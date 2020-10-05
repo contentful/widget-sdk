@@ -132,7 +132,7 @@ describe('Releases', () => {
         cy.wait(getReleasesInteraction);
         cy.findByTestId('releases-state-message-heading_detail')
           .should('be.visible')
-          .should('contain', 'No entities in this release');
+          .should('contain', 'No content in this release');
       });
     });
 
@@ -223,7 +223,7 @@ describe('Releases', () => {
           cy.wait(validateReleaseInteraction);
           cy.findAllByTestId('cf-ui-notification').should(
             'contain',
-            'All entities passed validation'
+            'All content passed validation'
           );
         });
 
@@ -234,7 +234,7 @@ describe('Releases', () => {
           cy.wait(validateReleaseInteraction);
           cy.findAllByTestId('cf-ui-notification').should(
             'contain',
-            'Some entities did not pass validation'
+            'Some content did not pass validation'
           );
           cy.findAllByTestId('validation-error').should('be.visible');
         });
@@ -259,7 +259,7 @@ describe('Releases', () => {
 
           cy.wait(publishReleaseInteraction);
           cy.wait(releaseActionFailed);
-          cy.findAllByTestId('cf-ui-notification').should('contain', 'Failed publishing Release');
+          cy.findAllByTestId('cf-ui-notification').should('contain', 'Failed publishing release');
         });
 
         it('fail to publish a release because of validation errors', () => {
@@ -269,7 +269,7 @@ describe('Releases', () => {
           cy.wait(publishReleaseInteraction);
           cy.findAllByTestId('cf-ui-notification').should(
             'contain',
-            'Some entities did not pass validation'
+            'Some content did not pass validation'
           );
         });
       });

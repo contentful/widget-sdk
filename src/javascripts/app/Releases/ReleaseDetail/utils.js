@@ -124,36 +124,21 @@ const findValidationErrorForEntity = (entityId, validationErrors) => {
   return errored ? errored.error.message : null;
 };
 
-const pluralize = (amount, word) => {
-  const plural = {
-    has: 'have',
-    entry: 'entries',
-    asset: 'assets',
-    entity: 'entities',
-    item: 'items',
-  };
-
-  if (amount > 1) {
-    const result = !word.includes(' ')
-      ? plural[word]
-      : word
-          .split(' ')
-          .map((el) => plural[el])
-          .join(' ');
-
-    return result;
-  }
-
-  return word;
+const entityTypeToTabName = {
+  Entry: 'entries',
+  Asset: 'assets',
 };
 
 const erroredEntityType = (entityType, validationErrors) =>
   validationErrors.filter(({ sys: { linkType } }) => linkType === entityType);
 
 const switchToErroredTab = (validationErrors, currentTab) => {
-  const erroredTab = [...new Set(validationErrors.map(({ sys: { linkType } }) => linkType))];
+  const erroredEntityTypes = [
+    ...new Set(validationErrors.map(({ sys: { linkType } }) => linkType)),
+  ];
 
-  return erroredTab.length === 1 ? pluralize(2, erroredTab[0].toLowerCase()) : currentTab;
+  // if there is one errored entity type switch to that tab
+  return erroredEntityTypes.length === 1 ? entityTypeToTabName[erroredEntityTypes[0]] : currentTab;
 };
 
 const CARD_VIEW = 'card';
@@ -187,7 +172,6 @@ export {
   displayedFields,
   waitForReleaseAction,
   findValidationErrorForEntity,
-  pluralize,
   erroredEntityType,
   switchToErroredTab,
   VIEW_LABELS,

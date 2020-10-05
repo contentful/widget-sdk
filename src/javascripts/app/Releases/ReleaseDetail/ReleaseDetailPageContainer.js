@@ -94,6 +94,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   }, [localStorage, entitiesLayout]);
 
   const handleEntityDelete = (entity) => {
+    const entityType = entity.sys.type;
     const releaseWithoutEntity = excludeEntityFromRelease(release, entity.sys.id);
     replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
       .then(() => {
@@ -105,7 +106,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
           });
       })
       .catch(() => {
-        Notification.error(`Failed deleting entity`);
+        Notification.error(`Failed to remove ${entityType.toLowerCase()}`);
       });
   };
 
@@ -115,7 +116,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
       type: SET_RELEASE_LIST_SELECTED_TAB,
       value: switchToErroredTab(errors, selectedTab),
     });
-    Notification.error('Some entities did not pass validation');
+    Notification.error('Some content did not pass validation');
   };
 
   const createJob = async ({ action, scheduledAt }) => {
@@ -169,11 +170,11 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
         if (errored.length) {
           return displayValidation(errored);
         }
-        Notification.success('All entities passed validation');
+        Notification.success('All content passed validation');
       })
       .catch(() => {
         dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
-        Notification.error('Entities validation failed');
+        Notification.error('Content validation failed');
       });
   };
 
@@ -196,7 +197,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
           return displayValidation(errored);
         }
       }
-      Notification.error('Failed publishing Release');
+      Notification.error('Failed publishing release');
     }
   };
 
