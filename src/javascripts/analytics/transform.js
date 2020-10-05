@@ -37,6 +37,7 @@ import DialogTransformer from './transformers/Dialog';
 import JobsCreateTransformer from './transformers/JobsCreate';
 import JobsCancelTransformer from './transformers/JobsCancel';
 import EnvironmentAliases from './transformers/EnvironmentAliases';
+import SpacePurchaseTransformer from './transformers/SpacePurchase';
 import { withSequenceContext } from './sequenceContext';
 
 /**
@@ -317,6 +318,19 @@ registerGenericEvent('editor_workbench:tab_open');
 
 registerGenericEvent('degraded_app_performance:modal_shown');
 
+registerSpacePurchaseEvent('space_purchase:begin');
+registerSpacePurchaseEvent('space_purchase:navigate');
+registerSpacePurchaseEvent('space_purchase:space_plan_selected');
+registerSpacePurchaseEvent('space_purchase:space_template_selected');
+registerSpacePurchaseEvent('space_purchase:space_details_entered');
+registerSpacePurchaseEvent('space_purchase:billing_details_entered');
+registerSpacePurchaseEvent('space_purchase:payment_details_entered');
+registerSpacePurchaseEvent('space_purchase:payment_method_created');
+registerSpacePurchaseEvent('space_purchase:confirm_purchase');
+registerSpacePurchaseEvent('space_purchase:space_created');
+registerSpacePurchaseEvent('space_purchase:space_template_created');
+registerSpacePurchaseEvent('space_purchase:error');
+
 /**
  * Registers an event to be tracked by snowplow.
  * @param {string} event
@@ -370,6 +384,10 @@ function registerSnapshotEvent(event) {
 
 function registerSpaceWizardEvent(event) {
   registerEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
+}
+
+function registerSpacePurchaseEvent(event) {
+  registerEvent(event, 'space_purchase', SpacePurchaseTransformer);
 }
 
 function registerSSOSelfConfigurationEvent(event) {
