@@ -84,6 +84,16 @@ export function addKey({ orgId, definitionId, jwk }) {
   });
 }
 
+export function generateKey({ orgId, definitionId }) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'POST',
+    data: { generate: true },
+    path: ['app_definitions', definitionId, 'keys'],
+  });
+}
+
 export function revokeKey({ orgId, definitionId, fingerprint }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 

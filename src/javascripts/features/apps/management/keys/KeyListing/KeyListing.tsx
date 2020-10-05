@@ -20,7 +20,7 @@ import { RevokeKeyDialog } from '../RevokeKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { KEY_GEN_GUIDE_URL } from '../../constants';
-import { fetchKeys, getFormattedKey } from './utils';
+import { downloadAsFile, fetchKeys, getFormattedKey } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
 import { TableWrapper } from './TableWrapper';
@@ -109,6 +109,7 @@ export function KeyListing({ definition }) {
   const orgId = definition.sys.organization.sys.id;
 
   const [isLoadingKeys, setIsLoadingKeys] = useState(true);
+  const [isGeneratingKeys, setIsGeneratingKeys] = useState(false);
   const [formattedKeys, setKeys] = useState(null);
   const hasKeys = formattedKeys && !!formattedKeys.length;
   const hasReachedKeysLimits = formattedKeys && formattedKeys.length >= MAX_KEYS_ALLOWED;
@@ -136,7 +137,24 @@ export function KeyListing({ definition }) {
 
       <div className={styles.ctasWrapper}>
         <WithLimitTooltip enabled={hasReachedKeysLimits}>
-          <Button disabled={hasReachedKeysLimits} onClick={() => null} testId="app-generate-keys">
+          <Button
+            loading={isGeneratingKeys}
+            disabled={isGeneratingKeys || hasReachedKeysLimits}
+            onClick={async () => {
+              setIsGeneratingKeys(true);
+              try {
+                const response = await ManagementApiClient.generateKey({
+                  orgId,
+                  definitionId,
+                });
+                downloadAsFile('application/x-pem-file', response.generated.privateKey, 'key.pem');
+                setKeys([...formattedKeys, await getFormattedKey(response)]);
+              } catch (e) {
+                Notification.error('Unable to generate App Keys. Please try uploading your own.');
+              }
+              setIsGeneratingKeys(false);
+            }}
+            testId="app-generate-keys">
             Generate key pair
           </Button>
         </WithLimitTooltip>

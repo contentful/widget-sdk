@@ -26,3 +26,18 @@ export const getFormattedKey = async (key) => {
     createdBy: await ManagementApiClient.getCreatorNameOf(key),
   };
 };
+
+export const downloadAsFile = (mimeType: string, payload: string, fileName: string) => {
+  const temporaryAnchor = document.createElement('a');
+  temporaryAnchor.download = fileName;
+
+  const blob = new Blob([payload], {
+    type: mimeType,
+  });
+
+  temporaryAnchor.href = URL.createObjectURL(blob);
+
+  temporaryAnchor.click();
+
+  URL.revokeObjectURL(temporaryAnchor.href);
+};
