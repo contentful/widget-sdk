@@ -5,18 +5,14 @@ import * as Fake from 'test/helpers/fakeFactory';
 // eslint-disable-next-line
 import { createOrganizationEndpoint, mockEndpoint } from 'data/EndpointFactory';
 
-import { transformBillingDetails } from '../utils/transformBillingDetails';
-
 const mockOrganization = Fake.Organization();
 const mockInvoices = ['invoiceOne', 'invoiceTwo', 'invoiceThree'];
 const mockBillingDetailsResp = {
   vat: 'DE123456',
   firstName: 'John',
   lastName: 'TestUser',
-  address: {
-    address1: 'Teststr 123',
-    country: 'Germany',
-  },
+  address1: 'Teststr 123',
+  country: 'Germany',
 };
 
 when(mockEndpoint)
@@ -69,7 +65,7 @@ describe('BillingDetailsService', () => {
         path: ['billing_details'],
       });
 
-      expect(billingDetails).toEqual(transformBillingDetails(mockBillingDetailsResp));
+      expect(billingDetails).toEqual(mockBillingDetailsResp);
     });
   });
 
