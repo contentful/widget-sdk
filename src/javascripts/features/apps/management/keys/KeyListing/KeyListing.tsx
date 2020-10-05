@@ -14,7 +14,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 
-import * as ManagementApiClient from '../../ManagementApiClient';
+import { ManagementApiClient } from 'features/apps';
 import { AddKeyDialog } from '../AddKeyDialog';
 import { RevokeKeyDialog } from '../RevokeKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
