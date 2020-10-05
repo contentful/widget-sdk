@@ -94,6 +94,23 @@ export const NewSpaceReceiptPage = ({
     }
   }, [newSpace, selectedTemplate, runTemplateCreation]);
 
+  useEffect(() => {
+    const eventHandler = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    // We want to ensure that users don't click away if their space is not yet created
+    // or if the template is actively being created
+    if (!newSpace || isCreatingTemplate) {
+      window.addEventListener('beforeunload', eventHandler);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', eventHandler);
+    };
+  }, [newSpace, isCreatingTemplate]);
+
   const goToCreatedSpace = async () => {
     await go({
       path: ['spaces', 'detail'],

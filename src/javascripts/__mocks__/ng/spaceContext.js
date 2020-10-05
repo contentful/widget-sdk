@@ -74,6 +74,8 @@ export const space = {
 
 export const getSpace = jest.fn().mockReturnValue(space);
 
+export const resetWithSpace = jest.fn();
+
 export const memberships = {
   invite: jest.fn().mockResolvedValue({}),
 };

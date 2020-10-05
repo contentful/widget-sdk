@@ -97,6 +97,25 @@ describe('NewSpaceReceiptPage', () => {
     });
   });
 
+  it('should set and unset the beforeunload event listener when creating the space', async () => {
+    let resolveCreateSpace;
+
+    makeNewSpace.mockImplementationOnce(() => {
+      return new Promise((resolve) => (resolveCreateSpace = () => resolve(true)));
+    });
+
+    build();
+
+    expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
+
+    await waitFor(expect(makeNewSpace).toBeCalled);
+    await waitFor(resolveCreateSpace);
+
+    await waitFor(() => {
+      expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
+    });
+  });
+
   it('should display a loading state while creating the space', async () => {
     let createSpacePromise;
     makeNewSpace.mockImplementation(() => {
