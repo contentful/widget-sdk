@@ -11,6 +11,16 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(() => Promise.resolve()),
 }));
 
+jest.mock('detect-browser', () => ({
+  detect: jest.fn().mockReturnValue({ name: 'not-ie' }),
+}));
+jest.mock('services/PubSubService', () => ({
+  createPubSubClientForSpace: jest.fn().mockReturnValue({
+    on: jest.fn(),
+    off: jest.fn(),
+  }),
+}));
+
 const props = {
   definition: mockDefinitions[0],
   goToListView: () => {},
