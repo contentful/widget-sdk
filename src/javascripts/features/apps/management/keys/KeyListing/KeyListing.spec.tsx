@@ -44,7 +44,7 @@ const mockDefinition = {
   },
 };
 
-const makeMockKey = (name: string = 'key'): Key => {
+const makeMockKey = (name = 'key'): Key => {
   return {
     createdAt: '',
     createdBy: '',

@@ -19,7 +19,7 @@ import { AddKeyDialog } from '../AddKeyDialog';
 import { RevokeKeyDialog } from '../RevokeKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { KEY_GEN_GUIDE_URL } from '../../constants';
+import { KEY_GEN_GUIDE_URL } from 'features/apps/management/constants';
 import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
