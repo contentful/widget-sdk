@@ -112,8 +112,8 @@ export const NewSpacePage = ({
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
 
   const hasBillingInformation = organization.isBillable;
-  const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
   const userIsOrgOwner = isOrgOwner(organization);
+  const canCreatePaidSpace = userIsOrgOwner || hasBillingInformation;
 
   const { isLoading, data } = useAsync(
     useCallback(fetchSpaceRatePlans(organization), [organization])

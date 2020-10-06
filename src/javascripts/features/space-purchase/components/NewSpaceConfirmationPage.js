@@ -63,10 +63,6 @@ export const NewSpaceConfirmationPage = ({
   showBillingDetails,
   showEditLink,
 }) => {
-  // TODO: Setting the grid template columns via a property is necessary as the component adds the grid styles
-  // as inline styles, rather than part of a class. This should be fixed in the component.
-  const initialColumnWidth = showBillingDetails ? '60%' : '50%';
-
   return (
     <section
       aria-labelledby="new-space-confirmation-section"
@@ -78,11 +74,7 @@ export const NewSpaceConfirmationPage = ({
         className={styles.sectionHeading}>
         Complete your payment
       </Heading>
-      <Grid
-        className={styles.grid}
-        columns={`${initialColumnWidth} auto`}
-        rows={1}
-        columnGap="spacing2Xl">
+      <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         {showBillingDetails && (
           <Card className={styles.card} testId="new-space-confirmation.billing-details">
             <Flex justifyContent="space-between">
