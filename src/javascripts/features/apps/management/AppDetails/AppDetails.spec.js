@@ -3,9 +3,7 @@ import React from 'react';
 import mockDefinitions from '../__mocks__/mockDefinitions.json';
 import { AppDetails } from './AppDetails';
 
-jest.mock('../ManagementApiClient', () => ({
-  getCreatorNameOf: jest.fn(() => Promise.resolve()),
-}));
+jest.mock('../ManagementApiClient');
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(() => Promise.resolve()),
