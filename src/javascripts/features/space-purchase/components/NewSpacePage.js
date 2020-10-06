@@ -64,21 +64,19 @@ const SPACE_PURCHASE_STEPS = {
 // Fetch billing and payment information if organziation already has billing information
 const fetchBillingDetails = async (
   organization,
-  setPaymentMethodInfo,
+  setPaymentDetails,
   setBillingDetails,
   setIsLoadingBillingDetails
 ) => {
-  if (organization.isBillable) {
-    setIsLoadingBillingDetails(true);
-    const [billingDetails, paymentMethod] = await Promise.all([
-      getBillingDetails(organization.sys.id),
-      getDefaultPaymentMethod(organization.sys.id),
-    ]);
+  setIsLoadingBillingDetails(true);
+  const [billingDetails, paymentMethod] = await Promise.all([
+    getBillingDetails(organization.sys.id),
+    getDefaultPaymentMethod(organization.sys.id),
+  ]);
 
-    setPaymentMethodInfo(paymentMethod);
-    setBillingDetails(billingDetails);
-    setIsLoadingBillingDetails(false);
-  }
+  setPaymentDetails(paymentMethod);
+  setBillingDetails(billingDetails);
+  setIsLoadingBillingDetails(false);
 };
 
 const fetchSpaceRatePlans = (organization) => async () => {
@@ -110,24 +108,27 @@ export const NewSpacePage = ({
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
+  const [paymentDetails, setPaymentDetails] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
 
   const hasBillingInformation = organization.isBillable;
-  const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
+  const userIsOrgOwner = isOrgOwner(organization);
+  const canCreatePaidSpace = userIsOrgOwner || hasBillingInformation;
 
   const { isLoading, data } = useAsync(
     useCallback(fetchSpaceRatePlans(organization), [organization])
   );
 
   useEffect(() => {
-    fetchBillingDetails(
-      organization,
-      setPaymentMethodInfo,
-      setBillingDetails,
-      setIsLoadingBillingDetails
-    );
-  }, [organization]);
+    if (userIsOrgOwner && organization.isBillable) {
+      fetchBillingDetails(
+        organization,
+        setPaymentDetails,
+        setBillingDetails,
+        setIsLoadingBillingDetails
+      );
+    }
+  }, [userIsOrgOwner, organization]);
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
@@ -226,7 +227,7 @@ export const NewSpacePage = ({
       throw error;
     }
 
-    setPaymentMethodInfo(paymentMethod);
+    setPaymentDetails(paymentMethod);
 
     trackEvent(EVENTS.PAYMENT_METHOD_CREATED, sessionMetadata);
 
@@ -303,12 +304,13 @@ export const NewSpacePage = ({
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceConfirmationPage
               organizationId={organization.sys.id}
-              navigateToPreviousStep={navigateToPreviousStep}
-              billingDetails={billingDetails}
-              paymentMethod={paymentMethodInfo}
               selectedPlan={selectedPlan}
-              hasBillingInformation={hasBillingInformation}
+              showBillingDetails={userIsOrgOwner}
+              showEditLink={organization.isBillable}
               isLoadingBillingDetails={isLoadingBillingDetails}
+              billingDetails={billingDetails}
+              paymentDetails={paymentDetails}
+              navigateToPreviousStep={navigateToPreviousStep}
               onConfirm={onConfirm}
             />
           </Grid>
