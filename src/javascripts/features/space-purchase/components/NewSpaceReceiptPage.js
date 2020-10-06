@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -10,10 +10,11 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
+
 import { go } from 'states/Navigator';
-import { useAsync } from 'core/hooks/useAsync';
+import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { useAsyncFn } from 'core/hooks/useAsync';
 
 import { PaymentSummary } from './PaymentSummary';
 
@@ -34,44 +35,36 @@ const styles = {
   }),
 };
 
-const createSpaceWith = (
-  organizationId,
-  sessionMetadata,
-  selectedPlan,
-  spaceName,
-  selectedTemplate = null
-) => async () => {
+const fetchSpace = (organizationId, sessionMetadata, selectedPlan, spaceName) => async () => {
   try {
-    let newSpace;
-
-    if (selectedTemplate) {
-      newSpace = await createSpaceWithTemplate(
-        organizationId,
-        selectedPlan,
-        spaceName,
-        selectedTemplate
-      );
-
-      trackEvent(EVENTS.SPACE_TEMPLATE_CREATED, sessionMetadata, {
-        selectedTemplate,
-      });
-    } else {
-      newSpace = await createSpace(organizationId, selectedPlan, spaceName);
-    }
-
+    const newSpace = await makeNewSpace(organizationId, selectedPlan, spaceName);
     trackEvent(EVENTS.SPACE_CREATED, sessionMetadata, {
       selectedPlan,
     });
-
-    return { newSpace };
+    return newSpace;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       location: 'NewSpaceReceiptPage',
       error,
     });
-
-    // To be updated after design decision is made
     Notification.error('Space could not be created, please try again.');
+  }
+};
+
+const fetchTemplate = (newSpace, selectedTemplate, sessionMetadata) => async () => {
+  try {
+    await createTemplate(newSpace, selectedTemplate);
+    trackEvent(EVENTS.SPACE_TEMPLATE_CREATED, sessionMetadata, {
+      selectedTemplate,
+    });
+  } catch (error) {
+    trackEvent(EVENTS.ERROR, sessionMetadata, {
+      location: 'NewSpaceReceiptPage',
+      error,
+    });
+    Notification.warning(
+      'Something happened while creating the template. You can still use your space, but some content from the template may be missing.'
+    );
   }
 };
 
@@ -82,22 +75,34 @@ export const NewSpaceReceiptPage = ({
   organizationId,
   selectedTemplate,
 }) => {
-  const { isLoading, data } = useAsync(
-    useCallback(
-      createSpaceWith(organizationId, sessionMetadata, selectedPlan, spaceName, selectedTemplate),
-      []
-    )
+  const [{ isLoading: isCreatingSpace, data: newSpace }, runSpaceCreation] = useAsyncFn(
+    useCallback(fetchSpace(organizationId, sessionMetadata, selectedPlan, spaceName), [])
   );
+
+  const [{ isLoading: isCreatingTemplate }, runTemplateCreation] = useAsyncFn(
+    useCallback(fetchTemplate(newSpace, selectedTemplate, sessionMetadata), [newSpace])
+  );
+
+  useEffect(() => {
+    runSpaceCreation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (newSpace && selectedTemplate) {
+      runTemplateCreation();
+    }
+  }, [newSpace, selectedTemplate, runTemplateCreation]);
 
   const goToCreatedSpace = async () => {
     await go({
       path: ['spaces', 'detail'],
-      params: { spaceId: data.newSpace.sys.id },
+      params: { spaceId: newSpace.sys.id },
     });
   };
 
   // Button should be disabled during loading && if creating the new space failed
-  const isButtonDisabled = isLoading || !data?.newSpace;
+  const isButtonDisabled = isCreatingSpace || isCreatingTemplate || !newSpace;
 
   return (
     <section
@@ -119,7 +124,7 @@ export const NewSpaceReceiptPage = ({
         </Paragraph>
         <Button
           testId="receipt-page.redirect-to-new-space"
-          loading={isLoading}
+          loading={isCreatingSpace || isCreatingTemplate}
           disabled={isButtonDisabled}
           onClick={goToCreatedSpace}
           className={styles.button}>

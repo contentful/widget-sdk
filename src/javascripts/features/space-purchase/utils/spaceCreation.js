@@ -9,7 +9,7 @@ import { getTemplate } from 'services/SpaceTemplateLoader';
 import { getModule } from 'core/NgRegistry';
 import * as Analytics from 'analytics/Analytics';
 
-async function makeNewSpace(organizationId, productRatePlan, spaceName) {
+export async function makeNewSpace(organizationId, productRatePlan, spaceName) {
   const spaceData = {
     defaultLocale: 'en-US',
     name: spaceName,
@@ -33,7 +33,6 @@ export async function createSpaceWithTemplate(
 
   const newSpace = await makeNewSpace(organizationId, productRatePlan, spaceName);
   const spaceContext = getModule('spaceContext');
-
   // Need to set the correct space on the spaceContext
   await TokenStore.getSpace(newSpace.sys.id).then((newSpace) =>
     spaceContext.resetWithSpace(newSpace)
@@ -44,10 +43,9 @@ export async function createSpaceWithTemplate(
     entityAutomationScope: { scope: 'space_template' },
   });
 
-  await createTemplate(template, spaceContext);
+  await makeTemplate(template, spaceContext);
 
   $rootScope.$broadcast('spaceTemplateCreated');
-
   return newSpace;
 }
 
@@ -67,7 +65,17 @@ export async function createSpace(organizationId, productRatePlan, spaceName) {
   return newSpace;
 }
 
-async function createTemplate(templateInfo, spaceContext) {
+export async function createTemplate(newSpace, templateInfo) {
+  const spaceContext = getModule('spaceContext');
+  // Need to set the correct space on the spaceContext
+  await TokenStore.getSpace(newSpace.sys.id).then((newSpace) =>
+    spaceContext.resetWithSpace(newSpace)
+  );
+
+  await makeTemplate(templateInfo, spaceContext);
+}
+
+async function makeTemplate(templateInfo, spaceContext) {
   const defaultLocale = 'en-US';
 
   const templateCreator = getTemplateCreator(
@@ -85,7 +93,6 @@ async function createTemplate(templateInfo, spaceContext) {
 
 async function tryCreateTemplate(templateCreator, templateData, retried) {
   const { spaceSetup, contentCreated } = templateCreator.create(templateData);
-
   try {
     await Promise.all([
       // we suppress errors, since `contentCreated` will handle them

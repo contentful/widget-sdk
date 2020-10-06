@@ -225,4 +225,27 @@ describe('utils', () => {
       });
     });
   });
+
+  describe('createTemplate', () => {
+    const mockTemplate = { name: 'Template' };
+    const call = async () => {
+      return await utils.createTemplate(mockSpace, mockTemplate);
+    };
+
+    it('should attempt to create the template for the designated space', async () => {
+      const remoteTemplate = { name: 'Another template', sys: { id: 'template_5678' } };
+      getTemplate.mockResolvedValue(remoteTemplate);
+      await call();
+
+      expect(TokenStore.getSpace).toBeCalledWith(mockSpace.sys.id);
+      expect(getCreator).toBeCalledWith(
+        spaceContext,
+        { onItemSuccess: expect.any(Function), onItemError: expect.any(Function) },
+        mockTemplate,
+        'en-US'
+      );
+      expect(getTemplate).toBeCalledWith(mockTemplate);
+      expect(getCreator().create).toBeCalledWith(remoteTemplate);
+    });
+  });
 });

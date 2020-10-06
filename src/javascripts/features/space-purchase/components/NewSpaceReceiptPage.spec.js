@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { go } from 'states/Navigator';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
+import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 
 const spaceName = 'My Space';
@@ -18,8 +18,8 @@ const mockSessionMetadata = {
 };
 
 jest.mock('../utils/spaceCreation', () => ({
-  createSpace: jest.fn(),
-  createSpaceWithTemplate: jest.fn(),
+  makeNewSpace: jest.fn(),
+  createTemplate: jest.fn(),
 }));
 
 jest.mock('../utils/analyticsTracking', () => ({
@@ -31,9 +31,13 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
+jest.mock('services/TokenStore', () => ({
+  getSpace: jest.fn(),
+}));
+
 describe('NewSpaceReceiptPage', () => {
   beforeEach(() => {
-    createSpace.mockResolvedValue(mockCreatedSpace);
+    makeNewSpace.mockResolvedValue(mockCreatedSpace);
   });
 
   it('should show the plan name and plan type', async () => {
@@ -51,11 +55,11 @@ describe('NewSpaceReceiptPage', () => {
     });
   });
 
-  it('should call createSpace and fire an analytic event when there is no selectedTemplate', async () => {
+  it('should call makeNewSpace and fire an analytic event when there is no selectedTemplate', async () => {
     build();
 
     await waitFor(() => {
-      expect(createSpace).toBeCalledWith(mockOrganization.sys.id, mockSelectedPlan, spaceName);
+      expect(makeNewSpace).toBeCalledWith(mockOrganization.sys.id, mockSelectedPlan, spaceName);
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_CREATED, mockSessionMetadata, {
@@ -63,17 +67,12 @@ describe('NewSpaceReceiptPage', () => {
     });
   });
 
-  it('should call createSpaceWithTemplate when there is a selectedTemplate', async () => {
+  it('should call createTemplate when there is a selectedTemplate', async () => {
     const mockTemplate = { test: true };
     build({ selectedTemplate: mockTemplate });
 
     await waitFor(() => {
-      expect(createSpaceWithTemplate).toBeCalledWith(
-        mockOrganization.sys.id,
-        mockSelectedPlan,
-        spaceName,
-        mockTemplate
-      );
+      expect(createTemplate).toBeCalledWith(mockCreatedSpace, mockTemplate);
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_CREATED, mockSessionMetadata, {
@@ -86,7 +85,7 @@ describe('NewSpaceReceiptPage', () => {
   });
 
   it('should display an error and fire an analytic event if the creation of the space errored', async () => {
-    createSpace.mockRejectedValueOnce();
+    makeNewSpace.mockRejectedValueOnce();
     build();
 
     await waitFor(() => {
@@ -100,7 +99,7 @@ describe('NewSpaceReceiptPage', () => {
 
   it('should display a loading state while creating the space', async () => {
     let createSpacePromise;
-    createSpace.mockImplementation(() => {
+    makeNewSpace.mockImplementation(() => {
       createSpacePromise = new Promise(() => {});
       return createSpacePromise;
     });
