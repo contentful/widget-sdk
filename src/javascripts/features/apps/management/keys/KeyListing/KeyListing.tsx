@@ -19,7 +19,7 @@ import { AddKeyDialog } from '../AddKeyDialog';
 import { DeleteKeyDialog } from '../DeleteKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { KEY_GEN_GUIDE_URL } from 'features/apps/management/constants';
+import { LEARN_MORE_URL } from 'features/apps/management/constants';
 import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
@@ -136,7 +136,7 @@ export function KeyListing({ definition }: { definition: AppDefinition }) {
         You need a private key to sign access token requests. We only store public keys.
         <br />
         <TextLink
-          href={withInAppHelpUtmParams(KEY_GEN_GUIDE_URL)}
+          href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
           Learn how to sign your access tokens

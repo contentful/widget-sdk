@@ -1,6 +1,7 @@
 import {
   Button,
   FormLabel,
+  Note,
   Notification,
   Paragraph,
   SkeletonBodyText,
@@ -127,17 +128,16 @@ export function AppEvents({ definition }) {
 
   return (
     <div>
-      <Paragraph className={styles.spacer}>
-        Use app events to be notified about changes in the environments your app is installed in.
-        Learn more about{' '}
+      <Note className={styles.spacer}>
+        You need a private key to sign access token requests. We only store public keys.
+        <br />
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
-          app identities and events
+          Learn how to sign your access tokens
         </TextLink>
-        .
-      </Paragraph>
+      </Note>
       {isLoading ? (
         <SkeletonContainer>
           <SkeletonBodyText numberOfLines={5} />
