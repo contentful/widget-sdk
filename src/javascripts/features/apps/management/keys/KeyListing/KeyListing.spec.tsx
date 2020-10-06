@@ -1,9 +1,11 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+
 import { KeyListing } from './KeyListing';
 import React from 'react';
 import { Key } from './utils';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import { ManagementApiClient } from '../../../index';
+import * as ManagementApiClient from '../../ManagementApiClient';
 
 let mockKeys: Key[] = [];
 
