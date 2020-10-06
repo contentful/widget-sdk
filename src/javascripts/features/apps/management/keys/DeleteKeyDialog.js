@@ -11,7 +11,7 @@ const styles = {
   }),
 };
 
-export function RevokeKeyDialog({ onConfirm, isShown, onCancel }) {
+export function DeleteKeyDialog({ onConfirm, isShown, onCancel }) {
   const [isLoading, setLoading] = useState(false);
 
   const onConfirmHandler = useCallback(async () => {
@@ -24,28 +24,28 @@ export function RevokeKeyDialog({ onConfirm, isShown, onCancel }) {
 
   return (
     <ModalConfirm
-      title="Revoke public key"
+      title="Delete public key"
       isShown={isShown}
       intent="negative"
       isConfirmLoading={isLoading}
       isConfirmDisabled={isLoading}
-      confirmLabel="Revoke"
+      confirmLabel="Delete"
       cancelLabel="Cancel"
       confirmTestId="revoke-key-confirm"
       cancelTestId="revoke-key-cancel"
       onCancel={onCancel}
       onConfirm={onConfirmHandler}>
       <Paragraph className={styles.spacer}>
-        After revoking a public key, your app will no longer be able to generate tokens with the
-        corresponding private key.
+        After deleting a key pair, your app will no longer be able to generate tokens with the
+        private key associated to this key pair.
       </Paragraph>
 
-      <Paragraph>Are you sure you want to revoke this public key from your app?</Paragraph>
+      <Paragraph>Are you sure you want to delete this public key from your app?</Paragraph>
     </ModalConfirm>
   );
 }
 
-RevokeKeyDialog.propTypes = {
+DeleteKeyDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,

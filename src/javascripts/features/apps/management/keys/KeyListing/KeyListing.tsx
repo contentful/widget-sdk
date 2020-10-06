@@ -1,32 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import moment from 'moment';
 
 import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paragraph,
-  TextLink,
   Button,
+  Note,
   Notification,
-  SkeletonContainer,
-  SkeletonBodyText,
+  Paragraph,
+  TableCell,
+  TableRow,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 
-import * as ManagementApiClient from '../ManagementApiClient';
-import { getAppDefinitionLoader } from 'features/apps-core';
-import { AddKeyDialog } from './AddKeyDialog';
-import { RevokeKeyDialog } from './RevokeKeyDialog';
-import * as util from '../util';
+import { ManagementApiClient } from 'features/apps';
+import { AddKeyDialog } from '../AddKeyDialog';
+import { DeleteKeyDialog } from '../DeleteKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { LEARN_MORE_URL } from '../constants';
+import { LEARN_MORE_URL } from 'features/apps/management/constants';
+import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
+import { WithLimitTooltip } from './WithLimitsTooltip';
+import { SkeletonRow } from './SkeletonRow';
+import { TableWrapper } from './TableWrapper';
+import { kebabCase } from 'lodash';
+import moment from 'moment';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -41,7 +40,7 @@ const styles = {
   fingerprint: css({
     display: 'block',
     fontFamily: tokens.fontStackMonospace,
-    fontSize: tokens.fontsizeS,
+    fontSize: tokens.fontSizeS,
   }),
   lightText: css({
     color: tokens.colorTextLight,
@@ -51,32 +50,21 @@ const styles = {
       background: 'transparent',
     },
   }),
+  ctasWrapper: css({
+    display: 'flex',
+    marginBottom: tokens.spacingL,
+  }),
+  ctaTextWrapper: css({
+    height: '2.5rem',
+    lineHeight: '2.5rem',
+  }),
+  ctaTextWrapperContent: (disabled: boolean) =>
+    css({
+      color: disabled ? tokens.colorTextLightest : tokens.colorTextMid,
+      opacity: disabled ? 0.5 : 1,
+      paddingLeft: tokens.spacingXs,
+    }),
 };
-
-const getFormattedKey = async (key) => {
-  const fingerprint = key.jwk.x5t;
-  const hexFingerprint = util.base64ToHex(fingerprint).replace(/(..)/g, '$1:').replace(/:$/, '');
-  const mid = hexFingerprint.length / 2 + 1;
-  const fingerprintLines = [hexFingerprint.substr(0, mid), hexFingerprint.substr(mid)];
-
-  return {
-    fingerprint,
-    fingerprintLines,
-    createdAt: moment(key.sys.createdAt).format('MMMM DD, YYYY'),
-    lastUsedAt: key.sys.lastUsedAt
-      ? 'Last used ' + util.formatPastDate(key.sys.lastUsedAt)
-      : 'Never used',
-    // TODO: batch getting creators
-    createdBy: await ManagementApiClient.getCreatorNameOf(key),
-  };
-};
-
-const fetchKeys = async (orgId, definitionId) => {
-  const keys = await getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
-
-  return Promise.all(keys.map(getFormattedKey));
-};
-
 const openAddKeyModal = (orgId, definitionId, setNewKey) => {
   ModalLauncher.open(({ isShown, onClose }) => {
     return (
@@ -101,10 +89,10 @@ const openAddKeyModal = (orgId, definitionId, setNewKey) => {
   });
 };
 
-const openRevokeKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
+const openDeleteKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
   ModalLauncher.open(({ isShown, onClose }) => {
     return (
-      <RevokeKeyDialog
+      <DeleteKeyDialog
         isShown={isShown}
         onCancel={onClose}
         onConfirm={async () => {
@@ -121,64 +109,17 @@ const openRevokeKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
   });
 };
 
-const TableWrapper = ({ children }) => {
-  return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Public key fingerprint</TableCell>
-          <TableCell>Added at</TableCell>
-          <TableCell>Added by</TableCell>
-          <TableCell />
-        </TableRow>
-      </TableHead>
-      <TableBody>{children}</TableBody>
-    </Table>
-  );
-};
-
-const SkeletonRow = () => {
-  return (
-    <TableRow>
-      <TableCell>
-        <div>
-          <SkeletonContainer svgWidth="420" svgHeight="40">
-            <SkeletonBodyText />
-          </SkeletonContainer>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div>
-          <SkeletonContainer width="420" svgHeight="40">
-            <SkeletonBodyText />
-          </SkeletonContainer>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div>
-          <SkeletonContainer svgHeight="40">
-            <SkeletonBodyText numberOfLines={1} />
-          </SkeletonContainer>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div>
-          <SkeletonContainer svgWidth="50" svgHeight="40">
-            <SkeletonBodyText numberOfLines={1} />
-          </SkeletonContainer>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-};
+const CTATextWrapper = ({ children }) => <span className={styles.ctaTextWrapper}>{children}</span>;
 
 export function KeyListing({ definition }) {
   const definitionId = definition.sys.id;
   const orgId = definition.sys.organization.sys.id;
 
   const [isLoadingKeys, setIsLoadingKeys] = useState(true);
-  const [formattedKeys, setKeys] = useState(null);
-  const hasKeys = formattedKeys && !!formattedKeys.length;
+  const [isGeneratingKeys, setIsGeneratingKeys] = useState(false);
+  const [formattedKeys, setKeys] = useState<Key[]>([]);
+  const hasKeys = !!formattedKeys.length;
+  const hasReachedKeysLimits = formattedKeys.length >= MAX_KEYS_ALLOWED;
 
   useEffect(() => {
     (async () => {
@@ -190,30 +131,64 @@ export function KeyListing({ definition }) {
 
   return (
     <>
-      <Paragraph className={styles.spacer}>
-        Use key pairs to generate temporary content management tokens in your app’s backend. Learn
-        more about{' '}
+      <Note className={styles.spacer}>
+        You need a private key to sign access token requests. We only store public keys.
+        <br />
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
-          app identities and events
+          Learn how to sign your access tokens
         </TextLink>
-        .
-      </Paragraph>
+      </Note>
 
-      <div>
-        <Button
-          className={styles.spacer}
-          disabled={formattedKeys && formattedKeys.length >= MAX_KEYS_ALLOWED}
-          onClick={() =>
-            openAddKeyModal(orgId, definitionId, (newFormattedKey) =>
-              setKeys([...formattedKeys, newFormattedKey])
-            )
-          }
-          testId="app-add-public-key">
-          Add public key
-        </Button>
+      <div className={styles.ctasWrapper}>
+        <WithLimitTooltip enabled={hasReachedKeysLimits}>
+          <Button
+            loading={isGeneratingKeys}
+            disabled={isGeneratingKeys || hasReachedKeysLimits}
+            onClick={async () => {
+              setIsGeneratingKeys(true);
+              try {
+                const response = await ManagementApiClient.generateKey({
+                  orgId,
+                  definitionId,
+                });
+
+                const fileName = `${kebabCase(definition.name)}_${moment(new Date()).format(
+                  'YYYY-MM-DD'
+                )}_private-key.pem`;
+
+                downloadAsFile('application/x-pem-file', response.generated.privateKey, fileName);
+                setKeys([...formattedKeys, await getFormattedKey(response)]);
+              } catch (e) {
+                Notification.error('Unable to generate App Keys. Please try uploading your own.');
+              }
+              setIsGeneratingKeys(false);
+            }}
+            testId="app-generate-keys">
+            Generate key pair
+          </Button>
+          <CTATextWrapper>
+            <span className={styles.ctaTextWrapperContent(hasReachedKeysLimits)}>
+              &nbsp;or&nbsp;
+            </span>
+          </CTATextWrapper>
+          <CTATextWrapper>
+            <TextLink
+              linkType="secondary"
+              className={styles.spacer}
+              disabled={hasReachedKeysLimits}
+              onClick={() =>
+                openAddKeyModal(orgId, definitionId, (newFormattedKey) =>
+                  setKeys([...formattedKeys, newFormattedKey])
+                )
+              }
+              testId="app-add-public-key">
+              upload a public key
+            </TextLink>
+          </CTATextWrapper>
+        </WithLimitTooltip>
       </div>
 
       {isLoadingKeys ? (
@@ -244,12 +219,12 @@ export function KeyListing({ definition }) {
                 <TableCell align="right">
                   <TextLink
                     onClick={() =>
-                      openRevokeKeyModal(orgId, definitionId, key.fingerprint, () =>
+                      openDeleteKeyModal(orgId, definitionId, key.fingerprint, () =>
                         setKeys(formattedKeys.filter((k) => k.fingerprint !== key.fingerprint))
                       )
                     }
                     linkType="negative">
-                    Revoke
+                    Delete
                   </TextLink>
                 </TableCell>
               </TableRow>

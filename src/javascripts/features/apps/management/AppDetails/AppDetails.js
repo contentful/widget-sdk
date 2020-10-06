@@ -20,7 +20,7 @@ import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
 import { AppEvents } from '../events';
 import { KeyListing } from '../keys/KeyListing';
-import * as ManagementApiClient from '../ManagementApiClient';
+import { ManagementApiClient } from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
 import { TAB_PATHS } from './constants';
 import { styles } from './styles';

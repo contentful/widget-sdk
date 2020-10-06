@@ -1,6 +1,7 @@
 import {
   Button,
   FormLabel,
+  Note,
   Notification,
   Paragraph,
   SkeletonBodyText,
@@ -17,7 +18,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { HTTPS_REG_EXP, LEARN_MORE_URL } from '../constants';
-import * as ManagementApiClient from '../ManagementApiClient';
+import { ManagementApiClient } from '../ManagementApiClient';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
 import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
 import { TopicEventTable } from './TopicEventTable';
@@ -127,17 +128,16 @@ export function AppEvents({ definition }) {
 
   return (
     <div>
-      <Paragraph className={styles.spacer}>
+      <Note className={styles.spacer}>
         Use app events to be notified about changes in the environments your app is installed in.
-        Learn more about{' '}
+        <br />
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
-          app identities and events
+          Learn more about app identities and events
         </TextLink>
-        .
-      </Paragraph>
+      </Note>
       {isLoading ? (
         <SkeletonContainer>
           <SkeletonBodyText numberOfLines={5} />

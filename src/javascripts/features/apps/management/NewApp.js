@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { AppEditor, validate } from './AppEditor';
-import * as ManagementApiClient from './ManagementApiClient';
+import { ManagementApiClient } from './ManagementApiClient';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
