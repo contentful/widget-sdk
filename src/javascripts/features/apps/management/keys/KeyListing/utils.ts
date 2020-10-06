@@ -2,7 +2,15 @@ import { getAppDefinitionLoader } from 'features/apps-core';
 import { formatPastDate, base64ToHex, ManagementApiClient } from 'features/apps';
 import moment from 'moment';
 
-export const fetchKeys = async (orgId, definitionId) => {
+export interface Key {
+  fingerprint: string;
+  fingerprintLines: string[];
+  createdAt: string;
+  createdBy: string;
+  lastUsedAt: string;
+}
+
+export const fetchKeys = async (orgId, definitionId): Promise<Key[]> => {
   const keys = await getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
 
   return Promise.all(keys.map(getFormattedKey));

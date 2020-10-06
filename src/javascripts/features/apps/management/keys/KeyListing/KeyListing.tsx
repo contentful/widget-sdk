@@ -20,7 +20,7 @@ import { RevokeKeyDialog } from '../RevokeKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { KEY_GEN_GUIDE_URL } from '../../constants';
-import { downloadAsFile, fetchKeys, getFormattedKey } from './utils';
+import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
 import { TableWrapper } from './TableWrapper';
@@ -38,7 +38,7 @@ const styles = {
   fingerprint: css({
     display: 'block',
     fontFamily: tokens.fontStackMonospace,
-    fontSize: tokens.fontsizeS,
+    fontSize: tokens.fontSizeS,
   }),
   lightText: css({
     color: tokens.colorTextLight,
@@ -110,9 +110,9 @@ export function KeyListing({ definition }) {
 
   const [isLoadingKeys, setIsLoadingKeys] = useState(true);
   const [isGeneratingKeys, setIsGeneratingKeys] = useState(false);
-  const [formattedKeys, setKeys] = useState(null);
-  const hasKeys = formattedKeys && !!formattedKeys.length;
-  const hasReachedKeysLimits = formattedKeys && formattedKeys.length >= MAX_KEYS_ALLOWED;
+  const [formattedKeys, setKeys] = useState<Key[]>([]);
+  const hasKeys = !!formattedKeys.length;
+  const hasReachedKeysLimits = formattedKeys.length >= MAX_KEYS_ALLOWED;
 
   useEffect(() => {
     (async () => {

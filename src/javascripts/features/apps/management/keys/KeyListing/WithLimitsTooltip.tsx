@@ -4,7 +4,9 @@ import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 
 export const WithLimitTooltip = ({ children, enabled }) => {
   return enabled ? (
-    <Tooltip content={`You've reached the limit of ${MAX_KEYS_ALLOWED} key pairs`}>
+    <Tooltip
+      testId="ctf-limit-tooltip"
+      content={`You've reached the limit of ${MAX_KEYS_ALLOWED} key pairs`}>
       {children}
     </Tooltip>
   ) : (
