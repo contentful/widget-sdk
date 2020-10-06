@@ -119,19 +119,26 @@ export default class JobsSchedule extends React.Component {
     entriesData: PropTypes.object,
     contentTypesData: PropTypes.object,
     emptyStateMessage: PropTypes.object,
+    releasesData: PropTypes.object,
   };
 
   render() {
-    const { jobs, entriesData, contentTypesData, emptyStateMessage } = this.props;
+    const { jobs, entriesData, releasesData, contentTypesData, emptyStateMessage } = this.props;
     if (!this.props.jobs.length) {
       return null;
     }
 
-    const jobsWithExisitingEntry = jobs.filter((job) => entriesData[job.entity.sys.id]);
+    const entryJobsWithExisitingEntry = jobs.filter((job) => entriesData[job.entity.sys.id]);
+    const releaseJobsWithExistingRelease = jobs.filter((job) => releasesData[job.entity.sys.id]);
+    const jobsWithExisitingEntry = [
+      ...entryJobsWithExisitingEntry,
+      ...releaseJobsWithExistingRelease,
+    ];
     const groupedJobs = _.chain(jobsWithExisitingEntry)
       .groupBy((item) => moment(item.scheduledFor.datetime).format('YYYY.MM.DD'))
       .map((item) => item)
       .value();
+    const entitiesData = { ...entriesData, ...releasesData };
     return (
       <div>
         {groupedJobs && groupedJobs.length > 0 ? (
@@ -139,7 +146,7 @@ export default class JobsSchedule extends React.Component {
             <DateGroup
               jobs={jobsGroup}
               key={`${jobsGroup[0].sys.id}-dateGroup`}
-              entriesData={entriesData}
+              entriesData={entitiesData}
               contentTypesData={contentTypesData}
             />
           ))

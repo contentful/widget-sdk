@@ -14,11 +14,15 @@ const WrappedEntityList = ({
     {entities.map((entity, index) => {
       return (
         <WrappedEntityListItem
-          key={entity.sys.id}
+          key={`${entity.sys.id}-${index}`}
           entity={entity}
           internalLocaleCode={internalLocaleCode}
           onClick={onEntityClick ? (e, entity) => onEntityClick(e, entity, index) : undefined}
-          contentType={contentTypes && contentTypes[entity.sys.contentType.sys.id].name}
+          contentType={
+            contentTypes &&
+            entity.sys.contentType &&
+            contentTypes[entity.sys.contentType.sys.id].name
+          }
           renderDropdown={renderDropdown}
         />
       );

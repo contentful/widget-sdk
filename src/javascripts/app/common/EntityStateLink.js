@@ -5,12 +5,27 @@ import { href } from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
+const entityTypeMap = {
+  Entry: {
+    path: 'entries',
+    entityId: 'entryId',
+  },
+  Asset: {
+    path: 'assets',
+    entityId: 'assetId',
+  },
+  Release: {
+    path: 'releases',
+    entityId: 'releaseId',
+  },
+};
+
 export function getEntityLink({ id, type, isMasterEnvironment = true }) {
-  const path = ['spaces', 'detail', type === 'Entry' ? 'entries' : 'assets', 'detail'];
+  const path = ['spaces', 'detail', entityTypeMap[type].path, 'detail'];
   if (!isMasterEnvironment) {
     path.splice(2, 0, 'environment');
   }
-  const params = { [type === 'Entry' ? 'entryId' : 'assetId']: id };
+  const params = { [entityTypeMap[type].entityId]: id };
 
   return {
     path: path.join('.'),

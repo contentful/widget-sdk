@@ -43,6 +43,8 @@ export async function getJobsData(spaceEndpoint, query) {
       jobs,
       entries: [],
       users: [],
+      assets: [],
+      releases: [],
     };
   }
 
@@ -84,7 +86,7 @@ export async function getJobsData(spaceEndpoint, query) {
     jobs,
     entries: entriesCollection,
     assets: assetCollection,
-    releases: releasesCollection,
+    releases: releasesCollection.items,
     users: usersCollection.items,
     nextQuery: jobsCollection.pages.next,
   };
