@@ -73,6 +73,7 @@ describe('SpaceCard', () => {
 
 function build(customProps) {
   const props = {
+    loading: false,
     content: {
       type: SPACE_PURCHASE_TYPES.MEDIUM,
       title: (

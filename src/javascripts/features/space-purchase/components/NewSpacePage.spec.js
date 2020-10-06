@@ -13,6 +13,7 @@ import {
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing/index';
+import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -35,6 +36,27 @@ const mockBillingDetails = {
 const mockRefId = 'ref_1234';
 const mockSessionId = '987654321';
 const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: mockSessionId };
+
+const mockRatePlans = [
+  {
+    name: 'Community',
+    productPlanType: 'free_space',
+    productType: 'on_demand',
+    price: 0,
+  },
+  {
+    name: 'Medium',
+    productPlanType: 'space',
+    productType: 'on_demand',
+    price: 489,
+  },
+  {
+    name: 'Large',
+    productPlanType: 'space',
+    productType: 'on_demand',
+    price: 879,
+  },
+];
 
 jest.mock('services/TokenStore', () => ({
   ...jest.requireActual('services/TokenStore'),
@@ -73,20 +95,27 @@ jest.mock('features/organization-billing/index', () => ({
   getHostedPaymentParams: jest.fn().mockResolvedValue(),
 }));
 
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  getSpaceRatePlans: jest.fn(() => mockRatePlans),
+  isFreeProductPlan: jest.fn(),
+}));
+
 describe('NewSpacePage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     mockOrganization.isBillable = false;
   });
 
-  it('should render SPACE_SELECTION page as a default', () => {
-    build();
+  it('should render SPACE_SELECTION page as a default', async () => {
+    getSpaceRatePlans.mockResolvedValueOnce([mockRatePlans]);
+    await build();
 
+    expect(getSpaceRatePlans).toBeCalledTimes(1);
     expect(screen.getByTestId('space-selection-section')).toBeVisible();
   });
 
-  it('should render SPACE_DETAILS when a plan has been selected', () => {
-    build();
+  it('should render SPACE_DETAILS when a plan has been selected', async () => {
+    await build();
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -94,7 +123,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should render BILLING_DETAILS when space details have been filled out with the selected space plan', async () => {
-    build();
+    await build();
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -120,8 +149,8 @@ describe('NewSpacePage', () => {
     });
   });
 
-  it('should allow any paid space plan to be selected if the user is org owner, even without billing details', () => {
-    build();
+  it('should allow any paid space plan to be selected if the user is org owner, even without billing details', async () => {
+    await build();
 
     const spacePlanCards = screen.getAllByTestId('space-card');
 
@@ -130,11 +159,11 @@ describe('NewSpacePage', () => {
     });
   });
 
-  it('should allow any paid space plan to be selected if the user is not org owner and the org has billing details', () => {
+  it('should allow any paid space plan to be selected if the user is not org owner and the org has billing details', async () => {
     mockOrganization.isBillable = true;
     isOwner.mockReturnValueOnce(false);
 
-    build();
+    await build();
 
     const spacePlanCards = screen.getAllByTestId('space-card');
 
@@ -144,7 +173,6 @@ describe('NewSpacePage', () => {
   });
 
   it('should fetch and display billing details and skip credit card and billing details page if org has billing details', async () => {
-    mockOrganization.isBillable = true;
     getBillingDetails.mockResolvedValueOnce({
       firstName: 'John',
       lastName: 'Doe',
@@ -159,8 +187,12 @@ describe('NewSpacePage', () => {
         state: '',
       },
     });
+    getDefaultPaymentMethod.mockResolvedValueOnce({
+      number: '411111111111',
+      expirationDate: { month: 1, year: '2020' },
+    });
 
-    build();
+    await build({ organization: { ...mockOrganization, isBillable: true } });
 
     // Space Selection Page
     expect(getBillingDetails).toBeCalledWith(mockOrganization.sys.id);
@@ -176,13 +208,15 @@ describe('NewSpacePage', () => {
     userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
     // Confirmation Page
-    expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+    });
   });
 
-  it('should disable all paid space plans if the user is not org owner and the org does not have billing details', () => {
+  it('should disable all paid space plans if the user is not org owner and the org does not have billing details', async () => {
     isOwner.mockReturnValue(false);
 
-    build();
+    await build();
 
     const spacePlanCards = screen.getAllByTestId('space-card');
 
@@ -197,7 +231,7 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      build();
+      await build();
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -273,8 +307,8 @@ describe('NewSpacePage', () => {
   });
 
   describe('handler functionality', () => {
-    it('should update space name when onChangeSpaceName is used', () => {
-      build();
+    it('should update space name when onChangeSpaceName is used', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -285,8 +319,8 @@ describe('NewSpacePage', () => {
       expect(input.value).toEqual('test');
     });
 
-    it('should track user navigation', () => {
-      build();
+    it('should track user navigation', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(trackEvent).toBeCalledWith(
@@ -304,7 +338,7 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      build();
+      await build();
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -350,7 +384,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should display saved billing details when navigating back from Credit Card Page', async () => {
-    build();
+    await build();
 
     // ------ Space select page------
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -395,8 +429,8 @@ describe('NewSpacePage', () => {
   });
 
   describe('back button', () => {
-    it('should go back a step when clicked', () => {
-      build();
+    it('should go back a step when clicked', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
@@ -408,8 +442,8 @@ describe('NewSpacePage', () => {
       });
     });
 
-    it('should go back a step when browser back is clicked', () => {
-      build();
+    it('should go back a step when browser back is clicked', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
@@ -423,8 +457,8 @@ describe('NewSpacePage', () => {
   });
 
   describe('browser forward button', () => {
-    it('should go forward a step when clicked after a back button has been clicked', () => {
-      build();
+    it('should go forward a step when clicked after a back button has been clicked', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
@@ -440,8 +474,8 @@ describe('NewSpacePage', () => {
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
     });
 
-    it('should go forward a step after the browser back button has been clicked', () => {
-      build();
+    it('should go forward a step after the browser back button has been clicked', async () => {
+      await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
@@ -459,7 +493,7 @@ describe('NewSpacePage', () => {
   });
 });
 
-function build(customProps) {
+async function build(customProps) {
   const props = {
     organization: mockOrganization,
     sessionMetadata: mockSessionMetadata,
@@ -474,6 +508,8 @@ function build(customProps) {
   };
 
   render(<NewSpacePage {...props} />);
+
+  await waitFor(() => screen.getAllByTestId('select-space-cta'));
 }
 
 async function waitForZuoraToRender() {

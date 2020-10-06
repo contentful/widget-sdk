@@ -17,13 +17,6 @@ export const SPACE_PURCHASE_CONTENT = [
     ),
     description:
       'Simple microsites, or one-off projects managed by a small team who all have the same access permissions.',
-    price: (
-      <>
-        $<b>489</b>
-        <br />
-        /month
-      </>
-    ),
     callToAction: 'Select',
     limitsTitle: 'What are the space limits:',
     limits: [
@@ -43,13 +36,6 @@ export const SPACE_PURCHASE_CONTENT = [
     ),
     description:
       'Stand-alone experiences like a blog, or suite of pages that need more discrete publishing permissions or serve up to 10 markets.',
-    price: (
-      <>
-        $<b>789</b>
-        <br />
-        /month
-      </>
-    ),
     callToAction: 'Select',
     limitsTitle: 'What are the space limits:',
     limits: [
@@ -65,13 +51,6 @@ export const SPACE_PURCHASE_CONTENT = [
     title: <b>Enterprise</b>,
     description:
       'Organizations that require customization, training and fewer limitations to power one — or hundreds — of digital experiences.',
-    price: (
-      <>
-        <b>Custom</b>
-        <br />
-        to your needs
-      </>
-    ),
     callToAction: 'Talk to us',
     limitsTitle: 'All the Team features, plus:',
     limits: [

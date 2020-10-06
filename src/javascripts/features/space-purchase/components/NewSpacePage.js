@@ -11,12 +11,15 @@ import {
   getBillingDetails,
   getCountryCodeFromName,
 } from 'features/organization-billing';
-import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { FREE_SPACE_IDENTIFIER, transformSpaceRatePlans } from 'app/SpaceWizards/shared/utils';
+import { isFreeProductPlan, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { useAsync } from 'core/hooks/useAsync';
 import * as logger from 'services/logger';
 import * as TokenStore from 'services/TokenStore';
+import createResourceService from 'services/ResourceService';
 
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
@@ -59,15 +62,14 @@ const SPACE_PURCHASE_STEPS = {
 };
 
 // Fetch billing and payment information if organziation already has billing information
-const initialFetch = (
+const fetchBillingDetails = async (
   organization,
   setPaymentMethodInfo,
   setBillingDetails,
   setIsLoadingBillingDetails
-) => async () => {
+) => {
   if (organization.isBillable) {
     setIsLoadingBillingDetails(true);
-
     const [billingDetails, paymentMethod] = await Promise.all([
       getBillingDetails(organization.sys.id),
       getDefaultPaymentMethod(organization.sys.id),
@@ -77,6 +79,22 @@ const initialFetch = (
     setBillingDetails(billingDetails);
     setIsLoadingBillingDetails(false);
   }
+};
+
+const fetchSpaceRatePlans = (organization) => async () => {
+  const endpoint = createOrganizationEndpoint(organization.sys.id);
+  const orgResources = createResourceService(organization.sys.id, 'organization');
+  const [freeSpaceResource, rawSpaceRatePlans] = await Promise.all([
+    orgResources.get(FREE_SPACE_IDENTIFIER),
+    getSpaceRatePlans(endpoint),
+  ]);
+  const spaceRatePlans = transformSpaceRatePlans({
+    organization,
+    spaceRatePlans: rawSpaceRatePlans,
+    freeSpaceResource,
+  });
+
+  return { spaceRatePlans };
 };
 
 export const NewSpacePage = ({
@@ -98,21 +116,21 @@ export const NewSpacePage = ({
   const hasBillingInformation = organization.isBillable;
   const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
 
-  useAsync(
-    useCallback(
-      initialFetch(
-        organization,
-        setPaymentMethodInfo,
-        setBillingDetails,
-        setIsLoadingBillingDetails
-      ),
-      []
-    )
+  const { isLoading, data } = useAsync(
+    useCallback(fetchSpaceRatePlans(organization), [organization])
   );
+
+  useEffect(() => {
+    fetchBillingDetails(
+      organization,
+      setPaymentMethodInfo,
+      setBillingDetails,
+      setIsLoadingBillingDetails
+    );
+  }, [organization]);
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
-
   const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
 
   const onChangeSelectedTemplate = (changedTemplate) => {
@@ -318,6 +336,8 @@ export const NewSpacePage = ({
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
               canCreatePaidSpace={canCreatePaidSpace}
+              spaceRatePlans={data?.spaceRatePlans}
+              loading={isLoading}
             />
             <NewSpaceFAQ faqEntries={faqEntries} />
           </Grid>

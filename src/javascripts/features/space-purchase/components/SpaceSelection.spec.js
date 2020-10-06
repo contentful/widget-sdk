@@ -82,6 +82,7 @@ describe('SpaceSelection', () => {
 
 function build(customProps) {
   const props = {
+    loading: false,
     organizationId: mockOrganization.sys.id,
     selectPlan: mockSelectPlan,
     canCreateCommunityPlan: true,

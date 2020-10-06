@@ -57,6 +57,8 @@ export const SpaceSelection = ({
   selectPlan,
   canCreateCommunityPlan,
   canCreatePaidSpace,
+  spaceRatePlans,
+  loading,
 }) => {
   const getSelectHandler = (planType) => {
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
@@ -99,6 +101,8 @@ export const SpaceSelection = ({
             disabled={!canCreatePaidSpace}
             content={spaceContent}
             handleSelect={getSelectHandler(spaceContent.type)}
+            plan={spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type)}
+            loading={loading}
           />
         ))}
 
@@ -143,4 +147,6 @@ SpaceSelection.propTypes = {
   selectPlan: PropTypes.func,
   canCreateCommunityPlan: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool.isRequired,
+  spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
+  loading: PropTypes.bool,
 };

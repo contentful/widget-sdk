@@ -12,6 +12,9 @@ import {
   ListItem,
   Paragraph,
   Typography,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { websiteUrl } from 'Config';
@@ -77,56 +80,73 @@ const styles = {
   },
 };
 
-export const SpaceCard = ({ content, handleSelect, disabled = false }) => {
+export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loading = true }) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
   return (
     <Card className={cn(styles.card, styles.spaceColor[content.type])} testId="space-card">
-      <Typography className={styles.centered}>
-        <Heading element="h3" className={styles.cardTitle} testId="space-heading">
-          {content.title}
-        </Heading>
+      {loading && <LoadingState />}
+      {!loading && (
+        <>
+          <Typography className={styles.centered}>
+            <Heading element="h3" className={styles.cardTitle} testId="space-heading">
+              {content.title}
+            </Heading>
 
-        <Paragraph testId="space-description">{content.description}</Paragraph>
-      </Typography>
+            <Paragraph testId="space-description">{content.description}</Paragraph>
+          </Typography>
 
-      <Typography className={styles.centered}>
-        <Paragraph className={styles.price} testId="space-price">
-          {content.price}
-        </Paragraph>
-        {isEnterpriseCard ? (
-          <Button
-            href={websiteUrl('contact/sales/')}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleSelect}
-            testId="select-space-cta"
-            disabled={disabled}>
-            {content.callToAction}
-          </Button>
-        ) : (
-          <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
-            {content.callToAction}
-          </Button>
-        )}
-      </Typography>
+          <Typography className={styles.centered}>
+            <Paragraph className={styles.price} testId="space-price">
+              {plan ? (
+                <>
+                  $<b>{plan.price}</b>
+                  <br />
+                  /month
+                </>
+              ) : (
+                <>
+                  <b>Custom</b>
+                  <br />
+                  to your needs
+                </>
+              )}
+            </Paragraph>
+            {isEnterpriseCard ? (
+              <Button
+                href={websiteUrl('contact/sales/')}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleSelect}
+                testId="select-space-cta"
+                disabled={disabled}>
+                {content.callToAction}
+              </Button>
+            ) : (
+              <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
+                {content.callToAction}
+              </Button>
+            )}
+          </Typography>
 
-      <div className={styles.limitsSection}>
-        <Typography>
-          <Paragraph>{content.limitsTitle}</Paragraph>
-        </Typography>
-        <List testId="space-limits">
-          {content.limits.map((limit, idx) => (
-            <ListItem key={idx} className={styles.limit}>
-              <Icon
-                icon="CheckCircle"
-                className={cn(styles.check, styles.checkColor[content.type])}
-              />
-              <Paragraph>{limit}</Paragraph>
-            </ListItem>
-          ))}
-        </List>
-      </div>
+          <div className={styles.limitsSection}>
+            <Typography>
+              <Paragraph>{content.limitsTitle}</Paragraph>
+            </Typography>
+            <List testId="space-limits">
+              {content.limits.map((limit, idx) => (
+                <ListItem key={idx} className={styles.limit}>
+                  <Icon
+                    icon="CheckCircle"
+                    className={cn(styles.check, styles.checkColor[content.type])}
+                  />
+                  <Paragraph>{limit}</Paragraph>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </>
+      )}
     </Card>
   );
 };
@@ -142,6 +162,8 @@ SpaceCard.propTypes = {
   }).isRequired,
   handleSelect: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  plan: PropTypes.object,
+  loading: PropTypes.bool,
 };
 
 function getSpaceColorCSS(backgroundColor) {
@@ -157,4 +179,25 @@ function getSpaceColorCSS(backgroundColor) {
       backgroundColor,
     },
   });
+}
+
+function LoadingState() {
+  return (
+    <>
+      <SkeletonContainer svgHeight={140}>
+        <SkeletonDisplayText width={120} />
+        <SkeletonBodyText offsetTop={46} lineHeight={16} numberOfLines={3} />
+      </SkeletonContainer>
+      <SkeletonContainer svgHeight={110}>
+        <SkeletonBodyText offsetTop={16} lineHeight={16} numberOfLines={3} />
+      </SkeletonContainer>
+      <SkeletonContainer svgHeight={278}>
+        <SkeletonDisplayText offsetTop={24} width={200} />
+        <SkeletonBodyText offsetTop={61} lineHeight={16} numberOfLines={2} />
+        <SkeletonBodyText offsetTop={117} lineHeight={16} numberOfLines={2} />
+        <SkeletonBodyText offsetTop={173} lineHeight={16} numberOfLines={2} />
+        <SkeletonBodyText offsetTop={229} lineHeight={16} numberOfLines={2} />
+      </SkeletonContainer>
+    </>
+  );
 }
