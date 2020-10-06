@@ -5,6 +5,12 @@ import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvi
 import { Notification } from '@contentful/forma-36-react-components';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 import { UpdateTagModal } from 'features/content-tags/management/components/UpdateTagModal';
+import { wait } from '@testing-library/dom';
+
+jest.mock('data/CMA/ProductCatalog', () => ({
+  FEATURES: { PC_CONTENT_TAGS: 'content_tags' },
+  getCurrentSpaceFeature: jest.fn().mockResolvedValue(true),
+}));
 
 describe('A UpdateTagModal', () => {
   beforeEach(() => {
@@ -113,16 +119,18 @@ describe('A UpdateTagModal', () => {
       },
     });
 
-    act(() => {
+    await act(() => {
       events.click(checkboxInput);
       events.change(nameInput, { target: { value: 'Hello Sky' } });
     });
 
-    act(() => {
+    await act(() => {
       submit.click();
     });
 
-    expect(tagsRepo.readTags).toHaveBeenCalled();
+    await act(async () => {
+      await wait(() => expect(tagsRepo.readTags).toHaveBeenCalled());
+    });
   });
 });
 

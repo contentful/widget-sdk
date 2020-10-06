@@ -377,12 +377,10 @@ export const EntityList = ({
     );
   };
 
-  return tagsEnabled ? (
+  return (
     <TagsRepoProvider>
       <ReadTagsProvider>{renderContent()}</ReadTagsProvider>
     </TagsRepoProvider>
-  ) : (
-    renderContent()
   );
 };
 

@@ -5,13 +5,11 @@ import {
   ReadTagsProvider,
   TagsRepoProvider,
   useDocTags,
-  useTagsFeatureEnabled,
 } from 'features/content-tags';
 
 const ContentTagsField = ({ getValueAt, setValueAt, show }) => {
   const { tags, setTags } = useDocTags({ getValueAt, setValueAt });
-  const { tagsEnabled } = useTagsFeatureEnabled();
-  return tagsEnabled && show ? (
+  return show ? (
     <TagsRepoProvider>
       <ReadTagsProvider>
         <EditorTagsSkeleton showEmpty={false} tags={tags} setTags={setTags} />

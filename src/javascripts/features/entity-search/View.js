@@ -150,16 +150,13 @@ const styles = {
 
 export function Search(props) {
   const { tagsEnabled: withMetadata } = useTagsFeatureEnabled();
-  if (withMetadata) {
-    return (
-      <TagsRepoProvider>
-        <ReadTagsProvider>
-          <View withMetadata {...props} />
-        </ReadTagsProvider>
-      </TagsRepoProvider>
-    );
-  }
-  return <View {...props} />;
+  return (
+    <TagsRepoProvider>
+      <ReadTagsProvider>
+        <View withMetadata={withMetadata} {...props} />
+      </ReadTagsProvider>
+    </TagsRepoProvider>
+  );
 }
 
 function View({
