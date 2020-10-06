@@ -36,8 +36,8 @@ export function DeleteKeyDialog({ onConfirm, isShown, onCancel }) {
       onCancel={onCancel}
       onConfirm={onConfirmHandler}>
       <Paragraph className={styles.spacer}>
-        After deleting a public key, your app will no longer be able to generate tokens with the
-        corresponding private key.
+        After deleting a key pair, your app will no longer be able to generate tokens with the
+        private key associated to this key pair.
       </Paragraph>
 
       <Paragraph>Are you sure you want to delete this public key from your app?</Paragraph>
