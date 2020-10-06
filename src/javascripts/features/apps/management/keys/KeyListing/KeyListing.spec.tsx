@@ -4,7 +4,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha'
 import { KeyListing } from './KeyListing';
 import React from 'react';
 import { Key } from './utils';
-import * as ManagementApiClient from '../../ManagementApiClient';
+import { ManagementApiClient } from '../../ManagementApiClient';
 
 let mockKeys: Key[] = [];
 
@@ -12,7 +12,6 @@ jest.mock('../../ManagementApiClient');
 jest.mock('./utils', () => {
   return {
     fetchKeys: () => mockKeys,
-    generateKey: jest.fn(),
   };
 });
 

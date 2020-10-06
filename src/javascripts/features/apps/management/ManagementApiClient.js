@@ -5,7 +5,7 @@ import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
 import { WidgetLocation } from '@contentful/widget-renderer';
 
-export const VALIDATION_MESSAGE =
+const VALIDATION_MESSAGE =
   'Validation failed. Please check that you have provided valid configuration options.';
 
 function createOrgEndpointByDef(definition) {
@@ -13,7 +13,7 @@ function createOrgEndpointByDef(definition) {
   return createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 }
 
-export function createDefinitionTemplateForOrg(orgId) {
+function createDefinitionTemplateForOrg(orgId) {
   if (typeof orgId !== 'string' || !orgId) {
     throw new Error('orgId must be a string!');
   }
@@ -31,7 +31,7 @@ export function createDefinitionTemplateForOrg(orgId) {
   };
 }
 
-export function save(definition) {
+function save(definition) {
   const orgEndpoint = createOrgEndpointByDef(definition);
   const id = get(definition, ['sys', 'id']);
 
@@ -55,7 +55,7 @@ export function save(definition) {
   });
 }
 
-export function deleteDef(definition) {
+function deleteDef(definition) {
   const orgEndpoint = createOrgEndpointByDef(definition);
   const id = get(definition, ['sys', 'id']);
 
@@ -65,7 +65,7 @@ export function deleteDef(definition) {
   });
 }
 
-export async function getCreatorNameOf(entry) {
+async function getCreatorNameOf(entry) {
   const { firstName, lastName } = await getUser(
     createOrgEndpointByDef(entry),
     entry.sys.createdBy.sys.id
@@ -74,7 +74,7 @@ export async function getCreatorNameOf(entry) {
   return `${firstName} ${lastName}`;
 }
 
-export function addKey({ orgId, definitionId, jwk }) {
+function addKey({ orgId, definitionId, jwk }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
   return orgEndpoint({
@@ -84,7 +84,7 @@ export function addKey({ orgId, definitionId, jwk }) {
   });
 }
 
-export function generateKey({ orgId, definitionId }) {
+function generateKey({ orgId, definitionId }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
   return orgEndpoint({
@@ -94,7 +94,7 @@ export function generateKey({ orgId, definitionId }) {
   });
 }
 
-export function revokeKey({ orgId, definitionId, fingerprint }) {
+function revokeKey({ orgId, definitionId, fingerprint }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
   return orgEndpoint({
@@ -103,7 +103,7 @@ export function revokeKey({ orgId, definitionId, fingerprint }) {
   });
 }
 
-export function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
+function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
   return orgEndpoint({
     method: 'PUT',
@@ -112,7 +112,7 @@ export function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
   });
 }
 
-export function deleteAppEvents(orgId, definitionId) {
+function deleteAppEvents(orgId, definitionId) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
   return orgEndpoint({
@@ -120,3 +120,16 @@ export function deleteAppEvents(orgId, definitionId) {
     path: ['app_definitions', definitionId, 'event_subscription'],
   });
 }
+
+export const ManagementApiClient = {
+  createDefinitionTemplateForOrg,
+  save,
+  deleteDef,
+  getCreatorNameOf,
+  addKey,
+  generateKey,
+  revokeKey,
+  updateAppEvents,
+  deleteAppEvents,
+  VALIDATION_MESSAGE,
+};

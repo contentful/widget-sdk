@@ -1,7 +1,4 @@
-import * as client from './management/ManagementApiClient';
-
-export const ManagementApiClient = client;
-
+export { ManagementApiClient } from './management/ManagementApiClient';
 export { appRoute } from './routes';
 export { managementRoute } from './routes/management';
 export { renderAppsNavigationItem } from './AppsNavigationItem';
