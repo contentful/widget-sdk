@@ -29,14 +29,14 @@ jest.mock('states/Navigator', () => ({
 }));
 
 describe('NewSpaceConfirmationPage', () => {
-  it('should not show the edit link when org does not billing information', () => {
+  it('should not show the edit link when showEditLink is false', () => {
     build();
 
     expect(screen.queryByTestId('confirmation-page.edit-billing-link')).toBeNull();
   });
 
-  it('should show the edit link when org has billing information', () => {
-    build({ hasBillingInformation: true });
+  it('should show the edit link when showEditLink is true', () => {
+    build({ showEditLink: true });
 
     const editBillingLink = screen.getByTestId('confirmation-page.edit-billing-link');
 
@@ -63,6 +63,18 @@ describe('NewSpaceConfirmationPage', () => {
     expect(screen.getByTestId('billing-details-loading')).toBeVisible();
     expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
   });
+
+  it('should not show the billing details section if showBillingDetails is false', () => {
+    build({ showBillingDetails: false });
+
+    expect(screen.queryByTestId('new-space-confirmation.billing-details')).toBeNull();
+  });
+
+  it('should render the payment section with buttons if showBillingDetails is false', () => {
+    build({ showBillingDetails: false });
+
+    expect(screen.getByTestId('order-summary.buttons')).toBeVisible();
+  });
 });
 
 function build(customProps) {
@@ -70,9 +82,10 @@ function build(customProps) {
     organizationId: mockOrganization.sys.id,
     selectedPlan: { name: 'medium' },
     billingDetails: mockBillingDetails,
-    paymentMethod: mockPaymentMethod,
+    paymentDetails: mockPaymentMethod,
     isLoadingBillingDetails: false,
-    hasBillingInformation: false,
+    showBillingDetails: true,
+    showEditLink: false,
     onConfirm: () => {},
     navigateToPreviousStep: () => {},
     ...customProps,

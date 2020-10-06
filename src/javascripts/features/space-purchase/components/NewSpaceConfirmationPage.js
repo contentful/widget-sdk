@@ -57,11 +57,16 @@ export const NewSpaceConfirmationPage = ({
   navigateToPreviousStep,
   selectedPlan,
   billingDetails,
-  paymentMethod,
+  paymentDetails,
   onConfirm,
   isLoadingBillingDetails,
-  hasBillingInformation,
+  showBillingDetails,
+  showEditLink,
 }) => {
+  // TODO: Setting the grid template columns via a property is necessary as the component adds the grid styles
+  // as inline styles, rather than part of a class. This should be fixed in the component.
+  const initialColumnWidth = showBillingDetails ? '60%' : '50%';
+
   return (
     <section
       aria-labelledby="new-space-confirmation-section"
@@ -73,56 +78,67 @@ export const NewSpaceConfirmationPage = ({
         className={styles.sectionHeading}>
         Complete your payment
       </Heading>
-      <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
-        <Card className={styles.card}>
-          <Flex justifyContent="space-between">
-            <Subheading className={styles.cardTitle} element="h3">
-              Saved billing details{' '}
-              <span role="img" aria-label="Credit card">
-                💳
-              </span>
-            </Subheading>
-            {hasBillingInformation && (
-              <Paragraph>
-                <TextLink
-                  testId="confirmation-page.edit-billing-link"
-                  icon="ExternalLink"
-                  onClick={() => {
-                    redirectToEditPayment(organizationId);
-                  }}>
-                  Edit
-                </TextLink>
-              </Paragraph>
-            )}
-          </Flex>
-          <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-            {isLoadingBillingDetails && (
-              <>
-                <CreditCardDetailsLoading />
-                <BillingDetailsLoading />
-              </>
-            )}
-            {!isLoadingBillingDetails && (
-              <>
-                <CreditCardInformation creditCardInfo={paymentMethod} />
-                <BillingInformation billingDetails={billingDetails} />
-              </>
-            )}
-          </Grid>
-          <Flex justifyContent="flex-end">
-            <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
-              Back
-            </Button>
-            <Button
-              className={styles.continueButton}
-              onClick={onConfirm}
-              testId="confirm-purchase-button"
-              buttonType="positive">
-              Complete payment
-            </Button>
-          </Flex>
-        </Card>
-        <PaymentSummary selectedPlan={selectedPlan} />
+      <Grid
+        className={styles.grid}
+        columns={`${initialColumnWidth} auto`}
+        rows={1}
+        columnGap="spacing2Xl">
+        {showBillingDetails && (
+          <Card className={styles.card} testId="new-space-confirmation.billing-details">
+            <Flex justifyContent="space-between">
+              <Subheading className={styles.cardTitle} element="h3">
+                Billing details{' '}
+                <span role="img" aria-label="Credit card">
+                  💳
+                </span>
+              </Subheading>
+              {showEditLink && (
+                <Paragraph>
+                  <TextLink
+                    testId="confirmation-page.edit-billing-link"
+                    icon="ExternalLink"
+                    onClick={() => {
+                      redirectToEditPayment(organizationId);
+                    }}>
+                    Edit
+                  </TextLink>
+                </Paragraph>
+              )}
+            </Flex>
+            <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
+              {isLoadingBillingDetails && (
+                <>
+                  <CreditCardDetailsLoading />
+                  <BillingDetailsLoading />
+                </>
+              )}
+              {!isLoadingBillingDetails && (
+                <>
+                  <CreditCardInformation creditCardInfo={paymentDetails} />
+                  <BillingInformation billingDetails={billingDetails} />
+                </>
+              )}
+            </Grid>
+            <Flex justifyContent="flex-end">
+              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
+                Back
+              </Button>
+              <Button
+                className={styles.continueButton}
+                onClick={onConfirm}
+                testId="confirm-purchase-button"
+                buttonType="positive">
+                Confirm payment
+              </Button>
+            </Flex>
+          </Card>
+        )}
+        <PaymentSummary
+          selectedPlan={selectedPlan}
+          showButtons={!showBillingDetails}
+          onConfirm={onConfirm}
+          onBack={navigateToPreviousStep}
+        />
       </Grid>
     </section>
   );
@@ -134,7 +150,8 @@ NewSpaceConfirmationPage.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
   billingDetails: BillingDetailsPropType,
-  paymentMethod: PropTypes.object,
-  hasBillingInformation: PropTypes.bool.isRequired,
+  paymentDetails: PropTypes.object,
+  showEditLink: PropTypes.bool.isRequired,
   isLoadingBillingDetails: PropTypes.bool.isRequired,
+  showBillingDetails: PropTypes.bool.isRequired,
 };

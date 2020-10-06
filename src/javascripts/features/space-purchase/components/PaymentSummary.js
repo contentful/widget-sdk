@@ -9,7 +9,9 @@ import {
   Paragraph,
   List,
   ListItem,
+  Button,
 } from '@contentful/forma-36-react-components';
+import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -42,9 +44,18 @@ const styles = {
     fontWeight: tokens.fontWeightDemiBold,
     marginBottom: '0px',
   }),
+  buttons: css({
+    marginTop: tokens.spacing2Xl,
+  }),
 };
 
-export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
+export const PaymentSummary = ({
+  selectedPlan,
+  isReceipt = false,
+  showButtons = false,
+  onConfirm,
+  onBack,
+}) => {
   return (
     <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
@@ -63,6 +74,19 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
           </ListItem>
         </List>
         <Paragraph>This price does not include sales tax, if applicable.</Paragraph>
+        {showButtons && (
+          <Flex
+            className={styles.buttons}
+            justifyContent="space-between"
+            testId="order-summary.buttons">
+            <Button onClick={onBack} testId="order-summary.back" buttonType="muted">
+              Back
+            </Button>
+            <Button onClick={onConfirm} testId="order-summary.confirm" buttonType="positive">
+              Confirm payment
+            </Button>
+          </Flex>
+        )}
       </Typography>
     </Card>
   );
@@ -71,4 +95,7 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
 PaymentSummary.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
   isReceipt: PropTypes.bool,
+  showButtons: PropTypes.bool,
+  onConfirm: PropTypes.func,
+  onBack: PropTypes.func,
 };
