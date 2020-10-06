@@ -129,13 +129,13 @@ export function AppEvents({ definition }) {
   return (
     <div>
       <Note className={styles.spacer}>
-        You need a private key to sign access token requests. We only store public keys.
+        Use app events to be notified about changes in the environments your app is installed in.
         <br />
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
-          Learn how to sign your access tokens
+          Learn more about app identities and events
         </TextLink>
       </Note>
       {isLoading ? (

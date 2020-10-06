@@ -24,7 +24,6 @@ import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
 import { TableWrapper } from './TableWrapper';
-import { AppDefinition } from 'contentful-management/dist/typings/entities/app-definition';
 import { kebabCase } from 'lodash';
 import moment from 'moment';
 
@@ -112,7 +111,7 @@ const openDeleteKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
 
 const CTATextWrapper = ({ children }) => <span className={styles.ctaTextWrapper}>{children}</span>;
 
-export function KeyListing({ definition }: { definition: AppDefinition }) {
+export function KeyListing({ definition }) {
   const definitionId = definition.sys.id;
   const orgId = definition.sys.organization.sys.id;
 
