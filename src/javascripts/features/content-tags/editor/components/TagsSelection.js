@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Paragraph, Tooltip } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import {
@@ -16,54 +16,60 @@ import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 
 import { css } from 'emotion';
-import FeedbackButton from 'app/common/FeedbackButton';
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
-import tokens from '@contentful/forma-36-tokens';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
+import { TagTypePropType } from 'features/content-tags/core/TagType';
 
 const styles = {
   wrapper: css({
     display: 'flex',
     justifyContent: 'space-between',
   }),
-  innerWrapper: css({
-    display: 'flex',
-    justifyContent: 'flex-end',
-  }),
-  iconWrapper: css({
-    marginLeft: tokens.spacingL,
-    order: '2',
-  }),
-  tagLimits: css({
-    marginLeft: 'auto',
-  }),
   tooltipWrapper: css({
     width: '100%',
   }),
 };
 
-const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
-  const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
+const TagsSelection = ({
+  showEmpty,
+  onAdd,
+  onRemove,
+  selectedTags = [],
+  tagType,
+  disabled,
+  label = 'Tags',
+}) => {
+  const { allData, isLoading, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const { currentEnvironment } = useSpaceEnvContext();
   const tagGroups = useAllTagsGroups();
-
-  const totalSelected = selectedTags.length;
-  const disabled = totalSelected >= TAGS_PER_ENTITY;
+  const [data, setData] = useState([]);
+  const [match, setMatch] = useState('');
+  const cachedTagsFilter = useMemo(() => createTagsFilter(allData), [allData]);
+  const maxTagsReached = selectedTags.length >= TAGS_PER_ENTITY;
 
   useEffect(() => {
     setLimit(1000);
   }, [setLimit]);
 
+  useEffect(() => {
+    if (cachedTagsFilter) {
+      const options = { match: match, tagType: tagType };
+      const result = cachedTagsFilter(options);
+      setData(result);
+    }
+  }, [cachedTagsFilter, setData, match, tagType]);
+
   const onSearch = useCallback(
-    (tagId) => {
-      setSearch(tagId);
+    (searchStr) => {
+      setMatch(searchStr);
     },
-    [setSearch]
+    [setMatch]
   );
 
   const filteredTags = useMemo(() => {
@@ -74,6 +80,18 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
     );
     return filtered.splice(0, Math.min(10, filtered.length));
   }, [data, selectedTags]);
+
+  const selectedFilteredTags = useMemo(() => {
+    return orderByLabel(
+      tagsPayloadToValues(
+        data.filter(
+          (tag) =>
+            tag.sys.tagType === tagType &&
+            selectedTags.some((localTag) => localTag.value === tag.sys.id)
+        )
+      )
+    );
+  }, [selectedTags, data, tagType]);
 
   const { showModal: showUserListModal, modalComponent: userListModal } = useF36Modal(
     AdminsOnlyModal
@@ -103,21 +121,19 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
       <FieldFocus>
         {userListModal}
         <div className={styles.wrapper}>
-          <Paragraph>Tags</Paragraph>
-          <Paragraph className={styles.tagLimits}>
-            {totalSelected} / {TAGS_PER_ENTITY}
-            <span className={styles.iconWrapper}>
-              <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
-            </span>
-          </Paragraph>
+          <Paragraph>{label}</Paragraph>
         </div>
         <ConditionalWrapper
-          condition={disabled}
+          condition={maxTagsReached || disabled}
           wrapper={(children) => (
             <Tooltip
               targetWrapperClassName={styles.tooltipWrapper}
               containerElement={'div'}
-              content={`You can only add up to ${TAGS_PER_ENTITY} tags per entry or asset`}
+              content={
+                disabled
+                  ? `You don't have permission to edit this field. To change your permission setting contact your space admin.`
+                  : `You can only add up to ${TAGS_PER_ENTITY} tags per entry or asset`
+              }
               id="limitTip"
               place="top">
               {children}
@@ -127,24 +143,30 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
             tags={filteredTags}
             isLoading={isLoading}
             onChange={onAdd}
-            disabled={disabled}
+            disabled={maxTagsReached || disabled}
             onQueryChange={onSearch}
           />
         </ConditionalWrapper>
-        <EntityTags tags={selectedTags} onRemove={onRemove} tagGroups={tagGroups} />
+        <EntityTags
+          disabled={disabled}
+          tags={selectedFilteredTags}
+          onRemove={onRemove}
+          tagGroups={tagGroups}
+        />
       </FieldFocus>
     );
   }, [
     filteredTags,
-    selectedTags,
+    selectedFilteredTags,
     isLoading,
     onAdd,
     onSearch,
     onRemove,
     userListModal,
     tagGroups,
+    maxTagsReached,
     disabled,
-    totalSelected,
+    label,
   ]);
 
   if (isInitialLoad) {
@@ -165,6 +187,9 @@ TagsSelection.propTypes = {
   entry: PropTypes.object,
   onAdd: PropTypes.func,
   onRemove: PropTypes.func,
+  label: PropTypes.string,
+  tagType: TagTypePropType,
+  disabled: PropTypes.bool,
 };
 
 export { TagsSelection };

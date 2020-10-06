@@ -5,9 +5,8 @@ import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const useFeatureFlagVariation = (featureFlag, defaultValue) => {
+export const useFeatureFlagVariation = (featureFlag, defaultValue) => {
   const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
-
   const load = useCallback(async () => {
     return await getVariation(featureFlag, {
       spaceId: currentSpaceId,

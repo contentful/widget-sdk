@@ -11,7 +11,7 @@ const styles = {
   headline: css({ color: tokens.colorTextMid }),
 };
 
-const EntityTags = ({ tags, onRemove, style = {}, tagGroups = [] }) => {
+const EntityTags = ({ tags, onRemove, disabled, style = {}, tagGroups = [] }) => {
   const onTagPillClose = useCallback(
     (tagId) => {
       if (onRemove) {
@@ -34,7 +34,7 @@ const EntityTags = ({ tags, onRemove, style = {}, tagGroups = [] }) => {
           className={css(styles.tag, style)}
           key={tag.value}
           label={tag.label}
-          onClose={() => onTagPillClose(tag.value)}
+          onClose={disabled ? null : () => onTagPillClose(tag.value)}
         />
       </li>
     ));
@@ -82,6 +82,7 @@ EntityTags.propTypes = {
   onRemove: PropTypes.func,
   style: PropTypes.object,
   tagGroups: PropTypes.array,
+  disabled: PropTypes.bool,
 };
 
 export { EntityTags };

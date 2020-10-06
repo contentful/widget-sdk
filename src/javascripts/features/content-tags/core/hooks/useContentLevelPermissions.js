@@ -1,22 +1,14 @@
-import { useAsync } from 'core/hooks';
-import { FLAGS, getVariation } from 'LaunchDarkly';
-import { useCallback } from 'react';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { FLAGS } from 'LaunchDarkly';
+import { useFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 const useContentLevelPermissions = () => {
-  const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
-
-  const getContentLevelPermissionsEnabled = useCallback(
-    () =>
-      getVariation(FLAGS.CONTENT_LEVEL_PERMISSIONS, {
-        spaceId: currentSpaceId,
-        environmentId: currentEnvironmentId,
-        organizationId: currentOrganizationId,
-      }),
-    [currentSpaceId, currentEnvironmentId, currentOrganizationId]
+  const { isSpaceFeatureLoading, spaceFeatureEnabled } = useFeatureFlagVariation(
+    FLAGS.CONTENT_LEVEL_PERMISSIONS
   );
-  const { isLoading, data } = useAsync(getContentLevelPermissionsEnabled);
-  return { contentLevelPermissionsLoading: isLoading, contentLevelPermissionsEnabled: !!data };
+  return {
+    contentLevelPermissionsLoading: isSpaceFeatureLoading,
+    contentLevelPermissionsEnabled: !!spaceFeatureEnabled,
+  };
 };
 
 export { useContentLevelPermissions };

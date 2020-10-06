@@ -2,14 +2,23 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
-import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
+import {
+  useContentLevelPermissions,
+  useIsAdmin,
+  useIsInitialLoadingOfTags,
+  useReadTags,
+} from 'features/content-tags/core/hooks';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 import { SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-react-components';
+import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
+import { TagType } from 'features/content-tags/core/TagType';
 
 const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
   const { allData } = useReadTags();
   const [localTags, setLocalTags] = useState();
   const isInitialLoad = useIsInitialLoadingOfTags();
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     const tagsIds = tags.map(({ sys: { id } }) => id) || [];
@@ -54,12 +63,28 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
   }
 
   return (
-    <TagsSelection
-      showEmpty={showEmpty}
-      onAdd={onAddTag}
-      onRemove={onRemoveTag}
-      selectedTags={localTags}
-    />
+    <React.Fragment>
+      <TagSelectionHeader totalSelected={localTags.length} />
+      <TagsSelection
+        showEmpty={showEmpty}
+        onAdd={onAddTag}
+        onRemove={onRemoveTag}
+        selectedTags={localTags}
+        tagType={TagType.Default}
+        label={'Tags'}
+      />
+      {contentLevelPermissionsEnabled && (
+        <TagsSelection
+          disabled={!isAdmin}
+          showEmpty={showEmpty}
+          onAdd={onAddTag}
+          onRemove={onRemoveTag}
+          selectedTags={localTags}
+          tagType={TagType.Access}
+          label={'Access Tags'}
+        />
+      )}
+    </React.Fragment>
   );
 };
 
