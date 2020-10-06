@@ -8,7 +8,8 @@ import { Entity } from 'app/entity_editor/Document/types';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
-import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
+import { EditorInterface } from '@contentful/widget-renderer';
+import { LegacyWidget } from 'widgets/WidgetCompat';
 
 const SnapshotPresenterRichText = ({
   className,
@@ -61,10 +62,7 @@ interface SnapshotPresenterRichTextProps {
   entity: Entity;
   field: Field;
   locale: Locale;
-  widget: {
-    id: string;
-    namespace: WidgetNamespace;
-  };
+  widget: LegacyWidget;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;

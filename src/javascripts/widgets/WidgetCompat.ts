@@ -7,18 +7,36 @@ import {
 } from '@contentful/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 
-export type LegacyWidget = ReturnType<typeof toLegacyWidget>;
+export interface LegacyWidget {
+  namespace: WidgetNamespace;
+  id: string;
+  name: string;
+  fieldTypes: (string | undefined)[];
+  locations: WidgetLocation[];
+  sidebar: boolean;
+  parameters: Widget['parameters']['definitions']['instance'];
+  installationParameters: {
+    definitions: Widget['parameters']['definitions']['installation'];
+    values: Widget['parameters']['values']['installation'];
+  };
 
-export const toLegacyWidget = (widget: Widget) => {
+  src?: string;
+  srcdoc?: string;
+
+  appDefinitionId?: string;
+  appId?: string;
+  appIconUrl?: string;
+}
+
+export const toLegacyWidget = (widget: Widget): LegacyWidget => {
   const locations = widget.locations.map((l) => l.location);
   const entryFieldLocation = widget.locations.find(
     (l) => l.location === WidgetLocation.ENTRY_FIELD
   );
 
-  const legacy = {
+  const legacy: LegacyWidget = {
     namespace: widget.namespace,
     id: widget.id,
-    [widget.hosting.type === HostingType.SRC ? 'src' : 'srcdoc']: widget.hosting.value,
     name: widget.name,
     fieldTypes: entryFieldLocation
       ? (entryFieldLocation as EntryFieldLocation).fieldTypes.map(toInternalFieldType)
@@ -31,6 +49,12 @@ export const toLegacyWidget = (widget: Widget) => {
       values: widget.parameters.values.installation,
     },
   };
+
+  if (widget.hosting.type === HostingType.SRC) {
+    legacy.src = widget.hosting.value;
+  } else if (widget.hosting.type === HostingType.SRCDOC) {
+    legacy.srcdoc = widget.hosting.value;
+  }
 
   if (widget.namespace === WidgetNamespace.APP) {
     legacy.appDefinitionId = widget.id;
@@ -48,10 +72,24 @@ export const toRendererWidget = (legacy: any): Widget => {
     entryFieldLocation.fieldTypes = legacy.fieldTypes.map(toApiFieldType);
   }
 
-  const hosting = {
-    type: legacy.src ? HostingType.SRC : HostingType.SRCDOC,
-    value: legacy.src || legacy.srcdoc,
-  };
+  let hosting: Widget['hosting'];
+  if (legacy.src) {
+    hosting = {
+      type: HostingType.SRC,
+      value: legacy.src,
+    };
+  } else if (legacy.srcdoc) {
+    hosting = {
+      type: HostingType.SRCDOC,
+      value: legacy.srcdoc,
+    };
+  } else {
+    hosting = {
+      type: HostingType.BACKEND_ONLY,
+      value: '',
+    };
+  }
+
   const widget = {
     namespace: legacy.namespace,
     id: legacy.id,
