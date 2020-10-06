@@ -35,6 +35,13 @@ const mockBillingDetails = {
 };
 const mockRefId = 'ref_1234';
 const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: '987654321' };
+const mockFreeSpaceResource = {
+  usage: 0,
+  limits: {
+    included: 1,
+    maximum: 1,
+  },
+};
 
 const trackWithSession = jest.fn();
 
@@ -44,18 +51,21 @@ const mockRatePlans = [
     productPlanType: 'free_space',
     productType: 'on_demand',
     price: 0,
+    productRatePlanCharges: [],
   },
   {
     name: 'Medium',
     productPlanType: 'space',
     productType: 'on_demand',
     price: 489,
+    productRatePlanCharges: [],
   },
   {
     name: 'Large',
     productPlanType: 'space',
     productType: 'on_demand',
     price: 879,
+    productRatePlanCharges: [],
   },
 ];
 
@@ -96,14 +106,26 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreeProductPlan: jest.fn(),
 }));
 
+jest.mock('services/ResourceService', () => {
+  return () => ({
+    get: (type) => {
+      if (type === 'free_space') {
+        return mockFreeSpaceResource;
+      } else {
+        throw `${type} not defined in ResourceService mock`;
+      }
+    },
+  });
+});
+
 describe('NewSpacePage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     mockOrganization.isBillable = false;
+    getSpaceRatePlans.mockResolvedValue(mockRatePlans);
   });
 
   it('should render SPACE_SELECTION page as a default', async () => {
-    getSpaceRatePlans.mockResolvedValueOnce([mockRatePlans]);
     await build();
 
     expect(getSpaceRatePlans).toBeCalledTimes(1);

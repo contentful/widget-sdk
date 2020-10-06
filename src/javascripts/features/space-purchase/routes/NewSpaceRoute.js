@@ -1,13 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { Spinner } from '@contentful/forma-36-react-components';
-
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { NewSpacePage } from '../components/NewSpacePage';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
   getRatePlans,
@@ -68,7 +65,7 @@ const initialFetch = (orgId) => async () => {
 
   if (!canAccess) {
     go({
-      path: ['account', 'organizations', 'subscription_new', 'overview'],
+      path: ['account', 'organizations', 'subscription_new'],
       params: { orgId },
     });
 
@@ -118,25 +115,17 @@ export const NewSpaceRoute = ({ orgId }) => {
     return <ErrorState />;
   }
 
-  if (isLoading || !data) {
-    return (
-      <EmptyStateContainer>
-        <Spinner testId="space-route-loading" size="large" />
-      </EmptyStateContainer>
-    );
-  }
-
   return (
     <>
       <DocumentTitle title="Space purchase" />
       <NewSpacePage
         sessionMetadata={sessionMetadata}
         trackWithSession={trackWithSession}
-        organization={data.organization}
-        templatesList={data.templatesList}
-        productRatePlans={data.productRatePlans}
-        canCreateCommunityPlan={data.canCreateFreeSpace}
-        pageContent={data.pageContent}
+        organization={data?.organization}
+        templatesList={data?.templatesList}
+        productRatePlans={data?.productRatePlans}
+        canCreateCommunityPlan={data?.canCreateFreeSpace}
+        pageContent={data?.pageContent}
       />
     </>
   );
