@@ -1,5 +1,4 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { KeyListing } from './KeyListing';
@@ -69,8 +68,8 @@ describe('KeyListing', () => {
     const generateButton = await wrapper.findByTestId('app-generate-keys');
     const addButton = await wrapper.findByTestId('app-add-public-key');
 
-    expect(generateButton).toHaveAttribute('disabled');
-    expect(addButton).toHaveAttribute('disabled');
+    expect(generateButton.attributes.getNamedItem('disabled')).not.toBeUndefined();
+    expect(addButton.attributes.getNamedItem('disabled')).not.toBeUndefined();
   });
   it('allows generating the key pair', async () => {
     const wrapper = render(<KeyListing definition={mockDefinition} />);
