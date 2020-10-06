@@ -5,6 +5,7 @@ import { KeyListing } from './KeyListing';
 import React from 'react';
 import { Key } from './utils';
 import { ManagementApiClient } from '../../ManagementApiClient';
+import { AppDefinition } from 'contentful-management/dist/typings/entities/app-definition';
 
 let mockKeys: Key[] = [];
 
@@ -33,16 +34,18 @@ jest.mock('services/PubSubService', () => ({
   }),
 }));
 
-const mockDefinition = {
+const mockDefinition = ({
   sys: {
     id: 'definitionId',
     organization: {
       sys: {
+        type: 'Link',
         id: 'organizationId',
+        linkType: 'Organization',
       },
     },
   },
-};
+} as unknown) as AppDefinition;
 
 const makeMockKey = (name = 'key'): Key => {
   return {

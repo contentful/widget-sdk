@@ -16,7 +16,7 @@ import {
 
 import { ManagementApiClient } from 'features/apps';
 import { AddKeyDialog } from '../AddKeyDialog';
-import { RevokeKeyDialog } from '../RevokeKeyDialog';
+import { DeleteKeyDialog } from '../DeleteKeyDialog';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { KEY_GEN_GUIDE_URL } from 'features/apps/management/constants';
@@ -24,6 +24,9 @@ import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';
 import { TableWrapper } from './TableWrapper';
+import { AppDefinition } from 'contentful-management/dist/typings/entities/app-definition';
+import { kebabCase } from 'lodash';
+import moment from 'moment';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -56,8 +59,13 @@ const styles = {
     height: '2.5rem',
     lineHeight: '2.5rem',
   }),
+  ctaTextWrapperContent: (disabled: boolean) =>
+    css({
+      color: disabled ? tokens.colorTextLightest : tokens.colorTextMid,
+      opacity: disabled ? 0.5 : 1,
+      paddingLeft: tokens.spacingXs,
+    }),
 };
-
 const openAddKeyModal = (orgId, definitionId, setNewKey) => {
   ModalLauncher.open(({ isShown, onClose }) => {
     return (
@@ -82,10 +90,10 @@ const openAddKeyModal = (orgId, definitionId, setNewKey) => {
   });
 };
 
-const openRevokeKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
+const openDeleteKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
   ModalLauncher.open(({ isShown, onClose }) => {
     return (
-      <RevokeKeyDialog
+      <DeleteKeyDialog
         isShown={isShown}
         onCancel={onClose}
         onConfirm={async () => {
@@ -104,7 +112,7 @@ const openRevokeKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
 
 const CTATextWrapper = ({ children }) => <span className={styles.ctaTextWrapper}>{children}</span>;
 
-export function KeyListing({ definition }) {
+export function KeyListing({ definition }: { definition: AppDefinition }) {
   const definitionId = definition.sys.id;
   const orgId = definition.sys.organization.sys.id;
 
@@ -147,7 +155,12 @@ export function KeyListing({ definition }) {
                   orgId,
                   definitionId,
                 });
-                downloadAsFile('application/x-pem-file', response.generated.privateKey, 'key.pem');
+
+                const fileName = `${kebabCase(definition.name)}_${moment(new Date()).format(
+                  'YYYY-MM-DD'
+                )}_private-key.pem`;
+
+                downloadAsFile('application/x-pem-file', response.generated.privateKey, fileName);
                 setKeys([...formattedKeys, await getFormattedKey(response)]);
               } catch (e) {
                 Notification.error('Unable to generate App Keys. Please try uploading your own.');
@@ -157,9 +170,11 @@ export function KeyListing({ definition }) {
             testId="app-generate-keys">
             Generate key pair
           </Button>
-        </WithLimitTooltip>
-        <CTATextWrapper>&nbsp;or&nbsp;</CTATextWrapper>
-        <WithLimitTooltip enabled={hasReachedKeysLimits}>
+          <CTATextWrapper>
+            <span className={styles.ctaTextWrapperContent(hasReachedKeysLimits)}>
+              &nbsp;or&nbsp;
+            </span>
+          </CTATextWrapper>
           <CTATextWrapper>
             <TextLink
               linkType="secondary"
@@ -205,12 +220,12 @@ export function KeyListing({ definition }) {
                 <TableCell align="right">
                   <TextLink
                     onClick={() =>
-                      openRevokeKeyModal(orgId, definitionId, key.fingerprint, () =>
+                      openDeleteKeyModal(orgId, definitionId, key.fingerprint, () =>
                         setKeys(formattedKeys.filter((k) => k.fingerprint !== key.fingerprint))
                       )
                     }
                     linkType="negative">
-                    Revoke
+                    Delete
                   </TextLink>
                 </TableCell>
               </TableRow>
