@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { HTTPS_REG_EXP, LEARN_MORE_URL } from '../constants';
-import * as ManagementApiClient from '../ManagementApiClient';
+import { ManagementApiClient } from '../ManagementApiClient';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
 import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
 import { TopicEventTable } from './TopicEventTable';
