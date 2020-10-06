@@ -7,6 +7,7 @@ import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import * as $rootScope from 'ng/$rootScope';
 
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
@@ -38,6 +39,13 @@ jest.mock('services/TokenStore', () => ({
 describe('NewSpaceReceiptPage', () => {
   beforeEach(() => {
     makeNewSpace.mockResolvedValue(mockCreatedSpace);
+    jest.spyOn(window, 'addEventListener');
+    jest.spyOn(window, 'removeEventListener');
+  });
+
+  afterEach(() => {
+    window.addEventListener.mockRestore();
+    window.removeEventListener.mockRestore();
   });
 
   it('should show the plan name and plan type', async () => {
@@ -108,6 +116,32 @@ describe('NewSpaceReceiptPage', () => {
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
     expect(redirectToNewSpace).toHaveAttribute('disabled');
     expect(within(redirectToNewSpace).getByTestId('cf-ui-spinner')).toBeVisible();
+  });
+
+  it('should set and unset the beforeunload and $stateChangeStart event listeners when creating the space', async () => {
+    let resolveCreateSpace;
+    makeNewSpace.mockImplementationOnce(() => {
+      return new Promise((resolve) => (resolveCreateSpace = () => resolve(true)));
+    });
+
+    const mockOffCb = jest.fn();
+
+    $rootScope.$on.mockReturnValue(mockOffCb);
+
+    build();
+
+    expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
+    expect($rootScope.$on).toHaveBeenCalledWith('$stateChangeStart', expect.any(Function));
+
+    await waitFor(expect(makeNewSpace).toBeCalled);
+    await waitFor(resolveCreateSpace);
+
+    await waitFor(() => {
+      expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
+      expect(mockOffCb).toBeCalled();
+    });
+
+    $rootScope.$on.mockReset();
   });
 
   it('should redirect to the new space when clicking on the button after the space has been', async () => {
