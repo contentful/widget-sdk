@@ -5,7 +5,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 import { NewSpacePage } from './NewSpacePage';
 import { isOwner } from 'services/OrganizationRoles';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { EVENTS } from '../utils/analyticsTracking';
 
 import {
   createBillingDetails,
@@ -34,8 +34,9 @@ const mockBillingDetails = {
   vat: '',
 };
 const mockRefId = 'ref_1234';
-const mockSessionId = '987654321';
-const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: mockSessionId };
+const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: '987654321' };
+
+const trackWithSession = jest.fn();
 
 const mockRatePlans = [
   {
@@ -61,11 +62,6 @@ const mockRatePlans = [
 jest.mock('services/TokenStore', () => ({
   ...jest.requireActual('services/TokenStore'),
   refresh: jest.fn().mockResolvedValue(),
-}));
-
-jest.mock('../utils/analyticsTracking', () => ({
-  trackEvent: jest.fn().mockReturnValue(true),
-  EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -236,10 +232,10 @@ describe('NewSpacePage', () => {
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, {
         selectedPlan: mockProductRatePlanMedium,
       });
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_SELECTION',
         toStep: 'SPACE_DETAILS',
       });
@@ -251,8 +247,8 @@ describe('NewSpacePage', () => {
 
       userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_DETAILS_ENTERED, mockSessionMetadata);
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.SPACE_DETAILS_ENTERED);
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_DETAILS',
         toStep: 'BILLING_DETAILS',
       });
@@ -271,8 +267,8 @@ describe('NewSpacePage', () => {
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED, mockSessionMetadata);
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED);
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'BILLING_DETAILS',
         toStep: 'CARD_DETAILS',
       });
@@ -282,24 +278,24 @@ describe('NewSpacePage', () => {
 
       successCb({ success: true, refId: mockRefId });
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.PAYMENT_DETAILS_ENTERED, mockSessionMetadata);
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.PAYMENT_DETAILS_ENTERED);
 
       // ------ Confirmation page ------
       await waitFor(() => {
         expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
       });
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'CARD_DETAILS',
         toStep: 'CONFIRMATION',
       });
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.PAYMENT_METHOD_CREATED, mockSessionMetadata);
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.PAYMENT_METHOD_CREATED);
 
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.CONFIRM_PURCHASE, mockSessionMetadata);
-      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.CONFIRM_PURCHASE);
+      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'CONFIRMATION',
         toStep: 'RECEIPT',
       });
@@ -323,14 +319,10 @@ describe('NewSpacePage', () => {
       await build();
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
-      expect(trackEvent).toBeCalledWith(
-        EVENTS.NAVIGATE,
-        {
-          organizationId: mockOrganization.sys.id,
-          sessionId: mockSessionId,
-        },
-        { fromStep: 'SPACE_SELECTION', toStep: 'SPACE_DETAILS' }
-      );
+      expect(trackWithSession).toBeCalledWith(EVENTS.NAVIGATE, {
+        fromStep: 'SPACE_SELECTION',
+        toStep: 'SPACE_DETAILS',
+      });
     });
 
     it('should save billing information then fetch the payment method onSuccess of the Zoura iframe', async () => {
@@ -495,6 +487,7 @@ describe('NewSpacePage', () => {
 
 async function build(customProps) {
   const props = {
+    trackWithSession,
     organization: mockOrganization,
     sessionMetadata: mockSessionMetadata,
     templatesList: [],

@@ -29,7 +29,7 @@ import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { EVENTS } from '../utils/analyticsTracking';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { usePageContent } from '../hooks/usePageContent';
@@ -97,6 +97,7 @@ const fetchSpaceRatePlans = (organization) => async () => {
 
 export const NewSpacePage = ({
   organization,
+  trackWithSession,
   templatesList,
   productRatePlans,
   canCreateCommunityPlan,
@@ -135,7 +136,7 @@ export const NewSpacePage = ({
   const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
 
   const onChangeSelectedTemplate = (changedTemplate) => {
-    trackEvent(EVENTS.SPACE_TEMPLATE_SELECTED, sessionMetadata, {
+    trackWithSession(EVENTS.SPACE_TEMPLATE_SELECTED, {
       selectedTemplate: changedTemplate,
     });
 
@@ -147,7 +148,7 @@ export const NewSpacePage = ({
   };
 
   const goToStep = (nextStep) => {
-    trackEvent(EVENTS.NAVIGATE, sessionMetadata, {
+    trackWithSession(EVENTS.NAVIGATE, {
       fromStep: SPACE_PURCHASE_STEPS[currentStep],
       toStep: SPACE_PURCHASE_STEPS[nextStep],
     });
@@ -171,7 +172,7 @@ export const NewSpacePage = ({
       return productRatePlan.name.toLowerCase() === planType.toLowerCase();
     });
 
-    trackEvent(EVENTS.SPACE_PLAN_SELECTED, sessionMetadata, {
+    trackWithSession(EVENTS.SPACE_PLAN_SELECTED, {
       selectedPlan: selectedProductRatePlan,
     });
 
@@ -180,7 +181,7 @@ export const NewSpacePage = ({
   };
 
   const onSubmitSpaceDetails = () => {
-    trackEvent(EVENTS.SPACE_DETAILS_ENTERED, sessionMetadata);
+    trackWithSession(EVENTS.SPACE_DETAILS_ENTERED);
 
     if (spaceIsFree) {
       // Since the space is free, they can immediately create the space (which happens on the receipt page)
@@ -194,14 +195,14 @@ export const NewSpacePage = ({
   };
 
   const onSubmitBillingDetails = (billingDetails) => {
-    trackEvent(EVENTS.BILLING_DETAILS_ENTERED, sessionMetadata);
+    trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
 
     setBillingDetails(billingDetails);
     goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
   };
 
   const onSubmitPaymentMethod = async (refId) => {
-    trackEvent(EVENTS.PAYMENT_DETAILS_ENTERED, sessionMetadata);
+    trackWithSession(EVENTS.PAYMENT_DETAILS_ENTERED);
 
     const newBillingDetails = {
       ...billingDetails,
@@ -229,13 +230,13 @@ export const NewSpacePage = ({
 
     setPaymentDetails(paymentMethod);
 
-    trackEvent(EVENTS.PAYMENT_METHOD_CREATED, sessionMetadata);
+    trackWithSession(EVENTS.PAYMENT_METHOD_CREATED);
 
     goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
   };
 
   const onConfirm = () => {
-    trackEvent(EVENTS.CONFIRM_PURCHASE, sessionMetadata);
+    trackWithSession(EVENTS.CONFIRM_PURCHASE);
 
     goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
   };
@@ -305,6 +306,7 @@ export const NewSpacePage = ({
             <NewSpaceConfirmationPage
               organizationId={organization.sys.id}
               selectedPlan={selectedPlan}
+              trackWithSession={trackWithSession}
               showBillingDetails={userIsOrgOwner}
               showEditLink={organization.isBillable}
               isLoadingBillingDetails={isLoadingBillingDetails}
@@ -338,6 +340,7 @@ export const NewSpacePage = ({
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
               canCreatePaidSpace={canCreatePaidSpace}
+              trackWithSession={trackWithSession}
               spaceRatePlans={data?.spaceRatePlans}
               loading={isLoading}
             />
@@ -360,6 +363,7 @@ export const NewSpacePage = ({
 
 NewSpacePage.propTypes = {
   sessionMetadata: PropTypes.object.isRequired,
+  trackWithSession: PropTypes.func.isRequired,
   organization: OrganizationPropType.isRequired,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,

@@ -326,6 +326,8 @@ registerSpacePurchaseEvent('space_purchase:space_details_entered');
 registerSpacePurchaseEvent('space_purchase:billing_details_entered');
 registerSpacePurchaseEvent('space_purchase:payment_details_entered');
 registerSpacePurchaseEvent('space_purchase:payment_method_created');
+registerSpacePurchaseEvent('space_purchase:external_link_clicked');
+registerSpacePurchaseEvent('space_purchase:internal_link_clicked');
 registerSpacePurchaseEvent('space_purchase:confirm_purchase');
 registerSpacePurchaseEvent('space_purchase:space_created');
 registerSpacePurchaseEvent('space_purchase:space_template_created');

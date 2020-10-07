@@ -20,6 +20,8 @@ import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { websiteUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 
+export const CONTACT_SALES_HREF = websiteUrl('contact/sales/');
+
 const MEDIUM_PLAN_COLOR = '#14D997';
 const LARGE_PLAN_COLOR = '#0BAA75';
 const COMMUNITY_COLOR = tokens.colorBlueMid;
@@ -114,7 +116,7 @@ export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loadi
             </Paragraph>
             {isEnterpriseCard ? (
               <Button
-                href={websiteUrl('contact/sales/')}
+                href={CONTACT_SALES_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleSelect}

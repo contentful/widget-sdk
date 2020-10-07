@@ -9,6 +9,8 @@ const EVENTS = {
   SPACE_TEMPLATE_SELECTED: 'space_template_selected',
   SPACE_DETAILS_ENTERED: 'space_details_entered',
   BILLING_DETAILS_ENTERED: 'billing_details_entered',
+  EXTERNAL_LINK_CLICKED: 'external_link_clicked',
+  INTERNAL_LINK_CLICKED: 'internal_link_clicked',
   PAYMENT_DETAILS_ENTERED: 'payment_details_entered',
   PAYMENT_METHOD_CREATED: 'payment_method_created',
   CONFIRM_PURCHASE: 'confirm_purchase',
@@ -22,6 +24,8 @@ const transformers = {
   [EVENTS.NAVIGATE]: navigateTransformer,
   [EVENTS.SPACE_PLAN_SELECTED]: spacePlanSelectedTransformer,
   [EVENTS.SPACE_TEMPLATE_SELECTED]: spaceTemplateSelectedTransformer,
+  [EVENTS.EXTERNAL_LINK_CLICKED]: externalLinkClickedTransformer,
+  [EVENTS.INTERNAL_LINK_CLICKED]: internalLinkClickedTransformer,
   [EVENTS.SPACE_DETAILS_ENTERED]: emptyTransformer,
   [EVENTS.BILLING_DETAILS_ENTERED]: emptyTransformer,
   [EVENTS.PAYMENT_DETAILS_ENTERED]: emptyTransformer,
@@ -67,6 +71,14 @@ function navigateTransformer(data) {
 
 function spacePlanSelectedTransformer(data) {
   return pick(data, ['selectedPlan']);
+}
+
+function externalLinkClickedTransformer(data) {
+  return pick(data, ['href', 'intent']);
+}
+
+function internalLinkClickedTransformer(data) {
+  return pick(data, ['state', 'intent']);
 }
 
 function spaceTemplateSelectedTransformer(data) {

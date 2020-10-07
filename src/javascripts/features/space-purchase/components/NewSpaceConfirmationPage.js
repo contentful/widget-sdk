@@ -12,6 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
+import { EVENTS } from '../utils/analyticsTracking';
 import { go } from 'states/Navigator';
 
 import {
@@ -47,7 +48,7 @@ const styles = {
 
 const redirectToEditPayment = (orgId) => {
   go({
-    path: ['account', 'organizations', 'billing'],
+    path: 'account.organizations.billing',
     params: { orgId },
   });
 };
@@ -56,6 +57,7 @@ export const NewSpaceConfirmationPage = ({
   organizationId,
   navigateToPreviousStep,
   selectedPlan,
+  trackWithSession,
   billingDetails,
   paymentDetails,
   onConfirm,
@@ -90,6 +92,11 @@ export const NewSpaceConfirmationPage = ({
                     testId="confirmation-page.edit-billing-link"
                     icon="ExternalLink"
                     onClick={() => {
+                      trackWithSession(EVENTS.INTERNAL_LINK_CLICKED, {
+                        state: 'account.organizations.billing',
+                        intent: 'edit_billing',
+                      });
+
                       redirectToEditPayment(organizationId);
                     }}>
                     Edit
@@ -141,6 +148,7 @@ NewSpaceConfirmationPage.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
+  trackWithSession: PropTypes.func.isRequired,
   billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
   showEditLink: PropTypes.bool.isRequired,

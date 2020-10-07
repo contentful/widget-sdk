@@ -95,15 +95,21 @@ export const NewSpaceRoute = ({ orgId }) => {
     organizationId: orgId,
   };
 
+  const trackWithSession = (eventName, eventMetadata) => {
+    trackEvent(eventName, sessionMetadata, eventMetadata);
+  };
+
   const { isLoading, data, error } = useAsync(useCallback(initialFetch(orgId), []));
 
   useEffect(() => {
     if (!isLoading && data?.newPurchaseFlowIsEnabled) {
       const eventMetadata = createEventMetadataFromData(data);
 
-      trackEvent(EVENTS.BEGIN, sessionMetadata, eventMetadata);
+      trackWithSession(EVENTS.BEGIN, eventMetadata);
     }
-  }, [isLoading, sessionMetadata, data]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, data]);
 
   if (error) {
     return <ErrorState />;
@@ -122,6 +128,7 @@ export const NewSpaceRoute = ({ orgId }) => {
       <DocumentTitle title="Space purchase" />
       <NewSpacePage
         sessionMetadata={sessionMetadata}
+        trackWithSession={trackWithSession}
         organization={data.organization}
         templatesList={data.templatesList}
         productRatePlans={data.productRatePlans}

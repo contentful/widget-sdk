@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
+import { EVENTS } from '../utils/analyticsTracking';
 
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 
@@ -35,8 +36,9 @@ describe('NewSpaceConfirmationPage', () => {
     expect(screen.queryByTestId('confirmation-page.edit-billing-link')).toBeNull();
   });
 
-  it('should show the edit link when showEditLink is true', () => {
-    build({ showEditLink: true });
+  it('should show the edit link when showEditLink is true and track clicks on it', () => {
+    const trackWithSession = jest.fn();
+    build({ showEditLink: true, trackWithSession });
 
     const editBillingLink = screen.getByTestId('confirmation-page.edit-billing-link');
 
@@ -44,8 +46,13 @@ describe('NewSpaceConfirmationPage', () => {
 
     userEvent.click(editBillingLink);
 
+    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.INTERNAL_LINK_CLICKED, {
+      state: 'account.organizations.billing',
+      intent: 'edit_billing',
+    });
+
     expect(go).toHaveBeenCalledWith({
-      path: ['account', 'organizations', 'billing'],
+      path: 'account.organizations.billing',
       params: { orgId: mockOrganization.sys.id },
     });
   });
@@ -84,6 +91,7 @@ function build(customProps) {
     billingDetails: mockBillingDetails,
     paymentDetails: mockPaymentMethod,
     isLoadingBillingDetails: false,
+    trackWithSession: () => {},
     showBillingDetails: true,
     showEditLink: false,
     onConfirm: () => {},

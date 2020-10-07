@@ -3,7 +3,9 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { SpaceSelection } from './SpaceSelection';
+import { EVENTS } from '../utils/analyticsTracking';
+import { websiteUrl } from 'Config';
+import { SpaceSelection, FEATURE_OVERVIEW_HREF } from './SpaceSelection';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
 const mockOrganization = FakeFactory.Organization();
@@ -45,10 +47,31 @@ describe('SpaceSelection', () => {
     expect(screen.getByTestId('space-selection.community-card')).toBeVisible();
   });
 
+  it('should show the feature overview link and log when it is clicked', () => {
+    const trackWithSession = jest.fn();
+    build({ trackWithSession });
+
+    const featureOverviewLink = screen.getByTestId('space-selection.feature-overview-link');
+    expect(featureOverviewLink).toBeVisible();
+
+    userEvent.click(featureOverviewLink);
+
+    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
+      href: FEATURE_OVERVIEW_HREF,
+      intent: 'feature_overview',
+    });
+  });
+
   it('should track the click and open the sales form in a new tab when the enterprise select button is clicked', () => {
-    build();
+    const trackWithSession = jest.fn();
+    build({ trackWithSession });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[2]);
+
+    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
+      href: websiteUrl('contact/sales/'),
+      intent: 'upgrade_to_enterprise',
+    });
 
     expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       organizationId: mockOrganization.sys.id,
@@ -86,6 +109,7 @@ function build(customProps) {
     organizationId: mockOrganization.sys.id,
     selectPlan: mockSelectPlan,
     canCreateCommunityPlan: true,
+    trackWithSession: () => {},
     canCreatePaidSpace: true,
     ...customProps,
   };

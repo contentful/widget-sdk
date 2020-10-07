@@ -17,7 +17,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { SpaceCard } from './SpaceCard';
+import { SpaceCard, CONTACT_SALES_HREF } from './SpaceCard';
+import { EVENTS } from '../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
 const styles = {
@@ -52,9 +53,13 @@ const styles = {
   }),
 };
 
+// Exported for testing only
+export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
+
 export const SpaceSelection = ({
   organizationId,
   selectPlan,
+  trackWithSession,
   canCreateCommunityPlan,
   canCreatePaidSpace,
   spaceRatePlans,
@@ -63,6 +68,12 @@ export const SpaceSelection = ({
   const getSelectHandler = (planType) => {
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
       return () => {
+        trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+          href: CONTACT_SALES_HREF,
+          intent: 'upgrade_to_enterprise',
+        });
+
+        // Do we want to track this as a CTA upgrade to enterprise click as well?
         trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId,
         });
@@ -133,7 +144,15 @@ export const SpaceSelection = ({
               </Tooltip>
             </Flex>
           </Card>
-          <ExternalTextLink href={websiteUrl('pricing/#feature-overview')}>
+          <ExternalTextLink
+            testId="space-selection.feature-overview-link"
+            href={FEATURE_OVERVIEW_HREF}
+            onClick={() => {
+              trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+                href: FEATURE_OVERVIEW_HREF,
+                intent: 'feature_overview',
+              });
+            }}>
             See full feature list
           </ExternalTextLink>
         </div>
@@ -145,6 +164,7 @@ export const SpaceSelection = ({
 SpaceSelection.propTypes = {
   organizationId: PropTypes.string,
   selectPlan: PropTypes.func,
+  trackWithSession: PropTypes.func.isRequired,
   canCreateCommunityPlan: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool.isRequired,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),

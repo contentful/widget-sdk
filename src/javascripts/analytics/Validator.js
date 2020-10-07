@@ -181,6 +181,8 @@ export const validEvents = {
     'space_template_selected',
     'space_details_entered',
     'billing_details_entered',
+    'external_link_clicked',
+    'internal_link_clicked',
     'payment_details_entered',
     'payment_method_created',
     'confirm_purchase',
