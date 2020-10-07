@@ -1,4 +1,13 @@
-import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty, isPlainObject } from 'lodash';
+import {
+  get,
+  isObject,
+  identity,
+  pick,
+  isEqual,
+  cloneDeep,
+  isEmpty,
+  isPlainObject as _isPlainObject,
+} from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
@@ -7,6 +16,8 @@ import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
 import APIClient from 'data/APIClient';
+
+const isPlainObject = (value: any): value is object => _isPlainObject(value);
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
