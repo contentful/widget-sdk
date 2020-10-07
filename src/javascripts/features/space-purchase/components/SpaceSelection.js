@@ -40,7 +40,6 @@ const styles = {
   communityCard: css({
     position: 'relative',
     padding: `${tokens.spacingXl} ${tokens.spacingL}`,
-    overflow: 'hidden',
     '&:before': {
       content: '""',
       position: 'absolute',
@@ -129,7 +128,8 @@ export const SpaceSelection = ({
 
               <Tooltip
                 testId="read-only-tooltip"
-                place="bottom"
+                maxWidth={270}
+                place="auto"
                 content={
                   !canCreateCommunityPlan
                     ? 'You’ve already used your free Community space. To add a new Community space, delete your existing one.'
