@@ -29,33 +29,23 @@ const styles = {
   }),
 };
 
-const ReleasesCardBadge = ({ release }) => {
-  // @todo fetch and display the action date
-  // const releaseId = release.sys.id;
-  // const releaseActionId = release.sys.lastAction.sys.id;
-
+const ReleasesCardBadge = ({ lastAction }) => {
   return (
     <div className={styles.container}>
       <div className={styles.wrapper} data-test-id="release-action-badge">
         <Icon icon="Clock" color="white" className={styles.icon} />
-        <div>{formatPastDate(release.sys.createdAt)}</div>
+        <div>{formatPastDate(lastAction.sys.createdAt)}</div>
       </div>
     </div>
   );
 };
 
 ReleasesCardBadge.propTypes = {
-  release: PropTypes.shape({
+  lastAction: PropTypes.shape({
     sys: PropTypes.shape({
-      id: PropTypes.string,
       createdAt: PropTypes.string,
-      lastAction: PropTypes.shape({
-        sys: PropTypes.shape({
-          id: PropTypes.string,
-        }),
-      }),
     }),
-  }),
+  }).isRequired,
 };
 
 export default ReleasesCardBadge;

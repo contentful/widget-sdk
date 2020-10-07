@@ -17,7 +17,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
-import { getReleases } from '../releasesService';
+import { getReleaseActions, getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesListdialog from './ReleasesListDialog';
 
@@ -114,6 +114,7 @@ class ReleasesListPage extends Component {
         [TabTypes.PastReleases]: [],
         [TabTypes.UpcomingReleases]: [],
       },
+      lastActions: [],
       isReleaseDialogShown: false,
     };
 
@@ -141,6 +142,15 @@ class ReleasesListPage extends Component {
           ),
         };
 
+        const actionsToFetch = releases[TabTypes.PastReleases].map((release) => ({
+          releaseId: release.sys.id,
+          actionId: release.sys.lastAction.sys.id,
+        }));
+
+        getReleaseActions(actionsToFetch).then((lastActions) => {
+          this.setState({ ...this.state, lastActions });
+        });
+
         this.setState({ ...this.state, isLoading: false, releases });
       })
       .catch(() => {
@@ -163,12 +173,13 @@ class ReleasesListPage extends Component {
   }
 
   renderReleases() {
-    const { activeTab, releases } = this.state;
+    const { activeTab, releases, lastActions } = this.state;
 
     if (releases[activeTab].length) {
       return (
         <ReleasesTimeline
           releases={releases[activeTab]}
+          lastActions={lastActions}
           onDeleteRelease={this.fetchReleases}
           onReleaseSelect={this.onReleaseSelect}
         />
