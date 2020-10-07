@@ -10,7 +10,13 @@ import { loadPeriodData } from '../services/UsageService';
 const formatDate = (date) => moment(date).format('DD MMM');
 
 export const PeriodSelector = () => {
-  const { periods, selectedPeriodIndex, orgId, isTeamOrEnterpriseCustomer } = useUsageState();
+  const {
+    periods,
+    selectedPeriodIndex,
+    orgId,
+    isTeamOrEnterpriseCustomer,
+    isAssetBandwidthTab,
+  } = useUsageState();
   const dispatch = useUsageDispatch();
 
   const handleChange = async (e) => {
@@ -27,7 +33,6 @@ export const PeriodSelector = () => {
     });
 
     dispatch({ type: 'CHANGE_PERIOD', value: newPeriodIndex });
-    dispatch({ type: 'SWITCH_MAIN_TAB', value: 'apiRequest' });
     const data = await loadPeriodData(orgId, newPeriod);
     dispatch({ type: 'SET_USAGE_DATA', value: data });
     dispatch({ type: 'SET_LOADING', value: false });
@@ -49,7 +54,8 @@ export const PeriodSelector = () => {
   const renderSelect = () => {
     return (
       <Select
-        defaultValue={selectedPeriodIndex}
+        value={isAssetBandwidthTab ? '0' : `${selectedPeriodIndex}`}
+        isDisabled={isAssetBandwidthTab}
         onChange={handleChange}
         width="auto"
         name="period-selector"
@@ -75,7 +81,7 @@ export const PeriodSelector = () => {
 
   return (
     <div className="usage__period-selector">
-      <label>API requests usage period</label>
+      <label>Usage period</label>
       {isTeamOrEnterpriseCustomer ? renderSelect() : renderCurrentPeriodTextOnly()}
     </div>
   );

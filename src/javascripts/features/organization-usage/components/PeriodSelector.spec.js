@@ -34,6 +34,7 @@ const defaultData = {
   selectedPeriodIndex: 0,
   orgId: 'abcd',
   isTeamOrEnterpriseCustomer: true,
+  isAssetBandwidthTab: false,
 };
 
 const renderComp = (data, dispatch) => {
@@ -50,6 +51,7 @@ const MockPovider = ({
   selectedPeriodIndex,
   orgId,
   isTeamOrEnterpriseCustomer,
+  isAssetBandwidthTab,
   dispatch,
 }) => (
   <UsageStateContext.Provider
@@ -58,6 +60,7 @@ const MockPovider = ({
       selectedPeriodIndex,
       orgId,
       isTeamOrEnterpriseCustomer,
+      isAssetBandwidthTab,
     }}>
     <UsageDispatchContext.Provider value={dispatch}>{children}</UsageDispatchContext.Provider>
   </UsageStateContext.Provider>
@@ -86,10 +89,9 @@ describe('PeriodSelector', () => {
 
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: true });
     expect(loadPeriodData).toHaveBeenCalledWith(defaultData.orgId, defaultData.periods[1]);
-    await waitFor(() => expect(dispatchSpy).toHaveBeenCalledTimes(5));
+    await waitFor(() => expect(dispatchSpy).toHaveBeenCalledTimes(4));
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_USAGE_DATA', value: {} });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'CHANGE_PERIOD', value: 1 });
-    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SWITCH_MAIN_TAB', value: 'apiRequest' });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: false });
   });
 
@@ -100,5 +102,24 @@ describe('PeriodSelector', () => {
     const periodSelector = getByTestId('period-selector');
     fireEvent.change(periodSelector, { target: { value: 1 } });
     expect(getByText('a month ago', { exact: false })).toBeVisible();
+  });
+
+  it('should render the period selector for team and enterprise tier on the API requests tab', async () => {
+    const { getByTestId } = renderComp(defaultData);
+    expect(getByTestId('period-selector')).toBeVisible();
+  });
+
+  it('should render the disabled period selector with a current period selected on the assetbandwidth tab', async () => {
+    const { getByTestId, getByText } = renderComp({
+      ...defaultData,
+      isAssetBandwidthTab: true,
+    });
+    expect(getByTestId('period-selector')).toBeDisabled();
+    expect(getByText('current', { exact: false })).toBeVisible();
+  });
+
+  it('should render the current period text for community tier users', async () => {
+    const { getByTestId } = renderComp({ ...defaultData, isTeamOrEnterpriseCustomer: false });
+    expect(getByTestId('usage-period-text')).toBeVisible();
   });
 });

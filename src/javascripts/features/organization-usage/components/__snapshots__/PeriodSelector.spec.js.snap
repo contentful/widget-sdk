@@ -6,7 +6,7 @@ exports[`PeriodSelector should render 1`] = `
     class="usage__period-selector"
   >
     <label>
-      API requests usage period
+      Usage period
     </label>
     <div
       class="Select__Select__wrapper___2mbYV Select__Select--auto___3Y-B9"
@@ -20,7 +20,6 @@ exports[`PeriodSelector should render 1`] = `
       >
         <option
           data-test-id="cf-ui-select-option"
-          selected=""
           value="0"
         >
           06 Jan – 05 Feb (current)
