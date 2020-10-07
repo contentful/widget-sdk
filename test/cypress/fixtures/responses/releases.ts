@@ -6,6 +6,7 @@ import {
   defaultUserId,
   defaultEnvironmentId,
   defaultReleaseId,
+  defaultReleaseActionId,
 } from '../../util/requests';
 
 export const noReleases = () => ({
@@ -66,7 +67,7 @@ export const severalEntitiesReleaseResponse = () => ({
   },
 });
 
-export const severalReleases = () => ({
+export const severalReleases = ({ defaultActioned = false } = {}) => ({
   sys: {
     type: 'Array',
   },
@@ -85,6 +86,15 @@ export const severalReleases = () => ({
         },
         id: defaultReleaseId,
         type: 'Release',
+        lastAction: defaultActioned
+          ? {
+              sys: {
+                type: 'Link',
+                linkType: 'ReleaseAction',
+                id: defaultReleaseActionId,
+              },
+            }
+          : undefined,
         updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
       },
       title: 'First release',
@@ -259,7 +269,7 @@ export const publishValidationErrorResponse = () => ({
 export const releaseAction = (status) => ({
   sys: {
     type: 'ReleaseAction',
-    id: '6PGYc55NYDi7rysoKGEoWS',
+    id: defaultReleaseActionId,
     release: {
       sys: {
         type: 'Link',

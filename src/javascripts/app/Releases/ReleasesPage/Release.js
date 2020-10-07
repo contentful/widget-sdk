@@ -22,6 +22,7 @@ import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 import DeleteReleaseConfirmationDialog from './DeleteReleaseDialog';
+import ReleasesCardBadge from './ReleasesCardBadge';
 
 const getColorCode = (str) => {
   const releaseColorPalette = [
@@ -35,7 +36,7 @@ const getColorCode = (str) => {
   ];
 
   const convertIdToNumber = parseInt(str, 36).toExponential().split('e')[0];
-  const convertNumberToFloat = convertIdToNumber.replace(convertIdToNumber[0], '0');
+  const convertNumberToFloat = parseFloat(convertIdToNumber.replace(convertIdToNumber[0], '0'));
 
   return releaseColorPalette[Math.floor(convertNumberToFloat * releaseColorPalette.length)];
 };
@@ -98,7 +99,7 @@ const styles = {
 };
 
 const ReleaseImage = ({ release }) => {
-  const [images, setImages] = useState(null);
+  const [images, setImages] = useState();
   const [loading, setLoading] = useState(true);
 
   const assets = release.entities.items.filter((item) => item.sys.linkType === 'Asset');
@@ -122,6 +123,7 @@ const ReleaseImage = ({ release }) => {
       setLoading(false);
     }
   }, [loading, assets, images]);
+
   return (
     <div
       className={cx(
@@ -167,8 +169,10 @@ export default class Release extends Component {
           linkType: PropTypes.string,
           id: PropTypes.string,
         }),
+        lastAction: PropTypes.string,
       }),
-    }),
+    }).isRequired,
+    lastAction: PropTypes.object,
   };
 
   state = {
@@ -206,18 +210,19 @@ export default class Release extends Component {
   }
 
   render() {
-    const { release } = this.props;
+    const { release, lastAction } = this.props;
     const { isConfirmationDialogOpen, isDropdownOpen } = this.state;
     const assets = this.getItemsCountByLinkType(release, 'Asset') || null;
     const entries = this.getItemsCountByLinkType(release, 'Entry') || null;
 
     return (
       <Card testId="release-card" className={styles.card}>
+        {lastAction && <ReleasesCardBadge lastAction={lastAction} />}
         <ReleaseImage release={release} />
         <div>
           <div className={styles.headingContainer}>
             <div className={styles.actionHeading}>
-              <Subheading element="h2" title={release.title} className={styles.subheading}>
+              <Subheading element="h2" className={styles.subheading}>
                 {release.title}
               </Subheading>
               <Dropdown
