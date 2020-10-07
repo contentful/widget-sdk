@@ -61,6 +61,7 @@ jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
+  getCurrentStateName: jest.fn(),
 }));
 
 jest.mock('../services/intercomProductTour', () => ({

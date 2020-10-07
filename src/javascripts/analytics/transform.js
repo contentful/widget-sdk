@@ -206,6 +206,8 @@ registerGenericEvent('targeted_cta_impression:create_space');
 registerGenericEvent('targeted_cta_impression:purchase_micro_small_via_support');
 registerGenericEvent('targeted_cta_impression:upgrade_to_team');
 registerGenericEvent('targeted_cta_impression:increase_team_user_limit_via_support');
+registerGenericEvent('targeted_cta_impression:enterprise_trial_tag');
+registerGenericEvent('targeted_cta_impression:trial_space_tag');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');

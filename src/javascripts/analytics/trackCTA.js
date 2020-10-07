@@ -14,6 +14,8 @@ export const CTA_EVENTS = {
   PURCHASE_MICRO_SMALL_VIA_SUPPORT: 'purchase_micro_small_via_support',
   UPGRADE_TO_TEAM: 'upgrade_to_team',
   REQUEST_TEAM_USER_LIMIT: 'increase_team_user_limit_via_support',
+  ENTERPRISE_TRIAL_TAG: 'enterprise_trial_tag',
+  TRIAL_SPACE_TAG: 'trial_space_tag',
 };
 
 function ifValidThenTrack(action, intent, meta) {

@@ -13,6 +13,8 @@ import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService';
 import { logError } from 'services/logger';
+import { CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 const styles = {
   tag: css({
@@ -101,16 +103,22 @@ export const TrialTag = () => {
 
   return (
     <Tag className={styles.tag} testId={`${trialType}-trial-tag`}>
-      <StateLink
-        className={styles.link}
-        testId={`${trialType}-trial-tag-link`}
-        path={isEnterpriseTrial ? 'account.organizations.subscription_new' : 'spaces.detail.home'}
-        params={{ orgId: organization.sys.id, spaceId: space && space.sys.id }}
-        {...tracking}
-        component={TextLink}
-        linkType="white">
-        TRIAL - <Pluralized text="DAY" count={daysLeft} />
-      </StateLink>
+      <TrackTargetedCTAImpression
+        impressionType={
+          isEnterpriseTrial ? CTA_EVENTS.ENTERPRISE_TRIAL_TAG : CTA_EVENTS.TRIAL_SPACE_TAG
+        }
+        meta={{ spaceId: space?.sys.id, organizationId: organization?.sys.id }}>
+        <StateLink
+          className={styles.link}
+          testId={`${trialType}-trial-tag-link`}
+          path={isEnterpriseTrial ? 'account.organizations.subscription_new' : 'spaces.detail.home'}
+          params={{ orgId: organization.sys.id, spaceId: space && space.sys.id }}
+          {...tracking}
+          component={TextLink}
+          linkType="white">
+          TRIAL - <Pluralized text="DAY" count={daysLeft} />
+        </StateLink>
+      </TrackTargetedCTAImpression>
     </Tag>
   );
 };

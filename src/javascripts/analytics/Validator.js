@@ -9,6 +9,8 @@ const CTA_EVENTS = [
   'purchase_micro_small_via_support',
   'upgrade_to_team',
   'increase_team_user_limit_via_support',
+  'enterprise_trial_tag',
+  'trial_space_tag',
 ];
 
 export const validEvents = {
