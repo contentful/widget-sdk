@@ -1,17 +1,9 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDebugValue, useEffect, useMemo, useState } from 'react';
 import { Paragraph, Tooltip } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
-import {
-  useCanManageTags,
-  useF36Modal,
-  useIsInitialLoadingOfTags,
-  useReadTags,
-} from 'features/content-tags/core/hooks';
-import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
-import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsOnlyModal';
-import * as Navigator from 'states/Navigator';
+import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 
@@ -20,8 +12,6 @@ import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
 import { TagTypePropType } from 'features/content-tags/core/TagType';
 
@@ -46,7 +36,6 @@ const TagsSelection = ({
 }) => {
   const { allData, isLoading, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
-  const { currentEnvironment } = useSpaceEnvContext();
   const tagGroups = useAllTagsGroups();
   const [data, setData] = useState([]);
   const [match, setMatch] = useState('');
@@ -93,33 +82,18 @@ const TagsSelection = ({
     );
   }, [selectedTags, data, tagType]);
 
-  const { showModal: showUserListModal, modalComponent: userListModal } = useF36Modal(
-    AdminsOnlyModal
-  );
-
-  const canManageTags = useCanManageTags();
-  const onCreate = useCallback(() => {
-    if (canManageTags) {
-      const isMaster = isMasterEnvironment(currentEnvironment);
-      Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
-    } else {
-      showUserListModal();
-    }
-  }, [canManageTags, showUserListModal, currentEnvironment]);
-
-  const renderNoTags = useMemo(() => {
-    return (
-      <React.Fragment>
-        {userListModal}
-        <NoTagsContainer onCreate={onCreate} buttonLabel={'Add tags'} />
-      </React.Fragment>
-    );
-  }, [onCreate, userListModal]);
+  useDebugValue({
+    showEmpty,
+    tagType,
+    maxTagsReached,
+    disabled,
+    filteredTags: filteredTags.length,
+    selectedFilteredTags: selectedFilteredTags.length,
+  });
 
   const renderTags = useMemo(() => {
     return (
       <FieldFocus>
-        {userListModal}
         <div className={styles.wrapper}>
           <Paragraph>{label}</Paragraph>
         </div>
@@ -162,7 +136,6 @@ const TagsSelection = ({
     onAdd,
     onSearch,
     onRemove,
-    userListModal,
     tagGroups,
     maxTagsReached,
     disabled,
@@ -174,7 +147,7 @@ const TagsSelection = ({
   }
 
   if (!hasTags && !isLoading) {
-    return showEmpty ? renderNoTags : null;
+    return null;
   }
 
   if (!isLoading) {

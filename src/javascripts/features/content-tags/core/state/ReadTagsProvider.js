@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
-import { useTagsFeatureEnabled, useTagsRepo } from 'features/content-tags/core/hooks';
+import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
 import { ORDER_TAG, tagsSorter } from 'features/content-tags/core/state/tags-sorting';
 import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
 import { TagType, TagTypeAny } from 'features/content-tags/core/TagType';
+import { FEATURES, getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 
 function ReadTagsProvider({ children }) {
-  const { tagsEnabled, isTagsEnabledLoading } = useTagsFeatureEnabled();
   const tagsRepo = useTagsRepo();
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(25);
@@ -21,7 +21,7 @@ function ReadTagsProvider({ children }) {
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
-      if (!tagsEnabled) {
+      if (!(await getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false))) {
         return [];
       }
       const getResult = async (skip = 0) => {
@@ -39,7 +39,7 @@ function ReadTagsProvider({ children }) {
         }
       };
       return getResult();
-    }, [tagsRepo, tagsEnabled]),
+    }, [tagsRepo]),
     true
   );
 
@@ -51,13 +51,13 @@ function ReadTagsProvider({ children }) {
 
   useEffect(() => {
     if (data) {
-      setIsLoading(isTagsEnabledLoading);
+      setIsLoading(false);
       setCachedData(data);
     }
     if (error) {
       setIsLoading(false);
     }
-  }, [isTagsEnabledLoading, data, setCachedData, error, setIsLoading]);
+  }, [data, setCachedData, error, setIsLoading]);
 
   const cachedTagsFilter = useMemo(() => createTagsFilter(cachedData), [cachedData]);
 
