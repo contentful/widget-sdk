@@ -48,13 +48,13 @@ describe('NewSpaceReceiptPage', () => {
     window.removeEventListener.mockRestore();
   });
 
-  it('should show the plan name and plan type', async () => {
+  it('should show the plan name and plan type in the paragraph when the space has been successfully created', async () => {
     build();
 
-    expect(screen.getByTestId('new-space-receipt-success').textContent).toContain(spaceName);
-    expect(screen.getByTestId('new-space-receipt-success').textContent).toContain(
-      mockSelectedPlan.name
-    );
+    await waitFor(expect(makeNewSpace).toBeCalled);
+
+    expect(screen.getByTestId('receipt.subtext').textContent).toContain(spaceName);
+    expect(screen.getByTestId('receipt.subtext').textContent).toContain(mockSelectedPlan.name);
 
     // Need to wait for promise to resolve to catch act()
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
@@ -93,15 +93,34 @@ describe('NewSpaceReceiptPage', () => {
   });
 
   it('should display an error and fire an analytic event if the creation of the space errored', async () => {
-    makeNewSpace.mockRejectedValueOnce();
+    const err = new Error('Something went wrong');
+    makeNewSpace.mockRejectedValueOnce(err);
     build();
 
     await waitFor(() => {
-      expect(screen.queryByText('Space could not be created, please try again.')).toBeVisible();
+      expect(screen.getByTestId('receipt.error-face')).toBeVisible();
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.ERROR, mockSessionMetadata, {
       location: 'NewSpaceReceiptPage',
+      error: err,
+    });
+  });
+
+  it('should restart the space creation if it errs and the user clicks the button again', async () => {
+    makeNewSpace.mockRejectedValueOnce(new Error('Something went wrong'));
+    build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt.error-face')).toBeVisible();
+    });
+
+    expect(makeNewSpace).toHaveBeenCalledTimes(1);
+
+    userEvent.click(screen.getByTestId('receipt-page.redirect-to-new-space'));
+
+    await waitFor(() => {
+      expect(makeNewSpace).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -116,6 +135,7 @@ describe('NewSpaceReceiptPage', () => {
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
     expect(redirectToNewSpace).toHaveAttribute('disabled');
     expect(within(redirectToNewSpace).getByTestId('cf-ui-spinner')).toBeVisible();
+    expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
   });
 
   it('should set and unset the beforeunload and $stateChangeStart event listeners when creating the space', async () => {

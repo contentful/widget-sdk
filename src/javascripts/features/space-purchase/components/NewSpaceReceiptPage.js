@@ -22,7 +22,6 @@ import { PaymentSummary } from './PaymentSummary';
 
 const styles = {
   grid: css({
-    maxWidth: '470px',
     margin: `${tokens.spacing2Xl} auto 0`,
   }),
   sectionHeading: css({
@@ -40,16 +39,21 @@ const styles = {
 const fetchSpace = (organizationId, sessionMetadata, selectedPlan, spaceName) => async () => {
   try {
     const newSpace = await makeNewSpace(organizationId, selectedPlan, spaceName);
+
     trackEvent(EVENTS.SPACE_CREATED, sessionMetadata, {
       selectedPlan,
     });
+
     return newSpace;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       location: 'NewSpaceReceiptPage',
       error,
     });
+
     Notification.error('Space could not be created, please try again.');
+
+    throw error;
   }
 };
 
@@ -77,7 +81,10 @@ export const NewSpaceReceiptPage = ({
   organizationId,
   selectedTemplate,
 }) => {
-  const [{ isLoading: isCreatingSpace, data: newSpace }, runSpaceCreation] = useAsyncFn(
+  const [
+    { isLoading: isCreatingSpace, data: newSpace, error: spaceCreationErred },
+    runSpaceCreation,
+  ] = useAsyncFn(
     useCallback(fetchSpace(organizationId, sessionMetadata, selectedPlan, spaceName), [])
   );
 
@@ -151,8 +158,8 @@ export const NewSpaceReceiptPage = ({
     });
   };
 
-  // Button should be disabled during loading && if creating the new space failed
-  const isButtonDisabled = isCreatingSpace || isCreatingTemplate || !newSpace;
+  const pending = isCreatingSpace || isCreatingTemplate;
+  const buttonAction = spaceCreationErred ? runSpaceCreation : goToCreatedSpace;
 
   return (
     <section
@@ -164,21 +171,50 @@ export const NewSpaceReceiptPage = ({
           element="h2"
           testId="new-space-receipt-section-heading"
           className={styles.sectionHeading}>
-          Nice one!{' '}
-          <span role="img" aria-label="Shopping bag">
-            🛍
-          </span>
+          {pending && (
+            <>
+              Hang on, your new space is on its way{' '}
+              <span
+                role="img"
+                data-test-id="receipt.loading-envelope"
+                aria-label="Envelope with arrow">
+                📩
+              </span>
+            </>
+          )}
+          {!pending && spaceCreationErred && (
+            <>
+              Oh dear, we had some trouble creating your new space{' '}
+              <span
+                role="img"
+                data-test-id="receipt.error-face"
+                aria-label="Face with eyes wide open">
+                😳
+              </span>
+            </>
+          )}
+          {!pending && !spaceCreationErred && (
+            <>
+              Nice one!{' '}
+              <span role="img" aria-label="Shopping bag">
+                🛍
+              </span>
+            </>
+          )}
         </DisplayText>
-        <Paragraph className={styles.successMsg} testId="new-space-receipt-success">
-          You successfully purchased the {selectedPlan.name} space {spaceName}.
+        <Paragraph className={styles.successMsg} testId="receipt.subtext">
+          {!pending && spaceCreationErred && 'Don’t worry, simply retrigger the space creation.'}
+          {!pending &&
+            !spaceCreationErred &&
+            `You successfully purchased the ${selectedPlan.name} space ${spaceName}.`}
         </Paragraph>
         <Button
           testId="receipt-page.redirect-to-new-space"
-          loading={isCreatingSpace || isCreatingTemplate}
-          disabled={isButtonDisabled}
-          onClick={goToCreatedSpace}
+          loading={pending}
+          disabled={pending}
+          onClick={buttonAction}
           className={styles.button}>
-          Take me to {spaceName}
+          {spaceCreationErred ? 'Retrigger space creation' : `Take me to ${spaceName}`}
         </Button>
         <PaymentSummary selectedPlan={selectedPlan} isReceipt />
       </Flex>
