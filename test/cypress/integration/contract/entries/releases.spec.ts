@@ -19,6 +19,7 @@ const severalEntriesResponse = require('../../../fixtures/responses/entries-seve
 describe('Releases', () => {
   let interactions: string[];
   let getReleasesInteraction;
+  let getReleaseActionInteraction;
 
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
@@ -83,6 +84,31 @@ describe('Releases', () => {
           'contain',
           'First release was sucessfully deleted'
         );
+      });
+    });
+
+    context('several releases with primary actioned', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleasesList.willReturnSeveralFirstActioned();
+        getReleaseActionInteraction = publishRelease.willSucceed();
+
+        cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        cy.wait(interactions, { timeout: 20000 });
+      });
+
+      it('puts the actioned release on the Past tab', () => {
+        cy.wait(getReleasesInteraction);
+        cy.wait(getReleaseActionInteraction);
+
+        cy.findAllByTestId('release-card')
+          .should('exist')
+          .should('have.length', severalReleases().items.length - 1);
+
+        cy.get('[aria-controls=PastReleases]').click();
+
+        cy.findAllByTestId('release-card').should('exist').should('have.length', 1);
+
+        cy.findAllByTestId('release-action-badge').should('have.length', 1);
       });
     });
 

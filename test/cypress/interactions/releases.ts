@@ -1,9 +1,10 @@
 import {
-  defaultHeader,
-  defaultSpaceId,
-  defaultEnvironmentId,
-  defaultReleaseId,
   defaultEntryId,
+  defaultEnvironmentId,
+  defaultHeader,
+  defaultReleaseId,
+  defaultReleaseActionId,
+  defaultSpaceId,
 } from '../util/requests';
 import { createReleaseRequest } from '../fixtures/requests/releases';
 
@@ -24,6 +25,7 @@ import { deleteEntityBodyRequest } from '../fixtures/requests/releases';
 enum States {
   NONE = 'releases/none',
   SEVERAL = 'releases/several',
+  SEVERAL_FIRST_ACTIONED = 'releases/several-first-actioned/succeeded',
   DELETE = 'releases/delete',
   DELETE_ENTITY = 'release/entity/delete',
   VALIDATE_RELEASE = 'release/validate',
@@ -61,7 +63,6 @@ export const getReleasesList = {
   },
 
   willReturnSeveral() {
-    console.log('severalReleases(): ', severalReleases());
     cy.addInteraction({
       provider: 'releases',
       state: States.SEVERAL,
@@ -84,6 +85,31 @@ export const getReleasesList = {
     }).as('willReturnSeveral');
 
     return '@willReturnSeveral';
+  },
+
+  willReturnSeveralFirstActioned() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.SEVERAL_FIRST_ACTIONED,
+      uponReceiving: `a request for several releases in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: severalReleases({ defaultActioned: true }),
+      },
+    }).as('releases/willReturnSeveralFirstActioned');
+
+    return '@releases/willReturnSeveralFirstActioned';
   },
 };
 
@@ -303,7 +329,7 @@ export const publishRelease = {
       uponReceiving: `a request to publish release "${defaultReleaseId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/6PGYc55NYDi7rysoKGEoWS`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/${defaultReleaseActionId}`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',
@@ -328,7 +354,7 @@ export const publishRelease = {
       uponReceiving: `a request to publish release "${defaultReleaseId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/6PGYc55NYDi7rysoKGEoWS`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/${defaultReleaseActionId}`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',

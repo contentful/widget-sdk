@@ -24,6 +24,7 @@ export const defaultUserId = '1AMbGlddLG0ISEoa1I423p';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 export const defaultReleaseId = 'releaseId';
+export const defaultReleaseActionId = 'releaseActionId';
 export const defaultAppId = '6YdAwxoPHopeTeuwh43UJu';
 export const appContentTypeId = 'dropboxTest';
 export const entryIdWithApp = 'entryIdWithApp';
