@@ -7,6 +7,7 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { LinkSys } from 'core/services/SpaceEnvContext/types';
 
 export async function getUser(id: string) {
   const spaceContext = getModule('spaceContext');
@@ -26,7 +27,7 @@ export async function getApp(id: string) {
   return app;
 }
 
-export function formatAppName({ name }: { name: string }) {
+export function formatAppName({ name }: { name: string }, formatName: (v: string) => string) {
   return (
     <div className={styles.wrapper}>
       <Tooltip id={'page-app'} targetWrapperClassName={styles.tooltip} content="Updated by an app">
@@ -39,12 +40,16 @@ export function formatAppName({ name }: { name: string }) {
           ariaDescribedBy={'page-app'}
         />
       </Tooltip>
-      {name}
+      {formatName(name)}
     </div>
   );
 }
 
-export function formatUserName(user) {
+export function formatAppNameAsString({ name }: { name: string }): string {
+  return name;
+}
+
+export function formatUserName(user): string {
   if (!user) {
     return '';
   }
@@ -58,17 +63,31 @@ export function formatUserName(user) {
   return `${firstName} ${lastName}`.trim();
 }
 
-export function getActionPerformerName(linkType: string, actor) {
+export function getActionPerformerName(linkType: string, actor, formatName: (v: string) => string) {
   switch (linkType) {
     case APP_DEFINITION_TYPE:
-      return formatAppName(actor);
+      return formatAppName(actor, formatName);
     case USER_TYPE:
     default:
-      return formatUserName(actor);
+      return formatName(formatUserName(actor));
   }
 }
 
-export function getActionPerformer(link) {
+export function getActionPerformerNameAsString(
+  linkType: string,
+  actor,
+  formatName: (v: string) => string
+): string {
+  switch (linkType) {
+    case APP_DEFINITION_TYPE:
+      return formatName(formatAppNameAsString(actor));
+    case USER_TYPE:
+    default:
+      return formatName(formatUserName(actor));
+  }
+}
+
+export function getActionPerformer(link: LinkSys) {
   const linkType = get(link, ['sys', 'linkType'], USER_TYPE);
   const id = get(link, ['sys', 'id'], '');
 

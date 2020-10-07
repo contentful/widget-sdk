@@ -1,10 +1,13 @@
 import React from 'react';
 import { getModule } from 'core/NgRegistry';
-import { render } from '@testing-library/react';
+import { render, within } from '@testing-library/react';
 import { ActionPerformerName } from './ActionPerformerName';
 import { mockUser } from './__mocks__/mockUser';
+import { mockApp } from './__mocks__/mockApp';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('widgets/CustomWidgetLoaderInstance', () => ({ getCustomWidgetLoader: jest.fn() }));
 
 getModule.mockReturnValue({
   users: {
@@ -13,12 +16,25 @@ getModule.mockReturnValue({
   user: mockUser,
 });
 
+getCustomWidgetLoader.mockReturnValue(
+  Promise.resolve({
+    getOne: () => Promise.resolve(mockApp),
+  })
+);
+
 describe('ActionPerformerName', () => {
   const link = {
     sys: {
       type: 'Link',
       linkType: 'User',
       id: mockUser.sys.id,
+    },
+  };
+  const appLink = {
+    sys: {
+      type: 'Link',
+      linkType: 'AppDefinition',
+      id: mockApp.id,
     },
   };
 
@@ -94,5 +110,21 @@ describe('ActionPerformerName', () => {
 
     const { findByTestId } = render(<ActionPerformerName link={brokenLink} />);
     expect(await findByTestId('action-performer-name')).toMatchSnapshot();
+  });
+
+  it('should render the app name', async () => {
+    const { findByTestId } = render(<ActionPerformerName link={appLink} />);
+    const container = await findByTestId('action-performer-name');
+    expect(container).toHaveAttribute('title', 'App Name');
+    expect(within(container).getByText('App Name')).toBeInTheDocument();
+  });
+
+  it('should render the formatted app name', async () => {
+    const { findByTestId } = render(
+      <ActionPerformerName link={appLink} formatName={(name) => name.toLowerCase()} />
+    );
+    const container = await findByTestId('action-performer-name');
+    expect(container).toHaveAttribute('title', 'app name');
+    expect(within(container).getByText('app name')).toBeInTheDocument();
   });
 });

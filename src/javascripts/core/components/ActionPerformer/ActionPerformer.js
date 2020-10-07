@@ -3,7 +3,11 @@ import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
-import { getActionPerformer, getActionPerformerName } from './utils';
+import {
+  getActionPerformer,
+  getActionPerformerName,
+  getActionPerformerNameAsString,
+} from './utils';
 
 // TODO: This component should be moved to core once we have a good foundation there
 
@@ -32,8 +36,15 @@ export const ActionPerformer = ({ children, link, loadingComponent, formatName }
 
   return children({
     actionPerformer,
-    formattedName: formatName(
-      getActionPerformerName(get(link, ['sys', 'linkType'], USER_TYPE), actionPerformer)
+    formattedName: getActionPerformerName(
+      get(link, ['sys', 'linkType'], USER_TYPE),
+      actionPerformer,
+      formatName
+    ),
+    formattedNameAsString: getActionPerformerNameAsString(
+      get(link, ['sys', 'linkType'], USER_TYPE),
+      actionPerformer,
+      formatName
     ),
   });
 };
