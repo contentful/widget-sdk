@@ -119,7 +119,14 @@ function transformWidgetList(
   // If there is no item stored use the default one.
   const result = Array.isArray(existingWidgets) ? existingWidgets : cloneDeep(defaultWidgets);
 
-  const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
+  const widget: {
+    widgetNamespace: WidgetNamespace;
+    widgetId: string;
+    settings?: Record<string, boolean | string | number>;
+  } = {
+    widgetNamespace: WidgetNamespace.APP,
+    widgetId,
+  };
 
   if (partialTargetState === true) {
     return [...result, widget];
@@ -163,7 +170,12 @@ function transformSingleEditorInterfaceToTargetState(
       const controls = Array.isArray(result.controls) ? [...result.controls] : [];
       const idx = controls.findIndex((cur) => cur.fieldId === control.fieldId);
 
-      const item = {
+      const item: {
+        fieldId: string;
+        widgetNamespace: WidgetNamespace;
+        widgetId: string;
+        settings?: Record<string, boolean | string | number>;
+      } = {
         fieldId: control.fieldId,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
