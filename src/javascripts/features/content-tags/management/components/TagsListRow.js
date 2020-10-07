@@ -19,10 +19,11 @@ const styles = {
     color: tokens.colorRedBase,
   }),
   longText: css({
-    wordBreak: 'break-word', //break-word,
+    wordBreak: 'break-word',
     overflowWrap: 'break-word',
   }),
   copy: css({
+    wordBreak: 'normal',
     margin: '0',
     padding: '0',
     button: {
