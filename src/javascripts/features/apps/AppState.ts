@@ -2,7 +2,9 @@ import { get, isObject, set } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
 import { AppState } from 'contentful-ui-extensions-sdk';
 
-export type PartialTargetState = boolean | { position: number };
+export type PartialTargetState =
+  | boolean
+  | { position: number; settings?: Record<string, string | number | boolean> };
 
 export const getCurrentState = async (
   spaceContext: any,

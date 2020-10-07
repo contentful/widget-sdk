@@ -1,4 +1,4 @@
-import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'lodash';
+import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty, isPlainObject } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
@@ -19,6 +19,16 @@ async function promiseAllSafe(promises) {
 
   return results.filter(identity);
 }
+
+const isValidSettingsObject = (settings: unknown) => {
+  if (!isPlainObject(settings)) {
+    return false;
+  }
+
+  const isValidProperty = (property: any) => property && !isObject(property);
+
+  return Object.values(settings).every(isValidProperty);
+};
 
 export async function getDefaultSidebar(): Promise<
   { widgetId: string; widgetNamespace: WidgetNamespace }[]
@@ -47,10 +57,10 @@ function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
  * The input format is:
  * {
  *   'content-type-id-1': {
- *     controls: [{ fieldId: 'title' }, { fieldId: 'media' }],
- *     sidebar: { position: 2 }
+ *     controls: [{ fieldId: 'title', settings: {} }, { fieldId: 'media', settings: {} }],
+ *     sidebar: { position: 2, settings: {} }
  *   },
- *   'some-other-ct-id': { editor: true }
+ *   'some-other-ct-id': { editor: true, settings: {} }
  * }
  */
 export async function transformEditorInterfacesToTargetState(
@@ -104,7 +114,12 @@ function transformWidgetList(
     return [...result, widget];
   }
 
-  if (isObject(partialTargetState)) {
+  if (isPlainObject(partialTargetState)) {
+    // Include settings only if they are valid
+    if (isValidSettingsObject(partialTargetState.settings)) {
+      widget.settings = partialTargetState.settings;
+    }
+
     // If position is defined use it for insertion.
     if (isUnsignedInteger(partialTargetState.position)) {
       result.splice(partialTargetState.position, 0, widget);
@@ -142,6 +157,11 @@ function transformSingleEditorInterfaceToTargetState(
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       };
+
+      // Include settings only if they are valid
+      if (isValidSettingsObject(control.settings)) {
+        item.settings = control.settings;
+      }
 
       // Usually controls will be defined and field will be found by ID.
       if (idx > -1) {
