@@ -135,6 +135,7 @@ describe('NewSpaceRoute', () => {
         canCreateFreeSpace: true,
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
       }
     );
   });

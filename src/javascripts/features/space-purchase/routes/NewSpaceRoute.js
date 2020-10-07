@@ -27,13 +27,14 @@ import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
-function createEventMetadataFromData(data) {
+function createEventMetadataFromData(data, sessionType) {
   const { organizationMembership, basePlan, canCreateFreeSpace } = data;
 
   return {
     userOrganizationRole: organizationMembership.role,
     organizationPlatform: basePlan.customerType,
     canCreateFreeSpace,
+    sessionType,
   };
 }
 
@@ -103,7 +104,9 @@ export const NewSpaceRoute = ({ orgId }) => {
 
   useEffect(() => {
     if (!isLoading && data?.newPurchaseFlowIsEnabled) {
-      const eventMetadata = createEventMetadataFromData(data);
+      // To be updated to check for 'create_space' or 'upgrade_space' once upgrade space is enabled in this flow
+      const sessionType = 'create_space';
+      const eventMetadata = createEventMetadataFromData(data, sessionType);
 
       trackWithSession(EVENTS.BEGIN, eventMetadata);
     }

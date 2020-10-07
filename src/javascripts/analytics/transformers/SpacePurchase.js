@@ -62,7 +62,12 @@ function emptyTransformer() {
 }
 
 function beginTransformer(data) {
-  return pick(data, ['userOrganizationRole', 'organizationPlatform', 'canCreateFreeSpace']);
+  return pick(data, [
+    'userOrganizationRole',
+    'organizationPlatform',
+    'canCreateFreeSpace',
+    'sessionType',
+  ]);
 }
 
 function navigateTransformer(data) {
