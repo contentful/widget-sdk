@@ -3,7 +3,7 @@ import * as JobsService from '../DataManagement/ScheduledActionsService';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import _ from 'lodash';
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import { getReleases } from 'app/Releases/releasesService.js';
+import { getReleases } from 'app/Releases/releasesService';
 
 const defaultEntityTypes = ['Entry', 'Asset'];
 
