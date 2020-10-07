@@ -55,9 +55,11 @@ const handleSuccess = async (organizationId, paymentMethodRefId) => {
   try {
     await setDefaultPaymentMethod(organizationId, paymentMethodRefId);
   } catch {
-    Notification.error("Oops, your payment method couldn't be updated. Try again.");
+    Notification.error("Oops, your credit card couldn't be updated. Try again.");
     return;
   }
+
+  Notification.success('Credit card successfully updated.');
 
   goToBillingDashboard();
 };
