@@ -280,7 +280,6 @@ function BillingDetails({ billingDetails }) {
       )}
       <br />
       {billingDetails.country}
-      <br />
       {billingDetails.vat && (
         <>
           <br />
