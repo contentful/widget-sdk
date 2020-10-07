@@ -178,6 +178,7 @@ export const validEvents = {
   trial: ['trial_tag_clicked', 'fair_use_policy_clicked', 'get_in_touch_clicked'],
   space_purchase: [
     'begin',
+    'cancel',
     'navigate',
     'space_plan_selected',
     'space_template_selected',

@@ -321,6 +321,7 @@ registerGenericEvent('editor_workbench:tab_open');
 registerGenericEvent('degraded_app_performance:modal_shown');
 
 registerSpacePurchaseEvent('space_purchase:begin');
+registerSpacePurchaseEvent('space_purchase:cancel');
 registerSpacePurchaseEvent('space_purchase:navigate');
 registerSpacePurchaseEvent('space_purchase:space_plan_selected');
 registerSpacePurchaseEvent('space_purchase:space_template_selected');

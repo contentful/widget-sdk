@@ -30,6 +30,7 @@ import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import { EVENTS } from '../utils/analyticsTracking';
+import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { usePageContent } from '../hooks/usePageContent';
@@ -115,6 +116,8 @@ export const NewSpacePage = ({
   const hasBillingInformation = organization.isBillable;
   const userIsOrgOwner = isOrgOwner(organization);
   const canCreatePaidSpace = userIsOrgOwner || hasBillingInformation;
+
+  useTrackCancelEvent(trackWithSession, { currentStep, finalStep: SPACE_PURCHASE_STEPS.RECEIPT });
 
   const { isLoading, data } = useAsync(
     useCallback(fetchSpaceRatePlans(organization), [organization])

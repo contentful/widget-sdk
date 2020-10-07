@@ -21,6 +21,7 @@ const EVENTS = {
 
 const transformers = {
   [EVENTS.BEGIN]: beginTransformer,
+  [EVENTS.CANCEL]: cancelTransformer,
   [EVENTS.NAVIGATE]: navigateTransformer,
   [EVENTS.SPACE_PLAN_SELECTED]: spacePlanSelectedTransformer,
   [EVENTS.SPACE_TEMPLATE_SELECTED]: spaceTemplateSelectedTransformer,
@@ -68,6 +69,9 @@ function beginTransformer(data) {
     'canCreateFreeSpace',
     'sessionType',
   ]);
+}
+function cancelTransformer(data) {
+  return pick(data, ['currentStep']);
 }
 
 function navigateTransformer(data) {
