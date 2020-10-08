@@ -36,8 +36,10 @@ const styles = {
     marginBottom: tokens.spacingXl,
   }),
   templateCreationErrorNote: css({
-    maxWidth: '700px',
     marginBottom: tokens.spacingXl,
+  }),
+  paymentSummaryContainer: css({
+    maxWidth: '600px',
   }),
 };
 
@@ -223,17 +225,19 @@ export const NewSpaceReceiptPage = ({
           className={styles.button}>
           {spaceCreationErred ? 'Retrigger space creation' : `Take me to ${spaceName}`}
         </Button>
-        {templateCreationError && (
-          <Note
-            noteType="warning"
-            title="We had a problem creating your template"
-            testId="receipt-page.template-creation-error"
-            className={styles.templateCreationErrorNote}>
-            Something happened while creating the template. You can still use your space, but some
-            content from the template may be missing.
-          </Note>
-        )}
-        <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+        <div className={styles.paymentSummaryContainer}>
+          {templateCreationError && (
+            <Note
+              noteType="warning"
+              title="We had a problem creating your template"
+              testId="receipt-page.template-creation-error"
+              className={styles.templateCreationErrorNote}>
+              Something happened while creating the template. You can still use your space, but some
+              content from the template may be missing.
+            </Note>
+          )}
+          <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+        </div>
       </Flex>
     </section>
   );
