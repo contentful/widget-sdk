@@ -349,6 +349,7 @@ describe('AppState', () => {
           {}, // no field ID
           { fieldId: 123 }, // field ID not a string
           { fieldId: '' }, // field ID is empty
+          { fieldId: 'string', settings: 'yolo' }, //settings is not an object
         ].forEach((control) => {
           expect(() => {
             validateState({
@@ -403,6 +404,7 @@ describe('AppState', () => {
           { position: 'TEST' }, // position is not a number
           { position: 1.23 }, // position is not an integer
           { position: -1 }, // position is a negative number
+          { position: 1, settings: 'yolo' }, //settings is not an object
         ].forEach((sidebar) => {
           expect(() => {
             validateState({
@@ -492,6 +494,7 @@ describe('AppState', () => {
           { position: 'TEST' }, // position is not a number
           { position: 1.23 }, // position is not an integer
           { position: -1 }, // position is a negative number,
+          { position: 1, settings: 'yolo' }, //settings is not an object
         ].forEach((editors) => {
           expect(() => {
             validateState({

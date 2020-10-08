@@ -69,6 +69,14 @@ describe('AppEditorInterfaces', () => {
                   widgetNamespace: WidgetNamespace.BUILTIN,
                   widgetId: 'some-default-will-stay',
                 },
+                {
+                  fieldId: 'test5',
+                  widgetNamespace: WidgetNamespace.APP,
+                  widgetId: APP_ID,
+                  settings: {
+                    theme: 'true',
+                  },
+                },
               ],
               sidebar: [
                 {
@@ -103,8 +111,16 @@ describe('AppEditorInterfaces', () => {
 
       await transform({
         CT1: {
-          controls: [{ fieldId: 'test' }, { fieldId: 'test2' }, { fieldId: 'yolo' }],
-          sidebar: { position: 1 },
+          controls: [
+            { fieldId: 'test' },
+            { fieldId: 'test2' },
+            { fieldId: 'yolo' },
+            {
+              fieldId: 'test5',
+              settings: { theme: 'false' },
+            },
+          ],
+          sidebar: { position: 1, settings: { theme: 'true' } },
           editors: { position: 0 },
         },
         CT2: {
@@ -134,6 +150,14 @@ describe('AppEditorInterfaces', () => {
             widgetNamespace: WidgetNamespace.BUILTIN,
             widgetId: 'some-default-will-stay',
           },
+          {
+            fieldId: 'test5',
+            widgetNamespace: WidgetNamespace.APP,
+            widgetId: APP_ID,
+            settings: {
+              theme: 'false',
+            },
+          },
           { fieldId: 'yolo', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
         ],
         sidebar: [
@@ -141,6 +165,9 @@ describe('AppEditorInterfaces', () => {
           {
             widgetNamespace: WidgetNamespace.APP,
             widgetId: APP_ID,
+            settings: {
+              theme: 'true',
+            },
           },
           { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'some-extension' },
         ],
