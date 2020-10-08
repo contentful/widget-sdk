@@ -221,6 +221,11 @@ export const NewSpacePage = ({
         TokenStore.refresh(),
       ]);
     } catch (error) {
+      trackWithSession(EVENTS.ERROR, {
+        location: 'NewSpaceCardDetailsPage',
+        error,
+      });
+
       logger.logError('SpacePurchaseError', {
         data: {
           error,
