@@ -8,6 +8,7 @@ import {
   Paragraph,
   Notification,
   Modal,
+  Note,
 } from '@contentful/forma-36-react-components';
 import { Flex, ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
@@ -32,7 +33,13 @@ const styles = {
     marginBottom: tokens.spacingXl,
   }),
   button: css({
-    marginBottom: tokens.spacing2Xl,
+    marginBottom: tokens.spacingXl,
+  }),
+  templateCreationErrorNote: css({
+    marginBottom: tokens.spacingXl,
+  }),
+  paymentSummaryContainer: css({
+    maxWidth: '600px',
   }),
 };
 
@@ -68,9 +75,8 @@ const fetchTemplate = (newSpace, selectedTemplate, sessionMetadata) => async () 
       location: 'NewSpaceReceiptPage',
       error,
     });
-    Notification.warning(
-      'Something happened while creating the template. You can still use your space, but some content from the template may be missing.'
-    );
+
+    throw error;
   }
 };
 
@@ -88,7 +94,10 @@ export const NewSpaceReceiptPage = ({
     useCallback(fetchSpace(organizationId, sessionMetadata, selectedPlan, spaceName), [])
   );
 
-  const [{ isLoading: isCreatingTemplate }, runTemplateCreation] = useAsyncFn(
+  const [
+    { isLoading: isCreatingTemplate, error: templateCreationError },
+    runTemplateCreation,
+  ] = useAsyncFn(
     useCallback(fetchTemplate(newSpace, selectedTemplate, sessionMetadata), [newSpace])
   );
 
@@ -216,7 +225,19 @@ export const NewSpaceReceiptPage = ({
           className={styles.button}>
           {spaceCreationErred ? 'Retrigger space creation' : `Take me to ${spaceName}`}
         </Button>
-        <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+        <div className={styles.paymentSummaryContainer}>
+          {templateCreationError && (
+            <Note
+              noteType="warning"
+              title="We had a problem creating your template"
+              testId="receipt-page.template-creation-error"
+              className={styles.templateCreationErrorNote}>
+              Something happened while creating the template. You can still use your space, but some
+              content from the template may be missing.
+            </Note>
+          )}
+          <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+        </div>
       </Flex>
     </section>
   );

@@ -124,6 +124,17 @@ describe('NewSpaceReceiptPage', () => {
     });
   });
 
+  it('should show a warning note if template content creation fails', async () => {
+    createTemplate.mockRejectedValueOnce(new Error('Something went wrong'));
+    build({ selectedTemplate: {} });
+
+    await waitFor(() => {
+      expect(createTemplate).toBeCalled();
+    });
+
+    expect(screen.getByTestId('receipt-page.template-creation-error')).toBeVisible();
+  });
+
   it('should display a loading state while creating the space', async () => {
     let createSpacePromise;
     makeNewSpace.mockImplementation(() => {
