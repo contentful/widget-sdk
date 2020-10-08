@@ -88,7 +88,7 @@ export const SpaceSelection = ({
   return (
     <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
-        {!canCreatePaidSpace && (
+        {canCreatePaidSpace === false && (
           <Note
             testId="payment-details-required"
             className={styles.fullRow}
@@ -166,7 +166,7 @@ SpaceSelection.propTypes = {
   selectPlan: PropTypes.func,
   trackWithSession: PropTypes.func.isRequired,
   canCreateCommunityPlan: PropTypes.bool,
-  canCreatePaidSpace: PropTypes.bool.isRequired,
+  canCreatePaidSpace: PropTypes.bool,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
 };

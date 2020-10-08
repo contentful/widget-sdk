@@ -16,7 +16,6 @@ import { FREE_SPACE_IDENTIFIER, transformSpaceRatePlans } from 'app/SpaceWizards
 import { isFreeProductPlan, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
-import { useAsync } from 'core/hooks/useAsync';
 import * as logger from 'services/logger';
 import * as TokenStore from 'services/TokenStore';
 import createResourceService from 'services/ResourceService';
@@ -80,7 +79,7 @@ const fetchBillingDetails = async (
   setIsLoadingBillingDetails(false);
 };
 
-const fetchSpaceRatePlans = (organization) => async () => {
+const fetchSpaceRatePlans = async (organization, setSpaceRatePlans) => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const orgResources = createResourceService(organization.sys.id, 'organization');
   const [freeSpaceResource, rawSpaceRatePlans] = await Promise.all([
@@ -93,7 +92,7 @@ const fetchSpaceRatePlans = (organization) => async () => {
     freeSpaceResource,
   });
 
-  return { spaceRatePlans };
+  setSpaceRatePlans(spaceRatePlans);
 };
 
 export const NewSpacePage = ({
@@ -112,19 +111,27 @@ export const NewSpacePage = ({
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
+  const [spaceRatePlans, setSpaceRatePlans] = useState(null);
 
-  const hasBillingInformation = organization.isBillable;
-  const userIsOrgOwner = isOrgOwner(organization);
-  const canCreatePaidSpace = userIsOrgOwner || hasBillingInformation;
+  const organizationId = organization?.sys?.id;
+  const hasBillingInformation = !!organization?.isBillable;
+  const userIsOrgOwner = !!organization && isOrgOwner(organization);
 
   useTrackCancelEvent(trackWithSession, { currentStep, finalStep: SPACE_PURCHASE_STEPS.RECEIPT });
 
-  const { isLoading, data } = useAsync(
-    useCallback(fetchSpaceRatePlans(organization), [organization])
-  );
+  // This is explicitly undefined/true/false, not just true/false, so that `canCreatePaidSpace`
+  // when passed to `<SpaceSelection />` doesn't render the "no payment details" note until we
+  // truly know if the user can create a paid space, which requires the organization to have loaded.
+  const canCreatePaidSpace = organization && (userIsOrgOwner || hasBillingInformation);
 
   useEffect(() => {
-    if (userIsOrgOwner && organization.isBillable) {
+    if (organization) {
+      fetchSpaceRatePlans(organization, setSpaceRatePlans);
+    }
+  }, [organization]);
+
+  useEffect(() => {
+    if (userIsOrgOwner && organization?.isBillable) {
       fetchBillingDetails(
         organization,
         setPaymentDetails,
@@ -298,7 +305,7 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceCardDetailsPage
-              organizationId={organization.sys.id}
+              organizationId={organizationId}
               navigateToPreviousStep={navigateToPreviousStep}
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
@@ -312,7 +319,7 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceConfirmationPage
-              organizationId={organization.sys.id}
+              organizationId={organizationId}
               selectedPlan={selectedPlan}
               trackWithSession={trackWithSession}
               showBillingDetails={userIsOrgOwner}
@@ -332,7 +339,7 @@ export const NewSpacePage = ({
             <NewSpaceReceiptPage
               selectedPlan={selectedPlan}
               spaceName={spaceName}
-              organizationId={organization.sys.id}
+              organizationId={organizationId}
               sessionMetadata={sessionMetadata}
               selectedTemplate={selectedTemplate}
             />
@@ -344,13 +351,13 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
             <SpaceSelection
-              organizationId={organization.sys.id}
+              organizationId={organizationId}
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
               canCreatePaidSpace={canCreatePaidSpace}
               trackWithSession={trackWithSession}
-              spaceRatePlans={data?.spaceRatePlans}
-              loading={isLoading}
+              spaceRatePlans={spaceRatePlans}
+              loading={!spaceRatePlans}
             />
             <NewSpaceFAQ faqEntries={faqEntries} />
           </Grid>
