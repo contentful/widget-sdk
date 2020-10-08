@@ -131,7 +131,7 @@ describe('EditPaymentMethodRouter', () => {
       });
     });
 
-    it('should show a notification if the default payment method request fails', async () => {
+    it('should show an error notification if the default payment method request fails', async () => {
       mockEndpoint.mockRejectedValueOnce();
 
       successCb();
@@ -140,6 +140,14 @@ describe('EditPaymentMethodRouter', () => {
 
       expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
       expect(go).not.toBeCalled();
+    });
+
+    it('should show a success notification if the request succeeds', async () => {
+      successCb();
+
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
+
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'success');
     });
   });
 });
