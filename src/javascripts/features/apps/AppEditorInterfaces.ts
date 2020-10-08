@@ -1,13 +1,4 @@
-import {
-  get,
-  isObject,
-  identity,
-  pick,
-  isEqual,
-  cloneDeep,
-  isEmpty,
-  isPlainObject as _isPlainObject,
-} from 'lodash';
+import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
@@ -16,8 +7,6 @@ import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
 import APIClient from 'data/APIClient';
-
-const isPlainObject = (value: any): value is object => _isPlainObject(value);
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -30,16 +19,6 @@ async function promiseAllSafe(promises) {
 
   return results.filter(identity);
 }
-
-const isValidSettingsObject = (settings: unknown) => {
-  if (!isPlainObject(settings)) {
-    return false;
-  }
-
-  const isValidProperty = (property: any) => property && !isObject(property);
-
-  return Object.values(settings).every(isValidProperty);
-};
 
 export async function getDefaultSidebar(): Promise<
   { widgetId: string; widgetNamespace: WidgetNamespace }[]
@@ -132,9 +111,9 @@ function transformWidgetList(
     return [...result, widget];
   }
 
-  if (isPlainObject(partialTargetState)) {
-    // Include settings only if they are valid
-    if (isValidSettingsObject(partialTargetState.settings)) {
+  if (isObject(partialTargetState)) {
+    // Include settings only if they exist
+    if (partialTargetState.settings) {
       widget.settings = partialTargetState.settings;
     }
 
@@ -181,8 +160,8 @@ function transformSingleEditorInterfaceToTargetState(
         widgetId,
       };
 
-      // Include settings only if they are valid
-      if (isValidSettingsObject(control.settings)) {
+      // Include settings only if they exist
+      if (control.settings) {
         item.settings = control.settings;
       }
 

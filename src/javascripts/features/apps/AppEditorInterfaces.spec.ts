@@ -381,61 +381,6 @@ describe('AppEditorInterfaces', () => {
         expect(cma.updateEditorInterface).not.toBeCalled();
       });
     });
-
-    describe('with settings', () => {
-      it('does not call if invalid settings are passed', async () => {
-        cma.getEditorInterfaces.mockImplementationOnce(() => {
-          return Promise.resolve({
-            items: [
-              {
-                sys: { contentType: { sys: { id: 'CT1' } } },
-                editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
-              },
-            ],
-          });
-        });
-
-        await transform({ CT1: { editors: { position: 0, settings: 'invalid' } } });
-
-        expect(cma.updateEditorInterface).not.toBeCalled();
-      });
-
-      it('calls api without settings if invalid settings and other changes', async () => {
-        cma.getEditorInterfaces.mockImplementationOnce(() => {
-          return Promise.resolve({
-            items: [
-              {
-                sys: { contentType: { sys: { id: 'CT1' } } },
-                editors: [
-                  { widgetNamespace: WidgetNamespace.EDITOR_BUILTIN, widgetId: 'builtin-editor' },
-                ],
-              },
-            ],
-          });
-        });
-
-        await transform({
-          CT1: {
-            editors: {
-              position: 0,
-              settings: {
-                lol: {
-                  invalid: 'lol',
-                },
-              },
-            },
-          },
-        });
-
-        expect(cma.updateEditorInterface).toBeCalledWith({
-          sys: { contentType: { sys: { id: 'CT1' } } },
-          editors: [
-            { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
-            { widgetNamespace: WidgetNamespace.EDITOR_BUILTIN, widgetId: 'builtin-editor' },
-          ],
-        });
-      });
-    });
   });
 
   describe('removeAllEditorInterfaceReferences', () => {

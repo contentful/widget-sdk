@@ -1,4 +1,4 @@
-import { get, isObject, set } from 'lodash';
+import { get, isObject, set, isPlainObject as _isPlainObject, isUndefined } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
 import { AppState } from 'contentful-ui-extensions-sdk';
 
@@ -78,7 +78,10 @@ export function validateState(targetState) {
 
     (ei.controls || []).forEach((control: Control) => {
       const validControl =
-        isObject(control) && typeof control.fieldId === 'string' && control.fieldId.length > 0;
+        isObject(control) &&
+        typeof control.fieldId === 'string' &&
+        control.fieldId.length > 0 &&
+        isValidSettingsObject(control.settings);
       if (!validControl) {
         throw new Error(`Invalid target controls declared for EditorInterface ${ctId}.`);
       }
@@ -109,7 +112,7 @@ const validatePositionalPartialTargetState = (
   if (isObject(partialTargetState)) {
     const validPosition =
       !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
-    if (!validPosition) {
+    if (!validPosition || !isValidSettingsObject(partialTargetState.settings)) {
       throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
     }
   }
@@ -148,4 +151,20 @@ const areSameApp = (
     widgetOne.widgetNamespace === WidgetNamespace.APP &&
     widgetTwo.widgetNamespace === WidgetNamespace.APP
   );
+};
+
+const isPlainObject = (value: any): value is object => _isPlainObject(value);
+
+const isValidSettingsObject = (settings: unknown) => {
+  if (isUndefined(settings)) {
+    return true;
+  }
+
+  if (!isPlainObject(settings)) {
+    return false;
+  }
+
+  const isValidProperty = (property: any) => property && !isObject(property);
+
+  return Object.values(settings).every(isValidProperty);
 };
