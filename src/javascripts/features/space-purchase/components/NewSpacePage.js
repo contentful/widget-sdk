@@ -147,7 +147,7 @@ export const NewSpacePage = ({
 
   const onChangeSelectedTemplate = (changedTemplate) => {
     trackWithSession(EVENTS.SPACE_TEMPLATE_SELECTED, {
-      selectedTemplate: changedTemplate,
+      selectedTemplate: changedTemplate?.name,
     });
 
     setSelectedTemplate(changedTemplate);
