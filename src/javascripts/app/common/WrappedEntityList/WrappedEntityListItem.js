@@ -49,7 +49,7 @@ const getReleaseDescription = (release) => {
   const asset = assetsCount && pluralize('asset', assetsCount, true);
 
   if (entry && asset) {
-    return `${entry} & ${asset}`;
+    return `${entry}, ${asset}`;
   }
 
   return entry || asset;
@@ -69,7 +69,7 @@ export default function WrappedEntityListItem({
   const { isLoading, data } = useAsync(getEntityDataFn);
   const entityData =
     entity.sys.type === 'Release'
-      ? { ...entity, description: getReleaseDescription(entity) }
+      ? { ...entity, description: getReleaseDescription(entity) || 'No content' }
       : data;
 
   return isLoading ? (
