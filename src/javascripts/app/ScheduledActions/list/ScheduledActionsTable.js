@@ -16,7 +16,7 @@ import {
   Icon,
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
-import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
+import { getEntryTitle, getAssetTitle } from 'classes/EntityFieldValueHelpers';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 import SecretiveLink from 'components/shared/SecretiveLink';
@@ -115,15 +115,21 @@ function ScheduledActionWithExsitingEntityRow({
   defaultLocale,
   showStatusTransition,
 }) {
-  const entityTitleMap = {
+  const entityTypeToTitle = {
     Entry: getEntryTitle({
       entry: entity,
       contentType,
-      internallocaleCode: defaultLocale.internal_code,
+      internalLocaleCode: defaultLocale.internal_code,
       defaultInternalLocaleCode: defaultLocale.internal_code,
       defaultTitle: 'Untitled',
     }),
     Release: entity.title,
+    Asset: getAssetTitle({
+      asset: entity,
+      internalLocaleCode: defaultLocale.internal_code,
+      defaultInternalLocaleCode: defaultLocale.internal_code,
+      defaultTitle: 'Untitled',
+    }),
   };
 
   return (
@@ -147,7 +153,7 @@ function ScheduledActionWithExsitingEntityRow({
           </TableCell>
           <TableCell>
             {' '}
-            <SecretiveLink href={getHref()}>{entityTitleMap[entity.sys.type]}</SecretiveLink>
+            <SecretiveLink href={getHref()}>{entityTypeToTitle[entity.sys.type]}</SecretiveLink>
           </TableCell>
           <TableCell>{contentType && contentType.name}</TableCell>
           <TableCell>

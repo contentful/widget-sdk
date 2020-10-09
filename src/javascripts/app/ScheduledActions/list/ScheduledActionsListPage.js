@@ -147,6 +147,7 @@ class ScheduledActionsListPage extends Component {
       scheduleData: {
         jobs: [],
         entries: {},
+        assets: {},
         releases: {},
         users: {},
         contentTypes: {},
@@ -190,7 +191,7 @@ class ScheduledActionsListPage extends Component {
       return;
     }
 
-    const { jobs, entries, releases, users, nextQuery } = jobsData;
+    const { jobs, entries, assets, releases, users, nextQuery } = jobsData;
     const { scheduleData } = this.state;
 
     const newJobs = _.uniqBy(scheduleData.jobs.concat(jobs), 'sys.id');
@@ -200,6 +201,7 @@ class ScheduledActionsListPage extends Component {
       scheduleData: {
         jobs: newJobs,
         entries: { ...scheduleData.entries, ...normalizeCollection(entries) },
+        assets: { ...scheduleData.assets, ...normalizeCollection(assets) },
         releases: { ...scheduleData.releases, ...normalizeCollection(releases) },
         users: { ...scheduleData.users, ...normalizeCollection(users) },
         contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
@@ -228,7 +230,11 @@ class ScheduledActionsListPage extends Component {
       );
     }
 
-    const entitiesById = { ...scheduleData.entries, ...scheduleData.releases };
+    const entitiesById = {
+      ...scheduleData.entries,
+      ...scheduleData.assets,
+      ...scheduleData.releases,
+    };
 
     return (
       <>
