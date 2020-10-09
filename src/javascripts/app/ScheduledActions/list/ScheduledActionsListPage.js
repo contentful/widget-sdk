@@ -200,9 +200,9 @@ class ScheduledActionsListPage extends Component {
       isInitialLoad: false,
       scheduleData: {
         jobs: newJobs,
-        entries: { ...scheduleData.entries, ...normalizeCollection(entries) },
-        assets: { ...scheduleData.assets, ...normalizeCollection(assets) },
-        releases: { ...scheduleData.releases, ...normalizeCollection(releases) },
+        entries: { ...scheduleData.entries, ...(entries && normalizeCollection(entries)) },
+        assets: { ...scheduleData.assets, ...(assets && normalizeCollection(assets)) },
+        releases: { ...scheduleData.releases, ...(releases && normalizeCollection(releases)) },
         users: { ...scheduleData.users, ...normalizeCollection(users) },
         contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
       },
