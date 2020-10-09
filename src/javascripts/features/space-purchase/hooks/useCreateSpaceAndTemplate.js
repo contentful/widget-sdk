@@ -16,7 +16,7 @@ const fetchSpace = (organizationId, sessionMetadata, selectedPlan, spaceName) =>
     return newSpace;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
-      location: 'NewSpaceReceiptPage',
+      errorType: 'CreateSpaceError',
       error,
     });
 
@@ -33,7 +33,7 @@ const fetchTemplate = (newSpace, selectedTemplate, sessionMetadata) => async () 
     });
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
-      location: 'NewSpaceReceiptPage',
+      errorType: 'CreateTemplateError',
       error,
     });
 

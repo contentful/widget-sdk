@@ -103,5 +103,5 @@ function spaceTemplateCreatedTransformer(data) {
 }
 
 function errorTransformer(data) {
-  return pick(data, ['location', 'error']);
+  return pick(data, ['errorType', 'error']);
 }

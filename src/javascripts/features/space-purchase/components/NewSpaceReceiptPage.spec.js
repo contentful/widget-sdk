@@ -102,7 +102,23 @@ describe('NewSpaceReceiptPage', () => {
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.ERROR, mockSessionMetadata, {
-      location: 'NewSpaceReceiptPage',
+      errorType: 'CreateSpaceError',
+      error: err,
+    });
+  });
+
+  it('should display an error and fire an analytic event if creating the template of the space errored', async () => {
+    const err = new Error('Something went wrong');
+    makeNewSpace.mockResolvedValueOnce({ newSpace: 'test' });
+    createTemplate.mockRejectedValueOnce(err);
+    build({ selectedTemplate: {} });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('receipt-page.template-creation-error')).toBeVisible();
+    });
+
+    expect(trackEvent).toHaveBeenCalledWith(EVENTS.ERROR, mockSessionMetadata, {
+      errorType: 'CreateTemplateError',
       error: err,
     });
   });

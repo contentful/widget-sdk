@@ -229,7 +229,7 @@ export const NewSpacePage = ({
       ]);
     } catch (error) {
       trackWithSession(EVENTS.ERROR, {
-        location: 'NewSpaceCardDetailsPage',
+        errorType: 'CreateAndSaveBillingDetails',
         error,
       });
 
