@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { identity } from 'lodash';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import {
   getActionPerformer,
   getActionPerformerName,
@@ -34,15 +34,14 @@ export const ActionPerformer = ({ children, link, loadingComponent, formatName }
     return loadingComponent;
   }
 
+  const actionPerformerType =
+    actionPerformer.namespace === WidgetNamespace.APP ? APP_DEFINITION_TYPE : USER_TYPE;
+
   return children({
     actionPerformer,
-    formattedName: getActionPerformerName(
-      get(link, ['sys', 'linkType'], USER_TYPE),
-      actionPerformer,
-      formatName
-    ),
+    formattedName: getActionPerformerName(actionPerformerType, actionPerformer, formatName),
     formattedNameAsString: getActionPerformerNameAsString(
-      get(link, ['sys', 'linkType'], USER_TYPE),
+      actionPerformerType,
       actionPerformer,
       formatName
     ),

@@ -55,7 +55,7 @@ export function formatUserName(user): string {
   }
 
   const currentUser = getModule('spaceContext').user;
-  if (currentUser && currentUser.sys.id === user.sys.id) {
+  if (currentUser && currentUser.sys.id === user.sys?.id) {
     return 'Me';
   }
 
