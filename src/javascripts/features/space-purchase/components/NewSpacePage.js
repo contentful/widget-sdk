@@ -297,7 +297,6 @@ export const NewSpacePage = ({
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
-              navigateToNextStep={() => goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION)}
             />
           </Grid>
         );
