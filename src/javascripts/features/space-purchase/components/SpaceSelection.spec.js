@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { EVENTS } from '../utils/analyticsTracking';
-import { websiteUrl } from 'Config';
 import { SpaceSelection, FEATURE_OVERVIEW_HREF } from './SpaceSelection';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -69,7 +68,8 @@ describe('SpaceSelection', () => {
     userEvent.click(screen.getAllByTestId('select-space-cta')[2]);
 
     expect(trackWithSession).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
-      href: websiteUrl('contact/sales/'),
+      href:
+        'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us',
       intent: 'upgrade_to_enterprise',
     });
 

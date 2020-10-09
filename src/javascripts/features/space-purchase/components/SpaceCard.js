@@ -17,10 +17,16 @@ import {
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
-import { websiteUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { salesUrl } from 'Config';
 
-export const CONTACT_SALES_HREF = websiteUrl('contact/sales/');
+export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
+  medium: 'webapp',
+  source: 'purchase-space-page',
+  campaign: 'cta-enterprise-space',
+  content: 'contact-us',
+})(salesUrl);
 
 const MEDIUM_PLAN_COLOR = '#14D997';
 const LARGE_PLAN_COLOR = '#0BAA75';
@@ -116,7 +122,7 @@ export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loadi
             </Paragraph>
             {isEnterpriseCard ? (
               <Button
-                href={CONTACT_SALES_HREF}
+                href={SPACE_PURCHASE_CONTACT_SALES_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleSelect}

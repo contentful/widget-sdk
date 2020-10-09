@@ -17,7 +17,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { SpaceCard, CONTACT_SALES_HREF } from './SpaceCard';
+import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from './SpaceCard';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -68,7 +68,7 @@ export const SpaceSelection = ({
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
       return () => {
         trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
-          href: CONTACT_SALES_HREF,
+          href: SPACE_PURCHASE_CONTACT_SALES_HREF,
           intent: 'upgrade_to_enterprise',
         });
 

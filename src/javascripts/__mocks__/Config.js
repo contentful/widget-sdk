@@ -4,6 +4,7 @@ export const appUrl = `https://app.contentful.com/`;
 export const apiUrl = (path) => `//api.test.com/${path || ''}`;
 export const oauthUrl = (key) => `//be.test.com/account/profile/auth/${key}`;
 export const supportUrl = `https://support.contentful.com/`;
+export const salesUrl = `https://www.contentful.com/contact/sales/`;
 export const helpCenterUrl = 'https://www.contentful.com/help';
 export const developerDocsUrl = 'https://www.contentful.com/developers/docs/';
 export const developersChangelogUrl = 'https://www.contentful.com/developers/changelog/';
