@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -164,13 +164,6 @@ export const NewSpacePage = ({
     });
 
     setCurrentStep(nextStep);
-    // Save the step in the history's state to use when the browser's forward or back button is clicked
-    window.history.pushState({ step: nextStep }, null);
-  };
-
-  const navigateToPreviousStep = () => {
-    // We use window's history's back function so that the history state is also correctly updated.
-    window.history.back();
   };
 
   const selectPlan = (planType) => {
@@ -201,6 +194,14 @@ export const NewSpacePage = ({
       goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
     } else {
       goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS);
+    }
+  };
+
+  const onBackConfirmation = () => {
+    if (organization.isBillable) {
+      goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
+    } else {
+      goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
     }
   };
 
@@ -256,20 +257,6 @@ export const NewSpacePage = ({
     goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
   };
 
-  const browserNavigationHandler = useCallback((e) => {
-    // If no state/step is set, it's the first step.
-    setCurrentStep(e.state?.step ?? SPACE_PURCHASE_STEPS.SPACE_SELECTION);
-  }, []);
-
-  useEffect(() => {
-    // Adds a listener for the back and forward browser button
-    window.addEventListener('popstate', browserNavigationHandler);
-
-    return () => {
-      window.removeEventListener('popstate', browserNavigationHandler);
-    };
-  }, [browserNavigationHandler]);
-
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case SPACE_PURCHASE_STEPS.SPACE_DETAILS:
@@ -277,7 +264,7 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
             <NewSpaceDetailsPage
-              navigateToPreviousStep={navigateToPreviousStep}
+              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION)}
               spaceName={spaceName}
               onChangeSpaceName={onChangeSpaceName}
               templatesList={templatesList}
@@ -293,7 +280,7 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceBillingDetailsPage
-              navigateToPreviousStep={navigateToPreviousStep}
+              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS)}
               savedBillingDetails={billingDetails}
               onSubmitBillingDetails={onSubmitBillingDetails}
               selectedPlan={selectedPlan}
@@ -306,7 +293,7 @@ export const NewSpacePage = ({
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceCardDetailsPage
               organizationId={organizationId}
-              navigateToPreviousStep={navigateToPreviousStep}
+              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS)}
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
@@ -327,7 +314,7 @@ export const NewSpacePage = ({
               isLoadingBillingDetails={isLoadingBillingDetails}
               billingDetails={billingDetails}
               paymentDetails={paymentDetails}
-              navigateToPreviousStep={navigateToPreviousStep}
+              navigateToPreviousStep={onBackConfirmation}
               onConfirm={onConfirm}
             />
           </Grid>
