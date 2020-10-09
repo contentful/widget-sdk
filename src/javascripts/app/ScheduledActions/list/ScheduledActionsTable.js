@@ -197,7 +197,7 @@ export default class ScheduledActionsTable extends Component {
     description: PropTypes.string,
     jobs: PropTypes.array, // Todo: Define propTypes when api clear
     contentTypesData: PropTypes.object,
-    entityData: PropTypes.object,
+    entitiesById: PropTypes.object,
     showStatusTransition: PropTypes.bool,
     defaultLocale: PropTypes.object,
   };
@@ -206,7 +206,7 @@ export default class ScheduledActionsTable extends Component {
     const {
       jobs,
       description,
-      entityData,
+      entitiesById,
       contentTypesData,
       showStatusTransition,
       defaultLocale,
@@ -228,7 +228,7 @@ export default class ScheduledActionsTable extends Component {
             {jobs.map((job) => {
               const user = job.sys.createdBy;
 
-              const entity = entityData[job.entity.sys.id];
+              const entity = entitiesById[job.entity.sys.id];
 
               if (entity) {
                 const contentType =

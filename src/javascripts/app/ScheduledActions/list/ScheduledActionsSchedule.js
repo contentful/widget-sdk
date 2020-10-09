@@ -51,9 +51,10 @@ const jobPropType = PropTypes.shape({
   action: PropTypes.string,
 });
 
-const TimeGroup = ({ jobs, entityData, contentTypesData }) => {
+const TimeGroup = ({ jobs, entitiesById, contentTypesData }) => {
   const tagType = jobs[0].action === ScheduledActionAction.Publish ? 'positive' : 'secondary';
   const isScheduleCompleted = jobs[0].sys.status === 'succeeded';
+
   return (
     <div className={styles.timeGroup}>
       <div className={styles.timeGroupHeader}>
@@ -71,7 +72,7 @@ const TimeGroup = ({ jobs, entityData, contentTypesData }) => {
       </div>
       <div className={styles.timeGroupListWrapper}>
         <WrappedEntityList
-          entities={jobs.map((job) => entityData[job.entity.sys.id])}
+          entities={jobs.map((job) => entitiesById[job.entity.sys.id])}
           contentTypes={contentTypesData}
         />
       </div>
@@ -81,11 +82,11 @@ const TimeGroup = ({ jobs, entityData, contentTypesData }) => {
 
 TimeGroup.propTypes = {
   jobs: PropTypes.arrayOf(jobPropType),
-  entityData: PropTypes.object,
+  entitiesById: PropTypes.object,
   contentTypesData: PropTypes.object,
 };
 
-const DateGroup = ({ jobs, entityData, contentTypesData }) => {
+const DateGroup = ({ jobs, entitiesById, contentTypesData }) => {
   const timeGroups = _.chain(jobs)
     .groupBy((job) => `${moment(job.scheduledFor.datetime).format('HH:mm')}-${job.action}`)
     .map((job) => job)
@@ -99,7 +100,7 @@ const DateGroup = ({ jobs, entityData, contentTypesData }) => {
         <TimeGroup
           jobs={jobs}
           key={`${jobs[0].sys.id}-timeGroup`}
-          entityData={entityData}
+          entitiesById={entitiesById}
           contentTypesData={contentTypesData}
         />
       ))}
@@ -109,25 +110,25 @@ const DateGroup = ({ jobs, entityData, contentTypesData }) => {
 
 DateGroup.propTypes = {
   jobs: PropTypes.arrayOf(jobPropType),
-  entityData: PropTypes.object,
+  entitiesById: PropTypes.object,
   contentTypesData: PropTypes.object,
 };
 
 export default class JobsSchedule extends React.Component {
   static propTypes = {
     jobs: PropTypes.arrayOf(jobPropType),
-    entityData: PropTypes.object,
+    entitiesById: PropTypes.object,
     contentTypesData: PropTypes.object,
     emptyStateMessage: PropTypes.object,
   };
 
   render() {
-    const { jobs, entityData, contentTypesData, emptyStateMessage } = this.props;
+    const { jobs, entitiesById, contentTypesData, emptyStateMessage } = this.props;
     if (!this.props.jobs.length) {
       return null;
     }
 
-    const jobsWithExisitingEntity = jobs.filter((job) => entityData[job.entity.sys.id]);
+    const jobsWithExisitingEntity = jobs.filter((job) => entitiesById[job.entity.sys.id]);
     const groupedJobs = _.chain(jobsWithExisitingEntity)
       .groupBy((item) => moment(item.scheduledFor.datetime).format('YYYY.MM.DD'))
       .map((item) => item)
@@ -139,7 +140,7 @@ export default class JobsSchedule extends React.Component {
             <DateGroup
               jobs={jobsGroup}
               key={`${jobsGroup[0].sys.id}-dateGroup`}
-              entityData={entityData}
+              entitiesById={entitiesById}
               contentTypesData={contentTypesData}
             />
           ))

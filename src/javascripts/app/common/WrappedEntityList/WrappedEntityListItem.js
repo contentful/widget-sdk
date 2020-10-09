@@ -65,11 +65,6 @@ export default function WrappedEntityListItem({
   const getEntityDataFn = useCallback(() => {
     return getEntityData(entity, internalLocaleCode);
   }, [entity, internalLocaleCode]);
-  const contentTypeMap = {
-    Entry: contentType,
-    Asset: 'image png',
-    Release: 'Release',
-  };
 
   const { isLoading, data } = useAsync(getEntityDataFn);
   const entityData =
@@ -88,7 +83,7 @@ export default function WrappedEntityListItem({
             onClick={(e) => (onClick ? onClick(e, entity) : onClickGoToEntity(e, entity))}
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
-            contentType={contentTypeMap[entity.sys.type]}
+            contentType={entity.sys.type === 'Release' ? 'Release' : contentType}
             dropdownListElements={renderDropdown && renderDropdown({ entity })}
             entityType={entity.sys.type}
             thumbnailUrl={

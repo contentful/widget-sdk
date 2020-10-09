@@ -228,14 +228,14 @@ class ScheduledActionsListPage extends Component {
       );
     }
 
-    const entityData = { ...scheduleData.entries, ...scheduleData.releases };
+    const entitiesById = { ...scheduleData.entries, ...scheduleData.releases };
 
     return (
       <>
         {activeTab !== TabTypes.ErroredJobs ? (
           <ScheduledActionsSchedule
             jobs={scheduleData.jobs}
-            entityData={entityData}
+            entitiesById={entitiesById}
             usersData={scheduleData.users}
             emptyStateMessage={TabsData[activeTab].emptyStateMessage}
             contentTypesData={scheduleData.contentTypes}
@@ -244,7 +244,7 @@ class ScheduledActionsListPage extends Component {
           <ScheduledActionsTable
             description={TabsData[activeTab].description}
             jobs={scheduleData.jobs}
-            entityData={entityData}
+            entitiesById={entitiesById}
             contentTypesData={scheduleData.contentTypes}
             defaultLocale={defaultLocale}
           />
