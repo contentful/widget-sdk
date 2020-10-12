@@ -38,8 +38,8 @@ const styles = {
   }),
   problemItem: css({
     position: 'relative',
-    marginBottom: tokens.spacingM,
     margin: 0,
+    marginBottom: tokens.spacingM,
     userSelect: 'none',
   }),
   problemItemText: css({
