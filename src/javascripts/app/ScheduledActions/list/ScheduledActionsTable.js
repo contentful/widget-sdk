@@ -16,7 +16,7 @@ import {
   Icon,
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
-import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
+import { getEntryTitle, getAssetTitle } from 'classes/EntityFieldValueHelpers';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 import SecretiveLink from 'components/shared/SecretiveLink';
@@ -93,10 +93,10 @@ StatusTag.propTypes = {
   job: PropTypes.object,
 };
 
-function StatusTransition({ entry }) {
+function StatusTransition({ entity }) {
   return (
     <span className={styles.statusTransition} color="secondary">
-      <EntityStatusTag statusLabel={stateName(getState(entry.sys))} />
+      <EntityStatusTag statusLabel={stateName(getState(entity.sys))} />
       <Icon color="secondary" icon="ChevronRight" />
       <Tag tagType="positive">Published</Tag>
     </span>
@@ -104,27 +104,36 @@ function StatusTransition({ entry }) {
 }
 
 StatusTransition.propTypes = {
-  entry: PropTypes.object,
+  entity: PropTypes.object,
 };
 
-function ScheduledActionWithExsitingEntryRow({
+function ScheduledActionWithExsitingEntityRow({
   job,
   user,
-  entry,
+  entity,
   contentType,
   defaultLocale,
   showStatusTransition,
 }) {
-  const entryTitle = getEntryTitle({
-    entry,
-    contentType,
-    internallocaleCode: defaultLocale.internal_code,
-    defaultInternalLocaleCode: defaultLocale.internal_code,
-    defaultTitle: 'Untilted',
-  });
+  const entityTypeToTitle = {
+    Entry: getEntryTitle({
+      entry: entity,
+      contentType,
+      internalLocaleCode: defaultLocale.internal_code,
+      defaultInternalLocaleCode: defaultLocale.internal_code,
+      defaultTitle: 'Untitled',
+    }),
+    Release: entity.title,
+    Asset: getAssetTitle({
+      asset: entity,
+      internalLocaleCode: defaultLocale.internal_code,
+      defaultInternalLocaleCode: defaultLocale.internal_code,
+      defaultTitle: 'Untitled',
+    }),
+  };
 
   return (
-    <EntityStateLink entity={entry}>
+    <EntityStateLink entity={entity}>
       {({ onClick, getHref }) => (
         <TableRow
           className={styles.jobRow}
@@ -144,14 +153,14 @@ function ScheduledActionWithExsitingEntryRow({
           </TableCell>
           <TableCell>
             {' '}
-            <SecretiveLink href={getHref()}>{entryTitle}</SecretiveLink>
+            <SecretiveLink href={getHref()}>{entityTypeToTitle[entity.sys.type]}</SecretiveLink>
           </TableCell>
-          <TableCell>{contentType.name}</TableCell>
+          <TableCell>{contentType && contentType.name}</TableCell>
           <TableCell>
             <ActionPerformerName link={user} />
           </TableCell>
           <TableCell>
-            {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
+            {showStatusTransition ? <StatusTransition entity={entity} /> : <StatusTag job={job} />}
           </TableCell>
         </TableRow>
       )}
@@ -159,22 +168,22 @@ function ScheduledActionWithExsitingEntryRow({
   );
 }
 
-ScheduledActionWithExsitingEntryRow.propTypes = {
+ScheduledActionWithExsitingEntityRow.propTypes = {
   job: PropTypes.object,
   user: PropTypes.object,
-  entry: PropTypes.object,
+  entity: PropTypes.object,
   contentType: PropTypes.object,
   defaultLocale: PropTypes.object,
   showStatusTransition: PropTypes.bool,
 };
 
-function ScheduledActionWithMissingEntryRow({ job, user }) {
+function ScheduledActionWithMissingEntityRow({ job, user }) {
   return (
     <TableRow data-test-id="scheduled-job">
       <TableCell>
         {moment.utc(job.scheduledFor.datetime).local().format('ddd, MMM Do, YYYY - hh:mm A')}
       </TableCell>
-      <TableCell>Entry missing or inaccessible</TableCell>
+      <TableCell>Entity missing or inaccessible</TableCell>
       <TableCell />
       <TableCell>
         <ActionPerformerName link={user} />
@@ -184,7 +193,7 @@ function ScheduledActionWithMissingEntryRow({ job, user }) {
   );
 }
 
-ScheduledActionWithMissingEntryRow.propTypes = {
+ScheduledActionWithMissingEntityRow.propTypes = {
   job: PropTypes.object,
   user: PropTypes.object,
 };
@@ -194,7 +203,7 @@ export default class ScheduledActionsTable extends Component {
     description: PropTypes.string,
     jobs: PropTypes.array, // Todo: Define propTypes when api clear
     contentTypesData: PropTypes.object,
-    entriesData: PropTypes.object,
+    entitiesById: PropTypes.object,
     showStatusTransition: PropTypes.bool,
     defaultLocale: PropTypes.object,
   };
@@ -203,7 +212,7 @@ export default class ScheduledActionsTable extends Component {
     const {
       jobs,
       description,
-      entriesData,
+      entitiesById,
       contentTypesData,
       showStatusTransition,
       defaultLocale,
@@ -225,16 +234,17 @@ export default class ScheduledActionsTable extends Component {
             {jobs.map((job) => {
               const user = job.sys.createdBy;
 
-              const entry = entriesData[job.entity.sys.id];
+              const entity = entitiesById[job.entity.sys.id];
 
-              if (entry) {
-                const contentType = contentTypesData[entry.sys.contentType.sys.id];
+              if (entity) {
+                const contentType =
+                  entity.sys.contentType && contentTypesData[entity.sys.contentType.sys.id];
                 return (
-                  <ScheduledActionWithExsitingEntryRow
+                  <ScheduledActionWithExsitingEntityRow
                     key={job.sys.id}
                     job={job}
                     user={user}
-                    entry={entry}
+                    entity={entity}
                     contentType={contentType}
                     defaultLocale={defaultLocale}
                     showStatusTransition={showStatusTransition}
@@ -242,7 +252,7 @@ export default class ScheduledActionsTable extends Component {
                 );
               } else {
                 return (
-                  <ScheduledActionWithMissingEntryRow key={job.sys.id} job={job} user={user} />
+                  <ScheduledActionWithMissingEntityRow key={job.sys.id} job={job} user={user} />
                 );
               }
             })}
