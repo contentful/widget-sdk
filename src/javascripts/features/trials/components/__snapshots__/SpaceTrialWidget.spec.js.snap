@@ -22,7 +22,7 @@ exports[`SpaceTrialWidget renders correctly when the space is on trial 1`] = `
 
 .emotion-0 {
   list-style-type: disc;
-  list-style-position: inside;
+  margin-left: 1.5rem;
 }
 
 <div>
@@ -60,7 +60,7 @@ exports[`SpaceTrialWidget renders correctly when the space is on trial 1`] = `
           class="ListItem__ListItem___3S9Oc emotion-0"
           data-test-id="cf-ui-list-item"
         >
-          Since itʼs a sandbox, content here is not public
+          Trial spaces are intended for non-production development and testing purposes only
         </li>
       </ul>
       <h2
@@ -102,7 +102,7 @@ exports[`SpaceTrialWidget renders correctly when the space is on trial 1`] = `
         <a
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="fair_use_policy_link"
-          href="https://www.contentful.com/r/knowledgebase/fair-use/"
+          href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
           rel="noopener noreferrer"
           target="_blank"
         >
