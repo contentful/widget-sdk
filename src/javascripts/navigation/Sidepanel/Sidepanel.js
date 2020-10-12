@@ -15,6 +15,7 @@ import * as accessChecker from 'access_control/AccessChecker/index';
 import * as logger from 'services/logger';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { navState$ } from 'navigation/NavState';
+import { isOrganizationOnTrial } from 'features/trials';
 
 export default class Sidepanel extends React.Component {
   static propTypes = {
@@ -97,7 +98,7 @@ export default class Sidepanel extends React.Component {
   gotoOrgSettings = () => {
     this.props.closeSidePanel();
     const orgSettingsPath = ['account', 'organizations'];
-    if (OrgRoles.isOwnerOrAdmin(this.state.currOrg)) {
+    if (OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg)) {
       const hasNewPricing = this.state.currOrg.pricingVersion === 'pricing_version_2';
       orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
     } else {
