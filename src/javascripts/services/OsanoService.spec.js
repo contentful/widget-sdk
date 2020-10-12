@@ -7,50 +7,10 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
 import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import { getUserSync } from 'services/TokenStore';
-import { wait } from '@testing-library/react';
 
 jest.mock('utils/LazyLoader', () => {
-  const mockedCm = {
-    cm: {
-      on: jest.fn(),
-      emit: jest.fn(),
-      setup: jest.fn(),
-      whenReady: jest.fn((cb) => cb()),
-      whenReadyCb: jest.fn(),
-      teardown: jest.fn(),
-      storage: {
-        key: 'osano_consentmanager',
-        setConsent: jest.fn(),
-        getConsent: jest.fn(),
-        getExpDate: jest.fn().mockReturnValue('test_exp_date'),
-        getUUID: jest.fn().mockReturnValue('test_uuid'),
-        saveConsent: jest.fn(),
-      },
-      options: {},
-    },
-  };
-
-  // I'm sorry for this hacky mess. Future reader, please forgive me.
-  //
-  // What I'm doing here is ensuring that whenever I get a new instance
-  // of this ConsentManager function, I am getting the `mockedCm.cm`
-  // object. This makes assertions significantly easier at the expense of
-  // not truly testing a separate cm object and new ConsentManager instance.
-  //
-  // Additionally, because the state is saved during this test run, I reset
-  // `mockedCm.cm.storage.key` below in `describe('init') -> afterEach`.
-  mockedCm.ConsentManager = function () {
-    this.whenReady(this.whenReadyCb);
-
-    return mockedCm.cm;
-  };
-
-  Object.entries(mockedCm.cm).forEach(([key, value]) => {
-    mockedCm.ConsentManager.prototype[key] = value;
-  });
-
   return {
-    get: jest.fn().mockResolvedValue(mockedCm),
+    get: jest.fn(),
   };
 });
 
@@ -67,16 +27,7 @@ jest.mock('core/services/BrowserStorage', () => {
 });
 
 jest.mock('services/TokenStore', () => ({
-  getUserSync: jest.fn().mockReturnValue({
-    cookieConsentData: JSON.stringify({
-      consent: {
-        testKey: 'value',
-      },
-      uuid: 'user_uuid',
-      expirationDate: 987654321,
-    }),
-    sys: { version: 123 },
-  }),
+  getUserSync: jest.fn(),
 }));
 
 jest.mock('analytics/isAnalyticsAllowed', () => jest.fn().mockReturnValue(true));
@@ -89,41 +40,88 @@ jest.mock('analytics/segment', () => ({
   getIntegrations: jest.fn().mockResolvedValue([]),
 }));
 
-jest.spyOn(Notification, 'warning').mockImplementation(() => {});
-
 describe('OsanoService', () => {
+  let user;
+
   beforeEach(service.__reset);
-  const callHandleInitialize = () => {
-    service.handleInitialize();
-  };
+  beforeEach(() => {
+    jest.spyOn(Notification, 'warning').mockImplementation(() => {});
 
-  const callHandleConsentChanged = () => {
-    service.handleConsentChanged();
+    const client = {
+      _onCbs: {},
+      cm: {
+        on: jest.fn((event, cb) => {
+          client._onCbs[event] = cb;
+        }),
+        getConsent: jest.fn().mockReturnValue(generateConsentOptions()),
+        showDrawer: jest.fn(),
+      },
+    };
 
-    service.handleConsentChanged.flush();
-  };
+    LazyLoader.get.mockResolvedValue(client);
 
-  const generateConsentOptions = (analyticsAllowed = true, personalizationAllowed = true) => ({
-    ANALYTICS: analyticsAllowed ? 'ACCEPT' : 'DENY',
-    PERSONALIZATION: personalizationAllowed ? 'ACCEPT' : 'DENY',
-    MARKETING: 'DENY',
-    ESSENTIAL: 'ACCEPT',
+    user = {
+      cookieConsentData: JSON.stringify({
+        userInterface: {
+          rawConsentRecord: 'abcd',
+          consentRecord: generateConsentOptions(),
+          uuid: 'consent_record_uuid',
+          expirationDate: 987654321,
+        },
+      }),
+      sys: { version: 123 },
+    };
+
+    getUserSync.mockReturnValue(user);
   });
+
+  afterEach(() => {
+    const store = getBrowserStorage();
+
+    store.get.mockReset();
+    store.set.mockReset();
+    store.has.mockReset();
+
+    Notification.warning.mockRestore();
+  });
+
+  const callHandleInitialize = () => {
+    return service.handleInitialize();
+  };
+
+  const callHandleConsentSaved = async () => {
+    const promise = service.handleConsentSaved();
+
+    service.handleConsentSaved.flush();
+
+    await new Promise((resolve) => process.nextTick(resolve));
+
+    return promise;
+  };
 
   const setupService = async (opts = generateConsentOptions()) => {
     const { cm } = await LazyLoader.get();
-    cm.storage.getConsent.mockReturnValue(opts);
+    cm.getConsent.mockReturnValue(opts);
     await service.init();
     return cm;
   };
 
-  describe('initialization', () => {
+  describe('handleInitialize', () => {
+    it('should hide the marketing toggles', async () => {
+      jest.spyOn(document, 'querySelectorAll');
+
+      await setupService();
+      await callHandleInitialize();
+
+      expect(document.querySelectorAll).toHaveBeenCalledTimes(1);
+      expect(document.querySelectorAll).toHaveBeenCalledWith("[data-category='MARKETING']");
+
+      document.querySelectorAll.mockRestore();
+    });
+
     it('should enable analytics with all Segment integrations if analytics and personalization is allowed', async () => {
       await setupService();
-
-      callHandleInitialize();
-      // Need to wait for handleInitialize to finish.
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -139,18 +137,19 @@ describe('OsanoService', () => {
       });
     });
 
-    it('should do nothing if LazyLoader returned nothing', async () => {
-      LazyLoader.get.mockResolvedValueOnce(null);
+    it('should not attempt to enable analytics twice', async () => {
+      await setupService();
+      await callHandleInitialize();
+      await callHandleInitialize();
 
-      expect(await service.init()).toBe(false);
+      expect(Analytics.enable).toHaveBeenCalledTimes(1);
     });
 
     it('should disable any additional integrations from Segment', async () => {
       Segment.getIntegrations.mockResolvedValueOnce(['My Awesome Integration']);
       await setupService();
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -170,8 +169,7 @@ describe('OsanoService', () => {
     it('should enable analytics with only analytics Segment integrations if analytics but not personalization is allowed', async () => {
       await setupService(generateConsentOptions(true, false));
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -192,8 +190,7 @@ describe('OsanoService', () => {
 
       isAnalyticsAllowed.mockReturnValue(false);
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
     });
@@ -201,8 +198,7 @@ describe('OsanoService', () => {
     it('should only enable Intercom and Wootric (via Segment) if analytics is denied but personalization is allowed', async () => {
       await setupService(generateConsentOptions(false, true));
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
 
@@ -223,121 +219,99 @@ describe('OsanoService', () => {
     it('should not enable analytics is neither is allowed', async () => {
       await setupService(generateConsentOptions(false, false));
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
       expect(Segment.enable).not.toHaveBeenCalled();
     });
-
-    it('should set local consent from Gatekeeper consent if present', async () => {
-      const { cm } = await LazyLoader.get();
-
-      await service.init();
-      callHandleInitialize();
-
-      expect(cm.storage.setConsent).toBeCalledWith({
-        testKey: 'value',
-      });
-      expect(cm.storage.uuid).toEqual('user_uuid');
-      expect(cm.storage.saveConsent).toHaveBeenLastCalledWith(987654321);
-    });
-
-    it('should save local consent to Gatekeeper if there is local consent but no Gatekeeper consent', async () => {
-      getUserSync.mockReturnValueOnce({ sys: { version: 456 } });
-      const { cm } = await LazyLoader.get();
-      const localConsent = generateConsentOptions();
-      cm.storage.getConsent.mockReturnValue(localConsent);
-
-      await service.init();
-
-      callHandleInitialize();
-      await wait();
-
-      expect(updateUserData).toHaveBeenCalledWith({
-        data: {
-          cookieConsentData: JSON.stringify({
-            consent: localConsent,
-            uuid: 'test_uuid',
-            expirationDate: 'test_exp_date',
-          }),
-        },
-        version: 456,
-      });
-    });
-
-    it('does not save any consent if the user has not consented yet', async () => {
-      const { cm } = await LazyLoader.get();
-      cm.storage.getExpDate.mockReturnValue(0);
-      const store = getBrowserStorage();
-
-      await service.init();
-
-      callHandleInitialize();
-      await wait();
-
-      expect(store.set).toHaveBeenCalledTimes(0);
-      expect(updateUserData).toHaveBeenCalledTimes(0);
-    });
   });
 
   describe('handleConsentChanged', () => {
-    it('should warn the user to reload if they change their consent options', async () => {
+    it('should warn the user to reload if they change their consent options and the service is initialized', async () => {
       const cm = await setupService();
 
-      callHandleInitialize();
-      await wait();
+      await callHandleInitialize();
 
-      callHandleInitialize();
-      await wait();
+      await callHandleConsentSaved();
+      await callHandleConsentSaved();
 
-      expect(Notification.warning).not.toHaveBeenCalled();
+      expect(Notification.warning).not.toBeCalled();
+      expect(updateUserData).not.toBeCalled();
 
       const newOpts = generateConsentOptions(false, false);
-      cm.storage.getConsent.mockReturnValue(newOpts);
+      cm.getConsent.mockReturnValue(newOpts);
 
-      callHandleConsentChanged();
-      await wait();
+      await callHandleConsentSaved();
 
       expect(updateUserData).toHaveBeenCalledTimes(1);
       expect(Notification.warning).toHaveBeenCalledTimes(1);
     });
 
-    it('it should intialize consent if it has not been done yet', async () => {
-      const { cm } = await LazyLoader.get();
-      cm.storage.getExpDate.mockReturnValue(0);
-      cm.storage.getConsent.mockReturnValue(generateConsentOptions());
-      getUserSync.mockReturnValue({ sys: { version: 123 } });
-      isAnalyticsAllowed.mockReturnValue(true);
+    it(`should not attempt to update the user's consent record if the consent hasn't changed`, async () => {
+      await setupService();
+      await callHandleConsentSaved();
 
-      await service.init();
+      expect(updateUserData).not.toBeCalled();
+    });
 
-      callHandleInitialize();
-      await wait();
+    it('should not warn the user if their consent record was migrated', async () => {
+      user.cookieConsentData = JSON.stringify({
+        consent: generateConsentOptions(false, false),
+        expirationDate: 1234,
+        uuid: 'some-uuid',
+      });
 
-      expect(Analytics.enable).not.toHaveBeenCalled();
+      await setupService();
+      await callHandleConsentSaved();
 
-      cm.storage.getExpDate.mockReset().mockReturnValue(12);
-      callHandleConsentChanged();
-      // Ned to wait for HandleConsentChanged to finish.
-      await wait();
-
-      expect(Analytics.enable).toHaveBeenCalled();
-
-      cm.storage.getExpDate.mockReset().mockReturnValue(0);
+      expect(updateUserData).toBeCalled();
+      expect(Notification.warning).not.toBeCalled();
     });
   });
 
   describe('init', () => {
-    afterEach(async () => {
-      const { cm } = await LazyLoader.get();
-      cm.storage.key = 'osano_consentmanager';
-    });
-
     it('should get Osano from LazyLoader', async () => {
       await service.init();
 
       expect(LazyLoader.get).toHaveBeenCalled();
+    });
+
+    it('should return false if LazyLoader.get throws', async () => {
+      LazyLoader.get.mockRejectedValueOnce();
+
+      expect(await service.init()).toBe(false);
+    });
+
+    it('should return false if LazyLoader returns nothing', async () => {
+      LazyLoader.get.mockResolvedValueOnce(null);
+
+      expect(await service.init()).toBe(false);
+    });
+
+    it('should add persisted consent to localStorage', async () => {
+      const store = getBrowserStorage();
+
+      await service.init();
+
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager', expect.any(String));
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager_expdate', expect.any(Number));
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager_uuid', expect.any(String));
+    });
+
+    it('should add legacy consent to localStorage', async () => {
+      const store = getBrowserStorage();
+
+      user.cookieConsentData = JSON.stringify({
+        consent: 'consent-1234',
+        expirationDate: 1234,
+        uuid: 'uuid-1234',
+      });
+
+      await service.init();
+
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager', 'consent-1234');
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager_expdate', 1234);
+      expect(store.set).toHaveBeenCalledWith('osano_consentmanager_uuid', 'uuid-1234');
     });
 
     it('should only call the LazyLoader once, even after multiple init calls', async () => {
@@ -358,37 +332,6 @@ describe('OsanoService', () => {
       expect(LazyLoader.get).toHaveBeenCalledTimes(0);
     });
 
-    it('should immediately teardown the original instance', async () => {
-      const { cm } = await LazyLoader.get();
-
-      await service.init();
-
-      expect(cm.teardown).toHaveBeenCalledTimes(1);
-    });
-
-    it('should set the updated cookie value', async () => {
-      const { cm } = await LazyLoader.get();
-
-      expect(cm.storage.key).toBe('osano_consentmanager');
-
-      await service.init();
-
-      expect(cm.storage.key).toBe('cf_webapp_cookieconsent');
-    });
-
-    it('should gracefully handle teardown failures', async () => {
-      const { cm } = await LazyLoader.get();
-      cm.teardown.mockImplementationOnce(() => {
-        throw new Error('Teardown failure');
-      });
-
-      expect(cm.storage.key).toBe('osano_consentmanager');
-
-      await service.init();
-
-      expect(cm.storage.key).toBe('cf_webapp_cookieconsent');
-    });
-
     it('should setup listeners for various events', async () => {
       const { cm } = await LazyLoader.get();
 
@@ -397,44 +340,25 @@ describe('OsanoService', () => {
       expect(cm.on).toHaveBeenCalledWith('osano-cm-initialized', expect.any(Function));
       expect(cm.on).toHaveBeenCalledWith('osano-cm-consent-saved', expect.any(Function));
     });
-
-    it('should call storage.setConsent if there is an item in localStorage', async () => {
-      const store = getBrowserStorage();
-      store.get.mockReturnValue({ hello: 'world' });
-
-      const { cm } = await LazyLoader.get();
-
-      await service.init();
-
-      expect(cm.storage.setConsent).toHaveBeenCalledWith({ hello: 'world' });
-    });
-
-    it('should override whenReady and call the readyCb during initialization', async () => {
-      const { cm } = await LazyLoader.get();
-
-      await service.init();
-
-      expect(cm.whenReady).not.toHaveBeenCalled();
-      expect(cm.whenReadyCb).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('waitForCMInstance', () => {
     beforeEach(() => {
       // `waitForCMInstance` internally sets a 100ms timeout, and we want to explicitly
       // test `setTimeout` calls, so we mock `setTimeout`.
-      global.setTimeoutOrig = global.setTimeout;
-
-      global.setTimeout = jest.fn().mockImplementation((fn) => global.setTimeoutOrig(fn));
+      //
+      // This is mocked, rather than setting fake timers, since we don't care about exact
+      // timing and just care that the setTimeout callback is immediately executed.
+      jest.spyOn(window, 'setTimeout').mockImplementation((fn) => fn());
     });
 
     afterEach(() => {
-      global.setTimeout = global.setTimeoutOrig;
+      window.setTimeout.mockRestore();
     });
 
     it('should retry 10 times and then throw if cm is not available', async () => {
       await expect(service.waitForCMInstance()).rejects.toThrow();
-      expect(global.setTimeout).toHaveBeenCalledTimes(10);
+      expect(window.setTimeout).toHaveBeenCalledTimes(10);
     });
 
     it('should resolve if cm is available', async () => {
@@ -445,14 +369,34 @@ describe('OsanoService', () => {
   });
 
   describe('openConsentManagementPanel', () => {
-    it('should emit the "info-dialog-open" Osano event', async () => {
+    it('should call cm.showDrawer', async () => {
       const { cm } = await LazyLoader.get();
 
       await service.init();
 
       service.openConsentManagementPanel();
 
-      expect(cm.emit).toHaveBeenCalledWith('osano-cm-dom-info-dialog-open');
+      expect(cm.showDrawer).toBeCalled();
     });
   });
+
+  it('should hide the marketing toggles', async () => {
+    jest.spyOn(document, 'querySelectorAll');
+
+    await service.init();
+
+    service.openConsentManagementPanel();
+    expect(document.querySelectorAll).toHaveBeenCalledWith("[data-category='MARKETING']");
+
+    document.querySelectorAll.mockRestore();
+  });
 });
+
+function generateConsentOptions(analyticsAllowed = true, personalizationAllowed = true) {
+  return {
+    ANALYTICS: analyticsAllowed ? 'ACCEPT' : 'DENY',
+    PERSONALIZATION: personalizationAllowed ? 'ACCEPT' : 'DENY',
+    MARKETING: 'DENY',
+    ESSENTIAL: 'ACCEPT',
+  };
+}
