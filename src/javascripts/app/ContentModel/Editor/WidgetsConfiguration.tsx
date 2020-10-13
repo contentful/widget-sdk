@@ -76,10 +76,12 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
     .concat(state.availableItems)
     .filter((item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem)));
 
-  const selectedItems = state.items.map(item => {
-    const isMissing = [...defaultAvailableItems, ...state.availableItems].every(availableItem => !isSameWidget(item, availableItem));
+  const selectedItems = state.items.map((item) => {
+    const isMissing = [...defaultAvailableItems, ...state.availableItems].every(
+      (availableItem) => !isSameWidget(item, availableItem)
+    );
 
-    return isMissing ? {...item, problem: true} : item;
+    return isMissing ? { ...item, problem: true } : item;
   });
 
   return (

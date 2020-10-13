@@ -36,12 +36,16 @@ const styles = {
     top: tokens.spacingS,
     fill: tokens.colorTextLight,
   }),
-  problemItem: css({
-    position: 'relative',
-    margin: 0,
-    marginBottom: tokens.spacingM,
-    userSelect: 'none',
-  }),
+  problemItem: css`
+    position: relative;
+    margin: 0;
+    margin-bottom: ${tokens.spacingM};
+    user-select: none;
+
+    & > div > div {
+      display: flex;
+    }
+  `,
   problemItemText: css({
     paddingRight: tokens.spacingM,
   }),
