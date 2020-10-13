@@ -44,13 +44,13 @@ const organizationSettings = {
 
       let path = ['account', 'organizations'];
 
-      if (isOwnerOrAdmin(organization) || isOrganizationOnTrial(organization)) {
+      if (isDeveloper(organization)) {
+        path = [...path, 'apps', 'list'];
+      } else if (isOwnerOrAdmin(organization) || isOrganizationOnTrial(organization)) {
         // the subscription page is available to users of any role when the org is on trial
         const hasNewPricing = !isLegacyOrganization(organization);
 
         path = [...path, hasNewPricing ? 'subscription_new' : 'subscription'];
-      } else if (isDeveloper(organization)) {
-        path = [...path, 'apps', 'list'];
       } else {
         // They are a member and the member path should go to organization/teams
         path = [...path, 'teams'];
