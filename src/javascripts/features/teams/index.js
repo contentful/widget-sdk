@@ -1,3 +1,2 @@
-export { TeamDetailsRoute } from './routes/TeamDetailsRoute';
-export { TeamListRoute } from './routes/TeamListRoute';
+export { teamsState } from './routes/TeamsState';
 export { isEnabled } from './components/TeamsFeature';

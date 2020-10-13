@@ -10,13 +10,6 @@ export default (state) => {
   if (!path) {
     return null;
   }
-  // partialTest => also valid for child paths
-  // https://github.com/troch/path-parser#pathpartialtestpath-string-opts-object-object--null
-  const params = ROUTES.organization.partialTest(path);
-  // if orgId is in path just return that
-  if (params !== null) {
-    return params.orgId;
-  }
   // otherwise get active space
   const spaceId = get('spaceId', ROUTES.space.partialTest(path));
   if (!spaceId) {

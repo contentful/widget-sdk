@@ -3,7 +3,7 @@ import { iframeStateWrapper } from 'states/utils';
 import * as Analytics from 'analytics/Analytics';
 import subscriptionState from './Subscription/SubscriptionState';
 import { usageState } from 'features/organization-usage';
-import teamsState from './Teams/TeamsState';
+import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { SSOSetupRoutingState } from 'features/sso';

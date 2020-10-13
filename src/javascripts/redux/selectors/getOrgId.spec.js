@@ -5,24 +5,6 @@ import getOrgId from './getOrgId';
 const testOrgId = 'testOrg';
 const testSpace = 'testSpace';
 describe('getOrgId', () => {
-  describe('is at route that contains an org id', () => {
-    let state;
-    beforeEach(() => {
-      state = reducer(undefined, {
-        type: 'LOCATION_CHANGED',
-        payload: {
-          location: {
-            pathname: routes.organization.children.teams.build({ orgId: testOrgId }),
-          },
-        },
-      });
-    });
-
-    it('should return the orgId from the route', () => {
-      expect(getOrgId(state)).toEqual(testOrgId);
-    });
-  });
-
   describe('is at route that contains a space id', () => {
     let state;
     beforeEach(() => {
