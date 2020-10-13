@@ -58,9 +58,11 @@ const EntryEditorWorkbench = (props) => {
 
   const editorData = getEditorData();
   const otDoc = getOtDoc();
-  const enabledTabs = editorData.editorsExtensions.filter((editor) => !editor.disabled);
-  const defaultTabKey = enabledTabs.length
-    ? `${enabledTabs[0].widgetNamespace}-${enabledTabs[0].widgetId}`
+  const availableTabs = editorData.editorsExtensions.filter(
+    (editor) => !editor.disabled && !editor.problem
+  );
+  const defaultTabKey = availableTabs.length
+    ? `${availableTabs[0].widgetNamespace}-${availableTabs[0].widgetId}`
     : null;
 
   const [selectedTab, setSelectedTab] = useState(defaultTabKey);
@@ -83,7 +85,7 @@ const EntryEditorWorkbench = (props) => {
 
   const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
 
-  const tabs = enabledTabs.map((currentTab) => {
+  const tabs = availableTabs.map((currentTab) => {
     const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
     const isReferenceTabVisible = isReferenceTab && tabVisible.entryReferences;
     const isReferenceTabEnabled =

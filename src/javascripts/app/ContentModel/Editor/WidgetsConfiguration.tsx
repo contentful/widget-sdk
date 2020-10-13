@@ -76,6 +76,14 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
     .concat(state.availableItems)
     .filter((item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem)));
 
+  const selectedItems = state.items.map((item) => {
+    const isMissing = [...defaultAvailableItems, ...state.availableItems].every(
+      (availableItem) => !isSameWidget(item, availableItem)
+    );
+
+    return isMissing ? { ...item, problem: true } : item;
+  });
+
   return (
     <>
       <Heading className={styles.heading}>{configuration.location} configuration</Heading>
@@ -97,7 +105,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
           <CustomConfiguration
             title={configuration.location}
             onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
-            items={state.items}
+            items={selectedItems}
             onRemoveItem={(widget: ConfigurationItem) => {
               dispatch(removeItem(widget));
             }}
