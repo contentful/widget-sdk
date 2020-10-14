@@ -49,7 +49,6 @@ function save(definition) {
     path: ['app_definitions'].concat(isPersisted ? [id] : []),
     data: {
       name: definition.name,
-      public: definition.public,
       ...(definition.src ? widgetConfig : {}),
     },
   });
