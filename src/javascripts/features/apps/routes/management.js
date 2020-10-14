@@ -5,6 +5,8 @@ import { NewApp } from '../management/NewApp';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { getAppDefinitionLoader } from 'features/apps-core';
+import { ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS } from '.';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 const definitionsResolver = [
   '$stateParams',
@@ -44,11 +46,34 @@ export const managementRoute = {
       resolve: {
         definitions: definitionsResolver,
         canManageApps: canManageAppsResolver,
+        hasAdvancedApps: [
+          '$stateParams',
+          async ({ orgId }) => {
+            try {
+              return await getOrgFeature(
+                orgId,
+                ADVANCED_APPS_FEATURE_KEY,
+                DEFAULT_ADVANCED_APPS_STATUS
+              );
+            } catch (err) {
+              return DEFAULT_ADVANCED_APPS_STATUS;
+            }
+          },
+        ],
       },
       mapInjectedToProps: [
         'definitions',
         'canManageApps',
-        (definitions, canManageApps) => ({ definitions, canManageApps }),
+        'hasAdvancedApps',
+        (definitions, canManageApps, hasAdvancedApps) => {
+          return {
+            definitions,
+            canManageApps,
+            // Values have to be synced with:
+            // https://github.com/contentful/extensibility-api/blob/master/lib/entities/constants.ts
+            definitionLimit: hasAdvancedApps ? 50 : 10,
+          };
+        },
       ],
       component: AppListing,
     },
