@@ -175,7 +175,7 @@ function createDialogSDK(
 
   return {
     ...sdkWithoutDialogs,
-    dialogs: createDialogsApi(sdkWithoutDialogs),
+    dialogs: createDialogsApi(sdkWithoutDialogs as BaseExtensionSDKWithoutDialogs),
   };
 }
 

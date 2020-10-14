@@ -13,7 +13,7 @@ import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
-import { noop } from 'lodash';
+import { noop, omit } from 'lodash';
 
 interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
@@ -104,8 +104,14 @@ export const createEditorExtensionSDK = ({
     ids: idsApi,
   };
 
+  // We don't want to leak entry specific information
+  const sdkWithoutDialogsAndIds = {
+    ...sdkWithoutDialogs,
+    ids: omit(sdkWithoutDialogs.ids, ['entry', 'contentType']),
+  };
+
   return {
     ...sdkWithoutDialogs,
-    dialogs: createDialogsApi(sdkWithoutDialogs),
+    dialogs: createDialogsApi(sdkWithoutDialogsAndIds),
   };
 };
