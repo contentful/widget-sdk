@@ -25,6 +25,7 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
 import StateLink from 'app/common/StateLink';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   workbenchContent: css({
@@ -76,7 +77,7 @@ export default class TasksPage extends Component {
         body: task.body,
         createdBy: spaceUsers.find((user) => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
-        enviromentId: task.sys.environment.sys.id,
+        environment: task.sys.environment,
         entryId: task.sys.parentEntity.sys.id,
         entryTitle: entryTitles[task.sys.parentEntity.sys.id],
       };
@@ -104,13 +105,14 @@ export default class TasksPage extends Component {
       // getEntryTitle expects the entry field to be keyed by their internal ID,
       // not their API name. But we're using API data, so we need to convert
       // the field keys before passing them along.
+      console.log(key);
       return _.find(contentType.data.fields, { apiName: key }).id;
     });
     return getEntryTitle({
       entry: { ...entry, fields },
       contentType: contentType.data,
       defaultInternalLocaleCode: this.props.defaultLocaleCode,
-      defaultTitle: 'Untilted',
+      defaultTitle: 'Untitled',
     });
   };
 
@@ -126,51 +128,47 @@ export default class TasksPage extends Component {
 
   renderTable = () => (
     <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell className={styles.taskColumn}>Task</TableCell>
-          <TableCell>Created by</TableCell>
-          <TableCell>Assigned at</TableCell>
-          <TableCell className={styles.entryColumn}>Appears in</TableCell>
-        </TableRow>
-      </TableHead>
-
+      <TableHeader />
       <TableBody>
-        {this.state.tasks.map((task, index) => (
-          <TableRow key={index}>
-            <TableCell className={styles.taskColumn}>{task.body}</TableCell>
-            <TableCell>{task.createdBy.firstName}</TableCell>
-            <TableCell>
-              <RelativeDateTime value={task.createdAt} />
-            </TableCell>
-            <TableCell className={styles.entryColumn}>
-              <StateLink
-                path="spaces.detail.environment.entries.detail"
-                params={{ entryId: task.entryId, environmentId: task.enviromentId }}>
-                {({ getHref, onClick }) => (
-                  <TextLink icon="Entry" href={getHref()} onClick={onClick}>
-                    {task.entryTitle}
-                  </TextLink>
-                )}
-              </StateLink>
-            </TableCell>
-          </TableRow>
-        ))}
+        {this.state.tasks.map((task, index) => {
+          // Look for the environment of the task
+          // if it's master we don't want it in the url
+          const path = [
+            'spaces',
+            'detail',
+            ...(isMasterEnvironment(task.environment) ? [] : ['environment']),
+            'entries',
+            'detail',
+          ].join('.');
+
+          return (
+            <TableRow key={index}>
+              <TableCell className={styles.taskColumn}>{task.body}</TableCell>
+              <TableCell>{task.createdBy.firstName}</TableCell>
+              <TableCell>
+                <RelativeDateTime value={task.createdAt} />
+              </TableCell>
+              <TableCell className={styles.entryColumn}>
+                <StateLink
+                  path={path}
+                  params={{ entryId: task.entryId, environmentId: task.environment.sys.id }}>
+                  {({ getHref, onClick }) => (
+                    <TextLink icon="Entry" href={getHref()} onClick={onClick}>
+                      {task.entryTitle}
+                    </TextLink>
+                  )}
+                </StateLink>
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
 
   renderLoadingState = () => (
     <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell className={styles.taskColumn}>Task</TableCell>
-          <TableCell>Created by</TableCell>
-          <TableCell>Assigned at</TableCell>
-          <TableCell className={styles.entryColumn}>Appears in</TableCell>
-        </TableRow>
-      </TableHead>
-
+      <TableHeader />
       <TableBody>
         <TableRow>
           <TableCell className={styles.taskColumn}>
@@ -218,4 +216,17 @@ export default class TasksPage extends Component {
       </Workbench>
     );
   }
+}
+
+function TableHeader() {
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell className={styles.taskColumn}>Task</TableCell>
+        <TableCell>Created by</TableCell>
+        <TableCell>Assigned at</TableCell>
+        <TableCell className={styles.entryColumn}>Appears in</TableCell>
+      </TableRow>
+    </TableHead>
+  );
 }
