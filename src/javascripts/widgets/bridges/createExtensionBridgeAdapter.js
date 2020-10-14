@@ -15,7 +15,6 @@ export const createExtensionBridgeAdapter = (scopeData) => (
     'editorContext',
     'editorData',
     'entityInfo',
-    'fields',
     'fieldLocaleListeners',
     'localeData',
     'otDoc',

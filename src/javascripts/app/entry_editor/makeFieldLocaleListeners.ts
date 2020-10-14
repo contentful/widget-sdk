@@ -21,7 +21,7 @@ export const makeFieldLocaleListeners = (
   const lookup: FieldLocaleLookup = {};
   const flat: FieldLocaleListener[] = [];
 
-  if (isEmpty(localeData)) return;
+  if (isEmpty(localeData)) return { lookup, flat };
 
   controls.forEach((widget) => {
     const locales = widget.field.localized ? localeData.privateLocales : [localeData.defaultLocale];
