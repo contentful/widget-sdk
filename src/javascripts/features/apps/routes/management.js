@@ -7,6 +7,7 @@ import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { getAppDefinitionLoader } from 'features/apps-core';
 import { ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS } from '.';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { ADVANCED_APPS_LIMIT, BASIC_APPS_LIMIT } from '../limits';
 
 const definitionsResolver = [
   '$stateParams',
@@ -69,9 +70,7 @@ export const managementRoute = {
           return {
             definitions,
             canManageApps,
-            // Values have to be synced with:
-            // https://github.com/contentful/extensibility-api/blob/master/lib/entities/constants.ts
-            definitionLimit: hasAdvancedApps ? 50 : 10,
+            definitionLimit: hasAdvancedApps ? ADVANCED_APPS_LIMIT : BASIC_APPS_LIMIT,
           };
         },
       ],
