@@ -38,7 +38,12 @@ function save(definition) {
   const isPersisted = typeof id === 'string';
   const method = isPersisted ? 'PUT' : 'POST';
 
-  const widgetConfig = { src: definition.src, locations: definition.locations || [] };
+  const widgetConfig = {
+    src: definition.src,
+    locations: definition.locations || [],
+    parameters: definition.parameters,
+  };
+
   const dialogLocation = widgetConfig.locations.find((l) => l.location === WidgetLocation.DIALOG);
   if (!dialogLocation) {
     widgetConfig.locations = [...widgetConfig.locations, { location: WidgetLocation.DIALOG }];
