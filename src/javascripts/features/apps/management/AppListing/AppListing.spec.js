@@ -22,16 +22,22 @@ util.getLastUsedSpace = jest.fn(() => Promise.resolve('my-space-123'));
 
 describe('AppListing', () => {
   it('should show the empty state when no definitions are passed', () => {
-    expect(render(<AppListing definitions={[]} canManageApps />)).toMatchSnapshot();
+    expect(
+      render(<AppListing definitions={[]} canManageApps definitionLimit={10} />)
+    ).toMatchSnapshot();
   });
 
   it('should render the app listing when definitions are present', () => {
-    expect(render(<AppListing definitions={mockDefinitions} canManageApps />)).toMatchSnapshot();
+    expect(
+      render(<AppListing definitions={mockDefinitions} canManageApps definitionLimit={10} />)
+    ).toMatchSnapshot();
   });
 
   it('should show a warning when a user cant manage apps', () => {
     expect(
-      render(<AppListing definitions={mockDefinitions} canManageApps={false} />)
+      render(
+        <AppListing definitions={mockDefinitions} canManageApps={false} definitionLimit={10} />
+      )
     ).toMatchSnapshot();
   });
 });

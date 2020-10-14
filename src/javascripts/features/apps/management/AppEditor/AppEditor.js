@@ -3,7 +3,6 @@ import {
   CheckboxField,
   FormLabel,
   Icon,
-  Note,
   Paragraph,
   Switch,
   Tag,
@@ -15,7 +14,6 @@ import {
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import c from 'classnames';
-import { MARKETPLACE_ORG_ID } from 'features/apps/config';
 import { cloneDeep, isEmpty, isEqual, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -103,13 +101,6 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
     } else {
       updated.locations = definition.locations.concat([{ location: locationValue }]);
     }
-
-    onChange(updated);
-  };
-
-  const togglePublic = () => {
-    const updated = cloneDeep(definition);
-    updated.public = !updated.public;
 
     onChange(updated);
   };
@@ -407,21 +398,6 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
               );
             })}
           </>
-        )}
-        {definition.sys.organization.sys.id === MARKETPLACE_ORG_ID && (
-          <div className={styles.publicSwitch}>
-            <Switch
-              testId="public-switch"
-              id="public-switch"
-              isChecked={definition.public}
-              labelText="Public"
-              onToggle={() => togglePublic()}
-            />
-            <br />
-            <Note noteType="warning" title="ENTERING THE DANGER ZONE">
-              You are about to modify the definition of a Contentful Marketplace app!
-            </Note>
-          </div>
         )}
       </div>
     </>

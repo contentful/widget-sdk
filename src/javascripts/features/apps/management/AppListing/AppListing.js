@@ -21,12 +21,10 @@ import {
 import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import React from 'react';
 import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { MARKETPLACE_ORG_ID, MAX_DEFINITIONS_ALLOWED } from 'features/apps/config';
 import { AppInstallModal } from '../AppInstallModal';
 import { styles } from './styles';
 
@@ -42,20 +40,19 @@ function openInstallModal(definition) {
   ));
 }
 
-function CreateAppButton({ orgId, disabled, onClick }) {
-  const isNotPublicOrg = orgId !== MARKETPLACE_ORG_ID;
-  if (isNotPublicOrg && disabled) {
+function CreateAppButton({ definitionLimit, disabled, onClick }) {
+  if (disabled) {
     return (
       <Tooltip
-        content={`Your organization has reached the limit of ${MAX_DEFINITIONS_ALLOWED} app definitions.`}>
+        content={`Your organization has reached the limit of ${definitionLimit} app definitions.`}>
         <Button onClick={onClick} disabled={disabled}>
           Create app
         </Button>
       </Tooltip>
     );
+  } else {
+    return <Button onClick={onClick}>Create app</Button>;
   }
-
-  return <Button onClick={onClick}>Create app</Button>;
 }
 
 function buildRenderedAppURL(url) {
@@ -69,10 +66,7 @@ function buildRenderedAppURL(url) {
   return `${urlObj.hostname}${port}${path}`;
 }
 
-export function AppListing({ definitions, canManageApps }) {
-  const definitionsLimitExceeded = definitions.length >= MAX_DEFINITIONS_ALLOWED;
-  const orgId = get(definitions, [0, 'sys', 'organization', 'sys', 'id'], '');
-
+export function AppListing({ definitions, canManageApps, definitionLimit }) {
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -143,8 +137,8 @@ export function AppListing({ definitions, canManageApps }) {
             {({ onClick }) => (
               <CreateAppButton
                 onClick={onClick}
-                orgId={orgId}
-                disabled={definitionsLimitExceeded}
+                definitionLimit={definitionLimit}
+                disabled={definitions.length >= definitionLimit}
               />
             )}
           </StateLink>
@@ -230,10 +224,11 @@ export function AppListing({ definitions, canManageApps }) {
 AppListing.propTypes = {
   definitions: PropTypes.arrayOf(PropTypes.object).isRequired,
   canManageApps: PropTypes.bool.isRequired,
+  definitionLimit: PropTypes.number.isRequired,
 };
 
 CreateAppButton.propTypes = {
   disabled: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired,
+  definitionLimit: PropTypes.number.isRequired,
 };
