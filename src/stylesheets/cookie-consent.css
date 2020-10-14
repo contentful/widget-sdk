@@ -38,7 +38,7 @@
   font-weight: bold;
 }
 
-.osano-cm-toggle__checkbox {
+.osano-cm-toggle__input {
   height: initial;
   width: initial;
   margin: 0;
@@ -105,24 +105,30 @@
   margin-left: var(--spacing-m);
 }
 
-.osano-cm-info-dialog {
+.osano-cm-info-dialog__info {
   box-shadow: none;
   background-color: var(--color-element-lightest);
-  padding: 1.25rem;
+  padding: 0.5rem;
   max-width: 350px;
   font-size: var(--font-size-m);
   line-height: var(--line-height-default);
   color: var(--color-text-mid);
 }
 
-.osano-cm-info-dialog-close {
+.osano-cm-close {
   display: none;
 }
 
-.osano-cm-info-dialog__header {
+.osano-cm-info-dialog-header {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid var(--color-element-mid);
+  position: initial;
+  font-weight: 600;
+}
+
+.osano-cm-header,
+.osano-cm-info-dialog-header {
+  background: transparent;
 }
 
 .osano-cm-info-dialog .osano-cm-label,
@@ -155,11 +161,15 @@
 
 details.osano-cm-disclosure[open],
 details.osano-cm-disclosure:not([open]),
-details.osano-cm-disclosure.osano-cm-disclosure--collapse {
+.osano-cm-disclosure--collapse {
   padding: 0;
   width: 100%;
   margin: 0;
   border: 0;
+}
+
+..osano-cm-disclosure--collapse {
+  border-bottom: none;
 }
 
 summary.osano-cm-disclosure__toggle {
@@ -203,10 +213,15 @@ summary.osano-cm-disclosure__toggle {
 .osano-cm-info-dialog .osano-cm-toggle {
   flex-direction: row;
   justify-content: flex-start;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-m);
 }
 
-.osano-cm-info-list__item {
+.osano-cm-list {
+  border-top: 1px solid var(--color-element-mid);
+  padding-top: 1rem;
+}
+
+.osano-cm-list__list-item {
   margin: var(--spacing-m) 0 0;
   border-bottom: 1px solid var(--color-element-dark);
 }
