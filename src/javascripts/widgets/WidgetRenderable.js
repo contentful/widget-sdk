@@ -20,10 +20,11 @@ export function buildRenderables(controls, widgets) {
         const renderable = buildOneRenderable(control, widgets);
         const type = renderable.sidebar ? 'sidebar' : 'form';
         acc[type].push(renderable);
+        acc.all.push(renderable);
       }
       return acc;
     },
-    { sidebar: [], form: [] }
+    { sidebar: [], form: [], all: [] }
   );
 }
 

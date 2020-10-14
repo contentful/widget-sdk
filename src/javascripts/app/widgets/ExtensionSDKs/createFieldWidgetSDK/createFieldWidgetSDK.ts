@@ -14,6 +14,7 @@ import { createUserApi } from '../createUserApi';
 import { noop } from 'lodash';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -24,6 +25,7 @@ export function createFieldWidgetSDK({
   $scope,
   doc,
   internalContentType,
+  fieldLocaleListeners,
   parameters,
 }: {
   fieldId: string;
@@ -34,6 +36,7 @@ export function createFieldWidgetSDK({
   $scope: any;
   doc: Document;
   internalContentType: InternalContentType;
+  fieldLocaleListeners: { lookup: FieldLocaleLookup };
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
@@ -51,7 +54,7 @@ export function createFieldWidgetSDK({
   const entryApi = createEntryApi({
     internalContentType,
     doc,
-    fieldLocaleListeners: $scope.fieldLocaleListeners.lookup,
+    fieldLocaleListeners: fieldLocaleListeners.lookup,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.

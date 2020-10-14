@@ -14,6 +14,7 @@ import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { SidebarExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 interface CreateSidebarWidgetSDKOptions {
   internalContentType: InternalContentType;
@@ -26,6 +27,7 @@ interface CreateSidebarWidgetSDKOptions {
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  fieldLocaleListeners: { lookup: FieldLocaleLookup };
 }
 
 export const createSidebarWidgetSDK = ({
@@ -36,6 +38,7 @@ export const createSidebarWidgetSDK = ({
   spaceContext,
   widgetNamespace,
   widgetId,
+  fieldLocaleListeners,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
   const editorApi = createEditorApi({
@@ -48,7 +51,7 @@ export const createSidebarWidgetSDK = ({
   const entryApi = createEntryApi({
     internalContentType,
     doc,
-    fieldLocaleListeners: $scope.fieldLocaleListeners.lookup,
+    fieldLocaleListeners: fieldLocaleListeners.lookup,
     // TODO: `setInvalid` is only available on `fieldController` of a current
     // field, but in context of sidebar there is no current field. We should move
     // it to field-locale level in a long run.

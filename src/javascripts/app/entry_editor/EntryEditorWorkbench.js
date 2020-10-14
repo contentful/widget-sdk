@@ -27,6 +27,8 @@ import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
+import { filterWidgets } from './formWidgetsController';
+import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -49,8 +51,6 @@ const EntryEditorWorkbench = (props) => {
     sidebarToggleProps,
     preferences,
     fields,
-    widgets,
-    fieldLocaleListeners,
   } = props;
   const { state: referencesState } = useContext(ReferencesContext);
   const { processingAction, references, selectedEntities } = referencesState;
@@ -68,6 +68,13 @@ const EntryEditorWorkbench = (props) => {
   const [selectedTab, setSelectedTab] = useState(defaultTabKey);
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
 
+  const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
+    localeData,
+    editorContext,
+    editorData.fieldControls.form,
+    preferences.showDisabledFields
+  );
+
   useEffect(() => {
     async function getFeatureFlagVariation() {
       const { data: spaceData, environment } = getSpace();
@@ -84,6 +91,11 @@ const EntryEditorWorkbench = (props) => {
   }, [setTabVisible, getSpace]);
 
   const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
+
+  const fieldLocaleListeners = useMemo(
+    () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
+    [editorData.fieldControls.all, editorContext, localeData, otDoc]
+  );
 
   const tabs = availableTabs.map((currentTab) => {
     const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
@@ -105,11 +117,15 @@ const EntryEditorWorkbench = (props) => {
             tabVisible,
             selectedTab,
             onRootReferenceCardClick,
+            widgets,
+            shouldDisplayNoLocalizedFieldsAdvice,
+            fieldLocaleListeners,
             ...props,
           });
         } else {
           const createSdk = createExtensionBridgeAdapter({
             editorData,
+            editorContext,
             entityInfo,
             otDoc,
             localeData,
@@ -268,12 +284,7 @@ EntryEditorWorkbench.propTypes = {
   preferences: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
-  fieldLocaleListeners: PropTypes.shape({
-    flat: PropTypes.array,
-    lookup: PropTypes.object,
-  }),
   getOtDoc: PropTypes.func,
-  shouldDisplayNoLocalizedFieldsAdvice: PropTypes.bool,
   noLocalizedFieldsAdviceProps: PropTypes.object,
   sidebarToggleProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,

@@ -14,6 +14,7 @@ import { createDialogsApi } from '../createDialogsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { noop } from 'lodash';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
@@ -26,6 +27,7 @@ interface CreateEditorExtensionSDKOptions {
   $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  fieldLocaleListeners: { lookup: FieldLocaleLookup };
 }
 
 export const createEditorExtensionSDK = ({
@@ -36,6 +38,7 @@ export const createEditorExtensionSDK = ({
   widgetId,
   parameters,
   doc,
+  fieldLocaleListeners,
 }: CreateEditorExtensionSDKOptions): EditorExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
 
@@ -51,7 +54,7 @@ export const createEditorExtensionSDK = ({
   const entryApi = createEntryApi({
     internalContentType,
     doc,
-    fieldLocaleListeners: $scope.fieldLocaleListeners.lookup,
+    fieldLocaleListeners: fieldLocaleListeners.lookup,
     // TODO: `setInvalid` is only available on `fieldController` of a current
     // field, but in context of editor there is no current field. We should move
     // it to field-locale level in a long run.

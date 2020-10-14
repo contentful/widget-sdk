@@ -7,6 +7,7 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import TheLocaleStore from 'services/localeStore';
 import { createFieldWidgetSDK, createSidebarWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { toRendererWidget } from 'widgets/WidgetCompat';
+import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 
 export default ({ $scope, emitter }) => {
   const spaceContext = getModule('spaceContext');
@@ -226,6 +227,13 @@ export default ({ $scope, emitter }) => {
     }
   });
 
+  const fieldLocaleListeners = makeFieldLocaleListeners(
+    $scope.editorData.fieldControls.all,
+    $scope.editorContext,
+    $scope.localeData,
+    $scope.otDoc
+  );
+
   // Construct a list of legacy sidebar extensions
   const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
     return {
@@ -241,6 +249,7 @@ export default ({ $scope, emitter }) => {
           doc: $scope.otDoc,
           internalContentType: $scope.entityInfo.contentType,
           parameters: widget.parameters,
+          fieldLocaleListeners,
         })
       ),
       widget: toRendererWidget(widget.descriptor),
@@ -258,6 +267,7 @@ export default ({ $scope, emitter }) => {
         spaceContext,
         widgetNamespace,
         widgetId,
+        fieldLocaleListeners,
       });
     },
     (ns, id, params) => [ns, id, JSON.stringify(params)].join(',')
