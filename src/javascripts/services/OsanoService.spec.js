@@ -267,6 +267,16 @@ describe('OsanoService', () => {
       expect(updateUserData).toBeCalled();
       expect(Notification.warning).not.toBeCalled();
     });
+
+    it('should not warn the user if this is their first consent record', async () => {
+      user.cookieConsentData = null;
+
+      await setupService();
+      await callHandleConsentSaved();
+
+      expect(updateUserData).toBeCalled();
+      expect(Notification.warning).not.toBeCalled();
+    });
   });
 
   describe('init', () => {
