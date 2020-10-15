@@ -105,7 +105,6 @@ export default class TasksPage extends Component {
       // getEntryTitle expects the entry field to be keyed by their internal ID,
       // not their API name. But we're using API data, so we need to convert
       // the field keys before passing them along.
-      console.log(key);
       return _.find(contentType.data.fields, { apiName: key }).id;
     });
     return getEntryTitle({
@@ -131,15 +130,9 @@ export default class TasksPage extends Component {
       <TableHeader />
       <TableBody>
         {this.state.tasks.map((task, index) => {
-          // Look for the environment of the task
-          // if it's master we don't want it in the url
-          const path = [
-            'spaces',
-            'detail',
-            ...(isMasterEnvironment(task.environment) ? [] : ['environment']),
-            'entries',
-            'detail',
-          ].join('.');
+          const linkPath = isMasterEnvironment(task.environment)
+            ? 'spaces.detail.entries.detail'
+            : 'spaces.detail.environment.entries.detail';
 
           return (
             <TableRow key={index}>
@@ -150,7 +143,7 @@ export default class TasksPage extends Component {
               </TableCell>
               <TableCell className={styles.entryColumn}>
                 <StateLink
-                  path={path}
+                  path={linkPath}
                   params={{ entryId: task.entryId, environmentId: task.environment.sys.id }}>
                   {({ getHref, onClick }) => (
                     <TextLink icon="Entry" href={getHref()} onClick={onClick}>
