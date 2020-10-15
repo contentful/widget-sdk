@@ -38,7 +38,7 @@ function createTrackingData(sessionMetadata, eventMetadata) {
     // Required for space upgrade flow
     spaceId: sessionMetadata.spaceId ?? null,
     // Optional
-    eventMetadata,
+    ...eventMetadata,
   };
 
   return trackingData;

@@ -79,10 +79,10 @@ export const TabTypes = {
 const TabsData = {
   [TabTypes.ScheduledJobs]: {
     title: 'Scheduled',
-    description: 'Entries that are currently scheduled to publish.',
+    description: 'Content that is currently scheduled to publish.',
     emptyStateMessage: {
       title: 'Nothing is scheduled at the moment',
-      text: 'Entries that are scheduled to publish will show up here',
+      text: 'Content that is scheduled to publish will show up here',
     },
     query: {
       'sys.status': 'scheduled',
@@ -92,10 +92,10 @@ const TabsData = {
   },
   [TabTypes.CompletedJobs]: {
     title: 'Completed',
-    description: 'Entries that were successfully published',
+    description: 'Content that was successfully published',
     emptyStateMessage: {
-      title: 'No entries have been successfully published yet',
-      text: 'Successfully published entries will show up here',
+      title: 'No content has been successfully published yet',
+      text: 'Successfully published content will show up here',
     },
     query: {
       'sys.status': 'succeeded',
@@ -105,10 +105,10 @@ const TabsData = {
   },
   [TabTypes.ErroredJobs]: {
     title: 'Failed',
-    description: 'Entries that failed to publish',
+    description: 'Content that failed to publish',
     emptyStateMessage: {
       title: 'Nothing here',
-      text: 'Scheduled entries that have failed to publish will show up here.',
+      text: 'Scheduled content that has failed to publish will show up here.',
     },
     query: {
       'sys.status': 'failed',
@@ -133,7 +133,7 @@ const JobsListShell = ({ children }) => (
   </Workbench>
 );
 
-class JobsListPage extends Component {
+class ScheduledActionsListPage extends Component {
   constructor(props) {
     super(props);
 
@@ -147,6 +147,8 @@ class JobsListPage extends Component {
       scheduleData: {
         jobs: [],
         entries: {},
+        assets: {},
+        releases: {},
         users: {},
         contentTypes: {},
       },
@@ -189,7 +191,7 @@ class JobsListPage extends Component {
       return;
     }
 
-    const { jobs, entries, users, nextQuery } = jobsData;
+    const { jobs, entries, assets, releases, users, nextQuery } = jobsData;
     const { scheduleData } = this.state;
 
     const newJobs = _.uniqBy(scheduleData.jobs.concat(jobs), 'sys.id');
@@ -198,7 +200,9 @@ class JobsListPage extends Component {
       isInitialLoad: false,
       scheduleData: {
         jobs: newJobs,
-        entries: { ...scheduleData.entries, ...normalizeCollection(entries) },
+        entries: { ...scheduleData.entries, ...(entries && normalizeCollection(entries)) },
+        assets: { ...scheduleData.assets, ...(assets && normalizeCollection(assets)) },
+        releases: { ...scheduleData.releases, ...(releases && normalizeCollection(releases)) },
         users: { ...scheduleData.users, ...normalizeCollection(users) },
         contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
       },
@@ -226,12 +230,18 @@ class JobsListPage extends Component {
       );
     }
 
+    const entitiesById = {
+      ...scheduleData.entries,
+      ...scheduleData.assets,
+      ...scheduleData.releases,
+    };
+
     return (
       <>
         {activeTab !== TabTypes.ErroredJobs ? (
           <ScheduledActionsSchedule
             jobs={scheduleData.jobs}
-            entriesData={scheduleData.entries}
+            entitiesById={entitiesById}
             usersData={scheduleData.users}
             emptyStateMessage={TabsData[activeTab].emptyStateMessage}
             contentTypesData={scheduleData.contentTypes}
@@ -240,7 +250,7 @@ class JobsListPage extends Component {
           <ScheduledActionsTable
             description={TabsData[activeTab].description}
             jobs={scheduleData.jobs}
-            entriesData={scheduleData.entries}
+            entitiesById={entitiesById}
             contentTypesData={scheduleData.contentTypes}
             defaultLocale={defaultLocale}
           />
@@ -296,7 +306,7 @@ class JobsListPage extends Component {
   }
 }
 
-JobsListPage.propTypes = {
+ScheduledActionsListPage.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   contentTypes: PropTypes.array.isRequired,
@@ -304,8 +314,8 @@ JobsListPage.propTypes = {
   activeTab: PropTypes.oneOf(Object.keys(TabTypes)),
 };
 
-JobsListPage.defaultProps = {
+ScheduledActionsListPage.defaultProps = {
   activeTab: TabTypes.ScheduledJobs,
 };
 
-export default JobsListPage;
+export default ScheduledActionsListPage;

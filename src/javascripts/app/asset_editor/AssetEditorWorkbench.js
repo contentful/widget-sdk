@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench, Button } from '@contentful/forma-36-react-components';
@@ -10,6 +10,8 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
 import tokens from '@contentful/forma-36-tokens';
+import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
+import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 
 const styles = {
   sidebar: css({
@@ -29,8 +31,6 @@ const AssetEditorWorkbench = ({
   statusNotificationProps,
   entrySidebarProps,
   fields,
-  widgets,
-  fieldLocaleListeners,
   editorContext,
   getOtDoc,
   tagProps,
@@ -38,6 +38,14 @@ const AssetEditorWorkbench = ({
 }) => {
   const otDoc = getOtDoc();
   const editorData = getEditorData();
+
+  const { widgets } = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
+
+  const fieldLocaleListeners = useMemo(
+    () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
+    [editorData.fieldControls.all, editorContext, localeData, otDoc]
+  );
+
   return (
     <div className="asset-editor">
       <Workbench>
@@ -72,10 +80,12 @@ const AssetEditorWorkbench = ({
           <StatusNotification {...statusNotificationProps} />
           <div className="entity-editor-form">
             <AngularComponent
-              template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
+              template={
+                '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
+              }
               scope={{
-                widgets,
                 fieldLocaleListeners,
+                widgets,
                 localeData,
                 editorContext,
                 fields,
@@ -89,10 +99,7 @@ const AssetEditorWorkbench = ({
           </div>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
-          <EntrySidebar
-            entrySidebarProps={entrySidebarProps}
-            sidebarToggleProps={{ commentsToggle: { isEnabled: false } }}
-          />
+          <EntrySidebar entrySidebarProps={entrySidebarProps} disableComments />
         </Workbench.Sidebar>
       </Workbench>
     </div>
@@ -117,11 +124,6 @@ AssetEditorWorkbench.propTypes = {
   statusNotificationProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
-  widgets: PropTypes.array,
-  fieldLocaleListeners: PropTypes.shape({
-    flat: PropTypes.array,
-    lookup: PropTypes.object,
-  }),
   getOtDoc: PropTypes.func,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,

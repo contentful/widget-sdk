@@ -84,7 +84,7 @@ const UserListRow = ({
         )}
         <div data-test-id="user-list.roles">{displayRoles}</div>
       </div>
-      <Tooltip targetWrapperClassName={styles.userMenu} place="left" content={toolTipContent}>
+      <Tooltip place="auto" targetWrapperClassName={styles.userMenu} content={toolTipContent}>
         <CardActions
           isAutoalignmentEnabled={true}
           iconButtonProps={{ buttonType: 'primary', testId: 'user-list.actions' }}

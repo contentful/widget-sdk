@@ -86,8 +86,8 @@ describe('CommentsPanel', () => {
 
     it('fetches all comments of entry `props.entryId` via `props.endpoint`', () => {
       build();
-      const { endpoint, entryId } = defaultProps;
-      expect(useCommentsFetcher).toHaveBeenCalledWith(endpoint, entryId);
+      const { entryId } = defaultProps;
+      expect(useCommentsFetcher).toHaveBeenCalledWith(expect.any(Function), entryId);
     });
   });
 

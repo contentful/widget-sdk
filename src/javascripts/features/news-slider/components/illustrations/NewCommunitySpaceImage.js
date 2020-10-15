@@ -1,9 +1,17 @@
 import React from 'react';
+import { css } from 'emotion';
+
+const styles = {
+  svg: css({
+    width: '100%',
+  }),
+};
 
 export const NewCommunitySpaceImage = () => {
   return (
     <svg
       id="Layer_1"
+      className={styles.svg}
       data-name="Layer 1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"

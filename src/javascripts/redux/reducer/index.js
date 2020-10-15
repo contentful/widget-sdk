@@ -5,8 +5,6 @@ import resources from './resources';
 import token from './token';
 import location from './location';
 import datasets from './datasets';
-import optimistic from './optimistic';
-import deleted from './deleted';
 import access from './access';
 
 // the redux dev tools are highly recommended to inspect the state created by these reducers
@@ -17,7 +15,5 @@ export default combineReducers({
   spaceWizard,
   token,
   datasets,
-  optimistic,
-  deleted,
   access,
 });

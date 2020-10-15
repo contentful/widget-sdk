@@ -16,12 +16,12 @@ export default function renderDefaultEditor(
     getEditorData,
     preferences,
     widgets,
-    fieldLocaleListeners,
     editorContext,
     shouldDisplayNoLocalizedFieldsAdvice,
     noLocalizedFieldsAdviceProps,
     selectedTab,
     onRootReferenceCardClick,
+    fieldLocaleListeners,
   }
 ) {
   const otDoc = getOtDoc();
@@ -50,12 +50,12 @@ export default function renderDefaultEditor(
           template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
           scope={{
             widgets,
-            fieldLocaleListeners,
             editorContext,
             localeData,
             fields,
             loadEvents,
             editorData: getEditorData(),
+            fieldLocaleListeners,
             otDoc,
             preferences,
             entityInfo,

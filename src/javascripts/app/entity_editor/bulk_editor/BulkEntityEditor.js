@@ -126,6 +126,12 @@ export const BulkEntityEditor = ({
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const fieldLocaleListeners = useMemo(() => {
+    if (!editorState) return null;
+    const { editorData, editorContext, doc } = editorState;
+    return makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, doc);
+  }, [editorState, localeData]);
+
   if (isLoading) {
     return (
       <div className={styles.loadingWrapper} data-test-id="entity-loader">
@@ -172,8 +178,7 @@ export const BulkEntityEditor = ({
     editorData,
     entityInfo,
     localeData,
-    makeFieldLocaleListeners: (currentScope) =>
-      makeFieldLocaleListeners(fieldControls.form.concat(fieldControls.sidebar), currentScope),
+    fieldLocaleListeners,
     otDoc: doc,
   };
 
@@ -215,9 +220,9 @@ export const BulkEntityEditor = ({
             ) : (
               <AngularComponent
                 with$Apply
-                template={`<div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
-                  <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
-                </div>`}
+                template={
+                  '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
+                }
                 scope={scope}
               />
             )}

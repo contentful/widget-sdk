@@ -47,10 +47,10 @@ function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
  * The input format is:
  * {
  *   'content-type-id-1': {
- *     controls: [{ fieldId: 'title' }, { fieldId: 'media' }],
- *     sidebar: { position: 2 }
+ *     controls: [{ fieldId: 'title', settings: {} }, { fieldId: 'media', settings: {} }],
+ *     sidebar: { position: 2, settings: {} }
  *   },
- *   'some-other-ct-id': { editor: true }
+ *   'some-other-ct-id': { editor: true, settings: {} }
  * }
  */
 export async function transformEditorInterfacesToTargetState(
@@ -98,13 +98,25 @@ function transformWidgetList(
   // If there is no item stored use the default one.
   const result = Array.isArray(existingWidgets) ? existingWidgets : cloneDeep(defaultWidgets);
 
-  const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
+  const widget: {
+    widgetNamespace: WidgetNamespace;
+    widgetId: string;
+    settings?: Record<string, boolean | string | number>;
+  } = {
+    widgetNamespace: WidgetNamespace.APP,
+    widgetId,
+  };
 
   if (partialTargetState === true) {
     return [...result, widget];
   }
 
   if (isObject(partialTargetState)) {
+    // Include settings only if they exist
+    if (partialTargetState.settings) {
+      widget.settings = partialTargetState.settings;
+    }
+
     // If position is defined use it for insertion.
     if (isUnsignedInteger(partialTargetState.position)) {
       result.splice(partialTargetState.position, 0, widget);
@@ -137,11 +149,21 @@ function transformSingleEditorInterfaceToTargetState(
       const controls = Array.isArray(result.controls) ? [...result.controls] : [];
       const idx = controls.findIndex((cur) => cur.fieldId === control.fieldId);
 
-      const item = {
+      const item: {
+        fieldId: string;
+        widgetNamespace: WidgetNamespace;
+        widgetId: string;
+        settings?: Record<string, boolean | string | number>;
+      } = {
         fieldId: control.fieldId,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       };
+
+      // Include settings only if they exist
+      if (control.settings) {
+        item.settings = control.settings;
+      }
 
       // Usually controls will be defined and field will be found by ID.
       if (idx > -1) {

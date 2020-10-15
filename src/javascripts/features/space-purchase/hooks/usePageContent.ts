@@ -6,13 +6,13 @@ function usePageContent(pageContent: PageContent) {
 
   useEffect(() => {
     // filter only the FAQ entries
-    if (pageContent.content.length > 0) {
+    if (pageContent?.content?.length > 0) {
       const questions = pageContent.content.filter(
         (entry) => entry.sys.contentType.sys.id === 'webappFaqEntry'
       );
       setFAQEntries(questions as FaqEntry[]);
     }
-  }, [pageContent.content]);
+  }, [pageContent]);
 
   return { faqEntries };
 }

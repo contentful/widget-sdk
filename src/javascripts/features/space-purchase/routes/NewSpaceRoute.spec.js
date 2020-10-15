@@ -74,10 +74,10 @@ describe('NewSpaceRoute', () => {
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
   });
 
-  it('should render a spinner while loading', () => {
+  it('should render the space plan selection page while loading', () => {
     build();
 
-    expect(screen.getByTestId('space-route-loading')).toBeVisible();
+    expect(screen.getByTestId('new-space-page')).toBeVisible();
   });
 
   it('should redirect to space home if the new flow is not enabled', async () => {
@@ -86,7 +86,7 @@ describe('NewSpaceRoute', () => {
 
     await waitFor(() => {
       expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        path: ['account', 'organizations', 'subscription_new'],
         params: { orgId: mockOrganization.sys.id },
       });
     });
@@ -99,7 +99,7 @@ describe('NewSpaceRoute', () => {
 
     await waitFor(() => {
       expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        path: ['account', 'organizations', 'subscription_new'],
         params: { orgId: mockOrganization.sys.id },
       });
     });
@@ -112,7 +112,7 @@ describe('NewSpaceRoute', () => {
 
     await waitFor(() => {
       expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        path: ['account', 'organizations', 'subscription_new'],
         params: { orgId: mockOrganization.sys.id },
       });
     });

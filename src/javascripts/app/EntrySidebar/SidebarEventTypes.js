@@ -14,9 +14,6 @@ export default {
   UPDATED_FOCUSED_LOCALE: 'sidebar:updated-focused-locale',
   UPDATED_DOCUMENT_STATE: 'sidebar:updated-document-state',
   UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',
-  UPDATED_COMMENTS_PANEL: 'sidebar:updated-comments-panel',
-  INIT_COMMENTS_PANEL: 'sidebar:init-comments-panel',
-  UPDATED_COMMENTS_COUNT: 'sidebar:updated-comments-count',
   WIDGET_REGISTERED: 'sidebar:widget-is-registered',
   WIDGET_DEREGISTERED: 'sidebar:widget-is-registered',
 };

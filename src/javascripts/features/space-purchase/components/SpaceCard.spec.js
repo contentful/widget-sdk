@@ -67,7 +67,9 @@ describe('SpaceCard', () => {
 
     const enterpriseButton = screen.getByTestId('select-space-cta');
     expect(enterpriseButton).toHaveTextContent('Talk to us');
-    expect(enterpriseButton.href).toEqual('https://www.contentful.comcontact/sales/');
+    expect(enterpriseButton.href).toEqual(
+      'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us'
+    );
   });
 });
 
