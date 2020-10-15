@@ -12,6 +12,7 @@ import {
 import StateLink from 'app/common/StateLink';
 import { WebhookCallStatus } from './WebhookCallStatus';
 import { getWebhookRepo } from './services/WebhookRepoInstance';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const PER_PAGE = 30;
 
@@ -21,19 +22,22 @@ export class WebhookActivityLog extends React.Component {
     registerLogRefreshAction: PropTypes.func.isRequired,
   };
 
+  static contextType = SpaceEnvContext;
+
   constructor(props) {
     super(props);
     this.state = { page: 0, loading: false, calls: [] };
   }
 
   componentDidMount() {
-    this.fetch();
+    const { currentSpaceId: spaceId, currentSpace: space } = this.context;
+    this.fetch({ spaceId, space });
     this.props.registerLogRefreshAction(this.fetch.bind(this));
   }
 
-  fetch() {
+  fetch({ spaceId, space }) {
     const { webhookId } = this.props;
-    const webhookRepo = getWebhookRepo();
+    const webhookRepo = getWebhookRepo({ spaceId, space });
 
     if (typeof webhookId !== 'string' || this.state.loading) {
       return Promise.resolve();
