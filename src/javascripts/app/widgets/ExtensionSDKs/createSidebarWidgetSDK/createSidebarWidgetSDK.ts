@@ -7,7 +7,7 @@ import { createIdsApiWithoutField } from '../utils';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { createUserApi, SpaceMember } from '../createUserApi';
 import { createNavigatorApi } from '../createNavigatorApi';
-import { noop } from 'lodash';
+import { noop, omit } from 'lodash';
 import { createSpaceApi } from '../createSpaceApi';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
@@ -115,8 +115,14 @@ export const createSidebarWidgetSDK = ({
     window: windowApi,
   };
 
+  // We don't want to leak entry specific information
+  const sdkWithoutDialogsAndIds = {
+    ...sdkWithoutDialogs,
+    ids: omit(sdkWithoutDialogs.ids, ['entry', 'contentType']),
+  };
+
   return {
     ...sdkWithoutDialogs,
-    dialogs: createDialogsApi(sdkWithoutDialogs),
+    dialogs: createDialogsApi(sdkWithoutDialogsAndIds),
   };
 };

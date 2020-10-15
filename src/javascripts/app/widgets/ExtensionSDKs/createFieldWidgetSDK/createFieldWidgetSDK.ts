@@ -11,7 +11,7 @@ import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { createIdsApi } from '../createIdsApi';
 import { createUserApi } from '../createUserApi';
-import { noop } from 'lodash';
+import { noop, omit } from 'lodash';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
@@ -126,8 +126,14 @@ export function createFieldWidgetSDK({
     window: windowApi,
   };
 
+  // We don't want to leak entry specific information
+  const sdkWithoutDialogsAndIds = {
+    ...sdkWithoutDialogs,
+    ids: omit(sdkWithoutDialogs.ids, ['entry', 'contentType', 'field']),
+  };
+
   return {
     ...sdkWithoutDialogs,
-    dialogs: createDialogsApi(sdkWithoutDialogs),
+    dialogs: createDialogsApi(sdkWithoutDialogsAndIds),
   };
 }
