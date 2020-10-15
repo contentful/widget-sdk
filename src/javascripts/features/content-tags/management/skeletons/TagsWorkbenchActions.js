@@ -13,6 +13,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
   useContentLevelPermissions,
+  useFilteredTags,
   useReadTags,
   useToggle,
 } from 'features/content-tags/core/hooks';
@@ -57,7 +58,9 @@ const styles = {
 };
 
 function TagsWorkbenchActions({ hasData, onCreate }) {
-  const { search, setSearch, setSkip, total } = useReadTags();
+  const { total } = useReadTags();
+  const { search, setSearch, setSkip } = useFilteredTags();
+
   const [isDropDownOpen, toggleDropDown] = useToggle();
   const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
 

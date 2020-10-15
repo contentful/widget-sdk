@@ -24,8 +24,7 @@ import * as EntityState from 'data/CMA/EntityState';
 import StateLink from 'app/common/StateLink';
 import { useSelectedEntities } from 'core/hooks';
 import { BulkActionsRow } from './BulkActions/BulkActionsRow';
-import { useTagsFeatureEnabled } from 'features/content-tags';
-import { ReadTagsProvider, TagsRepoProvider } from 'features/content-tags';
+import { MetadataTags, useTagsFeatureEnabled } from 'features/content-tags';
 
 const noWrapEllipsis = {
   overflow: 'hidden',
@@ -377,11 +376,7 @@ export const EntityList = ({
     );
   };
 
-  return (
-    <TagsRepoProvider>
-      <ReadTagsProvider>{renderContent()}</ReadTagsProvider>
-    </TagsRepoProvider>
-  );
+  return <MetadataTags>{renderContent()}</MetadataTags>;
 };
 
 EntityList.propTypes = {

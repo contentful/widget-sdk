@@ -6,10 +6,9 @@ import PropTypes from 'prop-types';
 import { Note, Paragraph } from '@contentful/forma-36-react-components';
 import { useBulkTaggingProvider } from 'features/content-tags/editor/state/BulkTaggingProvider';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
-import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
-import { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
 import { AddOrRemoveContentSection } from 'features/content-tags/editor/components/AddOrRemoveContentSection';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { MetadataTags } from 'features/content-tags';
 
 const styles = {
   wrapper: css({ padding: tokens.spacingL, width: '100%' }),
@@ -38,18 +37,15 @@ const AddOrRemoveTags = ({ selectedEntities: entities }) => {
       <Paragraph className={styles.entitiesCount}>
         {entities.length} {entityType} selected
       </Paragraph>
-
       <FieldFocus>
         <SpaceEnvContextProvider>
-          <TagsRepoProvider>
-            <ReadTagsProvider>
-              <AddOrRemoveContentSection
-                entityTags={entityTags}
-                entities={entities}
-                entityType={entityType}
-              />
-            </ReadTagsProvider>
-          </TagsRepoProvider>
+          <MetadataTags>
+            <AddOrRemoveContentSection
+              entityTags={entityTags}
+              entities={entities}
+              entityType={entityType}
+            />
+          </MetadataTags>
         </SpaceEnvContextProvider>
       </FieldFocus>
       {hasChanges && (

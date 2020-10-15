@@ -12,6 +12,7 @@ import {
   CHANGE_TYPE,
   useBulkTaggingProvider,
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
+import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
 
 const styles = {
   addOrRemoveTable: css({ border: 'none' }),
@@ -26,7 +27,8 @@ const tagsWithOccurrence = (tags) => {
 };
 
 const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
-  const { data, isLoading, getTag, setSearch, setLimit } = useReadTags();
+  const { isLoading, getTag } = useReadTags();
+  const { setSearch, filteredTags } = useFilteredTags();
   const entityCount = entities.length;
   const {
     push,
@@ -39,16 +41,12 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     hasChanges,
   } = useBulkTaggingProvider();
 
-  useEffect(() => {
-    setLimit(1000);
-  }, [setLimit]);
-
   const tags = useMemo(() => {
-    if (data.length > 0) {
-      return data.map((tag) => ({ value: tag.sys.id, label: tag.name }));
+    if (filteredTags.length > 0) {
+      return filteredTags.map((tag) => ({ value: tag.sys.id, label: tag.name }));
     }
     return [];
-  }, [data]);
+  }, [filteredTags]);
 
   const searchTags = tags.filter((tag) => currentState && !currentState.has(tag.value));
 

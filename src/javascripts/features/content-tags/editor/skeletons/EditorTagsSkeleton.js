@@ -12,26 +12,38 @@ import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/
 import { SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-react-components';
 import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
 import { TagType } from 'features/content-tags/core/TagType';
+import { FilteredTagsProvider } from 'features/content-tags';
 
-const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
-  const { allData } = useReadTags();
-  const [localTags, setLocalTags] = useState();
-  const isInitialLoad = useIsInitialLoadingOfTags();
-  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
-  const isAdmin = useIsAdmin();
+function selectedTags(allRawTags, selectedTagIds, tagType) {
+  return tagsPayloadToValues(
+    allRawTags.filter((rawTag) => {
+      return rawTag.sys.tagType === tagType && selectedTagIds.some((id) => rawTag.sys.id === id);
+    })
+  );
+}
+
+function useLocalTags(tags, setTags) {
+  const { data } = useReadTags();
+  const [localTags, setLocalTags] = useState([]);
+  const [defaultTags, setLocalDefaultTags] = useState([]);
+  const [accessTags, setLocalAccessTags] = useState([]);
 
   useEffect(() => {
     const tagsIds = tags.map(({ sys: { id } }) => id) || [];
-    const lTags = tagsPayloadToValues(allData).filter((tag) =>
-      tagsIds.some((t) => t === tag.value)
-    );
+    const lTags = tagsPayloadToValues(data).filter((tag) => tagsIds.some((t) => t === tag.value));
     setLocalTags(orderByLabel(lTags));
-  }, [tags, setLocalTags, allData]);
+  }, [tags, setLocalTags, data]);
 
-  const onAddTag = useCallback(
-    (tag) => {
+  useEffect(() => {
+    const localTagIds = localTags.map((lTag) => lTag.value);
+    setLocalDefaultTags(orderByLabel(selectedTags(data, localTagIds, TagType.Default)));
+    setLocalAccessTags(orderByLabel(selectedTags(data, localTagIds, TagType.Access)));
+  }, [localTags, setLocalDefaultTags, setLocalAccessTags, data]);
+
+  const addTag = useCallback(
+    (tagId) => {
       setLocalTags((prevState) => {
-        const nextState = orderByLabel([...prevState, tag]);
+        const nextState = orderByLabel([...prevState, tagId]);
         setTags(nextState.map(({ value }) => value));
         return nextState;
       });
@@ -39,7 +51,7 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
     [setLocalTags, setTags]
   );
 
-  const onRemoveTag = useCallback(
+  const removeTag = useCallback(
     (tagId) => {
       setLocalTags((prevState) => {
         const nextState = orderByLabel([...prevState.filter((tag) => tag.value !== tagId)]);
@@ -49,6 +61,15 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
     },
     [setLocalTags, setTags]
   );
+
+  return { defaultTags, accessTags, removeTag, addTag };
+}
+
+const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
+  const { accessTags, defaultTags, addTag, removeTag } = useLocalTags(tags, setTags);
+  const isInitialLoad = useIsInitialLoadingOfTags();
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
+  const isAdmin = useIsAdmin();
 
   if (isInitialLoad) {
     return (
@@ -64,25 +85,27 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
 
   return (
     <React.Fragment>
-      <TagSelectionHeader totalSelected={localTags.length} />
-      <TagsSelection
-        showEmpty={showEmpty}
-        onAdd={onAddTag}
-        onRemove={onRemoveTag}
-        selectedTags={localTags}
-        tagType={TagType.Default}
-        label={'Tags'}
-      />
-      {contentLevelPermissionsEnabled && (
+      <TagSelectionHeader totalSelected={defaultTags.length + accessTags.length} />
+      <FilteredTagsProvider tagType={TagType.Default}>
         <TagsSelection
-          disabled={!isAdmin}
           showEmpty={showEmpty}
-          onAdd={onAddTag}
-          onRemove={onRemoveTag}
-          selectedTags={localTags}
-          tagType={TagType.Access}
-          label={'Access Tags'}
+          onAdd={addTag}
+          onRemove={removeTag}
+          selectedTags={defaultTags}
+          label={'Tags'}
         />
+      </FilteredTagsProvider>
+      {contentLevelPermissionsEnabled && (
+        <FilteredTagsProvider tagType={TagType.Access}>
+          <TagsSelection
+            disabled={!isAdmin}
+            showEmpty={showEmpty}
+            onAdd={addTag}
+            onRemove={removeTag}
+            selectedTags={accessTags}
+            label={'Access Tags'}
+          />
+        </FilteredTagsProvider>
       )}
     </React.Fragment>
   );

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useCallback, useDebugValue, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Paragraph, Tooltip } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
@@ -12,8 +12,7 @@ import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
-import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
-import { TagTypePropType } from 'features/content-tags/core/TagType';
+import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
 
 const styles = {
   wrapper: css({
@@ -25,71 +24,25 @@ const styles = {
   }),
 };
 
-const TagsSelection = ({
-  showEmpty,
-  onAdd,
-  onRemove,
-  selectedTags = [],
-  tagType,
-  disabled,
-  label = 'Tags',
-}) => {
-  const { allData, isLoading, setLimit, hasTags } = useReadTags();
+const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = 'Tags' }) => {
+  const { isLoading, hasTags } = useReadTags();
+  const { setSearch, filteredTags } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
-  const [data, setData] = useState([]);
-  const [match, setMatch] = useState('');
-  const cachedTagsFilter = useMemo(() => createTagsFilter(allData), [allData]);
-  const maxTagsReached = selectedTags.length >= TAGS_PER_ENTITY;
 
-  useEffect(() => {
-    setLimit(1000);
-  }, [setLimit]);
+  const totalSelected = selectedTags.length;
+  const maxTagsReached = totalSelected >= TAGS_PER_ENTITY;
 
-  useEffect(() => {
-    if (cachedTagsFilter) {
-      const options = { match: match, tagType: tagType };
-      const result = cachedTagsFilter(options);
-      setData(result);
-    }
-  }, [cachedTagsFilter, setData, match, tagType]);
-
-  const onSearch = useCallback(
-    (searchStr) => {
-      setMatch(searchStr);
-    },
-    [setMatch]
-  );
-
-  const filteredTags = useMemo(() => {
+  const localFilteredTags = useMemo(() => {
     const filtered = orderByLabel(
       tagsPayloadToValues(
-        data.filter((tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id))
-      )
-    );
-    return filtered.splice(0, Math.min(10, filtered.length));
-  }, [data, selectedTags]);
-
-  const selectedFilteredTags = useMemo(() => {
-    return orderByLabel(
-      tagsPayloadToValues(
-        data.filter(
-          (tag) =>
-            tag.sys.tagType === tagType &&
-            selectedTags.some((localTag) => localTag.value === tag.sys.id)
+        filteredTags.filter(
+          (tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id)
         )
       )
     );
-  }, [selectedTags, data, tagType]);
-
-  useDebugValue({
-    showEmpty,
-    tagType,
-    maxTagsReached,
-    disabled,
-    filteredTags: filteredTags.length,
-    selectedFilteredTags: selectedFilteredTags.length,
-  });
+    return filtered.splice(0, Math.min(10, filtered.length));
+  }, [filteredTags, selectedTags]);
 
   const renderTags = useMemo(() => {
     return (
@@ -114,27 +67,27 @@ const TagsSelection = ({
             </Tooltip>
           )}>
           <TagsAutocomplete
-            tags={filteredTags}
+            tags={localFilteredTags}
             isLoading={isLoading}
             onChange={onAdd}
             disabled={maxTagsReached || disabled}
-            onQueryChange={onSearch}
+            onQueryChange={setSearch}
           />
         </ConditionalWrapper>
         <EntityTags
           disabled={disabled}
-          tags={selectedFilteredTags}
+          tags={selectedTags}
           onRemove={onRemove}
           tagGroups={tagGroups}
         />
       </FieldFocus>
     );
   }, [
-    filteredTags,
-    selectedFilteredTags,
+    selectedTags,
+    localFilteredTags,
     isLoading,
     onAdd,
-    onSearch,
+    setSearch,
     onRemove,
     tagGroups,
     maxTagsReached,
@@ -161,7 +114,6 @@ TagsSelection.propTypes = {
   onAdd: PropTypes.func,
   onRemove: PropTypes.func,
   label: PropTypes.string,
-  tagType: TagTypePropType,
   disabled: PropTypes.bool,
 };
 

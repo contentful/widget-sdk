@@ -4,11 +4,14 @@ export {
   useReadTags,
   useHistoryReducer,
   useToggle,
+  useFilteredTags,
 } from 'features/content-tags/core/hooks';
 export { TagPropType } from 'features/content-tags/core/TagPropType';
 export { create as createTagsRepo } from 'features/content-tags/core/state/TagsRepo';
 export { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
 export { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
+export { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
+export { MetadataTags } from 'features/content-tags/core/state/MetadataTags';
 export { EditorTagsSkeleton } from 'features/content-tags/editor/skeletons/EditorTagsSkeleton';
 export { useDocTags } from 'features/content-tags/editor/hooks/useDocTags';
 export { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
@@ -22,7 +25,6 @@ export {
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
 export { SlideIn } from 'features/content-tags/core/components/SlideIn';
 export { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
-
 export { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 export {
   tagPayloadToValue,

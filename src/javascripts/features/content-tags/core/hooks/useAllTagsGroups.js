@@ -3,12 +3,12 @@ import { groupByName, tagsPayloadToValues } from 'features/content-tags/editor/u
 import { useReadTags } from 'features/content-tags/core/hooks/useReadTags';
 
 const useAllTagsGroups = () => {
-  const { allData } = useReadTags();
+  const { data } = useReadTags();
   const [tagGroups, setTagGroups] = useState([]);
   useEffect(() => {
-    const allDataTags = tagsPayloadToValues(allData);
+    const allDataTags = tagsPayloadToValues(data);
     setTagGroups(Object.keys(groupByName(allDataTags)));
-  }, [allData, setTagGroups]);
+  }, [data, setTagGroups]);
   return tagGroups;
 };
 

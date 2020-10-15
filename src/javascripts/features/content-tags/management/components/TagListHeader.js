@@ -5,7 +5,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
-import { useReadTags } from 'features/content-tags/core/hooks';
+import { useFilteredTags, useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
 
 const styles = {
@@ -18,7 +18,8 @@ const styles = {
 };
 
 const TagListHeader = ({ contentLevelPermissionsEnabled }) => {
-  const { total, setSorting, setTypeFilter } = useReadTags();
+  const { total } = useReadTags();
+  const { setSorting, setTypeFilter } = useFilteredTags();
 
   const limitNote = useMemo(() => {
     if (total >= TAGS_PER_SPACE) {

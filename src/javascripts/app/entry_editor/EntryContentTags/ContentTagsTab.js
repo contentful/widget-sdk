@@ -1,20 +1,13 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {
-  EditorTagsSkeleton,
-  ReadTagsProvider,
-  TagsRepoProvider,
-  useDocTags,
-} from 'features/content-tags';
+import { EditorTagsSkeleton, MetadataTags, useDocTags } from 'features/content-tags';
 
 const ContentTagsTab = ({ getValueAt, setValueAt }) => {
   const { tags, setTags } = useDocTags({ getValueAt, setValueAt });
   return (
-    <TagsRepoProvider>
-      <ReadTagsProvider>
-        <EditorTagsSkeleton tags={tags} setTags={setTags} showEmpty={true} />
-      </ReadTagsProvider>
-    </TagsRepoProvider>
+    <MetadataTags>
+      <EditorTagsSkeleton tags={tags} setTags={setTags} showEmpty={true} />
+    </MetadataTags>
   );
 };
 

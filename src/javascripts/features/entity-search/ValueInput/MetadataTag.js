@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
@@ -9,6 +9,7 @@ import {
   tagPayloadToValue,
   tagsPayloadToValues,
   orderByLabel,
+  useFilteredTags,
 } from 'features/content-tags';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -85,7 +86,8 @@ class MetadataTag extends React.Component {
 // Functional component to match old style search state
 // with new style hook state
 export const MetadataTagWrapper = (props) => {
-  const { data, isLoading, error, setSearch, setLimit } = useReadTags();
+  const { isLoading, error } = useReadTags();
+  const { setSearch, filteredTags } = useFilteredTags();
   const { value } = props;
   const onSearch = useCallback(
     (tagId) => {
@@ -94,17 +96,15 @@ export const MetadataTagWrapper = (props) => {
     [setSearch]
   );
 
-  useEffect(() => setLimit(1000000));
-
   if (isLoading === false && !error) {
     // Normalize incoming tags and use them as initial state
     // missing tags are thrown out...
-    const tags = orderByLabel(tagsPayloadToValues(data));
+    const tags = orderByLabel(tagsPayloadToValues(filteredTags));
 
     const initialTags = value
       .split(',')
       .map((id) => id.trim())
-      .map((id) => data.find((tag) => tag.sys.id === id))
+      .map((id) => filteredTags.find((tag) => tag.sys.id === id))
       .filter(Boolean)
       .map(tagPayloadToValue);
 

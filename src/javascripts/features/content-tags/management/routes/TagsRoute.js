@@ -5,11 +5,11 @@ import Pagination from 'app/common/Pagination';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
-import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { useTagsFeatureEnabled } from 'features/content-tags/core/hooks/useTagsFeatureEnabled';
 import { TagsWorkbenchSkeleton } from 'features/content-tags/management/skeletons/TagsWorkbenchSkeleton';
-import { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
 import { TagsList } from 'features/content-tags/management/components/TagsList';
+import { MetadataTags } from 'features/content-tags';
+import { FilteredTagsContext } from 'features/content-tags/core/state/FilteredTagsContext';
 
 /**
  * @return {null}
@@ -40,55 +40,48 @@ function TagsRoute({ redirectUrl }) {
   }
 
   return (
-    <TagsRepoProvider>
-      <ReadTagsProvider>
-        <DocumentTitle title="Content Tags" />
-        <ReadTagsContext.Consumer>
-          {({
-            data,
-            error,
-            isLoading,
-            reloadAll,
-            skip,
-            setSkip,
-            limit,
-            setLimit,
-            total,
-            hasTags,
-          }) => {
-            return (
-              <TagsWorkbenchSkeleton
-                isLoading={isLoading}
-                hasTags={hasTags}
-                hasData={data && data.length > 0}>
-                {error ? (
-                  renderError(error, reloadAll)
-                ) : (
-                  <>
-                    <TagsList
-                      tags={data || []}
-                      isLoading={isLoading}
-                      hasTags={hasTags}
-                      total={total}
-                    />
-                    <Pagination
-                      skip={skip}
-                      limit={limit}
-                      total={total}
-                      loading={isLoading}
-                      onChange={(change) => {
-                        setSkip(change.skip);
-                        setLimit(change.limit);
-                      }}
-                    />
-                  </>
-                )}
-              </TagsWorkbenchSkeleton>
-            );
-          }}
-        </ReadTagsContext.Consumer>
-      </ReadTagsProvider>
-    </TagsRepoProvider>
+    <MetadataTags>
+      <DocumentTitle title="Content Tags" />
+      <ReadTagsContext.Consumer>
+        {({ error, isLoading, reloadAll, total, hasTags }) => {
+          return (
+            <FilteredTagsContext.Consumer>
+              {({ filteredTags, limit, setLimit, skip, setSkip }) => {
+                return (
+                  <TagsWorkbenchSkeleton
+                    isLoading={isLoading}
+                    hasTags={hasTags}
+                    hasData={filteredTags && filteredTags.length > 0}>
+                    {error ? (
+                      renderError(error, reloadAll)
+                    ) : (
+                      <>
+                        <TagsList
+                          tags={filteredTags || []}
+                          isLoading={isLoading}
+                          hasTags={hasTags}
+                          total={total}
+                        />
+                        <Pagination
+                          skip={skip}
+                          limit={limit}
+                          total={total}
+                          loading={isLoading}
+                          onChange={(change) => {
+                            setSkip(change.skip);
+                            setLimit(change.limit);
+                          }}
+                        />
+                      </>
+                    )}
+                  </TagsWorkbenchSkeleton>
+                );
+              }}
+            </FilteredTagsContext.Consumer>
+          );
+        }}
+      </ReadTagsContext.Consumer>
+    </MetadataTags>
   );
 }
 

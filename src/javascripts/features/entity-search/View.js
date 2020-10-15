@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import cn from 'classnames';
 import { css } from 'emotion';
 import { Icon, Spinner, TextInput } from '@contentful/forma-36-react-components';
 import { Keys } from './Keys';
 import tokens from '@contentful/forma-36-tokens';
-import { ReadTagsProvider, TagsRepoProvider, useTagsFeatureEnabled } from 'features/content-tags';
+import { MetadataTags, useTagsFeatureEnabled } from 'features/content-tags';
 import createUserCache from 'data/userCache';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-
-import cn from 'classnames';
 import { FilterPill } from './FilterPill';
 import { SuggestionsBox } from './SuggestionsBox';
 import pluralize from 'pluralize';
@@ -151,11 +150,9 @@ const styles = {
 export function Search(props) {
   const { tagsEnabled: withMetadata } = useTagsFeatureEnabled();
   return (
-    <TagsRepoProvider>
-      <ReadTagsProvider>
-        <View withMetadata={withMetadata} {...props} />
-      </ReadTagsProvider>
-    </TagsRepoProvider>
+    <MetadataTags>
+      <View withMetadata={withMetadata} {...props} />
+    </MetadataTags>
   );
 }
 
