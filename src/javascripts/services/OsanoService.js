@@ -11,40 +11,49 @@ import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getUserSync } from 'services/TokenStore';
+import { getUserSync, refresh as refreshToken } from 'services/TokenStore';
 import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import * as logger from 'services/logger';
 import { debounce } from 'lodash';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import * as Config from 'Config';
 
 const localStorage = getBrowserStorage();
 
-// The cookie and localStorage key name
-const STORAGE_KEY = 'cf_webapp_cookieconsent';
+const CONSENT_KEY = 'osano_consentmanager';
+const EXPIRATION_DATE_KEY = 'osano_consentmanager_expdate';
+const UUID_KEY = 'osano_consentmanager_uuid';
 
 // The Osano "Consent Manager" object
 let cm = null;
 
-// To tell if consent has been initalized yet or not
 let initialized = false;
 
-// Function to handle resetting `cm` in testing
-export const __reset = () => {
+/**
+ * Function for resetting singleton during tests.
+ * @return {void} [description]
+ */
+export function __reset() {
   cm = null;
   initialized = false;
-};
+}
 
+/**
+ * Handles when the `osano-cm-initialized` event fires.
+ * @return {void}
+ */
 export async function handleInitialize() {
-  // Initialization happens in ClientController, and only happens after the user is available to us, so we
-  // can safely synchronously get the user.
-  const user = getUserSync();
-  // If consent has already been initialized, return. Or if user hasn't consented yet, return wait for that, then initialize consent.
-  if (initialized || !hasUserConsented(user)) {
+  // Only initialize once
+  if (initialized) {
     return;
   }
 
-  const localConsent = cm.storage.getConsent();
+  hideMarketingToggles();
+
+  // Initialization happens in ClientController, and only happens after the user is available to us, so we
+  // can safely synchronously get the user.
+  const user = getUserSync();
+
+  const localConsent = cm.getConsent();
 
   const analyticsAllowed = isAnalyticsAllowed(user) && localConsent.ANALYTICS === 'ACCEPT';
   const personalizationAllowed = localConsent.PERSONALIZATION === 'ACCEPT';
@@ -65,40 +74,65 @@ export async function handleInitialize() {
   initialized = true;
 }
 
-// Exported for testing
-export const handleConsentChanged = debounce(async function debouncedHandleConsentChanged() {
+/**
+ * Handles when the `osano-cm-consent-saved` event is fired.
+ *
+ * Updates the consent if it has saved and shows a notification if the consent was changed and not migrated.
+ *
+ * Note: this event is always fired when Osano.cm finishes loading.
+ * @return {void}
+ */
+export const handleConsentSaved = debounce(async function debouncedHandleConsentSaved() {
   const user = getUserSync();
 
-  await updateGKConsent(user);
+  if (!hasConsentChanged(user)) {
+    return;
+  }
 
-  if (initialized) {
-    // If the consent options changed, we need to reload because we can't unload existing scripts like GA, Intercom.
+  const migrated = await persistConsent(user);
+
+  // If the consent options changed and was not just migrated from the old to new GK consent JSON format, the user needs to reload
+  // to unload already loaded scripts like GA, Intercom (these can't be removed otherwise).
+  //
+  // Since a migration can be considered the same as a consent record that didn't change we don't show the notification to prevent
+  // users from seeing it when they load the app once this is in production.
+  if (initialized && !migrated) {
     Notification.warning('Reload the app to apply your new preferences.');
   }
 
   handleInitialize();
 }, 500);
 
+/**
+ * Initializes Osano. Is initialized in ClientController, and only once per app session.
+ * @return {void}
+ */
 export async function init() {
   // Do not run init if we already did before, or if we specifically opt to disable (for example in testing)
   if (cm || localStorage.has('__disable_consentmanager')) {
     return;
   }
 
-  // Only handle consents in production, and just enable in non-production, since Osano is more or less
-  // broken in staging/preview
-  const isDevelopmentEnv = Config.env === 'development' || Config.env === 'staging';
+  const user = getUserSync();
 
-  if (isDevelopmentEnv) {
-    const user = getUserSync();
-    const segmentLoadOptions = await generateSegmentLoadOptions(true, true);
+  if (isConsentPersisted(user)) {
+    // The consent has been saved previously, set it locally.
+    const {
+      userInterface: { rawConsentRecord, expirationDate, uuid },
+    } = JSON.parse(user.cookieConsentData);
 
-    Analytics.enable(user, segmentLoadOptions);
+    localStorage.set(CONSENT_KEY, rawConsentRecord);
+    localStorage.set(EXPIRATION_DATE_KEY, expirationDate);
+    localStorage.set(UUID_KEY, uuid);
+  } else if (isLegacyConsentPersisted(user)) {
+    const { consent, expirationDate, uuid } = JSON.parse(user.cookieConsentData);
 
-    return;
+    localStorage.set(CONSENT_KEY, consent);
+    localStorage.set(EXPIRATION_DATE_KEY, expirationDate);
+    localStorage.set(UUID_KEY, uuid);
   }
 
-  const Osano = await LazyLoader.get('osano');
+  const Osano = await LazyLoader.get('osano').catch(() => {});
 
   if (!Osano) {
     // There's nothing we can do it we couldn't load Osano, so just bail early
@@ -107,78 +141,83 @@ export async function init() {
     return false;
   }
 
-  // Get the original options and teardown the injected script
-  // generated Cosnent Manager instance
-  const options = Osano.cm.options;
+  cm = Osano.cm;
 
-  try {
-    Osano.cm.teardown();
-  } catch {
-    // We don't care if teardown fails. It is likely to have failed if we call
-    // `teardown` before everything is attached, which is okay in this case.
-  }
-
-  // Override `whenReady` so that we can set the cookie key, which isn't
-  // able to be set using the options object
-  let readyCb;
-  Osano.ConsentManager.prototype.whenReady = (cb) => {
-    readyCb = cb;
-  };
-
-  // Create a new ConsentManager instance
-  cm = new Osano.ConsentManager(options);
-
-  // Rename the cookie/local storage key to not clash with marketing website
-  cm.storage.key = STORAGE_KEY;
-
-  // Since we override `storage.key` above after instantiating `cm`, we also
-  // set the existing options to the values in localStorage.
-  const existingOpts = localStorage.get(STORAGE_KEY);
-
-  if (existingOpts) {
-    cm.storage.setConsent(existingOpts);
-  }
-
-  // Do before calling readyCb and setting the event listeners below.
-  await setupLocalConsent(getUserSync());
-
-  // Setup listeners before readyCb, so that we get the `osano-cm-initialized` event.
   cm.on('osano-cm-initialized', handleInitialize);
-  cm.on('osano-cm-consent-saved', handleConsentChanged);
-
-  // Only call the readyCb exists
-  readyCb && readyCb();
-
-  // Hide the "Marketing" toggles
-  const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
-
-  if (marketingToggles.length > 0) {
-    marketingToggles.forEach((toggle) => {
-      toggle.parentElement.parentElement.style.display = 'none';
-    });
-  }
+  cm.on('osano-cm-consent-saved', handleConsentSaved);
 
   return cm;
 }
 
-function setupLocalConsent(user) {
-  if (user.cookieConsentData) {
-    // The consent has been saved previously, set it locally.
-    updateLocalConsent(user);
-  } else if (isConsentSavedLocally()) {
-    // Looks like the user consented previously but it's not in GK yet, update GK
-    updateGKConsent(user);
-  } else {
-    // No consent is present yet, we don't need to do anything
+/**
+ * Determines if the user object has valid cookie consent data on it.
+ * @param  {User}  user
+ * @return {Boolean}
+ */
+function isConsentPersisted(user) {
+  try {
+    return !!JSON.parse(user.cookieConsentData)?.userInterface?.rawConsentRecord;
+  } catch {
+    return false;
   }
 }
 
-export async function updateGKConsent(user) {
+/**
+ * Determines if the user object has a legacy consent record.
+ * @param  {User}  user
+ * @return {Boolean}
+ */
+function isLegacyConsentPersisted(user) {
+  try {
+    return !!JSON.parse(user.cookieConsentData)?.consent;
+  } catch {
+    //
+  }
+}
+
+/**
+ * Persist the current consent record in GK. Preserves consent that exists on other keys,
+ * e.g. `cookieConsentData.webCreator`.
+ *
+ * If the consent is in the "old" format, meaning before migrating to the keyed `userInterface`
+ * scope, it is considered "migrated".
+ * @param  {User} user
+ * @return {Boolean}      If the consent was migrated from the old format.
+ */
+export async function persistConsent(user) {
+  // Is the current `user` consent the old format? If so, treat this as a "migration" and return true
+  let migrated = false;
+  let currentConsentData = {};
+
+  if (!user.cookieConsentData) {
+    // Osano always fires the save event initially, so we can treat nonexistent cookie consent data
+    // as also being migrated.
+    migrated = true;
+  } else {
+    try {
+      currentConsentData = JSON.parse(user.cookieConsentData);
+
+      if (currentConsentData.consent) {
+        delete currentConsentData.consent;
+        delete currentConsentData.expirationDate;
+        delete currentConsentData.uuid;
+
+        migrated = true;
+      }
+    } catch {
+      // Doesn't matter if it fails to parse, we just update it below
+    }
+  }
+
   const data = {
     cookieConsentData: JSON.stringify({
-      consent: cm.storage.getConsent(),
-      uuid: cm.storage.getUUID(),
-      expirationDate: cm.storage.getExpDate(),
+      ...currentConsentData,
+      userInterface: {
+        rawConsentRecord: localStorage.get(CONSENT_KEY),
+        expirationDate: localStorage.get(EXPIRATION_DATE_KEY),
+        uuid: localStorage.get(UUID_KEY),
+        consentRecord: cm.getConsent(),
+      },
     }),
   };
 
@@ -187,51 +226,91 @@ export async function updateGKConsent(user) {
       version: user.sys.version,
       data,
     });
+    await refreshToken();
   } catch (e) {
     logger.logError(e);
   }
+
+  return migrated;
 }
 
-// Save consent to local Osano ConsentManager instance
-function updateLocalConsent(user) {
-  const { consent, uuid, expirationDate } = JSON.parse(user.cookieConsentData);
-  const expirationDateInt = parseInt(expirationDate);
-
-  cm.storage.setConsent(consent);
-  cm.storage.uuid = uuid;
-  cm.storage.saveConsent(expirationDateInt);
-}
-
-function hasUserConsented(user) {
-  return isConsentSavedInGK(user) || isConsentSavedLocally();
-}
-
-function isConsentSavedInGK(user) {
-  return user.cookieConsentData != null;
-}
-
-function isConsentSavedLocally() {
-  // If cm.storage.getExpDate() === 0, then there is no consent yet saved for this user and we should check if we have saved consent data in GK
-  return cm.storage.getExpDate() !== 0;
-}
-
+/**
+ * Wait for Osano's cm (consent manager) instance to load. Will wait 1 second before throwing.
+ * @param  {Number} tries Current number of tries
+ * @return {void}
+ */
 export async function waitForCMInstance(tries = 0) {
+  // Wait for Osano to load for 1 second or throw
   if (tries === 10) {
     throw new Error('Osano failed to load');
   }
 
-  // If Osano hasn't loaded yet, try to wait for it to load
   if (!cm) {
     await new Promise((resolve) => setTimeout(resolve, 100));
     return waitForCMInstance(tries + 1);
   }
 }
 
-export function openConsentManagementPanel() {
-  // Opens Osano's cookie management side bar
-  cm.emit('osano-cm-dom-info-dialog-open');
+/**
+ * Determines if the consent has changed for this user.
+ *
+ * If the consent hasn't been persisted in GK, then no matter what it is considered to have
+ * changed. If it is persisted, and either analytics or personalization has changed, then the
+ * consent is considered changed. Otherwise, it is considered identical.
+ * @param  {User}  user
+ * @return {Boolean}
+ */
+function hasConsentChanged(user) {
+  if (!isConsentPersisted(user)) {
+    return true;
+  }
+
+  const { consentRecord: userConsent } = JSON.parse(user.cookieConsentData).userInterface;
+  const instanceConsent = cm.getConsent();
+
+  if (
+    userConsent?.ANALYTICS !== instanceConsent.ANALYTICS ||
+    userConsent?.PERSONALIZATION !== instanceConsent.PERSONALIZATION
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
+/**
+ * Open the consent management side panel and hide the marketing toggle that's visible in it.
+ * @return {void}
+ */
+export function openConsentManagementPanel() {
+  // Opens Osano's cookie management side bar
+  cm.showDrawer();
+  hideMarketingToggles();
+}
+
+/**
+ * Hide vislble marketing toggles on the screen.
+ *
+ * @return {void}
+ */
+function hideMarketingToggles() {
+  // Hide the "Marketing" toggles
+  const marketingToggles = document.querySelectorAll("[data-category='MARKETING']");
+
+  if (marketingToggles.length > 0) {
+    marketingToggles.forEach((toggle) => {
+      toggle.parentElement.parentElement.style.display = 'none';
+    });
+  }
+}
+
+/**
+ * Generate options for Segment so that all integrations are disallowed by default, and enabled
+ * only if the appropriate permission (analytics/personalization) allows it.
+ * @param  {boolean} analyticsAllowed
+ * @param  {boolean} personalizationAllowed
+ * @return {SegmentOptions}
+ */
 async function generateSegmentLoadOptions(analyticsAllowed, personalizationAllowed) {
   const allIntegrations = await segment.getIntegrations();
 
