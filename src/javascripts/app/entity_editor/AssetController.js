@@ -10,7 +10,6 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData';
 import TheLocaleStore from 'services/localeStore';
-import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { valuePropertyAt } from './Document';
@@ -22,11 +21,7 @@ import { initStateController } from './stateController';
  * @returns {Promise<void>}
  */
 export default async function create($scope, editorData, preferences) {
-  const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
-  const $rootScope = getModule('$rootScope');
-
-  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
 
   $scope.context = {};
   $scope.editorData = editorData;
@@ -107,11 +102,6 @@ export default async function create($scope, editorData, preferences) {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
     emitter: $scope.emitter,
-  });
-
-  $controller('FormWidgetsController', {
-    $scope,
-    controls: editorData.fieldControls,
   });
 
   function defaultLocaleIsFocused() {

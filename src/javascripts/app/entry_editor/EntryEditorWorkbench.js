@@ -27,6 +27,8 @@ import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
+import { filterWidgets } from './formWidgetsController';
+import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -46,11 +48,8 @@ const EntryEditorWorkbench = (props) => {
     getEditorData,
     editorContext,
     entrySidebarProps,
-    sidebarToggleProps,
     preferences,
     fields,
-    widgets,
-    fieldLocaleListeners,
   } = props;
   const { state: referencesState } = useContext(ReferencesContext);
   const { processingAction, references, selectedEntities } = referencesState;
@@ -58,13 +57,22 @@ const EntryEditorWorkbench = (props) => {
 
   const editorData = getEditorData();
   const otDoc = getOtDoc();
-  const enabledTabs = editorData.editorsExtensions.filter((editor) => !editor.disabled);
-  const defaultTabKey = enabledTabs.length
-    ? `${enabledTabs[0].widgetNamespace}-${enabledTabs[0].widgetId}`
+  const availableTabs = editorData.editorsExtensions.filter(
+    (editor) => !editor.disabled && !editor.problem
+  );
+  const defaultTabKey = availableTabs.length
+    ? `${availableTabs[0].widgetNamespace}-${availableTabs[0].widgetId}`
     : null;
 
   const [selectedTab, setSelectedTab] = useState(defaultTabKey);
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
+
+  const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
+    localeData,
+    editorContext,
+    editorData.fieldControls.form,
+    preferences.showDisabledFields
+  );
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -83,7 +91,12 @@ const EntryEditorWorkbench = (props) => {
 
   const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
 
-  const tabs = enabledTabs.map((currentTab) => {
+  const fieldLocaleListeners = useMemo(
+    () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
+    [editorData.fieldControls.all, editorContext, localeData, otDoc]
+  );
+
+  const tabs = availableTabs.map((currentTab) => {
     const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
     const isReferenceTabVisible = isReferenceTab && tabVisible.entryReferences;
     const isReferenceTabEnabled =
@@ -103,11 +116,15 @@ const EntryEditorWorkbench = (props) => {
             tabVisible,
             selectedTab,
             onRootReferenceCardClick,
+            widgets,
+            shouldDisplayNoLocalizedFieldsAdvice,
+            fieldLocaleListeners,
             ...props,
           });
         } else {
           const createSdk = createExtensionBridgeAdapter({
             editorData,
+            editorContext,
             entityInfo,
             otDoc,
             localeData,
@@ -244,10 +261,7 @@ const EntryEditorWorkbench = (props) => {
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
           </Workbench.Sidebar>
           <Workbench.Sidebar position="right" className={styles.sidebar}>
-            <EntrySidebar
-              entrySidebarProps={entrySidebarProps}
-              sidebarToggleProps={sidebarToggleProps}
-            />
+            <EntrySidebar entrySidebarProps={entrySidebarProps} />
           </Workbench.Sidebar>
         </div>
       </Workbench>
@@ -266,14 +280,8 @@ EntryEditorWorkbench.propTypes = {
   preferences: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
-  fieldLocaleListeners: PropTypes.shape({
-    flat: PropTypes.array,
-    lookup: PropTypes.object,
-  }),
   getOtDoc: PropTypes.func,
-  shouldDisplayNoLocalizedFieldsAdvice: PropTypes.bool,
   noLocalizedFieldsAdviceProps: PropTypes.object,
-  sidebarToggleProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,

@@ -10,20 +10,12 @@ export default class EntryInfoPanel extends Component {
     contentTypeDescription: PropTypes.string,
     contentTypeId: PropTypes.string,
     sys: PropTypes.object,
-    isVisible: PropTypes.bool.isRequired,
-  };
-
-  static defaultProps = {
-    isVisible: false,
   };
 
   render() {
-    const { sys, contentTypeName, contentTypeDescription, contentTypeId, isVisible } = this.props;
+    const { sys, contentTypeName, contentTypeDescription, contentTypeId } = this.props;
     return (
-      <div
-        className={classNames('entity-sidebar__info-panel entity-info-panel', {
-          'x--show': isVisible,
-        })}>
+      <div className={classNames('entity-sidebar__info-panel entity-info-panel')}>
         {sys && (
           <table>
             <tbody>

@@ -17,7 +17,7 @@ import {
 import { ManagementApiClient } from 'features/apps';
 import { AddKeyDialog } from '../AddKeyDialog';
 import { DeleteKeyDialog } from '../DeleteKeyDialog';
-import { MAX_KEYS_ALLOWED } from 'features/apps/config';
+import { APP_KEYS_LIMIT } from 'features/apps/limits';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { LEARN_MORE_URL } from 'features/apps/management/constants';
 import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
@@ -119,7 +119,7 @@ export function KeyListing({ definition }) {
   const [isGeneratingKeys, setIsGeneratingKeys] = useState(false);
   const [formattedKeys, setKeys] = useState<Key[]>([]);
   const hasKeys = !!formattedKeys.length;
-  const hasReachedKeysLimits = formattedKeys.length >= MAX_KEYS_ALLOWED;
+  const hasReachedKeysLimits = formattedKeys.length >= APP_KEYS_LIMIT;
 
   useEffect(() => {
     (async () => {

@@ -1,55 +1,54 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import 'jest-enzyme';
-import mitt from 'mitt';
 
-import SidebarEventTypes from '../SidebarEventTypes';
 import CommentsPanelContainer from './CommentsPanelContainer';
+import { waitFor, render } from '@testing-library/react';
 
 // TODO: find a better way to avoid the ng dependencies
-jest.mock('services/TokenStore', () => {});
+jest.mock('services/TokenStore', () => ({ getUserSync: jest.fn() }));
 jest.mock('access_control/OrganizationMembershipRepository', () => {});
+jest.mock('data/CMA/CommentsRepo', () => ({
+  getAllForEntry: jest.fn().mockResolvedValue({ items: [1, 2] }),
+}));
 
 describe('CommentsPanelContainer', () => {
-  let emitter;
-  let off;
   let component;
-  const params = {
-    endpoint: () => {},
-    entryId: 'my-entry',
-    environmentId: 'my-env',
-  };
-  const render = () => {
-    emitter = mitt();
-    off = jest.spyOn(emitter, 'off');
-    return shallow(<CommentsPanelContainer emitter={emitter} isVisible />);
+  let onCommentsCountUpdate;
+  const entryId = 'entry-id';
+  const renderComponent = () => {
+    onCommentsCountUpdate = jest.fn();
+    return render(
+      <CommentsPanelContainer
+        onCommentsCountUpdate={onCommentsCountUpdate}
+        entryId={entryId}
+        isVisible={false}
+      />
+    );
   };
 
   beforeEach(() => {
-    component = render();
-    emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, params);
+    jest.useFakeTimers();
+    component = renderComponent();
   });
 
-  it('initializes the sidebar', () => {
-    expect(component).toMatchSnapshot();
+  it('initializes the comments count', async () => {
+    jest.advanceTimersByTime(1000);
+    await waitFor(() => {
+      expect(onCommentsCountUpdate).toHaveBeenLastCalledWith(2);
+      expect(onCommentsCountUpdate).toHaveBeenCalledTimes(1);
+    });
+    expect(component.queryByTestId('comments')).not.toBeInTheDocument();
   });
 
-  it('makes panel visible', () => {
-    emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, { isVisible: true });
-    component.update();
-    expect(component).toMatchSnapshot();
-  });
-
-  it('makes panel hidden', () => {
-    emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, { isVisible: false });
-    component.update();
-    expect(component).toMatchSnapshot();
-  });
-
-  it('unsubcribes from events', () => {
-    const component = render();
-    component.unmount();
-    expect(off).toHaveBeenNthCalledWith(1, SidebarEventTypes.INIT_COMMENTS_PANEL);
-    expect(off).toHaveBeenNthCalledWith(2, SidebarEventTypes.UPDATED_COMMENTS_PANEL);
+  it('initializes the visible component', async () => {
+    component.rerender(
+      <CommentsPanelContainer
+        onCommentsCountUpdate={onCommentsCountUpdate}
+        entryId={entryId}
+        isVisible
+      />
+    );
+    await waitFor(() => {
+      expect(component.queryByTestId('comments')).toBeInTheDocument();
+    });
   });
 });

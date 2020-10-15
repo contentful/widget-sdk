@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { usePrevious } from 'core/hooks';
 
 import TemplatesToggle from './TemplatesToggle';
 import TemplatesList from './TemplatesList';
@@ -8,16 +9,21 @@ export default function TemplateSelector(props) {
   const { onSelect, templates, formAlign, selectedTemplate, isNewSpacePurchaseFlow } = props;
 
   const [templatesVisible, setTemplatesVisible] = useState(false);
+  const prevState = usePrevious({ selectedTemplate, templatesVisible });
 
   useEffect(() => {
-    if (!templatesVisible) {
-      onSelect(null);
-    } else if (!selectedTemplate) {
+    // if templates are visible, select the first one by default
+    if (templatesVisible && !selectedTemplate) {
       onSelect(templates[0]);
     }
 
+    // using previous value here because we only want to reset the selection when user "give up" of selecting a template
+    if (prevState?.templatesVisible && !templatesVisible) {
+      onSelect(null);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTemplate, templatesVisible]);
+  }, [selectedTemplate, templatesVisible, prevState]);
 
   return (
     <div>

@@ -77,7 +77,7 @@ describe('Jobs page', () => {
       cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
       cy.findByTestId('jobs-state-message-heading').should(
         'contain',
-        'No entries have been successfully published yet'
+        'No content has been successfully published yet'
       );
     });
     it('renders illustration and heading for Failed tab empty state', () => {

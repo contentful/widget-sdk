@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SidebarEventTypes from '../SidebarEventTypes';
-import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import CommentsPanel from './CommentsPanel';
+import { getAllForEntry } from 'data/CMA/CommentsRepo';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 /**
  * This component is the bridge between the EntitySidebar and the CommentPanel components.
@@ -13,43 +14,55 @@ import CommentsPanel from './CommentsPanel';
  */
 export default class CommentsPanelContainer extends React.Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired,
     isVisible: PropTypes.bool.isRequired,
+    entryId: PropTypes.string.isRequired,
+    onCommentsCountUpdate: PropTypes.func.isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   state = {
-    initialized: false,
+    isInitialized: false,
   };
 
-  componentDidMount() {
-    const { emitter } = this.props;
-    emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.COMMENTS_PANEL);
-    emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ endpoint, entryId }) => {
-      this.setState({ initialized: true, endpoint, entryId });
-    });
+  initComments() {
+    const { entryId, onCommentsCountUpdate } = this.props;
+    const { currentSpaceId, currentEnvironmentId } = this.context;
+    const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+
+    // Showing the count is low-priority so we can defer fetching it
+    if (window.requestIdleCallback !== undefined) {
+      window.requestIdleCallback(fetchCommentsCount);
+    } else {
+      const sensibleDelay = 1000;
+      setTimeout(fetchCommentsCount, sensibleDelay);
+    }
+
+    async function fetchCommentsCount() {
+      const { items: comments } = await getAllForEntry(endpoint, entryId);
+      onCommentsCountUpdate(comments.length);
+    }
   }
 
-  onCommentsCountUpdate = (commentsCount) => {
-    this.props.emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_COUNT, commentsCount);
-  };
+  componentDidMount() {
+    !this.state.isInitialized && this.initComments();
+  }
 
-  componentWillUnmount() {
-    this.props.emitter.emit(
-      SidebarEventTypes.WIDGET_DEREGISTERED,
-      SidebarWidgetTypes.COMMENTS_PANEL
-    );
-    this.props.emitter.off(SidebarEventTypes.INIT_COMMENTS_PANEL);
-    this.props.emitter.off(SidebarEventTypes.UPDATED_COMMENTS_PANEL);
+  componentDidUpdate() {
+    if (this.props.isVisible && !this.state.isInitialized) {
+      this.setState({ isInitialized: true });
+    }
   }
 
   render() {
-    const { initialized, ...panelProps } = this.state;
+    const { isInitialized } = this.state;
+    const { entryId, onCommentsCountUpdate, isVisible } = this.props;
     return (
-      initialized && (
+      isInitialized && (
         <CommentsPanel
-          {...panelProps}
-          isVisible={this.props.isVisible}
-          onCommentsCountUpdate={this.onCommentsCountUpdate}
+          entryId={entryId}
+          isVisible={isVisible}
+          onCommentsCountUpdate={onCommentsCountUpdate}
         />
       )
     );

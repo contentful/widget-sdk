@@ -10,7 +10,6 @@ export default class EntryInfoPanelContainer extends Component {
   };
 
   state = {
-    isVisible: false,
     sys: null,
     contentType: null,
   };
@@ -35,7 +34,6 @@ export default class EntryInfoPanelContainer extends Component {
 
   render() {
     const props = {
-      isVisible: this.state.isVisible,
       sys: this.state.sys,
     };
 

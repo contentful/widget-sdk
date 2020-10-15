@@ -1,6 +1,6 @@
 [
-  { "name": "Armed Forces Americas", "code": "AA" },
-  { "name": "Armed Forces Europe", "code": "AE" },
+  { "name": "Armed Forces America", "code": "AA" },
+  { "name": "Armed Forces", "code": "AE" },
   { "name": "Alaska", "code": "AK" },
   { "name": "Alabama", "code": "AL" },
   { "name": "Armed Forces Pacific", "code": "AP" },
@@ -10,7 +10,6 @@
   { "name": "California", "code": "CA" },
   { "name": "Colorado", "code": "CO" },
   { "name": "Connecticut", "code": "CT" },
-  { "name": "District of Columbia", "code": "DC" },
   { "name": "Delaware", "code": "DE" },
   { "name": "Florida", "code": "FL" },
   { "name": "Georgia", "code": "GA" },
@@ -51,9 +50,10 @@
   { "name": "Texas", "code": "TX" },
   { "name": "Utah", "code": "UT" },
   { "name": "Virginia", "code": "VA" },
-  { "name": "Virgin Islands, U.S.", "code": "VI" },
+  { "name": "Virgin Islands", "code": "VI" },
   { "name": "Vermont", "code": "VT" },
   { "name": "Washington", "code": "WA" },
+  { "name": "Washington DC", "code": "DC" },
   { "name": "Wisconsin", "code": "WI" },
   { "name": "West Virginia", "code": "WV" },
   { "name": "Wyoming", "code": "WY" }

@@ -27,6 +27,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       spaceContext,
       doc: props.scope.otDoc,
       internalContentType: props.scope.entityInfo.contentType,
+      fieldLocaleListeners: props.scope.fieldLocaleListeners,
       parameters,
     });
   }, [props.scope]);

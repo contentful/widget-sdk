@@ -3,7 +3,7 @@ import { iframeStateWrapper } from 'states/utils';
 import * as Analytics from 'analytics/Analytics';
 import subscriptionState from './Subscription/SubscriptionState';
 import { usageState } from 'features/organization-usage';
-import teamsState from './Teams/TeamsState';
+import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { SSOSetupRoutingState } from 'features/sso';
@@ -16,6 +16,7 @@ import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
+import { isOrganizationOnTrial } from 'features/trials';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -42,9 +43,11 @@ const organizationSettings = {
       const organization = await TokenStore.getOrganization(orgId);
 
       let path = ['account', 'organizations'];
+
       if (isDeveloper(organization)) {
         path = [...path, 'apps', 'list'];
-      } else if (isOwnerOrAdmin(organization)) {
+      } else if (isOwnerOrAdmin(organization) || isOrganizationOnTrial(organization)) {
+        // the subscription page is available to users of any role when the org is on trial
         const hasNewPricing = !isLegacyOrganization(organization);
 
         path = [...path, hasNewPricing ? 'subscription_new' : 'subscription'];

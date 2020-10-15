@@ -1,15 +1,5 @@
 import Parser from 'path-parser';
 
-import {
-  ORG_MEMBERSHIPS,
-  ORG_SPACE_ROLES,
-  ORG_SPACES,
-  TEAM_MEMBERSHIPS,
-  TEAM_SPACE_MEMBERSHIPS,
-  TEAMS,
-  USERS,
-} from './datasets';
-
 /**
  * @description
  * Define routes in app and attributes of these routes
@@ -24,25 +14,6 @@ import {
 const ROUTES = {
   organization: {
     path: '/account/organizations/:orgId',
-    children: {
-      teams: {
-        path: '/teams',
-        requiredDataSets: [TEAMS, TEAM_MEMBERSHIPS],
-        feature: 'teams',
-        children: {
-          team: {
-            path: '/:teamId',
-            requiredDataSets: [
-              USERS,
-              ORG_MEMBERSHIPS,
-              TEAM_SPACE_MEMBERSHIPS,
-              ORG_SPACES,
-              { orgRoles: ['admin', 'owner'], datasets: [ORG_SPACE_ROLES] },
-            ],
-          },
-        },
-      },
-    },
   },
   space: {
     path: '/spaces/:spaceId',

@@ -38,7 +38,7 @@ describe('analyticsTracking', () => {
       expect(Analytics.track).toBeCalledWith(`space_purchase:${EVENTS.BEGIN}`, {
         ...mockSessionData,
         spaceId: null,
-        eventMetadata: mockEventMetadata,
+        ...mockEventMetadata,
       });
     });
 
@@ -52,7 +52,7 @@ describe('analyticsTracking', () => {
       expect(Analytics.track).toBeCalledWith(`space_purchase:${EVENTS.NAVIGATE}`, {
         ...mockSessionData,
         spaceId: null,
-        eventMetadata: mockEventMetadata,
+        ...mockEventMetadata,
       });
     });
 
@@ -69,7 +69,8 @@ describe('analyticsTracking', () => {
       expect(Analytics.track).toBeCalledWith(`space_purchase:${EVENTS.NAVIGATE}`, {
         ...mockSessionData,
         spaceId: null,
-        eventMetadata: { fromStep: 'Space Details', toStep: 'Receipt' },
+        fromStep: 'Space Details',
+        toStep: 'Receipt',
       });
     });
   });

@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'emotion';
+import pluralize from 'pluralize';
 import tokens from '@contentful/forma-36-tokens';
 
 import {
@@ -37,6 +38,23 @@ const styles = {
   }),
 };
 
+const getItemsCountByLinkType = (release, linkType) =>
+  release.entities.items.filter((item) => item.sys.linkType === linkType).length;
+
+const getReleaseDescription = (release) => {
+  const entriesCount = getItemsCountByLinkType(release, 'Entry');
+  const assetsCount = getItemsCountByLinkType(release, 'Asset');
+
+  const entry = entriesCount && pluralize('entry', entriesCount, true);
+  const asset = assetsCount && pluralize('asset', assetsCount, true);
+
+  if (entry && asset) {
+    return `${entry}, ${asset}`;
+  }
+
+  return entry || asset;
+};
+
 export default function WrappedEntityListItem({
   entity,
   internalLocaleCode,
@@ -48,21 +66,26 @@ export default function WrappedEntityListItem({
     return getEntityData(entity, internalLocaleCode);
   }, [entity, internalLocaleCode]);
 
-  const { isLoading, data: entityData } = useAsync(getEntityDataFn);
+  const { isLoading, data } = useAsync(getEntityDataFn);
+  const entityData =
+    entity.sys.type === 'Release'
+      ? { ...entity, description: getReleaseDescription(entity) || 'No content' }
+      : data;
+
   return isLoading ? (
     <EntityListItemSkeleton />
   ) : (
     <EntityStateLink key={entity.sys.id} entity={entity}>
-      {({ onClick: onClickGoToEntry, getHref }) => {
+      {({ onClick: onClickGoToEntity, getHref }) => {
         return (
           <EntityListItem
             className={styles.entryListItem}
-            onClick={(e) => (onClick ? onClick(e, entity) : onClickGoToEntry(e, entity))}
+            onClick={(e) => (onClick ? onClick(e, entity) : onClickGoToEntity(e, entity))}
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
-            contentType={contentType}
+            contentType={entity.sys.type === 'Release' ? 'Release' : contentType}
             dropdownListElements={renderDropdown && renderDropdown({ entity })}
-            entityType={entity.sys.type && entity.sys.type.toLowerCase()}
+            entityType={entity.sys.type}
             thumbnailUrl={
               entityData.file && entityData.status !== 'archived'
                 ? `${AssetUrlService.transformHostname(entityData.file.url)}?w=46&h=46&fit=thumb`

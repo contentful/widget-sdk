@@ -8,6 +8,8 @@ import * as fake from 'test/helpers/fakeFactory';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 const trialEndsAt = '2020-10-10';
+const today = '2020-10-01T03:00:00.000Z';
+
 const organizationNotOnTrial = fake.Organization();
 const spaceNotOnTrial = fake.Space();
 const trialOrganization = fake.Organization({
@@ -35,6 +37,11 @@ jest.mock('core/services/BrowserStorage', () => {
 });
 
 describe('Trial/IntercomProductTour', () => {
+  beforeEach(() => {
+    const mockedNow = new Date(today).valueOf();
+    jest.spyOn(Date, 'now').mockImplementation(() => mockedNow);
+  });
+
   it('should return when both org and space on trial', () => {
     initTrialProductTour(trialSpace, trialOrganization);
     expect(Intercom.startTour).toHaveBeenCalledTimes(0);

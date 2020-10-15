@@ -4,13 +4,12 @@ import thunk from 'redux-thunk';
 import { onValue } from 'core/utils/kefir';
 import fclone from 'fclone';
 
-import middlewares from './middlewares';
 import reducer from './reducer';
 import * as actionCreators from 'redux/actions/token/actionCreators';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, ...middlewares)));
+const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
 if (user$ && organizations$ && spacesByOrganization$) {
   onValue(user$, (user) => store.dispatch(actionCreators.updateUserFromToken(fclone(user))));

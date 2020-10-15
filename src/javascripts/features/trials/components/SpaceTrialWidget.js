@@ -33,7 +33,7 @@ const styles = {
   }),
   listItem: css({
     listStyleType: 'disc',
-    listStylePosition: 'inside',
+    marginLeft: tokens.spacingL,
   }),
 };
 
@@ -43,7 +43,7 @@ const trackClickEvent = (eventName) => {
 
 const FairUsePolicyLink = () => (
   <TextLink
-    href="https://www.contentful.com/r/knowledgebase/fair-use/"
+    href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
     target="_blank"
     onClick={() => trackClickEvent('fair_use_policy_clicked')}
     data-test-id="fair_use_policy_link"
@@ -88,7 +88,7 @@ export const SpaceTrialWidget = ({ spaceId }) => {
           </ListItem>
           <ListItem className={styles.listItem}>You can access it for a limited time</ListItem>
           <ListItem className={styles.listItem}>
-            Since itʼs a sandbox, content here is not public
+            Trial spaces are intended for non-production development and testing purposes only
           </ListItem>
         </List>
         <Subheading>What happens at the end of my trial?</Subheading>

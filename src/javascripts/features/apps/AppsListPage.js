@@ -32,11 +32,8 @@ import { websiteUrl } from 'Config';
 import { AppListItem } from './AppListItem';
 import { AppDetailsModal } from './AppDetailsModal';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import {
-  isUsageExceeded,
-  APP_INSTALLATION_LIMIT,
-  ADVANCED_APPS_INSTALLATION_LIMIT,
-} from './isUsageExceeded';
+import { isUsageExceeded } from './isUsageExceeded';
+import { BASIC_APPS_LIMIT, ADVANCED_APPS_LIMIT } from './limits';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
@@ -328,8 +325,8 @@ export class AppsListPage extends React.Component {
     if (this.state.ready) {
       const hasInstalledApps = installedApps.length > 0;
       const spaceInstallationLimit = hasAdvancedAppsFeature
-        ? ADVANCED_APPS_INSTALLATION_LIMIT
-        : APP_INSTALLATION_LIMIT;
+        ? ADVANCED_APPS_LIMIT
+        : BASIC_APPS_LIMIT;
       content = (
         <>
           {hasInstalledApps ? (

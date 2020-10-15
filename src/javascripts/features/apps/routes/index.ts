@@ -15,8 +15,9 @@ import { PageWidgetRenderer } from '../PageWidgetRenderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
-const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
-const DEFAULT_ADVANCED_APPS_STATUS = false;
+
+export const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
+export const DEFAULT_ADVANCED_APPS_STATUS = false;
 
 function canUserManageApps() {
   return !shouldHide(Action.UPDATE, 'settings');
