@@ -10,7 +10,6 @@ import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { create } from 'app/entity_editor/Document/CmaDocument';
 import { Entity } from 'app/entity_editor/Document/types';
-
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createEditorApi } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';

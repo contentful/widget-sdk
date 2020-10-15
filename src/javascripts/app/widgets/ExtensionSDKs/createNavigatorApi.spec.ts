@@ -2,15 +2,12 @@ import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigato
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import * as Navigator from 'states/Navigator';
-import {
-  makeExtensionNavigationHandlers,
-  makeExtensionBulkNavigationHandlers,
-} from 'widgets/bridges/makeExtensionNavigationHandlers';
+import * as entityCreator from 'components/app_container/entityCreator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('navigation/SlideInNavigator/index');
 jest.mock('states/Navigator');
-jest.mock('widgets/bridges/makeExtensionNavigationHandlers');
+jest.mock('components/app_container/entityCreator');
 
 describe('createNavigatorApi', () => {
   let navigatorApi;
@@ -47,80 +44,142 @@ describe('createNavigatorApi', () => {
     const DEFAULT_WIDGET_ID = 'my_widget';
     const DEFAULT_ENVIRONMENT_ID = 'envid';
     const DEFAULT_SPACE_ID = 'spaceid';
-    const spaceContext = {
+    const DEFAULT_SPACE_CONTEXT = {
       getId: () => DEFAULT_SPACE_ID,
       getEnvironmentId: () => DEFAULT_ENVIRONMENT_ID,
       isMasterEnvironment: () => true,
     };
+    const mockAsset = {
+      sys: {
+        id: 'asset_id',
+        type: 'Entry',
+        space: {
+          id: DEFAULT_SPACE_ID,
+        },
+        environment: {
+          id: DEFAULT_ENVIRONMENT_ID,
+        },
+      },
+    };
+
+    const mockEntry = {
+      sys: {
+        id: 'new-entry',
+        type: 'Asset',
+        space: {
+          sys: {
+            id: DEFAULT_SPACE_ID,
+          },
+        },
+        environment: {
+          sys: {
+            id: DEFAULT_ENVIRONMENT_ID,
+          },
+        },
+      },
+    };
+
     const buildApi = ({
       widgetNamespace = DEFAULT_WIDGET_NAMESPACE,
       isOnPageLocation = false,
+      spaceContext = {},
     } = {}) =>
       createNavigatorApi({
-        spaceContext,
+        spaceContext: { ...DEFAULT_SPACE_CONTEXT, ...spaceContext },
         widgetNamespace,
         widgetId: DEFAULT_WIDGET_ID,
         isOnPageLocation,
       });
 
     describe('openEntry', () => {
-      it('calls navigateToContentEntity with the correct arguments', () => {
-        const navigateToContentEntity = jest.fn();
-        (makeExtensionNavigationHandlers as jest.Mock).mockReturnValueOnce(navigateToContentEntity);
+      it('calls navigateToContentEntity with the correct arguments', async () => {
+        const spaceContext = {
+          cma: {
+            getEntry: () => Promise.resolve(mockEntry),
+          },
+        };
 
-        const navigatorApi = buildApi();
-        navigatorApi.openEntry('my_id', { slideIn: true });
-        expect(navigateToContentEntity).toHaveBeenCalledWith({
-          entityType: 'Entry',
-          slideIn: true,
-          id: 'my_id',
+        const navigatorApi = buildApi({ spaceContext });
+        const result = await navigatorApi.openEntry('my_id', { slideIn: true });
+        expect(result).toEqual({
+          navigated: true,
+          entity: mockEntry,
+        });
+      });
+
+      it('calls navigateToContentEntity with slideIn = false', async () => {
+        const spaceContext = {
+          cma: {
+            getEntry: () => Promise.resolve(mockEntry),
+          },
+        };
+
+        const navigatorApi = buildApi({ spaceContext });
+        const result = await navigatorApi.openEntry('my_id', { slideIn: false });
+        expect(result).toEqual({
+          navigated: true,
+          entity: mockEntry,
         });
       });
     });
 
     describe('openNewEntry', () => {
-      it('calls navigateToContentEntity with correct arguments', () => {
-        const navigateToContentEntity = jest.fn();
-        (makeExtensionNavigationHandlers as jest.Mock).mockReturnValueOnce(navigateToContentEntity);
+      it('calls navigateToContentEntity with correct arguments', async () => {
+        const spaceContext = {
+          cma: {
+            getEntry: () => Promise.resolve(mockEntry),
+          },
+        };
 
-        const navigatorApi = buildApi();
-        navigatorApi.openNewEntry('content_type_id', { slideIn: true });
-        expect(navigateToContentEntity).toHaveBeenCalledWith({
-          entityType: 'Entry',
-          slideIn: true,
-          id: null,
-          contentTypeId: 'content_type_id',
+        (entityCreator.newEntry as jest.Mock).mockReturnValue({
+          data: mockEntry,
+        });
+
+        const navigatorApi = buildApi({ spaceContext });
+        const result = await navigatorApi.openNewEntry('content_type_id', { slideIn: true });
+        expect(result).toEqual({
+          navigated: true,
+          entity: mockEntry,
         });
       });
     });
 
     describe('openAsset', () => {
-      it('calls navigateToContentEntity with the correct arguments', () => {
-        const navigateToContentEntity = jest.fn();
-        (makeExtensionNavigationHandlers as jest.Mock).mockReturnValueOnce(navigateToContentEntity);
+      it('calls navigateToContentEntity with the correct arguments', async () => {
+        const spaceContext = {
+          cma: {
+            getAsset: () => Promise.resolve(mockAsset),
+          },
+        };
+        const navigatorApi = buildApi({ spaceContext });
 
-        const navigatorApi = buildApi();
-        navigatorApi.openAsset('my_id', { slideIn: false });
-        expect(navigateToContentEntity).toHaveBeenCalledWith({
-          entityType: 'Asset',
-          slideIn: false,
-          id: 'my_id',
+        const result = await navigatorApi.openAsset('known_asset_id', { slideIn: false });
+        expect(result).toEqual({
+          navigated: true,
+          entity: mockAsset,
         });
       });
     });
 
     describe('openNewAsset', () => {
-      it('calls navigateToContentEntity with the correct arguments', () => {
-        const navigateToContentEntity = jest.fn();
-        (makeExtensionNavigationHandlers as jest.Mock).mockReturnValueOnce(navigateToContentEntity);
+      it('calls navigateToContentEntity with the correct arguments', async () => {
+        (entityCreator.newAsset as jest.Mock).mockReturnValue({
+          data: mockAsset,
+        });
 
-        const navigatorApi = buildApi();
-        navigatorApi.openNewAsset({ slideIn: false });
+        const spaceContext = {
+          cma: {
+            getAsset: () => Promise.resolve(mockAsset),
+          },
+        };
 
-        expect(navigateToContentEntity).toHaveBeenCalledWith({
-          entityType: 'Asset',
-          slideIn: false,
-          id: null,
+        const navigatorApi = buildApi({ spaceContext });
+        const result = await navigatorApi.openNewAsset({ slideIn: false });
+
+        expect(result).toEqual({
+          navigated: true,
+          entity: mockAsset,
+          slide: undefined,
         });
       });
     });
@@ -296,20 +355,16 @@ describe('createNavigatorApi', () => {
     });
 
     describe('openBulkEditor', () => {
-      it('calls navigateToBulkEditor with the correct arguments', () => {
-        const navigateToBulkEditor = jest.fn();
-        (makeExtensionBulkNavigationHandlers as jest.Mock).mockReturnValueOnce(
-          navigateToBulkEditor
-        );
-
+      it('calls navigateToBulkEditor with the correct arguments', async () => {
         const navigatorApi = buildApi();
-        navigatorApi.openBulkEditor('entry_id', { fieldId: 'field_id', locale: 'fr', index: 3 });
-
-        expect(navigateToBulkEditor).toHaveBeenCalledWith({
-          entryId: 'entry_id',
+        const result = await navigatorApi.openBulkEditor('entry_id', {
           fieldId: 'field_id',
           locale: 'fr',
           index: 3,
+        });
+
+        expect(result).toEqual({
+          navigated: true,
         });
       });
     });

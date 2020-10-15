@@ -12,7 +12,7 @@ import {
   SET_PROCESSING_ACTION,
 } from './actions';
 
-type ReferencesState = {
+export type ReferencesState = {
   references: [];
   linksCounter: object;
   selectedEntities: [];
@@ -25,7 +25,7 @@ type ReferencesState = {
   processingAction: string | null;
 };
 
-type Action = {
+export type Action = {
   type:
     | typeof SET_REFERENCES
     | typeof SET_LINKS_COUNTER

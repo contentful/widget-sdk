@@ -26,12 +26,13 @@ import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
-import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
+import { Action, ReferencesState } from './EntryReferences/state/reducer';
 import { filterWidgets } from './formWidgetsController';
 import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
+    /* eslint-disable-next-line @typescript-eslint/camelcase */
     tab_name: tab,
   });
 
@@ -51,7 +52,10 @@ const EntryEditorWorkbench = (props) => {
     preferences,
     fields,
   } = props;
-  const { state: referencesState } = useContext(ReferencesContext);
+  const { state: referencesState } = (useContext(ReferencesContext) as unknown) as {
+    state: ReferencesState;
+    dispatch: React.Dispatch<Action>;
+  };
   const { processingAction, references, selectedEntities } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
@@ -122,7 +126,7 @@ const EntryEditorWorkbench = (props) => {
             ...props,
           });
         } else {
-          const createSdk = createExtensionBridgeAdapter({
+          const scope = {
             editorData,
             editorContext,
             entityInfo,
@@ -132,9 +136,9 @@ const EntryEditorWorkbench = (props) => {
             fields,
             widgets,
             fieldLocaleListeners,
-          });
+          };
 
-          return <CustomEditorExtensionRenderer extension={currentTab} createSdk={createSdk} />;
+          return <CustomEditorExtensionRenderer extension={currentTab} scope={scope} />;
         }
       },
       onClick(selectedTab) {
@@ -180,7 +184,7 @@ const EntryEditorWorkbench = (props) => {
     }
   }
 
-  const referencesTab = selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
+  const referencesTab = selectedTab!.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
 
   if (!editorContext) return null;
 

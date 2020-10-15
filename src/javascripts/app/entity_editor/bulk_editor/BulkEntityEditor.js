@@ -11,7 +11,6 @@ import * as logger from 'services/logger';
 import { localFieldChanges } from 'app/entity_editor/Document';
 import { getModule } from 'core/NgRegistry';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
-import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
 import Loader from 'ui/Loader';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -213,10 +212,7 @@ export const BulkEntityEditor = ({
         {isExpanded && (
           <Workbench.Content type="text">
             {customEditor ? (
-              <CustomEditorExtensionRenderer
-                extension={customEditor}
-                createSdk={createExtensionBridgeAdapter(scope)}
-              />
+              <CustomEditorExtensionRenderer extension={customEditor} scope={scope} />
             ) : (
               <AngularComponent
                 with$Apply

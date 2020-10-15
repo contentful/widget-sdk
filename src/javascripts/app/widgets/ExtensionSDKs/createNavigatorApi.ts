@@ -1,13 +1,37 @@
-import { noop } from 'lodash';
-import {
-  makeExtensionNavigationHandlers,
-  makeExtensionBulkNavigationHandlers,
-} from 'widgets/bridges/makeExtensionNavigationHandlers';
-import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { NavigatorAPI, NavigatorPageResponse } from 'contentful-ui-extensions-sdk';
-import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { noop } from 'lodash';
+import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import * as Navigator from 'states/Navigator';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { find } from 'lodash';
+import * as entityCreator from 'components/app_container/entityCreator';
+import get from 'lodash/get';
+import localeStore from 'services/localeStore';
+import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
+import { NavigatorOpenResponse } from 'contentful-ui-extensions-sdk';
+
+function isAnotherBulkEditorOpen() {
+  return !!find(SlideInNavigator.getSlideInEntities(), { type: 'BulkEditor' });
+}
+
+async function navigateToBulkEditor(options) {
+  const { entryId, fieldId, locale, index } = options;
+
+  if (isAnotherBulkEditorOpen()) {
+    throw new Error(`Can't open bulk editor when there is another bulk editor open`);
+  }
+
+  const path = [entryId, fieldId, localeStore.toInternalCode(locale), index];
+
+  const slide = SlideInNavigator.goToSlideInEntity({
+    type: 'BulkEditor',
+    path,
+  });
+
+  return { navigated: true, slide };
+}
 
 interface NavigatorProps {
   spaceContext: any;
@@ -29,6 +53,90 @@ const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
 
 const denyNavigate = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Navigate);
+};
+
+const makeNavigateToEntity = (cma: any) => {
+  return async function navigate(options) {
+    if (!['Entry', 'Asset'].includes(options.entityType)) {
+      throw new Error('Unknown entity type.');
+    }
+    // open existing entity
+    if (typeof options.id === 'string') {
+      return openExistingEntity(options, {});
+    }
+
+    let entity;
+    try {
+      entity = await createEntity(options);
+    } catch (e) {
+      throw new Error('Failed to create an entity.');
+    }
+
+    return openExistingEntity(
+      {
+        ...options,
+        id: entity.sys.id,
+      },
+      entity
+    );
+  };
+
+  async function createEntity(options) {
+    // Important note:
+    // `entityCreator` returns legacy client entities, we need to extract `entity.data`.
+
+    if (options.entityType === 'Entry' && typeof options.contentTypeId === 'string') {
+      const created = await entityCreator.newEntry(options.contentTypeId);
+      return created.data;
+    } else if (options.entityType === 'Asset') {
+      const created = await entityCreator.newAsset();
+      return created.data;
+    }
+
+    throw new Error('Could not determine how to create the requested entity.');
+  }
+
+  function getEntity(options) {
+    if (options.entityType === 'Asset') {
+      return cma.getAsset(options.id);
+    } else {
+      return cma.getEntry(options.id);
+    }
+  }
+
+  async function openExistingEntity<T>(
+    { id, entityType, slideIn = false },
+    entity: T
+  ): Promise<NavigatorOpenResponse<T>> {
+    let slide = undefined;
+
+    try {
+      if (slideIn) {
+        if (get(slideIn, ['waitForClose'], false) === true) {
+          slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
+            id,
+            type: entityType,
+          });
+        } else {
+          slide = SlideInNavigator.goToSlideInEntity({
+            id,
+            type: entityType,
+          });
+        }
+        entity = await getEntity({
+          entityType,
+          id,
+        });
+      } else {
+        entity = await getEntity({ id, entityType });
+        await Navigator.go(Navigator.makeEntityRef(entity));
+      }
+    } catch (err) {
+      throw new Error('Failed to navigate to the entity.');
+    }
+
+    return { navigated: true, entity, slide };
+  }
 };
 
 const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
@@ -110,12 +218,11 @@ export function createNavigatorApi({
   widgetId,
   isOnPageLocation = false,
 }: NavigatorProps): NavigatorAPI {
-  const navigateToContentEntity = makeExtensionNavigationHandlers({ cma: spaceContext.cma });
-  const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
   const isMaster = spaceContext.isMasterEnvironment();
 
+  const navigateToContentEntity = makeNavigateToEntity(spaceContext.cma);
   const navigateToPage = makeNavigateToPage(
     {
       spaceId,

@@ -78,7 +78,7 @@ export function goToSlideInEntity(slide) {
  * @param {Function} onExit? Invoked when the last slide is closed. Navigates to
  * the current state's list if omitted.
  */
-export function goToPreviousSlideOrExit(eventLabel, onExit) {
+export function goToPreviousSlideOrExit(eventLabel, onExit = null) {
   const $state = getModule('$state');
 
   const slideInEntities = getSlideInEntities();
