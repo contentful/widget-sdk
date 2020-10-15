@@ -134,7 +134,7 @@ const SnapshotComparator = ({
       trackVersioning.restored(pathsToRestore, diffCount, showOnlyDifferences);
       setDirty(false);
       Notification.success('Entry successfully restored.');
-      if (redirect) stateRedirect(true);
+      if (redirect) stateRedirect(false);
     } catch (error) {
       handleSaveError(error);
     }

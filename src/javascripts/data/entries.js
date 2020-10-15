@@ -19,6 +19,10 @@ function transformRepresentation(entryData, transformPath) {
     _.set(result, transformPath(path), value);
   });
 
+  if (entryData.metadata) {
+    result.metadata = _.cloneDeep(entryData.metadata);
+  }
+
   return result;
 }
 
