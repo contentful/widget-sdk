@@ -1,3 +1,7 @@
+import { noop } from 'lodash';
+import { createDialogsApi } from '../createDialogsApi';
+import { createSidebarWidgetSDK } from './createSidebarWidgetSDK';
+
 jest.mock('../createEditorApi', () => ({ createEditorApi: jest.fn() }));
 jest.mock('../createEntryApi', () => ({ createEntryApi: jest.fn() }));
 jest.mock('../createUserApi', () => ({ createUserApi: jest.fn() }));
@@ -21,10 +25,6 @@ jest.mock('../utils', () => ({
   }),
 }));
 
-import { noop } from 'lodash';
-import { createDialogsApi } from '../createDialogsApi';
-import { createSidebarWidgetSDK } from './createSidebarWidgetSDK';
-
 const contentType = {
   name: 'content type',
   description: 'a type of content',
@@ -37,7 +37,7 @@ describe('createSidebarWidgetSDK', () => {
   it('prunes properties when creating SDK for dialogs', () => {
     createSidebarWidgetSDK({
       internalContentType: contentType,
-      $scope: { editorData: {}, fieldLocaleListeners: {}, watch: noop },
+      $scope: { editorData: {}, fieldLocaleListeners: {lookup: noop}, watch: noop },
       doc: {},
       parameters: null,
       spaceContext: {
