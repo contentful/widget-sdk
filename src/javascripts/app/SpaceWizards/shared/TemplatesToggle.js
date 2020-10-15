@@ -63,7 +63,7 @@ export default function TemplatesToggle(props) {
         className={classnames({
           [styles.newSpacePurchaseFlow]: isNewSpacePurchaseFlow,
         })}>
-        <FieldGroup className={styles.test}>
+        <FieldGroup>
           <RadioButtonField
             name="isShowingTemplates"
             id="isShowingTemplates-false"

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   getIncludedResources,
   createSpace,
@@ -31,11 +32,21 @@ import {
   FormLabel,
   Paragraph,
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { Pluralized } from 'core/components/formatting';
 import { isOrganizationOnTrial } from 'features/trials';
+
+const styles = {
+  controlButtons: css({
+    marginTop: tokens.spacingXl,
+  }),
+  talkToUsButton: css({
+    marginRight: tokens.spacingM,
+  }),
+};
 
 const initialFetch = (organization, basePlan) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
@@ -142,7 +153,7 @@ export default function EnterpriseWizard(props) {
   const limit = freeSpaceResource.limits.maximum;
   const reachedLimit = freeSpaceResource.usage >= freeSpaceResource.limits.maximum;
   const isFeatureDisabled = limit === 0;
-  const showForm = !isFeatureDisabled && !reachedLimit;
+  const canCreate = !isFeatureDisabled && !reachedLimit;
   const showTrialSpaceInfo = isTrialCommFeatureFlagEnabled && !isHighDemand && !isEnterpriseTrial;
 
   return (
@@ -157,25 +168,32 @@ export default function EnterpriseWizard(props) {
           <Modal.Header title="Create a space" onClose={isProcessing ? null : onClose} />
           <Modal.Content testId="enterprise-wizard-contents">
             <Typography>
-              <FormLabel htmlFor="spaceType">Space Type</FormLabel>
-              {showTrialSpaceInfo && (
-                <Paragraph>
-                  Use a Trial Space to test out new projects for 30 days, free of charge
-                </Paragraph>
-              )}
-              {!isTrialCommFeatureFlagEnabled && !isHighDemand && <POCInfo />}
-              <POCPlan
-                resources={includedResources}
-                name={freeSpaceRatePlan.name}
-                roleSet={freeSpaceRatePlan.roleSet}
-                reachedLimit={reachedLimit}
-                usage={usage}
-                limit={limit}
-                disabled={!showForm}
-                showTrialSpaceInfo={showTrialSpaceInfo}
-              />
-              {showForm && (
-                <Form onSubmit={handleSubmit}>
+              <Form>
+                {!canCreate && !isEnterpriseTrial && (
+                  <>
+                    {reachedLimit && !isFeatureDisabled && (
+                      <Note testId="reached-limit-note">
+                        You’ve created{' '}
+                        <Pluralized
+                          text={
+                            isTrialCommFeatureFlagEnabled ? 'Trial Space' : 'proof of concept space'
+                          }
+                          count={limit}
+                        />
+                        . Delete an existing one or talk to us if you need more.
+                      </Note>
+                    )}
+                    {isFeatureDisabled && (
+                      <Note testId="poc-not-enabled-note">
+                        You can’t create{' '}
+                        {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}{' '}
+                        because they’re not a part of your enterprise deal with Contentful. Get in
+                        touch with us if you want to create new spaces.
+                      </Note>
+                    )}
+                  </>
+                )}
+                {canCreate && (
                   <TextField
                     countCharacters
                     required
@@ -192,62 +210,57 @@ export default function EnterpriseWizard(props) {
                     }}
                     onChange={(e) => setSpaceName(e.target.value)}
                   />
-                  <TemplateSelector
-                    onSelect={setSelectedTemplate}
-                    selectedTemplate={selectedTemplate}
-                    templates={templates}
-                    formAlign="left"
-                  />
-                </Form>
+                )}
+              </Form>
+              <FormLabel htmlFor="spaceType">Space Type</FormLabel>
+              {showTrialSpaceInfo && (
+                <Paragraph>
+                  Use a Trial Space to test out new projects for 30 days, free of charge
+                </Paragraph>
               )}
-              {!showForm && !isEnterpriseTrial && (
-                <>
-                  {reachedLimit && !isFeatureDisabled && (
-                    <Note testId="reached-limit-note">
-                      You’ve created{' '}
-                      <Pluralized
-                        text={
-                          isTrialCommFeatureFlagEnabled ? 'Trial Space' : 'proof of concept space'
-                        }
-                        count={limit}
-                      />
-                      . Delete an existing one or talk to us if you need more.
-                    </Note>
-                  )}
-                  {isFeatureDisabled && (
-                    <Note testId="poc-not-enabled-note">
-                      You can’t create{' '}
-                      {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}{' '}
-                      because they’re not a part of your enterprise deal with Contentful. Get in
-                      touch with us if you want to create new spaces.
-                    </Note>
-                  )}
-                </>
+              {!isTrialCommFeatureFlagEnabled && !isHighDemand && <POCInfo />}
+              <POCPlan
+                resources={includedResources}
+                name={freeSpaceRatePlan.name}
+                roleSet={freeSpaceRatePlan.roleSet}
+                reachedLimit={reachedLimit}
+                usage={usage}
+                limit={limit}
+                disabled={!canCreate}
+                showTrialSpaceInfo={showTrialSpaceInfo}
+              />
+              {canCreate && (
+                <TemplateSelector
+                  onSelect={setSelectedTemplate}
+                  selectedTemplate={selectedTemplate}
+                  templates={templates}
+                  formAlign="left"
+                />
               )}
+              <div className={styles.controlButtons}>
+                {!canCreate && (
+                  <>
+                    <ContactUsButton noIcon onClick={onClose} className={styles.talkToUsButton}>
+                      Talk to us
+                    </ContactUsButton>
+                    <Button testId="close-wizard" buttonType="muted" onClick={onClose}>
+                      Close
+                    </Button>
+                  </>
+                )}
+                {canCreate && (
+                  <Button
+                    testId="create-space-button"
+                    buttonType="primary"
+                    disabled={isCreatingSpace || spaceName === ''}
+                    loading={isCreatingSpace}
+                    onClick={handleSubmit}>
+                    Confirm and create space
+                  </Button>
+                )}
+              </div>
             </Typography>
           </Modal.Content>
-          {!showForm && (
-            <Modal.Controls>
-              <ContactUsButton noIcon onClick={onClose}>
-                Talk to us
-              </ContactUsButton>
-              <Button testId="close-wizard" buttonType="muted" onClick={onClose}>
-                Close
-              </Button>
-            </Modal.Controls>
-          )}
-          {showForm && (
-            <Modal.Controls>
-              <Button
-                testId="create-space-button"
-                buttonType="primary"
-                disabled={isCreatingSpace || spaceName === ''}
-                loading={isCreatingSpace}
-                onClick={handleSubmit}>
-                Confirm and create space
-              </Button>
-            </Modal.Controls>
-          )}
         </>
       )}
     </>
