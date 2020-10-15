@@ -11,6 +11,8 @@ import CommentThread from './CommentThread';
 import CommentsPanelEmptyState from './CommentsPanelEmptyState';
 import { CommentSkeletonGroup } from './CommentSkeleton';
 import { fromFlatToThreads, isReply, isReplyToComment } from './utils';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export const styles = {
   root: css({
@@ -45,7 +47,13 @@ export const styles = {
   }),
 };
 
-function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
+function CommentsPanelContent({ entryId, onCommentsCountUpdate }) {
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const endpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
+    currentSpaceId,
+    currentEnvironmentId,
+  ]);
+
   const { isLoading, data, error } = useCommentsFetcher(endpoint, entryId);
   const [comments, setComments] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -131,7 +139,6 @@ function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
 }
 
 CommentsPanelContent.propTypes = {
-  endpoint: PropTypes.func.isRequired,
   entryId: PropTypes.string.isRequired,
   onCommentsCountUpdate: PropTypes.func.isRequired,
 };

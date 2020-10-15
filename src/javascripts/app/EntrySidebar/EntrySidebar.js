@@ -26,6 +26,9 @@ import {
   WidgetRenderer,
 } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { trackIsCommentsAlphaEligible } from './CommentsPanel/analytics';
 
 const styles = {
   activity: css({
@@ -75,6 +78,8 @@ const ComponentsMap = {
 };
 
 export default class EntrySidebar extends Component {
+  static contextType = SpaceEnvContext;
+
   static propTypes = {
     entrySidebarProps: PropTypes.shape({
       isMasterEnvironment: PropTypes.bool.isRequired,
@@ -105,56 +110,94 @@ export default class EntrySidebar extends Component {
         })
       ),
       localeData: PropTypes.object.isRequired,
+      entityInfo: PropTypes.object.isRequired,
     }),
-    sidebarToggleProps: PropTypes.shape({
-      commentsToggle: PropTypes.shape({
-        onClick: PropTypes.func,
-        isEnabled: PropTypes.bool,
-        commentsCount: PropTypes.number,
-      }),
-    }),
+    disableComments: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    commentsEnabled: true,
+    disableComments: false,
   };
 
   entitySidebarRef = React.createRef();
 
-  createTabs = () => ({
-    activity: {
-      isEnabled: true,
-      title: 'General',
-      onClick: (id) => {
-        this.setState({ selectedTab: id });
+  onCommentsCountUpdate = (commentsCount) => this.setState({ commentsCount });
+
+  createTabs = () => {
+    const { commentsEnabled, commentsCount, selectedTab } = this.state;
+    const { entrySidebarProps } = this.props;
+
+    const sidebarItems = this.getSidebarConfiguration();
+    const legacyExtensions = entrySidebarProps.legacySidebarExtensions || [];
+
+    const onSelect = (id) => {
+      this.setState({ selectedTab: id });
+    };
+
+    return {
+      activity: {
+        isEnabled: true,
+        title: 'General',
+        onSelect,
+        children: (
+          <div className={styles.activity} data-test-id="entry-editor-sidebar">
+            {this.renderWidgets(sidebarItems)}
+            {this.renderLegacyExtensions(legacyExtensions)}
+          </div>
+        ),
       },
-    },
-    comments: {
-      isEnabled: this.props.sidebarToggleProps.commentsToggle.isEnabled,
-      title: (
-        <div>
-          <span>
-            {this.props.sidebarToggleProps.commentsToggle.commentsCount
-              ? this.props.sidebarToggleProps.commentsToggle.commentsCount === 1
-                ? '1 comment'
-                : `${this.props.sidebarToggleProps.commentsToggle.commentsCount} comments`
-              : 'Comments'}
-          </span>
-        </div>
-      ),
-      onClick: (id) => {
-        this.props.sidebarToggleProps.commentsToggle.onClick();
-        this.setState({ selectedTab: id });
+      comments: {
+        isEnabled: commentsEnabled,
+        title: (
+          <div>
+            <span>
+              {commentsCount
+                ? `${commentsCount} comment${commentsCount === 1 ? '' : 's'}`
+                : 'Comments'}
+            </span>
+          </div>
+        ),
+        onSelect,
+        children: (
+          <CommentsPanelContainer
+            emitter={entrySidebarProps.emitter}
+            entryId={entrySidebarProps.entityInfo.id}
+            isVisible={selectedTab === 'comments'}
+            onCommentsCountUpdate={this.onCommentsCountUpdate}
+          />
+        ),
       },
-    },
-    info: {
-      isEnabled: true,
-      title: 'Info',
-      onClick: (id) => {
-        this.setState({ selectedTab: id });
+      info: {
+        isEnabled: true,
+        title: 'Info',
+        onSelect,
+        children: <EntryInfoPanelContainer emitter={entrySidebarProps.emitter} />,
       },
-    },
-  });
+    };
+  };
 
   state = {
-    selectedTab: Object.keys(this.createTabs())[0],
+    selectedTab: 'activity',
+    commentsEnabled: undefined,
+    commentsCount: undefined,
   };
+
+  componentDidMount() {
+    const { disableComments } = this.props;
+    if (!disableComments) {
+      const { currentSpaceId, currentOrganizationId } = this.context;
+      getVariation(FLAGS.ENTRY_COMMENTS, {
+        organizationId: currentOrganizationId,
+        spaceId: currentSpaceId,
+      }).then((commentsEnabled) => {
+        if (commentsEnabled) {
+          this.setState({ commentsEnabled });
+          trackIsCommentsAlphaEligible();
+        }
+      });
+    }
+  }
 
   componentDidUpdate(_, prevState) {
     if (prevState.selectedTab !== this.state.selectedTab) {
@@ -264,55 +307,41 @@ export default class EntrySidebar extends Component {
   };
 
   render() {
-    const sidebarItems = this.getSidebarConfiguration();
-    const legacyExtensions = this.props.entrySidebarProps.legacySidebarExtensions || [];
-    const tabs = this.createTabs();
+    const { selectedTab } = this.state;
+    const tabs = Object.entries(this.createTabs());
+
     return (
       <React.Fragment>
         <div className={styles.tabWrapper}>
           <Tabs className={styles.tabs} withDivider>
-            {Object.keys(tabs).map(
-              (key) =>
-                tabs[key].isEnabled && (
+            {tabs.map(
+              ([key, { isEnabled, onSelect, title }]) =>
+                isEnabled && (
                   <Tab
-                    id={key}
-                    selected={this.state.selectedTab === key}
                     key={key}
+                    id={key}
+                    selected={selectedTab === key}
                     className={styles.tab}
-                    onSelect={tabs[key].onClick}>
-                    {tabs[key].title}
+                    onSelect={onSelect}>
+                    {title}
                   </Tab>
                 )
             )}
           </Tabs>
           <div className={cx('entity-sidebar', styles.panelWrapper)} ref={this.entitySidebarRef}>
-            <TabPanel
-              id="comments"
-              className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'comments',
-              })}>
-              <CommentsPanelContainer
-                emitter={this.props.entrySidebarProps.emitter}
-                isVisible={this.state.selectedTab === 'comments'}
-              />
-            </TabPanel>
-            <TabPanel
-              id="info"
-              className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'info',
-              })}>
-              <EntryInfoPanelContainer emitter={this.props.entrySidebarProps.emitter} />
-            </TabPanel>
-            <TabPanel
-              id="activity"
-              className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'activity',
-              })}>
-              <div className={styles.activity} data-test-id="entry-editor-sidebar">
-                {this.renderWidgets(sidebarItems)}
-                {this.renderLegacyExtensions(legacyExtensions)}
-              </div>
-            </TabPanel>
+            {tabs.map(
+              ([key, { isEnabled, children }]) =>
+                isEnabled && (
+                  <TabPanel
+                    key={key}
+                    id={key}
+                    className={cx(styles.tabPanel, {
+                      [styles.isVisible]: selectedTab === key,
+                    })}>
+                    {children}
+                  </TabPanel>
+                )
+            )}
           </div>
         </div>
       </React.Fragment>

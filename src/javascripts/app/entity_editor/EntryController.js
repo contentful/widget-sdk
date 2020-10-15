@@ -9,13 +9,7 @@ import { valuePropertyAt } from 'app/entity_editor/Document';
 
 import { getModule } from 'core/NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import * as Analytics from 'analytics/Analytics';
-
-import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
-import { getAllForEntry } from 'data/CMA/CommentsRepo';
-import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { getEditorState } from './editorState';
 
@@ -47,14 +41,11 @@ import { getEditorState } from './editorState';
  */
 export default async function create($scope, editorData, preferences, trackLoadEvent) {
   const spaceContext = getModule('spaceContext');
-  const $rootScope = getModule('$rootScope');
-  const spaceId = spaceContext.space.getId();
 
   $scope.context = {};
   $scope.context.ready = true;
   $scope.editorData = editorData;
   $scope.loadEvents = K.createStreamBus($scope);
-  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
   const { entityInfo } = editorData;
   $scope.entityInfo = entityInfo;
 
@@ -204,40 +195,5 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const { errors, focusedLocale } = $scope.localeData;
     const localeCodes = keys(errors);
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
-  }
-
-  getVariation(FLAGS.ENTRY_COMMENTS, {
-    organizationId: spaceContext.getData('organization.sys.id'),
-    spaceId,
-  }).then((isEnabled) => {
-    if (isEnabled) {
-      $scope.sidebarToggleProps.commentsToggle.isEnabled = isEnabled;
-      trackIsCommentsAlphaEligible();
-      initComments($scope, spaceContext.endpoint, entityInfo.id);
-    }
-  });
-}
-
-function initComments($scope, endpoint, entityId) {
-  // Showing the count is low-priority so we can defer fetching it
-  if (window.requestIdleCallback !== undefined) {
-    window.requestIdleCallback(maybeFetchCommentsCount);
-  } else {
-    const sensibleDelay = 1000;
-    setTimeout(maybeFetchCommentsCount, sensibleDelay);
-  }
-
-  $scope.shouldDisplayCommentsToggle = true;
-  $scope.emitter.on(SidebarEventTypes.UPDATED_COMMENTS_COUNT, setCommentsCount);
-
-  async function maybeFetchCommentsCount() {
-    if ($scope.sidebarToggleProps.commentsToggle.commentsCount === undefined) {
-      const { items: comments } = await getAllForEntry(endpoint, entityId);
-      setCommentsCount(comments.length);
-    }
-  }
-
-  function setCommentsCount(commentsCount) {
-    $scope.sidebarToggleProps.commentsToggle.commentsCount = commentsCount;
   }
 }

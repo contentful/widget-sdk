@@ -99,10 +99,7 @@ const AssetEditorWorkbench = ({
           </div>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
-          <EntrySidebar
-            entrySidebarProps={entrySidebarProps}
-            sidebarToggleProps={{ commentsToggle: { isEnabled: false } }}
-          />
+          <EntrySidebar entrySidebarProps={entrySidebarProps} disableComments />
         </Workbench.Sidebar>
       </Workbench>
     </div>

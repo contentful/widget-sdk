@@ -151,48 +151,9 @@ export default ({ $scope, emitter }) => {
       });
     };
 
-    $scope.$on('show-aux-panel', (_, isVisible) => {
-      updateProps({
-        isVisible,
-      });
-    });
-
     K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       updateProps({ sys });
     });
-  });
-
-  let commentsPanelDelistener;
-
-  const initializeCommentsPanel = once(() => {
-    const init = once(() => {
-      // init will fetch all comments. we don't want that until
-      // the comments tab is opened for the first time
-      emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
-        entryId: $scope.entityInfo.id,
-        endpoint: spaceContext.endpoint,
-      });
-    });
-
-    commentsPanelDelistener = $scope.$on('show-comments-panel', (_, isVisible) => {
-      init();
-      emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
-        isVisible,
-      });
-    });
-  });
-
-  const deinitializeCommentsPanel = once(() => {
-    commentsPanelDelistener && commentsPanelDelistener();
-    commentsPanelDelistener = undefined;
-  });
-
-  emitter.on(SidebarEventTypes.WIDGET_DEREGISTERED, (name) => {
-    switch (name) {
-      case SidebarWidgetTypes.COMMENTS_PANEL:
-        deinitializeCommentsPanel();
-        break;
-    }
   });
 
   emitter.on(SidebarEventTypes.WIDGET_REGISTERED, (name) => {
@@ -220,9 +181,6 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();
-        break;
-      case SidebarWidgetTypes.COMMENTS_PANEL:
-        initializeCommentsPanel();
         break;
     }
   });
@@ -279,6 +237,7 @@ export default ({ $scope, emitter }) => {
   return {
     legacySidebarExtensions: legacyExtensions,
     localeData: $scope.localeData,
+    entityInfo: $scope.entityInfo,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
     makeSidebarWidgetSDK,

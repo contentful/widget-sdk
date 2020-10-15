@@ -10,7 +10,6 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData';
 import TheLocaleStore from 'services/localeStore';
-import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { valuePropertyAt } from './Document';
@@ -23,9 +22,6 @@ import { initStateController } from './stateController';
  */
 export default async function create($scope, editorData, preferences) {
   const spaceContext = getModule('spaceContext');
-  const $rootScope = getModule('$rootScope');
-
-  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
 
   $scope.context = {};
   $scope.editorData = editorData;

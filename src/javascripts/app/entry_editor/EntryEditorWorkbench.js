@@ -48,7 +48,6 @@ const EntryEditorWorkbench = (props) => {
     getEditorData,
     editorContext,
     entrySidebarProps,
-    sidebarToggleProps,
     preferences,
     fields,
   } = props;
@@ -262,10 +261,7 @@ const EntryEditorWorkbench = (props) => {
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
           </Workbench.Sidebar>
           <Workbench.Sidebar position="right" className={styles.sidebar}>
-            <EntrySidebar
-              entrySidebarProps={entrySidebarProps}
-              sidebarToggleProps={sidebarToggleProps}
-            />
+            <EntrySidebar entrySidebarProps={entrySidebarProps} />
           </Workbench.Sidebar>
         </div>
       </Workbench>
@@ -286,7 +282,6 @@ EntryEditorWorkbench.propTypes = {
   widgets: PropTypes.array,
   getOtDoc: PropTypes.func,
   noLocalizedFieldsAdviceProps: PropTypes.object,
-  sidebarToggleProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,
