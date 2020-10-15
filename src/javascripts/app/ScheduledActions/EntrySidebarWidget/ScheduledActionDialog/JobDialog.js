@@ -14,8 +14,8 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import {
-  createDialogClose,
-  createDialogOpen,
+  createDialogClose as trackDialogClose,
+  createDialogOpen as trackDialogOpen,
 } from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 
 import ScheduledActionsTimeline from '../ScheduledActionsTimeline';
@@ -82,8 +82,7 @@ function JobDialog({
   const [formError, setFormError] = useState('');
 
   useEffect(() => {
-    createDialogOpen();
-    return createDialogClose;
+    trackDialogOpen();
   }, []);
 
   const validateForm = useCallback(
@@ -134,7 +133,10 @@ function JobDialog({
       shouldCloseOnOverlayClick
       isShown
       testId="schedule-publication-modal"
-      onClose={() => onCancel(false)}>
+      onClose={() => {
+        trackDialogClose(false);
+        return onCancel(false);
+      }}>
       {({ title, onClose }) => (
         <>
           <Modal.Header title={title} onClose={onClose} />
@@ -214,17 +216,18 @@ function JobDialog({
           </Modal.Content>
           <Modal.Controls>
             <Button
-              data-test-id="schedule-publication"
+              testId="schedule-publication"
               type="submit"
               loading={isSubmitting}
               disabled={isSubmitDisabled}
               onClick={() => {
                 setSubmitDisabled(true);
                 handleSubmit({ validateForm, action, date, time, timezone });
+                trackDialogClose(true);
               }}>
               Schedule
             </Button>
-            <Button buttonType="muted" data-test-id="cancel" onClick={() => onCancel()}>
+            <Button buttonType="muted" testId="cancel" onClick={onClose}>
               Cancel
             </Button>
           </Modal.Controls>

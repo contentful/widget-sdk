@@ -34,7 +34,7 @@ function convertActionToAnalyticsFormat(jobAction) {
 
 export function createDialogOpen() {
   const payload = {
-    purpose: 'job.create',
+    purpose: 'create',
     name: AnalyticsEventName.CreateJob,
     action: 'open',
   };
@@ -42,9 +42,14 @@ export function createDialogOpen() {
   return Analytics.track(AnalyticsEventName.Dialog, payload);
 }
 
-export function createDialogClose() {
+/**
+ * Tracks closing of the scheduled actions modal
+ * @param {*} wasSubmitted indicates if the modal was closed after submitted scheduled action or just a plain Cancel / Close
+ */
+export function createDialogClose(wasSubmitted) {
   const payload = {
     name: AnalyticsEventName.CreateJob,
+    purpose: wasSubmitted ? 'submit' : 'cancel',
     action: 'close',
   };
 

@@ -19,17 +19,28 @@ describe('JobsAnalytics', () => {
 
     expectTrackCalledOnceWith('global:dialog', {
       name: 'jobs:create',
-      purpose: 'job.create',
+      purpose: 'create',
       action: 'open',
     });
   });
 
-  it('Dialog close', () => {
+  it('Dialog close after cancel', () => {
     JobsAnalytics.createDialogClose();
 
     expectTrackCalledOnceWith('global:dialog', {
       name: 'jobs:create',
       action: 'close',
+      purpose: 'cancel',
+    });
+  });
+
+  it('Dialog close after submit', () => {
+    JobsAnalytics.createDialogClose(true);
+
+    expectTrackCalledOnceWith('global:dialog', {
+      name: 'jobs:create',
+      action: 'close',
+      purpose: 'submit',
     });
   });
 

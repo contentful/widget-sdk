@@ -156,11 +156,22 @@ describe('ScheduledActionDialog', () => {
 
     it('tracks closing the scheduling dialog', () => {
       const createDialogCloseSpy = jest.spyOn(ScheduledActionsAnalytics, 'createDialogClose');
-      const [renderResult] = build();
+      const [renderer] = build();
 
-      renderResult.unmount();
+      renderer.getByTestId('cancel').click();
 
       expect(createDialogCloseSpy).toHaveBeenCalledTimes(1);
+      expect(createDialogCloseSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('tracks closing dialog after submit', () => {
+      const createDialogCloseSpy = jest.spyOn(ScheduledActionsAnalytics, 'createDialogClose');
+      const [renderer] = build();
+
+      renderer.getByTestId('schedule-publication').click();
+
+      expect(createDialogCloseSpy).toHaveBeenCalledTimes(1);
+      expect(createDialogCloseSpy).toHaveBeenCalledWith(true);
     });
   });
 
