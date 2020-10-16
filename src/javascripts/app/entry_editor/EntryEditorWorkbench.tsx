@@ -18,7 +18,6 @@ import { referenceText } from 'app/entry_editor/EntryReferences/utils';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
 import renderDefaultEditor from './DefaultEntryEditor';
@@ -100,13 +99,33 @@ const EntryEditorWorkbench = (props) => {
     [editorData.fieldControls.all, editorContext, localeData, otDoc]
   );
 
+  const { tagsEnabled } = useTagsFeatureEnabled();
+
   const tabs = availableTabs.map((currentTab) => {
+    let isTabVisible = true;
+    let isTabEnabled = true;
+
     const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
-    const isReferenceTabVisible = isReferenceTab && tabVisible.entryReferences;
-    const isReferenceTabEnabled =
-      isReferenceTab && entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
-    const isTabVisible = isReferenceTab ? isReferenceTabVisible : true;
-    const isTabEnabled = isReferenceTab ? isReferenceTabEnabled : true;
+    const isTagsTab = currentTab.widgetId === EntryEditorWidgetTypes.TAGS_EDITOR.id;
+
+    if (isReferenceTab) {
+      isTabVisible = tabVisible.entryReferences;
+      isTabEnabled = entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
+    }
+
+    if (isTagsTab) {
+      if (!tagsEnabled) {
+        isTabVisible = false;
+        isTabEnabled = false;
+      }
+
+      if (otDoc.isOtDocument && Config.env !== 'production') {
+        isTabVisible = false;
+        isTabEnabled = false;
+        // eslint-disable-next-line
+        console.log(`enable "${FLAGS.SHAREJS_REMOVAL}" feature flag to show content tags`);
+      }
+    }
 
     return {
       key: `${currentTab.widgetNamespace}-${currentTab.widgetId}`,
@@ -149,40 +168,6 @@ const EntryEditorWorkbench = (props) => {
       },
     };
   });
-
-  const tagsTab = useMemo(() => {
-    return {
-      key: 'entryContentTags',
-      title: 'Tags',
-      icon: 'Tags',
-      isVisible: true,
-      isEnabled: () => true,
-      render() {
-        return (
-          <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
-            {selectedTab === 'entryContentTags' && (
-              <ContentTagsTab getValueAt={otDoc.getValueAt} setValueAt={otDoc.setValueAt} />
-            )}
-          </div>
-        );
-      },
-      onClick(selectedTab) {
-        setSelectedTab(selectedTab);
-        trackTabOpen(selectedTab);
-      },
-    };
-  }, [selectedTab, setSelectedTab, otDoc]);
-
-  const { tagsEnabled } = useTagsFeatureEnabled();
-
-  if (tagsEnabled) {
-    if (otDoc.isOtDocument !== true) {
-      tabs.push(tagsTab);
-    } else if (Config.env !== 'production') {
-      // eslint-disable-next-line
-      console.log(`enable "${FLAGS.SHAREJS_REMOVAL}" feature flag to show content tags`);
-    }
-  }
 
   const referencesTab = selectedTab!.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
 
@@ -239,7 +224,10 @@ const EntryEditorWorkbench = (props) => {
                   onSelect={tab.onClick}>
                   <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
                   {tab.title}
-                  {tab.key === 'entryContentTags' && <Tag className={styles.promotionTag}>new</Tag>}
+                  {tab.key ===
+                    `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
+                    <Tag className={styles.promotionTag}>new</Tag>
+                  )}
                 </Tab>
               ))}
           </Tabs>

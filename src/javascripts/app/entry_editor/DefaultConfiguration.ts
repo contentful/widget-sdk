@@ -1,6 +1,8 @@
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import EntryEditorWidgetTypes from './EntryEditorWidgetTypes';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { FEATURES } from 'data/CMA/ProductCatalog';
 
 interface EntryEditorWidget {
   widgetId: string;
@@ -27,12 +29,20 @@ const ReferencesEntryEditor: EntryEditorWidget = {
   name: EntryEditorWidgetTypes.REFERENCE_TREE.name,
 };
 
-const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor];
+const TagsEditor: EntryEditorWidget = {
+  widgetId: EntryEditorWidgetTypes.TAGS_EDITOR.id,
+  widgetNamespace: WidgetNamespace.EDITOR_BUILTIN,
+  name: EntryEditorWidgetTypes.TAGS_EDITOR.name,
+};
+
+const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor, TagsEditor];
 
 const availabilityMap = {
   [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: () => true,
   [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async (spaceData: SpaceData) =>
     getVariation(FLAGS.ALL_REFERENCES_DIALOG, spaceData),
+  [EntryEditorWidgetTypes.TAGS_EDITOR.id]: async () =>
+    getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false),
 };
 
 export async function getEntryConfiguration(spaceData: SpaceData) {

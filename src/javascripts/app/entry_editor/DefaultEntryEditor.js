@@ -3,6 +3,7 @@ import AngularComponent from 'ui/Framework/AngularComponent';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import ReferencesTab from './EntryReferences';
+import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export default function renderDefaultEditor(
@@ -27,8 +28,8 @@ export default function renderDefaultEditor(
   const otDoc = getOtDoc();
   const editorData = getEditorData();
 
-  if (widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id) {
-    return (
+  const widgetComponents = {
+    [EntryEditorWidgetTypes.REFERENCE_TREE.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         {/*
           We could do return if `selectedTab !== currentTab` at the top of <EntryEditorWorkbench>,
@@ -42,9 +43,9 @@ export default function renderDefaultEditor(
           />
         )}
       </div>
-    );
-  } else if (widgetId === EntryEditorWidgetTypes.DEFAULT_EDITOR.id) {
-    return (
+    ),
+
+    [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         <AngularComponent
           template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
@@ -65,6 +66,16 @@ export default function renderDefaultEditor(
           <NoLocalizedFieldsAdvice {...noLocalizedFieldsAdviceProps} />
         )}
       </div>
-    );
-  }
+    ),
+
+    [EntryEditorWidgetTypes.TAGS_EDITOR.id]: (
+      <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
+        {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
+          <ContentTagsTab getValueAt={otDoc.getValueAt} setValueAt={otDoc.setValueAt} />
+        )}
+      </div>
+    ),
+  };
+
+  return widgetComponents[widgetId];
 }

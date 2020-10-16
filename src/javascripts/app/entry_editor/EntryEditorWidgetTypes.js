@@ -11,4 +11,9 @@ export default {
     id: 'reference-tree',
     icon: 'References',
   },
+  TAGS_EDITOR: {
+    name: 'Tags',
+    id: 'tags-editor',
+    icon: 'Tags',
+  },
 };
