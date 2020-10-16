@@ -15,6 +15,7 @@ import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService'
 import { logError } from 'services/logger';
 import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import * as Navigator from 'states/Navigator';
 
 const styles = {
   tag: css({
@@ -42,11 +43,11 @@ export const TrialTag = () => {
     let org;
     let space;
 
-    if (orgId) {
+    if (Navigator.isOrgRoute()) {
       org = await getOrganization(orgId);
     }
 
-    if (spaceId) {
+    if (Navigator.isSpaceRoute()) {
       try {
         space = await getSpace(spaceId);
         org = space.organization;

@@ -7,7 +7,7 @@ import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { href } from 'states/Navigator';
+import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
 import { initTrialProductTour } from '../services/intercomProductTour';
 
 const trialEndsAt = '2020-10-10';
@@ -62,6 +62,8 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
   getCurrentStateName: jest.fn(),
+  isOrgRoute: jest.fn(),
+  isSpaceRoute: jest.fn(),
 }));
 
 jest.mock('../services/intercomProductTour', () => ({
@@ -71,9 +73,10 @@ jest.mock('../services/intercomProductTour', () => ({
 describe('TrialTag', () => {
   beforeEach(() => {
     getVariation.mockClear().mockResolvedValue(true);
-
     getOrganization.mockResolvedValue(trialOrganization);
     getSpace.mockResolvedValue(trialSpace);
+    isOrgRoute.mockReturnValue(true);
+    isSpaceRoute.mockReturnValue(false);
 
     const mockedNow = new Date(today).valueOf();
     jest.spyOn(Date, 'now').mockImplementation(() => mockedNow);
@@ -81,6 +84,8 @@ describe('TrialTag', () => {
 
   it('does not render the trial tag if AccountSettingNavbar or ErrorNavbar', async () => {
     getModule.mockReturnValue({});
+    isOrgRoute.mockReturnValue(false);
+    isSpaceRoute.mockReturnValue(false);
 
     build();
 
@@ -92,7 +97,6 @@ describe('TrialTag', () => {
     getModule.mockReturnValue({ spaceId: trialSpace.sys.id, orgId: organizationNotOnTrial.sys.id });
     getOrganization.mockResolvedValue(organizationNotOnTrial);
     getSpace.mockRejectedValue();
-
     build();
 
     await waitFor(() =>
@@ -101,6 +105,7 @@ describe('TrialTag', () => {
         spaceId: undefined,
       })
     );
+
     expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
   });
 
@@ -151,7 +156,6 @@ describe('TrialTag', () => {
     it('does not render if the trial has ended', async () => {
       getOrganization.mockResolvedValue(trialExpiredOrganization);
       getModule.mockReturnValue({ orgId: trialExpiredOrganization.sys.id });
-
       build();
 
       await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
@@ -162,7 +166,6 @@ describe('TrialTag', () => {
     it('does not render if the organization is not on trial', async () => {
       getOrganization.mockResolvedValue(organizationNotOnTrial);
       getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
-
       build();
 
       await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
@@ -170,11 +173,12 @@ describe('TrialTag', () => {
       expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
     });
 
-    it('renders when the organization is on trial and the navbar is SpaceNabvar', async () => {
+    it('renders when the organization is on trial and the navbar is SpaceNavbar', async () => {
       const space = spaceNotOnTrial(trialOrganization);
       getModule.mockReturnValue({ spaceId: space.sys.id });
       getSpace.mockResolvedValue(space);
-
+      isOrgRoute.mockReturnValue(false);
+      isSpaceRoute.mockReturnValue(true);
       build();
 
       await waitFor(() => expect(initTrialProductTour).toBeCalled());
@@ -187,6 +191,8 @@ describe('TrialTag', () => {
     beforeEach(() => {
       getModule.mockReturnValue({ spaceId: trialSpace.sys.id });
       isOwnerOrAdmin.mockReturnValue(false);
+      isOrgRoute.mockReturnValue(false);
+      isSpaceRoute.mockReturnValue(true);
     });
 
     it('does not render if the feature flag is turned off', async () => {
@@ -200,7 +206,7 @@ describe('TrialTag', () => {
       expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
     });
 
-    it('renders when the space is on trial and the navbar is SpaceNabvar', async () => {
+    it('renders when the space is on trial and the navbar is SpaceNavbar', async () => {
       build();
 
       await waitFor(() =>
@@ -244,8 +250,11 @@ describe('TrialTag', () => {
       expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
     });
 
-    it('does not render when the space is on trial but the navbar is OrgSettingsNabvar', async () => {
+    it('does not render when the space is on trial but the navbar is OrgSettingsNavbar', async () => {
       getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
+      isOrgRoute.mockReturnValue(true);
+      isSpaceRoute.mockReturnValue(false);
+
       build();
 
       await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
