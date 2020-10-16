@@ -166,6 +166,14 @@ export function getCurrentStateName() {
   return get($state, ['current', 'name']);
 }
 
+export function isOrgRoute() {
+  return getCurrentStateName().includes('account.organizations');
+}
+
+export function isSpaceRoute() {
+  return getCurrentStateName().includes('spaces.detail');
+}
+
 function makeEntityPath(entity) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
