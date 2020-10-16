@@ -112,8 +112,8 @@ export class AppDetails extends React.Component {
 
   openSaveConfirmModal = () => {
     const errors = validate(this.state.definition);
+    this.setState({ errors });
     if (errors.length > 0) {
-      this.setState({ errors });
       return;
     }
 

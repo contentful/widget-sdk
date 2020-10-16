@@ -12,7 +12,10 @@ export const styles = {
   toggleContainer: css({
     marginBottom: tokens.spacingXs,
   }),
-  locationP: css({
+  location: css({
+    marginBottom: tokens.spacingL,
+  }),
+  locationLabel: css({
     marginBottom: tokens.spacingM,
   }),
   locationToggle: css({
@@ -24,10 +27,6 @@ export const styles = {
       color: tokens.colorElementDarkest,
       fontFamily: tokens.fontStackMonospace,
     }),
-  }),
-  checkboxInfo: css({
-    position: 'absolute',
-    right: tokens.spacingS,
   }),
   checkboxInfoIcon: css({
     position: 'absolute',
@@ -157,4 +156,52 @@ export const styles = {
   tag: css({
     marginBottom: tokens.spacingXs,
   }),
+  instanceParameters: {
+    container: css({
+      marginBottom: tokens.spacingL,
+    }),
+    help: css({
+      marginBottom: tokens.spacingM,
+    }),
+    note: css({
+      marginBottom: tokens.spacingM,
+    }),
+    table: css({
+      width: '100%',
+      'tr:last-child td': {
+        paddingBottom: tokens.spacingM,
+      },
+      td: {
+        paddingRight: tokens.spacingXs,
+        paddingBottom: tokens.spacingS,
+        width: '24%',
+        '&:last-child': {
+          paddingRight: 0,
+          width: '4%',
+
+          '& > *': {
+            display: 'block', // for vertical-align to work
+          },
+        },
+      },
+    }),
+  },
+  enumOptions: {
+    text: css({
+      marginBottom: tokens.spacingM,
+    }),
+    table: css({
+      td: {
+        paddingRight: tokens.spacingXs,
+        paddingBottom: tokens.spacingXs,
+        '&:last-child': {
+          paddingRight: 0,
+
+          '& > *': {
+            display: 'block', // for vertical-align to work
+          },
+        },
+      },
+    }),
+  },
 };

@@ -41,9 +41,10 @@ function save(definition) {
   const widgetConfig = {
     src: definition.src,
     locations: definition.locations || [],
-    parameters: definition.parameters,
+    parameters: {
+      instance: definition?.parameters?.instance ?? [],
+    },
   };
-
   const dialogLocation = widgetConfig.locations.find((l) => l.location === WidgetLocation.DIALOG);
   if (!dialogLocation) {
     widgetConfig.locations = [...widgetConfig.locations, { location: WidgetLocation.DIALOG }];

@@ -29,7 +29,7 @@ export const LOCATION_ORDER: [string, string][] = [
   ['Entry sidebar', WidgetLocation.ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocation.ENTRY_EDITOR],
   ['Page', WidgetLocation.PAGE],
-  ['Dialog', WidgetLocation.DIALOG],
 ];
 
 export const SRC_REG_EXP = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
+export const PARAMETER_ID_REG_EXP = /^[a-zA-Z][a-zA-Z0-9_]*$/;

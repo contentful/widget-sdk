@@ -91,4 +91,49 @@ describe('validate', () => {
     expect(result).toHaveLength(1);
     expect(result[0].path).toStrictEqual(['locations', 'page', 'navigationItem', 'path']);
   });
+
+  it('returns error for missing instance parameter id', () => {
+    const definition = {
+      name: 'Test app',
+      src: 'https://httpbin.org/post',
+      locations: [{ location: 'dialog' }],
+      parameters: {
+        instance: [{ id: '', name: 'Name', type: 'Symbol' }],
+      },
+    };
+
+    const result = validate(definition);
+    expect(result).toHaveLength(1);
+    expect(result[0].path).toStrictEqual(['parameters', 'instance', 0, 'id']);
+  });
+
+  it('returns error for invalid instance parameter id', () => {
+    const definition = {
+      name: 'Test app',
+      src: 'https://httpbin.org/post',
+      locations: [{ location: 'dialog' }],
+      parameters: {
+        instance: [{ id: '_invalid', name: 'Name', type: 'Symbol' }],
+      },
+    };
+
+    const result = validate(definition);
+    expect(result).toHaveLength(1);
+    expect(result[0].path).toStrictEqual(['parameters', 'instance', 0, 'id']);
+  });
+
+  it('returns error for missing instance parameter name', () => {
+    const definition = {
+      name: 'Test app',
+      src: 'https://httpbin.org/post',
+      locations: [{ location: 'dialog' }],
+      parameters: {
+        instance: [{ id: 'name', name: '', type: 'Symbol' }],
+      },
+    };
+
+    const result = validate(definition);
+    expect(result).toHaveLength(1);
+    expect(result[0].path).toStrictEqual(['parameters', 'instance', 0, 'name']);
+  });
 });
