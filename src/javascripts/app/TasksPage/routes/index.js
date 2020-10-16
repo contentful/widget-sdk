@@ -17,6 +17,8 @@ export default {
           spaceId,
           environmentId: spaceContext.getEnvironmentId(),
           currentUserId: spaceContext.getData('spaceMember.sys.user.sys.id'),
+          isMasterEnvironmentById: (environmentId) =>
+            spaceContext.isMasterEnvironmentById(environmentId),
           users: spaceContext.users,
           defaultLocaleCode: TheLocaleStore.getDefaultLocale().code,
           getContentType: (contentTypeId) => spaceContext.publishedCTs.get(contentTypeId),

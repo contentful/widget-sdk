@@ -25,7 +25,6 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
 import StateLink from 'app/common/StateLink';
-import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   workbenchContent: css({
@@ -47,6 +46,7 @@ export default class TasksPage extends Component {
     spaceId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
+    isMasterEnvironmentById: PropTypes.func.isRequired,
     users: PropTypes.object.isRequired,
     getContentType: PropTypes.func.isRequired,
     defaultLocaleCode: PropTypes.string.isRequired,
@@ -77,7 +77,7 @@ export default class TasksPage extends Component {
         body: task.body,
         createdBy: spaceUsers.find((user) => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
-        environment: task.sys.environment,
+        environmentId: task.sys.environment.sys.id,
         entryId: task.sys.parentEntity.sys.id,
         entryTitle: entryTitles[task.sys.parentEntity.sys.id],
       };
@@ -130,7 +130,7 @@ export default class TasksPage extends Component {
       <TableHeader />
       <TableBody>
         {this.state.tasks.map((task, index) => {
-          const linkPath = isMasterEnvironment(task.environment)
+          const linkPath = this.props.isMasterEnvironmentById(task.environmentId)
             ? 'spaces.detail.entries.detail'
             : 'spaces.detail.environment.entries.detail';
 
@@ -144,7 +144,7 @@ export default class TasksPage extends Component {
               <TableCell className={styles.entryColumn}>
                 <StateLink
                   path={linkPath}
-                  params={{ entryId: task.entryId, environmentId: task.environment.sys.id }}>
+                  params={{ entryId: task.entryId, environmentId: task.environmentId }}>
                   {({ getHref, onClick }) => (
                     <TextLink icon="Entry" href={getHref()} onClick={onClick}>
                       {task.entryTitle}
