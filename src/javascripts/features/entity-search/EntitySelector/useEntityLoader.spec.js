@@ -2,26 +2,25 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useEntityLoader, ITEMS_PER_PAGE } from './useEntityLoader';
 import { id as randomId } from 'utils/Random';
 
-jest.mock('ng/spaceContext', () => ({
-  publishedCTs: {
-    get: jest.fn().mockReturnValue({
-      data: {
-        displayField: 'title',
-        fields: [
-          {
-            type: 'Symbol',
-            id: 'title',
-          },
-        ],
-      },
-    }),
-  },
-}));
-
 const Entities = {
   Entry: 'Entry',
   Asset: 'Asset',
 };
+
+const mockContentTypes = [
+  {
+    displayField: 'title',
+    fields: [
+      {
+        type: 'Symbol',
+        id: 'title',
+      },
+    ],
+    sys: {
+      id: 'Article',
+    },
+  },
+];
 
 const entity = (type, id = randomId()) => {
   if (type === Entities.Entry) {
@@ -53,6 +52,7 @@ describe('useEntityLoader', () => {
     const fetch = jest.fn();
     const { result } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -75,6 +75,7 @@ describe('useEntityLoader', () => {
     );
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -108,6 +109,7 @@ describe('useEntityLoader', () => {
     const fetch = jest.fn().mockResolvedValue(expectedResults);
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -146,6 +148,7 @@ describe('useEntityLoader', () => {
       .mockResolvedValueOnce(expectedBatches[1]);
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -192,6 +195,7 @@ describe('useEntityLoader', () => {
     const fetch = jest.fn().mockRejectedValue(expectedError);
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -242,6 +246,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -317,6 +322,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -361,6 +367,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -427,6 +434,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId: null,
@@ -465,6 +473,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId,
@@ -501,6 +510,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Asset,
         fetch,
         contentTypeId: null,
@@ -543,6 +553,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Asset,
         fetch,
         contentTypeId: null,
@@ -583,6 +594,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
         contentTypeId,
@@ -621,6 +633,7 @@ describe('useEntityLoader', () => {
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useEntityLoader({
+        contentTypes: mockContentTypes,
         entityType: Entities.Entry,
         fetch,
       })

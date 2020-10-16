@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import * as entityHelpers from 'app/entity_editor/entityHelpers';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-
 import { ITEMS_PER_PAGE } from './useEntityLoader';
 import { EntitySelectorForm } from './EntitySelectorForm';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const entity = (type, id) => ({
   sys: {
@@ -60,87 +60,6 @@ const getDefaultProps = (props = {}) => {
 
 getCurrentSpaceFeature.mockResolvedValue(false);
 
-jest.mock('ng/spaceContext', () => {
-  const contentType = {
-    data: {
-      sys: {
-        space: {
-          sys: {
-            type: 'Link',
-            linkType: 'Space',
-            id: '4ewyIpxr86t804EdLMv2lV',
-          },
-        },
-        environment: {
-          sys: {
-            type: 'Link',
-            linkType: 'Environment',
-            id: 'b8fb6fda-6745-4f2e-90f6-89b9db072d2d',
-          },
-        },
-        id: 'content-type',
-        updatedBy: {
-          sys: {
-            type: 'Link',
-            linkType: 'User',
-            id: '4Ewlm588a3nWdO8P6mvXEE',
-          },
-        },
-        updatedAt: '2020-07-16T17:59:17.065Z',
-        createdBy: {
-          sys: {
-            type: 'Link',
-            linkType: 'User',
-            id: '4Ewlm588a3nWdO8P6mvXEE',
-          },
-        },
-        createdAt: '2020-07-16T17:59:17.065Z',
-        version: 0,
-        type: 'ContentType',
-      },
-      name: 'Test-content-type',
-      fields: [
-        {
-          id: 'fieldKapgihOYEzLC3Ijsukdxx',
-          apiName: 'fieldKapgihOYEzLC3Ijsukdxx',
-          name: '5Y0WGckPdzyGVCK7yrRlgA',
-          type: 'Symbol',
-          localized: false,
-          required: false,
-          disabled: false,
-          omitted: false,
-          deleted: false,
-          validations: [],
-        },
-      ],
-    },
-  };
-
-  const spaceContextStub = {
-    publishedCTs: {
-      getAllBare: jest.fn().mockReturnValue([contentType.data]),
-      fetch: jest.fn().mockReturnValue([]),
-      get: jest.fn().mockReturnValue(contentType),
-    },
-    getId: jest.fn().mockReturnValue('space-id'),
-    getEnvironmentId: jest.fn().mockReturnValue('environment-id'),
-    getData: jest.fn().mockReturnValue('organization-id'),
-    users: {
-      getAll: jest.fn().mockResolvedValue([
-        {
-          sys: {
-            id: 'user-1',
-          },
-          firstName: 'Mr',
-          lastName: 'Test',
-        },
-      ]), // to let the search bar render
-    },
-  };
-
-  return spaceContextStub;
-});
-
 jest.mock('data/CMA/FetchAll', () => ({
   fetchAll: jest.fn().mockResolvedValue([
     {
@@ -168,10 +87,77 @@ jest.mock('access_control/AccessChecker', () => {
   };
 });
 
+const build = (props) => {
+  const value = {
+    currentSpaceId: 'space-id',
+    currentEnvironmentId: 'environment-id',
+    currentSpaceContentTypes: [
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: '4ewyIpxr86t804EdLMv2lV',
+            },
+          },
+          environment: {
+            sys: {
+              type: 'Link',
+              linkType: 'Environment',
+              id: 'b8fb6fda-6745-4f2e-90f6-89b9db072d2d',
+            },
+          },
+          id: 'content-type',
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '4Ewlm588a3nWdO8P6mvXEE',
+            },
+          },
+          updatedAt: '2020-07-16T17:59:17.065Z',
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '4Ewlm588a3nWdO8P6mvXEE',
+            },
+          },
+          createdAt: '2020-07-16T17:59:17.065Z',
+          version: 0,
+          type: 'ContentType',
+        },
+        name: 'Test-content-type',
+        fields: [
+          {
+            id: 'fieldKapgihOYEzLC3Ijsukdxx',
+            apiName: 'fieldKapgihOYEzLC3Ijsukdxx',
+            name: '5Y0WGckPdzyGVCK7yrRlgA',
+            type: 'Symbol',
+            localized: false,
+            required: false,
+            disabled: false,
+            omitted: false,
+            deleted: false,
+            validations: [],
+          },
+        ],
+      },
+    ],
+  };
+
+  return render(
+    <SpaceEnvContext.Provider value={value}>
+      <EntitySelectorForm {...props} />
+    </SpaceEnvContext.Provider>
+  );
+};
+
 describe('EntitySelectorForm', () => {
   it('[multiple: false] should not allow the option to render selected entities', async () => {
     const props = getDefaultProps({ multiple: false });
-    const { queryByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { queryByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
     expect(queryByTestId('show-selected')).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -179,7 +165,7 @@ describe('EntitySelectorForm', () => {
 
   it('should render the entity selector in initial state', async () => {
     const props = getDefaultProps();
-    const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { getByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
     expect(getByTestId('show-selected')).toBeDefined();
   });
@@ -190,14 +176,14 @@ describe('EntitySelectorForm', () => {
       total: 0,
     });
     const props = getDefaultProps({ withCreate: true, fetch: fetchMock });
-    const { queryAllByText, findByText } = render(<EntitySelectorForm {...props} />);
+    const { queryAllByText, findByText } = build(props);
     await findByText('Create new Test-content-type');
     expect(queryAllByText('cf-ui-entry-card')).toHaveLength(0);
   });
 
   it('[multiple: false] should toggle selection', async () => {
     const props = getDefaultProps({ multiple: false });
-    const { getAllByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { getAllByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
     const cards = getAllByTestId('cf-ui-entry-card');
 
@@ -208,7 +194,7 @@ describe('EntitySelectorForm', () => {
 
   it('[multiple: false, withCreate: true] provides an option to create an entity', async () => {
     const props = getDefaultProps({ multiple: false, withCreate: true });
-    const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { getByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
     expect(getByTestId('create-entry')).toBeDefined();
   });
@@ -290,7 +276,7 @@ describe('EntitySelectorForm', () => {
       total: 3,
     });
     const props = getDefaultProps({ fetch: fetchMock, entityType: 'Asset' });
-    const { findAllByTestId, getAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { findAllByTestId, getAllByTestId } = build(props);
     await findAllByTestId('cf-ui-asset-card');
     const cards = getAllByTestId('cf-ui-asset-card');
     expect(cards).toHaveLength(assets.length);
@@ -377,7 +363,7 @@ describe('EntitySelectorForm', () => {
     };
     const fetchMock = jest.fn().mockRejectedValue(error);
     const props = getDefaultProps({ fetch: fetchMock });
-    const { findByText, findByTestId } = render(<EntitySelectorForm {...props} />);
+    const { findByText, findByTestId } = build(props);
     await findByTestId('cf-ui-note');
     expect(findByText(error.data.message)).toBeDefined();
   });
@@ -394,7 +380,7 @@ describe('EntitySelectorForm', () => {
       total: entries.length,
     });
     const props = getDefaultProps({ fetch: fetchMock });
-    render(<EntitySelectorForm {...props} />);
+    build(props);
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
 
@@ -420,7 +406,7 @@ describe('EntitySelectorForm', () => {
       .mockResolvedValueOnce(entitiesBatches[1]);
 
     const props = getDefaultProps({ fetch: fetchMock });
-    const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { getByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
 
     const searchbar = getByTestId('queryInput');
@@ -542,7 +528,7 @@ describe('EntitySelectorForm hacking bottom hit trigger', () => {
       .mockResolvedValueOnce(entitiesBatches[2]);
 
     const props = getDefaultProps({ fetch: fetchMock });
-    const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    const { getByTestId, findAllByTestId } = build(props);
     await findAllByTestId('cf-ui-entry-card');
     expect(fetchMock).toHaveBeenCalledTimes(1);
 

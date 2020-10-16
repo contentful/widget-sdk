@@ -6,7 +6,6 @@ import EntryLink from 'app/widgets/link/EntryLink';
 import AssetLink from 'app/widgets/link/AssetLink';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
 import { Paragraph, TextLink, Note } from '@contentful/forma-36-react-components';
-import { getModule } from 'core/NgRegistry';
 import { useEntityLoader } from './useEntityLoader';
 import { useSelection } from './useSelection';
 import { useScrollToBottomTrigger } from './useScrollToBottomTrigger';
@@ -16,6 +15,7 @@ import { CreateEntity } from './CreateEntity';
 import { getReadableContentTypes } from 'data/ContentTypeRepo/filter';
 import { Search } from '../View';
 import { useListView } from '../useListView';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 /*
   The core of this component was split into 3 hooks:
@@ -47,7 +47,8 @@ export const EntitySelectorForm = ({
   linkedContentTypeIds,
   fetch,
 }) => {
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
+
   const singleContentTypeId =
     Array.isArray(linkedContentTypeIds) && linkedContentTypeIds.length === 1
       ? linkedContentTypeIds[0]
@@ -60,7 +61,7 @@ export const EntitySelectorForm = ({
   });
   const [search, setSearch] = useState({
     state: {
-      ...getOrder(spaceContext.publishedCTs, singleContentTypeId),
+      ...getOrder(currentSpaceContentTypes, singleContentTypeId),
     },
     searchResult: {
       entities: [],
@@ -83,7 +84,7 @@ export const EntitySelectorForm = ({
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
   const getContentType = memoize(
-    (entity) => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
+    (entity) => currentSpaceContentTypes.find((ct) => ct.sys.id === entity.sys.contentType.sys.id),
     (entity) => entity.sys.id
   );
 
@@ -92,10 +93,7 @@ export const EntitySelectorForm = ({
 
   if (withCreate) {
     createEntityProps = {
-      contentTypes: getValidContentTypes(
-        linkedContentTypeIds,
-        spaceContext.publishedCTs.getAllBare()
-      ),
+      contentTypes: getValidContentTypes(linkedContentTypeIds, currentSpaceContentTypes),
       suggestedContentTypeId: search.state.contentTypeId,
       onSelect: (entity) => onChange([entity]),
       type: entityType,
@@ -109,6 +107,7 @@ export const EntitySelectorForm = ({
     entityType,
     fetch,
     contentTypeId: singleContentTypeId,
+    contentTypes: currentSpaceContentTypes,
   });
 
   const { lastToggledIndex, selectedEntities, isSelected, toggle } = useSelection({
@@ -224,11 +223,11 @@ export const EntitySelectorForm = ({
 
   const readableContentTypes = useMemo(() => {
     const accessibleContentTypes = getReadableContentTypes(
-      spaceContext.publishedCTs.getAllBare(),
+      currentSpaceContentTypes,
       singleContentTypeId
     );
     return getValidContentTypes(linkedContentTypeIds, accessibleContentTypes);
-  }, [linkedContentTypeIds, singleContentTypeId, spaceContext]);
+  }, [linkedContentTypeIds, singleContentTypeId, currentSpaceContentTypes]);
 
   // TODO: refactor in follow up
   const renderEntities = (entities) => {

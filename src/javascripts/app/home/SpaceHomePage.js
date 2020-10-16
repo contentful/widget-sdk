@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { Spinner } from '@contentful/forma-36-react-components';
 import AuthorEditorSpaceHome from './AuthorEditorSpaceHome';
 import AdminSpaceHome from './AdminSpaceHome';
@@ -16,7 +15,6 @@ import {
   isContentOnboardingSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import * as K from 'core/utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';
 import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
@@ -31,17 +29,14 @@ import {
   getOrganizationName,
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
-import { getModule } from 'core/NgRegistry';
 import { isSpaceOnTrial } from 'features/trials';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { TrialSpaceHome } from './TrialSpaceHome';
 
-const isTEASpace = (publishedItems, currentSpace) => {
-  const publishedCTs = K.getValue(publishedItems) || [];
+const isTEASpace = (contentTypes, currentSpace) => {
   return (
-    publishedCTs.find((ct) => {
-      return get(ct, ['sys', 'id']) === 'layoutHighlightedCourse';
-    }) || isContentOnboardingSpace(currentSpace)
+    !!contentTypes.find((ct) => ct.sys.id === 'layoutHighlightedCourse') ||
+    isContentOnboardingSpace(currentSpace)
   );
 };
 
@@ -112,15 +107,18 @@ const fetchData = (
 
 // TODO should fix this template being used by both spaceHome and Home
 const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
-  const spaceContext = getModule('spaceContext'); // TODO: Edge case, should be moved to a different service/provider
-  const { currentSpaceId, currentSpace, currentSpaceName } = useSpaceEnvContext();
+  const {
+    currentSpaceId,
+    currentSpace,
+    currentSpaceName,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
   const [
     { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
   const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
-
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationId = getOrganizationId(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
@@ -129,7 +127,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const isAuthorOrEditor = accessChecker.isAuthorOrEditor(spaceRoles ?? false);
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
-  const isTEA = isTEASpace(spaceContext.publishedCTs.items$, currentSpace);
+  const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
   const isTrialSpace = currentSpace && isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
   const spaceHomeProps = {
     orgId: organizationId,
@@ -151,7 +149,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
         setIsTrialCommEnabled,
         currentSpace
       ),
-      [spaceTemplateCreated]
+      [spaceTemplateCreated, isSpaceAdmin, isTEA, isModernStack, currentSpaceId, currentSpace]
     )
   );
 

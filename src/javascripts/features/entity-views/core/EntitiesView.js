@@ -16,7 +16,7 @@ import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
 import { Search, usePaginator, useSearchController } from 'features/entity-search';
 import { getCreatableContentTypes, getReadableContentTypes } from 'data/ContentTypeRepo/filter';
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -93,8 +93,7 @@ export const EntitiesView = ({
   const paginator = usePaginator();
   const [isInitialized, setIsInitialized] = useState(false);
   const { contentTypeId } = listViewContext.getView();
-
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
 
   const [
     { isLoading, entities, hasEntities, hasNoSearchResults, showNoEntitiesAdvice },
@@ -125,13 +124,12 @@ export const EntitiesView = ({
     !isLoading && setIsInitialized(true);
   }, [isLoading]);
 
-  const contentTypes = spaceContext.publishedCTs.getAllBare();
   const { readableContentTypes, creatableContentTypes } = useMemo(
     () => ({
-      readableContentTypes: getReadableContentTypes(contentTypes, contentTypeId),
-      creatableContentTypes: getCreatableContentTypes(contentTypes),
+      readableContentTypes: getReadableContentTypes(currentSpaceContentTypes, contentTypeId),
+      creatableContentTypes: getCreatableContentTypes(currentSpaceContentTypes),
     }),
-    [contentTypeId, contentTypes, isInitialized] // eslint-disable-line react-hooks/exhaustive-deps
+    [contentTypeId, currentSpaceContentTypes, isInitialized] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const renderPropArgs = {
@@ -139,7 +137,7 @@ export const EntitiesView = ({
     isLoading,
     updateEntities,
     showNoEntitiesAdvice,
-    contentTypes,
+    contentTypes: currentSpaceContentTypes,
     readableContentTypes,
     creatableContentTypes,
   };

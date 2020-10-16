@@ -10,9 +10,9 @@ function getValidContentTypes(linkedContentTypeIds, contentTypes) {
 }
 
 function getOrder(publishedCTs, singleContentTypeId) {
-  const ct = singleContentTypeId && publishedCTs.get(singleContentTypeId);
+  const ct = singleContentTypeId && publishedCTs.find((ct) => ct.sys.id === singleContentTypeId);
   if (ct) {
-    const displayField = ct.data.fields.find(({ id }) => id === ct.data.displayField);
+    const displayField = ct.fields.find(({ id }) => id === ct.displayField);
     if (displayField && displayField.type === 'Symbol' && displayField.id) {
       return {
         order: {

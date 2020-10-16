@@ -11,6 +11,43 @@ export interface SpaceEnvContextValue {
   currentSpaceEnvironments?: Environment[];
   currentSpaceId?: string;
   currentSpaceName?: string;
+  currentSpaceContentTypes: ContentType[];
+}
+
+export interface ContentType {
+  description: string;
+  displayField: string;
+  fields: ContentTypeField[];
+  name: string;
+  sys: ContentTypeSys;
+}
+
+export interface ContentTypeField {
+  apiName: string;
+  disabled: boolean;
+  id: string;
+  localized: boolean;
+  name: string;
+  omitted: boolean;
+  required: boolean;
+  type: string;
+  validations: ContentTypeValidation[];
+}
+
+export type ContentTypeValidation = Record<string, unknown>;
+
+export interface ContentTypeSys {
+  type: string;
+  id: string;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  environment: {
+    sys: LinkSys;
+  };
+  space: {
+    sys: LinkSys;
+  };
 }
 
 export interface SpaceEnv {

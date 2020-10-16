@@ -1,5 +1,4 @@
-import { useRef, useState, useMemo, useCallback } from 'react';
-import { getModule } from 'core/NgRegistry';
+import { useRef, useState, useCallback } from 'react';
 import Paginator from 'classes/Paginator';
 import { Operator } from 'core/services/ContentQuery';
 import { id } from 'utils/Random';
@@ -9,13 +8,11 @@ export const ITEMS_PER_PAGE = 40;
 /*
   Handles loading, pagination, errors for the entity selector.
 */
-export const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
+export const useEntityLoader = ({ entityType, fetch, contentTypeId, contentTypes }) => {
   const paginator = useRef(Paginator.create(ITEMS_PER_PAGE));
   const lastRequestId = useRef();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
-
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
 
   const load = useCallback(
     async (options) => {
@@ -66,9 +63,9 @@ export const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
       };
 
       const getOrder = () => {
-        const ct = contentTypeId && spaceContext.publishedCTs.get(contentTypeId);
+        const ct = contentTypeId && contentTypes.find((ct) => ct.sys.id === contentTypeId);
         if (ct) {
-          const displayField = ct.data.fields.find((field) => field.id === ct.data.displayField);
+          const displayField = ct.fields.find((field) => field.id === ct.displayField);
           if (displayField && displayField.type === 'Symbol' && displayField.id) {
             return { fieldId: displayField.id, direction: 'ascending' };
           }
@@ -140,7 +137,7 @@ export const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
         return getEmptyResponse();
       }
     },
-    [entityType, fetch, contentTypeId, spaceContext]
+    [entityType, fetch, contentTypeId, contentTypes]
   );
 
   const state = {

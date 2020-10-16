@@ -15,7 +15,6 @@ import { EmptyStates } from './EmptyStates';
 import EntityListCache from 'classes/entityListCache';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
-import { getModule } from 'core/NgRegistry';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
@@ -33,12 +32,12 @@ const trackEnforcedButtonClick = (err) => {
 const newEntry = (goTo, publishedCTs, showNoEntitiesAdvice) => async (contentTypeId) => {
   try {
     const entry = await entityCreator.newEntry(contentTypeId);
-    const { data } = publishedCTs.get(contentTypeId);
+    const contentType = publishedCTs.find((ct) => ct.sys.id === contentTypeId);
     const eventOriginFlag = showNoEntitiesAdvice ? '--empty' : '';
 
     Analytics.track('entry:create', {
       eventOrigin: `content-list${eventOriginFlag}`,
-      contentType: data,
+      contentType,
       response: entry.data,
     });
 
@@ -52,7 +51,6 @@ const newEntry = (goTo, publishedCTs, showNoEntitiesAdvice) => async (contentTyp
 
 export const EntryView = ({ goTo }) => {
   const entityType = 'entry';
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
   const {
     currentEnvironmentId,
     currentOrganization,
@@ -129,12 +127,15 @@ export const EntryView = ({ goTo }) => {
       isMasterEnvironment={isMasterEnvironment}
       fetchEntities={fetchEntries}
       searchControllerProps={searchControllerProps}
-      renderAddEntityActions={({ showNoEntitiesAdvice, creatableContentTypes }, className) => (
+      renderAddEntityActions={(
+        { showNoEntitiesAdvice, contentTypes, creatableContentTypes },
+        className
+      ) => (
         <span className={className}>
           <CreateEntryButton
             contentTypes={creatableContentTypes}
             suggestedContentTypeId={suggestedContentTypeId}
-            onSelect={newEntry(goTo, spaceContext.publishedCTs, showNoEntitiesAdvice)}
+            onSelect={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
           />
         </span>
       )}
@@ -153,7 +154,7 @@ export const EntryView = ({ goTo }) => {
           hasContentType={contentTypes.length > 0}
           contentTypes={creatableContentTypes}
           suggestedContentTypeId={suggestedContentTypeId}
-          onCreate={newEntry(goTo, spaceContext.publishedCTs, showNoEntitiesAdvice)}
+          onCreate={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
         />
       )}
       renderEntityList={({ entities, isLoading, updateEntities }, className) => (
