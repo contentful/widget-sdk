@@ -12,6 +12,7 @@ import AngularComponent from 'ui/Framework/AngularComponent';
 import tokens from '@contentful/forma-36-tokens';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
+import { useTagsFeatureEnabled } from 'features/content-tags';
 
 const styles = {
   sidebar: css({
@@ -45,6 +46,8 @@ const AssetEditorWorkbench = ({
     () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
     [editorData.fieldControls.all, editorContext, localeData, otDoc]
   );
+
+  const { tagsEnabled } = useTagsFeatureEnabled();
 
   return (
     <div className="asset-editor">
@@ -95,7 +98,7 @@ const AssetEditorWorkbench = ({
               }}
             />
 
-            <ContentTagsField {...tagProps} />
+            {tagsEnabled && <ContentTagsField {...tagProps} />}
           </div>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
