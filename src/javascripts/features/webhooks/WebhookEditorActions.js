@@ -19,8 +19,8 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG,
 };
 
-export async function save(webhook, spaceId, space, templateId, templateIdReferrer) {
-  const webhookRepo = getWebhookRepo({ spaceId, space });
+export async function save(webhook, templateId, templateIdReferrer) {
+  const webhookRepo = getWebhookRepo();
 
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
     throw new Error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
@@ -45,8 +45,8 @@ function getSaveApiErrorMessage(err) {
   }
 }
 
-export function remove(webhook, spaceId, space) {
-  return getWebhookRepo({ spaceId, space }).remove(webhook);
+export function remove(webhook) {
+  return getWebhookRepo().remove(webhook);
 }
 
 function trackSave(webhook, templateId = null, templateIdReferrer = null) {

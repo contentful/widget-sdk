@@ -17,9 +17,7 @@ import { getWebhookRepo } from '../services/WebhookRepoInstance';
 
 const WebhooksFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const space = spaceContext.getSpace();
-  const webhookRepo = getWebhookRepo({ spaceId, space });
+  const webhookRepo = getWebhookRepo();
 
   return Promise.all([
     webhookRepo.getAll(),

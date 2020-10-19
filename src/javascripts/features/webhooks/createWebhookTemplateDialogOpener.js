@@ -8,7 +8,7 @@ import { WebhookTemplates } from './templates';
 
 const isNonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
-export function createWebhookTemplateDialogOpener(config, spaceId, space) {
+export function createWebhookTemplateDialogOpener(config) {
   const { contentTypes, defaultLocaleCode, domain, hasAwsProxy } = config;
 
   const validTemplateIds = WebhookTemplates.map((template) => template.id);
@@ -31,13 +31,7 @@ export function createWebhookTemplateDialogOpener(config, spaceId, space) {
         onCreate={(webhooks, templateId) =>
           Promise.all(
             webhooks.map((webhook) => {
-              return WebhookEditorActions.save(
-                webhook,
-                spaceId,
-                space,
-                templateId,
-                templateIdReferrer
-              );
+              return WebhookEditorActions.save(webhook, templateId, templateIdReferrer);
             })
           ).then((webhooks) => {
             onClose();
