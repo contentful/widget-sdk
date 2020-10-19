@@ -1,9 +1,10 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
-import { InternalContentTypeField, InternalContentType } from './createContentTypeApi';
+import { InternalContentType, InternalContentTypeField } from './createContentTypeApi';
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntrySys, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntryFieldAPI, EntrySys } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import { isEqual } from 'lodash';
 
 interface CreateEntryApiOptions {
   internalContentType: InternalContentType;
@@ -30,6 +31,21 @@ export function createEntryApi({
     });
   });
 
+  const internalApi = {
+    getMetadata: () => {
+      return doc.getValueAt(['metadata']);
+    },
+    onMetadataChanged: (cb) => {
+      return (
+        doc.data$
+          // metadata is mutated which makes `skipDuplicates` always skip as identical objects are compared
+          .map((value) => ({ ...value.metadata }))
+          .skipDuplicates(isEqual)
+          .observe(cb).unsubscribe
+      );
+    },
+  };
+
   return {
     getSys: () => {
       // TODO: the EntitySys type in doc doesn't match EntrySys from UIESDK
@@ -39,6 +55,8 @@ export function createEntryApi({
       return K.onValue(doc.sysProperty, cb as (value: unknown) => void);
     },
     fields: reduceFields(fields),
+    ...(internalApi as any),
+    // TODO: remove after workflows app doesn't use it anymore
     metadata: doc.getValueAt(['metadata']),
   };
 }

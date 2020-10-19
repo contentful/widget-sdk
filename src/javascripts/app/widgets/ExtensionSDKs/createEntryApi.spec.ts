@@ -5,6 +5,10 @@ import { EntryAPI } from 'contentful-ui-extensions-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';
 import { noop } from 'lodash';
+import * as Kefir from 'kefir';
+import jestKefir from 'jest-kefir';
+
+const kefirHelpers = jestKefir(Kefir);
 
 jest.mock('services/localeStore', () => {
   const originalModule = jest.requireActual('services/localeStore');
@@ -48,7 +52,9 @@ describe('createEntryApi', () => {
     description: 'a content type',
     displayField: '',
   } as InternalContentType;
+  const docData = kefirHelpers.stream();
   const doc = ({
+    data$: docData,
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),
   } as unknown) as Document;
@@ -69,11 +75,36 @@ describe('createEntryApi', () => {
     });
   });
 
-  describe('onSysChange', () => {
+  describe('onSysChanged', () => {
     it('calls Kefir onvalue with the callback', () => {
       const callback = jest.fn();
       entryApi.onSysChanged(callback);
       expect(onValue).toHaveBeenCalledWith(doc.sysProperty, callback);
+    });
+  });
+
+  describe('getMetadata', () => {
+    it('returns metadata from doc', () => {
+      (entryApi as any).getMetadata();
+      expect(doc.getValueAt).toHaveBeenCalledWith(['metadata']);
+    });
+  });
+
+  describe('onMetadataChanged', () => {
+    it('calls Kefir onvalue with the callback', () => {
+      const callback = jest.fn();
+      (entryApi as any).onMetadataChanged(callback);
+
+      kefirHelpers.send(docData, [kefirHelpers.value({ metadata: { tags: ['a', 'b'] } })]);
+      kefirHelpers.send(docData, [kefirHelpers.value({ metadata: { tags: ['a', 'b', 'c'] } })]);
+      kefirHelpers.send(docData, [kefirHelpers.value({ metadata: { tags: ['a', 'b', 'c'] } })]);
+      kefirHelpers.send(docData, [kefirHelpers.value({ metadata: { tags: ['a', 'b', 'c'] } })]);
+      kefirHelpers.send(docData, [kefirHelpers.value({ metadata: { tags: ['a', 'b'] } })]);
+
+      expect(callback).toHaveBeenCalledTimes(3);
+      expect(callback).toHaveBeenNthCalledWith(1, { tags: ['a', 'b'] });
+      expect(callback).toHaveBeenNthCalledWith(2, { tags: ['a', 'b', 'c'] });
+      expect(callback).toHaveBeenNthCalledWith(3, { tags: ['a', 'b'] });
     });
   });
 
