@@ -93,7 +93,7 @@ describe('Token store service', () => {
 
     this.tokenStore.refresh();
     $apply();
-    sinon.assert.calledOnce(this.stubs.ReloadNotification.trigger);
+    sinon.assert.calledOnce(this.stubs.Authentication.logout);
   });
 
   describe('#getSpace()', () => {
