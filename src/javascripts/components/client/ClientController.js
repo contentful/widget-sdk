@@ -233,7 +233,6 @@ export default function register() {
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
           ),
           import(/* webpackMode: "eager" */ 'services/OsanoService'),
-          import(/* webpackMode: "eager" */ 'features/news-slider'),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);
