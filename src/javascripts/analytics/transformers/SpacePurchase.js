@@ -17,6 +17,7 @@ const EVENTS = {
   SPACE_CREATED: 'space_created',
   SPACE_TEMPLATE_CREATED: 'space_template_created',
   ERROR: 'error',
+  CANCEL: 'cancel',
 };
 
 const transformers = {
