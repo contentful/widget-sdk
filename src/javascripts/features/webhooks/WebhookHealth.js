@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getWebhookRepo } from './services/WebhookRepoInstance';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const THRESHOLD = { WARNING: 70, SUCCESS: 90 };
 
@@ -25,13 +26,16 @@ export class WebhookHealth extends React.Component {
     webhookId: PropTypes.string.isRequired,
   };
 
+  static contextType = SpaceEnvContext;
+
   state = {
     status: STATUS.LOADING,
   };
 
   componentDidMount() {
     const { webhookId } = this.props;
-    const webhookRepo = getWebhookRepo();
+    const { currentSpaceId: spaceId, currentSpace: space } = this.context;
+    const webhookRepo = getWebhookRepo({ spaceId, space });
 
     webhookRepo.logs.getHealth(webhookId).then(
       (data) => this.setState(calculateHealth(data) || { status: STATUS.NODATA }),

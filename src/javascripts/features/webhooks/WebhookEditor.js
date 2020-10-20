@@ -18,6 +18,7 @@ import * as WebhookEditorActions from './WebhookEditorActions';
 import { WebhookRemovalDialog } from './dialogs/WebhookRemovalDialog';
 import { WebhookActivityLog } from './WebhookActivityLog';
 import * as Navigator from 'states/Navigator';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const TABS = { SETTINGS: 1, LOG: 2 };
 
@@ -32,6 +33,8 @@ export class WebhookEditor extends React.Component {
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   constructor(props) {
     super(props);
@@ -83,13 +86,13 @@ export class WebhookEditor extends React.Component {
     return Navigator.go({ path: '^.list' });
   }
 
-  save = async () => {
+  save = async (spaceId, space) => {
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      const saved = await WebhookEditorActions.save(webhook);
+      const saved = await WebhookEditorActions.save(webhook, spaceId, space);
 
       if (fresh) {
         this.navigateToSaved(saved);
@@ -105,13 +108,13 @@ export class WebhookEditor extends React.Component {
     this.setState({ busy: false });
   };
 
-  remove = async () => {
+  remove = async (spaceId, space) => {
     const { webhook } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      await WebhookEditorActions.remove(webhook);
+      await WebhookEditorActions.remove(webhook, spaceId, space);
       this.navigateToList(true);
       Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
     } catch (err) {
@@ -155,6 +158,7 @@ export class WebhookEditor extends React.Component {
 
   render() {
     const { tab, webhook, fresh, dirty, busy } = this.state;
+    const { currentSpaceId, currentSpace } = this.context;
 
     return (
       <React.Fragment>
@@ -186,7 +190,7 @@ export class WebhookEditor extends React.Component {
                     buttonType="positive"
                     disabled={!dirty}
                     loading={busy}
-                    onClick={this.save}>
+                    onClick={() => this.save(currentSpaceId, currentSpace)}>
                     Save
                   </Button>
                 )}
@@ -233,7 +237,7 @@ export class WebhookEditor extends React.Component {
           isShown={this.state.isDeleteDialogShown}
           webhookUrl={this.state.webhook.url}
           isConfirmLoading={busy}
-          onConfirm={this.remove}
+          onConfirm={() => this.remove(currentSpaceId, currentSpace)}
           onCancel={() => {
             this.setState({ isDeleteDialogShown: false });
           }}

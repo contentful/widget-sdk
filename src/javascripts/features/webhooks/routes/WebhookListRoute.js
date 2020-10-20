@@ -17,7 +17,9 @@ import { getWebhookRepo } from '../services/WebhookRepoInstance';
 
 const WebhooksFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');
-  const webhookRepo = getWebhookRepo();
+  const spaceId = spaceContext.getId();
+  const space = spaceContext.getSpace();
+  const webhookRepo = getWebhookRepo({ spaceId, space });
 
   return Promise.all([
     webhookRepo.getAll(),
@@ -38,12 +40,16 @@ export class WebhookListRoute extends React.Component {
   setupTemplateOpener(hasAwsProxy = false) {
     const spaceContext = getModule('spaceContext');
 
-    return createWebhookTemplateDialogOpener({
-      contentTypes: spaceContext.publishedCTs.getAllBare(),
-      defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
-      domain: Config.domain,
-      hasAwsProxy,
-    });
+    return createWebhookTemplateDialogOpener(
+      {
+        contentTypes: spaceContext.publishedCTs.getAllBare(),
+        defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
+        domain: Config.domain,
+        hasAwsProxy,
+      },
+      spaceContext.getId(),
+      spaceContext.getSpace()
+    );
   }
 
   render() {
