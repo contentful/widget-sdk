@@ -38,7 +38,6 @@ export const FLAGS = {
   NEW_STATUS_SWITCH: 'feature-pulitzer-03-2020-new-status-switch',
   ADD_TO_RELEASE: 'feature-pulitzer-05-2020-add-to-release',
   SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
-  PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
   SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
