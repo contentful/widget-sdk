@@ -13,6 +13,12 @@ export type EditorContext = {
   validator: { hasFieldLocaleError: (...args: any) => boolean };
   entityInfo: {
     type: 'Entry' | 'Asset';
+    contentType?: {
+      name: string;
+      sys: {
+        id: string;
+      };
+    };
   };
 };
 

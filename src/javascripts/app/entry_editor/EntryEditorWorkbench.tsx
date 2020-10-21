@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { cx } from 'emotion';
 import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -22,12 +21,14 @@ import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
 import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
+import { EditorContext, LocaleData } from 'app/entity_editor/EntityField/types';
 import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { Action, ReferencesState } from './EntryReferences/state/reducer';
 import { filterWidgets } from './formWidgetsController';
 import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
+import NoEditorsWarning from './NoEditorsWarning';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -35,7 +36,40 @@ const trackTabOpen = (tab) =>
     tab_name: tab,
   });
 
-const EntryEditorWorkbench = (props) => {
+interface EntryEditorWorkbenchProps {
+  localeData: LocaleData;
+  title: string;
+  entityInfo: {
+    id: string;
+    type: any;
+  };
+  entryActions: Record<string, any>;
+  loadEvents: Record<string, any>;
+  state: {
+    delete: Record<string, any>;
+  };
+  getSpace: Function;
+  statusNotificationProps: { entityLabel: any; status: string };
+  getOtDoc: Function;
+  getEditorData: Function;
+  editorContext: EditorContext;
+  entrySidebarProps: {
+    isMasterEnvironment: boolean;
+    isEntry: boolean;
+    emitter: Record<string, any>;
+    makeSidebarWidgetSDK: any;
+    localeData: LocaleData;
+    entityInfo: any;
+    sidebar?: any[];
+    sidebarExtensions?: any[];
+    legacySidebarExtensions?: any[];
+  };
+  preferences: Record<string, any>;
+  fields: Record<string, any>;
+  noLocalizedFieldsAdviceProps: any;
+}
+
+const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const {
     localeData,
     title,
@@ -136,7 +170,6 @@ const EntryEditorWorkbench = (props) => {
       render() {
         if (currentTab.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN) {
           return renderDefaultEditor(currentTab.widgetId, {
-            tabVisible,
             selectedTab,
             onRootReferenceCardClick,
             widgets,
@@ -169,9 +202,12 @@ const EntryEditorWorkbench = (props) => {
     };
   });
 
-  const referencesTab = selectedTab!.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
+  const referencesTab =
+    selectedTab?.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) && tabVisible.entryReferences;
 
   if (!editorContext) return null;
+
+  const visibleTabs = tabs.filter(({ isVisible }) => isVisible);
 
   return (
     <div className="entry-editor">
@@ -183,7 +219,7 @@ const EntryEditorWorkbench = (props) => {
               title={title}
               localeName={localeData.focusedLocale.name}
               isSingleLocaleModeOn={localeData.isSingleLocaleModeOn}
-              contentTypeName={editorContext.entityInfo.contentType.name}
+              contentTypeName={editorContext.entityInfo.contentType?.name}
               entityInfo={entityInfo}
             />
           }
@@ -208,40 +244,40 @@ const EntryEditorWorkbench = (props) => {
             />
           )}
           <Tabs className={styles.tabs} withDivider>
-            {tabs
-              .filter((tab) => tab.isVisible)
-              .map((tab) => (
-                <Tab
-                  id={tab.key}
-                  key={tab.key}
-                  testId={`test-id-${tab.key}`}
-                  disabled={!tab.isEnabled()}
-                  selected={selectedTab === tab.key}
-                  className={cx(styles.tab, {
-                    // the class name is to provide a hook to attach intercom product tours
-                    [`tab-${tab.key}--enabled`]: tab.isEnabled(),
-                  })}
-                  onSelect={tab.onClick}>
-                  <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
-                  {tab.title}
-                  {tab.key ===
-                    `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
-                    <Tag className={styles.promotionTag}>new</Tag>
-                  )}
-                </Tab>
-              ))}
+            {visibleTabs.map((tab) => (
+              <Tab
+                id={tab.key}
+                key={tab.key}
+                testId={`test-id-${tab.key}`}
+                disabled={!tab.isEnabled()}
+                selected={selectedTab === tab.key}
+                className={cx(styles.tab, {
+                  // the class name is to provide a hook to attach intercom product tours
+                  [`tab-${tab.key}--enabled`]: tab.isEnabled(),
+                })}
+                onSelect={tab.onClick}>
+                <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
+                {tab.title}
+                {tab.key ===
+                  `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
+                  <Tag className={styles.promotionTag}>new</Tag>
+                )}
+              </Tab>
+            ))}
           </Tabs>
           <StatusNotification {...statusNotificationProps} />
-          {tabs
-            .filter((tab) => tab.isVisible)
-            .map((tab) => (
+          {visibleTabs.length <= 0 ? (
+            <NoEditorsWarning contentTypeId={props.editorContext.entityInfo.contentType?.sys.id} />
+          ) : (
+            visibleTabs.map((tab) => (
               <TabPanel
                 id={tab.key}
                 key={tab.key}
                 className={cx(styles.tabPanel, { [styles.isVisible]: selectedTab === tab.key })}>
                 {tab.render()}
               </TabPanel>
-            ))}
+            ))
+          )}
         </Workbench.Content>
         <div>
           <Workbench.Sidebar
@@ -261,38 +297,7 @@ const EntryEditorWorkbench = (props) => {
   );
 };
 
-EntryEditorWorkbench.propTypes = {
-  title: PropTypes.string.isRequired,
-  localeData: PropTypes.shape({
-    focusedLocale: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    isSingleLocaleModeOn: PropTypes.bool,
-  }),
-  preferences: PropTypes.object,
-  statusNotificationProps: PropTypes.object,
-  widgets: PropTypes.array,
-  getOtDoc: PropTypes.func,
-  noLocalizedFieldsAdviceProps: PropTypes.object,
-  entrySidebarProps: PropTypes.object,
-  editorContext: PropTypes.shape({
-    entityInfo: PropTypes.object,
-  }),
-  fields: PropTypes.object,
-  getEditorData: PropTypes.func,
-  getSpace: PropTypes.func,
-  state: PropTypes.shape({
-    delete: PropTypes.object,
-  }),
-  entryActions: PropTypes.object,
-  entityInfo: PropTypes.shape({
-    id: PropTypes.string,
-    type: PropTypes.string,
-  }),
-  loadEvents: PropTypes.object,
-};
-
-const EntryEditorWorkbenchWithProvider = (props) => (
+const EntryEditorWorkbenchWithProvider = (props: EntryEditorWorkbenchProps) => (
   <ReferencesProvider>
     <EntryEditorWorkbench {...props} />
   </ReferencesProvider>

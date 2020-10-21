@@ -5,13 +5,13 @@ import { track } from 'analytics/Analytics';
 
 const StateLink = ({
   path,
-  params,
-  options,
-  children,
-  onClick,
-  component,
-  trackingEvent,
-  trackParams,
+  params = undefined,
+  options = undefined,
+  children = undefined,
+  onClick = undefined,
+  component = undefined,
+  trackingEvent = undefined,
+  trackParams = undefined,
   ...rest
 }) => {
   const trackClick = () => {
