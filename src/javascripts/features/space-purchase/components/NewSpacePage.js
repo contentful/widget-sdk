@@ -12,27 +12,30 @@ import {
   getCountryCodeFromName,
 } from 'features/organization-billing';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { FREE_SPACE_IDENTIFIER, transformSpaceRatePlans } from 'app/SpaceWizards/shared/utils';
+import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 import { isFreeProductPlan, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
-import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import {
+  Organization as OrganizationPropType,
+  Space as SpacePropType,
+} from 'app/OrganizationSettings/PropTypes';
 import * as logger from 'services/logger';
 import * as TokenStore from 'services/TokenStore';
 import createResourceService from 'services/ResourceService';
-
 import { Breadcrumb } from './Breadcrumb';
-import { NewSpaceFAQ } from './NewSpaceFAQ';
-import { SpaceSelection } from './SpaceSelection';
-import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
+import { EVENTS } from '../utils/analyticsTracking';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
+import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
+import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
-import { EVENTS } from '../utils/analyticsTracking';
-import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
-
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { SpaceSelection } from './SpaceSelection';
+import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
+import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 import { usePageContent } from '../hooks/usePageContent';
+import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 
 const NEW_SPACE_STEPS = [
   { text: '1.Spaces', isActive: true },
@@ -59,6 +62,7 @@ const SPACE_PURCHASE_STEPS = {
   CARD_DETAILS: 'CARD_DETAILS',
   CONFIRMATION: 'CONFIRMATION',
   RECEIPT: 'RECEIPT',
+  UPGRADE_RECEIPT: 'UPGRADE_RECEIPT',
 };
 
 // Fetch billing and payment information if organziation already has billing information
@@ -79,20 +83,34 @@ const fetchBillingDetails = async (
   setIsLoadingBillingDetails(false);
 };
 
-const fetchSpaceRatePlans = async (organization, setSpaceRatePlans) => {
+const fetchSpaceRatePlans = async (
+  organization,
+  spaceId,
+  setSpaceRatePlans,
+  setCurrentSpacePlan
+) => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const orgResources = createResourceService(organization.sys.id, 'organization');
   const [freeSpaceResource, rawSpaceRatePlans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSpaceRatePlans(endpoint),
+    getSpaceRatePlans(endpoint, spaceId),
   ]);
   const spaceRatePlans = transformSpaceRatePlans({
-    organization,
     spaceRatePlans: rawSpaceRatePlans,
     freeSpaceResource,
   });
 
   setSpaceRatePlans(spaceRatePlans);
+
+  if (spaceId && spaceRatePlans) {
+    const currentSpacePlan = spaceRatePlans.find((plan) =>
+      plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
+    );
+    setCurrentSpacePlan(
+      currentSpacePlan ??
+        spaceRatePlans.find((plan) => plan.name === SPACE_PURCHASE_TYPES.COMMUNITY)
+    );
+  }
 };
 
 export const NewSpacePage = ({
@@ -103,6 +121,7 @@ export const NewSpacePage = ({
   canCreateCommunityPlan,
   pageContent,
   sessionMetadata,
+  currentSpace,
 }) => {
   const [currentStep, setCurrentStep] = useState(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
   const [spaceName, setSpaceName] = useState('');
@@ -112,6 +131,7 @@ export const NewSpacePage = ({
   const [paymentDetails, setPaymentDetails] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
   const [spaceRatePlans, setSpaceRatePlans] = useState(null);
+  const [currentSpacePlan, setCurrentSpacePlan] = useState(null);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
@@ -126,9 +146,14 @@ export const NewSpacePage = ({
 
   useEffect(() => {
     if (organization) {
-      fetchSpaceRatePlans(organization, setSpaceRatePlans);
+      fetchSpaceRatePlans(
+        organization,
+        currentSpace?.sys.id,
+        setSpaceRatePlans,
+        setCurrentSpacePlan
+      );
     }
-  }, [organization]);
+  }, [organization, currentSpace]);
 
   useEffect(() => {
     if (userIsOrgOwner && organization?.isBillable) {
@@ -180,7 +205,15 @@ export const NewSpacePage = ({
     });
 
     setSelectedPlan(selectedProductRatePlan);
-    goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
+
+    // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
+    if (currentSpace && organization.isBillable) {
+      goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
+    } else if (currentSpace && !organization.isBillable) {
+      goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS);
+    } else {
+      goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
+    }
   };
 
   const onSubmitSpaceDetails = () => {
@@ -198,10 +231,12 @@ export const NewSpacePage = ({
   };
 
   const onBackConfirmation = () => {
-    if (organization.isBillable) {
+    if (!organization.isBillable) {
+      goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
+    } else if (!currentSpace) {
       goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
     } else {
-      goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
+      goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
     }
   };
 
@@ -254,7 +289,11 @@ export const NewSpacePage = ({
   const onConfirm = () => {
     trackWithSession(EVENTS.CONFIRM_PURCHASE);
 
-    goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
+    goToStep(
+      currentSpace && currentSpacePlan
+        ? SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT
+        : SPACE_PURCHASE_STEPS.RECEIPT
+    );
   };
 
   const getComponentForStep = (currentStep) => {
@@ -280,10 +319,18 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceBillingDetailsPage
-              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS)}
+              navigateToPreviousStep={() =>
+                goToStep(
+                  currentSpace
+                    ? SPACE_PURCHASE_STEPS.SPACE_SELECTION
+                    : SPACE_PURCHASE_STEPS.SPACE_DETAILS
+                )
+              }
               savedBillingDetails={billingDetails}
               onSubmitBillingDetails={onSubmitBillingDetails}
               selectedPlan={selectedPlan}
+              currentSpace={currentSpace}
+              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -297,6 +344,8 @@ export const NewSpacePage = ({
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
+              currentSpace={currentSpace}
+              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -315,6 +364,8 @@ export const NewSpacePage = ({
               paymentDetails={paymentDetails}
               navigateToPreviousStep={onBackConfirmation}
               onConfirm={onConfirm}
+              currentSpace={currentSpace}
+              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -328,6 +379,20 @@ export const NewSpacePage = ({
               organizationId={organizationId}
               sessionMetadata={sessionMetadata}
               selectedTemplate={selectedTemplate}
+              currentSpace={currentSpace}
+              currentPlan={currentSpacePlan}
+            />
+          </Grid>
+        );
+      case SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT:
+        return (
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <UpgradeSpaceReceiptPage
+              selectedPlan={selectedPlan}
+              sessionMetadata={sessionMetadata}
+              currentSpace={currentSpace}
+              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -344,6 +409,7 @@ export const NewSpacePage = ({
               trackWithSession={trackWithSession}
               spaceRatePlans={spaceRatePlans}
               loading={!spaceRatePlans}
+              currentSpacePlan={currentSpacePlan}
             />
             <NewSpaceFAQ faqEntries={faqEntries} />
           </Grid>
@@ -365,7 +431,7 @@ export const NewSpacePage = ({
 NewSpacePage.propTypes = {
   sessionMetadata: PropTypes.object.isRequired,
   trackWithSession: PropTypes.func.isRequired,
-  organization: OrganizationPropType.isRequired,
+  organization: OrganizationPropType,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,
   canCreateCommunityPlan: PropTypes.bool,
@@ -378,4 +444,5 @@ NewSpacePage.propTypes = {
       })
     ).isRequired,
   }),
+  currentSpace: SpacePropType,
 };

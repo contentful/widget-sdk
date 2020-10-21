@@ -11,15 +11,17 @@ import {
   List,
   ListItem,
   Paragraph,
+  Tooltip,
   Typography,
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import tokens from '@contentful/forma-36-tokens';
+import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
+import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
 
 export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
   medium: 'webapp',
@@ -88,7 +90,14 @@ const styles = {
   },
 };
 
-export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loading = true }) => {
+export const SpaceCard = ({
+  content,
+  handleSelect,
+  plan,
+  disabled = false,
+  loading = true,
+  selected = false,
+}) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
   return (
@@ -120,7 +129,7 @@ export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loadi
                 </>
               )}
             </Paragraph>
-            {isEnterpriseCard ? (
+            {isEnterpriseCard && (
               <Button
                 href={SPACE_PURCHASE_CONTACT_SALES_HREF}
                 target="_blank"
@@ -130,11 +139,16 @@ export const SpaceCard = ({ content, handleSelect, plan, disabled = false, loadi
                 disabled={disabled}>
                 {content.callToAction}
               </Button>
-            ) : (
-              <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
-                {content.callToAction}
-              </Button>
             )}
+            {!isEnterpriseCard && !selected && (
+              <Tooltip
+                content={disabled ? 'You are using more resources than this plan offers' : ''}>
+                <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
+                  {content.callToAction}
+                </Button>
+              </Tooltip>
+            )}
+            {!isEnterpriseCard && selected && <CurrentSpaceLabel />}
           </Typography>
 
           <div className={styles.limitsSection}>
@@ -172,6 +186,7 @@ SpaceCard.propTypes = {
   disabled: PropTypes.bool,
   plan: PropTypes.object,
   loading: PropTypes.bool,
+  selected: PropTypes.bool,
 };
 
 function getSpaceColorCSS(backgroundColor) {

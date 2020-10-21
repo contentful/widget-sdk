@@ -45,27 +45,35 @@ const mockFreeSpaceResource = {
 
 const trackWithSession = jest.fn();
 
+const mockPlanCharges = [
+  FakeFactory.RatePlanCharge('Environments', 3),
+  FakeFactory.RatePlanCharge('Roles', 3),
+  FakeFactory.RatePlanCharge('Locales', 3),
+  FakeFactory.RatePlanCharge('Content types', 3),
+  FakeFactory.RatePlanCharge('Records', 3),
+];
+
 const mockRatePlans = [
   {
     name: 'Community',
     productPlanType: 'free_space',
     productType: 'on_demand',
     price: 0,
-    productRatePlanCharges: [],
+    productRatePlanCharges: mockPlanCharges,
   },
   {
     name: 'Medium',
     productPlanType: 'space',
     productType: 'on_demand',
     price: 489,
-    productRatePlanCharges: [],
+    productRatePlanCharges: mockPlanCharges,
   },
   {
     name: 'Large',
     productPlanType: 'space',
     productType: 'on_demand',
     price: 879,
-    productRatePlanCharges: [],
+    productRatePlanCharges: mockPlanCharges,
   },
 ];
 

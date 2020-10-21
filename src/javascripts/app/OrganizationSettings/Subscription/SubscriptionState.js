@@ -3,7 +3,7 @@ import { organizationRoute } from 'states/utils';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
-import { newSpaceState as spacePurchaseState } from 'features/space-purchase';
+import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';
 import { go } from 'states/Navigator';
 
 const subscriptionPageState = {
@@ -33,7 +33,7 @@ const subscriptionPageState = {
 export default organizationRoute({
   name: 'subscription_new',
   url: '',
-  children: [spacePurchaseState, subscriptionPageState],
+  children: [newSpaceState, upgradeSpaceState, subscriptionPageState],
   component: () => {
     go({
       path: ['account', 'organizations', 'subscription_new', 'overview'],

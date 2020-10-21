@@ -1,5 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { Plan, Space } from 'test/helpers/fakeFactory';
+
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
@@ -38,6 +40,27 @@ describe('PaymentSummary', () => {
     fireEvent.click(screen.getByTestId('order-summary.back'));
 
     expect(onBack).toBeCalled();
+  });
+
+  it('should show Receipt copy when isReceipt is passed', () => {
+    build({ isReceipt: true });
+
+    expect(screen.getByTestId('space-heading').textContent).toEqual('Receipt');
+  });
+
+  it('should show space change copy', () => {
+    const currentSpace = Space({ name: 'Tomato' });
+    const currentPlan = Plan({ name: 'Medium' });
+    const selectedPlan = { name: 'Large' };
+    build({
+      currentSpace,
+      currentPlan,
+      selectedPlan,
+    });
+    const paymentMsg = screen.getByTestId('payment-summary.message');
+    expect(paymentMsg.textContent).toContain('Tomato');
+    expect(paymentMsg.textContent).toContain('Medium');
+    expect(paymentMsg.textContent).toContain('Large');
   });
 });
 

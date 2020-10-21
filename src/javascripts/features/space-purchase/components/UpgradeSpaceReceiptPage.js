@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { DisplayText, Button, Paragraph, Note } from '@contentful/forma-36-react-components';
+import { DisplayText, Button, Paragraph } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { useSpaceCreation, useTemplateCreation } from '../hooks/useCreateSpaceAndTemplate';
-import { useNavigationWarn } from '../hooks/useNavigationWarn';
 import { PaymentSummary } from './PaymentSummary';
+import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
+import { useSpaceUpgrade } from '../hooks/useCreateSpaceAndTemplate';
 
 const styles = {
   grid: css({
@@ -24,37 +24,22 @@ const styles = {
   button: css({
     marginBottom: tokens.spacingXl,
   }),
-  templateCreationErrorNote: css({
-    marginBottom: tokens.spacingXl,
-  }),
   paymentSummaryContainer: css({
     maxWidth: '600px',
   }),
 };
 
-export const NewSpaceReceiptPage = ({
-  organizationId,
+export const UpgradeSpaceReceiptPage = ({
   selectedPlan,
-  selectedTemplate,
   sessionMetadata,
-  spaceName,
+  currentSpace,
+  currentPlan,
 }) => {
-  const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation(
-    organizationId,
+  const { isUpgradingSpace, upgradeError, buttonAction } = useSpaceUpgrade(
+    currentSpace,
     selectedPlan,
-    spaceName,
     sessionMetadata
   );
-
-  const { isCreatingTemplate, templateCreationError } = useTemplateCreation(
-    newSpace,
-    selectedTemplate,
-    sessionMetadata
-  );
-
-  const pending = isCreatingSpace || isCreatingTemplate;
-
-  useNavigationWarn(selectedPlan, pending);
 
   return (
     <section
@@ -66,9 +51,9 @@ export const NewSpaceReceiptPage = ({
           element="h2"
           testId="new-space-receipt-section-heading"
           className={styles.sectionHeading}>
-          {pending && (
+          {isUpgradingSpace && (
             <>
-              Hang on, your new space is on its way{' '}
+              Hang on, we’re changing your space{' '}
               <span
                 role="img"
                 data-test-id="receipt.loading-envelope"
@@ -77,9 +62,9 @@ export const NewSpaceReceiptPage = ({
               </span>
             </>
           )}
-          {!pending && spaceCreationError && (
+          {!isUpgradingSpace && upgradeError && (
             <>
-              Oh dear, we had some trouble creating your new space{' '}
+              Oh dear, we had some trouble changing your space{' '}
               <span
                 role="img"
                 data-test-id="receipt.error-face"
@@ -88,7 +73,7 @@ export const NewSpaceReceiptPage = ({
               </span>
             </>
           )}
-          {!pending && !spaceCreationError && (
+          {!isUpgradingSpace && !upgradeError && (
             <>
               Nice one!{' '}
               <span role="img" aria-label="Shopping bag">
@@ -98,41 +83,32 @@ export const NewSpaceReceiptPage = ({
           )}
         </DisplayText>
         <Paragraph className={styles.successMsg} testId="receipt.subtext">
-          {!pending && spaceCreationError && 'Don’t worry, simply retrigger the space creation.'}
-          {!pending &&
-            !spaceCreationError &&
-            `You successfully purchased the ${selectedPlan.name} space ${spaceName}.`}
+          {!isUpgradingSpace && upgradeError && 'Don’t worry, simply retrigger the space change.'}
         </Paragraph>
         <Button
-          testId="receipt-page.redirect-to-new-space"
-          loading={pending}
-          disabled={pending}
+          testId="receipt-page.redirect-to-upgraded-space"
+          loading={isUpgradingSpace}
+          disabled={isUpgradingSpace}
           onClick={buttonAction}
           className={styles.button}>
-          {spaceCreationError ? 'Retrigger space creation' : `Take me to ${spaceName}`}
+          {upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
         </Button>
         <div className={styles.paymentSummaryContainer}>
-          {templateCreationError && (
-            <Note
-              noteType="warning"
-              title="We had a problem creating your template"
-              testId="receipt-page.template-creation-error"
-              className={styles.templateCreationErrorNote}>
-              Something happened while creating the template. You can still use your space, but some
-              content from the template may be missing.
-            </Note>
-          )}
-          <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+          <PaymentSummary
+            selectedPlan={selectedPlan}
+            currentSpace={currentSpace}
+            currentPlan={currentPlan}
+            isReceipt
+          />
         </div>
       </Flex>
     </section>
   );
 };
 
-NewSpaceReceiptPage.propTypes = {
-  spaceName: PropTypes.string.isRequired,
+UpgradeSpaceReceiptPage.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
-  selectedTemplate: PropTypes.object,
-  organizationId: PropTypes.string.isRequired,
   sessionMetadata: PropTypes.object.isRequired,
+  currentSpace: SpacePropType,
+  currentPlan: PlanPropType,
 };

@@ -5,8 +5,9 @@ import { css } from 'emotion';
 import { Heading, Card, Subheading, Notification } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import { ZuoraCreditCardIframe } from 'features/organization-billing';
 
+import { ZuoraCreditCardIframe } from 'features/organization-billing';
+import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { PaymentSummary } from './PaymentSummary';
 
 const styles = {
@@ -34,6 +35,8 @@ export const NewSpaceCardDetailsPage = ({
   navigateToPreviousStep,
   selectedPlan,
   onSuccess,
+  currentSpace,
+  currentPlan,
 }) => {
   return (
     <section
@@ -68,7 +71,11 @@ export const NewSpaceCardDetailsPage = ({
             cancelText="Back"
           />
         </Card>
-        <PaymentSummary selectedPlan={selectedPlan} />
+        <PaymentSummary
+          selectedPlan={selectedPlan}
+          currentSpace={currentSpace}
+          currentPlan={currentPlan}
+        />
       </Grid>
     </section>
   );
@@ -80,4 +87,6 @@ NewSpaceCardDetailsPage.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object.isRequired,
+  currentSpace: SpacePropType,
+  currentPlan: PlanPropType,
 };

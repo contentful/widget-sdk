@@ -15,6 +15,8 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
 import tokens from '@contentful/forma-36-tokens';
 
+import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
+
 const BORDER = `1px solid ${tokens.colorElementMid}`;
 
 const styles = {
@@ -55,6 +57,8 @@ export const PaymentSummary = ({
   showButtons = false,
   onConfirm,
   onBack,
+  currentSpace,
+  currentPlan,
 }) => {
   return (
     <Card className={styles.card} testId="order-summary.card">
@@ -62,8 +66,8 @@ export const PaymentSummary = ({
         <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
           {isReceipt ? 'Receipt' : 'Payment summary'}
         </Subheading>
-        <Paragraph>
-          Start using your new space today. You will be charged monthly. You can cancel at anytime.
+        <Paragraph testId="payment-summary.message">
+          {getSuccessMsg(currentSpace?.name, currentPlan?.name, selectedPlan.name, isReceipt)}
         </Paragraph>
         <List className={styles.list}>
           <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
@@ -98,4 +102,20 @@ PaymentSummary.propTypes = {
   showButtons: PropTypes.bool,
   onConfirm: PropTypes.func,
   onBack: PropTypes.func,
+  currentSpace: SpacePropType,
+  currentPlan: PlanPropType,
 };
+
+function getSuccessMsg(currentSpaceName, currentPlanName, selectedPlanName, isReceipt) {
+  let successMsg = '';
+
+  if (currentSpaceName && currentPlanName) {
+    successMsg = `You${
+      isReceipt ? '’ve changed the space' : ' are changing'
+    } ${currentSpaceName} from a ${currentPlanName} to a ${selectedPlanName} space`;
+  } else {
+    successMsg = 'Start using your new space today.';
+  }
+
+  return (successMsg += ' You will be charged monthly. You can cancel at anytime.');
+}

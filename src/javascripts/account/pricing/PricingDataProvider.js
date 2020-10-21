@@ -164,7 +164,7 @@ export function changeSpacePlan(endpoint, productRatePlanId) {
       method: 'PUT',
       path: [],
       data: {
-        productRatePlanId: productRatePlanId,
+        productRatePlanId,
       },
     },
     alphaHeader

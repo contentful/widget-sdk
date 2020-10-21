@@ -7,6 +7,7 @@ import { Heading, Card, Typography, Subheading } from '@contentful/forma-36-reac
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
+import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { PaymentSummary } from './PaymentSummary';
 import { BillingDetailsForm } from 'features/organization-billing';
 
@@ -29,6 +30,8 @@ export const NewSpaceBillingDetailsPage = ({
   savedBillingDetails,
   onSubmitBillingDetails,
   selectedPlan,
+  currentPlan,
+  currentSpace,
 }) => {
   return (
     <section
@@ -60,7 +63,11 @@ export const NewSpaceBillingDetailsPage = ({
             billingDetails={savedBillingDetails}
           />
         </Card>
-        <PaymentSummary selectedPlan={selectedPlan} />
+        <PaymentSummary
+          selectedPlan={selectedPlan}
+          currentPlan={currentPlan}
+          currentSpace={currentSpace}
+        />
       </Grid>
     </section>
   );
@@ -71,4 +78,6 @@ NewSpaceBillingDetailsPage.propTypes = {
   savedBillingDetails: PropTypes.object,
   onSubmitBillingDetails: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
+  currentSpace: SpacePropType,
+  currentPlan: PlanPropType,
 };

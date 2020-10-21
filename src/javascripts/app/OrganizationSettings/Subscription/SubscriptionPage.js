@@ -152,9 +152,7 @@ export default function SubscriptionPage({
       trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, { organizationId, spaceId: space.sys.id });
 
       showChangeSpaceModal({
-        action: 'change',
         organizationId,
-        scope: 'organization',
         space,
         onSubmit: async (productRatePlan) => {
           // Update current spacePlan for this space with new data

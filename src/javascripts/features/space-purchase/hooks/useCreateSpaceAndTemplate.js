@@ -1,11 +1,13 @@
 import { useCallback, useEffect } from 'react';
 
+import { changeSpacePlan } from 'account/pricing/PricingDataProvider';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useAsyncFn } from 'core/hooks/useAsync';
 
-const fetchSpace = (organizationId, sessionMetadata, selectedPlan, spaceName) => async () => {
+const fetchSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) => async () => {
   try {
     const newSpace = await makeNewSpace(organizationId, selectedPlan, spaceName);
 
@@ -41,37 +43,32 @@ const fetchTemplate = (newSpace, selectedTemplate, sessionMetadata) => async () 
   }
 };
 
-function useCreateSpaceAndTemplate(
-  organizationId,
-  selectedPlan,
-  selectedTemplate,
-  sessionMetadata,
-  spaceName
-) {
+const upgradePlan = (space, plan, sessionMetadata) => async () => {
+  try {
+    const endpoint = createSpaceEndpoint(space.sys.id);
+    await changeSpacePlan(endpoint, plan.sys.id);
+    trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata);
+  } catch (error) {
+    trackEvent(EVENTS.ERROR, sessionMetadata, {
+      errorType: 'UpgradeError',
+      error,
+    });
+    throw error;
+  }
+};
+
+export function useSpaceCreation(organizationId, selectedPlan, spaceName, sessionMetadata) {
   const [
     { isLoading: isCreatingSpace, data: newSpace, error: spaceCreationError },
     runSpaceCreation,
   ] = useAsyncFn(
-    useCallback(fetchSpace(organizationId, sessionMetadata, selectedPlan, spaceName), [])
-  );
-
-  const [
-    { isLoading: isCreatingTemplate, error: templateCreationError },
-    runTemplateCreation,
-  ] = useAsyncFn(
-    useCallback(fetchTemplate(newSpace, selectedTemplate, sessionMetadata), [newSpace])
+    useCallback(fetchSpace(organizationId, selectedPlan, spaceName, sessionMetadata), [])
   );
 
   useEffect(() => {
     runSpaceCreation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (newSpace && selectedTemplate) {
-      runTemplateCreation();
-    }
-  }, [newSpace, selectedTemplate, runTemplateCreation]);
 
   const goToCreatedSpace = async () => {
     await go({
@@ -80,15 +77,58 @@ function useCreateSpaceAndTemplate(
     });
   };
 
-  const pending = isCreatingSpace || isCreatingTemplate;
   const buttonAction = spaceCreationError ? runSpaceCreation : goToCreatedSpace;
 
   return {
-    pending,
-    buttonAction,
+    isCreatingSpace,
     spaceCreationError,
+    buttonAction,
+    newSpace,
+  };
+}
+
+export function useTemplateCreation(newSpace, selectedTemplate, sessionMetadata) {
+  const [
+    { isLoading: isCreatingTemplate, error: templateCreationError },
+    runTemplateCreation,
+  ] = useAsyncFn(
+    useCallback(fetchTemplate(newSpace, selectedTemplate, sessionMetadata), [newSpace])
+  );
+
+  useEffect(() => {
+    if (newSpace && selectedTemplate) {
+      runTemplateCreation();
+    }
+  }, [newSpace, selectedTemplate, runTemplateCreation]);
+
+  return {
+    isCreatingTemplate,
     templateCreationError,
   };
 }
 
-export { useCreateSpaceAndTemplate };
+export function useSpaceUpgrade(currentSpace, selectedPlan, sessionMetadata) {
+  const [{ isLoading: isUpgradingSpace, error: upgradeError }, runSpaceUpgrade] = useAsyncFn(
+    useCallback(upgradePlan(currentSpace, selectedPlan, sessionMetadata), [currentSpace])
+  );
+
+  useEffect(() => {
+    runSpaceUpgrade();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const goToCreatedSpace = async () => {
+    await go({
+      path: ['spaces', 'detail'],
+      params: { spaceId: currentSpace.sys.id },
+    });
+  };
+
+  const buttonAction = upgradeError ? runSpaceUpgrade : goToCreatedSpace;
+
+  return {
+    isUpgradingSpace,
+    upgradeError,
+    buttonAction,
+  };
+}

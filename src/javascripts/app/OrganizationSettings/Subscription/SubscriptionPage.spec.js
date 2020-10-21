@@ -264,7 +264,7 @@ describe('SubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
-  it('should track a click and open change space model when onChangeSpace is clicked', () => {
+  it('should track a click and call showChangeSpaceModal when onChangeSpace is clicked', () => {
     build({ spacePlans: mockSpacePlans });
 
     // Click on the first space plan's upgrade link
@@ -274,9 +274,7 @@ describe('SubscriptionPage', () => {
       spaceId: mockSpacePlans[0].space.sys.id,
     });
     expect(showChangeSpaceModal).toBeCalledWith({
-      action: 'change',
       organizationId: mockOrganization.sys.id,
-      scope: 'organization',
       space: mockSpacePlans[0].space,
       onSubmit: expect.any(Function),
     });

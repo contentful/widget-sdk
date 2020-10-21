@@ -11,15 +11,20 @@ import {
   Button,
   Tooltip,
   Note,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
+import { Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from './SpaceCard';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
 
 const styles = {
   fullRow: css({
@@ -62,6 +67,7 @@ export const SpaceSelection = ({
   canCreateCommunityPlan,
   canCreatePaidSpace,
   spaceRatePlans,
+  currentSpacePlan,
   loading,
 }) => {
   const getSelectHandler = (planType) => {
@@ -85,6 +91,9 @@ export const SpaceSelection = ({
     };
   };
 
+  const isFreeSpaceDisabled =
+    spaceRatePlans && spaceRatePlans.find((plan) => plan.name === 'Community')?.disabled;
+
   return (
     <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
@@ -97,52 +106,74 @@ export const SpaceSelection = ({
             to add payment details and start purchasing spaces.
           </Note>
         )}
-        <Heading
-          id="space-selection-heading"
-          element="h2"
-          className={cn(styles.fullRow, styles.sectionHeading)}
-          testId="space-selection.heading">
-          Choose the space that’s right for your project
-        </Heading>
+        {loading ? (
+          <SkeletonContainer svgHeight={47} className={styles.fullRow}>
+            <SkeletonDisplayText />
+          </SkeletonContainer>
+        ) : (
+          <Heading
+            id="space-selection-heading"
+            element="h2"
+            className={cn(styles.fullRow, styles.sectionHeading)}
+            testId="space-selection.heading">
+            {!currentSpacePlan
+              ? 'Choose the space that’s right for your project'
+              : 'Choose the space you’d like to change to'}
+          </Heading>
+        )}
 
-        {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => (
-          <SpaceCard
-            key={idx}
-            disabled={!canCreatePaidSpace}
-            content={spaceContent}
-            handleSelect={getSelectHandler(spaceContent.type)}
-            plan={spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type)}
-            loading={loading}
-          />
-        ))}
+        {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => {
+          const plan =
+            spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type);
+          const isCurrentPlan = currentSpacePlan?.name === spaceContent.type;
+
+          return (
+            <SpaceCard
+              key={idx}
+              loading={loading}
+              disabled={!canCreatePaidSpace || plan?.disabled}
+              selected={isCurrentPlan}
+              plan={plan}
+              content={spaceContent}
+              handleSelect={getSelectHandler(spaceContent.type)}
+            />
+          );
+        })}
 
         <div className={cn(styles.fullRow, styles.communitySection)}>
           <Card className={styles.communityCard} testId="space-selection.community-card">
-            <Flex justifyContent="space-between" alignItems="center">
-              <div>
-                <Heading element="h3" className={styles.normalWeight}>
-                  Community
-                </Heading>
-                <Paragraph>Free space limited to 1 per organization.</Paragraph>
-              </div>
+            {loading ? (
+              <CommunityLoadingState />
+            ) : (
+              <Flex justifyContent="space-between" alignItems="center">
+                <div>
+                  <Heading element="h3" className={styles.normalWeight}>
+                    Community
+                  </Heading>
+                  <Paragraph>Free space limited to 1 per organization.</Paragraph>
+                </div>
 
-              <Tooltip
-                testId="read-only-tooltip"
-                maxWidth={270}
-                place="auto"
-                content={
-                  !canCreateCommunityPlan
-                    ? 'You’ve already used your free Community space. To add a new Community space, delete your existing one.'
-                    : ''
-                }>
-                <Button
-                  testId="space-selection-community-select-button"
-                  onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
-                  disabled={!canCreateCommunityPlan}>
-                  Select
-                </Button>
-              </Tooltip>
-            </Flex>
+                {currentSpacePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
+                  <CurrentSpaceLabel />
+                ) : (
+                  <Tooltip
+                    testId="read-only-tooltip"
+                    maxWidth={270}
+                    place="auto"
+                    content={getCommunityTooltipContent(
+                      canCreateCommunityPlan,
+                      isFreeSpaceDisabled
+                    )}>
+                    <Button
+                      testId="space-selection-community-select-button"
+                      onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
+                      disabled={!canCreateCommunityPlan || isFreeSpaceDisabled}>
+                      Select
+                    </Button>
+                  </Tooltip>
+                )}
+              </Flex>
+            )}
           </Card>
           <ExternalTextLink
             testId="space-selection.feature-overview-link"
@@ -168,5 +199,27 @@ SpaceSelection.propTypes = {
   canCreateCommunityPlan: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
+  currentSpacePlan: PlanPropType,
   loading: PropTypes.bool,
 };
+
+function CommunityLoadingState() {
+  return (
+    <SkeletonContainer svgHeight={45}>
+      <SkeletonDisplayText width={120} />
+      <SkeletonBodyText offsetTop={29} lineHeight={16} numberOfLines={1} width={240} />
+    </SkeletonContainer>
+  );
+}
+
+function getCommunityTooltipContent(canCreateCommunityPlan, isFreeSpaceDisabled) {
+  if (!canCreateCommunityPlan) {
+    return 'You’ve already used your free Community space. To add a new Community space, delete your existing one.';
+  }
+
+  if (isFreeSpaceDisabled) {
+    return 'You are using more resources than this plan offers';
+  }
+
+  return '';
+}
