@@ -17,6 +17,7 @@ export const AppPropType = PropTypes.shape({
   }).isRequired,
   icon: PropTypes.string.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  supportUrl: PropTypes.string,
 });
 
 export const externalLinkProps = {

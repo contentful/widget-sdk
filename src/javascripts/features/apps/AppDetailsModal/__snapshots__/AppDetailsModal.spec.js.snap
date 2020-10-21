@@ -139,7 +139,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
   margin-right: 1rem;
 }
 
-.emotion-15 {
+.emotion-20 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -154,7 +154,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
   flex-grow: 1;
 }
 
-.emotion-14 {
+.emotion-19 {
   min-width: 280px;
   width: 280px;
   padding-left: 1.5rem;
@@ -170,13 +170,35 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
   margin-bottom: 0.5rem;
 }
 
-.emotion-7 {
+.emotion-12 {
   margin-bottom: 0.5rem;
 }
 
-.emotion-10 {
-  width: 40px;
-  height: 40px;
+.emotion-9 {
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+.emotion-9 > * {
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.emotion-7 {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+}
+
+.emotion-8 {
+  color: #192532;
+  font-weight: 600;
+}
+
+.emotion-15 {
+  margin-bottom: 0.25rem;
 }
 
 .emotion-2 {
@@ -195,7 +217,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 
 <div>
   <div
-    class="emotion-15"
+    class="emotion-20"
   >
     <div
       class="emotion-4"
@@ -258,7 +280,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
       </div>
     </div>
     <div
-      class="emotion-14"
+      class="emotion-19"
     >
       <button
         class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--full-width___3Fmpo"
@@ -283,13 +305,44 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
         class="Subheading__Subheading___2mA9j emotion-6"
         data-test-id="cf-ui-subheading"
       >
+        Developer
+      </h3>
+      <a
+        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-9 TextLink__TextLink--primary___2Vc9F"
+        data-test-id="cf-ui-text-link"
+        href="https://www.contentful.com"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <span
+          class="TabFocusTrap__TabFocusTrap___39Vty"
+          tabindex="-1"
+        >
+          <img
+            class="emotion-7"
+            src="//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
+          />
+          <div
+            class="emotion-8"
+          >
+            Contentful
+          </div>
+        </span>
+      </a>
+      <div
+        class="emotion-5"
+      />
+      <h3
+        class="Subheading__Subheading___2mA9j emotion-6"
+        data-test-id="cf-ui-subheading"
+      >
         Links
       </h3>
       <div
-        class="emotion-7"
+        class="emotion-12"
       >
         <a
-          arialabel="Documentation"
+          aria-label="Documentation"
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
           href="https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
@@ -331,25 +384,30 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
         class="Subheading__Subheading___2mA9j emotion-6"
         data-test-id="cf-ui-subheading"
       >
-        Author
+        Support
       </h3>
-      <a
-        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-        data-test-id="cf-ui-text-link"
-        href="https://www.contentful.com"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <span
-          class="TabFocusTrap__TabFocusTrap___39Vty"
-          tabindex="-1"
+      <div>
+        <p
+          class="Paragraph__Paragraph___2aO-9 emotion-15"
+          data-test-id="cf-ui-paragraph"
         >
-          <img
-            class="emotion-10"
-            src="//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
-          />
-        </span>
-      </a>
+          This app is not officially supported.
+        </p>
+        <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
+          href="https://www.contentful.com/slack"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Ask a question in our Slack community
+          </span>
+        </a>
+      </div>
       <div
         class="emotion-5"
       />

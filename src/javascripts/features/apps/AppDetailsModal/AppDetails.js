@@ -6,6 +6,8 @@ import {
   TextLink,
   Paragraph,
   HelpText,
+  SkeletonBodyText,
+  SkeletonContainer,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import MarkdownRenderer from 'app/common/MarkdownRenderer';
@@ -16,6 +18,8 @@ import { getUsageExceededMessage } from '../isUsageExceeded';
 import tokens from '@contentful/forma-36-tokens';
 import cx from 'classnames';
 import { css } from 'emotion';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
+import moment from 'moment';
 
 const styles = {
   root: css({
@@ -44,13 +48,47 @@ const styles = {
   sidebarLink: css({
     marginBottom: tokens.spacingXs,
   }),
-  iconSmall: css({
-    width: '40px',
-    height: '40px',
-  }),
   modalPermissions: css({
     whiteSpace: 'pre-line',
   }),
+  installation: {
+    container: css({
+      marginTop: tokens.spacingM,
+    }),
+    installerName: css({
+      color: tokens.colorTextDark,
+      fontSize: tokens.fontSizeM,
+      fontWeight: tokens.fontWeightMedium,
+    }),
+    date: css({
+      fontSize: tokens.fontSizeM,
+      color: tokens.colorTextLightest,
+    }),
+  },
+  author: {
+    container: css({
+      textDecoration: 'none !important',
+
+      // <TabFocusTrap>
+      '> *': {
+        display: 'flex !important',
+      },
+    }),
+    icon: css({
+      width: '24px',
+      height: '24px',
+      marginRight: tokens.spacingXs,
+    }),
+    name: css({
+      color: tokens.colorTextDark,
+      fontWeight: tokens.fontWeightMedium,
+    }),
+  },
+  support: {
+    text: css({
+      marginBottom: tokens.spacing2Xs,
+    }),
+  },
 };
 
 function determineOnClick(installed = false, onClick, onClose, setShowPermissions) {
@@ -110,6 +148,28 @@ export function AppDetails(props) {
             </Button>
           )}
         </StateLink>
+
+        {app.appInstallation && (
+          <>
+            <div className={styles.installation.container}>
+              <div className={styles.installation.installerName}>
+                <ActionPerformerName
+                  link={app.appInstallation.sys.createdBy}
+                  formatName={(name) => `Installed by ${name}`}
+                  loadingComponent={
+                    <SkeletonContainer svgHeight={21}>
+                      <SkeletonBodyText lineHeight={21} numberOfLines={1} />
+                    </SkeletonContainer>
+                  }
+                />
+              </div>
+            </div>
+            <span className={styles.installation.date}>
+              {moment(app.appInstallation.createdAt).format('DD MMM YYYY')}
+            </span>
+          </>
+        )}
+
         {!installed && usageExceeded && canManageApps && (
           <>
             <div className={styles.sidebarSpacingM} />
@@ -124,7 +184,18 @@ export function AppDetails(props) {
             </HelpText>
           </>
         )}
+
         <div className={styles.sidebarSpacing} />
+
+        <Subheading element="h3" className={styles.sidebarSubheading}>
+          Developer
+        </Subheading>
+        <TextLink href={app.author.url} {...externalLinkProps} className={styles.author.container}>
+          <img src={app.author.icon} className={styles.author.icon} />
+          <div className={styles.author.name}>{app.author.name}</div>
+        </TextLink>
+        <div className={styles.sidebarSpacing} />
+
         {app.links.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>
@@ -136,7 +207,7 @@ export function AppDetails(props) {
                   href={`${link.url}`}
                   {...externalLinkProps}
                   icon="ExternalLink"
-                  ariaLabel={link.title}>
+                  aria-label={link.title}>
                   {link.shortTitle || link.title}
                 </TextLink>
               </div>
@@ -144,12 +215,32 @@ export function AppDetails(props) {
             <div className={styles.sidebarSpacing} />
           </>
         )}
+
         <Subheading element="h3" className={styles.sidebarSubheading}>
-          Author
+          Support
         </Subheading>
-        <TextLink href={app.author.url} {...externalLinkProps}>
-          <img src={app.author.icon} className={styles.iconSmall} />
-        </TextLink>
+        <div>
+          {app.supportUrl ? (
+            <>
+              <Paragraph className={styles.support.text}>
+                {app.author.name} supports this app.
+              </Paragraph>
+              <TextLink href={app.supportUrl} icon="ChatBubble" {...externalLinkProps}>
+                Get support
+              </TextLink>
+            </>
+          ) : (
+            <>
+              <Paragraph className={styles.support.text}>
+                This app is not officially supported.
+              </Paragraph>
+              <TextLink href="https://www.contentful.com/slack" {...externalLinkProps}>
+                Ask a question in our Slack community
+              </TextLink>
+            </>
+          )}
+        </div>
+
         <div className={styles.sidebarSpacing} />
 
         {app.categories.length > 0 && (

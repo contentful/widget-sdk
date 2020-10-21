@@ -93,6 +93,7 @@ function createAppObject(entry, isListed) {
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
     documentationLink: get(entry, ['fields', 'documentationLink', 'fields'], null),
     links: get(entry, ['fields', 'links'], []).map((link) => link.fields),
+    supportUrl: get(entry, ['fields', 'supportUrl'], null),
     legal: {
       eula: get(entry, ['fields', 'eula'], ''),
       privacyPolicy: get(entry, ['fields', 'privacyPolicy'], ''),
