@@ -6,18 +6,9 @@ import {
   getEnabledRichTextOptions,
   groupValidations,
 } from 'features/content-model-editor';
-import { isEmpty } from 'lodash';
+import { extend, isEmpty } from 'lodash';
 
-export async function openFieldDialog({
-  contentTypeModel,
-  setContentTypeModel,
-  field,
-  widget,
-  updateWidgetSettings,
-  setContextDirty,
-  editorInterface,
-  extensions,
-}) {
+export async function openFieldDialog($scope, field, widget) {
   const spaceContext = getModule('spaceContext');
 
   const updateFieldOnScope = (
@@ -43,9 +34,7 @@ export async function openFieldDialog({
     const { itemValidations, baseValidations } = groupValidations(validationFields);
 
     if (isTitle) {
-      setContentTypeModel((state) => {
-        return { ...state, data: { ...state.data, displayField: field.id } };
-      });
+      $scope.contentType.data.displayField = field.id;
     }
 
     const isRichText = field.type === 'RichText';
@@ -82,33 +71,30 @@ export async function openFieldDialog({
       validations: fieldValidations,
     };
 
-    const updatedCTfields = contentTypeModel.data.fields.map((field) =>
+    const updatedCTfields = $scope.contentType.data.fields.map((field) =>
       field.id === updatedField.id ? updatedField : field
     );
+    $scope.contentType.data.fields = updatedCTfields;
 
-    setContentTypeModel((ct) => {
-      ct.data.fields = updatedCTfields;
-      return ct;
-    });
-
-    updateWidgetSettings({
-      ...widget,
+    // update widget on scope with data from React component
+    extend(widget, {
       widgetId: widgetSettings.id,
       widgetNamespace: widgetSettings.namespace,
       settings: widgetSettings.params,
       fieldId: field.apiName,
     });
 
-    setContextDirty(true);
+    $scope.context.dirty = true;
+    $scope.$applyAsync();
   };
 
   return openFieldModalDialog(
     field,
     widget,
     spaceContext,
-    contentTypeModel,
+    $scope.contentType,
     updateFieldOnScope,
-    editorInterface,
-    extensions
+    $scope.editorInterface,
+    $scope.customWidgets
   );
 }

@@ -28,8 +28,7 @@ function SidebarConfiguration(props) {
 
   useEffect(() => {
     onUpdateConfiguration(convertInternalStateToConfiguration(state, defaultAvailableItems));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, defaultAvailableItems]);
+  }, [state, onUpdateConfiguration, defaultAvailableItems]);
 
   return (
     <div className={styles.container}>
