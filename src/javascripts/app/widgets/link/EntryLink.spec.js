@@ -1,37 +1,55 @@
 import React from 'react';
-import { render, wait, waitForElement } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import EntryLink from './EntryLink';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
-describe('EntryLink component', () => {
-  const contentType = {
-    data: {
-      name: 'Article',
-    },
-  };
+const contentType = {
+  sys: {
+    id: 'content-type',
+  },
+  name: 'Article',
+};
 
-  const entryTitle = 'EntryTitle';
+const entryTitle = 'EntryTitle';
 
-  const props = {
-    entry: {
-      sys: {
-        id: 'entryId',
-        type: 'Entry',
+const props = {
+  entry: {
+    sys: {
+      id: 'entryId',
+      type: 'Entry',
+      contentType: {
+        sys: {
+          id: contentType.sys.id,
+        },
       },
     },
-    getContentType: jest.fn().mockResolvedValue(contentType),
-    entityHelpers: {
-      entityTitle: jest.fn().mockResolvedValue(entryTitle),
-      entityFile: jest.fn().mockResolvedValue(undefined),
-      entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff'),
-    },
+  },
+  entityHelpers: {
+    entityTitle: jest.fn().mockResolvedValue(entryTitle),
+    entityFile: jest.fn().mockResolvedValue(undefined),
+    entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff'),
+  },
+};
+
+const build = (props) => {
+  const value = {
+    currentSpaceContentTypes: [contentType],
   };
 
+  return render(
+    <SpaceEnvContext.Provider value={value}>
+      <EntryLink {...props} />
+    </SpaceEnvContext.Provider>
+  );
+};
+
+describe('EntryLink component', () => {
   it('should render the entry card', async () => {
-    const { getByTestId, getByText } = render(<EntryLink {...props} />);
-    await waitForElement(() => getByText('EntryTitle'));
-    expect(getByTestId('content-type').textContent).toBe(contentType.data.name);
+    const { getByTestId, getByText } = build(props);
+    await waitFor(() => getByText('EntryTitle'));
+    expect(getByTestId('content-type').textContent).toBe(contentType.name);
     expect(getByTestId('title').textContent).toBe(entryTitle);
   });
 
@@ -40,8 +58,8 @@ describe('EntryLink component', () => {
       ...props,
       entry: undefined,
     };
-    const { queryByText } = render(<EntryLink {...propsOverride} />);
-    wait(
+    const { queryByText } = build(propsOverride);
+    waitFor(
       () => {
         const item = queryByText(entryTitle);
         expect(item).toBeNull();
@@ -59,8 +77,8 @@ describe('EntryLink component', () => {
         entityTitle: jest.fn().mockResolvedValue(undefined),
       },
     };
-    const { getByTestId } = render(<EntryLink {...propsOverrides} />);
-    await waitForElement(() => getByTestId('title'));
+    const { getByTestId } = build(propsOverrides);
+    await waitFor(() => getByTestId('title'));
     expect(getByTestId('title').textContent).toBe('Untitled');
   });
 
@@ -82,8 +100,8 @@ describe('EntryLink component', () => {
         }),
       },
     };
-    render(<EntryLink {...propsOverrides} />);
-    await waitForElement(() =>
+    build(propsOverrides);
+    await waitFor(() =>
       document.querySelector(`img[src*="//google.com/dog-in-a-house-on-fire.jpg"]`)
     );
   });
@@ -96,7 +114,7 @@ describe('EntryLink component', () => {
         entityDescription: jest.fn().mockResolvedValue('Awesome stuff'),
       },
     };
-    const { queryByText } = render(<EntryLink {...propsOverrides} />);
-    await waitForElement(() => queryByText('Awesome stuff'));
+    const { queryByText } = build(propsOverrides);
+    await waitFor(() => queryByText('Awesome stuff'));
   });
 });

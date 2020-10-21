@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { noop, memoize, uniqBy } from 'lodash';
+import { noop, uniqBy } from 'lodash';
 import { cx } from 'emotion';
 import EntryLink from 'app/widgets/link/EntryLink';
 import AssetLink from 'app/widgets/link/AssetLink';
@@ -81,12 +81,6 @@ export const EntitySelectorForm = ({
   const hasMore = isSearching ? search.searchResult.hasMore : state.hasMore;
   const entities = isSearching ? search.searchResult.entities : state.entities;
   const helpers = useMemo(() => newForLocale(locale), [locale]);
-  // Returns a promise for the content type of the given entry.
-  // We cache this by the entry id
-  const getContentType = memoize(
-    (entity) => currentSpaceContentTypes.find((ct) => ct.sys.id === entity.sys.contentType.sys.id),
-    (entity) => entity.sys.id
-  );
 
   let createEntityProps;
   let createEntityInlineProps;
@@ -257,7 +251,6 @@ export const EntitySelectorForm = ({
             entry={entity}
             entityHelpers={helpers}
             isSelected={isSelected(entity)}
-            getContentType={getContentType}
             onClick={onSelect(entity, entityIndex)}
           />
         );

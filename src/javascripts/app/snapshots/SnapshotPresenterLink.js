@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { memoize } from 'lodash';
 import { css } from 'emotion';
-import { getModule } from 'core/NgRegistry';
 import { Card } from '@contentful/forma-36-react-components';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
@@ -19,7 +17,6 @@ const styles = {
 
 const SnapshotPresenterLink = ({ locale, value, linkType }) => {
   const [models, setModels] = useState([]);
-  const spaceContext = getModule('spaceContext');
 
   useEffect(() => {
     const links = Array.isArray(value) ? value : [value];
@@ -39,10 +36,6 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
   }, [linkType, value]);
 
   const helper = EntityHelpers.newForLocale(locale.code);
-  const getContentType = memoize(
-    ({ sys }) => spaceContext.publishedCTs.fetch(sys.contentType.sys.id),
-    ({ sys }) => sys.id
-  );
 
   return (
     <>
@@ -58,7 +51,7 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
         const key = `${entity.sys.id}_${i}`;
         return entity.sys.type === 'Entry' ? (
           <div key={key} data-test-id="snapshot-presenter-link">
-            <EntryLink entry={entity} entityHelpers={helper} getContentType={getContentType} />
+            <EntryLink entry={entity} entityHelpers={helper} />
           </div>
         ) : (
           <div key={key} className={styles.assetLink} data-test-id="snapshot-presenter-link">

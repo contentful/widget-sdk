@@ -3,20 +3,16 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import WrappedEntityCard from 'app/widgets/shared/FetchedEntityCard/WrappedEntityCard';
 import { getState, stateName } from 'data/CMA/EntityState';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const EntryLink = ({ entry, entityHelpers, getContentType, onClick, isSelected, size }) => {
-  const state = entry ? getState(entry.sys) : undefined;
-  const entityStatus = state ? stateName(state) : undefined;
-  const [{ title, description, contentTypeName, file }, setEntityInfo] = useState({});
+const EntryLink = ({ entry, entityHelpers, onClick, isSelected, size }) => {
+  const { currentSpaceContentTypes = [] } = useSpaceEnvContext();
+  const [{ title, description, file }, setEntityInfo] = useState({});
   const [isLoading, setLoading] = useState(true);
 
   useEffect(
     () => {
       const fetchEntityInfo = async () => {
-        let contentType;
-        if (getContentType) {
-          contentType = await getContentType(entry);
-        }
         const [title, file, description] = await Promise.all([
           entityHelpers.entityTitle(entry),
           entityHelpers.entityFile(entry),
@@ -26,7 +22,6 @@ const EntryLink = ({ entry, entityHelpers, getContentType, onClick, isSelected, 
         setEntityInfo({
           title,
           description,
-          contentTypeName: get(contentType, 'data.name'),
           file,
         });
         setLoading(false);
@@ -42,33 +37,37 @@ const EntryLink = ({ entry, entityHelpers, getContentType, onClick, isSelected, 
     []
   );
 
-  const getEntryTitle = () => {
-    if (!entry) {
-      return 'Entry is missing or inaccessible';
-    }
-    return title ? title : 'Untitled';
-  };
+  if (!entry) {
+    return null;
+  }
+
+  const state = getState(entry.sys);
+  const entityStatus = stateName(state);
+
+  const contentType = currentSpaceContentTypes.find(
+    (ct) => ct.sys.id === entry.sys.contentType.sys.id
+  );
 
   const shouldSizeBeDefault = !!(file || description);
   const cardSize = size || shouldSizeBeDefault ? 'default' : 'small';
 
-  return entry ? (
+  return (
     <WrappedEntityCard
       entity={entry}
       entityType={get(entry, 'sys.type', 'Entry')}
       entityFile={file}
       entityId={get(entry, 'sys.id')}
       entityDescription={description}
-      entityTitle={getEntryTitle()}
+      entityTitle={title || 'Untitled'}
       entityStatus={entityStatus}
       isLoading={isLoading}
-      contentTypeName={contentTypeName}
+      contentTypeName={get(contentType, 'name')}
       size={cardSize}
       readOnly={true}
       selected={isSelected}
       onClick={onClick}
     />
-  ) : null;
+  );
 };
 
 EntryLink.propTypes = {
@@ -76,6 +75,11 @@ EntryLink.propTypes = {
     sys: PropTypes.shape({
       id: PropTypes.string.isRequired,
       type: PropTypes.oneOf(['Entry']),
+      contentType: PropTypes.shape({
+        sys: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+        }).isRequired,
+      }).isRequired,
     }),
   }),
   entityHelpers: PropTypes.shape({
@@ -83,7 +87,6 @@ EntryLink.propTypes = {
     entityDescription: PropTypes.func.isRequired,
     entityFile: PropTypes.func.isRequired,
   }).isRequired,
-  getContentType: PropTypes.func,
   isSelected: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
   onClick: PropTypes.func,

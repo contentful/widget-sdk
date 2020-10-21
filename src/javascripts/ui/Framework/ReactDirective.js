@@ -14,14 +14,8 @@ import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
-import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
-import { Paginator } from 'core/components/Paginator';
-import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
 import * as Loader from 'ui/Loader';
-import * as UserLink from 'app/widgets/link/UserLink';
-import * as AssetLink from 'app/widgets/link/AssetLink';
-import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -232,15 +226,9 @@ function getModule(name) {
   const allowedModules = {
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
-    'core/components/Paginator': { default: Paginator },
-    'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
     'app/entity_editor/bulk_editor/BulkEditor': { default: BulkEditor },
     'ui/Loader': Loader,
-    'app/widgets/link/UserLink': UserLink,
-    'app/widgets/link/AssetLink': AssetLink,
-    'app/widgets/link/EntryLink': EntryLink,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
