@@ -9,6 +9,7 @@ import * as K from 'core/utils/kefir';
 import { createMVar } from 'utils/Concurrent';
 import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';
+import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
@@ -109,7 +110,7 @@ export function refresh() {
       () => {
         // We need to logout a user if their session expired. Reloading a page with ReloadNotification
         // does not comply with our security policies. More details: AHOY-297
-        auth.logout();
+        ReloadNotification.triggerAndLogout('Please authenticate again');
       }
     );
   }

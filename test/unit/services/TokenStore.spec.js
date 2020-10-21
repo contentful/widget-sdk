@@ -14,6 +14,7 @@ describe('Token store service', () => {
     this.stubs = {
       ReloadNotification: {
         trigger: sinon.stub(),
+        triggerAndLogout: sinon.stub(),
       },
     };
 
@@ -93,7 +94,7 @@ describe('Token store service', () => {
 
     this.tokenStore.refresh();
     $apply();
-    sinon.assert.calledOnce(this.stubs.Authentication.logout);
+    sinon.assert.calledOnce(this.stubs.ReloadNotification.triggerAndLogout);
   });
 
   describe('#getSpace()', () => {
