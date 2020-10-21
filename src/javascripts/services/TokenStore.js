@@ -108,8 +108,7 @@ export function refresh() {
         tokenUpdate.emit();
       },
       () => {
-        // We need to logout a user if their session expired. Reloading a page with ReloadNotification
-        // does not comply with our security policies. More details: AHOY-297
+        // We show a pop-up and logout a user if their session expired. More details: AHOY-297
         ReloadNotification.triggerAndLogout('Please authenticate again');
       }
     );
