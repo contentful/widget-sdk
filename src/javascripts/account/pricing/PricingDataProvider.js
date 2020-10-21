@@ -85,6 +85,7 @@ export function getBasePlan(endpoint) {
       // although you can only have 1 base plan, the endpoint
       // still returns a list
       .then((data) => data.items[0])
+      .catch((error) => error)
   );
 }
 
