@@ -108,7 +108,8 @@ export function refresh() {
         tokenUpdate.emit();
       },
       () => {
-        ReloadNotification.trigger('The application was unable to authenticate with the server');
+        // We show a pop-up and logout a user if their session expired. More details: AHOY-297
+        ReloadNotification.triggerAndLogout('Please authenticate again');
       }
     );
   }

@@ -4,6 +4,7 @@ import { getModule } from 'core/NgRegistry';
 import { isObject } from 'lodash';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import * as auth from 'Authentication';
 
 let open = false;
 
@@ -63,6 +64,10 @@ function reloadWithCacheBuster() {
   window.location = $location.url();
 }
 
+function reloadWithLogout() {
+  auth.logout();
+}
+
 const trigger = async (options = {}) => {
   if (open) return;
   open = true;
@@ -73,6 +78,22 @@ const trigger = async (options = {}) => {
       isShown
       onReload={() => {
         reloadWithCacheBuster();
+      }}>
+      {options.children || null}
+    </ReloadNotificationDialog>
+  ));
+};
+
+const triggerAndLogout = async (options = {}) => {
+  if (open) return;
+  open = true;
+  await ModalLauncher.open(() => (
+    <ReloadNotificationDialog
+      title={'The session expired'}
+      message={options.message}
+      isShown
+      onReload={() => {
+        reloadWithLogout();
       }}>
       {options.children || null}
     </ReloadNotificationDialog>
@@ -92,6 +113,10 @@ export default {
 
   trigger: function (message, title) {
     trigger({ message: message, title: title });
+  },
+
+  triggerAndLogout: function (message, title) {
+    triggerAndLogout({ message: message, title: title });
   },
 
   gatekeeperErrorHandler: function (err) {
