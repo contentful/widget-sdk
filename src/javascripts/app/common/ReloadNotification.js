@@ -115,6 +115,10 @@ export default {
     trigger({ message: message, title: title });
   },
 
+  triggerAndLogout: function (message, title) {
+    triggerAndLogout({ message: message, title: title });
+  },
+
   gatekeeperErrorHandler: function (err) {
     if (isApiError(err)) {
       trigger({
