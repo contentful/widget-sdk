@@ -31,7 +31,6 @@ export default function register() {
       let initEnvAliasCreateHandler;
       let initEnvAliasDeleteHandler;
       let initOsano;
-      let openPricing2020Warning;
       let pubSubClientRef;
 
       // TODO remove this eventually. All components should access it as a service
@@ -54,7 +53,6 @@ export default function register() {
         });
 
         const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
-          openPricing2020Warning();
           unsubscribe();
         });
 
@@ -220,7 +218,6 @@ export default function register() {
             initEnvAliasDeleteHandler,
           },
           { init: initOsano },
-          { openPricing2020Warning },
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'services/logger'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
@@ -236,7 +233,6 @@ export default function register() {
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
           ),
           import(/* webpackMode: "eager" */ 'services/OsanoService'),
-          import(/* webpackMode: "eager" */ 'features/news-slider'),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);
