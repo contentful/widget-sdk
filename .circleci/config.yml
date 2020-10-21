@@ -3,7 +3,6 @@ version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.7.0
   samson: contentful/trigger-samson@1
-  e2e-tests: contentful/e2e-tests@1
   copy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.15
@@ -194,13 +193,6 @@ orbs:
               path: test/cypress/screenshots
 
 parameters:
-  # This parameter is used to trigger the main workflow
-  push:
-    type: boolean
-    default: true
-  with-e2e:
-    type: boolean
-    default: false
   # Required for microbackends side contract verification
   contract_url:
     type: string
@@ -401,13 +393,8 @@ jobs:
     <<: *verify-contracts
 
 workflows:
-  push:
-    when: << pipeline.parameters.push >>
-    jobs:
-      - e2e-tests/trigger-conditional-workflows
   build:
-    unless:
-      or: [<< pipeline.parameters.push >>, << pipeline.parameters.with-e2e >>]
+    unless: << pipeline.parameters.contract_url >>
     jobs:
       - lint
       - build-with-statistics:
