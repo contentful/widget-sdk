@@ -109,26 +109,23 @@ const makeNavigateToEntity = (cma: any) => {
     entity: T
   ): Promise<NavigatorOpenResponse<T>> {
     let slide = undefined;
+    const slideInfo = { id, entityType };
 
     try {
       if (slideIn) {
         if (get(slideIn, ['waitForClose'], false) === true) {
-          slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
-            id,
-            type: entityType,
-          });
+          slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise(slideInfo);
         } else {
-          slide = SlideInNavigator.goToSlideInEntity({
-            id,
-            type: entityType,
-          });
+          slide = SlideInNavigator.goToSlideInEntity(slideInfo);
         }
-        entity = await getEntity({
-          entityType,
-          id,
-        });
+        try {
+          entity = await getEntity(slideInfo);
+        } catch (e) {
+          // Entity deleted or otherwise unavailable
+          return { navigated: true, slide };
+        }
       } else {
-        entity = await getEntity({ id, entityType });
+        entity = await getEntity(slideInfo);
         await Navigator.go(Navigator.makeEntityRef(entity));
       }
     } catch (err) {
