@@ -11,6 +11,7 @@ const EVENTS = {
   BILLING_DETAILS_ENTERED: 'billing_details_entered',
   EXTERNAL_LINK_CLICKED: 'external_link_clicked',
   INTERNAL_LINK_CLICKED: 'internal_link_clicked',
+  FAQ_SECTION_OPEN: 'faq_section_open',
   PAYMENT_DETAILS_ENTERED: 'payment_details_entered',
   PAYMENT_METHOD_CREATED: 'payment_method_created',
   CONFIRM_PURCHASE: 'confirm_purchase',
@@ -28,6 +29,7 @@ const transformers = {
   [EVENTS.SPACE_TEMPLATE_SELECTED]: spaceTemplateSelectedTransformer,
   [EVENTS.EXTERNAL_LINK_CLICKED]: externalLinkClickedTransformer,
   [EVENTS.INTERNAL_LINK_CLICKED]: internalLinkClickedTransformer,
+  [EVENTS.FAQ_SECTION_OPEN]: faqSectionOpenTransformer,
   [EVENTS.SPACE_DETAILS_ENTERED]: emptyTransformer,
   [EVENTS.BILLING_DETAILS_ENTERED]: emptyTransformer,
   [EVENTS.PAYMENT_DETAILS_ENTERED]: emptyTransformer,
@@ -89,6 +91,9 @@ function externalLinkClickedTransformer(data) {
 
 function internalLinkClickedTransformer(data) {
   return pick(data, ['state', 'intent']);
+}
+function faqSectionOpenTransformer(data) {
+  return pick(data, ['question']);
 }
 
 function spaceTemplateSelectedTransformer(data) {

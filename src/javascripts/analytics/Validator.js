@@ -186,6 +186,7 @@ export const validEvents = {
     'billing_details_entered',
     'external_link_clicked',
     'internal_link_clicked',
+    'faq_section_open',
     'payment_details_entered',
     'payment_method_created',
     'confirm_purchase',

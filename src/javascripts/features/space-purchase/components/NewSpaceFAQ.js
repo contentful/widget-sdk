@@ -11,6 +11,7 @@ import {
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { EVENTS } from '../utils/analyticsTracking';
 
 import { ContentfulRichText } from 'core/services/ContentfulCDA';
 
@@ -22,7 +23,7 @@ const styles = {
   }),
 };
 
-export const NewSpaceFAQ = ({ faqEntries }) => {
+export const NewSpaceFAQ = ({ faqEntries, trackWithSession }) => {
   if (!faqEntries) {
     return <FAQLoadingState />;
   }
@@ -37,8 +38,14 @@ export const NewSpaceFAQ = ({ faqEntries }) => {
       <Accordion className={styles.accordionItemTitles}>
         {/** FAQ using Contentful */}
         {faqEntries.map((entry, idx) => {
+          const trackFAQClick = () => {
+            trackWithSession(EVENTS.FAQ_SECTION_OPEN, {
+              question: entry.fields.question,
+            });
+          };
+
           return (
-            <AccordionItem key={idx} title={entry.fields.question}>
+            <AccordionItem key={idx} title={entry.fields.question} onExpand={trackFAQClick}>
               <Typography>
                 <ContentfulRichText document={entry.fields.answer} />
               </Typography>
@@ -50,6 +57,7 @@ export const NewSpaceFAQ = ({ faqEntries }) => {
   );
 };
 NewSpaceFAQ.propTypes = {
+  trackWithSession: PropTypes.func.isRequired,
   faqEntries: PropTypes.arrayOf(
     PropTypes.shape({
       question: PropTypes.string,
@@ -60,7 +68,7 @@ NewSpaceFAQ.propTypes = {
 
 function FAQLoadingState() {
   return (
-    <SkeletonContainer svgHeight={117}>
+    <SkeletonContainer svgHeight={117} testId="faq-loading">
       <SkeletonDisplayText />
       <SkeletonBodyText numberOfLines={4} offsetTop={29} />
     </SkeletonContainer>

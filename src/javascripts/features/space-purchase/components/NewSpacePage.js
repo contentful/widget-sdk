@@ -411,7 +411,7 @@ export const NewSpacePage = ({
               loading={!spaceRatePlans}
               currentSpacePlan={currentSpacePlan}
             />
-            <NewSpaceFAQ faqEntries={faqEntries} />
+            <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
           </Grid>
         );
     }
