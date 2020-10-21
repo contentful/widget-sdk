@@ -6,10 +6,11 @@ import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
 import { statusProperty } from './Document';
 
-export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
-  setLocaleData($scope);
-  handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter);
-  handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors);
+export default ({ initialValues, entityLabel, shouldHideLocaleErrors, emitter, onUpdate }) => {
+  initialValues.localeData = assignLocaleData(initialValues.localeData);
+  handleSidebarEvents(initialValues, entityLabel, shouldHideLocaleErrors, emitter, onUpdate);
+  handleTopNavErrors(initialValues, entityLabel, shouldHideLocaleErrors, onUpdate);
+  onUpdate(initialValues);
 };
 
 export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {}) {
@@ -26,11 +27,6 @@ export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {})
   return localeData;
 }
 
-export function setLocaleData($scope, options) {
-  const localeData = assignLocaleData($scope.localeData, options);
-  $scope.localeData = localeData;
-}
-
 function maybeResetFocusedLocale() {
   if (!TheLocaleStore.getPrivateLocales().includes(TheLocaleStore.getFocusedLocale())) {
     // This would happen if the focused locale was changed or deleted by a
@@ -43,52 +39,50 @@ function maybeResetFocusedLocale() {
   }
 }
 
-function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter) {
+function handleSidebarEvents(props, entityLabel, shouldHideLocaleErrors, emitter, onUpdate) {
   emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, (isOn) => {
     if (!isOn) {
-      resetStatusNotificationProps($scope, entityLabel);
+      resetStatusNotificationProps(props, entityLabel);
     }
     TheLocaleStore.setSingleLocaleMode(isOn);
-    $scope.localeData.isSingleLocaleModeOn = isOn;
-    $scope.$applyAsync(() => {
-      $scope.editorContext.validator.run();
-    });
+    props.localeData.isSingleLocaleModeOn = isOn;
+    onUpdate(props);
+    props.editorContext.validator.run();
   });
 
   emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, (locale) => {
     TheLocaleStore.setFocusedLocale(locale);
-    $scope.localeData.focusedLocale = locale;
-    $scope.$applyAsync(() => {
-      $scope.editorContext.validator.run();
-      if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-        resetStatusNotificationProps($scope, entityLabel);
-      }
-    });
+    props.localeData.focusedLocale = locale;
+    onUpdate(props);
+    props.editorContext.validator.run();
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps(props, entityLabel);
+    }
   });
 
   emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, (locale) => {
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps($scope, entityLabel);
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps(props, entityLabel);
     }
     TheLocaleStore.deactivateLocale(locale);
-    $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    $scope.$applyAsync();
+    props.localeData.activeLocales = TheLocaleStore.getActiveLocales();
+    onUpdate(props);
   });
 
   emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, (locales) => {
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps($scope, entityLabel);
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps(props, entityLabel);
     }
     TheLocaleStore.setActiveLocales(locales);
-    $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    $scope.$applyAsync();
+    props.localeData.activeLocales = TheLocaleStore.getActiveLocales();
+    onUpdate(props);
   });
 }
 
-function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
-  K.onValueScope($scope, $scope.editorContext.validator.errors$, (errors) => {
-    const { defaultLocale, focusedLocale } = $scope.localeData;
-    if (!$scope.localeData.isSingleLocaleModeOn) {
+function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate) {
+  K.onValue(props.editorContext.validator.errors$, (errors) => {
+    const { defaultLocale, focusedLocale } = props.localeData;
+    if (!props.localeData.isSingleLocaleModeOn) {
       // We only want to display the top-nav notification about locale errors
       // if we are in the single focused locale mode.
       return;
@@ -99,22 +93,24 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     // it to be aliased to the default locale's internal code, since this should
     // always refer to a missing file error.
     const localesErrors = groupBy(errors, (error) => error.path[2] || defaultLocale.internal_code);
-    $scope.localeData.errors = localesErrors;
+    props.localeData.errors = localesErrors;
     if (isEmpty(localesErrors) || shouldHideLocaleErrors()) {
+      onUpdate(props);
       return;
     }
 
-    const { privateLocales: locales } = $scope.localeData;
+    const { privateLocales: locales } = props.localeData;
     const erroredKeys = keys(localesErrors);
     const erroredLocales = erroredKeys.map((ic) =>
       locales.find((l) => l.code === ic || l.internal_code === ic)
     );
     const setNotificationProps = (status, locales = null) => {
-      $scope.statusNotificationProps = {
+      props.statusNotificationProps = {
         status,
         entityLabel,
         erroredLocales: locales || erroredLocales,
       };
+      onUpdate(props);
     };
 
     if (entityLabel === 'entry') {
@@ -147,27 +143,28 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     }
   });
 
-  K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
+  K.onValue(statusProperty(props.otDoc), (status) => {
     // If there are locales errors (and doc is ok), keep the old notification.
     if (
       status === DocumentStatusCode.OK &&
-      !isEmpty($scope.localeData.errors) &&
+      !isEmpty(props.localeData.errors) &&
       !shouldHideLocaleErrors()
     ) {
       return;
     }
-    const entityRef = Navigator.makeEntityRef($scope.editorData.entity.data);
-    $scope.statusNotificationProps = {
+    const entityRef = Navigator.makeEntityRef(props.editorData.entity.data);
+    props.statusNotificationProps = {
       status,
       entityLabel,
       // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
       entityHref: Navigator.href(entityRef).split('?').shift(),
     };
+    onUpdate(props);
   });
 }
 
-function resetStatusNotificationProps($scope, entityLabel) {
-  $scope.statusNotificationProps = {
+function resetStatusNotificationProps(props, entityLabel) {
+  props.statusNotificationProps = {
     status: 'ok',
     entityLabel,
   };

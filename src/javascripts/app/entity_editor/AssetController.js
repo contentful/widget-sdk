@@ -8,7 +8,7 @@ import initDocErrorHandler from './DocumentErrorHandler';
 import installTracking from './Tracking';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { keys } from 'lodash';
-import setLocaleData from 'app/entity_editor/setLocaleData';
+import initLocaleData from 'app/entity_editor/setLocaleData';
 import TheLocaleStore from 'services/localeStore';
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
@@ -98,10 +98,14 @@ export default async function create($scope, editorData, preferences) {
   $scope.getOtDoc = () => $scope.otDoc;
   $scope.getEditorData = () => $scope.editorData;
 
-  setLocaleData($scope, {
+  initLocaleData({
+    initialValues: $scope,
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
     emitter: $scope.emitter,
+    onUpdate: () => {
+      $scope.$applyAsync();
+    },
   });
 
   function defaultLocaleIsFocused() {

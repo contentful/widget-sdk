@@ -70,18 +70,18 @@ export function createLoadEventTracker({
   };
 }
 
-export function bootstrapEntryEditorLoadEvents($scope, loadEvents, editorData, trackLoadEvent) {
+export function bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, trackLoadEvent) {
   let loadLinksRendered = false;
   let loadShareJSConnected = false;
 
   const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
   const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
 
-  K.onValueScope($scope, $scope.otDoc.state.isConnected$, (status) => {
+  K.onValue(otDoc.state.isConnected$, (status) => {
     if (loadShareJSConnected || status === false) {
       return;
     }
-    const connectedEvent = $scope.otDoc.isOtDocument ? 'sharejs_connected' : 'doc_connected';
+    const connectedEvent = otDoc.isOtDocument ? 'sharejs_connected' : 'doc_connected';
     trackLoadEvent(connectedEvent);
 
     loadShareJSConnected = true;

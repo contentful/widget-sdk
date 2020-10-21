@@ -4,7 +4,7 @@ import mitt from 'mitt';
 import { user$ } from 'services/TokenStore';
 import installTracking from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
-import setLocaleData from 'app/entity_editor/setLocaleData';
+import initLocaleData from 'app/entity_editor/setLocaleData';
 import { valuePropertyAt } from 'app/entity_editor/Document';
 
 import { getModule } from 'core/NgRegistry';
@@ -90,7 +90,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   /**
    * @type {EntityDocument}
    */
-  bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
+  bootstrapEntryEditorLoadEvents($scope.otDoc, $scope.loadEvents, editorData, trackLoadEvent);
 
   installTracking(entityInfo, doc, scopeLifeline);
 
@@ -168,7 +168,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.user = K.getValue(user$);
 
-  K.onValueScope($scope, doc.state.isDirty$, (isDirty) => {
+  K.onValue(doc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
 
@@ -181,10 +181,14 @@ export default async function create($scope, editorData, preferences, trackLoadE
     emitter: $scope.emitter,
   });
 
-  setLocaleData($scope, {
+  initLocaleData({
+    initialValues: $scope,
     entityLabel: 'entry',
     shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
     emitter: $scope.emitter,
+    onUpdate: () => {
+      $scope.$applyAsync();
+    },
   });
 
   $scope.$watch('localeData.focusedLocale.name', (localeName) => {
