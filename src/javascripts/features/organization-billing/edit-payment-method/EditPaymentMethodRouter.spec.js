@@ -8,6 +8,7 @@ import { getVariation } from 'LaunchDarkly';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
+import * as logger from 'services/logger';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -106,10 +107,14 @@ describe('EditPaymentMethodRouter', () => {
 
   describe('payment method successfully created', () => {
     let successCb;
+    let errorCb;
 
     beforeEach(async () => {
       build();
-      successCb = await waitForZuoraToRender();
+      const cbs = await waitForZuoraToRender();
+
+      successCb = cbs.successCb;
+      errorCb = cbs.errorCb;
     });
 
     it('should set the default payment method and redirect when the success callback is called', async () => {
@@ -129,6 +134,18 @@ describe('EditPaymentMethodRouter', () => {
       expect(go).toBeCalledWith({
         path: ['account', 'organizations', 'billing'],
       });
+    });
+
+    it('should log the error and show an error notification if the Zuora iframe errors when rendering', async () => {
+      const response = errorCb();
+
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
+
+      expect(logger.logError).toBeCalledWith('ZuoraIframeError', {
+        ...response,
+        location: 'account.organizations.billing.edit-payment-method',
+      });
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
     });
 
     it('should show an error notification if the default payment method request fails', async () => {
@@ -161,18 +178,25 @@ async function waitForZuoraToRender() {
 
   let runAfterRenderCb;
   let successCb;
+  let errorCb;
 
-  Zuora.renderWithErrorHandler.mockImplementationOnce(
-    (_params, _prefilledFields, cb) =>
-      (successCb = () => {
-        const response = { success: true, refId: 'ref_1234' };
+  Zuora.renderWithErrorHandler.mockImplementationOnce((_params, _prefilledFields, cb) => {
+    successCb = () => {
+      const response = { success: true, refId: 'ref_1234' };
 
-        cb(response);
+      cb(response);
 
-        // For simplified testing, return the response here as well
-        return response;
-      })
-  );
+      return response;
+    };
+
+    errorCb = () => {
+      const response = { success: false, errorCode: 'Something_Went_Wrong' };
+
+      cb(response);
+
+      return response;
+    };
+  });
 
   Zuora.runAfterRender.mockImplementationOnce((cb) => (runAfterRenderCb = cb));
 
@@ -182,5 +206,5 @@ async function waitForZuoraToRender() {
 
   expect(screen.getByTestId('zuora-iframe.iframe-element')).toBeVisible();
 
-  return successCb;
+  return { successCb, errorCb };
 }

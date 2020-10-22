@@ -6,6 +6,7 @@ import { Heading, Card, Subheading, Notification } from '@contentful/forma-36-re
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
+import * as logger from 'services/logger';
 import { ZuoraCreditCardIframe } from 'features/organization-billing';
 import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { PaymentSummary } from './PaymentSummary';
@@ -66,6 +67,16 @@ export const NewSpaceCardDetailsPage = ({
               } catch {
                 Notification.error('Your credit card couldn’t be saved. Please try again.');
               }
+            }}
+            onError={(error) => {
+              logger.logError('ZuoraIframeError', {
+                location: 'account.organizations.subscription_new.new_space',
+                ...error,
+              });
+
+              Notification.error(
+                'Something went wrong. Refresh this page and contact us if you continue to see this.'
+              );
             }}
             onCancel={navigateToPreviousStep}
             cancelText="Back"
