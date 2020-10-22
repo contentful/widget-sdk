@@ -17,7 +17,7 @@ import { without } from 'lodash';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import OrganizationRow from './OrganizationRow';
@@ -72,7 +72,7 @@ const OrganizationsRoute = () => {
       <DocumentTitle title="Organizations" />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="Organizations" size="large" />}
+          icon={<ProductIcon icon="Organizations" size="large" />}
           testId="organizations-list.title"
           title="Organizations"
           actions={

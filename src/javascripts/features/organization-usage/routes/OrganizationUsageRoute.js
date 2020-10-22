@@ -18,7 +18,7 @@ import * as OrganizationMembershipRepository from 'access_control/OrganizationMe
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
 
 const styles = {
@@ -149,7 +149,7 @@ export const OrganizationUsage = () => {
       <Workbench testId="organization.usage">
         <Workbench.Header
           title="Usage"
-          icon={<NavigationIcon icon="Usage" size="large" />}
+          icon={<ProductIcon icon="Usage" size="large" />}
           actions={<WorkbenchActions />}
         />
         <Workbench.Content className={styles.content}>

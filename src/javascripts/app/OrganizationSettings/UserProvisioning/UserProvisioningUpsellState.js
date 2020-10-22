@@ -10,7 +10,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { helpCenterUrl, salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
@@ -31,10 +31,7 @@ const styles = {
 function UserProvisioningUpsellState() {
   return (
     <Workbench>
-      <Workbench.Header
-        icon={<NavigationIcon icon="Sso" size="large" />}
-        title="User Provisioning"
-      />
+      <Workbench.Header icon={<ProductIcon icon="Sso" size="large" />} title="User Provisioning" />
       <Workbench.Content type="text">
         <div className={styles.pageWrapper}>
           <EmptyStateContainer>

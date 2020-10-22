@@ -17,7 +17,7 @@ import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorC
 import { getEntryConfiguration } from 'app/entry_editor/DefaultConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import useCreateActions from 'app/ContentModel/Editor/Actions';
 
 function isEntryEditorWidget(widget) {
@@ -65,7 +65,7 @@ export default function ContentTypesPage(props) {
     <Workbench>
       <Workbench.Header
         title={contentTypeModel.name}
-        icon={<NavigationIcon icon="ContentModel" size="large" color="positive" />}
+        icon={<ProductIcon icon="ContentModel" size="large" color="positive" />}
         description={contentTypeModel.description}
         actions={
           <ContentTypePageActions

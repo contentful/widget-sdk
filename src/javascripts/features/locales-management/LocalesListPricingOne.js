@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
 import {
   Button,
@@ -173,7 +173,7 @@ export class LocalesListPricingOne extends React.Component {
     return (
       <Workbench testId="locale-list-workbench">
         <Workbench.Header
-          icon={<NavigationIcon icon="Settings" size="large" />}
+          icon={<ProductIcon icon="Settings" size="large" />}
           title={
             <>
               <Heading>Locales</Heading>

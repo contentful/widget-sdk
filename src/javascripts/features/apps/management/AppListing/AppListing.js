@@ -18,7 +18,7 @@ import {
   Typography,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import PropTypes from 'prop-types';
@@ -131,7 +131,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
       <DocumentTitle title="Apps" />
       <Workbench.Header
         title={<Heading>Apps</Heading>}
-        icon={<NavigationIcon icon="Apps" size="large" />}
+        icon={<ProductIcon icon="Apps" size="large" />}
         actions={
           <StateLink path="^.new_definition">
             {({ onClick }) => (
@@ -164,7 +164,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
                     <div className={styles.cell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                         <span className={styles.miniIcon}>
-                          <NavigationIcon icon="Apps" size="small" />
+                          <ProductIcon icon="Apps" size="small" />
                         </span>{' '}
                         <b>{def.name}</b>
                       </StateLink>

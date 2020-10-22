@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { styles } from './styles';
 
@@ -8,7 +8,7 @@ const IconRaw = ({ icon, className, size }) => {
   if (!icon) {
     return (
       <div className={className}>
-        <NavigationIcon icon="Apps" tag="span" size={size ? size : 'large'} />
+        <ProductIcon icon="Apps" tag="span" size={size ? size : 'large'} />
       </div>
     );
   }

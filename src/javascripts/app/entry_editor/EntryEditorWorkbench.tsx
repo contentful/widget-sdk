@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { cx } from 'emotion';
 import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
@@ -223,7 +223,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
               entityInfo={entityInfo}
             />
           }
-          icon={<NavigationIcon icon="Content" size="xlarge" />}
+          icon={<ProductIcon icon="Content" size="xlarge" />}
           actions={
             <>
               <div id={`editor-status-switch-${entityInfo.id}`} />

@@ -14,7 +14,7 @@ import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import Loader from 'ui/Loader';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { getEditorState } from '../editorState';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -185,7 +185,7 @@ export const BulkEntityEditor = ({
     <div data-test-id="entity-workbench">
       <Workbench className={styles.workbench}>
         <Workbench.Header
-          icon={<NavigationIcon icon="Content" size="large" />}
+          icon={<ProductIcon icon="Content" size="large" />}
           title={
             <BulkEditorTitle
               onClick={toggleExpansion}

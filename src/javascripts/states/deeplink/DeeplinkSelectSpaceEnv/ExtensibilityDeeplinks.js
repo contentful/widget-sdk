@@ -5,7 +5,7 @@ import { Icon, Paragraph } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { WebhookTemplates } from 'features/webhooks';
 import SVGIcon from 'ui/Components/Icon';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   installHeader: css({
@@ -146,7 +146,7 @@ export function AppLinkHeader({ appId, apps }) {
         {app ? (
           <img src={app.icon} className={styles.appIcon} />
         ) : (
-          <NavigationIcon icon="Apps" size="xlarge" className={styles.appIcon} />
+          <ProductIcon icon="Apps" size="xlarge" className={styles.appIcon} />
         )}
       </InstallLogos>
     </>
@@ -163,7 +163,7 @@ export function ExtensionLinkHeader({ url }) {
     <>
       <InstallHeader>Install extension to Contentful</InstallHeader>
       <InstallLogos>
-        <NavigationIcon icon="Apps" size="xlarge" className={styles.appIcon} />
+        <ProductIcon icon="Apps" size="xlarge" className={styles.appIcon} />
       </InstallLogos>
       <div className={styles.extensionLink}>
         <Paragraph>Make sure this extension comes from a trusted source.</Paragraph>

@@ -8,7 +8,7 @@ import {
   Heading,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 export const ExtensionEditorSkeleton = (props) => (
   <Workbench>
@@ -16,7 +16,7 @@ export const ExtensionEditorSkeleton = (props) => (
       onBack={() => {
         props.goToList();
       }}
-      icon={<NavigationIcon icon="Settings" size="large" />}
+      icon={<ProductIcon icon="Settings" size="large" />}
       title={
         <>
           {props.title && <Heading>{props.title}</Heading>}

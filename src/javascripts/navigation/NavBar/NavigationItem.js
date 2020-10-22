@@ -9,7 +9,7 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
 
@@ -150,7 +150,7 @@ export default function NavigationItem(props) {
         }}>
         <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
           {item.navIcon ? (
-            <NavigationIcon
+            <ProductIcon
               icon={item.navIcon}
               size="medium"
               color="white"

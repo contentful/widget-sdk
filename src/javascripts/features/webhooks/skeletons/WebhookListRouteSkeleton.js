@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 
 function WebhookLoading() {
   return (
     <Workbench testId="webhooks.list">
-      <Workbench.Header icon={<NavigationIcon icon="Settings" size="large" />} />
+      <Workbench.Header icon={<ProductIcon icon="Settings" size="large" />} />
       <Workbench.Content type="full">
         <SkeletonContainer
           svgWidth={600}
@@ -39,7 +39,7 @@ function ListShell(props) {
   return (
     <Workbench testId="webhooks.list">
       <Workbench.Header
-        icon={<NavigationIcon icon="Settings" size="large" />}
+        icon={<ProductIcon icon="Settings" size="large" />}
         title={props.title}
         actions={props.actions}
       />

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 export function ApiKeysWorkbench(props) {
@@ -11,7 +11,7 @@ export function ApiKeysWorkbench(props) {
       <DocumentTitle title="APIs" />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="Apis" size="large" />}
+          icon={<ProductIcon icon="Apis" size="large" />}
           title={
             <>
               <Heading>APIs</Heading>

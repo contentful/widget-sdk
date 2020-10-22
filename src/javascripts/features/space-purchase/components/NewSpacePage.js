@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
 import {
@@ -421,7 +421,7 @@ export const NewSpacePage = ({
     <Workbench>
       <Workbench.Header
         title="Space purchase"
-        icon={<NavigationIcon icon="Purchase" size="large" />}
+        icon={<ProductIcon icon="Purchase" size="large" />}
       />
       <Workbench.Content>{getComponentForStep(currentStep)}</Workbench.Content>
     </Workbench>

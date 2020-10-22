@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench, Button } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import ContentTagsField from 'app/asset_editor/ContentTagsField';
@@ -63,7 +63,7 @@ const AssetEditorWorkbench = ({
               entityInfo={entityInfo}
             />
           }
-          icon={<NavigationIcon icon="Media" size="xlarge" />}
+          icon={<ProductIcon icon="Media" size="xlarge" />}
           actions={
             <>
               <div

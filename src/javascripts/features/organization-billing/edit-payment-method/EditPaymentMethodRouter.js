@@ -5,7 +5,7 @@ import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { setDefaultPaymentMethod } from '../services/PaymentMethodService';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
@@ -87,7 +87,7 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
       <Workbench>
         <Workbench.Header
           title={'Edit credit card'}
-          icon={<NavigationIcon icon="Billing" size="large" />}
+          icon={<ProductIcon icon="Billing" size="large" />}
         />
         <Workbench.Content>
           {showZuoraIframe && (

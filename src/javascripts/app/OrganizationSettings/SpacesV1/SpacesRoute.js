@@ -14,7 +14,7 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import moment from 'moment';
 import { css } from 'emotion';
 import { keyBy } from 'lodash';
@@ -113,7 +113,7 @@ const SpacesRoute = ({ orgId }) => {
       <DocumentTitle title="Organization spaces" />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="Spaces" size="large" />}
+          icon={<ProductIcon icon="Spaces" size="large" />}
           testId="v1-spaces-list.title"
           title="Organization spaces"
           actions={

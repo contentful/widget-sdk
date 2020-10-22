@@ -10,7 +10,7 @@ import {
   Button,
   Typography,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { css } from 'emotion';
 import { helpCenterUrl, apiUrl } from 'Config';
@@ -77,10 +77,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
 
   return (
     <Workbench>
-      <Workbench.Header
-        icon={<NavigationIcon icon="Sso" size="large" />}
-        title="User Provisioning"
-      />
+      <Workbench.Header icon={<ProductIcon icon="Sso" size="large" />} title="User Provisioning" />
       <Workbench.Content type="text">
         <Typography className={styles.content}>
           <Heading>Set up user provisioning with SCIM 2.0</Heading>

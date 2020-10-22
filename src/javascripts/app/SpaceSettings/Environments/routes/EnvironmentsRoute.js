@@ -22,7 +22,7 @@ import tokens from '@contentful/forma-36-tokens';
 import * as Config from 'Config';
 import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
 
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { LinkOpen } from 'ui/Content';
 import { assign } from 'utils/Collections';
 
@@ -69,7 +69,7 @@ export default function EnvironmentsRoute(props) {
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="Settings" size="large" />}
+          icon={<ProductIcon icon="Settings" size="large" />}
           title="Environments"
         />
         <Workbench.Content>

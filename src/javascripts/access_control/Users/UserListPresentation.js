@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SectionHeading, Button, Workbench } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -90,7 +90,7 @@ const UserListPresentation = ({
       <Workbench>
         <Workbench.Header
           title={`Users (${spaceUsersCount})`}
-          icon={<NavigationIcon icon="Users" size="large" />}
+          icon={<ProductIcon icon="Users" size="large" />}
           actions={
             <Button
               buttonType="primary"

@@ -10,7 +10,7 @@ import {
   TextLink,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import PropTypes from 'prop-types';
@@ -173,7 +173,7 @@ export class AppDetails extends React.Component {
         <Workbench.Content>
           <div className={styles.workbenchContent}>
             <div className={styles.title}>
-              <NavigationIcon icon="Apps" size="xlarge" />
+              <ProductIcon icon="Apps" size="xlarge" />
               <div>
                 <Heading>{name}</Heading>
                 <div className={styles.sysId}>

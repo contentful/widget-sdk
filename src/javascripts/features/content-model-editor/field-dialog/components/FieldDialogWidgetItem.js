@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Icon from 'ui/Components/Icon';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
@@ -49,7 +49,7 @@ class FieldDialogWidgetItem extends Component {
       <Icon className="field-dialog__widget-icon" name={`${icon}-widget`} />
     ) : (
       <div className={styles.widgetAppIcon}>
-        <NavigationIcon icon="Apps" size="large" />
+        <ProductIcon icon="Apps" size="large" />
       </div>
     );
   }

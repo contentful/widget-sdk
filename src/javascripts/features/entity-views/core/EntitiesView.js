@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'reac
 import PropTypes from 'prop-types';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { Sidebar as SavedViewsSidebar } from './SavedViews/Sidebar';
 import { css } from 'emotion';
@@ -157,7 +157,7 @@ export const EntitiesView = ({
           <Workbench.Header
             title={title}
             description={<KnowledgeBase target={entityType} className={styles.info} />}
-            icon={<NavigationIcon icon={title} size="large" />}
+            icon={<ProductIcon icon={title} size="large" />}
             actions={
               <div className={styles.header}>
                 <Search

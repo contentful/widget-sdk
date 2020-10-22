@@ -7,7 +7,7 @@ import {
   Typography,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import EmptyStateContainer, {
   defaultSVGStyle,
@@ -99,7 +99,7 @@ function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, classNam
       <Workbench.Header
         title={'Tags'}
         actions={<TagsWorkbenchActions hasData={hasTags} onCreate={onCreate} />}
-        icon={<NavigationIcon icon="Settings" size="large" tag={'span'} />}
+        icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
       />
       <Workbench.Content type="default" className={'tags-workbench-content'}>
         {hasTags && (
