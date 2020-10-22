@@ -66,7 +66,6 @@ function ReferenceCards({
   root,
   allReferencesSelected,
   maxLevel,
-  defaultLocale,
   validations,
   onReferenceCardClick,
   setIsTreeMaxDepthReached,
@@ -170,7 +169,9 @@ function ReferenceCards({
 
     const nextLevelReferenceCards = Object.entries(fields).reduce(
       (allCards, [_, fieldValue], fieldIndex) => {
-        const localizedFieldValue = fieldValue[defaultLocale];
+        const localizedFieldValue = Object.keys(fieldValue)
+          .map((locale) => fieldValue[locale])
+          .flat();
         // if field is an array of entities
         if (Array.isArray(localizedFieldValue) && localizedFieldValue.every((value) => value.sys)) {
           return allCards.concat(
