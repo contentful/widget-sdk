@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { isFunction, get } from 'lodash';
 import { registerDirective } from 'core/NgRegistry';
 import angular from 'angular';
 import * as logger from 'services/logger';
 
 import * as Forma36Components from '@contentful/forma-36-react-components';
-
-import store from 'redux/store';
 
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
@@ -24,18 +21,16 @@ import { EmptyState } from 'app/entity_editor/EmptyState';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 // TODO refactor this function (6 arguments is too much)
-function renderComponent(Component, props, scope, container, store) {
+function renderComponent(Component, props, scope, container) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
     ReactDOM.render(
-      <Provider store={store}>
-        <SpaceEnvContextProvider>
-          <CurrentSpaceAPIClientProvider>
-            <Component {...props} scope={scope} />
-          </CurrentSpaceAPIClientProvider>
-        </SpaceEnvContextProvider>
-      </Provider>,
+      <SpaceEnvContextProvider>
+        <CurrentSpaceAPIClientProvider>
+          <Component {...props} scope={scope} />
+        </CurrentSpaceAPIClientProvider>
+      </SpaceEnvContextProvider>,
       container
     );
   });
@@ -197,7 +192,7 @@ export default function register() {
 
         const renderMyComponent = () => {
           const scopeProps = $scope.$eval(attrs.props);
-          renderComponent(ReactComponent, scopeProps, $scope, container, store);
+          renderComponent(ReactComponent, scopeProps, $scope, container);
         };
 
         // If there are props, re-render when they change

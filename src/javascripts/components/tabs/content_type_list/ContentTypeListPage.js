@@ -1,7 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import DocumentTitle from 'components/shared/DocumentTitle';
 import {
   SkeletonContainer,
   SkeletonBodyText,
@@ -18,7 +16,6 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import ContentTypeListSearch from './ContentTypeListSearch';
 import ContentTypeListFilter from './ContentTypeListFilter';
 import * as service from './ContentTypeListService';
-import { getSearchTerm } from 'redux/selectors/filters';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
@@ -29,7 +26,11 @@ import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
 import createResourceService from 'services/ResourceService';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { useAsync } from 'core/hooks';
+import { debounce } from 'lodash';
+import qs from 'qs';
+import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {
   banner: css({
@@ -37,37 +38,14 @@ const styles = {
   }),
 };
 
-export class ContentTypesPage extends React.Component {
-  static propTypes = {
-    searchText: PropTypes.string,
-    spaceId: PropTypes.string,
-    onSearchChange: PropTypes.func,
-  };
+export function ContentTypeListPage({ spaceId, currentOrganization, currentOrganizationId }) {
+  const updateLocation = useContext(LocationDispatchContext);
+  const locationValue = useContext(LocationStateContext);
+  const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
+  const [searchTerm, setSearchTerm] = useState(queryValues ? queryValues.searchTerm : null);
+  const [status, setStatus] = useState(undefined);
 
-  static defaultProps = {
-    onSearchChange: () => {},
-  };
-
-  static contextType = SpaceEnvContext;
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoading: true,
-      contentTypes: [],
-      searchTerm: props.searchText || '',
-      status: undefined,
-      showContentTypeLimitBanner: false,
-      usage: 0,
-      maximum: 0,
-    };
-  }
-
-  async componentDidMount() {
-    const { currentOrganization, currentOrganizationId } = this.context;
-    const { spaceId } = this.props;
-
+  const getData = useCallback(async () => {
     // This is written so that the important data (contentTypes) only would wait for a max of 2 seconds for the
     // less important banner information to load. Having them load together prevents the page jumping when the
     // banner information loads second, but if the banner information would take more than 2 seconds to load,
@@ -96,187 +74,157 @@ export class ContentTypesPage extends React.Component {
 
     const [contentTypeItems, communityBannerData] = await Promise.all(promisesArray);
 
-    let state = {
-      contentTypes: contentTypeItems,
-      isLoading: false,
-      showContentTypeLimitBanner: false,
-      usage: 0,
-      limit: 0,
-    };
+    let showContentTypeLimitBanner = false;
+    let usage = 0;
+    let limit = 0;
 
     // If there is communityBannerData then the user isOrgAdminOrOwner, so we can then determine if we should show the CTA to upgrade to enterprise.
     if (communityBannerData) {
       const [nextSpacePlan, resource] = communityBannerData;
-      const usage = resource.usage;
-      const limit = getResourceLimits(resource).maximum;
-
-      const showContentTypeLimitBanner =
+      usage = resource.usage;
+      limit = getResourceLimits(resource).maximum;
+      showContentTypeLimitBanner =
         !nextSpacePlan && usage / limit >= PricingService.WARNING_THRESHOLD;
-
-      state = { ...state, showContentTypeLimitBanner, usage, limit };
     }
 
-    if (!this.componentIsUnmounted) {
-      this.setState(state);
-    }
-  }
+    return {
+      contentTypes: contentTypeItems,
+      showContentTypeLimitBanner,
+      usage,
+      limit,
+    };
+  }, [currentOrganization, currentOrganizationId, spaceId]);
 
-  componentWillUnmount() {
-    this.componentIsUnmounted = true;
-  }
+  const { isLoading, data } = useAsync(getData);
 
-  handleBannerClickCTA() {
-    const { spaceId } = this.props;
-    const { currentOrganizationId } = this.context;
+  const debouncedSearch = useCallback(
+    debounce((searchTerm) => {
+      setSearchTerm(searchTerm);
+      updateLocation({ searchTerm });
+    }, 200),
+    []
+  );
 
+  const search = (value) => {
+    debouncedSearch(value);
+  };
+
+  const handleBannerClickCTA = () => {
     trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       spaceId,
       organizationId: currentOrganizationId,
     });
-  }
+  };
 
-  renderSidebar() {
-    const { isLoading, contentTypes, status } = this.state;
-    if (!isLoading && contentTypes.length === 0) {
+  const renderSidebar = () => {
+    if (!isLoading && data.contentTypes.length === 0) {
       return null;
     }
 
     return (
       <Workbench.Sidebar position="left">
         {!isLoading && (
-          <ContentTypeListFilter
-            status={status}
-            onChange={(status) => {
-              this.setState({ status });
-            }}
-          />
+          <ContentTypeListFilter status={status} onChange={(status) => setStatus(status)} />
         )}
       </Workbench.Sidebar>
     );
-  }
+  };
 
-  render() {
-    const {
-      isLoading,
-      contentTypes,
-      searchTerm,
-      status,
-      showContentTypeLimitBanner,
-      usage,
-      limit,
-    } = this.state;
-    const filteredContentTypes = service.filterContentTypes(contentTypes, {
+  let filteredContentTypes = [];
+  if (!isLoading) {
+    filteredContentTypes = service.filterContentTypes(data.contentTypes, {
       searchTerm,
       status,
     });
-
-    const { spaceId } = this.props;
-    const { currentOrganizationId } = this.context;
-
-    return (
-      <React.Fragment>
-        <DocumentTitle title="Content Model" />
-        <Workbench>
-          <Workbench.Header
-            icon={<ProductIcon icon="ContentModel" size="large" />}
-            title={
-              <>
-                <Heading>Content Model</Heading>
-                <div className="workbench-header__kb-link">
-                  <KnowledgeBase target="content_model" />
-                </div>
-              </>
-            }
-            actions={
-              <>
-                {contentTypes.length > 0 && (
-                  <ContentTypeListSearch
-                    initialValue={searchTerm}
-                    onChange={(value) => {
-                      this.setState({
-                        searchTerm: value,
-                      });
-                      this.props.onSearchChange(value);
-                    }}
-                  />
-                )}
-                {contentTypes.length > 0 && <CreateContentTypeCta testId="create-content-type" />}
-              </>
-            }
-          />
-
-          {this.renderSidebar()}
-
-          <Workbench.Content type="full">
-            {isLoading ? (
-              <SkeletonContainer
-                data-test-id="content-loader"
-                ariaLabel="Loading Content Type list"
-                svgWidth="100%">
-                <SkeletonBodyText numberOfLines={2} />
-                <SkeletonBodyText numberOfLines={2} offsetTop={75} />
-                <SkeletonBodyText numberOfLines={2} offsetTop={150} />
-                <SkeletonBodyText numberOfLines={2} offsetTop={225} />
-                <SkeletonBodyText numberOfLines={2} offsetTop={300} />
-                <SkeletonBodyText numberOfLines={2} offsetTop={375} />
-              </SkeletonContainer>
-            ) : (
-              <React.Fragment>
-                {showContentTypeLimitBanner && (
-                  <Note
-                    noteType="primary"
-                    className={styles.banner}
-                    testId="content-type-limit-banner">
-                    <Paragraph>
-                      You’ve used {usage} of {limit} content types.
-                    </Paragraph>
-                    <Paragraph>
-                      To increase the limit,{' '}
-                      <TrackTargetedCTAImpression
-                        impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
-                        meta={{ spaceId, organizationId: currentOrganizationId }}>
-                        <ExternalTextLink
-                          testId="link-to-sales"
-                          href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
-                          onClick={() => this.handleBannerClickCTA()}>
-                          talk to us
-                        </ExternalTextLink>{' '}
-                      </TrackTargetedCTAImpression>
-                      about upgrading to the enterprise tier.
-                    </Paragraph>
-                  </Note>
-                )}
-
-                {filteredContentTypes.length > 0 && (
-                  <div data-test-id="content-type-list">
-                    <ContentTypeList contentTypes={filteredContentTypes} />
-                  </div>
-                )}
-                {contentTypes.length > 0 && filteredContentTypes.length === 0 && (
-                  <div data-test-id="no-search-results">
-                    <NoSearchResultsAdvice />
-                  </div>
-                )}
-                {contentTypes.length === 0 && (
-                  <div data-test-id="empty-state">
-                    <NoContentTypeAdvice />
-                  </div>
-                )}
-              </React.Fragment>
-            )}
-          </Workbench.Content>
-        </Workbench>
-      </React.Fragment>
-    );
   }
+
+  return (
+    <Workbench>
+      <Workbench.Header
+        icon={<ProductIcon icon="ContentModel" size="large" />}
+        title={
+          <>
+            <Heading>Content Model</Heading>
+            <div className="workbench-header__kb-link">
+              <KnowledgeBase target="content_model" />
+            </div>
+          </>
+        }
+        actions={
+          <>
+            {!isLoading && data.contentTypes.length > 0 && (
+              <ContentTypeListSearch searchTerm={searchTerm} onChange={(value) => search(value)} />
+            )}
+            {!isLoading && data.contentTypes.length > 0 && (
+              <CreateContentTypeCta testId="create-content-type" />
+            )}
+          </>
+        }
+      />
+
+      {renderSidebar()}
+
+      <Workbench.Content type="full">
+        {isLoading ? (
+          <SkeletonContainer
+            data-test-id="content-loader"
+            ariaLabel="Loading Content Type list"
+            svgWidth="100%">
+            <SkeletonBodyText numberOfLines={2} />
+            <SkeletonBodyText numberOfLines={2} offsetTop={75} />
+            <SkeletonBodyText numberOfLines={2} offsetTop={150} />
+            <SkeletonBodyText numberOfLines={2} offsetTop={225} />
+            <SkeletonBodyText numberOfLines={2} offsetTop={300} />
+            <SkeletonBodyText numberOfLines={2} offsetTop={375} />
+          </SkeletonContainer>
+        ) : (
+          <React.Fragment>
+            {data.showContentTypeLimitBanner && (
+              <Note noteType="primary" className={styles.banner} testId="content-type-limit-banner">
+                <Paragraph>
+                  You’ve used {data.usage} of {data.limit} content types.
+                </Paragraph>
+                <Paragraph>
+                  To increase the limit,{' '}
+                  <TrackTargetedCTAImpression
+                    impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
+                    meta={{ spaceId, organizationId: currentOrganizationId }}>
+                    <ExternalTextLink
+                      testId="link-to-sales"
+                      href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
+                      onClick={() => handleBannerClickCTA()}>
+                      talk to us
+                    </ExternalTextLink>{' '}
+                  </TrackTargetedCTAImpression>
+                  about upgrading to the enterprise tier.
+                </Paragraph>
+              </Note>
+            )}
+
+            {filteredContentTypes.length > 0 && (
+              <div data-test-id="content-type-list">
+                <ContentTypeList contentTypes={filteredContentTypes} />
+              </div>
+            )}
+            {data.contentTypes.length > 0 && filteredContentTypes.length === 0 && (
+              <div data-test-id="no-search-results">
+                <NoSearchResultsAdvice />
+              </div>
+            )}
+            {data.contentTypes.length === 0 && (
+              <div data-test-id="empty-state">
+                <NoContentTypeAdvice />
+              </div>
+            )}
+          </React.Fragment>
+        )}
+      </Workbench.Content>
+    </Workbench>
+  );
 }
 
-export default connect(
-  (state) => ({
-    searchText: getSearchTerm(state),
-  }),
-  (dispatch) => ({
-    onSearchChange: (newSearchTerm) =>
-      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } }),
-  })
-)(ContentTypesPage);
+ContentTypeListPage.propTypes = {
+  spaceId: PropTypes.string,
+  currentOrganization: OrganizationPropType,
+  currentOrganizationId: PropTypes.string,
+};

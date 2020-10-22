@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import debounce from 'lodash/debounce';
 import { TextInput } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -15,21 +14,12 @@ const styles = {
 
 export default class ContentTypeListSearch extends React.Component {
   static propTypes = {
-    initialValue: PropTypes.string,
+    searchTerm: PropTypes.string,
     onChange: PropTypes.func,
   };
-  state = {
-    value: this.props.initialValue,
-  };
-  debouncedOnChangeCallback = debounce((value) => {
-    this.props.onChange(value);
-  }, 200);
   handleChange = (e) => {
     const value = e.target.value;
-    this.setState({
-      value,
-    });
-    this.debouncedOnChangeCallback(value);
+    this.props.onChange(value);
   };
   render() {
     return (
@@ -37,7 +27,7 @@ export default class ContentTypeListSearch extends React.Component {
         testId="search-box"
         autoFocus
         placeholder="Search for a content type"
-        value={this.state.value}
+        value={this.props.searchTerm}
         onChange={this.handleChange}
         width="large"
         className={styles.input}

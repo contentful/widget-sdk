@@ -1,13 +1,13 @@
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import ContentTypeListPage from 'components/tabs/content_type_list/ContentTypeListPage';
+import { ContentTypesPage } from 'components/tabs/content_type_list/ContentTypesPage';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const list = {
   name: 'list',
   url: '',
-  component: ContentTypeListPage,
+  component: ContentTypesPage,
 };
 
 const fields = {

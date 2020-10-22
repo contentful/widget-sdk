@@ -1,6 +1,6 @@
 import { registerController, appReady } from 'core/NgRegistry';
 import { onValueScope } from 'core/utils/kefir';
-import { pick, isObject } from 'lodash';
+import { isObject } from 'lodash';
 
 // Do not add imports here, or else it may affect Karma tests. You need to import
 // everything using the async method below. See `initialize`.
@@ -15,7 +15,6 @@ export default function register() {
       let logger;
       let FEATURES;
       let getSpaceFeature;
-      let store;
       let EnforcementsService;
       let NavState;
       let CreateSpace;
@@ -46,12 +45,6 @@ export default function register() {
       $scope.controllerReady = false;
 
       initialize().then(() => {
-        // We do this once
-        store.dispatch({
-          type: 'LOCATION_CHANGED',
-          payload: { location: pickSerializable(window.location) },
-        });
-
         const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
           unsubscribe();
         });
@@ -76,11 +69,6 @@ export default function register() {
         onValueScope($scope, TokenStore.user$, handleUser);
 
         $rootScope.$on('$locationChangeSuccess', function () {
-          store.dispatch({
-            type: 'LOCATION_CHANGED',
-            payload: { location: pickSerializable(window.location) },
-          });
-
           if (shouldCheckUsageForCurrentLocation()) {
             spaceAndTokenWatchHandler({
               tokenLookup: TokenStore.getTokenLookup(),
@@ -93,20 +81,6 @@ export default function register() {
 
         $scope.controllerReady = true;
       });
-
-      function pickSerializable(location) {
-        return pick(location, [
-          'hash',
-          'host',
-          'hostname',
-          'href',
-          'origin',
-          'pathname',
-          'port',
-          'protocol',
-          'search',
-        ]);
-      }
 
       async function spaceAndTokenWatchHandler({
         tokenLookup,
@@ -200,7 +174,6 @@ export default function register() {
         [
           logger,
           { getSpaceFeature, FEATURES },
-          { default: store },
           EnforcementsService,
           NavState,
           CreateSpace,
@@ -221,7 +194,6 @@ export default function register() {
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'services/logger'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
-          import(/* webpackMode: "eager" */ 'redux/store'),
           import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
           import(/* webpackMode: "eager" */ 'navigation/NavState'),
           import(/* webpackMode: "eager" */ 'services/CreateSpace'),

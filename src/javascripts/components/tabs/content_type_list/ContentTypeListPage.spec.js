@@ -9,9 +9,9 @@ import {
 import userEvent from '@testing-library/user-event';
 import { flatten, concat } from 'lodash';
 
-import { ContentTypesPage as Page } from './ContentTypeListPage';
+import { ContentTypeListPage as Page } from './ContentTypeListPage';
 
-import * as spaceContextMocked from 'ng/spaceContext';
+import { fetchContentTypes, filterContentTypes } from './ContentTypeListService';
 import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
 import * as PricingService from 'services/PricingService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -19,7 +19,8 @@ import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
-import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
+import * as Fake from 'test/helpers/fakeFactory';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
@@ -56,33 +57,38 @@ jest.mock('access_control/AccessChecker', () => ({
   Action: { CREATE: 'Create' },
 }));
 
-const selectors = {
-  contentLoader: '[data-test-id="content-loader"]',
-  contentTypeList: '[data-test-id="content-type-list"]',
-  emptyState: '[data-test-id="empty-state"]',
-  noSearchResults: '[data-test-id="no-search-results"]',
-  searchBox: '[data-test-id="search-box"]',
-  statusFilter: '[data-test-id="status-filter"]',
+const testIds = {
+  contentLoader: 'content-loader',
+  contentTypeList: 'content-type-list',
+  emptyState: 'empty-state',
+  noSearchResults: 'no-search-results',
+  searchBox: 'search-box',
+  statusFilter: 'status-filter',
 };
+
+jest.mock('./ContentTypeListService', () => ({
+  fetchContentTypes: jest.fn(),
+  filterContentTypes: jest.fn(),
+}));
 
 const mockContentTypeList = [
   contentTypeFactory.createPublished(),
   contentTypeFactory.createPublished(),
   contentTypeFactory.createPublished(),
 ];
-// const mockOrganization = fake.Organization();
 
-function renderComponent({ props = {}, items = [] }) {
-  const getStub = jest.fn().mockResolvedValue({ items });
-  spaceContextMocked.endpoint = getStub;
+const locationValueWithSearch = { search: '?searchTerm=initial%20search%20text%2042' };
+const updateLocation = jest.fn();
 
-  const wrapper = render(
-    <SpaceEnvContextProvider>
-      <Page {...props} />
-    </SpaceEnvContextProvider>
+function renderComponent({ props = {}, locationValue = {} }) {
+  render(
+    <LocationStateContext.Provider value={locationValue}>
+      <LocationDispatchContext.Provider value={updateLocation}>
+        <Page {...props} />
+      </LocationDispatchContext.Provider>
+    </LocationStateContext.Provider>
   );
-
-  return [wrapper, getStub];
+  return waitForElementToBeRemoved(() => screen.getByTestId(testIds.contentLoader));
 }
 
 describe('ContentTypeList Page', () => {
@@ -90,53 +96,43 @@ describe('ContentTypeList Page', () => {
     createResourceService().get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
 
     jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
+    fetchContentTypes.mockReturnValue(mockContentTypeList);
+    filterContentTypes.mockReturnValue(mockContentTypeList);
   });
 
   afterEach(() => {
     PricingService.nextSpacePlanForResource.mockRestore();
   });
 
-  it('renders loader', () => {
-    const [{ container }, getStub] = renderComponent({ items: mockContentTypeList });
-
-    expect(getStub).toHaveBeenCalledTimes(1);
-    expect(container.querySelector(selectors.contentLoader)).toBeInTheDocument();
-  });
-
   it('renders results once loaded', async () => {
-    const [{ container }] = renderComponent({ items: mockContentTypeList });
+    await renderComponent({});
 
-    await waitFor(() => {
-      return container.querySelector(selectors.contentTypeList);
-    });
+    await waitFor(() => expect(screen.getByTestId(testIds.contentTypeList)).toBeVisible());
 
-    expect(container.querySelector(selectors.contentLoader)).not.toBeInTheDocument();
-    expect(container.querySelector(selectors.searchBox)).toBeInTheDocument();
-    expect(container.querySelector(selectors.statusFilter)).toBeInTheDocument();
+    expect(screen.queryByTestId(testIds.contentLoader)).not.toBeInTheDocument();
+    expect(screen.getByTestId(testIds.searchBox)).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.statusFilter)).toBeInTheDocument();
   });
 
   it('renders empty page if no content types loaded', async () => {
-    const [{ container }] = renderComponent({ items: [] });
+    fetchContentTypes.mockReturnValue([]);
+    filterContentTypes.mockReturnValue([]);
+    await renderComponent({});
 
-    await waitFor(() => {
-      return container.querySelector(selectors.emptyState);
-    });
+    await waitFor(() => expect(screen.getByTestId(testIds.emptyState)).toBeVisible());
 
-    expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(testIds.contentTypeList)).not.toBeInTheDocument();
   });
 
   it('renders predefined search text', async () => {
     const searchText = 'initial search text 42';
-    const [{ container }] = renderComponent({
-      props: { searchText },
-      items: mockContentTypeList,
+    await renderComponent({
+      locationValue: locationValueWithSearch,
     });
 
-    await waitFor(() => {
-      return container.querySelector(selectors.searchBox);
-    });
+    await waitFor(() => expect(screen.getByTestId(testIds.searchBox)).toBeVisible());
 
-    expect(container.querySelector(selectors.searchBox).value).toEqual(searchText);
+    expect(screen.getByTestId(testIds.searchBox).value).toEqual(searchText);
   });
 
   describe('Search Box', () => {
@@ -146,38 +142,34 @@ describe('ContentTypeList Page', () => {
     ];
 
     it('filters results by search box value', async () => {
-      const [{ container }] = renderComponent({
-        items: contentTypes,
-      });
+      fetchContentTypes.mockReturnValue(contentTypes);
+      filterContentTypes.mockReturnValue([contentTypeFactory.createPublished({ name: 'aaa' })]);
 
-      await waitFor(() => {
-        return container.querySelector(selectors.searchBox);
-      });
+      await renderComponent({});
+      await waitFor(() => expect(screen.getByTestId(testIds.searchBox)).toBeVisible());
 
-      fireEvent.change(container.querySelector(selectors.searchBox), {
+      await fireEvent.change(screen.getByTestId(testIds.searchBox), {
         target: { value: 'a' },
       });
 
-      expect(container.querySelector(selectors.contentTypeList).textContent).toMatchInlineSnapshot(
-        `"content-type-id11"`
+      expect(screen.queryByTestId(testIds.contentTypeList).textContent).toMatchInlineSnapshot(
+        `"content-type-id28"`
       );
     });
 
     it('renders no results', async () => {
-      const [{ container }] = renderComponent({
-        items: contentTypes,
-      });
+      fetchContentTypes.mockReturnValue(contentTypes);
+      filterContentTypes.mockReturnValue([]);
 
-      await waitFor(() => {
-        return container.querySelector(selectors.searchBox);
-      });
+      await renderComponent({});
+      await waitFor(() => expect(screen.getByTestId(testIds.searchBox)).toBeVisible());
 
-      fireEvent.change(container.querySelector(selectors.searchBox), {
+      await fireEvent.change(screen.getByTestId(testIds.searchBox), {
         target: { value: 'x' },
       });
 
-      expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
-      expect(container.querySelector(selectors.noSearchResults)).toBeInTheDocument();
+      expect(screen.queryByTestId(testIds.contentTypeList)).not.toBeInTheDocument();
+      expect(screen.getByTestId(testIds.noSearchResults)).toBeInTheDocument();
     });
   });
 
@@ -193,8 +185,7 @@ describe('ContentTypeList Page', () => {
         createResourceService().get.mockResolvedValue({ usage: 43, limits: { maximum: 48 } });
         isOwnerOrAdmin.mockReturnValue(true);
 
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
       });
@@ -202,8 +193,7 @@ describe('ContentTypeList Page', () => {
       it('does not show up even if they are at above the 90% threshold', async () => {
         isOwnerOrAdmin.mockReturnValue(true);
         createResourceService().get.mockResolvedValue({ usage: 46, limits: { maximum: 48 } });
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
       });
@@ -215,8 +205,7 @@ describe('ContentTypeList Page', () => {
         createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
         isOwnerOrAdmin.mockReturnValue(false);
 
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
       });
@@ -226,8 +215,7 @@ describe('ContentTypeList Page', () => {
         isOwnerOrAdmin.mockReturnValue(true);
         isLegacyOrganization.mockReturnValueOnce(true);
 
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
       });
@@ -236,8 +224,7 @@ describe('ContentTypeList Page', () => {
         isOwnerOrAdmin.mockReturnValue(true);
         createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
 
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
       });
@@ -246,8 +233,7 @@ describe('ContentTypeList Page', () => {
         createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
         isOwnerOrAdmin.mockReturnValue(true);
 
-        renderComponent({ props: {}, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({});
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
         expect(screen.queryByTestId('link-to-sales')).toBeVisible();
@@ -257,9 +243,11 @@ describe('ContentTypeList Page', () => {
         createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
         isOwnerOrAdmin.mockReturnValue(true);
         const fakeSpaceId = 'fakeSpaceId';
+        const fakeOrg = Fake.Organization();
 
-        renderComponent({ props: { spaceId: fakeSpaceId }, items: [] });
-        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        await renderComponent({
+          props: { spaceId: fakeSpaceId, currentOrganizationId: fakeOrg.sys.id },
+        });
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
 
@@ -268,7 +256,7 @@ describe('ContentTypeList Page', () => {
         userEvent.click(linkToSales);
 
         expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId: spaceContextMocked.space.data.organization.sys.id,
+          organizationId: fakeOrg.sys.id,
           spaceId: fakeSpaceId,
         });
       });
@@ -285,15 +273,16 @@ describe('ContentTypeList Page', () => {
     const contentTypes = flatten(Object.values(contentTypesByStatus));
 
     it('highlights default status (All) after page load', async () => {
-      const [{ container, getByTestId }] = renderComponent({
-        items: contentTypes,
-      });
+      fetchContentTypes.mockReturnValue(contentTypes);
+      filterContentTypes.mockReturnValue(contentTypes);
+
+      await renderComponent({});
 
       await waitFor(() => {
-        return container.querySelector(selectors.statusFilter);
+        expect(screen.getByTestId(testIds.statusFilter)).toBeVisible();
       });
 
-      expect(getByTestId('status-undefined')).toBeInTheDocument();
+      expect(screen.getByTestId('status-undefined')).toBeInTheDocument();
     });
 
     /* eslint-disable-next-line no-restricted-syntax */
@@ -305,18 +294,18 @@ describe('ContentTypeList Page', () => {
       ${undefined} | ${contentTypes}
     `('filters list', ({ status, expectedResult }) => {
       it(`by status: ${status || 'All'}`, async () => {
-        const [{ container, getByTestId }] = renderComponent({
-          items: contentTypes,
-        });
+        fetchContentTypes.mockReturnValue(contentTypes);
+        filterContentTypes.mockReturnValue(expectedResult);
 
-        await waitFor(() => {
-          return container.querySelector(selectors.statusFilter);
-        });
+        await renderComponent({});
 
-        fireEvent.click(getByTestId(`status-${status}`));
+        expect(screen.queryByTestId(testIds.statusFilter)).toBeVisible();
 
-        expect(container.querySelector(selectors.contentTypeList)).toBeInTheDocument();
-        expect(container.querySelector(selectors.contentTypeList).textContent).toEqual(
+        fireEvent.click(screen.getByTestId(`status-${status}`));
+        expect(filterContentTypes).toHaveBeenCalled();
+
+        expect(screen.getByTestId(testIds.contentTypeList)).toBeInTheDocument();
+        expect(screen.getByTestId(testIds.contentTypeList).textContent).toEqual(
           expectedResult.map((item) => item.sys.id).join(',')
         );
       });
