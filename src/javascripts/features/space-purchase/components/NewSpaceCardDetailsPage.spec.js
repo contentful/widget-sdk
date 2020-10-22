@@ -3,6 +3,8 @@ import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 
 import * as LazyLoader from 'utils/LazyLoader';
+import * as logger from 'services/logger';
+import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 
@@ -22,7 +24,11 @@ jest.mock('utils/LazyLoader', () => {
   };
 });
 
+jest.useFakeTimers();
+
 describe('NewSpaceCardDetailsPage', () => {
+  afterEach(cleanupNotifications);
+
   it('should call navigateToPreviousStep if the Zuora iframe cancel button is clicked', async () => {
     const navigateToPreviousStep = jest.fn();
 
@@ -33,14 +39,14 @@ describe('NewSpaceCardDetailsPage', () => {
     expect(navigateToPreviousStep).toBeCalled();
   });
 
-  it('should call onSuccess if the Zuora response callback is called', async () => {
+  it('should call onSuccess if the Zuora success response callback is called', async () => {
     const onSuccess = jest.fn();
 
-    const responseCb = await build({ onSuccess });
+    const { successCb } = await build({ onSuccess });
 
     expect(onSuccess).not.toBeCalled();
 
-    responseCb();
+    successCb();
 
     expect(onSuccess).toBeCalled();
   });
@@ -48,30 +54,58 @@ describe('NewSpaceCardDetailsPage', () => {
   it('should notify the user something went wrong if onSuccess fails', async () => {
     const onSuccess = jest.fn().mockRejectedValueOnce();
 
-    const responseCb = await build({ onSuccess });
+    const { successCb } = await build({ onSuccess });
 
     expect(onSuccess).not.toBeCalled();
 
-    responseCb();
+    successCb();
 
     expect(onSuccess).toBeCalled();
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Your credit card couldn’t be saved. Please try again.')
-      ).toBeVisible();
+    await waitFor(() => screen.getByTestId('cf-ui-notification'));
+
+    expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+  });
+
+  it('should log and show an error notification if the Zuora error response callback is called', async () => {
+    const { errorCb } = await build();
+
+    const response = errorCb();
+
+    await waitFor(() => screen.getByTestId('cf-ui-notification'));
+
+    expect(logger.logError).toBeCalledWith('ZuoraIframeError', {
+      ...response,
+      location: 'account.organizations.subscription_new.new_space',
     });
+
+    expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
   });
 });
 
 async function build(customProps) {
   const { Zuora } = LazyLoader._results;
 
-  let responseCb;
+  let successCb;
+  let errorCb;
 
-  Zuora.renderWithErrorHandler.mockImplementationOnce(
-    (_params, _prefilledFields, cb) => (responseCb = () => cb({ success: true, refId: 'ref_1234' }))
-  );
+  Zuora.renderWithErrorHandler.mockImplementationOnce((_params, _prefilledFields, cb) => {
+    successCb = () => {
+      const response = { success: true, refId: 'ref_1234' };
+
+      cb(response);
+
+      return response;
+    };
+
+    errorCb = () => {
+      const response = { success: false, errorCode: 'Something_Went_Wrong' };
+
+      cb(response);
+
+      return response;
+    };
+  });
 
   const props = Object.assign(
     {
@@ -88,5 +122,5 @@ async function build(customProps) {
 
   await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 
-  return responseCb;
+  return { successCb, errorCb };
 }

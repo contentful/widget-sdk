@@ -10,6 +10,7 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
+import * as logger from 'services/logger';
 
 import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
 
@@ -73,6 +74,17 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
     organizationId,
   ]);
 
+  const onError = useCallback((error) => {
+    logger.logError('ZuoraIframeError', {
+      location: 'account.organizations.billing.edit-payment-method',
+      ...error,
+    });
+
+    Notification.error(
+      'Something went wrong. Refresh this page and contact us if you continue to see this.'
+    );
+  }, []);
+
   useEffect(() => {
     if (!shouldShowZuoraIframe) {
       return;
@@ -95,6 +107,7 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
               organizationId={organizationId}
               onSuccess={onSuccess}
               onCancel={goToBillingDashboard}
+              onError={onError}
             />
           )}
         </Workbench.Content>
