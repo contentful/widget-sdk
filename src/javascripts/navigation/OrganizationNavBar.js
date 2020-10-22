@@ -8,8 +8,6 @@ import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial } from 'features/trials';
 
 function getItems(params, { orgId }) {
@@ -110,7 +108,6 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      tagLabel: params.showUsageNewLabel ? 'new' : null,
       navIcon: 'Usage',
       dataViewType: 'platform-usage',
     },
@@ -209,11 +206,10 @@ export default class OrganizationNavigationBar extends React.Component {
   async getConfiguration() {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
-    const endpoint = createOrganizationEndpoint(orgId);
 
     const organization = await TokenStore.getOrganization(orgId);
 
-    let promises = [
+    const promises = [
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
       FeatureService.get('offsiteBackup'),
@@ -222,15 +218,6 @@ export default class OrganizationNavigationBar extends React.Component {
       getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId: orgId }),
     ];
 
-    if (organization.pricingVersion !== 'pricing_version_1' && isOwnerOrAdmin(organization)) {
-      promises = promises.concat([
-        getVariation(FLAGS.PRICING_2020_WARNING, {
-          organizationId: orgId,
-        }),
-        getBasePlan(endpoint),
-      ]);
-    }
-
     const [
       ssoFeatureEnabled,
       scimFeatureEnabled,
@@ -238,11 +225,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasAdvancedExtensibility,
       platformTrialCommEnabled,
       newSpacePurchaseFlowEnabled,
-      newPricingFeatureDisplayed,
-      basePlan,
     ] = await Promise.all(promises);
-
-    const basePlanIsEnterprise = !!basePlan && isEnterprisePlan(basePlan);
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
@@ -253,7 +236,6 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
-      showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
       platformTrialCommEnabled,
       newSpacePurchaseFlowEnabled,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
