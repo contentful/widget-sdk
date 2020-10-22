@@ -115,12 +115,12 @@ describe('createNavigatorApi', () => {
           },
         };
 
-        let err
+        let err;
         const navigatorApi = buildApi({ spaceContext });
         await navigatorApi
           .openEntry('my_id', { slideIn: { waitForClose: true } })
-          .catch(e => err = e)
-        expect(err).toBeTruthy()
+          .catch((e) => (err = e));
+        expect(err).toBeTruthy();
       });
 
       it('resolves if entity not found after navigateToContentEntity with waitForClose', async () => {
