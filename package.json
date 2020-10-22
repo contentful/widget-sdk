@@ -62,7 +62,7 @@
     "contentful": "^7.14.6",
     "contentful-management": "^6.2.0-experimental.3",
     "contentful-resolve-response": "^1.1.4",
-    "contentful-ui-extensions-sdk": "^3.23.2",
+    "contentful-ui-extensions-sdk": "^3.23.3",
     "core-js": "^3.6.5",
     "dataloader": "^2.0.0",
     "delay": "^4.3.0",
