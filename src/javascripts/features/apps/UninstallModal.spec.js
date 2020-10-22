@@ -68,7 +68,6 @@ describe('UninstallModal', () => {
 
     // access the checkboxes and click two
     fireEvent.click(getByTestId('reason-0').children[0]);
-    fireEvent.click(getByTestId('reason-5').children[0]);
     fireEvent.change(getByTestId('reason-custom'), { target: { value: customReasonText } });
 
     getByTestId('uninstall-button').click();

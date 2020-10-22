@@ -13,6 +13,7 @@ import {
   Paragraph,
   CheckboxField,
   Textarea,
+  FormLabel,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -27,7 +28,7 @@ const styles = {
     marginTop: tokens.spacingL,
     marginBottom: tokens.spacingL,
   }),
-  otherInput: css({
+  customReasonLabel: css({
     marginTop: tokens.spacingM,
   }),
   checkbox: css({
@@ -75,17 +76,16 @@ const reasons = [
   'I was just testing it out',
 ];
 
-function parseReasons(checked, otherReason) {
+function parseReasons(checked, customReason) {
   return Object.keys(checked)
     .filter((x) => checked[x])
     .map((reason) => reasons[reason])
-    .concat(otherReason ? [{ custom: otherReason }] : []);
+    .concat(customReason ? [{ custom: customReason }] : []);
 }
 
 export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
   const [checked, onCheck] = useState({});
-  const [otherChecked, toggleOther] = useState(false);
-  const [otherReason, setOtherReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
 
   return (
     <Modal title="Uninstall app?" onClose={onClose} isShown={isShown} allowHeightOverflow>
@@ -96,7 +96,7 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
       <hr className={styles.separator} />
 
       <Typography>
-        <Subheading>Reasons for removing (optional):</Subheading>
+        <Subheading>Reason for uninstalling (optional):</Subheading>
       </Typography>
 
       <div data-test-id="reasons-list">
@@ -114,36 +114,24 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
             />
           </ListItem>
         ))}
-        <ListItem>
-          <CheckboxField
-            className={styles.checkbox}
-            key="Other"
-            labelText="Other"
-            name="someOption"
-            checked={otherChecked}
-            onChange={() => toggleOther(!otherChecked)}
-            id="Other"
-            testId={`reason-${reasons.length}`}
-          />
-        </ListItem>
-        {otherChecked && (
-          <Textarea
-            className={styles.otherInput}
-            value={otherReason}
-            onChange={(e) => setOtherReason(e.target.value)}
-            rows={3}
-            maxLength={2000}
-            placeholder="Why did you decide to uninstall the app?"
-            name="otherReason"
-            id="otherReason"
-            testId="reason-custom"
-          />
-        )}
+
+        <FormLabel htmlFor="customReason" className={styles.customReasonLabel}>
+          What can we improve about the app?
+        </FormLabel>
+        <Textarea
+          value={customReason}
+          onChange={(e) => setCustomReason(e.target.value)}
+          rows={3}
+          maxLength={2000}
+          name="customReason"
+          id="customReason"
+          testId="reason-custom"
+        />
       </div>
       <hr className={styles.separator} />
       <Button
         testId="uninstall-button"
-        onClick={() => onConfirm(parseReasons(checked, otherReason))}
+        onClick={() => onConfirm(parseReasons(checked, customReason))}
         buttonType="negative">
         Uninstall
       </Button>
