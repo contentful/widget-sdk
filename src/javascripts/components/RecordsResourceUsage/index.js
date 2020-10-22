@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { HelpText, TextLink } from '@contentful/forma-36-react-components';
 
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import createResourceService from 'services/ResourceService';
 import { getResourceLimits } from 'utils/ResourceUtils';
 
@@ -11,11 +11,9 @@ const WARN_THRESHOLD = 0.9;
 const ERROR_THRESHOLD = 0.95;
 
 const openUpgradeModal = (space, onSubmit) =>
-  showUpgradeSpaceDialog({
+  beginSpaceChange({
     organizationId: space.organization.sys.id,
     space,
-    action: 'change',
-    scope: 'space',
     onSubmit,
   });
 

@@ -4,7 +4,7 @@ import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -28,7 +28,7 @@ const styles = {
 };
 
 const openUpgradeModal = (organizationId, spaceData, onSubmit) =>
-  showUpgradeSpaceDialog({
+  beginSpaceChange({
     organizationId,
     space: spaceData,
     onSubmit,

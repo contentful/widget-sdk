@@ -12,7 +12,7 @@ import { billing } from './links';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
@@ -20,7 +20,7 @@ jest.mock('services/CreateSpace', () => ({
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showDialog: jest.fn(),
+  beginSpaceChange: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -264,7 +264,7 @@ describe('SubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
-  it('should track a click and call showChangeSpaceModal when onChangeSpace is clicked', () => {
+  it('should track a click and call beginSpaceChange when onChangeSpace is clicked', () => {
     build({ spacePlans: mockSpacePlans });
 
     // Click on the first space plan's upgrade link
@@ -273,7 +273,7 @@ describe('SubscriptionPage', () => {
       organizationId: mockOrganization.sys.id,
       spaceId: mockSpacePlans[0].space.sys.id,
     });
-    expect(showChangeSpaceModal).toBeCalledWith({
+    expect(beginSpaceChange).toBeCalledWith({
       organizationId: mockOrganization.sys.id,
       space: mockSpacePlans[0].space,
       onSubmit: expect.any(Function),

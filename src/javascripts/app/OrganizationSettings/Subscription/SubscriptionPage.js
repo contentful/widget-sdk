@@ -22,10 +22,7 @@ import { billing } from './links';
 import { go } from 'states/Navigator';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import {
-  showDialog as showChangeSpaceModal,
-  getNotificationMessage,
-} from 'services/ChangeSpaceService';
+import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
@@ -151,7 +148,7 @@ export default function SubscriptionPage({
     return () => {
       trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, { organizationId, spaceId: space.sys.id });
 
-      showChangeSpaceModal({
+      beginSpaceChange({
         organizationId,
         space,
         onSubmit: async (productRatePlan) => {

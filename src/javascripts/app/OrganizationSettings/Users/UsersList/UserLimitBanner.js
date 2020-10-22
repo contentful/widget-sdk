@@ -5,7 +5,7 @@ import { TextLink, Note, Paragraph } from '@contentful/forma-36-react-components
 import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
@@ -76,8 +76,7 @@ export function UserLimitBanner({ orgId, spaces }) {
   const changeSpace = () => {
     trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, trackMeta);
 
-    showChangeSpaceModal({
-      action: 'change',
+    beginSpaceChange({
       organizationId: orgId,
       ...(spaceToUpgrade && { space: spaceToUpgrade }),
     });

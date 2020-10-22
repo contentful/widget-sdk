@@ -35,11 +35,9 @@ export const localesSettingsState = {
         'localeResource',
         (spaceContext, localeResource) => ({
           showUpgradeSpaceDialog: ({ onSubmit }) => {
-            ChangeSpaceService.showDialog({
+            ChangeSpaceService.beginSpaceChange({
               organizationId: spaceContext.organization.sys.id,
               space: spaceContext.space.data,
-              action: 'change',
-              scope: 'space',
               onSubmit,
             });
           },

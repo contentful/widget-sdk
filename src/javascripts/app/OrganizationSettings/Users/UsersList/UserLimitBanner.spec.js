@@ -30,7 +30,7 @@ jest
   .mockImplementation(() => mockUsersEmpty);
 jest.spyOn(OrganizationRoles, 'isOwner').mockImplementation(() => false);
 jest.spyOn(CreateSpace, 'beginSpaceCreation').mockImplementation(() => jest.fn());
-jest.spyOn(ChangeSpaceService, 'showDialog').mockImplementation(() => jest.fn());
+jest.spyOn(ChangeSpaceService, 'beginSpaceChange').mockImplementation(() => jest.fn());
 
 async function build(customProps) {
   const props = {
@@ -96,8 +96,7 @@ describe('UserLimitBanner', () => {
         organizationId: mockOrg.sys.id,
         spaceId: mockSpaces[0].sys.id,
       });
-      expect(ChangeSpaceService.showDialog).toBeCalledWith({
-        action: 'change',
+      expect(ChangeSpaceService.beginSpaceChange).toBeCalledWith({
         organizationId: mockOrg.sys.id,
         space: mockSpaces[0],
       });

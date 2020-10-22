@@ -6,7 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isOwner } from 'services/OrganizationRoles';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
@@ -46,7 +46,7 @@ export function FileSizeLimitWarning({ organizationId, spaceId }) {
       spaceId,
     });
 
-    showChangeSpaceModal({
+    beginSpaceChange({
       organizationId,
       space,
     });

@@ -8,10 +8,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { SpaceSettings } from '../components/SpaceSettings';
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import {
-  showDialog as showChangeSpaceModal,
-  getNotificationMessage,
-} from 'services/ChangeSpaceService';
+import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
@@ -102,7 +99,7 @@ export class SpaceSettingsRoute extends React.Component {
       spaceId: currentSpaceId,
     });
 
-    showChangeSpaceModal({
+    beginSpaceChange({
       organizationId: currentOrganizationId,
       space,
       onSubmit: async (newProductRatePlan) => {

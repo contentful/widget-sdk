@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -24,7 +24,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showDialog: jest.fn(),
+  beginSpaceChange: jest.fn(),
   showUpgradeSpaceDialog: jest.fn(),
 }));
 
@@ -150,7 +150,7 @@ describe('UpgradeBanner', () => {
         organizationId: spaceContextMocked.space.data.organization.sys.id,
         spaceId: spaceContextMocked.space.data.sys.id,
       });
-      expect(showUpgradeSpaceDialog).toBeCalledWith({
+      expect(beginSpaceChange).toBeCalledWith({
         organizationId: spaceContextMocked.space.data.organization.sys.id,
         space: spaceContextMocked.space.data,
         onSubmit: expect.any(Function),

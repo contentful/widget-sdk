@@ -5,7 +5,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
@@ -218,11 +218,9 @@ export const useEnvironmentsRouteState = (props) => {
   const OpenUpgradeSpaceDialog = () => {
     const { organizationId, getSpaceData } = props;
 
-    showUpgradeSpaceDialog({
+    beginSpaceChange({
       organizationId,
       space: getSpaceData(),
-      action: 'change',
-      scope: 'space',
       onSubmit: () => FetchEnvironments(),
     });
   };

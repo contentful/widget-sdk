@@ -8,6 +8,8 @@ import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataP
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
+import { go } from 'states/Navigator';
+import { isSpacePurchaseFlowAllowedForChange } from 'features/space-purchase';
 
 /**
  * Creates a string to be passed to the notification
@@ -37,29 +39,31 @@ export const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) =>
  * @param {object?} space - optional space to upgrade
  * @param {function} onSubmit
  */
-export async function showDialog({ organizationId, space, onSubmit: onSuccess }) {
-  // onSubmit is aliased to onSuccess because it's actually fired once the modal is successful, not every time.
-  // Will be updated in a later PR.
-
-  if (!organizationId) {
-    throw new Error('organizationId not supplied for space change');
-  }
+export async function beginSpaceChange({ organizationId, space, onSubmit: onModalSuccess }) {
+  if (!organizationId) throw new Error('organizationId not supplied for space change');
+  if (!space) throw new Error('space not supplied for space change');
 
   const organization = await getOrganization(organizationId);
-
-  if (!space) {
-    throw new Error('space not supplied for space change');
-  }
-
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
   const spacePlan = await getSingleSpacePlan(orgEndpoint, space.sys.id);
+
+  // if newSpacePurchase flag is on and org is OnDemand or Free, they should go to /new_space
+  const spacePurchaseFlowAllowedForPlanChange = await isSpacePurchaseFlowAllowedForChange(
+    organizationId
+  );
 
   if (spacePlan && spacePlan.committed) {
     openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
   } else if (isPOCSpacePlan(spacePlan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.POC);
+  } else if (spacePurchaseFlowAllowedForPlanChange) {
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'upgrade_space'],
+      params: { orgId: organizationId, spaceId: space.sys.id },
+    });
+    return;
   } else {
-    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+    const modalSuccess = await ModalLauncher.open(({ isShown, onClose }) => (
       <SpaceWizardsWrapper
         isShown={isShown}
         onClose={onClose}
@@ -68,8 +72,8 @@ export async function showDialog({ organizationId, space, onSubmit: onSuccess })
       />
     ));
 
-    if (result) {
-      onSuccess && onSuccess(result);
+    if (modalSuccess) {
+      onModalSuccess(modalSuccess);
     }
   }
 }

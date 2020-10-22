@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import * as Fake from 'test/helpers/fakeFactory';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner } from 'services/OrganizationRoles';
 import { FileSizeLimitWarning } from './FileSizeLimitWarning';
@@ -26,8 +26,7 @@ jest.mock('services/OrganizationRoles', () => ({
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showChangeSpaceModal: jest.fn(),
-  showDialog: jest.fn(),
+  beginSpaceChange: jest.fn(),
 }));
 
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
@@ -76,7 +75,7 @@ describe('FileSizeLimitWarning', () => {
       spaceId: mockSpace.sys.id,
     });
 
-    expect(showChangeSpaceModal).toBeCalledWith({
+    expect(beginSpaceChange).toBeCalledWith({
       organizationId: mockOrganization.sys.id,
       space: mockSpace,
     });

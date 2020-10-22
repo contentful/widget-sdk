@@ -8,7 +8,7 @@ import { getVariation } from 'LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 import * as Fake from 'test/helpers/fakeFactory';
@@ -43,7 +43,7 @@ jest.mock('utils/ResourceUtils', () => ({
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showDialog: jest.fn(),
+  beginSpaceChange: jest.fn(),
   showUpgradeSpaceDialog: jest.fn(),
 }));
 
@@ -367,7 +367,7 @@ describe('EnvironmentsRoute', () => {
         organizationId: defaultProps.organizationId,
         spaceId: defaultProps.spaceId,
       });
-      expect(showUpgradeSpaceDialog).toBeCalled();
+      expect(beginSpaceChange).toBeCalled();
 
       expect(screen.queryByTestId('subscriptionLink')).toBeNull();
     });

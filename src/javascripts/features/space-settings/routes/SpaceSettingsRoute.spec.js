@@ -4,10 +4,7 @@ import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { getSpace } from 'services/TokenStore';
-import {
-  showDialog as showChangeSpaceModal,
-  getNotificationMessage,
-} from 'services/ChangeSpaceService';
+import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
 
@@ -20,8 +17,7 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showChangeSpaceModal: jest.fn(),
-  showDialog: jest.fn(),
+  beginSpaceChange: jest.fn(),
   getNotificationMessage: jest.fn(),
 }));
 
@@ -101,8 +97,8 @@ describe('SpaceSettingsRoute', () => {
 
   it('should with call changeSpaceDialog and track the CTA click', async () => {
     getSingleSpacePlan.mockResolvedValue(mediumPlan);
-    showChangeSpaceModal.mockImplementation((argumentVariables) => {
-      // Pretend that the user selected the large plan in the showChangeSpaceModal.
+    beginSpaceChange.mockImplementation((argumentVariables) => {
+      // Pretend that the user selected the large plan in the beginSpaceChange.
       argumentVariables.onSubmit(largePlan);
     });
 
@@ -113,14 +109,14 @@ describe('SpaceSettingsRoute', () => {
     );
     userEvent.click(screen.getByTestId('upgrade-space-button'));
 
-    await waitFor(() => expect(showChangeSpaceModal).toBeCalled());
+    await waitFor(() => expect(beginSpaceChange).toBeCalled());
 
     expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId: testSpace.organization.sys.id,
       spaceId: testSpace.sys.id,
     });
 
-    expect(showChangeSpaceModal).toBeCalledWith({
+    expect(beginSpaceChange).toBeCalledWith({
       organizationId: testSpace.organization.sys.id,
       space: testSpace,
       onSubmit: expect.any(Function),
