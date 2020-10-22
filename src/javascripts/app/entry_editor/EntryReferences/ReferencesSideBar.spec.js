@@ -55,6 +55,10 @@ jest.mock('services/PubSubService', () => ({
   }),
 }));
 
+jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
+  getReleasesFeatureVariation: jest.fn().mockResolvedValue(true),
+}));
+
 const MockPovider = ({ children, references, selectedEntities, dispatch }) => (
   <ReferencesContext.Provider value={{ state: { references, selectedEntities }, dispatch }}>
     {children}

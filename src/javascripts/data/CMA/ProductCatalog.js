@@ -12,6 +12,9 @@ export const FEATURES = {
   CONTENT_WORKFLOW_TASKS: 'tasks',
   SCHEDULED_PUBLISHING: 'scheduled_publishing',
   PC_CONTENT_TAGS: 'content_tags',
+  PC_SPACE_RELEASES: 'releases',
+  PC_SPACE_REFERENCE_TREE: 'reference_tree',
+  PC_ORG_PLANNER_APP: 'planner_app',
 };
 
 // Features used commonly: we fetch them (using the same request)

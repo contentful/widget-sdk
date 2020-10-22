@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, wait, fireEvent, act, waitFor } from '@testing-library/react';
+import { render, wait, fireEvent, act } from '@testing-library/react';
 import { upperFirst } from 'lodash';
 import { BulkActionsRow } from './BulkActionsRow';
 import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation } from 'LaunchDarkly';
+import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -59,6 +59,10 @@ jest.mock('services/PubSubService', () => ({
   }),
 }));
 
+jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
+  useFeatureFlagAddToRelease: jest.fn().mockReturnValue({ addToReleaseEnabled: true }),
+}));
+
 const performer = {
   archive: jest.fn().mockResolvedValue('success'),
   unarchive: jest.fn().mockResolvedValue('success'),
@@ -103,17 +107,15 @@ const renderComponent = (props = {}) => {
   return { updateEntities, onActionComplete, ...result };
 };
 
-const waitForVariationToHaveBeenEvaluatedOnce = async () =>
-  waitFor(() => expect(getVariation).toHaveBeenCalledTimes(1));
-
 describe('BulkActionsRow', () => {
   beforeEach(() => {
     accessChecker.canPerformActionOnEntity.mockReturnValue(true);
     accessChecker.shouldDisable.mockReturnValue(false);
     accessChecker.shouldHide.mockReturnValue(false);
     accessChecker.canUserReadEntities.mockReturnValue(true);
-    getVariation.mockReturnValue(true);
+    useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: true });
   });
+
   it('should hide the component when nothing is selected', () => {
     const { container } = renderComponent();
     expect(container).toBeEmpty();
@@ -149,7 +151,6 @@ describe('BulkActionsRow', () => {
   describe('render action links', () => {
     it('should show all action links', async () => {
       const { getByTestId } = renderComponent({ selectedEntities: generateEntities(1, false) });
-      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(getByTestId('duplicate')).toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(getByTestId('unarchive')).toBeInTheDocument();
@@ -183,7 +184,6 @@ describe('BulkActionsRow', () => {
         selectedEntities: generateEntities(1, false),
         entityType: 'asset',
       });
-      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(queryByTestId('archive')).not.toBeInTheDocument();
       expect(queryByTestId('unarchive')).not.toBeInTheDocument();
@@ -213,11 +213,10 @@ describe('BulkActionsRow', () => {
     });
 
     it('should not display the Add to release action when feature flag is disabled', async () => {
-      getVariation.mockResolvedValue(false);
+      useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: false });
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
-      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(getByTestId('duplicate')).toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(getByTestId('unarchive')).toBeInTheDocument();
@@ -317,11 +316,12 @@ describe('BulkActionsRow', () => {
     });
 
     it('should display the release modal when clicked on "Add to release" action', async () => {
+      useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: true });
+
       const { getByTestId } = renderComponent({
         selectedEntities: generateEntities(5, false),
       });
 
-      await waitForVariationToHaveBeenEvaluatedOnce();
       const link = getByTestId('add to release');
 
       await act(() => {

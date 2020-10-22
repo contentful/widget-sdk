@@ -16,7 +16,7 @@ import { create } from 'access_control/EntityPermissions';
 import { track } from 'analytics/Analytics';
 import { ReferencesContext } from 'app/entry_editor/EntryReferences/ReferencesContext';
 import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import {
   createSuccessMessage,
   createErrorMessage,
@@ -72,7 +72,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   useEffect(() => {
     async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await releasesFeatureFlagVariation();
+      const isAddToReleaseEnabled = await releasesPCFeatureVariation();
       setisAddToReleaseEnabled(isAddToReleaseEnabled);
     }
 

@@ -7,7 +7,7 @@ import PublicationWidget from './PublicationWidget';
 import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
-import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { getOrganizationId } from 'core/services/SpaceEnvContext/utils';
@@ -43,7 +43,7 @@ export default class PublicationWidgetContainer extends Component {
     });
     this.setState({ isStatusSwitch: statusSwitchEnabled });
 
-    const addToReleaseEnabled = await releasesFeatureFlagVariation();
+    const addToReleaseEnabled = await releasesPCFeatureVariation();
     this.setState({ isAddToRelease: addToReleaseEnabled });
 
     this.props.emitter.on(

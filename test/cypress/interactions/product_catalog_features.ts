@@ -5,6 +5,7 @@ const productCatalogOrg = require('../fixtures/responses/product-catalog-org.jso
 const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
 const productCatalogTasks = require('../fixtures/responses/product-catalog-tasks.json');
 const productCatalogScheduledPublishing = require('../fixtures/responses/product-catalog-scheduled-publishing.json');
+const productCatalogReleases = require('../fixtures/responses/product-catalog-releases.json');
 const productCatalogBasicApps = require('../fixtures/responses/product-catalog-basic-apps.json');
 const productCatalogAdvancedApps = require('../fixtures/responses/product-catalog-advanced-apps.json');
 const productCatalogContentTags = require('../fixtures/responses/product-catalog-content-tags.json');
@@ -100,6 +101,26 @@ export const queryForScheduledPublishingInDefaultSpace = {
     }).as('queryForScheduledPublishingInDefaultSpace');
 
     return '@queryForScheduledPublishingInDefaultSpace';
+  },
+};
+
+export const queryForReleasesInDefaultSpace = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "releases" feature for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=releases'),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: productCatalogReleases,
+      },
+    }).as('queryForReleasesInDefaultSpace');
+
+    return '@queryForReleasesInDefaultSpace';
   },
 };
 

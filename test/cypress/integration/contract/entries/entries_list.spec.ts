@@ -21,6 +21,7 @@ import {
   queryForScheduledPublishingInDefaultSpace,
   queryForBasicAppsInDefaultSpace,
   queryForContentTagsInDefaultSpace,
+  queryForReleasesInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -135,6 +136,7 @@ describe('Entries list page', () => {
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
+        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
       cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
       cy.findByTestId('create-entry-button-menu-trigger').click();
@@ -173,6 +175,7 @@ describe('Entries list page', () => {
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -232,6 +235,7 @@ describe('Entries list page', () => {
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

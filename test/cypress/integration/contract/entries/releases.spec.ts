@@ -11,8 +11,18 @@ import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/en
 import { queryForDefaultAssets, severalAssetsBody } from '../../../interactions/assets';
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId, defaultReleaseId } from '../../../util/requests';
-import { FeatureFlag } from '../../../util/featureFlag';
 import { severalReleases } from '../../../fixtures/responses/releases';
+import {
+  queryForAdvancedAppsInDefaultOrg,
+  queryForBasicAppsInDefaultSpace,
+  queryForContentTagsInDefaultSpace,
+  queryForCustomSidebarInDefaultOrg,
+  queryForReleasesInDefaultSpace,
+  queryForSelfConfigureSsoInDefaultOrg,
+  queryForTasksInDefaultSpace,
+  queryForTeamsInDefaultOrg,
+  queryForScimInDefaultOrg,
+} from '../../../interactions/product_catalog_features';
 
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
 
@@ -22,7 +32,6 @@ describe('Releases', () => {
   let getReleaseActionInteraction;
 
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
     interactions = basicServerSetUp();
   });
 
@@ -308,7 +317,7 @@ function basicServerSetUp(): string[] {
 
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['users', 'releases', 'entries'],
+    providers: ['users', 'releases', 'entries', 'product_catalog_features'],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
@@ -317,5 +326,16 @@ function basicServerSetUp(): string[] {
 
   cy.server();
 
-  return defaultRequestsMock();
+  return [
+    ...defaultRequestsMock(),
+    queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+    queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+    queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+    queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+    queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+    queryForScimInDefaultOrg.willFindFeatureEnabled(),
+  ];
 }

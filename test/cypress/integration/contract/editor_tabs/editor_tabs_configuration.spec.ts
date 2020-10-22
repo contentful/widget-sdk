@@ -143,7 +143,6 @@ const saveDefaultContentTypeEditorInterfaceWithCustomEditors = {
 
 describe('Editor tabs configuration', () => {
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
     cy.resetAllFakeServers();
     // TODO: move this to a before block
     cy.startFakeServers({

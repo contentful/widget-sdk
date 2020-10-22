@@ -1,7 +1,7 @@
 import { uniq } from 'lodash';
 import * as JobsService from '../DataManagement/ScheduledActionsService';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import _ from 'lodash';
+import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { getReleases } from 'app/Releases/releasesService';
 
@@ -33,7 +33,7 @@ function getEntities(entityType, ids) {
 }
 
 export async function getJobsData(spaceEndpoint, query) {
-  const releasesFlagEnabled = await getVariation(FLAGS.ADD_TO_RELEASE);
+  const releasesFlagEnabled = await getReleasesFeatureVariation();
   const jobsCollection = await JobsService.getJobs(spaceEndpoint, query);
 
   const jobs = jobsCollection.items;

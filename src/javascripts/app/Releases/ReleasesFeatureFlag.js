@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { getModule } from 'core/NgRegistry';
 import { useAsync } from 'core/hooks';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
+import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export const useFeatureFlagVariation = (featureFlag, defaultValue) => {
@@ -19,23 +19,26 @@ export const useFeatureFlagVariation = (featureFlag, defaultValue) => {
   return { spaceFeatureEnabled: error ? defaultValue : !!data, isSpaceFeatureLoading: isLoading };
 };
 
+export const useProductCatalogFeatureVariation = (featureFlag, defaultValue) => {
+  const load = useCallback(async () => {
+    return await getCurrentSpaceFeature(featureFlag, false);
+  }, [featureFlag]);
+
+  const { data, isLoading, error } = useAsync(load);
+  return { orgFeatureEnabled: error ? defaultValue : !!data, isOrgFeatureLoading: isLoading };
+};
+
 export function useFeatureFlagAddToRelease() {
-  const { spaceFeatureEnabled, isSpaceFeatureLoading } = useFeatureFlagVariation(
-    FLAGS.ADD_TO_RELEASE,
+  const { orgFeatureEnabled, isOrgFeatureLoading } = useProductCatalogFeatureVariation(
+    FEATURES.PC_SPACE_RELEASES,
     false
   );
-  return { addToReleaseEnabled: spaceFeatureEnabled, isAddToReleaseLoading: isSpaceFeatureLoading };
+  return { addToReleaseEnabled: orgFeatureEnabled, isAddToReleaseLoading: isOrgFeatureLoading };
 }
 
 export async function getReleasesFeatureVariation() {
   try {
-    const spaceContext = getModule('spaceContext');
-    const flag = await getVariation(FLAGS.ADD_TO_RELEASE, {
-      spaceId: spaceContext.getId(),
-      environmentId: spaceContext.getEnvironmentId(),
-      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
-    });
-
+    const flag = await getCurrentSpaceFeature(FEATURES.PC_SPACE_RELEASES, false);
     return flag;
   } catch (_e) {
     return false;
