@@ -10,7 +10,7 @@ import {
   TextLink,
   ToggleButton,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import c from 'classnames';
 import { cloneDeep, isEmpty, isEqual, noop } from 'lodash';
@@ -413,12 +413,12 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                   Preview
                                 </Tag>
                                 <div className={styles.nav}>
-                                  <NavigationIcon icon="Apps" size="medium" color="white" />{' '}
+                                  <ProductIcon icon="Apps" size="medium" color="white" />{' '}
                                   <span>Apps</span> <Icon icon="ArrowDown" color="white" />
                                 </div>
                                 <Card className={styles.navItem}>
                                   <span className={styles.navItemIcon}>
-                                    <NavigationIcon icon="Apps" size="small" />{' '}
+                                    <ProductIcon icon="Apps" size="small" />{' '}
                                   </span>
                                   <span>{getNavigationItemValue('name')}</span>
                                 </Card>

@@ -23,11 +23,11 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
         class="Workbench__Workbench__header-icon___1kJlL"
       >
         <div
-          class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--large___3A1HH"
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
           data-test-id="cf-ui-navigation-icon"
         >
           <svg
-            class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
             fill="none"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
@@ -449,11 +449,11 @@ exports[`AppsListPage should match snapshot of apps loaded with limited access 1
         class="Workbench__Workbench__header-icon___1kJlL"
       >
         <div
-          class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--large___3A1HH"
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
           data-test-id="cf-ui-navigation-icon"
         >
           <svg
-            class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
             fill="none"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"

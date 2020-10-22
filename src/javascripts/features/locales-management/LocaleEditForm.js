@@ -4,7 +4,7 @@ import { orderBy } from 'lodash';
 import { Subheading, Form, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   Button,
   Select,
@@ -125,7 +125,7 @@ export class LocaleEditForm extends Component {
           onBack={() => {
             this.props.goToList();
           }}
-          icon={<NavigationIcon icon="Settings" size="large" />}
+          icon={<ProductIcon icon="Settings" size="large" />}
           title={`${this.state.locale.name || 'New locale'}${
             this.state.locale.default ? ' / Default locale' : ''
           }`}

@@ -8,7 +8,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 const addMasterEnvironment = flow(
   update('limits', flow(update('included', add(1)), update('maximum', add(1)))),
@@ -67,10 +67,7 @@ class SpaceUsage extends React.Component {
       <React.Fragment>
         <DocumentTitle title="Usage" />
         <Workbench>
-          <Workbench.Header
-            icon={<NavigationIcon icon="Usage" size="large" />}
-            title="Space usage"
-          />
+          <Workbench.Header icon={<ProductIcon icon="Usage" size="large" />} title="Space usage" />
           <Workbench.Content>
             <ResourceUsageList
               spaceResources={spaceResources}

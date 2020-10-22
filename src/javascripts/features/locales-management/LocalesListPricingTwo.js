@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { LocalesListSidebar } from './LocalesListSidebar';
@@ -33,7 +33,7 @@ export class LocalesListPricingTwo extends React.Component {
     return (
       <Workbench testId="locale-list-workbench">
         <Workbench.Header
-          icon={<NavigationIcon icon="Settings" size="large" />}
+          icon={<ProductIcon icon="Settings" size="large" />}
           title={this.renderTitle()}
         />
         <Workbench.Content type="full">

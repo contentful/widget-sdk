@@ -17,7 +17,7 @@ import {
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import {
-  NavigationIcon,
+  ProductIcon,
   Grid,
   GridItem,
   ModalLauncher,
@@ -119,7 +119,7 @@ export function Dashboard({
     <>
       <DocumentTitle title="Billing" />
       <Workbench>
-        <Workbench.Header title="Billing" icon={<NavigationIcon icon="Billing" size="large" />} />
+        <Workbench.Header title="Billing" icon={<ProductIcon icon="Billing" size="large" />} />
         <Workbench.Content>
           <Grid columns={2} rows={1}>
             {shouldShowBillingDetails && (

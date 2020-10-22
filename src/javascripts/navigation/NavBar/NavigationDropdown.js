@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { noop } from 'lodash';
 import { NewTag } from 'components/shared/NewTag';
 
@@ -102,7 +102,7 @@ const styles = {
     alignItems: 'center',
     color: tokens.colorWhite,
   }),
-  navBarNavigationIcon: css({
+  navBarProductIcon: css({
     marginRight: tokens.spacingM,
   }),
   tag: css({
@@ -158,11 +158,11 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
             }}>
             <span className={styles.navBarListLabel}>
               {item.navIcon ? (
-                <NavigationIcon
+                <ProductIcon
                   icon={item.navIcon}
                   size="medium"
                   color="white"
-                  className={styles.navBarNavigationIcon}
+                  className={styles.navBarProductIcon}
                 />
               ) : (
                 <Icon name={item.icon} />

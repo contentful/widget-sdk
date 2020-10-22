@@ -34,7 +34,7 @@ import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { PlatformTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
@@ -198,7 +198,7 @@ export default function SubscriptionPage({
   return (
     <Workbench testId="subscription-page">
       <Workbench.Header
-        icon={<NavigationIcon icon="Subscription" size="large" />}
+        icon={<ProductIcon icon="Subscription" size="large" />}
         title="Subscription"
       />
       <Workbench.Content className={styles.content}>

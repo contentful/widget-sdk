@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics';
 
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
-import { NavigationIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { useAsync } from 'core/hooks';
 import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
@@ -137,7 +137,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
     <Workbench>
       <Workbench.Header
         title="Subscription"
-        icon={<NavigationIcon icon="Subscription" size="large" />}
+        icon={<ProductIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
         {isLoading && <AssignmentLoadingCard />}

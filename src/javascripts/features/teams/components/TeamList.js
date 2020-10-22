@@ -15,7 +15,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { orderBy } from 'lodash';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllTeams } from '../services/TeamRepository';
@@ -93,7 +93,7 @@ export function TeamList({ readOnlyPermission, orgId }) {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon icon="Teams" size="large" />}
+        icon={<ProductIcon icon="Teams" size="large" />}
         title="Teams"
         actions={
           <div className={styles.headerActions}>

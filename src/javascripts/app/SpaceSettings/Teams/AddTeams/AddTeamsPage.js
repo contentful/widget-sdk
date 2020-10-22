@@ -27,7 +27,7 @@ import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
 
 import RoleSelector from './RoleSelector';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   workbench: css({
@@ -367,7 +367,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     <Workbench className={styles.workbench}>
       <Workbench.Header
         title="Add teams"
-        icon={<NavigationIcon icon="Teams" size="large" />}
+        icon={<ProductIcon icon="Teams" size="large" />}
         onBack={() =>
           go({
             path: ['spaces', 'detail', 'settings', 'teams', 'list'],

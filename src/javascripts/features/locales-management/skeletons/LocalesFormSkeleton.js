@@ -5,12 +5,12 @@ import {
   SkeletonBodyText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 export function LocalesFormSkeleton() {
   return (
     <Workbench>
-      <Workbench.Header onBack={noop} icon={<NavigationIcon icon="Settings" size="large" />} />
+      <Workbench.Header onBack={noop} icon={<ProductIcon icon="Settings" size="large" />} />
       <Workbench.Content>
         <SkeletonContainer
           svgWidth={600}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from '../cma-tokens/TokenResourceManager';
@@ -15,7 +15,7 @@ export const UserCMATokensRoute = () => {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon icon="Token" size="large" />}
+        icon={<ProductIcon icon="Token" size="large" />}
         title={'Personal access tokens'}
       />
       <Workbench.Content type="default">

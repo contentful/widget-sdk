@@ -14,7 +14,7 @@ import _ from 'lodash';
 
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { createIdp, retrieveIdp } from 'features/sso/services/SSOService';
 
@@ -68,7 +68,7 @@ export function SSOPage({ organization }) {
   return (
     <Workbench className="sso-setup">
       <Workbench.Header
-        icon={<NavigationIcon icon="Sso" size="large" />}
+        icon={<ProductIcon icon="Sso" size="large" />}
         title="Single Sign-On (SSO)"
       />
       <Workbench.Content>

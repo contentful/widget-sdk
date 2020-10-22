@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
-import { NavigationIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
@@ -137,7 +137,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
     <Workbench>
       <Workbench.Header
         title="Subscription"
-        icon={<NavigationIcon icon="Subscription" size="large" />}
+        icon={<ProductIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
         {isLoading && <AssignmentLoadingCard />}

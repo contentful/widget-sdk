@@ -21,7 +21,7 @@ import {
   Icon,
 } from '@contentful/forma-36-react-components';
 
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
@@ -180,7 +180,7 @@ const AppsListShell = (props) => (
   <Workbench className={styles.workbench}>
     <Workbench.Header
       title={<Header />}
-      icon={<NavigationIcon icon="Apps" size="large" />}
+      icon={<ProductIcon icon="Apps" size="large" />}
       actions={
         <StateLink path="account.organizations.apps.list" params={{ orgId: props.organizationId }}>
           Manage private apps

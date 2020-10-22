@@ -6,7 +6,7 @@ import {
   TextLink,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { css } from 'emotion';
@@ -92,7 +92,7 @@ export class NewApp extends React.Component {
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
-          icon={<NavigationIcon icon="Apps" size="large" />}
+          icon={<ProductIcon icon="Apps" size="large" />}
         />
         <Workbench.Content type="text">
           <Note className={styles.spacerXl}>

@@ -37,7 +37,7 @@ import {
   getSearchTermFromQuery,
 } from './FilterDefinitions';
 import { Space as SpacePropType, Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsyncFn } from 'core/hooks';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { UserLimitBanner } from './UserLimitBanner';
@@ -231,7 +231,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   return (
     <Workbench testId="organization-users-page">
       <Workbench.Header
-        icon={<NavigationIcon icon="Users" size="large" />}
+        icon={<ProductIcon icon="Users" size="large" />}
         title="Users"
         actions={
           <div className={styles.actionsWrapper}>
