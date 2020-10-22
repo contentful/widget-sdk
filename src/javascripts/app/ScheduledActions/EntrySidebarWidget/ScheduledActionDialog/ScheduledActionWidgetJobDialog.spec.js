@@ -11,6 +11,8 @@ import APIClient from 'data/APIClient';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
+jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entityTitle: () => 'Test' }));
+
 describe('ScheduledActionDialog', () => {
   let dateNowSpy;
   beforeAll(() => {
@@ -18,13 +20,13 @@ describe('ScheduledActionDialog', () => {
     DateMocks.mockNow(dateNowSpy, '2017-06-18T00:00:00.000+00:00');
   });
 
-  const build = () => {
+  const build = (entity) => {
     const props = {
       spaceId: 'spaceId',
       environmentId: 'environmentId',
-      entity: {},
-      validator: { setApiResponseErrors() {} },
-      entryTitle: 'Test',
+      entity,
+      validator: { setApiResponseErrors() {}, run: jest.fn().mockReturnValue(true) },
+      entityTitle: 'Test',
       onCreate: jest.fn(),
       onCancel: jest.fn(),
       isSubmitting: false,
@@ -42,13 +44,13 @@ describe('ScheduledActionDialog', () => {
   };
 
   it('renders scheduling dialog', () => {
-    const [renderResult] = build();
+    const [renderResult] = build(createEntry());
 
     expect(renderResult.getByTestId('schedule-publication-modal')).toBeInTheDocument();
   });
 
   it('calls the onConfirm callback', async () => {
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
 
     await schedulePublication(renderResult);
 
@@ -56,7 +58,7 @@ describe('ScheduledActionDialog', () => {
   });
 
   it('calls the onCancel callback', async () => {
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
     const cancel = renderResult.getByTestId('cancel');
 
     fireEvent.click(cancel);
@@ -74,7 +76,7 @@ describe('ScheduledActionDialog', () => {
   ])('default values are the full hour in the future: %p => %p', async (now, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
 
     await schedulePublication(renderResult);
 
@@ -95,7 +97,7 @@ describe('ScheduledActionDialog', () => {
   ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
 
     const tz = renderResult.getByTestId('autocomplete.input');
 
@@ -128,7 +130,7 @@ describe('ScheduledActionDialog', () => {
   it('prevents to schedule a publication if selected date is in the past', async () => {
     DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).subtract(1, 'hours'));
 
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
 
     await schedulePublication(renderResult);
     expect(renderResult.getByTestId('job-dialog-validation-message')).toBeInTheDocument();
@@ -138,7 +140,17 @@ describe('ScheduledActionDialog', () => {
   it('allows to schedule a publication if selected date is in the future', async () => {
     DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).add(1, 'hours'));
 
-    const [renderResult, props] = build();
+    const [renderResult, props] = build(createEntry());
+
+    await schedulePublication(renderResult);
+    expect(renderResult.queryByTestId('job-dialog-validation-message')).toBeNull();
+    expect(props.onCreate).toHaveBeenCalled();
+  });
+
+  it('allows to schedule an asset', async () => {
+    DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).add(1, 'hours'));
+
+    const [renderResult, props] = build(createAsset());
 
     await schedulePublication(renderResult);
     expect(renderResult.queryByTestId('job-dialog-validation-message')).toBeNull();
@@ -149,14 +161,14 @@ describe('ScheduledActionDialog', () => {
     it('tracks opening the scheduling dialog', () => {
       const createDialogOpenSpy = jest.spyOn(ScheduledActionsAnalytics, 'createDialogOpen');
 
-      build();
+      build(createEntry());
 
       expect(createDialogOpenSpy).toHaveBeenCalledTimes(1);
     });
 
     it('tracks closing the scheduling dialog', () => {
       const createDialogCloseSpy = jest.spyOn(ScheduledActionsAnalytics, 'createDialogClose');
-      const [renderer] = build();
+      const [renderer] = build(createEntry());
 
       renderer.getByTestId('cancel').click();
 
@@ -166,7 +178,7 @@ describe('ScheduledActionDialog', () => {
 
     it('tracks closing dialog after submit', () => {
       const createDialogCloseSpy = jest.spyOn(ScheduledActionsAnalytics, 'createDialogClose');
-      const [renderer] = build();
+      const [renderer] = build(createEntry());
 
       renderer.getByTestId('schedule-publication').click();
 
@@ -183,10 +195,24 @@ describe('ScheduledActionDialog', () => {
       },
     }));
 
-    const [renderResult] = build();
+    const [renderResult] = build(createEntry());
 
     await schedulePublication(renderResult);
 
+    expect(Notification.error).toHaveBeenCalledWith(
+      'Error scheduling Test: Validation failed. Please check the individual fields for errors.'
+    );
+  });
+
+  it('shows the validation message for invalid asset', async () => {
+    jest.spyOn(Notification, 'error').mockImplementation(() => {});
+
+    const [render, props] = build(createAsset());
+    props.validator.run.mockReset().mockReturnValue(false);
+
+    await schedulePublication(render);
+
+    expect(props.validator.run).toHaveBeenCalled();
     expect(Notification.error).toHaveBeenCalledWith(
       'Error scheduling Test: Validation failed. Please check the individual fields for errors.'
     );
@@ -197,4 +223,24 @@ async function schedulePublication(container) {
   const cta = container.getByTestId('schedule-publication');
   fireEvent.click(cta);
   await wait();
+}
+
+function createEntry(entry = {}) {
+  return {
+    ...entry,
+    sys: {
+      id: 'id',
+      ...entry.sys,
+      type: 'Entry',
+    },
+  };
+}
+
+function createAsset() {
+  return {
+    sys: {
+      id: 'id',
+      type: 'Asset',
+    },
+  };
 }

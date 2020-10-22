@@ -5,6 +5,72 @@ import ScheduledActionAction from '../ScheduledActionAction';
 
 jest.mock('analytics/Analytics');
 jest.mock('moment-timezone');
+
+const checkCreateAndCancelActions = (entityType) => {
+  [ScheduledActionAction.Publish, ScheduledActionAction.Unpublish].forEach((action) => {
+    const eventAction = `${entityType}.${action}`;
+
+    it(`create scheduled action with action ${action}`, () => {
+      const jobId = 'job-id';
+      const entityId = 'entity-id';
+      const scheduledFor = {
+        datetime: '2019-07-12T23:37:00.000+05:30',
+      };
+
+      const job = {
+        entity: {
+          sys: {
+            id: entityId,
+            type: 'Link',
+            linkType: entityType,
+          },
+        },
+        sys: {
+          id: jobId,
+        },
+        action: action,
+        scheduledFor,
+      };
+
+      JobsAnalytics.createJob(job);
+
+      expectTrackCalledOnceWith('jobs:create', {
+        action: eventAction,
+        job_id: jobId,
+        entity_id: entityId,
+        scheduled_for: scheduledFor.datetime,
+        timezone_offset: -120,
+      });
+
+      expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
+    });
+
+    it(`cancel scheduled action with action ${action}`, () => {
+      const jobId = 'job-id';
+
+      const job = {
+        sys: {
+          id: jobId,
+        },
+        action: action,
+        entity: {
+          sys: {
+            type: 'Link',
+            linkType: entityType,
+          },
+        },
+      };
+
+      JobsAnalytics.cancelJob(job);
+
+      expectTrackCalledOnceWith('jobs:cancel', {
+        action: eventAction,
+        job_id: jobId,
+      });
+    });
+  });
+};
+
 describe('JobsAnalytics', () => {
   beforeEach(() => {
     jest.spyOn(Analytics, 'track').mockImplementation(() => {});
@@ -44,61 +110,12 @@ describe('JobsAnalytics', () => {
     });
   });
 
-  it.each([
-    [ScheduledActionAction.Publish, 'Entry.publish'],
-    [ScheduledActionAction.Unpublish, 'Entry.unpublish'],
-  ])('CreateJob with action %i', (jobAction, eventAction) => {
-    const jobId = 'job-id';
-    const entityId = 'entity-id';
-    const scheduledFor = {
-      datetime: '2019-07-12T23:37:00.000+05:30',
-    };
-
-    const job = {
-      entity: {
-        sys: {
-          id: entityId,
-        },
-      },
-      sys: {
-        id: jobId,
-      },
-      action: jobAction,
-      scheduledFor,
-    };
-
-    JobsAnalytics.createJob(job);
-
-    expectTrackCalledOnceWith('jobs:create', {
-      action: eventAction,
-      job_id: jobId,
-      entity_id: entityId,
-      scheduled_for: scheduledFor.datetime,
-      timezone_offset: -120,
-    });
-
-    expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
+  describe('Entity type: Entry', () => {
+    checkCreateAndCancelActions('Entry');
   });
 
-  it.each([
-    [ScheduledActionAction.Publish, 'Entry.publish'],
-    [ScheduledActionAction.Unpublish, 'Entry.unpublish'],
-  ])('cancelJob with action %i', (jobAction, eventAction) => {
-    const jobId = 'job-id';
-
-    const job = {
-      sys: {
-        id: jobId,
-      },
-      action: jobAction,
-    };
-
-    JobsAnalytics.cancelJob(job);
-
-    expectTrackCalledOnceWith('jobs:cancel', {
-      action: eventAction,
-      job_id: jobId,
-    });
+  describe('Entity type: Asset', () => {
+    checkCreateAndCancelActions('Asset');
   });
 
   it('trackAlphaEligibilityToIntercom calls Intercom once', () => {

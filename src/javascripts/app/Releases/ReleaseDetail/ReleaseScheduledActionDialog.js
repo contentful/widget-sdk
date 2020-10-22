@@ -30,7 +30,7 @@ function ReleaseActionJobDialog({
       isSubmitting={isSubmitting}
       pendingJobs={pendingJobs}
       isMasterEnvironment={isMasterEnvironment}
-      linkType="release"
+      linkType="Release"
     />
   );
 }

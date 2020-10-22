@@ -16,19 +16,23 @@ const IntercomEventName = {
 };
 
 const AnalyticsAction = {
-  EntryPublish: 'Entry.publish',
-  EntryUnpublish: 'Entry.unpublish',
+  Publish: (entityType) => `${entityType}.publish`,
+  Unpublish: (entityType) => `${entityType}.unpublish`,
 };
 
 /** Will become obsolete once we change action format in the api */
-function convertActionToAnalyticsFormat(jobAction) {
-  switch (jobAction) {
+function formatAnalyticsAction(scheduledAction) {
+  const { action, entity } = scheduledAction || {};
+
+  const entityType = entity?.sys.linkType;
+
+  switch (action) {
     case ScheduledActionAction.Publish:
-      return AnalyticsAction.EntryPublish;
+      return AnalyticsAction.Publish(entityType);
     case ScheduledActionAction.Unpublish:
-      return AnalyticsAction.EntryUnpublish;
+      return AnalyticsAction.Unpublish(entityType);
     default:
-      throw new Error(`unsupported job action ${jobAction}`);
+      throw new Error(`unsupported job action ${action}`);
   }
 }
 
@@ -58,7 +62,7 @@ export function createDialogClose(wasSubmitted) {
 
 export function createJob(job, scheduledForTimezone) {
   const payload = {
-    action: convertActionToAnalyticsFormat(job.action),
+    action: formatAnalyticsAction(job),
     job_id: job.sys.id,
     scheduled_for: job.scheduledFor.datetime,
     entity_id: job.entity.sys.id,
@@ -73,7 +77,7 @@ export function createJob(job, scheduledForTimezone) {
 
 export function cancelJob(job) {
   const payload = {
-    action: convertActionToAnalyticsFormat(job.action),
+    action: formatAnalyticsAction(job),
     job_id: job.sys.id,
   };
   return Analytics.track(AnalyticsEventName.CancelJob, payload);

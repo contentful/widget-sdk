@@ -77,7 +77,7 @@ const ReleaseWorkBenchSideBar = ({
               onCancel={handleScheduleCancel}
               isReadOnly={false}
               showAllScheduleLink={false}
-              linkType="release"
+              linkType="Release"
             />
           )}
         </>

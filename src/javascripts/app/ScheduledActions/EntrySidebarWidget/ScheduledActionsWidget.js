@@ -38,6 +38,7 @@ import {
 
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
+import localeStore from 'services/localeStore';
 
 const styles = {
   jobsSkeleton: css({
@@ -117,10 +118,16 @@ export default function ScheduledActionsWidget({
   const [isDialogShown, setIsDialogShown] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const publishedAt = getPublishedAt(entity);
-  const entryTitle = EntityFieldValueSpaceContext.entryTitle({
-    getContentTypeId: () => entity.sys.contentType.sys.id,
-    data: entity,
-  });
+  const entityType = entity.sys.type;
+  const entityTitle =
+    EntityFieldValueSpaceContext.entityTitle(
+      {
+        getType: () => entityType,
+        getContentTypeId: () => entity.sys.contentType.sys.id,
+        data: entity,
+      },
+      localeStore.getFocusedLocale().code
+    ) || 'Untitled';
 
   const hasActiveScheduledAction = (jobs) => jobs.find((job) => job.sys.status === 'scheduled');
 
@@ -162,7 +169,7 @@ export default function ScheduledActionsWidget({
           environmentId,
           entityId: entity.sys.id,
           action: action,
-          linkType: 'Entry',
+          linkType: entityType,
           scheduledAt,
         }),
         { 'environment.sys.id': environmentId }
@@ -171,13 +178,13 @@ export default function ScheduledActionsWidget({
     } catch (error) {
       if (400 === error.status) {
         Notification.error(
-          `Unable to schedule ${entryTitle}. There is a limit of 200 scheduled entries at any one time.`
+          `Unable to schedule ${entityTitle}. There is a limit of 200 scheduled entries at any one time.`
         );
       } else {
-        Notification.error(`${entryTitle} failed to schedule`);
+        Notification.error(`${entityTitle} failed to schedule`);
       }
       setIsCreatingJob(false);
-      logger.logError(`Entry failed to schedule`, {
+      logger.logError(`${entityType} failed to schedule`, {
         error,
         message: error.message,
       });
@@ -188,7 +195,7 @@ export default function ScheduledActionsWidget({
     setIsCreatingJob(true);
     const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
-      Notification.success(`${entryTitle} was scheduled successfully`);
+      Notification.success(`${entityTitle} was scheduled successfully`);
       setIsCreatingJob(false);
       setIsDialogShown(false);
       trackCreatedJob(job, timezone);
@@ -218,14 +225,14 @@ export default function ScheduledActionsWidget({
 
   useEffect(() => {
     if (showToast) {
-      Notification.success('Entry was successfully published.');
+      Notification.success(`${entityType} was successfully published.`);
     }
-  }, [showToast]);
+  }, [showToast, entityType]);
 
   const failedScheduleNote = (scheduledAt) => {
     return (
       <>
-        Due to validation errors this entry failed to {lastJob.action} on{' '}
+        Due to validation errors this {entityType.toLowerCase()} failed to {lastJob.action} on{' '}
         <DateTime date={scheduledAt} />. Please check individual fields and try your action again.
       </>
     );
@@ -239,7 +246,7 @@ export default function ScheduledActionsWidget({
         primary={primary}
         isScheduled={hasScheduledActions}
         entity={entity}
-        entryTitle={entryTitle}
+        entryTitle={entityTitle}
         secondary={secondary}
         revert={revert}
         isSaving={isSaving}
@@ -251,7 +258,7 @@ export default function ScheduledActionsWidget({
             spaceId,
             environmentId,
             confirmLabel: 'Schedule anyway',
-            modalTitle: 'Are you sure you want to schedule this entry to publish?',
+            modalTitle: `Are you sure you want to schedule this ${entityType.toLowerCase()} to publish?`,
           });
 
           if (isConfirmed) {
@@ -271,7 +278,7 @@ export default function ScheduledActionsWidget({
       )}
       {error && (
         <Note noteType="warning" className={styles.warningNote}>
-          We were unable to load the schedule for this entry.{' '}
+          We were unable to load the schedule for this {entityType.toLowerCase()}.{' '}
           <TextLink onClick={() => fetchJobs()}>Please refresh.</TextLink>
         </Note>
       )}
@@ -286,7 +293,7 @@ export default function ScheduledActionsWidget({
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
-              linkType="entry"
+              linkType={entityType}
             />
           )}
         </>
@@ -296,7 +303,7 @@ export default function ScheduledActionsWidget({
           isMasterEnvironment={isMasterEnvironment}
           entity={entity}
           validator={validator}
-          entryTitle={entryTitle}
+          entityTitle={entityTitle}
           pendingJobs={pendingJobs}
           onCreate={(newJob, timezone) => {
             handleCreate(newJob, timezone);

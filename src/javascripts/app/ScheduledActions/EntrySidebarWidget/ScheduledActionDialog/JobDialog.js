@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import { css } from 'emotion';
@@ -69,6 +69,7 @@ function JobDialog({
   isSubmitting,
   pendingJobs,
   isMasterEnvironment,
+  validationError,
   linkType,
 }) {
   const now = moment(Date.now());
@@ -78,46 +79,10 @@ function JobDialog({
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [action, setAction] = useState(ScheduledAction.Publish);
   const [timezone, setTimezone] = useState(currentTimezone);
-  const [isSubmitDisabled, setSubmitDisabled] = useState(isSubmitting);
-  const [formError, setFormError] = useState('');
 
   useEffect(() => {
     trackDialogOpen();
   }, []);
-
-  const validateForm = useCallback(
-    (onFormValid) => {
-      if (
-        pendingJobs &&
-        pendingJobs.length > 0 &&
-        pendingJobs.find(
-          (job) =>
-            job.scheduledFor.datetime ===
-            moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
-        )
-      ) {
-        setFormError(
-          'There is already an action scheduled for the selected time, please review the current schedule.'
-        );
-        setSubmitDisabled(false);
-        return;
-      } else {
-        setFormError(null);
-      }
-
-      if (moment(formatScheduledAtDate({ date, time, timezone })).isAfter(moment.now())) {
-        setFormError(null);
-        if (onFormValid) {
-          onFormValid();
-        }
-      } else {
-        setFormError("The selected time can't be in the past");
-      }
-
-      setSubmitDisabled(false);
-    },
-    [time, timezone, date, pendingJobs]
-  );
 
   function getSuggestedDate() {
     return pendingJobs && pendingJobs.length !== 0
@@ -205,10 +170,10 @@ function JobDialog({
                   <TimezoneNote date={date} time={time} timezone={timezone} />
                 </FieldGroup>
               )}
-              {formError && (
+              {validationError && (
                 <FieldGroup>
                   <Note noteType="negative" testId="job-dialog-validation-message">
-                    {formError}
+                    {validationError}
                   </Note>
                 </FieldGroup>
               )}
@@ -219,10 +184,9 @@ function JobDialog({
               testId="schedule-publication"
               type="submit"
               loading={isSubmitting}
-              disabled={isSubmitDisabled}
+              disabled={Boolean(isSubmitting || validationError)}
               onClick={() => {
-                setSubmitDisabled(true);
-                handleSubmit({ validateForm, action, date, time, timezone });
+                handleSubmit({ action, date, time, timezone });
                 trackDialogClose(true);
               }}>
               Schedule
@@ -245,6 +209,7 @@ JobDialog.propTypes = {
   showUnpublish: PropTypes.bool,
   isMasterEnvironment: PropTypes.bool,
   linkType: PropTypes.string.isRequired,
+  validationError: PropTypes.string,
 };
 
 export default JobDialog;

@@ -138,7 +138,7 @@ Divider.propTypes = {
   }),
 };
 
-const JobsTimeline = ({
+const ScheduledActionsTimeline = ({
   isMasterEnvironment,
   jobs,
   onCancel,
@@ -192,21 +192,21 @@ const JobsTimeline = ({
   );
 };
 
-JobsTimeline.propTypes = {
+ScheduledActionsTimeline.propTypes = {
   jobs: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   isMasterEnvironment: PropTypes.bool.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   showAllScheduleLink: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
-  linkType: PropTypes.string.isRequired,
+  linkType: PropTypes.oneOf(['Entry', 'Asset', 'Release']),
 };
 
-JobsTimeline.defaultProps = {
+ScheduledActionsTimeline.defaultProps = {
   onCancel: () => {},
   showAllScheduleLink: true,
   size: 'default',
   hasAlphaTag: false,
 };
 
-export default JobsTimeline;
+export default ScheduledActionsTimeline;

@@ -17,6 +17,7 @@ import { FileSizeLimitWarning } from './FileSizeLimitWarning';
 import { shouldHide } from 'access_control/AccessChecker';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { ScheduledActionsPageLink } from 'app/ScheduledActions';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -108,6 +109,9 @@ export const AssetView = ({ goTo }) => {
           />
         );
       }}
+      renderSavedViewsActions={() => (
+        <ScheduledActionsPageLink isMasterEnvironment={isMasterEnvironment} />
+      )}
       renderEmptyState={({ updateEntities }, className) => (
         <AssetsEmptyState
           className={className}

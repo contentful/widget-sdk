@@ -8,6 +8,7 @@ import {
   createJob as createJobService,
   cancelJob,
 } from '../DataManagement/ScheduledActionsService';
+import localeStore from 'services/localeStore';
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -20,8 +21,9 @@ const commandTemplate = {
   isRestricted: () => false,
 };
 
+jest.mock('services/localeStore');
 jest.mock('../DataManagement/ScheduledActionsService');
-jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entryTitle: () => 'Test' }));
+jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entityTitle: () => 'Test' }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true),
 }));
@@ -30,6 +32,7 @@ describe('<ScheduledActionsWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
+    jest.spyOn(localeStore, 'getFocusedLocale').mockReturnValue({ code: 'en-US' });
   });
 
   const build = (props) => {
@@ -288,7 +291,7 @@ describe('<ScheduledActionsWidget />', () => {
     createJobService.mockRejectedValueOnce(new Error());
     getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
 
-    const notPublishedEntry = { sys: { id: 'entryId' } };
+    const notPublishedEntry = { sys: { id: 'entryId', type: 'Entry' } };
     const [renderResult] = build({ entity: notPublishedEntry });
     await wait();
 
@@ -346,7 +349,7 @@ function createJob(job = {}) {
 function createPendingJob(job = {}) {
   return createJob({
     ...job,
-    entity: { sys: { id: 'id' } },
+    entity: { sys: { id: 'id', type: 'Entry' } },
     sys: { ...job.sys, status: 'scheduled' },
   });
 }
@@ -365,6 +368,7 @@ function createEntry(entry = {}) {
     sys: {
       id: defaultEntryId(),
       ...entry.sys,
+      type: 'Entry',
     },
   };
 }

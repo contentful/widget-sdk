@@ -110,8 +110,8 @@ export default class PublicationWidgetContainer extends Component {
       <ScheduledActionsFeatureFlag>
         {({ currentVariation }) => {
           const isJobsFeatureEnabled = currentVariation;
-          const isAssetOrDeletedEntry = !entity || entity.sys.type !== 'Entry';
-          return !isJobsFeatureEnabled || isAssetOrDeletedEntry ? (
+          const isDeletedEntity = !entity;
+          return !isJobsFeatureEnabled || isDeletedEntity ? (
             <PublicationWidget
               status={status}
               entityId={get(entity, 'sys.id')}
