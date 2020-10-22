@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { get } from 'lodash';
 import { Workbench } from '@contentful/forma-36-react-components';
 import ContentTypePageActions from './ContentTypePageActions';
@@ -18,7 +18,6 @@ import { getEntryConfiguration } from 'app/entry_editor/DefaultConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import useCreateActions from 'app/ContentModel/Editor/Actions';
 
 function isEntryEditorWidget(widget) {
   return widget.locations?.includes(WidgetLocation.ENTRY_EDITOR);
@@ -27,106 +26,95 @@ function isEntryEditorWidget(widget) {
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
 
-  const {
-    actions,
-    contentTypeModel,
-    editorInterface,
-    setEditorInterface,
-    contextState,
-    setContextDirty,
-  } = useCreateActions({
-    isNew: props.isNew,
-    contentType: props.contentType,
-    contentTypeIds: props.contentTypeIds,
-    editorInterface: props.editorInterface,
-    publishedContentType: props.publishedContentType,
-    extensions: props.extensions,
-    saveContentType: props.saveContentType,
-    updateContextDirty: props.updateContextDirty,
-  });
+  const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
+  const [entryEditorConfiguration, updateEntryEditorConfiguration] = useState(
+    props.editorConfiguration
+  );
 
-  useEffect(() => {
-    // We need to pass the fresh content type editor state to the saveAndClose action
-    props.initRequestLeaveConfirmation(actions.saveAndClose);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contentTypeModel]);
+  const onUpdateConfiguration = useCallback(
+    (configuration) => {
+      updateSidebarConfiguration(configuration);
+      props.actions.updateSidebarConfiguration(configuration);
+    },
+    [updateSidebarConfiguration, props.actions]
+  );
 
-  const onUpdateConfiguration = (sidebar) => {
-    setEditorInterface((editorInterface) => ({ ...editorInterface, sidebar }));
-    setContextDirty(true);
-  };
-
-  const onEntryEditorUpdateConfiguration = (editors) => {
-    setEditorInterface((editorInterface) => ({ ...editorInterface, editors }));
-    setContextDirty(true);
-  };
+  const onEntryEditorUpdateConfiguration = useCallback(
+    (configuration) => {
+      updateEntryEditorConfiguration(configuration);
+      props.actions.updateEditorConfiguration(configuration);
+    },
+    [updateEntryEditorConfiguration, props.actions]
+  );
 
   return (
     <Workbench>
       <Workbench.Header
-        title={contentTypeModel.name}
+        title={props.contentTypeName}
         icon={<ProductIcon icon="ContentModel" size="large" color="positive" />}
-        description={contentTypeModel.description}
+        description={props.contentTypeData.description}
         actions={
           <ContentTypePageActions
             isNew={props.isNew}
             canEdit={props.canEdit}
-            save={actions.save}
-            delete={actions.delete}
-            cancel={actions.cancel}
-            duplicate={actions.duplicate}
-            showMetadataDialog={actions.showMetadataDialog}
+            save={props.actions.save}
+            delete={props.actions.delete}
+            cancel={props.actions.cancel}
+            duplicate={props.actions.duplicate}
+            showMetadataDialog={props.actions.showMetadataDialog}
           />
         }
       />
       <Workbench.Content type="text">
         <EditorFieldTabs
-          fieldsCount={contentTypeModel.fields.length}
+          fieldsCount={props.contentTypeData.fields.length}
           currentTab={props.currentTab}
           hasAdvancedExtensibility={props.hasAdvancedExtensibility}
         />
         <form name="contentTypeForm">
           {props.currentTab === 'fields' && (
             <React.Fragment>
-              <DocumentTitle title={[contentTypeModel.name, 'Content Model']} />
+              <DocumentTitle title={[props.contentTypeData.name, 'Content Model']} />
               <FieldsList
-                displayField={contentTypeModel.displayField}
+                displayField={props.contentTypeData.displayField}
                 canEdit={props.canEdit}
-                fields={contentTypeModel.fields}
-                actions={actions}
+                fields={props.contentTypeData.fields}
+                actions={props.actions}
               />
             </React.Fragment>
           )}
           {props.currentTab === 'preview' && (
             <React.Fragment>
-              <DocumentTitle title={['Preview', contentTypeModel.name, 'Content Model']} />
+              <DocumentTitle title={['Preview', props.contentTypeData.name, 'Content Model']} />
               <ContentTypePreview
-                isDirty={contextState.dirty}
-                publishedVersion={get(contentTypeModel, 'sys.publishedVersion')}
-                loadPreview={actions.loadPreview}
+                isDirty={props.isDirty}
+                publishedVersion={get(props.contentTypeData, 'sys.publishedVersion')}
+                loadPreview={props.actions.loadPreview}
               />
             </React.Fragment>
           )}
           {props.hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
-            <React.Fragment>
+            <>
               <DocumentTitle
-                title={['Sidebar Configuration', contentTypeModel.name, 'Content Model']}
+                title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
               />
               <div>
                 <SidebarConfiguration
-                  configuration={editorInterface.sidebar}
+                  configuration={sidebarConfiguration}
                   extensions={props.extensions}
                   onUpdateConfiguration={onUpdateConfiguration}
                 />
               </div>
-            </React.Fragment>
+            </>
           )}
           {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
-              <DocumentTitle title={['Entry editors', contentTypeModel.name, 'Content Model']} />
+              <DocumentTitle
+                title={['Entry editors', props.contentTypeData.name, 'Content Model']}
+              />
               <div>
                 <EntryEditorConfiguration
-                  configuration={editorInterface.editors}
+                  configuration={entryEditorConfiguration}
                   customWidgets={props.extensions.filter(isEntryEditorWidget)}
                   getDefaultEntryEditorConfiguration={getEntryConfiguration.bind(
                     null,
@@ -144,11 +132,11 @@ export default function ContentTypesPage(props) {
           <div>
             <FieldsSection
               canEdit={props.canEdit}
-              showNewFieldDialog={actions.showNewFieldDialog}
-              fieldsUsed={contentTypeModel.fields.length}
+              showNewFieldDialog={props.actions.showNewFieldDialog}
+              fieldsUsed={props.contentTypeData.fields.length}
             />
             <EntryEditorSection />
-            <ContentTypeIdSection contentTypeId={contentTypeModel.sys.id} />
+            <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
             <DocumentationSection />
           </div>
         </Workbench.Sidebar>
@@ -158,14 +146,32 @@ export default function ContentTypesPage(props) {
 }
 
 ContentTypesPage.propTypes = {
+  isDirty: PropTypes.bool.isRequired,
   isNew: PropTypes.bool.isRequired,
-  contentTypeIds: PropTypes.any.isRequired,
-  contentType: PropTypes.object.isRequired,
+  contentTypeName: PropTypes.string.isRequired,
+  contentTypeData: PropTypes.object.isRequired,
   canEdit: PropTypes.bool.isRequired,
   currentTab: PropTypes.string.isRequired,
+  actions: PropTypes.shape({
+    showNewFieldDialog: PropTypes.object.isRequired,
+    showMetadataDialog: PropTypes.object.isRequired,
+    save: PropTypes.object.isRequired,
+    delete: PropTypes.object.isRequired,
+    cancel: PropTypes.object.isRequired,
+    duplicate: PropTypes.object.isRequired,
+    openFieldDialog: PropTypes.func.isRequired,
+    setFieldAsTitle: PropTypes.func.isRequired,
+    toggleFieldProperty: PropTypes.func.isRequired,
+    deleteField: PropTypes.func.isRequired,
+    undeleteField: PropTypes.func.isRequired,
+    updateOrder: PropTypes.func.isRequired,
+    updateSidebarConfiguration: PropTypes.func.isRequired,
+    updateEditorConfiguration: PropTypes.func.isRequired,
+    loadPreview: PropTypes.func.isRequired,
+  }).isRequired,
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
-  editorInterface: PropTypes.any,
-  publishedContentType: PropTypes.any,
+  sidebarConfiguration: PropTypes.array,
+  editorConfiguration: PropTypes.array,
   // TODO: rename to "widgets". Make sure it "isRequired".
   extensions: PropTypes.array,
   spaceData: PropTypes.shape({
@@ -173,7 +179,4 @@ ContentTypesPage.propTypes = {
     environmentId: PropTypes.string.isRequired,
     organizationId: PropTypes.string.isRequired,
   }),
-  saveContentType: PropTypes.func.isRequired,
-  updateContextDirty: PropTypes.func.isRequired,
-  initRequestLeaveConfirmation: PropTypes.func.isRequired,
 };
