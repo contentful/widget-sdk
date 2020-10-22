@@ -5,6 +5,7 @@ import * as Navigator from 'states/Navigator';
 import * as entityCreator from 'components/app_container/entityCreator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
+jest.mock('navigation/SlideInNavigator/withPromise');
 jest.mock('navigation/SlideInNavigator/index');
 jest.mock('states/Navigator');
 jest.mock('components/app_container/entityCreator');
@@ -104,6 +105,36 @@ describe('createNavigatorApi', () => {
         expect(result).toEqual({
           navigated: true,
           entity: mockEntry,
+        });
+      });
+
+      it('rejects on error in navigateToContentEntity with waitForClose', async () => {
+        const spaceContext = {
+          cma: {
+            getEntry: () => Promise.reject({ code: 'SomeError' }),
+          },
+        };
+
+        let err
+        const navigatorApi = buildApi({ spaceContext });
+        await navigatorApi
+          .openEntry('my_id', { slideIn: { waitForClose: true } })
+          .catch(e => err = e)
+        expect(err).toBeTruthy()
+      });
+
+      it('resolves if entity not found after navigateToContentEntity with waitForClose', async () => {
+        const spaceContext = {
+          cma: {
+            getEntry: () => Promise.reject({ code: 'NotFound' }),
+          },
+        };
+
+        const navigatorApi = buildApi({ spaceContext });
+        const result = await navigatorApi.openEntry('my_id', { slideIn: { waitForClose: true } });
+        expect(result).toEqual({
+          navigated: true,
+          entity: undefined,
         });
       });
 
