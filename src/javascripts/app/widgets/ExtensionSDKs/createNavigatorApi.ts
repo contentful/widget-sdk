@@ -6,7 +6,6 @@ import * as Navigator from 'states/Navigator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { find } from 'lodash';
 import * as entityCreator from 'components/app_container/entityCreator';
-import get from 'lodash/get';
 import localeStore from 'services/localeStore';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
