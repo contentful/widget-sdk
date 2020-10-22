@@ -6,9 +6,18 @@ import {
   getEnabledRichTextOptions,
   groupValidations,
 } from 'features/content-model-editor';
-import { extend, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
-export async function openFieldDialog($scope, field, widget) {
+export async function openFieldDialog({
+  contentTypeModel,
+  setContentTypeModel,
+  field,
+  widget,
+  updateWidgetSettings,
+  setContextDirty,
+  editorInterface,
+  extensions,
+}) {
   const spaceContext = getModule('spaceContext');
 
   const updateFieldOnScope = (
@@ -34,7 +43,9 @@ export async function openFieldDialog($scope, field, widget) {
     const { itemValidations, baseValidations } = groupValidations(validationFields);
 
     if (isTitle) {
-      $scope.contentType.data.displayField = field.id;
+      setContentTypeModel((state) => {
+        return { ...state, data: { ...state.data, displayField: field.id } };
+      });
     }
 
     const isRichText = field.type === 'RichText';
@@ -71,30 +82,33 @@ export async function openFieldDialog($scope, field, widget) {
       validations: fieldValidations,
     };
 
-    const updatedCTfields = $scope.contentType.data.fields.map((field) =>
+    const updatedCTfields = contentTypeModel.data.fields.map((field) =>
       field.id === updatedField.id ? updatedField : field
     );
-    $scope.contentType.data.fields = updatedCTfields;
 
-    // update widget on scope with data from React component
-    extend(widget, {
+    setContentTypeModel((ct) => {
+      ct.data.fields = updatedCTfields;
+      return ct;
+    });
+
+    updateWidgetSettings({
+      ...widget,
       widgetId: widgetSettings.id,
       widgetNamespace: widgetSettings.namespace,
       settings: widgetSettings.params,
       fieldId: field.apiName,
     });
 
-    $scope.context.dirty = true;
-    $scope.$applyAsync();
+    setContextDirty(true);
   };
 
   return openFieldModalDialog(
     field,
     widget,
     spaceContext,
-    $scope.contentType,
+    contentTypeModel,
     updateFieldOnScope,
-    $scope.editorInterface,
-    $scope.customWidgets
+    editorInterface,
+    extensions
   );
 }
