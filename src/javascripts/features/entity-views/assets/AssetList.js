@@ -12,7 +12,7 @@ const styles = {
   }),
 };
 
-export function AssetList({ isLoading, assets = [], updateAssets }) {
+export function AssetList({ isLoading, assets = [], updateAssets, scheduledActions = [] }) {
   const displayedFields = [
     {
       id: 'file',
@@ -47,6 +47,7 @@ export function AssetList({ isLoading, assets = [], updateAssets }) {
       className={styles.table}
       displayedFields={displayedFields}
       entities={assets}
+      jobs={scheduledActions}
       entityType="asset"
       isLoading={isLoading}
       renderDisplayField={(props) => <DisplayField {...props} />}
@@ -58,5 +59,6 @@ export function AssetList({ isLoading, assets = [], updateAssets }) {
 AssetList.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   assets: PropTypes.array,
+  scheduledActions: PropTypes.array,
   updateAssets: PropTypes.func.isRequired,
 };

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { AddAssetButton } from './AddAssetButton';
 import { AssetList } from './AssetList';
@@ -18,6 +18,8 @@ import { shouldHide } from 'access_control/AccessChecker';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { ScheduledActionsPageLink } from 'app/ScheduledActions';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -72,6 +74,7 @@ export const AssetView = ({ goTo }) => {
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const listViewContext = useListView({ entityType, isPersisted: true });
+  const [scheduledActions, setScheduledActions] = useState([]);
   const fetchAssets = useCallback((query) => currentSpace.getAssets(query), [currentSpace]);
 
   const searchControllerProps = {
@@ -81,6 +84,23 @@ export const AssetView = ({ goTo }) => {
     },
     getListQuery: ListQuery.getForAssets,
   };
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+        const { items = [] } = await ScheduledActionsService.getJobs(spaceEndpoint, {
+          order: 'scheduledFor.datetime',
+          'sys.status': 'scheduled',
+          'environment.sys.id': currentEnvironmentId,
+        });
+        setScheduledActions(items);
+      } catch (items) {
+        // ignore error
+      }
+    };
+    init();
+  }, [currentSpaceId, currentEnvironmentId]);
 
   return (
     <EntitiesView
@@ -125,6 +145,7 @@ export const AssetView = ({ goTo }) => {
           className={className}
           assets={entities}
           isLoading={isLoading}
+          scheduledActions={scheduledActions}
           updateAssets={() => updateEntities()}
         />
       )}

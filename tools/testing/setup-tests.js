@@ -22,9 +22,10 @@ console.warn = (message, ...args) => {
   // will deal with all deprecated methods once we upgrade to React 17
   // right now it creates a noice rather than helps
   if (
-    message.includes('componentWillMount has been renamed') ||
-    message.includes('componentWillReceiveProps has been renamed') ||
-    message.includes('componentWillUpdate has been renamed')
+    typeof message === 'string' &&
+    (message.includes('componentWillMount has been renamed') ||
+      message.includes('componentWillReceiveProps has been renamed') ||
+      message.includes('componentWillUpdate has been renamed'))
   ) {
     return;
   }
@@ -44,8 +45,9 @@ console.error = (message, ...args) => {
   }
 
   if (
-    message.includes('componentWillMount has been renamed') ||
-    message.includes('componentWillReceiveProps has been renamed')
+    typeof message === 'string' &&
+    (message.includes('componentWillMount has been renamed') ||
+      message.includes('componentWillReceiveProps has been renamed'))
   ) {
     return;
   }
