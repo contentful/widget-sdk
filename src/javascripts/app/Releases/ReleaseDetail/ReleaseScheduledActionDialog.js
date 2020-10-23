@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import JobDialog from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/JobDialog';
 
@@ -11,16 +12,52 @@ function ReleaseActionJobDialog({
   pendingJobs,
   isMasterEnvironment,
 }) {
-  function handleSubmit({ validateForm, action, date, time, timezone }) {
-    validateForm(async () => {
-      onCreate(
-        {
-          scheduledAt: formatScheduledAtDate({ date, time, timezone }),
-          action,
-        },
-        timezone
-      );
-    });
+  const [validationError, setValidationError] = useState();
+
+  const validateForm = useCallback(
+    (onFormValid, { date, time, timezone }) => {
+      if (
+        pendingJobs &&
+        pendingJobs.length > 0 &&
+        pendingJobs.find(
+          (job) =>
+            job.scheduledFor.datetime ===
+            moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
+        )
+      ) {
+        setValidationError(
+          'There is already an action scheduled for the selected time, please review the current schedule.'
+        );
+        return;
+      } else {
+        setValidationError(null);
+      }
+
+      if (moment(formatScheduledAtDate({ date, time, timezone })).isAfter(moment.now())) {
+        setValidationError(null);
+        if (onFormValid) {
+          onFormValid();
+        }
+      } else {
+        setValidationError("The selected time can't be in the past");
+      }
+    },
+    [pendingJobs]
+  );
+
+  function handleSubmit({ action, date, time, timezone }) {
+    validateForm(
+      async () => {
+        onCreate(
+          {
+            scheduledAt: formatScheduledAtDate({ date, time, timezone }),
+            action,
+          },
+          timezone
+        );
+      },
+      { date, time, timezone }
+    );
   }
 
   return (
@@ -31,6 +68,7 @@ function ReleaseActionJobDialog({
       pendingJobs={pendingJobs}
       isMasterEnvironment={isMasterEnvironment}
       linkType="Release"
+      validationError={validationError}
     />
   );
 }
