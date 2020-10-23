@@ -6,7 +6,6 @@ import * as Navigator from 'states/Navigator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { find } from 'lodash';
 import * as entityCreator from 'components/app_container/entityCreator';
-import get from 'lodash/get';
 import localeStore from 'services/localeStore';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
@@ -62,7 +61,7 @@ const makeNavigateToEntity = (cma: any) => {
     }
     // open existing entity
     if (typeof options.id === 'string') {
-      return openExistingEntity(options, {});
+      return openExistingEntity(options);
     }
 
     let entity;
@@ -72,13 +71,10 @@ const makeNavigateToEntity = (cma: any) => {
       throw new Error('Failed to create an entity.');
     }
 
-    return openExistingEntity(
-      {
-        ...options,
-        id: entity.sys.id,
-      },
-      entity
-    );
+    return openExistingEntity({
+      ...options,
+      id: entity.sys.id,
+    });
   };
 
   async function createEntity(options) {
@@ -104,38 +100,39 @@ const makeNavigateToEntity = (cma: any) => {
     }
   }
 
-  async function openExistingEntity<T>(
-    { id, entityType, slideIn = false },
-    entity: T
-  ): Promise<NavigatorOpenResponse<T>> {
-    let slide = undefined;
+  async function openExistingEntity({
+    id,
+    entityType,
+    slideIn = false,
+  }: {
+    id: string;
+    entityType: string;
+    slideIn: boolean | { waitForClose: boolean };
+  }) {
+    const ret: NavigatorOpenResponse<any> = { navigated: true };
+    const slideInfo = { id, type: entityType };
 
     try {
       if (slideIn) {
-        if (get(slideIn, ['waitForClose'], false) === true) {
-          slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
-            id,
-            type: entityType,
-          });
+        if (typeof slideIn === 'object') {
+          ret.slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise(slideInfo);
         } else {
-          slide = SlideInNavigator.goToSlideInEntity({
-            id,
-            type: entityType,
-          });
+          ret.slide = SlideInNavigator.goToSlideInEntity(slideInfo);
         }
-        entity = await getEntity({
-          entityType,
-          id,
-        });
-      } else {
-        entity = await getEntity({ id, entityType });
-        await Navigator.go(Navigator.makeEntityRef(entity));
+      }
+
+      ret.entity = await getEntity({ id, entityType });
+
+      if (!slideIn) {
+        await Navigator.go(Navigator.makeEntityRef(ret.entity));
       }
     } catch (err) {
-      throw new Error('Failed to navigate to the entity.');
+      if (err.code !== 'NotFound') {
+        throw new Error('Failed to navigate to the entity.');
+      }
     }
 
-    return { navigated: true, entity, slide };
+    return ret;
   }
 };
 
