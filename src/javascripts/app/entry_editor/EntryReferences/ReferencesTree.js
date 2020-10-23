@@ -169,21 +169,20 @@ function ReferenceCards({
 
     const nextLevelReferenceCards = Object.entries(fields).reduce(
       (allCards, [_, fieldValue], fieldIndex) => {
-        Object.keys(fieldValue).forEach((locale) => {
-          const localizedFieldValue = fieldValue[locale];
-
+        Object.entries(fieldValue).forEach(([_, localizedFieldValue]) => {
           // if field is an array of entities
           if (
             Array.isArray(localizedFieldValue) &&
             localizedFieldValue.every((value) => value.sys)
           ) {
-            return allCards.push(
+            allCards = [
+              ...allCards,
               localizedFieldValue.map((entity, index) => {
                 const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}.${index}`;
                 visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
                 return toReferenceCard(entity, level, nextEntityIndexInTree);
-              })
-            );
+              }),
+            ];
             // if rich text field
           } else if (Array.isArray(get(localizedFieldValue, 'content'))) {
             const getReferenceCardsFromContent = (content, parentIndex) => {
@@ -219,17 +218,19 @@ function ReferenceCards({
               }, []);
             };
 
-            return allCards.push(
-              getReferenceCardsFromContent(localizedFieldValue.content, entityIndexInTree)
-            );
+            allCards = [
+              ...allCards,
+              getReferenceCardsFromContent(localizedFieldValue.content, entityIndexInTree),
+            ];
             // if plain entity
           } else if (get(localizedFieldValue, 'sys')) {
             const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}`;
             visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
 
-            return allCards.push(
-              toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree)
-            );
+            allCards = [
+              ...allCards,
+              toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree),
+            ];
           }
         });
 
