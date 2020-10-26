@@ -41,6 +41,33 @@ export const emptyReleaseResponse = () => ({
   },
 });
 
+export const releaseAction = (status) => ({
+  sys: {
+    type: 'ReleaseAction',
+    id: defaultReleaseActionId,
+    release: {
+      sys: {
+        type: 'Link',
+        linkType: 'Release',
+        id: defaultReleaseId,
+      },
+    },
+    status: status,
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
+    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
+    environment: {
+      sys: {
+        id: defaultEnvironmentId,
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+  },
+  action: 'publish',
+});
+
 export const severalEntitiesReleaseResponse = () => ({
   title: 'Twentieth Release',
   entities: {
@@ -64,6 +91,7 @@ export const severalEntitiesReleaseResponse = () => ({
     id: defaultReleaseId,
     type: 'Release',
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+    lastAction: releaseAction('succeeded'),
   },
 });
 
@@ -264,31 +292,4 @@ export const publishValidationErrorResponse = () => ({
       },
     ],
   },
-});
-
-export const releaseAction = (status) => ({
-  sys: {
-    type: 'ReleaseAction',
-    id: defaultReleaseActionId,
-    release: {
-      sys: {
-        type: 'Link',
-        linkType: 'Release',
-        id: defaultReleaseId,
-      },
-    },
-    status: status,
-    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
-    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-    environment: {
-      sys: {
-        id: defaultEnvironmentId,
-        type: 'Link',
-        linkType: 'Environment',
-      },
-    },
-  },
-  action: 'publish',
 });

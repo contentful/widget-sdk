@@ -23,6 +23,11 @@ import {
   queryForTeamsInDefaultOrg,
   queryForScimInDefaultOrg,
 } from '../../../interactions/product_catalog_features';
+import {
+  createScheduledReleaseForDefaultSpace,
+  cancelDefaultJobInDefaultSpace,
+  queryAllScheduledJobsForDefaultRelease,
+} from '../../../interactions/jobs';
 
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
 
@@ -309,6 +314,63 @@ describe('Releases', () => {
         });
       });
     });
+
+    context('schedule release', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleaseEntities.willReturnSeveral();
+        const slowInteractions = [
+          queryForDefaultEntryWithoutEnvironment.willFindIt(),
+          queryForDefaultAssets.willFindOne(),
+          queryAllScheduledJobsForDefaultRelease.willFindOnePendingJob(),
+        ];
+
+        cy.visit(`/spaces/${defaultSpaceId}/releases/${defaultReleaseId}`);
+        cy.wait(interactions, { timeout: 20000 });
+        cy.wait(slowInteractions, { timeout: 20000 });
+      });
+
+      it('succesfully schedule a release', () => {
+        const scheduleReleaseInteraction = createScheduledReleaseForDefaultSpace.willSucceed();
+        cy.findAllByTestId('schedule-release').scrollIntoView().click();
+        cy.findAllByTestId('schedule-publication').click();
+
+        cy.wait(scheduleReleaseInteraction);
+        cy.findAllByTestId('cf-ui-notification').should(
+          'contain',
+          'Release was scheduled successfully'
+        );
+      });
+
+      it('succesfully cancels a scheduled release', () => {
+        const cancelReleaseInteraction = cancelDefaultJobInDefaultSpace.willSucceed();
+        cy.findAllByTestId('cancel-job-ddl').scrollIntoView().click();
+        cy.findAllByTestId('cancel-job').click();
+        cy.findAllByTestId('confirm-job-cancellation').click();
+
+        cy.wait(cancelReleaseInteraction);
+        cy.findAllByTestId('cf-ui-notification').should('contain', 'Schedule canceled');
+      });
+    });
+
+    context('show error note for failed scheduled publishing of a release', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleaseEntities.willReturnSeveral();
+        const slowInteractions = [
+          queryForDefaultEntryWithoutEnvironment.willFindIt(),
+          queryForDefaultAssets.willFindOne(),
+          queryAllScheduledJobsForDefaultRelease.willFindOneFailedJob(),
+          publishRelease.willFail(),
+        ];
+
+        cy.visit(`/spaces/${defaultSpaceId}/releases/${defaultReleaseId}`);
+        cy.wait(interactions, { timeout: 20000 });
+        cy.wait(slowInteractions, { timeout: 20000 });
+      });
+
+      it('show error note for failed scheduled publishing of a release', () => {
+        cy.findAllByTestId('failed-job-note').should('be.visible');
+      });
+    });
   });
 });
 
@@ -317,7 +379,7 @@ function basicServerSetUp(): string[] {
 
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['users', 'releases', 'entries', 'product_catalog_features'],
+    providers: ['users', 'releases', 'entries', 'product_catalog_features', 'jobs'],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
