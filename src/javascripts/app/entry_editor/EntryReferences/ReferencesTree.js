@@ -66,7 +66,6 @@ function ReferenceCards({
   root,
   allReferencesSelected,
   maxLevel,
-  defaultLocale,
   validations,
   onReferenceCardClick,
   setIsTreeMaxDepthReached,
@@ -170,62 +169,71 @@ function ReferenceCards({
 
     const nextLevelReferenceCards = Object.entries(fields).reduce(
       (allCards, [_, fieldValue], fieldIndex) => {
-        const localizedFieldValue = fieldValue[defaultLocale];
-        // if field is an array of entities
-        if (Array.isArray(localizedFieldValue) && localizedFieldValue.every((value) => value.sys)) {
-          return allCards.concat(
-            localizedFieldValue.map((entity, index) => {
-              const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}.${index}`;
-              visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
-              return toReferenceCard(entity, level, nextEntityIndexInTree);
-            })
-          );
-          // if rich text field
-        } else if (Array.isArray(get(localizedFieldValue, 'content'))) {
-          const getReferenceCardsFromContent = (content, parentIndex) => {
-            // embedded-entry-inline is inside the nodeType paragraph, for example, so we first go depth first
-            const entityContentToReferenceCards = (entity, entityIndex) =>
-              Array.isArray(entity.content) && entity.content.length
-                ? getReferenceCardsFromContent(entity.content, entityIndex)
-                : [];
-            return content.reduce((acc, entity, index) => {
-              if (
-                [
-                  'embedded-asset-block',
-                  'embedded-entry-block',
-                  'embedded-entry-inline',
-                  'entry-hyperlink',
-                ].includes(entity.nodeType)
-              ) {
-                const entityPayload = entity.data.target;
-                const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${index}`;
-                visitedEntities[nextEntityIndexInTree] = [...visitedEntities[parentIndex]];
-                return [
-                  ...acc,
-                  ...entityContentToReferenceCards(entity, nextEntityIndexInTree),
-                  toReferenceCard(entityPayload, level, nextEntityIndexInTree),
-                ];
-              } else {
-                const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${index}`;
-                visitedEntities[nextEntityIndexInTree] = [...visitedEntities[parentIndex]];
-                // if current node is not one of the embedded cards, we merge parsed child ref cards
-                // (possibly an empty array)
-                return acc.concat(entityContentToReferenceCards(entity, nextEntityIndexInTree));
-              }
-            }, []);
-          };
+        Object.entries(fieldValue).forEach(([_, localizedFieldValue]) => {
+          // if field is an array of entities
+          if (
+            Array.isArray(localizedFieldValue) &&
+            localizedFieldValue.every((value) => value.sys)
+          ) {
+            allCards = [
+              ...allCards,
+              localizedFieldValue.map((entity, index) => {
+                const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}.${index}`;
+                visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
+                return toReferenceCard(entity, level, nextEntityIndexInTree);
+              }),
+            ];
+            // if rich text field
+          } else if (Array.isArray(get(localizedFieldValue, 'content'))) {
+            const getReferenceCardsFromContent = (content, parentIndex) => {
+              // embedded-entry-inline is inside the nodeType paragraph, for example, so we first go depth first
+              const entityContentToReferenceCards = (entity, entityIndex) =>
+                Array.isArray(entity.content) && entity.content.length
+                  ? getReferenceCardsFromContent(entity.content, entityIndex)
+                  : [];
+              return content.reduce((acc, entity, index) => {
+                if (
+                  [
+                    'embedded-asset-block',
+                    'embedded-entry-block',
+                    'embedded-entry-inline',
+                    'entry-hyperlink',
+                  ].includes(entity.nodeType)
+                ) {
+                  const entityPayload = entity.data.target;
+                  const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${index}`;
+                  visitedEntities[nextEntityIndexInTree] = [...visitedEntities[parentIndex]];
+                  return [
+                    ...acc,
+                    ...entityContentToReferenceCards(entity, nextEntityIndexInTree),
+                    toReferenceCard(entityPayload, level, nextEntityIndexInTree),
+                  ];
+                } else {
+                  const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${index}`;
+                  visitedEntities[nextEntityIndexInTree] = [...visitedEntities[parentIndex]];
+                  // if current node is not one of the embedded cards, we merge parsed child ref cards
+                  // (possibly an empty array)
+                  return acc.concat(entityContentToReferenceCards(entity, nextEntityIndexInTree));
+                }
+              }, []);
+            };
 
-          return allCards.concat(
-            getReferenceCardsFromContent(localizedFieldValue.content, entityIndexInTree)
-          );
-          // if plain entity
-        } else if (get(localizedFieldValue, 'sys')) {
-          const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}`;
-          visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
+            allCards = [
+              ...allCards,
+              getReferenceCardsFromContent(localizedFieldValue.content, entityIndexInTree),
+            ];
+            // if plain entity
+          } else if (get(localizedFieldValue, 'sys')) {
+            const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}`;
+            visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
 
-          return [...allCards, toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree)];
-        }
-        // otherwise, skip
+            allCards = [
+              ...allCards,
+              toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree),
+            ];
+          }
+        });
+
         return allCards;
       },
       []
