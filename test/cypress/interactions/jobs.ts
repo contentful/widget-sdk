@@ -55,7 +55,6 @@ const releaseIdQuery = {
 
 enum States {
   NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
-  NO_RELEASE_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-release-jobs-for-default-space',
   ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry',
   ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_RELEASE = 'jobs/one-pending-job-scheduled-for-default-release',
   SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
@@ -438,7 +437,7 @@ export const createScheduledReleaseForDefaultSpace = {
   willSucceed() {
     cy.addInteraction({
       provider: 'jobs',
-      state: States.NO_RELEASE_JOBS_FOR_DEFAULT_SPACE,
+      state: States.NO_JOBS_FOR_DEFAULT_SPACE,
       uponReceiving: `a request to create a scheduling release for space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
