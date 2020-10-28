@@ -22,7 +22,10 @@ export function createFieldWidgetSDK({
   widgetNamespace,
   widgetId,
   spaceContext,
-  $scope,
+  editorData,
+  localeData,
+  preferences,
+  fieldController,
   doc,
   internalContentType,
   fieldLocaleListeners,
@@ -33,7 +36,10 @@ export function createFieldWidgetSDK({
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   spaceContext: any;
-  $scope: any;
+  editorData: any;
+  localeData: any;
+  preferences: any;
+  fieldController: any;
   doc: Document;
   internalContentType: InternalContentType;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
@@ -43,10 +49,9 @@ export function createFieldWidgetSDK({
   };
 }): FieldExtensionSDK {
   const editorApi = createEditorApi({
-    editorInterface: $scope.editorData.editorInterface,
-    getLocaleData: () => $scope.localeData,
-    getPreferences: () => $scope.preferences,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    editorInterface: editorData.editorInterface,
+    getLocaleData: () => localeData,
+    getPreferences: () => preferences,
   });
 
   const contentTypeApi = createContentTypeApi(internalContentType);
@@ -59,8 +64,8 @@ export function createFieldWidgetSDK({
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
     setInvalid: (localeCode, isInvalid) => {
-      if ($scope.fieldController) {
-        return $scope.fieldController.setInvalid(localeCode, isInvalid);
+      if (fieldController) {
+        return fieldController.setInvalid(localeCode, isInvalid);
       }
     },
   });

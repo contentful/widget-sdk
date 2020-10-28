@@ -15,6 +15,7 @@ import * as Tracking from 'app/entity_editor/bulk_editor/Tracking';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { proxify } from 'core/services/proxy';
 
 const heightWithoutHeader = 'calc(100% - 71px)';
 
@@ -94,7 +95,7 @@ export const BulkEditor = ({ getReferenceContext, trackLoadEvent }) => {
   const [focusedIndex, setFocusedIndex] = useState(focusIndex);
 
   const { current: track } = useRef(Tracking.create(parentId, links$));
-  const { current: localeData } = useRef(assignLocaleData({}, { isBulkEditor: true }));
+  const { current: localeData } = useRef(proxify(assignLocaleData({}, { isBulkEditor: true })));
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [entityContexts, setEntityContexts] = useState([]);
@@ -148,7 +149,7 @@ export const BulkEditor = ({ getReferenceContext, trackLoadEvent }) => {
   const onCloseWithReason = (reason) => () => close(reason);
 
   const bulkEditorContext = {
-    editorSettings,
+    preferences: proxify({ ...editorSettings }),
     track,
     trackLoadEvent,
     loadEditorData,

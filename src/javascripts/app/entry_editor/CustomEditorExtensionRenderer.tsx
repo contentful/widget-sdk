@@ -5,7 +5,6 @@ import { createEditorExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import { EditorExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { css } from 'emotion';
-import { extend } from 'lodash';
 import React from 'react';
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
 
@@ -42,8 +41,6 @@ interface Props {
 const CustomEditorExtensionRenderer = (props: Props) => {
   const { extension, scope } = props;
   const spaceContext = getModule('spaceContext');
-  const $rootScope = getModule('$rootScope');
-  const $scope = extend($rootScope.$new(), scope);
   const { descriptor, parameters } = extension;
 
   if (extension.problem) {
@@ -57,14 +54,16 @@ const CustomEditorExtensionRenderer = (props: Props) => {
 
   const widget = toRendererWidget(descriptor);
   const sdk: EditorExtensionSDK = createEditorExtensionSDK({
-    $scope,
+    editorData: scope.editorData,
+    localeData: scope.localeData,
+    preferences: scope.preferences,
     spaceContext,
-    internalContentType: $scope.entityInfo.contentType,
+    internalContentType: scope.entityInfo.contentType,
     widgetNamespace: extension.widgetNamespace,
     widgetId: extension.widgetId,
     parameters,
-    doc: $scope.otDoc,
-    fieldLocaleListeners: $scope.fieldLocaleListeners,
+    doc: scope.otDoc,
+    fieldLocaleListeners: scope.fieldLocaleListeners,
   });
 
   return (

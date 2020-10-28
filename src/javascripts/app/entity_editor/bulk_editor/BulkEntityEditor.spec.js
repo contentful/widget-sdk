@@ -81,7 +81,7 @@ const renderComponent = (extraProps = {}) => {
     bulkEditorContext: {
       scrollTarget$: K.createBus().stream,
       loadEditorData: jest.fn().mockResolvedValue(editorData),
-      editorSettings: {
+      preferences: {
         showDisabledFields: false,
       },
       track: {

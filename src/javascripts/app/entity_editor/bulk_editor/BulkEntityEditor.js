@@ -73,7 +73,7 @@ export const BulkEntityEditor = ({
     [entityContext.id, currentEnvironmentId, isMasterEnvironment, currentSpaceId]
   );
 
-  const { editorSettings: preferences, track } = bulkEditorContext;
+  const { preferences, track } = bulkEditorContext;
 
   useEffect(() => {
     const lifeline = K.createBus();
@@ -88,7 +88,7 @@ export const BulkEntityEditor = ({
           spaceId: currentSpaceId,
           environmentId: currentEnvironmentId,
           bulkEditorContext,
-          hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
+          hasInitialFocus: preferences.hasInitialFocus || hasInitialFocus,
           getTitle: () => title,
           onTitleUpdate: ({ truncatedTitle }) => setTitle(truncatedTitle),
           onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
@@ -239,7 +239,7 @@ BulkEntityEditor.propTypes = {
   onEditorInitialized: PropTypes.func.isRequired,
   bulkEditorContext: PropTypes.shape({
     loadEditorData: PropTypes.func.isRequired,
-    editorSettings: PropTypes.shape({
+    preferences: PropTypes.shape({
       showDisabledFields: PropTypes.bool,
       hasInitialFocus: PropTypes.bool,
     }).isRequired,

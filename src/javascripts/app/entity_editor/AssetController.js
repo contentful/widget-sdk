@@ -14,6 +14,7 @@ import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { valuePropertyAt } from './Document';
 import { initStateController } from './stateController';
+import { proxify } from 'core/services/proxy';
 
 /**
  * @param {Object} $scope
@@ -25,6 +26,9 @@ export default async function create($scope, editorData, preferences) {
 
   $scope.context = {};
   $scope.editorData = editorData;
+
+  $scope.localeData = proxify({});
+  $scope.preferences = proxify(preferences);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -79,12 +83,17 @@ export default async function create($scope, editorData, preferences) {
 
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
-  $scope.localeData = {};
-
   $scope.emitter = mitt();
 
   $scope.entrySidebarProps = createEntrySidebarProps({
-    $scope,
+    entityInfo: $scope.entityInfo,
+    localeData: $scope.localeData,
+    editorData: $scope.editorData,
+    editorContext: $scope.editorContext,
+    otDoc: $scope.otDoc,
+    state: $scope.state,
+    fieldController: $scope.fieldController,
+    preferences: $scope.preferences,
     emitter: $scope.emitter,
   });
 
