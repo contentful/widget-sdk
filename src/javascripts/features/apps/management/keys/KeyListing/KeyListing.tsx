@@ -19,7 +19,7 @@ import { AddKeyDialog } from '../AddKeyDialog';
 import { DeleteKeyDialog } from '../DeleteKeyDialog';
 import { APP_KEYS_LIMIT } from 'features/apps/limits';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { LEARN_MORE_URL } from 'features/apps/management/constants';
+import { LEARN_MORE_URL } from 'features/apps/management/DocumentationUrls';
 import { downloadAsFile, fetchKeys, getFormattedKey, Key } from './utils';
 import { WithLimitTooltip } from './WithLimitsTooltip';
 import { SkeletonRow } from './SkeletonRow';

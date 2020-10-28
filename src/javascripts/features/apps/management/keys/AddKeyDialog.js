@@ -12,7 +12,7 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import * as util from '../util';
-import { KEY_GEN_GUIDE_URL } from '../constants';
+import { KEY_GEN_GUIDE_URL } from '../DocumentationUrls';
 
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
