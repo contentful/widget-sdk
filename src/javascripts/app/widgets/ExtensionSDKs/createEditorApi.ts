@@ -1,18 +1,17 @@
 import { EditorInterface, SharedEditorSDK } from 'contentful-ui-extensions-sdk';
-import { Proxy, WatchFunction } from 'core/services/proxy';
 import { Locale } from './createLocalesApi';
 
 type Callback = (value: any) => any;
 type UnsubscribeFn = () => void;
 type ValueGetterFn = () => any;
 
-export interface LocaleData {
+interface LocaleData {
   activeLocales?: Locale[];
   isSingleLocaleModeOn?: boolean;
   focusedLocale?: Locale;
 }
 
-export interface Preferences {
+interface Preferences {
   showDisabledFields?: boolean;
 }
 
@@ -20,37 +19,41 @@ export function createEditorApi({
   editorInterface,
   getLocaleData,
   getPreferences,
+  watch,
 }: {
   editorInterface: EditorInterface;
-  getLocaleData: () => Proxy<LocaleData>;
-  getPreferences: () => Proxy<Preferences>;
+  getLocaleData: () => LocaleData;
+  getPreferences: () => Preferences;
+  watch: (watchFn: ValueGetterFn, cb: Callback) => UnsubscribeFn;
 }): SharedEditorSDK['editor'] {
   return {
     editorInterface,
-    onLocaleSettingsChanged: makeHandler<LocaleData>(
-      getLocaleData(),
-      ['activeLocales', 'isSingleLocaleModeOn', 'focusedLocale'],
+    onLocaleSettingsChanged: makeHandler(
+      [
+        () => getLocaleData().activeLocales,
+        () => getLocaleData().isSingleLocaleModeOn,
+        () => getLocaleData().focusedLocale,
+      ],
       getLocaleSettings
     ),
-    onShowDisabledFieldsChanged: makeHandler<Preferences>(
-      getPreferences(),
-      ['showDisabledFields'],
+    onShowDisabledFieldsChanged: makeHandler(
+      [() => getPreferences().showDisabledFields],
       () => !!getPreferences().showDisabledFields
     ),
   };
 
-  function makeHandler<T>(target: Proxy<T>, keys: (keyof T)[], getCallbackValue: ValueGetterFn) {
+  function makeHandler(watchFns: ValueGetterFn[], getCallbackValue: ValueGetterFn) {
     const handlers: Callback[] = [];
     let unsubscribe: UnsubscribeFn | null = null;
 
     const subscribeOrUnsubscribe = () => {
       if (!unsubscribe && handlers.length > 0) {
-        const watchFunction: WatchFunction<T> = ({ key }) => {
-          if (keys.includes(key as keyof T)) {
+        const unsubscribeFns = watchFns.map((watchFn) => {
+          return watch(watchFn, () => {
             handlers.forEach((cb) => cb(getCallbackValue()));
-          }
-        };
-        unsubscribe = target._proxy?.subscribe(watchFunction);
+          });
+        });
+        unsubscribe = () => unsubscribeFns.forEach((off) => off());
       }
 
       if (unsubscribe && handlers.length < 1) {

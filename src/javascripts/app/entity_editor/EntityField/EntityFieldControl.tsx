@@ -15,15 +15,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
 
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
-    const {
-      widget,
-      locale,
-      editorData,
-      fieldController,
-      localeData,
-      preferences,
-      otDoc: doc,
-    } = props.scope;
+    const { widget, locale } = props.scope;
     const { widgetNamespace, widgetId, fieldId, parameters } = widget;
 
     return createFieldWidgetSDK({
@@ -31,12 +23,9 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       localeCode: locale.code,
       widgetNamespace,
       widgetId,
-      editorData,
-      fieldController,
-      localeData,
-      preferences,
+      $scope: props.scope,
       spaceContext,
-      doc,
+      doc: props.scope.otDoc,
       internalContentType: props.scope.entityInfo.contentType,
       fieldLocaleListeners: props.scope.fieldLocaleListeners,
       parameters,

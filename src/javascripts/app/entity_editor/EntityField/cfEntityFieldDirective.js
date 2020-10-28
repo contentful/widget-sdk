@@ -75,14 +75,11 @@ export default function register() {
             updateActiveLocales();
             setFieldLocales();
 
-            $scope.localeData._proxy.subscribe(({ key }) => {
-              if (['focusedLocale', 'isSingleLocaleModeOn'].includes(key)) {
-                setFieldLocales();
-              }
-              if (key === 'activeLocales') {
-                updateActiveLocales();
-                setFieldLocales();
-              }
+            $scope.$watch('localeData.focusedLocale', setFieldLocales);
+            $scope.$watch('localeData.isSingleLocaleModeOn', setFieldLocales);
+            $scope.$watchCollection(getActiveLocaleCodes, () => {
+              updateActiveLocales();
+              setFieldLocales();
             });
 
             // TODO Changes to 'validator.errors' change the behavior of
@@ -107,6 +104,10 @@ export default function register() {
                 : validator.hasFieldError(field.id);
               const hasControlErrors = _.some(invalidControls);
               $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
+            }
+
+            function getActiveLocaleCodes() {
+              return _.map($scope.localeData.activeLocales, 'internal_code');
             }
 
             function updateActiveLocales() {

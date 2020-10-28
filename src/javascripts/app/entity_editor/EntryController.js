@@ -12,7 +12,6 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as Analytics from 'analytics/Analytics';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { getEditorState } from './editorState';
-import { proxify } from 'core/services/proxy';
 
 /**
  * @ngdoc type
@@ -45,10 +44,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.context = {};
   $scope.context.ready = true;
-
-  $scope.preferences = proxify(preferences);
-  $scope.localeData = proxify({});
-
   $scope.editorData = editorData;
   $scope.loadEvents = K.createStreamBus($scope);
   const { entityInfo } = editorData;
@@ -57,6 +52,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
   $scope.getOtDoc = () => $scope.otDoc;
   $scope.getEditorData = () => editorData;
   $scope.getSpace = () => spaceContext.getSpace();
+
+  $scope.localeData = {};
 
   const contentType = {
     id: entityInfo.contentTypeId,
@@ -175,17 +172,12 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.context.dirty = isDirty;
   });
 
+  $scope.localeData = {};
+
   $scope.emitter = mitt();
 
   $scope.entrySidebarProps = createEntrySidebarProps({
-    entityInfo: $scope.entityInfo,
-    localeData: $scope.localeData,
-    editorData: $scope.editorData,
-    editorContext: $scope.editorContext,
-    otDoc: $scope.otDoc,
-    state: $scope.state,
-    fieldController: $scope.fieldController,
-    preferences: $scope.preferences,
+    $scope,
     emitter: $scope.emitter,
   });
 
@@ -199,10 +191,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
     },
   });
 
-  $scope.localeData._proxy.subscribe(({ key, value }) => {
-    if (key === 'focusedLocale') {
-      $scope.noLocalizedFieldsAdviceProps = { localeName: value.name };
-    }
+  $scope.$watch('localeData.focusedLocale.name', (localeName) => {
+    $scope.noLocalizedFieldsAdviceProps = { localeName };
   });
 
   function onlyFocusedLocaleHasErrors() {

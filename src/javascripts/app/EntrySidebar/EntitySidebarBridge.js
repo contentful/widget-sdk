@@ -9,27 +9,17 @@ import { createFieldWidgetSDK, createSidebarWidgetSDK } from 'app/widgets/Extens
 import { toRendererWidget } from 'widgets/WidgetCompat';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 
-export default ({
-  entityInfo,
-  localeData,
-  editorData,
-  editorContext,
-  otDoc,
-  state,
-  fieldController,
-  preferences,
-  emitter,
-}) => {
+export default ({ $scope, emitter }) => {
   const spaceContext = getModule('spaceContext');
 
-  const isEntry = entityInfo.type === 'Entry';
+  const isEntry = $scope.entityInfo.type === 'Entry';
   const aliasId = spaceContext.getAliasId();
   const environmentId = spaceContext.getEnvironmentId();
   const isMasterEnvironment = spaceContext.isMasterEnvironment();
 
   const initializeIncomingLinks = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
-      entityInfo: entityInfo,
+      entityInfo: $scope.entityInfo,
     });
   });
 
@@ -37,23 +27,23 @@ export default ({
     const updateEntry = (entry) => {
       emitter.emit(SidebarEventTypes.UPDATED_CONTENT_PREVIEW_WIDGET, {
         entry,
-        contentType: entityInfo.contentType,
+        contentType: $scope.entityInfo.contentType,
         dataForTracking: {
-          locales: localeData.activeLocales,
+          locales: $scope.localeData.activeLocales,
           fromState: getCurrentStateName(),
-          entryId: entityInfo.id,
+          entryId: $scope.entityInfo.id,
         },
       });
     };
     updateEntry(null);
-    K.onValue(otDoc.data$, (entry) => {
+    K.onValueScope($scope, $scope.otDoc.data$, (entry) => {
       updateEntry(entry);
     });
   });
 
   const initializeUsers = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, []);
-    K.onValue(otDoc.presence.collaborators, (collaborators) => {
+    K.onValueScope($scope, $scope.otDoc.presence.collaborators, (collaborators) => {
       emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, collaborators);
     });
   });
@@ -66,7 +56,7 @@ export default ({
       });
     };
 
-    const updateStream$ = otDoc.sysProperty.map((sys) => ({
+    const updateStream$ = $scope.otDoc.sysProperty.map((sys) => ({
       entrySys: sys,
       publishedVersion: sys.publishedVersion,
     }));
@@ -76,7 +66,7 @@ export default ({
 
   const initializePublication = once(() => {
     const notifyUpdate = (update) => {
-      const entity = K.getValue(otDoc.data$);
+      const entity = K.getValue($scope.otDoc.data$);
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
         entity: entity && { ...entity }, // `undefined` after entity deletion.
@@ -84,37 +74,37 @@ export default ({
         environmentId: aliasId || environmentId,
         isMasterEnvironment,
         userId: spaceContext.user.sys.id,
-        validator: editorContext.validator,
+        validator: $scope.editorContext.validator,
         commands: {
-          primary: state.primary,
-          secondary: state.secondary,
-          revertToPrevious: state.revertToPrevious,
+          primary: $scope.state.primary,
+          secondary: $scope.state.secondary,
+          revertToPrevious: $scope.state.revertToPrevious,
         },
       });
     };
 
     notifyUpdate({
-      status: state.current,
-      updatedAt: K.getValue(otDoc.sysProperty).updatedAt,
+      status: $scope.state.current,
+      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt,
     });
 
-    K.onValue(otDoc.sysProperty, (sys) => {
+    K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       notifyUpdate({
-        status: state.current,
+        status: $scope.state.current,
         updatedAt: sys.updatedAt,
       });
     });
 
     // Listen for state updates, specifically "published" -> "changed" on pending local changes,
     // which might be triggered before the auto-save request is fired changing the sys property.
-    K.onValue(otDoc.resourceState.state$, () => {
+    K.onValueScope($scope, $scope.otDoc.resourceState.state$, () => {
       notifyUpdate({
-        status: state.current,
+        status: $scope.state.current,
       });
     });
 
     let setNotSavingTimeout;
-    K.onValue(otDoc.state.isSaving$, (isSaving) => {
+    K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
       clearTimeout(setNotSavingTimeout);
       if (isSaving) {
         notifyUpdate({
@@ -131,11 +121,11 @@ export default ({
   });
 
   const initializeReleases = once(() => {
-    const entity = K.getValue(otDoc.data$);
+    const entity = K.getValue($scope.otDoc.data$);
     emitter.emit(SidebarEventTypes.UPDATED_RELEASES_WIDGET, {
-      entityInfo: entityInfo,
+      entityInfo: $scope.entityInfo,
       entity: entity && { ...entity },
-      contentType: entityInfo.contentType,
+      contentType: $scope.entityInfo.contentType,
     });
   });
 
@@ -143,7 +133,7 @@ export default ({
     const notifyUpdate = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
         ...update,
-        entityInfo: entityInfo,
+        entityInfo: $scope.entityInfo,
         endpoint: spaceContext.endpoint,
         users: spaceContext.users,
         currentUser: spaceContext.user,
@@ -156,12 +146,12 @@ export default ({
   const initializeInfoPanel = once(() => {
     const updateProps = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_INFO_PANEL, {
-        contentType: entityInfo.contentType,
+        contentType: $scope.entityInfo.contentType,
         ...update,
       });
     };
 
-    K.onValue(otDoc.sysProperty, (sys) => {
+    K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       updateProps({ sys });
     });
   });
@@ -196,7 +186,7 @@ export default ({
   });
 
   // Construct a list of legacy sidebar extensions
-  const legacyExtensions = editorData.fieldControls.sidebar.map((widget) => {
+  const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
     return {
       makeSdk: memoize(() =>
         createFieldWidgetSDK({
@@ -206,18 +196,15 @@ export default ({
           widgetNamespace: widget.widgetNamespace,
           widgetId: widget.widgetId,
           spaceContext,
-          editorData,
-          fieldController,
-          localeData,
-          preferences,
-          doc: otDoc,
-          internalContentType: entityInfo.contentType,
+          $scope,
+          doc: $scope.otDoc,
+          internalContentType: $scope.entityInfo.contentType,
           parameters: widget.parameters,
           fieldLocaleListeners: makeFieldLocaleListeners(
-            editorData.fieldControls.all,
-            editorContext,
-            localeData,
-            otDoc
+            $scope.editorData.fieldControls.all,
+            $scope.editorContext,
+            $scope.localeData,
+            $scope.otDoc
           ),
         })
       ),
@@ -229,20 +216,18 @@ export default ({
   const makeSidebarWidgetSDK = memoize(
     (widgetNamespace, widgetId, parameters) => {
       return createSidebarWidgetSDK({
-        internalContentType: entityInfo.contentType,
-        editorData,
-        localeData,
-        preferences,
-        doc: otDoc,
+        internalContentType: $scope.entityInfo.contentType,
+        $scope,
+        doc: $scope.otDoc,
         parameters,
         spaceContext,
         widgetNamespace,
         widgetId,
         fieldLocaleListeners: makeFieldLocaleListeners(
-          editorData.fieldControls.all,
-          editorContext,
-          localeData,
-          otDoc
+          $scope.editorData.fieldControls.all,
+          $scope.editorContext,
+          $scope.localeData,
+          $scope.otDoc
         ),
       });
     },
@@ -251,10 +236,10 @@ export default ({
 
   return {
     legacySidebarExtensions: legacyExtensions,
-    localeData: localeData,
-    entityInfo: entityInfo,
-    sidebar: editorData.sidebar,
-    sidebarExtensions: editorData.sidebarExtensions,
+    localeData: $scope.localeData,
+    entityInfo: $scope.entityInfo,
+    sidebar: $scope.editorData.sidebar,
+    sidebarExtensions: $scope.editorData.sidebarExtensions,
     makeSidebarWidgetSDK,
     isEntry,
     isMasterEnvironment,

@@ -20,22 +20,18 @@ interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
   doc: Document;
   spaceContext: any;
-  editorData: any;
-  localeData: any;
-  preferences: any;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
+  $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
 }
 
 export const createEditorExtensionSDK = ({
-  editorData,
-  localeData,
-  preferences,
+  $scope,
   spaceContext,
   internalContentType,
   widgetNamespace,
@@ -47,9 +43,10 @@ export const createEditorExtensionSDK = ({
   const contentTypeApi = createContentTypeApi(internalContentType);
 
   const editorApi = createEditorApi({
-    editorInterface: editorData.editorInterface,
-    getLocaleData: () => localeData,
-    getPreferences: () => preferences,
+    editorInterface: $scope.editorData.editorInterface,
+    getLocaleData: () => $scope.localeData,
+    getPreferences: () => $scope.preferences,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
   });
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember as SpaceMember);

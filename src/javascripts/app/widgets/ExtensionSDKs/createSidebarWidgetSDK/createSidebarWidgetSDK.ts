@@ -18,14 +18,12 @@ import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 interface CreateSidebarWidgetSDKOptions {
   internalContentType: InternalContentType;
+  $scope: any;
   doc: Document;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
-  editorData: any;
-  localeData: any;
-  preferences: any;
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
@@ -34,9 +32,7 @@ interface CreateSidebarWidgetSDKOptions {
 
 export const createSidebarWidgetSDK = ({
   internalContentType,
-  editorData,
-  localeData,
-  preferences,
+  $scope,
   doc,
   parameters,
   spaceContext,
@@ -45,11 +41,11 @@ export const createSidebarWidgetSDK = ({
   fieldLocaleListeners,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
-
   const editorApi = createEditorApi({
-    editorInterface: editorData.editorInterface,
-    getLocaleData: () => localeData,
-    getPreferences: () => preferences,
+    editorInterface: $scope.editorData.editorInterface,
+    getLocaleData: () => $scope.localeData,
+    getPreferences: () => $scope.preferences,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
   });
 
   const entryApi = createEntryApi({
