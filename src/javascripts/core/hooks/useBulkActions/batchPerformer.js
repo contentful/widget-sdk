@@ -124,6 +124,7 @@ export function createBatchPerformer(config) {
       }
       return spaceContext.space.createEntry(ctId, {
         fields: currentFieldsWithIndexedDisplayField,
+        metadata: entity.data.metadata,
       });
     } else {
       return Promise.reject(new Error('Only entries can be duplicated'));
