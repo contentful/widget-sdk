@@ -12,7 +12,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ModalLauncher, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { AppEditor, validate } from '../AppEditor';
@@ -41,7 +40,6 @@ export class AppDetails extends React.Component {
 
     this.state = {
       busy: false,
-      appManagementViewsEnabled: false,
       name: props.definition.name,
       definition: props.definition,
       selectedTab: props.tab,
@@ -55,16 +53,12 @@ export class AppDetails extends React.Component {
 
     let creator = userNameCache[definition.sys.id];
 
-    const appManagementViewsEnabled = await getVariation(FLAGS.APP_MANAGEMENT_VIEWS, {
-      organizationId: definition.sys.organization.sys.id,
-    });
-
     if (!creator) {
       creator = await ManagementApiClient.getCreatorNameOf(definition);
       userNameCache[definition.sys.id] = creator;
     }
 
-    this.setState({ creator, appManagementViewsEnabled });
+    this.setState({ creator });
 
     if (!Object.values(TAB_PATHS).includes(this.props.tab)) {
       this.onTabSelect(TAB_PATHS.GENERAL);
@@ -156,7 +150,7 @@ export class AppDetails extends React.Component {
   };
 
   render() {
-    const { name, definition, busy, selectedTab, appManagementViewsEnabled } = this.state;
+    const { name, definition, busy, selectedTab } = this.state;
 
     return (
       <Workbench>
@@ -200,22 +194,18 @@ export class AppDetails extends React.Component {
                 onSelect={this.onTabSelect}>
                 General
               </Tab>
-              {appManagementViewsEnabled ? (
-                <>
-                  <Tab
-                    id={TAB_PATHS.KEY_PAIRS}
-                    selected={selectedTab === TAB_PATHS.KEY_PAIRS}
-                    onSelect={this.onTabSelect}>
-                    Key pairs
-                  </Tab>
-                  <Tab
-                    id={TAB_PATHS.EVENTS}
-                    selected={selectedTab === TAB_PATHS.EVENTS}
-                    onSelect={this.onTabSelect}>
-                    Events
-                  </Tab>
-                </>
-              ) : null}
+              <Tab
+                id={TAB_PATHS.KEY_PAIRS}
+                selected={selectedTab === TAB_PATHS.KEY_PAIRS}
+                onSelect={this.onTabSelect}>
+                Key pairs
+              </Tab>
+              <Tab
+                id={TAB_PATHS.EVENTS}
+                selected={selectedTab === TAB_PATHS.EVENTS}
+                onSelect={this.onTabSelect}>
+                Events
+              </Tab>
             </Tabs>
             {selectedTab === TAB_PATHS.GENERAL && (
               <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
