@@ -270,8 +270,6 @@ jobs:
             ~/bin/estivador docker-ecr-login
             ~/bin/estivador put-image
             ~/bin/estivador promote-image
-      - samson/trigger-samson:
-          samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
       - run:
           name: Upload build to user_interface build tracker server and post comment
           command: |
@@ -437,6 +435,10 @@ workflows:
             - build-with-statistics
       # - ui-extensions-sdk/run:
       #     name: run-ui-extensions-integration
+      - samson/trigger-samson:
+          samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
+          requires:
+            - copy-assets-to-s3
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
