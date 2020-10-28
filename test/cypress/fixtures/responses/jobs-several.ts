@@ -1,6 +1,7 @@
 import { Matchers } from '@pact-foundation/pact-web';
 import {
   defaultSpaceId,
+  defaultEntryId,
   defaultUserId,
   defaultJobId,
   defaultEnvironmentId,
@@ -42,33 +43,54 @@ export const severalFailedJobsResponse = {
   ],
 };
 
-export const onePendingJobResponse = {
+export const onePendingJobResponse = (linkType, entityId) => ({
   sys: {
     type: 'Array',
   },
   limit: 100,
   pages: {},
-  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })],
-};
-
-export const oneFailedJobResponse = {
-  sys: {
-    type: 'Array',
-  },
-  limit: 100,
-  pages: {},
-  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })],
-};
-
-export const createJobResponse = job({
-  sys: {
-    id: Matchers.somethingLike('3A13SXSDwO8c46NrjigFYT'),
-    space: { sys: { type: 'Link', id: defaultSpaceId } },
-    createdBy: { sys: { type: 'Link', id: defaultUserId } },
-  },
+  items: [
+    job({
+      sys: { id: Matchers.somethingLike(defaultJobId) },
+      linkType,
+      entityId,
+    }),
+  ],
 });
 
-export function job(jobPayload = { sys: {} }) {
+export const oneFailedJobResponse = (linkType, entityId) => ({
+  sys: {
+    type: 'Array',
+  },
+  limit: 100,
+  pages: {},
+  items: [
+    job({
+      sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' },
+      linkType,
+      entityId,
+    }),
+  ],
+});
+
+export const createJobResponse = (linkType, entityId) =>
+  job({
+    sys: {
+      id: Matchers.somethingLike('3A13SXSDwO8c46NrjigFYT'),
+      space: { sys: { type: 'Link', id: defaultSpaceId } },
+      createdBy: { sys: { type: 'Link', id: defaultUserId } },
+    },
+    linkType,
+    entityId,
+  });
+
+type jobPayload = {
+  sys: {};
+  linkType?: string;
+  entityId?: string;
+};
+
+export function job({ sys: jobPayloadSys, linkType, entityId }: jobPayload) {
   const sys = {
     id: 'jobID',
     type: 'ScheduledAction',
@@ -88,13 +110,13 @@ export function job(jobPayload = { sys: {} }) {
       },
     },
     status: 'scheduled',
-    ...jobPayload.sys,
+    ...jobPayloadSys,
   };
   const entity = {
     sys: {
       type: 'Link',
-      linkType: 'Entry',
-      id: 'testEntryId',
+      linkType: linkType || 'Entry',
+      id: entityId || defaultEntryId,
     },
   };
   const environment = {

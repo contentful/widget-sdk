@@ -4,6 +4,7 @@ import {
   defaultJobId,
   defaultHeader,
   defaultEnvironmentId,
+  defaultReleaseId,
 } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
@@ -46,12 +47,19 @@ const entryIdQuery = {
   'environment.sys.id': 'master',
   order: '-scheduledFor.datetime',
 };
+const releaseIdQuery = {
+  'entity.sys.id': defaultReleaseId,
+  'environment.sys.id': 'master',
+  order: '-scheduledFor.datetime',
+};
 
 enum States {
   NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
   ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry',
+  ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_RELEASE = 'jobs/one-pending-job-scheduled-for-default-release',
   SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
   JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
+  RELEASE_JOB_EXECUTION_FAILED = 'jobs/release-job-execution-failed',
   MAX_PENDING_JOBS = 'jobs/max-pending-jobs',
   INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
 }
@@ -295,7 +303,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: onePendingJobResponse,
+        body: onePendingJobResponse('Entry', defaultEntryId),
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
@@ -312,7 +320,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: oneFailedJobResponse,
+        body: oneFailedJobResponse('Entry', defaultEntryId),
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
@@ -382,14 +390,14 @@ export const createScheduledPublicationForDefaultSpace = {
         query: {
           'environment.sys.id': defaultEnvironmentId,
         },
-        body: createJobRequest,
+        body: createJobRequest('Entry', defaultEntryId),
       },
       willRespondWith: {
         status: 201,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: createJobResponse,
+        body: createJobResponse('Entry', defaultEntryId),
       },
     }).as('createScheduledPublicationForDefaultSpace');
 
@@ -411,7 +419,7 @@ export const createScheduledPublicationForDefaultSpace = {
         query: {
           'environment.sys.id': defaultEnvironmentId,
         },
-        body: createJobRequest,
+        body: createJobRequest('Entry', defaultEntryId),
       },
       willRespondWith: {
         status: 400,
@@ -422,5 +430,74 @@ export const createScheduledPublicationForDefaultSpace = {
     }).as('createScheduledPublicationForDefaultSpace');
 
     return '@createScheduledPublicationForDefaultSpace';
+  },
+};
+
+export const createScheduledReleaseForDefaultSpace = {
+  willSucceed() {
+    cy.addInteraction({
+      provider: 'jobs',
+      state: States.NO_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a request to create a scheduling release for space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/scheduled_actions`,
+        headers: {
+          ...defaultHeader,
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'x-contentful-enable-alpha-feature': 'scheduled-jobs',
+        },
+        query: {
+          'environment.sys.id': defaultEnvironmentId,
+        },
+        body: createJobRequest('Release', defaultReleaseId),
+      },
+      willRespondWith: {
+        status: 201,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: createJobResponse('Release', defaultReleaseId),
+      },
+    }).as('createScheduledReleaseForDefaultSpace');
+
+    return '@createScheduledReleaseForDefaultSpace';
+  },
+};
+
+export const queryAllScheduledJobsForDefaultRelease = {
+  willFindOnePendingJob() {
+    cy.addInteraction({
+      provider: 'jobs',
+      state: States.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_RELEASE,
+      uponReceiving: `a query for all scheduled jobs of release "${defaultReleaseId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(releaseIdQuery),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: onePendingJobResponse('Release', defaultReleaseId),
+      },
+    }).as('queryAllScheduledJobsForDefaultRelease');
+
+    return '@queryAllScheduledJobsForDefaultRelease';
+  },
+  willFindOneFailedJob() {
+    cy.addInteraction({
+      provider: 'jobs',
+      state: States.RELEASE_JOB_EXECUTION_FAILED,
+      uponReceiving: `a query for all scheduled jobs of release "${defaultReleaseId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(releaseIdQuery),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: oneFailedJobResponse('Release', defaultReleaseId),
+      },
+    }).as('queryAllScheduledJobsForDefaultRelease');
+
+    return '@queryAllScheduledJobsForDefaultRelease';
   },
 };
