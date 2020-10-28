@@ -17,7 +17,7 @@ import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { HTTPS_REG_EXP, LEARN_MORE_URL } from '../constants';
+import { LEARN_MORE_URL } from '../DocumentationUrls';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
 import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
@@ -55,7 +55,7 @@ export function AppEvents({ definition }) {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const updateAppEvents = async () => {
-    if (!HTTPS_REG_EXP.test(targetUrl)) {
+    if (!(targetUrl || '').startsWith('https://')) {
       setErrors([
         {
           details: 'Please enter a valid URL',
