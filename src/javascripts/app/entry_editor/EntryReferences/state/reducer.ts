@@ -67,7 +67,7 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
     case SET_SELECTED_ENTITIES:
       return { ...state, selectedEntities: action.value };
     case SET_SELECTED_ENTITIES_MAP:
-        return { ...state, selectedEntitiesMap: action.value };
+      return { ...state, selectedEntitiesMap: action.value };
     case SET_VALIDATIONS:
       return { ...state, validations: action.value };
     case SET_MAX_DEPTH_REACHED:
