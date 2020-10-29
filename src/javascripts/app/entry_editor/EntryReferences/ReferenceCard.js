@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import { noop } from 'lodash';
@@ -11,6 +11,7 @@ import {
   Checkbox,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { ReferencesContext } from './ReferencesContext';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import * as EntityState from 'data/CMA/EntityState';
 import { getEntityTitle } from './referencesService';
@@ -94,6 +95,9 @@ const ReferenceCard = ({
   isReferenceSelected,
   onReferenceCheckboxClick,
 }) => {
+  const {
+    state: { selectedEntitiesMap },
+  } = useContext(ReferencesContext);
   const [title, setTitle] = useState('Untitled');
   const [isSelected, setSelected] = useState(isReferenceSelected);
 
@@ -108,6 +112,15 @@ const ReferenceCard = ({
       getTitle();
     }
   }, [entity, isUnresolved]);
+
+  useEffect(() => {
+    const {
+      sys: { id: entityId, type: entityType },
+    } = entity;
+    const entityUniqueId = `${entityId}-${entityType}`;
+
+    setSelected(selectedEntitiesMap.has(entityUniqueId));
+  }, [selectedEntitiesMap, selectedEntitiesMap.size, entity]);
 
   if (isMoreCard) {
     return (
@@ -158,7 +171,6 @@ const ReferenceCard = ({
         <Checkbox
           labelText={isSelected ? 'Deselect entity' : 'Select entity'}
           onChange={() => {
-            setSelected(!isSelected);
             onReferenceCheckboxClick(!isSelected, entity);
           }}
           checked={isSelected}

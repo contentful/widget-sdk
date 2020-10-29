@@ -10,12 +10,14 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_IS_TOO_COMPLEX,
   SET_PROCESSING_ACTION,
+  SET_SELECTED_ENTITIES_MAP,
 } from './actions';
 
 export type ReferencesState = {
   references: [];
   linksCounter: object;
   selectedEntities: [];
+  selectedEntitiesMap: Map<string, object>;
   validations: object | null;
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
@@ -36,7 +38,8 @@ export type Action = {
     | typeof SET_INITIAL_REFERENCES_AMOUNT
     | typeof SET_REFERENCE_TREE_KEY
     | typeof SET_IS_TOO_COMPLEX
-    | typeof SET_PROCESSING_ACTION;
+    | typeof SET_PROCESSING_ACTION
+    | typeof SET_SELECTED_ENTITIES_MAP;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -45,6 +48,7 @@ export const initialState: ReferencesState = {
   references: [],
   linksCounter: {},
   selectedEntities: [],
+  selectedEntitiesMap: new Map(),
   validations: null,
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
@@ -62,6 +66,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
       return { ...state, linksCounter: action.value };
     case SET_SELECTED_ENTITIES:
       return { ...state, selectedEntities: action.value };
+    case SET_SELECTED_ENTITIES_MAP:
+        return { ...state, selectedEntitiesMap: action.value };
     case SET_VALIDATIONS:
       return { ...state, validations: action.value };
     case SET_MAX_DEPTH_REACHED:

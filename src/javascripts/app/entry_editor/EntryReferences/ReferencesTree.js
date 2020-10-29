@@ -9,6 +9,7 @@ import { track } from 'analytics/Analytics';
 import { ReferencesContext } from './ReferencesContext';
 import {
   SET_SELECTED_ENTITIES,
+  SET_SELECTED_ENTITIES_MAP,
   SET_ACTIONS_DISABLED,
   SET_INITIAL_REFERENCES_AMOUNT,
 } from './state/actions';
@@ -80,7 +81,7 @@ function ReferenceCards({
   const [initialized, setInitialized] = useState(false);
   const entitiesPerLevel = [];
   const visitedEntities = { 0: [root.sys.id] };
-  const initialSelectedEntities = [];
+  const initialSelectedEntitiesMap = new Map();
 
   const toReferenceCard = (entity, level, entityIndexInTree) => {
     if (level === maxLevel) {
@@ -151,7 +152,7 @@ function ReferenceCards({
       : 1;
 
     if (allReferencesSelected) {
-      initialSelectedEntities.push(entity);
+      initialSelectedEntitiesMap.set(`${entity.sys.id}-${entity.sys.type}`, entity);
     }
 
     if (!fields || level > failsaveLevel) {
@@ -255,7 +256,7 @@ function ReferenceCards({
   const referenceCards = renderLayer(root, level, parentIndexInTree);
 
   if (!initialized) {
-    setInitialEntities(initialSelectedEntities);
+    setInitialEntities(initialSelectedEntitiesMap);
     setInitialReferenceAmount(entitiesPerLevel);
     setInitialized(true);
     if (maxLevelReached) {
@@ -282,29 +283,34 @@ const ReferencesTree = ({
   defaultLocale,
   onRootReferenceCardClick,
 }) => {
-  const { state: referencesState, dispatch } = useContext(ReferencesContext);
-  const root = referencesState.references[0];
+  const {
+    state: { selectedEntitiesMap, references },
+    dispatch,
+  } = useContext(ReferencesContext);
+  const root = references[0];
+
+  const selectedEntities = (entitiesMap) => [...entitiesMap.values()];
 
   const handleSelect = useCallback(
     (selected, selectedEntity) => {
-      const selectedEntities = selected
-        ? [...referencesState.selectedEntities, selectedEntity]
-        : referencesState.selectedEntities.filter(
-            (entity) => entity.sys.id !== selectedEntity.sys.id
-          );
-      dispatch({
-        type: SET_SELECTED_ENTITIES,
-        value: selectedEntities,
-      });
-      dispatch({ type: SET_ACTIONS_DISABLED, value: !selectedEntities.length });
+      const {
+        sys: { id, type },
+      } = selectedEntity;
+      selected
+        ? selectedEntitiesMap.set(`${id}-${type}`, selectedEntity)
+        : selectedEntitiesMap.delete(`${id}-${type}`);
+
+      dispatch({ type: SET_SELECTED_ENTITIES, value: selectedEntities(selectedEntitiesMap) });
+      dispatch({ type: SET_ACTIONS_DISABLED, value: !selectedEntitiesMap.size });
     },
-    [dispatch, referencesState.selectedEntities]
+    [dispatch, selectedEntitiesMap]
   );
 
   const setInitialEntities = useCallback(
-    (selectedEntities) => {
-      dispatch({ type: SET_SELECTED_ENTITIES, value: selectedEntities });
-      dispatch({ type: SET_ACTIONS_DISABLED, value: !selectedEntities.length });
+    (selectedEntitiesMap) => {
+      dispatch({ type: SET_SELECTED_ENTITIES_MAP, value: selectedEntitiesMap });
+      dispatch({ type: SET_SELECTED_ENTITIES, value: selectedEntities(selectedEntitiesMap) });
+      dispatch({ type: SET_ACTIONS_DISABLED, value: !selectedEntitiesMap.size });
     },
     [dispatch]
   );
