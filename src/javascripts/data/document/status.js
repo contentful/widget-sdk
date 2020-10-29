@@ -24,7 +24,6 @@ import { Error as DocError } from './Error';
 export function create(sys$, docError$, canUpdate) {
   return K.combineProperties([sys$, docError$], (sys, docError) => {
     if (docError instanceof DocError.CmaInternalServerError) {
-      logger.logServerError('CmaDocument error', { error: docError });
       return DocumentStatusCode.INTERNAL_SERVER_ERROR;
     }
     if (docError instanceof DocError.VersionMismatch) {
