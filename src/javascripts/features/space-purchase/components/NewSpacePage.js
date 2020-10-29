@@ -106,10 +106,7 @@ const fetchSpaceRatePlans = async (
     const currentSpacePlan = spaceRatePlans.find((plan) =>
       plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
     );
-    setCurrentSpacePlan(
-      currentSpacePlan ??
-        spaceRatePlans.find((plan) => plan.name === SPACE_PURCHASE_TYPES.COMMUNITY)
-    );
+    setCurrentSpacePlan(currentSpacePlan ?? null);
   }
 };
 
@@ -289,11 +286,7 @@ export const NewSpacePage = ({
   const onConfirm = () => {
     trackWithSession(EVENTS.CONFIRM_PURCHASE);
 
-    goToStep(
-      currentSpace && currentSpacePlan
-        ? SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT
-        : SPACE_PURCHASE_STEPS.RECEIPT
-    );
+    goToStep(currentSpace ? SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT : SPACE_PURCHASE_STEPS.RECEIPT);
   };
 
   const getComponentForStep = (currentStep) => {
