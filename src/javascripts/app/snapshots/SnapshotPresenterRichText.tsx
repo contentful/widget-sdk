@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 
-import { getModule } from 'core/NgRegistry';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
 import { Entity } from 'app/entity_editor/Document/types';
@@ -10,6 +9,13 @@ import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentType
 import { createTagsRepo } from 'features/content-tags';
 import { EditorInterface } from '@contentful/widget-renderer';
 import { LegacyWidget } from 'widgets/WidgetCompat';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createCache from 'data/userCache';
+import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
+import { SpaceEndpoint } from 'data/CMA/types';
 
 const SnapshotPresenterRichText = ({
   className,
@@ -21,29 +27,58 @@ const SnapshotPresenterRichText = ({
   widget,
   parameters,
 }: SnapshotPresenterRichTextProps) => {
+  const {
+    currentSpaceId,
+    currentEnvironment,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
+  const spaceApiClient = useCurrentSpaceAPIClient();
+
   const sdk: FieldExtensionSDK = useMemo(() => {
-    const spaceContext = getModule('spaceContext');
+    const environmentId = currentEnvironmentId as string;
+    const spaceId = currentSpaceId as string;
+    const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
+    const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
+    const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
+    const usersEndpoint = createCache(spaceEndpoint);
+    const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 
     return createReadonlyFieldWidgetSDK({
-      cma: spaceContext.cma,
+      cma: spaceApiClient,
       editorInterface: editorData.editorInterface,
-      endpoint: spaceContext.endpoint,
+      endpoint: spaceEndpoint,
       entry: entity,
-      environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+      environmentIds: [environmentId, ...aliasesId],
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
-      initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+      initialContentTypes: currentSpaceContentTypes,
       internalContentType: editorData.contentType.data,
       publicLocaleCode: locale.code,
-      spaceId: spaceContext.getId(),
-      spaceMember: spaceContext.space.data.spaceMember,
-      tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-      usersRepo: spaceContext.users,
+      spaceId,
+      spaceMember,
+      tagsRepo: tagsEndpoint,
+      usersRepo: usersEndpoint,
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
       parameters,
     });
-  }, [field, locale, entity, editorData, value, widget, parameters]);
+  }, [
+    field,
+    locale,
+    entity,
+    editorData,
+    value,
+    widget,
+    parameters,
+    currentSpaceId,
+    currentEnvironment,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceContentTypes,
+    spaceApiClient,
+  ]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">

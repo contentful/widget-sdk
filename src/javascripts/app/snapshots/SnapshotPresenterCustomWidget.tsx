@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 
 import { FieldExtensionSDK, KnownSDK } from 'contentful-ui-extensions-sdk';
-import { getModule } from 'core/NgRegistry';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import {
   EditorInterface,
@@ -13,6 +12,13 @@ import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentType
 import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
 import { Entity } from 'app/entity_editor/Document/types';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
+import { SpaceEndpoint } from 'data/CMA/types';
+import createCache from 'data/userCache';
 
 interface SnapshotPresenterCustomWIdgetProps {
   locale: Locale;
@@ -42,29 +48,58 @@ const SnapshotPresenterCustomWidget = ({
   field,
   parameters,
 }: SnapshotPresenterCustomWIdgetProps) => {
+  const {
+    currentSpaceId,
+    currentEnvironment,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
+  const spaceApiClient = useCurrentSpaceAPIClient();
+
   const sdk: FieldExtensionSDK = useMemo(() => {
-    const spaceContext = getModule('spaceContext');
+    const spaceId = currentSpaceId as string;
+    const environmentId = currentEnvironmentId as string;
+    const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
+    const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
+    const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
+    const usersEndpoint = createCache(spaceEndpoint);
+    const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 
     return createReadonlyFieldWidgetSDK({
-      cma: spaceContext.cma,
+      cma: spaceApiClient,
       editorInterface: editorData.editorInterface,
-      endpoint: spaceContext.endpoint,
+      endpoint: spaceEndpoint,
       entry: entity,
-      environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+      environmentIds: [environmentId, ...aliasesId],
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
-      initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+      initialContentTypes: currentSpaceContentTypes,
       internalContentType: editorData.contentType.data,
       publicLocaleCode: locale.code,
-      spaceId: spaceContext.getId(),
-      spaceMember: spaceContext.space.data.spaceMember,
-      tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-      usersRepo: spaceContext.users,
+      spaceId,
+      spaceMember,
+      tagsRepo: tagsEndpoint,
+      usersRepo: usersEndpoint,
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
       parameters,
     });
-  }, [field, locale, entity, editorData, widget, value, parameters]);
+  }, [
+    field,
+    locale,
+    entity,
+    editorData,
+    widget,
+    value,
+    parameters,
+    spaceApiClient,
+    currentSpaceId,
+    currentEnvironmentId,
+    currentSpaceContentTypes,
+    currentEnvironment,
+    currentSpace,
+  ]);
 
   return (
     <div data-test-id="snapshot-presenter-extension">
