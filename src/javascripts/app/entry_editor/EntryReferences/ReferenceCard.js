@@ -114,9 +114,7 @@ const ReferenceCard = ({
   }, [entity, isUnresolved]);
 
   useEffect(() => {
-    const {
-      sys: { id: entityId, type: entityType },
-    } = entity;
+    const { sys: { id: entityId, type: entityType } = {} } = entity || {};
     const entityUniqueId = `${entityId}-${entityType}`;
 
     setSelected(selectedEntitiesMap.has(entityUniqueId));
