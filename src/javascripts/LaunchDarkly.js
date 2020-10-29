@@ -262,7 +262,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
       await initializationPromise;
 
       initialized = true;
-    } catch {
+    } catch (error) {
       // If LaunchDarkly couldn't initialize, return whatever the fallback value is
       // for the flag and reset the state so we can try to initialize later
       initializationPromise = null;
@@ -270,7 +270,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
 
       logger.logError(`LaunchDarkly initialization failed`, {
         groupingHash: 'LDInitFailed',
-        data: { flagName, organizationId, spaceId, environmentId },
+        data: { flagName, organizationId, spaceId, environmentId, error },
       });
 
       DegradedAppPerformance.trigger('LaunchDarkly');
@@ -314,7 +314,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         logger.logError(`Unexpected error occurred while getting variation for ${flagName}`, {
           groupingHash: 'UnexpectedFlagPromiseError',
           error,
-          data: { flagName, organizationId, spaceId, environmentId },
+          data: { flagName, organizationId, spaceId, environmentId, error },
         });
 
         return FLAG_PROMISE_ERRED;
@@ -397,10 +397,10 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
         user: currentUser,
         flags,
       });
-    } catch {
+    } catch (error) {
       logger.logError(`LaunchDarkly identify failed for ${flagName}`, {
         groupingHash: 'LDIdentifyFailed',
-        data: { flagName, organizationId, spaceId, environmentId },
+        data: { flagName, organizationId, spaceId, environmentId, error },
       });
 
       return FLAG_PROMISE_ERRED;
