@@ -8,80 +8,88 @@ import { createWebhookTemplateDialogOpener } from '../createWebhookTemplateDialo
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import StateRedirect from 'app/common/StateRedirect';
-import { getModule } from 'core/NgRegistry';
 import * as Config from 'Config';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import * as TokenStore from 'services/TokenStore';
 
-const WebhooksFetcher = createFetcherComponent(() => {
-  const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const space = spaceContext.getSpace();
+const WebhooksFetcher = createFetcherComponent(({ spaceId, space, organizationId, userEmail }) => {
   const webhookRepo = getWebhookRepo({ spaceId, space });
 
   return Promise.all([
     webhookRepo.getAll(),
-    getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy'),
+    getOrgFeature(organizationId, 'webhook_aws_proxy'),
   ]).then(([webhooks, hasAwsProxyFeature]) => {
-    const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
+    const isContentfulUser = (userEmail || '').endsWith('@contentful.com');
     const hasAwsProxy = hasAwsProxyFeature || isContentfulUser;
     return [webhooks, hasAwsProxy];
   });
 });
 
-export class WebhookListRoute extends React.Component {
-  static propTypes = {
-    templateId: PropTypes.string,
-    templateIdReferrer: PropTypes.string,
-  };
+export function WebhookListRoute(props) {
+  const { email: userEmail } = TokenStore.getUserSync();
+  const {
+    currentSpace,
+    currentSpaceId,
+    currentOrganizationId,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
 
-  setupTemplateOpener(hasAwsProxy = false) {
-    const spaceContext = getModule('spaceContext');
-
+  function setupTemplateOpener(hasAwsProxy = false) {
     return createWebhookTemplateDialogOpener(
       {
-        contentTypes: spaceContext.publishedCTs.getAllBare(),
+        contentTypes: currentSpaceContentTypes,
         defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
         domain: Config.domain,
         hasAwsProxy,
       },
-      spaceContext.getId(),
-      spaceContext.getSpace()
+      currentSpaceId,
+      currentSpace
     );
   }
 
-  render() {
-    if (!getSectionVisibility()['webhooks']) {
-      if (this.props.templateId) {
-        return <WebhookForbiddenPage templateId={this.props.templateId} />;
-      }
-      return <StateRedirect path="spaces.detail.entries.list" />;
+  if (!getSectionVisibility()['webhooks']) {
+    if (props.templateId) {
+      return <WebhookForbiddenPage templateId={props.templateId} />;
     }
-    return (
-      <WebhooksFetcher>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <WebhookSkeletons.WebhooksListLoading />;
-          }
-          if (isError) {
-            return <StateRedirect path="spaces.detail.entries.list" />;
-          }
-          const [webhooks, hasAwsProxy] = data;
-          return (
-            <React.Fragment>
-              <DocumentTitle title="Webhooks" />
-              <WebhookList
-                templateId={this.props.templateId}
-                templateIdReferrer={this.props.templateIdReferrer}
-                webhooks={webhooks}
-                openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
-              />
-            </React.Fragment>
-          );
-        }}
-      </WebhooksFetcher>
-    );
+
+    return <StateRedirect path="spaces.detail.entries.list" />;
   }
+
+  return (
+    <WebhooksFetcher
+      spaceId={currentSpaceId}
+      space={currentSpace}
+      organizationId={currentOrganizationId}
+      userEmail={userEmail}>
+      {({ isLoading, isError, data }) => {
+        if (isLoading) {
+          return <WebhookSkeletons.WebhooksListLoading />;
+        }
+        if (isError) {
+          return <StateRedirect path="spaces.detail.entries.list" />;
+        }
+        const [webhooks, hasAwsProxy] = data;
+        return (
+          <React.Fragment>
+            <DocumentTitle title="Webhooks" />
+            <WebhookList
+              templateId={props.templateId}
+              templateIdReferrer={props.templateIdReferrer}
+              webhooks={webhooks}
+              openTemplateDialog={setupTemplateOpener(hasAwsProxy)}
+            />
+          </React.Fragment>
+        );
+      }}
+    </WebhooksFetcher>
+  );
 }
+
+WebhookListRoute.propTypes = {
+  templateId: PropTypes.string,
+  templateIdReferrer: PropTypes.string,
+};

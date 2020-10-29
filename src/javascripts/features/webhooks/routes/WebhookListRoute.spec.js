@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import { WebhookListRoute } from './WebhookListRoute';
 import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([]),
@@ -23,6 +24,25 @@ jest.mock('app/common/ReloadNotification', () => ({
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getOrgFeature: () => Promise.resolve(false) }));
 
+jest.mock('services/TokenStore', () => ({
+  getUserSync: jest.fn().mockReturnValue({
+    email: 'test@contentful.com',
+  }),
+}));
+
+const build = (props = {}) => {
+  return render(
+    <SpaceEnvContext.Provider
+      value={{
+        currentSpace: {},
+        currentSpaceId: 'space-id',
+        currentOrganizationId: 'organization-id',
+      }}>
+      <WebhookListRoute {...props} />
+    </SpaceEnvContext.Provider>
+  );
+};
+
 describe('WebhookListRoute', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
@@ -37,7 +57,7 @@ describe('WebhookListRoute', () => {
   it('should be resticted for non-admins and redirect should be called', () => {
     expect.assertions(3);
     setSectionVisibility(false);
-    render(<WebhookListRoute />);
+    build();
     expect($stateMocked.go).toHaveBeenCalledTimes(1);
     expect($stateMocked.go).toHaveBeenCalledWith(
       'spaces.detail.entries.list',
@@ -51,7 +71,7 @@ describe('WebhookListRoute', () => {
     expect.assertions(3);
     setSectionVisibility(false);
 
-    const { getByTestId } = render(<WebhookListRoute templateId="algolia-index-entries" />);
+    const { getByTestId } = build({ templateId: 'algolia-index-entries' });
 
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(mockWebhookRepo.getAll).not.toHaveBeenCalled();
@@ -61,7 +81,7 @@ describe('WebhookListRoute', () => {
   it('should fetch webhooks if admin reaches that page', () => {
     expect.assertions(3);
     setSectionVisibility(true);
-    const { queryByTestId } = render(<WebhookListRoute />);
+    const { queryByTestId } = build();
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(mockWebhookRepo.getAll).toHaveBeenCalledTimes(1);
     expect(queryByTestId('webhooks.forbidden')).toBeNull();
