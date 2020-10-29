@@ -2,7 +2,6 @@ import { cloneDeep, get, sortBy } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { deepFreeze } from 'utils/Freeze';
 import * as K from 'core/utils/kefir';
-import * as logger from 'services/logger';
 import * as Store from 'data/streamHashSet';
 
 /**
@@ -188,7 +187,6 @@ function handleReloadError(err) {
     Notification.error(message);
   } else {
     Notification.error('Could not get published content types');
-    logger.logServerError('Could not get published Content Types', { error: err });
   }
   return Promise.reject(err);
 }
