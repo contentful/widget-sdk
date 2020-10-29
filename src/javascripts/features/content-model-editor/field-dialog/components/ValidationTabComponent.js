@@ -17,7 +17,7 @@ const ValidationTabComponent = ({
   onChange,
   fields,
   ctField,
-  spaceContext,
+  contentTypes,
   widgetSettings,
   availableWidgets,
 }) => {
@@ -106,7 +106,7 @@ const ValidationTabComponent = ({
               validation={fields.linkContentType}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
+              contentTypes={contentTypes}
             />
           )}
           {fields.assetFileSize && (
@@ -114,7 +114,6 @@ const ValidationTabComponent = ({
               validation={fields.assetFileSize}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
             />
           )}
           {fields.linkMimetypeGroup && (
@@ -123,7 +122,7 @@ const ValidationTabComponent = ({
               validation={fields.linkMimetypeGroup}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
+              contentTypes={contentTypes}
             />
           )}
           {fields.assetImageDimensions && (
@@ -170,7 +169,7 @@ const ValidationTabComponent = ({
               validation={fields.entryHyperlinkLinkContentType}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
+              contentTypes={contentTypes}
             />
           )}
           <Heading className={styles.marginBottomM}>Embedded block entry</Heading>
@@ -188,7 +187,7 @@ const ValidationTabComponent = ({
               validation={fields.embeddedEntryBlockLinkContentType}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
+              contentTypes={contentTypes}
             />
           )}
           <Heading className={styles.marginBottomM}>Embedded asset</Heading>
@@ -224,7 +223,7 @@ const ValidationTabComponent = ({
               validation={fields.embeddedEntryInlineLinkContentType}
               onChange={onChange}
               onBlur={onBlur}
-              spaceContext={spaceContext}
+              contentTypes={contentTypes}
             />
           )}
         </Fragment>
@@ -238,7 +237,7 @@ ValidationTabComponent.propTypes = {
   onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   ctField: PropTypes.object.isRequired,
-  spaceContext: PropTypes.object.isRequired,
+  contentTypes: PropTypes.array.isRequired,
   widgetSettings: PropTypes.shape({
     namespace: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,

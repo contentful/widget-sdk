@@ -26,6 +26,7 @@ import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   modalHeader: css({
@@ -76,12 +77,12 @@ const FieldModalDialogForm = ({
   onClose,
   ctField,
   widget,
-  spaceContext,
   contentType,
   updateFieldOnScope,
   editorInterface,
   customWidgets,
 }) => {
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
   const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
@@ -160,7 +161,7 @@ const FieldModalDialogForm = ({
                 fields={fields}
                 form={form}
                 ctField={ctField}
-                spaceContext={spaceContext}
+                contentTypes={currentSpaceContentTypes}
                 contentType={contentType}
                 richTextOptions={richTextOptions}
                 setRichTextOptions={setRichTextOptions}
@@ -175,7 +176,7 @@ const FieldModalDialogForm = ({
                 fields={fields}
                 form={form}
                 ctField={ctField}
-                spaceContext={spaceContext}
+                contentTypes={currentSpaceContentTypes}
                 widgetSettings={widgetSettings}
                 availableWidgets={availableWidgets}
               />
@@ -219,7 +220,6 @@ FieldModalDialogForm.propTypes = {
   onClose: PropTypes.func.isRequired,
   ctField: PropTypes.object,
   widget: PropTypes.object,
-  spaceContext: PropTypes.object.isRequired,
   contentType: PropTypes.object.isRequired,
   updateFieldOnScope: PropTypes.func.isRequired,
 };

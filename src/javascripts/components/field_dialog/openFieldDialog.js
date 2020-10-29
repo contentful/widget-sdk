@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import {
   openFieldModalDialog,
   extractFieldValidations,
@@ -9,8 +8,6 @@ import {
 import { extend, isEmpty } from 'lodash';
 
 export async function openFieldDialog($scope, field, widget) {
-  const spaceContext = getModule('spaceContext');
-
   const updateFieldOnScope = (
     {
       isTitle,
@@ -91,7 +88,6 @@ export async function openFieldDialog($scope, field, widget) {
   return openFieldModalDialog(
     field,
     widget,
-    spaceContext,
     $scope.contentType,
     updateFieldOnScope,
     $scope.editorInterface,

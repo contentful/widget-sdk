@@ -12,7 +12,7 @@ import { toString, includes, map } from 'lodash';
 import { ValidationFieldType } from 'features/content-model-editor/field-dialog/utils/PropTypes';
 import mimetype from '@contentful/mimetype';
 
-const LinkedEntitiesValidation = ({ fieldName, validation, onChange, onBlur, spaceContext }) => {
+const LinkedEntitiesValidation = ({ fieldName, validation, onChange, onBlur, contentTypes }) => {
   const { name, helpText, message, settings, enabled } = validation.value;
 
   const entitiesTypes = useMemo(() => {
@@ -37,8 +37,8 @@ const LinkedEntitiesValidation = ({ fieldName, validation, onChange, onBlur, spa
     };
     return fieldName === 'linkMimetypeGroup'
       ? map(mimetype.getGroupNames(), decorateAssetsTypes)
-      : spaceContext.publishedCTs.getAllBare().map(decorateContentType);
-  }, [spaceContext, fieldName, settings]);
+      : contentTypes.map(decorateContentType);
+  }, [contentTypes, fieldName, settings]);
 
   const onCheckboxChange = (updatedCheckboxItem) => {
     const updatedEntitiesTypes = entitiesTypes.map((item) => {
@@ -121,7 +121,7 @@ LinkedEntitiesValidation.propTypes = {
   validation: PropTypes.shape(ValidationFieldType).isRequired,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
-  spaceContext: PropTypes.object.isRequired,
+  contentTypes: PropTypes.array.isRequired,
 };
 
 export { LinkedEntitiesValidation };

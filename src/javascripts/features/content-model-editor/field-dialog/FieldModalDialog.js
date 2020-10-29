@@ -11,7 +11,6 @@ const FieldModalDialog = ({
   onClose,
   field: ctField,
   widget,
-  spaceContext,
   contentType,
   updateFieldOnScope,
   editorInterface,
@@ -26,7 +25,6 @@ const FieldModalDialog = ({
               onClose={onClose}
               ctField={ctField}
               widget={widget}
-              spaceContext={spaceContext}
               contentType={contentType}
               updateFieldOnScope={updateFieldOnScope}
               editorInterface={editorInterface}
@@ -44,7 +42,6 @@ FieldModalDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   field: PropTypes.object,
   widget: PropTypes.object.isRequired,
-  spaceContext: PropTypes.object.isRequired,
   contentType: PropTypes.object.isRequired,
   updateFieldOnScope: PropTypes.func.isRequired,
   editorInterface: PropTypes.object.isRequired,
@@ -54,7 +51,6 @@ FieldModalDialog.propTypes = {
 const openFieldModalDialog = (
   field,
   widget,
-  spaceContext,
   contentType,
   updateFieldOnScope,
   editorInterface,
@@ -66,7 +62,6 @@ const openFieldModalDialog = (
       onClose={onClose}
       field={field}
       widget={widget}
-      spaceContext={spaceContext}
       contentType={contentType}
       updateFieldOnScope={updateFieldOnScope}
       editorInterface={editorInterface}

@@ -2,8 +2,7 @@ import React from 'react';
 import { render, fireEvent, within, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FieldModalDialogForm } from './FieldModalDialogForm';
-import * as spaceContextMocked from 'ng/spaceContext';
-import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 describe('Field Modal Dialog Form', () => {
@@ -11,7 +10,7 @@ describe('Field Modal Dialog Form', () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScope = jest.fn();
     const { getByTestId } = render(
-      <SpaceEnvContextProvider>
+      <SpaceEnvContext.Provider value={{ currentSpaceContentTypes: [] }}>
         <CurrentSpaceAPIClientProvider>
           <FieldModalDialogForm
             onClose={onCloseMock}
@@ -27,14 +26,13 @@ describe('Field Modal Dialog Form', () => {
               validations: [],
             }}
             widget={{}}
-            spaceContext={spaceContextMocked}
             contentType={{ data: { displayField: 'title', sys: { id: 'id' } } }}
             updateFieldOnScope={updateFieldOnScope}
             editorInterface={{}}
             customWidgets={[]}
           />
         </CurrentSpaceAPIClientProvider>
-      </SpaceEnvContextProvider>
+      </SpaceEnvContext.Provider>
     );
     const titleInput = getByTestId('content-type-field-name');
     expect(titleInput).toBeVisible();
@@ -47,7 +45,7 @@ describe('Field Modal Dialog Form', () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScopeMock = jest.fn();
     const { getByTestId, findByText } = render(
-      <SpaceEnvContextProvider>
+      <SpaceEnvContext.Provider value={{ currentSpaceContentTypes: [] }}>
         <CurrentSpaceAPIClientProvider>
           <FieldModalDialogForm
             onClose={onCloseMock}
@@ -63,14 +61,13 @@ describe('Field Modal Dialog Form', () => {
               validations: [],
             }}
             widget={{}}
-            spaceContext={spaceContextMocked}
             contentType={{ data: { displayField: 'title', sys: { id: 'id' } } }}
             updateFieldOnScope={updateFieldOnScopeMock}
             editorInterface={{}}
             customWidgets={[]}
           />
         </CurrentSpaceAPIClientProvider>
-      </SpaceEnvContextProvider>
+      </SpaceEnvContext.Provider>
     );
     const titleInput = getByTestId('content-type-field-name');
     expect(titleInput).toBeVisible();
