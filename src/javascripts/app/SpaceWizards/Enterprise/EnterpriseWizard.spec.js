@@ -2,12 +2,10 @@ import React from 'react';
 import { render, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { when } from 'jest-when';
-import { ENTERPRISE_HIGH_DEMAND } from 'account/pricing/PricingDataProvider';
 import client from 'services/client';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import * as utils from '../shared/utils';
 import * as Fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
 
 import EnterpriseWizard from './EnterpriseWizard';
 
@@ -85,7 +83,6 @@ describe('Enterprise Wizard', () => {
     getTemplatesList.mockResolvedValue([mockTemplate]);
     getTemplate.mockResolvedValue(mockTemplate);
     client.createSpace.mockResolvedValue(mockSpace);
-    getVariation.mockClear().mockResolvedValue(false);
 
     window.open = jest.fn();
   });
@@ -103,18 +100,6 @@ describe('Enterprise Wizard', () => {
   it('should show the POC plan', async () => {
     await build();
     expect(screen.queryByTestId('space-plans-list.item')).toBeVisible();
-  });
-
-  it('should display a disclaimer about POC spaces if the plan is not "High Demand"', async () => {
-    await build();
-    expect(screen.queryByTestId('enterprise-space-wizard.info')).toBeVisible();
-  });
-
-  it('should not display a disclaimer about POC spaces if the plan is "High Demand"', async () => {
-    const highDemandBasePlan = Fake.Plan({ customerType: ENTERPRISE_HIGH_DEMAND });
-
-    await build({ basePlan: highDemandBasePlan });
-    expect(screen.queryByTestId('enterprise-space-wizard.info')).toBeNull();
   });
 
   it('should hide the create button and show the contact us and close buttons if the user is at their free space limit', async () => {

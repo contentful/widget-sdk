@@ -9,6 +9,9 @@ export const TRIAL_SPACE_DATE_INTRODUCED_AT = '2020-10-01';
  * @return {boolean}
  */
 export const isOrganizationOnTrial = (organization) => {
+  if (!organization) {
+    return false;
+  }
   // endDate is null if organization has never been on trial
   const endDate = organization.trialPeriodEndsAt;
   return endDate ? moment().isSameOrBefore(moment(endDate), 'date') : false;
@@ -21,6 +24,9 @@ export const isOrganizationOnTrial = (organization) => {
  * @return {boolean}
  */
 export const isSpaceOnTrial = (space) => {
+  if (!space) {
+    return false;
+  }
   const endDate = space.trialPeriodEndsAt;
   return endDate ? moment().isSameOrBefore(moment(endDate), 'date') : false;
 };

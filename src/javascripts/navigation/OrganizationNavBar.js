@@ -33,11 +33,6 @@ function getItems(params, { orgId }) {
     },
   ];
 
-  const shouldDisplayNewSubscriptionPage = params.platformTrialCommEnabled
-    ? params.pricingVersion == 'pricing_version_2' &&
-      (params.isOwnerOrAdmin || params.isOrganizationOnTrial)
-    : params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin;
-
   return [
     {
       if: params.hasSettingsTab,
@@ -64,7 +59,9 @@ function getItems(params, { orgId }) {
       dataViewType: 'subscription',
     },
     {
-      if: shouldDisplayNewSubscriptionPage,
+      if:
+        params.pricingVersion == 'pricing_version_2' &&
+        (params.isOwnerOrAdmin || params.isOrganizationOnTrial),
       title: 'Subscription',
       sref: 'account.organizations.subscription_new',
       srefParams: { orgId },
@@ -214,7 +211,6 @@ export default class OrganizationNavigationBar extends React.Component {
       getOrgFeature(orgId, 'scim'),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
-      getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId: orgId }),
       getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId: orgId }),
     ];
 
@@ -223,7 +219,6 @@ export default class OrganizationNavigationBar extends React.Component {
       scimFeatureEnabled,
       hasOffsiteBackup,
       hasAdvancedExtensibility,
-      platformTrialCommEnabled,
       newSpacePurchaseFlowEnabled,
     ] = await Promise.all(promises);
 
@@ -236,7 +231,6 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
-      platformTrialCommEnabled,
       newSpacePurchaseFlowEnabled,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };

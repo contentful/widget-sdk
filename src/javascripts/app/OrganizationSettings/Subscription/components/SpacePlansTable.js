@@ -43,10 +43,8 @@ export function SpacePlansTable({
   showSpacePlanChangeBtn,
   initialLoad,
   upgradedSpaceId,
-  isTrialCommEnabled,
 }) {
-  const showExpiresAtColumn =
-    isTrialCommEnabled && plans.some((plan) => plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME);
+  const showExpiresAtColumn = plans.some((plan) => plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME);
   return (
     <Table testId="subscription-page.table">
       <colgroup>
@@ -83,7 +81,6 @@ export function SpacePlansTable({
                 enterprisePlan={enterprisePlan}
                 showSpacePlanChangeBtn={showSpacePlanChangeBtn}
                 showExpiresAtColumn={showExpiresAtColumn}
-                isTrialCommEnabled={isTrialCommEnabled}
               />
             );
           })
@@ -101,5 +98,4 @@ SpacePlansTable.propTypes = {
   showSpacePlanChangeBtn: PropTypes.bool,
   initialLoad: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
-  isTrialCommEnabled: PropTypes.bool,
 };

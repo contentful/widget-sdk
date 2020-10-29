@@ -32,12 +32,12 @@ export function initTrialProductTour(space, org) {
   const orgIdExists = storeOrgIds.includes(orgId);
   const spaceIdExists = storeSpaceIds.includes(spaceId);
 
-  if (org && isOrganizationOnTrial(org) && !orgIdExists) {
+  if (isOrganizationOnTrial(org) && !orgIdExists) {
     Intercom.startTour(INTERCOM_PLATFORM_TRIAL_TOUR_ID);
     storeOrgIds.push(orgId);
   }
 
-  if (space && isSpaceOnTrial(space) && !spaceIdExists) {
+  if (isSpaceOnTrial(space) && !spaceIdExists) {
     Intercom.startTour(INTERCOM_TRIAL_SPACE_TOUR_ID);
     storeSpaceIds.push(spaceId);
   }

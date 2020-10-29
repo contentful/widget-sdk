@@ -91,15 +91,15 @@ describe('Space Plan Row', () => {
       expect(screen.queryByTestId('subscription-page.spaces-list.change-plan-link')).toBeNull();
     });
 
-    it('should display the expiry date column if showExpiresAtColumn is true and feature flag is on', async () => {
-      await build({ showExpiresAtColumn: true, isTrialCommEnabled: true });
+    it('should display the expiry date column if showExpiresAtColumn is true', async () => {
+      await build({ showExpiresAtColumn: true });
       expect(screen.getByTestId('subscription-page.spaces-list.expires-at')).toHaveTextContent(
         MOCK_EXPIRES_AT_DAY_MONTH_YEAR
       );
     });
 
-    it('should not display the expiry date column if showExpiresAtColumn is false and feature flag is on', async () => {
-      await build({ showExpiresAtColumn: false, isTrialCommEnabled: true });
+    it('should not display the expiry date column if showExpiresAtColumn is false', async () => {
+      await build({ showExpiresAtColumn: false });
       expect(screen.queryByTestId('subscription-page.spaces-list.expires-at')).toBeNull();
     });
   });
@@ -158,8 +158,8 @@ describe('Space Plan Row', () => {
       expect(screen.getByTestId('subscription-page.spaces-list.features-tooltip')).toBeDefined();
     });
 
-    it('shows the PoC tooltip when the space is an existing POC and feature flag is on', async () => {
-      await build({ isTrialCommEnabled: true, createdAsPOC: true });
+    it('shows the PoC tooltip when the space is an existing POC', async () => {
+      await build({ createdAsPOC: true });
 
       fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.poc-tooltip-trigger'));
 
@@ -170,17 +170,10 @@ describe('Space Plan Row', () => {
       getEnabledFeatures.mockImplementation(() => {
         return ['FakeFeature1'];
       });
-      await build({ isTrialCommEnabled: true, createdAsPOC: true });
+      await build({ createdAsPOC: true });
 
       expect(() => {
         screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger');
-      }).toThrow();
-    });
-
-    it('does not show the PoC tooltip when the feature flag is off', async () => {
-      await build({ isTrialCommEnabled: false });
-      expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.poc-tooltip-trigger');
       }).toThrow();
     });
 
@@ -342,7 +335,6 @@ function build(input = {}) {
           enterprisePlan={options.enterprisePlan}
           showSpacePlanChangeBtn={options.showSpacePlanChangeBtn}
           showExpiresAtColumn={options.showExpiresAtColumn}
-          isTrialCommEnabled={options.isTrialCommEnabled}
         />
       </tbody>
     </table>

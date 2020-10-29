@@ -16,7 +16,6 @@ export function getSpaceNavigationItems({
   isUnscopedRoute,
   contentTagsEnabled,
   canManageSpace,
-  isSpaceTrial,
 }) {
   const dropdownItems = {
     locales: {
@@ -155,14 +154,14 @@ export function getSpaceNavigationItems({
   return [
     !useSpaceEnvironment || isUnscopedRoute
       ? {
-          if: canNavigateTo('spaceHome') || isSpaceTrial,
+          if: canNavigateTo('spaceHome'),
           sref: 'spaces.detail.home',
           dataViewType: 'space-home',
           navIcon: 'Home',
           title: 'Space home',
         }
       : {
-          if: canNavigateTo('spaceHome') || isSpaceTrial,
+          if: canNavigateTo('spaceHome'),
           disabled: true,
           tooltip: 'The space home is only available in the master environment.',
           navIcon: 'Home',

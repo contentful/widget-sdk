@@ -176,7 +176,7 @@ describe('SubscriptionPage', () => {
       hardLimit: null,
     };
 
-    build({ usersMeta, isPlatformTrialCommEnabled: true, organization: mockTrialOrganization });
+    build({ usersMeta, organization: mockTrialOrganization });
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
       `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
@@ -294,7 +294,6 @@ describe('SubscriptionPage', () => {
     it('should show trial info for admins and owners', () => {
       build({
         organization: mockTrialOrganization,
-        isPlatformTrialCommEnabled: true,
       });
 
       expect(screen.getByTestId('platform-trial-info')).toBeVisible();
@@ -304,7 +303,6 @@ describe('SubscriptionPage', () => {
       isOwnerOrAdmin.mockReturnValueOnce(false);
       build({
         organization: mockTrialOrganization,
-        isPlatformTrialCommEnabled: true,
         memberAccessibleSpaces: [],
       });
 

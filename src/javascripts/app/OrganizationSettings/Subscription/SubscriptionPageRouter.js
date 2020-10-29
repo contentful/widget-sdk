@@ -69,22 +69,16 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
 
   const endpoint = createOrganizationEndpoint(organizationId);
 
-  const [isPlatformTrialCommEnabled, newSpacePurchaseEnabled] = await Promise.all([
-    getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-      organizationId: organization.sys.id,
-    }),
-    getVariation(FLAGS.NEW_PURCHASE_FLOW, {
-      organizationId: organization.sys.id,
-    }),
-  ]);
+  const newSpacePurchaseEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW, {
+    organizationId: organization.sys.id,
+  });
 
   if (!isOwnerOrAdmin(organization)) {
-    if (isPlatformTrialCommEnabled && isOrganizationOnTrial(organization)) {
+    if (isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
       return {
         organization,
         memberAccessibleSpaces: spaces,
-        isPlatformTrialCommEnabled,
         newSpacePurchaseEnabled,
       };
     }
@@ -132,7 +126,6 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organization,
     productRatePlans,
     showMicroSmallSupportCard,
-    isPlatformTrialCommEnabled,
     newSpacePurchaseEnabled,
   };
 };

@@ -51,7 +51,6 @@ function SpacePlanRow({
   enterprisePlan,
   showSpacePlanChangeBtn,
   showExpiresAtColumn,
-  isTrialCommEnabled,
 }) {
   const { space } = plan;
   const createdBy = space ? getUserName(space.sys.createdBy) : '';
@@ -61,7 +60,7 @@ function SpacePlanRow({
   const enabledFeatures = getEnabledFeatures(plan);
   const includedFeatures = joinAnd(enabledFeatures.map(({ name }) => name));
 
-  const showPOCTooltip = Boolean(isTrialCommEnabled && space && space.createdAsPOC);
+  const showPOCTooltip = Boolean(space && space.createdAsPOC);
 
   const onViewSpace = () =>
     go({
@@ -209,7 +208,6 @@ SpacePlanRow.propTypes = {
   hasUpgraded: PropTypes.bool,
   showSpacePlanChangeBtn: PropTypes.bool,
   showExpiresAtColumn: PropTypes.bool,
-  isTrialCommEnabled: PropTypes.bool,
 };
 
 SpacePlanRow.defaultProps = {
@@ -217,7 +215,6 @@ SpacePlanRow.defaultProps = {
   hasUpgraded: false,
   showSpacePlanChangeBtn: false,
   showExpiresAtColumn: false,
-  isTrialCommEnabled: false,
 };
 
 export default SpacePlanRow;

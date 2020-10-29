@@ -14,7 +14,6 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import SpaceTrialIllustration from 'svg/illustrations/space-trial-illustration.svg';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { useAsync } from 'core/hooks';
 import { isSpaceOnTrial } from '../services/TrialService';
 import { getSpace } from 'services/TokenStore';
@@ -56,25 +55,13 @@ const FairUsePolicyLink = () => (
 export const SpaceTrialWidget = ({ spaceId }) => {
   const [isTrialSpace, setIsTrialSpace] = useState(false);
 
-  const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
-
   const fetchSpace = useCallback(async () => {
-    const space = await getSpace(spaceId);
-    const organizationId = space.organization.sys.id;
-    const isTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId });
-
-    if (!isTrialCommEnabled) {
-      return;
-    }
-
-    setIsTrialCommEnabled(isTrialCommEnabled);
-
     getSpace(spaceId).then((space) => setIsTrialSpace(isSpaceOnTrial(space)));
   }, [spaceId]);
 
   const { isLoading } = useAsync(fetchSpace);
 
-  if (isLoading || !isTrialSpace || !isTrialCommEnabled) {
+  if (isLoading || !isTrialSpace) {
     return null;
   }
 

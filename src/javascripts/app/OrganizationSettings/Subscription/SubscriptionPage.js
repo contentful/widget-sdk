@@ -104,7 +104,6 @@ export default function SubscriptionPage({
   initialLoad,
   spacePlans,
   onSpacePlansChange,
-  isPlatformTrialCommEnabled,
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
 }) {
@@ -183,7 +182,7 @@ export default function SubscriptionPage({
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
-  const isOrgOnTrial = isPlatformTrialCommEnabled && isOrganizationOnTrial(organization);
+  const isOrgOnTrial = isOrganizationOnTrial(organization);
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
@@ -210,7 +209,7 @@ export default function SubscriptionPage({
             )}
           </div>
           <div className={styles.trialSection}>
-            {isPlatformTrialCommEnabled && <PlatformTrialInfo organization={organization} />}
+            {organization && <PlatformTrialInfo organization={organization} />}
           </div>
           {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.leftSection}>
@@ -303,7 +302,6 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   showMicroSmallSupportCard: PropTypes.bool,
   onSpacePlansChange: PropTypes.func,
-  isPlatformTrialCommEnabled: PropTypes.bool,
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
 };

@@ -30,7 +30,6 @@ import {
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
 import { isSpaceOnTrial } from 'features/trials';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { TrialSpaceHome } from './TrialSpaceHome';
 
 const isTEASpace = (contentTypes, currentSpace) => {
@@ -47,15 +46,11 @@ const fetchData = (
   isTEA,
   isModernStack,
   currentSpaceId,
-  setIsTrialCommEnabled,
   currentSpace
 ) => async () => {
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
-  getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-    organizationId: getOrganizationId(currentSpace),
-  }).then((flag) => setIsTrialCommEnabled(flag));
 
   if (!currentSpaceId || !isSpaceAdmin) {
     setLoading(false);
@@ -118,7 +113,6 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
-  const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationId = getOrganizationId(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
@@ -128,7 +122,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
-  const isTrialSpace = currentSpace && isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
+  const isTrialSpace = currentSpace && isSpaceOnTrial(currentSpace.data);
   const spaceHomeProps = {
     orgId: organizationId,
     orgName: organizationName,
@@ -146,7 +140,6 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
         isTEA,
         isModernStack,
         currentSpaceId,
-        setIsTrialCommEnabled,
         currentSpace
       ),
       [spaceTemplateCreated, isSpaceAdmin, isTEA, isModernStack, currentSpaceId, currentSpace]

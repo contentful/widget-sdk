@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
-import { getVariation } from 'LaunchDarkly';
 import * as fake from 'test/helpers/fakeFactory';
 import { SpaceTrialWidget } from './SpaceTrialWidget';
 import { getSpace } from 'services/TokenStore';
@@ -30,18 +29,8 @@ jest.mock('../services/TrialService', () => ({
 
 describe('SpaceTrialWidget', () => {
   beforeEach(() => {
-    getVariation.mockClear().mockResolvedValue(true);
     getSpace.mockResolvedValue(mockedSpace);
     isSpaceOnTrial.mockReturnValue(true);
-  });
-
-  it('does not render if the feature flag is turned off', async () => {
-    getVariation.mockResolvedValueOnce(false);
-
-    build();
-
-    await waitFor(() => expect(getVariation).toBeCalledTimes(1));
-    expect(screen.queryByTestId('space-trial-widget')).not.toBeInTheDocument();
   });
 
   it('renders correctly when the space is on trial', async () => {

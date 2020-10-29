@@ -83,7 +83,6 @@ function SpacePlans({
   const [isSpaceAssignmentExperimentEnabled, setIsSpaceAssignmentExperimentEnabled] = useState(
     false
   );
-  const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
@@ -95,7 +94,6 @@ function SpacePlans({
         FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
         { organizationId }
       );
-      const isTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId });
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
       const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
@@ -106,7 +104,6 @@ function SpacePlans({
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);
       setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
-      setIsTrialCommEnabled(isTrialCommEnabled);
     }
     fetch();
   }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
@@ -239,7 +236,6 @@ function SpacePlans({
                 onDeleteSpace={onDeleteSpace}
                 enterprisePlan={enterprisePlan}
                 showSpacePlanChangeBtn={canManageSpaces}
-                isTrialCommEnabled={isTrialCommEnabled}
               />
             </TabPanel>
             {unassignedSpacePlans.length > 0 && (
@@ -268,7 +264,6 @@ function SpacePlans({
             onDeleteSpace={onDeleteSpace}
             enterprisePlan={enterprisePlan}
             showSpacePlanChangeBtn={canManageSpaces}
-            isTrialCommEnabled={isTrialCommEnabled}
           />
         ))}
     </>

@@ -63,6 +63,10 @@ jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
   useFeatureFlagAddToRelease: jest.fn().mockReturnValue({ addToReleaseEnabled: true }),
 }));
 
+jest.mock('features/trials', () => ({
+  isSpaceOnTrial: jest.fn(),
+}));
+
 const performer = {
   archive: jest.fn().mockResolvedValue('success'),
   unarchive: jest.fn().mockResolvedValue('success'),

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
-import { getVariation } from 'LaunchDarkly';
 import { TrialTag } from './TrialTag';
 import * as fake from 'test/helpers/fakeFactory';
 import { getModule } from 'core/NgRegistry';
@@ -72,7 +71,6 @@ jest.mock('../services/intercomProductTour', () => ({
 
 describe('TrialTag', () => {
   beforeEach(() => {
-    getVariation.mockClear().mockResolvedValue(true);
     getOrganization.mockResolvedValue(trialOrganization);
     getSpace.mockResolvedValue(trialSpace);
     isOrgRoute.mockReturnValue(true);
@@ -93,37 +91,10 @@ describe('TrialTag', () => {
     expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
   });
 
-  it('does not pass an invalid spaceID to LD or try to render the tag if inaccessible space', async () => {
-    getModule.mockReturnValue({ spaceId: trialSpace.sys.id, orgId: organizationNotOnTrial.sys.id });
-    getOrganization.mockResolvedValue(organizationNotOnTrial);
-    getSpace.mockRejectedValue();
-    build();
-
-    await waitFor(() =>
-      expect(getVariation).toBeCalledWith(undefined, {
-        organizationId: organizationNotOnTrial.sys.id,
-        spaceId: undefined,
-      })
-    );
-
-    expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
-  });
-
   describe('Platform trial', () => {
     beforeEach(() => {
       getModule.mockReturnValue({ orgId: trialOrganization.sys.id });
       isOwnerOrAdmin.mockReturnValue(false);
-    });
-
-    it('does not render if the feature flag is turned off', async () => {
-      getVariation.mockResolvedValueOnce(false);
-      build();
-
-      await waitFor(() => expect(getVariation).toBeCalledTimes(1));
-
-      expect(initTrialProductTour).toBeCalledTimes(0);
-
-      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
     });
 
     it('renders when the organization is on trial and the navbar is OrgSettingsNavbar', async () => {
@@ -193,17 +164,6 @@ describe('TrialTag', () => {
       isOwnerOrAdmin.mockReturnValue(false);
       isOrgRoute.mockReturnValue(false);
       isSpaceRoute.mockReturnValue(true);
-    });
-
-    it('does not render if the feature flag is turned off', async () => {
-      getVariation.mockResolvedValueOnce(false);
-      build();
-
-      await waitFor(() => expect(getVariation).toBeCalledTimes(1));
-
-      expect(initTrialProductTour).toBeCalledTimes(0);
-
-      expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
     });
 
     it('renders when the space is on trial and the navbar is SpaceNavbar', async () => {

@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { css } from 'emotion';
 import { Tag, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { Pluralized } from 'core/components/formatting';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
@@ -35,8 +34,6 @@ export const TrialTag = () => {
   const [organization, setOrganization] = useState();
   const [space, setSpace] = useState();
 
-  const [isPlatformTrialCommEnabled, setIsPlatformTrialCommEnabled] = useState(false);
-
   const { orgId, spaceId } = getModule('$stateParams');
 
   const fetchData = useCallback(async () => {
@@ -57,23 +54,16 @@ export const TrialTag = () => {
       }
     }
 
-    const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-      organizationId: org.sys.id,
-    });
+    initTrialProductTour(space, org);
 
-    if (isPlatformTrialCommEnabled) {
-      initTrialProductTour(space, org);
-    }
-
-    setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
     setOrganization(org);
     setSpace(space);
   }, [spaceId, orgId]);
 
   const { isLoading } = useAsync(fetchData);
 
-  const isEnterpriseTrial = organization && isOrganizationOnTrial(organization);
-  const isSpaceTrial = space && isSpaceOnTrial(space);
+  const isEnterpriseTrial = isOrganizationOnTrial(organization);
+  const isSpaceTrial = isSpaceOnTrial(space);
 
   if (isEnterpriseTrial && isSpaceTrial) {
     logError('Unexpected behaviour, both space and organization are on trial', {
@@ -83,7 +73,7 @@ export const TrialTag = () => {
     return null;
   }
 
-  if (isLoading || !isPlatformTrialCommEnabled || (!isEnterpriseTrial && !isSpaceTrial)) {
+  if (isLoading || (!isEnterpriseTrial && !isSpaceTrial)) {
     return null;
   }
 

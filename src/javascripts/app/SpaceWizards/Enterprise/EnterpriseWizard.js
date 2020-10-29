@@ -13,7 +13,6 @@ import ProgressScreen from '../shared/ProgressScreen';
 
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import POCPlan from './Plan';
-import POCInfo from './Info';
 import Loader from '../shared/Loader';
 import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -35,7 +34,6 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { Pluralized } from 'core/components/formatting';
 import { isOrganizationOnTrial } from 'features/trials';
 
@@ -51,18 +49,10 @@ const styles = {
 const initialFetch = (organization, basePlan) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const orgResources = createResourceService(organization.sys.id, 'organization');
-  const [
-    freeSpaceResource,
-    spaceRatePlans,
-    templates,
-    isTrialCommFeatureFlagEnabled,
-  ] = await Promise.all([
+  const [freeSpaceResource, spaceRatePlans, templates] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
-    getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-      organizationId: organization.sys.id,
-    }),
   ]);
 
   const freeSpaceRatePlan = spaceRatePlans.find(
@@ -78,7 +68,6 @@ const initialFetch = (organization, basePlan) => async () => {
     freeSpaceRatePlan,
     freeSpaceResource,
     templates,
-    isTrialCommFeatureFlagEnabled,
   };
 };
 
@@ -139,14 +128,7 @@ export default function EnterpriseWizard(props) {
     return <Loader />;
   }
 
-  const {
-    isHighDemand,
-    isEnterpriseTrial,
-    freeSpaceResource,
-    freeSpaceRatePlan,
-    templates,
-    isTrialCommFeatureFlagEnabled,
-  } = data;
+  const { isHighDemand, isEnterpriseTrial, freeSpaceResource, freeSpaceRatePlan, templates } = data;
 
   const includedResources = getIncludedResources(freeSpaceRatePlan.productRatePlanCharges);
   const usage = freeSpaceResource.usage;
@@ -154,7 +136,7 @@ export default function EnterpriseWizard(props) {
   const reachedLimit = freeSpaceResource.usage >= freeSpaceResource.limits.maximum;
   const isFeatureDisabled = limit === 0;
   const canCreate = !isFeatureDisabled && !reachedLimit;
-  const showTrialSpaceInfo = isTrialCommFeatureFlagEnabled && !isHighDemand && !isEnterpriseTrial;
+  const showTrialSpaceInfo = !isHighDemand && !isEnterpriseTrial;
 
   return (
     <>
@@ -173,22 +155,14 @@ export default function EnterpriseWizard(props) {
                   <>
                     {reachedLimit && !isFeatureDisabled && (
                       <Note testId="reached-limit-note">
-                        You’ve created{' '}
-                        <Pluralized
-                          text={
-                            isTrialCommFeatureFlagEnabled ? 'Trial Space' : 'proof of concept space'
-                          }
-                          count={limit}
-                        />
-                        . Delete an existing one or talk to us if you need more.
+                        You’ve created <Pluralized text="Trial Space" count={limit} />. Delete an
+                        existing one or talk to us if you need more.
                       </Note>
                     )}
                     {isFeatureDisabled && (
                       <Note testId="poc-not-enabled-note">
-                        You can’t create{' '}
-                        {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}{' '}
-                        because they’re not a part of your enterprise deal with Contentful. Get in
-                        touch with us if you want to create new spaces.
+                        You can’t create Trial Spaces because they’re not a part of your enterprise
+                        deal with Contentful. Get in touch with us if you want to create new spaces.
                       </Note>
                     )}
                   </>
@@ -218,7 +192,6 @@ export default function EnterpriseWizard(props) {
                   Use a Trial Space to test out new projects for 30 days, free of charge
                 </Paragraph>
               )}
-              {!isTrialCommFeatureFlagEnabled && !isHighDemand && <POCInfo />}
               <POCPlan
                 resources={includedResources}
                 name={freeSpaceRatePlan.name}
