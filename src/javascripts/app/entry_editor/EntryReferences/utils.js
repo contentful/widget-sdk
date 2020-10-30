@@ -72,13 +72,13 @@ export const createCountMessage = ({ entityTitle, selectedEntities, root }) => {
   const referencesAmount = selectedEntities.length;
 
   if (doesContainRootEntry) {
-    return `${entityTitle} and ${referencesAmount - 1} ${pluralize(
+    return `${entityTitle} and ${referencesAmount - 1} unique ${pluralize(
       referencesAmount - 1,
       'reference'
     )} ${pluralize(referencesAmount - 1, 'is')} selected.`;
   }
 
-  return `${referencesAmount} ${pluralize(referencesAmount, 'reference')} ${pluralize(
+  return `${referencesAmount} unique ${pluralize(referencesAmount, 'reference')} ${pluralize(
     referencesAmount,
     'is'
   )} selected.`;
