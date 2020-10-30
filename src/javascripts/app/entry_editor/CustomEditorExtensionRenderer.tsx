@@ -57,12 +57,15 @@ const CustomEditorExtensionRenderer = (props: Props) => {
 
   const widget = toRendererWidget(descriptor);
   const sdk: EditorExtensionSDK = createEditorExtensionSDK({
-    $scope,
+    editorData: $scope.editorData,
+    localeData: $scope.localeData,
+    preferences: $scope.preferences,
     spaceContext,
     internalContentType: $scope.entityInfo.contentType,
     widgetNamespace: extension.widgetNamespace,
     widgetId: extension.widgetId,
     parameters,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
     doc: $scope.otDoc,
     fieldLocaleListeners: $scope.fieldLocaleListeners,
   });

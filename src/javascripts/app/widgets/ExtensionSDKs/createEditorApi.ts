@@ -15,6 +15,8 @@ interface Preferences {
   showDisabledFields?: boolean;
 }
 
+export type WatchFunction = (watchFn: ValueGetterFn, cb: Callback) => UnsubscribeFn;
+
 export function createEditorApi({
   editorInterface,
   getLocaleData,
@@ -24,7 +26,7 @@ export function createEditorApi({
   editorInterface: EditorInterface;
   getLocaleData: () => LocaleData;
   getPreferences: () => Preferences;
-  watch: (watchFn: ValueGetterFn, cb: Callback) => UnsubscribeFn;
+  watch: WatchFunction;
 }): SharedEditorSDK['editor'] {
   return {
     editorInterface,

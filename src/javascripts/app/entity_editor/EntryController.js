@@ -1,7 +1,6 @@
 import * as K from 'core/utils/kefir';
 import { keys } from 'lodash';
 import mitt from 'mitt';
-import { user$ } from 'services/TokenStore';
 import installTracking from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import initLocaleData from 'app/entity_editor/setLocaleData';
@@ -166,18 +165,22 @@ export default async function create($scope, editorData, preferences, trackLoadE
     },
   };
 
-  $scope.user = K.getValue(user$);
-
   K.onValue(doc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
 
-  $scope.localeData = {};
-
   $scope.emitter = mitt();
 
   $scope.entrySidebarProps = createEntrySidebarProps({
-    $scope,
+    entityInfo: $scope.entityInfo,
+    localeData: $scope.localeData,
+    editorData: $scope.editorData,
+    editorContext: $scope.editorContext,
+    otDoc: $scope.otDoc,
+    state: $scope.state,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    fieldController: $scope.fieldController,
+    preferences: $scope.preferences,
     emitter: $scope.emitter,
   });
 

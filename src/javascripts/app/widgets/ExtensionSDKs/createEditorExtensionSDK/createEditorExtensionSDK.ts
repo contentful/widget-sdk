@@ -3,7 +3,7 @@ import { InternalContentType, createContentTypeApi } from '../createContentTypeA
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createUserApi, SpaceMember } from '../createUserApi';
-import { createEditorApi } from '../createEditorApi';
+import { createEditorApi, WatchFunction } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
@@ -20,18 +20,24 @@ interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
   doc: Document;
   spaceContext: any;
+  editorData: any;
+  localeData: any;
+  preferences: any;
+  watch: WatchFunction;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
-  $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
 }
 
 export const createEditorExtensionSDK = ({
-  $scope,
+  editorData,
+  localeData,
+  preferences,
+  watch,
   spaceContext,
   internalContentType,
   widgetNamespace,
@@ -43,10 +49,10 @@ export const createEditorExtensionSDK = ({
   const contentTypeApi = createContentTypeApi(internalContentType);
 
   const editorApi = createEditorApi({
-    editorInterface: $scope.editorData.editorInterface,
-    getLocaleData: () => $scope.localeData,
-    getPreferences: () => $scope.preferences,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    editorInterface: editorData.editorInterface,
+    getLocaleData: () => localeData,
+    getPreferences: () => preferences,
+    watch,
   });
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember as SpaceMember);

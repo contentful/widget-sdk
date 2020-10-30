@@ -37,7 +37,8 @@ describe('createSidebarWidgetSDK', () => {
   it('prunes properties when creating SDK for dialogs', () => {
     createSidebarWidgetSDK({
       internalContentType: contentType,
-      $scope: { editorData: {}, fieldLocaleListeners: {}, watch: noop },
+      editorData: {},
+      fieldLocaleListeners: {},
       doc: {},
       parameters: null,
       spaceContext: {
@@ -50,7 +51,6 @@ describe('createSidebarWidgetSDK', () => {
       },
       widgetNamespace: null,
       widgetId: 'a-widget-id',
-      fieldLocaleListeners: {},
     } as any);
     expect(createDialogsApi).toBeCalledWith({
       ids: {

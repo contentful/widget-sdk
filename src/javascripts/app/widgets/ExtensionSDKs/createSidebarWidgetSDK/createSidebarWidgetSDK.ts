@@ -1,7 +1,7 @@
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { createDialogsApi } from '../createDialogsApi';
-import { createEditorApi } from '../createEditorApi';
+import { createEditorApi, WatchFunction } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createIdsApiWithoutField } from '../utils';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
@@ -18,12 +18,15 @@ import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 interface CreateSidebarWidgetSDKOptions {
   internalContentType: InternalContentType;
-  $scope: any;
   doc: Document;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
+  editorData: any;
+  localeData: any;
+  preferences: any;
+  watch: WatchFunction;
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
@@ -32,20 +35,24 @@ interface CreateSidebarWidgetSDKOptions {
 
 export const createSidebarWidgetSDK = ({
   internalContentType,
-  $scope,
+  editorData,
+  localeData,
+  preferences,
   doc,
   parameters,
+  watch,
   spaceContext,
   widgetNamespace,
   widgetId,
   fieldLocaleListeners,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
+
   const editorApi = createEditorApi({
-    editorInterface: $scope.editorData.editorInterface,
-    getLocaleData: () => $scope.localeData,
-    getPreferences: () => $scope.preferences,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    editorInterface: editorData.editorInterface,
+    getLocaleData: () => localeData,
+    getPreferences: () => preferences,
+    watch,
   });
 
   const entryApi = createEntryApi({

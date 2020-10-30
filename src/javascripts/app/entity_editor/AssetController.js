@@ -1,7 +1,6 @@
 import mitt from 'mitt';
 import * as K from 'core/utils/kefir';
 import { truncate } from 'utils/StringUtils';
-import { user$ } from 'services/TokenStore';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
@@ -75,8 +74,6 @@ export default async function create($scope, editorData, preferences) {
     $scope.context.dirty = isDirty;
   });
 
-  $scope.user = K.getValue(user$);
-
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
   $scope.localeData = {};
@@ -84,7 +81,15 @@ export default async function create($scope, editorData, preferences) {
   $scope.emitter = mitt();
 
   $scope.entrySidebarProps = createEntrySidebarProps({
-    $scope,
+    entityInfo: $scope.entityInfo,
+    localeData: $scope.localeData,
+    editorData: $scope.editorData,
+    editorContext: $scope.editorContext,
+    otDoc: $scope.otDoc,
+    state: $scope.state,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    fieldController: $scope.fieldController,
+    preferences: $scope.preferences,
     emitter: $scope.emitter,
   });
 

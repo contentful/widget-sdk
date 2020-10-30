@@ -4,7 +4,7 @@ import { InternalContentType, createContentTypeApi } from '../createContentTypeA
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { createEditorApi } from '../createEditorApi';
+import { createEditorApi, WatchFunction } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createSpaceApi } from '../createSpaceApi';
 import { createNavigatorApi } from '../createNavigatorApi';
@@ -22,8 +22,12 @@ export function createFieldWidgetSDK({
   widgetNamespace,
   widgetId,
   spaceContext,
-  $scope,
+  editorData,
+  localeData,
+  preferences,
+  fieldController,
   doc,
+  watch,
   internalContentType,
   fieldLocaleListeners,
   parameters,
@@ -33,7 +37,11 @@ export function createFieldWidgetSDK({
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   spaceContext: any;
-  $scope: any;
+  editorData: any;
+  localeData: any;
+  preferences: any;
+  fieldController: any;
+  watch: WatchFunction;
   doc: Document;
   internalContentType: InternalContentType;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
@@ -43,10 +51,10 @@ export function createFieldWidgetSDK({
   };
 }): FieldExtensionSDK {
   const editorApi = createEditorApi({
-    editorInterface: $scope.editorData.editorInterface,
-    getLocaleData: () => $scope.localeData,
-    getPreferences: () => $scope.preferences,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+    editorInterface: editorData.editorInterface,
+    getLocaleData: () => localeData,
+    getPreferences: () => preferences,
+    watch,
   });
 
   const contentTypeApi = createContentTypeApi(internalContentType);
@@ -59,8 +67,8 @@ export function createFieldWidgetSDK({
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
     setInvalid: (localeCode, isInvalid) => {
-      if ($scope.fieldController) {
-        return $scope.fieldController.setInvalid(localeCode, isInvalid);
+      if (fieldController) {
+        return fieldController.setInvalid(localeCode, isInvalid);
       }
     },
   });
