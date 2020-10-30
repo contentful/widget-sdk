@@ -1,25 +1,20 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
-import { getModule } from 'core/NgRegistry';
 import { getBlankEntryView } from 'data/UiConfig/Blanks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-getModule.mockReturnValue({
-  getId: jest.fn().mockReturnValue('spaceId'),
-  getEnvironmentId: jest.fn().mockReturnValue('envId'),
-  search: jest.fn(),
-  replace: jest.fn(),
-  publishedCTs: {
-    get: jest.fn().mockImplementation(
-      (contentTypeId) =>
-        contentTypeId && {
-          data: {
-            displayField: 0,
-            fields: [{ id: 0 }, { disabled: true, id: 1 }, { id: 2 }],
-          },
-        }
-    ),
-  },
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn(),
+}));
+
+useSpaceEnvContext.mockReturnValue({
+  currentSpaceContentTypes: [
+    {
+      displayField: 0,
+      fields: [{ id: 0 }, { disabled: true, id: 1 }, { id: 2 }],
+      sys: { id: 1 },
+    },
+  ],
 });
 
 let mockView = getBlankEntryView();
@@ -188,7 +183,6 @@ describe('useSelectedEntities', () => {
 
   it('should initialize the displayed and hidden fields with additional fields according to contentTypeId', () => {
     const { result } = initHook(1);
-
     expect(result.current[0].displayedFields).toEqual([
       { canPersist: true, id: 'contentType', name: 'Content Type', type: 'ContentType' },
       { canPersist: true, id: 'updatedAt', name: 'Updated', type: 'Date' },

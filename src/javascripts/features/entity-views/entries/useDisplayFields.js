@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
 import { sortBy, pick } from 'lodash';
-import { getModule } from 'core/NgRegistry';
 import * as SystemFields from 'data/SystemFields';
 import * as MetadataFields from 'data/MetadataFields';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const getAvailableFields = (contentTypeId) => {
-  const spaceContext = getModule('spaceContext');
-  const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
+const getAvailableFields = (contentTypes, contentTypeId) => {
+  const filteredContentType = contentTypes.find((ct) => ct.sys.id === contentTypeId);
   let fields = [...SystemFields.getList(), ...MetadataFields.getList()];
 
   if (filteredContentType) {
-    fields = [...fields, ...filteredContentType.data.fields].filter(
-      ({ disabled, id }) => !disabled && id !== filteredContentType.data.displayField
+    fields = [...fields, ...filteredContentType.fields].filter(
+      ({ disabled, id }) => !disabled && id !== filteredContentType.displayField
     );
   }
   return fields;
@@ -22,13 +21,14 @@ const VIEW_KEYS = ['displayedFieldIds', 'contentTypeId'];
 export const useDisplayFields = ({ listViewContext, updateEntities }) => {
   const [hiddenFields, setHiddenFields] = useState([]);
   const [displayedFields, setDisplayedFields] = useState([]);
+  const { currentSpaceContentTypes: contentTypes } = useSpaceEnvContext();
 
   const view = listViewContext.getView();
   const { contentTypeId, displayedFieldIds } = view;
   const readViewKeys = () => pick(view, VIEW_KEYS);
 
   const refreshDisplayFields = ({ displayedFieldIds = [], contentTypeId }) => {
-    const fields = getAvailableFields(contentTypeId);
+    const fields = getAvailableFields(contentTypes, contentTypeId);
 
     const displayedFields = displayedFieldIds
       .map((id) => fields.find((field) => field.id === id))
