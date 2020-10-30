@@ -8,8 +8,8 @@ import * as Analytics from 'analytics/Analytics';
 import { entitySelector } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
-import { getModule } from 'core/NgRegistry';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   helpText: css({
@@ -37,7 +37,7 @@ const linkEntity = (entity) => ({
 });
 
 export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
-  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove after `publishedCTs` is refactored
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
   const spaceApiClient = useCurrentSpaceAPIClient();
 
   // TODO necessary for entitySelector change it
@@ -52,7 +52,9 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
 
   const addNewEntry = useCallback(
     (ctOrCtId) => {
-      const contentType = isObject(ctOrCtId) ? ctOrCtId : spaceContext.publishedCTs.get(ctOrCtId);
+      const contentType = isObject(ctOrCtId)
+        ? ctOrCtId
+        : currentSpaceContentTypes.find((ct) => ct.sys.id === ctOrCtId);
       return spaceApiClient.createEntry(contentType.getId(), {}).then((entry) => {
         Analytics.track('entry:create', {
           eventOrigin: 'bulk-editor',
@@ -63,7 +65,7 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
         return addLinks([linkEntity(entry)]);
       });
     },
-    [spaceContext, spaceApiClient, addLinks, track]
+    [currentSpaceContentTypes, spaceApiClient, track, addLinks]
   );
 
   const addExistingEntries = useCallback(async () => {
@@ -76,10 +78,9 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
     }
   }, [linkCount, extendedField, addLinks, track]);
 
-  const getAllContentTypeIds = useCallback(
-    () => spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id),
-    [spaceContext]
-  );
+  const getAllContentTypeIds = useCallback(() => currentSpaceContentTypes.map((ct) => ct.sys.id), [
+    currentSpaceContentTypes,
+  ]);
 
   /**
    * Returns a list of content types that the user can add to this field.
@@ -99,13 +100,15 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
         ? contentTypeValidation.linkContentType
         : getAllContentTypeIds();
 
-      const validCTs = uniq(validCtIds).map((ctId) => spaceContext.publishedCTs.get(ctId));
+      const validCTs = uniq(validCtIds).map((ctId) =>
+        currentSpaceContentTypes.find((ct) => ct.sys.id === ctId)
+      );
 
-      return validCTs
-        .filter((ct) => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId()))
-        .map((ct) => ct.data);
+      return validCTs.filter(
+        (ct) => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id)
+      );
     },
-    [spaceContext, getAllContentTypeIds]
+    [currentSpaceContentTypes, getAllContentTypeIds]
   );
 
   const allowedCTs = useMemo(() => getAllowedCTs(extendedField), [getAllowedCTs, extendedField]);
