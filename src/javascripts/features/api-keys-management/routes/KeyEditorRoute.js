@@ -7,39 +7,42 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironmentsRepo }) => {
-  const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const organizationId = spaceContext.organization.sys.id;
-
-  const [
-    apiKey,
-    canEdit,
-    shouldDisableCreate,
-    environmentsEnabled,
-    { environments: spaceEnvironments, aliases: spaceAliases },
-  ] = await Promise.all([
-    getApiKeyRepo().get(apiKeyId),
-    accessChecker.canModifyApiKeys(),
-    accessChecker.shouldDisable('create', 'apiKey'),
-    getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
-    spaceEnvironmentsRepo.getAll(),
-  ]);
-  return {
-    apiKey,
-    canEdit,
-    canCreate: !shouldDisableCreate,
-    environmentsEnabled,
-    spaceAliases,
-    spaceEnvironments,
-  };
-});
+const ApiKeyFetcher = createFetcherComponent(
+  async ({ spaceId, organizationId, apiKeyId, spaceEnvironmentsRepo }) => {
+    const [
+      apiKey,
+      canEdit,
+      shouldDisableCreate,
+      environmentsEnabled,
+      { environments: spaceEnvironments, aliases: spaceAliases },
+    ] = await Promise.all([
+      getApiKeyRepo().get(apiKeyId),
+      accessChecker.canModifyApiKeys(),
+      accessChecker.shouldDisable('create', 'apiKey'),
+      getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
+      spaceEnvironmentsRepo.getAll(),
+    ]);
+    return {
+      apiKey,
+      canEdit,
+      canCreate: !shouldDisableCreate,
+      environmentsEnabled,
+      spaceAliases,
+      spaceEnvironments,
+    };
+  }
+);
 
 export function KeyEditorRoute(props) {
+  const { currentSpaceId: spaceId, currentOrganizationId: organizationId } = useSpaceEnvContext();
   return (
-    <ApiKeyFetcher apiKeyId={props.apiKeyId} spaceEnvironmentsRepo={props.spaceEnvironmentsRepo}>
+    <ApiKeyFetcher
+      spaceId={spaceId}
+      organizationId={organizationId}
+      apiKeyId={props.apiKeyId}
+      spaceEnvironmentsRepo={props.spaceEnvironmentsRepo}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <KeyEditorWorkbench />;
