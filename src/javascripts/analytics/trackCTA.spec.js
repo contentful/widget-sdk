@@ -46,7 +46,24 @@ describe.each([
 
       expect(track).toBeCalledWith(eventName, {
         ctaLocation: getCurrentStateName(),
+        ctaLocationType: 'ui_state',
         meta: {
+          organizationId: 'org_1234',
+        },
+      });
+    });
+
+    it('should overwrite default ctaLocation if given in metadata', () => {
+      func(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
+        organizationId: 'org_1234',
+        ctaLocation: 'different_from_state',
+      });
+
+      expect(track).toBeCalledWith(eventName, {
+        ctaLocation: 'different_from_state',
+        ctaLocationType: 'other',
+        meta: {
+          ctaLocation: 'different_from_state',
           organizationId: 'org_1234',
         },
       });

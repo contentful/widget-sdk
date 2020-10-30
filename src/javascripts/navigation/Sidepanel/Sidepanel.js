@@ -13,6 +13,7 @@ import * as K from 'core/utils/kefir';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker/index';
 import * as logger from 'services/logger';
+import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { navState$ } from 'navigation/NavState';
 import { isOrganizationOnTrial } from 'features/trials';
@@ -142,8 +143,15 @@ export default class Sidepanel extends React.Component {
   };
 
   showCreateSpaceModal = () => {
+    const organizationId = this.state.currOrg.sys.id;
+
+    trackCTAClick(CTA_EVENTS.CREATE_SPACE, {
+      organizationId,
+      ctaLocation: 'sidepanel',
+    });
+
     this.props.closeSidePanel();
-    CreateSpace.beginSpaceCreation(this.state.currOrg.sys.id);
+    CreateSpace.beginSpaceCreation(organizationId);
   };
 
   setOpenedSpaceId = (spaceId) => {

@@ -3,7 +3,7 @@ import { validateEvent } from './Validator';
 import { track } from './Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 
-const VALID_META_KEYS = ['organizationId', 'spaceId'];
+const VALID_META_KEYS = ['organizationId', 'spaceId', 'ctaLocation'];
 
 // Note these names should be kept up to date with same CTA_EVENTS in Validator.js, defined there to avoid
 // circular dependency until a better solution for constants is determined.
@@ -32,7 +32,10 @@ function ifValidThenTrack(action, intent, meta) {
   }
 
   track(`${action}:${intent}`, {
-    ctaLocation: getCurrentStateName(),
+    // ctaLocation should only be overriden from the default getCurrentStateName() for ctas that are state independent.
+    // For example ctas in the Navbar and it's children like the Sidepanel.
+    ctaLocation: meta.ctaLocation ?? getCurrentStateName(),
+    ctaLocationType: meta.ctaLocation ? 'other' : 'ui_state',
     meta,
   });
 }
