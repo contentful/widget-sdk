@@ -17,50 +17,178 @@ exports[`SpaceRoleEditor renders the component 1`] = `
   justify-content: space-between;
 }
 
-<div>
-  <div
-    class="Dropdown__Dropdown___nAsJ-"
-    data-test-id="cf-ui-dropdown"
-  >
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
-      data-test-id="space-role-editor.button"
-      type="button"
-    >
-      <span
-        class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-        tabindex="-1"
+<SpaceRoleEditor
+  buttonProps={
+    Object {
+      "className": "",
+    }
+  }
+  className=""
+  onChange={[MockFunction]}
+  options={
+    Array [
+      Object {
+        "name": "Police officer",
+        "sys": Object {
+          "id": "police",
+        },
+      },
+      Object {
+        "name": "Thief",
+        "sys": Object {
+          "id": "thief",
+        },
+      },
+    ]
+  }
+  value={Array []}
+>
+  <Dropdown
+    getContainerRef={[Function]}
+    isAutoalignmentEnabled={true}
+    isOpen={false}
+    onClose={[Function]}
+    position="bottom-left"
+    testId="cf-ui-dropdown"
+    toggleElement={
+      <Button
+        buttonType="naked"
+        className="emotion-0"
+        disabled={false}
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="space-role-editor.button"
+        type="button"
       >
-        <span
-          class="Button__Button__label___3tcOj"
+        Select a space role
+      </Button>
+    }
+  >
+    <div
+      className="Dropdown__Dropdown___nAsJ-"
+      data-test-id="cf-ui-dropdown"
+      onClose={[Function]}
+      position="bottom-left"
+    >
+      <Button
+        aria-expanded={false}
+        aria-haspopup="menu"
+        buttonType="naked"
+        className="emotion-0"
+        disabled={false}
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="space-role-editor.button"
+        type="button"
+      >
+        <button
+          aria-expanded={false}
+          aria-haspopup="menu"
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
+          data-test-id="space-role-editor.button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          type="button"
         >
-          Select a space role
-        </span>
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-          data-test-id="cf-ui-icon"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M7 10l5 5 5-5z"
-          />
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
-</div>
+          <TabFocusTrap
+            className="Button__Button__inner-wrapper___3qrNC"
+          >
+            <span
+              className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabIndex={-1}
+            >
+              <span
+                className="Button__Button__label___3tcOj"
+              >
+                Select a space role
+              </span>
+              <Icon
+                color="secondary"
+                icon="ArrowDown"
+                size="small"
+                testId="cf-ui-icon"
+              >
+                <ArrowDown
+                  className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                  data-test-id="cf-ui-icon"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <svg
+                    className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                    data-test-id="cf-ui-icon"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </ArrowDown>
+              </Icon>
+              <CSSTransition
+                classNames={
+                  Object {
+                    "enter": "Button__Button--spinner--enter___1qgg7",
+                    "enterActive": "Button__Button--spinner-active___EEKjQ",
+                    "exit": "Button__Button--spinner--exit___2RUI-",
+                    "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                  }
+                }
+                in={false}
+                mountOnEnter={true}
+                timeout={1000}
+                unmountOnExit={true}
+              >
+                <Transition
+                  appear={false}
+                  enter={true}
+                  exit={true}
+                  in={false}
+                  mountOnEnter={true}
+                  onEnter={[Function]}
+                  onEntered={[Function]}
+                  onEntering={[Function]}
+                  onExit={[Function]}
+                  onExited={[Function]}
+                  onExiting={[Function]}
+                  timeout={1000}
+                  unmountOnExit={true}
+                />
+              </CSSTransition>
+            </span>
+          </TabFocusTrap>
+        </button>
+      </Button>
+    </div>
+  </Dropdown>
+</SpaceRoleEditor>
 `;
 
 exports[`SpaceRoleEditor shows a list of options 1`] = `
+.emotion-3 {
+  color: #192532;
+}
+
+.emotion-2 {
+  color: #606C7C;
+  grid-column-start: 2;
+  white-space: normal;
+}
+
 .emotion-0 {
   width: 100%;
   border: 1px solid #e5ebed;
@@ -77,45 +205,778 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   justify-content: space-between;
 }
 
-<div>
-  <div
-    class="Dropdown__Dropdown___nAsJ-"
-    data-test-id="cf-ui-dropdown"
-  >
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
-      data-test-id="space-role-editor.button"
-      type="button"
-    >
-      <span
-        class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-        tabindex="-1"
+<SpaceRoleEditor
+  buttonProps={
+    Object {
+      "className": "",
+    }
+  }
+  className=""
+  onChange={[MockFunction]}
+  options={
+    Array [
+      Object {
+        "name": "Police officer",
+        "sys": Object {
+          "id": "police",
+        },
+      },
+      Object {
+        "name": "Thief",
+        "sys": Object {
+          "id": "thief",
+        },
+      },
+    ]
+  }
+  value={Array []}
+>
+  <Dropdown
+    getContainerRef={[Function]}
+    isAutoalignmentEnabled={true}
+    isOpen={true}
+    onClose={[Function]}
+    position="bottom-left"
+    testId="cf-ui-dropdown"
+    toggleElement={
+      <Button
+        buttonType="naked"
+        className="emotion-0"
+        disabled={false}
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="space-role-editor.button"
+        type="button"
       >
-        <span
-          class="Button__Button__label___3tcOj"
+        Select a space role
+      </Button>
+    }
+  >
+    <div
+      className="Dropdown__Dropdown___nAsJ-"
+      data-test-id="cf-ui-dropdown"
+      onClose={[Function]}
+      position="bottom-left"
+    >
+      <Button
+        aria-expanded={true}
+        aria-haspopup="menu"
+        buttonType="naked"
+        className="emotion-0"
+        disabled={false}
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="space-role-editor.button"
+        type="button"
+      >
+        <button
+          aria-expanded={true}
+          aria-haspopup="menu"
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
+          data-test-id="space-role-editor.button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          type="button"
         >
-          Select a space role
-        </span>
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-          data-test-id="cf-ui-icon"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
+          <TabFocusTrap
+            className="Button__Button__inner-wrapper___3qrNC"
+          >
+            <span
+              className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabIndex={-1}
+            >
+              <span
+                className="Button__Button__label___3tcOj"
+              >
+                Select a space role
+              </span>
+              <Icon
+                color="secondary"
+                icon="ArrowDown"
+                size="small"
+                testId="cf-ui-icon"
+              >
+                <ArrowDown
+                  className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                  data-test-id="cf-ui-icon"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <svg
+                    className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                    data-test-id="cf-ui-icon"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </ArrowDown>
+              </Icon>
+              <CSSTransition
+                classNames={
+                  Object {
+                    "enter": "Button__Button--spinner--enter___1qgg7",
+                    "enterActive": "Button__Button--spinner-active___EEKjQ",
+                    "exit": "Button__Button--spinner--exit___2RUI-",
+                    "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                  }
+                }
+                in={false}
+                mountOnEnter={true}
+                timeout={1000}
+                unmountOnExit={true}
+              >
+                <Transition
+                  appear={false}
+                  enter={true}
+                  exit={true}
+                  in={false}
+                  mountOnEnter={true}
+                  onEnter={[Function]}
+                  onEntered={[Function]}
+                  onEntering={[Function]}
+                  onExit={[Function]}
+                  onExited={[Function]}
+                  onExiting={[Function]}
+                  timeout={1000}
+                  unmountOnExit={true}
+                />
+              </CSSTransition>
+            </span>
+          </TabFocusTrap>
+        </button>
+      </Button>
+      <DropdownContainer
+        anchorDimensionsAndPositon={
+          Object {
+            "height": 0,
+            "left": 0,
+            "top": 0,
+            "width": 0,
+          }
+        }
+        dropdownAnchor={
+          .emotion-0 {
+  width: 100%;
+  border: 1px solid #e5ebed;
+}
+
+.emotion-0> span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+<div
+            class="Dropdown__Dropdown___nAsJ-"
+            data-test-id="cf-ui-dropdown"
+            position="bottom-left"
+          >
+            <button
+              aria-expanded="true"
+              aria-haspopup="menu"
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
+              data-test-id="space-role-editor.button"
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                tabindex="-1"
+              >
+                <span
+                  class="Button__Button__label___3tcOj"
+                >
+                  Select a space role
+                </span>
+                <svg
+                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                  data-test-id="cf-ui-icon"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7 10l5 5 5-5z"
+                  />
+                  <path
+                    d="M0 0h24v24H0z"
+                    fill="none"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+        }
+        getRef={[Function]}
+        isAutoalignmentEnabled={true}
+        onClose={[Function]}
+        openSubmenu={[Function]}
+        position="bottom-left"
+        submenu={false}
+        testId="cf-ui-dropdown-container"
+      >
+        <Portal
+          containerInfo={
+            .emotion-1 {
+  color: #192532;
+}
+
+.emotion-0 {
+  color: #606C7C;
+  grid-column-start: 2;
+  white-space: normal;
+}
+
+<div>
+              <div
+                class="DropdownContainer__DropdownContainer___3WlJM"
+                data-test-id="cf-ui-dropdown-container"
+                style="top: 0px; left: 0px;"
+              >
+                <div
+                  class="InViewport__InViewport___2o6g4"
+                  data-test-id="cf-ui-in-viewport"
+                  offset="0"
+                >
+                  <ul
+                    class="DropdownList__DropdownList___2EMLM"
+                    data-test-id="space-role-editor.options"
+                    role="menu"
+                    style="max-height: auto; overflow-y: visible;"
+                  >
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.admin-option"
+                      role="menuitem"
+                    >
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
+                          >
+                            <input
+                              aria-label="Admin"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="__cf_builtin_admin"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Admin
+                            </div>
+                            <div
+                              class="emotion-0"
+                            >
+                              Can manage everything in the space
+                            </div>
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                  </ul>
+                  <ul
+                    class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    role="menu"
+                    style="max-height: 200px; overflow-y: auto;"
+                  >
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
+                      data-test-id="cf-ui-dropdown-list-item"
+                      role="menuitem"
+                    >
+                      <span>
+                        other roles
+                      </span>
+                    </li>
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
+                      role="menuitem"
+                    >
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
+                          >
+                            <input
+                              aria-label="Police officer"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="police"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Police officer
+                            </div>
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
+                      role="menuitem"
+                    >
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
+                          >
+                            <input
+                              aria-label="Thief"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="thief"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Thief
+                            </div>
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          }
         >
-          <path
-            d="M7 10l5 5 5-5z"
-          />
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
-</div>
+          <div
+            className="DropdownContainer__DropdownContainer___3WlJM"
+            data-test-id="cf-ui-dropdown-container"
+            onFocus={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+            style={
+              Object {
+                "left": 0,
+                "top": 0,
+              }
+            }
+          >
+            <InViewport
+              offset={0}
+              onOverflowBottom={[Function]}
+              onOverflowLeft={[Function]}
+              onOverflowRight={[Function]}
+              onOverflowTop={[Function]}
+              testId="cf-ui-in-viewport"
+            >
+              <div
+                className="InViewport__InViewport___2o6g4"
+                data-test-id="cf-ui-in-viewport"
+                offset={0}
+              >
+                <DropdownList
+                  testId="space-role-editor.options"
+                >
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM"
+                    data-test-id="space-role-editor.options"
+                    role="menu"
+                    style={
+                      Object {
+                        "maxHeight": "auto",
+                        "overflowY": "visible",
+                      }
+                    }
+                  >
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      onClick={[Function]}
+                      testId="space-role-editor.admin-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.admin-option"
+                        role="menuitem"
+                      >
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
+                        >
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          >
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
+                            >
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
+                              >
+                                <div
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
+                                >
+                                  <Checkbox
+                                    checked={false}
+                                    disabled={false}
+                                    id="__cf_builtin_admin"
+                                    labelText="Admin"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
+                                    willBlurOnEsc={true}
+                                  >
+                                    <ControlledInput
+                                      checked={false}
+                                      disabled={false}
+                                      id="__cf_builtin_admin"
+                                      labelText="Admin"
+                                      required={false}
+                                      testId="ctf-ui-checkbox"
+                                      type="checkbox"
+                                      willBlurOnEsc={true}
+                                    >
+                                      <input
+                                        aria-label="Admin"
+                                        checked={false}
+                                        className="ControlledInput__ControlledInput___2XK3j"
+                                        data-test-id="ctf-ui-checkbox"
+                                        disabled={false}
+                                        id="__cf_builtin_admin"
+                                        onBlur={[Function]}
+                                        onChange={[Function]}
+                                        onFocus={[Function]}
+                                        onKeyDown={[Function]}
+                                        required={false}
+                                        type="checkbox"
+                                      />
+                                    </ControlledInput>
+                                  </Checkbox>
+                                  <div>
+                                    Admin
+                                  </div>
+                                  <div
+                                    className="emotion-2"
+                                  >
+                                    Can manage everything in the space
+                                  </div>
+                                </div>
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
+                <DropdownList
+                  border="top"
+                  maxHeight={200}
+                  testId="cf-ui-dropdown-list"
+                >
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    role="menu"
+                    style={
+                      Object {
+                        "maxHeight": 200,
+                        "overflowY": "auto",
+                      }
+                    }
+                  >
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={true}
+                      testId="cf-ui-dropdown-list-item"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
+                        data-test-id="cf-ui-dropdown-list-item"
+                        role="menuitem"
+                      >
+                        <span>
+                          other roles
+                        </span>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="police"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
+                        role="menuitem"
+                      >
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
+                        >
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          >
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
+                            >
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
+                              >
+                                <div
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
+                                >
+                                  <Checkbox
+                                    checked={false}
+                                    disabled={false}
+                                    id="police"
+                                    labelText="Police officer"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
+                                    willBlurOnEsc={true}
+                                  >
+                                    <ControlledInput
+                                      checked={false}
+                                      disabled={false}
+                                      id="police"
+                                      labelText="Police officer"
+                                      required={false}
+                                      testId="ctf-ui-checkbox"
+                                      type="checkbox"
+                                      willBlurOnEsc={true}
+                                    >
+                                      <input
+                                        aria-label="Police officer"
+                                        checked={false}
+                                        className="ControlledInput__ControlledInput___2XK3j"
+                                        data-test-id="ctf-ui-checkbox"
+                                        disabled={false}
+                                        id="police"
+                                        onBlur={[Function]}
+                                        onChange={[Function]}
+                                        onFocus={[Function]}
+                                        onKeyDown={[Function]}
+                                        required={false}
+                                        type="checkbox"
+                                      />
+                                    </ControlledInput>
+                                  </Checkbox>
+                                  <div>
+                                    Police officer
+                                  </div>
+                                </div>
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="thief"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
+                        role="menuitem"
+                      >
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
+                        >
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          >
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
+                            >
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
+                              >
+                                <div
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
+                                >
+                                  <Checkbox
+                                    checked={false}
+                                    disabled={false}
+                                    id="thief"
+                                    labelText="Thief"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
+                                    willBlurOnEsc={true}
+                                  >
+                                    <ControlledInput
+                                      checked={false}
+                                      disabled={false}
+                                      id="thief"
+                                      labelText="Thief"
+                                      required={false}
+                                      testId="ctf-ui-checkbox"
+                                      type="checkbox"
+                                      willBlurOnEsc={true}
+                                    >
+                                      <input
+                                        aria-label="Thief"
+                                        checked={false}
+                                        className="ControlledInput__ControlledInput___2XK3j"
+                                        data-test-id="ctf-ui-checkbox"
+                                        disabled={false}
+                                        id="thief"
+                                        onBlur={[Function]}
+                                        onChange={[Function]}
+                                        onFocus={[Function]}
+                                        onKeyDown={[Function]}
+                                        required={false}
+                                        type="checkbox"
+                                      />
+                                    </ControlledInput>
+                                  </Checkbox>
+                                  <div>
+                                    Thief
+                                  </div>
+                                </div>
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
+              </div>
+            </InViewport>
+          </div>
+        </Portal>
+      </DropdownContainer>
+    </div>
+  </Dropdown>
+</SpaceRoleEditor>
 `;

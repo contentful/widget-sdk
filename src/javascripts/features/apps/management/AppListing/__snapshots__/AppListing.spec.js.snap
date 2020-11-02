@@ -343,6 +343,7 @@ Object {
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
                           data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
                             aria-expanded="false"
@@ -508,6 +509,7 @@ Object {
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
                           data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
                             aria-expanded="false"
@@ -673,6 +675,7 @@ Object {
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
                           data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
                             aria-expanded="false"
@@ -1116,6 +1119,7 @@ Object {
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
                         data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
                           aria-expanded="false"
@@ -1281,6 +1285,7 @@ Object {
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
                         data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
                           aria-expanded="false"
@@ -1446,6 +1451,7 @@ Object {
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
                         data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
                           aria-expanded="false"
