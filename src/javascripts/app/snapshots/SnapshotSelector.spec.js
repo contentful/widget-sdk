@@ -2,9 +2,14 @@ import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
 import SnapshotSelector from './SnapshotSelector';
 import moment from 'moment';
-import { getModule } from 'core/NgRegistry';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { CurrentSpaceAPIClientContext } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
-jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('data/userCache', () =>
+  jest.fn().mockReturnValue({
+    get: jest.fn().mockResolvedValue(),
+  })
+);
 
 const makeFakeSnapshot = (_, i) => {
   return {
@@ -37,11 +42,6 @@ const getEntrySnapshots = jest.fn().mockImplementation((_, query) => {
   return Promise.resolve({ items });
 });
 
-getModule.mockImplementation(() => ({
-  cma: { getEntrySnapshots },
-  users: { get: jest.fn().mockResolvedValue() },
-}));
-
 const goToSnapshot = jest.fn();
 const getProps = (args = {}) => {
   const props = {
@@ -66,7 +66,14 @@ const getSnapshotId = (idx) => {
 };
 
 const renderComponent = () => {
-  const component = render(<SnapshotSelector {...getProps()} />);
+  const component = render(
+    <SpaceEnvContext.Provider
+      value={{ currentSpaceId: 'space-id', currentEnvironmentId: 'environment-id' }}>
+      <CurrentSpaceAPIClientContext.Provider value={{ getEntrySnapshots }}>
+        <SnapshotSelector {...getProps()} />
+      </CurrentSpaceAPIClientContext.Provider>
+    </SpaceEnvContext.Provider>
+  );
   const { getByTestId, queryByTestId } = component;
 
   const scrollTable = () => {

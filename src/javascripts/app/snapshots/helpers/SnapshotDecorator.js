@@ -33,11 +33,11 @@ export function withCurrent(entrySys, snapshots) {
  * @description
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
-export function withAuthorName(spaceContext, snapshots) {
+export function withAuthorName(usersRepo, snapshots) {
   const promises = snapshots.map((snapshot) => {
     const userId = get(snapshot, 'sys.createdBy.sys.id');
 
-    return spaceContext.users.get(userId).then((user) => {
+    return usersRepo.get(userId).then((user) => {
       const authorName = user ? user.firstName + ' ' + user.lastName : '';
       const snapshotClone = cloneDeep(snapshot);
       snapshotClone.sys.createdBy.authorName = authorName;
