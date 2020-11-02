@@ -95,6 +95,7 @@ async function setupMemberships(membershipPlans = [{ spaceName: '', roleNames: [
     const space = screen.queryByText(spaceName);
     fireEvent.click(space);
   });
+  await wait();
 
   // select all roles
   await Promise.all(
@@ -102,13 +103,17 @@ async function setupMemberships(membershipPlans = [{ spaceName: '', roleNames: [
       const membershipListItem = screen.getAllByTestId('add-to-spaces.list.item')[index];
       await Promise.all(
         roleNames.map(async (roleName) => {
+          await wait();
           const rolesDropdownTrigger = within(membershipListItem).getByTestId(
             'space-role-editor.button'
           );
           fireEvent.click(rolesDropdownTrigger);
+          await wait();
+
           await screen.findAllByTestId('space-role-editor.options');
           const role = screen.getByLabelText(roleName);
           fireEvent.click(role);
+          await wait();
         })
       );
     })
