@@ -259,7 +259,6 @@ function ReferenceCards({
   if (!initialized) {
     setInitialEntities(initialSelectedEntitiesMap);
     setInitialReferenceAmount(entitiesPerLevel);
-    setInitialized(true);
     if (maxLevelReached) {
       setIsTreeMaxDepthReached(true);
     }
@@ -269,6 +268,7 @@ function ReferenceCards({
       references_per_level: entitiesPerLevel,
       circular_references_count: circularReferenceCount,
     });
+    setInitialized(true);
   }
 
   return referenceCards;
@@ -342,7 +342,6 @@ const ReferencesTree = ({
         setInitialReferenceAmount={setInitialReferenceAmount}
       />
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       allReferencesSelected,
       maxLevel,
