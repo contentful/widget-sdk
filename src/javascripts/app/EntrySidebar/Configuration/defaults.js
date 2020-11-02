@@ -1,5 +1,5 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
-import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 
@@ -85,18 +85,19 @@ export const EntryConfiguration = [
 
 export const AssetConfiguration = [Publication, Releases, Links, Translation, Users];
 
-const availabilityMap = {
+const getAvailabilityMap = (spaceId) => ({
   [Publication.widgetId]: true,
-  [Releases.widgetId]: () => getReleasesFeatureVariation(),
-  [Tasks.widgetId]: () => getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false),
+  [Releases.widgetId]: () => getReleasesFeatureVariation(spaceId),
+  [Tasks.widgetId]: () => getSpaceFeature(spaceId, FEATURES.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,
   [Translation.widgetId]: true,
   [Versions.widgetId]: true,
   [Users.widgetId]: true,
-};
+});
 
-export const getEntryConfiguration = async () => {
+export const getEntryConfiguration = async ({ spaceId }) => {
+  const availabilityMap = getAvailabilityMap(spaceId);
   const availability = await Promise.all(
     EntryConfiguration.map((widget) => {
       const value = availabilityMap[widget.widgetId];

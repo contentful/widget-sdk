@@ -30,6 +30,7 @@ import {
   SET_PROCESSING_ACTION,
 } from './state/actions';
 import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   sideBarWrapper: css({
@@ -69,10 +70,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
   const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
   useEffect(() => {
     async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await releasesPCFeatureVariation();
+      const isAddToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
       setisAddToReleaseEnabled(isAddToReleaseEnabled);
     }
 

@@ -20,10 +20,12 @@ async function promiseAllSafe(promises) {
   return results.filter(identity);
 }
 
-export async function getDefaultSidebar(): Promise<
-  { widgetId: string; widgetNamespace: WidgetNamespace }[]
-> {
-  const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration();
+export async function getDefaultSidebar(
+  spaceData
+): Promise<{ widgetId: string; widgetNamespace: WidgetNamespace }[]> {
+  const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration({
+    spaceId: spaceData.spaceId,
+  });
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
@@ -61,7 +63,7 @@ export async function transformEditorInterfacesToTargetState(
 ) {
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
-    getDefaultSidebar(),
+    getDefaultSidebar(spaceData),
     getDefaultEditors(spaceData),
   ]);
 

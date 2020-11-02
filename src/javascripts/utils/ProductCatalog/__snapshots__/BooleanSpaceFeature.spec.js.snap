@@ -1,15 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BooleanSpaceFeature Component renders children if feature is enabled 1`] = `
-<BooleanSpaceFeature
-  spaceFeatureKey="ff"
->
-  1
-</BooleanSpaceFeature>
+<SpaceEnvContextProvider>
+  <BooleanSpaceFeature
+    spaceFeatureKey="ff"
+  >
+    1
+  </BooleanSpaceFeature>
+</SpaceEnvContextProvider>
 `;
 
 exports[`BooleanSpaceFeature Component renders null if feature is disabled 1`] = `
-<BooleanSpaceFeature
-  spaceFeatureKey="ff"
-/>
+<SpaceEnvContextProvider>
+  <BooleanSpaceFeature
+    spaceFeatureKey="ff"
+  />
+</SpaceEnvContextProvider>
 `;

@@ -53,10 +53,21 @@ describe('AppOperations', () => {
       };
       const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
+      const spaceData = {
+        spaceId: 'spaceId',
+        environmentId: 'environmentId',
+        organizationId: 'organizationId',
+      };
 
-      await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
-        parameters: { test: true },
-      });
+      await AppOperations.installOrUpdate(
+        cma,
+        evictWidget,
+        checkAppStatus,
+        {
+          parameters: { test: true },
+        },
+        spaceData
+      );
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
       expect(cma.updateAppInstallation).toBeCalledWith('some-app', { test: true }, false);
@@ -73,11 +84,16 @@ describe('AppOperations', () => {
       };
       const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
+      const spaceData = {
+        spaceId: 'spaceId',
+        environmentId: 'environmentId',
+        organizationId: 'organizationId',
+      };
 
       expect.assertions(3);
 
       try {
-        await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus);
+        await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {}, spaceData);
       } catch (err) {
         expect(err).toMatch('unprocessable');
         expect(cma.updateAppInstallation).toBeCalledTimes(1);
@@ -108,16 +124,27 @@ describe('AppOperations', () => {
       };
       const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
+      const spaceData = {
+        spaceId: 'spaceId',
+        environmentId: 'environmentId',
+        organizationId: 'organizationId',
+      };
 
-      await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
-        targetState: {
-          EditorInterface: {
-            CT1: {
-              controls: [{ fieldId: 'xxx' }],
+      await AppOperations.installOrUpdate(
+        cma,
+        evictWidget,
+        checkAppStatus,
+        {
+          targetState: {
+            EditorInterface: {
+              CT1: {
+                controls: [{ fieldId: 'xxx' }],
+              },
             },
           },
         },
-      });
+        spaceData
+      );
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
       expect(cma.getEditorInterfaces).toBeCalledTimes(1);

@@ -173,7 +173,7 @@ class ScheduledActionsListPage extends Component {
     const { spaceId, environmentId, contentTypes } = this.props;
     const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 
-    const jobsData = await getJobsData(spaceEndpoint, {
+    const jobsData = await getJobsData(spaceId, spaceEndpoint, {
       ...query,
       'environment.sys.id': environmentId,
     }).catch((error) => {

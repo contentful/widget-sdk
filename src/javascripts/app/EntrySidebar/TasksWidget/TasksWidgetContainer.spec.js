@@ -6,7 +6,7 @@ import { trackIsTasksAlphaEligible } from './analytics';
 import * as ProductCatalog from 'data/CMA/ProductCatalog';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  getCurrentSpaceFeature: jest.fn(),
+  getSpaceFeature: jest.fn(),
   FEATURES: {
     TASKS: 'test-tasks',
   },
@@ -15,7 +15,7 @@ jest.mock('./analytics');
 
 describe('<TasksWidgetContainer />', () => {
   afterEach(() => {
-    ProductCatalog.getCurrentSpaceFeature.mockClear();
+    ProductCatalog.getSpaceFeature.mockClear();
   });
 
   const build = () => {
@@ -62,5 +62,5 @@ describe('<TasksWidgetContainer />', () => {
 });
 
 function mockBooleanFeatureFlag(currentVariation) {
-  ProductCatalog.getCurrentSpaceFeature.mockResolvedValue(currentVariation);
+  ProductCatalog.getSpaceFeature.mockResolvedValue(currentVariation);
 }

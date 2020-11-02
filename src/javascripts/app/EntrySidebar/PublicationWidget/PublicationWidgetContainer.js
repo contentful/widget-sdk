@@ -10,7 +10,6 @@ import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesServi
 import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -35,15 +34,14 @@ export default class PublicationWidgetContainer extends Component {
   };
 
   async componentDidMount() {
-    const { currentSpaceId, currentSpace } = this.context;
-    const organizationId = getOrganizationId(currentSpace);
+    const { currentSpaceId: spaceId, currentOrganizationId: organizationId } = this.context;
     const statusSwitchEnabled = await getVariation(FLAGS.NEW_STATUS_SWITCH, {
-      spaceId: currentSpaceId,
-      organizationId: organizationId,
+      spaceId,
+      organizationId,
     });
     this.setState({ isStatusSwitch: statusSwitchEnabled });
 
-    const addToReleaseEnabled = await releasesPCFeatureVariation();
+    const addToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
     this.setState({ isAddToRelease: addToReleaseEnabled });
 
     this.props.emitter.on(

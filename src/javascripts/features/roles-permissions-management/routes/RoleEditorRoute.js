@@ -5,12 +5,11 @@ import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import createResourceService from 'services/ResourceService';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 
 const RoleEditorFetcher = createFetcherComponent(
   async ({ spaceId, getContentTypes, getEntities, isNew }) => {
@@ -25,7 +24,7 @@ const RoleEditorFetcher = createFetcherComponent(
       getContentTypes(),
       getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
-      getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false),
+      getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false),
       createResourceService(spaceId).get('role'),
       getEntities(),
     ]);

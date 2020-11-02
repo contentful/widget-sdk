@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
@@ -10,6 +10,7 @@ import {
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   container: css({
@@ -59,7 +60,17 @@ SidebarConfiguration.propTypes = {
 };
 
 export default (props) => {
-  const { isLoading, error, data } = useAsync(getEntryConfiguration);
+  const {
+    currentSpaceId: spaceId,
+    currentEnvironmentId: environmentId,
+    currentOrganizationId: organizationId,
+  } = useSpaceEnvContext();
+
+  const { isLoading, error, data } = useAsync(
+    useCallback(async () => {
+      return await getEntryConfiguration({ spaceId, environmentId, organizationId });
+    }, [spaceId, environmentId, organizationId])
+  );
 
   if (isLoading || error) {
     return null;

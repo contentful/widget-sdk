@@ -3,16 +3,18 @@ import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContex
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
 import { TagType } from 'features/content-tags/core/TagType';
-import { FEATURES, getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 function ReadTagsProvider({ children }) {
   const tagsRepo = useTagsRepo();
   const [isLoading, setIsLoading] = useState(true);
   const [cachedData, setCachedData] = useState([]);
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
-      if (!(await getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false))) {
+      if (!(await getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false))) {
         return [];
       }
       const getResult = async (skip = 0) => {
@@ -30,7 +32,7 @@ function ReadTagsProvider({ children }) {
         }
       };
       return getResult();
-    }, [tagsRepo]),
+    }, [tagsRepo, spaceId]),
     true
   );
 

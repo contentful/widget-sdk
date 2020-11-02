@@ -9,7 +9,7 @@ import { EditorContext } from 'app/entity_editor/EntityField/types';
 jest.mock('services/PubSubService', () => ({}));
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
-  getCurrentSpaceFeature: jest.fn(),
+  getSpaceFeature: jest.fn(),
   FEATURES: {
     PC_CONTENT_TAGS: false,
     SCHEDULED_PUBLISHING: 'ff',

@@ -32,8 +32,8 @@ function getEntities(entityType, ids) {
   });
 }
 
-export async function getJobsData(spaceEndpoint, query) {
-  const releasesFlagEnabled = await getReleasesFeatureVariation();
+export async function getJobsData(spaceId, spaceEndpoint, query) {
+  const releasesFlagEnabled = await getReleasesFeatureVariation(spaceId);
   const jobsCollection = await JobsService.getJobs(spaceEndpoint, query);
 
   const jobs = jobsCollection.items;

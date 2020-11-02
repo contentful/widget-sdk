@@ -3,7 +3,7 @@ import { render as renderReact, wait, fireEvent, waitFor } from '@testing-librar
 import { Search as View } from './View';
 import { contentTypes, brand } from 'core/services/ContentQuery/__tests__/helpers';
 import keycodes from 'utils/keycodes';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 
 const onUpdate = jest.fn();
 
@@ -48,7 +48,7 @@ const renderWithInitialWait = async (props) => {
 
 describe('app/ContentList/Search/View', () => {
   beforeEach(() => {
-    getCurrentSpaceFeature.mockResolvedValue(false);
+    getSpaceFeature.mockResolvedValue(false);
 
     listViewContext.getView = jest
       .fn()

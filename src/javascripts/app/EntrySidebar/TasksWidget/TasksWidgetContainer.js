@@ -14,21 +14,23 @@ import createTaskPermissionChecker, {
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
 import TaskList from './View/TaskList';
 import { trackIsTasksAlphaEligible } from './analytics';
-import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   const [isEnabled, setIsEnabled] = useState(false);
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
   useEffect(() => {
     async function fetchFeatureFlag() {
-      const isEnabled = await getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false);
+      const isEnabled = await getSpaceFeature(spaceId, FEATURES.CONTENT_WORKFLOW_TASKS, false);
       setIsEnabled(isEnabled);
       if (isEnabled) {
         trackIsTasksAlphaEligible();
       }
     }
     fetchFeatureFlag();
-  }, []);
+  }, [spaceId]);
 
   return <ErrorHandler>{isEnabled ? <TasksWidgetContainer {...props} /> : null}</ErrorHandler>;
 }

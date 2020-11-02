@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import * as entityHelpers from 'app/entity_editor/entityHelpers';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { ITEMS_PER_PAGE } from './useEntityLoader';
 import { EntitySelectorForm } from './EntitySelectorForm';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -58,7 +58,7 @@ const getDefaultProps = (props = {}) => {
   };
 };
 
-getCurrentSpaceFeature.mockResolvedValue(false);
+getSpaceFeature.mockResolvedValue(false);
 
 jest.mock('data/CMA/FetchAll', () => ({
   fetchAll: jest.fn().mockResolvedValue([

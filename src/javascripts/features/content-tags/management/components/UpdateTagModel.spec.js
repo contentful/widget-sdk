@@ -9,7 +9,7 @@ import { wait } from '@testing-library/dom';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   FEATURES: { PC_CONTENT_TAGS: 'content_tags' },
-  getCurrentSpaceFeature: jest.fn().mockResolvedValue(true),
+  getSpaceFeature: jest.fn().mockResolvedValue(true),
 }));
 
 describe('A UpdateTagModal', () => {

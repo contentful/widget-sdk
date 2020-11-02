@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useCallback } from 'react';
+import React, { useContext, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
@@ -78,10 +78,33 @@ function ReferenceCards({
   let depth = 0;
   let circularReferenceCount = 0;
   let maxLevelReached = false;
-  const [initialized, setInitialized] = useState(false);
   const entitiesPerLevel = [];
   const visitedEntities = { 0: [root.sys.id] };
   const initialSelectedEntitiesMap = new Map();
+
+  useEffect(() => {
+    setInitialEntities(initialSelectedEntitiesMap);
+    setInitialReferenceAmount(entitiesPerLevel);
+    if (maxLevelReached) {
+      setIsTreeMaxDepthReached(true);
+    }
+    track(trackingEvents.dialogOpen, {
+      entity_id: root.sys.id,
+      references_depth: depth,
+      references_per_level: entitiesPerLevel,
+      circular_references_count: circularReferenceCount,
+    });
+  }, [
+    circularReferenceCount,
+    depth,
+    entitiesPerLevel,
+    initialSelectedEntitiesMap,
+    maxLevelReached,
+    root.sys.id,
+    setInitialEntities,
+    setInitialReferenceAmount,
+    setIsTreeMaxDepthReached,
+  ]);
 
   const toReferenceCard = (entity, level, entityIndexInTree) => {
     if (level === maxLevel) {
@@ -255,21 +278,6 @@ function ReferenceCards({
   const parentIndexInTree = 0;
   const referenceCards = renderLayer(root, level, parentIndexInTree);
 
-  if (!initialized) {
-    setInitialEntities(initialSelectedEntitiesMap);
-    setInitialReferenceAmount(entitiesPerLevel);
-    setInitialized(true);
-    if (maxLevelReached) {
-      setIsTreeMaxDepthReached(true);
-    }
-    track(trackingEvents.dialogOpen, {
-      entity_id: root.sys.id,
-      references_depth: depth,
-      references_per_level: entitiesPerLevel,
-      circular_references_count: circularReferenceCount,
-    });
-  }
-
   return referenceCards;
 }
 
@@ -341,19 +349,8 @@ const ReferencesTree = ({
         setInitialReferenceAmount={setInitialReferenceAmount}
       />
     ),
-    [
-      allReferencesSelected,
-      maxLevel,
-      defaultLocale,
-      validations,
-      onReferenceCardClick,
-      onSelectEntities,
-      setIsTreeMaxDepthReached,
-      handleSelect,
-      setInitialEntities,
-      root,
-      setInitialReferenceAmount,
-    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   return (

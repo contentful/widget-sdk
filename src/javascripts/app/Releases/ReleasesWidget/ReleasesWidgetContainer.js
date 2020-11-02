@@ -15,6 +15,7 @@ import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
 import * as Entries from 'data/entries';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const styles = {
   textLink: css({
@@ -90,6 +91,8 @@ export default class ReleasesWidgetContainer extends Component {
     this.onUpdateReleasesWidget = this.onUpdateReleasesWidget.bind(this);
   }
 
+  static contextType = SpaceEnvContext;
+
   static propTypes = {
     emitter: PropTypes.object.isRequired,
   };
@@ -102,10 +105,19 @@ export default class ReleasesWidgetContainer extends Component {
   };
 
   async componentDidMount() {
+    const {
+      currentSpaceId: spaceId,
+      currentEnvironmentId: environmentId,
+      currentOrganizationId: organizationId,
+    } = this.context;
     this.props.emitter.on(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.RELEASES);
 
-    const featureEnabled = await getReleasesFeatureVariation();
+    const featureEnabled = await getReleasesFeatureVariation({
+      spaceId,
+      environmentId,
+      organizationId,
+    });
     this.setState({ featureEnabled });
   }
 

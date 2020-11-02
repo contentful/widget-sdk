@@ -1,2 +1,2 @@
-export const getCurrentSpaceFeature = jest.fn().mockResolvedValue(true);
+export const getSpaceFeature = jest.fn().mockResolvedValue(true);
 export const FEATURES = {};

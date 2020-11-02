@@ -8,7 +8,7 @@ import * as Config from 'Config';
 import { getUser } from 'services/TokenStore';
 import { getCurrentStateName } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
-import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import StateLink from 'app/common/StateLink';
 
 import {
@@ -120,7 +120,7 @@ const getPendingTasksCount = (tasks, entries) => {
 };
 
 const canDisplayTasksDashboard = async (spaceId) =>
-  spaceId ? getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false) : false;
+  spaceId ? getSpaceFeature(spaceId, FEATURES.CONTENT_WORKFLOW_TASKS, false) : false;
 
 export default class AccountDropdown extends Component {
   state = {

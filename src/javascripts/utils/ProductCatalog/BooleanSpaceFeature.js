@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 /**
  * React wrapper around Product Catalog space features with boolean variation.
@@ -16,11 +17,18 @@ export default class BooleanSpaceFeature extends React.Component {
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   };
 
+  static contextType = SpaceEnvContext;
+
   state = {
     currentVariation: undefined,
   };
   async componentDidMount() {
-    const currentVariation = await getCurrentSpaceFeature(this.props.spaceFeatureKey, false);
+    const { currentSpaceId } = this.context;
+    const currentVariation = await getSpaceFeature(
+      currentSpaceId,
+      this.props.spaceFeatureKey,
+      false
+    );
 
     if (this.isUnmounted) {
       return;

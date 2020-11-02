@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 /*
  * React hook to retrieve a Product Catalog feature flag for current space.
@@ -8,9 +9,11 @@ import { useAsync } from 'core/hooks';
  * @param {string} defaultValue - default value used if flag not present.
  */
 function useCurrentSpaceFeature(featureId, defaultValue) {
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+
   const load = useCallback(async () => {
-    return getCurrentSpaceFeature(featureId, defaultValue);
-  }, [featureId, defaultValue]);
+    return getSpaceFeature(spaceId, featureId, defaultValue);
+  }, [featureId, defaultValue, spaceId]);
 
   const { data, isLoading } = useAsync(load);
   return { spaceFeatureEnabled: !!data, isSpaceFeatureLoading: isLoading };
