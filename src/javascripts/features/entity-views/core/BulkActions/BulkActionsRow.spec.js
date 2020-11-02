@@ -5,6 +5,7 @@ import { BulkActionsRow } from './BulkActionsRow';
 import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
 import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -65,6 +66,11 @@ jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
 
 jest.mock('features/trials', () => ({
   isSpaceOnTrial: jest.fn(),
+}));
+
+jest.mock('data/CMA/ProductCatalog', () => ({
+  FEATURES: { PC_CONTENT_TAGS: 'content_tags' },
+  getSpaceFeature: jest.fn().mockResolvedValue(false),
 }));
 
 const performer = {
@@ -228,6 +234,15 @@ describe('BulkActionsRow', () => {
       expect(getByTestId('unpublish')).toBeInTheDocument();
       expect(getByTestId('delete')).toBeInTheDocument();
       expect(queryByTestId('add to release')).not.toBeInTheDocument();
+    });
+
+    it('should only show tags bulk action when feature flag enabled', async () => {
+      getSpaceFeature.mockResolvedValue(true);
+      const { getByTestId } = renderComponent({
+        selectedEntities: generateEntities(1, false),
+      });
+      await wait(); // for feature flag
+      expect(getByTestId('add or remove tags')).toBeInTheDocument();
     });
 
     it('should show the publish label', () => {

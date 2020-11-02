@@ -114,6 +114,7 @@ export const BulkActionsRow = ({
       !showUnarchive &&
       !showUnpublish &&
       !showPublish &&
+      !tagsEnabled &&
       (!isReleaseFeatureEnabled || !canAddToRelease);
 
     if (noActionAvailable)
