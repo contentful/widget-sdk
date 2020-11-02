@@ -105,19 +105,11 @@ export default class ReleasesWidgetContainer extends Component {
   };
 
   async componentDidMount() {
-    const {
-      currentSpaceId: spaceId,
-      currentEnvironmentId: environmentId,
-      currentOrganizationId: organizationId,
-    } = this.context;
+    const { currentSpaceId: spaceId } = this.context;
     this.props.emitter.on(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.RELEASES);
 
-    const featureEnabled = await getReleasesFeatureVariation({
-      spaceId,
-      environmentId,
-      organizationId,
-    });
+    const featureEnabled = await getReleasesFeatureVariation(spaceId);
     this.setState({ featureEnabled });
   }
 
