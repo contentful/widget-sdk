@@ -334,6 +334,7 @@ registerSpacePurchaseEvent('space_purchase:internal_link_clicked');
 registerSpacePurchaseEvent('space_purchase:faq_section_open');
 registerSpacePurchaseEvent('space_purchase:confirm_purchase');
 registerSpacePurchaseEvent('space_purchase:space_created');
+registerSpacePurchaseEvent('space_purchase:space_type_change');
 registerSpacePurchaseEvent('space_purchase:space_template_created');
 registerSpacePurchaseEvent('space_purchase:error');
 

@@ -47,7 +47,7 @@ const upgradePlan = (space, plan, sessionMetadata) => async () => {
   try {
     const endpoint = createSpaceEndpoint(space.sys.id);
     await changeSpacePlan(endpoint, plan.sys.id);
-    trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata);
+    trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata, { selectedPlan: plan });
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       errorType: 'UpgradeError',

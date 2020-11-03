@@ -47,7 +47,9 @@ describe('UpgradeSpaceReceiptPage', () => {
       expect(changeSpacePlan).toHaveBeenCalled();
     });
 
-    expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_TYPE_CHANGE, mockSessionMetadata);
+    expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_TYPE_CHANGE, mockSessionMetadata, {
+      selectedPlan: mockSelectedPlan,
+    });
   });
 
   it('should display an error and fire an analytic event if the change of the space errored', async () => {

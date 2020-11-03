@@ -36,6 +36,7 @@ const transformers = {
   [EVENTS.PAYMENT_METHOD_CREATED]: emptyTransformer,
   [EVENTS.CONFIRM_PURCHASE]: emptyTransformer,
   [EVENTS.SPACE_CREATED]: spaceCreatedTransformer,
+  [EVENTS.SPACE_TYPE_CHANGE]: spaceUpgradeTransformer,
   [EVENTS.SPACE_TEMPLATE_CREATED]: spaceTemplateCreatedTransformer,
   [EVENTS.ERROR]: errorTransformer,
 };
@@ -102,6 +103,10 @@ function spaceTemplateSelectedTransformer(data) {
 }
 
 function spaceCreatedTransformer(data) {
+  return pick(data, ['selectedPlan']);
+}
+
+function spaceUpgradeTransformer(data) {
   return pick(data, ['selectedPlan']);
 }
 
