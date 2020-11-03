@@ -71,6 +71,7 @@ function beginTransformer(data) {
     'organizationPlatform',
     'canCreateFreeSpace',
     'sessionType',
+    'currentSpacePlan',
   ]);
 }
 function cancelTransformer(data) {

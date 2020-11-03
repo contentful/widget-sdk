@@ -3,11 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { NewSpaceRoute } from './NewSpaceRoute';
 import { getVariation } from 'LaunchDarkly';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { getBasePlan, getRatePlans } from 'account/pricing/PricingDataProvider';
+import { getBasePlan, getRatePlans, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { getOrganizationMembership, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
@@ -15,6 +16,8 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 const mockOrganization = FakeFactory.Organization();
 const mockUserRole = 'admin';
 const mockOrganizationPlatform = 'Free';
+const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
+const mockSpaceRatePlans = ['plan1', 'plan2', 'plan3'];
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -25,6 +28,10 @@ jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn(),
 }));
 
+jest.mock('../utils/transformSpaceRatePlans', () => ({
+  transformSpaceRatePlans: jest.fn(),
+}));
+
 jest.mock('services/OrganizationRoles', () => ({
   getOrganizationMembership: jest.fn(),
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
@@ -33,6 +40,7 @@ jest.mock('services/OrganizationRoles', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
   getBasePlan: jest.fn(),
+  getSpaceRatePlans: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
@@ -64,11 +72,12 @@ jest.mock('../components/NewSpacePage', () => ({
 
 describe('NewSpaceRoute', () => {
   beforeEach(() => {
-    createResourceService().get.mockResolvedValue({ usage: 0, limits: { maximum: 1 } });
+    createResourceService().get.mockResolvedValue(createResourceServiceResolvedValue);
     getVariation.mockClear().mockResolvedValue(true);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
     getRatePlans.mockResolvedValue();
+    getSpaceRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
@@ -138,6 +147,20 @@ describe('NewSpaceRoute', () => {
         sessionType: 'create_space',
       }
     );
+  });
+
+  it('should fetch and transform the space rate plans', async () => {
+    build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-page')).toBeVisible();
+    });
+
+    expect(getSpaceRatePlans).toBeCalled();
+    expect(transformSpaceRatePlans).toBeCalledWith({
+      freeSpaceResource: createResourceServiceResolvedValue,
+      spaceRatePlans: mockSpaceRatePlans,
+    });
   });
 
   it('should show an error page if the fetch fails', async () => {

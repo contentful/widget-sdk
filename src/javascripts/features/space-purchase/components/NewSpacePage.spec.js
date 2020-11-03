@@ -13,7 +13,6 @@ import {
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing/index';
-import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -53,7 +52,7 @@ const mockPlanCharges = [
   FakeFactory.RatePlanCharge('Records', 3),
 ];
 
-const mockRatePlans = [
+const mockSpaceRatePlans = [
   {
     name: 'Community',
     productPlanType: 'free_space',
@@ -110,7 +109,6 @@ jest.mock('features/organization-billing/index', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSpaceRatePlans: jest.fn(() => mockRatePlans),
   isFreeProductPlan: jest.fn(),
 }));
 
@@ -130,13 +128,11 @@ describe('NewSpacePage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     mockOrganization.isBillable = false;
-    getSpaceRatePlans.mockResolvedValue(mockRatePlans);
   });
 
   it('should render SPACE_SELECTION page as a default', async () => {
     await build();
 
-    expect(getSpaceRatePlans).toBeCalledTimes(1);
     expect(screen.getByTestId('space-selection-section')).toBeVisible();
   });
 
@@ -474,6 +470,7 @@ async function build(customProps) {
     templatesList: [],
     canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
+    spaceRatePlans: mockSpaceRatePlans,
     pageContent: {
       pageName: 'Space Purchase',
       content: [],

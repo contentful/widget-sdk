@@ -11,6 +11,7 @@ import {
   getBasePlan,
   isSelfServicePlan,
   isFreePlan,
+  getSpaceRatePlans,
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -23,15 +24,18 @@ import { getOrganizationMembership } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
+import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
 function createEventMetadataFromData(data, sessionType) {
-  const { organizationMembership, basePlan, canCreateFreeSpace } = data;
+  const { organizationMembership, basePlan, canCreateFreeSpace, currentSpacePlan } = data;
 
   return {
     userOrganizationRole: organizationMembership.role,
     organizationPlatform: basePlan.customerType,
     canCreateFreeSpace,
     sessionType,
+    currentSpacePlan: currentSpacePlan,
   };
 }
 
@@ -48,17 +52,31 @@ const initialFetch = (orgId, spaceId) => async () => {
     pageContent,
     organizationMembership,
     currentSpace,
+    rawSpaceRatePlans,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
     getBasePlan(endpoint),
-    createResourceService(orgId, 'organization').get('free_space'),
+    createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
     fetchSpacePurchaseContent(),
     getOrganizationMembership(orgId),
     TokenStore.getSpace(spaceId),
+    getSpaceRatePlans(endpoint, spaceId),
   ]);
+
+  const spaceRatePlans = transformSpaceRatePlans({
+    spaceRatePlans: rawSpaceRatePlans,
+    freeSpaceResource,
+  });
+
+  let currentSpacePlan;
+  if (spaceId && spaceRatePlans) {
+    currentSpacePlan = spaceRatePlans.find((plan) =>
+      plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
+    );
+  }
 
   const canAccess =
     newPurchaseFlowIsEnabled &&
@@ -87,6 +105,8 @@ const initialFetch = (orgId, spaceId) => async () => {
     organizationMembership,
     newPurchaseFlowIsEnabled,
     currentSpace,
+    spaceRatePlans,
+    currentSpacePlan,
   };
 };
 
@@ -130,6 +150,8 @@ export const UpgradeSpaceRoute = ({ orgId, spaceId }) => {
         canCreateCommunityPlan={data?.canCreateFreeSpace}
         pageContent={data?.pageContent}
         currentSpace={data?.currentSpace}
+        spaceRatePlans={data?.spaceRatePlans}
+        currentSpacePlan={data?.currentSpacePlan}
       />
     </>
   );

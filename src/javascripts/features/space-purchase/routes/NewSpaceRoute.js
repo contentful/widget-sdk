@@ -11,6 +11,7 @@ import {
   getBasePlan,
   isSelfServicePlan,
   isFreePlan,
+  getSpaceRatePlans,
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -23,6 +24,7 @@ import { getOrganizationMembership } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 
 function createEventMetadataFromData(data, sessionType) {
   const { organizationMembership, basePlan, canCreateFreeSpace } = data;
@@ -47,6 +49,7 @@ const initialFetch = (orgId) => async () => {
     freeSpaceResource,
     pageContent,
     organizationMembership,
+    rawSpaceRatePlans,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
@@ -56,7 +59,13 @@ const initialFetch = (orgId) => async () => {
     createResourceService(orgId, 'organization').get('free_space'),
     fetchSpacePurchaseContent(),
     getOrganizationMembership(orgId),
+    getSpaceRatePlans(endpoint),
   ]);
+
+  const spaceRatePlans = transformSpaceRatePlans({
+    spaceRatePlans: rawSpaceRatePlans,
+    freeSpaceResource,
+  });
 
   const canAccess =
     newPurchaseFlowIsEnabled &&
@@ -84,6 +93,7 @@ const initialFetch = (orgId) => async () => {
     basePlan,
     organizationMembership,
     newPurchaseFlowIsEnabled,
+    spaceRatePlans,
   };
 };
 
@@ -126,6 +136,7 @@ export const NewSpaceRoute = ({ orgId }) => {
         productRatePlans={data?.productRatePlans}
         canCreateCommunityPlan={data?.canCreateFreeSpace}
         pageContent={data?.pageContent}
+        spaceRatePlans={data?.spaceRatePlans}
       />
     </>
   );

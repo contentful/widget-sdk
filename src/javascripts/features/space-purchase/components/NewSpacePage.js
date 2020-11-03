@@ -11,9 +11,7 @@ import {
   getBillingDetails,
   getCountryCodeFromName,
 } from 'features/organization-billing';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
-import { isFreeProductPlan, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import {
   Organization as OrganizationPropType,
@@ -21,7 +19,6 @@ import {
 } from 'app/OrganizationSettings/PropTypes';
 import * as logger from 'services/logger';
 import * as TokenStore from 'services/TokenStore';
-import createResourceService from 'services/ResourceService';
 import { Breadcrumb } from './Breadcrumb';
 import { EVENTS } from '../utils/analyticsTracking';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
@@ -32,7 +29,6 @@ import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { SpaceSelection } from './SpaceSelection';
-import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
@@ -83,33 +79,6 @@ const fetchBillingDetails = async (
   setIsLoadingBillingDetails(false);
 };
 
-const fetchSpaceRatePlans = async (
-  organization,
-  spaceId,
-  setSpaceRatePlans,
-  setCurrentSpacePlan
-) => {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const orgResources = createResourceService(organization.sys.id, 'organization');
-  const [freeSpaceResource, rawSpaceRatePlans] = await Promise.all([
-    orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSpaceRatePlans(endpoint, spaceId),
-  ]);
-  const spaceRatePlans = transformSpaceRatePlans({
-    spaceRatePlans: rawSpaceRatePlans,
-    freeSpaceResource,
-  });
-
-  setSpaceRatePlans(spaceRatePlans);
-
-  if (spaceId && spaceRatePlans) {
-    const currentSpacePlan = spaceRatePlans.find((plan) =>
-      plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
-    );
-    setCurrentSpacePlan(currentSpacePlan ?? null);
-  }
-};
-
 export const NewSpacePage = ({
   organization,
   trackWithSession,
@@ -119,6 +88,8 @@ export const NewSpacePage = ({
   pageContent,
   sessionMetadata,
   currentSpace,
+  spaceRatePlans,
+  currentSpacePlan,
 }) => {
   const [currentStep, setCurrentStep] = useState(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
   const [spaceName, setSpaceName] = useState('');
@@ -127,8 +98,6 @@ export const NewSpacePage = ({
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
-  const [spaceRatePlans, setSpaceRatePlans] = useState(null);
-  const [currentSpacePlan, setCurrentSpacePlan] = useState(null);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
@@ -140,17 +109,6 @@ export const NewSpacePage = ({
   // when passed to `<SpaceSelection />` doesn't render the "no payment details" note until we
   // truly know if the user can create a paid space, which requires the organization to have loaded.
   const canCreatePaidSpace = organization && (userIsOrgOwner || hasBillingInformation);
-
-  useEffect(() => {
-    if (organization) {
-      fetchSpaceRatePlans(
-        organization,
-        currentSpace?.sys.id,
-        setSpaceRatePlans,
-        setCurrentSpacePlan
-      );
-    }
-  }, [organization, currentSpace]);
 
   useEffect(() => {
     if (userIsOrgOwner && organization?.isBillable) {
@@ -424,6 +382,8 @@ export const NewSpacePage = ({
 NewSpacePage.propTypes = {
   sessionMetadata: PropTypes.object.isRequired,
   trackWithSession: PropTypes.func.isRequired,
+  spaceRatePlans: PropTypes.array,
+  currentSpacePlan: PropTypes.object,
   organization: OrganizationPropType,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,
