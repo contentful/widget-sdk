@@ -21,6 +21,7 @@ export const useSearchContext = ({
 }) => {
   const { getView, assignView } = listViewContext;
   const { searchFilters, contentTypeId, searchText: initialSearchText } = getView();
+  const getSearchFilters = () => cloneDeep(getView().searchFilters || []);
 
   const [isTyping, setIsTyping] = useState(true);
   const [searchText, setSearch] = useState(initialSearchText);
@@ -100,13 +101,13 @@ export const useSearchContext = ({
   );
 
   const removeFilter = (removedIndex) => {
-    const updated = cloneDeep(searchFilters);
+    const updated = getSearchFilters();
     updated.splice(removedIndex, 1);
     setSearchFilters(updated);
   };
 
   const setFilterOperator = ([index, newOp]) => {
-    const updated = cloneDeep(searchFilters);
+    const updated = getSearchFilters();
     updated[index][1] = newOp;
     setSearchFilters(updated);
   };
@@ -120,7 +121,7 @@ export const useSearchContext = ({
 
   const setFilterValue = ([index, newValue]) => {
     setIsTyping(true);
-    const updated = cloneDeep(searchFilters);
+    const updated = getSearchFilters();
     updated[index][2] = newValue;
     assignView({ searchFilters: updated });
     debouncedSetFilterValue();
@@ -145,7 +146,7 @@ export const useSearchContext = ({
     setSearch('');
 
     const updatedFilters = [
-      ...(searchFilters || []),
+      ...getSearchFilters(),
       [filter.queryKey, filter.operators[0][0], value],
     ];
     assignView({ ...view, searchFilters: updatedFilters }, onUpdate);
