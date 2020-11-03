@@ -245,4 +245,23 @@ describe('ReferencesSideBar component', () => {
       expect(getByTestId('content-release-modal')).toBeInTheDocument();
     });
   });
+
+  it('should disable the buttons when selected entities are more than 200', async () => {
+    const response = cfResolveResponse(simpleReferences);
+    const selectedEntitiesArray = [...Array(201).fill(simpleReferences.items[0])];
+    const { getByTestId } = render(
+      <MockPovider references={response} selectedEntities={selectedEntitiesArray}>
+        <ReferencesSideBar entityTitle="Title" entity={entity} />
+      </MockPovider>
+    );
+
+    await waitFor(() => getByTestId);
+
+    await waitFor(() => {
+      expect(getByTestId('publishReferencesBtn')).toBeDisabled();
+      expect(getByTestId('validateReferencesBtn')).toBeDisabled();
+      expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
+      expect(getByTestId('cf-ui-note-reference-limit')).toBeInTheDocument();
+    });
+  });
 });

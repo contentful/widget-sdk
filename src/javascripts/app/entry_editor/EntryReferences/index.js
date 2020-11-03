@@ -83,6 +83,8 @@ export const hasLinks = (obj) => {
   return linksFound;
 };
 
+const REFERENCES_LIMIT = 1000;
+
 const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
@@ -193,9 +195,9 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
           {isTooComplex ? (
             <Note noteType="negative" className={styles.tooComplexNote}>
               We are currently unable to display the references for this entry. This may mean that
-              this entry has hit the current limit of more than 200 references or there is a
-              temporary system error. We are currently rolling out this feature and are actively
-              working on improving this.
+              this entry has hit the current limit of more than {REFERENCES_LIMIT} references or
+              there is a temporary system error. We are currently rolling out this feature and are
+              actively working on improving this.
             </Note>
           ) : references.length ? (
             <ReferencesTree
