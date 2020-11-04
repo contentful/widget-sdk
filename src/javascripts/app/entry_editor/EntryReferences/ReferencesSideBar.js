@@ -83,7 +83,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
-    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
 
     validationResponse.errored.length
       ? Notification.error('Some references did not pass validation')
