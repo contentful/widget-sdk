@@ -1,12 +1,9 @@
-import { getModule } from 'core/NgRegistry';
-import { useMemo } from 'react';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const useIsAdmin = () => {
-  const isAdmin = useMemo(() => {
-    const spaceContext = getModule('spaceContext');
-    return !!spaceContext.getData('spaceMember.admin', false);
-  }, []);
-  return isAdmin;
+  const { currentSpace } = useSpaceEnvContext();
+  return isAdmin(currentSpace);
 };
 
 export { useIsAdmin };
