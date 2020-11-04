@@ -16,6 +16,7 @@ describe('SpaceSettings', () => {
         onChangeSpace={noop}
         plan={{ name: 'testPlanName', price: 10 }}
         showDeleteButton={false}
+        showChangeButton={true}
         {...props}
       />
     );
@@ -43,6 +44,16 @@ describe('SpaceSettings', () => {
     userEvent.click(screen.getByTestId('upgrade-space-button'));
 
     expect(onChangeSpace).toBeCalled();
+  });
+
+  it('should not display the upgrade button', () => {
+    renderComponent({
+      showChangeButton: false,
+    });
+
+    const upgradeButton = screen.queryByTestId('upgrade-space-button');
+
+    expect(upgradeButton).not.toBeInTheDocument();
   });
 
   it('correct space data is present in the form', () => {

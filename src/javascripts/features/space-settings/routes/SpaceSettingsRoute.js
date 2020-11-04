@@ -131,6 +131,7 @@ export class SpaceSettingsRoute extends React.Component {
             onChangeSpace={this.changeSpaceDialog}
             spaceId={currentSpaceId}
             showDeleteButton={isOwnerOrAdmin(organization)}
+            showChangeButton={isOwnerOrAdmin(organization)}
           />
         )}
       </React.Fragment>

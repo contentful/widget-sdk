@@ -101,6 +101,7 @@ describe('SpaceSettingsRoute', () => {
       // Pretend that the user selected the large plan in the beginSpaceChange.
       argumentVariables.onSubmit(largePlan);
     });
+    isOwnerOrAdmin.mockReturnValue(true);
 
     await build();
 

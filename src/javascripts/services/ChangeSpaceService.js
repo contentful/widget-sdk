@@ -4,12 +4,13 @@ import {
   open as openChangeSpaceWarningModal,
   MODAL_TYPES,
 } from 'app/SpaceWizards/ChangeSpaceWarning';
-import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 import { go } from 'states/Navigator';
 import { isSpacePurchaseFlowAllowedForChange } from 'features/space-purchase';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 /**
  * Creates a string to be passed to the notification
@@ -51,11 +52,17 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
   const spacePurchaseFlowAllowedForPlanChange = await isSpacePurchaseFlowAllowedForChange(
     organizationId
   );
+  const isEnterpriseSpaceChangeAllowed = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, {
+    organizationId,
+  });
 
-  if (spacePlan && spacePlan.committed) {
+  if (isEnterpriseSpaceChangeAllowed && isEnterprisePlan(spacePlan)) {
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'overview', 'space_plans'],
+      params: { orgId: organizationId, spaceId: space.sys.id },
+    });
+  } else if (isEnterprisePlan(spacePlan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
-  } else if (isPOCSpacePlan(spacePlan)) {
-    openChangeSpaceWarningModal(MODAL_TYPES.POC);
   } else if (spacePurchaseFlowAllowedForPlanChange) {
     go({
       path: ['account', 'organizations', 'subscription_new', 'upgrade_space'],

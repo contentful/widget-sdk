@@ -60,7 +60,14 @@ export class SpaceSettings extends React.Component {
   };
 
   render() {
-    const { showDeleteButton, onRemoveClick, spaceId, plan, onChangeSpace } = this.props;
+    const {
+      showDeleteButton,
+      showChangeButton,
+      onRemoveClick,
+      spaceId,
+      plan,
+      onChangeSpace,
+    } = this.props;
 
     return (
       <Workbench>
@@ -115,9 +122,12 @@ export class SpaceSettings extends React.Component {
                   </>
                 </Paragraph>
 
-                <Button onClick={onChangeSpace} testId="upgrade-space-button">
-                  Upgrade your space
-                </Button>
+                {/* Only org admins and owners can change the space type */}
+                {showChangeButton && (
+                  <Button onClick={onChangeSpace} testId="upgrade-space-button">
+                    Upgrade your space
+                  </Button>
+                )}
               </Typography>
             </Card>
           )}
@@ -150,4 +160,5 @@ SpaceSettings.propTypes = {
   spaceName: PropTypes.string.isRequired,
   spaceId: PropTypes.string.isRequired,
   showDeleteButton: PropTypes.bool.isRequired,
+  showChangeButton: PropTypes.bool.isRequired,
 };
