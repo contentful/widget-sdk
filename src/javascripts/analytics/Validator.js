@@ -181,6 +181,7 @@ export const validEvents = {
     'cancel',
     'navigate',
     'space_plan_selected',
+    'space_type_change',
     'space_template_selected',
     'space_details_entered',
     'billing_details_entered',
