@@ -97,3 +97,7 @@ export function getSpaceVersion(space?: SpaceEnv): number | undefined {
 export function getEnvironmentAliasesIds(environment?: Environment): string[] {
   return environment?.sys.aliases?.map(({ sys }) => sys.id) ?? [];
 }
+
+export function hasOptedIntoAliases(environments?: Environment[]): boolean | undefined {
+  return environments?.some(({ sys: { aliases = [] } }) => aliases.length > 0);
+}
