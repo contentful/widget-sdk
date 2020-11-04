@@ -65,6 +65,8 @@ const mapEntities = (entities) =>
     isEqual
   );
 
+const SELECTED_ENTITIES_LIMIT = 200;
+
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
@@ -169,7 +171,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');
 
-  const disableButton = !showPublishButtons || isTooComplex || !selectedEntities.length;
+  const isSelectedEntitesMoreThanLimit = selectedEntities.length > SELECTED_ENTITIES_LIMIT;
+  const disableButton =
+    !showPublishButtons ||
+    isTooComplex ||
+    !selectedEntities.length ||
+    isSelectedEntitesMoreThanLimit;
 
   return (
     <div className={styles.sideBarWrapper}>
@@ -188,6 +195,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           <HelpText>None selected</HelpText>
         )
       ) : null}
+      {isSelectedEntitesMoreThanLimit && (
+        <Note noteType="warning" className={styles.spacingTop} testId="cf-ui-note-reference-limit">
+          Currently only up to {SELECTED_ENTITIES_LIMIT} references can be acted on at a time.
+          Alternatively you can select only the references you want to publish.
+        </Note>
+      )}
       <Button
         testId="publishReferencesBtn"
         buttonType="positive"
