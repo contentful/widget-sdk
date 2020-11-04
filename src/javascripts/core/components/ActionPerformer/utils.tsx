@@ -3,7 +3,6 @@ import Icon from 'ui/Components/Icon';
 import { styles } from './styles';
 import { get } from 'lodash';
 import { getModule } from 'core/NgRegistry';
-import { Tooltip } from '@contentful/forma-36-react-components';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
 import { WidgetNamespace } from '@contentful/widget-renderer';
@@ -30,16 +29,14 @@ export async function getApp(id: string) {
 export function formatAppName({ name }: { name: string }, formatName: (v: string) => string) {
   return (
     <div className={styles.wrapper}>
-      <Tooltip id={'page-app'} targetWrapperClassName={styles.tooltip} content="Updated by an app">
-        <Icon
-          name="page-apps"
-          scale="0.455"
-          className={styles.icon}
-          ariaLabel={'App'}
-          ariaHideIcon={true}
-          ariaDescribedBy={'page-app'}
-        />
-      </Tooltip>
+      <Icon
+        name="page-apps"
+        scale="0.455"
+        className={styles.icon}
+        ariaLabel="Updated by an app"
+        ariaHideIcon
+        ariaDescribedBy="page-app"
+      />
       {formatName(name)}
     </div>
   );
