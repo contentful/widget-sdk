@@ -70,7 +70,7 @@ export const queryFirst100LocalesOfDefaultSpace = {
       uponReceiving: `a query for the first 100 locales of the "${defaultSpaceId}" space`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/locales`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/locales`,
         headers: defaultHeader,
         query: {
           limit: '100',
@@ -95,7 +95,7 @@ export const queryFirst100LocalesOfDefaultSpace = {
       uponReceiving: `a query for the first 100 locales of the "${defaultSpaceId}" space`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/locales`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/locales`,
         headers: defaultHeader,
         query: {
           limit: '100',
@@ -123,7 +123,7 @@ export const postLocaleForSpace = {
       uponReceiving: `a post request to create locale "${name} (${code})" in "${defaultSpaceId}" space`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/locales`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/locales`,
         headers: defaultHeader,
       },
       willRespondWith: {
@@ -147,7 +147,7 @@ export const putLocaleForSpace = {
       uponReceiving: `a put request to change locale "${name} (${code})" in "${defaultSpaceId}" space`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/locales/${id}`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/locales/${id}`,
         headers: defaultHeader,
       },
       willRespondWith: {
@@ -171,7 +171,7 @@ export const deleteLocaleForSpace = {
       uponReceiving: `a delete request to delete locale "${id} from "${defaultSpaceId}" space`,
       withRequest: {
         method: 'DELETE',
-        path: `/spaces/${defaultSpaceId}/locales/${id}`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/locales/${id}`,
         headers: defaultHeader,
       },
       willRespondWith: {

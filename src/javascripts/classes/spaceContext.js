@@ -155,8 +155,15 @@ export default function register() {
           self.space = space;
           self.cma = new APIClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
-          self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
+
+          const localeRepoSpaceEndpoint = createSpaceEndpoint(
+            Config.apiUrl(),
+            spaceId,
+            Auth,
+            uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
+          );
+          self.localeRepo = createLocaleRepo(localeRepoSpaceEndpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

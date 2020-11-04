@@ -22,7 +22,18 @@ describe('Space Template creation service', () => {
       setActiveLocales: sinon.stub(),
       createApiKey: sinon.stub().returns(Promise.resolve()),
       getAllApiKeys: sinon.stub().returns(Promise.resolve([{ accessToken: 'mock-token' }])),
+      createLocaleRepo: sinon.stub().returns({
+        save: sinon.stub().returns(Promise.resolve({ code: 'something' })),
+      }),
     };
+
+    this.system.set('data/EndpointFactory', {
+      createSpaceEndpoint: sinon.stub(),
+    });
+
+    this.system.set('data/CMA/LocaleRepo', {
+      default: stubs.createLocaleRepo,
+    });
 
     this.system.set('analytics/Analytics', { track: _.noop });
     this.system.set('services/SpaceTemplateCreator/enrichTemplate', {
@@ -142,6 +153,8 @@ describe('Space Template creation service', () => {
       };
 
       spaceContext = {
+        getEnvironmentId: _.constant('master'),
+        getId: _.constant('123'),
         space: {
           getId: _.constant('123'),
           createContentType: sinon.stub(),
@@ -160,9 +173,6 @@ describe('Space Template creation service', () => {
               },
             })
           ),
-        },
-        localeRepo: {
-          save: sinon.stub(),
         },
         cma: {
           updateEditorInterface: sinon.stub().resolves(),
@@ -195,7 +205,6 @@ describe('Space Template creation service', () => {
         .onThirdCall()
         .returns(Promise.reject(new Error('can not createa an entry')));
       stubs.entryPublish.returns(Promise.resolve());
-      spaceContext.localeRepo.save.returns(Promise.resolve({ code: 'something' }));
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,

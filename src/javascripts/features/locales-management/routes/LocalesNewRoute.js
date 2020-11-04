@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import StateRedirect from 'app/common/StateRedirect';
 import * as LocaleNotifications from '../utils/LocaleNotifications';
 import { LocaleEditForm } from '../LocaleEditForm';
-import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createLocaleRepo from 'data/CMA/LocaleRepo';
 
-const LocalesFetcher = createFetcherComponent(() => {
-  const spaceContext = getModule('spaceContext');
-
-  return spaceContext.localeRepo.getAll();
+const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {
+  return localeRepo.getAll();
 });
 
 class NewLocaleForm extends Component {
@@ -87,46 +87,49 @@ class NewLocaleForm extends Component {
   }
 }
 
-export class LocalesNewRoute extends React.Component {
-  save = async function (locale) {
-    const spaceContext = getModule('spaceContext');
+export function LocalesNewRoute(props) {
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const spaceEndpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
+    currentSpaceId,
+    currentEnvironmentId,
+  ]);
+  const localeRepo = useMemo(() => createLocaleRepo(spaceEndpoint), [spaceEndpoint]);
 
-    const savedLocale = await spaceContext.localeRepo.save(locale);
+  async function save(locale) {
+    const savedLocale = await localeRepo.save(locale);
     await TheLocaleStore.refresh();
     return savedLocale;
-  };
-
-  render() {
-    if (!getSectionVisibility()['locales']) {
-      return <ForbiddenPage />;
-    }
-
-    return (
-      <React.Fragment>
-        <DocumentTitle title="New Locale" />
-        <LocalesFetcher>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <LocalesFormSkeleton />;
-            }
-            if (isError) {
-              return <StateRedirect path="^.list" />;
-            }
-            const spaceLocales = data;
-            return (
-              <NewLocaleForm
-                spaceLocales={spaceLocales}
-                saveLocale={this.save}
-                setDirty={this.props.setDirty}
-                goToList={this.props.goToList}
-                registerSaveAction={this.props.registerSaveAction}
-              />
-            );
-          }}
-        </LocalesFetcher>
-      </React.Fragment>
-    );
   }
+
+  if (!getSectionVisibility()['locales']) {
+    return <ForbiddenPage />;
+  }
+
+  return (
+    <React.Fragment>
+      <DocumentTitle title="New Locale" />
+      <LocalesFetcher localeRepo={localeRepo}>
+        {({ isLoading, isError, data }) => {
+          if (isLoading) {
+            return <LocalesFormSkeleton />;
+          }
+          if (isError) {
+            return <StateRedirect path="^.list" />;
+          }
+          const spaceLocales = data;
+          return (
+            <NewLocaleForm
+              spaceLocales={spaceLocales}
+              saveLocale={save}
+              setDirty={props.setDirty}
+              goToList={props.goToList}
+              registerSaveAction={props.registerSaveAction}
+            />
+          );
+        }}
+      </LocalesFetcher>
+    </React.Fragment>
+  );
 }
 
 LocalesNewRoute.propTypes = {

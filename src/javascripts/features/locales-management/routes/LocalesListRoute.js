@@ -13,12 +13,13 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSubscriptionState } from './utils/getSubscriptionState';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { getModule } from 'core/NgRegistry';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
 import * as PricingService from 'services/PricingService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createLocaleRepo from 'data/CMA/LocaleRepo';
 
 const fetch = async ({
   organization,
@@ -29,15 +30,11 @@ const fetch = async ({
 }) => {
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(organization);
   const orgIsLegacy = isLegacyOrganization(organization);
-  /** TODO: Change it to a `localeRepo` instance
-   * We can create the `localeRepo` instance instead but this would break the contract tests
-   * because we would need to pass the environment ID and this would change the expected URL for Cypress
-   * while other parts of the app are still using it from the Angular spaceContext
-   **/
-  const spaceContext = getModule('spaceContext');
+  const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+  const localeRepo = createLocaleRepo(spaceEndpoint);
 
   const promisesArray = [
-    spaceContext.localeRepo.getAll(),
+    localeRepo.getAll(),
     createResourceService(spaceId).get('locale', environmentId),
     createLegacyFeatureService(spaceId).get('multipleLocales'),
     isMasterEnvironment,

@@ -12,6 +12,8 @@ import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createLocaleRepo from 'data/CMA/LocaleRepo';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -39,6 +41,8 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   const templateName = templateInfo.name;
   const creationErrors = [];
   const handledItems = {};
+  const spaceEndpoint = createSpaceEndpoint(spaceContext.getId(), spaceContext.getEnvironmentId());
+  const localeRepo = createLocaleRepo(spaceEndpoint);
   return {
     create,
   };
@@ -78,7 +82,8 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       const localesPromise = Promise.all(
         filteredLocales.map((locale) => {
           // we create the default locale automatically, so we mark all other locales as non-default
-          const saveLocalePromise = spaceContext.localeRepo.save({ ...locale, default: false });
+
+          const saveLocalePromise = localeRepo.save({ ...locale, default: false });
           // we ingore errors. there might be different reasons why it is happening
           // like pricing, too many locales already, etc
           return saveLocalePromise.catch(() => null);

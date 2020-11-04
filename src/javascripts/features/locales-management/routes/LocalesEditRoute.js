@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
@@ -10,16 +10,16 @@ import * as LocaleNotifications from '../utils/LocaleNotifications';
 import { LocaleRemovalConfirmDialog } from '../dialogs/LocaleRemovalConfirmDialog';
 import { ChooseNewFallbackLocaleDialog } from '../dialogs/ChooseNewFallbackLocaleDialog';
 import { LocaleCodeChangeConfirmDialog } from '../dialogs/LocaleCodeChangeConfirmDialog';
-import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
+import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const LocalesFetcher = createFetcherComponent(() => {
-  const spaceContext = getModule('spaceContext');
-
-  return spaceContext.localeRepo.getAll();
+const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {
+  return localeRepo.getAll();
 });
 
 class EditLocaleForm extends Component {
@@ -182,64 +182,65 @@ class EditLocaleForm extends Component {
   }
 }
 
-export class LocalesEditRoute extends React.Component {
-  save = async function (locale) {
-    const spaceContext = getModule('spaceContext');
+export function LocalesEditRoute(props) {
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const spaceEndpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
+    currentSpaceId,
+    currentEnvironmentId,
+  ]);
+  const localeRepo = useMemo(() => createLocaleRepo(spaceEndpoint), [spaceEndpoint]);
 
-    const savedLocale = await spaceContext.localeRepo.save(locale);
+  async function save(locale) {
+    const savedLocale = await localeRepo.save(locale);
     await TheLocaleStore.refresh();
     return savedLocale;
-  };
-
-  remove = async function (locale) {
-    const spaceContext = getModule('spaceContext');
-
-    await spaceContext.localeRepo.remove(locale);
-    await TheLocaleStore.refresh();
-  };
-
-  render() {
-    if (!getSectionVisibility()['locales']) {
-      return <ForbiddenPage />;
-    }
-
-    return (
-      <LocalesFetcher>
-        {({ isLoading, isError, data, fetch }) => {
-          if (isLoading) {
-            return <LocalesFormSkeleton />;
-          }
-          if (isError) {
-            return <StateRedirect path="^.list" />;
-          }
-          const spaceLocales = data;
-          const locale = spaceLocales.find((locale) => locale.sys.id === this.props.localeId);
-          if (!locale) {
-            return <StateRedirect path="^.list" />;
-          }
-
-          return (
-            <React.Fragment>
-              <DocumentTitle title={[locale.name, 'Locales']} />
-              <EditLocaleForm
-                initialLocale={locale}
-                spaceLocales={spaceLocales}
-                saveLocale={(locale) =>
-                  this.save(locale).then(() => {
-                    fetch();
-                  })
-                }
-                removeLocale={this.remove}
-                setDirty={this.props.setDirty}
-                goToList={this.props.goToList}
-                registerSaveAction={this.props.registerSaveAction}
-              />
-            </React.Fragment>
-          );
-        }}
-      </LocalesFetcher>
-    );
   }
+
+  async function remove(locale) {
+    await localeRepo.remove(locale);
+    await TheLocaleStore.refresh();
+  }
+
+  if (!getSectionVisibility()['locales']) {
+    return <ForbiddenPage />;
+  }
+
+  return (
+    <LocalesFetcher localeRepo={localeRepo}>
+      {({ isLoading, isError, data, fetch }) => {
+        if (isLoading) {
+          return <LocalesFormSkeleton />;
+        }
+        if (isError) {
+          return <StateRedirect path="^.list" />;
+        }
+        const spaceLocales = data;
+        const locale = spaceLocales.find((locale) => locale.sys.id === props.localeId);
+        if (!locale) {
+          return <StateRedirect path="^.list" />;
+        }
+
+        return (
+          <React.Fragment>
+            <DocumentTitle title={[locale.name, 'Locales']} />
+            <EditLocaleForm
+              initialLocale={locale}
+              spaceLocales={spaceLocales}
+              saveLocale={(locale) =>
+                save(locale).then(() => {
+                  fetch();
+                })
+              }
+              removeLocale={remove}
+              setDirty={props.setDirty}
+              goToList={props.goToList}
+              registerSaveAction={props.registerSaveAction}
+            />
+          </React.Fragment>
+        );
+      }}
+    </LocalesFetcher>
+  );
 }
 
 LocalesEditRoute.propTypes = {
