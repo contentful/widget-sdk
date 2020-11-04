@@ -10,6 +10,7 @@ import { BillingDetailsPropType } from '../propTypes';
 import { isValidVATFormat, isCountryUsingVAT } from '../utils/vat';
 import COUNTRIES_LIST from 'libs/countries_list.json';
 import US_STATES_LIST from 'libs/us_states_list.json';
+import CA_STATES_LIST from 'libs/ca_states_list.json';
 
 const styles = {
   card: css({
@@ -49,7 +50,8 @@ export function BillingDetailsForm({
   billingDetails = {},
 }) {
   const [showVat, setShouldShowVat] = useState(isCountryUsingVAT(billingDetails?.country));
-  const [showUSState, setShouldShowUSState] = useState(!!billingDetails.state);
+  const [showState, setShouldShowState] = useState(!!billingDetails.state);
+  const [countryName, setCountryName] = useState();
 
   const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
     fields: {
@@ -107,6 +109,7 @@ export function BillingDetailsForm({
       const countryName = fields.country.value;
       const vatNumber = fields.vat.value;
       const state = fields.state.value;
+      const isUSAorCanada = countryName === 'United States' || countryName === 'Canada';
 
       // Only want to check if the VAT number is valid if a VAT number has been added.
       if (
@@ -117,8 +120,8 @@ export function BillingDetailsForm({
         errors.vat = 'Not a valid VAT Number';
       }
 
-      if (countryName === 'United States' && state === '') {
-        errors.state = 'Select a state';
+      if (isUSAorCanada && state === '') {
+        errors.state = `Select a ${countryName === 'Canada' ? 'province' : 'state'}`;
       }
 
       return errors;
@@ -126,27 +129,26 @@ export function BillingDetailsForm({
   });
 
   const onChangeCountry = (e) => {
-    const countryName = e.target.value;
-    const isVatCountry = isCountryUsingVAT(countryName);
-    const countryIsUSA = countryName === 'United States';
+    const country = e.target.value;
+    const isVatCountry = isCountryUsingVAT(country);
+    const isUSAorCanada = country === 'United States' || country === 'Canada';
 
     setShouldShowVat(isVatCountry);
-
     if (!isVatCountry) {
       // Reset VAT number in case they started filling this field out as we
       // don't want to submit/validate this field if it's not a VAT country.
       onChange('vat', '');
     }
 
-    setShouldShowUSState(countryIsUSA);
-
-    if (!countryIsUSA) {
+    setShouldShowState(isUSAorCanada);
+    if (!isUSAorCanada) {
       // Reset state in case they started filling this field out as we
       // don't want to submit/validate this field if it's not the US.
       onChange('state', '');
     }
 
-    onChange('country', countryName);
+    onChange('country', country);
+    setCountryName(e.target.value);
   };
 
   // Get the input's name and call onChange/onBlur for that input with the updated value.
@@ -284,22 +286,29 @@ export function BillingDetailsForm({
         ))}
       </SelectField>
 
-      {showUSState && (
+      {showState && (
         <SelectField
           className={styles.selectLocale}
           name="state"
           id="state"
           testId="billing-details.state"
-          labelText="State"
+          labelText={countryName === 'Canada' ? 'Province' : 'State'}
           value={fields.state.value}
           validationMessage={fields.state.error}
           onChange={handleChange}>
           <option value="" disabled />
-          {US_STATES_LIST.map((state) => (
-            <option key={state.name} value={state.name}>
-              {state.name}
-            </option>
-          ))}
+          {countryName === 'United States' &&
+            US_STATES_LIST.map((state) => (
+              <option key={state.name} value={state.name}>
+                {state.name}
+              </option>
+            ))}
+          {countryName === 'Canada' &&
+            CA_STATES_LIST.map((state) => (
+              <option key={state.name} value={state.name}>
+                {state.name}
+              </option>
+            ))}
         </SelectField>
       )}
 

@@ -202,6 +202,52 @@ describe('BillingDetailsForm', () => {
           expect(onSubmit).toBeCalled();
         });
       });
+
+      it('should display an error if Canada is selected but no province has been selected', async () => {
+        const onSubmit = jest.fn();
+
+        build({
+          billingDetails: getMockBillingDetails({ country: 'Germany' }),
+          onSubmit,
+        });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['Canada']);
+        userEvent.click(screen.getByTestId('billing-details.submit'));
+
+        expect(screen.getByText('Select a province')).toBeVisible();
+        expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should not display error and successfully submit if Canada and a Province are selected', async () => {
+        const onSubmit = jest.fn();
+
+        build({
+          billingDetails: getMockBillingDetails({ country: 'Germany' }),
+          onSubmit,
+        });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['Canada']);
+
+        const stateSelect = within(screen.getByTestId('billing-details.state')).getByTestId(
+          'cf-ui-select'
+        );
+        userEvent.selectOptions(stateSelect, ['Saskatchewan']);
+
+        userEvent.click(screen.getByTestId('billing-details.submit'));
+
+        expect(screen.queryByText('Select a state')).toBeNull();
+        await waitFor(() => {
+          expect(onSubmit).toBeCalled();
+        });
+      });
     });
   });
 
