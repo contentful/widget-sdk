@@ -129,9 +129,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
 
     slideInStackEmitter.on('changed', ({ newSlideLevel }) => {
       if (newSlideLevel === 0) {
-        fetchReferencesAndTitle().then(() => {
-          dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-        });
+        fetchReferencesAndTitle();
       }
     });
   }, [entity, dispatch]);
