@@ -1,9 +1,14 @@
 import React from 'react';
 import { screen, render, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { noop } from 'lodash';
 
 import { SpaceSettings } from './SpaceSettings';
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  isEnterprisePlan: jest.fn(),
+}));
 
 describe('SpaceSettings', () => {
   const renderComponent = (props) => {
@@ -22,6 +27,10 @@ describe('SpaceSettings', () => {
     );
   };
 
+  beforeEach(() => {
+    isEnterprisePlan.mockReturnValue(false);
+  });
+
   it('does not display space-plan-card if it is v1 pricing', () => {
     renderComponent({ plan: null });
 
@@ -34,6 +43,13 @@ describe('SpaceSettings', () => {
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
       'testPlanName - $10/month'
     );
+  });
+
+  it('does not display plan price for v2 enterprise orgs', () => {
+    isEnterprisePlan.mockReturnValue(true);
+    renderComponent();
+
+    expect(screen.queryByTestId('space-settings-page.plan-price')).toBeNull();
   });
 
   it('calls onChangeSpace when upgrade space button is clicked', () => {

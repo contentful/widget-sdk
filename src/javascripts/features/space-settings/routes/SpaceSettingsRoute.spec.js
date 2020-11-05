@@ -37,6 +37,7 @@ jest.mock('services/TokenStore', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getSingleSpacePlan: jest.fn(),
   getRatePlans: jest.fn(),
+  isEnterprisePlan: jest.fn().mockReturnValue(false),
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');

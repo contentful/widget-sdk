@@ -13,6 +13,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   section: css({
@@ -116,11 +117,13 @@ export class SpaceSettings extends React.Component {
             <Card testId="upgrade-space-plan-card" className={styles.section}>
               <Typography>
                 <Heading>Current space plan</Heading>
-                <Paragraph testId="space-settings-page.plan-price">
-                  <>
-                    {plan.name} - <Price value={plan.price} unit="month" />
-                  </>
-                </Paragraph>
+                {!isEnterprisePlan(plan) && (
+                  <Paragraph testId="space-settings-page.plan-price">
+                    <>
+                      {plan.name} - <Price value={plan.price} unit="month" />
+                    </>
+                  </Paragraph>
+                )}
 
                 {/* Only org admins and owners can change the space type */}
                 {showChangeButton && (
