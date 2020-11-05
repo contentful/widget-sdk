@@ -224,7 +224,7 @@ executors:
 jobs:
   build-with-statistics:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:12.18.2
     environment:
       DOCKER_IMAGE: contentful/user_interface
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
@@ -294,7 +294,7 @@ jobs:
             - output
   lint:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:12.18.2
     environment:
       CYPRESS_INSTALL_BINARY: 0
     steps:
@@ -315,7 +315,7 @@ jobs:
 
   run-unit-tests:
     docker:
-      - image: circleci/node:10.15.3-browsers
+      - image: circleci/node:12.18.2-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
       CI: true

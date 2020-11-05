@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import SnapshotSelector from './SnapshotSelector';
 import moment from 'moment';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -86,8 +86,10 @@ const renderComponent = () => {
     expect(button).toBeInTheDocument();
     expect(queryByTestId('snapshot-selector-table')).not.toBeInTheDocument();
     expect(getEntrySnapshots).not.toHaveBeenCalled();
-    button.click();
-    await waitForElement(() => getByTestId('snapshot-selector-table'));
+    act(() => {
+      button.click();
+    });
+    await waitFor(() => getByTestId('snapshot-selector-table'));
     expect(getEntrySnapshots).toHaveBeenCalled();
   };
 
@@ -181,9 +183,13 @@ describe('SnapshotSelector', () => {
       await initFirstLoad();
       const button = getByTestId('snapshot-selector-table-sort-status');
       compareNthChild(2, 2);
-      button.click();
-      button.click();
-      compareNthChild(2, 17);
+      await act(async () => {
+        button.click();
+      });
+      await act(async () => {
+        button.click();
+      });
+      compareNthChild(1, 17);
     });
   });
 });

@@ -2,33 +2,33 @@ import withRetry from './Retry';
 import { delay } from './Utils';
 import * as Telemetry from 'i13n/Telemetry';
 
-jest.useFakeTimers();
-
 jest.mock('./Utils', () => ({
   delay: jest.fn(async () => {}),
   getEndpoint: jest.fn((url) => url),
   getCurrentState: jest.fn(() => 'STATE'),
 }));
 
-const requestFn = jest.fn(() => Promise.resolve());
-const wrappedFn = withRetry(requestFn);
+const requestFn = jest.fn().mockResolvedValue({});
+
+let wrappedFn;
 
 // executes all tasks and micro-tasks (timeouts and promise callbacks)
 // but won't execute newly scheduled micro-tasks (promise callbacks)
 async function flush() {
-  await Promise.resolve();
   jest.runOnlyPendingTimers();
+  return Promise.resolve();
 }
 
-// create n requests wrapped with Retry
-const runTimes = (n = 1) => {
-  Array(n)
-    .fill()
-    .forEach(() => wrappedFn());
-};
-
 describe('Retry', () => {
-  beforeEach(requestFn.mockReset);
+  beforeEach(() => {
+    requestFn.mockReset();
+    jest.useFakeTimers();
+    wrappedFn = withRetry(requestFn);
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
 
   it('executes a request', async () => {
     requestFn.mockResolvedValueOnce('bar');
@@ -39,13 +39,18 @@ describe('Retry', () => {
   });
 
   it('consumes requests in a specific rate (7 per second)', async () => {
-    runTimes(15);
+    Array(15)
+      .fill()
+      .forEach(() => wrappedFn());
+
     // immediately calls 7
-    await flush();
+    await Promise.resolve();
     expect(requestFn).toHaveBeenCalledTimes(7);
+
     // after 1 period, calls 7 more
     await flush();
     expect(requestFn).toHaveBeenCalledTimes(14);
+
     // after 1 period, calls the remaining one
     await flush();
     expect(requestFn).toHaveBeenCalledTimes(15);

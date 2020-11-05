@@ -6,7 +6,7 @@
   "bin": {},
   "directories": {},
   "engines": {
-    "node": "10.15.3",
+    "node": "12.18.2",
     "npm": "6.4.1"
   },
   "dependencies": {
@@ -148,7 +148,7 @@
     "@svgr/webpack": "^5.4.0",
     "@testing-library/cypress": "^6.0.0",
     "@testing-library/dom": "^7.21.3",
-    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^10.4.7",
     "@testing-library/react-hooks": "^3.3.0",
     "@testing-library/user-event": "^10.4.1",
@@ -208,7 +208,6 @@
     "husky": "^2.7.0",
     "jasmine-core": "2.99.1",
     "jest": "25.1.0",
-    "jest-dom": "^4.0.0",
     "jest-emotion": "^10.0.32",
     "jest-enzyme": "^7.1.2",
     "jest-extended": "^0.11.5",

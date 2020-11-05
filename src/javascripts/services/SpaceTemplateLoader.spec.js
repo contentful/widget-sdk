@@ -63,7 +63,7 @@ describe('SpaceTemplateLoader', () => {
     });
 
     describe('when env is anything else', () => {
-      it('shold return space id, preview access token and preview api url', () => {
+      it('should return space id, preview access token and preview api url', () => {
         expect(
           getClientParams({
             env: 'dev',
