@@ -48,10 +48,6 @@ const styles = {
   warningNote: css({
     marginTop: tokens.spacingM,
   }),
-  marginedJobsSkeleton: css({
-    maxHeight: '40px',
-    marginTop: tokens.spacing2Xl,
-  }),
 };
 
 function shouldShowErrorNote(lastJob, entity) {
@@ -111,7 +107,6 @@ export default function ScheduledActionsWidget({
   updatedAt,
   validator,
   publicationBlockedReason,
-  isStatusSwitch,
   emitter,
 }) {
   const [jobs, setJobs] = useState([]);
@@ -251,7 +246,6 @@ export default function ScheduledActionsWidget({
         revert={revert}
         isSaving={isSaving}
         updatedAt={updatedAt}
-        isStatusSwitch={isStatusSwitch}
         onScheduledPublishClick={async () => {
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
@@ -270,9 +264,7 @@ export default function ScheduledActionsWidget({
         publicationBlockedReason={publicationBlockedReason}
       />
       {isLoading && (
-        <SkeletonContainer
-          data-test-id="jobs-skeleton"
-          className={isStatusSwitch ? styles.marginedJobsSkeleton : styles.jobsSkeleton}>
+        <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
           <SkeletonBodyText numberOfLines={2} />
         </SkeletonContainer>
       )}
@@ -334,10 +326,5 @@ ScheduledActionsWidget.propTypes = {
     setApiResponseErrors: PropTypes.func,
   }).isRequired,
   publicationBlockedReason: PropTypes.string,
-  isStatusSwitch: PropTypes.bool,
   emitter: PropTypes.object.isRequired,
-};
-
-ScheduledActionsWidget.defaultProps = {
-  isStatusSwitch: false,
 };

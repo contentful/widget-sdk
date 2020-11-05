@@ -16,8 +16,6 @@ import EntrySidebarWidget from '../EntrySidebarWidget';
 import RelativeTimeData from 'components/shared/RelativeDateTime';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from './StatusBadge';
-import StatusSwitchPortal from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitchPortal';
-import StatusSwitch from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitch';
 
 const styles = {
   actionRestrictionNote: css({
@@ -62,12 +60,6 @@ export default class PublicationWidget extends React.PureComponent {
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
     publicationBlockedReason: PropTypes.string,
-    entityId: PropTypes.string,
-    isStatusSwitch: PropTypes.bool,
-  };
-
-  static defaultProps = {
-    isStatusSwitch: false,
   };
 
   state = {
@@ -76,34 +68,16 @@ export default class PublicationWidget extends React.PureComponent {
 
   render() {
     const {
-      entityId,
       primary,
       status,
       secondary,
       isSaving,
       updatedAt,
       publicationBlockedReason,
-      isStatusSwitch,
     } = this.props;
     const secondaryActionsDisabled = every(secondary || [], (action) => action.isDisabled());
     const isPrimaryPublishBlocked =
       primary && primary.targetStateId === 'published' && !!publicationBlockedReason;
-
-    if (isStatusSwitch) {
-      return (
-        <StatusSwitchPortal entityId={entityId}>
-          <StatusSwitch
-            primaryAction={primary}
-            status={status}
-            isSaving={isSaving}
-            isDisabled={false}
-            secondaryActions={secondary}
-            publicationBlockedReason={publicationBlockedReason}
-            withScheduling={false}
-          />
-        </StatusSwitchPortal>
-      );
-    }
 
     return (
       <EntrySidebarWidget title="Status">

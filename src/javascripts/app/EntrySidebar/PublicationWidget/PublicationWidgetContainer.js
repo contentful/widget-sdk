@@ -8,7 +8,6 @@ import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 export default class PublicationWidgetContainer extends Component {
@@ -28,18 +27,12 @@ export default class PublicationWidgetContainer extends Component {
     userId: undefined,
     entity: undefined,
     validator: undefined,
-    isStatusSwitch: false,
     isAddToRelease: false,
     entityTitle: null,
   };
 
   async componentDidMount() {
-    const { currentSpaceId: spaceId, currentOrganizationId: organizationId } = this.context;
-    const statusSwitchEnabled = await getVariation(FLAGS.NEW_STATUS_SWITCH, {
-      spaceId,
-      organizationId,
-    });
-    this.setState({ isStatusSwitch: statusSwitchEnabled });
+    const { currentSpaceId: spaceId } = this.context;
 
     const addToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
     this.setState({ isAddToRelease: addToReleaseEnabled });
@@ -96,7 +89,6 @@ export default class PublicationWidgetContainer extends Component {
       updatedAt,
       validator,
       publicationBlockedReasons,
-      isStatusSwitch,
     } = this.state;
 
     const revert = get(commands, 'revertToPrevious');
@@ -112,14 +104,12 @@ export default class PublicationWidgetContainer extends Component {
           return !isJobsFeatureEnabled || isDeletedEntity ? (
             <PublicationWidget
               status={status}
-              entityId={get(entity, 'sys.id')}
               primary={primary}
               secondary={secondary}
               revert={revert}
               isSaving={this.state.isSaving}
               updatedAt={this.state.updatedAt}
               publicationBlockedReason={publicationBlockedReason}
-              isStatusSwitch={!!entity && isStatusSwitch}
             />
           ) : (
             <ScheduledActionsWidget
@@ -136,7 +126,6 @@ export default class PublicationWidgetContainer extends Component {
               updatedAt={updatedAt}
               validator={validator}
               publicationBlockedReason={publicationBlockedReason}
-              isStatusSwitch={isStatusSwitch}
               emitter={this.props.emitter}
             />
           );

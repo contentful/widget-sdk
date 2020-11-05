@@ -21,8 +21,6 @@ describe('Asset Page', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
 
-      cy.disableFeatureFlags([FeatureFlag.NEW_STATUS_SWITCH]);
-
       const interactions = [
         ...defaultRequestsMock(),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),

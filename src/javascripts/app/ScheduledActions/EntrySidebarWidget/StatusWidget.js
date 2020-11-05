@@ -19,9 +19,6 @@ import RestrictedAction from './RestrictedAction';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from 'app/EntrySidebar/PublicationWidget/StatusBadge';
 
-import StatusSwitchPortal from './StatusSwitchPortal';
-import StatusSwitch from './StatusSwitch';
-
 // TODO: This code started as a copy of <PublicationWidget />, there should be
 //  some shared code as there are still a lot of similarities.
 
@@ -74,15 +71,9 @@ class StatusWidget extends React.PureComponent {
       return null;
     }
 
-    const { isStatusSwitch } = this.props;
-
     return (
       <DropdownListItem
-        className={
-          isStatusSwitch
-            ? cx(styles.scheduleListItem, styles.dropdownItem)
-            : styles.scheduleListItem
-        }
+        className={styles.scheduleListItem}
         testId="schedule-publication"
         isDisabled={
           isButtonLocked ||
@@ -115,30 +106,7 @@ class StatusWidget extends React.PureComponent {
       isDisabled,
       isScheduled,
       publicationBlockedReason,
-      entity,
-      isStatusSwitch,
-      onScheduledPublishClick,
-      isScheduledPublishDisabled,
     } = this.props;
-
-    if (isStatusSwitch) {
-      return (
-        <StatusSwitchPortal entityId={entity.sys.id}>
-          <StatusSwitch
-            primaryAction={primary}
-            status={status}
-            isSaving={isSaving}
-            secondaryActions={secondary}
-            isDisabled={isDisabled}
-            publicationBlockedReason={publicationBlockedReason}
-            isScheduled={isScheduled}
-            onScheduledPublishClick={onScheduledPublishClick}
-            isScheduledPublishDisabled={isScheduledPublishDisabled}
-            withScheduling={true}
-          />
-        </StatusSwitchPortal>
-      );
-    }
 
     const secondaryActionsDisabled =
       every(secondary || [], (action) => action.isDisabled()) && !this.canSchedule();
@@ -256,12 +224,6 @@ StatusWidget.propTypes = {
   isScheduledPublishDisabled: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired,
   publicationBlockedReason: PropTypes.string,
-  entity: PropTypes.object,
-  isStatusSwitch: PropTypes.bool,
-};
-
-StatusWidget.defaultProps = {
-  isStatusSwitch: false,
 };
 
 export default StatusWidget;
