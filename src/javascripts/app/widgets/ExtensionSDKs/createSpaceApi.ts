@@ -120,7 +120,7 @@ export function createSpaceApi({
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
     onEntityChanged,
 
-    signRequest: makeSignRequest(appId, cma),
+    signRequest: appId ? (req) => cma.signRequest(appId, req) : undefined,
   };
 
   function getCachedContentTypes() {
@@ -202,15 +202,6 @@ export function createSpaceApi({
 
     return () => {
       pubSubClient.off(CONTENT_ENTITY_UPDATED_EVENT, handler);
-    };
-  }
-
-  function makeSignRequest(appId, cma) {
-    return (req) => {
-      if (!appId) {
-        throw new Error('Request signing is only available in apps');
-      }
-      return cma.signRequest(appId, req);
     };
   }
 }
