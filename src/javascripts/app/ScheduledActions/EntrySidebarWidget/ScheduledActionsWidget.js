@@ -8,6 +8,8 @@ import CommandPropType from 'app/entity_editor/CommandPropType';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.js';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
+import * as accessChecker from 'access_control/AccessChecker';
+
 import {
   SkeletonContainer,
   SkeletonBodyText,
@@ -208,12 +210,16 @@ export default function ScheduledActionsWidget({
       EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
       jobId,
       { 'environment.sys.id': environmentId }
-    ).then(() => {
-      const job = jobs.find((j) => j.sys.id === jobId);
-      trackCancelledJob(job);
-      setJobsState(jobs.filter((j) => j !== job));
-      Notification.success('Schedule canceled');
-    });
+    )
+      .then(() => {
+        const job = jobs.find((j) => j.sys.id === jobId);
+        trackCancelledJob(job);
+        setJobsState(jobs.filter((j) => j !== job));
+        Notification.success('Schedule canceled');
+      })
+      .catch((_err) => {
+        Notification.error('The schedule could not be canceled');
+      });
   };
 
   const pendingJobs = jobs.filter((job) => job.sys.status === 'scheduled');
@@ -237,6 +243,11 @@ export default function ScheduledActionsWidget({
       </>
     );
   };
+
+  // Controls whether the `Cancel Schedule` dropdown appears
+  const canUnpublishSchedule = accessChecker.can(accessChecker.Action.UNPUBLISH, entity);
+  const isReadyOnly = primary.isDisabled() || !canUnpublishSchedule;
+
   return (
     <ErrorHandler>
       <StatusWidget
@@ -292,7 +303,7 @@ export default function ScheduledActionsWidget({
               isMasterEnvironment={isMasterEnvironment}
               jobs={pendingJobs}
               onCancel={handleCancel}
-              isReadOnly={primary.isDisabled()}
+              isReadOnly={isReadyOnly}
               linkType={entityType}
             />
           )}

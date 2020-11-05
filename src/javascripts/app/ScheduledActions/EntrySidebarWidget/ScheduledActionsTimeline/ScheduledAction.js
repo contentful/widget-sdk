@@ -166,6 +166,7 @@ export const propTypes = {
   size: PropTypes.oneOf(['default', 'small']).isRequired,
   linkType: PropTypes.string.isRequired,
 };
+
 Job.propTypes = propTypes;
 
 export default Job;
