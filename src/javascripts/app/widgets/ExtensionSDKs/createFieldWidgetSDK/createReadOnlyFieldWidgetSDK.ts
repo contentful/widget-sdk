@@ -111,17 +111,6 @@ export function createReadonlyFieldWidgetSDK({
     readOnly: true,
   });
 
-  const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(cma),
-    initialContentTypes,
-    pubSubClient,
-    environmentIds: [environmentId, ...allEnvironmentAliasIds],
-    spaceId,
-    tagsRepo,
-    usersRepo,
-    readOnly: true,
-  });
-
   const contentTypeApi = createContentTypeApi(internalContentType);
 
   const locationApi = {
@@ -152,6 +141,18 @@ export function createReadonlyFieldWidgetSDK({
     user: userApi,
     widgetNamespace,
     widgetId,
+  });
+
+  const spaceApi = createSpaceApi({
+    cma: getBatchingApiClient(cma),
+    initialContentTypes,
+    pubSubClient,
+    environmentIds: [environmentId, ...allEnvironmentAliasIds],
+    spaceId,
+    tagsRepo,
+    usersRepo,
+    readOnly: true,
+    appId: idsApi.app,
   });
 
   const baseSdkWithoutDialogs = createBaseExtensionSdk({

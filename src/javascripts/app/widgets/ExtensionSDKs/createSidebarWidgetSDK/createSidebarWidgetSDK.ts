@@ -86,6 +86,7 @@ export const createSidebarWidgetSDK = ({
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
+    appId: idsApi.app,
   });
 
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });

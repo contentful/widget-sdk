@@ -30,6 +30,13 @@ export const createAppExtensionSDK = ({
 
   const userApi = createUserApi(spaceMember);
 
+  const idsApi = {
+    user: userApi.sys.id,
+    space: spaceContext.getId(),
+    environment: spaceContext.getEnvironmentId(),
+    app: widgetId,
+  };
+  
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
@@ -38,14 +45,8 @@ export const createAppExtensionSDK = ({
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
+    appId: idsApi.app
   });
-
-  const idsApi = {
-    user: userApi.sys.id,
-    space: spaceContext.getId(),
-    environment: spaceContext.getEnvironmentId(),
-    app: widgetId,
-  };
 
   const locationApi = {
     is: (location: string) => location === WidgetLocation.APP_CONFIG,

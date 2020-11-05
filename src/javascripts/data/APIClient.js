@@ -542,6 +542,10 @@ APIClient.prototype.deleteAppInstallation = function (appDefinitionId) {
   return this._deleteResource('app_installations', appDefinitionId);
 };
 
+APIClient.prototype.signRequest = function (appDefinitionId, data) {
+  return this._createResource(`app_installations/${appDefinitionId}/signed_requests`, data);
+};
+
 APIClient.prototype._request = function (req, headers) {
   return this._endpoint(req, headers);
 };
