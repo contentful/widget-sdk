@@ -20,7 +20,6 @@ import {
   CreditCardDetailsLoading,
   BillingDetailsPropType,
 } from 'features/organization-billing';
-import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 
 import { CreditCardInformation } from './CreditCardInformation';
 import { BillingInformation } from './BillingInformation';
@@ -57,7 +56,6 @@ const redirectToEditPayment = (orgId) => {
 export const NewSpaceConfirmationPage = ({
   organizationId,
   navigateToPreviousStep,
-  selectedPlan,
   trackWithSession,
   billingDetails,
   paymentDetails,
@@ -65,8 +63,6 @@ export const NewSpaceConfirmationPage = ({
   isLoadingBillingDetails,
   showBillingDetails,
   showEditLink,
-  currentSpace,
-  currentPlan,
 }) => {
   return (
     <section
@@ -136,9 +132,6 @@ export const NewSpaceConfirmationPage = ({
           </Card>
         )}
         <PaymentSummary
-          selectedPlan={selectedPlan}
-          currentSpace={currentSpace}
-          currentPlan={currentPlan}
           showButtons={!showBillingDetails}
           onConfirm={onConfirm}
           onBack={navigateToPreviousStep}
@@ -152,13 +145,10 @@ NewSpaceConfirmationPage.propTypes = {
   organizationId: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  selectedPlan: PropTypes.object,
   trackWithSession: PropTypes.func.isRequired,
   billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
   showEditLink: PropTypes.bool.isRequired,
   isLoadingBillingDetails: PropTypes.bool.isRequired,
   showBillingDetails: PropTypes.bool.isRequired,
-  currentSpace: SpacePropType,
-  currentPlan: PlanPropType,
 };

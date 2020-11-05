@@ -7,7 +7,7 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import { PaymentSummary } from './PaymentSummary';
-import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
+import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import { useSpaceUpgrade } from '../hooks/useCreateSpaceAndTemplate';
 
 const styles = {
@@ -29,12 +29,7 @@ const styles = {
   }),
 };
 
-export const UpgradeSpaceReceiptPage = ({
-  selectedPlan,
-  sessionMetadata,
-  currentSpace,
-  currentPlan,
-}) => {
+export const UpgradeSpaceReceiptPage = ({ selectedPlan, sessionMetadata, currentSpace }) => {
   const { isUpgradingSpace, upgradeError, buttonAction } = useSpaceUpgrade(
     currentSpace,
     selectedPlan,
@@ -94,12 +89,7 @@ export const UpgradeSpaceReceiptPage = ({
           {upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
         </Button>
         <div className={styles.paymentSummaryContainer}>
-          <PaymentSummary
-            selectedPlan={selectedPlan}
-            currentSpace={currentSpace}
-            currentPlan={currentPlan}
-            isReceipt
-          />
+          <PaymentSummary isReceipt />
         </div>
       </Flex>
     </section>
@@ -110,5 +100,4 @@ UpgradeSpaceReceiptPage.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
   sessionMetadata: PropTypes.object.isRequired,
   currentSpace: SpacePropType,
-  currentPlan: PlanPropType,
 };

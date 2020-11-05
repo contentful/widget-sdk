@@ -7,12 +7,12 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { changeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 
+import { SpacePurchaseState } from '../context';
 import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
 const mockCurrentSpace = FakeFactory.Space();
-const mockCurrentSpacePlan = FakeFactory.Plan();
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
   sessionId: 'some_random_id',
@@ -118,14 +118,22 @@ describe('UpgradeSpaceReceiptPage', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     selectedPlan: mockSelectedPlan,
     sessionMetadata: mockSessionMetadata,
     currentSpace: mockCurrentSpace,
-    currentPlan: mockCurrentSpacePlan,
     ...customProps,
   };
 
-  render(<UpgradeSpaceReceiptPage {...props} />);
+  const contextValue = {
+    state: { selectedPlan: mockSelectedPlan, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <UpgradeSpaceReceiptPage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

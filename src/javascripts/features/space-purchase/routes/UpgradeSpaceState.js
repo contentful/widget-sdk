@@ -2,6 +2,7 @@ import React from 'react';
 import { organizationRoute } from 'states/utils';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import { importer } from './importer';
+import { SpacePurchaseContextProvider } from '../context';
 
 export const upgradeSpaceState = organizationRoute({
   name: 'upgrade_space',
@@ -11,8 +12,12 @@ export const upgradeSpaceState = organizationRoute({
   },
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
-      {({ UpgradeSpaceRoute }) => {
-        return <UpgradeSpaceRoute {...props} />;
+      {({ SpacePurchaseRoute }) => {
+        return (
+          <SpacePurchaseContextProvider>
+            <SpacePurchaseRoute {...props} />
+          </SpacePurchaseContextProvider>
+        );
       }}
     </LazyLoadedComponent>
   ),

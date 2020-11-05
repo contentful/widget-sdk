@@ -122,7 +122,7 @@ export const NewSpaceReceiptPage = ({
               content from the template may be missing.
             </Note>
           )}
-          <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+          <PaymentSummary isReceipt />
         </div>
       </Flex>
     </section>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -15,7 +15,7 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
 import tokens from '@contentful/forma-36-tokens';
 
-import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
+import { SpacePurchaseState } from '../context';
 
 const BORDER = `1px solid ${tokens.colorElementMid}`;
 
@@ -51,15 +51,11 @@ const styles = {
   }),
 };
 
-export const PaymentSummary = ({
-  selectedPlan,
-  isReceipt = false,
-  showButtons = false,
-  onConfirm,
-  onBack,
-  currentSpace,
-  currentPlan,
-}) => {
+export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfirm, onBack }) => {
+  const {
+    state: { currentSpace, currentSpaceRatePlan, selectedPlan },
+  } = useContext(SpacePurchaseState);
+
   return (
     <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
@@ -67,7 +63,12 @@ export const PaymentSummary = ({
           {isReceipt ? 'Receipt' : 'Payment summary'}
         </Subheading>
         <Paragraph testId="payment-summary.message">
-          {getSuccessMsg(currentSpace?.name, currentPlan?.name, selectedPlan.name, isReceipt)}
+          {getSuccessMsg(
+            currentSpace?.name,
+            currentSpaceRatePlan?.name,
+            selectedPlan.name,
+            isReceipt
+          )}
         </Paragraph>
         <List className={styles.list}>
           <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
@@ -97,13 +98,10 @@ export const PaymentSummary = ({
 };
 
 PaymentSummary.propTypes = {
-  selectedPlan: PropTypes.object.isRequired,
   isReceipt: PropTypes.bool,
   showButtons: PropTypes.bool,
   onConfirm: PropTypes.func,
   onBack: PropTypes.func,
-  currentSpace: SpacePropType,
-  currentPlan: PlanPropType,
 };
 
 function getSuccessMsg(currentSpaceName, currentPlanName, selectedPlanName, isReceipt) {

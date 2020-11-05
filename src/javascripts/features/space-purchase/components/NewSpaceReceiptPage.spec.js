@@ -8,6 +8,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
+import { SpacePurchaseState } from '../context';
 
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
@@ -211,7 +212,7 @@ describe('NewSpaceReceiptPage', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     spaceName,
     selectedPlan: mockSelectedPlan,
@@ -220,5 +221,14 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<NewSpaceReceiptPage {...props} />);
+  const contextValue = {
+    state: { selectedPlan: mockSelectedPlan, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <NewSpaceReceiptPage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

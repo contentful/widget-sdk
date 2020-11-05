@@ -6,6 +6,7 @@ import * as LazyLoader from 'utils/LazyLoader';
 import { NewSpacePage } from './NewSpacePage';
 import { isOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
+import { SpacePurchaseState } from '../context';
 
 import {
   createBillingDetails,
@@ -145,7 +146,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should render BILLING_DETAILS when space details have been filled out with the selected space plan', async () => {
-    await build();
+    await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -214,7 +215,10 @@ describe('NewSpacePage', () => {
       expirationDate: { month: 1, year: '2020' },
     });
 
-    await build({ organization: { ...mockOrganization, isBillable: true } });
+    await build({
+      customProps: { organization: { ...mockOrganization, isBillable: true } },
+      customState: { selectedPlan: mockProductRatePlanMedium },
+    });
 
     // Space Selection Page
     expect(getBillingDetails).toBeCalledWith(mockOrganization.sys.id);
@@ -253,7 +257,7 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build();
+      await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -356,7 +360,7 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build();
+      await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -402,7 +406,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should display saved billing details when navigating back from Credit Card Page', async () => {
-    await build();
+    await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
 
     // ------ Space select page------
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -462,7 +466,7 @@ describe('NewSpacePage', () => {
   });
 });
 
-async function build(customProps) {
+async function build(options) {
   const props = {
     trackWithSession,
     organization: mockOrganization,
@@ -475,10 +479,19 @@ async function build(customProps) {
       pageName: 'Space Purchase',
       content: [],
     },
-    ...customProps,
+    ...options?.customProps,
   };
 
-  render(<NewSpacePage {...props} />);
+  const contextValue = {
+    state: { ...options?.customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <NewSpacePage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 
   await waitFor(() => screen.getAllByTestId('select-space-cta'));
 }

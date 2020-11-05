@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { SpacePurchaseState } from '../context';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 
 describe('NewSpaceBillingDetailsPage', () => {
@@ -11,13 +12,21 @@ describe('NewSpaceBillingDetailsPage', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     navigateToPreviousStep: () => {},
     onSubmitBillingDetails: () => {},
-    selectedPlan: { name: 'Medium', price: 123 },
     ...customProps,
   };
 
-  render(<NewSpaceBillingDetailsPage {...props} />);
+  const contextValue = {
+    state: { selectedPlan: { name: 'Medium', price: 123 }, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <NewSpaceBillingDetailsPage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { NewSpaceRoute } from './NewSpaceRoute';
+import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getVariation } from 'LaunchDarkly';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { getBasePlan, getRatePlans, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
@@ -12,8 +12,10 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
+import { SpacePurchaseState } from '../context';
 
 const mockOrganization = FakeFactory.Organization();
+const mockSpace = FakeFactory.Space();
 const mockUserRole = 'admin';
 const mockOrganizationPlatform = 'Free';
 const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
@@ -59,6 +61,7 @@ jest.mock('services/ResourceService', () => {
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
+  getSpace: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -70,7 +73,7 @@ jest.mock('../components/NewSpacePage', () => ({
   NewSpacePage: jest.fn().mockReturnValue(<div data-test-id="new-space-page" />),
 }));
 
-describe('NewSpaceRoute', () => {
+describe('SpacePurchaseRoute', () => {
   beforeEach(() => {
     createResourceService().get.mockResolvedValue(createResourceServiceResolvedValue);
     getVariation.mockClear().mockResolvedValue(true);
@@ -163,6 +166,31 @@ describe('NewSpaceRoute', () => {
     });
   });
 
+  it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {
+    TokenStore.getSpace.mockReturnValueOnce(mockSpace);
+
+    build({ spaceId: mockSpace.sys.id });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-page')).toBeVisible();
+    });
+
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        sessionId: expect.any(String),
+        spaceId: mockSpace.sys.id,
+      },
+      {
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'upgrade_space',
+      }
+    );
+  });
+
   it('should show an error page if the fetch fails', async () => {
     TokenStore.getOrganization.mockRejectedValueOnce(new Error());
 
@@ -174,11 +202,20 @@ describe('NewSpaceRoute', () => {
   });
 });
 
+const mockContextValue = {
+  state: {},
+  dispatch: jest.fn(),
+};
+
 function build(customProps) {
   const props = {
     orgId: mockOrganization.sys.id,
     ...customProps,
   };
 
-  render(<NewSpaceRoute {...props} />);
+  render(
+    <SpacePurchaseState.Provider value={mockContextValue}>
+      <SpacePurchaseRoute {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

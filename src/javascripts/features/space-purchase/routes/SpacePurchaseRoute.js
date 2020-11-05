@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -9,9 +9,9 @@ import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
   getRatePlans,
   getBasePlan,
+  getSpaceRatePlans,
   isSelfServicePlan,
   isFreePlan,
-  getSpaceRatePlans,
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -25,6 +25,8 @@ import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
+
+import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
 function createEventMetadataFromData(data, sessionType) {
@@ -39,7 +41,7 @@ function createEventMetadataFromData(data, sessionType) {
   };
 }
 
-const initialFetch = (orgId, spaceId) => async () => {
+const initialFetch = (orgId, spaceId, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const [
@@ -62,7 +64,7 @@ const initialFetch = (orgId, spaceId) => async () => {
     createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
     fetchSpacePurchaseContent(),
     getOrganizationMembership(orgId),
-    TokenStore.getSpace(spaceId),
+    spaceId ? TokenStore.getSpace(spaceId) : undefined,
     getSpaceRatePlans(endpoint, spaceId),
   ]);
 
@@ -71,9 +73,9 @@ const initialFetch = (orgId, spaceId) => async () => {
     freeSpaceResource,
   });
 
-  let currentSpacePlan;
-  if (spaceId && spaceRatePlans) {
-    currentSpacePlan = spaceRatePlans.find((plan) =>
+  let currentSpaceRatePlan;
+  if (spaceId && spaceRatePlans?.length > 0) {
+    currentSpaceRatePlan = spaceRatePlans.find((plan) =>
       plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
     );
   }
@@ -95,6 +97,14 @@ const initialFetch = (orgId, spaceId) => async () => {
   // User can't create another community plan if they've already reached their limit
   const canCreateFreeSpace = !resourceIncludedLimitReached(freeSpaceResource);
 
+  dispatch({
+    type: actions.SET_INITIAL_STATE,
+    payload: {
+      currentSpace,
+      currentSpaceRatePlan,
+    },
+  });
+
   return {
     organization,
     templatesList,
@@ -106,25 +116,30 @@ const initialFetch = (orgId, spaceId) => async () => {
     newPurchaseFlowIsEnabled,
     currentSpace,
     spaceRatePlans,
-    currentSpacePlan,
+    currentSpaceRatePlan,
   };
 };
 
-export const UpgradeSpaceRoute = ({ orgId, spaceId }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
+  const { dispatch } = useContext(SpacePurchaseState);
+
   const sessionMetadata = {
     sessionId: alnum(16),
     organizationId: orgId,
+    spaceId,
   };
 
   const trackWithSession = (eventName, eventMetadata) => {
     trackEvent(eventName, sessionMetadata, eventMetadata);
   };
 
-  const { isLoading, data, error } = useAsync(useCallback(initialFetch(orgId, spaceId), []));
+  const { isLoading, data, error } = useAsync(
+    useCallback(initialFetch(orgId, spaceId, dispatch), [])
+  );
 
   useEffect(() => {
     if (!isLoading && data?.newPurchaseFlowIsEnabled) {
-      const sessionType = 'change_space';
+      const sessionType = spaceId ? 'upgrade_space' : 'create_space';
       const eventMetadata = createEventMetadataFromData(data, sessionType);
 
       trackWithSession(EVENTS.BEGIN, eventMetadata);
@@ -141,7 +156,6 @@ export const UpgradeSpaceRoute = ({ orgId, spaceId }) => {
     <>
       <DocumentTitle title="Space purchase" />
       <NewSpacePage
-        loading={isLoading}
         sessionMetadata={sessionMetadata}
         trackWithSession={trackWithSession}
         organization={data?.organization}
@@ -151,13 +165,13 @@ export const UpgradeSpaceRoute = ({ orgId, spaceId }) => {
         pageContent={data?.pageContent}
         currentSpace={data?.currentSpace}
         spaceRatePlans={data?.spaceRatePlans}
-        currentSpacePlan={data?.currentSpacePlan}
+        currentSpacePlan={data?.currentSpaceRatePlan}
       />
     </>
   );
 };
 
-UpgradeSpaceRoute.propTypes = {
+SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string,
   spaceId: PropTypes.string,
 };

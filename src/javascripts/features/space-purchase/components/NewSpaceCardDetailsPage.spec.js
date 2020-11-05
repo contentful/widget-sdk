@@ -6,6 +6,7 @@ import * as LazyLoader from 'utils/LazyLoader';
 import * as logger from 'services/logger';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
+import { SpacePurchaseState } from '../context';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 
 const mockOrganization = Fake.Organization();
@@ -83,7 +84,7 @@ describe('NewSpaceCardDetailsPage', () => {
   });
 });
 
-async function build(customProps) {
+async function build(customProps, customState) {
   const { Zuora } = LazyLoader._results;
 
   let successCb;
@@ -111,14 +112,22 @@ async function build(customProps) {
     {
       organizationId: mockOrganization.sys.id,
       billingCountryCode: 'CX',
-      selectedPlan: {},
       navigateToPreviousStep: () => {},
       onSuccess: () => {},
     },
     customProps
   );
 
-  render(<NewSpaceCardDetailsPage {...props} />);
+  const contextValue = {
+    state: { selectedPlan: { name: 'Medium', price: 123 }, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <NewSpaceCardDetailsPage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 
   await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 

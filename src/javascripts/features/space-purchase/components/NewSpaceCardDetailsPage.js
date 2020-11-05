@@ -8,7 +8,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as logger from 'services/logger';
 import { ZuoraCreditCardIframe } from 'features/organization-billing';
-import { Space as SpacePropType, Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { PaymentSummary } from './PaymentSummary';
 
 const styles = {
@@ -34,10 +33,7 @@ export const NewSpaceCardDetailsPage = ({
   organizationId,
   billingCountryCode,
   navigateToPreviousStep,
-  selectedPlan,
   onSuccess,
-  currentSpace,
-  currentPlan,
 }) => {
   return (
     <section
@@ -82,11 +78,7 @@ export const NewSpaceCardDetailsPage = ({
             cancelText="Back"
           />
         </Card>
-        <PaymentSummary
-          selectedPlan={selectedPlan}
-          currentSpace={currentSpace}
-          currentPlan={currentPlan}
-        />
+        <PaymentSummary />
       </Grid>
     </section>
   );
@@ -97,7 +89,4 @@ NewSpaceCardDetailsPage.propTypes = {
   billingCountryCode: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
-  selectedPlan: PropTypes.object.isRequired,
-  currentSpace: SpacePropType,
-  currentPlan: PlanPropType,
 };

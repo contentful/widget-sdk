@@ -2,12 +2,13 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Plan, Space } from 'test/helpers/fakeFactory';
 
+import { SpacePurchaseState } from '../context';
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
 
 describe('PaymentSummary', () => {
-  it('should the plan name and price', () => {
+  it('should show the plan name and price', () => {
     build();
 
     expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
@@ -50,11 +51,11 @@ describe('PaymentSummary', () => {
 
   it('should show space change copy', () => {
     const currentSpace = Space({ name: 'Tomato' });
-    const currentPlan = Plan({ name: 'Medium' });
+    const currentSpaceRatePlan = Plan({ name: 'Medium' });
     const selectedPlan = { name: 'Large' };
-    build({
+    build(null, {
       currentSpace,
-      currentPlan,
+      currentSpaceRatePlan,
       selectedPlan,
     });
     const paymentMsg = screen.getByTestId('payment-summary.message');
@@ -64,11 +65,20 @@ describe('PaymentSummary', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     selectedPlan: mockSelectedPlan,
     ...customProps,
   };
 
-  render(<PaymentSummary {...props} />);
+  const contextValue = {
+    state: { selectedPlan: mockSelectedPlan, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <PaymentSummary {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

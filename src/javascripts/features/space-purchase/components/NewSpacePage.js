@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { Grid, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -32,6 +32,8 @@ import { SpaceSelection } from './SpaceSelection';
 import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
+
+import { actions, SpacePurchaseState } from '../context';
 
 const NEW_SPACE_STEPS = [
   { text: '1.Spaces', isActive: true },
@@ -91,6 +93,8 @@ export const NewSpacePage = ({
   spaceRatePlans,
   currentSpacePlan,
 }) => {
+  const { dispatch } = useContext(SpacePurchaseState);
+
   const [currentStep, setCurrentStep] = useState(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -160,6 +164,7 @@ export const NewSpacePage = ({
     });
 
     setSelectedPlan(selectedProductRatePlan);
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedProductRatePlan });
 
     // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
     if (currentSpace && organization.isBillable) {
@@ -279,9 +284,6 @@ export const NewSpacePage = ({
               }
               savedBillingDetails={billingDetails}
               onSubmitBillingDetails={onSubmitBillingDetails}
-              selectedPlan={selectedPlan}
-              currentSpace={currentSpace}
-              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -294,9 +296,6 @@ export const NewSpacePage = ({
               navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS)}
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
-              selectedPlan={selectedPlan}
-              currentSpace={currentSpace}
-              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -306,7 +305,6 @@ export const NewSpacePage = ({
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceConfirmationPage
               organizationId={organizationId}
-              selectedPlan={selectedPlan}
               trackWithSession={trackWithSession}
               showBillingDetails={userIsOrgOwner}
               showEditLink={organization.isBillable}
@@ -315,8 +313,6 @@ export const NewSpacePage = ({
               paymentDetails={paymentDetails}
               navigateToPreviousStep={onBackConfirmation}
               onConfirm={onConfirm}
-              currentSpace={currentSpace}
-              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -330,8 +326,6 @@ export const NewSpacePage = ({
               organizationId={organizationId}
               sessionMetadata={sessionMetadata}
               selectedTemplate={selectedTemplate}
-              currentSpace={currentSpace}
-              currentPlan={currentSpacePlan}
             />
           </Grid>
         );
@@ -343,7 +337,6 @@ export const NewSpacePage = ({
               selectedPlan={selectedPlan}
               sessionMetadata={sessionMetadata}
               currentSpace={currentSpace}
-              currentPlan={currentSpacePlan}
             />
           </Grid>
         );

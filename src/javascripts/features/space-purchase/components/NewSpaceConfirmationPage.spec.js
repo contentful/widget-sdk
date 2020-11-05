@@ -5,9 +5,11 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { EVENTS } from '../utils/analyticsTracking';
 
+import { SpacePurchaseState } from '../context';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 
 const mockOrganization = Fake.Organization();
+const mockSelectedPlan = Fake.Plan();
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
@@ -84,10 +86,9 @@ describe('NewSpaceConfirmationPage', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     organizationId: mockOrganization.sys.id,
-    selectedPlan: { name: 'medium' },
     billingDetails: mockBillingDetails,
     paymentDetails: mockPaymentMethod,
     isLoadingBillingDetails: false,
@@ -99,5 +100,14 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<NewSpaceConfirmationPage {...props} />);
+  const contextValue = {
+    state: { selectedPlan: mockSelectedPlan, ...customState },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <NewSpaceConfirmationPage {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }
