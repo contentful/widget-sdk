@@ -7,6 +7,13 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { css } from 'emotion';
+
+const styles = {
+  workbenchContent: css({
+    padding: 0,
+  }),
+};
 
 export function RolesWorkbenchSkeleton(props) {
   return (
@@ -29,7 +36,7 @@ export function RolesWorkbenchSkeleton(props) {
         }
         icon={<ProductIcon icon="Settings" size="large" />}
       />
-      <Workbench.Content type="default">
+      <Workbench.Content type={props.type || 'default'} className={styles.workbenchContent}>
         {props.children || (
           <SkeletonContainer
             svgWidth="100%"
@@ -40,7 +47,6 @@ export function RolesWorkbenchSkeleton(props) {
           </SkeletonContainer>
         )}
       </Workbench.Content>
-      {props.sidebar && <Workbench.Sidebar position="right">{props.sidebar}</Workbench.Sidebar>}
     </Workbench>
   );
 }
@@ -49,7 +55,7 @@ RolesWorkbenchSkeleton.propTypes = {
   className: PropTypes.string,
   onBack: PropTypes.func,
   actions: PropTypes.node,
-  title: PropTypes.node.isRequired,
+  title: PropTypes.node,
   children: PropTypes.node,
-  sidebar: PropTypes.node,
+  type: PropTypes.oneOf(['default', 'full']),
 };

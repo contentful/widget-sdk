@@ -1,34 +1,21 @@
 import React from 'react';
-import { findIndex, set, update, remove, map } from 'lodash/fp';
+import { findIndex, map, remove, set, update } from 'lodash/fp';
 import {
+  cloneDeep,
+  extend,
+  find,
   flow,
-  startsWith,
   get,
   includes,
-  isString,
   isObject,
-  extend,
+  isString,
   omit,
-  find,
-  cloneDeep,
+  startsWith,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-  TextLink,
-  TextField,
-  Textarea,
-  Notification,
-  Heading,
-  CheckboxField,
-  Paragraph,
-  Note,
-} from '@contentful/forma-36-react-components';
+import { Note, Notification, Tab, TabPanel, Tabs } from '@contentful/forma-36-react-components';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import FormSection from 'components/forms/FormSection';
-import { RuleList } from './RuleList';
-import { TranslatorRoleSelector } from './TranslatorRoleSelector';
 import { getLocales } from '../utils/getLocales';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
@@ -36,13 +23,27 @@ import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
 
 import * as RoleListHandler from '../components/RoleListHandler';
-import { RoleEditorSidebar } from './RoleEditorSidebar';
 import { RoleEditorActions } from './RoleEditorActions';
 import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { entitySelector } from 'features/entity-search';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
+import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
+import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  tabs: css({
+    overflowX: 'auto',
+    display: 'flex',
+    paddingLeft: tokens.spacing2Xl,
+  }),
+  tabPanel: css({
+    padding: tokens.spacing2Xl,
+  }),
+};
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -94,6 +95,13 @@ export function handleSaveError(response) {
 
   return Promise.reject();
 }
+
+const RoleTabs = {
+  Details: 'details',
+  Content: 'content',
+  Media: 'media',
+  Permissions: 'permissions',
+};
 
 export class RoleEditor extends React.Component {
   static propTypes = {
@@ -148,6 +156,7 @@ export class RoleEditor extends React.Component {
       saving: false,
       dirty: isDuplicate,
       internal,
+      selectedTab: RoleTabs.Details,
     };
   }
 
@@ -365,6 +374,12 @@ export class RoleEditor extends React.Component {
     return Navigator.go({ path: '^.list' });
   }
 
+  navigateToTab = (tab) => {
+    this.setState({ selectedTab: tab });
+    //TODO: make it route based, and not local state
+    //return Navigator.go({ path: `^.${tab}` });
+  };
+
   render() {
     const {
       role,
@@ -375,7 +390,7 @@ export class RoleEditor extends React.Component {
       hasEnvironmentAliasesEnabled,
     } = this.props;
 
-    const { saving, internal, isLegacy, dirty } = this.state;
+    const { saving, internal, isLegacy, dirty, selectedTab } = this.state;
 
     const showTranslator = startsWith(role.name, 'Translator');
 
@@ -390,13 +405,11 @@ export class RoleEditor extends React.Component {
       <>
         <DocumentTitle title={`${title} | Roles`} />
         <RolesWorkbenchSkeleton
+          type={'full'}
           title={title}
           onBack={() => {
             this.navigateToList();
           }}
-          sidebar={
-            <RoleEditorSidebar hasCustomRolesFeature={hasCustomRolesFeature} isLegacy={isLegacy} />
-          }
           actions={
             <RoleEditorActions
               hasCustomRolesFeature={hasCustomRolesFeature}
@@ -411,6 +424,33 @@ export class RoleEditor extends React.Component {
               onDelete={this.delete}
             />
           }>
+          <Tabs withDivider className={styles.tabs}>
+            <Tab
+              selected={selectedTab === RoleTabs.Details}
+              id={RoleTabs.Details}
+              onSelect={this.navigateToTab}>
+              Role details
+            </Tab>
+            <Tab
+              selected={selectedTab === RoleTabs.Content}
+              id={RoleTabs.Content}
+              onSelect={this.navigateToTab}>
+              Content
+            </Tab>
+            <Tab
+              selected={selectedTab === RoleTabs.Media}
+              id={RoleTabs.Media}
+              onSelect={this.navigateToTab}>
+              Media
+            </Tab>
+            <Tab
+              selected={selectedTab === RoleTabs.Permissions}
+              id={RoleTabs.Permissions}
+              onSelect={this.navigateToTab}>
+              Permissions
+            </Tab>
+          </Tabs>
+
           {autofixed && (
             <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
               Some rules have been removed because of changes in your content structure. Please
@@ -418,198 +458,66 @@ export class RoleEditor extends React.Component {
             </Note>
           )}
 
-          <FormSection title="Role details">
-            <TextField
-              required
-              name="nameInput"
-              id="opt_name"
-              labelText="Name"
-              className="role-editor__name-input"
-              value={internal.name || ''}
-              onChange={this.updateRoleFromTextInput('name')}
-              textInputProps={{ disabled: !canModifyRoles }}
-            />
-            <TextField
-              textarea
-              name="descriptionInput"
-              id="opt_description"
-              labelText="Description"
-              value={internal.description || ''}
-              onChange={this.updateRoleFromTextInput('description')}
-              textInputProps={{ disabled: !canModifyRoles }}
-            />
-            {showTranslator && (
-              <TranslatorRoleSelector
-                policies={internal}
-                hasFeatureEnabled={hasCustomRolesFeature}
-                onChange={this.updateLocale}
-                privateLocales={TheLocaleStore.getPrivateLocales()}
+          <TabPanel id={`panel-${selectedTab}`} className={styles.tabPanel}>
+            {selectedTab === RoleTabs.Details && (
+              <RoleEditorDetails
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                updateLocale={this.updateLocale}
+                canModifyRoles={canModifyRoles}
+                showTranslator={showTranslator}
+                hasCustomRolesFeature={hasCustomRolesFeature}
+                internal={internal}
               />
             )}
-          </FormSection>
-          {
-            // if metadata tag rules exist, force incompatibility here}
-            internal.uiCompatible && !internal.metadataTagRuleExists ? (
-              <React.Fragment>
-                <FormSection title="Content">
-                  <RuleList
-                    rules={internal.entries}
-                    onUpdateRuleAttribute={this.updateRuleAttribute('entries')}
-                    onAddRule={this.addRule('entry', 'entries')}
-                    onRemoveRule={this.removeRule('entries')}
-                    entity="entry"
-                    isDisabled={!canModifyRoles}
-                    privateLocales={TheLocaleStore.getPrivateLocales()}
-                    contentTypes={this.props.contentTypes}
-                    searchEntities={this.searchEntities}
-                    getEntityTitle={this.getEntityTitle}
-                  />
-                </FormSection>
-                <FormSection title="Media">
-                  <RuleList
-                    rules={internal.assets}
-                    onUpdateRuleAttribute={this.updateRuleAttribute('assets')}
-                    onAddRule={this.addRule('asset', 'assets')}
-                    onRemoveRule={this.removeRule('assets')}
-                    entity="asset"
-                    isDisabled={!canModifyRoles}
-                    privateLocales={TheLocaleStore.getPrivateLocales()}
-                    contentTypes={this.props.contentTypes}
-                    searchEntities={this.searchEntities}
-                    getEntityTitle={this.getEntityTitle}
-                  />
-                </FormSection>
-              </React.Fragment>
-            ) : (
-              <FormSection title="Policies">
-                <Heading element="h3">Policies</Heading>
-                <Paragraph>
-                  <span>The policy for this role cannot be represented visually.</span>
-                  {canModifyRoles && (
-                    <span>
-                      You can continue to edit the JSON directly, or{' '}
-                      <TextLink href="" onClick={this.resetPolicies}>
-                        clear the policy
-                      </TextLink>{' '}
-                      to define policy rules visually.
-                    </span>
-                  )}
-                </Paragraph>
-                <div className="cfnext-form-option">
-                  <Textarea
-                    className="cfnext-form__input--full-size"
-                    disabled={!canModifyRoles}
-                    value={internal.policyString || ''}
-                    onChange={this.updateRoleFromTextInput('policyString')}
-                    rows="10"
-                  />
-                </div>
-              </FormSection>
-            )
-          }
-          <FormSection title="Content model">
-            <div className="cfnext-form-option">
-              <CheckboxField
-                id="opt_content_types_access"
-                name="opt_content_types_access"
-                labelIsLight
-                labelText="Can modify content types"
-                helpText="The content type builder is only shown to users who have this permission"
-                disabled={!canModifyRoles}
-                checked={internal.contentModel.manage}
-                onChange={this.updateRoleFromCheckbox('contentModel.manage')}
-                type="checkbox"
+
+            {selectedTab === RoleTabs.Content && (
+              <RoleEditorEntities
+                title={'Content'}
+                entity={'entry'}
+                entities={'entries'}
+                rules={internal.entries}
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                addRule={this.addRule}
+                removeRule={this.removeRule}
+                updateRuleAttribute={this.updateRuleAttribute}
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                contentTypes={this.props.contentTypes}
+                searchEntities={this.searchEntities}
+                getEntityTitle={this.getEntityTitle}
+                resetPolicies={this.resetPolicies}
               />
-            </div>
-          </FormSection>
-          {hasContentTagsFeature && (
-            <FormSection title="Tags">
-              <div className="cfnext-form-option">
-                <CheckboxField
-                  id="opt_tags_access"
-                  name="opt_tags_access"
-                  labelIsLight
-                  labelText="Can create and manage tags"
-                  disabled={!canModifyRoles}
-                  checked={internal.tags.manage}
-                  onChange={this.updateRoleFromCheckbox('tags.manage')}
-                  type="checkbox"
-                />
-              </div>
-            </FormSection>
-          )}
-          <FormSection title="API keys">
-            <div className="cfnext-form-option">
-              <CheckboxField
-                id="opt_api_keys_view"
-                name="opt_api_keys_view"
-                labelIsLight
-                labelText="Can access existing API keys for this space."
-                disabled={!canModifyRoles || internal.contentDelivery.manage}
-                checked={internal.contentDelivery.read}
-                onChange={this.updateRoleFromCheckbox('contentDelivery.read')}
-                type="checkbox"
-              />
-            </div>
-            <div className="cfnext-form-option">
-              <CheckboxField
-                id="opt_space_settings_edit"
-                name="opt_space_settings_edit"
-                labelText="Can create and update API keys for this space."
-                labelIsLight
-                disabled={!canModifyRoles}
-                checked={internal.contentDelivery.manage}
-                onChange={this.updateRoleFromCheckbox('contentDelivery.manage')}
-                type="checkbox"
-              />
-            </div>
-          </FormSection>
-          <FormSection title="Environments settings">
-            <div className="cfnext-form-option">
-              <CheckboxField
-                id="opt_manage_environments_access"
-                name="opt_manage_environments_access"
-                disabled={!canModifyRoles}
-                labelText="Can manage and use all environments for this space."
-                helpText="Content level permissions only apply to the master environment and will not have an effect in non-master environments"
-                labelIsLight
-                checked={internal.environments.manage}
-                onChange={this.updateRoleFromCheckbox('environments.manage')}
-                type="checkbox"
-              />
-            </div>
-            {hasEnvironmentAliasesEnabled && (
-              <label className="cfnext-form-option">
-                <CheckboxField
-                  id="opt_manage_environment_aliases_access"
-                  name="opt_manage_environment_aliases_access"
-                  disabled={!canModifyRoles || !internal.environments.manage}
-                  checked={internal.environments.manage && internal.environmentAliases.manage}
-                  onChange={this.updateRoleFromCheckbox('environmentAliases.manage')}
-                  type="checkbox"
-                  labelText="Can create environment aliases and change their target environment for this space."
-                  labelIsLight
-                />
-              </label>
             )}
-          </FormSection>
-          <FormSection title="Space settings">
-            <div className="cfnext-form-option">
-              <CheckboxField
-                id="opt_space_settings_access"
-                name="opt_space_settings_access"
-                disabled={!canModifyRoles}
-                checked={internal.settings.manage}
-                onChange={this.updateRoleFromCheckbox('settings.manage')}
-                type="checkbox"
-                labelIsLight
-                labelText="Can modify space settings."
-                helpText="This permission allows users to modify locales, webhooks, apps,
-              the space name, and logo image. It does not grant permission to modify the roles or access of a user or team to this space. This
-              permission does not allow users to delete the space."
+
+            {selectedTab === RoleTabs.Media && (
+              <RoleEditorEntities
+                title={'Media'}
+                entity={'asset'}
+                entities={'assets'}
+                rules={internal.assets}
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                addRule={this.addRule}
+                removeRule={this.removeRule}
+                updateRuleAttribute={this.updateRuleAttribute}
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                contentTypes={this.props.contentTypes}
+                searchEntities={this.searchEntities}
+                getEntityTitle={this.getEntityTitle}
+                resetPolicies={this.resetPolicies}
               />
-            </div>
-          </FormSection>
+            )}
+
+            {selectedTab === RoleTabs.Permissions && (
+              <RoleEditorPermissions
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                updateRoleFromCheckbox={this.updateRoleFromCheckbox}
+                hasContentTagsFeature={hasContentTagsFeature}
+                hasEnvironmentAliasesEnabled={hasEnvironmentAliasesEnabled}
+              />
+            )}
+          </TabPanel>
         </RolesWorkbenchSkeleton>
       </>
     );

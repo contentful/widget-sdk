@@ -2183,9 +2183,6 @@ pre,
     -ms-flex-preferred-size: 100%;
         flex-basis: 100%;
   }
-  .role-editor__name-input {
-    margin-bottom: 1rem;
-  }
   .role-editor em {
     color: var(--color-text-lightest);
   }

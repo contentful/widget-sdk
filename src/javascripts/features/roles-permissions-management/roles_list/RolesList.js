@@ -28,6 +28,9 @@ const styles = {
   addRoleButton: css({
     marginLeft: tokens.spacingL,
   }),
+  container: css({
+    marginTop: tokens.spacingL,
+  }),
 };
 
 function RoleListActions(props) {
@@ -55,6 +58,7 @@ function RoleListActions(props) {
     </div>
   );
 }
+
 RoleListActions.propTypes = {
   limit: PropTypes.number.isRequired,
   hasReachedLimit: PropTypes.bool.isRequired,
@@ -87,40 +91,42 @@ export function RolesList(props) {
           rolesResource={props.rolesResource}
         />
       }>
-      {props.hasCustomRolesFeature && hasReachedLimit && (
-        <ReachedRolesLimitNote
-          isLegacyOrganization={props.isLegacyOrganization}
-          canUpgradeOrganization={props.canUpgradeOrganization}
-          limit={limit}
-        />
-      )}
-      {!props.hasCustomRolesFeature && (
-        <CustomRolesPlanNote isLegacyOrganization={props.isLegacyOrganization} />
-      )}
-      <Table testId="roles-list-table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Role</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Members</TableCell>
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <AdministratorRoleListItem
-            hasCustomRolesFeature={props.hasCustomRolesFeature}
-            count={props.roleCounts.admin}
+      <div className={styles.container}>
+        {props.hasCustomRolesFeature && hasReachedLimit && (
+          <ReachedRolesLimitNote
+            isLegacyOrganization={props.isLegacyOrganization}
+            canUpgradeOrganization={props.canUpgradeOrganization}
+            limit={limit}
           />
-          {props.roles.map((role) => (
-            <RoleListItem
-              key={role.sys.id}
-              role={role}
+        )}
+        {!props.hasCustomRolesFeature && (
+          <CustomRolesPlanNote isLegacyOrganization={props.isLegacyOrganization} />
+        )}
+        <Table testId="roles-list-table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Role</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Members</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <AdministratorRoleListItem
               hasCustomRolesFeature={props.hasCustomRolesFeature}
-              onRemoveRole={removeRole}
+              count={props.roleCounts.admin}
             />
-          ))}
-        </TableBody>
-      </Table>
+            {props.roles.map((role) => (
+              <RoleListItem
+                key={role.sys.id}
+                role={role}
+                hasCustomRolesFeature={props.hasCustomRolesFeature}
+                onRemoveRole={removeRole}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </RolesWorkbenchSkeleton>
   );
 }
