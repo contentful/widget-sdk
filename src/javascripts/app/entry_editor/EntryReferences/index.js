@@ -96,6 +96,8 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     initialReferencesAmount,
     referenceTreeKey,
     isTooComplex,
+    selectedEntitiesMap,
+    initialUnqiueReferencesAmount,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
@@ -133,6 +135,12 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
       }
     });
   }, [entity, dispatch]);
+
+  useEffect(() => {
+    if (initialUnqiueReferencesAmount !== selectedEntitiesMap.size) {
+      setAllReferencesSelected(false);
+    }
+  }, [initialUnqiueReferencesAmount, selectedEntitiesMap.size]);
 
   if (entity.sys.type === 'Asset' || !hasLinks(entity.fields)) {
     return null;
