@@ -124,7 +124,7 @@ export function Dashboard({
           <Grid columns={2} rows={1}>
             {shouldShowBillingDetails && (
               <GridItem>
-                <Card>
+                <Card testId="billing-details-card">
                   <Typography>
                     <Heading>Billing details</Heading>
                     <Grid columns={2} rows={1}>

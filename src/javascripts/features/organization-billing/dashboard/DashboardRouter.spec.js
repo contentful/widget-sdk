@@ -6,11 +6,29 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { getVariation } from 'LaunchDarkly';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
+import isLegacyEnterprise from 'data/isLegacyEnterprise';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isSelfServicePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
+
+jest.mock('data/isLegacyEnterprise', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('utils/ResourceUtils', () => ({
+  isLegacyOrganization: jest.fn(),
+}));
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  getBasePlan: jest.requireActual('account/pricing/PricingDataProvider').getBasePlan,
+  isSelfServicePlan: jest.fn(),
+  isEnterprisePlan: jest.fn(),
+}));
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn().mockResolvedValue({}),
@@ -47,6 +65,14 @@ when(mockEndpoint)
 const mockOrganization = Fake.Organization();
 
 describe('DashboardRouter', () => {
+  beforeEach(() => {
+    TokenStore.getOrganization.mockResolvedValue(mockOrganization);
+    isLegacyOrganization.mockReturnValue(false);
+    isLegacyEnterprise.mockReturnValue(false);
+    isSelfServicePlan.mockReturnValue(true);
+    isEnterprisePlan.mockReturnValue(false);
+  });
+
   it('should redirect to the old billing view if the flag is not enabled', async () => {
     getVariation.mockResolvedValueOnce(false);
 
@@ -84,6 +110,7 @@ describe('DashboardRouter', () => {
   });
 
   it('should request the org base plan and then invoices', async () => {
+    isSelfServicePlan.mockReturnValue(false);
     build();
 
     await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
@@ -145,6 +172,43 @@ describe('DashboardRouter', () => {
         path: ['default_payment_method'],
       })
     );
+  });
+
+  it('should show billing details to v1 self-service', async () => {
+    isLegacyOrganization.mockReturnValue(true);
+    build();
+
+    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
+
+    expect(screen.getByTestId('billing-details-card')).toBeVisible();
+  });
+
+  it('should show billing details to v2 self-service', async () => {
+    build();
+
+    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
+
+    expect(screen.getByTestId('billing-details-card')).toBeVisible();
+  });
+
+  it('should NOT show billing details to v1 enterprise', async () => {
+    isLegacyOrganization.mockReturnValue(true);
+    isLegacyEnterprise.mockReturnValue(true);
+    build();
+
+    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
+
+    expect(screen.queryByTestId('billing-details-card')).toBeNull();
+  });
+
+  it('should NOT show billing details to v2 enterprise', async () => {
+    isSelfServicePlan.mockReturnValue(false);
+    isEnterprisePlan.mockReturnValue(true);
+    build();
+
+    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
+
+    expect(screen.queryByTestId('billing-details-card')).toBeNull();
   });
 });
 

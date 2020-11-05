@@ -9,6 +9,8 @@ import {
   isSelfServicePlan,
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
+import isLegacyEnterprise from 'data/isLegacyEnterprise';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { isOwner } from 'services/OrganizationRoles';
@@ -51,11 +53,21 @@ const fetch = (organizationId, dispatch) => async () => {
     return;
   }
 
-  const endpoint = createOrganizationEndpoint(organizationId);
-  const basePlan = await getBasePlan(endpoint);
+  const isLegacyOrg = isLegacyOrganization(organization);
 
-  const orgIsSelfService = isSelfServicePlan(basePlan);
-  const orgIsEnterprise = isEnterprisePlan(basePlan);
+  let orgIsSelfService, orgIsEnterprise;
+  if (isLegacyOrg) {
+    const isLegacyEnterpriseOrganization = isLegacyEnterprise(organization);
+
+    orgIsSelfService = !isLegacyEnterpriseOrganization;
+    orgIsEnterprise = isLegacyEnterpriseOrganization;
+  } else {
+    const endpoint = createOrganizationEndpoint(organizationId);
+    const basePlan = await getBasePlan(endpoint);
+
+    orgIsSelfService = isSelfServicePlan(basePlan);
+    orgIsEnterprise = isEnterprisePlan(basePlan);
+  }
 
   dispatch({
     type: ACTIONS.SET_ORG_DETAILS,
