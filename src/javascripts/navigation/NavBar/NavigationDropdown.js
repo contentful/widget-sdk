@@ -190,13 +190,21 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
                 </DropdownListItem>
               );
             }
+
             const navigationProps = getNavigationProps(subitem);
+
+            let href = Navigator.href(navigationProps);
+            // When using PathSuffix in the matching url, Navigator.href returns a wrongly encoded url.
+            // A method `formatUrl` can be passed in to fix that url.
+            if (subitem.formatUrl) {
+              href = subitem.formatUrl(href);
+            }
 
             return (
               <DropdownListItem
                 data-view-type={subitem.dataViewType}
                 key={subitem.title}
-                href={Navigator.href(navigationProps)}
+                href={href}
                 onClick={(e) => {
                   if (e.ctrlKey || e.metaKey) {
                     return;

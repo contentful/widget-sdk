@@ -67,6 +67,10 @@ const buildAppChild = (widget, { isUnscopedRoute }) => {
       path: navigationItem.path,
     },
     title: navigationItem.name,
+    formatUrl: (url) => {
+      const encodedPath = encodeURIComponent(navigationItem.path);
+      return url.replace(encodedPath, navigationItem.path);
+    },
     render: (item) => <AppNavigationLink icon={widget.iconUrl} title={item.title} />,
   };
 };
