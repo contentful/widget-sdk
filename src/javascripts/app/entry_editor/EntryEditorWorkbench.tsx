@@ -26,7 +26,7 @@ import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { Action, ReferencesState } from './EntryReferences/state/reducer';
-import { filterWidgets } from './formWidgetsController';
+import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsController';
 import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
 
@@ -66,7 +66,6 @@ interface EntryEditorWorkbenchProps {
   };
   preferences: Record<string, any>;
   fields: Record<string, any>;
-  noLocalizedFieldsAdviceProps: any;
 }
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
@@ -104,12 +103,14 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const [selectedTab, setSelectedTab] = useState(defaultTabKey);
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
 
-  const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
+  const widgets = filterWidgets(
     localeData,
     editorContext,
     editorData.fieldControls.form,
     preferences.showDisabledFields
   );
+
+  const noLocalizedFieldsAdviceProps = getNoLocalizedFieldsAdviceProps(widgets, localeData);
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -173,7 +174,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             selectedTab,
             onRootReferenceCardClick,
             widgets,
-            shouldDisplayNoLocalizedFieldsAdvice,
+            noLocalizedFieldsAdviceProps,
             fieldLocaleListeners,
             ...props,
           });

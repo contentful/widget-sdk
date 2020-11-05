@@ -195,10 +195,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
     },
   });
 
-  $scope.$watch('localeData.focusedLocale.name', (localeName) => {
-    $scope.noLocalizedFieldsAdviceProps = { localeName };
-  });
-
   function onlyFocusedLocaleHasErrors() {
     const { errors, focusedLocale } = $scope.localeData;
     const localeCodes = keys(errors);

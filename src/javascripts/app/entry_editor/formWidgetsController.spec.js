@@ -37,7 +37,7 @@ describe('FormWidgetsController#widgets', () => {
   });
 
   it('exposes enabled field', () => {
-    const { widgets } = filter();
+    const widgets = filter();
     expect(widgets).toHaveLength(1);
   });
 
@@ -58,7 +58,7 @@ describe('FormWidgetsController#widgets', () => {
         });
 
         it('does not show the field', () => {
-          const { widgets } = filter();
+          const widgets = filter();
           expect(widgets).toHaveLength(0);
         });
 
@@ -68,7 +68,7 @@ describe('FormWidgetsController#widgets', () => {
           });
 
           it('shows the fields if the preference flag is set', () => {
-            const { widgets } = filter();
+            const widgets = filter();
             expect(widgets).toHaveLength(1);
           });
         });
@@ -82,7 +82,7 @@ describe('FormWidgetsController#widgets', () => {
 
           it('shows the field', () => {
             validator.errors$.set([]);
-            const { widgets } = filter();
+            const widgets = filter();
             expect(widgets).toHaveLength(1);
           });
         });
@@ -105,7 +105,7 @@ describe('FormWidgetsController#widgets', () => {
         });
 
         it('does not show the field', () => {
-          const { widgets } = filter();
+          const widgets = filter();
           expect(widgets).toHaveLength(0);
         });
 
@@ -118,7 +118,7 @@ describe('FormWidgetsController#widgets', () => {
 
           it('shows the field', () => {
             validator.errors$.set([]);
-            const { widgets } = filter();
+            const widgets = filter();
             expect(widgets).toHaveLength(1);
           });
         });
@@ -130,7 +130,7 @@ describe('FormWidgetsController#widgets', () => {
         });
 
         it('shows the field', () => {
-          const { widgets } = filter();
+          const widgets = filter();
           expect(widgets).toHaveLength(1);
         });
 
@@ -140,7 +140,7 @@ describe('FormWidgetsController#widgets', () => {
           });
 
           it('does not show the field', () => {
-            const { widgets } = filter();
+            const widgets = filter();
             expect(widgets).toHaveLength(0);
           });
 
@@ -150,7 +150,7 @@ describe('FormWidgetsController#widgets', () => {
             });
 
             it('shows the field', () => {
-              const { widgets } = filter();
+              const widgets = filter();
               expect(widgets).toHaveLength(1);
             });
           });
@@ -164,7 +164,7 @@ describe('FormWidgetsController#widgets', () => {
 
             it('shows the field', () => {
               validator.errors$.set([]);
-              const { widgets } = filter();
+              const widgets = filter();
               expect(widgets).toHaveLength(1);
             });
           });
@@ -180,7 +180,7 @@ describe('FormWidgetsController#widgets', () => {
 
             it('does not show the field', () => {
               validator.errors$.set([]);
-              const { widgets } = filter();
+              const widgets = filter();
               expect(widgets).toHaveLength(0);
             });
           });
@@ -200,13 +200,13 @@ describe('FormWidgetsController#widgets', () => {
       });
 
       it('does not show the field', () => {
-        const { widgets } = filter();
+        const widgets = filter();
         expect(widgets).toHaveLength(0);
       });
 
       it('shows the fields if the preference flag is set', () => {
         showDisabledFields = true;
-        const { widgets } = filter();
+        const widgets = filter();
         expect(widgets).toHaveLength(1);
       });
 
@@ -214,7 +214,7 @@ describe('FormWidgetsController#widgets', () => {
         const validator = editorContext.validator;
         validator.hasFieldError.withArgs('foo').returns(true);
         validator.errors$.set([]);
-        const { widgets } = filter();
+        const widgets = filter();
 
         expect(widgets).toHaveLength(1);
       });

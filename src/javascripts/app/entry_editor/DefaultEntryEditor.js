@@ -18,7 +18,6 @@ export default function renderDefaultEditor(
     preferences,
     widgets,
     editorContext,
-    shouldDisplayNoLocalizedFieldsAdvice,
     noLocalizedFieldsAdviceProps,
     selectedTab,
     onRootReferenceCardClick,
@@ -62,7 +61,7 @@ export default function renderDefaultEditor(
             entityInfo,
           }}
         />
-        {shouldDisplayNoLocalizedFieldsAdvice && (
+        {noLocalizedFieldsAdviceProps && (
           <NoLocalizedFieldsAdvice {...noLocalizedFieldsAdviceProps} />
         )}
       </div>

@@ -40,7 +40,7 @@ const AssetEditorWorkbench = ({
   const otDoc = getOtDoc();
   const editorData = getEditorData();
 
-  const { widgets } = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
+  const widgets = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
 
   const fieldLocaleListeners = useMemo(
     () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),

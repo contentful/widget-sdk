@@ -148,7 +148,7 @@ export const BulkEntityEditor = ({
 
   const trackAction = track.actions(entityContext.id);
 
-  const { widgets } = filterWidgets(
+  const widgets = filterWidgets(
     localeData,
     editorContext,
     fieldControls.form,

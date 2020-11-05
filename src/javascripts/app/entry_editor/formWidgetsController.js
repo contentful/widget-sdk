@@ -9,6 +9,13 @@ function shouldRender(widget) {
   return widget.isVisible;
 }
 
+export const getNoLocalizedFieldsAdviceProps = (widgets, localeData) => {
+  const shouldDisplayNoLocalizedFieldsAdvice = widgets.every((w) => w.isVisible === false);
+  if (shouldDisplayNoLocalizedFieldsAdvice) {
+    return { localeName: localeData.focusedLocale.name };
+  }
+};
+
 export const filterWidgets = (localeData, editorContext, controls, showDisabledFields) => {
   // Adds `isVisible` property to a widget telling the editor
   // if the widget should be visible.
@@ -39,8 +46,5 @@ export const filterWidgets = (localeData, editorContext, controls, showDisabledF
     };
   }
 
-  const widgets = controls.map(markVisibility).filter(shouldRender);
-  const shouldDisplayNoLocalizedFieldsAdvice = widgets.every((w) => w.isVisible === false);
-
-  return { shouldDisplayNoLocalizedFieldsAdvice, widgets };
+  return controls.map(markVisibility).filter(shouldRender);
 };
