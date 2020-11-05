@@ -4,7 +4,7 @@ import { InternalContentType, createContentTypeApi } from '../createContentTypeA
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { createEditorApi, WatchFunction } from '../createEditorApi';
+import { createEditorApi } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createSpaceApi } from '../createSpaceApi';
 import { createNavigatorApi } from '../createNavigatorApi';
@@ -27,7 +27,6 @@ export function createFieldWidgetSDK({
   preferences,
   fieldController,
   doc,
-  watch,
   internalContentType,
   fieldLocaleListeners,
   parameters,
@@ -41,7 +40,6 @@ export function createFieldWidgetSDK({
   localeData: any;
   preferences: any;
   fieldController: any;
-  watch: WatchFunction;
   doc: Document;
   internalContentType: InternalContentType;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
@@ -54,7 +52,6 @@ export function createFieldWidgetSDK({
     editorInterface: editorData.editorInterface,
     getLocaleData: () => localeData,
     getPreferences: () => preferences,
-    watch,
   });
 
   const contentTypeApi = createContentTypeApi(internalContentType);

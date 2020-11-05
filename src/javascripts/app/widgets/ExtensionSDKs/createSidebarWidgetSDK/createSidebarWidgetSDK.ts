@@ -1,7 +1,7 @@
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { createDialogsApi } from '../createDialogsApi';
-import { createEditorApi, WatchFunction } from '../createEditorApi';
+import { createEditorApi } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createIdsApiWithoutField } from '../utils';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
@@ -26,7 +26,6 @@ interface CreateSidebarWidgetSDKOptions {
   editorData: any;
   localeData: any;
   preferences: any;
-  watch: WatchFunction;
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
@@ -40,7 +39,6 @@ export const createSidebarWidgetSDK = ({
   preferences,
   doc,
   parameters,
-  watch,
   spaceContext,
   widgetNamespace,
   widgetId,
@@ -52,7 +50,6 @@ export const createSidebarWidgetSDK = ({
     editorInterface: editorData.editorInterface,
     getLocaleData: () => localeData,
     getPreferences: () => preferences,
-    watch,
   });
 
   const entryApi = createEntryApi({

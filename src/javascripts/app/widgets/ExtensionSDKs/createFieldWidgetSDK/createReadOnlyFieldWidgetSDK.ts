@@ -11,7 +11,7 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 import { create } from 'app/entity_editor/Document/CmaDocument';
 import { Entity } from 'app/entity_editor/Document/types';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { createEditorApi } from '../createEditorApi';
+import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createSpaceApi } from '../createSpaceApi';
 import { createReadOnlyNavigatorApi } from '../createNavigatorApi';
@@ -21,6 +21,7 @@ import { InternalContentType, createContentTypeApi } from '../createContentTypeA
 import { createIdsApi } from '../createIdsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
+import { proxify } from 'core/services/proxy';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
@@ -85,19 +86,18 @@ export function createReadonlyFieldWidgetSDK({
   const editorApi = createEditorApi({
     editorInterface: editorInterface,
     getLocaleData: () => {
-      return {
+      return proxify({
         defaultLocale: localeStore.getDefaultLocale(),
         privateLocales: localeStore.getPrivateLocales(),
         focusedLocale: localeStore.getFocusedLocale(),
         isSingleLocaleModeOn: localeStore.isSingleLocaleModeOn(),
         isLocaleActive: localeStore.isLocaleActive,
-      };
+      } as LocaleData);
     },
     // TODO: the value of preferences.showDisabledFields doesn't seem to affect the snapshot view.
     //  Also, preferences.showDisabledFields is the only preference which seems to be used in the
     //  Editor API. Is it safe to assume this is useless and can be nooped?
-    getPreferences: () => ({ showDisabledFields: true }),
-    watch: (_watchFn, _cb) => noop,
+    getPreferences: () => proxify({ showDisabledFields: true } as Preferences),
   });
 
   const entryApi = createEntryApi({

@@ -19,7 +19,6 @@ export default ({
   fieldController,
   preferences,
   emitter,
-  watch,
 }) => {
   const spaceContext = getModule('spaceContext');
 
@@ -206,7 +205,6 @@ export default ({
           localeCode: TheLocaleStore.getDefaultLocale().code,
           widgetNamespace: widget.widgetNamespace,
           widgetId: widget.widgetId,
-          watch,
           spaceContext,
           editorData,
           fieldController,
@@ -235,7 +233,6 @@ export default ({
         editorData,
         localeData,
         preferences,
-        watch,
         doc: otDoc,
         parameters,
         spaceContext,

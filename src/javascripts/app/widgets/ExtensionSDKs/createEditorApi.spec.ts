@@ -5,22 +5,36 @@ describe('createEditorApi', () => {
   const editorInterface: EditorInterface = {
     sys: {},
   };
-  let watchers: Function[] = [];
+  let watchers: any[] = [];
+  const unsubscribe = jest.fn();
+  const subscribe = jest.fn((cb: Function) => {
+    watchers.push(cb);
+    return unsubscribe;
+  });
+
+  const watch = jest.fn((keys: any[], cb: Function) => {
+    watchers.push({ keys, watch: cb });
+    return unsubscribe;
+  });
+
   const getLocaleData = jest.fn(() => ({
     activeLocals: [{ name: 'en-US', code: 'en-US' }],
     isSingleLocaleModeOn: true,
     focusedLocale: { name: 'en-US', code: 'en-US' },
+    _proxy: {
+      subscribe,
+      watch,
+    },
   }));
 
   const showDisabledFields = true;
   const getPreferences = jest.fn(() => ({
     showDisabledFields,
+    _proxy: {
+      subscribe,
+      watch,
+    },
   }));
-  const unsubscribe = jest.fn();
-  const watch = jest.fn((_getValue: any, cb: Function) => {
-    watchers.push(cb);
-    return unsubscribe;
-  });
   let editorApi;
   beforeEach(() => {
     watchers = [];
@@ -29,7 +43,6 @@ describe('createEditorApi', () => {
       editorInterface,
       getLocaleData,
       getPreferences,
-      watch,
     });
   });
 
@@ -40,7 +53,7 @@ describe('createEditorApi', () => {
   describe('onLocaleSettingsChanged', () => {
     it('sets up watchers', () => {
       editorApi.onLocaleSettingsChanged(jest.fn());
-      expect(watch).toHaveBeenCalledTimes(3);
+      expect(watch).toHaveBeenCalledTimes(1);
     });
 
     it('returns a cleanup function', () => {
@@ -48,13 +61,15 @@ describe('createEditorApi', () => {
 
       expect(unsubscribe).toHaveBeenCalledTimes(0);
       clear();
-      expect(unsubscribe).toHaveBeenCalledTimes(3);
+      expect(unsubscribe).toHaveBeenCalledTimes(1);
     });
 
     it('allows the passed in watch function to be called on changes', () => {
       const watcher = jest.fn();
       editorApi.onLocaleSettingsChanged(watcher);
-      watchers.forEach((fn) => fn());
+      watchers.forEach(({ watch: fn }) =>
+        fn({ key: 'activeLocales', value: { focused: 'en-US', mode: 'single' }, target: {} })
+      );
       expect(watcher).toHaveBeenCalledWith({ focused: 'en-US', mode: 'single' });
     });
   });
@@ -76,7 +91,9 @@ describe('createEditorApi', () => {
     it('allows the passed in watch function to be called on changes', () => {
       const watcher = jest.fn();
       editorApi.onShowDisabledFieldsChanged(watcher);
-      watchers.forEach((fn) => fn());
+      watchers.forEach(({ watch: fn }) =>
+        fn({ key: 'showDisabledFields', value: showDisabledFields, target: {} })
+      );
       expect(watcher).toHaveBeenCalledWith(showDisabledFields);
     });
   });

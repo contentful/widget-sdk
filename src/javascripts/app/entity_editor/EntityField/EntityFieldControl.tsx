@@ -37,8 +37,6 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       preferences,
       spaceContext,
       doc,
-      watch: (watchFn, cb) => props.scope.$watch(watchFn, cb),
-
       internalContentType: props.scope.entityInfo.contentType,
       fieldLocaleListeners: props.scope.fieldLocaleListeners,
       parameters,

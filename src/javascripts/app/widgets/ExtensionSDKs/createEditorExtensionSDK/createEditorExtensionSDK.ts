@@ -3,7 +3,7 @@ import { InternalContentType, createContentTypeApi } from '../createContentTypeA
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createUserApi, SpaceMember } from '../createUserApi';
-import { createEditorApi, WatchFunction } from '../createEditorApi';
+import { createEditorApi } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
@@ -23,7 +23,6 @@ interface CreateEditorExtensionSDKOptions {
   editorData: any;
   localeData: any;
   preferences: any;
-  watch: WatchFunction;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
@@ -37,7 +36,6 @@ export const createEditorExtensionSDK = ({
   editorData,
   localeData,
   preferences,
-  watch,
   spaceContext,
   internalContentType,
   widgetNamespace,
@@ -52,7 +50,6 @@ export const createEditorExtensionSDK = ({
     editorInterface: editorData.editorInterface,
     getLocaleData: () => localeData,
     getPreferences: () => preferences,
-    watch,
   });
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember as SpaceMember);

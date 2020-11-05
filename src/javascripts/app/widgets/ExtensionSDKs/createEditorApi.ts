@@ -1,61 +1,62 @@
 import { EditorInterface, SharedEditorSDK } from 'contentful-ui-extensions-sdk';
+import { Proxy, WatchFunction, ObjectOrArrayKey } from 'core/services/proxy';
 import { Locale } from './createLocalesApi';
 
 type Callback = (value: any) => any;
 type UnsubscribeFn = () => void;
-type ValueGetterFn = () => any;
+type ValueGetterFn = <T>(arg: T) => any;
 
-interface LocaleData {
+export interface LocaleData {
   activeLocales?: Locale[];
   isSingleLocaleModeOn?: boolean;
   focusedLocale?: Locale;
 }
 
-interface Preferences {
+export interface Preferences {
   showDisabledFields?: boolean;
 }
-
-export type WatchFunction = (watchFn: ValueGetterFn, cb: Callback) => UnsubscribeFn;
 
 export function createEditorApi({
   editorInterface,
   getLocaleData,
   getPreferences,
-  watch,
 }: {
   editorInterface: EditorInterface;
-  getLocaleData: () => LocaleData;
-  getPreferences: () => Preferences;
-  watch: WatchFunction;
+  getLocaleData: () => Proxy<LocaleData>;
+  getPreferences: () => Proxy<Preferences>;
 }): SharedEditorSDK['editor'] {
   return {
     editorInterface,
-    onLocaleSettingsChanged: makeHandler(
-      [
-        () => getLocaleData().activeLocales,
-        () => getLocaleData().isSingleLocaleModeOn,
-        () => getLocaleData().focusedLocale,
-      ],
-      getLocaleSettings
+    onLocaleSettingsChanged: makeHandler<LocaleData>(
+      getLocaleData(),
+      ['activeLocales', 'isSingleLocaleModeOn', 'focusedLocale'],
+      getLocaleDataSettings
     ),
-    onShowDisabledFieldsChanged: makeHandler(
-      [() => getPreferences().showDisabledFields],
-      () => !!getPreferences().showDisabledFields
+    onShowDisabledFieldsChanged: makeHandler<Preferences>(
+      getPreferences(),
+      ['showDisabledFields'],
+      getPreferencesSettings
     ),
   };
 
-  function makeHandler(watchFns: ValueGetterFn[], getCallbackValue: ValueGetterFn) {
+  function makeHandler<T>(
+    initialTarget: Proxy<T>,
+    keys: ObjectOrArrayKey<T>[],
+    getCallbackValue: ValueGetterFn
+  ) {
     const handlers: Callback[] = [];
     let unsubscribe: UnsubscribeFn | null = null;
 
     const subscribeOrUnsubscribe = () => {
       if (!unsubscribe && handlers.length > 0) {
-        const unsubscribeFns = watchFns.map((watchFn) => {
-          return watch(watchFn, () => {
-            handlers.forEach((cb) => cb(getCallbackValue()));
-          });
-        });
-        unsubscribe = () => unsubscribeFns.forEach((off) => off());
+        const callHandlers = (target) => {
+          handlers.forEach((cb) => cb(getCallbackValue<T>(target)));
+        };
+        const watchFunction: WatchFunction<T> = ({ target }) => {
+          callHandlers(target);
+        };
+        callHandlers(initialTarget);
+        unsubscribe = initialTarget._proxy?.watch(keys, watchFunction);
       }
 
       if (unsubscribe && handlers.length < 1) {
@@ -75,8 +76,7 @@ export function createEditorApi({
     };
   }
 
-  function getLocaleSettings() {
-    const localeData = getLocaleData();
+  function getLocaleDataSettings(localeData) {
     const mode = localeData.isSingleLocaleModeOn ? 'single' : 'multi';
 
     if (mode === 'single') {
@@ -92,5 +92,9 @@ export function createEditorApi({
       mode,
       active: activeLocales.map((locale) => locale.code).filter((code) => code),
     };
+  }
+
+  function getPreferencesSettings(preferences) {
+    return !!preferences.showDisabledFields;
   }
 }

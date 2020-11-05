@@ -13,6 +13,7 @@ import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { valuePropertyAt } from './Document';
 import { initStateController } from './stateController';
+import { proxify } from 'core/services/proxy';
 
 /**
  * @param {Object} $scope
@@ -29,6 +30,8 @@ export default async function create($scope, editorData, preferences) {
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
   $scope.entityInfo = entityInfo;
+  $scope.preferences = proxify(preferences);
+  $scope.localeData = proxify({});
 
   // TODO rename the scope property
   const doc = editorData.openDoc(K.scopeLifeline($scope));
@@ -76,8 +79,6 @@ export default async function create($scope, editorData, preferences) {
 
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
-  $scope.localeData = {};
-
   $scope.emitter = mitt();
 
   $scope.entrySidebarProps = createEntrySidebarProps({
@@ -87,7 +88,6 @@ export default async function create($scope, editorData, preferences) {
     editorContext: $scope.editorContext,
     otDoc: $scope.otDoc,
     state: $scope.state,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
     fieldController: $scope.fieldController,
     preferences: $scope.preferences,
     emitter: $scope.emitter,

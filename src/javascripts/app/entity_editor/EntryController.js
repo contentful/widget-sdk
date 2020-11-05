@@ -11,6 +11,7 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as Analytics from 'analytics/Analytics';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { getEditorState } from './editorState';
+import { proxify } from 'core/services/proxy';
 
 /**
  * @ngdoc type
@@ -48,11 +49,12 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const { entityInfo } = editorData;
   $scope.entityInfo = entityInfo;
 
+  $scope.preferences = proxify(preferences);
+  $scope.localeData = proxify({});
+
   $scope.getOtDoc = () => $scope.otDoc;
   $scope.getEditorData = () => editorData;
   $scope.getSpace = () => spaceContext.getSpace();
-
-  $scope.localeData = {};
 
   const contentType = {
     id: entityInfo.contentTypeId,
@@ -178,7 +180,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
     editorContext: $scope.editorContext,
     otDoc: $scope.otDoc,
     state: $scope.state,
-    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
     fieldController: $scope.fieldController,
     preferences: $scope.preferences,
     emitter: $scope.emitter,
