@@ -1,7 +1,7 @@
 import * as K from 'core/utils/kefir';
 import { keys } from 'lodash';
 import mitt from 'mitt';
-import installTracking from './Tracking';
+import installTracking, { trackEntryView } from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import initLocaleData from 'app/entity_editor/setLocaleData';
 import { valuePropertyAt } from 'app/entity_editor/Document';
@@ -65,18 +65,21 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const currentSlideLevel = Object.keys($scope.slideStates || {}).length;
   const editorState = getEditorState({
     editorData,
-    editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
-    getTitle: () => $scope.title,
     onStateUpdate: (state) => {
       $scope.state = state;
       $scope.$applyAsync();
     },
-    onTitleUpdate: ({ title, truncatedTitle }) => {
-      $scope.context.title = title;
-      $scope.title = truncatedTitle;
+    onTitleUpdate: (title) => {
+      $scope.title = title;
+      $scope.$applyAsync();
     },
+    trackView: (args) =>
+      trackEntryView({
+        ...args,
+        editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
+        currentSlideLevel,
+      }),
     lifeline: scopeLifeline,
-    currentSlideLevel,
     hasInitialFocus: preferences.hasInitialFocus,
     publishedCTs: spaceContext.publishedCTs,
     spaceId: spaceContext.getId(),

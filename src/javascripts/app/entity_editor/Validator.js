@@ -21,6 +21,25 @@ import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilde
 
 /**
  * @ngdoc method
+ * @name entityEditor/Validator#createForEntity
+ * @param {API.EntityInfo} entityInfo
+ * @param {EntityEditor.Document} doc
+ * @param {API.Locale[]} locales
+ * @param {ContentTypeRepo} publishedCTs
+ * @returns {entityEditor/Validator}
+ */
+export function createForEntity({ entityInfo, doc, locales, publishedCTs }) {
+  if (entityInfo.type === 'Entry') {
+    return createForEntry(entityInfo.contentType, doc, publishedCTs, locales);
+  }
+  if (entityInfo.type === 'Asset') {
+    return createForAsset(doc, locales);
+  }
+  throw new Error(`Entity type must be one of "Entry"/"Asset", but is ${entityInfo.type}`);
+}
+
+/**
+ * @ngdoc method
  * @name entityEditor/Validator#createForEntry
  * @param {API.ContentType} contentType
  * @param {EntityEditor.Document} doc

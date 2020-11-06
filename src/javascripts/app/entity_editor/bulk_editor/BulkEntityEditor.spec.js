@@ -26,6 +26,7 @@ jest.mock('./BulkEntityEditorStatusDropdown', () => () => (
 ));
 jest.mock('app/entity_editor/Validator', () => ({
   createForEntry: jest.fn().mockReturnValue('validator'),
+  createForEntity: jest.fn().mockReturnValue('validator'),
 }));
 jest.mock('../stateController', () => ({
   initStateController: jest.fn(),

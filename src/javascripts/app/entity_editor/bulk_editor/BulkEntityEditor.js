@@ -19,6 +19,7 @@ import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListen
 import { getEditorState } from '../editorState';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { trackEntryView } from '../Tracking';
 
 const styles = {
   workbench: css({
@@ -82,17 +83,21 @@ export const BulkEntityEditor = ({
         const editorData = await bulkEditorContext.loadEditorData(entityContext.id);
 
         const editorState = getEditorState({
+          bulkEditorContext,
           editorData,
-          editorType: 'bulk_editor',
+          environmentId: currentEnvironmentId,
+          hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
+          lifeline: lifeline.stream,
+          onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
+          onTitleUpdate: setTitle,
           publishedCTs: spaceContext.publishedCTs,
           spaceId: currentSpaceId,
-          environmentId: currentEnvironmentId,
-          bulkEditorContext,
-          hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
-          getTitle: () => title,
-          onTitleUpdate: ({ truncatedTitle }) => setTitle(truncatedTitle),
-          onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
-          lifeline: lifeline.stream,
+          trackView: (args) =>
+            trackEntryView({
+              ...args,
+              currentSlideLevel: 0,
+              editorType: 'bulk_editor',
+            }),
         });
 
         if (editorState) {

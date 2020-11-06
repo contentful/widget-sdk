@@ -52,7 +52,12 @@ describe('stateController', () => {
 
     editorContext = createEditorContextMock().create();
     entityInfo = {};
-    editorData = { widgetTrackingContexts: [] };
+    editorData = {
+      widgetTrackingContexts: [],
+      entity: {
+        data: {},
+      },
+    };
 
     notify = jest.fn();
     makeNotify.mockReturnValue(notify);

@@ -3,26 +3,24 @@ import { truncate } from 'utils/StringUtils';
 import * as Focus from 'app/entity_editor/Focus';
 import * as logger from 'services/logger';
 import localeStore from 'services/localeStore';
-import { trackEntryView } from 'app/entity_editor/Tracking';
 import { valuePropertyAt } from 'app/entity_editor/Document';
 import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { initStateController } from './stateController';
+import { noop } from 'lodash';
 
 export const getEditorState = ({
-  editorData,
-  editorType,
   bulkEditorContext,
-  getTitle,
+  editorData,
+  environmentId,
+  hasInitialFocus = false,
+  lifeline,
   onStateUpdate,
   onTitleUpdate,
-  lifeline,
-  currentSlideLevel = 0,
-  hasInitialFocus = false,
-  spaceId,
-  environmentId,
   publishedCTs,
+  spaceId,
+  trackView = noop,
 }) => {
   if (editorData) {
     // Lifeline is required to destroy a document on e.g. slide-in editor close
@@ -30,46 +28,42 @@ export const getEditorState = ({
 
     const { entityInfo, entity } = editorData;
 
-    const validator = Validator.createForEntry(
-      entityInfo.contentType,
+    const validator = Validator.createForEntity({
       doc,
+      entityInfo,
+      locales: localeStore.getPrivateLocales(),
       publishedCTs,
-      localeStore.getPrivateLocales()
-    );
+    });
 
     initDocErrorHandlerWithoutScope(doc.state.error$);
 
     initStateController({
       bulkEditorContext,
+      doc,
       editorData,
       entity,
       entityInfo,
-      getTitle,
-      onUpdate: onStateUpdate,
-      doc,
-      validator,
-      spaceId,
       environmentId,
+      onUpdate: onStateUpdate,
       publishedCTs,
+      spaceId,
+      validator,
     });
 
     K.onValue(valuePropertyAt(doc, []), (data) => {
-      const title = EntityFieldValueSpaceContext.entryTitle({
-        getContentTypeId: () => entityInfo.contentTypeId,
-        data,
-      });
-      onTitleUpdate({
-        title,
-        truncatedTitle: truncate(title, 50),
-      });
+      const title =
+        EntityFieldValueSpaceContext.entityTitle({
+          getType: () => entityInfo.type,
+          getContentTypeId: () => entityInfo.contentTypeId,
+          data,
+        }) || 'Untitled';
+      onTitleUpdate(truncate(title, 50));
     });
 
     try {
-      trackEntryView({
+      trackView({
         editorData,
         entityInfo,
-        currentSlideLevel,
-        editorType,
         locale: localeStore.getDefaultLocale().internal_code,
       });
     } catch (error) {

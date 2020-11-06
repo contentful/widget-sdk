@@ -141,6 +141,7 @@ describe('Entry Editor Controller', function () {
 
     this.system.set('app/entity_editor/Validator', {
       createForEntry: sinon.stub(),
+      createForEntity: sinon.stub(),
     });
 
     this.system.set('services/localeStore', {
@@ -157,6 +158,7 @@ describe('Entry Editor Controller', function () {
 
     this.system.set('classes/EntityFieldValueSpaceContext', {
       entryTitle: (entry) => _.get(entry, 'data.fields.title'),
+      entityTitle: (entry) => _.get(entry, 'data.fields.title'),
     });
 
     this.system.set('analytics/Analytics', {
@@ -180,10 +182,10 @@ describe('Entry Editor Controller', function () {
       await configureForTest.call(this);
       this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       $apply();
-      expect(this.scope.context.title).toEqual('foo');
+      expect(this.scope.title).toEqual('foo');
       this.scope.otDoc.setValueAt(['fields', 'title'], 'bar');
       $apply();
-      expect(this.scope.context.title).toEqual('bar');
+      expect(this.scope.title).toEqual('bar');
     });
   });
 

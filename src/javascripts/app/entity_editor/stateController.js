@@ -14,6 +14,7 @@ import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedR
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import * as Analytics from 'analytics/Analytics';
 import { createCommand } from 'utils/command/command';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export const state = {
   ARCHIVED: stateName(State.Archived()),
@@ -25,7 +26,6 @@ export const initStateController = ({
   bulkEditorContext,
   entityInfo,
   editorData,
-  getTitle,
   doc,
   validator,
   onUpdate,
@@ -34,7 +34,15 @@ export const initStateController = ({
   publishedCTs,
 }) => {
   const { permissions, reverter, resourceState: docStateManager } = doc;
-  const notify = makeNotify(entityInfo.type, () => `“${getTitle()}”`);
+
+  const notify = (notification, data = editorData.entity.data) => {
+    const title = EntityFieldValueSpaceContext.entityTitle({
+      getType: () => entityInfo.type,
+      getContentTypeId: () => entityInfo.contentTypeId,
+      data,
+    });
+    makeNotify(entityInfo.type, () => `“${title || 'Untitled'}”`)(notification);
+  };
 
   const controller = {
     inProgress: false,
@@ -287,7 +295,7 @@ export const initStateController = ({
   async function applyAction(action) {
     try {
       const data = await docStateManager.apply(action);
-      notify(Notification.Success(action));
+      notify(Notification.Success(action), data);
       return { action, entity: data };
     } catch (error) {
       notify(Notification.Error(action, error));
