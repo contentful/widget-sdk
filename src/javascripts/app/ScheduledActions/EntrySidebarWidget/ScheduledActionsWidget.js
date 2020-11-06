@@ -213,8 +213,8 @@ export default function ScheduledActionsWidget({
     )
       .then(() => {
         const job = jobs.find((j) => j.sys.id === jobId);
-        trackCancelledJob(job);
         setJobsState(jobs.filter((j) => j !== job));
+        trackCancelledJob(job);
         Notification.success('Schedule canceled');
       })
       .catch((_err) => {
@@ -246,7 +246,7 @@ export default function ScheduledActionsWidget({
 
   // Controls whether the `Cancel Schedule` dropdown appears
   const canUnpublishSchedule = accessChecker.can(accessChecker.Action.UNPUBLISH, entity);
-  const isReadyOnly = primary.isDisabled() || !canUnpublishSchedule;
+  const isReadOnly = primary.isDisabled() || !canUnpublishSchedule;
 
   return (
     <ErrorHandler>
@@ -303,7 +303,7 @@ export default function ScheduledActionsWidget({
               isMasterEnvironment={isMasterEnvironment}
               jobs={pendingJobs}
               onCancel={handleCancel}
-              isReadOnly={isReadyOnly}
+              isReadOnly={isReadOnly}
               linkType={entityType}
             />
           )}
