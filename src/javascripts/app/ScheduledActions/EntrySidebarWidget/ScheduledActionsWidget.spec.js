@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
 
+import * as accessChecker from 'access_control/AccessChecker';
+
 import { Notification } from '@contentful/forma-36-react-components';
 import { default as ScheduledActionsWidget } from './ScheduledActionsWidget';
 import {
@@ -21,6 +23,7 @@ const commandTemplate = {
   isRestricted: () => false,
 };
 
+jest.mock('access_control/AccessChecker');
 jest.mock('services/localeStore');
 jest.mock('../DataManagement/ScheduledActionsService');
 jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entityTitle: () => 'Test' }));
@@ -308,6 +311,9 @@ describe('<ScheduledActionsWidget />', () => {
     const job = createPendingJob();
     const cancelJobSpy = jest.spyOn(ScheduledActionsAnalytics, 'cancelJob');
 
+    // User is allowed to unpublish/cancel the Job
+    jest.spyOn(accessChecker, 'can').mockReturnValue(true);
+
     cancelJob.mockResolvedValueOnce();
     getNotCanceledJobsForEntity.mockResolvedValueOnce([job]);
     const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
@@ -321,6 +327,23 @@ describe('<ScheduledActionsWidget />', () => {
 
     expect(cancelJobSpy).toHaveBeenCalledTimes(1);
     expect(cancelJobSpy).toHaveBeenCalledWith(job);
+  });
+
+  it("doesn't cancel the job if user is not allowed", async () => {
+    const job = createPendingJob();
+    const cancelJobSpy = jest.spyOn(ScheduledActionsAnalytics, 'cancelJob');
+    cancelJob.mockResolvedValueOnce();
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([job]);
+
+    // User is not allowed to unpublish/cancel the Job
+    jest.spyOn(accessChecker, 'can').mockReturnValue(false);
+
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult] = build({ entity: publishedEntry });
+    await wait();
+
+    expect(renderResult.queryByTestId('cancel-job-ddl')).toBeNull();
+    expect(cancelJobSpy).toHaveBeenCalledTimes(0);
   });
 });
 
