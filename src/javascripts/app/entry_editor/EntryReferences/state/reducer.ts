@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 import {
   SET_REFERENCES,
+  SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
   SET_LINKS_COUNTER,
   SET_SELECTED_ENTITIES,
   SET_VALIDATIONS,
@@ -22,6 +23,7 @@ export type ReferencesState = {
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
   initialReferencesAmount: number;
+  initialUnqiueReferencesAmount: number;
   referenceTreeKey: string;
   isTooComplex: boolean;
   processingAction: string | null;
@@ -30,6 +32,7 @@ export type ReferencesState = {
 export type Action = {
   type:
     | typeof SET_REFERENCES
+    | typeof SET_INITIAL_UNIQUE_REFERENCES_AMOUNT
     | typeof SET_LINKS_COUNTER
     | typeof SET_SELECTED_ENTITIES
     | typeof SET_VALIDATIONS
@@ -53,6 +56,7 @@ export const initialState: ReferencesState = {
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
   initialReferencesAmount: 0,
+  initialUnqiueReferencesAmount: 0,
   referenceTreeKey: uniqueId('id_'),
   isTooComplex: false,
   processingAction: null,
@@ -62,6 +66,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
   switch (action.type) {
     case SET_REFERENCES:
       return { ...state, references: action.value };
+    case SET_INITIAL_UNIQUE_REFERENCES_AMOUNT:
+      return { ...state, initialUnqiueReferencesAmount: action.value };
     case SET_LINKS_COUNTER:
       return { ...state, linksCounter: action.value };
     case SET_SELECTED_ENTITIES:

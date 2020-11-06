@@ -12,6 +12,7 @@ import {
   SET_SELECTED_ENTITIES_MAP,
   SET_ACTIONS_DISABLED,
   SET_INITIAL_REFERENCES_AMOUNT,
+  SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
 } from './state/actions';
 
 const styles = {
@@ -308,10 +309,11 @@ const ReferencesTree = ({
   );
 
   const setInitialEntities = useCallback(
-    (selectedEntitiesMap) => {
-      dispatch({ type: SET_SELECTED_ENTITIES_MAP, value: selectedEntitiesMap });
-      dispatch({ type: SET_SELECTED_ENTITIES, value: selectedEntities(selectedEntitiesMap) });
-      dispatch({ type: SET_ACTIONS_DISABLED, value: !selectedEntitiesMap.size });
+    (entitiesMap) => {
+      dispatch({ type: SET_SELECTED_ENTITIES_MAP, value: entitiesMap });
+      dispatch({ type: SET_SELECTED_ENTITIES, value: selectedEntities(entitiesMap) });
+      dispatch({ type: SET_INITIAL_UNIQUE_REFERENCES_AMOUNT, value: entitiesMap.size });
+      dispatch({ type: SET_ACTIONS_DISABLED, value: !entitiesMap.size });
     },
     [dispatch]
   );

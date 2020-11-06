@@ -96,6 +96,8 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     initialReferencesAmount,
     referenceTreeKey,
     isTooComplex,
+    selectedEntitiesMap,
+    initialUnqiueReferencesAmount,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
@@ -133,6 +135,14 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
       }
     });
   }, [entity, dispatch]);
+
+  const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
+
+  useEffect(() => {
+    if (initialUnqiueReferencesAmount !== selectedEntitiesMapSize) {
+      setAllReferencesSelected(false);
+    }
+  }, [initialUnqiueReferencesAmount, selectedEntitiesMapSize]);
 
   if (entity.sys.type === 'Asset' || !hasLinks(entity.fields)) {
     return null;
