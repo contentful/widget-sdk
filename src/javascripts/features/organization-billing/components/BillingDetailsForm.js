@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { TextField, Form, SelectField, Button } from '@contentful/forma-36-react-components';
@@ -51,7 +51,7 @@ export function BillingDetailsForm({
 }) {
   const [showVat, setShouldShowVat] = useState(isCountryUsingVAT(billingDetails?.country));
   const [showState, setShouldShowState] = useState(!!billingDetails.state);
-  const [countryName, setCountryName] = useState();
+  const [countryName, setCountryName] = useState(billingDetails.country);
 
   const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
     fields: {
@@ -128,17 +128,8 @@ export function BillingDetailsForm({
     },
   });
 
-  const onChangeCountry = (e) => {
-    const country = e.target.value;
-    const isVatCountry = isCountryUsingVAT(country);
-    const isUSAorCanada = country === 'United States' || country === 'Canada';
-
-    setShouldShowVat(isVatCountry);
-    if (!isVatCountry) {
-      // Reset VAT number in case they started filling this field out as we
-      // don't want to submit/validate this field if it's not a VAT country.
-      onChange('vat', '');
-    }
+  useEffect(() => {
+    const isUSAorCanada = countryName === 'United States' || countryName === 'Canada';
 
     setShouldShowState(isUSAorCanada);
     if (!isUSAorCanada) {
@@ -147,9 +138,17 @@ export function BillingDetailsForm({
       onChange('state', '');
     }
 
-    onChange('country', country);
-    setCountryName(e.target.value);
-  };
+    setShouldShowVat(isCountryUsingVAT(countryName));
+    if (!isCountryUsingVAT(countryName)) {
+      // Reset VAT number in case they started filling this field out as we
+      // don't want to submit/validate this field if it's not a VAT country.
+      onChange('vat', '');
+    }
+
+    onChange('country', countryName);
+  }, [countryName, onChange]);
+
+  const onChangeCountry = (e) => setCountryName(e.target.value);
 
   // Get the input's name and call onChange/onBlur for that input with the updated value.
   const handleChange = (e) => onChange(e.target.getAttribute('id'), e.target.value);
