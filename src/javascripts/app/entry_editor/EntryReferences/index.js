@@ -136,11 +136,13 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     });
   }, [entity, dispatch]);
 
+  const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
+
   useEffect(() => {
-    if (initialUnqiueReferencesAmount !== selectedEntitiesMap.size) {
+    if (initialUnqiueReferencesAmount !== selectedEntitiesMapSize) {
       setAllReferencesSelected(false);
     }
-  }, [initialUnqiueReferencesAmount, selectedEntitiesMap.size]);
+  }, [initialUnqiueReferencesAmount, selectedEntitiesMapSize]);
 
   if (entity.sys.type === 'Asset' || !hasLinks(entity.fields)) {
     return null;
