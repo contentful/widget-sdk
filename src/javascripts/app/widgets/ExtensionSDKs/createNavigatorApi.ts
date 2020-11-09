@@ -209,28 +209,8 @@ export function createReadOnlyNavigatorApi() {
   };
 }
 
-export function createNavigatorApi({
-  spaceContext,
-  widgetNamespace,
-  widgetId,
-  isOnPageLocation = false,
-}: NavigatorProps): NavigatorAPI {
-  const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.getEnvironmentId();
-  const isMaster = spaceContext.isMasterEnvironment();
-
-  const navigateToContentEntity = makeNavigateToEntity(spaceContext.cma);
-  const navigateToPage = makeNavigateToPage(
-    {
-      spaceId,
-      environmentId,
-      isMaster,
-      currentWidgetId: widgetId,
-      currentWidgetNamespace: widgetNamespace,
-    },
-    isOnPageLocation
-  );
-
+export function createEntityNavigatorApi({ cma }: { cma: any }) {
+  const navigateToContentEntity = makeNavigateToEntity(cma);
   return {
     openEntry: (id, opts) => {
       return navigateToContentEntity({ ...opts, entityType: 'Entry', id });
@@ -249,6 +229,32 @@ export function createNavigatorApi({
     openNewAsset: (opts) => {
       return navigateToContentEntity({ ...opts, entityType: 'Asset', id: null });
     },
+  };
+}
+
+export function createNavigatorApi({
+  spaceContext,
+  widgetNamespace,
+  widgetId,
+  isOnPageLocation = false,
+}: NavigatorProps): NavigatorAPI {
+  const spaceId = spaceContext.getId();
+  const environmentId = spaceContext.getEnvironmentId();
+  const isMaster = spaceContext.isMasterEnvironment();
+
+  const navigateToPage = makeNavigateToPage(
+    {
+      spaceId,
+      environmentId,
+      isMaster,
+      currentWidgetId: widgetId,
+      currentWidgetNamespace: widgetNamespace,
+    },
+    isOnPageLocation
+  );
+
+  return {
+    ...createEntityNavigatorApi({ cma: spaceContext.cma }),
     openPageExtension: (opts) => {
       return navigateToPage({ ...opts, type: WidgetNamespace.EXTENSION });
     },

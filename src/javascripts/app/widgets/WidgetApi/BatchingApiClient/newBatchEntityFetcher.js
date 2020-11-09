@@ -1,5 +1,4 @@
 import DataLoader from 'dataloader';
-import { detect as detectBrowser } from 'detect-browser';
 import { apiUrl } from 'Config';
 import {
   default as newEntityBatchLoaderFn,
@@ -7,7 +6,7 @@ import {
   WORST_CASE_QUERY_PARAMS,
 } from './newEntityBatchLoaderFn';
 
-const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
+const MAX_URL_LENGTH = 8000;
 const MAX_ID_LENGTH = 64;
 const MAX_LENGTH_ID = 'X'.repeat(MAX_ID_LENGTH);
 const WORST_CASE_URL = encodeURI(

@@ -10,6 +10,7 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 
 const RoleEditorFetcher = createFetcherComponent(
   async ({ spaceId, getContentTypes, getEntities, isNew }) => {
@@ -64,6 +65,8 @@ const RoleEditorFetcher = createFetcherComponent(
 );
 
 export function RoleEditorRoute(props) {
+  const entitySelectorSdk = useEntitySelectorSdk();
+
   return (
     <>
       <DocumentTitle title="Roles" />
@@ -81,7 +84,14 @@ export function RoleEditorRoute(props) {
           }
 
           return (
-            <RoleEditor isLegacyOrganization={props.isLegacyOrganization} {...data} {...props} />
+            <RoleEditor
+              isLegacyOrganization={props.isLegacyOrganization}
+              {...data}
+              {...props}
+              openEntitySelectorForEntity={(entity) => {
+                return entitySelector.openFromRolesAndPermissions(entitySelectorSdk, entity);
+              }}
+            />
           );
         }}
       </RoleEditorFetcher>

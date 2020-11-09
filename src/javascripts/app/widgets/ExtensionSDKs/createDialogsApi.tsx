@@ -51,35 +51,55 @@ export function createDialogsApi(
   sdk: BaseExtensionSDKWithoutDialogs,
   currentAppWidget?: Widget
 ): DialogsAPI {
+  const entitySelectorSdk = Object.assign({}, sdk, {
+    space: {
+      ...sdk.space,
+      getTags: () => {
+        // @ts-expect-error
+        return sdk.space.readTags(0, 10000);
+      },
+    },
+  });
+
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
     openPrompt: ExtensionDialogs.openPrompt,
-    selectSingleEntry: (opts) => {
-      return entitySelector.openFromExtensionSingle({
+    selectSingleEntry: async (opts) => {
+      const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Entry',
       });
+      if (result && result.length > 0) {
+        return result[0] ?? null;
+      }
+      return null;
     },
-    selectMultipleEntries: (opts) => {
-      return entitySelector.openFromExtension({
+    selectMultipleEntries: async (opts) => {
+      const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Entry',
         multiple: true,
       });
+      return result ?? null;
     },
-    selectSingleAsset: (opts) => {
-      return entitySelector.openFromExtensionSingle({
+    selectSingleAsset: async (opts) => {
+      const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Asset',
       });
+      if (result && result.length > 0) {
+        return result[0] ?? null;
+      }
+      return null;
     },
-    selectMultipleAssets: (opts) => {
-      return entitySelector.openFromExtension({
+    selectMultipleAssets: async (opts) => {
+      const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Asset',
         multiple: true,
       });
+      return result ?? null;
     },
     openCurrent: function (opts) {
       if (sdk.ids.app) {

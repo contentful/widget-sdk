@@ -1,8 +1,6 @@
 import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { createFieldLocaleDocument } from './fieldLocaleDocument';
 
-jest.mock('services/PubSubService', () => ({}));
-
 const fieldsPath = ['FID', 'LC'];
 const path = ['fields', ...fieldsPath];
 

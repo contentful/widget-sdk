@@ -22,13 +22,6 @@ jest.mock('services/ResourceService', () => ({
   }),
 }));
 
-jest.mock('services/PubSubService', () => ({
-  createPubSubClientForSpace: jest.fn().mockReturnValue({
-    on: jest.fn(),
-    off: jest.fn(),
-  }),
-}));
-
 jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true),
 }));

@@ -122,7 +122,7 @@ describe('entitySelector', () => {
 
   describe('opening from an extension', () => {
     function openFromExt(opts) {
-      return entitySelector.openFromExtension(opts);
+      return entitySelector.openFromWidget(opts);
     }
 
     function resolveWith(value) {
@@ -143,7 +143,7 @@ describe('entitySelector', () => {
       resolveWith([{ test: true }]);
       const entry = await openFromExt({ entityType: 'Entry', multiple: false });
       expect(config.multiple).toBe(false);
-      expect(entry).toEqual({ test: true });
+      expect(entry).toEqual([{ test: true }]);
     });
 
     it('selecting many entities', async function () {

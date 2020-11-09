@@ -20,7 +20,7 @@ xdescribe('Extension SDK', () => {
     });
 
     this.system.set('search/EntitySelector/entitySelector', {
-      openFromExtension: this.openStub,
+      openFromWidget: this.openStub,
     });
 
     await $initialize(this.system);

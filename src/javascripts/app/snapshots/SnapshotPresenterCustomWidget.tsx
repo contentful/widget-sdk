@@ -18,7 +18,7 @@ import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpac
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
 import { SpaceEndpoint } from 'data/CMA/types';
-import createCache from 'data/userCache';
+import createUsersCache from 'data/userCache';
 
 interface SnapshotPresenterCustomWIdgetProps {
   locale: Locale;
@@ -63,7 +63,7 @@ const SnapshotPresenterCustomWidget = ({
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
     const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
     const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
-    const usersEndpoint = createCache(spaceEndpoint);
+    const usersEndpoint = createUsersCache(spaceEndpoint);
     const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 
     return createReadonlyFieldWidgetSDK({

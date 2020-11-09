@@ -1,7 +1,5 @@
 import { create } from './EntityRepo';
 
-jest.mock('services/PubSubService', () => {});
-
 describe('EntityRepo', () => {
   const entityFromSpaceEndpoint = { foo: 'bar' };
   const spaceEndpoint = jest.fn().mockReturnValue(entityFromSpaceEndpoint);

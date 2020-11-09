@@ -6,7 +6,6 @@ import { noop } from 'lodash';
 
 import { waitFor } from '@testing-library/dom';
 
-jest.mock('services/PubSubService', () => ({}));
 jest.mock('services/logger', () => ({
   logSharejsError: jest.fn(),
   logServerError: jest.fn(),

@@ -44,6 +44,7 @@ export const FLAGS = {
   SPACE_PLAN_ASSIGNMENT_EXPERIMENT: 'feature-hejo-09-2020-space-plan-assignment-experiment',
   CONTENT_LEVEL_PERMISSIONS: 'feature-dev-workflows-09-2020-content-level-permissions',
   WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
+  NEW_ENTITY_SELECTOR: 'feature-prose-10-2020-new-entity-selector',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -68,6 +69,7 @@ const FALLBACK_VALUES = {
   [FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT]: false,
   [FLAGS.CONTENT_LEVEL_PERMISSIONS]: false,
   [FLAGS.WORKFLOWS_APP]: false,
+  [FLAGS.NEW_ENTITY_SELECTOR]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

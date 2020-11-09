@@ -18,7 +18,6 @@ jest.mock('access_control/AccessChecker', () => ({
   Action: { READ: 'read' },
   canPerformActionOnEntity: jest.fn().mockReturnValue(true),
 }));
-jest.mock('services/PubSubService', () => ({}));
 jest.mock('app/entity_editor/Notifications', () => ({
   Notification: {},
   makeNotify: jest.fn(),

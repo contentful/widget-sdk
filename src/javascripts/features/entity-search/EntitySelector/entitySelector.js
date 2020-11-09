@@ -5,7 +5,7 @@ import { getLabels, newConfigFromField, newConfigFromExtension } from './Config'
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { EntitySelectorDialog } from './EntitySelectorDialog';
 
-export function openEntitySelector(options) {
+function openEntitySelector(options) {
   return ModalLauncher.open(({ isShown, onClose }) => (
     <EntitySelectorDialog
       isShown={isShown}
@@ -46,33 +46,9 @@ export function openFromField(field, currentSize) {
  * coming from the extension SDK "dialogs"
  * namespace.
  */
-export function openFromExtension(options) {
+export function openFromWidget(options) {
   const config = newConfigFromExtension(options);
-  return openEntitySelector(config).then(
-    (
-      selected // resolve with a single object if selecting only
-    ) =>
-      // one entity, resolve with an array otherwise
-      options.multiple ? selected : selected?.[0] || null,
-    (
-      err // resolve with `null` if a user skipped selection,
-    ) =>
-      // reject with an error otherwise
-      err ? Promise.reject(err) : null
-  );
-}
-
-export function openFromExtensionSingle(options) {
-  const config = newConfigFromExtension(options);
-
-  return openEntitySelector(config).then(
-    (selected) => selected?.[0] || null,
-    (
-      err // resolve with `null` if a user skipped selection,
-    ) =>
-      // reject with an error otherwise
-      err ? Promise.reject(err) : null
-  );
+  return openEntitySelector(config).catch((err) => (err ? Promise.reject(err) : null));
 }
 
 /**
@@ -80,5 +56,5 @@ export function openFromExtensionSingle(options) {
  */
 export function openFromRolesAndPermissions(entityType) {
   const config = newConfigFromExtension({ entityType, multiple: false });
-  return openEntitySelector(config).then((selected) => selected?.[0] || null);
+  return openEntitySelector(config);
 }

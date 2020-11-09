@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { Heading, TextLink, Paragraph } from '@contentful/forma-36-react-components';
 import CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import * as Analytics from 'analytics/Analytics';
-import { entitySelector } from 'features/entity-search';
+import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
@@ -39,6 +39,7 @@ const linkEntity = (entity) => ({
 export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
   const { currentSpaceContentTypes } = useSpaceEnvContext();
   const spaceApiClient = useCurrentSpaceAPIClient();
+  const entitySelectorSdk = useEntitySelectorSdk();
 
   // TODO necessary for entitySelector change it
   const extendedField = useMemo(
@@ -70,13 +71,17 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
 
   const addExistingEntries = useCallback(async () => {
     try {
-      const entities = await entitySelector.openFromField(extendedField, linkCount);
+      const entities = await entitySelector.openFromField(
+        entitySelectorSdk,
+        extendedField,
+        linkCount
+      );
       track.addExisting(entities.length);
       addLinks(entities.map(linkEntity));
     } catch (error) {
       // ignore closing of entity selector
     }
-  }, [linkCount, extendedField, addLinks, track]);
+  }, [linkCount, extendedField, addLinks, track, entitySelectorSdk]);
 
   const getAllContentTypeIds = useCallback(() => currentSpaceContentTypes.map((ct) => ct.sys.id), [
     currentSpaceContentTypes,

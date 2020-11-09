@@ -26,7 +26,6 @@ import * as RoleListHandler from '../components/RoleListHandler';
 import { RoleEditorActions } from './RoleEditorActions';
 import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { entitySelector } from 'features/entity-search';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
@@ -122,6 +121,7 @@ export class RoleEditor extends React.Component {
     roleRepo: PropTypes.object.isRequired,
     canModifyRoles: PropTypes.bool.isRequired,
     hasCustomRolesFeature: PropTypes.bool.isRequired,
+    openEntitySelectorForEntity: PropTypes.func.isRequired,
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
   };
@@ -172,12 +172,13 @@ export class RoleEditor extends React.Component {
 
   searchEntities = (entityType) => {
     const { entityCache } = this.state;
-    return entitySelector.openFromRolesAndPermissions(entityType).then((entity) => {
-      if (entity) {
+    return this.props.openEntitySelectorForEntity(entityType).then((entities) => {
+      if (entities && entities.length === 1) {
+        const entity = entities[0];
         entityCache[entityType][entity.sys.id] = entity;
         this.setState({ entityCache });
+        return entity;
       }
-      return entity;
     });
   };
 

@@ -69,7 +69,6 @@ export function getLabels({ entityType = '', multiple }) {
  *
  * @param {API.Field} field
  * @param {number?} currentSize
- * @returns config for entitySelector.open()
  */
 export function newConfigFromField(field = {}, currentSize = 0) {
   const entityType = field.linkType || field.itemLinkType;
@@ -100,7 +99,7 @@ export function newConfigFromField(field = {}, currentSize = 0) {
 }
 
 /**
- * Builds a config for entitySelector.openFromExtension()
+ * Builds a config for entitySelector.openFromWidget()
  *
  * @param {object} options
  * @returns {object} config for the entity selector.

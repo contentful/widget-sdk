@@ -12,7 +12,8 @@
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
     "@contentful/asn1js": "^2.1.0",
-    "@contentful/editorial-primitives": "^0.8.0",
+    "@contentful/editorial-primitives": "^0.9.1",
+    "@contentful/entity-search": "0.4.0",
     "@contentful/field-editor-boolean": "0.8.4",
     "@contentful/field-editor-checkbox": "0.10.5",
     "@contentful/field-editor-date": "0.8.3",
@@ -60,7 +61,7 @@
     "codemirror": "^5.53.2",
     "color": "^2.0.1",
     "contentful": "^7.14.6",
-    "contentful-management": "^6.2.0-experimental.3",
+    "contentful-management": "^6.2.0-experimental.5",
     "contentful-resolve-response": "^1.1.4",
     "contentful-ui-extensions-sdk": "^3.23.4",
     "core-js": "^3.6.5",

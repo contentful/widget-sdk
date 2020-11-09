@@ -19,7 +19,10 @@ jest.mock('detect-browser', () => ({
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('app/entity_editor/DataLoader', () => ({ makePrefetchEntryLoader: jest.fn() }));
 jest.mock('ui/Framework/AngularComponent', () => () => <div data-test-id="angular-component" />);
-jest.mock('features/entity-search', () => ({ entitySelector: { openFromField: jest.fn() } }));
+jest.mock('features/entity-search', () => ({
+  entitySelector: { openFromField: jest.fn() },
+  useEntitySelectorSdk: jest.fn().mockReturnValue('entitySelectorSdk'),
+}));
 jest.mock('app/widgets/ExtensionSDKs', () => ({
   createEditorExtensionSDK: jest.fn(),
 }));
@@ -144,6 +147,7 @@ describe('BulkEntityEditor', () => {
     await waitFor(() => expect(queryByTestId('bulk-editor-loader')).not.toBeInTheDocument());
     queryByTestId('add-existing-entry').click();
     expect(entitySelector.openFromField).toHaveBeenCalledWith(
+      'entitySelectorSdk',
       {
         itemLinkType: 'Entry',
         itemValidations: [],

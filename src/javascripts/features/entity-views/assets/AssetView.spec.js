@@ -19,11 +19,6 @@ jest.mock('Authentication', () => ({
   getToken: jest.fn().mockResolvedValue('token'),
 }));
 
-jest.mock('services/PubSubService', () => ({
-  on: jest.fn(),
-  off: jest.fn(),
-}));
-
 jest.mock('features/content-tags/core/state/TagsRepo', () => ({
   create: jest.fn().mockReturnValue({
     readTags: jest.fn().mockResolvedValue({ items: [] }),

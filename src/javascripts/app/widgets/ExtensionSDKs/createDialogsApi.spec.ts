@@ -10,7 +10,7 @@ import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 jest.mock('@contentful/forma-36-react-components/dist/alpha');
 jest.mock('widgets/ExtensionDialogs');
 jest.mock('features/entity-search', () => ({
-  entitySelector: { openFromExtensionSingle: jest.fn(), openFromExtension: jest.fn() },
+  entitySelector: { openFromWidget: jest.fn() },
 }));
 jest.mock('widgets/CustomWidgetLoaderInstance');
 
@@ -55,10 +55,10 @@ describe('createDialogsApi', () => {
     });
 
     describe('selectSingleEntry', () => {
-      it('calls entitySelector.openFromExtensionSingle with opts and entity: entry', () => {
+      it('calls entitySelector.openFromWidget with opts and entity: entry', () => {
         const opts = { locale: 'en-US' };
         dialogsApi.selectSingleEntry(opts);
-        expect(entitySelector.openFromExtensionSingle).toHaveBeenCalledWith({
+        expect(entitySelector.openFromWidget).toHaveBeenCalledWith(expect.any(Object), {
           ...opts,
           entityType: 'Entry',
         });
@@ -66,10 +66,10 @@ describe('createDialogsApi', () => {
     });
 
     describe('selectMultipleEntries', () => {
-      it('calls entitySelector.openFromExtension with opts and entity: entry', () => {
+      it('calls entitySelector.openFromWidget with opts and entity: entry', () => {
         const opts = { locale: 'en-US' };
         dialogsApi.selectMultipleEntries(opts);
-        expect(entitySelector.openFromExtension).toHaveBeenCalledWith({
+        expect(entitySelector.openFromWidget).toHaveBeenCalledWith(expect.any(Object), {
           ...opts,
           entityType: 'Entry',
           multiple: true,
@@ -78,10 +78,10 @@ describe('createDialogsApi', () => {
     });
 
     describe('selectSingleAsset', () => {
-      it('calls entitySelector.openFromExtensionSingle with opts and entity: asset', () => {
+      it('calls entitySelector.openFromWidget with opts and entity: asset', () => {
         const opts = { locale: 'en-US' };
         dialogsApi.selectSingleAsset(opts);
-        expect(entitySelector.openFromExtensionSingle).toHaveBeenCalledWith({
+        expect(entitySelector.openFromWidget).toHaveBeenCalledWith(expect.any(Object), {
           ...opts,
           entityType: 'Asset',
         });
@@ -89,10 +89,10 @@ describe('createDialogsApi', () => {
     });
 
     describe('selectMultipleAssets', () => {
-      it('calls entitySelector.openFromExtension with opts and entity: entry', () => {
+      it('calls entitySelector.openFromWidget with opts and entity: entry', () => {
         const opts = { locale: 'en-US', min: 1, max: 10 };
         dialogsApi.selectMultipleAssets(opts);
-        expect(entitySelector.openFromExtension).toHaveBeenCalledWith({
+        expect(entitySelector.openFromWidget).toHaveBeenCalledWith(expect.any(Object), {
           ...opts,
           entityType: 'Asset',
           multiple: true,

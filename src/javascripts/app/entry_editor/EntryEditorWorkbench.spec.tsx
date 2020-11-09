@@ -6,7 +6,6 @@ import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { EntityType } from 'app/entity_editor/Components/constants';
 import { EditorContext } from 'app/entity_editor/EntityField/types';
 
-jest.mock('services/PubSubService', () => ({}));
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
   getSpaceFeature: jest.fn(),

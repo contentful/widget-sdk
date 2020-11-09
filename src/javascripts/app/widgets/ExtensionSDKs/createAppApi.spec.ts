@@ -7,13 +7,6 @@ jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
-jest.mock('services/PubSubService', () => ({
-  createPubSubClientForSpace: jest.fn().mockReturnValue({
-    on: jest.fn(),
-    off: jest.fn(),
-  }),
-}));
-
 describe('createAppApi', () => {
   const widgetId = 'w-id';
   const widgetNamespace = WidgetNamespace.APP;
