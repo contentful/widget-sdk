@@ -180,7 +180,6 @@ const SpacesRoute = ({ orgId }) => {
                     </TableCell>
                     <TableCell align="right">
                       <CardActions
-                        isAutoalignmentEnabled={true}
                         iconButtonProps={{
                           buttonType: 'primary',
                           className: styles.triggerIcon,

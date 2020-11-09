@@ -44,7 +44,7 @@ const styles = {
 
 function TagActions(props) {
   return (
-    <CardActions isAutoalignmentEnabled={true}>
+    <CardActions>
       <DropdownList>
         <DropdownListItem testId="tag-menu-edit" onClick={props.onEdit}>
           Rename tag

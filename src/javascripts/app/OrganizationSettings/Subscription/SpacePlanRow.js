@@ -163,7 +163,6 @@ function SpacePlanRow({
       )}
       <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
         <CardActions
-          isAutoalignmentEnabled={true}
           iconButtonProps={{
             testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
           }}

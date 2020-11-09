@@ -12204,7 +12204,7 @@ pre,
   .cf-workbench-content {
     padding: 24px;
     margin-left: 10px;
-    padding-bottom: 190px;
+    padding-bottom: 100px;
   }
 
   .workbench-layer--is-current .cf-workbench-content-type__text {

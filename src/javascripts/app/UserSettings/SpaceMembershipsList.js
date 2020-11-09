@@ -52,7 +52,6 @@ const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
                 </TableCell>
                 <TableCell testId="organization-row.actions-cell" className={styles.dotsRow}>
                   <CardActions
-                    isAutoalignmentEnabled={true}
                     iconButtonProps={{
                       buttonType: 'primary',
                       testId: 'organization-row.dropdown-menu.trigger',
