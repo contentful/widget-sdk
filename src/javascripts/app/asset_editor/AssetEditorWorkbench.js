@@ -1,7 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import { Workbench, Button } from '@contentful/forma-36-react-components';
+import { css, cx } from 'emotion';
+import {
+  Workbench,
+  Button,
+  Tab,
+  TabPanel,
+  Tabs,
+  Icon,
+  Tag,
+} from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import StatusNotification from 'app/entity_editor/StatusNotification';
@@ -13,6 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
+import { styles as editorStyles } from './../entry_editor/styles';
 
 const styles = {
   sidebar: css({
@@ -22,6 +31,11 @@ const styles = {
   statusSwitchWrapper: css({
     marginRight: tokens.spacingM,
   }),
+};
+
+const AssetTabs = {
+  Editor: 'Editor',
+  Tags: 'Tags',
 };
 
 const AssetEditorWorkbench = ({
@@ -48,6 +62,7 @@ const AssetEditorWorkbench = ({
   );
 
   const { tagsEnabled } = useTagsFeatureEnabled();
+  const [selectedTab, setSelectedTab] = useState(AssetTabs.Editor);
 
   return (
     <div className="asset-editor">
@@ -79,27 +94,69 @@ const AssetEditorWorkbench = ({
             </>
           }
         />
-        <Workbench.Content type="text">
-          <StatusNotification {...statusNotificationProps} />
-          <div className="entity-editor-form">
-            <AngularComponent
-              template={
-                '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
-              }
-              scope={{
-                fieldLocaleListeners,
-                widgets,
-                localeData,
-                editorContext,
-                fields,
-                entityInfo,
-                otDoc,
-                editorData,
-              }}
-            />
 
-            {tagsEnabled && <ContentTagsField {...tagProps} />}
-          </div>
+        <Workbench.Content type="full" className={editorStyles.mainContent}>
+          <Tabs withDivider className={editorStyles.tabs}>
+            <Tab
+              className={styles.tab}
+              selected={selectedTab === AssetTabs.Editor}
+              id={AssetTabs.Editor}
+              onSelect={setSelectedTab}>
+              <Icon icon={'Entry'} color="muted" className={editorStyles.tabIcon} />
+              {AssetTabs.Editor}
+            </Tab>
+            {tagsEnabled && (
+              <Tab
+                className={editorStyles.tab}
+                selected={selectedTab === AssetTabs.Tags}
+                id={AssetTabs.Tags}
+                onSelect={setSelectedTab}>
+                <Icon icon={'Tags'} color="muted" className={editorStyles.tabIcon} />
+                {AssetTabs.Tags}
+                <Tag className={editorStyles.promotionTag}>new</Tag>
+              </Tab>
+            )}
+          </Tabs>
+
+          <TabPanel
+            id={`panel-editor`}
+            className={cx(editorStyles.tabPanel, {
+              [editorStyles.isVisible]: selectedTab === AssetTabs.Editor,
+            })}>
+            <div
+              className={
+                'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
+              }>
+              <StatusNotification {...statusNotificationProps} />
+              <AngularComponent
+                template={
+                  '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
+                }
+                scope={{
+                  fieldLocaleListeners,
+                  widgets,
+                  localeData,
+                  editorContext,
+                  fields,
+                  entityInfo,
+                  otDoc,
+                  editorData,
+                }}
+              />
+            </div>
+          </TabPanel>
+          <TabPanel
+            id={`panel-tags`}
+            className={cx(editorStyles.tabPanel, {
+              [editorStyles.isVisible]: selectedTab === AssetTabs.Tags,
+            })}>
+            <div
+              className={
+                'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
+              }>
+              {tagsEnabled && <ContentTagsField {...tagProps} />}
+            </div>
+          </TabPanel>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
           <EntrySidebar entrySidebarProps={entrySidebarProps} disableComments />
