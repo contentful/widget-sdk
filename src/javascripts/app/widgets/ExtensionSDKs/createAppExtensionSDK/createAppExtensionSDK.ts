@@ -36,7 +36,7 @@ export const createAppExtensionSDK = ({
     environment: spaceContext.getEnvironmentId(),
     app: widgetId,
   };
-  
+
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
@@ -45,7 +45,7 @@ export const createAppExtensionSDK = ({
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
-    appId: idsApi.app
+    appId: idsApi.app,
   });
 
   const locationApi = {

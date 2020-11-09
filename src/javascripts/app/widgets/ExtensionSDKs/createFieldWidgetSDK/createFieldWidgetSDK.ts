@@ -100,7 +100,7 @@ export function createFieldWidgetSDK({
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
-    appId: idsApi.app
+    appId: idsApi.app,
   });
 
   const windowApi = {
