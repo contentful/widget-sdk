@@ -120,7 +120,7 @@ export function createSpaceApi({
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
     onEntityChanged,
 
-    signRequest: (req) => cma.signRequest(appId, req),
+    signRequest: makeReadOnlyGuardedMethod(readOnly, (req) => cma.signRequest(appId, req)),
   };
 
   function getCachedContentTypes() {

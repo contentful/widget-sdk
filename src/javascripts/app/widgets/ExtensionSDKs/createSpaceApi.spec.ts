@@ -61,6 +61,7 @@ const cma = {
   validateEntry: jest.fn(),
   validateRelease: jest.fn(),
   executeRelease: jest.fn(),
+  signRequest: jest.fn(),
 };
 
 const tagsRepo = {
