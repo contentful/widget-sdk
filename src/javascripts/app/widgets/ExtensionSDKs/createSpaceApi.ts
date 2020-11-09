@@ -120,8 +120,17 @@ export function createSpaceApi({
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
     onEntityChanged,
 
-    signRequest: makeReadOnlyGuardedMethod(readOnly, (req) => cma.signRequest(appId, req)),
+    signRequest: makeReadOnlyGuardedMethod(readOnly, makeSignRequest(appId)),
   };
+
+  function makeSignRequest(appId) {
+    return (req) => {
+      if (!appId) {
+        throw new Error('Can only sign request in app context');
+      }
+      return cma.signRequest(appId, req);
+    };
+  }
 
   function getCachedContentTypes() {
     return initialContentTypes.map(createContentTypeApi);
