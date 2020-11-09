@@ -6,20 +6,13 @@ import Forma from '@contentful/forma-36-react-components';
 
 jest.mock('@contentful/forma-36-react-components', () => ({}));
 
-jest.mock('core/NgRegistry', () => ({
-  getModule: jest.fn().mockReturnValue({
-    publishedCTs: {
-      fetch: jest.fn().mockResolvedValue({ data: { fields: [] } }),
-    },
-  }),
-}));
-
 Forma.Notification = { error: jest.fn() };
 
 const onLoading = jest.fn();
 const onUpdate = jest.fn();
 const fetchEntities = jest.fn();
 const getListQuery = ListQuery.getForEntries;
+const contentTypes = [];
 
 const listViewContext = {
   getView: jest.fn().mockReturnValue({}),
@@ -61,6 +54,7 @@ const createSearch = ({ entities, cache, view = {} } = {}) => {
     fetchEntities,
     keys,
     getListQuery,
+    contentTypes,
     listViewContext,
     paginator,
     cache,

@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields';
@@ -13,14 +12,13 @@ import { buildQuery as buildQueryFromUISearch } from './QueryBuilder';
  * @param {string} opts.searchText
  * @param {object} opts.order
  * @param {Paginator} opts.paginator
+ * @param {array} contentTypes
  * @returns {object}
  */
-export async function getForEntries(opts) {
-  const spaceContext = getModule('spaceContext');
+export function getForEntries({ opts, contentTypes }) {
   if (opts.contentTypeId) {
-    return spaceContext.publishedCTs
-      .fetch(opts.contentTypeId)
-      .then((contentType) => prepareEntityListQuery(contentType, opts));
+    const contentType = contentTypes.find((ct) => ct.sys.id === opts.contentTypeId);
+    return prepareEntityListQuery(contentType, opts);
   } else {
     return prepareEntityListQuery(null, opts);
   }
@@ -34,7 +32,7 @@ export async function getForEntries(opts) {
  * @param {Paginator} opts.paginator
  * @returns {object}
  */
-export async function getForAssets(opts) {
+export function getForAssets({ opts }) {
   return prepareEntityListQuery(assetContentType, opts);
 }
 /**
@@ -44,7 +42,7 @@ export async function getForAssets(opts) {
  * @param {Paginator} opts.paginator
  * @returns {object}
  */
-export async function getForUsers(opts) {
+export function getForUsers({ opts }) {
   const userContentType = {
     data: {},
     getId: _.constant(undefined),

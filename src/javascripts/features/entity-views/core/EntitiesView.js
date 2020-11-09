@@ -105,6 +105,7 @@ export const EntitiesView = ({
     cache: searchControllerProps.cache,
     getListQuery: searchControllerProps.getListQuery,
     keys: searchControllerProps.keys,
+    contentTypes: currentSpaceContentTypes,
   });
 
   const pageCount = paginator.getPageCount();
