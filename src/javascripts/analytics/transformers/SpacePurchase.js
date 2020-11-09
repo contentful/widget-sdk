@@ -16,6 +16,7 @@ const EVENTS = {
   PAYMENT_METHOD_CREATED: 'payment_method_created',
   CONFIRM_PURCHASE: 'confirm_purchase',
   SPACE_CREATED: 'space_created',
+  SPACE_TYPE_CHANGE: 'space_type_change',
   SPACE_TEMPLATE_CREATED: 'space_template_created',
   ERROR: 'error',
   CANCEL: 'cancel',
