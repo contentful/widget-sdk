@@ -43,7 +43,6 @@ export const createSearchController = ({
   cache,
   keys,
   getListQuery,
-  contentTypes,
   listViewContext,
   paginator,
 }) => {
@@ -137,7 +136,7 @@ export const createSearchController = ({
   async function updateEntities(chunkSize = null) {
     onLoading(true);
 
-    const query = getListQuery({ opts: getQueryOptions(), contentTypes });
+    const query = await getListQuery(getQueryOptions());
     try {
       let entities;
 

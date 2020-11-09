@@ -6,7 +6,6 @@ export const useSearchController = ({
   cache,
   listViewContext,
   getListQuery,
-  contentTypes = [],
   paginator,
   keys,
 }) => {
@@ -19,7 +18,6 @@ export const useSearchController = ({
         cache,
         fetchEntities,
         getListQuery,
-        contentTypes,
         keys,
         paginator,
         onUpdate: setEntities,
