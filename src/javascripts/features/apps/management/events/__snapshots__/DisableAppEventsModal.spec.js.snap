@@ -10,9 +10,19 @@ Object {
 <body
     class="Modal__body--open"
   >
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
     <div>
       <div />
     </div>
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
     <div
       class="Modal__Modal__portal___1AjJC"
     >

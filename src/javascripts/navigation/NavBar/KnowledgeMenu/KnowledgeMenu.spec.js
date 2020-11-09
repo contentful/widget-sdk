@@ -1,6 +1,6 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import React from 'react';
 import KnowledgeMenu from './KnowledgeMenu';
 
 const localStorage = getBrowserStorage('local');
@@ -10,34 +10,31 @@ describe('<KnowledgeMenu />', () => {
     localStorage.remove('hasSeenHelpMenu');
   });
 
-  it('should toggle the submenu when clicking on the icon', () => {
-    const { queryByTestId } = render(<KnowledgeMenu />);
+  it('should toggle the submenu when clicking on the icon', async () => {
+    const { findByTestId } = render(<KnowledgeMenu />);
 
-    const icon = queryByTestId('help-menu-button');
-
+    const icon = await findByTestId('help-menu-button');
     icon.click();
-
-    const helpCenterItem = queryByTestId('help-menu-help-center');
 
     // one item should suffice to make sure the submenu is opened
     // also checking by the item, is more accurate to make sure the users are seeing the menu
-    expect(helpCenterItem).toBeInTheDocument();
+    await expect(findByTestId('help-menu-help-center')).resolves.toBeDefined();
 
     icon.click();
 
-    expect(helpCenterItem).not.toBeInTheDocument();
+    await expect(findByTestId('help-menu-help-center')).rejects.toBeDefined();
   });
 
   it('should remove the notification badge after clicking on the menu once', async () => {
-    const { queryByTestId } = render(<KnowledgeMenu />);
+    const { findByTestId } = render(<KnowledgeMenu />);
 
-    const icon = queryByTestId('help-menu-button');
-    const badge = queryByTestId('help-menu-notification');
+    const icon = await findByTestId('help-menu-button');
 
-    expect(badge).toBeInTheDocument();
+    await expect(findByTestId('help-menu-notification')).resolves.toBeDefined();
 
     icon.click();
+    await wait();
 
-    expect(badge).not.toBeInTheDocument();
+    await expect(findByTestId('help-menu-notification')).rejects.toBeDefined();
   });
 });

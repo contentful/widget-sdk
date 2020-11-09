@@ -44,34 +44,37 @@ describe('ChangeEnvironmentModal', () => {
     );
   };
 
-  it('hides modal', () => {
-    const { getByTestId } = build({ modalOpen: false });
-    expect(() => getByTestId('changeenvironmentmodal.modal')).toThrow();
-    expect(() => getByTestId('changeenvironmentmodal.content')).toThrow();
+  it('hides modal', async () => {
+    const { findByTestId } = build({ modalOpen: false });
+    await expect(findByTestId('changeenvironmentmodal.modal')).rejects.toBeInstanceOf(Error);
+    await expect(findByTestId('changeenvironmentmodal.content')).rejects.toBeInstanceOf(Error);
   });
 
-  it('shows modal with disabled button', () => {
-    const { getByTestId } = build();
-    const modal = getByTestId('changeenvironmentmodal.modal');
+  it('shows modal with disabled button', async () => {
+    const { findByTestId } = build();
+    const modal = await findByTestId('changeenvironmentmodal.modal');
     expect(modal).toBeInTheDocument();
-    expect(getByTestId('changeenvironmentmodal.accept-btn')).toBeDisabled();
+    expect(await findByTestId('changeenvironmentmodal.accept-btn')).toBeDisabled();
   });
 
-  it('shows all items without aliases', () => {
-    const { getByTestId } = build();
-    getByTestId('changeenvironmentmodal.open-dropdown-btn').click();
-    expect(getByTestId('changeenvironmentmodal.current-alias').innerHTML).toContain('master');
-    expect(getByTestId('changeenvironmentmodal.current-environment').innerHTML).toContain(
+  it('shows all items without aliases', async () => {
+    const { findByTestId } = build();
+    (await findByTestId('changeenvironmentmodal.open-dropdown-btn')).click();
+
+    expect((await findByTestId('changeenvironmentmodal.current-alias')).innerHTML).toContain(
+      'master'
+    );
+    expect((await findByTestId('changeenvironmentmodal.current-environment')).innerHTML).toContain(
       'staging'
     );
-    expect(getByTestId('changeenvironmentmodal.dropdown').childNodes).toHaveLength(2);
+    expect((await findByTestId('changeenvironmentmodal.dropdown')).childNodes).toHaveLength(2);
   });
 
   it('lets the environment be selected', async () => {
-    const { getByTestId } = build();
-    getByTestId('changeenvironmentmodal.open-dropdown-btn').click();
-    getByTestId('changeenvironmentmodal.select-release-1').firstChild.click();
-    const acceptBtn = getByTestId('changeenvironmentmodal.accept-btn');
+    const { findByTestId } = build();
+    (await findByTestId('changeenvironmentmodal.open-dropdown-btn')).click();
+    (await findByTestId('changeenvironmentmodal.select-release-1')).firstChild.click();
+    const acceptBtn = await findByTestId('changeenvironmentmodal.accept-btn');
     expect(acceptBtn).not.toBeDisabled();
     acceptBtn.click();
     await wait(() => expect(setModalOpen).toHaveBeenCalledWith(false));
