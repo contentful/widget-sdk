@@ -8,10 +8,11 @@ import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
 import { RuleTagsSelection } from 'features/roles-permissions-management/components/RuleTagsSelection';
+import { getEntityName } from './RuleList';
 
 const { TAGS, NO_PATH_CONSTRAINT } = PolicyBuilderConfig;
 
-const contentTypesToOptions = (contentTypes) =>
+export const contentTypesToOptions = (contentTypes) =>
   [
     {
       id: PolicyBuilderConfig.ALL_CTS,
@@ -19,13 +20,36 @@ const contentTypesToOptions = (contentTypes) =>
     },
   ].concat(contentTypes.map(({ sys: { id }, name }) => ({ id, name })));
 
-const getEntityName = (entity) => {
-  if (entity === 'entry') {
-    return ['Entry', 'Entries'];
-  } else {
-    return ['Asset', 'Assets'];
-  }
-};
+export const actionsOptions = [
+  {
+    value: 'all',
+    text: 'All actions',
+  },
+  {
+    value: 'read',
+    text: 'Read',
+  },
+  {
+    value: 'update',
+    text: 'Edit',
+  },
+  {
+    value: 'create',
+    text: 'Create',
+  },
+  {
+    value: 'delete',
+    text: 'Delete',
+  },
+  {
+    value: 'archive',
+    text: 'Archive/Unarchive',
+  },
+  {
+    value: 'publish',
+    text: 'Publish/Unpublish',
+  },
+];
 
 const styles = {
   ruleList: css({
@@ -164,13 +188,13 @@ export class Rule extends React.Component {
           isDisabled={isDisabled}
           value={rule.action}
           onChange={onUpdateAttribute('action')}>
-          <Option value="all">All actions</Option>
-          <Option value="read">Read</Option>
-          <Option value="update">Edit</Option>
-          <Option value="create">Create</Option>
-          <Option value="delete">Delete</Option>
-          <Option value="archive">Archive/Unarchive</Option>
-          <Option value="publish">Publish/Unpublish</Option>
+          {actionsOptions.map(({ value, text }) => {
+            return (
+              <Option key={value} value={value}>
+                {text}
+              </Option>
+            );
+          })}
         </Select>
         <Select
           className={styles.select}
