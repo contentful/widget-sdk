@@ -141,7 +141,7 @@ export default function register() {
             });
 
             // temporary fix to rerender when this changes
-            // todo: change this once if sure that all accessChecker data is avalable at the time of initial render (suevalov)
+            // todo: change this once if sure that all accessChecker data is available at the time of initial render (suevalov)
             $scope.$watch(
               () => accessChecker && accessChecker.can('manage', 'Environments'),
               () => {
@@ -174,11 +174,30 @@ export default function register() {
 
         return ['$scope', '$state', '$stateParams'].concat(injectables).concat([
           function ($scope, $state, $stateParams, ...rest) {
+            function applyProps() {
+              const currentFullUrl = $state.href($state.current.name, $state.params, {
+                absolute: true,
+              });
+
+              const ngStateUrl = $state.current.url || '';
+              const ngStateBasePath = new URL(
+                currentFullUrl.slice(0, currentFullUrl.length - ngStateUrl.length)
+              ).pathname;
+
+              $scope.props = Object.assign(
+                { ngStateUrl, ngStateBasePath },
+                mapperFn(...rest),
+                $stateParams
+              );
+              $scope.$applyAsync();
+            }
+
+            $scope.$watch(() => $state.current.name, applyProps);
+
             $scope.context = {};
             $state.current.data = $scope.context;
             $scope.component = component;
-            $scope.props = Object.assign({}, mapperFn(...rest), $stateParams);
-            $scope.$applyAsync();
+            applyProps();
           },
         ]);
       }

@@ -124,6 +124,7 @@ export class RoleEditor extends React.Component {
     openEntitySelectorForEntity: PropTypes.func.isRequired,
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
+    ngStateUrl: PropTypes.string.isRequired,
   };
 
   static contextType = SpaceEnvContext;
@@ -156,7 +157,6 @@ export class RoleEditor extends React.Component {
       saving: false,
       dirty: isDuplicate,
       internal,
-      selectedTab: RoleTabs.Details,
     };
   }
 
@@ -372,13 +372,11 @@ export class RoleEditor extends React.Component {
   };
 
   navigateToList() {
-    return Navigator.go({ path: '^.list' });
+    return Navigator.go({ path: '^.^.list' });
   }
 
   navigateToTab = (tab) => {
-    this.setState({ selectedTab: tab });
-    //TODO: make it route based, and not local state
-    //return Navigator.go({ path: `^.${tab}` });
+    Navigator.go({ path: `^.${tab}` });
   };
 
   render() {
@@ -389,9 +387,10 @@ export class RoleEditor extends React.Component {
       hasCustomRolesFeature,
       hasContentTagsFeature,
       hasEnvironmentAliasesEnabled,
+      ngStateUrl,
     } = this.props;
 
-    const { saving, internal, isLegacy, dirty, selectedTab } = this.state;
+    const { saving, internal, isLegacy, dirty } = this.state;
 
     const showTranslator = startsWith(role.name, 'Translator');
 
@@ -401,6 +400,8 @@ export class RoleEditor extends React.Component {
     } else {
       title = internal.name || 'Untitled';
     }
+
+    const selectedTab = ngStateUrl.substring(1);
 
     return (
       <>

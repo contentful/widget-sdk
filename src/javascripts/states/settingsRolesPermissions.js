@@ -69,6 +69,7 @@ const newRole = {
 };
 
 const detail = {
+  redirectTo: '.details',
   name: 'detail',
   url: '/:roleId',
   resolve: {
@@ -79,6 +80,24 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
     ],
   },
+  children: [
+    {
+      name: 'details',
+      url: '/details',
+    },
+    {
+      name: 'content',
+      url: '/content',
+    },
+    {
+      name: 'media',
+      url: '/media',
+    },
+    {
+      name: 'permissions',
+      url: '/permissions',
+    },
+  ],
   component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
