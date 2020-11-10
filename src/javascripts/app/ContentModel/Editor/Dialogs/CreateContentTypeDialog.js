@@ -1,19 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import ContentTypeForm from './ContentTypeForm';
 
 export function CreateContentTypeForm(props) {
   return (
-    <ContentTypeForm
-      {...props}
-      title="Create new content type"
-      confirmLabel="Create"
-      cancelLabel="Cancel"
-      originalDescription=""
-      originalName=""
-      namePlaceholder="For example Product, Blog Post, Author"
-    />
+    <SpaceEnvContextProvider>
+      <CurrentSpaceAPIClientProvider>
+        <ContentTypeForm
+          {...props}
+          title="Create new content type"
+          confirmLabel="Create"
+          cancelLabel="Cancel"
+          originalDescription=""
+          originalName=""
+          originalAssembly={false}
+          namePlaceholder="For example Product, Blog Post, Author"
+        />
+      </CurrentSpaceAPIClientProvider>
+    </SpaceEnvContextProvider>
   );
 }
 

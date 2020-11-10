@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import { CheckboxField, Heading } from '@contentful/forma-36-react-components';
 import { SizeValidation } from './validations/SizeValidation';
@@ -10,6 +11,7 @@ import { LinkedEntitiesValidation } from './validations/LinkedEntitiesValidation
 import { AssetFileSizeValidation } from './validations/AssetFileSizeValidation';
 import { AssetDimmensionsValidation } from './validations/AssetDimmensionsValidation';
 import { FormFieldsType } from 'features/content-model-editor/field-dialog/utils/PropTypes';
+import { useAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
 import { styles } from './styles';
 
 const ValidationTabComponent = ({
@@ -21,6 +23,8 @@ const ValidationTabComponent = ({
   widgetSettings,
   availableWidgets,
 }) => {
+  const isAssemblyProductCatalogFlagEnabled = useAssemblyTypesProductCatalogFlag();
+
   return (
     <Fragment>
       {ctField.type !== 'RichText' && (
@@ -47,7 +51,7 @@ const ValidationTabComponent = ({
                 })
               }
               inputProps={{
-                onBlur: () => {},
+                onBlur: noop,
               }}
             />
           )}
@@ -131,6 +135,28 @@ const ValidationTabComponent = ({
               validation={fields.assetImageDimensions}
               onChange={onChange}
               onBlur={onBlur}
+            />
+          )}
+          {isAssemblyProductCatalogFlagEnabled && fields.relationshipType && (
+            <CheckboxField
+              className={styles.marginBottomS}
+              labelText={fields.relationshipType.value.name}
+              helpText={fields.relationshipType.value.helpText}
+              id="field-validations--relationshipType"
+              checked={fields.relationshipType.value.enabled}
+              onChange={(e) =>
+                onChange('relationshipType', {
+                  ...fields.relationshipType.value,
+                  enabled: e.target.checked,
+                  // Note: although relationshipType is an array value,
+                  // for the time being the only possible value is "Composition"
+                  // so it is visualized as a checkbox
+                  settings: e.target.checked ? ['Composition'] : null,
+                })
+              }
+              inputProps={{
+                onBlur: noop,
+              }}
             />
           )}
         </Fragment>

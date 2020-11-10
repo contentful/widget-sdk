@@ -6,6 +6,7 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFact
 
 // Gatekeeper Product Catalog features
 export const FEATURES = {
+  ASSEMBLY_TYPES: 'assembly_types',
   ENVIRONMENT_USAGE_ENFORCEMENT: 'environment_usage_enforcements',
   ENVIRONMENT_ALIASING: 'environment_aliasing',
   CONTENT_WORKFLOW_TASKS: 'tasks',

@@ -11,6 +11,7 @@ export const TASKS_DASHBOARD = 'tasks-dashboard'; // Oct 23, 2019
 export const MFA_API = 'mfa-api'; // Oct 23, 2019
 export const ENTRY_REFERENCES_ENDPOINT = 'query-references';
 export const IMMEDIATE_RELEASE = 'immediate-release';
+export const ASSEMBLY_TYPES = 'assembly-types';
 
 // Get an object with the alpha feature header with one or more features
 export const getAlphaHeader = (...features) => ({

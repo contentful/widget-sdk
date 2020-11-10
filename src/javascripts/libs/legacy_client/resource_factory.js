@@ -1,9 +1,12 @@
 export default function createMethods(constructor, path) {
   const methods = {
-    getById: function (id) {
+    getById: function (id, headers) {
       if (!id) throw new Error('No id provided');
 
-      return this.endpoint(path, id).get().then(this.childResourceFactory(constructor, path));
+      return this.endpoint(path, id)
+        .headers(headers)
+        .get()
+        .then(this.childResourceFactory(constructor, path));
     },
 
     getAll: function () {

@@ -24,6 +24,7 @@ const validationSettings = {
   unique: true,
   linkContentType: null,
   linkMimetypeGroup: null,
+  relationshipType: null,
   assetFileSize: { min: null, max: null },
   assetImageDimensions: {
     width: { min: null, max: null },
@@ -48,6 +49,7 @@ const validationLabels = {
   linkMimetypeGroup: 'Accept only specified file types',
   assetFileSize: 'Accept only specified file size',
   assetImageDimensions: 'Accept only specified image dimensions',
+  relationshipType: 'Reference type must be Composition',
 };
 
 const validationHelpText = {
@@ -68,6 +70,8 @@ const validationHelpText = {
     "You won't be able to publish an entry if the field value is not in the list of specified values",
   linkContentType: 'Make this field only accept entries from specified content type(s)',
   linkMimetypeGroup: 'Make this field only accept specified file types',
+  relationshipType:
+    'The referenced entry will share the same life cycle as this entry in Web Creator',
   assetFileSize: 'Specify a minimum and/or maximum allowed file size',
   assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension',
 };
@@ -100,11 +104,14 @@ const validatedNodeTypes = {
 const nodeValidationLabels = {
   size: 'Limit number of entries',
   linkContentType: 'Accept only specified entry type',
+  relationshipType: 'Reference type must be Composition',
 };
 
 const nodeValidationHelpText = {
   size: 'Specify a minimum and/or maximum allowed number of entries',
   linkContentType: 'Make this link type only accept entries from specified content type(s)',
+  relationshipType:
+    'The referenced entry will share the same life cycle as this entry in Web Creator',
 };
 
 const validationsOrder = [
@@ -118,6 +125,7 @@ const validationsOrder = [
   'linkMimeType',
   'assetFileSize',
   'in',
+  'relationshipType',
 ];
 
 const richTextOptionsLabels = {

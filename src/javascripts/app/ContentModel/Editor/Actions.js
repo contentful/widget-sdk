@@ -237,9 +237,11 @@ export default function create($scope, contentTypeIds) {
       return $q.reject();
     }
 
+    const spaceId = spaceContext.getId();
+
     return (
       $scope.contentType
-        .save()
+        .save({}, spaceId)
         .then((contentType) => spaceContext.publishedCTs.publish(contentType))
         .then((published) => {
           $scope.publishedContentType = cloneDeep(published);

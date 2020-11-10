@@ -1,17 +1,30 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, TextField, Form } from '@contentful/forma-36-react-components';
+import {
+  CheckboxField,
+  Modal,
+  Button,
+  TextField,
+  Form,
+} from '@contentful/forma-36-react-components';
+import { useAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 const DialogPropTypes = {
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   originalName: PropTypes.string.isRequired,
   originalDescription: PropTypes.string,
+  originalAssembly: PropTypes.bool,
 };
 
 export function EditContentForm(props) {
   const [name, setName] = useState(props.originalName);
   const [description, setDescription] = useState(props.originalDescription);
+  const [assembly, setAssembly] = useState(props.originalAssembly || false);
+
+  const isAssemblyProductCatalogFlagEnabled = useAssemblyTypesProductCatalogFlag();
 
   const onEditCancel = () => {
     props.onClose(false);
@@ -21,6 +34,7 @@ export function EditContentForm(props) {
     props.onConfirm({
       name,
       description,
+      ...(isAssemblyProductCatalogFlagEnabled && { assembly }),
     });
   };
 
@@ -61,6 +75,16 @@ export function EditContentForm(props) {
               setDescription(e.target.value);
             }}
           />
+          {isAssemblyProductCatalogFlagEnabled && (
+            <CheckboxField
+              checked={assembly}
+              onChange={() => setAssembly((oldAssembly) => !oldAssembly)}
+              name="contentTypeIsAssembly"
+              id="contentTypeIsAssembly"
+              labelText="Top level content type"
+              helpText="This content type represents a top level domain object and is composed from other entries"
+            />
+          )}
         </Form>
       </Modal.Content>
       <Modal.Controls>
@@ -89,7 +113,13 @@ export default function EditContentTypeDialog(props) {
       isShown={props.isShown}
       onClose={() => props.onClose(false)}
       allowHeightOverflow>
-      {() => <EditContentForm {...props} />}
+      {() => (
+        <SpaceEnvContextProvider>
+          <CurrentSpaceAPIClientProvider>
+            <EditContentForm {...props} />
+          </CurrentSpaceAPIClientProvider>
+        </SpaceEnvContextProvider>
+      )}
     </Modal>
   );
 }

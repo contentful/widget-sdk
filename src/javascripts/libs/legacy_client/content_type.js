@@ -1,3 +1,5 @@
+import { fetchAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
+import { getAlphaHeader, ASSEMBLY_TYPES } from 'alphaHeaders';
 import Entity from './entity';
 import mixinPublishable from './publishable';
 import _ from 'lodash';
@@ -42,6 +44,16 @@ ContentType.prototype.endpoint = function (...args) {
     endpoint = endpoint.putHeaders({ 'X-Contentful-Version': this.getVersion() });
   }
   return endpoint;
+};
+
+ContentType.prototype.save = async function (headers = {}, spaceId = '') {
+  const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+  const assemblyHeaders = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
+  const combinedHeaders = {
+    ...headers,
+    ...assemblyHeaders,
+  };
+  return Entity.prototype.save.call(this, combinedHeaders);
 };
 
 ContentType.prototype.publish = function (version) {
@@ -113,10 +125,14 @@ ContentType.prototype.getName = function () {
 
 const factoryMethods = createResourceFactoryMethods(ContentType, 'content_types');
 ContentType.factoryMethods = {
-  getContentType: factoryMethods.getById,
+  getContentType: async function (id) {
+    const spaceId = _.get(this, ['data', 'sys', 'id'], '');
+    const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+    const headers = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
+    return factoryMethods.getById.call(this, id, headers);
+  },
   newContentType: factoryMethods.new,
   createContentType: factoryMethods.create,
-
   getPublishedContentTypes: function (query) {
     return this.endpoint('public/content_types')
       .payload(query)

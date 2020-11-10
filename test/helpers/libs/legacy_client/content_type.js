@@ -1,10 +1,6 @@
 import sinon from 'sinon';
 import describeEntity from './entity';
-import {
-  describeCreateResource,
-  describeNewResource,
-  describeVersionedResource,
-} from './space_resource';
+import { describeNewResource } from './space_resource';
 
 /**
  * Adds ContentType specs if called.
@@ -14,9 +10,7 @@ import {
  */
 export default function describeContentType() {
   const contentType = { singular: 'content_type', plural: 'content_types' };
-  describeCreateResource(contentType);
   describeNewResource(contentType);
-  describeVersionedResource(contentType);
 
   describeEntity(contentType, function setupAsset() {
     beforeEach(async function () {
@@ -229,38 +223,6 @@ export default function describeContentType() {
         this.contentType.data.name = 'A name';
         expect(this.contentType.getName()).toEqual('A name');
       });
-    });
-  });
-
-  describe('.getPublishedContentTypes()', function () {
-    const contentTypeData = Object.freeze({
-      sys: Object.freeze({
-        id: 'cid',
-        type: 'ContentType',
-      }),
-    });
-    const contentTypeList = Object.freeze({
-      sys: { type: 'Array' },
-      total: 123,
-      items: [contentTypeData],
-    });
-
-    it('sends GET request', async function () {
-      this.request.respond(contentTypeList);
-      await this.space.getPublishedContentTypes();
-      sinon.assert.calledWith(this.request, {
-        method: 'GET',
-        url: '/spaces/42/public/content_types',
-      });
-    });
-
-    it('retrieves object from identity map', async function () {
-      this.request.respond(contentTypeData);
-      const contentType1 = await this.space.getContentType('cid');
-
-      this.request.respond(contentTypeList);
-      const [contentType2] = await this.space.getPublishedContentTypes();
-      expect(contentType1).toEqual(contentType2);
     });
   });
 }
