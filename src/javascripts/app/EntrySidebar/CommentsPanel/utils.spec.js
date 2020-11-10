@@ -1,6 +1,5 @@
 import { getUserSync } from 'services/TokenStore';
 import * as utils from './utils';
-import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock('services/TokenStore', () => ({
   getUserSync: jest.fn(),
@@ -16,9 +15,17 @@ const mockComment = {
   },
 };
 
+const mockSpace = {
+  data: {
+    spaceMember: {
+      admin: true,
+    },
+  },
+};
+
 describe('Comments utils', () => {
   const setAdmin = (isAdmin) => {
-    spaceContextMocked.getData.mockReturnValue(isAdmin);
+    mockSpace.data.spaceMember.admin = isAdmin;
   };
   const setIsAuthor = (isAuthor) => {
     const id = isAuthor ? mockComment.sys.createdBy.sys.id : 'notthesameid';
@@ -26,7 +33,6 @@ describe('Comments utils', () => {
   };
 
   beforeEach(() => {
-    spaceContextMocked.getData.mockReset();
     getUserSync.mockReset();
   });
 
@@ -48,7 +54,7 @@ describe('Comments utils', () => {
     it('allows removing if user is the author of the comment', () => {
       setIsAuthor(true);
       setAdmin(false);
-      const result = utils.canRemoveComment(mockComment);
+      const result = utils.canRemoveComment(mockSpace, mockComment);
       expect(result).toBe(true);
     });
 
@@ -56,14 +62,14 @@ describe('Comments utils', () => {
       setIsAuthor(false);
       setAdmin(false);
 
-      const result = utils.canRemoveComment(mockComment);
+      const result = utils.canRemoveComment(mockSpace, mockComment);
       expect(result).toBe(false);
     });
 
     it('allows removing if user is the space admin', () => {
       setIsAuthor(false);
       setAdmin(true);
-      const result = utils.canRemoveComment(mockComment);
+      const result = utils.canRemoveComment(mockSpace, mockComment);
       expect(result).toBe(true);
     });
   });

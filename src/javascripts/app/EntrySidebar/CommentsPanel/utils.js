@@ -1,6 +1,6 @@
 import { getUserSync } from 'services/TokenStore';
 import { get } from 'lodash';
-import { getModule } from 'core/NgRegistry';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 export function isCommentAuthor(comment) {
   const authorId = get(comment, 'sys.createdBy.sys.id');
@@ -8,10 +8,8 @@ export function isCommentAuthor(comment) {
   return authorId === userId;
 }
 
-export function canRemoveComment(comment) {
-  const spaceContext = getModule('spaceContext');
-  const isAdmin = spaceContext.getData('spaceMember.admin', false);
-  return isAdmin || isCommentAuthor(comment);
+export function canRemoveComment(space, comment) {
+  return isAdmin(space) || isCommentAuthor(comment);
 }
 
 // Get a flat list of comments and return a bidimensional

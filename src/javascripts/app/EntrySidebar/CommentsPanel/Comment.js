@@ -14,6 +14,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { remove as removeComment } from 'data/CMA/CommentsRepo';
 import { canRemoveComment } from './utils';
 import * as types from './CommentPropTypes';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export const styles = {
   comment: css({
@@ -134,8 +135,9 @@ function renderUserName(user) {
 
 function CommentActions({ comment, onRemove, hasReplies }) {
   const [showRemovalDialog, setShowRemovalDialog] = useState(false);
+  const { currentSpace } = useSpaceEnvContext();
 
-  if (hasReplies || !canRemoveComment(comment)) return null;
+  if (hasReplies || !canRemoveComment(currentSpace, comment)) return null;
 
   return (
     <React.Fragment>
