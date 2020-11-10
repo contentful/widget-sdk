@@ -1,6 +1,5 @@
 import { getFirstAccessibleSref } from './SectionAccess';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import * as spaceContextMocked from 'ng/spaceContext';
 
 const mockAllTrue = {
   contentType: true,
@@ -22,9 +21,49 @@ jest.mock('access_control/AccessChecker', () => {
   };
 });
 
+const adminSpace = {
+  data: {
+    spaceMember: {
+      admin: true,
+      roles: [],
+    },
+    activatedAt: null,
+  },
+};
+
+const adminActivatedSpace = {
+  data: {
+    spaceMember: {
+      admin: true,
+      roles: [],
+    },
+    activatedAt: 'activatedAt',
+  },
+};
+
+const customRoleSpace = {
+  data: {
+    spaceMember: {
+      admin: false,
+      roles: [{ name: 'Custom' }],
+    },
+    activatedAt: 'activatedAt',
+  },
+};
+
+const authorSpace = {
+  data: {
+    spaceMember: {
+      admin: false,
+      roles: [{ name: 'Author' }],
+    },
+    activatedAt: 'activatedAt',
+  },
+};
+
 describe('#getFirstAccessibleSref', () => {
   it('handles all-true scenario', () => {
-    expect(getFirstAccessibleSref()).toBe('.entries.list');
+    expect(getFirstAccessibleSref(customRoleSpace)).toBe('.entries.list');
   });
 
   it('handles some-true scenario', () => {
@@ -32,58 +71,28 @@ describe('#getFirstAccessibleSref', () => {
       ...mockAllTrue,
       entry: false,
     }));
-    expect(getFirstAccessibleSref()).toBe('.content_types.list');
+    expect(getFirstAccessibleSref(customRoleSpace)).toBe('.content_types.list');
   });
 
   it('handles all-false scenario', () => {
     getSectionVisibility.mockImplementationOnce(() => ({}));
-    expect(getFirstAccessibleSref()).toBeNull();
+    expect(getFirstAccessibleSref(customRoleSpace)).toBeNull();
   });
 
   it('handles all-false scenario with extra key', () => {
     getSectionVisibility.mockImplementationOnce(() => ({ extra: true }));
-    expect(getFirstAccessibleSref()).toBeNull();
+    expect(getFirstAccessibleSref(customRoleSpace)).toBeNull();
   });
 
   it('returns home screen sref when not activated and admin', () => {
-    spaceContextMocked.getData.mockImplementation((key) => {
-      if (key === 'spaceMember.admin') {
-        return true;
-      }
-      if (key === 'activatedAt') {
-        return null;
-      }
-    });
-
-    expect(getFirstAccessibleSref()).toBe('.home');
-    expect(spaceContextMocked.getData).toHaveBeenCalledTimes(3);
+    expect(getFirstAccessibleSref(adminSpace)).toBe('.home');
   });
 
   it('returns first available screen sref when activated and admin', () => {
-    spaceContextMocked.getData.mockImplementation((key) => {
-      if (key === 'spaceMember.admin') {
-        return true;
-      }
-      if (key === 'activatedAt') {
-        return 'activatedAt';
-      }
-    });
-
-    expect(getFirstAccessibleSref()).toBe('.entries.list');
-    expect(spaceContextMocked.getData).toHaveBeenCalledTimes(3);
+    expect(getFirstAccessibleSref(adminActivatedSpace)).toBe('.entries.list');
   });
 
   it('returns home screen sref when user is author or editor', () => {
-    spaceContextMocked.getData.mockImplementation((key) => {
-      if (key === 'spaceMember.roles') {
-        return [{ name: 'Author' }];
-      }
-      if (key === 'activatedAt') {
-        return 'activatedAt';
-      }
-    });
-
-    expect(getFirstAccessibleSref()).toBe('.home');
-    expect(spaceContextMocked.getData).toHaveBeenCalledTimes(3);
+    expect(getFirstAccessibleSref(authorSpace)).toBe('.home');
   });
 });

@@ -106,8 +106,9 @@ const spaceDetail = {
     '$scope',
     '$state',
     'spaceData',
-    ($scope, $state, spaceData) => {
-      const accessibleSref = getFirstAccessibleSref();
+    'spaceContext',
+    ($scope, $state, spaceData, spaceContext) => {
+      const accessibleSref = getFirstAccessibleSref(spaceContext.space);
 
       if (isHibernated(spaceData)) {
         $state.go('.hibernation');
