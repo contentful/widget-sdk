@@ -1,10 +1,9 @@
-import React, { useCallback, useState } from 'react';
-import moment from 'moment';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import ScheduledAction from 'app/ScheduledActions/ScheduledActionAction';
-import JobDialog from './JobDialog';
+import JobDialog, { validateScheduleForm } from './JobDialog';
 import { formatScheduledAtDate } from './utils';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
@@ -24,75 +23,47 @@ function ScheduledActionWidgetJobDialog({
 
   const client = useCurrentSpaceAPIClient();
 
-  const validateForm = useCallback(
-    (onFormValid, { date, time, timezone }) => {
-      if (
-        pendingJobs &&
-        pendingJobs.length > 0 &&
-        pendingJobs.find(
-          (job) =>
-            job.scheduledFor.datetime ===
-            moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
-        )
-      ) {
-        setValidationError(
-          'There is already an action scheduled for the selected time, please review the current schedule.'
-        );
-        return;
-      } else {
-        setValidationError(null);
-      }
-
-      if (moment(formatScheduledAtDate({ date, time, timezone })).isAfter(moment.now())) {
-        setValidationError(null);
-        if (onFormValid) {
-          onFormValid();
-        }
-      } else {
-        setValidationError("The selected time can't be in the past");
-      }
-    },
-    [pendingJobs]
-  );
-
-  function handleSubmit({ action, date, time, timezone }) {
+  async function handleSubmit({ action, date, time, timezone }) {
     const truncatedTitle =
       entityTitle.length > ENTITY_TITLE_TRUNCATED_LENGTH
         ? `${entityTitle.slice(0, ENTITY_TITLE_TRUNCATED_LENGTH)}...`
         : entityTitle;
-    validateForm(
-      async () => {
-        if (action === ScheduledAction.Publish) {
-          try {
-            if (entity.sys.type === 'Entry') {
-              await client.validateEntry(entity);
-            } else {
-              const isValid = validator.run();
-              if (!isValid) {
-                Notification.error(
-                  `Error scheduling ${truncatedTitle}: Validation failed. Please check the individual fields for errors.`
-                );
-                onCancel();
-                return;
-              }
-            }
-          } catch (e) {
-            validator.setApiResponseErrors(e);
+    const validationErrorMessage = validateScheduleForm(pendingJobs, { date, time, timezone });
+    setValidationError(validationErrorMessage);
+
+    if (validationErrorMessage) {
+      return;
+    }
+
+    if (action === ScheduledAction.Publish) {
+      try {
+        if (entity.sys.type === 'Entry') {
+          await client.validateEntry(entity);
+        } else {
+          const isValid = validator.run();
+          if (!isValid) {
             Notification.error(
               `Error scheduling ${truncatedTitle}: Validation failed. Please check the individual fields for errors.`
             );
+            onCancel();
             return;
           }
         }
-        onCreate(
-          {
-            scheduledAt: formatScheduledAtDate({ date, time, timezone }),
-            action,
-          },
-          timezone
+      } catch (e) {
+        validator.setApiResponseErrors(e);
+        Notification.error(
+          `Error scheduling ${truncatedTitle}: Validation failed. Please check the individual fields for errors.`
         );
+        return;
+      }
+    }
+
+    onCreate(
+      {
+        scheduledAt: formatScheduledAtDate({ date, time, timezone }),
+        action,
       },
-      { date, time, timezone }
+      timezone
     );
   }
 

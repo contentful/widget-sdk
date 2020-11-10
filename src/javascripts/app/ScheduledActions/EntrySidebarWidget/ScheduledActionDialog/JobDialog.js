@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
+import moment from 'moment';
+import momentTimezone from 'moment-timezone';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -38,7 +39,7 @@ const styles = {
 };
 
 function TimezoneNote({ date, time, timezone }) {
-  const localTimezoneName = moment.tz.guess();
+  const localTimezoneName = momentTimezone.tz.guess();
 
   return (
     <Note
@@ -47,7 +48,7 @@ function TimezoneNote({ date, time, timezone }) {
       noteType="primary"
       title="Timezone changed">
       The scheduled time you have selected will be:{' '}
-      {moment(formatScheduledAtDate({ date, time, timezone })).format(
+      {momentTimezone(formatScheduledAtDate({ date, time, timezone })).format(
         'ddd, DD MMM YYYY [at] h:mm A'
       )}
       <br />
@@ -72,8 +73,8 @@ function JobDialog({
   validationError,
   linkType,
 }) {
-  const now = moment(Date.now());
-  const currentTimezone = moment.tz.guess();
+  const now = momentTimezone(Date.now());
+  const currentTimezone = momentTimezone.tz.guess();
   const suggestedDate = getSuggestedDate(pendingJobs, now);
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
@@ -86,7 +87,7 @@ function JobDialog({
 
   function getSuggestedDate() {
     return pendingJobs && pendingJobs.length !== 0
-      ? moment(pendingJobs[0].scheduledFor.datetime).add(1, 'hours').startOf('hour')
+      ? momentTimezone(pendingJobs[0].scheduledFor.datetime).add(1, 'hours').startOf('hour')
       : now.add(1, 'hours').startOf('hour');
   }
 
@@ -141,11 +142,11 @@ function JobDialog({
               <FieldGroup row>
                 <DatePicker
                   onChange={(date) => {
-                    setDate(moment(date).format('YYYY-MM-DD'));
+                    setDate(momentTimezone(date).format('YYYY-MM-DD'));
                   }}
                   labelText={actionToLabelText(action)}
                   required
-                  value={moment(date).toDate()}
+                  value={momentTimezone(date).toDate()}
                   minDate={now.toDate()}
                   data-test-id="date"
                 />
@@ -213,3 +214,23 @@ JobDialog.propTypes = {
 };
 
 export default JobDialog;
+
+export const validateScheduleForm = (pendingScheduledActions, { date, time, timezone }) => {
+  if (
+    pendingScheduledActions &&
+    pendingScheduledActions.length > 0 &&
+    pendingScheduledActions.find(
+      (job) =>
+        job.scheduledFor.datetime ===
+        moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
+    )
+  ) {
+    return 'There is already an action scheduled for the selected time, please review the current schedule.';
+  }
+
+  if (moment(formatScheduledAtDate({ date, time, timezone })).isBefore(moment.now())) {
+    return "The selected time can't be in the past";
+  }
+
+  return null;
+};

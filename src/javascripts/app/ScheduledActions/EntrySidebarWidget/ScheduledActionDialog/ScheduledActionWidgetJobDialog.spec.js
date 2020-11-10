@@ -128,10 +128,11 @@ describe('ScheduledActionDialog', () => {
   });
 
   it('prevents to schedule a publication if selected date is in the past', async () => {
-    DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).subtract(1, 'hours'));
+    DateMocks.mockNow(dateNowSpy, moment(Date.now()).subtract(2, 'hours'));
 
     const [renderResult, props] = build(createEntry());
 
+    DateMocks.mockNow(dateNowSpy, '2017-06-18T00:00:00.000+00:00');
     await schedulePublication(renderResult);
     expect(renderResult.getByTestId('job-dialog-validation-message')).toBeInTheDocument();
     expect(props.onCreate).not.toHaveBeenCalled();
@@ -222,7 +223,7 @@ describe('ScheduledActionDialog', () => {
 async function schedulePublication(container) {
   const cta = container.getByTestId('schedule-publication');
   fireEvent.click(cta);
-  await wait();
+  // await wait();
 }
 
 function createEntry(entry = {}) {
