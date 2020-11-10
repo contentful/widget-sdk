@@ -1,27 +1,13 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import {
-  Button,
-  Dropdown,
-  DropdownList,
-  DropdownListItem,
-  Paragraph,
-  TextInput,
-  Tooltip,
-} from '@contentful/forma-36-react-components';
+import { Button, Paragraph, TextInput, Tooltip } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  useContentLevelPermissions,
-  useFilteredTags,
-  useReadTags,
-  useToggle,
-} from 'features/content-tags/core/hooks';
+import { useFilteredTags, useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
 import { TagsFeedbackLink } from 'features/content-tags/core/components/TagsFeedbackLink';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
-import { TagType } from 'features/content-tags/core/TagType';
 
 const styles = {
   search: css({
@@ -61,9 +47,6 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
   const { total } = useReadTags();
   const { search, setSearch, setSkip } = useFilteredTags();
 
-  const [isDropDownOpen, toggleDropDown] = useToggle();
-  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
-
   const onSearch = useCallback(
     (event) => {
       setSkip(0);
@@ -85,57 +68,18 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
             {children}
           </Tooltip>
         )}>
-        {contentLevelPermissionsEnabled ? (
-          <div className={'publish-buttons-row'}>
-            <Button
-              onClick={() => {
-                onCreate(TagType.Default);
-              }}
-              disabled={total >= TAGS_PER_SPACE}
-              buttonType="primary"
-              className={'primary-publish-button'}
-              testId="tags.add">
-              Create Tag
-            </Button>
-            <Dropdown
-              className="secondary-publish-button-wrapper"
-              position="bottom-right"
-              isOpen={isDropDownOpen}
-              onClose={toggleDropDown}
-              toggleElement={
-                <Button
-                  className="secondary-publish-button"
-                  buttonType="primary"
-                  indicateDropdown
-                  onClick={toggleDropDown}
-                />
-              }>
-              <DropdownList>
-                <DropdownListItem
-                  onClick={() => {
-                    onCreate(TagType.Access);
-                    toggleDropDown();
-                  }}
-                  disabled={total >= TAGS_PER_SPACE}>
-                  Create access tag
-                </DropdownListItem>
-              </DropdownList>
-            </Dropdown>
-          </div>
-        ) : (
-          <Button
-            onClick={() => {
-              onCreate(TagType.Default);
-            }}
-            disabled={total >= TAGS_PER_SPACE}
-            buttonType="primary"
-            testId="tags.add">
-            Create Tag
-          </Button>
-        )}
+        <Button
+          onClick={() => {
+            onCreate();
+          }}
+          disabled={total >= TAGS_PER_SPACE}
+          buttonType="primary"
+          testId="tags.add">
+          Create Tag
+        </Button>
       </ConditionalWrapper>
     );
-  }, [total, onCreate, isDropDownOpen, toggleDropDown, contentLevelPermissionsEnabled]);
+  }, [total, onCreate]);
 
   return (
     <div className={styles.actionsWrapper}>

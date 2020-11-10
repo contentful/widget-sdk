@@ -1,10 +1,9 @@
 function create(spaceEndpoint, environmentId) {
-  async function createTag(id, name, tagType, version) {
+  async function createTag(id, name, version) {
     const data = {
       name,
       sys: {
         id,
-        tagType,
       },
     };
     return await spaceEndpoint(
@@ -27,8 +26,8 @@ function create(spaceEndpoint, environmentId) {
     });
   }
 
-  async function updateTag(id, name, tagType, version) {
-    return createTag(id, name, tagType, version);
+  async function updateTag(id, name, version) {
+    return createTag(id, name, version);
   }
 
   async function deleteTag(id, version) {

@@ -102,7 +102,7 @@ function UpdateTagModal({ isShown, onClose, tag }) {
   const onSubmit = useCallback(async () => {
     const latestTag = getTag(tag.sys.id);
     const currentTagVersion = latestTag ? latestTag.sys.version : tag.sys.version;
-    await updateTag(tag.sys.id, name, tag.sys.tagType, currentTagVersion);
+    await updateTag(tag.sys.id, name, currentTagVersion);
     await reset();
   }, [tag, name, reset, updateTag, getTag]);
 

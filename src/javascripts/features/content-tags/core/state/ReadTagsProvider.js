@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
-import { TagType } from 'features/content-tags/core/TagType';
 import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
@@ -23,12 +22,7 @@ function ReadTagsProvider({ children }) {
         if (result.total > length) {
           return [...result.items, ...(await getResult(length))];
         } else {
-          return result.items.map((item) => {
-            if (!item.sys.tagType) {
-              item.sys.tagType = TagType.Default;
-            }
-            return item;
-          });
+          return result.items;
         }
       };
       return getResult();

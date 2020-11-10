@@ -205,16 +205,6 @@ describe('A CreateTagModal', () => {
       )
     ).toBeInTheDocument();
   });
-
-  it('has default tag type', async () => {
-    const { queries } = setup();
-    expect(queries.getByText('Create default tag')).toBeInTheDocument();
-  });
-
-  it('has access tag type', async () => {
-    const { queries } = setup({ tagType: 'Access', isShown: true, onClose: jest.fn() });
-    expect(queries.getByText('Create access tag')).toBeInTheDocument();
-  });
 });
 
 function setup(props = { isShown: true, onClose: jest.fn() }, tagsRepo = {}) {

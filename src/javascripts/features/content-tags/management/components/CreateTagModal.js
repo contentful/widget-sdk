@@ -15,7 +15,6 @@ import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
 import { GroupingHint } from 'features/content-tags/management/components/GroupingHint';
-import { TagType, TagTypePropType } from 'features/content-tags/core/TagType';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -65,7 +64,7 @@ function validate(state, nameExistsValidator, idExistsValidator) {
   return errors;
 }
 
-function CreateTagModal({ isShown, onClose, tagType = TagType.Default }) {
+function CreateTagModal({ isShown, onClose }) {
   const [{ name, id, idTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
   const [continueCreation, setContinueCreation] = useState(false);
   const { reset, nameExists, idExists, total } = useReadTags();
@@ -112,7 +111,7 @@ function CreateTagModal({ isShown, onClose, tagType = TagType.Default }) {
 
   const onSubmit = async (doContinue) => {
     setContinueCreation(doContinue);
-    await createTag(id, name, tagType);
+    await createTag(id, name);
   };
 
   const onCancel = () => {
@@ -136,7 +135,7 @@ function CreateTagModal({ isShown, onClose, tagType = TagType.Default }) {
     <Modal
       testId={'create-content-tags-modal'}
       isShown={isShown}
-      title={`Create ${tagType === TagType.Access ? 'access' : 'default'} tag`}
+      title={`Create tag`}
       onClose={onClose}
       shouldCloseOnOverlayClick={!createTagIsLoading}
       shouldCloseOnEscapePress={!createTagIsLoading}>
@@ -212,7 +211,6 @@ function CreateTagModal({ isShown, onClose, tagType = TagType.Default }) {
 }
 
 CreateTagModal.propTypes = {
-  tagType: TagTypePropType,
   isShown: PropTypes.bool,
   onClose: PropTypes.func,
 };

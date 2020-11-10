@@ -7,7 +7,6 @@ const FilteredTagsContext = React.createContext({
   setSkip: null,
   setExcludedTags: null,
   setSorting: null,
-  setTypeFilter: null,
 });
 
 export { FilteredTagsContext };

@@ -13,7 +13,6 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import {
-  useContentLevelPermissions,
   useF36Modal,
   useIsInitialLoadingOfTags,
   useScrollToTop,
@@ -21,7 +20,6 @@ import {
 import { TagsWorkbenchActions } from './TagsWorkbenchActions';
 import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
-import { TagType } from 'features/content-tags/core/TagType';
 import { TagListHeader } from 'features/content-tags/management/components/TagListHeader';
 
 function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, className }) {
@@ -30,14 +28,10 @@ function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, classNam
     CreateTagModal
   );
   const isInitialLoad = useIsInitialLoadingOfTags();
-  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
 
-  const onCreate = useCallback(
-    (tagType = TagType.Default) => {
-      showCreateTagModal({ tagType });
-    },
-    [showCreateTagModal]
-  );
+  const onCreate = useCallback(() => {
+    showCreateTagModal();
+  }, [showCreateTagModal]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -102,9 +96,7 @@ function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, classNam
         icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
       />
       <Workbench.Content type="default" className={'tags-workbench-content'}>
-        {hasTags && (
-          <TagListHeader contentLevelPermissionsEnabled={contentLevelPermissionsEnabled} />
-        )}
+        {hasTags && <TagListHeader />}
         <>{content}</>
       </Workbench.Content>
     </Workbench>

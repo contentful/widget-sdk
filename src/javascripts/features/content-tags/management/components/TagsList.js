@@ -15,7 +15,7 @@ import { css } from 'emotion';
 import { TagsListRow } from 'features/content-tags/management/components/TagsListRow';
 import { UpdateTagModal } from 'features/content-tags/management/components/UpdateTagModal';
 import { DeleteTagModal } from 'features/content-tags/management/components/DeleteTagModal';
-import { useContentLevelPermissions, useF36Modal } from 'features/content-tags/core/hooks';
+import { useF36Modal } from 'features/content-tags/core/hooks';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -46,8 +46,6 @@ function TagsList({ tags, isLoading }) {
     UpdateTagModal
   );
 
-  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
-
   const onDelete = useCallback((tag) => showDeleteModal({ tag }), [showDeleteModal]);
   const onEdit = useCallback((tag) => showUpdateModal({ tag }), [showUpdateModal]);
 
@@ -69,17 +67,9 @@ function TagsList({ tags, isLoading }) {
 
   const renderTags = useMemo(() => {
     return tags.map((tag, index) => {
-      return (
-        <TagsListRow
-          key={`tag-row-${index}`}
-          contentLevelPermissionsEnabled={contentLevelPermissionsEnabled}
-          onDelete={onDelete}
-          onEdit={onEdit}
-          tag={tag}
-        />
-      );
+      return <TagsListRow key={`tag-row-${index}`} onDelete={onDelete} onEdit={onEdit} tag={tag} />;
     });
-  }, [tags, onDelete, onEdit, contentLevelPermissionsEnabled]);
+  }, [tags, onDelete, onEdit]);
 
   return (
     <>
@@ -96,7 +86,6 @@ function TagsList({ tags, isLoading }) {
           isSticky>
           <TableRow>
             <TableCell className={styles.wideCell}>Tag name</TableCell>
-            {contentLevelPermissionsEnabled && <TableCell>Type</TableCell>}
             <TableCell className={styles.wideCell}>Tag ID</TableCell>
             <TableCell>Date added</TableCell>
             <TableCell />
