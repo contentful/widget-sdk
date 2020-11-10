@@ -1,21 +1,32 @@
 import React from 'react';
-import { render, wait, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 
 import * as Navigator from 'states/Navigator';
 import EntrySecondaryActions from './EntrySecondaryActions';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('states/Navigator');
 jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true),
 }));
+jest.mock('app/entity_editor/Document', () => ({
+  valuePropertyAt: jest.fn(),
+}));
+jest.mock('core/utils/kefir', () => ({
+  getValue: jest.fn().mockReturnValue([]),
+}));
+jest.mock('app/entity_editor/entityHelpers', () => ({
+  alignSlugWithEntryTitle: jest.fn(),
+  appendDuplicateIndexToEntryTitle: jest.fn(),
+}));
 
 const entry = { data: { sys: { id: 'entryId' } } };
-const entryActions = {
-  onAdd: jest.fn().mockReturnValue(Promise.resolve(entry)),
-  onDuplicate: jest.fn().mockReturnValue(Promise.resolve(entry)),
-  onShowDisabledFields: jest.fn(),
-};
 const onDelete = { execute: jest.fn() };
+
+const currentSpace = {
+  createEntry: jest.fn().mockReturnValue(Promise.resolve(entry)),
+};
+
 describe('EntrySecondaryActions', () => {
   const build = (props) => {
     const resultProps = {
@@ -24,22 +35,48 @@ describe('EntrySecondaryActions', () => {
         contentType: {
           name: 'ContentType',
         },
+        contentTypeId: 'ctid',
       },
-      entryActions,
+      editorData: {
+        editorInterface: {
+          controls: [],
+        },
+      },
+      otDoc: {},
+      preferences: {},
       onDelete,
+      onShowDisabledFields: jest.fn(),
       ...props,
     };
 
-    return [render(<EntrySecondaryActions {...resultProps} />), resultProps];
+    return [
+      render(
+        <SpaceEnvContext.Provider
+          value={{
+            currentSpaceContentTypes: [
+              {
+                fields: [],
+                sys: {
+                  id: resultProps.entityInfo.contentTypeId,
+                },
+              },
+            ],
+            currentSpace,
+          }}>
+          <EntrySecondaryActions {...resultProps} />
+        </SpaceEnvContext.Provider>
+      ),
+      resultProps,
+    ];
   };
 
   it.each([
-    ['onAdd', 'cf-ui-button-action-add'],
-    ['onDuplicate', 'cf-ui-button-action-duplicate'],
+    ['createEntry', 'cf-ui-button-action-add'],
+    ['createEntry', 'cf-ui-button-action-duplicate'],
   ])('Creates an entry for the current content type using %p', async (action, actionTestId) => {
     const [renderResult] = build();
     await triggerAction(renderResult, actionTestId);
-    expect(entryActions[action]).toHaveBeenCalled();
+    expect(currentSpace[action]).toHaveBeenCalled();
     expect(Navigator.go).toHaveBeenCalledWith({
       path: '^.detail',
       params: {
@@ -57,14 +94,15 @@ describe('EntrySecondaryActions', () => {
   });
 
   it('shows disabled fields', async () => {
-    const [renderResult] = build();
+    const preferences = { showDisabledFields: false };
+    const [renderResult] = build({ preferences });
     await triggerAction(renderResult, 'cf-ui-button-action-show-disabled-fields');
-    expect(entryActions.onShowDisabledFields).toHaveBeenCalledWith();
+    expect(preferences.showDisabledFields).toBe(true);
   });
 });
 
 async function triggerAction(renderResult, actionTestId) {
   fireEvent.click(renderResult.getByTestId('cf-ui-button-actions'));
   fireEvent.click(renderResult.getByTestId(actionTestId).querySelector('button'));
-  await wait();
+  await waitFor(() => {});
 }

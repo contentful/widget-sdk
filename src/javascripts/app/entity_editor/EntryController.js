@@ -4,12 +4,9 @@ import mitt from 'mitt';
 import installTracking, { trackEntryView } from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import initLocaleData from 'app/entity_editor/setLocaleData';
-import { valuePropertyAt } from 'app/entity_editor/Document';
 
 import { getModule } from 'core/NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
-import * as Analytics from 'analytics/Analytics';
-import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { getEditorState } from './editorState';
 import { proxify } from 'core/services/proxy';
 
@@ -56,11 +53,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   $scope.getEditorData = () => editorData;
   $scope.getSpace = () => spaceContext.getSpace();
 
-  const contentType = {
-    id: entityInfo.contentTypeId,
-    type: spaceContext.publishedCTs.get(entityInfo.contentTypeId),
-  };
-
   const scopeLifeline = K.scopeLifeline($scope);
   const currentSlideLevel = Object.keys($scope.slideStates || {}).length;
   const editorState = getEditorState({
@@ -97,78 +89,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   bootstrapEntryEditorLoadEvents($scope.otDoc, $scope.loadEvents, editorData, trackLoadEvent);
 
   installTracking(entityInfo, doc, scopeLifeline);
-
-  $scope.entryActions = {
-    onAdd: () => {
-      Analytics.track('entry_editor:created_with_same_ct', {
-        contentTypeId: contentType.id,
-        entryId: entityInfo.id,
-      });
-
-      return spaceContext.space.createEntry(contentType.id, {}).then((entry) => {
-        Analytics.track('entry:create', {
-          eventOrigin: 'entry-editor',
-          contentType: contentType.type.data,
-          response: entry.data,
-        });
-        return entry;
-      });
-    },
-    onDuplicate: () => {
-      const currentFields = K.getValue(valuePropertyAt(doc, ['fields']));
-      const displayFieldId = contentType.type.data.displayField;
-      const displayFieldControl =
-        contentType.type.data.fields.find((field) => field.id === displayFieldId) || {};
-      const currentFieldsWithIndexedDisplayField = appendDuplicateIndexToEntryTitle(
-        currentFields,
-        displayFieldId
-      );
-      const slugControl = editorData.editorInterface.controls.find(
-        (control) => control.widgetId === 'slugEditor'
-      );
-      // [PUL-809] We update the slug with the same index that was set on the displayField
-      if (slugControl) {
-        const slugField = contentType.type.data.fields.find((field) =>
-          [field.apiName, field.id].includes(slugControl.fieldId)
-        );
-        if (slugField) {
-          const slugFieldData = currentFieldsWithIndexedDisplayField[slugField.id];
-          const indexedSlugFieldData = alignSlugWithEntryTitle({
-            entryTitleData: currentFieldsWithIndexedDisplayField[displayFieldId],
-            unindexedTitleData: currentFields[displayFieldId],
-            slugFieldData,
-            isRequired: slugField.required,
-            isEntryTitleLocalized: displayFieldControl.localized,
-          });
-
-          if (indexedSlugFieldData) {
-            currentFieldsWithIndexedDisplayField[slugField.id] = indexedSlugFieldData;
-          }
-        }
-      }
-
-      return spaceContext.space
-        .createEntry(contentType.id, {
-          fields: currentFieldsWithIndexedDisplayField,
-        })
-        .then((entry) => {
-          Analytics.track('entry:create', {
-            eventOrigin: 'entry-editor__duplicate',
-            contentType: contentType.type.data,
-            response: entry.data,
-          });
-          return entry;
-        });
-    },
-    onShowDisabledFields: () => {
-      const show = ($scope.preferences.showDisabledFields = !$scope.preferences.showDisabledFields);
-      Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
-        entryId: entityInfo.id,
-        show: show,
-      });
-      return show;
-    },
-  };
 
   K.onValue(doc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;

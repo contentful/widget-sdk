@@ -113,7 +113,6 @@ describe('When rendering editors page with no editors', () => {
         name: 'name',
       },
     },
-    entryActions: {},
     loadEvents: {},
     state: {
       delete: {},
@@ -147,6 +146,9 @@ describe('When rendering editors page with no editors', () => {
       fieldControls: { form: [], all: [] },
       entity: {
         data: {},
+      },
+      editorInterface: {
+        controls: [],
       },
     });
     render(<EntryEditorWorkbench {...props} />);

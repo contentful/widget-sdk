@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as logger from 'services/logger';
+import * as K from 'core/utils/kefir';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Dropdown,
@@ -12,6 +13,13 @@ import {
   IconButton,
   Notification,
 } from '@contentful/forma-36-react-components';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { valuePropertyAt } from 'app/entity_editor/Document';
+import {
+  alignSlugWithEntryTitle,
+  appendDuplicateIndexToEntryTitle,
+} from 'app/entity_editor/entityHelpers';
+import * as Analytics from 'analytics/Analytics';
 
 const styles = {
   dropdown: css({
@@ -20,9 +28,15 @@ const styles = {
   }),
 };
 
-export default function EntrySecondaryActions({ entityInfo, entryActions, onDelete }) {
+export default function EntrySecondaryActions({
+  entityInfo,
+  otDoc,
+  editorData,
+  preferences,
+  onDelete,
+}) {
+  const { currentSpaceContentTypes, currentSpace } = useSpaceEnvContext();
   const [isOpen, setOpen] = useState(false);
-  const [areDisabledFieldsVisible, setAreDisabledFieldsVisible] = useState(false);
 
   const canCreateEntry = () => {
     return accessChecker.canPerformActionOnEntryOfType('create', entityInfo.contentTypeId);
@@ -39,48 +53,109 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
     });
   };
 
-  const handleDuplicate = () => {
-    return entryActions
-      .onDuplicate()
-      .then((entry) => {
-        goToCreatedEntry(entry);
-        setOpen(false);
-      })
-      .catch((error) => {
-        logger.logError(`Duplicating entry failed`, {
-          error,
-          message: error.message,
+  const entryActions = useMemo(() => {
+    const contentTypeData = {
+      id: entityInfo.contentTypeId,
+      type: currentSpaceContentTypes.find(({ sys }) => sys.id === entityInfo.contentTypeId),
+    };
+    return {
+      onAdd: async () => {
+        Analytics.track('entry_editor:created_with_same_ct', {
+          contentTypeId: contentTypeData.id,
+          entryId: entityInfo.id,
         });
-        Notification.error('Entry duplication failed');
-      });
-  };
 
-  const handleAdd = () => {
-    entryActions
-      .onAdd()
-      .then((entry) => {
-        goToCreatedEntry(entry);
-        setOpen(false);
-      })
-      .catch((error) => {
-        logger.logError(`Adding entry failed`, {
-          error,
-          message: error.message,
+        try {
+          const entry = await currentSpace.createEntry(contentTypeData.id, {});
+          Analytics.track('entry:create', {
+            eventOrigin: 'entry-editor',
+            contentType: contentTypeData.type,
+            response: entry.data,
+          });
+          goToCreatedEntry(entry);
+          setOpen(false);
+        } catch (error) {
+          logger.logError(`Adding entry failed`, {
+            error,
+            message: error.message,
+          });
+          Notification.error('Entry creation failed');
+        }
+      },
+      onDuplicate: async () => {
+        const currentFields = K.getValue(valuePropertyAt(otDoc, ['fields']));
+        const displayFieldId = contentTypeData.type.displayField;
+        const displayFieldControl =
+          contentTypeData.type.fields.find((field) => field.id === displayFieldId) || {};
+        const currentFieldsWithIndexedDisplayField = appendDuplicateIndexToEntryTitle(
+          currentFields,
+          displayFieldId
+        );
+        const slugControl = editorData.editorInterface.controls.find(
+          (control) => control.widgetId === 'slugEditor'
+        );
+        // [PUL-809] We update the slug with the same index that was set on the displayField
+        if (slugControl) {
+          const slugField = contentTypeData.type.fields.find((field) =>
+            [field.apiName, field.id].includes(slugControl.fieldId)
+          );
+          if (slugField) {
+            const slugFieldData = currentFieldsWithIndexedDisplayField[slugField.id];
+            const indexedSlugFieldData = alignSlugWithEntryTitle({
+              entryTitleData: currentFieldsWithIndexedDisplayField[displayFieldId],
+              unindexedTitleData: currentFields[displayFieldId],
+              slugFieldData,
+              isRequired: slugField.required,
+              isEntryTitleLocalized: displayFieldControl.localized,
+            });
+
+            if (indexedSlugFieldData) {
+              currentFieldsWithIndexedDisplayField[slugField.id] = indexedSlugFieldData;
+            }
+          }
+        }
+        try {
+          const entry = await currentSpace.createEntry(contentTypeData.id, {
+            fields: currentFieldsWithIndexedDisplayField,
+          });
+          Analytics.track('entry:create', {
+            eventOrigin: 'entry-editor__duplicate',
+            contentType: contentTypeData.type,
+            response: entry.data,
+          });
+          goToCreatedEntry(entry);
+          setOpen(false);
+        } catch (error) {
+          logger.logError(`Duplicating entry failed`, {
+            error,
+            message: error.message,
+          });
+          Notification.error('Entry duplication failed');
+        }
+      },
+      onShowDisabledFields: () => {
+        const show = (preferences.showDisabledFields = !preferences.showDisabledFields);
+        Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
+          entryId: entityInfo.id,
+          show: show,
         });
-        Notification.error('Entry creation failed');
-      });
-  };
-
-  const handleShowDisabled = () => {
-    const show = entryActions.onShowDisabledFields();
-    setAreDisabledFieldsVisible(show);
-    setOpen(false);
-  };
-
-  const handleDelete = () => {
-    onDelete.execute();
-    setOpen(false);
-  };
+        setOpen(false);
+      },
+      onDelete: () => {
+        onDelete.execute();
+        setOpen(false);
+      },
+    };
+  }, [
+    currentSpace,
+    currentSpaceContentTypes,
+    editorData.editorInterface.controls,
+    entityInfo.contentTypeId,
+    entityInfo.id,
+    onDelete,
+    otDoc,
+    preferences,
+  ]);
 
   return (
     <>
@@ -102,24 +177,24 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
         isOpen={isOpen}>
         <DropdownList testId="cf-ui-secondary-entry-actions-list">
           <DropdownListItem
-            onClick={handleAdd}
+            onClick={entryActions.onAdd}
             isDisabled={!canCreateEntry()}
             testId="cf-ui-button-action-add">
             Create new <em>{entityInfo.contentType.name}</em>
           </DropdownListItem>
           <DropdownListItem
-            onClick={handleDuplicate}
+            onClick={entryActions.onDuplicate}
             testId="cf-ui-button-action-duplicate"
             isDisabled={!canCreateEntry()}>
             Duplicate
           </DropdownListItem>
-          <DropdownListItem onClick={handleDelete} testId="cf-ui-button-action-delete">
+          <DropdownListItem onClick={entryActions.onDelete} testId="cf-ui-button-action-delete">
             Delete
           </DropdownListItem>
           <DropdownListItem
-            onClick={handleShowDisabled}
+            onClick={entryActions.onShowDisabledFields}
             testId="cf-ui-button-action-show-disabled-fields">
-            {areDisabledFieldsVisible ? `Hide disabled fields` : `Show disabled fields`}
+            {preferences.showDisabledFields ? `Hide disabled fields` : `Show disabled fields`}
           </DropdownListItem>
         </DropdownList>
       </Dropdown>
@@ -128,15 +203,24 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
 }
 
 EntrySecondaryActions.propTypes = {
-  entryActions: PropTypes.shape({
-    onAdd: PropTypes.func,
-    onDuplicate: PropTypes.func,
-    onShowDisabledFields: PropTypes.func,
-    getContentType: PropTypes.func,
-  }),
   onDelete: PropTypes.shape({
     execute: PropTypes.func,
   }),
+  otDoc: PropTypes.shape({
+    fields: PropTypes.array,
+  }).isRequired,
+  editorData: PropTypes.shape({
+    editorInterface: PropTypes.shape({
+      controls: PropTypes.arrayOf(
+        PropTypes.shape({
+          widgetId: PropTypes.string,
+        }).isRequired
+      ).isRequired,
+    }).isRequired,
+  }).isRequired,
+  preferences: PropTypes.shape({
+    showDisabledFields: PropTypes.bool,
+  }).isRequired,
   entityInfo: PropTypes.shape({
     id: PropTypes.string,
     contentTypeId: PropTypes.string,

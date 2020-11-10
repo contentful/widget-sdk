@@ -43,7 +43,6 @@ interface EntryEditorWorkbenchProps {
     id: string;
     type: any;
   };
-  entryActions: Record<string, any>;
   loadEvents: Record<string, any>;
   state: {
     delete: Record<string, any>;
@@ -73,7 +72,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     localeData,
     title,
     entityInfo,
-    entryActions,
     state,
     getSpace,
     statusNotificationProps,
@@ -230,7 +228,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
               <div id={`editor-status-switch-${entityInfo.id}`} />
               <EntrySecondaryActions
                 entityInfo={entityInfo}
-                entryActions={entryActions}
+                otDoc={otDoc}
+                editorData={editorData}
+                preferences={preferences}
                 onDelete={state.delete}
               />
             </>
