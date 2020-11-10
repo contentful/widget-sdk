@@ -13,7 +13,7 @@ import {
   startsWith,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Note, Notification, Tab, TabPanel, Tabs } from '@contentful/forma-36-react-components';
+import { Note, Notification, TabPanel, Tabs } from '@contentful/forma-36-react-components';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { css } from 'emotion';
 import { getLocales } from '../utils/getLocales';
@@ -32,6 +32,8 @@ import { RoleEditorDetails } from 'features/roles-permissions-management/role_ed
 import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
 import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
 import tokens from '@contentful/forma-36-tokens';
+import { RoleEditRoutes } from 'states/settingsRolesPermissions';
+import { Route, RouteTab } from 'core/routing';
 
 const styles = {
   tabs: css({
@@ -95,13 +97,6 @@ export function handleSaveError(response) {
   return Promise.reject();
 }
 
-const RoleTabs = {
-  Details: 'details',
-  Content: 'content',
-  Media: 'media',
-  Permissions: 'permissions',
-};
-
 export class RoleEditor extends React.Component {
   static propTypes = {
     role: PropTypes.shape({
@@ -124,7 +119,6 @@ export class RoleEditor extends React.Component {
     openEntitySelectorForEntity: PropTypes.func.isRequired,
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
-    ngStateUrl: PropTypes.string.isRequired,
   };
 
   static contextType = SpaceEnvContext;
@@ -375,10 +369,6 @@ export class RoleEditor extends React.Component {
     return Navigator.go({ path: '^.^.list' });
   }
 
-  navigateToTab = (tab) => {
-    Navigator.go({ path: `^.${tab}` });
-  };
-
   render() {
     const {
       role,
@@ -387,7 +377,6 @@ export class RoleEditor extends React.Component {
       hasCustomRolesFeature,
       hasContentTagsFeature,
       hasEnvironmentAliasesEnabled,
-      ngStateUrl,
     } = this.props;
 
     const { saving, internal, isLegacy, dirty } = this.state;
@@ -400,8 +389,6 @@ export class RoleEditor extends React.Component {
     } else {
       title = internal.name || 'Untitled';
     }
-
-    const selectedTab = ngStateUrl.substring(1);
 
     return (
       <>
@@ -427,30 +414,10 @@ export class RoleEditor extends React.Component {
             />
           }>
           <Tabs withDivider className={styles.tabs}>
-            <Tab
-              selected={selectedTab === RoleTabs.Details}
-              id={RoleTabs.Details}
-              onSelect={this.navigateToTab}>
-              Role details
-            </Tab>
-            <Tab
-              selected={selectedTab === RoleTabs.Content}
-              id={RoleTabs.Content}
-              onSelect={this.navigateToTab}>
-              Content
-            </Tab>
-            <Tab
-              selected={selectedTab === RoleTabs.Media}
-              id={RoleTabs.Media}
-              onSelect={this.navigateToTab}>
-              Media
-            </Tab>
-            <Tab
-              selected={selectedTab === RoleTabs.Permissions}
-              id={RoleTabs.Permissions}
-              onSelect={this.navigateToTab}>
-              Permissions
-            </Tab>
+            <RouteTab {...RoleEditRoutes.Details} />
+            <RouteTab {...RoleEditRoutes.Content} />
+            <RouteTab {...RoleEditRoutes.Media} />
+            <RouteTab {...RoleEditRoutes.Permissions} />
           </Tabs>
 
           {autofixed && (
@@ -460,8 +427,8 @@ export class RoleEditor extends React.Component {
             </Note>
           )}
 
-          <TabPanel id={`panel-${selectedTab}`} className={styles.tabPanel}>
-            {selectedTab === RoleTabs.Details && (
+          <TabPanel id={`role-tab-panel`} className={styles.tabPanel}>
+            <Route path={RoleEditRoutes.Details.url}>
               <RoleEditorDetails
                 updateRoleFromTextInput={this.updateRoleFromTextInput}
                 updateLocale={this.updateLocale}
@@ -470,9 +437,8 @@ export class RoleEditor extends React.Component {
                 hasCustomRolesFeature={hasCustomRolesFeature}
                 internal={internal}
               />
-            )}
-
-            {selectedTab === RoleTabs.Content && (
+            </Route>
+            <Route path={RoleEditRoutes.Content.url}>
               <RoleEditorEntities
                 title={'Content'}
                 entity={'entry'}
@@ -489,9 +455,8 @@ export class RoleEditor extends React.Component {
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
               />
-            )}
-
-            {selectedTab === RoleTabs.Media && (
+            </Route>
+            <Route path={RoleEditRoutes.Media.url}>
               <RoleEditorEntities
                 title={'Media'}
                 entity={'asset'}
@@ -508,9 +473,8 @@ export class RoleEditor extends React.Component {
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
               />
-            )}
-
-            {selectedTab === RoleTabs.Permissions && (
+            </Route>
+            <Route path={RoleEditRoutes.Permissions.url}>
               <RoleEditorPermissions
                 internal={internal}
                 canModifyRoles={canModifyRoles}
@@ -518,7 +482,7 @@ export class RoleEditor extends React.Component {
                 hasContentTagsFeature={hasContentTagsFeature}
                 hasEnvironmentAliasesEnabled={hasEnvironmentAliasesEnabled}
               />
-            )}
+            </Route>
           </TabPanel>
         </RolesWorkbenchSkeleton>
       </>

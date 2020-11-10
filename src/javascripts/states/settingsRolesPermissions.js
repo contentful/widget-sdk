@@ -6,6 +6,7 @@ import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
 import { RoleEditorRoute, RolesListRoute } from 'features/roles-permissions-management';
+import { mapRoutes, withRouteProvider } from 'core/routing';
 
 const list = {
   name: 'list',
@@ -23,7 +24,15 @@ const list = {
   ],
 };
 
+export const RoleEditRoutes = {
+  Details: { name: 'details', url: '/details', label: 'Role detail' },
+  Content: { name: 'content', url: '/content', label: 'Content' },
+  Media: { name: 'media', url: '/media', label: 'Media' },
+  Permissions: { name: 'permissions', url: '/permissions', label: 'Permissions' },
+};
+
 const newRole = {
+  redirectTo: '.details',
   name: 'new',
   url: '/new',
   params: {
@@ -38,7 +47,8 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null,
     ],
   },
-  component: RoleEditorRoute,
+  children: mapRoutes(RoleEditRoutes),
+  component: withRouteProvider(RoleEditorRoute),
   mapInjectedToProps: [
     '$scope',
     'spaceContext',
@@ -80,25 +90,8 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
     ],
   },
-  children: [
-    {
-      name: 'details',
-      url: '/details',
-    },
-    {
-      name: 'content',
-      url: '/content',
-    },
-    {
-      name: 'media',
-      url: '/media',
-    },
-    {
-      name: 'permissions',
-      url: '/permissions',
-    },
-  ],
-  component: RoleEditorRoute,
+  children: mapRoutes(RoleEditRoutes),
+  component: withRouteProvider(RoleEditorRoute),
   mapInjectedToProps: [
     '$scope',
     'spaceContext',

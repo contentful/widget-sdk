@@ -175,17 +175,8 @@ export default function register() {
         return ['$scope', '$state', '$stateParams'].concat(injectables).concat([
           function ($scope, $state, $stateParams, ...rest) {
             function applyProps() {
-              const currentFullUrl = $state.href($state.current.name, $state.params, {
-                absolute: true,
-              });
-
-              const ngStateUrl = $state.current.url || '';
-              const ngStateBasePath = new URL(
-                currentFullUrl.slice(0, currentFullUrl.length - ngStateUrl.length)
-              ).pathname;
-
               $scope.props = Object.assign(
-                { ngStateUrl, ngStateBasePath },
+                { ngStateUrl: $state.current.url || '' },
                 mapperFn(...rest),
                 $stateParams
               );
