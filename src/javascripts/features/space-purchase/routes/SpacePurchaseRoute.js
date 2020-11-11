@@ -102,6 +102,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     payload: {
       currentSpace,
       currentSpaceRatePlan,
+      sessionId: alnum(16),
     },
   });
 
@@ -121,11 +122,14 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
 };
 
 export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
-  const { dispatch } = useContext(SpacePurchaseState);
+  const {
+    dispatch,
+    state: { sessionId },
+  } = useContext(SpacePurchaseState);
 
   const sessionMetadata = {
-    sessionId: alnum(16),
     organizationId: orgId,
+    sessionId,
     spaceId,
   };
 

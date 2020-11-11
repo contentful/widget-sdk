@@ -6,6 +6,7 @@ const initialState = {
   selectedPlan: undefined,
   currentSpace: undefined,
   currentSpaceRatePlan: undefined,
+  sessionId: undefined,
 };
 
 export const SpacePurchaseState = createContext();

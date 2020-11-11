@@ -141,6 +141,7 @@ describe('SpacePurchaseRoute', () => {
       EVENTS.BEGIN,
       {
         organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
         sessionId: expect.any(String),
       },
       {
@@ -179,8 +180,8 @@ describe('SpacePurchaseRoute', () => {
       EVENTS.BEGIN,
       {
         organizationId: mockOrganization.sys.id,
-        sessionId: expect.any(String),
         spaceId: mockSpace.sys.id,
+        sessionId: expect.any(String),
       },
       {
         canCreateFreeSpace: true,
@@ -203,7 +204,7 @@ describe('SpacePurchaseRoute', () => {
 });
 
 const mockContextValue = {
-  state: {},
+  state: { sessionId: 'random_id' },
   dispatch: jest.fn(),
 };
 
