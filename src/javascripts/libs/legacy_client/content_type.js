@@ -56,11 +56,15 @@ ContentType.prototype.save = async function (headers = {}, spaceId = '') {
   return Entity.prototype.save.call(this, combinedHeaders);
 };
 
-ContentType.prototype.publish = function (version) {
+ContentType.prototype.publish = async function (version) {
   const self = this;
+  const spaceId = _.get(this, ['data', 'sys', 'space', 'sys', 'id'], '');
+  const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+  const assemblyHeaders = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
   return this.endpoint('published')
     .headers({
       'X-Contentful-Version': version,
+      ...assemblyHeaders,
     })
     .put()
     .then(function (response) {
