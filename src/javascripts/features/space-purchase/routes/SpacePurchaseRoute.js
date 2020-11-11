@@ -29,15 +29,22 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
+const CREATE_SPACE_SESSION = 'create_space';
+const UPGRADE_SPACE_SESSION = 'upgrade_space';
+
 function createEventMetadataFromData(data, sessionType) {
-  const { organizationMembership, basePlan, canCreateFreeSpace, currentSpacePlan } = data;
+  const { organizationMembership, basePlan, canCreateFreeSpace, currentSpaceRatePlan } = data;
+
+  if (sessionType === UPGRADE_SPACE_SESSION && !currentSpaceRatePlan) {
+    throw new Error('currentSpacePlan must be logged on the begin event');
+  }
 
   return {
     userOrganizationRole: organizationMembership.role,
     organizationPlatform: basePlan.customerType,
     canCreateFreeSpace,
     sessionType,
-    currentSpacePlan: currentSpacePlan,
+    currentSpacePlan: currentSpaceRatePlan,
   };
 }
 
@@ -143,7 +150,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
 
   useEffect(() => {
     if (!isLoading && data?.newPurchaseFlowIsEnabled) {
-      const sessionType = spaceId ? 'upgrade_space' : 'create_space';
+      const sessionType = spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION;
       const eventMetadata = createEventMetadataFromData(data, sessionType);
 
       trackWithSession(EVENTS.BEGIN, eventMetadata);
