@@ -28,9 +28,9 @@ import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilde
  * @param {ContentTypeRepo} publishedCTs
  * @returns {entityEditor/Validator}
  */
-export function createForEntity({ entityInfo, doc, locales, publishedCTs }) {
+export function createForEntity({ entityInfo, doc, locales }) {
   if (entityInfo.type === 'Entry') {
-    return createForEntry(entityInfo.contentType, doc, publishedCTs, locales);
+    return createForEntry(entityInfo.contentType, doc, locales);
   }
   if (entityInfo.type === 'Asset') {
     return createForAsset(doc, locales);
@@ -47,9 +47,9 @@ export function createForEntity({ entityInfo, doc, locales, publishedCTs }) {
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForEntry(contentType, doc, publishedCTs, locales) {
+export function createForEntry(contentType, doc, locales) {
   const schema = Schema.fromContentType(contentType, locales);
-  const buildMessage = errorMessageBuilder(publishedCTs);
+  const buildMessage = errorMessageBuilder();
   return createBase(buildMessage, schema, doc);
 }
 
