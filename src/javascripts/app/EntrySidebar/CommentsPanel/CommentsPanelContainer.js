@@ -4,6 +4,7 @@ import CommentsPanel from './CommentsPanel';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
 /**
  * This component is the bridge between the EntitySidebar and the CommentPanel components.
@@ -27,8 +28,11 @@ export default class CommentsPanelContainer extends React.Component {
 
   initComments() {
     const { entryId, onCommentsCountUpdate } = this.props;
-    const { currentSpaceId, currentEnvironmentId } = this.context;
-    const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+    const { currentSpaceId, currentEnvironmentId, currentEnvironment } = this.context;
+    const endpoint = createSpaceEndpoint(
+      currentSpaceId,
+      isMasterEnvironment(currentEnvironment) ? undefined : currentEnvironmentId
+    );
 
     // Showing the count is low-priority so we can defer fetching it
     if (window.requestIdleCallback !== undefined) {

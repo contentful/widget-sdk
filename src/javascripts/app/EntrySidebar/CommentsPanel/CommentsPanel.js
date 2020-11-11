@@ -11,8 +11,7 @@ import CommentThread from './CommentThread';
 import CommentsPanelEmptyState from './CommentsPanelEmptyState';
 import { CommentSkeletonGroup } from './CommentSkeleton';
 import { fromFlatToThreads, isReply, isReplyToComment } from './utils';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
 
 export const styles = {
   root: css({
@@ -48,11 +47,7 @@ export const styles = {
 };
 
 function CommentsPanelContent({ entryId, onCommentsCountUpdate }) {
-  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
-  const endpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
-    currentSpaceId,
-    currentEnvironmentId,
-  ]);
+  const endpoint = useSpaceEnvEndpoint();
 
   const { isLoading, data, error } = useCommentsFetcher(endpoint, entryId);
   const [comments, setComments] = useState();
