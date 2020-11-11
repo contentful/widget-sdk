@@ -43,7 +43,7 @@ const onMediaAction = (loadEvents, sdk) => (action) => {
 export function SingleMediaEditorWithTracking(props) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const { loadEvents, viewType, sdk } = props;
+  const { loadEvents, viewType, sdk, renderCustomActions } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <SingleMediaEditor
@@ -59,6 +59,7 @@ export function SingleMediaEditorWithTracking(props) {
         },
       }}
       onAction={onAction}
+      renderCustomActions={renderCustomActions}
     />
   );
 }
@@ -66,7 +67,7 @@ export function SingleMediaEditorWithTracking(props) {
 export function MultipleMediaEditorWithTracking(props) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const { loadEvents, viewType, sdk } = props;
+  const { loadEvents, viewType, sdk, renderCustomActions } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <MultipleMediaEditor
@@ -82,6 +83,7 @@ export function MultipleMediaEditorWithTracking(props) {
         },
       }}
       onAction={onAction}
+      renderCustomActions={renderCustomActions}
     />
   );
 }

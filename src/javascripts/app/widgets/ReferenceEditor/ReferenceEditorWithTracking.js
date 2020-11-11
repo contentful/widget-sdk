@@ -69,7 +69,7 @@ const onEntryAction = (loadEvents, sdk) => {
 export function SingleEntryReferenceEditorWithTracking(props) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const { loadEvents, viewType, sdk } = props;
+  const { loadEvents, viewType, sdk, renderCustomActions } = props;
 
   const onAction = onEntryAction(loadEvents, sdk);
 
@@ -87,6 +87,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
         },
       }}
       onAction={onAction}
+      renderCustomActions={renderCustomActions}
     />
   );
 }
@@ -94,7 +95,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
 export function MultipleEntryReferenceEditorWithTracking(props) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const { loadEvents, viewType, sdk } = props;
+  const { loadEvents, viewType, sdk, renderCustomActions } = props;
 
   const onAction = React.useMemo(() => onEntryAction(loadEvents, sdk), [loadEvents, sdk]);
 
@@ -113,6 +114,7 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
         },
       }}
       onAction={onAction}
+      renderCustomActions={renderCustomActions}
     />
   );
 }

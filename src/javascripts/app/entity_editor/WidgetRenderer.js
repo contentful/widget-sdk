@@ -49,7 +49,7 @@ function WidgetRendererInternal(props) {
       />
     );
   } else if (widget.widgetNamespace === WidgetNamespace.BUILTIN) {
-    const widget = renderFieldEditor({
+    const content = renderFieldEditor({
       $scope: props.scope,
       loadEvents: loadEvents || newNoopLoadEvents(),
       widgetApi: props.widgetApi,
@@ -58,7 +58,7 @@ function WidgetRendererInternal(props) {
 
     handleWidgetLinkRenderEvents();
 
-    return widget;
+    return content;
   }
 
   return null;
