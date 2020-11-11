@@ -1,7 +1,7 @@
 import React, { useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershipRepository';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { useAsync } from 'core/hooks';
@@ -10,11 +10,12 @@ import UserSelection from './UserSelection';
 import { Modal, Notification } from '@contentful/forma-36-react-components';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import RoleSelection from './RoleSelection';
-import { getModule } from 'core/NgRegistry';
 import RoleRepository from 'access_control/RoleRepository';
 import { track } from 'analytics/Analytics';
 import AddUsersError from './AddUsersError';
 import { isTaken } from 'utils/ServerErrorUtils';
+import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
+import { getSpaceId, getEnvironmentId } from 'core/services/SpaceEnvContext/utils';
 
 const steps = {
   USERS: 1,
@@ -56,16 +57,18 @@ const reducer = createImmerReducer({
   },
 });
 
-export default function AddUsers({ unavailableUserIds, orgId, isShown, onClose }) {
+export default function AddUsers({ unavailableUserIds, orgId, isShown, onClose, space }) {
   const [{ selectedUsers, selectedRoles, rejected, currentStep }, dispatch] = useReducer(
     reducer,
     initialState
   );
   const { data: availableUsers } = useFetchAvailableOrgMemberships(orgId, unavailableUserIds);
-  const { data: spaceRoles } = useFetchSpaceRoles();
+  const { data: spaceRoles } = useFetchSpaceRoles(space);
+  const spaceId = getSpaceId(space);
+  const environmentId = getEnvironmentId(space);
 
   const handleSubmit = async () => {
-    const { rejected } = await inviteUsers(selectedUsers, selectedRoles);
+    const { rejected } = await inviteUsers(selectedUsers, selectedRoles, spaceId, environmentId);
 
     if (rejected.length > 0) {
       dispatch({ type: 'INVITATIONS_FAILED', payload: rejected });
@@ -128,6 +131,7 @@ AddUsers.propTypes = {
   isShown: PropTypes.bool.isRequired,
   orgId: PropTypes.string.isRequired,
   unavailableUserIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  space: PropTypes.object.isRequired,
 };
 
 function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
@@ -150,17 +154,17 @@ function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
   return useAsync(fetchAvailableOrgMemberships);
 }
 
-function useFetchSpaceRoles() {
+function useFetchSpaceRoles(space) {
   const fetchSpaceRoles = useCallback(async () => {
-    const { space } = getModule('spaceContext');
     return RoleRepository.getInstance(space).getAll();
-  }, []);
+  }, [space]);
 
   return useAsync(fetchSpaceRoles);
 }
 
-async function inviteUsers(selectedUsers, selectedRoles) {
-  const spaceContext = getModule('spaceContext');
+async function inviteUsers(selectedUsers, selectedRoles, spaceId, environmentId) {
+  const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+  const membershipsRepo = createMembershipRepo(spaceEndpoint);
   const fulfilled = [];
   const rejected = [];
 
@@ -168,7 +172,7 @@ async function inviteUsers(selectedUsers, selectedRoles) {
     const email = orgMembership.sys.user.email;
     const roleIds = selectedRoles[orgMembership.sys.id];
     try {
-      await spaceContext.memberships.invite(email, roleIds);
+      await membershipsRepo.invite(email, roleIds);
       fulfilled.push(orgMembership);
     } catch (error) {
       rejected.push({ orgMembership, error });

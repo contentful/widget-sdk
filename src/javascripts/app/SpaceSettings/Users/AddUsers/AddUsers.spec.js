@@ -9,12 +9,13 @@ import {
   waitForElement,
   within,
 } from '@testing-library/react';
-import * as spaceContextMocked from 'ng/spaceContext';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershipRepository';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 
 const onCloseFn = jest.fn();
+const mockInvite = jest.fn();
+const mockSpaceEndpoint = jest.fn();
 
 const grant = fakeFactory.User({
   firstName: 'Grant',
@@ -45,9 +46,16 @@ const mockSpaceRoles = [editorRole, authorRole];
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllMembershipsWithQuery: jest.fn(async () => ({ items: mockOrgMemberships })),
 }));
+
 jest.mock('access_control/RoleRepository', () => ({
   getInstance: () => ({
     getAll: jest.fn(async () => mockSpaceRoles),
+  }),
+}));
+
+jest.mock('access_control/SpaceMembershipRepository', () => ({
+  create: () => ({
+    invite: mockInvite,
   }),
 }));
 
@@ -215,8 +223,8 @@ describe('AddUsers', () => {
 
       userEvent.click(submitButton);
       expect(screen.queryByTestId('add-users.role-selection.error-note')).not.toBeInTheDocument();
-      expect(spaceContextMocked.memberships.invite).toHaveBeenCalledTimes(2);
-      expect(spaceContextMocked.memberships.invite.mock.calls).toEqual([
+      expect(mockInvite).toHaveBeenCalledTimes(2);
+      expect(mockInvite.mock.calls).toEqual([
         [patrycja.email, [editorRole.sys.id]],
         [victoria.email, [ADMIN_ROLE_ID]],
       ]);
@@ -227,7 +235,7 @@ describe('AddUsers', () => {
 
   describe('when invitations fail', () => {
     beforeEach(async () => {
-      spaceContextMocked.memberships.invite
+      mockInvite
         // Grant - taken / already a member
         .mockRejectedValueOnce(createError(true))
         // Victoria - server error
@@ -281,6 +289,19 @@ async function build(unavailableUserIds = []) {
       orgId="123"
       isShown={true}
       onClose={onCloseFn}
+      space={{
+        endpoint: mockSpaceEndpoint,
+        data: {
+          sys: {
+            id: 'space-id',
+          },
+        },
+        environment: {
+          sys: {
+            id: 'environment-id',
+          },
+        },
+      }}
     />
   );
   await waitForElementToBeRemoved(() => screen.getByTestId('add-users.user-list.skeleton'));

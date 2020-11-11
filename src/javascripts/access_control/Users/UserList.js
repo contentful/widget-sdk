@@ -149,6 +149,7 @@ const UserList = ({ jumpToRole }) => {
         onClose={onClose}
         orgId={organizationId}
         unavailableUserIds={unavailableUserIds}
+        space={currentSpace}
       />
     ));
   }
