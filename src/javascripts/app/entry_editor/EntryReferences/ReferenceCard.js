@@ -35,6 +35,7 @@ const styles = {
   listItem: css({
     margin: '0',
     padding: `${tokens.spacing2Xs} 0`,
+    listStyleType: 'none',
     background: 'white',
     position: 'relative',
     '&:before': {
