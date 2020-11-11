@@ -11,6 +11,9 @@ const styles = {
   underline: css({
     textDecoration: 'underline',
   }),
+  listItem: css({
+    listStyleType: 'none',
+  }),
 };
 
 export default function PlanFeatures({ resources, roleSet, disabled }) {
@@ -27,7 +30,7 @@ export default function PlanFeatures({ resources, roleSet, disabled }) {
         }
 
         return (
-          <ListItem testId="resource" key={type}>
+          <ListItem testId="resource" className={styles.listItem} key={type}>
             {toLocaleString(number) + ' '}
             {tooltipText && (
               <Tooltip content={tooltipText}>

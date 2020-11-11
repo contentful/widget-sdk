@@ -20,6 +20,7 @@ const MAX_LENGTH = 32;
 const styles = {
   input: css({ marginTop: '5px' }),
   list: css({ marginTop: '20px' }),
+  listItem: css({ listStyleType: 'none' }),
   paragraph: css({ marginBottom: '25px' }),
 };
 
@@ -72,7 +73,7 @@ export class SaveViewDialogComponent extends React.Component {
               />
               {allowViewTypeSelection && (
                 <List className={styles.list}>
-                  <ListItem>
+                  <ListItem className={styles.listItem}>
                     <RadioButtonField
                       id="option-private"
                       labelText="Save under my views"
@@ -83,7 +84,7 @@ export class SaveViewDialogComponent extends React.Component {
                       labelIsLight
                     />
                   </ListItem>
-                  <ListItem>
+                  <ListItem className={styles.listItem}>
                     <RadioButtonField
                       labelText="Save under shared views"
                       id="option-shared"

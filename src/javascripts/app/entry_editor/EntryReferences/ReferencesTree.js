@@ -24,6 +24,7 @@ const styles = {
   }),
   listItem: css({
     position: 'relative',
+    listStyleType: 'none',
     '&:not(:last-child):before': {
       content: '""',
       position: 'absolute',
