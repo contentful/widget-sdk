@@ -41,6 +41,7 @@ import {
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import localeStore from 'services/localeStore';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   jobsSkeleton: css({
@@ -111,6 +112,7 @@ export default function ScheduledActionsWidget({
   publicationBlockedReason,
   emitter,
 }) {
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
@@ -262,6 +264,7 @@ export default function ScheduledActionsWidget({
             entity,
             spaceId,
             environmentId,
+            contentTypes: currentSpaceContentTypes,
             confirmLabel: 'Schedule anyway',
             modalTitle: `Are you sure you want to schedule this ${entityType.toLowerCase()} to publish?`,
           });

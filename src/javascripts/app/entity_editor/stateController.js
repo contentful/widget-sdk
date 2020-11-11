@@ -246,6 +246,7 @@ export const initStateController = ({
         entity: K.getValue(doc.data$),
         spaceId,
         environmentId,
+        contentTypes: currentSpaceContentTypes,
       });
 
       if (validator.run()) {
