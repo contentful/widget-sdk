@@ -1,27 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { DisplayText, Button, Paragraph, Note } from '@contentful/forma-36-react-components';
+import { Button, Note } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { useSpaceCreation, useTemplateCreation } from '../hooks/useCreateSpaceAndTemplate';
-import { useNavigationWarn } from '../hooks/useNavigationWarn';
+import { SpacePurchaseState } from 'features/space-purchase/context';
+import { useSpaceCreation } from 'features/space-purchase/hooks/useSpaceCreation';
+import { useTemplateCreation } from 'features/space-purchase/hooks/useTemplateCreation';
+import { useNavigationWarn } from 'features/space-purchase/hooks/useNavigationWarn';
 import { PaymentSummary } from './PaymentSummary';
+import { ReceiptMessage } from './ReceiptMessage';
 
 const styles = {
   grid: css({
     margin: `${tokens.spacing2Xl} auto 0`,
   }),
-  sectionHeading: css({
-    fontWeight: tokens.fontWeightMedium,
-    marginBottom: tokens.spacingXs,
-  }),
-  successMsg: css({
-    marginBottom: tokens.spacingXl,
-  }),
   button: css({
+    marginTop: tokens.spacingXl,
     marginBottom: tokens.spacingXl,
   }),
   templateCreationErrorNote: css({
@@ -32,24 +29,18 @@ const styles = {
   }),
 };
 
-export const NewSpaceReceiptPage = ({
-  organizationId,
-  selectedPlan,
-  selectedTemplate,
-  sessionMetadata,
-  spaceName,
-}) => {
+export const NewSpaceReceiptPage = ({ selectedTemplate, spaceName }) => {
+  const {
+    state: { selectedPlan },
+  } = useContext(SpacePurchaseState);
+
   const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation(
-    organizationId,
-    selectedPlan,
-    spaceName,
-    sessionMetadata
+    spaceName
   );
 
   const { isCreatingTemplate, templateCreationError } = useTemplateCreation(
     newSpace,
-    selectedTemplate,
-    sessionMetadata
+    selectedTemplate
   );
 
   const pending = isCreatingSpace || isCreatingTemplate;
@@ -61,48 +52,13 @@ export const NewSpaceReceiptPage = ({
       aria-labelledby="new-space-receipt-section-heading"
       data-test-id="new-space-receipt-section">
       <Flex className={styles.grid} flexDirection="column" alignItems="center">
-        <DisplayText
-          id="new-space-receipt-section-heading"
-          element="h2"
-          testId="new-space-receipt-section-heading"
-          className={styles.sectionHeading}>
-          {pending && (
-            <>
-              Hang on, your new space is on its way{' '}
-              <span
-                role="img"
-                data-test-id="receipt.loading-envelope"
-                aria-label="Envelope with arrow">
-                📩
-              </span>
-            </>
-          )}
-          {!pending && spaceCreationError && (
-            <>
-              Oh dear, we had some trouble creating your new space{' '}
-              <span
-                role="img"
-                data-test-id="receipt.error-face"
-                aria-label="Face with eyes wide open">
-                😳
-              </span>
-            </>
-          )}
-          {!pending && !spaceCreationError && (
-            <>
-              Nice one!{' '}
-              <span role="img" aria-label="Shopping bag">
-                🛍
-              </span>
-            </>
-          )}
-        </DisplayText>
-        <Paragraph className={styles.successMsg} testId="receipt.subtext">
-          {!pending && spaceCreationError && 'Don’t worry, simply retrigger the space creation.'}
-          {!pending &&
-            !spaceCreationError &&
-            `You successfully purchased the ${selectedPlan.name} space ${spaceName}.`}
-        </Paragraph>
+        <ReceiptMessage
+          pending={pending}
+          planName={selectedPlan.name}
+          spaceName={spaceName}
+          hasErrors={!!spaceCreationError}
+        />
+
         <Button
           testId="receipt-page.redirect-to-new-space"
           loading={pending}
@@ -111,6 +67,7 @@ export const NewSpaceReceiptPage = ({
           className={styles.button}>
           {spaceCreationError ? 'Retrigger space creation' : `Take me to ${spaceName}`}
         </Button>
+
         <div className={styles.paymentSummaryContainer}>
           {templateCreationError && (
             <Note
@@ -131,8 +88,5 @@ export const NewSpaceReceiptPage = ({
 
 NewSpaceReceiptPage.propTypes = {
   spaceName: PropTypes.string.isRequired,
-  selectedPlan: PropTypes.object.isRequired,
   selectedTemplate: PropTypes.object,
-  organizationId: PropTypes.string.isRequired,
-  sessionMetadata: PropTypes.object.isRequired,
 };

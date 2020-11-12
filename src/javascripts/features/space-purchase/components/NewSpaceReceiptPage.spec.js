@@ -215,14 +215,16 @@ describe('NewSpaceReceiptPage', () => {
 function build(customProps, customState) {
   const props = {
     spaceName,
-    selectedPlan: mockSelectedPlan,
-    organizationId: mockOrganization.sys.id,
-    sessionMetadata: mockSessionMetadata,
     ...customProps,
   };
 
   const contextValue = {
-    state: { selectedPlan: mockSelectedPlan, ...customState },
+    state: {
+      organization: mockOrganization,
+      selectedPlan: mockSelectedPlan,
+      sessionId: mockSessionMetadata.sessionId,
+      ...customState,
+    },
     dispatch: jest.fn(),
   };
 

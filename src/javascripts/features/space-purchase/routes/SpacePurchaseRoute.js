@@ -105,6 +105,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   dispatch({
     type: actions.SET_INITIAL_STATE,
     payload: {
+      organization,
       currentSpace,
       currentSpaceRatePlan,
       sessionId: alnum(16),
@@ -165,7 +166,6 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
     <>
       <DocumentTitle title="Space purchase" />
       <NewSpacePage
-        sessionMetadata={sessionMetadata}
         trackWithSession={trackWithSession}
         organization={data?.organization}
         templatesList={data?.templatesList}

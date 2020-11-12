@@ -16,6 +16,7 @@ const mockCurrentSpace = FakeFactory.Space();
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
   sessionId: 'some_random_id',
+  spaceId: mockCurrentSpace.sys.id,
 };
 
 jest.mock('data/EndpointFactory', () => ({
@@ -118,22 +119,21 @@ describe('UpgradeSpaceReceiptPage', () => {
   });
 });
 
-function build(customProps, customState) {
-  const props = {
-    selectedPlan: mockSelectedPlan,
-    sessionMetadata: mockSessionMetadata,
-    currentSpace: mockCurrentSpace,
-    ...customProps,
-  };
-
+function build(customState) {
   const contextValue = {
-    state: { selectedPlan: mockSelectedPlan, ...customState },
+    state: {
+      organization: mockOrganization,
+      currentSpace: mockCurrentSpace,
+      selectedPlan: mockSelectedPlan,
+      sessionId: mockSessionMetadata.sessionId,
+      ...customState,
+    },
     dispatch: jest.fn(),
   };
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <UpgradeSpaceReceiptPage {...props} />
+      <UpgradeSpaceReceiptPage />
     </SpacePurchaseState.Provider>
   );
 }

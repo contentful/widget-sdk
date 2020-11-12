@@ -466,6 +466,11 @@ describe('NewSpacePage', () => {
   });
 });
 
+const mockInitialState = {
+  organization: mockOrganization,
+  sessionId: mockSessionMetadata.sessionId,
+};
+
 async function build(options) {
   const props = {
     trackWithSession,
@@ -483,7 +488,7 @@ async function build(options) {
   };
 
   const contextValue = {
-    state: { ...options?.customState },
+    state: { ...mockInitialState, ...options?.customState },
     dispatch: jest.fn(),
   };
 

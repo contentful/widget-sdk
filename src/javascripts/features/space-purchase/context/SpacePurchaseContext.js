@@ -3,9 +3,10 @@ import React, { createContext, useReducer } from 'react';
 import { spacePurchaseReducer } from './spacePurchaseReducer';
 
 const initialState = {
-  selectedPlan: undefined,
+  organization: undefined,
   currentSpace: undefined,
   currentSpaceRatePlan: undefined,
+  selectedPlan: undefined,
   sessionId: undefined,
 };
 

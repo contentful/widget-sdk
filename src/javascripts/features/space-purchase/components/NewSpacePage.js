@@ -26,9 +26,9 @@ import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
-import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { SpaceSelection } from './SpaceSelection';
+import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
@@ -88,7 +88,6 @@ export const NewSpacePage = ({
   productRatePlans,
   canCreateCommunityPlan,
   pageContent,
-  sessionMetadata,
   currentSpace,
   spaceRatePlans,
   currentSpacePlan,
@@ -320,24 +319,14 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
-            <NewSpaceReceiptPage
-              selectedPlan={selectedPlan}
-              spaceName={spaceName}
-              organizationId={organizationId}
-              sessionMetadata={sessionMetadata}
-              selectedTemplate={selectedTemplate}
-            />
+            <NewSpaceReceiptPage spaceName={spaceName} selectedTemplate={selectedTemplate} />
           </Grid>
         );
       case SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
-            <UpgradeSpaceReceiptPage
-              selectedPlan={selectedPlan}
-              sessionMetadata={sessionMetadata}
-              currentSpace={currentSpace}
-            />
+            <UpgradeSpaceReceiptPage />
           </Grid>
         );
       default:
@@ -373,7 +362,6 @@ export const NewSpacePage = ({
 };
 
 NewSpacePage.propTypes = {
-  sessionMetadata: PropTypes.object.isRequired,
   trackWithSession: PropTypes.func.isRequired,
   spaceRatePlans: PropTypes.array,
   currentSpacePlan: PropTypes.object,
