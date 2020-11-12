@@ -136,22 +136,23 @@ export function ZuoraCreditCardIframe({
             message = emptyRequiredField ? 'Name required' : 'Name invalid';
             break;
           }
-
           case 'creditCardNumber': {
             message = emptyRequiredField ? 'Card number required' : 'Card number invalid';
             break;
           }
-
           case 'cardSecurityCode': {
             message = emptyRequiredField ? 'CVV required' : 'CVV invalid';
             break;
           }
-
           case 'creditCardExpirationMonth': {
             message = emptyRequiredField ? 'Expiration date required' : 'Expiration date invalid';
             break;
           }
-
+          case 'creditCardType':
+            message = emptyRequiredField
+              ? 'Credit card type is required'
+              : 'Credit card type is invalid';
+            break;
           case 'error': {
             // Async API error
             Notification.error(
