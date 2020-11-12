@@ -125,11 +125,7 @@ export default function register() {
          * @contentful/client instance.
          *
          * The returned promise resolves when all additional space
-         * resources have been fetched:
-         * - Extensions
-         * - Content types
-         * - UI Configs (space and user)
-         * - Locales
+         * resources have been fetched (environments, locales, content types).
          *
          * @param {API.Space} spaceData
          * @param {string?} uriEnvOrAliasId environment id based on the uri

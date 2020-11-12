@@ -1,4 +1,5 @@
 import { omit } from 'lodash';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import { fetchAll } from './FetchAll';
 
 /**
@@ -21,8 +22,12 @@ export default function create(spaceEndpoint) {
    * Goes through all the response pages if needed.
    * @returns {Promise<API.Locale[]}
    */
-  function getAll() {
-    return fetchAll(spaceEndpoint, ['locales'], 100);
+  async function getAll() {
+    const ldCtx = { spaceId: spaceEndpoint.spaceId };
+    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT, ldCtx);
+    const path = [shouldUseNewEndpoint ? 'localez' : 'locales'];
+
+    return fetchAll(spaceEndpoint, path, 100);
   }
 
   /**
@@ -60,11 +65,11 @@ export default function create(spaceEndpoint) {
    * @param {string} id
    * @param {integer} version
    */
-  function remove(id, version) {
-    return spaceEndpoint({
+  async function remove(id, version) {
+    await spaceEndpoint({
       method: 'DELETE',
       path: ['locales', id],
       version,
-    }).then(() => {});
+    });
   }
 }

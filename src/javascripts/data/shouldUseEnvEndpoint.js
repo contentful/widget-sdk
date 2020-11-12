@@ -10,6 +10,7 @@ const PREFIXES = [
   'ui_config',
   'extensions',
   'locales',
+  'locales_v2', // TODO: temporary, remove.
   'user_states',
   'states',
   'resources',
