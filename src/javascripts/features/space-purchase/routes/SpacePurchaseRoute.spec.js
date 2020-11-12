@@ -20,6 +20,8 @@ const mockUserRole = 'admin';
 const mockOrganizationPlatform = 'Free';
 const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
 const mockSpaceRatePlans = ['plan1', 'plan2', 'plan3'];
+const mockCurrentSpacePlan = { unavailabilityReasons: [{ type: 'currentPlan' }] };
+const mockUpgradeSpaceRatePlans = [mockCurrentSpacePlan, 'plan2', 'plan3'];
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -84,6 +86,7 @@ describe('SpacePurchaseRoute', () => {
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
+    transformSpaceRatePlans.mockReturnValue();
   });
 
   it('should render the space plan selection page while loading', () => {
@@ -169,6 +172,7 @@ describe('SpacePurchaseRoute', () => {
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {
     TokenStore.getSpace.mockReturnValueOnce(mockSpace);
+    transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 
     build({ spaceId: mockSpace.sys.id });
 
@@ -188,6 +192,7 @@ describe('SpacePurchaseRoute', () => {
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'upgrade_space',
+        currentSpacePlan: mockCurrentSpacePlan,
       }
     );
   });
