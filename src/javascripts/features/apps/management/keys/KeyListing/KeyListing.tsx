@@ -6,7 +6,6 @@ import { css } from 'emotion';
 
 import {
   Button,
-  Note,
   Notification,
   Paragraph,
   TableCell,
@@ -37,7 +36,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 const styles = {
   header: css({
     fontSize: tokens.fontSizeL,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingXs
   }),
   spacer: css({
     marginBottom: tokens.spacingL,
@@ -136,8 +135,8 @@ export function KeyListing({ definition }) {
 
   return (
     <>
-      <Heading className={styles.header}>Key pairs</Heading>
-      <Note className={styles.spacer}>
+      <Heading className={styles.header} element='h3'>Key pairs</Heading>
+      <Paragraph className={styles.spacer}>
         You need a private key to sign access token requests. We only store public keys.
         <br />
         <TextLink
@@ -146,7 +145,7 @@ export function KeyListing({ definition }) {
           rel="noopener noreferrer">
           Learn how to sign your access tokens
         </TextLink>
-      </Note>
+      </Paragraph>
 
       <div className={styles.ctasWrapper}>
         <WithLimitTooltip enabled={hasReachedKeysLimits}>

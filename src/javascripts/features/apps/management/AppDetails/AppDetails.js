@@ -248,6 +248,10 @@ export class AppDetails extends React.Component {
                 <AppEvents definition={definition} />
               </TabPanel>
             )}
+            {
+              // old route that moved to /security
+              selectedTab === TAB_PATHS.KEY_PAIRS && this.onTabSelect(TAB_PATHS.SECURITY)
+            }
           </div>
         </Workbench.Content>
       </Workbench>
