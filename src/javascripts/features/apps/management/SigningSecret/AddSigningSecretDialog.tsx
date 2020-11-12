@@ -21,7 +21,7 @@ const styles = {
 }
 
 export const AddSigningSecretDialog = ({ secret, isShown, onClose, saveUpdatedSecret}) => {
-  const [updatedSecret, setUpdatedSecret] = useState(secret);
+  const [updatedSecret, setUpdatedSecret] = useState(secret || generateSecret());
    
    return <>
     <ModalConfirm
@@ -37,7 +37,12 @@ export const AddSigningSecretDialog = ({ secret, isShown, onClose, saveUpdatedSe
       onConfirm={() => {saveUpdatedSecret(updatedSecret); onClose()}}
     >
       <Paragraph>You are about to update the shared secret of this app definition. This will invalidate your current secret. Make sure to update your app's code to reflect this change</Paragraph>
-      <TextInput className={styles.secretInput} value={updatedSecret} withCopyButton />
+      <TextInput
+        placeholder={"Click on Regenerate secret below to create a secret"}
+        className={styles.secretInput}
+        value={updatedSecret}
+        withCopyButton
+      />
       <TextLink onClick={() => setUpdatedSecret(generateSecret())}>Regenerate Secret</TextLink>
     </ModalConfirm>
   </>

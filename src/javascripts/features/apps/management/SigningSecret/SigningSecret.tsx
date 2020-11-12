@@ -20,6 +20,9 @@ const styles = {
     marginTop: tokens.spacing2Xl,
     marginBottom: tokens.spacingM,
   }),
+  activateButton: css({
+    marginTop: tokens.spacingL
+  }),
   copySecretReminder: css({
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM,
@@ -45,7 +48,7 @@ const styles = {
 };
 
 
-const openModal = (secret: string, updateSecret: (generatedSecret: string) => Promise<void>) => {
+const openModal = (secret: string | null, updateSecret: (generatedSecret: string) => Promise<void>) => {
  return ModalLauncher.open(({isShown, onClose}) => {
   return <AddSigningSecretDialog
     secret={ secret }
@@ -81,6 +84,10 @@ export const SigningSecret = ({definition}) => {
       Verify that requests from an app or event are coming from Contentful.{' '}
       <TextLink href="">Learn more about secure requests</TextLink>
     </Paragraph>
+
+    {!currentSecret &&<Button className={styles.activateButton} onClick={() => openModal(null, addNewSecret)} buttonType={"muted"}>
+      Activate secure requests
+    </Button>}
 
     {currentSecret && <>
       <Heading className={styles.inputHeader}>Shared secret</Heading>
