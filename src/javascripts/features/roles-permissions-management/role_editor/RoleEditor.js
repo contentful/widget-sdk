@@ -299,7 +299,7 @@ export class RoleEditor extends React.Component {
     );
 
   updateRuleAttribute = (entities) => (rulesKey, id) => (attribute) => ({ target: { value } }) => {
-    const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS;
+    const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.NO_PATH_CONSTRAINT;
     const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
 
     const rules = this.state.internal[entities][rulesKey];
@@ -456,6 +456,7 @@ export class RoleEditor extends React.Component {
                 resetPolicies={this.resetPolicies}
               />
             </Route>
+
             <Route path={RoleEditRoutes.Media.url}>
               <RoleEditorEntities
                 title={'Media'}

@@ -193,19 +193,24 @@ function updatePoliciesOnly(collection) {
 
 function checkPolicyCollectionForPath(collection, entitySys, fieldId, localeCode) {
   return updatePoliciesOnly(collection).some((p) => {
-    const noPath = !isString(p.field) && !isString(p.locale);
+    const noPath =
+      (!isString(p.field) && !isString(p.locale)) ||
+      p.field === PolicyBuilder.PolicyBuilderConfig.NO_PATH_CONSTRAINT;
     const fieldOnlyPathMatched = matchField(p.field) && !isString(p.locale);
     const localeOnlyPathMatched = !isString(p.field) && matchLocale(p.locale);
     const bothMatched = matchField(p.field) && matchLocale(p.locale);
     const pathIsMatched = noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
-
     const idMatchedIfPresent = !p.entityId || p.entityId === entitySys.id;
-
     return idMatchedIfPresent && pathIsMatched;
   });
 
   function matchField(field) {
-    return [PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS, fieldId].includes(field);
+    const matchingFields = [fieldId];
+    // if we're checking for tags path, "all fields" does not match, so don't add it to our matching fields array
+    if (fieldId !== PolicyBuilder.PolicyBuilderConfig.TAGS) {
+      matchingFields.push(PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS);
+    }
+    return matchingFields.includes(field);
   }
 
   function matchLocale(locale) {

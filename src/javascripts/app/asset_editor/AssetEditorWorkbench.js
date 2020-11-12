@@ -22,6 +22,7 @@ import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListen
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { styles as editorStyles } from './../entry_editor/styles';
+import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/PolicyBuilderConfig';
 
 const styles = {
   sidebar: css({
@@ -63,6 +64,10 @@ const AssetEditorWorkbench = ({
 
   const { tagsEnabled } = useTagsFeatureEnabled();
   const [selectedTab, setSelectedTab] = useState(AssetTabs.Editor);
+  const canEditTags = otDoc.permissions.canEditFieldLocale(
+    PolicyBuilderConfig.TAGS,
+    PolicyBuilderConfig.PATH_WILDCARD
+  );
 
   return (
     <div className="asset-editor">
@@ -154,7 +159,7 @@ const AssetEditorWorkbench = ({
               className={
                 'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
               }>
-              {tagsEnabled && <ContentTagsField {...tagProps} />}
+              {tagsEnabled && <ContentTagsField {...tagProps} disable={!canEditTags} />}
             </div>
           </TabPanel>
         </Workbench.Content>

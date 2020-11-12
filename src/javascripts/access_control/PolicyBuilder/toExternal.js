@@ -95,18 +95,12 @@ function addContentTypeConstraint(pair) {
 
 function addPathConstraint(pair) {
   const source = pair.source;
-
-  if (pair.source.entity === 'asset') {
-    if (!_.isString(source.locale)) {
-      return pair;
-    }
-  } else {
-    if (!_.isString(source.field) || !_.isString(source.locale)) {
-      return pair;
-    }
+  if (source.field === PolicyBuilderConfig.NO_PATH_CONSTRAINT || !_.isString(source.field)) {
+    return pair;
   }
-
-  const segments = ['fields', fieldSegment(source.field), localeSegment(source.locale)];
+  // if "fields" value in policy is TAGS, dont prefix path constraint with 'fields'
+  const segmentsBase = source.field === PolicyBuilderConfig.TAGS ? [] : ['fields'];
+  const segments = segmentsBase.concat([fieldSegment(source.field), localeSegment(source.locale)]);
   pushConstraint(pair, paths(segments));
   return pair;
 }

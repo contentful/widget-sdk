@@ -9,7 +9,7 @@ describe('Policy Builder, default rule', () => {
     expect(rule.contentType).toBe(PolicyBuilderConfig.ALL_CTS);
     expect(rule.action).toBe('all');
     expect(rule.scope).toBe('any');
-    expect(rule.field).toBeNull();
+    expect(rule.field).toBe(PolicyBuilderConfig.NO_PATH_CONSTRAINT);
     expect(rule.locale).toBeNull();
   });
 
@@ -19,7 +19,7 @@ describe('Policy Builder, default rule', () => {
     expect(rule.contentType).toBeUndefined();
     expect(rule.action).toBe('all');
     expect(rule.scope).toBe('any');
-    expect(rule.field).toBeUndefined();
+    expect(rule.field).toBe(PolicyBuilderConfig.NO_PATH_CONSTRAINT);
     expect(rule.locale).toBeNull();
   });
 
@@ -28,7 +28,7 @@ describe('Policy Builder, default rule', () => {
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);
     expect(getRule().contentType).toBe(PolicyBuilderConfig.ALL_CTS);
-    expect(getRule().field).toBeNull();
+    expect(getRule().field).toBe(PolicyBuilderConfig.NO_PATH_CONSTRAINT);
   });
 
   it('creates getter for default asset rule', () => {
@@ -36,6 +36,6 @@ describe('Policy Builder, default rule', () => {
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);
     expect(getRule().contentType).toBeUndefined();
-    expect(getRule().field).toBeUndefined();
+    expect(getRule().field).toBe(PolicyBuilderConfig.NO_PATH_CONSTRAINT);
   });
 });

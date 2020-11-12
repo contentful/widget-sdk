@@ -224,6 +224,29 @@ describe('Policy Builder, to external representation', () => {
       expect(ps[1].constraint.and[1].paths[0].doc).toBe('fields.test.%');
     });
 
+    it('translates path with metadata.tags', () => {
+      const external = toExternal({
+        uiCompatible: true,
+        entries: {
+          allowed: [{ action: 'update', field: PolicyBuilderConfig.TAGS }],
+        },
+      });
+      const ps = external.policies;
+      expect(ps[0].constraint.and[1].paths[0].doc).toEqual('metadata.tags.%');
+    });
+
+    it('translates path with NO_PATH_CONSTRAINT', () => {
+      const external = toExternal({
+        uiCompatible: true,
+        entries: {
+          allowed: [{ action: 'update', field: PolicyBuilderConfig.NO_PATH_CONSTRAINT }],
+        },
+      });
+      const ps = external.policies;
+      const pathConstraints = ps[0].constraint.and.filter((a) => !!a.paths);
+      expect(pathConstraints).toHaveLength(0);
+    });
+
     it('translates "glued" actions', () => {
       const external = toExternal({
         uiCompatible: true,

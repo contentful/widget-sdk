@@ -8,6 +8,8 @@ import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
 
+const { TAGS, NO_PATH_CONSTRAINT } = PolicyBuilderConfig;
+
 const contentTypesToOptions = (contentTypes) =>
   [
     {
@@ -75,6 +77,10 @@ export class Rule extends React.Component {
     return {
       contentTypeFields: [
         {
+          id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
+          name: 'All fields and Tags (metadata)',
+        },
+        {
           id: PolicyBuilderConfig.ALL_FIELDS,
           name: 'All fields',
         },
@@ -82,8 +88,26 @@ export class Rule extends React.Component {
         get(ct, ['fields'], []).map(({ id, name, apiName }) => ({
           id: apiName || id,
           name,
-        }))
+        })),
+        {
+          id: PolicyBuilderConfig.TAGS,
+          name: 'Tags (metadata)',
+        }
       ),
+      assetFields: [
+        {
+          id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
+          name: 'All fields and Tags (metadata)',
+        },
+        {
+          id: PolicyBuilderConfig.ALL_FIELDS,
+          name: 'All fields',
+        },
+        {
+          id: PolicyBuilderConfig.TAGS,
+          name: 'Tags (metadata)',
+        },
+      ],
     };
   }
 
@@ -129,7 +153,6 @@ export class Rule extends React.Component {
       getEntityTitle,
     } = this.props;
     const entityName = getEntityName(entity);
-
     return (
       <div className={styles.ruleList} data-test-id="rule-item">
         <Select
@@ -195,12 +218,27 @@ export class Rule extends React.Component {
             )}
           </React.Fragment>
         )}
+        {entity === 'asset' && rule.action === 'update' && (
+          <Select
+            className={styles.select}
+            width="medium"
+            testId="asset_field"
+            isDisabled={isDisabled}
+            value={rule.field}
+            onChange={onUpdateAttribute('field')}>
+            {this.state.assetFields.map(({ id, name }) => (
+              <Option value={id} key={id}>
+                {name}
+              </Option>
+            ))}
+          </Select>
+        )}
         {rule.action === 'update' && (
           <Select
             className={styles.select}
             width="medium"
             testId="locale"
-            isDisabled={isDisabled}
+            isDisabled={isDisabled || rule.field === TAGS || rule.field === NO_PATH_CONSTRAINT}
             value={rule.locale}
             onChange={onUpdateAttribute('locale')}>
             {getLocales(privateLocales).map(({ code, name }) => (

@@ -55,6 +55,20 @@ describe('Remove outdated rules', () => {
       expect(result).toBe(true);
     });
 
+    it('does not remove rule if field is missing because path constrains metadata.tag', () => {
+      const internal = toInternal({
+        policies: [createPolicy('ctid', 'metadata.tags.%'), createPolicy('ctid2', 'fields.%.%')],
+      });
+      const contentTypes = [
+        createCt('ctid', [{ apiName: 'x' }, { apiName: 'y' }, { apiName: 'z' }]),
+        createCt('ctid2'),
+      ];
+
+      const result = removeOutdatedRules(internal, contentTypes, []);
+      expect(internal.entries.allowed).toHaveLength(2);
+      expect(result).toBe(false);
+    });
+
     it('removes rules if a locale is missing', () => {
       const internal = toInternal({
         policies: [createPolicy('ctid', 'fields.%.en-US'), createPolicy('ctid', 'fields.%.de-DE')],

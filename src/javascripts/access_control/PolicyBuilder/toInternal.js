@@ -144,9 +144,16 @@ function createRule(policy) {
   const pathConstraint = findPathConstraint(rest);
   if (pathConstraint.value) {
     rule.isPath = true;
-    rule.field = fieldPathSegment(pathConstraint.value[1]);
+    // if path constraint is on metadata, path will be [metadata, tags, *]
+    // otherwise path will be [fields, fieldPath, locale]
+    rule.field =
+      pathConstraint.value[0] === 'metadata'
+        ? fieldPathSegment(`metadata.${pathConstraint.value[1]}`)
+        : fieldPathSegment(pathConstraint.value[1]);
     rule.locale = localePathSegment(pathConstraint.value[2]);
     rest.splice(pathConstraint.index, 1);
+  } else {
+    rule.field = PolicyBuilderConfig.NO_PATH_CONSTRAINT;
   }
 
   // return rule only when all constraints were parsed

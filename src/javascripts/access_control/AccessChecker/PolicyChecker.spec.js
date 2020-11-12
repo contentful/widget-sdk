@@ -444,6 +444,16 @@ describe('Policy Access Checker', () => {
       buildExpectation({}, {}, true);
     });
 
+    it('returns true for metadata.tags paths', () => {
+      setRole(pathPolicy('metadata.tags.%'), false);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, true);
+    });
+
+    it('returns false if trying to update tags when policy only says fields', () => {
+      setRole(pathPolicy('fields.%.%'), false);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, false);
+    });
+
     it('returns true for admin even for paths that do not match', () => {
       setRole(pathPolicy('fields.other.%'), true);
       buildExpectation({ apiName: 'test' }, {}, true);

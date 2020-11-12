@@ -43,7 +43,7 @@ function useLocalTags(tags, setTags) {
   return { localTags, removeTag, addTag };
 }
 
-const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
+const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty }) => {
   const { localTags, addTag, removeTag } = useLocalTags(tags, setTags);
   const isInitialLoad = useIsInitialLoadingOfTags();
 
@@ -64,6 +64,7 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
       <TagSelectionHeader totalSelected={localTags.length} />
       <FilteredTagsProvider>
         <TagsSelection
+          disabled={disable}
           showEmpty={showEmpty}
           onAdd={addTag}
           onRemove={removeTag}
@@ -76,6 +77,7 @@ const EditorTagsSkeleton = ({ tags, setTags, showEmpty }) => {
 };
 
 EditorTagsSkeleton.propTypes = {
+  disable: PropTypes.bool,
   showEmpty: PropTypes.bool,
   tags: PropTypes.array,
   setTags: PropTypes.func,

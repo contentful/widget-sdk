@@ -32,7 +32,8 @@ export function removeOutdatedRules(internal, contentTypes, locales) {
   function filterPolicyCollection(collection) {
     return _.filter(
       collection,
-      (p) => !isMissingContentType(p) && !isMissingField(p) && !isMissingLocale(p)
+      (p) =>
+        !isMissingContentType(p) && (!isMissingField(p) || isMetadataPath(p)) && !isMissingLocale(p)
     );
   }
 
@@ -46,6 +47,10 @@ export function removeOutdatedRules(internal, contentTypes, locales) {
       isSpecific(p.field, PolicyBuilderConfig.ALL_FIELDS) &&
       !hasField(p.contentType, p.field)
     );
+  }
+
+  function isMetadataPath(p) {
+    return !!p.isPath && p.field === PolicyBuilderConfig.TAGS;
   }
 
   function isMissingLocale(p) {

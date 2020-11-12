@@ -10,7 +10,11 @@ const DEFAULT_RULE = {
 
 const DEFAULT_ENTRY_RULE = {
   contentType: PolicyBuilderConfig.ALL_CTS,
-  field: null,
+  field: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
+};
+
+const DEFAULT_ASSET_RULE = {
+  field: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
 };
 
 function getDefaultRuleGetterFor(entity) {
@@ -24,6 +28,8 @@ function getDefaultRuleFor(entity) {
 
   if (entity === 'entry') {
     return extend(base, DEFAULT_ENTRY_RULE);
+  } else if (entity === 'asset') {
+    return extend(base, DEFAULT_ASSET_RULE);
   } else {
     return base;
   }

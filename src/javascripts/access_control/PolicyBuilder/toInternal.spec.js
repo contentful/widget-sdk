@@ -310,6 +310,47 @@ describe('Policy Builder, to internal representation', () => {
       expect(internal.entries.allowed[3].isPath).toBeUndefined();
     });
 
+    it('translates path (metadata.tags)', () => {
+      const internal = toInternal({
+        policies: [
+          {
+            actions: ['update'],
+            effect: 'allow',
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { paths: [{ doc: 'metadata.tags.%' }] },
+              ],
+            },
+          },
+        ],
+      });
+
+      expect(internal.entries.allowed).toHaveLength(1);
+      expect(internal.entries.allowed[0].isPath).toBe(true);
+      expect(internal.entries.allowed[0].field).toBe(PolicyBuilderConfig.TAGS);
+      expect(internal.entries.allowed[0].locale).toBe(PolicyBuilderConfig.ALL_LOCALES);
+    });
+
+    it('translates with no path constraint', () => {
+      const internal = toInternal({
+        policies: [
+          {
+            actions: ['update'],
+            effect: 'allow',
+            constraint: {
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
+      });
+
+      expect(internal.entries.allowed).toHaveLength(1);
+      expect(internal.entries.allowed[0].isPath).toBeUndefined();
+      expect(internal.entries.allowed[0].field).toBe(PolicyBuilderConfig.NO_PATH_CONSTRAINT);
+      expect(internal.entries.allowed[0].locale).toBeNull();
+    });
+
     it('translates "glued" actions', () => {
       let internal = toInternal({
         policies: [
