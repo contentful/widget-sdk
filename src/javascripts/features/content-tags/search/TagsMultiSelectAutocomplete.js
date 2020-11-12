@@ -1,7 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
-import { Autocomplete } from './Autocomplete';
+import { useState, useRef } from 'react';
 import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
+import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
@@ -24,10 +24,38 @@ const defaultStyles = {
     height: '100%',
   }),
   DropdownCheckboxField: css({ width: '100%' }),
-  DropdownListItem: css(
-    `label { width: 250px; position: relative; top: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }`
-  ),
 };
+
+// we keep an additional reference that can be used
+// in the onClose of the dropdown, which otherwise
+// has a stale state
+function useRefState(initialValue) {
+  const valueRef = useRef(initialValue);
+  const [currentValue, setValue] = useState(initialValue);
+
+  return {
+    get value() {
+      return currentValue;
+    },
+    set value(newValue) {
+      valueRef.current = newValue;
+      setValue(newValue);
+    },
+    get refValue() {
+      return valueRef.current;
+    },
+  };
+}
+
+function addOrRemoveTag(currentList, addedOrRemovedTag) {
+  if (currentList.some(({ value }) => value === addedOrRemovedTag.value)) {
+    // remove
+    return currentList.filter(({ value }) => value !== addedOrRemovedTag.value);
+  }
+
+  // add
+  return [...currentList, addedOrRemovedTag];
+}
 
 const TagsMultiSelectAutocomplete = ({
   tags,
@@ -40,18 +68,13 @@ const TagsMultiSelectAutocomplete = ({
   isFocused,
 }) => {
   const [isSearching, setIsSearching] = useState(isFocused);
-  const [newSelectedTags, setNewSelectedTags] = useState(selectedTags);
+  const currentTags = useRefState(selectedTags);
+  const tagsRef = useRef();
+
   setIsRemovable(!isSearching);
 
   const onSelectedTagChange = (tag) => {
-    if (newSelectedTags.some((selectedTag) => selectedTag.value === tag.value)) {
-      // remove
-      return setNewSelectedTags(
-        newSelectedTags.filter((selectedTag) => selectedTag.value !== tag.value)
-      );
-    }
-    // add
-    return setNewSelectedTags([...newSelectedTags, tag]);
+    currentTags.value = addOrRemoveTag(currentTags.value, tag);
   };
 
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
@@ -70,7 +93,7 @@ const TagsMultiSelectAutocomplete = ({
       onChange={(evt) => {
         evt.stopPropagation();
       }}
-      checked={newSelectedTags.some((selectedTag) => selectedTag.value === tag.value)}
+      checked={currentTags.value.some((selectedTag) => selectedTag.value === tag.value)}
     />
   );
 
@@ -86,7 +109,7 @@ const TagsMultiSelectAutocomplete = ({
     onQueryChange('');
     setIsSearching(false);
     setIsRemovable(true);
-    onChange(newSelectedTags);
+    onChange(currentTags.refValue);
   };
 
   const handleSummaryKeyDown = ({ keyCode }) => {
@@ -104,6 +127,7 @@ const TagsMultiSelectAutocomplete = ({
   return (
     <>
       <div
+        ref={tagsRef}
         onKeyDown={handleSummaryKeyDown}
         tabIndex="0"
         className={css(defaultStyles.TagSummary, styles.TagSummary)}
@@ -126,6 +150,9 @@ const TagsMultiSelectAutocomplete = ({
             emptyListMessage={'No tags found'}
             noMatchesMessage={'No tags found'}
             dropdownProps={{
+              // input of autocomplete disappears if we use portal
+              usePortal: false,
+              nonClosingRefs: [tagsRef],
               isFullWidth: true,
               isOpen: true,
               isAutoalignmentEnabled: false,
@@ -133,7 +160,6 @@ const TagsMultiSelectAutocomplete = ({
               dropdownContainerClassName: 'tag-search-container',
               onClose,
             }}
-            dropdownListItemProps={{ className: defaultStyles.DropdownListItem }}
             className={css(defaultStyles.Autocomplete, styles.Autocomplete)}>
             {(options) => options.map(tagSelectRow)}
           </Autocomplete>
