@@ -19,6 +19,7 @@ import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
 import { AppEvents } from '../events';
 import { KeyListing } from '../keys/KeyListing';
+import { SigningSecret } from '../SigningSecret/';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
 import { TAB_PATHS } from './constants';
@@ -195,10 +196,10 @@ export class AppDetails extends React.Component {
                 General
               </Tab>
               <Tab
-                id={TAB_PATHS.KEY_PAIRS}
-                selected={selectedTab === TAB_PATHS.KEY_PAIRS}
+                id={TAB_PATHS.SECURITY}
+                selected={selectedTab === TAB_PATHS.SECURITY}
                 onSelect={this.onTabSelect}>
-                Key pairs
+                Security
               </Tab>
               <Tab
                 id={TAB_PATHS.EVENTS}
@@ -236,9 +237,10 @@ export class AppDetails extends React.Component {
                 </div>
               </TabPanel>
             )}
-            {selectedTab === TAB_PATHS.KEY_PAIRS && (
-              <TabPanel id={TAB_PATHS.KEY_PAIRS} className={styles.tabPanel}>
+            {selectedTab === TAB_PATHS.SECURITY && (
+              <TabPanel id={TAB_PATHS.SECURITY} className={styles.tabPanel}>
                 <KeyListing definition={definition} />
+                <SigningSecret definition={definition} />
               </TabPanel>
             )}
             {selectedTab === TAB_PATHS.EVENTS && (

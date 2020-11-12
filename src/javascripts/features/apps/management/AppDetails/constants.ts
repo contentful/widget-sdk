@@ -1,5 +1,5 @@
 export const TAB_PATHS = {
   GENERAL: '',
-  KEY_PAIRS: 'key-pairs',
+  SECURITY: 'security',
   EVENTS: 'events',
 };

@@ -126,6 +126,16 @@ function deleteAppEvents(orgId, definitionId) {
   });
 }
 
+function addAppSigningSecret(orgId, definitionId, value) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'PUT',
+    data: { value },
+    path: ['app_definitions', definitionId, 'signing_secret'],
+  });
+}
+
 export const ManagementApiClient = {
   createDefinitionTemplateForOrg,
   save,
@@ -136,5 +146,6 @@ export const ManagementApiClient = {
   revokeKey,
   updateAppEvents,
   deleteAppEvents,
+  addAppSigningSecret,
   VALIDATION_MESSAGE,
 };

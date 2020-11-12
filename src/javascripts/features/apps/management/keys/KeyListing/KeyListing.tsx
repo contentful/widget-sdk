@@ -12,6 +12,7 @@ import {
   TableCell,
   TableRow,
   TextLink,
+  Heading,
 } from '@contentful/forma-36-react-components';
 
 import { ManagementApiClient } from 'features/apps';
@@ -34,6 +35,10 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 const styles = {
+  header: css({
+    fontSize: tokens.fontSizeL,
+    marginBottom: tokens.spacingM
+  }),
   spacer: css({
     marginBottom: tokens.spacingL,
   }),
@@ -131,6 +136,7 @@ export function KeyListing({ definition }) {
 
   return (
     <>
+      <Heading className={styles.header}>Key pairs</Heading>
       <Note className={styles.spacer}>
         You need a private key to sign access token requests. We only store public keys.
         <br />
