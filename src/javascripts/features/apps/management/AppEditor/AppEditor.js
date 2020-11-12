@@ -19,7 +19,7 @@ import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { toApiFieldType, toInternalFieldType } from 'widgets/FieldTypes';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { FIELD_TYPES_ORDER, LOCATION_ORDER, PARAMETER_ID_REG_EXP, SRC_REG_EXP } from './constants';
+import { FIELD_TYPES_ORDER, LOCATION_ORDER, SRC_REG_EXP } from './constants';
 import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
 
@@ -72,29 +72,6 @@ export function validate(definition) {
       });
     }
   }
-
-  (definition.parameters?.instance ?? []).forEach((parameter, parameterIndex) => {
-    if (isEmpty(parameter.id)) {
-      errors.push({
-        path: ['parameters', 'instance', parameterIndex, 'id'],
-        details: 'Please enter an ID',
-      });
-    } else if (!PARAMETER_ID_REG_EXP.test(parameter.id)) {
-      errors.push({
-        path: ['parameters', 'instance', parameterIndex, 'id'],
-        details: 'ID may not start with a number or _',
-      });
-    }
-
-    if (isEmpty(parameter.name)) {
-      errors.push({
-        path: ['parameters', 'instance', parameterIndex, 'name'],
-        details: 'Please enter a name',
-      });
-    }
-
-    // enum options are already validated in EnumOptionsDialog
-  });
 
   return errors;
 }

@@ -160,6 +160,24 @@ export const styles = {
     container: css({
       marginBottom: tokens.spacingL,
     }),
+    idCell: css({
+      button: {
+        height: '14px',
+        border: 'none',
+        backgroundColor: 'transparent',
+        transform: 'translate(-10px, 5px)',
+        opacity: '0',
+        transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
+      },
+      '&:hover': {
+        button: {
+          backgroundColor: 'transparent',
+          border: 'none',
+          opacity: '1',
+          transform: 'translate(0, 5px)',
+        },
+      },
+    }),
     help: css({
       marginBottom: tokens.spacingM,
     }),
@@ -167,41 +185,45 @@ export const styles = {
       marginBottom: tokens.spacingM,
     }),
     table: css({
-      width: '100%',
-      'tr:last-child td': {
-        paddingBottom: tokens.spacingM,
+      marginTop: tokens.spacingM,
+      'tr td:last-child': {
+        textAlign: 'right',
       },
-      td: {
-        paddingRight: tokens.spacingXs,
-        paddingBottom: tokens.spacingS,
-        width: '24%',
-        '&:last-child': {
-          paddingRight: 0,
-          width: '4%',
-
-          '& > *': {
-            display: 'block', // for vertical-align to work
-          },
+    }),
+  },
+  instanceParametersDialog: {
+    required: css({
+      input: {
+        marginLeft: 0,
+      },
+    }),
+    booleanDefault: css({
+      '> :first-child': {
+        marginRight: tokens.spacingM,
+        input: {
+          marginLeft: 0,
         },
       },
     }),
   },
   enumOptions: {
-    text: css({
-      marginBottom: tokens.spacingM,
-    }),
     table: css({
+      width: '100%',
+      marginTop: tokens.spacingM,
       td: {
-        paddingRight: tokens.spacingXs,
-        paddingBottom: tokens.spacingXs,
+        paddingRight: tokens.spacingS,
+        paddingBottom: tokens.spacingS,
         '&:last-child': {
           paddingRight: 0,
 
-          '& > *': {
-            display: 'block', // for vertical-align to work
-          },
+          // vertically position delete icon
+          verticalAlign: 'top',
+          paddingTop: '12px',
         },
       },
     }),
   },
+  monospace: css({
+    fontFamily: tokens.fontStackMonospace,
+  }),
 };
