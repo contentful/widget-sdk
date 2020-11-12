@@ -31,7 +31,7 @@ export const initStateController = ({
   onUpdate,
   spaceId,
   environmentId,
-  currentSpaceContentTypes,
+  publishedCTs,
 }) => {
   const { permissions, reverter, resourceState: docStateManager } = doc;
 
@@ -254,9 +254,7 @@ export const initStateController = ({
 
           let contentType;
           if (entityInfo.type === 'Entry') {
-            contentType = currentSpaceContentTypes.find(
-              (ct) => ct.sys.id === entityInfo.contentTypeId
-            );
+            contentType = publishedCTs.get(entityInfo.contentTypeId).data;
           }
           if (contentType) {
             let eventOrigin = 'entry-editor';

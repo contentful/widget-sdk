@@ -67,14 +67,14 @@ function customMessage(error) {
   return error.customMessage;
 }
 
-function buildErrorMessage(error) {
+function buildErrorMessage(error, ctRepo) {
   let getMessage;
   if (error.customMessage) {
     getMessage = customMessage;
   } else {
     getMessage = messages[error.name] || baseErrorMessageBuilder;
   }
-  return getMessage(error);
+  return getMessage(error, ctRepo);
 }
 
 function buildContentTypeError(error) {
@@ -109,8 +109,8 @@ function buildAssetError(error) {
   }
 }
 
-function errorMessageBuilder() {
-  return (error) => buildErrorMessage(error);
+function errorMessageBuilder(ctRepo) {
+  return (error) => buildErrorMessage(error, ctRepo);
 }
 
 errorMessageBuilder.forContentType = buildContentTypeError;

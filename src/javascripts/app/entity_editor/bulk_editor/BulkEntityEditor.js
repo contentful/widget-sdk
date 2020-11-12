@@ -9,6 +9,7 @@ import * as K from 'core/utils/kefir';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';
 import { localFieldChanges } from 'app/entity_editor/Document';
+import { getModule } from 'core/NgRegistry';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import Loader from 'ui/Loader';
 import { css } from 'emotion';
@@ -42,12 +43,8 @@ export const BulkEntityEditor = ({
   onRemove,
   hasInitialFocus,
 }) => {
-  const {
-    currentEnvironmentId,
-    currentSpace,
-    currentSpaceId,
-    currentSpaceContentTypes,
-  } = useSpaceEnvContext();
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove after `publishedCTs` is refactored
+  const { currentEnvironmentId, currentSpace, currentSpaceId } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const [isExpanded, setIsExpanded] = useState(true);
@@ -93,7 +90,7 @@ export const BulkEntityEditor = ({
           lifeline: lifeline.stream,
           onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
           onTitleUpdate: setTitle,
-          currentSpaceContentTypes,
+          publishedCTs: spaceContext.publishedCTs,
           spaceId: currentSpaceId,
           trackView: (args) =>
             trackEntryView({

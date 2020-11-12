@@ -18,7 +18,7 @@ export const getEditorState = ({
   lifeline,
   onStateUpdate,
   onTitleUpdate,
-  currentSpaceContentTypes,
+  publishedCTs,
   spaceId,
   trackView = noop,
 }) => {
@@ -32,6 +32,7 @@ export const getEditorState = ({
       doc,
       entityInfo,
       locales: localeStore.getPrivateLocales(),
+      publishedCTs,
     });
 
     initDocErrorHandlerWithoutScope(doc.state.error$);
@@ -44,7 +45,7 @@ export const getEditorState = ({
       entityInfo,
       environmentId,
       onUpdate: onStateUpdate,
-      currentSpaceContentTypes,
+      publishedCTs,
       spaceId,
       validator,
     });
