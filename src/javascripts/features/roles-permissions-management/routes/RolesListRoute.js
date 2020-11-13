@@ -10,8 +10,8 @@ import * as RoleListHandler from '../components/RoleListHandler';
 import { RolesList } from '../roles_list/RolesList';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
-  const listHandler = RoleListHandler.create();
+const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) => {
+  const listHandler = RoleListHandler.create(spaceId, environmentId);
 
   const hasCustomRolesFeature = await accessChecker.canModifyRoles();
   const data = await listHandler.reset();
@@ -37,7 +37,7 @@ export function RolesListRoute(props) {
   return (
     <>
       <DocumentTitle title="Roles" />
-      <RolesFetcher spaceId={props.spaceId}>
+      <RolesFetcher spaceId={props.spaceId} environmentId={props.environmentId}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <RolesWorkbenchSkeleton title="Roles" />;
@@ -61,6 +61,7 @@ export function RolesListRoute(props) {
 
 RolesListRoute.propTypes = {
   spaceId: PropTypes.string.isRequired,
+  environmentId: PropTypes.string.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
   canUpgradeOrganization: PropTypes.bool.isRequired,
 };

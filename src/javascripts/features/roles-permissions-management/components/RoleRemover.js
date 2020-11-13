@@ -6,6 +6,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha'
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
 import { jumpToRole } from '../utils/jumpToRole';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 export function createRoleRemover(listHandler, role, space) {
   const roleRepo = getInstance(space);
@@ -16,6 +17,7 @@ export function createRoleRemover(listHandler, role, space) {
     const isUsed = roleCount > 0;
     return (
       <RemoveRoleModalConfirm
+        isMasterEnvironment={isCurrentEnvironmentMaster(space)}
         key={uniqueModalKey}
         isShown={isShown}
         role={role}
@@ -44,8 +46,17 @@ export function createRoleRemover(listHandler, role, space) {
   }
 }
 
-export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
+export function RemoveRoleModalConfirm({
+  isUsed,
+  isShown,
+  onCancel,
+  onConfirm,
+  role,
+  count,
+  isMasterEnvironment,
+}) {
   const [loading, setLoading] = React.useState(false);
+
   return (
     <ModalConfirm
       intent={isUsed ? 'primary' : 'negative'}
@@ -54,7 +65,7 @@ export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, r
       isConfirmLoading={loading}
       onConfirm={() => {
         if (isUsed) {
-          jumpToRole(role.name);
+          jumpToRole(role.name, isMasterEnvironment);
           onCancel();
           return;
         }
@@ -92,5 +103,6 @@ RemoveRoleModalConfirm.propTypes = {
   isUsed: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
+  isMasterEnvironment: PropTypes.bool.isRequired,
   count: PropTypes.number,
 };

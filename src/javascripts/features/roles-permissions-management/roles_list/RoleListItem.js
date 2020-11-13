@@ -15,6 +15,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import { jumpToRole } from '../utils/jumpToRole';
 import { go } from 'states/Navigator';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   clickableCell: css({
@@ -28,8 +30,8 @@ const styles = {
   }),
 };
 
-function jumpToAdminRoleMembers() {
-  jumpToRole(RoleListHandler.ADMIN_ROLE_NAME);
+function jumpToAdminRoleMembers(isMasterEnvironment) {
+  jumpToRole(RoleListHandler.ADMIN_ROLE_NAME, isMasterEnvironment);
 }
 
 function RoleActions(props) {
@@ -72,6 +74,9 @@ RoleActions.propTypes = {
 };
 
 export function AdministratorRoleListItem(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+
   return (
     <TableRow testId="role-row">
       <TableCell>
@@ -90,7 +95,7 @@ export function AdministratorRoleListItem(props) {
         )}
       </TableCell>
       <TableCell>
-        <TextLink onClick={jumpToAdminRoleMembers}>
+        <TextLink onClick={() => jumpToAdminRoleMembers(isMasterEnvironment)}>
           {props.count} {props.count !== 1 ? 'members' : 'member'}
         </TextLink>
       </TableCell>
@@ -106,6 +111,9 @@ AdministratorRoleListItem.propTypes = {
 
 // eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
 export function RoleListItem(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+
   const openRole = () => {
     go({
       path: '^.detail',
@@ -134,7 +142,7 @@ export function RoleListItem(props) {
       <TableCell>
         <TextLink
           onClick={() => {
-            jumpToRole(props.role.name);
+            jumpToRole(props.role.name, isMasterEnvironment);
           }}>
           {props.role.count} {props.role.count !== 1 ? 'members' : 'member'}
         </TextLink>

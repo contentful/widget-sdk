@@ -214,15 +214,15 @@ export class RoleEditor extends React.Component {
 
   delete = () => {
     const { role } = this.props;
-    const { currentSpace } = this.context;
+    const { currentSpace, currentSpaceId, currentEnvironmentId } = this.context;
 
-    const listHandler = RoleListHandler.create();
+    const listHandler = RoleListHandler.create(currentSpaceId, currentEnvironmentId);
     listHandler.reset().then(() => {
       createRoleRemover(listHandler, role, currentSpace).then((removed) => {
         if (removed) {
           this.setDirty(false);
           Navigator.go({
-            path: '^.list',
+            path: 'spaces.detail.settings.roles.list',
           });
         }
       });

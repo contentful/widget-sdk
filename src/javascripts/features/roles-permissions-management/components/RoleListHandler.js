@@ -4,12 +4,14 @@ import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import { getInstance as getRoleRepoInstance } from 'access_control/RoleRepository';
 import { getModule } from 'core/NgRegistry';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 export const ADMIN_ROLE_NAME = 'Administrator';
 const ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
 
-export function create() {
+export function create(spaceId, environmentId) {
   const spaceContext = getModule('spaceContext');
+  const endpoint = createSpaceEndpoint(spaceId, environmentId);
 
   let roleCounts = {};
   let roleOptions = [];
@@ -23,7 +25,7 @@ export function create() {
   };
 
   async function reset() {
-    const { endpoint, space } = spaceContext;
+    const { space } = spaceContext;
     const [_memberships, roles] = await Promise.all([
       createSpaceMembersRepo(endpoint).getAll(),
       getRoleRepoInstance(space).getAll(),

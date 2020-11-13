@@ -17,6 +17,7 @@ const list = {
     (spaceContext) => {
       return {
         spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
         canUpgradeOrganization: isOwnerOrAdmin(spaceContext.organization),
       };
