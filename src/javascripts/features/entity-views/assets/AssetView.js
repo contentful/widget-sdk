@@ -93,6 +93,7 @@ export const AssetView = ({ goTo }) => {
           order: 'scheduledFor.datetime',
           'sys.status': 'scheduled',
           'environment.sys.id': currentEnvironmentId,
+          limit: 500,
         });
         setScheduledActions(items);
       } catch (items) {

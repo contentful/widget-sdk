@@ -13,7 +13,7 @@ import {
   States as EntryStates,
 } from '../../../interactions/entries';
 import {
-  queryPendingJobsForDefaultSpaceWithoutLimit,
+  queryPendingJobsForDefaultSpaceWithMaxLimit,
   queryAllScheduledJobsForDefaultEntry,
 } from '../../../interactions/jobs';
 import {
@@ -67,7 +67,7 @@ describe('Entries list page', () => {
       const interactions = [
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         '@queryNonArchivedEntries',
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
@@ -108,7 +108,7 @@ describe('Entries list page', () => {
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
@@ -168,7 +168,7 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
@@ -228,7 +228,7 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),

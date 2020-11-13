@@ -25,8 +25,9 @@ const pendingJobsQuery = {
   order: 'scheduledFor.datetime',
   'sys.status': 'scheduled',
 };
-const pendingJobsQueryWithoutLimit = {
+const pendingJobsQueryWithMaxLimit = {
   'environment.sys.id': 'master',
+  limit: '500',
   order: 'scheduledFor.datetime',
   'sys.status': 'scheduled',
 };
@@ -75,13 +76,13 @@ function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
   };
 }
 
-export const queryPendingJobsForDefaultSpaceWithoutLimit = {
+export const queryPendingJobsForDefaultSpaceWithMaxLimit = {
   willFindNone() {
     cy.addInteraction({
       provider: 'jobs',
       state: States.NO_JOBS_FOR_DEFAULT_SPACE,
-      uponReceiving: `a query without limit for pending jobs in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
+      uponReceiving: `a query with limit 500 for pending jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithMaxLimit),
       willRespondWith: {
         status: 200,
         headers: {
@@ -97,14 +98,14 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
     cy.addInteraction({
       provider: 'jobs',
       state: States.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
-      uponReceiving: `a query without a limit for pending jobs in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
+      uponReceiving: `a query with a limit 500 for pending jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithMaxLimit),
       willRespondWith: {
         status: 200,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: severalPendingJobsResponse(100), // Limit to 100
+        body: severalPendingJobsResponse(500), // Limit to 500
       },
     }).as('queryPendingJobsForDefaultSpace');
 

@@ -78,6 +78,7 @@ export const EntryView = ({ goTo }) => {
           order: 'scheduledFor.datetime',
           'sys.status': 'scheduled',
           'environment.sys.id': currentEnvironmentId,
+          limit: 500,
         });
         setJobs(items);
       } catch (error) {
