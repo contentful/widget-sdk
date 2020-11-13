@@ -51,7 +51,6 @@ const styles = {
   })
 };
 
-
 const openModal = (updateSecret: (generatedSecret: string) => Promise<void>) => {
  return ModalLauncher.open(({isShown, onClose}) => {
   return <AddSigningSecretDialog
@@ -76,7 +75,7 @@ export const SigningSecret = ({definition}) => {
 
   useEffect(() => {
     (async ()=>{
-      const secret = await getAppDefinitionLoader(orgId).getAppSigningSecret(definitionId)
+      const secret = await getAppDefinitionLoader(orgId).getAppSigningSecret(definitionId);
       setSecret(secret?.padStart(64, '*'));
     })()
   }, [orgId, definitionId, setSecret])
@@ -90,7 +89,12 @@ export const SigningSecret = ({definition}) => {
 
     {
       !currentSecret &&
-      <Button className={styles.activateButton} onClick={() => addNewSecret(generateSecret())} buttonType={"muted"}>
+      <Button
+        className={styles.activateButton}
+        onClick={() => addNewSecret(generateSecret())}
+        buttonType={"muted"}
+        testId={"activate-btn"}
+      >
         Activate secure requests
       </Button>
     }
@@ -100,12 +104,11 @@ export const SigningSecret = ({definition}) => {
         htmlFor="secretInput"
         className={styles.secretInputLabel}
         requiredText={""}
-        testId="cf-ui-form-label"
       >
         Shared secret
       </FormLabel>
       {isSecretUpdated &&
-        <Note className={styles.copySecretReminder} noteType="positive">
+        <Note className={styles.copySecretReminder} noteType="positive" testId={"copy-reminder"}>
           Make sure to immediately copy your new shared secret. You will not be able to see it again.
         </Note>
       }
@@ -115,11 +118,13 @@ export const SigningSecret = ({definition}) => {
           className={styles.currentSecretInput}
           value={currentSecret}
           withCopyButton={isSecretUpdated}
+          testId={"secret-input"}
           readOnly
         />
         <Button
           className={styles.button}
           buttonType={'muted'}
+          testId={"update-secret-btn"}
           onClick={() => {openModal(addNewSecret)}}
         >
           Update
