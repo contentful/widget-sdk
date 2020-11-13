@@ -10,6 +10,7 @@ import {
   queryLinksToDefaultEntry,
   getFirst7SnapshotsOfDefaultEntry,
   createAnEntryInDefaultSpace,
+  States as EntryStates,
 } from '../../../interactions/entries';
 import {
   queryPendingJobsForDefaultSpaceWithoutLimit,
@@ -23,9 +24,9 @@ import {
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
+import { severalEntriesResponse } from '../../../fixtures/responses/entries-several';
 
 const empty = require('../../../fixtures/responses/empty.json');
-const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
 const nonArchivedQuery = {
   limit: '40',
   order: '-sys.updatedAt',
@@ -51,7 +52,7 @@ describe('Entries list page', () => {
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
-        state: 'noEntries',
+        state: EntryStates.NONE,
         uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
@@ -89,7 +90,7 @@ describe('Entries list page', () => {
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
-        state: 'noEntries',
+        state: EntryStates.NONE,
         uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
@@ -151,7 +152,7 @@ describe('Entries list page', () => {
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
-        state: 'severalEntries',
+        state: EntryStates.SEVERAL,
         uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
@@ -159,7 +160,7 @@ describe('Entries list page', () => {
           headers: {
             'Content-Type': 'application/vnd.contentful.management.v1+json',
           },
-          body: severalEntriesResponse,
+          body: severalEntriesResponse(),
         },
       }).as('queryNonArchivedEntries');
 
@@ -183,7 +184,7 @@ describe('Entries list page', () => {
 
     it('renders entries page correctly', () => {
       cy.findByTestId('entry-list').should('be.visible');
-      cy.findAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
+      cy.findAllByTestId('entry-row').should('have.length', severalEntriesResponse().total);
     });
 
     it('renders the tooltip for the scheduled the entry', () => {
@@ -211,7 +212,7 @@ describe('Entries list page', () => {
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
-        state: 'severalEntries',
+        state: EntryStates.SEVERAL,
         uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
@@ -219,7 +220,7 @@ describe('Entries list page', () => {
           headers: {
             'Content-Type': 'application/vnd.contentful.management.v1+json',
           },
-          body: severalEntriesResponse,
+          body: severalEntriesResponse(),
         },
       }).as('queryNonArchivedEntries');
 

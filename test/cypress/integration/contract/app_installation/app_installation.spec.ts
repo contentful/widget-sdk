@@ -99,41 +99,4 @@ describe('App Installation', () => {
       });
     });
   });
-
-  describe('Entries page', () => {
-    let interactions: string[];
-    beforeEach(() => {
-      cy.resetAllFakeServers();
-      interactions = [
-        ...defaultRequestsMock({
-          publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnSeveral,
-        }),
-        getDefaultEntry.willReturnEntryWithAppInstalled(),
-        queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryForAppInstallations.willReturnSome(),
-      ];
-    });
-
-    context('with app installed', () => {
-      beforeEach(() => {
-        interactions.push(
-          getEditorInterfaceForDefaultContentType.willReturnEditorInterfaceWithAppInstalled()
-        );
-
-        cy.server();
-        cy.route('**/channel/**', []).as('shareJS');
-
-        cy.visit(`/spaces/${defaultSpaceId}/entries/${entryIdWithApp}`);
-
-        cy.wait(interactions);
-      });
-
-      describe('Opening the Entry page', () => {
-        it('shows the installed app instead of a JSON field', () => {
-          //check for loaded app iframe
-          cy.get('iframe[data-extension-id="6YdAwxoPHopeTeuwh43UJu"]').should('exist');
-        });
-      });
-    });
-  });
 });

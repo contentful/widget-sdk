@@ -1,6 +1,5 @@
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 
-const severalEntriesBody = require('../fixtures/responses/entries-several.json');
 const severalAssetsBody = require('../fixtures/responses/assets-several.json');
 const severalContentTypesBody = require('../fixtures/responses/content-types-several.json');
 
@@ -9,8 +8,7 @@ export const defaultOrgId = Cypress.env('orgId');
 export const defaultContentType = severalContentTypesBody.items[0];
 export const defaultContentTypeId = defaultContentType.sys.id;
 export const defaultEnvironmentId = 'master';
-export const defaultEntry = severalEntriesBody.items[2];
-export const defaultEntryId = defaultEntry.sys.id;
+export const defaultEntryId = 'testEntryId';
 export const defaultAsset = severalAssetsBody.items[0];
 export const defaultAssetId = defaultAsset.sys.id;
 export const defaultPreviewName = 'Test Name';

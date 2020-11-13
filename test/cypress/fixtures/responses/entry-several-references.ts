@@ -1,6 +1,6 @@
 import { Matchers } from '@pact-foundation/pact-web';
 import {
-  defaultContentType,
+  defaultContentTypeId,
   defaultEntryId,
   defaultSpaceId,
   defaultEnvironmentId,
@@ -151,7 +151,13 @@ export function entry(entryPayload = { sys: {}, fields: {} }) {
       },
     },
     environment,
-    contentType: defaultContentType,
+    contentType: {
+      sys: {
+        id: defaultContentTypeId,
+        linkType: 'ContentType',
+        type: 'Link',
+      },
+    },
     ...entryPayload.sys,
   };
 

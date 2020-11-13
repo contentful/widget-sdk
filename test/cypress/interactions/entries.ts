@@ -1,15 +1,15 @@
 import {
   defaultHeader,
   defaultEntryId,
-  defaultEntry,
   defaultSpaceId,
   defaultEnvironmentId,
   defaultAssetId,
-  entryIdWithApp,
+  defaultContentTypeId,
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
-const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
+import { newEntryResponse } from '../fixtures/responses/entry-new';
+import { severalEntriesResponse } from '../fixtures/responses/entries-several';
 import {
   severalEntryReferencesResponse,
   validateEntryReferencesSeveralRequest,
@@ -18,12 +18,12 @@ import {
   publishEntryReferencesSeveralErrorsResponse,
   publishEntryReferencesSeveralSuccessResponse,
 } from '../fixtures/responses/entry-several-references';
-import { entryWithApp } from '../fixtures/responses/entry-with-app';
+import { Matchers } from '@pact-foundation/pact-web';
+import { ENTRY_REFERENCES_ENDPOINT } from '../../../src/javascripts/alphaHeaders';
 
-enum States {
+export enum States {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
-  WITH_APP = 'entries/with-app',
   NO_ERRORS = 'releases/no-errors',
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
@@ -49,32 +49,11 @@ export const getDefaultEntry = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: defaultEntry,
+        body: severalEntriesResponse().items[2],
       },
     }).as('getDefaultEntry');
 
     return '@getDefaultEntry';
-  },
-  willReturnEntryWithAppInstalled() {
-    cy.addInteraction({
-      provider: 'entries',
-      state: States.WITH_APP,
-      uponReceiving: `a request for the entry "${entryIdWithApp}" in space "${defaultSpaceId}" that has an app installed`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/entries/${entryIdWithApp}`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: entryWithApp,
-      },
-    }).as('getDefaultEntryWithApp');
-
-    return '@getDefaultEntryWithApp';
   },
 };
 
@@ -164,14 +143,13 @@ export const queryForDefaultEntryInsideEnvironment = {
     cy.addInteraction({
       provider: 'entries',
       state: States.SEVERAL,
-      // TODO: Is this description accurate?
       uponReceiving: `a query for the entry "${defaultEntryId}" inside the environment "${defaultEnvironmentId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries`,
         headers: defaultHeader,
         query: {
-          'sys.id[in]': defaultEntryId, // TODO: Is this the correct query?
+          'sys.id[in]': defaultEntryId,
         },
       },
       willRespondWith: {
@@ -179,7 +157,15 @@ export const queryForDefaultEntryInsideEnvironment = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
+        body: {
+          sys: {
+            type: 'Array',
+          },
+          total: 1,
+          skip: Matchers.integer(0),
+          limit: Matchers.integer(40),
+          items: [severalEntriesResponse().items[2]],
+        },
       },
     }).as('queryForDefaultEntryInsideEnvironment');
 
@@ -192,14 +178,13 @@ export const queryForDefaultEntryWithoutEnvironment = {
     cy.addInteraction({
       provider: 'entries',
       state: States.SEVERAL,
-      // TODO: Is this description accurate?
-      uponReceiving: `a query for the entry "${defaultEntryId}"  in space "${defaultSpaceId}"`,
+      uponReceiving: `a query for the entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/entries`,
         headers: defaultHeader,
         query: {
-          'sys.id[in]': defaultEntryId, // TODO: Is this the correct query?
+          'sys.id[in]': defaultEntryId,
         },
       },
       willRespondWith: {
@@ -207,7 +192,15 @@ export const queryForDefaultEntryWithoutEnvironment = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
+        body: {
+          sys: {
+            type: 'Array',
+          },
+          total: 1,
+          skip: Matchers.integer(0),
+          limit: Matchers.integer(40),
+          items: [severalEntriesResponse().items[2]],
+        },
       },
     }).as('queryForDefaultEntryWithoutEnvironment');
 
@@ -224,14 +217,18 @@ export const createAnEntryInDefaultSpace = {
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/entries`,
-        headers: defaultHeader,
+        headers: {
+          ...defaultHeader,
+          'X-Contentful-Content-Type': defaultContentTypeId,
+        },
+        body: {},
       },
       willRespondWith: {
         status: 201,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: defaultEntry,
+        body: newEntryResponse(),
       },
     }).as('createAnEntryInDefaultSpace');
 
@@ -241,14 +238,18 @@ export const createAnEntryInDefaultSpace = {
 
 export const validateAnEntryValidResponse = {
   willSucceed() {
+    const version = String(severalEntriesResponse().items[2].sys.version.getValue());
     cy.addInteraction({
       provider: 'entries',
-      state: States.NONE,
+      state: States.SEVERAL,
       uponReceiving: `a request to validate an entry in "${defaultSpaceId}"`,
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/published`,
-        headers: defaultHeader,
+        headers: {
+          ...defaultHeader,
+          'X-Contentful-Version': version,
+        },
       },
       willRespondWith: {
         status: 200,
@@ -256,9 +257,9 @@ export const validateAnEntryValidResponse = {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
-    }).as('createAnEntryInDefaultSpace');
+    }).as('validateAnEntryValidResponse');
 
-    return '@createAnEntryInDefaultSpace';
+    return '@validateAnEntryValidResponse';
   },
 };
 
@@ -271,7 +272,10 @@ export const getEntryReferences = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
-        headers: defaultHeader,
+        headers: {
+          ...defaultHeader,
+          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
+        },
       },
       willRespondWith: {
         status: 200,

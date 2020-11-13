@@ -10,7 +10,7 @@ import {
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultAssets, severalAssetsBody } from '../../../interactions/assets';
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultSpaceId, defaultReleaseId } from '../../../util/requests';
+import { defaultSpaceId, defaultReleaseId, defaultEntryId } from '../../../util/requests';
 import { severalReleases } from '../../../fixtures/responses/releases';
 import {
   queryForAdvancedAppsInDefaultOrg,
@@ -28,8 +28,7 @@ import {
   cancelDefaultJobInDefaultSpace,
   queryAllScheduledJobsForDefaultRelease,
 } from '../../../interactions/jobs';
-
-const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
+import { severalEntriesResponse } from '../../../fixtures/responses/entries-several';
 
 describe('Releases', () => {
   let interactions: string[];
@@ -196,9 +195,7 @@ describe('Releases', () => {
         });
 
         it('shows entries', () => {
-          cy.findAllByTestId('release-entry-card')
-            .should('be.visible')
-            .should('have.length', severalEntriesResponse.items.length);
+          cy.findAllByTestId('release-entry-card').should('be.visible').should('have.length', 1);
         });
 
         it('shows assets', () => {
@@ -210,7 +207,7 @@ describe('Releases', () => {
         it('removes entity successfully', () => {
           const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
 
-          cy.findByTestId('entry_testEntryId_2_remove-release-ddl').click();
+          cy.findByTestId(`entry_${defaultEntryId}_0_remove-release-ddl`).click();
           cy.findByTestId('delete-entity').click();
 
           cy.wait(deleteEntityInteraction);
@@ -228,9 +225,7 @@ describe('Releases', () => {
         });
 
         it('shows list of entries on detailed release page', () => {
-          cy.findAllByTestId('entry-row')
-            .should('be.visible')
-            .should('have.length', severalEntriesResponse.items.length);
+          cy.findAllByTestId('entry-row').should('be.visible').should('have.length', 1);
         });
 
         it('shows list of assets on detailed release page', () => {
@@ -243,7 +238,7 @@ describe('Releases', () => {
         it('removes entity successfully', () => {
           const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
 
-          cy.findByTestId('entry_2_remove-release-ddl').click();
+          cy.findByTestId(`entry_0_remove-release-ddl`).click();
           cy.findByTestId('delete-entity').click();
 
           cy.wait(deleteEntityInteraction);
