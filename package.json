@@ -13,7 +13,7 @@
     "@babel/polyfill": "^7.8.7",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "^0.9.1",
-    "@contentful/entity-search": "0.4.3",
+    "@contentful/entity-search": "0.4.4",
     "@contentful/field-editor-boolean": "0.8.4",
     "@contentful/field-editor-checkbox": "0.10.5",
     "@contentful/field-editor-date": "0.8.3",
