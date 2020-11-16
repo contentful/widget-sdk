@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SpacePlans from './SpacePlans';
 import * as trackCTA from 'analytics/trackCTA';
-
+import { getVariation } from 'LaunchDarkly';
 import * as fake from 'test/helpers/fakeFactory';
 
 const mockSpaceForPlanOne = fake.Space();
@@ -37,6 +37,10 @@ const mockOnDeleteSpace = jest.fn();
 const mockOnCreateSpace = jest.fn();
 
 describe('Space Plan', () => {
+  beforeEach(() => {
+    getVariation.mockClear().mockResolvedValue(false);
+  });
+
   describe('should load correctly', () => {
     it('should display the skelton template while loading', async () => {
       build({ initialLoad: true });
@@ -134,6 +138,7 @@ describe('Space Plan', () => {
     });
 
     it('should render a help icon and tooltip when anySpacesInaccessible is true', async () => {
+      getVariation.mockResolvedValueOnce(true);
       build({ anySpacesInaccessible: true });
 
       const helpIcon = screen.getByTestId('inaccessible-help-icon');
@@ -164,6 +169,7 @@ describe('Space Plan', () => {
     });
 
     it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
+      getVariation.mockResolvedValueOnce(true);
       const mockPlanLocalOne = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',
@@ -204,6 +210,7 @@ describe('Space Plan', () => {
     });
 
     it('should display 1 tab for enterprise organization if there are no plans unassigned.', async () => {
+      getVariation.mockResolvedValueOnce(true);
       const mockPlanLocalOne = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',

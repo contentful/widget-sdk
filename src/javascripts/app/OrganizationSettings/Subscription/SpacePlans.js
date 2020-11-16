@@ -29,6 +29,7 @@ import { Pluralized, Price } from 'core/components/formatting';
 
 import { UnassignedPlansTable } from './components/UnassignedPlansTable';
 import { SpacePlansTable } from './components/SpacePlansTable';
+import { SpacePlansTableNew } from './components/SpacePlansTableNew';
 
 const styles = {
   total: css({
@@ -86,7 +87,7 @@ function SpacePlans({
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
-
+  const [showSpaceUsageSummary, setShowSpaceUsageSummary] = useState(false);
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId });
@@ -94,6 +95,10 @@ function SpacePlans({
         FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
         { organizationId }
       );
+      const showSpaceUsageSummary = await getVariation(FLAGS.SPACE_USAGE_SUMMARY, {
+        organizationId,
+      });
+      setShowSpaceUsageSummary(showSpaceUsageSummary);
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
       const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
@@ -228,15 +233,29 @@ function SpacePlans({
               className={cn(styles.tabPanel, {
                 [styles.isVisible]: selectedTab === USED_SPACES,
               })}>
-              <SpacePlansTable
-                plans={assignedSpacePlans}
-                initialLoad={initialLoad}
-                upgradedSpaceId={upgradedSpaceId}
-                onChangeSpace={onChangeSpace}
-                onDeleteSpace={onDeleteSpace}
-                enterprisePlan={enterprisePlan}
-                showSpacePlanChangeBtn={canManageSpaces}
-              />
+              {showSpaceUsageSummary ? (
+                <SpacePlansTableNew
+                  plans={assignedSpacePlans}
+                  organizationId={organizationId}
+                  initialLoad={initialLoad}
+                  upgradedSpaceId={upgradedSpaceId}
+                  onChangeSpace={onChangeSpace}
+                  onDeleteSpace={onDeleteSpace}
+                  enterprisePlan={enterprisePlan}
+                  showSpacePlanChangeBtn={canManageSpaces}
+                />
+              ) : (
+                <SpacePlansTable
+                  plans={assignedSpacePlans}
+                  organizationId={organizationId}
+                  initialLoad={initialLoad}
+                  upgradedSpaceId={upgradedSpaceId}
+                  onChangeSpace={onChangeSpace}
+                  onDeleteSpace={onDeleteSpace}
+                  enterprisePlan={enterprisePlan}
+                  showSpacePlanChangeBtn={canManageSpaces}
+                />
+              )}
             </TabPanel>
             {unassignedSpacePlans.length > 0 && (
               <TabPanel
@@ -255,6 +274,17 @@ function SpacePlans({
               </TabPanel>
             )}
           </>
+        ) : showSpaceUsageSummary ? (
+          <SpacePlansTableNew
+            plans={spacePlans}
+            organizationId={organizationId}
+            initialLoad={initialLoad}
+            upgradedSpaceId={upgradedSpaceId}
+            onChangeSpace={onChangeSpace}
+            onDeleteSpace={onDeleteSpace}
+            enterprisePlan={enterprisePlan}
+            showSpacePlanChangeBtn={canManageSpaces}
+          />
         ) : (
           <SpacePlansTable
             plans={spacePlans}
