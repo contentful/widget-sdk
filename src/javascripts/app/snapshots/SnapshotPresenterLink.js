@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 import { css } from 'emotion';
 import { Card } from '@contentful/forma-36-react-components';
+import TheLocaleStore from 'services/localeStore';
+import * as PublicContentType from 'widgets/PublicContentType';
+import { WrappedEntryCard, WrappedAssetCard } from '@contentful/field-editor-reference';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import * as EntityHelpers from 'app/entity_editor/entityHelpers';
-import EntryLink from 'app/widgets/link/EntryLink';
-import AssetLink from 'app/widgets/link/AssetLink';
 
 const styles = {
   assetLink: css({
@@ -17,6 +19,8 @@ const styles = {
 
 const SnapshotPresenterLink = ({ locale, value, linkType }) => {
   const [models, setModels] = useState([]);
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 
   useEffect(() => {
     const links = Array.isArray(value) ? value : [value];
@@ -26,7 +30,9 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
       const mapped = results.reduce(
         (red, entity) => ({
           ...red,
-          [entity.sys.id]: { entity },
+          [entity.sys.id]: {
+            entity,
+          },
         }),
         {}
       );
@@ -34,8 +40,6 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
       setModels(mappedResults);
     });
   }, [linkType, value]);
-
-  const helper = EntityHelpers.newForLocale(locale.code);
 
   return (
     <>
@@ -49,13 +53,41 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
         }
         const { entity } = model;
         const key = `${entity.sys.id}_${i}`;
+
+        const internalContentType = currentSpaceContentTypes.find(
+          (ct) => ct.sys.id === get(entity, ['sys', 'contentType', 'sys', 'id'])
+        );
+
+        const contentType = internalContentType
+          ? PublicContentType.fromInternal(internalContentType)
+          : undefined;
+
         return entity.sys.type === 'Entry' ? (
           <div key={key} data-test-id="snapshot-presenter-link">
-            <EntryLink entry={entity} entityHelpers={helper} />
+            <WrappedEntryCard
+              getEntityScheduledActions={() => {
+                return Promise.resolve([]);
+              }}
+              contentType={contentType}
+              entry={entity}
+              isDisabled={true}
+              localeCode={locale.code}
+              defaultLocaleCode={defaultLocaleCode}
+              hasCardEditActions={false}
+            />
           </div>
         ) : (
           <div key={key} className={styles.assetLink} data-test-id="snapshot-presenter-link">
-            <AssetLink asset={entity} entityHelpers={helper} />
+            <WrappedAssetCard
+              getEntityScheduledActions={() => {
+                return Promise.resolve([]);
+              }}
+              asset={entity}
+              isDisabled={true}
+              localeCode={locale.code}
+              defaultLocaleCode={defaultLocaleCode}
+              hasCardEditActions={false}
+            />
           </div>
         );
       })}

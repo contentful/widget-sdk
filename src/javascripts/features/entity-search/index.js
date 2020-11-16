@@ -1,4 +1,4 @@
-import * as entitySelector from './EntitySelector/entitySelectorRolloutFacade';
+import * as entitySelector from './EntitySelector/entitySelector';
 
 export { FilterPill } from './FilterPill';
 export { Search } from './View';

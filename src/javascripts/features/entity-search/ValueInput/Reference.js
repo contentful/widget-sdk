@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes';
 import * as entitySelector from '../EntitySelector/entitySelector';
+import { useEntitySelectorSdk } from '../EntitySelector/useEntitySelectorSdk';
 
 export function FilterValueReference({
   ctField = {},
@@ -16,9 +17,11 @@ export function FilterValueReference({
   const ctFieldClone = cloneDeep(ctField);
   ctFieldClone.type = 'Link';
 
+  const entitySelectorSdk = useEntitySelectorSdk();
+
   const openSelector = () =>
     entitySelector
-      .openFromField(ctFieldClone)
+      .openFromField(entitySelectorSdk, ctFieldClone)
       .then((entities) => entities.map((e) => e.sys.id).join(','))
       .then(onChange);
 

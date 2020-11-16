@@ -65,7 +65,7 @@ export function createDialogsApi(
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
     openPrompt: ExtensionDialogs.openPrompt,
-    selectSingleEntry: async (opts) => {
+    selectSingleEntry: (async (opts) => {
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Entry',
@@ -74,16 +74,16 @@ export function createDialogsApi(
         return result[0] ?? null;
       }
       return null;
-    },
-    selectMultipleEntries: async (opts) => {
+    }) as DialogExtensionSDK['dialogs']['selectSingleEntry'],
+    selectMultipleEntries: (async (opts) => {
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Entry',
         multiple: true,
       });
       return result ?? null;
-    },
-    selectSingleAsset: async (opts) => {
+    }) as DialogExtensionSDK['dialogs']['selectMultipleEntries'],
+    selectSingleAsset: (async (opts) => {
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Asset',
@@ -92,15 +92,15 @@ export function createDialogsApi(
         return result[0] ?? null;
       }
       return null;
-    },
-    selectMultipleAssets: async (opts) => {
+    }) as DialogExtensionSDK['dialogs']['selectSingleAsset'],
+    selectMultipleAssets: async function (opts) {
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
         entityType: 'Asset',
         multiple: true,
       });
       return result ?? null;
-    },
+    } as DialogExtensionSDK['dialogs']['selectMultipleAssets'],
     openCurrent: function (opts) {
       if (sdk.ids.app) {
         return this.openCurrentApp(opts);
