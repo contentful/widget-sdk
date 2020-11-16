@@ -21,7 +21,7 @@ import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import { FileEditor } from '@contentful/field-editor-file';
-import { getExternalImageUrl } from 'utils/thumbnailHelpers';
+import * as AssetUrlService from 'services/AssetUrlService';
 import {
   SingleEntryReferenceEditorWithTracking,
   SingleMediaEditorWithTracking,
@@ -323,7 +323,7 @@ export function create() {
           sdk={widgetApi}
           clientConfig={{ apiKey, policy, signature }}
           getUploadUrl={(url) => url}
-          getExternalUrl={getExternalImageUrl}
+          getExternalUrl={AssetUrlService.transformHostname}
           signAssetUrl={async (url) => {
             const result = await widgetApi.space.signAssetUrls({
               urls: [url],
