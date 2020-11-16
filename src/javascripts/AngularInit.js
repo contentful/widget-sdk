@@ -27,7 +27,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/EntityField/cfEntityFieldDirective'),
-      import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),

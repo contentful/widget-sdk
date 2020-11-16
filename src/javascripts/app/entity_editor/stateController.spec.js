@@ -86,7 +86,6 @@ describe('stateController', () => {
       editorData,
       entityInfo,
       doc,
-      getTitle: () => 'title',
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       publishedCTs: spaceContext.publishedCTs,

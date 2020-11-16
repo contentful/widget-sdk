@@ -76,8 +76,9 @@ export const BulkEntityEditor = ({
 
   const { editorSettings: preferences, track } = bulkEditorContext;
 
+  const lifeline = K.useLifeline();
+
   useEffect(() => {
-    const lifeline = K.createBus();
     const init = async () => {
       try {
         const editorData = await bulkEditorContext.loadEditorData(entityContext.id);
@@ -124,10 +125,6 @@ export const BulkEntityEditor = ({
       }
     };
     init();
-
-    return () => {
-      lifeline.end(); // make the doc destroy
-    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fieldLocaleListeners = useMemo(() => {

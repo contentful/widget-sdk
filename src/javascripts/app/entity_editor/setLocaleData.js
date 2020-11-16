@@ -27,6 +27,17 @@ export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {})
   return localeData;
 }
 
+export function getStatusNotificationPropsDefault(entityLabel) {
+  return {
+    status: 'ok',
+    entityLabel,
+  };
+}
+
+function resetStatusNotificationProps(props = {}, entityLabel) {
+  props.statusNotificationProps = getStatusNotificationPropsDefault(entityLabel);
+}
+
 function maybeResetFocusedLocale() {
   if (!TheLocaleStore.getPrivateLocales().includes(TheLocaleStore.getFocusedLocale())) {
     // This would happen if the focused locale was changed or deleted by a
@@ -55,13 +66,13 @@ function handleSidebarEvents(props, entityLabel, shouldHideLocaleErrors, emitter
     props.localeData.focusedLocale = locale;
     onUpdate(props);
     props.editorContext.validator.run();
-    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors(props.localeData)) {
       resetStatusNotificationProps(props, entityLabel);
     }
   });
 
   emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, (locale) => {
-    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors(props.localeData)) {
       resetStatusNotificationProps(props, entityLabel);
     }
     TheLocaleStore.deactivateLocale(locale);
@@ -70,7 +81,7 @@ function handleSidebarEvents(props, entityLabel, shouldHideLocaleErrors, emitter
   });
 
   emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, (locales) => {
-    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors()) {
+    if (isEmpty(props.localeData.errors) || shouldHideLocaleErrors(props.localeData)) {
       resetStatusNotificationProps(props, entityLabel);
     }
     TheLocaleStore.setActiveLocales(locales);
@@ -94,7 +105,7 @@ function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate
     // always refer to a missing file error.
     const localesErrors = groupBy(errors, (error) => error.path[2] || defaultLocale.internal_code);
     props.localeData.errors = localesErrors;
-    if (isEmpty(localesErrors) || shouldHideLocaleErrors()) {
+    if (isEmpty(localesErrors) || shouldHideLocaleErrors(props.localeData)) {
       onUpdate(props);
       return;
     }
@@ -148,7 +159,7 @@ function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate
     if (
       status === DocumentStatusCode.OK &&
       !isEmpty(props.localeData.errors) &&
-      !shouldHideLocaleErrors()
+      !shouldHideLocaleErrors(props.localeData)
     ) {
       return;
     }
@@ -161,11 +172,4 @@ function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate
     };
     onUpdate(props);
   });
-}
-
-function resetStatusNotificationProps(props, entityLabel) {
-  props.statusNotificationProps = {
-    status: 'ok',
-    entityLabel,
-  };
 }

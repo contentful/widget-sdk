@@ -2,6 +2,7 @@ import * as Kefir from 'kefir';
 import { noop, zipObject } from 'lodash';
 import { makeSum } from 'sum-types';
 import type { Emitter, Observable, Stream, Property } from 'kefir';
+import { useEffect, useRef } from 'react';
 
 export * from 'kefir';
 
@@ -358,6 +359,15 @@ export function scopeLifeline(scope: Scope): Stream<void, unknown> {
     }
   });
 }
+
+/**
+ * Returns a stream that ends when the component is unmounted.
+ */
+export const useLifeline = (): StreamBus<unknown> => {
+  const { current: lifeline } = useRef(createStreamBus());
+  useEffect(() => lifeline?.end, [lifeline]);
+  return lifeline;
+};
 
 /**
  * Returns a property that ends when

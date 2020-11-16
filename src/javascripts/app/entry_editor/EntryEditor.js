@@ -1,0 +1,96 @@
+import React, { Fragment, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import * as K from 'core/utils/kefir';
+import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
+import { trackEntryView } from '../entity_editor/Tracking';
+import { keys } from 'lodash';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import EntryEditorWorkbenchWithProvider from 'app/entry_editor/EntryEditorWorkbench';
+import { useProxyState } from 'core/services/proxy';
+import {
+  useLocaleData,
+  useEntrySidebarProps,
+  useEditorState,
+  useEmitter,
+} from '../entity_editor/useEditorHooks';
+
+export const EntryEditor = ({ getViewProps, currentSlideLevel, fieldController, fields }) => {
+  const viewProps = getViewProps();
+  const { editorData, trackLoadEvent } = viewProps;
+
+  const emitter = useEmitter();
+
+  const [preferences] = useProxyState({ ...viewProps.preferences });
+
+  const { doc: otDoc, editorContext, state, title } = useEditorState({
+    editorData,
+    preferences,
+    trackView: (args) => {
+      trackEntryView({
+        ...args,
+        currentSlideLevel,
+        editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
+      });
+    },
+  });
+
+  const shouldHideLocaleErrors = (localeData) => {
+    const { errors, focusedLocale } = localeData;
+    const localeCodes = keys(errors);
+    return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
+  };
+
+  const { localeData, statusNotificationProps } = useLocaleData({
+    editorContext,
+    editorData,
+    emitter,
+    otDoc,
+    shouldHideLocaleErrors,
+  });
+
+  const loadEvents = K.useLifeline();
+  useEffect(() => {
+    bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, trackLoadEvent);
+  }, [editorData, loadEvents, otDoc, trackLoadEvent]);
+
+  const entrySidebarProps = useEntrySidebarProps({
+    editorContext,
+    editorData,
+    emitter,
+    fieldController,
+    localeData,
+    otDoc,
+    preferences,
+    state,
+  });
+
+  return (
+    <Fragment>
+      <DocumentTitle title={[title, 'Content']} />
+      <EntryEditorWorkbenchWithProvider
+        editorContext={editorContext}
+        editorData={editorData}
+        entrySidebarProps={entrySidebarProps}
+        fields={fields}
+        loadEvents={loadEvents}
+        localeData={localeData}
+        otDoc={otDoc}
+        preferences={preferences}
+        state={state}
+        statusNotificationProps={statusNotificationProps}
+        title={title}
+      />
+    </Fragment>
+  );
+};
+
+EntryEditor.propTypes = {
+  getViewProps: PropTypes.func.isRequired,
+  currentSlideLevel: PropTypes.number.isRequired,
+  fieldController: PropTypes.object,
+  fields: PropTypes.object,
+};
+
+EntryEditor.defaultProps = {
+  currentSlideLevel: 0,
+};

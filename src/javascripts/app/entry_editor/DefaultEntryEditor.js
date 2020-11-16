@@ -14,23 +14,22 @@ export default function renderDefaultEditor(
     loadEvents,
     fields,
     entityInfo,
-    getOtDoc,
-    getEditorData,
+    otDoc,
+    editorData,
     preferences,
     widgets,
     editorContext,
-    noLocalizedFieldsAdviceProps,
     selectedTab,
     onRootReferenceCardClick,
     fieldLocaleListeners,
+    noLocalizedFieldsAdviceProps,
   }
 ) {
-  const otDoc = getOtDoc();
-  const editorData = getEditorData();
   const canEditTags = otDoc.permissions.canEditFieldLocale(
     PolicyBuilderConfig.TAGS,
     PolicyBuilderConfig.PATH_WILDCARD
   );
+
   const widgetComponents = {
     [EntryEditorWidgetTypes.REFERENCE_TREE.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
@@ -51,6 +50,7 @@ export default function renderDefaultEditor(
     [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         <AngularComponent
+          with$Apply
           template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
           scope={{
             widgets,
@@ -58,7 +58,7 @@ export default function renderDefaultEditor(
             localeData,
             fields,
             loadEvents,
-            editorData: getEditorData(),
+            editorData,
             fieldLocaleListeners,
             otDoc,
             preferences,

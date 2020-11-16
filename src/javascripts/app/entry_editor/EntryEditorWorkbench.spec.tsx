@@ -5,6 +5,7 @@ import { createEditorContextMock } from '../../../../test/utils/createEditorCont
 import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { EntityType } from 'app/entity_editor/Components/constants';
 import { EditorContext } from 'app/entity_editor/EntityField/types';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
@@ -32,22 +33,6 @@ jest.mock('services/localeStore', () => {
     toInternalCode: (code) => mockInternalLocale[code],
   };
 });
-
-const spaceContext = {
-  getId: () => 'spaceid',
-  getEnvironmentId: () => 'envid',
-  environment: {
-    sys: {
-      id: 'envid',
-    },
-  },
-  data: {
-    sys: {
-      id: 'spaceid',
-    },
-    organization: { sys: { id: 'orgid' } },
-  },
-};
 
 const createDocument = createDocumentMock().create;
 
@@ -117,10 +102,29 @@ describe('When rendering editors page with no editors', () => {
     state: {
       delete: {},
     },
-    getSpace: () => spaceContext,
     statusNotificationProps: { entityLabel: 'entry', status: 'cool' },
-    getOtDoc: () => doc,
-    getEditorData: jest.fn(),
+    otDoc: doc,
+    editorData: {
+      entityInfo: {
+        id: 'someid',
+        type: EntityType.ENTRY,
+        name: 'nice one',
+        contentType: {
+          name: 'name',
+        },
+      },
+      customEditor: undefined,
+      editorInterface: {
+        controls: [],
+      },
+      editorsExtensions: [],
+      fieldControls: { form: [], all: [] },
+      entity: {
+        data: {
+          fields: [],
+        },
+      },
+    },
     editorContext,
     entrySidebarProps: {
       isMasterEnvironment: true,
@@ -137,21 +141,20 @@ describe('When rendering editors page with no editors', () => {
     },
     preferences: { showDisabledFields: false },
     fields: {},
-    noLocalizedFieldsAdviceProps: {},
   };
 
   it('renders the warning', () => {
-    props.getEditorData.mockReturnValue({
-      editorsExtensions: [],
-      fieldControls: { form: [], all: [] },
-      entity: {
-        data: {},
-      },
-      editorInterface: {
-        controls: [],
-      },
-    });
-    render(<EntryEditorWorkbench {...props} />);
+    render(
+      <SpaceEnvContext.Provider
+        value={{
+          currentSpaceContentTypes: [],
+          currentSpaceId: 'spaceid',
+          currentEnvironmentId: 'envid',
+          currentOrganizationId: 'orgid',
+        }}>
+        <EntryEditorWorkbench {...props} />
+      </SpaceEnvContext.Provider>
+    );
     screen.getByText(/Editing is disabled/);
   });
 });

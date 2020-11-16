@@ -29,6 +29,7 @@ import { Action, ReferencesState } from './EntryReferences/state/reducer';
 import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsController';
 import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -39,18 +40,34 @@ const trackTabOpen = (tab) =>
 interface EntryEditorWorkbenchProps {
   localeData: LocaleData;
   title: string;
-  entityInfo: {
-    id: string;
-    type: any;
-  };
   loadEvents: Record<string, any>;
   state: {
     delete: Record<string, any>;
   };
-  getSpace: Function;
   statusNotificationProps: { entityLabel: any; status: string };
-  getOtDoc: Function;
-  getEditorData: Function;
+  otDoc: any;
+  editorData: {
+    entityInfo: {
+      id: string;
+      type: any;
+    };
+    entity: {
+      data: {
+        fields: any[];
+      };
+    };
+    editorsExtensions: any[];
+    customEditor: Record<string, any> | undefined;
+    fieldControls: {
+      form: any[];
+      all: any[];
+    };
+    editorInterface: {
+      controls: {
+        widgetId: string;
+      }[];
+    };
+  };
   editorContext: EditorContext;
   entrySidebarProps: {
     isMasterEnvironment: boolean;
@@ -68,20 +85,20 @@ interface EntryEditorWorkbenchProps {
 }
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
+  const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
   const {
-    localeData,
-    title,
-    entityInfo,
-    state,
-    getSpace,
-    statusNotificationProps,
-    getOtDoc,
-    getEditorData,
     editorContext,
+    editorData,
     entrySidebarProps,
-    preferences,
     fields,
+    localeData,
+    otDoc,
+    preferences,
+    state,
+    statusNotificationProps,
+    title,
   } = props;
+  const { entityInfo } = editorData;
   const { state: referencesState } = (useContext(ReferencesContext) as unknown) as {
     state: ReferencesState;
     dispatch: React.Dispatch<Action>;
@@ -89,8 +106,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const { processingAction, references, selectedEntities } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
-  const editorData = getEditorData();
-  const otDoc = getOtDoc();
   const availableTabs = editorData.editorsExtensions.filter(
     (editor) => !editor.disabled && !editor.problem
   );
@@ -107,23 +122,20 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     editorData.fieldControls.form,
     preferences.showDisabledFields
   );
-
   const noLocalizedFieldsAdviceProps = getNoLocalizedFieldsAdviceProps(widgets, localeData);
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
-      const { data: spaceData, environment } = getSpace();
-
       const isFeatureEnabled = await getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
-        organizationId: spaceData.organization.sys.id,
-        spaceId: spaceData.sys.id,
-        environmentId: environment.sys.id,
+        organizationId: currentOrganizationId,
+        spaceId: currentSpaceId,
+        environmentId: currentEnvironmentId,
       });
       setTabVisible({ entryReferences: isFeatureEnabled });
     }
 
     getFeatureFlagVariation();
-  }, [setTabVisible, getSpace]);
+  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible]);
 
   const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
 
@@ -174,6 +186,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             widgets,
             noLocalizedFieldsAdviceProps,
             fieldLocaleListeners,
+            entityInfo,
             ...props,
           });
         } else {
@@ -203,8 +216,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const referencesTab =
     selectedTab?.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) && tabVisible.entryReferences;
-
-  if (!editorContext) return null;
 
   const visibleTabs = tabs.filter(({ isVisible }) => isVisible);
 
@@ -268,7 +279,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
           </Tabs>
           <StatusNotification {...statusNotificationProps} />
           {visibleTabs.length <= 0 ? (
-            <NoEditorsWarning contentTypeId={props.editorContext.entityInfo.contentType?.sys.id} />
+            <NoEditorsWarning contentTypeId={editorContext.entityInfo.contentType?.sys.id} />
           ) : (
             visibleTabs.map((tab) => (
               <TabPanel
@@ -290,7 +301,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
           </Workbench.Sidebar>
           <Workbench.Sidebar position="right" className={styles.sidebar}>
-            <EntrySidebar entrySidebarProps={entrySidebarProps} />
+            {entrySidebarProps && <EntrySidebar entrySidebarProps={entrySidebarProps} />}
           </Workbench.Sidebar>
         </div>
       </Workbench>
