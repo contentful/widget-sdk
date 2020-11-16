@@ -86,9 +86,10 @@ describe('stateController', () => {
       editorData,
       entityInfo,
       doc,
-      spaceId: spaceContext.getId(),
-      environmentId: spaceContext.getEnvironmentId(),
-      publishedCTs: spaceContext.publishedCTs,
+      getTitle: () => 'title',
+      spaceId: 'spaceid',
+      environmentId: 'envid',
+      contentTypes: [{ name: 'foo', sys: { id: 'foo' } }],
       validator,
       onUpdate: (state) => {
         controller = state;
@@ -317,7 +318,7 @@ describe('stateController', () => {
             await controller.primary.execute();
             expect(Analytics.track).toHaveBeenCalledWith('entry:publish', {
               eventOrigin: eventOrigin,
-              contentType: { name: 'foo' },
+              contentType: { name: 'foo', sys: { id: 'foo' } },
               response: entity,
               widgetTrackingContexts: [],
             });

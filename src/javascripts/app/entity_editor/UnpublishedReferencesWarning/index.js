@@ -4,21 +4,17 @@ import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha'
 import Dialog from './Dialog';
 import fetchUnpublishedReferences from './FetchUnpublishedReferences';
 
-import { getModule } from 'core/NgRegistry';
-
 export const showUnpublishedReferencesWarning = async ({
   entity,
   spaceId,
   environmentId,
   confirmLabel,
   modalTitle,
+  contentTypes,
 }) => {
-  const spaceContext = getModule('spaceContext');
   if (entity.sys.type !== 'Entry') {
     return true;
   }
-
-  const contentTypes = spaceContext.publishedCTs.getAllBare();
 
   const unpublishedReferencesInfo = await fetchUnpublishedReferences({
     entry: entity,

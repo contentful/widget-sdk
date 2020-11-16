@@ -39,7 +39,7 @@ export const useEditorState = ({
       lifeline: lifeline.stream,
       onStateUpdate: setState,
       onTitleUpdate: setTitle,
-      publishedCTs: currentSpaceContentTypes,
+      contentTypes: currentSpaceContentTypes,
       spaceId: currentSpaceId,
       trackView,
     });

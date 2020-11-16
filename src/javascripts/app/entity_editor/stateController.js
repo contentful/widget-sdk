@@ -32,7 +32,7 @@ export const initStateController = ({
   onUpdate,
   spaceId,
   environmentId,
-  publishedCTs,
+  contentTypes,
 }) => {
   const { permissions, reverter, resourceState: docStateManager } = doc;
 
@@ -247,6 +247,7 @@ export const initStateController = ({
         entity: K.getValue(doc.data$),
         spaceId,
         environmentId,
+        contentTypes,
       });
 
       if (validator.run()) {
@@ -255,7 +256,7 @@ export const initStateController = ({
 
           let contentType;
           if (entityInfo.type === 'Entry') {
-            contentType = publishedCTs.get(entityInfo.contentTypeId).data;
+            contentType = contentTypes.find((ct) => ct.sys.id === entityInfo.contentTypeId);
           }
           if (contentType) {
             let eventOrigin = 'entry-editor';

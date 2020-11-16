@@ -37,7 +37,7 @@ export default async function create($scope, editorData, preferences) {
     },
     lifeline: scopeLifeline,
     hasInitialFocus: preferences.hasInitialFocus,
-    publishedCTs: spaceContext.publishedCTs,
+    contentTypes: spaceContext.publishedCTs.getAllBare(),
     spaceId: spaceContext.getId(),
     environmentId: spaceContext.getEnvironmentId(),
   });
