@@ -18,6 +18,9 @@ jest.mock('access_control/AccessChecker', () => ({
   Action: { READ: 'read' },
   canPerformActionOnEntity: jest.fn().mockReturnValue(true),
 }));
+jest.mock('services/localeStore', () => ({
+  getDefaultLocale: () => ({ internal_code: 'en-US' }),
+}));
 jest.mock('app/entity_editor/Notifications', () => ({
   Notification: {},
   makeNotify: jest.fn(),
@@ -114,6 +117,58 @@ describe('stateController', () => {
     expect(arg).toBeInstanceOf(Notification.Success);
     expect(arg.action).toBe(action);
   };
+
+  describe('makeNotify calls', () => {
+    const setDocTitle = (title) => {
+      entityInfo.type = 'Asset';
+      entity = {
+        sys: {
+          id: 'EID',
+          type: 'Asset',
+          version: 42,
+        },
+        fields: {
+          title: {
+            'en-US': title,
+          },
+        },
+      };
+
+      doc = createDocumentMock().create(entity, spaceEndpoint);
+      spaceEndpoint.mockResolvedValue(doc.getData());
+    };
+
+    beforeEach(() => {
+      ModalLauncher.open.mockResolvedValue({ action: 'delete' });
+    });
+
+    it('defaults to untitled', async () => {
+      const controller = await init();
+      await controller.delete.execute();
+      expect(notify).toHaveBeenCalledWith({ action: 'delete' });
+      const getTitleFn = makeNotify.mock.calls[0][1];
+      expect(getTitleFn()).toEqual('“Untitled”');
+    });
+
+    it('passes in a normal-length title', async () => {
+      setDocTitle('Hans goes skiing');
+      const controller = await init();
+      await controller.delete.execute();
+      expect(notify).toHaveBeenCalledWith({ action: 'delete' });
+      const getTitleFn = makeNotify.mock.calls[0][1];
+      expect(getTitleFn()).toEqual('“Hans goes skiing”');
+    });
+
+    it('truncates titles longer than 256 characters', async () => {
+      setDocTitle('a'.repeat(257));
+      const controller = await init();
+      await controller.delete.execute();
+      expect(notify).toHaveBeenCalledWith({ action: 'delete' });
+      const getTitleFn = makeNotify.mock.calls[0][1];
+      const expectedTitle = `“${'a'.repeat(253)}...”`;
+      expect(getTitleFn()).toEqual(expectedTitle);
+    });
+  });
 
   describe('delete command execution', () => {
     beforeEach(() => {

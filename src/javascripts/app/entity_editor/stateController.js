@@ -17,6 +17,9 @@ import * as Analytics from 'analytics/Analytics';
 import { createCommand } from 'utils/command/command';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
+// Truncate titles that are longer than a Symbol length
+const MAX_TITLE_LENGTH = 256;
+
 export const state = {
   ARCHIVED: stateName(State.Archived()),
   CHANGED: stateName(State.Changed()),
@@ -37,12 +40,13 @@ export const initStateController = ({
   const { permissions, reverter, resourceState: docStateManager } = doc;
 
   const notify = (notification, data = editorData.entity.data) => {
-    const title = EntityFieldValueSpaceContext.entityTitle({
+    const fullTitle = EntityFieldValueSpaceContext.entityTitle({
       getType: () => entityInfo.type,
       getContentTypeId: () => entityInfo.contentTypeId,
       data,
     });
-    makeNotify(entityInfo.type, () => `“${title || 'Untitled'}”`)(notification);
+    const title = _.truncate(fullTitle || 'Untitled', { length: MAX_TITLE_LENGTH });
+    makeNotify(entityInfo.type, () => `“${title}”`)(notification);
   };
 
   const controller = {
