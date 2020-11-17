@@ -31,14 +31,15 @@ const SnapshotPresenterRichText = ({
     currentSpaceId,
     currentEnvironment,
     currentEnvironmentId,
+    currentEnvironmentAliasId,
     currentSpace,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
   const spaceApiClient = useCurrentSpaceAPIClient();
 
   const sdk: FieldExtensionSDK = useMemo(() => {
-    const environmentId = currentEnvironmentId as string;
     const spaceId = currentSpaceId as string;
+    const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
     const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
     const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
@@ -50,13 +51,15 @@ const SnapshotPresenterRichText = ({
       editorInterface: editorData.editorInterface,
       endpoint: spaceEndpoint,
       entry: entity,
-      environmentIds: [environmentId, ...aliasesId],
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
       initialContentTypes: currentSpaceContentTypes,
       internalContentType: editorData.contentType.data,
       publicLocaleCode: locale.code,
       spaceId,
+      environmentId,
+      currentEnvironmentAliasId: currentEnvironmentAliasId,
+      allEnvironmentAliasIds: aliasesId,
       spaceMember,
       tagsRepo: tagsEndpoint,
       usersRepo: usersEndpoint,
@@ -75,6 +78,7 @@ const SnapshotPresenterRichText = ({
     currentSpaceId,
     currentEnvironment,
     currentEnvironmentId,
+    currentEnvironmentAliasId,
     currentSpace,
     currentSpaceContentTypes,
     spaceApiClient,

@@ -90,16 +90,17 @@ export function createFieldWidgetSDK({
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
-  const idsApi = createIdsApi(
-    spaceContext.getId(),
-    spaceContext.getEnvironmentId(),
-    internalContentType,
-    entryApi,
-    fieldApi,
-    userApi,
+  const idsApi = createIdsApi({
+    spaceId: spaceContext.getId(),
+    envId: spaceContext.getEnvironmentId(),
+    envAliasId: spaceContext.getAliasId(),
+    contentType: internalContentType,
+    entry: entryApi,
+    field: fieldApi,
+    user: userApi,
     widgetNamespace,
-    widgetId
-  );
+    widgetId,
+  });
 
   const windowApi = {
     // There are no iframes in the internal API so any methods related

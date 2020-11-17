@@ -28,13 +28,15 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   editorInterface: EditorInterface;
   endpoint: SpaceEndpoint;
   entry: Entity;
-  environmentIds: string[];
   publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
   initialContentTypes: InternalContentType[];
   internalContentType: InternalContentType;
   publicLocaleCode: Locale['code'];
   spaceId: string;
+  environmentId: string;
+  currentEnvironmentAliasId?: string;
+  allEnvironmentAliasIds: string[];
   spaceMember: SpaceMember;
   tagsRepo: any;
   usersRepo: any;
@@ -51,12 +53,14 @@ export function createReadonlyFieldWidgetSDK({
   editorInterface,
   endpoint,
   entry,
-  environmentIds,
   publicFieldId,
   initialContentTypes,
   internalContentType,
   publicLocaleCode,
   spaceId,
+  environmentId,
+  currentEnvironmentAliasId,
+  allEnvironmentAliasIds,
   spaceMember,
   tagsRepo,
   usersRepo,
@@ -64,7 +68,6 @@ export function createReadonlyFieldWidgetSDK({
   widgetNamespace,
   parameters,
 }: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
-  const [environmentId] = environmentIds;
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
   const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
     skipDraftValidation: true,
@@ -112,7 +115,7 @@ export function createReadonlyFieldWidgetSDK({
     cma: getBatchingApiClient(cma),
     initialContentTypes,
     pubSubClient,
-    environmentIds,
+    environmentIds: [environmentId, ...allEnvironmentAliasIds],
     spaceId,
     tagsRepo,
     usersRepo,
@@ -139,16 +142,17 @@ export function createReadonlyFieldWidgetSDK({
 
   const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
 
-  const idsApi = createIdsApi(
+  const idsApi = createIdsApi({
     spaceId,
-    environmentId,
-    internalContentType,
-    entryApi,
-    fieldApi,
-    userApi,
+    envId: environmentId,
+    envAliasId: currentEnvironmentAliasId || null,
+    contentType: internalContentType,
+    entry: entryApi,
+    field: fieldApi,
+    user: userApi,
     widgetNamespace,
-    widgetId
-  );
+    widgetId,
+  });
 
   const baseSdkWithoutDialogs = createBaseExtensionSdk({
     locationApi,

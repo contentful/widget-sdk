@@ -40,6 +40,7 @@ export const createPageWidgetSDK = ({
   const idsApi = createIdsApi({
     spaceId: spaceContext.getId(),
     envId: spaceContext.getEnvironmentId(),
+    envAliasId: spaceContext.getAliasId(),
     user: userApi,
     widgetNamespace,
     widgetId,

@@ -5,6 +5,7 @@ import { EntryAPI, FieldAPI, User } from 'contentful-ui-extensions-sdk';
 describe('createIdsApi', () => {
   const spaceId = 'space_id';
   const envId = 'env_id';
+  const envAliasId = 'some_alias';
   const entry = ({
     getSys: jest.fn(() => ({ id: 'entry_id' })),
   } as unknown) as EntryAPI;
@@ -29,18 +30,44 @@ describe('createIdsApi', () => {
 
   describe('for an app', () => {
     it('returns an object with the ids', () => {
-      const result = createIdsApi(
+      const result = createIdsApi({
         spaceId,
         envId,
+        envAliasId,
         contentType,
         entry,
-        ({ id: fieldId } as unknown) as FieldAPI,
-        user as User,
-        WidgetNamespace.APP,
-        widgetId
-      );
+        field: ({ id: fieldId } as unknown) as FieldAPI,
+        user: user as User,
+        widgetNamespace: WidgetNamespace.APP,
+        widgetId,
+      });
 
-      expect(result).toMatchObject({
+      expect(result).toStrictEqual({
+        space: spaceId,
+        environment: envId,
+        environmentAlias: envAliasId,
+        contentType: 'content_type',
+        entry: 'entry_id',
+        field: fieldId,
+        user: 'user_id',
+        app: widgetId,
+      });
+    });
+
+    it('skips environment alias if not provided', () => {
+      const result = createIdsApi({
+        spaceId,
+        envId,
+        envAliasId: null,
+        contentType,
+        entry,
+        field: ({ id: fieldId } as unknown) as FieldAPI,
+        user: user as User,
+        widgetNamespace: WidgetNamespace.APP,
+        widgetId,
+      });
+
+      expect(result).toStrictEqual({
         space: spaceId,
         environment: envId,
         contentType: 'content_type',
@@ -54,20 +81,22 @@ describe('createIdsApi', () => {
 
   describe('for an extension', () => {
     it('returns an object with the ids', () => {
-      const result = createIdsApi(
+      const result = createIdsApi({
         spaceId,
         envId,
+        envAliasId,
         contentType,
         entry,
-        { id: fieldId } as FieldAPI,
-        user as User,
-        WidgetNamespace.EXTENSION,
-        widgetId
-      );
+        field: { id: fieldId } as FieldAPI,
+        user: user as User,
+        widgetNamespace: WidgetNamespace.EXTENSION,
+        widgetId,
+      });
 
-      expect(result).toMatchObject({
+      expect(result).toStrictEqual({
         space: spaceId,
         environment: envId,
+        environmentAlias: envAliasId,
         contentType: 'content_type',
         entry: 'entry_id',
         field: fieldId,
