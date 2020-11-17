@@ -1,5 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import type { EntitySelectorExtensionSDK } from '@contentful/entity-search';
+import { EntitySelector } from '@contentful/entity-search';
 import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
 
 const checkFeatureFlags = async () => {
@@ -23,7 +24,6 @@ export const openFromRolesAndPermissions = async (
   entityType: 'Entry' | 'Asset'
 ) => {
   const { isTagsEnabled } = await checkFeatureFlags();
-  const { EntitySelector } = await import('@contentful/entity-search');
   return EntitySelector.open(sdk, {
     multiple: false,
     entityType,
@@ -35,7 +35,6 @@ export const openFromRolesAndPermissions = async (
 
 export const openFromField = async (sdk: EntitySelectorExtensionSDK, field) => {
   const { isTagsEnabled } = await checkFeatureFlags();
-  const { EntitySelector } = await import('@contentful/entity-search');
   return EntitySelector.openFromLinkField(sdk, {
     entityType: 'Entry',
     field,
@@ -59,7 +58,6 @@ export const openFromWidget = async (
   }
 ) => {
   const { isTagsEnabled } = await checkFeatureFlags();
-  const { EntitySelector } = await import('@contentful/entity-search');
 
   return EntitySelector.open(sdk, {
     locale: options.locale,
