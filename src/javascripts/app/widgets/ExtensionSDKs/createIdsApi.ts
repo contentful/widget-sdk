@@ -1,9 +1,6 @@
 import { ContentType, FieldAPI, IdsAPI, User, EntryAPI } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
-// TODO: Once the SDK types are updated use them directly.
-type IdsApiWithAlias = IdsAPI & { environmentAlias?: string };
-
 interface CreateIdsOptions {
   spaceId: string;
   envId: string;
@@ -26,7 +23,7 @@ export const createIdsApi = ({
   user,
   widgetNamespace,
   widgetId,
-}: CreateIdsOptions): IdsApiWithAlias => {
+}: CreateIdsOptions): IdsAPI => {
   return {
     space: spaceId,
     environment: envId,
