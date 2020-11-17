@@ -36,7 +36,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 const styles = {
   header: css({
     fontSize: tokens.fontSizeL,
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   spacer: css({
     marginBottom: tokens.spacingL,
@@ -135,10 +135,11 @@ export function KeyListing({ definition }) {
 
   return (
     <>
-      <Heading className={styles.header} element='h3'>Key pairs</Heading>
+      <Heading className={styles.header} element="h3">
+        Key pairs
+      </Heading>
       <Paragraph className={styles.spacer}>
-        You need a private key to sign access token requests. We only store public keys.
-        <br />
+        You need a private key to sign access token requests. We only store public keys.{' '}
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"

@@ -8,9 +8,9 @@ import { getAppDefinitionLoader } from 'features/apps-core';
 jest.mock('../ManagementApiClient', () => {
   return {
     ManagementApiClient: {
-      addAppSigningSecret: jest.fn()
-    }
-  }
+      addAppSigningSecret: jest.fn(),
+    },
+  };
 });
 
 jest.mock('@contentful/forma-36-react-components/dist/alpha', () => {
@@ -25,7 +25,7 @@ jest.mock('features/apps-core', () => {
     getAppDefinitionLoader: jest.fn().mockReturnValue({
       getAppSigningSecret: jest.fn(),
     }),
-  }
+  };
 });
 
 const mockAppDefinition = {
@@ -42,15 +42,8 @@ const mockAppDefinition = {
 };
 
 describe('AppSigningSecret', () => {
-  it('renders default activate button on no secret', () => {
-    const { getByTestId } = render(<SigningSecret definition={ mockAppDefinition } />)
-    const activateBtn = getByTestId('activate-btn');
-
-    expect(activateBtn).toBeTruthy();
-  });
-
   it('generates secret on clicking activate button', async () => {
-    const { getByTestId } = render(<SigningSecret definition={ mockAppDefinition } />)
+    const { getByTestId } = render(<SigningSecret definition={mockAppDefinition} />);
     await waitFor(() => getByTestId);
 
     const activateBtn = getByTestId('activate-btn');
@@ -66,11 +59,11 @@ describe('AppSigningSecret', () => {
     const truncatedSecret = 'test';
     getAppDefinitionLoader().getAppSigningSecret.mockReturnValue(truncatedSecret);
 
-    const { getByTestId } = render(<SigningSecret definition={ mockAppDefinition } />)
-    await waitForElementToBeRemoved(getByTestId('activate-btn'))
+    const { getByTestId } = render(<SigningSecret definition={mockAppDefinition} />);
+    await waitForElementToBeRemoved(getByTestId('activate-btn'));
 
     const textInput = getByTestId('secret-input');
-    expect((textInput as HTMLInputElement).value).toEqual(truncatedSecret.padStart(64, '*'));
+    expect((textInput as HTMLInputElement).value).toEqual(truncatedSecret.padStart(16, '*'));
 
     fireEvent.click(getByTestId('update-secret-btn'));
     expect(ModalLauncher.open).toHaveBeenCalled();
