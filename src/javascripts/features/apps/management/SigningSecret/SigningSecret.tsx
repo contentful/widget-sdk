@@ -7,6 +7,9 @@ import {
   Button,
   Note,
   FormLabel,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
@@ -48,6 +51,9 @@ const styles = {
     paddingRight: tokens.spacingXl,
     borderRadius: 0,
     borderLeftWidth: 0,
+  }),
+  loading: css({
+    marginTop: tokens.spacingS,
   }),
 };
 
@@ -101,51 +107,64 @@ export const SigningSecret = ({ definition }) => {
         Verify that requests from an app or event are coming from Contentful.{' '}
         <TextLink href="">Learn more about secure requests</TextLink>
       </Paragraph>
-
-      {!currentSecret && (
-        <Button
-          className={styles.activateButton}
-          onClick={() => addNewSecret(generateSecret())}
-          buttonType={'muted'}
-          testId={'activate-btn'}
-          loading={isLoadingSecret}>
-          {!isLoadingSecret && 'Activate secure requests'}
-        </Button>
+      {isLoadingSecret && (
+        <SkeletonContainer className={styles.loading} testId={'loading'}>
+          <SkeletonDisplayText />
+          <SkeletonBodyText />
+        </SkeletonContainer>
       )}
 
-      {currentSecret && (
+      {!isLoadingSecret && (
         <>
-          <FormLabel htmlFor="secretInput" className={styles.secretInputLabel} requiredText={''}>
-            Shared secret
-          </FormLabel>
-          {isSecretUpdated && (
-            <Note
-              className={styles.copySecretReminder}
-              noteType="positive"
-              testId={'copy-reminder'}>
-              Make sure to immediately copy your new shared secret. You will not be able to see it
-              again.
-            </Note>
-          )}
-          <div className={styles.inputWrapper}>
-            <TextInput
-              id={'secretInput'}
-              className={styles.currentSecretInput}
-              value={currentSecret}
-              withCopyButton={isSecretUpdated}
-              testId={'secret-input'}
-              readOnly
-            />
+          {!currentSecret && (
             <Button
-              className={styles.button}
+              className={styles.activateButton}
+              onClick={() => addNewSecret(generateSecret())}
               buttonType={'muted'}
-              testId={'update-secret-btn'}
-              onClick={() => {
-                openModal(addNewSecret);
-              }}>
-              Update
+              testId={'activate-btn'}
+              loading={isLoadingSecret}>
+              {!isLoadingSecret && 'Activate secure requests'}
             </Button>
-          </div>
+          )}
+
+          {currentSecret && (
+            <>
+              <FormLabel
+                htmlFor="secretInput"
+                className={styles.secretInputLabel}
+                requiredText={''}>
+                Shared secret
+              </FormLabel>
+              {isSecretUpdated && (
+                <Note
+                  className={styles.copySecretReminder}
+                  noteType="positive"
+                  testId={'copy-reminder'}>
+                  Make sure to immediately copy your new shared secret. You will not be able to see
+                  it again.
+                </Note>
+              )}
+              <div className={styles.inputWrapper}>
+                <TextInput
+                  id={'secretInput'}
+                  className={styles.currentSecretInput}
+                  value={currentSecret}
+                  withCopyButton={isSecretUpdated}
+                  testId={'secret-input'}
+                  disabled={true}
+                />
+                <Button
+                  className={styles.button}
+                  buttonType={'muted'}
+                  testId={'update-secret-btn'}
+                  onClick={() => {
+                    openModal(addNewSecret);
+                  }}>
+                  Update
+                </Button>
+              </div>
+            </>
+          )}
         </>
       )}
     </>

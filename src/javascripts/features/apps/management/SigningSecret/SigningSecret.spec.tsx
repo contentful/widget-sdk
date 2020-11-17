@@ -44,7 +44,7 @@ const mockAppDefinition = {
 describe('AppSigningSecret', () => {
   it('generates secret on clicking activate button', async () => {
     const { getByTestId } = render(<SigningSecret definition={mockAppDefinition} />);
-    await waitFor(() => getByTestId);
+    await waitForElementToBeRemoved(getByTestId('loading'));
 
     const activateBtn = getByTestId('activate-btn');
 
@@ -60,7 +60,7 @@ describe('AppSigningSecret', () => {
     getAppDefinitionLoader().getAppSigningSecret.mockReturnValue(truncatedSecret);
 
     const { getByTestId } = render(<SigningSecret definition={mockAppDefinition} />);
-    await waitForElementToBeRemoved(getByTestId('activate-btn'));
+    await waitForElementToBeRemoved(getByTestId('loading'));
 
     const textInput = getByTestId('secret-input');
     expect((textInput as HTMLInputElement).value).toEqual(truncatedSecret.padStart(16, '*'));

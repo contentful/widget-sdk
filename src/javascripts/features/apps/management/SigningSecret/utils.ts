@@ -8,9 +8,10 @@ const crypto = window.crypto;
 if (crypto?.getRandomValues) {
   randomStringRegExp.randInt = (from, to) => {
     const randomBuffer = new Uint32Array(1);
+    const range = to - from + 1; // inclusive range per https://github.com/fent/randexp.js#custom-prng
     crypto.getRandomValues(randomBuffer);
-    const randomZeroToOne = randomBuffer[0] / (0xffffffff + 1);
-    return randomZeroToOne * (to - from) + from;
+    const randomZeroToOne = randomBuffer[0] / 0xffffffff;
+    return Math.floor(randomZeroToOne * range + from);
   };
 }
 
