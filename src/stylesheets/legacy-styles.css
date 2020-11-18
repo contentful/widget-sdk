@@ -12207,6 +12207,10 @@ pre,
     padding-bottom: 100px;
   }
 
+  .cf-workbench-content.entity-editor-form {
+    padding-bottom: 200px;
+  }
+
   .workbench-layer--is-current .cf-workbench-content-type__text {
     max-width: 768px;
     margin: 0 auto;

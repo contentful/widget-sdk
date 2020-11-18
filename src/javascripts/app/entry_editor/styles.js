@@ -30,7 +30,6 @@ const slideOutToRight = keyframes({
 export const styles = {
   mainContent: css({
     padding: 0,
-    paddingBottom: '100px',
     '& > div': {
       height: '100%',
       minHeight: '100%',
