@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import {
@@ -18,7 +18,7 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
 import tokens from '@contentful/forma-36-tokens';
-import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
+import { useFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { styles as editorStyles } from './../entry_editor/styles';
@@ -57,9 +57,12 @@ const AssetEditorWorkbench = ({
 
   const widgets = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
 
-  const fieldLocaleListeners = useMemo(
-    () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
-    [editorData.fieldControls.all, editorContext, localeData, otDoc]
+  const fieldLocaleListeners = useFieldLocaleListeners(
+    editorData.fieldControls.all,
+    editorContext,
+    localeData.privateLocales,
+    localeData.defaultLocale,
+    otDoc
   );
 
   const { tagsEnabled } = useTagsFeatureEnabled();
@@ -174,6 +177,8 @@ const AssetEditorWorkbench = ({
 AssetEditorWorkbench.propTypes = {
   title: PropTypes.string.isRequired,
   localeData: PropTypes.shape({
+    privateLocales: PropTypes.arrayOf(PropTypes.object),
+    defaultLocale: PropTypes.object,
     focusedLocale: PropTypes.shape({
       name: PropTypes.string,
     }),

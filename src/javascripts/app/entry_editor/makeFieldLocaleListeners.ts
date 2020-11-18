@@ -1,7 +1,8 @@
-import { EditorContext, LocaleData, OtDoc, Widget } from 'app/entity_editor/EntityField/types';
+import { useMemo } from 'react';
+import { EditorContext, Locale, OtDoc, Widget } from 'app/entity_editor/EntityField/types';
 import { createFieldLocaleController } from 'app/entity_editor/fieldLocaleController';
 import * as K from 'core/utils/kefir';
-import { set, isEqual, isEmpty } from 'lodash';
+import { set, isEqual } from 'lodash';
 
 export interface FieldLocaleListener {
   fieldId: string;
@@ -15,16 +16,17 @@ export type FieldLocaleLookup = Record<string, Record<string, FieldLocaleListene
 export const makeFieldLocaleListeners = (
   controls: Widget[],
   editorContext: EditorContext,
-  localeData: LocaleData,
+  privateLocales: Locale[],
+  defaultLocale: Locale,
   otDoc: OtDoc
 ) => {
   const lookup: FieldLocaleLookup = {};
   const flat: FieldLocaleListener[] = [];
 
-  if (isEmpty(localeData)) return { lookup, flat };
+  if (!defaultLocale) return { lookup, flat };
 
   controls.forEach((widget) => {
-    const locales = widget.field.localized ? localeData.privateLocales : [localeData.defaultLocale];
+    const locales = widget.field.localized ? privateLocales : [defaultLocale];
 
     locales.forEach((locale) => {
       const fieldId = widget.fieldId;
@@ -51,4 +53,17 @@ export const makeFieldLocaleListeners = (
   });
 
   return { lookup, flat };
+};
+
+export const useFieldLocaleListeners = (
+  controls: Widget[],
+  editorContext: EditorContext,
+  privateLocales: Locale[],
+  defaultLocale: Locale,
+  otDoc: OtDoc
+) => {
+  return useMemo(
+    () => makeFieldLocaleListeners(controls, editorContext, privateLocales, defaultLocale, otDoc),
+    [controls, defaultLocale, editorContext, otDoc, privateLocales]
+  );
 };

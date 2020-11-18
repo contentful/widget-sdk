@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { cx } from 'emotion';
 import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -27,7 +27,7 @@ import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { Action, ReferencesState } from './EntryReferences/state/reducer';
 import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsController';
-import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
+import { useFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
@@ -139,9 +139,12 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
 
-  const fieldLocaleListeners = useMemo(
-    () => makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, otDoc),
-    [editorData.fieldControls.all, editorContext, localeData, otDoc]
+  const fieldLocaleListeners = useFieldLocaleListeners(
+    editorData.fieldControls.all,
+    editorContext,
+    localeData.privateLocales,
+    localeData.defaultLocale,
+    otDoc
   );
 
   const { tagsEnabled } = useTagsFeatureEnabled();

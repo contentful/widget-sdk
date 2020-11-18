@@ -130,11 +130,18 @@ export const BulkEntityEditor = ({
     init();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const { privateLocales, defaultLocale } = localeData;
   const fieldLocaleListeners = useMemo(() => {
     if (!editorState) return null;
     const { editorData, editorContext, doc } = editorState;
-    return makeFieldLocaleListeners(editorData.fieldControls.all, editorContext, localeData, doc);
-  }, [editorState, localeData]);
+    return makeFieldLocaleListeners(
+      editorData.fieldControls.all,
+      editorContext,
+      privateLocales,
+      defaultLocale,
+      doc
+    );
+  }, [defaultLocale, editorState, privateLocales]);
 
   if (isLoading) {
     return (

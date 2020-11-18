@@ -216,7 +216,8 @@ export default ({
           fieldLocaleListeners: makeFieldLocaleListeners(
             editorData.fieldControls.all,
             editorContext,
-            localeData,
+            localeData.privateLocales,
+            localeData.defaultLocale,
             otDoc
           ),
         })
@@ -241,7 +242,8 @@ export default ({
         fieldLocaleListeners: makeFieldLocaleListeners(
           editorData.fieldControls.all,
           editorContext,
-          localeData,
+          localeData.privateLocales,
+          localeData.defaultLocale,
           otDoc
         ),
       });
