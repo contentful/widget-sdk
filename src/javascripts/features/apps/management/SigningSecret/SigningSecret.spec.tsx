@@ -8,7 +8,7 @@ import { getAppDefinitionLoader } from 'features/apps-core';
 jest.mock('../ManagementApiClient', () => {
   return {
     ManagementApiClient: {
-      addAppSigningSecret: jest.fn(),
+      addAppSigningSecret: jest.fn().mockResolvedValue({}),
     },
   };
 });
@@ -49,6 +49,7 @@ describe('AppSigningSecret', () => {
     const activateBtn = getByTestId('activate-btn');
 
     fireEvent.click(activateBtn);
+    await waitForElementToBeRemoved(getByTestId('activate-btn'));
     const textInput = getByTestId('secret-input');
 
     expect(ManagementApiClient.addAppSigningSecret).toHaveBeenCalled();

@@ -42,6 +42,7 @@ export const AddSigningSecretDialog = ({ isShown, onClose, saveUpdatedSecret }) 
         placeholder={'Click on Regenerate secret below to create a secret'}
         className={styles.secretInput}
         value={updatedSecret}
+        onChange={(ev) => setUpdatedSecret(ev.target.value)}
         withCopyButton
       />
       <TextLink onClick={() => setUpdatedSecret(generateSecret())}>Regenerate Secret</TextLink>

@@ -10,6 +10,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { AddSigningSecretDialog } from './AddSigningSecretDialog';
@@ -37,10 +38,21 @@ export const SigningSecret = ({ definition }) => {
   const [isLoadingSecret, setIsLoadingSecret] = useState<boolean>(true);
   const [isSecretUpdated, setSecretUpdateStatus] = useState<boolean>(false);
 
-  const addNewSecret = (secret: string) => {
-    setSecret(secret);
-    setSecretUpdateStatus(true);
-    return ManagementApiClient.addAppSigningSecret(orgId, definitionId, secret);
+  const addNewSecret = async (secret: string) => {
+    try {
+      await ManagementApiClient.addAppSigningSecret(orgId, definitionId, secret);
+      setSecret(secret);
+      setSecretUpdateStatus(true);
+    } catch (err) {
+      Notification.error(`
+        Something went wrong with saving your secret. Please try again and make sure you have the correct secret format
+      `);
+    }
+  };
+  const showLoadingError = () => {
+    Notification.error(`
+      Something went wrong with loading your secret. Please refresh the page.
+    `);
   };
 
   useEffect(() => {
@@ -51,6 +63,7 @@ export const SigningSecret = ({ definition }) => {
       } catch (err) {
         // ignore "secret not found" as it is expected
         if (err.status !== 404) {
+          showLoadingError();
           throw err;
         }
       } finally {
@@ -84,9 +97,8 @@ export const SigningSecret = ({ definition }) => {
               className={styles.activateButton}
               onClick={() => addNewSecret(generateSecret())}
               buttonType={'muted'}
-              testId={'activate-btn'}
-              loading={isLoadingSecret}>
-              {!isLoadingSecret && 'Activate request verification'}
+              testId={'activate-btn'}>
+              Activate request verification
             </Button>
           )}
 
