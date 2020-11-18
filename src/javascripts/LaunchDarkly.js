@@ -47,6 +47,7 @@ export const FLAGS = {
   COMBINED_REFERENCE_ACTIONS: 'feature-pen-11-2020-combined-reference-actions',
   NEW_LOCALES_ENDPOINT: 'feature-ext-11-2020-new-locales-endpoint',
   SPACE_USAGE_SUMMARY: 'feature-moi-11-2020-space-usage-summary',
+  COMPOSE_LAUNCH_PURCHASE: 'feature-ahoy-11-2020-compose-launch-purchase',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -74,6 +75,7 @@ const FALLBACK_VALUES = {
   [FLAGS.COMBINED_REFERENCE_ACTIONS]: false,
   [FLAGS.NEW_LOCALES_ENDPOINT]: false,
   [FLAGS.SPACE_USAGE_SUMMARY]: false,
+  [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

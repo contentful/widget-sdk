@@ -51,7 +51,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
 
   const [
     organization,
-    newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
     basePlan,
@@ -60,9 +59,9 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     organizationMembership,
     currentSpace,
     rawSpaceRatePlans,
+    composeLaunchPurchaseEnabled,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
-    getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
     getBasePlan(endpoint),
@@ -71,6 +70,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     getOrganizationMembership(orgId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     getSpaceRatePlans(endpoint, spaceId),
+    getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE),
   ]);
 
   const spaceRatePlans = transformSpaceRatePlans({
@@ -86,9 +86,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   }
 
   const canAccess =
-    newPurchaseFlowIsEnabled &&
-    isOwnerOrAdmin(organization) &&
-    (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
+    isOwnerOrAdmin(organization) && (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
 
   if (!canAccess) {
     go({
@@ -120,10 +118,10 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     pageContent,
     basePlan,
     organizationMembership,
-    newPurchaseFlowIsEnabled,
     currentSpace,
     spaceRatePlans,
     currentSpaceRatePlan,
+    composeLaunchPurchaseEnabled,
   };
 };
 
@@ -148,7 +146,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
   );
 
   useEffect(() => {
-    if (!isLoading && data?.newPurchaseFlowIsEnabled) {
+    if (!isLoading && data) {
       const sessionType = spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION;
       const eventMetadata = createEventMetadataFromData(data, sessionType);
 
@@ -175,6 +173,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
         currentSpace={data?.currentSpace}
         spaceRatePlans={data?.spaceRatePlans}
         currentSpacePlan={data?.currentSpaceRatePlan}
+        composeLaunchPurchaseEnabled={data?.composeLaunchPurchaseEnabled}
       />
     </>
   );
