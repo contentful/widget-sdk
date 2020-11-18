@@ -4,7 +4,7 @@ import * as Focus from 'app/entity_editor/Focus';
 import * as logger from 'services/logger';
 import localeStore from 'services/localeStore';
 import { valuePropertyAt } from 'app/entity_editor/Document';
-import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
+import { initDocErrorHandler } from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { initStateController } from './stateController';
@@ -34,7 +34,7 @@ export const getEditorState = ({
       locales: localeStore.getPrivateLocales(),
     });
 
-    initDocErrorHandlerWithoutScope(doc.state.error$);
+    initDocErrorHandler(doc.state.error$);
 
     initStateController({
       bulkEditorContext,

@@ -13,12 +13,12 @@ import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHea
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as Loader from 'ui/Loader';
-import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { BulkEditor } from 'app/entity_editor/bulk_editor/BulkEditor';
 import { EmptyState } from 'app/entity_editor/EmptyState';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { EntryEditor } from 'app/entry_editor/EntryEditor';
+import { AssetEditor } from 'app/asset_editor/AssetEditor';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container) {
@@ -224,8 +224,8 @@ function getModule(name) {
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'app/entity_editor/bulk_editor/BulkEditor': { default: BulkEditor },
     'app/entry_editor/EntryEditor': { default: EntryEditor },
+    'app/asset_editor/AssetEditor': { default: AssetEditor },
     'ui/Loader': Loader,
-    'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
     'app/entity_editor/EmptyState': { default: EmptyState },

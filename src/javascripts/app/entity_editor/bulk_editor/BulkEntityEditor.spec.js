@@ -4,7 +4,7 @@ import { render, waitFor } from '@testing-library/react';
 import * as K from 'core/utils/kefir';
 
 import { initStateController } from '../stateController';
-import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
+import { initDocErrorHandler } from 'app/entity_editor/DocumentErrorHandler';
 import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 
 jest.mock('services/localeStore', () => ({
@@ -32,7 +32,7 @@ jest.mock('../stateController', () => ({
   initStateController: jest.fn(),
 }));
 jest.mock('app/entity_editor/DocumentErrorHandler', () => ({
-  initDocErrorHandlerWithoutScope: jest.fn(),
+  initDocErrorHandler: jest.fn(),
 }));
 jest.mock('app/entity_editor/Document', () => ({
   localFieldChanges: jest.fn(),
@@ -121,7 +121,7 @@ describe('BulkEntityEditor', () => {
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).toBeInTheDocument();
 
-    expect(initDocErrorHandlerWithoutScope).toHaveBeenCalledTimes(1);
+    expect(initDocErrorHandler).toHaveBeenCalledTimes(1);
     expect(initStateController).toHaveBeenCalledTimes(1);
 
     expect(props.bulkEditorContext.loadEditorData).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('BulkEntityEditor', () => {
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).toBeInTheDocument();
 
-    expect(initDocErrorHandlerWithoutScope).toHaveBeenCalledTimes(1);
+    expect(initDocErrorHandler).toHaveBeenCalledTimes(1);
     expect(initStateController).toHaveBeenCalledTimes(1);
 
     expect(props.bulkEditorContext.loadEditorData).toHaveBeenCalledTimes(1);
@@ -153,7 +153,7 @@ describe('BulkEntityEditor', () => {
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).not.toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).not.toBeInTheDocument();
 
-    expect(initDocErrorHandlerWithoutScope).not.toHaveBeenCalled();
+    expect(initDocErrorHandler).not.toHaveBeenCalled();
     expect(initStateController).not.toHaveBeenCalled();
   });
 
@@ -170,7 +170,7 @@ describe('BulkEntityEditor', () => {
     queryByTestId('bulk-editor-title').click();
     await waitFor(() => expect(queryByTestId('angular-component')).toBeInTheDocument());
 
-    expect(initDocErrorHandlerWithoutScope).toHaveBeenCalledTimes(1);
+    expect(initDocErrorHandler).toHaveBeenCalledTimes(1);
     expect(initStateController).toHaveBeenCalledTimes(1);
 
     expect(props.bulkEditorContext.loadEditorData).toHaveBeenCalledTimes(1);

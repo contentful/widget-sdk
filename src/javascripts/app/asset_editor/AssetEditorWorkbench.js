@@ -13,7 +13,7 @@ import {
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import StatusNotification from 'app/entity_editor/StatusNotification';
-import ContentTagsField from 'app/asset_editor/ContentTagsField';
+import { ContentTagsTab } from 'app/entity_editor/ContentTagsTab';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
@@ -22,7 +22,6 @@ import { useFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListene
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { styles as editorStyles } from './../entry_editor/styles';
-import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/PolicyBuilderConfig';
 
 const styles = {
   sidebar: css({
@@ -42,20 +41,16 @@ const AssetTabs = {
 const AssetEditorWorkbench = ({
   title,
   localeData,
-  entityInfo,
   state,
   statusNotificationProps,
   entrySidebarProps,
   fields,
   editorContext,
-  getOtDoc,
-  tagProps,
-  getEditorData,
+  otDoc,
+  editorData,
 }) => {
-  const otDoc = getOtDoc();
-  const editorData = getEditorData();
-
   const widgets = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
+  const { entityInfo } = editorData;
 
   const fieldLocaleListeners = useFieldLocaleListeners(
     editorData.fieldControls.all,
@@ -67,10 +62,6 @@ const AssetEditorWorkbench = ({
 
   const { tagsEnabled } = useTagsFeatureEnabled();
   const [selectedTab, setSelectedTab] = useState(AssetTabs.Editor);
-  const canEditTags = otDoc.permissions.canEditFieldLocale(
-    PolicyBuilderConfig.TAGS,
-    PolicyBuilderConfig.PATH_WILDCARD
-  );
 
   return (
     <div className="asset-editor">
@@ -137,6 +128,7 @@ const AssetEditorWorkbench = ({
               }>
               <StatusNotification {...statusNotificationProps} />
               <AngularComponent
+                with$Apply
                 template={
                   '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
                 }
@@ -162,12 +154,14 @@ const AssetEditorWorkbench = ({
               className={
                 'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
               }>
-              {tagsEnabled && <ContentTagsField {...tagProps} disable={!canEditTags} />}
+              {tagsEnabled && <ContentTagsTab doc={otDoc} />}
             </div>
           </TabPanel>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
-          <EntrySidebar entrySidebarProps={entrySidebarProps} disableComments />
+          {entrySidebarProps && (
+            <EntrySidebar entrySidebarProps={entrySidebarProps} disableComments />
+          )}
         </Workbench.Sidebar>
       </Workbench>
     </div>
@@ -184,22 +178,26 @@ AssetEditorWorkbench.propTypes = {
     }),
     isSingleLocaleModeOn: PropTypes.bool,
   }),
-  entityInfo: PropTypes.shape({
-    id: PropTypes.string,
-    type: PropTypes.string,
-  }),
   state: PropTypes.shape({
     delete: PropTypes.object,
   }),
   statusNotificationProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
-  getOtDoc: PropTypes.func,
+  otDoc: PropTypes.object,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,
   }),
-  getEditorData: PropTypes.func,
-  tagProps: PropTypes.any,
+  editorData: PropTypes.shape({
+    entityInfo: PropTypes.shape({
+      id: PropTypes.string,
+      type: PropTypes.string,
+    }),
+    fieldControls: PropTypes.shape({
+      all: PropTypes.array,
+      form: PropTypes.array,
+    }),
+  }),
 };
 
 export default AssetEditorWorkbench;

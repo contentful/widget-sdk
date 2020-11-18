@@ -3,9 +3,8 @@ import AngularComponent from 'ui/Framework/AngularComponent';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import ReferencesTab from './EntryReferences';
-import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/PolicyBuilderConfig';
+import { ContentTagsTab } from 'app/entity_editor/ContentTagsTab';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -25,11 +24,6 @@ export default function renderDefaultEditor(
     noLocalizedFieldsAdviceProps,
   }
 ) {
-  const canEditTags = otDoc.permissions.canEditFieldLocale(
-    PolicyBuilderConfig.TAGS,
-    PolicyBuilderConfig.PATH_WILDCARD
-  );
-
   const widgetComponents = {
     [EntryEditorWidgetTypes.REFERENCE_TREE.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
@@ -74,11 +68,7 @@ export default function renderDefaultEditor(
     [EntryEditorWidgetTypes.TAGS_EDITOR.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
-          <ContentTagsTab
-            disable={!canEditTags}
-            getValueAt={otDoc.getValueAt}
-            setValueAt={otDoc.setValueAt}
-          />
+          <ContentTagsTab doc={otDoc} showEmpty />
         )}
       </div>
     ),

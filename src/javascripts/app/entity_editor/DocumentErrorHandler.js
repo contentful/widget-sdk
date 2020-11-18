@@ -26,12 +26,7 @@ const onValue = ({ error }) => {
   }
 };
 
-export function initDocErrorHandlerWithoutScope(docError$) {
+export function initDocErrorHandler(docError$) {
   const forbidden = getForbidden(docError$);
   K.onValue(forbidden.take(1), onValue);
-}
-
-export default function init($scope, docError$) {
-  const forbidden = getForbidden(docError$);
-  K.onValueScope($scope, forbidden.take(1), onValue);
 }
