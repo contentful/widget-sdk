@@ -1,4 +1,4 @@
-import { render, fireEvent, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import React from 'react';
 import { SigningSecret } from './SigningSecret';

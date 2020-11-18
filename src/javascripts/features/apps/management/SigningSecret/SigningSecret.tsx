@@ -11,51 +11,12 @@ import {
   SkeletonDisplayText,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import { css } from 'emotion';
 import { AddSigningSecretDialog } from './AddSigningSecretDialog';
 import { generateSecret } from './utils';
 import { getAppDefinitionLoader } from 'features/apps-core';
 import { ManagementApiClient } from '../ManagementApiClient';
-
-const styles = {
-  header: css({
-    fontSize: tokens.fontSizeL,
-    marginTop: tokens.spacing2Xl,
-    marginBottom: tokens.spacingXs,
-  }),
-  activateButton: css({
-    marginTop: tokens.spacingM,
-  }),
-  copySecretReminder: css({
-    marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM,
-  }),
-  secretInputLabel: css({
-    fontSize: tokens.fontSizeM,
-    marginTop: tokens.spacingL,
-  }),
-  inputWrapper: css({
-    display: 'flex',
-  }),
-  currentSecretInput: css({
-    flexGrow: 1,
-    width: 'auto',
-    '& input': {
-      fontFamily: tokens.fontStackMonospace,
-    },
-  }),
-  button: css({
-    paddingLeft: tokens.spacingXl,
-    paddingRight: tokens.spacingXl,
-    borderRadius: 0,
-    borderLeftWidth: 0,
-  }),
-  loading: css({
-    marginTop: tokens.spacingS,
-  }),
-};
+import { styles } from './styles';
 
 const openModal = (updateSecret: (generatedSecret: string) => Promise<void>) => {
   return ModalLauncher.open(({ isShown, onClose }) => {
@@ -88,7 +49,7 @@ export const SigningSecret = ({ definition }) => {
         const secret = await getAppDefinitionLoader(orgId).getAppSigningSecret(definitionId);
         setSecret(secret?.padStart(16, '*'));
       } catch (err) {
-        // ignore secret not found as it is expected
+        // ignore "secret not found" as it is expected
         if (err.status !== 404) {
           throw err;
         }
@@ -105,7 +66,9 @@ export const SigningSecret = ({ definition }) => {
       </Heading>
       <Paragraph>
         Verify that requests from an app or event are coming from Contentful.{' '}
-        <TextLink href="">Learn more about secure requests</TextLink>
+        <TextLink href="https://www.contentful.com/developers/docs/extensibility/app-framework/request-verification/">
+          Learn more about request verification
+        </TextLink>
       </Paragraph>
       {isLoadingSecret && (
         <SkeletonContainer className={styles.loading} testId={'loading'}>
@@ -123,7 +86,7 @@ export const SigningSecret = ({ definition }) => {
               buttonType={'muted'}
               testId={'activate-btn'}
               loading={isLoadingSecret}>
-              {!isLoadingSecret && 'Activate secure requests'}
+              {!isLoadingSecret && 'Activate request verification'}
             </Button>
           )}
 

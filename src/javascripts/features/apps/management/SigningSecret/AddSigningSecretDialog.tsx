@@ -19,33 +19,32 @@ export const AddSigningSecretDialog = ({ isShown, onClose, saveUpdatedSecret }) 
   const [updatedSecret, setUpdatedSecret] = useState(generateSecret());
 
   return (
-    <>
-      <ModalConfirm
-        title="Update shared secret"
-        isShown={isShown}
-        intent="positive"
-        confirmLabel="Update"
-        cancelLabel="Cancel"
-        confirmTestId="add-secret-btn"
-        cancelTestId="add-secret-cancel"
-        size={'large'}
-        onCancel={onClose}
-        onConfirm={() => {
-          saveUpdatedSecret(updatedSecret);
-          onClose();
-        }}>
-        <Paragraph>
-          You are about to update the shared secret of this app definition. This will invalidate
-          your current secret. Make sure to update your app&apos;s code to reflect this change
-        </Paragraph>
-        <TextInput
-          placeholder={'Click on Regenerate secret below to create a secret'}
-          className={styles.secretInput}
-          value={updatedSecret}
-          withCopyButton
-        />
-        <TextLink onClick={() => setUpdatedSecret(generateSecret())}>Regenerate Secret</TextLink>
-      </ModalConfirm>
-    </>
+    <ModalConfirm
+      title="Update shared secret"
+      isShown={isShown}
+      intent="positive"
+      confirmLabel="Update"
+      cancelLabel="Cancel"
+      confirmTestId="add-secret-btn"
+      cancelTestId="add-secret-cancel"
+      size={'large'}
+      onCancel={onClose}
+      onConfirm={() => {
+        saveUpdatedSecret(updatedSecret);
+        onClose();
+      }}>
+      <Paragraph>
+        You are about to update the shared secret of this app definition. This will invalidate your
+        current secret. Make sure to update your app&apos;s backend settings to reflect this secret
+        change.
+      </Paragraph>
+      <TextInput
+        placeholder={'Click on Regenerate secret below to create a secret'}
+        className={styles.secretInput}
+        value={updatedSecret}
+        withCopyButton
+      />
+      <TextLink onClick={() => setUpdatedSecret(generateSecret())}>Regenerate Secret</TextLink>
+    </ModalConfirm>
   );
 };
