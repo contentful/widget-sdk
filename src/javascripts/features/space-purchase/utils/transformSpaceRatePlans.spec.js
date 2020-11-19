@@ -112,6 +112,7 @@ describe('transformSpaceRatePlans', () => {
     ).toEqual([
       {
         isFree: true,
+        currentPlan: false,
         disabled: true,
         includedResources: [
           {
@@ -139,6 +140,7 @@ describe('transformSpaceRatePlans', () => {
       },
       {
         isFree: false,
+        currentPlan: false,
         disabled: false,
         includedResources: [
           {
@@ -166,6 +168,7 @@ describe('transformSpaceRatePlans', () => {
       },
       {
         isFree: false,
+        currentPlan: false,
         disabled: true,
         includedResources: [
           {
@@ -193,6 +196,7 @@ describe('transformSpaceRatePlans', () => {
       },
       {
         isFree: false,
+        currentPlan: false,
         disabled: false,
         includedResources: [
           {

@@ -6,6 +6,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SpaceSelection, FEATURE_OVERVIEW_HREF } from './SpaceSelection';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { SpacePurchaseState } from '../context';
 
 const mockOrganization = FakeFactory.Organization();
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
@@ -103,7 +104,7 @@ describe('SpaceSelection', () => {
   });
 });
 
-function build(customProps) {
+function build(customProps, customState) {
   const props = {
     loading: false,
     organizationId: mockOrganization.sys.id,
@@ -114,5 +115,20 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<SpaceSelection {...props} />);
+  const contextValue = {
+    state: {
+      organization: mockOrganization,
+      currentSpace: {},
+      currentSpaceRatePlan: {},
+      sessionId: 'random_id',
+      ...customState,
+    },
+    dispatch: jest.fn(),
+  };
+
+  render(
+    <SpacePurchaseState.Provider value={contextValue}>
+      <SpaceSelection {...props} />
+    </SpacePurchaseState.Provider>
+  );
 }

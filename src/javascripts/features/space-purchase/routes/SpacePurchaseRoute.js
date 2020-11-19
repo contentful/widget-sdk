@@ -10,6 +10,7 @@ import {
   getRatePlans,
   getBasePlan,
   getSpaceRatePlans,
+  getSingleSpacePlan,
   isSelfServicePlan,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
@@ -51,25 +52,25 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
 
   const [
     organization,
-    templatesList,
-    productRatePlans,
-    basePlan,
-    freeSpaceResource,
-    pageContent,
     organizationMembership,
     currentSpace,
+    basePlan,
+    productRatePlans,
     rawSpaceRatePlans,
+    freeSpaceResource,
+    templatesList,
+    pageContent,
     composeLaunchPurchaseEnabled,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
-    getTemplatesList(),
-    getRatePlans(endpoint),
-    getBasePlan(endpoint),
-    createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
-    fetchSpacePurchaseContent(),
     getOrganizationMembership(orgId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
+    getBasePlan(endpoint),
+    getRatePlans(endpoint),
     getSpaceRatePlans(endpoint, spaceId),
+    createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
+    getTemplatesList(),
+    fetchSpacePurchaseContent(),
     getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE),
   ]);
 
@@ -78,11 +79,22 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     freeSpaceResource,
   });
 
+  let showLegacyPlanWarning = false;
   let currentSpaceRatePlan;
   if (spaceId && spaceRatePlans?.length > 0) {
-    currentSpaceRatePlan = spaceRatePlans.find((plan) =>
-      plan.unavailabilityReasons?.find((reason) => reason.type === 'currentPlan')
-    );
+    currentSpaceRatePlan = spaceRatePlans.find((plan) => plan.currentPlan);
+
+    // if currentSpaceRatePlan was not found by checking unavailabilityReasons
+    // it means this space is probably on a legacy plan (Micro or Small), so we need to use getSincleSpacePlan to get the rate plan
+    if (!currentSpaceRatePlan) {
+      currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
+
+      // if the plan is not in productRatePlans, it is Micro or Small
+      // but if it is in productRatePlans then it's a free space
+      showLegacyPlanWarning =
+        currentSpaceRatePlan &&
+        !productRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
+    }
   }
 
   const canAccess =
@@ -121,6 +133,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     currentSpace,
     spaceRatePlans,
     currentSpaceRatePlan,
+    showLegacyPlanWarning,
     composeLaunchPurchaseEnabled,
   };
 };
@@ -173,6 +186,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
         currentSpace={data?.currentSpace}
         spaceRatePlans={data?.spaceRatePlans}
         currentSpacePlan={data?.currentSpaceRatePlan}
+        currentSpaceIsLegacy={data?.showLegacyPlanWarning}
         composeLaunchPurchaseEnabled={data?.composeLaunchPurchaseEnabled}
       />
     </>

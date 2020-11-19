@@ -20,7 +20,11 @@ const mockOrganizationPlatform = 'Free';
 const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
 const mockSpaceRatePlans = ['plan1', 'plan2', 'plan3'];
 const mockCurrentSpacePlan = { unavailabilityReasons: [{ type: 'currentPlan' }] };
-const mockUpgradeSpaceRatePlans = [mockCurrentSpacePlan, 'plan2', 'plan3'];
+const mockUpgradeSpaceRatePlans = [
+  { ...mockCurrentSpacePlan, currentPlan: true },
+  'plan2',
+  'plan3',
+];
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -44,6 +48,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
   getBasePlan: jest.fn(),
   getSpaceRatePlans: jest.fn(),
+  getSingleSpacePlan: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
@@ -178,7 +183,7 @@ describe('SpacePurchaseRoute', () => {
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'upgrade_space',
-        currentSpacePlan: mockCurrentSpacePlan,
+        currentSpacePlan: { ...mockCurrentSpacePlan, currentPlan: true },
       }
     );
   });

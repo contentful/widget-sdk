@@ -91,6 +91,7 @@ export const NewSpacePage = ({
   currentSpace,
   spaceRatePlans,
   currentSpacePlan,
+  currentSpaceIsLegacy,
 }) => {
   const { dispatch } = useContext(SpacePurchaseState);
 
@@ -343,6 +344,7 @@ export const NewSpacePage = ({
               spaceRatePlans={spaceRatePlans}
               loading={!spaceRatePlans}
               currentSpacePlan={currentSpacePlan}
+              currentSpaceIsLegacy={currentSpaceIsLegacy}
             />
             <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
           </Grid>
@@ -379,4 +381,5 @@ NewSpacePage.propTypes = {
     ).isRequired,
   }),
   currentSpace: SpacePropType,
+  currentSpaceIsLegacy: PropTypes.bool,
 };

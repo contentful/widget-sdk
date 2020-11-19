@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import cn from 'classnames';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
+  Icon,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -25,6 +26,7 @@ import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from './SpaceCard';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
+import { SpacePurchaseState } from '../context';
 
 const styles = {
   fullRow: css({
@@ -55,6 +57,16 @@ const styles = {
       height: '100%',
     },
   }),
+  helpIcon: css({
+    // necessary to align icon with text
+    marginBottom: '-4px',
+  }),
+  legacyResourcesList: css({
+    display: 'flex',
+    '& li': {
+      margin: `${tokens.spacingXs} ${tokens.spacingM} 0 0`,
+    },
+  }),
 };
 
 // Exported for testing only
@@ -69,7 +81,12 @@ export const SpaceSelection = ({
   spaceRatePlans,
   currentSpacePlan,
   loading,
+  currentSpaceIsLegacy,
 }) => {
+  const {
+    state: { currentSpace, currentSpaceRatePlan },
+  } = useContext(SpacePurchaseState);
+
   const getSelectHandler = (planType) => {
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
       return () => {
@@ -120,6 +137,10 @@ export const SpaceSelection = ({
               ? 'Choose the space that’s right for your project'
               : 'Choose the space you’d like to change to'}
           </Heading>
+        )}
+
+        {currentSpaceIsLegacy && currentSpace && currentSpaceRatePlan && (
+          <LegacySpaceWarning spaceName={currentSpace.name} spacePlan={currentSpaceRatePlan} />
         )}
 
         {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => {
@@ -201,6 +222,7 @@ SpaceSelection.propTypes = {
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   currentSpacePlan: PlanPropType,
   loading: PropTypes.bool,
+  currentSpaceIsLegacy: PropTypes.bool,
 };
 
 function CommunityLoadingState() {
@@ -223,3 +245,33 @@ function getCommunityTooltipContent(canCreateCommunityPlan, isFreeSpaceDisabled)
 
   return '';
 }
+
+function LegacySpaceWarning({ spaceName, spacePlan }) {
+  return (
+    <Card className={styles.fullRow}>
+      <b>
+        {spaceName} is currently a {spacePlan.name} space
+      </b>{' '}
+      <Tooltip
+        content="We no longer sell these spaces, for more information see our FAQ"
+        maxWidth="200px">
+        <Icon icon="HelpCircleTrimmed" color="muted" className={styles.helpIcon} />
+      </Tooltip>
+      {/* eslint-disable-next-line */}
+      <ul className={styles.legacyResourcesList}>
+        {spacePlan.ratePlanCharges.map((charge, idx) => {
+          if (!charge.tiers) return null;
+          return (
+            <li key={idx}>
+              {charge.tiers[0].endingUnit} {charge.name}
+            </li>
+          );
+        })}
+      </ul>
+    </Card>
+  );
+}
+LegacySpaceWarning.propTypes = {
+  spaceName: PropTypes.string,
+  spacePlan: PropTypes.object,
+};

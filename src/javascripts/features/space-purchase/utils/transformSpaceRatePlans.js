@@ -24,7 +24,6 @@ function getIncludedResources(charges) {
 
 function transformSpaceRatePlan({ plan, freeSpaceResource }) {
   const isFree = plan.productPlanType === 'free_space';
-  const includedResources = getIncludedResources(plan.productRatePlanCharges);
   let disabled = false;
 
   if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
@@ -33,9 +32,27 @@ function transformSpaceRatePlan({ plan, freeSpaceResource }) {
     disabled = !canCreate(freeSpaceResource);
   }
 
-  return { ...plan, isFree, includedResources, disabled };
+  return {
+    ...plan,
+    isFree,
+    disabled,
+    currentPlan:
+      plan.unavailabilityReasons?.some((reason) => reason.type === 'currentPlan') ?? false,
+    includedResources: getIncludedResources(plan.productRatePlanCharges),
+  };
 }
 
+/**
+ * It returns the space rate plans with some additional information:
+ * - If a plan is free, it will return with `isFree: true`;
+ * - If a plan has at least 1 unavailability reason, it will return with `disabled: true`;
+ * - If a plan has the 'currentPlan' unavailability reason, it will return with `currentPlan: true`;
+ * - Each plan will return with includedResources, which is an array of the resources the space plan includes and their limits;
+ *
+ * @param {Object[]} plan the space rate plan you want to transform
+ * @param {Object} freeSpaceResource
+ * @returns {Object[]} an array of space rate plans with the properties mentioned above
+ */
 export function transformSpaceRatePlans({ spaceRatePlans = [], freeSpaceResource }) {
   return spaceRatePlans.map((plan) => transformSpaceRatePlan({ plan, freeSpaceResource }));
 }
