@@ -64,8 +64,8 @@ export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfi
         </Subheading>
         <Paragraph testId="payment-summary.message">
           {getSuccessMsg(
-            currentSpace?.name,
-            currentSpaceRatePlan?.name,
+            currentSpace && currentSpace.name,
+            currentSpaceRatePlan && currentSpaceRatePlan.name,
             selectedPlan.name,
             isReceipt
           )}
