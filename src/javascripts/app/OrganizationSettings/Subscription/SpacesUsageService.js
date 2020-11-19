@@ -11,3 +11,8 @@ export const getSpacesUsage = (endpoint, query) => {
     alphaHeader
   );
 };
+
+export const addMasterEnvironment = ({ usage, limit }) => ({
+  usage: usage + 1,
+  limit: limit + 1,
+});

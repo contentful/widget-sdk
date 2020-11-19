@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
+import moment from 'moment';
 import tokens from '@contentful/forma-36-tokens';
+import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 import {
   Icon,
   TextLink,
@@ -16,12 +18,13 @@ import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
 import { SpaceUsageTableCell } from './components/SpaceUsageTableCell';
+import { addMasterEnvironment } from './SpacesUsageService';
 
 const styles = {
   star: css({ color: tokens.colorOrangeMid, fontSize: tokens.fontSizeS, cursor: 'default' }),
   hasUpgraded: css({ backgroundColor: tokens.colorMintMid }),
   moreButton: css({ verticalAlign: 'middle' }),
-  helpIcon: css({ marginTop: `-${tokens.spacing2Xs}`, verticalAlign: 'middle', cursor: 'help' }),
+  helpIcon: css({ marginTop: `-${tokens.spacing2Xs}`, verticalAlign: 'middle' }),
 };
 
 export const SpacePlanRowNew = ({
@@ -34,8 +37,14 @@ export const SpacePlanRowNew = ({
   showSpacePlanChangeBtn,
 }) => {
   const { space } = plan;
-  const showExpiresAt = Boolean('expiresAt' in space);
+  const isTrialSpace = plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME;
   const isAccessible = Boolean(space.isAccessible);
+  const expiresAtTooltipContent =
+    isTrialSpace && isAccessible
+      ? `${moment().isAfter(moment(space.expiresAt), 'date') ? 'Expired' : 'Expires'} on ${moment(
+          space.expiresAt
+        ).format('DD/MM/YYYY')}`
+      : 'Become a space member to view expiration date';
 
   const onViewUsage = () =>
     go({
@@ -46,40 +55,44 @@ export const SpacePlanRowNew = ({
     });
 
   return (
-    <TableRow className={cx({ [styles.hasUpgraded]: hasUpgraded })}>
-      <TableCell>
-        {' '}
+    <TableRow
+      testId="subscription-page.spaces-list.table-row"
+      className={cx({ [styles.hasUpgraded]: hasUpgraded })}>
+      <TableCell testId="subscription-page.spaces-list.space-name">
         {isAccessible ? (
           <StateLink
+            testId="subscription-page.spaces-list.space-link"
             component={TextLink}
-            path="spaces.detail.home"
+            path="spaces.detail"
             params={{
               spaceId: space.sys.id,
             }}>
-            {space.name || '-'}{' '}
+            {space.name || '-'}
           </StateLink>
         ) : (
           space.name || '-'
         )}
-        &nbsp;{' '}
-        {plan.committed && (
-          <Tooltip content="This space is part of your Enterprise deal with Contentful">
-            <span className={styles.star}>★</span>
-          </Tooltip>
-        )}{' '}
       </TableCell>
-      <TableCell>
-        <strong>{plan.name}</strong>&nbsp;{' '}
-        {showExpiresAt && (
+      <TableCell testId="subscription-page.spaces-list.space-type">
+        <strong>{plan.name}</strong>&nbsp;
+        {isTrialSpace && (
           <Tooltip
-            content={space.expiresAt ? `Expires at ${space.expiresAt}` : `Expires after trial`}>
-            <Icon icon="HelpCircle" color="muted" className={styles.helpIcon} />
+            content={expiresAtTooltipContent}
+            testId="subscription-page.spaces-list.trial-space-tooltip">
+            <Icon
+              icon="HelpCircle"
+              color="muted"
+              className={styles.helpIcon}
+              testId="subscription-page.spaces-list.trial-space-tooltip-trigger"
+            />
+            &nbsp;
           </Tooltip>
         )}
         {showSpacePlanChangeBtn && (
           <>
             -{' '}
             <StateLink
+              testId="subscription-page.spaces-list.change-plan-link"
               component={TextLink}
               path=".space_plans"
               params={{ spaceId: space.sys.id }}
@@ -94,29 +107,59 @@ export const SpacePlanRowNew = ({
             </StateLink>
           </>
         )}
-        <br />{' '}
+        <br />
         {!enterprisePlan && (
           <>
-            <Price value={plan.price} unit="month" /> -{' '}
-            <TextLink onClick={onChangeSpace(space)}>upgrade</TextLink>
+            <Price
+              testId="subscription-page.spaces-list.plan-price"
+              value={plan.price}
+              unit="month"
+            />{' '}
+            -{' '}
+            <TextLink
+              testId="subscription-page.spaces-list.upgrade-plan-link"
+              onClick={onChangeSpace(space)}>
+              upgrade
+            </TextLink>
           </>
         )}{' '}
       </TableCell>
-      <SpaceUsageTableCell {...spaceUsage.environments} />
-      <SpaceUsageTableCell {...spaceUsage.roles} />
-      <SpaceUsageTableCell {...spaceUsage.locales} />
-      <SpaceUsageTableCell {...spaceUsage.contentTypes} />
-      <SpaceUsageTableCell {...spaceUsage.records} />
-      <TableCell className={styles.moreButton}>
-        <CardActions>
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.environments"
+        {...addMasterEnvironment(spaceUsage.environments)}
+      />
+      <SpaceUsageTableCell testId="subscription-page.spaces-list.roles" {...spaceUsage.roles} />
+      <SpaceUsageTableCell testId="subscription-page.spaces-list.locales" {...spaceUsage.locales} />
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.content-types"
+        {...spaceUsage.contentTypes}
+      />
+      <SpaceUsageTableCell testId="subscription-page.spaces-list.records" {...spaceUsage.records} />
+      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
+        <CardActions
+          iconButtonProps={{
+            testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
+          }}
+          data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
-            <DropdownListItem onClick={onViewUsage} isDisabled={!isAccessible}>
-              Usage
+            <DropdownListItem
+              onClick={onViewUsage}
+              isDisabled={!isAccessible}
+              testId="subscription-page.spaces-list.space-usage-link">
+              Detailed usage
             </DropdownListItem>
             {!showSpacePlanChangeBtn && (
-              <DropdownListItem onClick={onChangeSpace(space)}>Change space type</DropdownListItem>
+              <DropdownListItem
+                onClick={onChangeSpace(space)}
+                testId="subscription-page.spaces-list.change-space-link">
+                Change space type
+              </DropdownListItem>
             )}
-            <DropdownListItem onClick={onDeleteSpace(space, plan)}>Delete</DropdownListItem>
+            <DropdownListItem
+              onClick={onDeleteSpace(space, plan)}
+              testId="subscription-page.spaces-list.delete-space-link">
+              Delete
+            </DropdownListItem>
           </DropdownList>
         </CardActions>
       </TableCell>

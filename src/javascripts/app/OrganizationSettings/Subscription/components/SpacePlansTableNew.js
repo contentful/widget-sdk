@@ -21,7 +21,7 @@ const styles = {
     width: '30%',
   }),
   typeCol: css({
-    width: '30%',
+    width: '20%',
   }),
   usageCol: css({
     width: 'auto',
@@ -121,12 +121,14 @@ export const SpacePlansTableNew = ({
           )}
         </TableBody>
       </Table>
-      <Pagination
-        {...pagination}
-        total={data.total || 10}
-        loading={isLoading}
-        onChange={handlePaginationChange}
-      />
+      {data.total && (
+        <Pagination
+          {...pagination}
+          total={data.total}
+          loading={isLoading}
+          onChange={handlePaginationChange}
+        />
+      )}
     </div>
   );
 };

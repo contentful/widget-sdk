@@ -5,10 +5,13 @@ import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { noop } from 'lodash';
 
 import { SpaceSettings } from './SpaceSettings';
+import { User } from 'test/helpers/fakeFactory';
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(),
 }));
+
+const mockUser = User();
 
 describe('SpaceSettings', () => {
   const renderComponent = (props) => {
@@ -22,6 +25,8 @@ describe('SpaceSettings', () => {
         plan={{ name: 'testPlanName', price: 10 }}
         showDeleteButton={false}
         showChangeButton={true}
+        createdAt="2020-01-01"
+        createdBy={mockUser}
         {...props}
       />
     );
@@ -50,6 +55,13 @@ describe('SpaceSettings', () => {
     renderComponent();
 
     expect(screen.queryByTestId('space-settings-page.plan-price')).toBeNull();
+  });
+
+  it('displays space createdAt and createdBy info', () => {
+    renderComponent();
+
+    expect(screen.getByTestId('space-created-at-by')).toHaveTextContent('John Doe');
+    expect(screen.getByTestId('space-created-at-by')).toHaveTextContent('01/01/2020');
   });
 
   it('calls onChangeSpace when upgrade space button is clicked', () => {
