@@ -56,7 +56,7 @@ export function EntryList({
     isSortable: hasContentTypeSelected && fieldIsSortable(displayFieldName),
     isActiveSort: displayFieldName && isOrderField(displayFieldName),
     onClick: () => orderColumnBy(displayFieldName),
-    direction: order.direction,
+    direction: order?.direction,
     type: 'EntryTitle',
     colWidth: '20%',
   };
@@ -68,7 +68,7 @@ export function EntryList({
       isSortable: fieldIsSortable(field),
       isActiveSort: isOrderField(field),
       onClick: () => orderColumnBy(field),
-      direction: order.direction,
+      direction: order?.direction,
     })),
   ];
 
