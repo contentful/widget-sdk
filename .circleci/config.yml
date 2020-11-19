@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.7.0
   samson: contentful/trigger-samson@1
+  polaris-scan: contentful/polaris-scan@1
   copy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.15
@@ -392,6 +393,10 @@ workflows:
           requires:
             - lint
       - run-unit-tests
+      - polaris-scan/run-polaris-scan:
+          requires_build: false
+          context:
+            - sast-scan
       - cypress/run:
           name: run-contract-tests
           no-workspace: true
