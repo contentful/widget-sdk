@@ -12,6 +12,9 @@ const styles = {
     '&:focus-within': {
       borderColor: tokens.colorPrimary,
     },
+    '&:hover': {
+      borderColor: tokens.colorPrimary,
+    },
   }),
 };
 

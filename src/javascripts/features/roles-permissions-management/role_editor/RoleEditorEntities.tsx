@@ -11,6 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import ExternalTextLink from 'app/common/ExternalTextLink';
 
 type Props = {
   entity: string;
@@ -26,11 +27,16 @@ type Props = {
   getEntityTitle: () => string;
   resetPolicies: () => void;
   updateRoleFromTextInput: (path: string) => (...args) => void;
+  hasClpFeature: boolean;
 };
 
 const styles = {
   note: css({
+    width: tokens.contentWidthText,
     marginBottom: tokens.spacingXl,
+  }),
+  nodeHeading: css({
+    fontWeight: tokens.fontWeightDemiBold,
   }),
 };
 
@@ -48,11 +54,22 @@ const RoleEditorEntities: React.FC<Props> = ({
   getEntityTitle,
   updateRoleFromTextInput,
   resetPolicies,
+  hasClpFeature,
 }) => {
   return (
     <>
-      <Note className={styles.note}>Anything that is not explicitly allowed, is denied.</Note>
-      {internal.uiCompatible && !internal.metadataTagRuleExists ? (
+      <Note className={styles.note}>
+        <span className={styles.nodeHeading}>
+          Anything that is not explicitly allowed, is denied.
+        </span>
+        <div>
+          Learn more about how to set up a{' '}
+          <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/roles-permissions/">
+            custom role.
+          </ExternalTextLink>
+        </div>
+      </Note>
+      {internal.uiCompatible ? (
         <RuleList
           rules={rules}
           onUpdateRuleAttribute={updateRuleAttribute(entities)}
@@ -64,6 +81,7 @@ const RoleEditorEntities: React.FC<Props> = ({
           contentTypes={contentTypes}
           searchEntities={searchEntities}
           getEntityTitle={getEntityTitle}
+          hasClpFeature={hasClpFeature}
         />
       ) : (
         <>

@@ -3,9 +3,7 @@ import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { capitalize } from 'utils/StringUtils';
 
 function translatePolicies(internal) {
-  // TODO: remove when the new web ui to support metadata tag rules is implemented
-  // for now, metadata tag rules, parse the rule as JSON
-  if (!internal.uiCompatible || internal.metadataTagRuleExists) {
+  if (!internal.uiCompatible) {
     try {
       return JSON.parse(internal.policyString);
     } catch (e) {
@@ -20,6 +18,7 @@ function translatePolicies(internal) {
     .map(addUserConstraint)
     .map(addContentTypeConstraint)
     .map(addPathConstraint)
+    .map(addMetadataTagsConstraint)
     .map('result')
     .value();
 }
@@ -105,6 +104,14 @@ function addPathConstraint(pair) {
   return pair;
 }
 
+function addMetadataTagsConstraint(pair) {
+  const ct = pair.source.metadataTagIds;
+  if (Array.isArray(ct) && ct.length) {
+    pushConstraint(pair, inEq('metadata.tags.sys.id', ct));
+  }
+  return pair;
+}
+
 function fieldSegment(prop) {
   return segment(prop, PolicyBuilderConfig.ALL_FIELDS);
 }
@@ -124,6 +131,10 @@ function pushConstraint(pair, constraint) {
 
 function eq(prop, value) {
   return { equals: [{ doc: prop }, value] };
+}
+
+function inEq(prop, value) {
+  return { in: [{ doc: prop }, value] };
 }
 
 function paths(segments) {

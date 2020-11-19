@@ -7,6 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
+import { RuleTagsSelection } from 'features/roles-permissions-management/components/RuleTagsSelection';
 
 const { TAGS, NO_PATH_CONSTRAINT } = PolicyBuilderConfig;
 
@@ -60,6 +61,7 @@ export class Rule extends React.Component {
     contentTypes: PropTypes.array.isRequired,
     searchEntities: PropTypes.func.isRequired,
     getEntityTitle: PropTypes.func.isRequired,
+    hasClpFeature: PropTypes.bool,
   };
 
   state = {};
@@ -78,7 +80,7 @@ export class Rule extends React.Component {
       contentTypeFields: [
         {
           id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
-          name: 'All fields and Tags (metadata)',
+          name: 'All fields and tags (metadata)',
         },
         {
           id: PolicyBuilderConfig.ALL_FIELDS,
@@ -97,7 +99,7 @@ export class Rule extends React.Component {
       assetFields: [
         {
           id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
-          name: 'All fields and Tags (metadata)',
+          name: 'All fields and tags (metadata)',
         },
         {
           id: PolicyBuilderConfig.ALL_FIELDS,
@@ -248,8 +250,11 @@ export class Rule extends React.Component {
             ))}
           </Select>
         )}
+        {this.props.hasClpFeature && !['all', 'create'].includes(rule.action) && (
+          <RuleTagsSelection rule={rule} onChange={onUpdateAttribute('metadataTagIds')} />
+        )}
         {!isDisabled && (
-          <Button onClick={onRemove} buttonType="naked" icon="Close" size="small">
+          <Button onClick={onRemove} buttonType="naked" icon="Delete">
             Delete rule
           </Button>
         )}

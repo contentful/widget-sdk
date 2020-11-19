@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { Note, TextLink } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Rule } from './Rule';
 
 const styles = {
@@ -34,6 +34,7 @@ export class RuleList extends React.Component {
     contentTypes: PropTypes.array.isRequired,
     searchEntities: PropTypes.func.isRequired,
     getEntityTitle: PropTypes.func.isRequired,
+    hasClpFeature: PropTypes.bool,
   };
 
   render() {
@@ -48,20 +49,20 @@ export class RuleList extends React.Component {
       contentTypes,
       searchEntities,
       getEntityTitle,
+      hasClpFeature,
     } = this.props;
+
+    const hasRules = rules.allowed.length;
 
     return (
       <div className="rule-list" data-test-id={`rule-list-${entity}`}>
         <div className="rule-list__section" data-test-id={`rule-list-${entity}-section`}>
-          <label>Users with this role can:</label>
-          {rules.allowed.length === 0 && (
-            <Note className={styles.note}>
-              <span>Currently, everything is denied for this role. </span>
-              {!isDisabled && (
-                <span>To allow certain actions add a rule by clicking the link below.</span>
-              )}
-            </Note>
-          )}
+          <Heading>{hasRules ? 'Allowed' : 'Everything is denied for this rule.'}</Heading>
+          <Paragraph className={hasRules ? null : styles.addLink}>
+            {hasRules
+              ? 'Users with this role can:'
+              : "Users with this role can't do anything. Add a rule to allow certain actions."}
+          </Paragraph>
           {rules.allowed.map((rule) => (
             <Rule
               key={rule.id}
@@ -74,29 +75,25 @@ export class RuleList extends React.Component {
               contentTypes={contentTypes}
               searchEntities={searchEntities}
               getEntityTitle={getEntityTitle}
+              hasClpFeature={hasClpFeature}
             />
           ))}
           {!isDisabled && (
-            <TextLink
+            <Button
               className={styles.addLink}
               testId="add-allowed-rule"
               onClick={onAddRule('allowed')}>
               {rules.allowed.length > 0 ? 'Add another rule' : 'Add a rule'}
-            </TextLink>
+            </Button>
           )}
         </div>
         {rules.allowed.length > 0 && (
           <div className="rule-list__section">
-            <label>
+            <Heading>Denied</Heading>
+            <Paragraph className={rules.denied.length ? null : styles.addLink}>
               Users with this role can
               <strong> not</strong>:
-            </label>
-            {!(rules.denied.length > 0 || isDisabled) && (
-              <Note className={styles.note}>
-                You can add exceptions to the rules you defined above. Add an exception by clicking
-                on the link below.
-              </Note>
-            )}
+            </Paragraph>
             <div className="rule-list__rule" data-test-id="rule-exceptions">
               {rules.denied.map((rule) => (
                 <Rule
@@ -110,16 +107,17 @@ export class RuleList extends React.Component {
                   contentTypes={contentTypes}
                   searchEntities={searchEntities}
                   getEntityTitle={getEntityTitle}
+                  hasClpFeature={hasClpFeature}
                 />
               ))}
             </div>
             {!isDisabled && (
-              <TextLink
+              <Button
                 className={styles.addLink}
                 testId="add-denied-rule"
                 onClick={onAddRule('denied')}>
                 {rules.denied.length > 0 ? 'Add another exception' : 'Add an exception'}
-              </TextLink>
+              </Button>
             )}
           </div>
         )}

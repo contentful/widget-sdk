@@ -60,6 +60,8 @@ const newRole = {
         role: RoleRepository.getEmpty(),
         roleRepo: RoleRepository.getInstance(spaceContext.space),
         spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
+        organizationId: spaceContext.organization.sys.id,
         baseRole,
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
         getContentTypes: async () => {
@@ -101,6 +103,8 @@ const detail = {
       return {
         isNew: false,
         spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
+        organizationId: spaceContext.organization.sys.id,
         role,
         roleRepo: RoleRepository.getInstance(spaceContext.space),
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),

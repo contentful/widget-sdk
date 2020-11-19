@@ -63,39 +63,6 @@ describe('Policy Builder, to external representation', () => {
     });
   });
 
-  describe('translating metadata tag policies', () => {
-    it('returns parsed policy JSON string with uiCompatible flag and metadata tag rules', () => {
-      const external = toExternal({
-        uiCompatible: true,
-        metadataTagRuleExists: true,
-        policyString: '{"test": true}',
-      });
-
-      expect(external.policies.test).toBe(true);
-    });
-
-    it('returns null for an invalid JSON string', () => {
-      const external = toExternal({
-        uiCompatible: false,
-        metadataTagRuleExists: true,
-        policyString: '{test": false}}',
-      });
-
-      expect(external.policies).toBeNull();
-    });
-
-    it('fails to parse policyString with uiCompatible flag and metadata tag rules is false', () => {
-      const external = toExternal({
-        uiCompatible: true,
-        metadataTagRuleExists: false,
-        policyString: '{"test": true}',
-      });
-
-      expect(Array.isArray(external.policies)).toBe(true);
-      expect(external.policies).toHaveLength(0);
-    });
-  });
-
   describe('translating policies', () => {
     function baseExternal(collection, effect) {
       const internal = { uiCompatible: true };

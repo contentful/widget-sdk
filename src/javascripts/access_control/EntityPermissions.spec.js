@@ -91,7 +91,7 @@ describe('EntityPermissions', () => {
 
       expect(accessChecker.canEditFieldLocale).toHaveBeenCalledTimes(2);
       expect(accessChecker.canEditFieldLocale).toHaveBeenCalledWith(
-        entry.sys,
+        entry,
         { apiName: 'FIELD' },
         { code: 'LOCALE' }
       );

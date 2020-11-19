@@ -3,8 +3,8 @@ import * as PolicyBuilder from 'access_control/PolicyBuilder';
 
 const policies = {
   entry: {
-    allowed: { flat: [], byContentType: {}, byMetadataTagId: [], byMetadataTagType: [] },
-    denied: { flat: [], byContentType: {}, byMetadataTagId: [], byMetadataTagType: [] },
+    allowed: { flat: [], byContentType: {}, byMetadataTagIds: [] },
+    denied: { flat: [], byContentType: {}, byMetadataTagIds: [] },
   },
   asset: { allowed: [], denied: [] },
 };
@@ -38,15 +38,14 @@ export function setMembership(membership, spaceAuthContext) {
   groupByContentType('denied');
   groupByEntityId('entry', 'allowed');
   groupByEntityId('entry', 'denied');
-  groupByMetadataTagId('entry', 'allowed');
-  groupByMetadataTagId('entry', 'denied');
-  groupByMetadataTagType('entry', 'allowed');
-  groupByMetadataTagType('entry', 'denied');
+  groupByMetadataTagIds('entry', 'allowed');
+  groupByMetadataTagIds('entry', 'denied');
 }
 
 // TODO only pass field id and locale code
 // Separate method for assets
-export function canEditFieldLocale(entitySys, field, locale) {
+export function canEditFieldLocale(entity, field, locale) {
+  const entitySys = entity.sys;
   const fieldId = field.apiName || field.id;
   const localeCode = locale.code;
 
@@ -64,8 +63,8 @@ export function canEditFieldLocale(entitySys, field, locale) {
     ? getDenied(contentTypeId).concat(getDeniedEntries())
     : policies.asset.denied;
 
-  const hasAllowing = checkPolicyCollectionForPath(allowed, entitySys, fieldId, localeCode);
-  const hasDenying = checkPolicyCollectionForPath(denied, entitySys, fieldId, localeCode);
+  const hasAllowing = checkPolicyCollectionForPath(allowed, entity, fieldId, localeCode);
+  const hasDenying = checkPolicyCollectionForPath(denied, entity, fieldId, localeCode);
 
   const result = isAdmin || isEnvironmentManager || (hasAllowing && !hasDenying);
   cacheResult(contentTypeId, fieldId, localeCode, result);
@@ -113,14 +112,11 @@ function groupByContentType(collectionName) {
   });
 }
 
-function groupByMetadataTagId(type, collectionName) {
+function groupByMetadataTagIds(type, collectionName) {
   const collection = policies[type][collectionName];
-  collection.byMetadataTagId = collection.flat.filter((p) => Array.isArray(p.metadataTagId));
-}
-
-function groupByMetadataTagType(type, collectionName) {
-  const collection = policies[type][collectionName];
-  collection.byMetadataTagType = collection.flat.filter((p) => Array.isArray(p.metadataTagType));
+  collection.byMetadataTagIds = collection.flat.filter(
+    (p) => Array.isArray(p.metadataTagIds) && p.metadataTagIds.length
+  );
 }
 
 function groupByEntityId(type, collectionName) {
@@ -191,7 +187,9 @@ function updatePoliciesOnly(collection) {
   return collection.filter((p) => ['update', 'all'].includes(p.action));
 }
 
-function checkPolicyCollectionForPath(collection, entitySys, fieldId, localeCode) {
+function checkPolicyCollectionForPath(collection, entity, fieldId, localeCode) {
+  const entitySys = entity.sys;
+
   return updatePoliciesOnly(collection).some((p) => {
     const noPath =
       (!isString(p.field) && !isString(p.locale)) ||
@@ -201,8 +199,19 @@ function checkPolicyCollectionForPath(collection, entitySys, fieldId, localeCode
     const bothMatched = matchField(p.field) && matchLocale(p.locale);
     const pathIsMatched = noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     const idMatchedIfPresent = !p.entityId || p.entityId === entitySys.id;
-    return idMatchedIfPresent && pathIsMatched;
+    const metadataTagsMatchedIfPresent = !p.metadataTagIds || matchMetadataTags(p.metadataTagIds);
+
+    return idMatchedIfPresent && metadataTagsMatchedIfPresent && pathIsMatched;
   });
+
+  function matchMetadataTags(tagIds) {
+    return (
+      !entity.metadata ||
+      entity.metadata.tags.some((tag) => {
+        return tagIds.includes(tag.sys.id);
+      })
+    );
+  }
 
   function matchField(field) {
     const matchingFields = [fieldId];

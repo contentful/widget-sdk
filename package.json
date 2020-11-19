@@ -270,7 +270,7 @@
     "cypress": "npm run clean-logs-pacts && npx cypress open",
     "test": "NODE_ENV=test NODE_OPTIONS=--max-old-space-size=6144 TZ=UTC node run-tests.js",
     "test:once": "NODE_ENV=test TZ=UTC node run-tests.js --once",
-    "lint": "eslint src test tools micro-backends --ext '.ts,.tsx,.js,.jsx'",
+    "lint": "eslint src test tools micro-backends --ext '.ts,.tsx,.js,.jsx' --quiet",
     "jest": "TZ=UTC node run-tests-jest.js",
     "jest:coverage": "TZ=UTC node run-tests-jest.js --ci --coverage --maxWorkers=2",
     "jest:debug": "TZ=UTC node --inspect-brk run-tests-jest.js --runInBand",

@@ -43,6 +43,72 @@ describe('Policy Access Checker', () => {
         ],
       };
     },
+    allowReadAndEditOfEntityWithTags: function (entityType, metadataTagIds) {
+      return {
+        policies: [
+          {
+            effect: 'allow',
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, entityType] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, metadataTagIds] },
+              ],
+            },
+            actions: ['read'],
+          },
+          {
+            effect: 'allow',
+            actions: ['update'],
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, entityType] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, metadataTagIds] },
+              ],
+            },
+          },
+        ],
+      };
+    },
+    denyReadAndEditOfEntityWithTags: function (entityType, metadataTagIds) {
+      return {
+        policies: [
+          {
+            effect: 'allow',
+            constraint: {
+              and: [{ equals: [{ doc: 'sys.type' }, entityType] }],
+            },
+            actions: ['read'],
+          },
+          {
+            effect: 'deny',
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, entityType] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, metadataTagIds] },
+              ],
+            },
+            actions: ['read'],
+          },
+          {
+            effect: 'allow',
+            actions: ['update'],
+            constraint: {
+              and: [{ equals: [{ doc: 'sys.type' }, entityType] }],
+            },
+          },
+          {
+            effect: 'deny',
+            actions: ['update'],
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, entityType] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, metadataTagIds] },
+              ],
+            },
+          },
+        ],
+      };
+    },
     denyEditOfEntry: function (ctId) {
       return {
         policies: [
@@ -204,6 +270,16 @@ describe('Policy Access Checker', () => {
       allow.policies[1].constraint.and.push({ paths: [{ doc: 'fields.%.en-US' }] });
       setRole(allow);
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
+    });
+
+    it('returns true when the edit policy has a matching metadata tag', () => {
+      setRole(roles.allowReadAndEditOfEntityWithTags('Entry', ['foo']));
+      expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
+    });
+
+    it('returns false when the edit policy does not have a matching metadata tag', () => {
+      setRole(roles.denyReadAndEditOfEntityWithTags('Entry', ['foo']));
+      expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
   });
 
@@ -428,11 +504,18 @@ describe('Policy Access Checker', () => {
       expectation,
       id = 'id',
       ctId = 'ctid',
-      type = 'Entry'
+      type = 'Entry',
+      tags = []
     ) {
-      expect(
-        pac.canEditFieldLocale({ id, type, contentType: { sys: { id: ctId } } }, field, locale)
-      ).toBe(expectation);
+      const entity = {
+        sys: {
+          id,
+          type,
+          contentType: { sys: { id: ctId } },
+        },
+        metadata: { tags },
+      };
+      expect(pac.canEditFieldLocale(entity, field, locale)).toBe(expectation);
     }
 
     it('returns false by default', () => {
@@ -452,6 +535,70 @@ describe('Policy Access Checker', () => {
     it('returns false if trying to update tags when policy only says fields', () => {
       setRole(pathPolicy('fields.%.%'), false);
       buildExpectation({ apiName: 'metadata.tags' }, {}, false);
+    });
+
+    it('returns true if trying to update fields when policy has allowing matching metadata tags', () => {
+      const tags = [
+        {
+          sys: {
+            id: 'foo',
+            linkType: 'Tag',
+            type: 'Link',
+          },
+        },
+      ];
+
+      setRole(roles.allowReadAndEditOfEntityWithTags('Entry', ['foo']));
+      buildExpectation({ apiName: 'test' }, {}, true, 'id', 'ctid', 'Entry', tags);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, true, 'id', 'ctid', 'Entry', tags);
+    });
+
+    it('returns false if trying to update fields when policy has denying matching metadata tags', () => {
+      const tags = [
+        {
+          sys: {
+            id: 'foo',
+            linkType: 'Tag',
+            type: 'Link',
+          },
+        },
+      ];
+
+      setRole(roles.denyReadAndEditOfEntityWithTags('Entry', ['foo']));
+      buildExpectation({ apiName: 'test' }, {}, false, 'id', 'ctid', 'Entry', tags);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, false, 'id', 'ctid', 'Entry', tags);
+    });
+
+    it('returns true if trying to update asset fields when policy has allowing matching metadata tags', () => {
+      const tags = [
+        {
+          sys: {
+            id: 'foo',
+            linkType: 'Tag',
+            type: 'Link',
+          },
+        },
+      ];
+
+      setRole(roles.allowReadAndEditOfEntityWithTags('Asset', ['foo']));
+      buildExpectation({ apiName: 'test' }, {}, true, 'id', 'ctid', 'Asset', tags);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, true, 'id', 'ctid', 'Asset', tags);
+    });
+
+    it('returns false if trying to update asset fields when policy has denying matching metadata tags', () => {
+      const tags = [
+        {
+          sys: {
+            id: 'foo',
+            linkType: 'Tag',
+            type: 'Link',
+          },
+        },
+      ];
+
+      setRole(roles.denyReadAndEditOfEntityWithTags('Asset', ['foo']));
+      buildExpectation({ apiName: 'test' }, {}, false, 'id', 'ctid', 'Asset', tags);
+      buildExpectation({ apiName: 'metadata.tags' }, {}, false, 'id', 'ctid', 'Asset', tags);
     });
 
     it('returns true for admin even for paths that do not match', () => {
@@ -542,13 +689,13 @@ describe('Policy Access Checker', () => {
         { admin: false, roles: [roles.allowReadEntry] },
         { environment: { sys: { isMaster: true } } }
       );
-      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(false);
+      expect(pac.canEditFieldLocale({ sys: 'ctid' }, {}, {})).toBe(false);
 
       pac.setMembership({
         admin: false,
         roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')],
       });
-      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
+      expect(pac.canEditFieldLocale({ sys: 'ctid' }, {}, {})).toBe(true);
     });
 
     it('merges policies from two roles in a non master environment', () => {
@@ -556,13 +703,13 @@ describe('Policy Access Checker', () => {
         { admin: false, roles: [roles.allowReadEntry] },
         { environment: { sys: { isMaster: false } } }
       );
-      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
+      expect(pac.canEditFieldLocale({ sys: 'ctid' }, {}, {})).toBe(true);
 
       pac.setMembership({
         admin: false,
         roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')],
       });
-      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
+      expect(pac.canEditFieldLocale({ sys: 'ctid' }, {}, {})).toBe(true);
     });
   });
 });

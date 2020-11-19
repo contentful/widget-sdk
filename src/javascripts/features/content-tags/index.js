@@ -34,3 +34,7 @@ export {
 export { TagsBulkAction } from 'features/content-tags/editor/components/TagsBulkAction';
 export { useComputeTags } from 'features/content-tags/editor/hooks/useComputeTags';
 export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveTags';
+export { useTagsValuesForIdList } from 'features/content-tags/core/hooks/useTagsValuesForIdList';
+export { useTagsValuesForTagsList } from 'features/content-tags/core/hooks/useTagsValuesForTagsList';
+export { SelectTagsModal, selectTags } from 'features/content-tags/core/components/SelectTagsModal';
+export { TagSelectionValue } from 'features/content-tags/core/Types';

@@ -15,7 +15,6 @@ function translatePolicies(external) {
     assets: { allowed: [], denied: [] },
     policyString,
     uiCompatible: true,
-    metadataTagRuleExists: false, // TODO: remove this flag when the new web ui for metadata tag rules is implemented
   };
 
   _(prepare(external)).map(extendPolicyWithRule).forEach(prepareExtension);
@@ -28,11 +27,6 @@ function translatePolicies(external) {
     } else {
       const rule = _.extend(p.rule, { action: p.action });
       extension[p.entityCollection][p.effectCollection].push(rule);
-
-      // TODO: remove this flag when the new web ui for metadata tag rules is implemented
-      if (rule.metadataTagRulesExist) {
-        extension.metadataTagRuleExists = true;
-      }
     }
   }
 }
@@ -118,29 +112,19 @@ function createRule(policy) {
   // 4. find matching metadata tag id
   const metadataTagIdConstraint = findMetadataTagConstraint(rest, 'metadata.tags.sys.id');
   if (metadataTagIdConstraint.value) {
-    rule.metadataTagRulesExist = true;
-    rule.metadataTagId = metadataTagIdConstraint.value; // value can be a list of tag ids or tag types
-    rule.scope = 'metadataTagId';
+    rule.metadataTagIds = metadataTagIdConstraint.value; // value can be a list of tag ids
+    rule.scope = 'metadataTagIds';
     rest.splice(metadataTagIdConstraint.index, 1);
   }
 
-  // 5. find matching metadata tag type
-  const metadataTagTypeConstraint = findMetadataTagConstraint(rest, 'metadata.tags.sys.tagType');
-  if (metadataTagTypeConstraint.value) {
-    rule.metadataTagRulesExist = true;
-    rule.metadataTagType = metadataTagTypeConstraint.value; // value can be a list of tag ids or tag types
-    rule.scope = 'metadataTagType';
-    rest.splice(metadataTagTypeConstraint.index, 1);
-  }
-
-  // 6. find scope
+  // 5. find scope
   const userConstraint = findUserConstraint(rest);
   if (userConstraint.value) {
     rule.scope = _.isString(userConstraint.value) ? 'user' : 'any';
     rest.splice(userConstraint.index, 1);
   }
 
-  // 7. find path
+  // 6. find path
   const pathConstraint = findPathConstraint(rest);
   if (pathConstraint.value) {
     rule.isPath = true;

@@ -61,11 +61,10 @@ function canEditFieldLocale(entity, fieldId, localeCode) {
     return false;
   }
 
-  const entitySys = entity.data.sys;
   const field = { apiName: fieldId };
   const locale = { code: localeCode };
   if (field) {
-    return accessChecker.canEditFieldLocale(entitySys, field, locale);
+    return accessChecker.canEditFieldLocale(entity.data, field, locale);
   } else {
     return false;
   }

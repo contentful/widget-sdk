@@ -34,6 +34,7 @@ import { RoleEditorPermissions } from 'features/roles-permissions-management/rol
 import tokens from '@contentful/forma-36-tokens';
 import { RoleEditRoutes } from 'states/settingsRolesPermissions';
 import { Route, RouteTab } from 'core/routing';
+import { MetadataTags } from 'features/content-tags';
 
 const styles = {
   tabs: css({
@@ -115,10 +116,12 @@ export class RoleEditor extends React.Component {
     registerSaveAction: PropTypes.func.isRequired,
     roleRepo: PropTypes.object.isRequired,
     canModifyRoles: PropTypes.bool.isRequired,
-    hasCustomRolesFeature: PropTypes.bool.isRequired,
     openEntitySelectorForEntity: PropTypes.func.isRequired,
+    hasCustomRolesFeature: PropTypes.bool.isRequired,
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
+    ngStateUrl: PropTypes.string.isRequired,
+    hasClpFeature: PropTypes.bool.isRequired,
   };
 
   static contextType = SpaceEnvContext;
@@ -306,6 +309,7 @@ export class RoleEditor extends React.Component {
     const index = findIndex({ id }, rules);
     const rule = rules[index];
     let updatedRule = { ...rule, [attribute]: value };
+
     switch (attribute) {
       case 'action': {
         switch (value) {
@@ -327,6 +331,7 @@ export class RoleEditor extends React.Component {
         };
         break;
     }
+
     this.updateInternal(set([entities, rulesKey, index], updatedRule));
   };
 
@@ -391,7 +396,7 @@ export class RoleEditor extends React.Component {
     }
 
     return (
-      <>
+      <MetadataTags>
         <DocumentTitle title={`${title} | Roles`} />
         <RolesWorkbenchSkeleton
           type={'full'}
@@ -454,6 +459,7 @@ export class RoleEditor extends React.Component {
                 searchEntities={this.searchEntities}
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
+                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
               />
             </Route>
 
@@ -473,6 +479,7 @@ export class RoleEditor extends React.Component {
                 searchEntities={this.searchEntities}
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
+                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
               />
             </Route>
             <Route path={RoleEditRoutes.Permissions.url}>
@@ -486,7 +493,7 @@ export class RoleEditor extends React.Component {
             </Route>
           </TabPanel>
         </RolesWorkbenchSkeleton>
-      </>
+      </MetadataTags>
     );
   }
 }

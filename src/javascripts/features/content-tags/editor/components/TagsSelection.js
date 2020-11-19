@@ -105,6 +105,8 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
 
   if (!isLoading) {
     return renderTags;
+  } else {
+    return null;
   }
 };
 

@@ -38,7 +38,6 @@ describe('Policy Builder, to internal representation', () => {
       const internal = toInternal({ policies: [] });
       expect(internal.policyString).toBe('[]');
       expect(internal.uiCompatible).toBe(true);
-      expect(internal.metadataTagRuleExists).toBe(false);
     });
   });
 
@@ -49,7 +48,6 @@ describe('Policy Builder, to internal representation', () => {
         policies: [{ actions: 'all', effect: 'allow' }],
       });
       expect(internal.uiCompatible).toBe(false);
-      expect(internal.metadataTagRuleExists).toBe(false);
 
       // "or" constraint
       internal = toInternal({
@@ -157,46 +155,16 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'metadata.tags.sys.id' }, ['tagId']] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, ['tagId']] },
               ],
             },
           },
         ],
       });
 
-      expect(internal.entries.allowed[1].scope).toBe('metadataTagId');
-      expect(internal.entries.allowed[1].metadataTagId).toEqual(['tagId']);
+      expect(internal.entries.allowed[1].scope).toBe('metadataTagIds');
+      expect(internal.entries.allowed[1].metadataTagIds).toEqual(['tagId']);
       expect(internal.uiCompatible).toBe(true);
-      expect(internal.metadataTagRuleExists).toBe(true);
-    });
-
-    it('translates metadata tag type constraints', () => {
-      const internal = toInternal({
-        policies: [
-          {
-            actions: 'all',
-            effect: 'allow',
-            constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
-            },
-          },
-          {
-            actions: 'all',
-            effect: 'allow',
-            constraint: {
-              and: [
-                { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { in: [{ doc: 'metadata.tags.sys.tagType' }, ['Access']] },
-              ],
-            },
-          },
-        ],
-      });
-
-      expect(internal.entries.allowed[1].scope).toBe('metadataTagType');
-      expect(internal.entries.allowed[1].metadataTagType).toEqual(['Access']);
-      expect(internal.uiCompatible).toBe(true);
-      expect(internal.metadataTagRuleExists).toBe(true);
     });
 
     it('translates multiple policies with exceptions', () => {
@@ -387,7 +355,6 @@ describe('Policy Builder, to internal representation', () => {
       });
 
       expect(internal.uiCompatible).toBe(false);
-      expect(internal.metadataTagRuleExists).toBe(false);
     });
   });
 });
