@@ -46,6 +46,7 @@ export const FLAGS = {
   WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
   COMBINED_REFERENCE_ACTIONS: 'feature-pen-11-2020-combined-reference-actions',
   NEW_LOCALES_ENDPOINT: 'feature-ext-11-2020-new-locales-endpoint',
+  NEW_LOCALES_ENDPOINT_WRITE: 'feature-ext-11-2020-new-locales-endpoint-write',
   SPACE_USAGE_SUMMARY: 'feature-moi-11-2020-space-usage-summary',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
@@ -73,6 +74,7 @@ const FALLBACK_VALUES = {
   [FLAGS.WORKFLOWS_APP]: false,
   [FLAGS.COMBINED_REFERENCE_ACTIONS]: false,
   [FLAGS.NEW_LOCALES_ENDPOINT]: false,
+  [FLAGS.NEW_LOCALES_ENDPOINT_WRITE]: false,
   [FLAGS.SPACE_USAGE_SUMMARY]: false,
 
   // See above
