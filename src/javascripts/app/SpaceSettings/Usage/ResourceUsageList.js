@@ -6,6 +6,8 @@ import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-compo
 import tokens from '@contentful/forma-36-tokens';
 import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
+import * as ResourceUtils from 'utils/ResourceUtils';
+import { getEntitlementByResourceKey } from './services/EntitlementService';
 
 const styles = {
   environmentUsageParent: css({
@@ -19,21 +21,43 @@ const styles = {
   }),
 };
 
-const ResourceUsageList = ({ spaceResources, environmentResources, environmentMeta }) => {
+const ResourceUsageList = ({
+  spaceResources,
+  environmentResources,
+  environmentMeta,
+  entitlementsSet,
+}) => {
   if (!spaceResources) return null;
 
   const { environmentId, aliasId, isMasterEnvironment } = environmentMeta;
+  const getEntitlementFromResources = (entitlement) =>
+    ResourceUtils.getResourceLimits(spaceResources[entitlement]).maximum;
+  const getEntitlementFromNewAPI = (entitlement) =>
+    getEntitlementByResourceKey(entitlement, entitlementsSet);
+
+  const getEntitlement = (entitlement) =>
+    entitlementsSet
+      ? getEntitlementFromNewAPI(entitlement)
+      : getEntitlementFromResources(entitlement);
 
   return (
-    <div className="resource-list">
+    <div className="resource-list" data-test-id="resource-list">
       <section className="resource-list__highlights">
         <ResourceUsageHighlight resource={spaceResources['space_membership']} />
         <ResourceUsageHighlight resource={spaceResources['api_key']} />
         <ResourceUsageHighlight resource={spaceResources['webhook_definition']} />
       </section>
       <section>
-        <ResourceUsage resource={spaceResources['role']} />
-        <ResourceUsage resource={spaceResources['environment']} showMaximumLimit />
+        <ResourceUsage
+          entitlement={getEntitlement('role')}
+          usage={spaceResources['role'].usage}
+          name={spaceResources['role'].name}
+        />
+        <ResourceUsage
+          entitlement={getEntitlement('environment')}
+          usage={spaceResources['environment'].usage}
+          name={spaceResources['environment'].name}
+        />
       </section>
       {environmentResources && (
         <section className={styles.environmentUsageParent}>
@@ -59,11 +83,32 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentMe
               </span>
             </Paragraph>
           </Typography>
-          <ResourceUsage resource={environmentResources['entry']} />
-          <ResourceUsage resource={environmentResources['asset']} />
-          <ResourceUsage resource={environmentResources['record']} description="Entries + Assets" />
-          <ResourceUsage resource={environmentResources['content_type']} />
-          <ResourceUsage resource={environmentResources['locale']} />
+          <ResourceUsage
+            name={spaceResources['entry'].name}
+            entitlement={getEntitlement('entry')}
+            usage={environmentResources['entry'].usage}
+          />
+          <ResourceUsage
+            name={spaceResources['asset'].name}
+            entitlement={getEntitlement('asset')}
+            usage={environmentResources['asset'].usage}
+          />
+          <ResourceUsage
+            name={spaceResources['record'].name}
+            entitlement={getEntitlement('record')}
+            usage={environmentResources['record'].usage}
+            description="Entries + Assets"
+          />
+          <ResourceUsage
+            name={spaceResources['content_type'].name}
+            entitlement={getEntitlement('content_type')}
+            usage={environmentResources['content_type'].usage}
+          />
+          <ResourceUsage
+            name={spaceResources['locale'].name}
+            entitlement={getEntitlement('locale')}
+            usage={environmentResources['locale'].usage}
+          />
         </section>
       )}
     </div>
@@ -73,6 +118,7 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentMe
 ResourceUsageList.propTypes = {
   spaceResources: PropTypes.object,
   environmentResources: PropTypes.object,
+  entitlementsSet: PropTypes.object,
   environmentMeta: PropTypes.shape({
     aliasId: PropTypes.string,
     environmentId: PropTypes.string.isRequired,
