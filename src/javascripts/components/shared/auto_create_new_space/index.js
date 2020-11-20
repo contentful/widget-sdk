@@ -1,4 +1,5 @@
 import React from 'react';
+import * as K from 'core/utils/kefir';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
@@ -19,6 +20,17 @@ import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
 const store = getBrowserStorage();
 let creatingSampleSpace = false;
 
+const enabledBus = K.createPropertyBus(true);
+const enabled$ = enabledBus.property;
+
+export function disable() {
+  enabledBus.set(false);
+}
+
+export function enable() {
+  enabledBus.set(true);
+}
+
 /**
  * @description
  * Auto creates a space using the product catalogue template
@@ -26,9 +38,11 @@ let creatingSampleSpace = false;
  * It is hooked up in the run block in application prelude.
  */
 export function init() {
-  combine([user$, spacesByOrg$])
-    .filter(([user, spacesByOrg]) => {
-      return user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace;
+  combine([user$, spacesByOrg$, enabled$])
+    .filter(([user, spacesByOrg, enabled]) => {
+      return (
+        enabled && user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace
+      );
     })
     .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);

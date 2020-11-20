@@ -274,7 +274,6 @@ angular
       initBackendTracing();
       initAuthentication();
       initTokenStore();
-      initAutoCreateNewSpace();
       initExtentionActivationTracking();
       initDegradedAppPerformance();
 
@@ -316,27 +315,44 @@ angular
       // to route to it
       let matchFound = false;
 
-      $state.get().forEach((state) => {
+      for (const state of $state.get()) {
         if (!state.$$state || state.abstract) {
-          return;
+          continue;
+        }
+
+        // Stop looping after the first match
+        if (matchFound) {
+          break;
         }
 
         const { url } = state.$$state();
         const params = qs.parse(window.location.search.substr(1));
-        const match = url.exec(window.location.pathname, params);
+        const matchedParams = url.exec(window.location.pathname, params);
 
-        if (match && !matchFound) {
+        if (matchedParams) {
           matchFound = true;
 
           go({
             path: state.name.split('.'),
-            params: match,
+            params: matchedParams,
             options: { location: false },
+          }).then(() => {
+            // Onboarding (aka automatic new space creation) is special, since it effectively
+            // takes over the user's experience when they load into the app after registering,
+            // and doesn't go away until the user has created their "example" space.
+            //
+            // This isn't desirable in every case though - we may want to bring the user to a
+            // different part of the app, through a different onboarding flow (for example, when
+            // the user is registering from a Compose+Launch marketing CTA).
+            //
+            // To allow for routes to bypass this, the auto space creation is initialized after the
+            // first route has been initialized.
+            initAutoCreateNewSpace();
+
+            // Finally, mark the app as loaded
+            angular.module('contentful/app').loaded = true;
           });
         }
-      });
-
-      // Finally, mark the app as loaded
-      angular.module('contentful/app').loaded = true;
+      }
     },
   ]);
