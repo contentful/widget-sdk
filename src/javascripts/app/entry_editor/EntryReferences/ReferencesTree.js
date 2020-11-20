@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { List, ListItem } from '@contentful/forma-36-react-components';
+import * as EntityState from 'data/CMA/EntityState';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { track } from 'analytics/Analytics';
@@ -37,7 +38,9 @@ const styles = {
   }),
   parentList: css({
     paddingBottom: tokens.spacingM,
-    overflowY: 'scroll',
+    overflowY: 'auto',
+    paddingRight: tokens.spacingL,
+    height: 'calc(100vh - 305px)',
     '& > li': {
       '&:first-child:before, &:first-child:after': {
         display: 'none',
@@ -74,6 +77,7 @@ function ReferenceCards({
   setIsTreeMaxDepthReached,
   setInitialEntities,
   handleSelect,
+  selectedStates,
   setInitialReferenceAmount,
 }) {
   let isMoreCardRendered = false;
@@ -156,6 +160,13 @@ function ReferenceCards({
 
     if (allReferencesSelected) {
       initialSelectedEntitiesMap.set(`${entity.sys.id}-${entity.sys.type}`, entity);
+    } else if (selectedStates && selectedStates.length > 0) {
+      const stateName = EntityState.stateName(EntityState.getState(entity.sys));
+      selectedStates.forEach((entityState) => {
+        if (stateName === entityState) {
+          initialSelectedEntitiesMap.set(`${entity.sys.id}-${entity.sys.type}`, entity);
+        }
+      });
     }
 
     if (!fields || level > failsaveLevel) {
@@ -222,6 +233,7 @@ const ReferencesTree = ({
   maxLevel,
   onReferenceCardClick,
   defaultLocale,
+  selectedStates,
   onRootReferenceCardClick,
 }) => {
   const {
@@ -277,6 +289,7 @@ const ReferencesTree = ({
         validations={validations}
         onReferenceCardClick={onReferenceCardClick}
         onSelectEntities={onSelectEntities}
+        selectedStates={selectedStates}
         setIsTreeMaxDepthReached={setIsTreeMaxDepthReached}
         handleSelect={handleSelect}
         setInitialEntities={setInitialEntities}
@@ -294,6 +307,7 @@ const ReferencesTree = ({
       handleSelect,
       setInitialEntities,
       root,
+      selectedStates,
       setInitialReferenceAmount,
     ]
   );
@@ -313,6 +327,7 @@ const ReferencesTree = ({
 };
 
 ReferencesTree.propTypes = {
+  selectedStates: PropTypes.arrayOf(PropTypes.string),
   defaultLocale: PropTypes.string,
   maxLevel: PropTypes.number,
   allReferencesSelected: PropTypes.bool,

@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { uniqueId, get, isObject } from 'lodash';
 import {
-  Button,
   Note,
-  Checkbox,
   SkeletonContainer,
   SkeletonText,
   Paragraph,
@@ -15,6 +13,7 @@ import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
 import { goToSlideInEntity, slideInStackEmitter } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
+import MultiSelect from './MultiSelect';
 import { getReferencesForEntryId, getEntityTitle, getDefaultLocale } from './referencesService';
 import { pluralize } from './utils';
 
@@ -83,10 +82,29 @@ export const hasLinks = (obj) => {
   return linksFound;
 };
 
+const selectStatusCheckboxList = [
+  {
+    label: 'Changed',
+    name: 'changed',
+    checked: false,
+  },
+  {
+    label: 'Draft',
+    name: 'draft',
+    checked: false,
+  },
+  {
+    label: 'Published',
+    name: 'published',
+    checked: false,
+  },
+];
+
 const REFERENCES_LIMIT = 1000;
 
 const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
-  const [allReferencesSelected, setAllReferencesSelected] = useState(true);
+  const [allReferencesSelected, setAllReferencesSelected] = useState(false);
+  const [selectedStates, setSelectedStates] = useState([]);
   const [entityTitle, setEntityTitle] = useState(null);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const {
@@ -154,6 +172,21 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');
 
+  const handleSelectChange = (changeStatus) => {
+    if (changeStatus.allSelected) {
+      setAllReferencesSelected(changeStatus.allSelected);
+    } else {
+      const checkedStates = changeStatus.checkboxes.map((input) => {
+        if (input.checked) {
+          return input.name;
+        }
+      });
+      setAllReferencesSelected(false);
+      setSelectedStates(checkedStates);
+    }
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  };
+
   return (
     <>
       <ErrorHandler
@@ -179,24 +212,12 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
           )}
           {showPublishButtons && (
             <div className={styles.actionsWrapper}>
-              <Button
-                size="small"
-                buttonType="muted"
+              <MultiSelect
                 testId="selectAllReferences"
-                className={styles.selectAll}
-                onClick={() => {
-                  setAllReferencesSelected(!allReferencesSelected);
-                  dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-                }}>
-                <Checkbox
-                  className={styles.selectAllCB}
-                  labelText={
-                    allReferencesSelected ? 'All references selected' : 'No references selected'
-                  }
-                  checked={allReferencesSelected}
-                />
-                Select all
-              </Button>
+                onChange={handleSelectChange}
+                checkboxList={selectStatusCheckboxList}
+                selectAll={allReferencesSelected}
+              />
             </div>
           )}
 
@@ -214,6 +235,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
               defaultLocale={defaultLocale}
               validations={validations}
               maxLevel={MAX_LEVEL}
+              selectedStates={selectedStates}
               allReferencesSelected={allReferencesSelected}
               onRootReferenceCardClick={onRootReferenceCardClick}
               onReferenceCardClick={handleReferenceCardClick}

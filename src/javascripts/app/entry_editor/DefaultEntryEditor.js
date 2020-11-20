@@ -5,6 +5,7 @@ import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import ReferencesTab from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { ContentTagsTab } from 'app/entity_editor/ContentTagsTab';
+import { styles } from './styles';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -26,7 +27,8 @@ export default function renderDefaultEditor(
 ) {
   const widgetComponents = {
     [EntryEditorWidgetTypes.REFERENCE_TREE.id]: (
-      <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
+      <div
+        className={`${styles.referenceWrapper} cf-workbench-content cf-workbench-content-type__text`}>
         {/*
           We could do return if `selectedTab !== currentTab` at the top of <EntryEditorWorkbench>,
           however, <AngularComponent> doesnt re-render on state change as it involves also

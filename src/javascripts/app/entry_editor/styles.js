@@ -41,6 +41,9 @@ export const styles = {
     padding: '0',
     height: '100%',
   }),
+  referenceWrapper: css({
+    paddingBottom: 0,
+  }),
   referenceSideBar: css({
     position: 'absolute',
     zIndex: '1',
@@ -80,7 +83,7 @@ export const styles = {
     display: 'none',
     height: '100%',
     maxHeight: 'calc(100% - 56px)',
-    overflowY: 'scroll',
+    overflowY: 'auto',
   }),
   isVisible: css({
     display: 'block',

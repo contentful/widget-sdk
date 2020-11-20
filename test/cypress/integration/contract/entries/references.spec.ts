@@ -41,6 +41,7 @@ describe('Entry references', () => {
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnNoErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('validateReferencesBtn').click();
@@ -57,6 +58,7 @@ describe('Entry references', () => {
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('validateReferencesBtn').click();
@@ -81,6 +83,7 @@ describe('Entry references', () => {
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('publishReferencesBtn').click();
@@ -98,6 +101,7 @@ describe('Entry references', () => {
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('publishReferencesBtn').click();
@@ -114,6 +118,7 @@ describe('Entry references', () => {
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('publishReferencesBtn').click();
