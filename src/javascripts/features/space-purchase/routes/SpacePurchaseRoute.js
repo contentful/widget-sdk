@@ -7,7 +7,6 @@ import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
-  getRatePlans,
   getBasePlan,
   getSpaceRatePlans,
   getSingleSpacePlan,
@@ -55,7 +54,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     organizationMembership,
     currentSpace,
     basePlan,
-    productRatePlans,
     rawSpaceRatePlans,
     freeSpaceResource,
     templatesList,
@@ -66,7 +64,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     getOrganizationMembership(orgId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     getBasePlan(endpoint),
-    getRatePlans(endpoint),
     getSpaceRatePlans(endpoint, spaceId),
     createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
@@ -74,14 +71,11 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE),
   ]);
 
-  const spaceRatePlans = transformSpaceRatePlans({
-    spaceRatePlans: rawSpaceRatePlans,
-    freeSpaceResource,
-  });
+  const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
 
   let showLegacyPlanWarning = false;
   let currentSpaceRatePlan;
-  if (spaceId && spaceRatePlans?.length > 0) {
+  if (spaceId && spaceRatePlans.length > 0) {
     currentSpaceRatePlan = spaceRatePlans.find((plan) => plan.currentPlan);
 
     // if currentSpaceRatePlan was not found by checking unavailabilityReasons
@@ -93,7 +87,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
       // but if it is in productRatePlans then it's a free space
       showLegacyPlanWarning =
         currentSpaceRatePlan &&
-        !productRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
+        !spaceRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
     }
   }
 
@@ -125,7 +119,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   return {
     organization,
     templatesList,
-    productRatePlans,
     canCreateFreeSpace,
     pageContent,
     basePlan,
@@ -180,7 +173,6 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
         trackWithSession={trackWithSession}
         organization={data?.organization}
         templatesList={data?.templatesList}
-        productRatePlans={data?.productRatePlans}
         canCreateCommunityPlan={data?.canCreateFreeSpace}
         pageContent={data?.pageContent}
         currentSpace={data?.currentSpace}

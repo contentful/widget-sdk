@@ -155,10 +155,10 @@ describe('SpacePurchaseRoute', () => {
     });
 
     expect(getSpaceRatePlans).toBeCalled();
-    expect(transformSpaceRatePlans).toBeCalledWith({
-      freeSpaceResource: createResourceServiceResolvedValue,
-      spaceRatePlans: mockSpaceRatePlans,
-    });
+    expect(transformSpaceRatePlans).toBeCalledWith(
+      mockSpaceRatePlans,
+      createResourceServiceResolvedValue
+    );
   });
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {

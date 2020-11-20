@@ -1,22 +1,18 @@
-import { Organization, SpaceResource, Plan } from 'test/helpers/fakeFactory';
+import { SpaceResource, Plan } from 'test/helpers/fakeFactory';
 import { transformSpaceRatePlans } from './transformSpaceRatePlans';
 import { freeSpace, unavailableFreeSpace } from './__mocks__/plans';
 
-const mockOrganization = Organization({ isBillable: true });
+const freeResources = SpaceResource(1, 5, 'free_space');
 
 describe('transformSpaceRatePlans', () => {
   it('should return an empty array if given no space rate plans', () => {
-    expect(transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
+    expect(transformSpaceRatePlans()).toEqual([]);
   });
 
   it('should mark the transformed plan with isFree is the productPlanType is free_space', () => {
-    expect(
-      transformSpaceRatePlans({
-        organization: mockOrganization,
-        spaceRatePlans: [freeSpace],
-        freeSpaceResource: SpaceResource(1, 5, 'free_space'),
-      })
-    ).toEqual([
+    const spaceRatePlans = [freeSpace];
+
+    expect(transformSpaceRatePlans(spaceRatePlans, freeResources)).toEqual([
       expect.objectContaining({
         isFree: true,
       }),
@@ -24,13 +20,9 @@ describe('transformSpaceRatePlans', () => {
   });
 
   it('should mark a plan as disabled if there are any unavailabilityReasons', () => {
-    expect(
-      transformSpaceRatePlans({
-        organization: mockOrganization,
-        spaceRatePlans: [unavailableFreeSpace],
-        freeSpaceResource: SpaceResource(1, 5, 'free_space'),
-      })
-    ).toEqual([
+    const spaceRatePlans = [unavailableFreeSpace];
+
+    expect(transformSpaceRatePlans(spaceRatePlans, freeResources)).toEqual([
       expect.objectContaining({
         disabled: true,
       }),
@@ -38,13 +30,9 @@ describe('transformSpaceRatePlans', () => {
   });
 
   it('should mark a plan as disabled if the the plan is free and cannot create more free spaces', () => {
-    expect(
-      transformSpaceRatePlans({
-        organization: mockOrganization,
-        spaceRatePlans: [freeSpace],
-        freeSpaceResource: SpaceResource(2, 2, 'free_space'),
-      })
-    ).toEqual([
+    const spaceRatePlans = [freeSpace];
+
+    expect(transformSpaceRatePlans(spaceRatePlans, SpaceResource(2, 2, 'free_space'))).toEqual([
       expect.objectContaining({
         disabled: true,
       }),
@@ -103,13 +91,7 @@ describe('transformSpaceRatePlans', () => {
       }),
     ];
 
-    expect(
-      transformSpaceRatePlans({
-        organization: mockOrganization,
-        spaceRatePlans,
-        freeSpaceResource: SpaceResource(2, 2, 'free_space'),
-      })
-    ).toEqual([
+    expect(transformSpaceRatePlans(spaceRatePlans, SpaceResource(2, 2, 'free_space'))).toEqual([
       {
         isFree: true,
         currentPlan: false,

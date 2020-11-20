@@ -15,18 +15,23 @@ function getIncludedResources(charges) {
 
     // Add "extra" environment and role to include `master` and `admin`
     if ([SpaceResourceTypes.Environments, SpaceResourceTypes.Roles].includes(type)) {
-      number = number + 1;
+      number++;
     }
 
     return { type, number };
   });
 }
 
-function transformSpaceRatePlan({ plan, freeSpaceResource }) {
-  const isFree = plan.productPlanType === 'free_space';
+function transformSpaceRatePlan(plan, freeSpaceResource) {
+  const { productRatePlanCharges, productPlanType, unavailabilityReasons } = plan;
+
+  const includedResources = getIncludedResources(productRatePlanCharges);
+  const isFree = productPlanType === 'free_space';
+  let currentPlan = false;
   let disabled = false;
 
-  if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+  if (unavailabilityReasons && unavailabilityReasons.length > 0) {
+    currentPlan = unavailabilityReasons.some((reason) => reason.type === 'currentPlan');
     disabled = true;
   } else if (isFree) {
     disabled = !canCreate(freeSpaceResource);
@@ -36,9 +41,8 @@ function transformSpaceRatePlan({ plan, freeSpaceResource }) {
     ...plan,
     isFree,
     disabled,
-    currentPlan:
-      plan.unavailabilityReasons?.some((reason) => reason.type === 'currentPlan') ?? false,
-    includedResources: getIncludedResources(plan.productRatePlanCharges),
+    currentPlan,
+    includedResources,
   };
 }
 
@@ -53,6 +57,6 @@ function transformSpaceRatePlan({ plan, freeSpaceResource }) {
  * @param {Object} freeSpaceResource
  * @returns {Object[]} an array of space rate plans with the properties mentioned above
  */
-export function transformSpaceRatePlans({ spaceRatePlans = [], freeSpaceResource }) {
-  return spaceRatePlans.map((plan) => transformSpaceRatePlan({ plan, freeSpaceResource }));
+export function transformSpaceRatePlans(spaceRatePlans = [], freeSpaceResource) {
+  return spaceRatePlans.map((plan) => transformSpaceRatePlan(plan, freeSpaceResource));
 }
