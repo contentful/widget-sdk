@@ -35,7 +35,7 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
       color: 'warning',
       icon: 'Warning',
     };
-    label = `Approaching limit (${percentage}%)`;
+    label = percentage === 100 ? 'Reached limit (100%)' : `Approaching limit (${percentage}%)`;
   }
 
   return (
@@ -47,7 +47,7 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
       })}>
       <span className={cx({ [styles.usageEmphasized]: percentage >= 80 })}>{usage}</span>/{limit}
       &nbsp;
-      {percentage > 80 && (
+      {percentage >= 80 && (
         <Tooltip content={label} testId="subscription-page.spaces-list.usage-tooltip">
           <Icon
             className={styles.icon}

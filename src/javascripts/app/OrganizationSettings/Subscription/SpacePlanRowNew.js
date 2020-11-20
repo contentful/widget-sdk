@@ -37,8 +37,12 @@ export const SpacePlanRowNew = ({
   showSpacePlanChangeBtn,
 }) => {
   const { space } = plan;
-  const isTrialSpace = plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME;
+  const hasTrialSpacePlan = plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME;
   const isAccessible = Boolean(space.isAccessible);
+  const isLegacyPOC = isAccessible && hasTrialSpacePlan && space.expiresAt === undefined;
+  // if the space is not accessible, we cannot differenciate legacy POC from Trial Space
+  // in this case, treat it as Trial Space and show 'Become a space member to view expiration date' tooltip
+  const isTrialSpace = hasTrialSpacePlan && !isLegacyPOC;
   const expiresAtTooltipContent =
     isTrialSpace && isAccessible
       ? `${moment().isAfter(moment(space.expiresAt), 'date') ? 'Expired' : 'Expires'} on ${moment(

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within, act, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
 import { go } from 'states/Navigator';
 
 import * as fake from 'test/helpers/fakeFactory';
@@ -325,7 +325,7 @@ describe('Space Plan Row', () => {
         fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
       });
 
-      await waitFor(() => {
+      await act(() => {
         fireEvent.click(screen.getByTestId('subscription-page.spaces-list.delete-space-link'));
       });
 

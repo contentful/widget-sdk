@@ -24,13 +24,13 @@ describe('SpacePlanTabelCell', () => {
   it('warns the usage is approaching the limit', () => {
     const props = {
       limit: 10,
-      usage: 9,
+      usage: 8,
     };
     build(props);
 
     fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.usage-tooltip-trigger'));
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
-      'Approaching limit (90%)'
+      'Approaching limit (80%)'
     );
   });
   it('warns the usage is exceeding the limit', () => {
@@ -43,6 +43,18 @@ describe('SpacePlanTabelCell', () => {
     fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.usage-tooltip-trigger'));
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
       'Exceeding limit (110%)'
+    );
+  });
+  it('warns the usage has reached the limit', () => {
+    const props = {
+      limit: 10,
+      usage: 10,
+    };
+    build(props);
+
+    fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.usage-tooltip-trigger'));
+    expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
+      'Reached limit (100%)'
     );
   });
 });
