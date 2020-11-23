@@ -1,5 +1,6 @@
 import * as accessChecker from './AccessChecker';
 import { isAdmin, getSpaceRoles, getSpaceData } from 'core/services/SpaceEnvContext/utils';
+import { isTrialSpaceType } from 'features/trials';
 
 /**
  * This service makes use of accessChecker's section visibility data to expose
@@ -26,6 +27,9 @@ export function getFirstAccessibleSref(space) {
   const userIsAdmin = isAdmin(space);
   const userIsAuthorOrEditor = accessChecker.isAuthorOrEditor(getSpaceRoles(space));
   const notActivated = !getSpaceData(space).activatedAt;
+  const isTrialSpace = isTrialSpaceType(getSpaceData(space));
 
-  return (notActivated && userIsAdmin) || userIsAuthorOrEditor ? '.home' : firstAccessible;
+  return (notActivated && userIsAdmin) || userIsAuthorOrEditor || isTrialSpace
+    ? '.home'
+    : firstAccessible;
 }

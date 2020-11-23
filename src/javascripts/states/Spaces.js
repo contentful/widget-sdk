@@ -114,7 +114,7 @@ const spaceDetail = {
         $state.go('.hibernation');
       } else if (accessibleSref) {
         storeCurrentIds(spaceData);
-        $state.go(accessibleSref);
+        $state.go(accessibleSref, null, { location: 'replace' });
       } else {
         $scope.component = AccessForbidden;
       }

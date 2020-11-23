@@ -10,7 +10,7 @@ import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 import * as logger from 'services/logger';
 import { showPersistentNotification } from 'components/shared/persistent-notification/service';
-import { isSpaceOnTrial } from 'features/trials';
+import { isTrialSpaceType } from 'features/trials';
 
 /**
  * @name accessChecker
@@ -510,7 +510,7 @@ function collectSectionVisibility() {
     spaceHome:
       get(space, 'spaceMember.admin') ||
       isAuthorOrEditor(get(space, 'spaceMember.roles')) ||
-      isSpaceOnTrial(space),
+      isTrialSpaceType(space),
   };
 }
 

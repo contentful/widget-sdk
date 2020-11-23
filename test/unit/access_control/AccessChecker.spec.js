@@ -16,7 +16,7 @@ describe('Access Checker', () => {
     isPermissionDeniedStub,
     feature,
     getSpaceFeature,
-    isSpaceOnTrial;
+    isTrialSpaceType;
 
   function init() {
     ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
@@ -76,7 +76,7 @@ describe('Access Checker', () => {
     resetEnforcements = sinon.stub();
     getResStub = sinon.stub().returns(false);
     getSpaceFeature = sinon.stub();
-    isSpaceOnTrial = sinon.stub().returns(false);
+    isTrialSpaceType = sinon.stub().returns(false);
 
     this.system.set('data/EndpointFactory', {
       createOrganizationEndpoint: () => mockOrgEndpoint,
@@ -121,7 +121,7 @@ describe('Access Checker', () => {
       user$: this.stubs.user$,
     });
     this.system.set('features/trials', {
-      isSpaceOnTrial,
+      isTrialSpaceType,
     });
 
     enforcements = await this.system.import('access_control/Enforcements');
@@ -349,8 +349,8 @@ describe('Access Checker', () => {
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
         expect(ac.getSectionVisibility().spaceHome).toBe(false);
       });
-      it('should return "true" for spaceHome if the space is on trial even if user is not an admin, editor or author', () => {
-        isSpaceOnTrial.returns(true);
+      it('should return "true" for spaceHome if the space is a Trial Space if user is not an admin, editor or author', () => {
+        isTrialSpaceType.returns(true);
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
         expect(ac.getSectionVisibility().spaceHome).toBe(true);
       });

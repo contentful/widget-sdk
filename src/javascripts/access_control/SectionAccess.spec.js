@@ -61,6 +61,13 @@ const authorSpace = {
   },
 };
 
+const trialSpace = {
+  data: {
+    ...customRoleSpace.data,
+    trialPeriodEndsAt: 'some day',
+  },
+};
+
 describe('#getFirstAccessibleSref', () => {
   it('handles all-true scenario', () => {
     expect(getFirstAccessibleSref(customRoleSpace)).toBe('.entries.list');
@@ -94,5 +101,9 @@ describe('#getFirstAccessibleSref', () => {
 
   it('returns home screen sref when user is author or editor', () => {
     expect(getFirstAccessibleSref(authorSpace)).toBe('.home');
+  });
+
+  it('returns home screen sref when space is a Trial Space', () => {
+    expect(getFirstAccessibleSref(trialSpace)).toBe('.home');
   });
 });
