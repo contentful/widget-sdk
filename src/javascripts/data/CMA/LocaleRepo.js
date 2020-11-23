@@ -76,7 +76,7 @@ export default function create(spaceEndpoint) {
 
     await spaceEndpoint({
       method: 'DELETE',
-      path: [shouldUseNewEndpoint ? 'locales' : 'locales', id],
+      path: [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales', id],
       version,
     });
   }
