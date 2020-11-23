@@ -1,9 +1,9 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen, within, waitFor } from '@testing-library/react';
-import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
+import { SpaceDetails } from './SpaceDetails';
 
-describe('NewSpaceDetailsPage', () => {
+describe('steps/SpaceDetails', () => {
   it('should call onChangeSpaceName when the space name is changed', () => {
     const onChangeSpaceName = jest.fn();
 
@@ -77,5 +77,5 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<NewSpaceDetailsPage {...props} />);
+  render(<SpaceDetails {...props} />);
 }

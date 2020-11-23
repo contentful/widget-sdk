@@ -17,7 +17,7 @@ module.exports = {
         return;
       }
 
-      if (depPath.split('..').length > 2) {
+      if (depPath.split('..').length > 3) {
         const absDepPath = resolve.default(depPath, context);
         let additionalMessage = '';
 

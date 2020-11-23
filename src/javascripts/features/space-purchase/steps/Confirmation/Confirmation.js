@@ -12,7 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import { EVENTS } from '../utils/analyticsTracking';
+import { EVENTS } from '../../utils/analyticsTracking';
 import { go } from 'states/Navigator';
 
 import {
@@ -21,9 +21,9 @@ import {
   BillingDetailsPropType,
 } from 'features/organization-billing';
 
-import { CreditCardInformation } from './CreditCardInformation';
-import { BillingInformation } from './BillingInformation';
-import { PaymentSummary } from './PaymentSummary';
+import { CreditCardInformation } from '../../components/CreditCardInformation';
+import { BillingInformation } from '../../components/BillingInformation';
+import { PaymentSummary } from '../../components/PaymentSummary';
 
 const styles = {
   grid: css({
@@ -53,7 +53,7 @@ const redirectToEditPayment = (orgId) => {
   });
 };
 
-export const NewSpaceConfirmationPage = ({
+export const Confirmation = ({
   organizationId,
   navigateToPreviousStep,
   trackWithSession,
@@ -141,7 +141,7 @@ export const NewSpaceConfirmationPage = ({
   );
 };
 
-NewSpaceConfirmationPage.propTypes = {
+Confirmation.propTypes = {
   organizationId: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,

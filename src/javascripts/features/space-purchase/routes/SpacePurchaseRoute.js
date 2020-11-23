@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { NewSpacePage } from '../components/NewSpacePage';
+import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
@@ -169,7 +169,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
   return (
     <>
       <DocumentTitle title="Space purchase" />
-      <NewSpacePage
+      <SpacePurchaseContainer
         trackWithSession={trackWithSession}
         organization={data?.organization}
         templatesList={data?.templatesList}

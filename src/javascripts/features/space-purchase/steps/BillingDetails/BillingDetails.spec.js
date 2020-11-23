@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SpacePurchaseState } from '../context';
-import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
+import { SpacePurchaseState } from '../../context';
+import { BillingDetails } from './BillingDetails';
 
-describe('NewSpaceBillingDetailsPage', () => {
+describe('steps/BillingDetails', () => {
   it('should render Billing Details page and Order Summary', () => {
     build();
 
@@ -26,7 +26,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <NewSpaceBillingDetailsPage {...props} />
+      <BillingDetails {...props} />
     </SpacePurchaseState.Provider>
   );
 }

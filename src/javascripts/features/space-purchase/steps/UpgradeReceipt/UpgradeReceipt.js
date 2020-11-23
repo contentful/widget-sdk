@@ -7,8 +7,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { useSpaceUpgrade } from 'features/space-purchase/hooks/useSpaceUpgrade';
 import { SpacePurchaseState } from 'features/space-purchase/context';
-import { PaymentSummary } from './PaymentSummary';
-import { ReceiptMessage } from './ReceiptMessage';
+import { PaymentSummary } from '../../components/PaymentSummary';
+import { ReceiptMessage } from '../../components/ReceiptMessage';
 
 const styles = {
   grid: css({
@@ -23,7 +23,7 @@ const styles = {
   }),
 };
 
-export const UpgradeSpaceReceiptPage = () => {
+export const UpgradeReceipt = () => {
   const {
     state: { currentSpace },
   } = useContext(SpacePurchaseState);

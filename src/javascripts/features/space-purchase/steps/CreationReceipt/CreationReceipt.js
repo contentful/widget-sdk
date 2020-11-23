@@ -10,8 +10,8 @@ import { SpacePurchaseState } from 'features/space-purchase/context';
 import { useSpaceCreation } from 'features/space-purchase/hooks/useSpaceCreation';
 import { useTemplateCreation } from 'features/space-purchase/hooks/useTemplateCreation';
 import { useNavigationWarn } from 'features/space-purchase/hooks/useNavigationWarn';
-import { PaymentSummary } from './PaymentSummary';
-import { ReceiptMessage } from './ReceiptMessage';
+import { PaymentSummary } from '../../components/PaymentSummary';
+import { ReceiptMessage } from '../../components/ReceiptMessage';
 
 const styles = {
   grid: css({
@@ -29,7 +29,7 @@ const styles = {
   }),
 };
 
-export const NewSpaceReceiptPage = ({ selectedTemplate, spaceName }) => {
+export const CreationReceipt = ({ selectedTemplate, spaceName }) => {
   const {
     state: { selectedPlan },
   } = useContext(SpacePurchaseState);
@@ -86,7 +86,7 @@ export const NewSpaceReceiptPage = ({ selectedTemplate, spaceName }) => {
   );
 };
 
-NewSpaceReceiptPage.propTypes = {
+CreationReceipt.propTypes = {
   spaceName: PropTypes.string.isRequired,
   selectedTemplate: PropTypes.object,
 };

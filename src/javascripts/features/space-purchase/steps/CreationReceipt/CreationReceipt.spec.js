@@ -3,12 +3,12 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { go } from 'states/Navigator';
-import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
+import { CreationReceipt } from './CreationReceipt';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { makeNewSpace, createTemplate } from '../utils/spaceCreation';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { makeNewSpace, createTemplate } from '../../utils/spaceCreation';
+import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
-import { SpacePurchaseState } from '../context';
+import { SpacePurchaseState } from '../../context';
 
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
@@ -19,14 +19,14 @@ const mockSessionMetadata = {
   sessionId: 'some_random_id',
 };
 
-jest.mock('../utils/spaceCreation', () => ({
+jest.mock('../../utils/spaceCreation', () => ({
   makeNewSpace: jest.fn(),
   createTemplate: jest.fn(),
 }));
 
-jest.mock('../utils/analyticsTracking', () => ({
+jest.mock('../../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
-  EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,
+  EVENTS: jest.requireActual('../../utils/analyticsTracking').EVENTS,
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -37,7 +37,7 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
-describe('NewSpaceReceiptPage', () => {
+describe('CreationReceipt', () => {
   beforeEach(() => {
     makeNewSpace.mockResolvedValue(mockCreatedSpace);
     jest.spyOn(window, 'addEventListener');
@@ -230,7 +230,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <NewSpaceReceiptPage {...props} />
+      <CreationReceipt {...props} />
     </SpacePurchaseState.Provider>
   );
 }

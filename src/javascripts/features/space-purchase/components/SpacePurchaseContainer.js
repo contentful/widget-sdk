@@ -19,21 +19,23 @@ import {
 } from 'app/OrganizationSettings/PropTypes';
 import * as logger from 'services/logger';
 import * as TokenStore from 'services/TokenStore';
-import { Breadcrumb } from './Breadcrumb';
 import { EVENTS } from '../utils/analyticsTracking';
-import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
-import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
-import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
-import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
-import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
-import { SpaceSelection } from './SpaceSelection';
-import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
-import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
 import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
-
 import { actions, SpacePurchaseState } from '../context';
+
+import { Breadcrumb } from './Breadcrumb';
+import { NewSpaceFAQ } from './NewSpaceFAQ';
+import {
+  BillingDetails,
+  CreditCardDetails,
+  Confirmation,
+  SpaceDetails,
+  SpaceSelection,
+  CreationReceipt,
+  UpgradeReceipt,
+} from '../steps';
 
 const NEW_SPACE_STEPS = [
   { text: '1.Spaces', isActive: true },
@@ -81,7 +83,7 @@ const fetchBillingDetails = async (
   setIsLoadingBillingDetails(false);
 };
 
-export const NewSpacePage = ({
+export const SpacePurchaseContainer = ({
   organization,
   trackWithSession,
   templatesList,
@@ -257,7 +259,7 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
-            <NewSpaceDetailsPage
+            <SpaceDetails
               navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION)}
               spaceName={spaceName}
               onChangeSpaceName={onChangeSpaceName}
@@ -273,7 +275,7 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
-            <NewSpaceBillingDetailsPage
+            <BillingDetails
               navigateToPreviousStep={() =>
                 goToStep(
                   currentSpace
@@ -290,7 +292,7 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
-            <NewSpaceCardDetailsPage
+            <CreditCardDetails
               organizationId={organizationId}
               navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS)}
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
@@ -302,7 +304,7 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
-            <NewSpaceConfirmationPage
+            <Confirmation
               organizationId={organizationId}
               trackWithSession={trackWithSession}
               showBillingDetails={userIsOrgOwner}
@@ -319,14 +321,14 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
-            <NewSpaceReceiptPage spaceName={spaceName} selectedTemplate={selectedTemplate} />
+            <CreationReceipt spaceName={spaceName} selectedTemplate={selectedTemplate} />
           </Grid>
         );
       case SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
-            <UpgradeSpaceReceiptPage />
+            <UpgradeReceipt />
           </Grid>
         );
       default:
@@ -362,7 +364,7 @@ export const NewSpacePage = ({
   );
 };
 
-NewSpacePage.propTypes = {
+SpacePurchaseContainer.propTypes = {
   trackWithSession: PropTypes.func.isRequired,
   spaceRatePlans: PropTypes.array,
   currentSpacePlan: PropTypes.object,

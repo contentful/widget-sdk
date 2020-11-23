@@ -7,7 +7,7 @@ import { Heading, Card, Typography, Subheading } from '@contentful/forma-36-reac
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { PaymentSummary } from './PaymentSummary';
+import { PaymentSummary } from '../../components/PaymentSummary';
 import { BillingDetailsForm } from 'features/organization-billing';
 
 const styles = {
@@ -24,7 +24,7 @@ const styles = {
   }),
 };
 
-export const NewSpaceBillingDetailsPage = ({
+export const BillingDetails = ({
   navigateToPreviousStep,
   savedBillingDetails,
   onSubmitBillingDetails,
@@ -65,7 +65,7 @@ export const NewSpaceBillingDetailsPage = ({
   );
 };
 
-NewSpaceBillingDetailsPage.propTypes = {
+BillingDetails.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   savedBillingDetails: PropTypes.object,
   onSubmitBillingDetails: PropTypes.func.isRequired,

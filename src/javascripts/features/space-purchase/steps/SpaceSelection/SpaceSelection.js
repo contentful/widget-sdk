@@ -22,11 +22,11 @@ import { Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from './SpaceCard';
-import { EVENTS } from '../utils/analyticsTracking';
-import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
-import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
-import { SpacePurchaseState } from '../context';
+import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
+import { EVENTS } from '../../utils/analyticsTracking';
+import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
+import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
+import { SpacePurchaseState } from '../../context';
 
 const styles = {
   fullRow: css({

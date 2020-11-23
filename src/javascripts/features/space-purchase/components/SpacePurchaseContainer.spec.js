@@ -3,7 +3,7 @@ import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
-import { NewSpacePage } from './NewSpacePage';
+import { SpacePurchaseContainer } from './SpacePurchaseContainer';
 import { isOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SpacePurchaseState } from '../context';
@@ -123,7 +123,7 @@ jest.mock('services/ResourceService', () => {
   });
 });
 
-describe('NewSpacePage', () => {
+describe('SpacePurchaseContainer', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     mockOrganization.isBillable = false;
@@ -491,7 +491,7 @@ async function build(options) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <NewSpacePage {...props} />
+      <SpacePurchaseContainer {...props} />
     </SpacePurchaseState.Provider>
   );
 
