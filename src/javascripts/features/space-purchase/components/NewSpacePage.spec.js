@@ -19,8 +19,6 @@ import {
 import { mockEndpoint } from 'data/EndpointFactory';
 
 const mockOrganization = FakeFactory.Organization({ isBillable: false });
-const mockProductRatePlanMedium = { name: 'Medium', price: 100 };
-const mockProductRatePlanLarge = { name: 'Large', price: 200 };
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
@@ -146,7 +144,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should render BILLING_DETAILS when space details have been filled out with the selected space plan', async () => {
-    await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
+    await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -164,10 +162,10 @@ describe('NewSpacePage', () => {
     await waitFor(() => {
       expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
       expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
-        mockProductRatePlanMedium.name
+        mockSpaceRatePlans[1].name
       );
       expect(screen.getByTestId('order-summary.selected-plan-price')).toHaveTextContent(
-        mockProductRatePlanMedium.price
+        mockSpaceRatePlans[1].price
       );
     });
   });
@@ -217,7 +215,7 @@ describe('NewSpacePage', () => {
 
     await build({
       customProps: { organization: { ...mockOrganization, isBillable: true } },
-      customState: { selectedPlan: mockProductRatePlanMedium },
+      customState: { selectedPlan: mockSpaceRatePlans[1] },
     });
 
     // Space Selection Page
@@ -257,13 +255,13 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
+      await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, {
-        selectedPlan: mockProductRatePlanMedium,
+        selectedPlan: mockSpaceRatePlans[1],
       });
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_SELECTION',
@@ -360,7 +358,7 @@ describe('NewSpacePage', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
+      await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -406,7 +404,7 @@ describe('NewSpacePage', () => {
   });
 
   it('should display saved billing details when navigating back from Credit Card Page', async () => {
-    await build({ customState: { selectedPlan: mockProductRatePlanMedium } });
+    await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
 
     // ------ Space select page------
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -478,7 +476,6 @@ async function build(options) {
     sessionMetadata: mockSessionMetadata,
     templatesList: [],
     canCreateCommunityPlan: true,
-    productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
     spaceRatePlans: mockSpaceRatePlans,
     pageContent: {
       pageName: 'Space Purchase',

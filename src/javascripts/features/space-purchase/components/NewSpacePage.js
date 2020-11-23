@@ -85,12 +85,12 @@ export const NewSpacePage = ({
   organization,
   trackWithSession,
   templatesList,
-  productRatePlans,
   canCreateCommunityPlan,
   pageContent,
   currentSpace,
   spaceRatePlans,
   currentSpacePlan,
+  currentSpaceIsLegacy,
 }) => {
   const { dispatch } = useContext(SpacePurchaseState);
 
@@ -154,16 +154,16 @@ export const NewSpacePage = ({
       throw Error();
     }
 
-    const selectedProductRatePlan = productRatePlans.find((productRatePlan) => {
-      return productRatePlan.name.toLowerCase() === planType.toLowerCase();
+    const selectedPlan = spaceRatePlans.find((plan) => {
+      return plan.name.toLowerCase() === planType.toLowerCase();
     });
 
     trackWithSession(EVENTS.SPACE_PLAN_SELECTED, {
-      selectedPlan: selectedProductRatePlan,
+      selectedPlan,
     });
 
-    setSelectedPlan(selectedProductRatePlan);
-    dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedProductRatePlan });
+    setSelectedPlan(selectedPlan);
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedPlan });
 
     // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
     if (currentSpace && organization.isBillable) {
@@ -343,6 +343,7 @@ export const NewSpacePage = ({
               spaceRatePlans={spaceRatePlans}
               loading={!spaceRatePlans}
               currentSpacePlan={currentSpacePlan}
+              currentSpaceIsLegacy={currentSpaceIsLegacy}
             />
             <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
           </Grid>
@@ -367,7 +368,6 @@ NewSpacePage.propTypes = {
   currentSpacePlan: PropTypes.object,
   organization: OrganizationPropType,
   templatesList: PropTypes.array,
-  productRatePlans: PropTypes.array,
   canCreateCommunityPlan: PropTypes.bool,
   pageContent: PropTypes.shape({
     pageName: PropTypes.string.isRequired,
@@ -379,4 +379,5 @@ NewSpacePage.propTypes = {
     ).isRequired,
   }),
   currentSpace: SpacePropType,
+  currentSpaceIsLegacy: PropTypes.bool,
 };

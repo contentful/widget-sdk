@@ -29,22 +29,20 @@ const styles = {
   }),
 };
 
-class NavigationList extends React.Component {
-  render() {
-    return (
-      <ul className={styles.navBarList}>
-        {this.props.items.map((item) => {
-          if (item.render) {
-            return item.render(item);
-          } else if (item.children) {
-            return <NavigationDropdown key={item.title} item={item} />;
-          }
-          return <NavigationItem key={item.title} item={item} />;
-        })}
-      </ul>
-    );
-  }
-}
+const NavigationList = ({ items }) => {
+  return (
+    <ul className={styles.navBarList}>
+      {items.map((item) => {
+        if (item.render) {
+          return item.render(item);
+        } else if (item.children) {
+          return <NavigationDropdown key={item.title} item={item} />;
+        }
+        return <NavigationItem key={item.title} item={item} />;
+      })}
+    </ul>
+  );
+};
 
 NavigationList.propTypes = {
   items: PropTypes.array.isRequired,
@@ -56,7 +54,7 @@ export default class NavBar extends React.Component {
       <div className="app-top-bar__child app-top-bar__child-wide">
         <div className="app-top-bar__inner-wrapper">
           <div className="app-top-bar__child app-top-bar__main-nav">
-            <nav className={styles.navBar}>
+            <nav className={styles.navBar} aria-label="Main Navigation">
               <NavigationList items={this.props.listItems} />
               <div className={styles.navBarEnd}>
                 {this.props.showModernStackOnboardingRelaunch && (

@@ -5,11 +5,17 @@ import APIClient from 'data/APIClient.js';
 import { create as createDto } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsFactory.js';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import type { Entity, Release, ReleaseAction } from '@contentful/types';
+import { track } from 'analytics/Analytics';
 
 const toArrayOfUnique = (entities: Entity[]) => uniqWith(entities, isEqual);
 
 type ReleasableEntityType = 'Entry' | 'Asset';
 type ReleaseActionType = 'publish' | 'unpublish';
+
+const TrackingEvents = {
+  RELEASE_CREATED: 'release:created',
+  RELEASE_TRASHED: 'release:trashed',
+};
 
 function getContextIds() {
   const spaceContext = getModule('spaceContext');
@@ -34,7 +40,11 @@ async function createRelease(title: string, items: Entity[] = []) {
       id: item.sys.id,
     },
   }));
-  return await apiClient.createRelease(title, toArrayOfUnique(arrayOfEntityLinks));
+  const release = await apiClient.createRelease(title, toArrayOfUnique(arrayOfEntityLinks));
+
+  track(TrackingEvents.RELEASE_CREATED, { releaseId: release.sys.id });
+
+  return release;
 }
 
 async function getReleases(query): Promise<Release[]> {
@@ -44,6 +54,7 @@ async function getReleases(query): Promise<Release[]> {
 
 async function deleteRelease(id: string) {
   const apiClient = new APIClient(createEndpoint());
+  track(TrackingEvents.RELEASE_TRASHED, { releaseId: id });
   return await apiClient.deleteRelease(id);
 }
 
@@ -88,7 +99,8 @@ async function getReleaseActions(ids: GetReleaseActionInput[]): Promise<ReleaseA
 
 async function validateReleaseAction(releaseId: string, action: ReleaseActionType) {
   const apiClient = new APIClient(createEndpoint());
-  return await apiClient.validateReleaseAction(releaseId, action);
+  const validationResponse = await apiClient.validateReleaseAction(releaseId, action);
+  return validationResponse;
 }
 
 async function fetchReleaseJobs(releaseId: string) {

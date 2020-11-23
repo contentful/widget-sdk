@@ -8,7 +8,6 @@ const styles = {
   icon: css({
     marginTop: `-${tokens.spacing2Xs}`,
     verticalAlign: 'middle',
-    cursor: 'help',
   }),
   usageWarning: css({
     color: tokens.colorWarning,
@@ -16,9 +15,12 @@ const styles = {
   usageNegative: css({
     color: tokens.colorNegative,
   }),
+  usageEmphasized: css({
+    fontWeight: tokens.fontWeightDemiBold,
+  }),
 };
 
-export const SpaceUsageTableCell = ({ usage, limit }) => {
+export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
   const percentage = Math.round((usage / limit) * 100);
   let label;
   let icon;
@@ -28,25 +30,30 @@ export const SpaceUsageTableCell = ({ usage, limit }) => {
       color: 'negative',
       icon: 'InfoCircle',
     };
-  } else if (percentage > 80) {
+  } else if (percentage >= 80) {
     icon = {
       color: 'warning',
       icon: 'Warning',
     };
-    label = `Aproaching limit (${percentage}%)`;
+    label = percentage === 100 ? 'Reached limit (100%)' : `Approaching limit (${percentage}%)`;
   }
 
   return (
     <TableCell
-      testId="subscription-page.spaces-list.created-by"
+      testId={testId ?? 'subscription-page.spaces-list.usage'}
       className={cx({
         [styles.usageNegative]: icon?.color === 'negative',
         [styles.usageWarning]: icon?.color === 'warning',
       })}>
-      {usage}/{limit}&nbsp;
-      {percentage > 80 && (
-        <Tooltip content={label}>
-          <Icon className={styles.icon} {...icon} />
+      <span className={cx({ [styles.usageEmphasized]: percentage >= 80 })}>{usage}</span>/{limit}
+      &nbsp;
+      {percentage >= 80 && (
+        <Tooltip content={label} testId="subscription-page.spaces-list.usage-tooltip">
+          <Icon
+            className={styles.icon}
+            {...icon}
+            testId="subscription-page.spaces-list.usage-tooltip-trigger"
+          />
         </Tooltip>
       )}
     </TableCell>
@@ -56,4 +63,5 @@ export const SpaceUsageTableCell = ({ usage, limit }) => {
 SpaceUsageTableCell.propTypes = {
   limit: PropTypes.number.isRequired,
   usage: PropTypes.number.isRequired,
+  testId: PropTypes.string,
 };

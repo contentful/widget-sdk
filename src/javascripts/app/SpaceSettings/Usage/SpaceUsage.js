@@ -9,6 +9,8 @@ import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getSpaceEntitlementSet } from './services/EntitlementService';
 
 const addMasterEnvironment = flow(
   update('limits', flow(update('included', add(1)), update('maximum', add(1)))),
@@ -34,9 +36,16 @@ class SpaceUsage extends React.Component {
   state = {
     spaceResources: undefined,
     environmentResources: undefined,
+    entitlementsAPIEnabled: false,
+    entitlementsSet: undefined,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    const entitlementsAPIEnabled = await getVariation(FLAGS.ENTITLEMENTS_API);
+
+    this.setState({
+      entitlementsAPIEnabled,
+    });
     this.fetchPlan();
   }
 
@@ -45,6 +54,17 @@ class SpaceUsage extends React.Component {
     const spaceScopedService = createResourceService(spaceId);
     const envScopedService = createResourceService(spaceId, 'space', environmentMeta.environmentId);
     const isPermanent = (resource) => resource.kind === 'permanent';
+
+    if (this.state.entitlementsAPIEnabled) {
+      try {
+        const entitlementsSet = await getSpaceEntitlementSet(spaceId);
+        this.setState({
+          entitlementsSet,
+        });
+      } catch {
+        //
+      }
+    }
 
     try {
       this.setState({
@@ -61,7 +81,12 @@ class SpaceUsage extends React.Component {
   };
 
   render() {
-    const { spaceResources, environmentResources } = this.state;
+    const {
+      spaceResources,
+      environmentResources,
+      entitlementsAPIEnabled,
+      entitlementsSet,
+    } = this.state;
     const { environmentMeta } = this.props;
     return (
       <React.Fragment>
@@ -73,6 +98,7 @@ class SpaceUsage extends React.Component {
               spaceResources={spaceResources}
               environmentResources={environmentResources}
               environmentMeta={environmentMeta}
+              entitlementsSet={entitlementsAPIEnabled ? entitlementsSet : undefined}
             />
           </Workbench.Content>
           <Workbench.Sidebar position="right" className={styles.sidebar}>

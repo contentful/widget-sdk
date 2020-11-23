@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
-import { getVariation } from 'LaunchDarkly';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { getBasePlan, getRatePlans, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
@@ -21,7 +20,11 @@ const mockOrganizationPlatform = 'Free';
 const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
 const mockSpaceRatePlans = ['plan1', 'plan2', 'plan3'];
 const mockCurrentSpacePlan = { unavailabilityReasons: [{ type: 'currentPlan' }] };
-const mockUpgradeSpaceRatePlans = [mockCurrentSpacePlan, 'plan2', 'plan3'];
+const mockUpgradeSpaceRatePlans = [
+  { ...mockCurrentSpacePlan, currentPlan: true },
+  'plan2',
+  'plan3',
+];
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -45,6 +48,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
   getBasePlan: jest.fn(),
   getSpaceRatePlans: jest.fn(),
+  getSingleSpacePlan: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
@@ -78,7 +82,6 @@ jest.mock('../components/NewSpacePage', () => ({
 describe('SpacePurchaseRoute', () => {
   beforeEach(() => {
     createResourceService().get.mockResolvedValue(createResourceServiceResolvedValue);
-    getVariation.mockClear().mockResolvedValue(true);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
     getRatePlans.mockResolvedValue();
@@ -93,18 +96,6 @@ describe('SpacePurchaseRoute', () => {
     build();
 
     expect(screen.getByTestId('new-space-page')).toBeVisible();
-  });
-
-  it('should redirect to space home if the new flow is not enabled', async () => {
-    getVariation.mockResolvedValueOnce(false);
-    build();
-
-    await waitFor(() => {
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: mockOrganization.sys.id },
-      });
-    });
   });
 
   it('should redirect to space home if the user is not org admin or owner', async () => {
@@ -164,10 +155,10 @@ describe('SpacePurchaseRoute', () => {
     });
 
     expect(getSpaceRatePlans).toBeCalled();
-    expect(transformSpaceRatePlans).toBeCalledWith({
-      freeSpaceResource: createResourceServiceResolvedValue,
-      spaceRatePlans: mockSpaceRatePlans,
-    });
+    expect(transformSpaceRatePlans).toBeCalledWith(
+      mockSpaceRatePlans,
+      createResourceServiceResolvedValue
+    );
   });
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {
@@ -192,7 +183,7 @@ describe('SpacePurchaseRoute', () => {
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'upgrade_space',
-        currentSpacePlan: mockCurrentSpacePlan,
+        currentSpacePlan: { ...mockCurrentSpacePlan, currentPlan: true },
       }
     );
   });

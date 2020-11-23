@@ -11,6 +11,10 @@ const isForbiddenQueryError = (err) => {
   return err?.statusCode === 403 || err?.statusCode === 404;
 };
 
+const isNotFoundError = (err) => {
+  return err?.statusCode === 404;
+};
+
 const isServerError = (err) => err?.statusCode >= 500;
 
 const isUnknownContentTypeError = (err) => {
@@ -80,11 +84,15 @@ export const createSearchController = ({
 
   const handleEntitiesError = (err) => {
     const isInvalidQuery = isInvalidQueryError(err);
+    const isNotFound = isNotFoundError(err);
     const isForbidden = isForbiddenQueryError(err);
     const isUnknownContentType = isUnknownContentTypeError(err);
 
     // Reset the view only if the UI was not edited yet.
-    if (isInvalidQuery || isForbidden) {
+    if (isNotFound) {
+      // the user probably has read view restricted, meaning calling update entities again is fruitless
+      listViewContext.setView({});
+    } else if (isInvalidQuery || isForbidden) {
       // invalid search query, let's reset the view...
       listViewContext.setView({});
       updateEntities();

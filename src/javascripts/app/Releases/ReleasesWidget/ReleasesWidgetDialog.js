@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, uniqWith } from 'lodash';
+import pluralize from 'pluralize';
 import {
   Notification,
   SkeletonContainer,
@@ -15,6 +16,7 @@ import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
 import { css } from 'emotion';
 import { fetchReleases } from '../common/utils';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   notification: css({
@@ -35,6 +37,12 @@ const styles = {
   }),
 };
 
+const TrackingEvents = {
+  DIALOG_OPEN: 'release:dialog_box_open',
+  DIALOG_CLOSE: 'release:dialog_box_close',
+  ENTITY_ADDED: 'release:entity_added',
+};
+
 export default class ReleasesWidgetDialog extends Component {
   constructor(props) {
     super(props);
@@ -42,6 +50,7 @@ export default class ReleasesWidgetDialog extends Component {
     this.onClose = this.onClose.bind(this);
     this.onReleaseSelect = this.onReleaseSelect.bind(this);
     this.handleCreateRelease = this.handleCreateRelease.bind(this);
+    track(TrackingEvents.DIALOG_OPEN, { purpose: 'create' });
   }
 
   static propTypes = {
@@ -88,37 +97,57 @@ export default class ReleasesWidgetDialog extends Component {
   }
 
   handleCreateRelease(releaseName) {
-    const { releaseContentTitle, selectedEntities, rootEntity, handleReleaseRefresh } = this.props;
+    const { selectedEntities } = this.props;
     const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
 
     return createRelease(releaseName, uniqueSelectedEntities)
       .then((release) => {
-        const predicate = rootEntity || uniqueSelectedEntities.length === 1 ? 'was' : 'were';
-        Notification.success(
-          <div className={styles.notification}>
-            <span>
-              {releaseContentTitle} {predicate} sucessfully added to {releaseName}
-            </span>
-            <ReleaseDetailStateLink releaseId={release.sys.id} />
-          </div>
-        );
-        handleReleaseRefresh && handleReleaseRefresh();
+        this.handleSuccess(release);
       })
       .catch(() => {
         Notification.error(`Failed creating ${releaseName}`);
       });
   }
 
+  handleSuccess(release) {
+    const { releaseContentTitle, rootEntity, handleReleaseRefresh, selectedEntities } = this.props;
+    const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
+    const predicate = rootEntity || pluralize('was', uniqueSelectedEntities.length, true);
+
+    handleReleaseRefresh && handleReleaseRefresh();
+
+    const assetCount =
+      uniqueSelectedEntities.filter((entity) => entity.sys.type === 'Asset').length || 0;
+    const entryCount =
+      uniqueSelectedEntities.filter((entity) => entity.sys.type === 'Entry').length || 0;
+
+    track(TrackingEvents.ENTITY_ADDED, {
+      assetCount,
+      entryCount,
+      releaseId: release.sys.id,
+    });
+
+    Notification.success(
+      <div className={styles.notification}>
+        <span>
+          {releaseContentTitle} {predicate} sucessfully added to {release.title}
+        </span>
+        <ReleaseDetailStateLink releaseId={release.sys.id} />
+      </div>
+    );
+  }
+
   handleTabChange = (newTab) => {
     this.setState({ selectedTab: newTab });
   };
 
-  onClose() {
+  onClose(success = false) {
+    track(TrackingEvents.DIALOG_CLOSE, { purpose: success ? 'submit' : 'cancel' });
     this.props.onCancel();
   }
 
   async onReleaseSelect(release) {
-    const { releaseContentTitle, rootEntity, selectedEntities, handleReleaseRefresh } = this.props;
+    const { releaseContentTitle, selectedEntities } = this.props;
 
     try {
       const releaseItems = [
@@ -133,21 +162,13 @@ export default class ReleasesWidgetDialog extends Component {
       ];
 
       await replaceReleaseById(release.sys.id, release.title, releaseItems);
-      const predicate = rootEntity || selectedEntities.length === 1 ? 'was' : 'were';
-      handleReleaseRefresh && this.props.handleReleaseRefresh();
-      Notification.success(
-        <div className={styles.notification}>
-          <span>
-            {releaseContentTitle} {predicate} sucessfully added to {release.title}
-          </span>
-          <ReleaseDetailStateLink releaseId={release.sys.id} />
-        </div>
-      );
+
+      this.handleSuccess(release);
     } catch (error) {
       Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
     }
 
-    this.onClose();
+    this.onClose(true);
   }
 
   onSubmit = (releaseName, dispatch) => {
@@ -157,7 +178,7 @@ export default class ReleasesWidgetDialog extends Component {
         if (rootEntity) {
           fetchReleases(rootEntity.sys, dispatch);
         }
-        this.onClose();
+        this.onClose(true);
       });
     }
   };

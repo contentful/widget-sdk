@@ -233,6 +233,19 @@ describe('Controller', () => {
       });
     });
 
+    it('should be able to fetch entities with a NotFound query and not refetch continuously', async () => {
+      const error = { statusCode: 404 };
+      // This should only be called once. Anything beyond we should fail
+      fetchEntities.mockRejectedValueOnce(error).mockRejectedValue(undefined);
+
+      const { updateEntities } = createSearch({});
+
+      await updateEntities();
+
+      expect(listViewContext.setView).toHaveBeenCalledTimes(1);
+      expect(listViewContext.setView).toHaveBeenCalledWith({});
+    });
+
     it('should be able to fetch entities with unknown content type and refetch', async () => {
       const error = {
         body: { details: { errors: [{ name: 'unknownContentType', value: 'DOESNOTEXIST' }] } },

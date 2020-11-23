@@ -38,6 +38,7 @@ export const FLAGS = {
   SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
   SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
+  ENTITLEMENTS_API: 'feature-hejo-11-2020-entitlements-api',
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
   SPACE_PLAN_CHANGE_NEW_PURCHASE_FLOW: 'feature-ogg-10-2020-enable-space-purchase-for-change',
   SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
@@ -48,6 +49,7 @@ export const FLAGS = {
   NEW_LOCALES_ENDPOINT: 'feature-ext-11-2020-new-locales-endpoint',
   NEW_LOCALES_ENDPOINT_WRITE: 'feature-ext-11-2020-new-locales-endpoint-write',
   SPACE_USAGE_SUMMARY: 'feature-moi-11-2020-space-usage-summary',
+  COMPOSE_LAUNCH_PURCHASE: 'feature-ahoy-11-2020-compose-launch-purchase',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -66,6 +68,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PRICING_2020_WARNING]: true,
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
+  [FLAGS.ENTITLEMENTS_API]: false,
   [FLAGS.NEW_PURCHASE_FLOW]: false,
   [FLAGS.SPACE_PLAN_CHANGE_NEW_PURCHASE_FLOW]: false,
   [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
@@ -76,6 +79,7 @@ const FALLBACK_VALUES = {
   [FLAGS.NEW_LOCALES_ENDPOINT]: false,
   [FLAGS.NEW_LOCALES_ENDPOINT_WRITE]: false,
   [FLAGS.SPACE_USAGE_SUMMARY]: false,
+  [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

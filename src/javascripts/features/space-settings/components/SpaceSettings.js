@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import {
@@ -14,6 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 
 const styles = {
   section: css({
@@ -70,6 +72,9 @@ export class SpaceSettings extends React.Component {
       onChangeSpace,
     } = this.props;
 
+    const createdBy = getUserName(this.props.createdBy);
+    const createdAt = moment.utc(this.props.createdAt).format('DD/MM/YYYY');
+
     return (
       <Workbench>
         <Workbench.Header
@@ -80,6 +85,9 @@ export class SpaceSettings extends React.Component {
           <Card className={styles.section} testId="space-information-card">
             <Typography>
               <Heading>General</Heading>
+              <Paragraph testId="space-created-at-by">
+                This space was created by {createdBy} at {createdAt}.
+              </Paragraph>
               <TextField
                 name="space-id"
                 id="space-id"
@@ -161,6 +169,8 @@ SpaceSettings.propTypes = {
   onChangeSpace: PropTypes.func.isRequired,
   plan: PropTypes.object,
   spaceName: PropTypes.string.isRequired,
+  createdAt: PropTypes.string.isRequired,
+  createdBy: PropTypes.object.isRequired,
   spaceId: PropTypes.string.isRequired,
   showDeleteButton: PropTypes.bool.isRequired,
   showChangeButton: PropTypes.bool.isRequired,

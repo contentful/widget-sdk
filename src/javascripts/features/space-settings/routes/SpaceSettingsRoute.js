@@ -110,7 +110,7 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   render() {
-    const { currentSpace, currentSpaceName, currentSpaceId } = this.context;
+    const { currentSpace, currentSpaceName, currentSpaceId, currentSpaceData } = this.context;
     const organization = getOrganization(currentSpace);
 
     return (
@@ -132,6 +132,7 @@ export class SpaceSettingsRoute extends React.Component {
             spaceId={currentSpaceId}
             showDeleteButton={isOwnerOrAdmin(organization)}
             showChangeButton={isOwnerOrAdmin(organization)}
+            {...currentSpaceData.sys}
           />
         )}
       </React.Fragment>

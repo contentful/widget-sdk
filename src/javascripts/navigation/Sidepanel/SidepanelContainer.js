@@ -1,5 +1,5 @@
 import React from 'react';
-import SidepanelTrigger from './SidepanelTrigger';
+import SidePanelTrigger from './SidePanelTrigger';
 import Sidepanel from './Sidepanel';
 import keycodes from 'utils/keycodes';
 
@@ -72,7 +72,7 @@ export default class SidepanelContainer extends React.Component {
             }}
           />
         </div>
-        <SidepanelTrigger
+        <SidePanelTrigger
           onClick={() => {
             this.setSidePanelIsShown(true);
           }}
