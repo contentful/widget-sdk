@@ -38,6 +38,7 @@ import JobsCreateTransformer from './transformers/JobsCreate';
 import JobsCancelTransformer from './transformers/JobsCancel';
 import EnvironmentAliases from './transformers/EnvironmentAliases';
 import SpacePurchaseTransformer from './transformers/SpacePurchase';
+import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
 
 /**
@@ -236,6 +237,42 @@ registerGenericEvent('sharejs:cma_entity_version_mismatch');
 registerGenericEvent('content_preview:created');
 registerGenericEvent('content_preview:updated');
 registerGenericEvent('content_preview:deleted');
+
+registerEvent(
+  'release:dialog_box_open',
+  'release_dialog_box',
+  ReleasesTransformer.releaseDialogOpen
+);
+registerEvent(
+  'release:dialog_box_close',
+  'release_dialog_box',
+  ReleasesTransformer.releaseDialogClose
+);
+registerEvent(
+  'release:entity_added',
+  'release_entity_added',
+  ReleasesTransformer.releaseEntityAdded
+);
+registerEvent(
+  'release:entity_removed',
+  'release_entity_removed',
+  ReleasesTransformer.releaseEntityRemoved
+);
+registerEvent('release:created', 'release_created', ReleasesTransformer.releaseCreated);
+registerEvent('release:trashed', 'release_trashed', ReleasesTransformer.releaseTrashed);
+registerEvent('release:validated', 'release_validated', ReleasesTransformer.releaseValidated);
+registerEvent('release:published', 'release_published', ReleasesTransformer.releasePublished);
+registerEvent('release:unpublished', 'release_unpublished', ReleasesTransformer.releaseUnpublished);
+registerEvent(
+  'release:schedule_created',
+  'release_schedule_created',
+  ReleasesTransformer.releaseScheduleCreated
+);
+registerEvent(
+  'release:schedule_canceled',
+  'release_schedule_canceled',
+  ReleasesTransformer.releaseScheduleCanceled
+);
 
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {

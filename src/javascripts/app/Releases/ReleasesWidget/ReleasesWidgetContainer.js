@@ -16,6 +16,7 @@ import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
 import * as Entries from 'data/entries';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   textLink: css({
@@ -42,6 +43,11 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
 
   const deleteEntityFromRelease = (release) => {
     const releaseWithoutEntity = excludeEntityFromRelease(release, entityInfo.id);
+    track('release:entity_removed', {
+      releaseId: release.sys.id,
+      entityId: entityInfo.id,
+      entityType: entityInfo.type,
+    });
 
     replaceReleaseById(release.sys.id, release.title, releaseWithoutEntity)
       .then(() => {

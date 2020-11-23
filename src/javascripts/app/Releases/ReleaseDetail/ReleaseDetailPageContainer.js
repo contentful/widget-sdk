@@ -34,8 +34,16 @@ import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../release
 import ReleaseWorkBenchContent from './ReleaseWorkBenchContent';
 import ReleaseWorkBenchSideBar from './ReleaseWorkBenchSideBar';
 import ValidateReleaseDialog from './ValidateReleaseDialog';
+import { track } from 'analytics/Analytics';
 
 import { styles } from './styles';
+
+const TrackingEvents = {
+  ENTITY_REMOVED: 'release:entity_removed',
+  PUBLISHED: 'release:published',
+  SCHEDULE_CANCELED: 'release:schedule_canceled',
+  SCHEDULE_CREATED: 'release:schedule_created',
+};
 
 const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
   const localStorage = getBrowserStorage('local');
@@ -104,6 +112,12 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
           .then((entityTitle) => {
             Notification.success(`${entityTitle || 'Untitled'} was removed from ${release.title}`);
           });
+
+        track(TrackingEvents.ENTITY_REMOVED, {
+          releaseId: release.sys.id,
+          entityId: entity.sys.id,
+          entityType: entity.sys.type,
+        });
       })
       .catch(() => {
         Notification.error(`Failed to remove ${entityType.toLowerCase()}`);
@@ -139,6 +153,12 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
     setIsCreatingJob(true);
     const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
+      track(TrackingEvents.SCHEDULE_CREATED, {
+        assetCount: assets.length,
+        entryCount: entries.length,
+        jobId: job.sys.id,
+        releaseId,
+      });
       Notification.success(`${release.title} was scheduled successfully`);
       setIsCreatingJob(false);
       setShowScheduleActionDialog(false);
@@ -152,6 +172,10 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   const handleScheduleCancel = async (jobId) => {
     try {
       await cancelReleaseJob(jobId);
+      track(TrackingEvents.SCHEDULE_CANCELED, {
+        releaseId,
+        jobId,
+      });
       const job = jobs.find((j) => j.sys.id === jobId);
       setJobs(jobs.filter((j) => j !== job));
       Notification.success('Schedule canceled');
@@ -185,6 +209,11 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
       const publishResponse = await publishRelease(releaseId, release.sys.version);
       const releaseAction = await waitForReleaseAction(releaseId, publishResponse.sys.id);
 
+      track(TrackingEvents.PUBLISHED, {
+        releaseId,
+        assetCount: assets.length,
+        entryCount: entries.length,
+      });
       dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
       Notification.success('Release was published successfully');
       setEntityRefreshKey(publishResponse.sys.id);
