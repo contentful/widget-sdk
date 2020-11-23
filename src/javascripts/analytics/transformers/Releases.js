@@ -50,7 +50,7 @@ export const releaseEntityRemoved = (_eventName, data) => ({
   schema: getSchema('release_entity_removed').path,
   data: {
     release_id: data.releaseId,
-    entity_id: data.entity_id,
+    entity_id: data.entityId,
     entity_type: data.entityType,
     ...commonParams(data),
   },
@@ -86,6 +86,8 @@ export const releasePublished = (_eventName, data) => ({
 export const releaseScheduleCreated = (_eventName, data) => ({
   schema: getSchema('release_schedule_created').path,
   data: {
+    action: data.action,
+    scheduled_for: data.scheduledFor,
     asset_count: data.assetCount,
     entry_count: data.entryCount,
     release_id: data.releaseId,

@@ -154,6 +154,8 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
     const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
       track(TrackingEvents.SCHEDULE_CREATED, {
+        action: 'publish',
+        scheduledFor: scheduledAt,
         assetCount: assets.length,
         entryCount: entries.length,
         jobId: job.sys.id,
