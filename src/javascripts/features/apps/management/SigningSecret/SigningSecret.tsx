@@ -8,7 +8,6 @@ import {
   Note,
   FormLabel,
   SkeletonContainer,
-  SkeletonDisplayText,
   SkeletonBodyText,
   Notification,
 } from '@contentful/forma-36-react-components';
@@ -85,7 +84,6 @@ export const SigningSecret = ({ definition }) => {
       </Paragraph>
       {isLoadingSecret && (
         <SkeletonContainer className={styles.loading} testId={'loading'}>
-          <SkeletonDisplayText />
           <SkeletonBodyText />
         </SkeletonContainer>
       )}
@@ -98,7 +96,7 @@ export const SigningSecret = ({ definition }) => {
               onClick={() => addNewSecret(generateSecret())}
               buttonType={'muted'}
               testId={'activate-btn'}>
-              Activate request verification
+              Enable request verification
             </Button>
           )}
 
@@ -108,14 +106,14 @@ export const SigningSecret = ({ definition }) => {
                 htmlFor="secretInput"
                 className={styles.secretInputLabel}
                 requiredText={''}>
-                Shared secret
+                Signing secret
               </FormLabel>
               {isSecretUpdated && (
                 <Note
                   className={styles.copySecretReminder}
                   noteType="positive"
                   testId={'copy-reminder'}>
-                  Make sure to immediately copy your new shared secret. You will not be able to see
+                  Make sure to immediately copy your new signing secret. You will not be able to see
                   it again.
                 </Note>
               )}

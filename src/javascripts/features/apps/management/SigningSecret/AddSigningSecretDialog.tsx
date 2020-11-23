@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paragraph, TextLink, TextInput } from '@contentful/forma-36-react-components';
+import { Note, TextLink, TextInput } from '@contentful/forma-36-react-components';
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -20,7 +20,7 @@ export const AddSigningSecretDialog = ({ isShown, onClose, saveUpdatedSecret }) 
 
   return (
     <ModalConfirm
-      title="Update shared secret"
+      title="Update signing secret"
       isShown={isShown}
       intent="positive"
       confirmLabel="Update"
@@ -33,11 +33,11 @@ export const AddSigningSecretDialog = ({ isShown, onClose, saveUpdatedSecret }) 
         saveUpdatedSecret(updatedSecret);
         onClose();
       }}>
-      <Paragraph>
-        You are about to update the shared secret of this app definition. This will invalidate your
+      <Note>
+        You are about to update the signing secret of this app definition. This will invalidate your
         current secret. Make sure to update your app&apos;s backend settings to reflect this secret
         change.
-      </Paragraph>
+      </Note>
       <TextInput
         placeholder={'Click on Regenerate secret below to create a secret'}
         className={styles.secretInput}
