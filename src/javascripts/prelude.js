@@ -223,6 +223,7 @@ angular
 
       await initSpaceContext();
 
+      const logger = await import(/* webpackMode: "eager" */ 'services/logger');
       const Config = await import(/* webpackMode: "eager" */ 'Config');
       const { default: handleGKMessage } = await import(
         /* webpackMode: "eager" */ 'account/handleGatekeeperMessage'
@@ -336,22 +337,32 @@ angular
             path: state.name.split('.'),
             params: matchedParams,
             options: { location: false },
-          }).then(() => {
-            // Onboarding (aka automatic new space creation) is special, since it effectively
-            // takes over the user's experience when they load into the app after registering,
-            // and doesn't go away until the user has created their "example" space.
-            //
-            // This isn't desirable in every case though - we may want to bring the user to a
-            // different part of the app, through a different onboarding flow (for example, when
-            // the user is registering from a Compose+Launch marketing CTA).
-            //
-            // To allow for routes to bypass this, the auto space creation is initialized after the
-            // first route has been initialized.
-            initAutoCreateNewSpace();
+          })
+            .catch((err) => {
+              // If an error occurred, log it and continue. We don't want errors from
+              // above causing any issues for the app to fully "load", because
+              // `.loaded = true` is required to be set for the app to appear correctly.
+              logger.logException(err, {
+                state: state.name,
+                params: matchedParams,
+              });
+            })
+            .then(() => {
+              // Onboarding (aka automatic new space creation) is special, since it effectively
+              // takes over the user's experience when they load into the app after registering,
+              // and doesn't go away until the user has created their "example" space.
+              //
+              // This isn't desirable in every case though - we may want to bring the user to a
+              // different part of the app, through a different onboarding flow (for example, when
+              // the user is registering from a Compose+Launch marketing CTA).
+              //
+              // To allow for routes to bypass this, the auto space creation is initialized after the
+              // first route has been initialized.
+              initAutoCreateNewSpace();
 
-            // Finally, mark the app as loaded
-            angular.module('contentful/app').loaded = true;
-          });
+              // Finally, mark the app as loaded
+              angular.module('contentful/app').loaded = true;
+            });
         }
       }
     },
