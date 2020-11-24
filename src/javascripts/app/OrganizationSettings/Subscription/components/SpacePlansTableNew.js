@@ -15,6 +15,7 @@ import Pagination from 'app/common/Pagination';
 import { getSpacesUsage } from '../SpacesUsageService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { keyBy } from 'lodash';
+import { SortableHeaderCell } from './SortableHeaderCell';
 
 const styles = {
   nameCol: css({
@@ -47,16 +48,17 @@ export const SpacePlansTableNew = ({
   });
   const [plansLookup, setPlansLookup] = useState();
 
+  const [order, setOrder] = useState('space_name');
+
   const fetchSpacesUsage = useCallback(() => {
     const orgEndpoint = createOrganizationEndpoint(organizationId);
     const query = {
-      // include: 'space',
-      // order: '-locales.usage',
+      order: order,
       skip: pagination.skip,
       limit: pagination.limit,
     };
     return getSpacesUsage(orgEndpoint, query);
-  }, [organizationId, pagination.skip, pagination.limit]);
+  }, [organizationId, pagination.skip, pagination.limit, order]);
 
   const { isLoading, error, data = {} } = useAsync(fetchSpacesUsage);
 
@@ -67,6 +69,11 @@ export const SpacePlansTableNew = ({
       skip,
       limit,
     });
+  };
+
+  const handleSort = (colName, isAscending) => {
+    const order = `${isAscending ? '' : '-'}${colName}`;
+    setOrder(order);
   };
 
   return (
@@ -84,7 +91,10 @@ export const SpacePlansTableNew = ({
         </colgroup>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <SortableHeaderCell
+              displayName="Name"
+              onSort={(isAscending) => handleSort('space_name', isAscending)}
+            />
             <TableCell>Space type</TableCell>
             <TableCell>Environments</TableCell>
             <TableCell>Roles</TableCell>
