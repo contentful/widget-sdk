@@ -1,0 +1,51 @@
+import React, { useState } from 'react';
+import { Note, TextLink, TextInput } from '@contentful/forma-36-react-components';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
+import { generateSecret } from './utils';
+
+const styles = {
+  secretInput: css({
+    marginTop: tokens.spacingL,
+    marginBottom: tokens.spacingXs,
+    '& input': {
+      fontFamily: tokens.fontStackMonospace,
+    },
+  }),
+};
+
+export const AddSigningSecretDialog = ({ isShown, onClose, saveUpdatedSecret }) => {
+  const [updatedSecret, setUpdatedSecret] = useState(generateSecret());
+
+  return (
+    <ModalConfirm
+      title="Update signing secret"
+      isShown={isShown}
+      intent="positive"
+      confirmLabel="Update"
+      cancelLabel="Cancel"
+      confirmTestId="add-secret-btn"
+      cancelTestId="add-secret-cancel"
+      size={'large'}
+      onCancel={onClose}
+      onConfirm={() => {
+        saveUpdatedSecret(updatedSecret);
+        onClose();
+      }}>
+      <Note>
+        You are about to update the signing secret of this app definition. This will invalidate your
+        current secret. Make sure to update your app&apos;s backend settings to reflect this secret
+        change.
+      </Note>
+      <TextInput
+        placeholder={'Click on Regenerate secret below to create a secret'}
+        className={styles.secretInput}
+        value={updatedSecret}
+        onChange={(ev) => setUpdatedSecret(ev.target.value)}
+        withCopyButton
+      />
+      <TextLink onClick={() => setUpdatedSecret(generateSecret())}>Regenerate Secret</TextLink>
+    </ModalConfirm>
+  );
+};

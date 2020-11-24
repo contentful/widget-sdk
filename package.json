@@ -102,6 +102,7 @@
     "qrcode": "^1.4.4",
     "qs": "^6.9.4",
     "query-string": "^6.12.1",
+    "randexp": "0.4.6",
     "react": "16.13.1",
     "react-animate-height": "^2.0.15",
     "react-click-outside": "^3.0.1",

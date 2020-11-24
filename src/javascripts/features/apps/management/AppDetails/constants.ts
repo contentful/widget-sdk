@@ -1,5 +1,6 @@
 export const TAB_PATHS = {
   GENERAL: '',
-  KEY_PAIRS: 'key-pairs',
+  SECURITY: 'security',
   EVENTS: 'events',
+  KEY_PAIRS: 'key-pairs', // old route
 };

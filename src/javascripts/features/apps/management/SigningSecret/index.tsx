@@ -1,0 +1,1 @@
+export { SigningSecret } from './SigningSecret';

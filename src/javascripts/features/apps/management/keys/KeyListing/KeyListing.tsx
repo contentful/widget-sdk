@@ -6,12 +6,12 @@ import { css } from 'emotion';
 
 import {
   Button,
-  Note,
   Notification,
   Paragraph,
   TableCell,
   TableRow,
   TextLink,
+  Heading,
 } from '@contentful/forma-36-react-components';
 
 import { ManagementApiClient } from 'features/apps';
@@ -34,6 +34,10 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 const styles = {
+  header: css({
+    fontSize: tokens.fontSizeL,
+    marginBottom: tokens.spacingXs,
+  }),
   spacer: css({
     marginBottom: tokens.spacingL,
   }),
@@ -131,16 +135,18 @@ export function KeyListing({ definition }) {
 
   return (
     <>
-      <Note className={styles.spacer}>
-        You need a private key to sign access token requests. We only store public keys.
-        <br />
+      <Heading className={styles.header} element="h3">
+        Key pairs
+      </Heading>
+      <Paragraph className={styles.spacer}>
+        You need a private key to sign access token requests. We only store public keys.{' '}
         <TextLink
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
           Learn how to sign your access tokens
         </TextLink>
-      </Note>
+      </Paragraph>
 
       <div className={styles.ctasWrapper}>
         <WithLimitTooltip enabled={hasReachedKeysLimits}>
