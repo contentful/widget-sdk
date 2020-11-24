@@ -22,15 +22,18 @@ const styles = {
 
 export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
   const percentage = Math.round((usage / limit) * 100);
+  const lowLimitResource = limit < 5 && limit - usage === 1;
+  const approachingLimit = percentage >= 80 || lowLimitResource;
   let label;
   let icon;
+
   if (percentage > 100) {
     label = `Exceeding limit (${percentage}%)`;
     icon = {
       color: 'negative',
       icon: 'InfoCircle',
     };
-  } else if (percentage >= 80) {
+  } else if (approachingLimit) {
     icon = {
       color: 'warning',
       icon: 'Warning',
@@ -47,7 +50,7 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
       })}>
       <span className={cx({ [styles.usageEmphasized]: percentage >= 80 })}>{usage}</span>/{limit}
       &nbsp;
-      {percentage >= 80 && (
+      {approachingLimit && (
         <Tooltip content={label} testId="subscription-page.spaces-list.usage-tooltip">
           <Icon
             className={styles.icon}
