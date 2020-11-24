@@ -38,5 +38,8 @@ export const isSpaceOnTrial = (space) => {
  * @return {boolean}
  */
 export const isTrialSpaceType = (space) => {
+  if (!space) {
+    return false;
+  }
   return 'trialPeriodEndsAt' in space;
 };
