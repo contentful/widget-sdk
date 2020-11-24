@@ -61,17 +61,18 @@ function makeStableName(relevantSegments) {
   const getPath = (idx) => `/${chunks[idx][0]}`;
   const getId = (idx) => (chunks[idx][1] ? '/:id' : '');
 
-  if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
-    return `/:entity/:id${getPath(1)}${getId(1)}`;
-  } else {
-    const path = getPath(0);
-    const id = getId(0);
+  const path = getPath(0);
+  const id = getId(0);
 
-    if (chunks[1] && SECOND_LEVEL_PATHS[path] && SECOND_LEVEL_PATHS[path].includes(getPath(1))) {
+  if (chunks[1]) {
+    if (RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
+      return `/:entity/:id${getPath(1)}${getId(1)}`;
+    }
+    if (SECOND_LEVEL_PATHS[path] && SECOND_LEVEL_PATHS[path].includes(getPath(1))) {
       return `${path}${id}${getPath(1)}${getId(1)}`;
     }
-    return `${path}${id}`;
   }
+  return `${path}${id}`;
 }
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
