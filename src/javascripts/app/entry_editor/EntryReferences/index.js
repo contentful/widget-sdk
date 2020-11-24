@@ -11,10 +11,10 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
-import { goToSlideInEntity, slideInStackEmitter } from 'navigation/SlideInNavigator';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
 import MultiSelect from './MultiSelect';
-import { getReferencesForEntryId, getEntityTitle, getDefaultLocale } from './referencesService';
+import { getReferencesForEntryId, getDefaultLocale } from './referencesService';
 import { pluralize } from './utils';
 
 import { ReferencesContext } from './ReferencesContext';
@@ -105,7 +105,6 @@ const REFERENCES_LIMIT = 1000;
 const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
   const [allReferencesSelected, setAllReferencesSelected] = useState(false);
   const [selectedStates, setSelectedStates] = useState([]);
-  const [entityTitle, setEntityTitle] = useState(null);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const {
     references,
@@ -121,37 +120,23 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
   const defaultLocale = getDefaultLocale().code;
 
   useEffect(() => {
-    async function fetchReferences() {
-      const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
-      dispatch({ type: SET_REFERENCES, value: fetchedRefs });
-      dispatch({
-        type: SET_LINKS_COUNTER,
-        value: {
-          assets: get(response, 'includes.Asset.length') || 0,
-          entries: get(response, 'includes.Entry.length') || 0,
-        },
-      });
-
-      return fetchedRefs;
-    }
-
-    async function fetchReferencesAndTitle() {
+    (async function fetchReferences() {
       try {
-        const fetchedRefs = await fetchReferences();
-        const entryTitle = await getEntityTitle(fetchedRefs[0]);
-        setEntityTitle(entryTitle);
+        const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
+        dispatch({ type: SET_REFERENCES, value: fetchedRefs });
+        dispatch({
+          type: SET_LINKS_COUNTER,
+          value: {
+            assets: get(response, 'includes.Asset.length') || 0,
+            entries: get(response, 'includes.Entry.length') || 0,
+          },
+        });
+
+        return fetchedRefs;
       } catch {
         dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
       }
-    }
-
-    fetchReferencesAndTitle();
-
-    slideInStackEmitter.on('changed', ({ newSlideLevel }) => {
-      if (newSlideLevel === 0) {
-        fetchReferencesAndTitle();
-      }
-    });
+    })();
   }, [entity, dispatch]);
 
   const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
@@ -205,7 +190,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
                 </Note>
               )}
               <Paragraph className={styles.paragraph}>
-                &quot;{entityTitle}&quot; has {''}
+                This entry has {''}
                 {initialReferencesAmount - 1} {pluralize(initialReferencesAmount - 1, 'reference')}
               </Paragraph>
             </>

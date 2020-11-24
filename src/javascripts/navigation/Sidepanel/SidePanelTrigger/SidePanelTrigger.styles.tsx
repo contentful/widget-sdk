@@ -10,15 +10,21 @@ export const styles = {
     padding: `0 ${tokens.spacingM}`,
     textAlign: 'left',
     transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
-    minWidth: '280px',
+    width: '280px',
     '&:hover, &:focus': {
       backgroundColor: tokens.colorContrastDark,
+    },
+    ' > *': {
+      flexGrow: 0,
+      flexShrink: 0,
     },
   }),
   content: css({
     display: 'flex',
     flexFlow: 'column',
     flexGrow: 1,
+    flexShrink: 1,
+    overflow: 'hidden',
     padding: `0 ${tokens.spacingM}`,
   }),
   ellipsis: css({
