@@ -108,7 +108,7 @@ export function convertConfigurationToInternalState(
           // the updating of instance parameters to work
           acc.push({ ...found, ...pick(configItem, ['settings']) });
         } else {
-          acc.push({...configItem, problem: true})
+          acc.push({ ...configItem, problem: true });
         }
         return acc;
       }

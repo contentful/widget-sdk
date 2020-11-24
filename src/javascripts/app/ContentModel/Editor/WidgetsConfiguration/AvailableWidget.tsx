@@ -41,7 +41,7 @@ const styles = {
 };
 
 interface AvailableWidgetProps {
-  name: string;
+  name?: string;
   widgetNamespace: string;
   onClick: () => void;
   index: number;

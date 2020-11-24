@@ -77,7 +77,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       );
     });
 
-    it('should mark customs items in configuraon that are missing from widgets', () => {
+    it('should label custom items in configuration that are missing from widgets', () => {
       const configuration = [
         {
           widgetId: 'netlify-extension',
