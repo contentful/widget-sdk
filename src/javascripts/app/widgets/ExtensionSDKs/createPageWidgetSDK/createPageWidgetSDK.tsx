@@ -27,6 +27,15 @@ export const createPageWidgetSDK = ({
 }: CreatePageWidgetSDKOptions): PageExtensionSDK => {
   const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
+  const idsApi = createIdsApi({
+    spaceId: spaceContext.getId(),
+    envId: spaceContext.getEnvironmentId(),
+    envAliasId: spaceContext.getAliasId(),
+    user: userApi,
+    widgetNamespace,
+    widgetId,
+  });
+
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
@@ -35,15 +44,7 @@ export const createPageWidgetSDK = ({
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
-  });
-
-  const idsApi = createIdsApi({
-    spaceId: spaceContext.getId(),
-    envId: spaceContext.getEnvironmentId(),
-    envAliasId: spaceContext.getAliasId(),
-    user: userApi,
-    widgetNamespace,
-    widgetId,
+    appId: idsApi.app,
   });
 
   const locationApi = {

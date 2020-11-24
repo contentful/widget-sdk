@@ -56,6 +56,7 @@ export function createSpaceApi({
   tagsRepo,
   usersRepo,
   readOnly = false,
+  appId,
 }: {
   cma: any;
   initialContentTypes: InternalContentType[];
@@ -65,6 +66,7 @@ export function createSpaceApi({
   tagsRepo: any;
   usersRepo: any;
   readOnly?: boolean;
+  appId?: string;
 }): InternalSpaceAPI {
   return {
     // Proxy directly to the CMA client:
@@ -117,7 +119,18 @@ export function createSpaceApi({
     deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
     onEntityChanged,
+
+    signRequest: makeReadOnlyGuardedMethod(readOnly, makeSignRequest(appId)),
   };
+
+  function makeSignRequest(appId) {
+    return (req) => {
+      if (!appId) {
+        throw new Error('Can only sign request in app context');
+      }
+      return cma.signRequest(appId, req);
+    };
+  }
 
   function getCachedContentTypes() {
     return initialContentTypes.map(createContentTypeApi);

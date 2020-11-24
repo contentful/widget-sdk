@@ -509,6 +509,7 @@ xdescribe('Extension SDK', () => {
         'archiveAsset',
         'unarchiveEntry',
         'unarchiveAsset',
+        'signRequest',
       ];
     });
 

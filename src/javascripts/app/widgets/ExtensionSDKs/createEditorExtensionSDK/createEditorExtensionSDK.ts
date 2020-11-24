@@ -64,16 +64,6 @@ export const createEditorExtensionSDK = ({
     setInvalid: noop,
   });
 
-  const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
-    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-    spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-    usersRepo: spaceContext.users,
-  });
-
   const idsApi = createIdsApiWithoutField({
     spaceId: spaceContext.getId(),
     envId: spaceContext.getEnvironmentId(),
@@ -82,6 +72,17 @@ export const createEditorExtensionSDK = ({
     user: userApi,
     widgetNamespace,
     widgetId,
+  });
+
+  const spaceApi = createSpaceApi({
+    cma: getBatchingApiClient(spaceContext.cma),
+    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+    pubSubClient: spaceContext.pubsubClient,
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+    spaceId: spaceContext.getId(),
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+    usersRepo: spaceContext.users,
+    appId: idsApi.app,
   });
 
   const locationApi = {

@@ -70,16 +70,6 @@ export function createFieldWidgetSDK({
     },
   });
 
-  const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
-    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-    spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-    usersRepo: spaceContext.users,
-  });
-
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
 
   const locationApi = {
@@ -100,6 +90,17 @@ export function createFieldWidgetSDK({
     user: userApi,
     widgetNamespace,
     widgetId,
+  });
+
+  const spaceApi = createSpaceApi({
+    cma: getBatchingApiClient(spaceContext.cma),
+    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+    pubSubClient: spaceContext.pubsubClient,
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+    spaceId: spaceContext.getId(),
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+    usersRepo: spaceContext.users,
+    appId: idsApi.app,
   });
 
   const windowApi = {
