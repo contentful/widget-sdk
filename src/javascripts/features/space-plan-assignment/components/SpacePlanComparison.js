@@ -58,13 +58,13 @@ export function SpacePlanComparison({ plan, spaceResources }) {
                     place="right"
                     content="Your current usage exceeds this space type's limit">
                     <Flex justifyContent="left" alignItems="center">
-                      <Flex marginRight="spacing2xs">{usage}</Flex>
+                      <Flex marginRight="spacing2Xs">{usage}</Flex>
                       <Icon icon="Warning" color="warning" />
                     </Flex>
                   </Tooltip>
                 ) : (
                   <Flex justifyContent="left" alignItems="center">
-                    <Flex marginRight="spacing2xs">{usage}</Flex>
+                    <Flex marginRight="spacing2Xs">{usage}</Flex>
                   </Flex>
                 )}
               </TableCell>

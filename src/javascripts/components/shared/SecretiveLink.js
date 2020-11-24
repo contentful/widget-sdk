@@ -10,13 +10,18 @@ const styles = {
     display: 'inline-flex',
     width: '100%',
     color: tokens.colorTextMid,
+    fontWeight: tokens.fontWeightNormal,
     textDecoration: 'none',
     '& > span': {
       width: 'inherit',
     },
     '&:link': {
       textDecoration: 'none',
+      fontWeight: tokens.fontWeightNormal,
       display: 'inline-flex',
+      '&:link:hover': {
+        textDecoration: 'none',
+      },
     },
     '&:focus': {
       outline: 'none',

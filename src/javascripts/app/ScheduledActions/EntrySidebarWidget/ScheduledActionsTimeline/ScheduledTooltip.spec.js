@@ -3,6 +3,7 @@ import { shallow, mount } from 'enzyme';
 import 'jest-enzyme';
 import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
+import flushPromises from 'test/helpers/flushPromises';
 
 import ScheduleTooltip, { ScheduleTooltipContent } from './ScheduleTooltip';
 import * as FormattedDateAndTime from '../../FormattedDateAndTime';
@@ -42,7 +43,7 @@ describe('ScheduleTooltip', () => {
     expect(wrapper.find('Tooltip').prop('isVisible')).toBe(false);
   });
 
-  it('should ble able to process the array of jobs to show the correct data for the entry', () => {
+  it('should ble able to process the array of jobs to show the correct data for the entry', async () => {
     const targetEntryId = 'entryId';
     const jobs = [
       {
@@ -98,13 +99,15 @@ describe('ScheduleTooltip', () => {
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
     wrapper.find('Tooltip').simulate('mouseEnter');
+    await flushPromises();
+    wrapper.update();
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(jobs[jobs.length - 1]);
     expect(tooltipContent.prop('jobsCount')).toBe(jobs.length - 1);
   });
 
-  it('should prioritize the explicitly given job and jobsCount props over jobs array and filter function', () => {
+  it('should prioritize the explicitly given job and jobsCount props over jobs array and filter function', async () => {
     const job = {
       action: ScheduledActionActions.Publish,
       scheduledFor: {
@@ -131,6 +134,8 @@ describe('ScheduleTooltip', () => {
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
     wrapper.find('Tooltip').simulate('mouseEnter');
+    await flushPromises();
+    wrapper.update();
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(job);

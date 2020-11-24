@@ -1,7 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import { WidgetLoader, MarketplaceDataProvider } from '@contentful/widget-renderer';
-import { createPlainClient } from 'contentful-management';
+import { createClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 import * as Config from 'Config';
 
@@ -43,11 +43,14 @@ export async function getCustomWidgetLoader() {
   if (!loader) {
     const [proto, host] = Config.apiUrl().split('://');
 
-    const client = createPlainClient({
-      accessToken,
-      host: host.replace(/\/+$/, ''),
-      insecure: proto !== 'https',
-    });
+    const client = createClient(
+      {
+        accessToken,
+        host: host.replace(/\/+$/, ''),
+        insecure: proto !== 'https',
+      },
+      { type: 'plain' }
+    );
 
     loader = new WidgetLoader(client, getMarketplaceDataProvider(), spaceId, environmentId);
 

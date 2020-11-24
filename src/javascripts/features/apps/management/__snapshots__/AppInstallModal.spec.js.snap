@@ -28,6 +28,7 @@ Object {
         class="Modal__Modal__overlay___3gPyC Modal__Modal__overlay--centered___2kDOU Modal__Modal__overlay--after-open___sRqhJ"
       >
         <div
+          aria-modal="true"
           class="Modal__Modal__wrap___BjfRz Modal__Modal__wrap--after-open___1XDbx"
           role="dialog"
           style="top: 0px;"
