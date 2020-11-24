@@ -2,6 +2,9 @@ import { omit } from 'lodash';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { fetchAll } from './FetchAll';
 
+// TODO: rename me to 'locales' once migration is over
+const LOCALE_ENDPOINT = 'localez';
+
 /**
  * @name LocaleRepo.create
  * @description
@@ -25,7 +28,7 @@ export default function create(spaceEndpoint) {
   async function getAll() {
     const ldCtx = { spaceId: spaceEndpoint.spaceId };
     const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT, ldCtx);
-    const path = [shouldUseNewEndpoint ? 'localez' : 'locales'];
+    const path = [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales'];
 
     return fetchAll(spaceEndpoint, path, 100);
   }
@@ -39,17 +42,19 @@ export default function create(spaceEndpoint) {
    * @param {API.Locale} locale
    * @returns {Promise<API.Locale>} Promise of an updated entity
    */
-  function save(locale) {
+  async function save(locale) {
     const sys = locale.sys;
     const isNew = !sys || !sys.id;
+    const ldCtx = { spaceId: spaceEndpoint.spaceId };
+    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT_WRITE, ldCtx);
 
+    const path = [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales'].concat(isNew ? [] : [sys.id]);
     const method = isNew ? 'POST' : 'PUT';
-    const path = ['locales'].concat(isNew ? [] : [sys.id]);
     const version = isNew ? undefined : sys.version;
 
-    // Sending `defaul`, `fallback_code` or `internal_code`
+    // Sending `default`, `fallback_code` or `internal_code`
     // results in 422:
-    // - defaul locale cannot be changed
+    // - default locale cannot be changed
     // - `fallback_code` is now `fallbackCode`
     // - `internal_code` cannot be changed
     // - additionally there's no harm in not sending `sys`
@@ -66,9 +71,12 @@ export default function create(spaceEndpoint) {
    * @param {integer} version
    */
   async function remove(id, version) {
+    const ldCtx = { spaceId: spaceEndpoint.spaceId };
+    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT_WRITE, ldCtx);
+
     await spaceEndpoint({
       method: 'DELETE',
-      path: ['locales', id],
+      path: [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales', id],
       version,
     });
   }
