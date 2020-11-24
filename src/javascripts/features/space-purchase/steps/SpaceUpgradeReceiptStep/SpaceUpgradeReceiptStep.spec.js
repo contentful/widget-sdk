@@ -5,10 +5,10 @@ import userEvent from '@testing-library/user-event';
 import { go } from 'states/Navigator';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { changeSpacePlan } from 'account/pricing/PricingDataProvider';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 
-import { SpacePurchaseState } from '../context';
-import { UpgradeSpaceReceiptPage } from './UpgradeSpaceReceiptPage';
+import { SpacePurchaseState } from '../../context';
+import { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep';
 
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
@@ -27,9 +27,9 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   changeSpacePlan: jest.fn(),
 }));
 
-jest.mock('../utils/analyticsTracking', () => ({
+jest.mock('../../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
-  EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,
+  EVENTS: jest.requireActual('../../utils/analyticsTracking').EVENTS,
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -40,7 +40,7 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
-describe('UpgradeSpaceReceiptPage', () => {
+describe('SpaceUpgradeReceiptStep', () => {
   it('should call changeSpacePlan and fire an analytic event', async () => {
     build();
 
@@ -133,7 +133,7 @@ function build(customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <UpgradeSpaceReceiptPage />
+      <SpaceUpgradeReceiptStep />
     </SpacePurchaseState.Provider>
   );
 }

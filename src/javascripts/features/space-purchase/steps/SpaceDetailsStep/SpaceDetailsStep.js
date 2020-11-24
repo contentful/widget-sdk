@@ -43,7 +43,7 @@ const styles = {
   }),
 };
 
-export const NewSpaceDetailsPage = ({
+export const SpaceDetailsStep = ({
   navigateToPreviousStep,
   spaceName,
   onChangeSpaceName,
@@ -115,7 +115,7 @@ export const NewSpaceDetailsPage = ({
   );
 };
 
-NewSpaceDetailsPage.propTypes = {
+SpaceDetailsStep.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   onChangeSpaceName: PropTypes.func.isRequired,
   spaceName: PropTypes.string.isRequired,

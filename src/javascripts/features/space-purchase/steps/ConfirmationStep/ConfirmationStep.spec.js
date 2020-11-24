@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
-import { EVENTS } from '../utils/analyticsTracking';
+import { EVENTS } from '../../utils/analyticsTracking';
 
-import { SpacePurchaseState } from '../context';
-import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
+import { SpacePurchaseState } from '../../context';
+import { ConfirmationStep } from './ConfirmationStep';
 
 const mockOrganization = Fake.Organization();
 const mockSelectedPlan = Fake.Plan();
@@ -31,7 +31,7 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
-describe('NewSpaceConfirmationPage', () => {
+describe('ConfirmationStep', () => {
   it('should not show the edit link when showEditLink is false', () => {
     build();
 
@@ -107,7 +107,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <NewSpaceConfirmationPage {...props} />
+      <ConfirmationStep {...props} />
     </SpacePurchaseState.Provider>
   );
 }

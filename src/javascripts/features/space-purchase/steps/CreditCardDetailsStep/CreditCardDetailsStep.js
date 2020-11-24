@@ -8,7 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as logger from 'services/logger';
 import { ZuoraCreditCardIframe } from 'features/organization-billing';
-import { PaymentSummary } from './PaymentSummary';
+import { PaymentSummary } from '../../components/PaymentSummary';
 
 const styles = {
   grid: css({
@@ -29,7 +29,7 @@ const styles = {
   }),
 };
 
-export const NewSpaceCardDetailsPage = ({
+export const CreditCardDetailsStep = ({
   organizationId,
   billingCountryCode,
   navigateToPreviousStep,
@@ -84,7 +84,7 @@ export const NewSpaceCardDetailsPage = ({
   );
 };
 
-NewSpaceCardDetailsPage.propTypes = {
+CreditCardDetailsStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
   billingCountryCode: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,

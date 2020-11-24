@@ -74,9 +74,9 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
-// Mock NewSpacePage in order to not have to mock the imports/on render effects it has
-jest.mock('../components/NewSpacePage', () => ({
-  NewSpacePage: jest.fn().mockReturnValue(<div data-test-id="new-space-page" />),
+// Mock SpacePurchaseContainer in order to not have to mock the imports/on render effects it has
+jest.mock('../components/SpacePurchaseContainer', () => ({
+  SpacePurchaseContainer: jest.fn().mockReturnValue(<div data-test-id="new-space-page" />),
 }));
 
 describe('SpacePurchaseRoute', () => {
