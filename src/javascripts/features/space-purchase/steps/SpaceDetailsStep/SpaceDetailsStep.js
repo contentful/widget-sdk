@@ -44,12 +44,12 @@ const styles = {
 };
 
 export const SpaceDetailsStep = ({
-  navigateToPreviousStep,
+  onBack,
   spaceName,
   onChangeSpaceName,
   templatesList,
   selectedTemplate,
-  onChangeSelectedTemplate,
+  onSelectTemplate,
   onSubmit,
   spaceIsFree,
 }) => {
@@ -92,13 +92,13 @@ export const SpaceDetailsStep = ({
 
             <TemplateSelector
               isNewSpacePurchaseFlow={true}
-              onSelect={onChangeSelectedTemplate}
+              onSelect={onSelectTemplate}
               templates={templatesList}
               selectedTemplate={selectedTemplate}
             />
 
             <div className={styles.buttonsContainer}>
-              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
+              <Button onClick={onBack} testId="navigate-back" buttonType="muted">
                 Back
               </Button>
               <Button
@@ -116,12 +116,12 @@ export const SpaceDetailsStep = ({
 };
 
 SpaceDetailsStep.propTypes = {
-  navigateToPreviousStep: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
   onChangeSpaceName: PropTypes.func.isRequired,
   spaceName: PropTypes.string.isRequired,
   templatesList: PropTypes.array.isRequired,
   selectedTemplate: PropTypes.object,
-  onChangeSelectedTemplate: PropTypes.func.isRequired,
+  onSelectTemplate: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   spaceIsFree: PropTypes.bool,
 };

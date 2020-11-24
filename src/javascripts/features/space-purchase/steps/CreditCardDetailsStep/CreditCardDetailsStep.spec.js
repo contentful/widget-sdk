@@ -30,38 +30,38 @@ jest.useFakeTimers();
 describe('steps/CreditCardDetailsStep', () => {
   afterEach(cleanupNotifications);
 
-  it('should call navigateToPreviousStep if the Zuora iframe cancel button is clicked', async () => {
-    const navigateToPreviousStep = jest.fn();
+  it('should call onBack if the Zuora iframe cancel button is clicked', async () => {
+    const onBack = jest.fn();
 
-    await build({ navigateToPreviousStep });
+    await build({ onBack });
 
     fireEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
 
-    expect(navigateToPreviousStep).toBeCalled();
+    expect(onBack).toBeCalled();
   });
 
-  it('should call onSuccess if the Zuora success response callback is called', async () => {
-    const onSuccess = jest.fn();
+  it('should call onSubmit if the Zuora success response callback is called', async () => {
+    const onSubmit = jest.fn();
 
-    const { successCb } = await build({ onSuccess });
+    const { successCb } = await build({ onSubmit });
 
-    expect(onSuccess).not.toBeCalled();
+    expect(onSubmit).not.toBeCalled();
 
     successCb();
 
-    expect(onSuccess).toBeCalled();
+    expect(onSubmit).toBeCalled();
   });
 
-  it('should notify the user something went wrong if onSuccess fails', async () => {
-    const onSuccess = jest.fn().mockRejectedValueOnce();
+  it('should notify the user something went wrong if onSubmit fails', async () => {
+    const onSubmit = jest.fn().mockRejectedValueOnce();
 
-    const { successCb } = await build({ onSuccess });
+    const { successCb } = await build({ onSubmit });
 
-    expect(onSuccess).not.toBeCalled();
+    expect(onSubmit).not.toBeCalled();
 
     successCb();
 
-    expect(onSuccess).toBeCalled();
+    expect(onSubmit).toBeCalled();
 
     await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
@@ -112,8 +112,8 @@ async function build(customProps, customState) {
     {
       organizationId: mockOrganization.sys.id,
       billingCountryCode: 'CX',
-      navigateToPreviousStep: () => {},
-      onSuccess: () => {},
+      onBack: () => {},
+      onSubmit: () => {},
     },
     customProps
   );

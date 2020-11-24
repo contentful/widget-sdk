@@ -129,7 +129,7 @@ describe('SpacePurchaseContainer', () => {
     mockOrganization.isBillable = false;
   });
 
-  it('should render SPACE_SELECTION page as a default', async () => {
+  it('should render SPACE_PLAN_SELECTION page as a default', async () => {
     await build();
 
     expect(screen.getByTestId('space-selection-section')).toBeVisible();
@@ -264,7 +264,7 @@ describe('SpacePurchaseContainer', () => {
         selectedPlan: mockSpaceRatePlans[1],
       });
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
-        fromStep: 'SPACE_SELECTION',
+        fromStep: 'SPACE_PLAN_SELECTION',
         toStep: 'SPACE_DETAILS',
       });
 
@@ -298,7 +298,7 @@ describe('SpacePurchaseContainer', () => {
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED);
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'BILLING_DETAILS',
-        toStep: 'CARD_DETAILS',
+        toStep: 'CREDIT_CARD_DETAILS',
       });
 
       // ------ Card Details page ------
@@ -314,7 +314,7 @@ describe('SpacePurchaseContainer', () => {
       });
 
       expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
-        fromStep: 'CARD_DETAILS',
+        fromStep: 'CREDIT_CARD_DETAILS',
         toStep: 'CONFIRMATION',
       });
 
@@ -348,12 +348,12 @@ describe('SpacePurchaseContainer', () => {
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
       expect(trackWithSession).toBeCalledWith(EVENTS.NAVIGATE, {
-        fromStep: 'SPACE_SELECTION',
+        fromStep: 'SPACE_PLAN_SELECTION',
         toStep: 'SPACE_DETAILS',
       });
     });
 
-    it('should save billing information then fetch the payment method onSuccess of the Zoura iframe', async () => {
+    it('should save billing information then fetch the payment method onSuccess of the Zuora iframe', async () => {
       getDefaultPaymentMethod.mockResolvedValueOnce({
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
@@ -475,7 +475,7 @@ async function build(options) {
     organization: mockOrganization,
     sessionMetadata: mockSessionMetadata,
     templatesList: [],
-    canCreateCommunityPlan: true,
+    canCreateFreeSpace: true,
     spaceRatePlans: mockSpaceRatePlans,
     pageContent: {
       pageName: 'Space Purchase',

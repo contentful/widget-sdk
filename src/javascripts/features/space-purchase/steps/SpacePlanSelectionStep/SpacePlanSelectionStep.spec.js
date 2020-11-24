@@ -48,27 +48,27 @@ describe('SpacePlanSelectionStep', () => {
   });
 
   it('should show the feature overview link and log when it is clicked', () => {
-    const trackWithSession = jest.fn();
-    build({ trackWithSession });
+    const track = jest.fn();
+    build({ track });
 
     const featureOverviewLink = screen.getByTestId('space-selection.feature-overview-link');
     expect(featureOverviewLink).toBeVisible();
 
     userEvent.click(featureOverviewLink);
 
-    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
+    expect(track).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
       href: FEATURE_OVERVIEW_HREF,
       intent: 'feature_overview',
     });
   });
 
   it('should track the click and open the sales form in a new tab when the enterprise select button is clicked', () => {
-    const trackWithSession = jest.fn();
-    build({ trackWithSession });
+    const track = jest.fn();
+    build({ track });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[2]);
 
-    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
+    expect(track).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
       href:
         'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us',
       intent: 'upgrade_to_enterprise',
@@ -79,7 +79,7 @@ describe('SpacePlanSelectionStep', () => {
     });
   });
 
-  it('should call selectPlan when the medium or large space is selected', () => {
+  it('should call onSelectPlan when the medium or large space is selected', () => {
     build();
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -96,7 +96,7 @@ describe('SpacePlanSelectionStep', () => {
   });
 
   it('should disable the community plan button if the user cannot create a free space', () => {
-    build({ canCreateCommunityPlan: false });
+    build({ canCreateFreeSpace: false });
 
     const communitySelectButton = screen.getByTestId('space-selection-community-select-button');
 
@@ -108,9 +108,9 @@ function build(customProps, customState) {
   const props = {
     loading: false,
     organizationId: mockOrganization.sys.id,
-    selectPlan: mockSelectPlan,
-    canCreateCommunityPlan: true,
-    trackWithSession: () => {},
+    onSelectPlan: mockSelectPlan,
+    canCreateFreeSpace: true,
+    track: () => {},
     canCreatePaidSpace: true,
     ...customProps,
   };
