@@ -9,7 +9,7 @@ function createEndpoint() {
   const spaceContext = getModule('spaceContext');
   return EndpointFactory.createSpaceEndpoint(
     spaceContext.space.data.sys.id,
-    spaceContext.space.environment.sys.id
+    spaceContext.getAliasId() || spaceContext.getEnvironmentId()
   );
 }
 
