@@ -4,6 +4,9 @@ import * as Config from 'Config';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getSpaceEntitlementSet } from 'app/SpaceSettings/Usage/services/EntitlementService';
+
 // Gatekeeper Product Catalog features
 export const FEATURES = {
   ASSEMBLY_TYPES: 'assembly_types',
@@ -107,6 +110,15 @@ export const getOrgFeature = async (orgId, featureId, defaultValue) => {
 };
 
 export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
+  // Note: this is a call to test new entitlements service under production load
+  // it will be removed shortly and we do not care about the response
+  // in the future this service will be used to check space features
+  getVariation(FLAGS.ENTITLEMENTS_API).then((enabled) => {
+    if (enabled) {
+      getSpaceEntitlementSet(spaceId).catch(() => {});
+    }
+  });
+
   if (!spaceId || !featureId) {
     return isUndefined(defaultValue)
       ? Promise.reject('No spaceId or featureId provided when fetching a space feature')

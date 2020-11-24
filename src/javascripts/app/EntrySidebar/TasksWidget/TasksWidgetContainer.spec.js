@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import TasksWidgetContainer from './TasksWidgetContainer';
 
 import { trackIsTasksAlphaEligible } from './analytics';
@@ -11,6 +11,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
     TASKS: 'test-tasks',
   },
 }));
+
 jest.mock('./analytics');
 
 describe('<TasksWidgetContainer />', () => {
@@ -38,7 +39,7 @@ describe('<TasksWidgetContainer />', () => {
 
     it('does not track to intercom', async () => {
       build();
-      await wait();
+      await waitFor(() => expect(ProductCatalog.getSpaceFeature).toHaveBeenCalled());
       expect(trackIsTasksAlphaEligible).not.toHaveBeenCalled();
     });
 
@@ -55,7 +56,7 @@ describe('<TasksWidgetContainer />', () => {
 
     it('tracks to intercom', async () => {
       build();
-      await wait();
+      await waitFor(() => expect(ProductCatalog.getSpaceFeature).toHaveBeenCalled());
       expect(trackIsTasksAlphaEligible).toHaveBeenCalled();
     });
   });
