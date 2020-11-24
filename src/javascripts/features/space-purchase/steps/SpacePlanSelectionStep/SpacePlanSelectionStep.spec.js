@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { SpaceSelection, FEATURE_OVERVIEW_HREF } from './SpaceSelection';
+import { SpacePlanSelectionStep, FEATURE_OVERVIEW_HREF } from './SpacePlanSelectionStep';
 import { SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { SpacePurchaseState } from '../../context';
 
@@ -12,7 +12,7 @@ const mockOrganization = FakeFactory.Organization();
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 const mockSelectPlan = jest.fn();
 
-describe('steps/SpaceSelection', () => {
+describe('SpacePlanSelectionStep', () => {
   it('should show a heading', () => {
     build();
 
@@ -128,7 +128,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <SpaceSelection {...props} />
+      <SpacePlanSelectionStep {...props} />
     </SpacePurchaseState.Provider>
   );
 }

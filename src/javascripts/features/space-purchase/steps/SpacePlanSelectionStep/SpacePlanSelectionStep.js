@@ -72,7 +72,7 @@ const styles = {
 // Exported for testing only
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
-export const SpaceSelection = ({
+export const SpacePlanSelectionStep = ({
   organizationId,
   selectPlan,
   trackWithSession,
@@ -213,7 +213,7 @@ export const SpaceSelection = ({
   );
 };
 
-SpaceSelection.propTypes = {
+SpacePlanSelectionStep.propTypes = {
   organizationId: PropTypes.string,
   selectPlan: PropTypes.func,
   trackWithSession: PropTypes.func.isRequired,

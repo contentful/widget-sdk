@@ -6,7 +6,7 @@ import { go } from 'states/Navigator';
 import { EVENTS } from '../../utils/analyticsTracking';
 
 import { SpacePurchaseState } from '../../context';
-import { Confirmation } from './Confirmation';
+import { ConfirmationStep } from './ConfirmationStep';
 
 const mockOrganization = Fake.Organization();
 const mockSelectedPlan = Fake.Plan();
@@ -31,7 +31,7 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
-describe('steps/Confirmation', () => {
+describe('ConfirmationStep', () => {
   it('should not show the edit link when showEditLink is false', () => {
     build();
 
@@ -107,7 +107,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <Confirmation {...props} />
+      <ConfirmationStep {...props} />
     </SpacePurchaseState.Provider>
   );
 }

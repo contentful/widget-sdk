@@ -29,7 +29,7 @@ const styles = {
   }),
 };
 
-export const CreditCardDetails = ({
+export const CreditCardDetailsStep = ({
   organizationId,
   billingCountryCode,
   navigateToPreviousStep,
@@ -84,7 +84,7 @@ export const CreditCardDetails = ({
   );
 };
 
-CreditCardDetails.propTypes = {
+CreditCardDetailsStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
   billingCountryCode: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,

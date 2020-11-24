@@ -43,7 +43,7 @@ const styles = {
   }),
 };
 
-export const SpaceDetails = ({
+export const SpaceDetailsStep = ({
   navigateToPreviousStep,
   spaceName,
   onChangeSpaceName,
@@ -115,7 +115,7 @@ export const SpaceDetails = ({
   );
 };
 
-SpaceDetails.propTypes = {
+SpaceDetailsStep.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   onChangeSpaceName: PropTypes.func.isRequired,
   spaceName: PropTypes.string.isRequired,

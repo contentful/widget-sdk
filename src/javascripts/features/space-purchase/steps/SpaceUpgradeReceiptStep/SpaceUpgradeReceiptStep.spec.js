@@ -8,7 +8,7 @@ import { changeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 
 import { SpacePurchaseState } from '../../context';
-import { UpgradeReceipt } from './UpgradeReceipt';
+import { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep';
 
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
@@ -40,7 +40,7 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
-describe('steps/UpgradeReceipt', () => {
+describe('SpaceUpgradeReceiptStep', () => {
   it('should call changeSpacePlan and fire an analytic event', async () => {
     build();
 
@@ -133,7 +133,7 @@ function build(customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <UpgradeReceipt />
+      <SpaceUpgradeReceiptStep />
     </SpacePurchaseState.Provider>
   );
 }

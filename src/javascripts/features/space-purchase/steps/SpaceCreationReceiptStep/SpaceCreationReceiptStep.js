@@ -29,7 +29,7 @@ const styles = {
   }),
 };
 
-export const CreationReceipt = ({ selectedTemplate, spaceName }) => {
+export const SpaceCreationReceiptStep = ({ selectedTemplate, spaceName }) => {
   const {
     state: { selectedPlan },
   } = useContext(SpacePurchaseState);
@@ -86,7 +86,7 @@ export const CreationReceipt = ({ selectedTemplate, spaceName }) => {
   );
 };
 
-CreationReceipt.propTypes = {
+SpaceCreationReceiptStep.propTypes = {
   spaceName: PropTypes.string.isRequired,
   selectedTemplate: PropTypes.object,
 };

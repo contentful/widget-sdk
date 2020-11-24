@@ -22,8 +22,8 @@ import {
 } from 'features/organization-billing';
 
 import { CreditCardInformation } from '../../components/CreditCardInformation';
-import { BillingInformation } from '../../components/BillingInformation';
 import { PaymentSummary } from '../../components/PaymentSummary';
+import { BillingInformation } from './BillingInformation';
 
 const styles = {
   grid: css({
@@ -53,7 +53,7 @@ const redirectToEditPayment = (orgId) => {
   });
 };
 
-export const Confirmation = ({
+export const ConfirmationStep = ({
   organizationId,
   navigateToPreviousStep,
   trackWithSession,
@@ -141,7 +141,7 @@ export const Confirmation = ({
   );
 };
 
-Confirmation.propTypes = {
+ConfirmationStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,

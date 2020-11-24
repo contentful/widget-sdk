@@ -7,7 +7,7 @@ import * as logger from 'services/logger';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 import { SpacePurchaseState } from '../../context';
-import { CreditCardDetails } from './CreditCardDetails';
+import { CreditCardDetailsStep } from './CreditCardDetailsStep';
 
 const mockOrganization = Fake.Organization();
 
@@ -27,7 +27,7 @@ jest.mock('utils/LazyLoader', () => {
 
 jest.useFakeTimers();
 
-describe('steps/CreditCardDetails', () => {
+describe('steps/CreditCardDetailsStep', () => {
   afterEach(cleanupNotifications);
 
   it('should call navigateToPreviousStep if the Zuora iframe cancel button is clicked', async () => {
@@ -125,7 +125,7 @@ async function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <CreditCardDetails {...props} />
+      <CreditCardDetailsStep {...props} />
     </SpacePurchaseState.Provider>
   );
 

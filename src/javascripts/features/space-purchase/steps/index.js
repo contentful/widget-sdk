@@ -1,7 +1,7 @@
-export { BillingDetails } from './BillingDetails/BillingDetails';
-export { Confirmation } from './Confirmation/Confirmation';
-export { CreationReceipt } from './CreationReceipt/CreationReceipt';
-export { CreditCardDetails } from './CreditCardDetails/CreditCardDetails';
-export { SpaceDetails } from './SpaceDetails/SpaceDetails';
-export { SpaceSelection } from './SpaceSelection/SpaceSelection';
-export { UpgradeReceipt } from './UpgradeReceipt/UpgradeReceipt';
+export { BillingDetailsStep } from './BillingDetailsStep/BillingDetailsStep';
+export { ConfirmationStep } from './ConfirmationStep/ConfirmationStep';
+export { SpaceCreationReceiptStep } from './SpaceCreationReceiptStep/SpaceCreationReceiptStep';
+export { CreditCardDetailsStep } from './CreditCardDetailsStep/CreditCardDetailsStep';
+export { SpaceDetailsStep } from './SpaceDetailsStep/SpaceDetailsStep';
+export { SpacePlanSelectionStep } from './SpacePlanSelectionStep/SpacePlanSelectionStep';
+export { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep/SpaceUpgradeReceiptStep';

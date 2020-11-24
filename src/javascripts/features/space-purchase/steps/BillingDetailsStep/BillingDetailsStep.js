@@ -24,7 +24,7 @@ const styles = {
   }),
 };
 
-export const BillingDetails = ({
+export const BillingDetailsStep = ({
   navigateToPreviousStep,
   savedBillingDetails,
   onSubmitBillingDetails,
@@ -65,7 +65,7 @@ export const BillingDetails = ({
   );
 };
 
-BillingDetails.propTypes = {
+BillingDetailsStep.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   savedBillingDetails: PropTypes.object,
   onSubmitBillingDetails: PropTypes.func.isRequired,

@@ -23,7 +23,7 @@ const styles = {
   }),
 };
 
-export const UpgradeReceipt = () => {
+export const SpaceUpgradeReceiptStep = () => {
   const {
     state: { currentSpace },
   } = useContext(SpacePurchaseState);

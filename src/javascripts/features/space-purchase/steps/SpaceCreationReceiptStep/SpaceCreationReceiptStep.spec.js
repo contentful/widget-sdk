@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { go } from 'states/Navigator';
-import { CreationReceipt } from './CreationReceipt';
+import { SpaceCreationReceiptStep } from './SpaceCreationReceiptStep';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
@@ -37,7 +37,7 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
-describe('CreationReceipt', () => {
+describe('SpaceCreationReceiptStep', () => {
   beforeEach(() => {
     makeNewSpace.mockResolvedValue(mockCreatedSpace);
     jest.spyOn(window, 'addEventListener');
@@ -230,7 +230,7 @@ function build(customProps, customState) {
 
   render(
     <SpacePurchaseState.Provider value={contextValue}>
-      <CreationReceipt {...props} />
+      <SpaceCreationReceiptStep {...props} />
     </SpacePurchaseState.Provider>
   );
 }
