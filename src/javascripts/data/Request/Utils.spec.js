@@ -20,9 +20,17 @@ describe('data/Request/Utils', () => {
         'http://foo/spaces/space-id/content_types',
         'http://api.flinkly.com/spaces/space-id/environments/id/content_types',
       ],
-      '/content_types/:id': ['http://foo/spaces/space-id/content_types/some-id'],
+      '/content_types/:id': [
+        'http://foo/spaces/space-id/content_types/some-id',
+        'http://foo/spaces/space-id/content_types/some-id?foo=bar',
+      ],
+      '/content_types/:id/editor_interface': [
+        'http://foo/spaces/space-id/content_types/some-id/editor_interface',
+        'http://foo/spaces/space-id/environments/foo/content_types/some-id/editor_interface',
+      ],
       '/entries': [
         'https://api.contentful.com/spaces/space-id/entries',
+        'https://api.contentful.com/spaces/space-id/entries?sys.id[in]=id1,id2&x=y',
         'https://api.flinkly.com/spaces/space-id/environments/id/entries',
       ],
       '/entries/:id': [
@@ -49,6 +57,7 @@ describe('data/Request/Utils', () => {
       '/:entity/:id/snapshots/:id': [
         'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id',
         'https://api.flinkly.com/spaces/i-_.d/assets/some-id/snapshots/i-_.d/THIS-WILL-BE-IGNORED',
+        'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id?foo=bar',
       ],
     };
 

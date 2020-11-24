@@ -48,7 +48,12 @@ export function getCurrentState() {
   return currentState;
 }
 
+// E.g. "/entry/:id/tasks/:id" will be tracked as "/:entity/:id/tasks/:id"
 const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots'];
+// E.g. "/content_types/:id/editor_interface"
+const SECOND_LEVEL_PATHS = {
+  '/content_types': ['/editor_interface'],
+};
 
 function makeStableName(relevantSegments) {
   const chunks = chunk(relevantSegments, 2);
@@ -59,7 +64,13 @@ function makeStableName(relevantSegments) {
   if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
     return `/:entity/:id${getPath(1)}${getId(1)}`;
   } else {
-    return `${getPath(0)}${getId(0)}`;
+    const path = getPath(0);
+    const id = getId(0);
+
+    if (chunks[1] && SECOND_LEVEL_PATHS[path] && SECOND_LEVEL_PATHS[path].includes(getPath(1))) {
+      return `${path}${id}${getPath(1)}${getId(1)}`;
+    }
+    return `${path}${id}`;
   }
 }
 
