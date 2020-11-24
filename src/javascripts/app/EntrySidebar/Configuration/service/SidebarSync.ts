@@ -107,6 +107,8 @@ export function convertConfigurationToInternalState(
           // Settings have to be copied to the widget for
           // the updating of instance parameters to work
           acc.push({ ...found, ...pick(configItem, ['settings']) });
+        } else {
+          acc.push({...configItem, problem: true})
         }
         return acc;
       }
