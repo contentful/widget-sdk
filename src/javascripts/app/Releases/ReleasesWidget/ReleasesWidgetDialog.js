@@ -68,10 +68,12 @@ export default class ReleasesWidgetDialog extends Component {
     onCancel: PropTypes.func.isRequired,
     releaseContentTitle: PropTypes.string,
     handleReleaseRefresh: PropTypes.func,
+    excludeEntityReleases: PropTypes.bool,
   };
 
   static defaultProps = {
     onCancel() {},
+    excludeEntityReleases: false,
   };
 
   state = {
@@ -81,18 +83,19 @@ export default class ReleasesWidgetDialog extends Component {
   };
 
   async componentDidMount() {
-    const { rootEntity } = this.props;
+    const { rootEntity, excludeEntityReleases } = this.props;
     this.setState({ isFetchingReleases: true });
     const fetchedReleases = await getReleases();
-    const releases = rootEntity
-      ? fetchedReleases.items.filter(
-          (release) =>
-            !release.entities.items.find(
-              (entity) =>
-                entity.sys.id === rootEntity.sys.id && entity.sys.linkType === rootEntity.sys.type
-            )
-        )
-      : fetchedReleases.items;
+    const releases =
+      rootEntity && excludeEntityReleases
+        ? fetchedReleases.items.filter(
+            (release) =>
+              !release.entities.items.find(
+                (entity) =>
+                  entity.sys.id === rootEntity.sys.id && entity.sys.linkType === rootEntity.sys.type
+              )
+          )
+        : fetchedReleases.items;
     this.setState({ fetchedReleases: releases, isFetchingReleases: false });
   }
 

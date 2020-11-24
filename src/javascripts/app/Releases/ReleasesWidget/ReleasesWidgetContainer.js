@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useState } from 'react';
+import React, { Component, useContext, useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { TextLink, Icon, Notification } from '@contentful/forma-36-react-components';
@@ -59,6 +59,8 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       });
   };
 
+  const selectedEntities = useMemo(() => [entity], [entity]);
+
   return (
     <EntrySidebarWidget title="Releases" testId="sidebar-releases-section">
       {state.releasesIncludingEntity.length ? (
@@ -74,8 +76,9 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       </div>
       {isRelaseDialogShown && (
         <ReleasesWidgetDialog
-          selectedEntities={[entity]}
+          selectedEntities={selectedEntities}
           releaseContentTitle={entityTitle}
+          excludeEntityReleases={true}
           rootEntity={entity}
           handleReleaseRefresh={handleReleaseRefresh}
           onCancel={() => setIsRelaseDialogShown(false)}
