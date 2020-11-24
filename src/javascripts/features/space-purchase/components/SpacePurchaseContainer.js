@@ -25,7 +25,7 @@ import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
-import { Breadcrumb } from './Breadcrumb';
+import { Breadcrumbs } from 'features/breadcrumbs';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
 import {
   BillingDetailsStep,
@@ -258,7 +258,7 @@ export const SpacePurchaseContainer = ({
       case SPACE_PURCHASE_STEPS.SPACE_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS} />
+            <Breadcrumbs items={NEW_SPACE_STEPS} />
             <SpaceDetailsStep
               navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION)}
               spaceName={spaceName}
@@ -274,7 +274,7 @@ export const SpacePurchaseContainer = ({
       case SPACE_PURCHASE_STEPS.BILLING_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <BillingDetailsStep
               navigateToPreviousStep={() =>
                 goToStep(
@@ -291,7 +291,7 @@ export const SpacePurchaseContainer = ({
       case SPACE_PURCHASE_STEPS.CARD_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <CreditCardDetailsStep
               organizationId={organizationId}
               navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS)}
@@ -303,7 +303,7 @@ export const SpacePurchaseContainer = ({
       case SPACE_PURCHASE_STEPS.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <ConfirmationStep
               organizationId={organizationId}
               trackWithSession={trackWithSession}
@@ -320,14 +320,14 @@ export const SpacePurchaseContainer = ({
       case SPACE_PURCHASE_STEPS.RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
             <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
           </Grid>
         );
       case SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
             <SpaceUpgradeReceiptStep />
           </Grid>
         );
@@ -335,7 +335,7 @@ export const SpacePurchaseContainer = ({
         // Return step 1: SPACE_SELECTION
         return (
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS} />
+            <Breadcrumbs items={NEW_SPACE_STEPS} />
             <SpacePlanSelectionStep
               organizationId={organizationId}
               selectPlan={selectPlan}
