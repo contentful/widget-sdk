@@ -1,12 +1,27 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import { useAsync } from 'core/hooks';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
 import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
-import { SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-react-components';
+import { SkeletonBodyText, SkeletonContainer, Note } from '@contentful/forma-36-react-components';
 import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
 import { FilteredTagsProvider } from 'features/content-tags';
+import { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getSpaceFeature, FEATURES, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
+
+const styles = {
+  note: css({
+    marginBottom: tokens.spacingXl,
+  }),
+  nodeHeading: css({
+    fontWeight: tokens.fontWeightDemiBold,
+  }),
+};
 
 function useLocalTags(tags, setTags) {
   const { data } = useReadTags();
@@ -43,9 +58,21 @@ function useLocalTags(tags, setTags) {
   return { localTags, removeTag, addTag };
 }
 
-const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty }) => {
+const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) => {
   const { localTags, addTag, removeTag } = useLocalTags(tags, setTags);
   const isInitialLoad = useIsInitialLoadingOfTags();
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+
+  const hasCustomRolesFeatureCheck = useCallback(async () => {
+    return await getSpaceFeature(
+      spaceId,
+      FEATURES.CUSTOM_ROLES_FEATURE,
+      DEFAULT_FEATURES_STATUS.CUSTOM_ROLES_FEATURE
+    );
+  }, [spaceId]);
+
+  const { data: hasCustomRolesFeature } = useAsync(hasCustomRolesFeatureCheck);
 
   if (isInitialLoad) {
     return (
@@ -61,6 +88,16 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty }) => {
 
   return (
     <React.Fragment>
+      {hasCustomRolesFeature && contentLevelPermissionsEnabled && (
+        <Note className={styles.note}>
+          <span className={styles.nodeHeading}>Carefully add and remove tags</span>
+          <div>
+            You could unintentionally give or revoke access to this {entityType} for anyone in this
+            space, including yourself.
+          </div>
+        </Note>
+      )}
+
       <TagSelectionHeader totalSelected={localTags.length} />
       <FilteredTagsProvider>
         <TagsSelection
@@ -81,6 +118,7 @@ EditorTagsSkeleton.propTypes = {
   showEmpty: PropTypes.bool,
   tags: PropTypes.array,
   setTags: PropTypes.func,
+  entityType: PropTypes.string,
 };
 
 export { EditorTagsSkeleton };

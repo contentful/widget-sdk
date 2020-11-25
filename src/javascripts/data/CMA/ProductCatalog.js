@@ -18,6 +18,12 @@ export const FEATURES = {
   PC_SPACE_RELEASES: 'releases',
   PC_SPACE_REFERENCE_TREE: 'reference_tree',
   PC_ORG_PLANNER_APP: 'planner_app',
+  CUSTOM_ROLES_FEATURE: 'custom_roles',
+};
+
+// Gatekeeper Product Catalog features default values
+export const DEFAULT_FEATURES_STATUS = {
+  CUSTOM_ROLES_FEATURE: false,
 };
 
 // Features used commonly: we fetch them (using the same request)

@@ -10,6 +10,7 @@ import { useBulkSaveTags } from '../hooks/useBulkSaveTags';
 import { useComputeTags } from '../hooks/useComputeTags';
 import PropTypes from 'prop-types';
 import { usePrevious } from 'core/hooks';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const styles = {
   tagsContent: css({
@@ -138,27 +139,29 @@ const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities })
 
   return (
     <>
-      {progressComponent}
-      <SlideIn isShown={isShown} onClose={close}>
-        <Workbench className={styles.workbench}>
-          <Workbench.Header title={'Add or remove tags'} />
-          <div className={styles.tagsContent}>
-            <AddOrRemoveTags selectedEntities={selectedEntities} />
+      <SpaceEnvContextProvider>
+        {progressComponent}
+        <SlideIn isShown={isShown} onClose={close}>
+          <Workbench className={styles.workbench}>
+            <Workbench.Header title={'Add or remove tags'} />
+            <div className={styles.tagsContent}>
+              <AddOrRemoveTags selectedEntities={selectedEntities} />
+            </div>
+          </Workbench>
+          <div className={styles.footer}>
+            <Button
+              buttonType="positive"
+              disabled={!hasChanges}
+              className={styles.button}
+              onClick={onSave}>
+              Save
+            </Button>
+            <Button buttonType={'naked'} onClick={close}>
+              Cancel
+            </Button>
           </div>
-        </Workbench>
-        <div className={styles.footer}>
-          <Button
-            buttonType="positive"
-            disabled={!hasChanges}
-            className={styles.button}
-            onClick={onSave}>
-            Save
-          </Button>
-          <Button buttonType={'naked'} onClick={close}>
-            Cancel
-          </Button>
-        </div>
-      </SlideIn>
+        </SlideIn>
+      </SpaceEnvContextProvider>
     </>
   );
 };

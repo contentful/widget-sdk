@@ -154,7 +154,7 @@ const AssetEditorWorkbench = ({
               className={
                 'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
               }>
-              {tagsEnabled && <ContentTagsTab doc={otDoc} />}
+              {tagsEnabled && <ContentTagsTab doc={otDoc} entityType="asset" />}
             </div>
           </TabPanel>
         </Workbench.Content>
