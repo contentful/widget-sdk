@@ -21,7 +21,6 @@ import tokens from '@contentful/forma-36-tokens';
 import { Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
@@ -73,7 +72,6 @@ const styles = {
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
 export const SpacePlanSelectionStep = ({
-  organizationId,
   selectPlan,
   trackWithSession,
   canCreateCommunityPlan,
@@ -84,7 +82,7 @@ export const SpacePlanSelectionStep = ({
   currentSpaceIsLegacy,
 }) => {
   const {
-    state: { currentSpace, currentSpaceRatePlan },
+    state: { organization, currentSpace, currentSpaceRatePlan },
   } = useContext(SpacePurchaseState);
 
   const getSelectHandler = (planType) => {
@@ -93,11 +91,6 @@ export const SpacePlanSelectionStep = ({
         trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
           href: SPACE_PURCHASE_CONTACT_SALES_HREF,
           intent: 'upgrade_to_enterprise',
-        });
-
-        // Do we want to track this as a CTA upgrade to enterprise click as well?
-        trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId,
         });
       };
     }
@@ -157,6 +150,7 @@ export const SpacePlanSelectionStep = ({
               plan={plan}
               content={spaceContent}
               handleSelect={getSelectHandler(spaceContent.type)}
+              organizationId={organization?.sys.id}
             />
           );
         })}
@@ -214,7 +208,6 @@ export const SpacePlanSelectionStep = ({
 };
 
 SpacePlanSelectionStep.propTypes = {
-  organizationId: PropTypes.string,
   selectPlan: PropTypes.func,
   trackWithSession: PropTypes.func.isRequired,
   canCreateCommunityPlan: PropTypes.bool,

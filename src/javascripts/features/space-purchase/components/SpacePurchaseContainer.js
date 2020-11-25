@@ -337,7 +337,6 @@ export const SpacePurchaseContainer = ({
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS} />
             <SpacePlanSelectionStep
-              organizationId={organizationId}
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
               canCreatePaidSpace={canCreatePaidSpace}

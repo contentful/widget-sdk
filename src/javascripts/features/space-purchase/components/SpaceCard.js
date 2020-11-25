@@ -98,6 +98,7 @@ export const SpaceCard = ({
   disabled = false,
   loading = true,
   selected = false,
+  organizationId,
 }) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
@@ -132,6 +133,7 @@ export const SpaceCard = ({
             </Paragraph>
             {isEnterpriseCard && (
               <EnterpriseTalkToUs
+                organizationId={organizationId}
                 handleSelect={handleSelect}
                 disabled={disabled}
                 testId="select-space-cta"
@@ -184,6 +186,7 @@ SpaceCard.propTypes = {
   plan: PropTypes.object,
   loading: PropTypes.bool,
   selected: PropTypes.bool,
+  organizationId: PropTypes.string.isRequired,
 };
 
 function getSpaceColorCSS(backgroundColor) {
