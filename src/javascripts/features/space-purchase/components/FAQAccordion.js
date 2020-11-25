@@ -23,8 +23,8 @@ const styles = {
   }),
 };
 
-export const NewSpaceFAQ = ({ faqEntries, trackWithSession }) => {
-  if (!faqEntries) {
+export const FAQAccordion = ({ entries, track }) => {
+  if (!entries) {
     return <FAQLoadingState />;
   }
 
@@ -37,9 +37,9 @@ export const NewSpaceFAQ = ({ faqEntries, trackWithSession }) => {
       </Typography>
       <Accordion className={styles.accordionItemTitles}>
         {/** FAQ using Contentful */}
-        {faqEntries.map((entry, idx) => {
+        {entries.map((entry, idx) => {
           const trackFAQClick = () => {
-            trackWithSession(EVENTS.FAQ_SECTION_OPEN, {
+            track(EVENTS.FAQ_SECTION_OPEN, {
               question: entry.fields.question,
             });
           };
@@ -56,9 +56,9 @@ export const NewSpaceFAQ = ({ faqEntries, trackWithSession }) => {
     </aside>
   );
 };
-NewSpaceFAQ.propTypes = {
-  trackWithSession: PropTypes.func.isRequired,
-  faqEntries: PropTypes.arrayOf(
+FAQAccordion.propTypes = {
+  track: PropTypes.func.isRequired,
+  entries: PropTypes.arrayOf(
     PropTypes.shape({
       question: PropTypes.string,
       answer: PropTypes.object,

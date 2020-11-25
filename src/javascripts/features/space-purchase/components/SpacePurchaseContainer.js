@@ -26,7 +26,6 @@ import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
 import { Breadcrumbs } from 'features/breadcrumbs';
-import { NewSpaceFAQ } from './NewSpaceFAQ';
 import {
   BillingDetailsStep,
   CreditCardDetailsStep,
@@ -231,111 +230,86 @@ export const SpacePurchaseContainer = ({
     switch (currentStep) {
       case STEPS.SPACE_PLAN_SELECTION:
         return (
-          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <SpacePlanSelectionStep
-              organizationId={organizationId}
-              onSelectPlan={onSelectPlan}
-              canCreateFreeSpace={canCreateFreeSpace}
-              canCreatePaidSpace={canCreatePaidSpace}
-              track={trackWithSession}
-              spaceRatePlans={spaceRatePlans}
-              loading={!spaceRatePlans}
-              currentSpacePlan={currentSpacePlan}
-              currentSpacePlanIsLegacy={currentSpacePlanIsLegacy}
-            />
-            <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
-          </Grid>
+          <SpacePlanSelectionStep
+            organizationId={organizationId}
+            onSelectPlan={onSelectPlan}
+            canCreateFreeSpace={canCreateFreeSpace}
+            canCreatePaidSpace={canCreatePaidSpace}
+            track={trackWithSession}
+            spaceRatePlans={spaceRatePlans}
+            loading={!spaceRatePlans}
+            currentSpacePlan={currentSpacePlan}
+            currentSpacePlanIsLegacy={currentSpacePlanIsLegacy}
+            faqEntries={faqEntries}
+          />
         );
       case STEPS.SPACE_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <SpaceDetailsStep
-              onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
-              spaceName={spaceName}
-              onChangeSpaceName={onChangeSpaceName}
-              templatesList={templatesList}
-              onSelectTemplate={onSelectTemplate}
-              selectedTemplate={selectedTemplate}
-              onSubmit={onSubmitSpaceDetails}
-              spaceIsFree={spaceIsFree}
-            />
-          </Grid>
+          <SpaceDetailsStep
+            onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
+            spaceName={spaceName}
+            onChangeSpaceName={onChangeSpaceName}
+            templatesList={templatesList}
+            onSelectTemplate={onSelectTemplate}
+            selectedTemplate={selectedTemplate}
+            onSubmit={onSubmitSpaceDetails}
+            spaceIsFree={spaceIsFree}
+          />
         );
       case STEPS.BILLING_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <BillingDetailsStep
-              onBack={() =>
-                goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)
-              }
-              billingDetails={billingDetails}
-              onSubmit={(newBillingDetails) => {
-                trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
+          <BillingDetailsStep
+            onBack={() => goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)}
+            billingDetails={billingDetails}
+            onSubmit={(newBillingDetails) => {
+              trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
 
-                setBillingDetails(newBillingDetails);
-                goToStep(STEPS.CREDIT_CARD_DETAILS);
-              }}
-            />
-          </Grid>
+              setBillingDetails(newBillingDetails);
+              goToStep(STEPS.CREDIT_CARD_DETAILS);
+            }}
+          />
         );
       case STEPS.CREDIT_CARD_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <CreditCardDetailsStep
-              organizationId={organizationId}
-              onBack={() => goToStep(STEPS.BILLING_DETAILS)}
-              billingCountryCode={getCountryCodeFromName(billingDetails.country)}
-              onSubmit={onSubmitPaymentMethod}
-            />
-          </Grid>
+          <CreditCardDetailsStep
+            organizationId={organizationId}
+            onBack={() => goToStep(STEPS.BILLING_DETAILS)}
+            billingCountryCode={getCountryCodeFromName(billingDetails.country)}
+            onSubmit={onSubmitPaymentMethod}
+          />
         );
       case STEPS.CONFIRMATION:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <ConfirmationStep
-              organizationId={organizationId}
-              track={trackWithSession}
-              showBillingDetails={userIsOrgOwner}
-              showEditLink={organization.isBillable}
-              billingDetailsLoading={billingDetailsLoading}
-              billingDetails={billingDetails}
-              paymentDetails={paymentDetails}
-              onBack={() => {
-                if (!organization.isBillable) {
-                  goToStep(STEPS.CREDIT_CARD_DETAILS);
-                } else if (!currentSpace) {
-                  goToStep(STEPS.SPACE_DETAILS);
-                } else {
-                  goToStep(STEPS.SPACE_PLAN_SELECTION);
-                }
-              }}
-              onSubmit={() => {
-                trackWithSession(EVENTS.CONFIRM_PURCHASE);
+          <ConfirmationStep
+            organizationId={organizationId}
+            track={trackWithSession}
+            showBillingDetails={userIsOrgOwner}
+            showEditLink={organization.isBillable}
+            billingDetailsLoading={billingDetailsLoading}
+            billingDetails={billingDetails}
+            paymentDetails={paymentDetails}
+            onBack={() => {
+              if (!organization.isBillable) {
+                goToStep(STEPS.CREDIT_CARD_DETAILS);
+              } else if (!currentSpace) {
+                goToStep(STEPS.SPACE_DETAILS);
+              } else {
+                goToStep(STEPS.SPACE_PLAN_SELECTION);
+              }
+            }}
+            onSubmit={() => {
+              trackWithSession(EVENTS.CONFIRM_PURCHASE);
 
-                goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
-              }}
-            />
-          </Grid>
+              goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
+            }}
+          />
         );
       case STEPS.RECEIPT:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
-          </Grid>
+          <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
         );
       case STEPS.UPGRADE_RECEIPT:
-        return (
-          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
-            <SpaceUpgradeReceiptStep />
-          </Grid>
-        );
+        return <SpaceUpgradeReceiptStep />;
     }
   };
 
@@ -345,7 +319,12 @@ export const SpacePurchaseContainer = ({
         title="Space purchase"
         icon={<ProductIcon icon="Purchase" size="large" />}
       />
-      <Workbench.Content>{getComponentForStep(currentStep)}</Workbench.Content>
+      <Workbench.Content>
+        <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+          <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
+          {getComponentForStep(currentStep)}
+        </Grid>
+      </Workbench.Content>
     </Workbench>
   );
 };
