@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import {
-  Card,
   Heading,
   Paragraph,
   Icon,
@@ -17,10 +16,11 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { EVENTS } from '../../utils/analyticsTracking';
-import { SpacePurchaseState } from '../../context';
 
-import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
+import { SpacePurchaseState } from '../../context';
+import { EVENTS } from '../../utils/analyticsTracking';
+import { PLATFORM_CONTENT } from '../../utils/platformContent';
+import { PlatformCard } from '../../components/PlatformCard';
 import { EnterpriseTalkToUs, CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUs';
 
 const styles = {
@@ -96,40 +96,22 @@ export const PlatformSelectionStep = ({ track }) => {
           </ExternalTextLink>
         </GridItem>
 
-        <Card
-          className={styles.centeredText}
-          padding="large"
-          selected={selectedPlatform === 'SPACE'}
-          onClick={() => setSelectedPlatform('SPACE')}>
-          <Typography>
-            <Heading element="h3" className={styles.mediumWeight}>
-              Space
-            </Heading>
-            <Paragraph>
-              Your content platform, optimized for Developers. Includes access to our market-leading
-              CMS, App Framework and intuitive APIs
-            </Paragraph>
-          </Typography>
-          <CurrentSpaceLabel />
-        </Card>
+        {PLATFORM_CONTENT.map((platform, idx) => {
+          const content = {
+            title: platform.title,
+            description: platform.description,
+            price: platform.price,
+          };
 
-        <Card
-          className={styles.centeredText}
-          padding="large"
-          selected={selectedPlatform === 'COMPOSE'}
-          onClick={() => setSelectedPlatform('COMPOSE')}>
-          <Typography>
-            <Heading element="h3" className={styles.mediumWeight}>
-              Space + Compose + Launch
-            </Heading>
-            <Paragraph>
-              Content creators can easily manage web page content and coordinate content releases in
-              our sleek new apps. Developers continue to manage content models in your spaces
-            </Paragraph>
-            <Paragraph>$XXX</Paragraph>
-            <Paragraph>/month</Paragraph>
-          </Typography>
-        </Card>
+          return (
+            <PlatformCard
+              key={idx}
+              selected={selectedPlatform === platform.type}
+              handleClick={() => setSelectedPlatform(platform.type)}
+              content={content}
+            />
+          );
+        })}
 
         <div className={styles.enterprise}>
           <Typography>
