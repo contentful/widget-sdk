@@ -70,7 +70,7 @@ export default function renderDefaultEditor(
     [EntryEditorWidgetTypes.TAGS_EDITOR.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
-          <ContentTagsTab doc={otDoc} showEmpty />
+          <ContentTagsTab doc={otDoc} entityType="entry" showEmpty />
         )}
       </div>
     ),

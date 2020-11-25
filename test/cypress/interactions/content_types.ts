@@ -6,6 +6,11 @@ import {
   appContentTypeId,
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
+import {
+  createReguestWithNewField,
+  createResponseWithNewField,
+  createEditorInterfaceRequestWithNewField,
+} from '../fixtures/requests/content-types';
 import { editorInterfaceResponseWithApp } from '../fixtures/responses/editor-interface-with-app';
 import { severalPublicContentTypes } from '../fixtures/responses/content-types-several-public';
 
@@ -323,6 +328,100 @@ export const saveDefaultContentTypeWithCustomSidebar = {
     }).as('saveDefaultContentTypeWithCustomSidebar');
 
     return '@saveDefaultContentTypeWithCustomSidebar';
+  },
+};
+
+export const saveDefaultContentTypeWithNewField = {
+  willSucceed({
+    name,
+    apiName,
+    type,
+    linkType,
+  }: {
+    name: string;
+    apiName: string;
+    type: string;
+    linkType?: string;
+  }) {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.SEVERAL,
+      uponReceiving: `a request to save content type "${defaultContentTypeId}" with a new field "${apiName}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
+        headers: defaultHeader,
+        body: createReguestWithNewField({ name, apiName, type, linkType }),
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: createResponseWithNewField({ name, apiName, type, linkType }),
+      },
+    }).as(`saveDefaultContentTypeWithNewField${apiName}`);
+
+    return `@saveDefaultContentTypeWithNewField${apiName}`;
+  },
+};
+
+export const publishDefaultContentTypeWithNewField = {
+  willSucceed({
+    name,
+    apiName,
+    type,
+    linkType,
+  }: {
+    name: string;
+    apiName: string;
+    type: string;
+    linkType?: string;
+  }) {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.SEVERAL,
+      uponReceiving: `a request to publish content type  "${defaultContentTypeId}" with a new field "${apiName}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/published`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: createResponseWithNewField({ name, apiName, type, linkType }),
+      },
+    }).as(`publishDefaultContentTypeWithNewField${apiName}`);
+
+    return `@publishDefaultContentTypeWithNewField${apiName}`;
+  },
+};
+
+export const saveDefaultContentTypeEditorInterfaceWithNewField = {
+  willSucceed({ apiName, widgetId }: { apiName: string; widgetId: string }) {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.EDITORINTERFACE_WITHOUT_SIDEBAR,
+      uponReceiving: `a request to save the editor interface of content type "${defaultContentTypeId}" with new field "${apiName}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/editor_interface`,
+        headers: defaultHeader,
+        body: createEditorInterfaceRequestWithNewField({ apiName, widgetId }),
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: createEditorInterfaceRequestWithNewField({ apiName, widgetId }),
+      },
+    }).as(`saveDefaultContentTypeEditorInterfaceWithNewField${apiName}`);
+
+    return `@saveDefaultContentTypeEditorInterfaceWithNewField${apiName}`;
   },
 };
 

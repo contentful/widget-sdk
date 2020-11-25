@@ -3,13 +3,14 @@ export type AvailabilityStatus = 'alpha' | 'beta';
 export interface ConfigurationItem {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
-  name: string;
+  name?: string;
   description?: string;
   locations?: WidgetLocation[];
   parameters?: any;
   availabilityStatus?: AvailabilityStatus;
   settings?: any;
   disabled?: boolean;
+  problem?: boolean;
 }
 
 export interface ConfigurableConfigurationItem extends ConfigurationItem {

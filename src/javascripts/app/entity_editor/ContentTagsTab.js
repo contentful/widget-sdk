@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { EditorTagsSkeleton, MetadataTags, useDocTags } from 'features/content-tags';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/PolicyBuilderConfig';
 
-export const ContentTagsTab = ({ doc, showEmpty }) => {
+export const ContentTagsTab = ({ doc, entityType, showEmpty }) => {
   const canEditTags = doc.permissions.canEditFieldLocale(
     PolicyBuilderConfig.TAGS,
     PolicyBuilderConfig.PATH_WILDCARD
@@ -18,6 +18,7 @@ export const ContentTagsTab = ({ doc, showEmpty }) => {
         showEmpty={showEmpty}
         tags={tags}
         setTags={setTags}
+        entityType={entityType}
       />
     </MetadataTags>
   );
@@ -32,6 +33,7 @@ ContentTagsTab.propTypes = {
       canEditFieldLocale: PropTypes.func.isRequired,
     }).isRequired,
   }),
+  entityType: PropTypes.string.isRequired,
 };
 
 ContentTagsTab.defaultPropes = {

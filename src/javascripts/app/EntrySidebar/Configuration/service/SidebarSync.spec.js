@@ -77,7 +77,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       );
     });
 
-    it('should exclude customs items in configuraiton that are missing from widgets', () => {
+    it('should label custom items in configuration that are missing from widgets', () => {
       const configuration = [
         {
           widgetId: 'netlify-extension',
@@ -107,6 +107,14 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       );
 
       expect(state.items).toEqual([
+        {
+          widgetId: 'netlify-extension',
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          settings: {
+            netlifyBuildHook: 'http://hook',
+          },
+          problem: true,
+        },
         {
           widgetId: 'custom-publish-button',
           widgetNamespace: WidgetNamespace.EXTENSION,
