@@ -22,9 +22,14 @@ type Props = {
     allowed: RuleInterface[];
     denied: RuleInterface[];
   };
-  updateRuleAttribute: (entities: string) => (rulesKey: string, id: string) => void;
-  addRule: (entity: string, entities: string) => (rulesKey) => () => void;
-  removeRule: (entities: string) => (rulesKey: string, id: string) => void;
+  updateRuleAttribute: (
+    entities: string
+  ) => (
+    rulesKey: string,
+    id: string
+  ) => (attribute: string) => (event: React.ChangeEvent<{ value: string }>) => void;
+  addRule: (entity: string, entities: string) => (rulesKey) => () => string;
+  removeRule: (entities: string) => (rulesKey: string, id: string) => () => void;
   canModifyRoles: boolean;
   contentTypes: string[];
   searchEntities: () => void;
@@ -36,6 +41,11 @@ type Props = {
     action: string;
   };
   updateFilter: (filterName: string, value: string) => void;
+  draftRulesIds: string[];
+  addDraftRuleId: (ruleId: string) => void;
+  removeDraftRuleId: (ruleId: string) => void;
+  editedRuleIds: string[];
+  addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
 };
 
 const styles = {
@@ -63,6 +73,11 @@ const RoleEditorEntities: React.FC<Props> = ({
   updateRoleFromTextInput,
   resetPolicies,
   hasClpFeature,
+  draftRulesIds,
+  addDraftRuleId,
+  removeDraftRuleId,
+  editedRuleIds,
+  addEditedRule,
 }) => {
   return (
     <>
@@ -90,6 +105,11 @@ const RoleEditorEntities: React.FC<Props> = ({
           searchEntities={searchEntities}
           getEntityTitle={getEntityTitle}
           hasClpFeature={hasClpFeature}
+          draftRulesIds={draftRulesIds}
+          addDraftRuleId={addDraftRuleId}
+          removeDraftRuleId={removeDraftRuleId}
+          editedRuleIds={editedRuleIds}
+          addEditedRule={addEditedRule}
         />
       ) : (
         <>

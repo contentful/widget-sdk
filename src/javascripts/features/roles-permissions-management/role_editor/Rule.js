@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
+import classNames from 'classnames';
 import { getLocales } from '../utils/getLocales';
 import tokens from '@contentful/forma-36-tokens';
-import { Select, Option, Button } from '@contentful/forma-36-react-components';
+import { Select, Option, Button, SectionHeading } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
 import { RuleTagsSelection } from 'features/roles-permissions-management/components/RuleTagsSelection';
@@ -63,6 +64,15 @@ const styles = {
     marginTop: tokens.spacingXs,
     marginBottom: tokens.spacingXs,
   }),
+  newRule: css({
+    color: tokens.colorPrimary,
+  }),
+  modifiedRule: css({
+    color: tokens.colorWarning,
+  }),
+  ruleLabel: css({
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export class Rule extends React.Component {
@@ -86,9 +96,14 @@ export class Rule extends React.Component {
     searchEntities: PropTypes.func.isRequired,
     getEntityTitle: PropTypes.func.isRequired,
     hasClpFeature: PropTypes.bool,
+    focus: PropTypes.bool,
+    modified: PropTypes.bool.isRequired,
+    isNew: PropTypes.bool.isRequired,
   };
 
-  state = {};
+  state = {
+    ref: React.createRef(),
+  };
 
   constructor(props) {
     super(props);
@@ -138,17 +153,20 @@ export class Rule extends React.Component {
   }
 
   searchEntitiesAndUpdate = () => {
-    const { entity, searchEntities, onUpdateAttribute } = this.props;
+    const { entity, searchEntities, onUpdateAttribute, rule } = this.props;
     const entityName = getEntityName(entity);
 
     return searchEntities(entityName[0]).then((entity) => {
       if (entity) {
         if (entityName[0] === 'Entry') {
-          onUpdateAttribute('contentType')({
+          onUpdateAttribute(
+            'contentType',
+            rule.contentType
+          )({
             target: { value: entity.sys.contentType.sys.id },
           });
         }
-        onUpdateAttribute('entityId')({ target: { value: entity.sys.id } });
+        onUpdateAttribute('entityId', rule.entityId)({ target: { value: entity.sys.id } });
         return entity.sys.id;
       }
       return null;
@@ -160,12 +178,12 @@ export class Rule extends React.Component {
     if (event.target.value === 'entityId' && !rule.entityId) {
       return this.searchEntitiesAndUpdate().then((entityId) => {
         if (entityId) {
-          return onUpdateAttribute('scope')({ target: { value: 'entityId' } });
+          return onUpdateAttribute('scope', rule.scope)({ target: { value: 'entityId' } });
         }
         return null;
       });
     }
-    return onUpdateAttribute('scope')(event);
+    return onUpdateAttribute('scope', rule.scope)(event);
   };
 
   render() {
@@ -177,17 +195,37 @@ export class Rule extends React.Component {
       rule,
       privateLocales,
       getEntityTitle,
+      focus,
+      isNew,
+      modified,
     } = this.props;
     const entityName = getEntityName(entity);
+
+    if (focus && this.state.ref.current) {
+      this.state.ref.current.scrollIntoView({ behaviour: 'smooth', block: 'center' });
+      const firstSelectComponent = this.state.ref.current.children[1];
+      firstSelectComponent?.firstElementChild?.focus();
+    }
+
     return (
-      <div className={styles.ruleList} data-test-id="rule-item">
+      <div ref={this.state.ref} className={classNames(styles.ruleList)} data-test-id="rule-item">
+        {!isNew && modified && (
+          <SectionHeading className={classNames(styles.ruleLabel, styles.modifiedRule)}>
+            Edited
+          </SectionHeading>
+        )}
+        {isNew && (
+          <SectionHeading className={classNames(styles.ruleLabel, styles.newRule)}>
+            New
+          </SectionHeading>
+        )}
         <Select
           className={styles.select}
           width="medium"
           testId="action"
           isDisabled={isDisabled}
           value={rule.action}
-          onChange={onUpdateAttribute('action')}>
+          onChange={onUpdateAttribute('action', rule.action)}>
           {actionsOptions.map(({ value, text }) => {
             return (
               <Option key={value} value={value}>
@@ -220,7 +258,7 @@ export class Rule extends React.Component {
               testId="contentType"
               isDisabled={rule.scope === 'entityId' || isDisabled}
               value={rule.contentType}
-              onChange={onUpdateAttribute('contentType')}>
+              onChange={onUpdateAttribute('contentType', rule.contentType)}>
               {this.contentTypes.map(({ id, name }) => (
                 <Option value={id} key={id}>
                   {name}
@@ -234,7 +272,7 @@ export class Rule extends React.Component {
                 testId="field"
                 isDisabled={rule.contentType === 'all' || isDisabled}
                 value={rule.field}
-                onChange={onUpdateAttribute('field')}>
+                onChange={onUpdateAttribute('field', rule.field)}>
                 {this.state.contentTypeFields.map(({ id, name }) => (
                   <Option value={id} key={id}>
                     {name}
@@ -251,7 +289,7 @@ export class Rule extends React.Component {
             testId="asset_field"
             isDisabled={isDisabled}
             value={rule.field}
-            onChange={onUpdateAttribute('field')}>
+            onChange={onUpdateAttribute('field', rule.field)}>
             {this.state.assetFields.map(({ id, name }) => (
               <Option value={id} key={id}>
                 {name}
@@ -266,7 +304,7 @@ export class Rule extends React.Component {
             testId="locale"
             isDisabled={isDisabled || rule.field === TAGS || rule.field === NO_PATH_CONSTRAINT}
             value={rule.locale}
-            onChange={onUpdateAttribute('locale')}>
+            onChange={onUpdateAttribute('locale', rule.locale)}>
             {getLocales(privateLocales).map(({ code, name }) => (
               <Option value={code} key={code}>
                 {name}

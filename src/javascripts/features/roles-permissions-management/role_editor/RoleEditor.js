@@ -170,6 +170,14 @@ export class RoleEditor extends React.Component {
       },
       saving: false,
       dirty: isDuplicate,
+      draftRuleIds: {
+        entries: [],
+        assets: [],
+      },
+      editedRules: {
+        entries: {},
+        assets: {},
+      },
       internal,
       tab: this.props.tab || RoleEditRoutes.Details.url,
     };
@@ -356,7 +364,9 @@ export class RoleEditor extends React.Component {
 
   addRule = (entity, entities) => (rulesKey) => () => {
     const getDefaultRule = PolicyBuilder.DefaultRule.getDefaultRuleGetterFor(entity);
-    this.updateInternal(update([entities, rulesKey], (rules = []) => [...rules, getDefaultRule()]));
+    const defaultRule = getDefaultRule();
+    this.updateInternal(update([entities, rulesKey], (rules = []) => [...rules, defaultRule]));
+    return defaultRule.id;
   };
 
   removeRule = (entities) => (rulesKey, id) => () => {
@@ -387,6 +397,71 @@ export class RoleEditor extends React.Component {
     this.updateInternal(
       flow(update('entries.allowed', mapPolicies), update('assets.allowed', mapPolicies))
     );
+  };
+
+  // TODO: Should we have 4 different functions or can the functionality somehow be reused?
+  updateDraftRuleIds = {
+    addEntryDraftRuleId: (draftRuleId) => {
+      this.setState(({ draftRuleIds }) => {
+        draftRuleIds.entries = [...draftRuleIds.entries, draftRuleId];
+        return draftRuleIds;
+      });
+    },
+    removeEntryDraftRuleId: (draftRuleId) => {
+      this.setState(({ draftRuleIds }) => {
+        draftRuleIds.entries = draftRuleIds.entries.filter((id) => id !== draftRuleId);
+        return draftRuleIds;
+      });
+    },
+    addAssetDraftRuleId: (draftRuleId) => {
+      this.setState(({ draftRuleIds }) => {
+        draftRuleIds.assets = [...draftRuleIds.assets, draftRuleId];
+        return draftRuleIds;
+      });
+    },
+    removeAssetDraftRuleId: (draftRuleId) => {
+      this.setState(({ draftRuleIds }) => {
+        draftRuleIds.assets = draftRuleIds.assets.filter((id) => id !== draftRuleId);
+        return draftRuleIds;
+      });
+    },
+  };
+
+  addEditedRule = (entity) => {
+    return (editRuleId, field, initialValue, newValue) => {
+      this.setState(({ editedRules }) => {
+        if (!editedRules[entity][editRuleId]) {
+          editedRules[entity][editRuleId] = {};
+        }
+
+        if (!editedRules[entity][editRuleId][field]) {
+          editedRules[entity][editRuleId][field] = {
+            initialValue,
+          };
+        }
+
+        if (
+          field === 'scope' &&
+          newValue !== 'entityId' &&
+          !editedRules[entity][editRuleId].entityId?.initialValue
+        ) {
+          delete editedRules[entity][editRuleId].entityId;
+        }
+
+        if (editedRules[entity][editRuleId][field].initialValue !== newValue) {
+          editedRules[entity][editRuleId][field].newValue = newValue;
+          return editedRules;
+        }
+
+        delete editedRules[entity][editRuleId][field];
+
+        if (!Object.keys(editedRules[entity][editRuleId]).length) {
+          delete editedRules[entity][editRuleId];
+        }
+
+        return editedRules;
+      });
+    };
   };
 
   navigateToList() {
@@ -501,6 +576,11 @@ export class RoleEditor extends React.Component {
                   getEntityTitle={this.getEntityTitle}
                   resetPolicies={this.resetPolicies}
                   hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                  draftRulesIds={this.state.draftRuleIds.entries}
+                  addDraftRuleId={this.updateDraftRuleIds.addEntryDraftRuleId}
+                  removeDraftRuleId={this.updateDraftRuleIds.removeEntryDraftRuleId}
+                  editedRuleIds={Object.keys(this.state.editedRules.entries)}
+                  addEditedRule={this.addEditedRule('entries')}
                 />
               </Route>
 
@@ -521,6 +601,11 @@ export class RoleEditor extends React.Component {
                   getEntityTitle={this.getEntityTitle}
                   resetPolicies={this.resetPolicies}
                   hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                  draftRulesIds={this.state.draftRuleIds.assets}
+                  addDraftRuleId={this.updateDraftRuleIds.addAssetDraftRuleId}
+                  removeDraftRuleId={this.updateDraftRuleIds.removeAssetDraftRuleId}
+                  editedRuleIds={Object.keys(this.state.editedRules.assets)}
+                  addEditedRule={this.addEditedRule('assets')}
                 />
               </Route>
               <Route path={RoleEditRoutes.Permissions.url}>

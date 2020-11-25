@@ -11,7 +11,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import * as React from 'react';
 import { actionsOptions, contentTypesToOptions, Rule } from './Rule';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SelectPill } from '../components/SelectPill';
 import { RuleInterface } from 'features/roles-permissions-management/@types';
 
@@ -62,14 +62,19 @@ const filterRules: (
   };
 };
 
+type RuleType = 'denied' | 'allowed';
+
 interface RuleListProps {
   rules: {
     allowed: RuleInterface[];
     denied: RuleInterface[];
   };
-  onAddRule: (rulesKey: string) => () => void;
-  onRemoveRule: (rulesKey: string, id: string) => void;
-  onUpdateRuleAttribute: (rulesKey: string, id: string) => void;
+  onAddRule: (rulesKey: string) => () => string;
+  onRemoveRule: (rulesKey: string, id: string) => () => void;
+  onUpdateRuleAttribute: (
+    rulesKey: string,
+    id: string
+  ) => (attribute: string) => (event: React.ChangeEvent<{ value: string }>) => void;
   isDisabled: boolean;
   entity: string;
   privateLocales: any[];
@@ -77,6 +82,11 @@ interface RuleListProps {
   searchEntities: () => void;
   getEntityTitle: () => void;
   hasClpFeature: boolean;
+  draftRulesIds: string[];
+  addDraftRuleId: (ruleId: string) => void;
+  removeDraftRuleId: (ruleId: string) => void;
+  editedRuleIds: string[];
+  addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
 }
 
 const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
@@ -92,10 +102,16 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
     searchEntities,
     getEntityTitle,
     hasClpFeature,
+    draftRulesIds,
+    addDraftRuleId,
+    removeDraftRuleId,
+    editedRuleIds,
+    addEditedRule,
   } = props;
-  const [actionFilter, setActionFilter] = React.useState('clean');
-  const [scopeFilter, setScopeFilter] = React.useState('clean');
-  const [contentTypeFilter, setContentTypeFilter] = React.useState('clean');
+  const [actionFilter, setActionFilter] = useState('clean');
+  const [scopeFilter, setScopeFilter] = useState('clean');
+  const [contentTypeFilter, setContentTypeFilter] = useState('clean');
+  const [scroll, setScroll] = useState(false);
 
   const resetFilters = useCallback(() => {
     setActionFilter('clean');
@@ -110,11 +126,33 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
   ];
 
   const addRuleAndResetFilters = useCallback(
-    (ruleType: 'denied' | 'allowed') => {
-      onAddRule(ruleType)();
+    (ruleType: RuleType) => {
+      const draftRuleId = onAddRule(ruleType)();
+      addDraftRuleId(draftRuleId);
       resetFilters();
+      setScroll(true);
     },
-    [onAddRule, resetFilters]
+    [onAddRule, resetFilters, addDraftRuleId]
+  );
+
+  const removeRule = useCallback(
+    (ruleType: RuleType, ruleId) => {
+      onRemoveRule(ruleType, ruleId)();
+      removeDraftRuleId(ruleId);
+      setScroll(false);
+    },
+    [onRemoveRule, removeDraftRuleId]
+  );
+
+  const updateRuleAttribute = useCallback(
+    (ruleType: RuleType, ruleId) => (field, initialValue) => (
+      event: React.ChangeEvent<{ value: string }>
+    ) => {
+      onUpdateRuleAttribute(ruleType, ruleId)(field)(event);
+      addEditedRule(ruleId, field, initialValue, event.target.value);
+      setScroll(false);
+    },
+    [onUpdateRuleAttribute, addEditedRule]
   );
 
   const filteredRules = useMemo(
@@ -194,21 +232,28 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
             ? 'Users with this role can:'
             : "Users with this role can't do anything. Add a rule to allow certain actions."}
         </Paragraph>
-        {filteredRules.allowed.map((rule) => (
-          <Rule
-            key={rule.id}
-            rule={rule}
-            onUpdateAttribute={onUpdateRuleAttribute('allowed', rule.id)}
-            onRemove={onRemoveRule('allowed', rule.id)}
-            entity={entity}
-            isDisabled={isDisabled}
-            privateLocales={privateLocales}
-            contentTypes={contentTypes}
-            searchEntities={searchEntities}
-            getEntityTitle={getEntityTitle}
-            hasClpFeature={hasClpFeature}
-          />
-        ))}
+        {filteredRules.allowed.map((rule) => {
+          const isTheNewRule =
+            draftRulesIds.length > 0 && rule.id === draftRulesIds[draftRulesIds.length - 1];
+          return (
+            <Rule
+              key={rule.id}
+              rule={rule}
+              onUpdateAttribute={updateRuleAttribute('allowed', rule.id)}
+              onRemove={() => removeRule('allowed', rule.id)}
+              entity={entity}
+              isDisabled={isDisabled}
+              privateLocales={privateLocales}
+              contentTypes={contentTypes}
+              searchEntities={searchEntities}
+              getEntityTitle={getEntityTitle}
+              hasClpFeature={hasClpFeature}
+              focus={isTheNewRule && scroll}
+              isNew={draftRulesIds.includes(rule.id)}
+              modified={editedRuleIds.includes(rule.id)}
+            />
+          );
+        })}
         {!isDisabled && (
           <Button
             className={styles.addLink}
@@ -226,21 +271,28 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
             <strong> not</strong>:
           </Paragraph>
           <div className="rule-list__rule" data-test-id="rule-exceptions">
-            {filteredRules.denied.map((rule) => (
-              <Rule
-                key={rule.id}
-                rule={rule}
-                onUpdateAttribute={onUpdateRuleAttribute('denied', rule.id)}
-                onRemove={onRemoveRule('denied', rule.id)}
-                entity={entity}
-                isDisabled={isDisabled}
-                privateLocales={privateLocales}
-                contentTypes={contentTypes}
-                searchEntities={searchEntities}
-                getEntityTitle={getEntityTitle}
-                hasClpFeature={hasClpFeature}
-              />
-            ))}
+            {filteredRules.denied.map((rule) => {
+              const isTheNewRule =
+                draftRulesIds.length > 0 && rule.id === draftRulesIds[draftRulesIds.length - 1];
+              return (
+                <Rule
+                  key={rule.id}
+                  rule={rule}
+                  onUpdateAttribute={updateRuleAttribute('denied', rule.id)}
+                  onRemove={() => removeRule('denied', rule.id)}
+                  entity={entity}
+                  isDisabled={isDisabled}
+                  privateLocales={privateLocales}
+                  contentTypes={contentTypes}
+                  searchEntities={searchEntities}
+                  getEntityTitle={getEntityTitle}
+                  hasClpFeature={hasClpFeature}
+                  focus={isTheNewRule && scroll}
+                  isNew={draftRulesIds.includes(rule.id)}
+                  modified={editedRuleIds.includes(rule.id)}
+                />
+              );
+            })}
           </div>
           {!isDisabled && (
             <Button
