@@ -477,6 +477,7 @@ async function build(options) {
     templatesList: [],
     canCreateFreeSpace: true,
     spaceRatePlans: mockSpaceRatePlans,
+    hasPurchasedApps: true,
     pageContent: {
       pageName: 'Space Purchase',
       content: [],

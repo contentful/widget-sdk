@@ -108,7 +108,7 @@ export const SpacePurchaseContainer = ({
 
   // if the user has already purchased apps, we want them to start at the space selection step
   // otherwise, they should start in the platfform and space selection step
-  const initialStep = hasPurchasedApps ? STEPS.SPACE_SELECTION : STEPS.PLATFORM_SELECTION;
+  const initialStep = hasPurchasedApps ? STEPS.SPACE_PLAN_SELECTION : STEPS.PLATFORM_SELECTION;
 
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [spaceName, setSpaceName] = useState('');

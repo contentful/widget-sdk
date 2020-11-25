@@ -62,19 +62,18 @@ describe('SpaceCard', () => {
     expect(handleSelect).toBeCalled();
   });
 
-  it('should render a button with an href to sales if it is an enterprise card', () => {
+  it('should render "Talk to us" button if it is an enterprise card', () => {
     build({ content: mockEnterpriseContent });
 
     const enterpriseButton = screen.getByTestId('select-space-cta');
+    expect(enterpriseButton).toBeDefined();
     expect(enterpriseButton).toHaveTextContent('Talk to us');
-    expect(enterpriseButton.href).toEqual(
-      'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us'
-    );
   });
 });
 
 function build(customProps) {
   const props = {
+    organizationId: 'random_org_id',
     loading: false,
     content: {
       type: SPACE_PURCHASE_TYPES.MEDIUM,
