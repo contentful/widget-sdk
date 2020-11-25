@@ -17,18 +17,18 @@ describe('SpaceDetailsStep', () => {
     expect(onChangeSpaceName).toBeCalledWith('my space name');
   });
 
-  it('should call onChangeSelectedTemplate when the selected template is changed', () => {
-    const onChangeSelectedTemplate = jest.fn();
+  it('should call onSelectTemplate when the selected template is changed', () => {
+    const onSelectTemplate = jest.fn();
     const template = { name: 'Cool template bro', sys: { id: 'template_abcd' } };
 
-    build({ onChangeSelectedTemplate, templates: [template] });
+    build({ onSelectTemplate, templates: [template] });
 
     userEvent.click(
       within(screen.getByTestId('template-toggle-true')).getByTestId('cf-ui-controlled-input')
     );
 
     waitFor(() => {
-      expect(onChangeSelectedTemplate).toBeCalledWith(template);
+      expect(onSelectTemplate).toBeCalledWith(template);
     });
   });
 
@@ -54,14 +54,14 @@ describe('SpaceDetailsStep', () => {
     expect(onSubmit).toBeCalled();
   });
 
-  it('should call navigateToPreviousStep when the back button is clicked', () => {
-    const navigateToPreviousStep = jest.fn();
+  it('should call onBack when the back button is clicked', () => {
+    const onBack = jest.fn();
 
-    build({ navigateToPreviousStep });
+    build({ onBack });
 
     userEvent.click(screen.getByTestId('navigate-back'));
 
-    expect(navigateToPreviousStep).toBeCalled();
+    expect(onBack).toBeCalled();
   });
 });
 
@@ -71,9 +71,9 @@ function build(customProps) {
     spaceName: '',
     selectedTemplate: null,
     onChangeSpaceName: () => {},
-    onChangeSelectedTemplate: () => {},
+    onSelectTemplate: () => {},
     onSubmit: () => {},
-    navigateToPreviousStep: () => {},
+    onBack: () => {},
     ...customProps,
   };
 

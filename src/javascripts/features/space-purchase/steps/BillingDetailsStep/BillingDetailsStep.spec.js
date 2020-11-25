@@ -14,8 +14,8 @@ describe('BillingDetailsStep', () => {
 
 function build(customProps, customState) {
   const props = {
-    navigateToPreviousStep: () => {},
-    onSubmitBillingDetails: () => {},
+    onBack: () => {},
+    onSubmit: () => {},
     ...customProps,
   };
 

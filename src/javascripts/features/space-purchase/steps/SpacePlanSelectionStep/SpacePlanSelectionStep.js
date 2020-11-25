@@ -72,14 +72,14 @@ const styles = {
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
 export const SpacePlanSelectionStep = ({
-  selectPlan,
-  trackWithSession,
-  canCreateCommunityPlan,
+  onSelectPlan,
+  track,
+  canCreateFreeSpace,
   canCreatePaidSpace,
   spaceRatePlans,
   currentSpacePlan,
   loading,
-  currentSpaceIsLegacy,
+  currentSpacePlanIsLegacy,
 }) => {
   const {
     state: { organization, currentSpace, currentSpaceRatePlan },
@@ -88,7 +88,7 @@ export const SpacePlanSelectionStep = ({
   const getSelectHandler = (planType) => {
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
       return () => {
-        trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+        track(EVENTS.EXTERNAL_LINK_CLICKED, {
           href: SPACE_PURCHASE_CONTACT_SALES_HREF,
           intent: 'upgrade_to_enterprise',
         });
@@ -97,7 +97,7 @@ export const SpacePlanSelectionStep = ({
 
     return () => {
       // NOTE: Add SELECT_PLAN space wizard tracking here
-      selectPlan(planType);
+      onSelectPlan(planType);
     };
   };
 
@@ -132,7 +132,7 @@ export const SpacePlanSelectionStep = ({
           </Heading>
         )}
 
-        {currentSpaceIsLegacy && currentSpace && currentSpaceRatePlan && (
+        {currentSpacePlanIsLegacy && currentSpace && currentSpaceRatePlan && (
           <LegacySpaceWarning spaceName={currentSpace.name} spacePlan={currentSpaceRatePlan} />
         )}
 
@@ -175,14 +175,11 @@ export const SpacePlanSelectionStep = ({
                     testId="read-only-tooltip"
                     maxWidth={270}
                     place="auto"
-                    content={getCommunityTooltipContent(
-                      canCreateCommunityPlan,
-                      isFreeSpaceDisabled
-                    )}>
+                    content={getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled)}>
                     <Button
                       testId="space-selection-community-select-button"
                       onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
-                      disabled={!canCreateCommunityPlan || isFreeSpaceDisabled}>
+                      disabled={!canCreateFreeSpace || isFreeSpaceDisabled}>
                       Select
                     </Button>
                   </Tooltip>
@@ -194,7 +191,7 @@ export const SpacePlanSelectionStep = ({
             testId="space-selection.feature-overview-link"
             href={FEATURE_OVERVIEW_HREF}
             onClick={() => {
-              trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+              track(EVENTS.EXTERNAL_LINK_CLICKED, {
                 href: FEATURE_OVERVIEW_HREF,
                 intent: 'feature_overview',
               });
@@ -208,14 +205,14 @@ export const SpacePlanSelectionStep = ({
 };
 
 SpacePlanSelectionStep.propTypes = {
-  selectPlan: PropTypes.func,
-  trackWithSession: PropTypes.func.isRequired,
-  canCreateCommunityPlan: PropTypes.bool,
+  onSelectPlan: PropTypes.func,
+  track: PropTypes.func.isRequired,
+  canCreateFreeSpace: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   currentSpacePlan: PlanPropType,
   loading: PropTypes.bool,
-  currentSpaceIsLegacy: PropTypes.bool,
+  currentSpacePlanIsLegacy: PropTypes.bool,
 };
 
 function CommunityLoadingState() {
@@ -227,8 +224,8 @@ function CommunityLoadingState() {
   );
 }
 
-function getCommunityTooltipContent(canCreateCommunityPlan, isFreeSpaceDisabled) {
-  if (!canCreateCommunityPlan) {
+function getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled) {
+  if (!canCreateFreeSpace) {
     return 'You’ve already used your free Community space. To add a new Community space, delete your existing one.';
   }
 

@@ -62,12 +62,12 @@ const NEW_SPACE_STEPS_CONFIRMATION = [
   { text: '3.Confirmation', isActive: true },
 ];
 
-const SPACE_PURCHASE_STEPS = {
+const STEPS = {
   PLATFORM_SELECTION: 'PLATFORM_SELECTION',
-  SPACE_SELECTION: 'SPACE_SELECTION',
+  SPACE_PLAN_SELECTION: 'SPACE_PLAN_SELECTION',
   SPACE_DETAILS: 'SPACE_DETAILS',
   BILLING_DETAILS: 'BILLING_DETAILS',
-  CARD_DETAILS: 'CARD_DETAILS',
+  CREDIT_CARD_DETAILS: 'CREDIT_CARD_DETAILS',
   CONFIRMATION: 'CONFIRMATION',
   RECEIPT: 'RECEIPT',
   UPGRADE_RECEIPT: 'UPGRADE_RECEIPT',
@@ -78,9 +78,10 @@ const fetchBillingDetails = async (
   organization,
   setPaymentDetails,
   setBillingDetails,
-  setIsLoadingBillingDetails
+  setBillingDetailsLoading
 ) => {
-  setIsLoadingBillingDetails(true);
+  setBillingDetailsLoading(true);
+
   const [billingDetails, paymentMethod] = await Promise.all([
     getBillingDetails(organization.sys.id),
     getDefaultPaymentMethod(organization.sys.id),
@@ -88,41 +89,40 @@ const fetchBillingDetails = async (
 
   setPaymentDetails(paymentMethod);
   setBillingDetails(billingDetails);
-  setIsLoadingBillingDetails(false);
+  setBillingDetailsLoading(false);
 };
 
 export const SpacePurchaseContainer = ({
   organization,
   trackWithSession,
   templatesList,
-  canCreateCommunityPlan,
+  canCreateFreeSpace,
   pageContent,
   currentSpace,
   spaceRatePlans,
   currentSpacePlan,
-  currentSpaceIsLegacy,
+  currentSpacePlanIsLegacy,
   hasPurchasedApps,
 }) => {
   const { dispatch } = useContext(SpacePurchaseState);
 
   // if the user has already purchased apps, we want them to start at the space selection step
   // otherwise, they should start in the platfform and space selection step
-  const initialStep = hasPurchasedApps
-    ? SPACE_PURCHASE_STEPS.SPACE_SELECTION
-    : SPACE_PURCHASE_STEPS.PLATFORM_SELECTION;
+  const initialStep = hasPurchasedApps ? STEPS.SPACE_SELECTION : STEPS.PLATFORM_SELECTION;
+
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
-  const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
+  const [billingDetailsLoading, setBillingDetailsLoading] = useState(false);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
   const userIsOrgOwner = !!organization && isOrgOwner(organization);
 
-  useTrackCancelEvent(trackWithSession, { currentStep, finalStep: SPACE_PURCHASE_STEPS.RECEIPT });
+  useTrackCancelEvent(trackWithSession, { currentStep, finalStep: STEPS.RECEIPT });
 
   // This is explicitly undefined/true/false, not just true/false, so that `canCreatePaidSpace`
   // when passed to `<SpaceSelection />` doesn't render the "no payment details" note until we
@@ -135,7 +135,7 @@ export const SpacePurchaseContainer = ({
         organization,
         setPaymentDetails,
         setBillingDetails,
-        setIsLoadingBillingDetails
+        setBillingDetailsLoading
       );
     }
   }, [userIsOrgOwner, organization]);
@@ -144,12 +144,12 @@ export const SpacePurchaseContainer = ({
   const { faqEntries } = usePageContent(pageContent);
   const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
 
-  const onChangeSelectedTemplate = (changedTemplate) => {
+  const onSelectTemplate = (selectedTemplate) => {
     trackWithSession(EVENTS.SPACE_TEMPLATE_SELECTED, {
-      selectedTemplate: changedTemplate?.name,
+      selectedTemplate: selectedTemplate?.name,
     });
 
-    setSelectedTemplate(changedTemplate);
+    setSelectedTemplate(selectedTemplate);
   };
 
   const onChangeSpaceName = (changedSpaceName) => {
@@ -158,14 +158,14 @@ export const SpacePurchaseContainer = ({
 
   const goToStep = (nextStep) => {
     trackWithSession(EVENTS.NAVIGATE, {
-      fromStep: SPACE_PURCHASE_STEPS[currentStep],
-      toStep: SPACE_PURCHASE_STEPS[nextStep],
+      fromStep: STEPS[currentStep],
+      toStep: STEPS[nextStep],
     });
 
     setCurrentStep(nextStep);
   };
 
-  const selectPlan = (planType) => {
+  const onSelectPlan = (planType) => {
     if (!Object.values(SPACE_PURCHASE_TYPES).includes(planType)) {
       throw Error();
     }
@@ -183,11 +183,11 @@ export const SpacePurchaseContainer = ({
 
     // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
     if (currentSpace && organization.isBillable) {
-      goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
+      goToStep(STEPS.CONFIRMATION);
     } else if (currentSpace && !organization.isBillable) {
-      goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS);
+      goToStep(STEPS.BILLING_DETAILS);
     } else {
-      goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
+      goToStep(STEPS.SPACE_DETAILS);
     }
   };
 
@@ -196,30 +196,13 @@ export const SpacePurchaseContainer = ({
 
     if (spaceIsFree) {
       // Since the space is free, they can immediately create the space (which happens on the receipt page)
-      goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
+      goToStep(STEPS.RECEIPT);
     } else if (organization.isBillable) {
       // Since they already have billing details, they can go straight to the confirmation page to confirm their purchase
-      goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
+      goToStep(STEPS.CONFIRMATION);
     } else {
-      goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS);
+      goToStep(STEPS.BILLING_DETAILS);
     }
-  };
-
-  const onBackConfirmation = () => {
-    if (!organization.isBillable) {
-      goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
-    } else if (!currentSpace) {
-      goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
-    } else {
-      goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
-    }
-  };
-
-  const onSubmitBillingDetails = (billingDetails) => {
-    trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
-
-    setBillingDetails(billingDetails);
-    goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
   };
 
   const onSubmitPaymentMethod = async (refId) => {
@@ -258,121 +241,123 @@ export const SpacePurchaseContainer = ({
 
     trackWithSession(EVENTS.PAYMENT_METHOD_CREATED);
 
-    goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
-  };
-
-  const onConfirm = () => {
-    trackWithSession(EVENTS.CONFIRM_PURCHASE);
-
-    goToStep(currentSpace ? SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT : SPACE_PURCHASE_STEPS.RECEIPT);
+    goToStep(STEPS.CONFIRMATION);
   };
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
-      case SPACE_PURCHASE_STEPS.SPACE_DETAILS:
+      case STEPS.PLATFORM_SELECTION:
+        return (
+          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingXl">
+            <Breadcrumbs items={PLATFORM_AND_SPACE_STEPS} />
+            <PlatformSelectionStep trackWithSession={trackWithSession} />
+          </Grid>
+        );
+      case STEPS.SPACE_PLAN_SELECTION:
+        return (
+          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
+            <Breadcrumbs items={NEW_SPACE_STEPS} />
+            <SpacePlanSelectionStep
+              organizationId={organizationId}
+              onSelectPlan={onSelectPlan}
+              canCreateFreeSpace={canCreateFreeSpace}
+              canCreatePaidSpace={canCreatePaidSpace}
+              track={trackWithSession}
+              spaceRatePlans={spaceRatePlans}
+              loading={!spaceRatePlans}
+              currentSpacePlan={currentSpacePlan}
+              currentSpacePlanIsLegacy={currentSpacePlanIsLegacy}
+            />
+            <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
+          </Grid>
+        );
+      case STEPS.SPACE_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS} />
             <SpaceDetailsStep
-              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.SPACE_SELECTION)}
+              onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
               spaceName={spaceName}
               onChangeSpaceName={onChangeSpaceName}
               templatesList={templatesList}
-              onChangeSelectedTemplate={onChangeSelectedTemplate}
+              onSelectTemplate={onSelectTemplate}
               selectedTemplate={selectedTemplate}
               onSubmit={onSubmitSpaceDetails}
               spaceIsFree={spaceIsFree}
             />
           </Grid>
         );
-      case SPACE_PURCHASE_STEPS.BILLING_DETAILS:
+      case STEPS.BILLING_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <BillingDetailsStep
-              navigateToPreviousStep={() =>
-                goToStep(
-                  currentSpace
-                    ? SPACE_PURCHASE_STEPS.SPACE_SELECTION
-                    : SPACE_PURCHASE_STEPS.SPACE_DETAILS
-                )
+              onBack={() =>
+                goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)
               }
-              savedBillingDetails={billingDetails}
-              onSubmitBillingDetails={onSubmitBillingDetails}
+              billingDetails={billingDetails}
+              onSubmit={(newBillingDetails) => {
+                trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
+
+                setBillingDetails(newBillingDetails);
+                goToStep(STEPS.CREDIT_CARD_DETAILS);
+              }}
             />
           </Grid>
         );
-      case SPACE_PURCHASE_STEPS.CARD_DETAILS:
+      case STEPS.CREDIT_CARD_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <CreditCardDetailsStep
               organizationId={organizationId}
-              navigateToPreviousStep={() => goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS)}
+              onBack={() => goToStep(STEPS.BILLING_DETAILS)}
               billingCountryCode={getCountryCodeFromName(billingDetails.country)}
-              onSuccess={onSubmitPaymentMethod}
+              onSubmit={onSubmitPaymentMethod}
             />
           </Grid>
         );
-      case SPACE_PURCHASE_STEPS.CONFIRMATION:
+      case STEPS.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
             <ConfirmationStep
               organizationId={organizationId}
-              trackWithSession={trackWithSession}
+              track={trackWithSession}
               showBillingDetails={userIsOrgOwner}
               showEditLink={organization.isBillable}
-              isLoadingBillingDetails={isLoadingBillingDetails}
+              billingDetailsLoading={billingDetailsLoading}
               billingDetails={billingDetails}
               paymentDetails={paymentDetails}
-              navigateToPreviousStep={onBackConfirmation}
-              onConfirm={onConfirm}
+              onBack={() => {
+                if (!organization.isBillable) {
+                  goToStep(STEPS.CREDIT_CARD_DETAILS);
+                } else if (!currentSpace) {
+                  goToStep(STEPS.SPACE_DETAILS);
+                } else {
+                  goToStep(STEPS.SPACE_PLAN_SELECTION);
+                }
+              }}
+              onSubmit={() => {
+                trackWithSession(EVENTS.CONFIRM_PURCHASE);
+
+                goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
+              }}
             />
           </Grid>
         );
-      case SPACE_PURCHASE_STEPS.RECEIPT:
+      case STEPS.RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
             <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
           </Grid>
         );
-      case SPACE_PURCHASE_STEPS.UPGRADE_RECEIPT:
+      case STEPS.UPGRADE_RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
             <SpaceUpgradeReceiptStep />
-          </Grid>
-        );
-      case SPACE_PURCHASE_STEPS.PLATFORM_SELECTION:
-        return (
-          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingXl">
-            <Breadcrumbs items={PLATFORM_AND_SPACE_STEPS} />
-            <PlatformSelectionStep
-              canCreateCommunityPlan={canCreateCommunityPlan}
-              canCreatePaidSpace={canCreatePaidSpace}
-              trackWithSession={trackWithSession}
-              loading={!spaceRatePlans}
-            />
-          </Grid>
-        );
-      default:
-        // Return step 1: SPACE_SELECTION
-        return (
-          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS} />
-            <SpacePlanSelectionStep
-              selectPlan={selectPlan}
-              canCreateCommunityPlan={canCreateCommunityPlan}
-              canCreatePaidSpace={canCreatePaidSpace}
-              trackWithSession={trackWithSession}
-              spaceRatePlans={spaceRatePlans}
-              loading={!spaceRatePlans}
-              currentSpacePlan={currentSpacePlan}
-              currentSpaceIsLegacy={currentSpaceIsLegacy}
-            />
-            <NewSpaceFAQ faqEntries={faqEntries} trackWithSession={trackWithSession} />
           </Grid>
         );
     }
@@ -395,7 +380,7 @@ SpacePurchaseContainer.propTypes = {
   currentSpacePlan: PropTypes.object,
   organization: OrganizationPropType,
   templatesList: PropTypes.array,
-  canCreateCommunityPlan: PropTypes.bool,
+  canCreateFreeSpace: PropTypes.bool,
   pageContent: PropTypes.shape({
     pageName: PropTypes.string.isRequired,
     content: PropTypes.arrayOf(
@@ -406,6 +391,6 @@ SpacePurchaseContainer.propTypes = {
     ).isRequired,
   }),
   currentSpace: SpacePropType,
-  currentSpaceIsLegacy: PropTypes.bool,
+  currentSpacePlanIsLegacy: PropTypes.bool,
   hasPurchasedApps: PropTypes.bool,
 };

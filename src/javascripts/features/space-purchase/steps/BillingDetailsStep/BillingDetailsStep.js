@@ -24,11 +24,7 @@ const styles = {
   }),
 };
 
-export const BillingDetailsStep = ({
-  navigateToPreviousStep,
-  savedBillingDetails,
-  onSubmitBillingDetails,
-}) => {
+export const BillingDetailsStep = ({ onBack, billingDetails, onSubmit }) => {
   return (
     <section
       aria-labelledby="new-space-billing-details-section"
@@ -44,7 +40,7 @@ export const BillingDetailsStep = ({
         <Card className={styles.card} testId="billing-details.card">
           <Typography>
             <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
-              {isEmpty(savedBillingDetails) ? 'Add' : 'Update'} your billing details{' '}
+              {isEmpty(billingDetails) ? 'Add' : 'Update'} your billing details{' '}
               <span role="img" aria-label="Mailbox closed">
                 📫
               </span>
@@ -52,11 +48,11 @@ export const BillingDetailsStep = ({
           </Typography>
 
           <BillingDetailsForm
-            onSubmit={onSubmitBillingDetails}
-            onCancel={navigateToPreviousStep}
+            onSubmit={onSubmit}
+            onCancel={onBack}
             submitText="Continue"
             cancelText="Back"
-            billingDetails={savedBillingDetails}
+            billingDetails={billingDetails}
           />
         </Card>
         <PaymentSummary />
@@ -66,7 +62,7 @@ export const BillingDetailsStep = ({
 };
 
 BillingDetailsStep.propTypes = {
-  navigateToPreviousStep: PropTypes.func.isRequired,
-  savedBillingDetails: PropTypes.object,
-  onSubmitBillingDetails: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
+  billingDetails: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
 };

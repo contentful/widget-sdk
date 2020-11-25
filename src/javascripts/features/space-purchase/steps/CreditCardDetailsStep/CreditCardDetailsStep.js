@@ -29,12 +29,7 @@ const styles = {
   }),
 };
 
-export const CreditCardDetailsStep = ({
-  organizationId,
-  billingCountryCode,
-  navigateToPreviousStep,
-  onSuccess,
-}) => {
+export const CreditCardDetailsStep = ({ organizationId, billingCountryCode, onBack, onSubmit }) => {
   return (
     <section
       aria-labelledby="new-space-card-details-section"
@@ -59,7 +54,7 @@ export const CreditCardDetailsStep = ({
             countryCode={billingCountryCode}
             onSuccess={async ({ refId }) => {
               try {
-                await onSuccess(refId);
+                await onSubmit(refId);
               } catch {
                 Notification.error('Your credit card couldn’t be saved. Please try again.');
               }
@@ -74,7 +69,7 @@ export const CreditCardDetailsStep = ({
                 'Something went wrong. Refresh this page and contact us if you continue to see this.'
               );
             }}
-            onCancel={navigateToPreviousStep}
+            onCancel={onBack}
             cancelText="Back"
           />
         </Card>
@@ -87,6 +82,6 @@ export const CreditCardDetailsStep = ({
 CreditCardDetailsStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
   billingCountryCode: PropTypes.string.isRequired,
-  navigateToPreviousStep: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
