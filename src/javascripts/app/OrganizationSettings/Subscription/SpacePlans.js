@@ -19,10 +19,11 @@ import {
 import { getVariation, FLAGS } from 'LaunchDarkly';
 
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { websiteUrl } from 'Config';
+import { websiteUrl, helpCenterUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { Pluralized, Price } from 'core/components/formatting';
@@ -64,6 +65,12 @@ const styles = {
 const USED_SPACES = 'usedSpaces';
 const UNUSED_SPACES = 'unusedSpaces';
 
+const withUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'subscription-space-table',
+  campaign: 'in-app-help',
+});
+
 function SpacePlans({
   initialLoad,
   spacePlans,
@@ -87,7 +94,8 @@ function SpacePlans({
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
-  const [showSpaceUsageSummary, setShowSpaceUsageSummary] = useState(false);
+  const [isSpaceUsageSummaryEnabled, setIsSpaceUsageSummaryEnabled] = useState(false);
+
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId });
@@ -95,10 +103,11 @@ function SpacePlans({
         FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
         { organizationId }
       );
-      const showSpaceUsageSummary = await getVariation(FLAGS.SPACE_USAGE_SUMMARY, {
-        organizationId,
-      });
-      setShowSpaceUsageSummary(showSpaceUsageSummary);
+
+      setIsSpaceUsageSummaryEnabled(
+        await getVariation(FLAGS.SPACE_USAGE_SUMMARY, { organizationId })
+      );
+
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
       const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
@@ -199,11 +208,24 @@ function SpacePlans({
           Create Space
         </TextLink>
       </Paragraph>
-      {canManageSpaces && (
-        <Note className={styles.note}>
-          {`Click the "change" link next to the space type to change it.`}
-        </Note>
-      )}
+      {canManageSpaces ? (
+        isSpaceUsageSummaryEnabled ? (
+          <Note className={styles.note}>
+            {'Check out your space usage in our new overview below! Got Questions? See '}
+            <TextLink
+              href={withUtmParams(`${helpCenterUrl}/subscription-plan/`)}
+              target="_blank"
+              rel="noopener noreferrer">
+              this article
+            </TextLink>
+            {'.'}
+          </Note>
+        ) : (
+          <Note className={styles.note}>
+            {'Click the "change" link next to the space type to change it.'}
+          </Note>
+        )
+      ) : null}
       {(initialLoad || numSpaces > 0) &&
         (canManageSpaces ? (
           <>
@@ -233,7 +255,7 @@ function SpacePlans({
               className={cn(styles.tabPanel, {
                 [styles.isVisible]: selectedTab === USED_SPACES,
               })}>
-              {showSpaceUsageSummary ? (
+              {isSpaceUsageSummaryEnabled ? (
                 <SpacePlansTableNew
                   plans={assignedSpacePlans}
                   organizationId={organizationId}
@@ -274,7 +296,7 @@ function SpacePlans({
               </TabPanel>
             )}
           </>
-        ) : showSpaceUsageSummary ? (
+        ) : isSpaceUsageSummaryEnabled ? (
           <SpacePlansTableNew
             plans={spacePlans}
             organizationId={organizationId}
