@@ -37,24 +37,6 @@ import {
   SpaceUpgradeReceiptStep,
 } from '../steps';
 
-const NEW_SPACE_STEPS = [
-  { text: '1.Spaces', isActive: true },
-  { text: '2.Payment', isActive: false },
-  { text: '3.Confirmation', isActive: false },
-];
-
-const NEW_SPACE_STEPS_PAYMENT = [
-  { text: '1.Spaces', isActive: false },
-  { text: '2.Payment', isActive: true },
-  { text: '3.Confirmation', isActive: false },
-];
-
-const NEW_SPACE_STEPS_CONFIRMATION = [
-  { text: '1.Spaces', isActive: false },
-  { text: '2.Payment', isActive: false },
-  { text: '3.Confirmation', isActive: true },
-];
-
 const STEPS = {
   SPACE_PLAN_SELECTION: 'SPACE_PLAN_SELECTION',
   SPACE_DETAILS: 'SPACE_DETAILS',
@@ -63,6 +45,20 @@ const STEPS = {
   CONFIRMATION: 'CONFIRMATION',
   RECEIPT: 'RECEIPT',
   UPGRADE_RECEIPT: 'UPGRADE_RECEIPT',
+};
+
+const generateBreadcrumbItems = (step) => {
+  const spaceSteps = [STEPS.SPACE_PLAN_SELECTION, STEPS.SPACE_DETAILS];
+
+  const paymentSteps = [STEPS.BILLING_DETAILS, STEPS.CREDIT_CARD_DETAILS, STEPS.CONFIRMATION];
+
+  const confirmationSteps = [STEPS.RECEIPT, STEPS.UPGRADE_RECEIPT];
+
+  return [
+    { text: '1.Spaces', isActive: spaceSteps.includes(step) },
+    { text: '2.Payment', isActive: paymentSteps.includes(step) },
+    { text: '3.Confirmation', isActive: confirmationSteps.includes(step) },
+  ];
 };
 
 // Fetch billing and payment information if organziation already has billing information
@@ -236,7 +232,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <SpacePlanSelectionStep
               organizationId={organizationId}
               onSelectPlan={onSelectPlan}
@@ -254,7 +250,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.SPACE_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <SpaceDetailsStep
               onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
               spaceName={spaceName}
@@ -270,7 +266,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.BILLING_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <BillingDetailsStep
               onBack={() =>
                 goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)
@@ -288,7 +284,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.CREDIT_CARD_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <CreditCardDetailsStep
               organizationId={organizationId}
               onBack={() => goToStep(STEPS.BILLING_DETAILS)}
@@ -300,7 +296,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS_PAYMENT} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <ConfirmationStep
               organizationId={organizationId}
               track={trackWithSession}
@@ -329,14 +325,14 @@ export const SpacePurchaseContainer = ({
       case STEPS.RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
           </Grid>
         );
       case STEPS.UPGRADE_RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumbs items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
             <SpaceUpgradeReceiptStep />
           </Grid>
         );
