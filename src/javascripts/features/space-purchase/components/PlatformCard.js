@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'classnames';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 
@@ -15,12 +16,27 @@ import { PinLabel } from './PinLabel';
 
 const styles = {
   card: css({
+    position: 'relative',
     display: 'grid',
     gridTemplateRows: '70px auto 1fr auto',
     rowGap: tokens.spacingXs,
     justifyItems: 'center',
     alignItems: 'center',
     textAlign: 'center',
+  }),
+  newTag: css({
+    '&:before': {
+      content: '"New!"',
+      backgroundColor: tokens.colorBlueMid,
+      position: 'absolute',
+      top: '-13px',
+      color: tokens.colorWhite,
+      fontWeight: tokens.fontWeightNormal,
+      padding: `${tokens.spacing2Xs} ${tokens.spacingL}`,
+      borderRadius: tokens.spacingL,
+      textTransform: 'uppercase',
+      fontSize: tokens.fontSizeS,
+    },
   }),
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
@@ -34,9 +50,13 @@ const styles = {
   }),
 };
 
-export const PlatformCard = ({ handleClick, selected = false, content }) => {
+export const PlatformCard = ({ handleClick, selected = false, isNew = false, content }) => {
   return (
-    <Card className={styles.card} padding="large" selected={selected} onClick={handleClick}>
+    <Card
+      className={cn(styles.card, { [styles.newTag]: isNew })}
+      padding="large"
+      selected={selected}
+      onClick={handleClick}>
       {/** TODO: replace skeletons with final illustration */}
       <SkeletonContainer svgWidth={70} svgHeight={70}>
         <SkeletonImage />
@@ -65,6 +85,7 @@ export const PlatformCard = ({ handleClick, selected = false, content }) => {
 PlatformCard.propTypes = {
   handleClick: PropTypes.func.isRequired,
   selected: PropTypes.bool,
+  isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,

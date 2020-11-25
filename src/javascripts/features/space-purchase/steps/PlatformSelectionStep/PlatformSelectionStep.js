@@ -20,7 +20,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 
 import { SpacePurchaseState } from '../../context';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { PLATFORM_CONTENT } from '../../utils/platformContent';
+import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
 import { PlatformCard } from '../../components/PlatformCard';
 import { EnterpriseTalkToUs, CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUs';
 
@@ -115,6 +115,7 @@ export const PlatformSelectionStep = ({ track }) => {
               selected={selectedPlatform === platform.type}
               handleClick={() => setSelectedPlatform(platform.type)}
               content={content}
+              isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
             />
           );
         })}
