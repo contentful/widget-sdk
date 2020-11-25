@@ -250,7 +250,7 @@ export const SpacePurchaseContainer = ({
         return (
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingXl">
             <Breadcrumbs items={PLATFORM_AND_SPACE_STEPS} />
-            <PlatformSelectionStep trackWithSession={trackWithSession} />
+            <PlatformSelectionStep track={trackWithSession} />
           </Grid>
         );
       case STEPS.SPACE_PLAN_SELECTION:

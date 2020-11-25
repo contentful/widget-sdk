@@ -64,7 +64,7 @@ const styles = {
 // TODO: this is a placeholder url, update with link to packages comparison
 const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ trackWithSession }) => {
+export const PlatformSelectionStep = ({ track }) => {
   const {
     state: { organization },
   } = useContext(SpacePurchaseState);
@@ -87,7 +87,7 @@ export const PlatformSelectionStep = ({ trackWithSession }) => {
             testId="platform-selection.package-comparison-link"
             href={PACKAGES_COMPARISON_HREF}
             onClick={() => {
-              trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+              track(EVENTS.EXTERNAL_LINK_CLICKED, {
                 href: PACKAGES_COMPARISON_HREF,
                 intent: 'packages_comparison',
               });
@@ -159,7 +159,7 @@ export const PlatformSelectionStep = ({ trackWithSession }) => {
           <EnterpriseTalkToUs
             organizationId={organization?.sys.id}
             handleSelect={() =>
-              trackWithSession(EVENTS.EXTERNAL_LINK_CLICKED, {
+              track(EVENTS.EXTERNAL_LINK_CLICKED, {
                 href: CONTACT_SALES_HREF,
                 intent: 'upgrade_to_enterprise',
               })
@@ -172,5 +172,5 @@ export const PlatformSelectionStep = ({ trackWithSession }) => {
 };
 
 PlatformSelectionStep.propTypes = {
-  trackWithSession: PropTypes.func.isRequired,
+  track: PropTypes.func.isRequired,
 };
