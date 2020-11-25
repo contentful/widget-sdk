@@ -8,9 +8,10 @@ import {
   Heading,
   Paragraph,
   Icon,
-  Typography,
   List,
   ListItem,
+  SkeletonContainer,
+  SkeletonImage,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -42,6 +43,11 @@ const styles = {
   enterprise: css({
     backgroundColor: tokens.colorBlueLightest,
     padding: tokens.spacingL,
+    display: 'grid',
+    gridTemplateRows: '70px auto 1fr auto',
+    rowGap: tokens.spacingXs,
+    justifyItems: 'center',
+    alignItems: 'center',
     textAlign: 'center',
   }),
   enterpriseFeatures: css({
@@ -114,29 +120,35 @@ export const PlatformSelectionStep = ({ track }) => {
         })}
 
         <div className={styles.enterprise}>
-          <Typography>
-            <Heading element="h3" className={cn(styles.centeredText, styles.mediumWeight)}>
-              Enterprise
-            </Heading>
-          </Typography>
+          {/** TODO: replace skeletons with final illustration */}
+          <SkeletonContainer svgWidth={70} svgHeight={70}>
+            <SkeletonImage />
+          </SkeletonContainer>
 
-          <Paragraph className={styles.textLeft}>Space + Compose + Launch plus:</Paragraph>
-          <List className={styles.enterpriseFeatures} testId="platform-limits">
-            <ListItem className={cn(styles.listItem, styles.textLeft)}>
-              <Icon icon="CheckCircle" color="positive" className={styles.check} />
-              <Paragraph>Customization of roles &amp; tasks </Paragraph>
-            </ListItem>
-            <ListItem className={cn(styles.listItem, styles.textLeft)}>
-              <Icon icon="CheckCircle" color="positive" className={styles.check} />
-              <Paragraph>
-                Access to Professional Services, Solution Architects &amp; Customer Success Managers
-              </Paragraph>
-            </ListItem>
-            <ListItem className={cn(styles.listItem, styles.textLeft)}>
-              <Icon icon="CheckCircle" color="positive" className={styles.check} />
-              <Paragraph>SSO, Teams, and User Management API</Paragraph>
-            </ListItem>
-          </List>
+          <Heading element="h3" className={cn(styles.centeredText, styles.mediumWeight)}>
+            Enterprise
+          </Heading>
+
+          <span>
+            <Paragraph className={styles.textLeft}>Space + Compose + Launch plus:</Paragraph>
+            <List className={styles.enterpriseFeatures} testId="platform-limits">
+              <ListItem className={cn(styles.listItem, styles.textLeft)}>
+                <Icon icon="CheckCircle" color="positive" className={styles.check} />
+                <Paragraph>Customization of roles &amp; tasks </Paragraph>
+              </ListItem>
+              <ListItem className={cn(styles.listItem, styles.textLeft)}>
+                <Icon icon="CheckCircle" color="positive" className={styles.check} />
+                <Paragraph>
+                  Access to Professional Services, Solution Architects &amp; Customer Success
+                  Managers
+                </Paragraph>
+              </ListItem>
+              <ListItem className={cn(styles.listItem, styles.textLeft)}>
+                <Icon icon="CheckCircle" color="positive" className={styles.check} />
+                <Paragraph>SSO, Teams, and User Management API</Paragraph>
+              </ListItem>
+            </List>
+          </span>
 
           <EnterpriseTalkToUs
             organizationId={organization?.sys.id}
