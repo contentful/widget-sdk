@@ -173,12 +173,12 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
         trackWithSession={trackWithSession}
         organization={data?.organization}
         templatesList={data?.templatesList}
-        canCreateCommunityPlan={data?.canCreateFreeSpace}
+        canCreateFreeSpace={data?.canCreateFreeSpace}
         pageContent={data?.pageContent}
         currentSpace={data?.currentSpace}
         spaceRatePlans={data?.spaceRatePlans}
         currentSpacePlan={data?.currentSpaceRatePlan}
-        currentSpaceIsLegacy={data?.showLegacyPlanWarning}
+        currentSpacePlanIsLegacy={data?.showLegacyPlanWarning}
         composeLaunchPurchaseEnabled={data?.composeLaunchPurchaseEnabled}
       />
     </>

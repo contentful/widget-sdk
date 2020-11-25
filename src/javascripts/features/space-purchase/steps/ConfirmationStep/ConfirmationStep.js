@@ -55,14 +55,14 @@ const redirectToEditPayment = (orgId) => {
 
 export const ConfirmationStep = ({
   organizationId,
-  navigateToPreviousStep,
-  trackWithSession,
+  billingDetailsLoading,
+  showEditLink,
+  showBillingDetails,
   billingDetails,
   paymentDetails,
-  onConfirm,
-  isLoadingBillingDetails,
-  showBillingDetails,
-  showEditLink,
+  track,
+  onBack,
+  onSubmit,
 }) => {
   return (
     <section
@@ -91,7 +91,7 @@ export const ConfirmationStep = ({
                     testId="confirmation-page.edit-billing-link"
                     icon="ExternalLink"
                     onClick={() => {
-                      trackWithSession(EVENTS.INTERNAL_LINK_CLICKED, {
+                      track(EVENTS.INTERNAL_LINK_CLICKED, {
                         state: 'account.organizations.billing',
                         intent: 'edit_billing',
                       });
@@ -104,13 +104,13 @@ export const ConfirmationStep = ({
               )}
             </Flex>
             <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-              {isLoadingBillingDetails && (
+              {billingDetailsLoading && (
                 <>
                   <CreditCardDetailsLoading />
                   <BillingDetailsLoading />
                 </>
               )}
-              {!isLoadingBillingDetails && (
+              {!billingDetailsLoading && (
                 <>
                   <CreditCardInformation creditCardInfo={paymentDetails} />
                   <BillingInformation billingDetails={billingDetails} />
@@ -118,12 +118,12 @@ export const ConfirmationStep = ({
               )}
             </Grid>
             <Flex justifyContent="flex-end">
-              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
+              <Button onClick={onBack} testId="navigate-back" buttonType="muted">
                 Back
               </Button>
               <Button
                 className={styles.continueButton}
-                onClick={onConfirm}
+                onClick={onSubmit}
                 testId="confirm-purchase-button"
                 buttonType="positive">
                 Confirm payment
@@ -131,11 +131,7 @@ export const ConfirmationStep = ({
             </Flex>
           </Card>
         )}
-        <PaymentSummary
-          showButtons={!showBillingDetails}
-          onConfirm={onConfirm}
-          onBack={navigateToPreviousStep}
-        />
+        <PaymentSummary showButtons={!showBillingDetails} onConfirm={onSubmit} onBack={onBack} />
       </Grid>
     </section>
   );
@@ -143,12 +139,12 @@ export const ConfirmationStep = ({
 
 ConfirmationStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
-  navigateToPreviousStep: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  trackWithSession: PropTypes.func.isRequired,
+  billingDetailsLoading: PropTypes.bool.isRequired,
+  showEditLink: PropTypes.bool.isRequired,
+  showBillingDetails: PropTypes.bool.isRequired,
   billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
-  showEditLink: PropTypes.bool.isRequired,
-  isLoadingBillingDetails: PropTypes.bool.isRequired,
-  showBillingDetails: PropTypes.bool.isRequired,
+  track: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };

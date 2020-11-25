@@ -39,8 +39,8 @@ describe('ConfirmationStep', () => {
   });
 
   it('should show the edit link when showEditLink is true and track clicks on it', () => {
-    const trackWithSession = jest.fn();
-    build({ showEditLink: true, trackWithSession });
+    const track = jest.fn();
+    build({ showEditLink: true, track });
 
     const editBillingLink = screen.getByTestId('confirmation-page.edit-billing-link');
 
@@ -48,7 +48,7 @@ describe('ConfirmationStep', () => {
 
     userEvent.click(editBillingLink);
 
-    expect(trackWithSession).toHaveBeenCalledWith(EVENTS.INTERNAL_LINK_CLICKED, {
+    expect(track).toHaveBeenCalledWith(EVENTS.INTERNAL_LINK_CLICKED, {
       state: 'account.organizations.billing',
       intent: 'edit_billing',
     });
@@ -67,7 +67,7 @@ describe('ConfirmationStep', () => {
   });
 
   it('should show a loading state if the payment and billing details are loading', () => {
-    build({ isLoadingBillingDetails: true });
+    build({ billingDetailsLoading: true });
 
     expect(screen.getByTestId('billing-details-loading')).toBeVisible();
     expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
@@ -91,12 +91,12 @@ function build(customProps, customState) {
     organizationId: mockOrganization.sys.id,
     billingDetails: mockBillingDetails,
     paymentDetails: mockPaymentMethod,
-    isLoadingBillingDetails: false,
-    trackWithSession: () => {},
+    billingDetailsLoading: false,
+    track: () => {},
     showBillingDetails: true,
     showEditLink: false,
-    onConfirm: () => {},
-    navigateToPreviousStep: () => {},
+    onSubmit: () => {},
+    onBack: () => {},
     ...customProps,
   };
 
