@@ -61,13 +61,8 @@ const generateBreadcrumbItems = (step) => {
 };
 
 // Fetch billing and payment information if organziation already has billing information
-const fetchBillingDetails = async (
-  organization,
-  setPaymentDetails,
-  setBillingDetails,
-  setBillingDetailsLoading
-) => {
-  setBillingDetailsLoading(true);
+const fetchBillingDetails = async (organization, dispatch, setPaymentDetails) => {
+  dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: true });
 
   const [billingDetails, paymentMethod] = await Promise.all([
     getBillingDetails(organization.sys.id),
@@ -75,8 +70,8 @@ const fetchBillingDetails = async (
   ]);
 
   setPaymentDetails(paymentMethod);
-  setBillingDetails(billingDetails);
-  setBillingDetailsLoading(false);
+  dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
+  dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: false });
 };
 
 export const SpacePurchaseContainer = ({
@@ -90,15 +85,18 @@ export const SpacePurchaseContainer = ({
   currentSpacePlan,
   currentSpacePlanIsLegacy,
 }) => {
-  const { dispatch } = useContext(SpacePurchaseState);
+  const {
+    state: { billingDetails },
+    dispatch,
+  } = useContext(SpacePurchaseState);
 
   const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [billingDetails, setBillingDetails] = useState({});
+  // const [billingDetails, setBillingDetails] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
-  const [billingDetailsLoading, setBillingDetailsLoading] = useState(false);
+  // const [billingDetailsLoading, setBillingDetailsLoading] = useState(false);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
@@ -113,14 +111,9 @@ export const SpacePurchaseContainer = ({
 
   useEffect(() => {
     if (userIsOrgOwner && organization?.isBillable) {
-      fetchBillingDetails(
-        organization,
-        setPaymentDetails,
-        setBillingDetails,
-        setBillingDetailsLoading
-      );
+      fetchBillingDetails(organization, dispatch, setPaymentDetails);
     }
-  }, [userIsOrgOwner, organization]);
+  }, [userIsOrgOwner, organization, dispatch]);
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
@@ -260,11 +253,9 @@ export const SpacePurchaseContainer = ({
         return (
           <BillingDetailsStep
             onBack={() => goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)}
-            billingDetails={billingDetails}
-            onSubmit={(newBillingDetails) => {
+            onSubmit={() => {
               trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
 
-              setBillingDetails(newBillingDetails);
               goToStep(STEPS.CREDIT_CARD_DETAILS);
             }}
           />
@@ -285,8 +276,6 @@ export const SpacePurchaseContainer = ({
             track={trackWithSession}
             showBillingDetails={userIsOrgOwner}
             showEditLink={organization.isBillable}
-            billingDetailsLoading={billingDetailsLoading}
-            billingDetails={billingDetails}
             paymentDetails={paymentDetails}
             onBack={() => {
               if (!organization.isBillable) {

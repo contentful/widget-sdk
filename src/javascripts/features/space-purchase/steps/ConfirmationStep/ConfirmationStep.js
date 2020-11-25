@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -15,15 +15,12 @@ import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { go } from 'states/Navigator';
 
-import {
-  BillingDetailsLoading,
-  CreditCardDetailsLoading,
-  BillingDetailsPropType,
-} from 'features/organization-billing';
+import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
 
 import { CreditCardInformation } from '../../components/CreditCardInformation';
 import { PaymentSummary } from '../../components/PaymentSummary';
 import { BillingInformation } from './BillingInformation';
+import { SpacePurchaseState } from '../../context';
 
 const styles = {
   grid: css({
@@ -55,15 +52,17 @@ const redirectToEditPayment = (orgId) => {
 
 export const ConfirmationStep = ({
   organizationId,
-  billingDetailsLoading,
   showEditLink,
   showBillingDetails,
-  billingDetails,
   paymentDetails,
   track,
   onBack,
   onSubmit,
 }) => {
+  const {
+    state: { billingDetails, billingDetailsLoading },
+  } = useContext(SpacePurchaseState);
+
   return (
     <section
       aria-labelledby="new-space-confirmation-section"
@@ -139,10 +138,8 @@ export const ConfirmationStep = ({
 
 ConfirmationStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
-  billingDetailsLoading: PropTypes.bool.isRequired,
   showEditLink: PropTypes.bool.isRequired,
   showBillingDetails: PropTypes.bool.isRequired,
-  billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
   track: PropTypes.func.isRequired,
   onBack: PropTypes.func.isRequired,
