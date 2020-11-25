@@ -1,7 +1,7 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import { NewSpaceFAQ } from './NewSpaceFAQ';
+import { FAQAccordion } from './FAQAccordion';
 
 // Mocked since this consumes a complex data structure that is difficult to mock
 jest.mock('core/services/ContentfulCDA', () => ({
@@ -21,9 +21,9 @@ const mockFaqs = [
   },
 ];
 
-describe('NewSpaceFAQ', () => {
+describe('FAQAccordion', () => {
   it('should render a loading state when faqs are loading', () => {
-    build({ faqEntries: null });
+    build({ entries: null });
 
     expect(screen.getByTestId('faq-loading')).toBeVisible();
   });
@@ -35,23 +35,23 @@ describe('NewSpaceFAQ', () => {
   });
 
   it('should track when an faq is opened', () => {
-    const trackWithSession = jest.fn();
+    const track = jest.fn();
 
-    build({ trackWithSession });
+    build({ track });
 
     userEvent.click(screen.getByText(mockQuestion));
 
-    expect(trackWithSession).toBeCalled();
+    expect(track).toBeCalled();
     expect(screen.getByText(mockAnswer)).toBeVisible();
   });
 });
 
 function build(customProps) {
   const props = {
-    trackWithSession: () => {},
-    faqEntries: mockFaqs,
+    track: () => {},
+    entries: mockFaqs,
     ...customProps,
   };
 
-  render(<NewSpaceFAQ {...props} />);
+  render(<FAQAccordion {...props} />);
 }

@@ -26,6 +26,7 @@ import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { PinLabel } from '../../components/PinLabel';
 import { SpacePurchaseState } from '../../context';
+import { FAQAccordion } from '../../components/FAQAccordion';
 
 const styles = {
   fullRow: css({
@@ -80,6 +81,7 @@ export const SpacePlanSelectionStep = ({
   currentSpacePlan,
   loading,
   currentSpacePlanIsLegacy,
+  faqEntries,
 }) => {
   const {
     state: { organization, currentSpace, currentSpaceRatePlan },
@@ -199,6 +201,9 @@ export const SpacePlanSelectionStep = ({
             See full feature list
           </ExternalTextLink>
         </div>
+        <div className={styles.fullRow}>
+          <FAQAccordion entries={faqEntries} track={track} />
+        </div>
       </Grid>
     </section>
   );
@@ -213,6 +218,7 @@ SpacePlanSelectionStep.propTypes = {
   currentSpacePlan: PlanPropType,
   loading: PropTypes.bool,
   currentSpacePlanIsLegacy: PropTypes.bool,
+  faqEntries: PropTypes.arrayOf(PropTypes.object),
 };
 
 function CommunityLoadingState() {
