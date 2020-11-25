@@ -22,6 +22,7 @@ import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
 import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
+import { EnterpriseTalkToUs } from '../components/EnterpriseTalkToUs';
 
 export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
   medium: 'webapp',
@@ -130,15 +131,11 @@ export const SpaceCard = ({
               )}
             </Paragraph>
             {isEnterpriseCard && (
-              <Button
-                href={SPACE_PURCHASE_CONTACT_SALES_HREF}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleSelect}
+              <EnterpriseTalkToUs
+                handleSelect={handleSelect}
+                disabled={disabled}
                 testId="select-space-cta"
-                disabled={disabled}>
-                {content.callToAction}
-              </Button>
+              />
             )}
             {!isEnterpriseCard && !selected && (
               <Tooltip
