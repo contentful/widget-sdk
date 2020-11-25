@@ -24,7 +24,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
-import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
+import { PinLabel } from '../../components/PinLabel';
 import { SpacePurchaseState } from '../../context';
 
 const styles = {
@@ -169,7 +169,7 @@ export const SpacePlanSelectionStep = ({
                 </div>
 
                 {currentSpacePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
-                  <CurrentSpaceLabel />
+                  <PinLabel label="Current space" />
                 ) : (
                   <Tooltip
                     testId="read-only-tooltip"

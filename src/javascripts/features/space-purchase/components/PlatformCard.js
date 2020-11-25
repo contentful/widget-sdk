@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Card, Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { CurrentSpaceLabel } from './CurrentSpaceLabel';
+import { PinLabel } from './PinLabel';
 
 const styles = {
   mediumWeight: css({
@@ -39,7 +39,7 @@ export const PlatformCard = ({ handleClick, selected = false, content }) => {
             /month
           </Paragraph>
         ) : (
-          <CurrentSpaceLabel />
+          <PinLabel label="Your current package" />
         )}
       </Typography>
     </Card>

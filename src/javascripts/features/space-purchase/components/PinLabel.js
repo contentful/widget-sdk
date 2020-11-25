@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { SectionHeading } from '@contentful/forma-36-react-components';
@@ -12,13 +13,16 @@ const styles = {
   }),
 };
 
-export function CurrentSpaceLabel() {
+export function PinLabel({ label }) {
   return (
     <SectionHeading className={styles.currentSpaceLabel} element="p">
       <span role="img" aria-label="Pin">
         📍
       </span>{' '}
-      Current space
+      {label}
     </SectionHeading>
   );
 }
+PinLabel.propTypes = {
+  label: PropTypes.string.isRequired,
+};

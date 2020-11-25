@@ -21,7 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
-import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
+import { PinLabel } from './PinLabel';
 import { EnterpriseTalkToUs } from '../components/EnterpriseTalkToUs';
 
 export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
@@ -147,7 +147,7 @@ export const SpaceCard = ({
                 </Button>
               </Tooltip>
             )}
-            {!isEnterpriseCard && selected && <CurrentSpaceLabel />}
+            {!isEnterpriseCard && selected && <PinLabel label="Current space" />}
           </Typography>
 
           <div className={styles.limitsSection}>
