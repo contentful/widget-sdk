@@ -31,11 +31,18 @@ import {
   BillingDetailsStep,
   CreditCardDetailsStep,
   ConfirmationStep,
+  PlatformSelectionStep,
   SpaceDetailsStep,
   SpacePlanSelectionStep,
   SpaceCreationReceiptStep,
   SpaceUpgradeReceiptStep,
 } from '../steps';
+
+const PLATFORM_AND_SPACE_STEPS = [
+  { text: '1.Subscription', isActive: true },
+  { text: '2.Payment', isActive: false },
+  { text: '3.Confirmation', isActive: false },
+];
 
 const NEW_SPACE_STEPS = [
   { text: '1.Spaces', isActive: true },
@@ -56,6 +63,7 @@ const NEW_SPACE_STEPS_CONFIRMATION = [
 ];
 
 const SPACE_PURCHASE_STEPS = {
+  PLATFORM_SELECTION: 'PLATFORM_SELECTION',
   SPACE_SELECTION: 'SPACE_SELECTION',
   SPACE_DETAILS: 'SPACE_DETAILS',
   BILLING_DETAILS: 'BILLING_DETAILS',
@@ -93,10 +101,16 @@ export const SpacePurchaseContainer = ({
   spaceRatePlans,
   currentSpacePlan,
   currentSpaceIsLegacy,
+  hasPurchasedApps,
 }) => {
   const { dispatch } = useContext(SpacePurchaseState);
 
-  const [currentStep, setCurrentStep] = useState(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
+  // if the user has already purchased apps, we want them to start at the space selection step
+  // otherwise, they should start in the platfform and space selection step
+  const initialStep = hasPurchasedApps
+    ? SPACE_PURCHASE_STEPS.SPACE_SELECTION
+    : SPACE_PURCHASE_STEPS.PLATFORM_SELECTION;
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -331,6 +345,18 @@ export const SpacePurchaseContainer = ({
             <SpaceUpgradeReceiptStep />
           </Grid>
         );
+      case SPACE_PURCHASE_STEPS.PLATFORM_SELECTION:
+        return (
+          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingXl">
+            <Breadcrumbs items={PLATFORM_AND_SPACE_STEPS} />
+            <PlatformSelectionStep
+              canCreateCommunityPlan={canCreateCommunityPlan}
+              canCreatePaidSpace={canCreatePaidSpace}
+              trackWithSession={trackWithSession}
+              loading={!spaceRatePlans}
+            />
+          </Grid>
+        );
       default:
         // Return step 1: SPACE_SELECTION
         return (
@@ -381,4 +407,5 @@ SpacePurchaseContainer.propTypes = {
   }),
   currentSpace: SpacePropType,
   currentSpaceIsLegacy: PropTypes.bool,
+  hasPurchasedApps: PropTypes.bool,
 };
