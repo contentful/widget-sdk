@@ -238,6 +238,8 @@ registerGenericEvent('content_preview:created');
 registerGenericEvent('content_preview:updated');
 registerGenericEvent('content_preview:deleted');
 
+registerGenericEvent('planner_app:deep_link');
+
 registerEvent(
   'release:dialog_box_open',
   'release_dialog_box',

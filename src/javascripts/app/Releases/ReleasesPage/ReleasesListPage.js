@@ -20,6 +20,7 @@ import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
 import { getReleaseActions, getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesListdialog from './ReleasesListDialog';
+import { LaunchAppDeepLink } from '../ReleasesWidget/LaunchAppDeepLink';
 
 const styles = {
   workbenchContent: css({
@@ -31,6 +32,9 @@ const styles = {
   loadMoreButtonWrapper: css({
     display: 'flex',
     justifyContent: 'center',
+  }),
+  deepLinkHeader: css({
+    height: tokens.spacing2Xl,
   }),
 };
 
@@ -92,6 +96,7 @@ const PageShell = ({ children, setIsRelaseDialogShown }) => (
         </Button>
       }
     />
+    <Workbench.Header className={styles.deepLinkHeader} title={<LaunchAppDeepLink />} />
     <Workbench.Content type="text" className={styles.workbenchContent}>
       <div>{children}</div>
     </Workbench.Content>
