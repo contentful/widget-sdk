@@ -1,6 +1,4 @@
-// import React from 'react';
 import { screen } from '@testing-library/react';
-// import { SpacePurchaseState } from '../../context';
 import { BillingDetailsStep } from './BillingDetailsStep';
 import { renderWithProvider } from '../../testHelpers';
 

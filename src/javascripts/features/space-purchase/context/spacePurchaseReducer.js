@@ -5,6 +5,7 @@ export const actions = {
   SET_SELECTED_PLAN: 'SET_SELECTED_PLAN',
   SET_BILLING_DETAILS: 'SET_BILLING_DETAILS',
   SET_BILLING_DETAILS_LOADING: 'SET_BILLING_DETAILS_LOADING',
+  SET_PAYMENT_DETAILS: 'SET_PAYMENT_DETAILS',
 };
 
 export const spacePurchaseReducer = (state, action) => {
@@ -21,6 +22,8 @@ export const spacePurchaseReducer = (state, action) => {
       return { ...state, billingDetails: action.payload };
     case actions.SET_BILLING_DETAILS_LOADING:
       return { ...state, billingDetailsLoading: action.payload };
+    case actions.SET_PAYMENT_DETAILS:
+      return { ...state, paymentDetails: action.payload };
     default:
       return state;
   }

@@ -10,6 +10,7 @@ const initialState = {
   sessionId: undefined,
   billingDetails: {},
   billingDetailsLoading: false,
+  paymentDetails: {},
 };
 
 export const SpacePurchaseState = createContext();

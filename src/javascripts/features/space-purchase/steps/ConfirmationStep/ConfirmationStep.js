@@ -54,13 +54,12 @@ export const ConfirmationStep = ({
   organizationId,
   showEditLink,
   showBillingDetails,
-  paymentDetails,
   track,
   onBack,
   onSubmit,
 }) => {
   const {
-    state: { billingDetails, billingDetailsLoading },
+    state: { billingDetails, billingDetailsLoading, paymentDetails },
   } = useContext(SpacePurchaseState);
 
   return (
@@ -140,7 +139,6 @@ ConfirmationStep.propTypes = {
   organizationId: PropTypes.string.isRequired,
   showEditLink: PropTypes.bool.isRequired,
   showBillingDetails: PropTypes.bool.isRequired,
-  paymentDetails: PropTypes.object,
   track: PropTypes.func.isRequired,
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

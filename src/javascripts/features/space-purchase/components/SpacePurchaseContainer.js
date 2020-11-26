@@ -4,21 +4,13 @@ import PropTypes from 'prop-types';
 import { Grid, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
-import {
-  createBillingDetails,
-  setDefaultPaymentMethod,
-  getDefaultPaymentMethod,
-  getBillingDetails,
-  getCountryCodeFromName,
-} from 'features/organization-billing';
+import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import {
   Organization as OrganizationPropType,
   Space as SpacePropType,
 } from 'app/OrganizationSettings/PropTypes';
-import * as logger from 'services/logger';
-import * as TokenStore from 'services/TokenStore';
 import { EVENTS } from '../utils/analyticsTracking';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { usePageContent } from '../hooks/usePageContent';
@@ -61,15 +53,15 @@ const generateBreadcrumbItems = (step) => {
 };
 
 // Fetch billing and payment information if organziation already has billing information
-const fetchBillingDetails = async (organization, dispatch, setPaymentDetails) => {
+const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: true });
 
-  const [billingDetails, paymentMethod] = await Promise.all([
+  const [billingDetails, paymentDetails] = await Promise.all([
     getBillingDetails(organization.sys.id),
     getDefaultPaymentMethod(organization.sys.id),
   ]);
 
-  setPaymentDetails(paymentMethod);
+  dispatch({ type: actions.SET_PAYMENT_DETAILS, payload: paymentDetails });
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
   dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: false });
 };
@@ -85,18 +77,12 @@ export const SpacePurchaseContainer = ({
   currentSpacePlan,
   currentSpacePlanIsLegacy,
 }) => {
-  const {
-    state: { billingDetails },
-    dispatch,
-  } = useContext(SpacePurchaseState);
+  const { dispatch } = useContext(SpacePurchaseState);
 
   const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  // const [billingDetails, setBillingDetails] = useState({});
-  const [paymentDetails, setPaymentDetails] = useState({});
-  // const [billingDetailsLoading, setBillingDetailsLoading] = useState(false);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
@@ -111,7 +97,7 @@ export const SpacePurchaseContainer = ({
 
   useEffect(() => {
     if (userIsOrgOwner && organization?.isBillable) {
-      fetchBillingDetails(organization, dispatch, setPaymentDetails);
+      fetchBillingDetails(organization, dispatch);
     }
   }, [userIsOrgOwner, organization, dispatch]);
 
@@ -180,45 +166,6 @@ export const SpacePurchaseContainer = ({
     }
   };
 
-  const onSubmitPaymentMethod = async (refId) => {
-    trackWithSession(EVENTS.PAYMENT_DETAILS_ENTERED);
-
-    const newBillingDetails = {
-      ...billingDetails,
-      refid: refId,
-    };
-
-    let paymentMethod;
-    try {
-      await createBillingDetails(organization.sys.id, newBillingDetails);
-      await setDefaultPaymentMethod(organization.sys.id, refId);
-      [paymentMethod] = await Promise.all([
-        getDefaultPaymentMethod(organization.sys.id),
-        TokenStore.refresh(),
-      ]);
-    } catch (error) {
-      trackWithSession(EVENTS.ERROR, {
-        errorType: 'CreateAndSaveBillingDetails',
-        error,
-      });
-
-      logger.logError('SpacePurchaseError', {
-        data: {
-          error,
-          organizationId: organization.sys.id,
-        },
-      });
-
-      throw error;
-    }
-
-    setPaymentDetails(paymentMethod);
-
-    trackWithSession(EVENTS.PAYMENT_METHOD_CREATED);
-
-    goToStep(STEPS.CONFIRMATION);
-  };
-
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.SPACE_PLAN_SELECTION:
@@ -265,8 +212,12 @@ export const SpacePurchaseContainer = ({
           <CreditCardDetailsStep
             organizationId={organizationId}
             onBack={() => goToStep(STEPS.BILLING_DETAILS)}
-            billingCountryCode={getCountryCodeFromName(billingDetails.country)}
-            onSubmit={onSubmitPaymentMethod}
+            track={trackWithSession}
+            onSubmit={() => {
+              trackWithSession(EVENTS.PAYMENT_METHOD_CREATED);
+
+              goToStep(STEPS.CONFIRMATION);
+            }}
           />
         );
       case STEPS.CONFIRMATION:
@@ -276,7 +227,6 @@ export const SpacePurchaseContainer = ({
             track={trackWithSession}
             showBillingDetails={userIsOrgOwner}
             showEditLink={organization.isBillable}
-            paymentDetails={paymentDetails}
             onBack={() => {
               if (!organization.isBillable) {
                 goToStep(STEPS.CREDIT_CARD_DETAILS);

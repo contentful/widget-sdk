@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -7,8 +7,17 @@ import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import * as logger from 'services/logger';
-import { ZuoraCreditCardIframe } from 'features/organization-billing';
+import * as TokenStore from 'services/TokenStore';
+import {
+  ZuoraCreditCardIframe,
+  getCountryCodeFromName,
+  createBillingDetails,
+  setDefaultPaymentMethod,
+  getDefaultPaymentMethod,
+} from 'features/organization-billing';
 import { PaymentSummary } from '../../components/PaymentSummary';
+import { actions, SpacePurchaseState } from '../../context';
+import { EVENTS } from '../../utils/analyticsTracking';
 
 const styles = {
   grid: css({
@@ -29,7 +38,28 @@ const styles = {
   }),
 };
 
-export const CreditCardDetailsStep = ({ organizationId, billingCountryCode, onBack, onSubmit }) => {
+async function createBillingPaymentDetails(organizationId, billingDetails, refId) {
+  const newBillingDetails = {
+    ...billingDetails,
+    refid: refId,
+  };
+
+  await createBillingDetails(organizationId, newBillingDetails);
+  await setDefaultPaymentMethod(organizationId, refId);
+  const [paymentMethod] = await Promise.all([
+    getDefaultPaymentMethod(organizationId),
+    TokenStore.refresh(),
+  ]);
+
+  return paymentMethod;
+}
+
+export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
+  const {
+    state: { organization, billingDetails },
+    dispatch,
+  } = useContext(SpacePurchaseState);
+
   return (
     <section
       aria-labelledby="new-space-card-details-section"
@@ -50,14 +80,38 @@ export const CreditCardDetailsStep = ({ organizationId, billingCountryCode, onBa
             </span>
           </Subheading>
           <ZuoraCreditCardIframe
-            organizationId={organizationId}
-            countryCode={billingCountryCode}
+            organizationId={organization.sys.id}
+            countryCode={getCountryCodeFromName(billingDetails.country)}
             onSuccess={async ({ refId }) => {
+              track(EVENTS.PAYMENT_DETAILS_ENTERED);
+
               try {
-                await onSubmit(refId);
-              } catch {
+                const paymentMethod = await createBillingPaymentDetails(
+                  organization.sys.id,
+                  billingDetails,
+                  refId
+                );
+
+                dispatch({ type: actions.SET_PAYMENT_DETAILS, payload: paymentMethod });
+              } catch (error) {
+                track(EVENTS.ERROR, {
+                  errorType: 'CreateAndSaveBillingDetails',
+                  error,
+                });
+
+                logger.logError('SpacePurchaseError', {
+                  data: {
+                    error,
+                    organizationId: organization.sys.id,
+                  },
+                });
+
                 Notification.error('Your credit card couldn’t be saved. Please try again.');
+
+                return;
               }
+
+              onSubmit();
             }}
             onError={(error) => {
               logger.logError('ZuoraIframeError', {
@@ -80,8 +134,7 @@ export const CreditCardDetailsStep = ({ organizationId, billingCountryCode, onBa
 };
 
 CreditCardDetailsStep.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  billingCountryCode: PropTypes.string.isRequired,
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  track: PropTypes.func.isRequired,
 };

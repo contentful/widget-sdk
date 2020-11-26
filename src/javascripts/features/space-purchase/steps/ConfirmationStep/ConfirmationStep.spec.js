@@ -88,9 +88,6 @@ describe('ConfirmationStep', () => {
 async function build(customProps, customState) {
   const props = {
     organizationId: mockOrganization.sys.id,
-    billingDetails: mockBillingDetails,
-    paymentDetails: mockPaymentMethod,
-    billingDetailsLoading: false,
     track: () => {},
     showBillingDetails: true,
     showEditLink: false,
@@ -101,7 +98,12 @@ async function build(customProps, customState) {
 
   await renderWithProvider(
     ConfirmationStep,
-    { selectedPlan: mockSelectedPlan, ...customState },
+    {
+      selectedPlan: mockSelectedPlan,
+      billingDetails: mockBillingDetails,
+      paymentDetails: mockPaymentMethod,
+      ...customState,
+    },
     props
   );
 }

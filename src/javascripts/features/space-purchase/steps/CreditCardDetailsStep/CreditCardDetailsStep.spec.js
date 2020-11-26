@@ -1,15 +1,32 @@
-import React from 'react';
-import { render, waitFor, screen, fireEvent } from '@testing-library/react';
+import { when } from 'jest-when';
+import { waitFor, screen, fireEvent } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 
+import * as TokenStore from 'services/TokenStore';
 import * as LazyLoader from 'utils/LazyLoader';
 import * as logger from 'services/logger';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
-import { SpacePurchaseState } from '../../context';
 import { CreditCardDetailsStep } from './CreditCardDetailsStep';
+import { renderWithProvider } from '../../testHelpers';
+
+// eslint-disable-next-line
+import { mockEndpoint } from 'data/EndpointFactory';
+
+when(mockEndpoint)
+  .calledWith(expect.objectContaining({ method: 'POST', path: ['billing_details'] }))
+  .mockResolvedValue()
+  .calledWith(expect.objectContaining({ method: 'PUT', path: ['default_payment_method'] }))
+  .mockResolvedValue()
+  .calledWith(expect.objectContaining({ method: 'GET', path: ['default_payment_method'] }))
+  .mockResolvedValue();
 
 const mockOrganization = Fake.Organization();
+const mockBillingDetails = {
+  country: 'Armenia',
+};
+
+const mockRefId = 'ref_1234';
 
 jest.mock('utils/LazyLoader', () => {
   const results = {
@@ -24,6 +41,10 @@ jest.mock('utils/LazyLoader', () => {
     get: jest.fn().mockImplementation((key) => results[key]),
   };
 });
+
+jest.mock('services/TokenStore', () => ({
+  refresh: jest.fn().mockResolvedValue(),
+}));
 
 jest.useFakeTimers();
 
@@ -40,7 +61,7 @@ describe('steps/CreditCardDetailsStep', () => {
     expect(onBack).toBeCalled();
   });
 
-  it('should call onSubmit if the Zuora success response callback is called', async () => {
+  it('should make some requests and call onSubmit if the Zuora success response callback is called', async () => {
     const onSubmit = jest.fn();
 
     const { successCb } = await build({ onSubmit });
@@ -49,11 +70,46 @@ describe('steps/CreditCardDetailsStep', () => {
 
     successCb();
 
+    await waitFor(() => expect(mockEndpoint).toBeCalled());
+
+    expect(mockEndpoint).toBeCalledWith(
+      expect.objectContaining({
+        method: 'POST',
+        path: ['billing_details'],
+        data: {
+          ...mockBillingDetails,
+          refid: mockRefId,
+        },
+      })
+    );
+
+    expect(mockEndpoint).toBeCalledWith(
+      expect.objectContaining({
+        method: 'PUT',
+        path: ['default_payment_method'],
+        data: {
+          paymentMethodRefId: mockRefId,
+        },
+      })
+    );
+
+    expect(mockEndpoint).toBeCalledWith(
+      expect.objectContaining({
+        method: 'GET',
+        path: ['default_payment_method'],
+      })
+    );
+
+    expect(TokenStore.refresh).toBeCalled();
     expect(onSubmit).toBeCalled();
   });
 
-  it('should notify the user something went wrong if onSubmit fails', async () => {
-    const onSubmit = jest.fn().mockRejectedValueOnce();
+  it('should log and notify the user, and not call onSubmit if something went wrong during submission', async () => {
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ method: 'POST', path: ['billing_details'] }))
+      .mockRejectedValueOnce(new Error('oops'));
+
+    const onSubmit = jest.fn();
 
     const { successCb } = await build({ onSubmit });
 
@@ -61,9 +117,14 @@ describe('steps/CreditCardDetailsStep', () => {
 
     successCb();
 
-    expect(onSubmit).toBeCalled();
+    await waitFor(() => expect(mockEndpoint).toBeCalled());
 
-    await waitFor(() => screen.getByTestId('cf-ui-notification'));
+    expect(logger.logError).toBeCalledWith('SpacePurchaseError', {
+      data: {
+        error: expect.any(Error),
+        organizationId: mockOrganization.sys.id,
+      },
+    });
 
     expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
   });
@@ -110,23 +171,25 @@ async function build(customProps, customState) {
 
   const props = Object.assign(
     {
-      organizationId: mockOrganization.sys.id,
-      billingCountryCode: 'CX',
+      track: () => {},
       onBack: () => {},
       onSubmit: () => {},
     },
     customProps
   );
 
-  const contextValue = {
-    state: { selectedPlan: { name: 'Medium', price: 123 }, ...customState },
-    dispatch: jest.fn(),
-  };
-
-  render(
-    <SpacePurchaseState.Provider value={contextValue}>
-      <CreditCardDetailsStep {...props} />
-    </SpacePurchaseState.Provider>
+  await renderWithProvider(
+    CreditCardDetailsStep,
+    {
+      selectedPlan: {
+        name: 'Medium',
+        price: 123,
+      },
+      organization: mockOrganization,
+      billingDetails: mockBillingDetails,
+      ...customState,
+    },
+    props
   );
 
   await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
