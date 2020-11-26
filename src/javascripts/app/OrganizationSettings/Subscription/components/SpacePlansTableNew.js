@@ -74,6 +74,8 @@ export const SpacePlansTableNew = ({
 
   const handleSort = (columnName) => {
     setSortState({ [columnName]: sortState[columnName] === 'ASC' ? 'DESC' : 'ASC' });
+    // Go to page zero on User sort request
+    setPagination({ ...pagination, skip: 0 });
   };
 
   const fetchSpacesUsage = useCallback(() => {
