@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { screen, within } from '@testing-library/react';
 import { SpaceDetailsStep } from './SpaceDetailsStep';
-import { renderWithProvider } from '../../testHelpers';
+import { renderWithProvider } from '../../__tests__/helpers';
 import { EVENTS } from '../../utils/analyticsTracking';
 
 const mockTemplate = { name: 'Cool template bro', sys: { id: 'template_abcd' } };

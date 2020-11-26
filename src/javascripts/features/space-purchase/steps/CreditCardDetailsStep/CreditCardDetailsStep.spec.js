@@ -8,7 +8,7 @@ import * as logger from 'services/logger';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 import { CreditCardDetailsStep } from './CreditCardDetailsStep';
-import { renderWithProvider } from '../../testHelpers';
+import { renderWithProvider } from '../../__tests__/helpers';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';

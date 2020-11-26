@@ -5,7 +5,7 @@ import { go } from 'states/Navigator';
 import { EVENTS } from '../../utils/analyticsTracking';
 
 import { ConfirmationStep } from './ConfirmationStep';
-import { renderWithProvider } from '../../testHelpers';
+import { renderWithProvider } from '../../__tests__/helpers';
 
 const mockOrganization = Fake.Organization();
 const mockSelectedPlan = Fake.Plan();

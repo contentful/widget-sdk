@@ -7,7 +7,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
-import { renderWithProvider } from '../../testHelpers';
+import { renderWithProvider } from '../../__tests__/helpers';
 
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { BillingDetailsStep } from './BillingDetailsStep';
-import { renderWithProvider } from '../../testHelpers';
+import { renderWithProvider } from '../../__tests__/helpers';
 
 describe('BillingDetailsStep', () => {
   it('should render Billing Details page and Order Summary', async () => {

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { render, waitFor } from '@testing-library/react';
 
-import { SpacePurchaseContextProvider, actions, SpacePurchaseState } from './context';
+import { SpacePurchaseContextProvider, actions, SpacePurchaseState } from '../context';
 
 function ComponentEncapsulator({ children, initialState = {} }) {
   const [initialized, setInitialized] = useState(false);

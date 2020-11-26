@@ -5,7 +5,7 @@ import * as LazyLoader from 'utils/LazyLoader';
 import { SpacePurchaseContainer } from './SpacePurchaseContainer';
 import { isOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
-import { renderWithProvider } from '../testHelpers';
+import { renderWithProvider } from '../__tests__/helpers';
 
 import {
   createBillingDetails,
