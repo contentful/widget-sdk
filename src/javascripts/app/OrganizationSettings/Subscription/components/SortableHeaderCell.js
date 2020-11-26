@@ -36,7 +36,7 @@ export const SortableHeaderCell = ({ displayName, sortOrder, id, onSort }) => {
 
 SortableHeaderCell.propTypes = {
   displayName: PropTypes.string.isRequired,
-  sortOrder: PropTypes.func.isRequired,
+  sortOrder: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
   onSort: PropTypes.func.isRequired,
 };

@@ -32,6 +32,13 @@ const styles = {
   }),
 };
 
+const buildSortParam = (sortState) => {
+  const [columnNameAndOrder] = Object.entries(sortState);
+  const [name, sortOrder] = columnNameAndOrder;
+  const isSpaceName = name === 'spaceName';
+  return `${sortOrder === 'DESC' ? '-' : ''}${name}${isSpaceName ? '' : '.utilization'}`;
+};
+
 export const SpacePlansTableNew = ({
   plans,
   onChangeSpace,
@@ -42,15 +49,11 @@ export const SpacePlansTableNew = ({
   upgradedSpaceId,
   organizationId,
 }) => {
-  const [pagination, setPagination] = useState({
-    skip: 0,
-    limit: 10,
-  });
+  const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const [plansLookup, setPlansLookup] = useState();
-
   const [sortState, setSortState] = useState({ spaceName: 'ASC' });
 
-  const onSort = (columnName) => {
+  const handleSort = (columnName) => {
     const newSortState =
       sortState[columnName] === undefined || sortState[columnName] === 'ASC' ? 'DESC' : 'ASC';
     setSortState({ [columnName]: newSortState });
@@ -59,18 +62,19 @@ export const SpacePlansTableNew = ({
   const fetchSpacesUsage = useCallback(() => {
     const orgEndpoint = createOrganizationEndpoint(organizationId);
     const query = {
+      order: buildSortParam(sortState),
       skip: pagination.skip,
       limit: pagination.limit,
     };
     return getSpacesUsage(orgEndpoint, query);
-  }, [organizationId, pagination.skip, pagination.limit]);
+  }, [organizationId, pagination.skip, pagination.limit, sortState]);
 
   const { isLoading, error, data = {} } = useAsync(fetchSpacesUsage);
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
 
   return (
-    <div>
+    <>
       <Table>
         <colgroup>
           <col className={styles.nameCol} />
@@ -87,38 +91,38 @@ export const SpacePlansTableNew = ({
             <SortableHeaderCell
               id="spaceName"
               displayName="Name"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <TableCell>Space type</TableCell>
             <SortableHeaderCell
               id="environments"
               displayName="Environments"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <SortableHeaderCell
               id="roles"
               displayName="Roles"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <SortableHeaderCell
               id="locales"
               displayName="Locales"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <SortableHeaderCell
               id="contentTypes"
               displayName="Content types"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <SortableHeaderCell
               id="records"
               displayName="Records"
-              onSort={onSort}
+              onSort={handleSort}
               sortOrder={sortState}
             />
             <TableCell />
@@ -128,25 +132,21 @@ export const SpacePlansTableNew = ({
           {initialLoad || isLoading || !!error ? (
             <SkeletonRow columnCount={8} rowCount={pagination.limit} />
           ) : (
-            // The default order of `data.items` is ascending alphabetical order by space name
-            // We assume `data.items` do not contain `paceUsage of an deleted space
             data.items.map((spaceUsage) => {
               const spaceId = spaceUsage.sys.space.sys.id;
               const plan = plansLookup[spaceId];
-              if (plan) {
-                return (
-                  <SpacePlanRowNew
-                    key={spaceUsage.sys.id}
-                    plan={plan}
-                    spaceUsage={spaceUsage}
-                    onChangeSpace={onChangeSpace}
-                    onDeleteSpace={onDeleteSpace}
-                    hasUpgraded={spaceId === upgradedSpaceId}
-                    enterprisePlan={enterprisePlan}
-                    showSpacePlanChangeBtn={showSpacePlanChangeBtn}
-                  />
-                );
-              }
+              return plan ? (
+                <SpacePlanRowNew
+                  key={spaceUsage.sys.id}
+                  plan={plansLookup[spaceId]}
+                  spaceUsage={spaceUsage}
+                  onChangeSpace={onChangeSpace}
+                  onDeleteSpace={onDeleteSpace}
+                  hasUpgraded={spaceId === upgradedSpaceId}
+                  enterprisePlan={enterprisePlan}
+                  showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                />
+              ) : null;
             })
           )}
         </TableBody>
@@ -159,7 +159,7 @@ export const SpacePlansTableNew = ({
           onChange={setPagination}
         />
       )}
-    </div>
+    </>
   );
 };
 
