@@ -18,17 +18,32 @@ import { keyBy } from 'lodash';
 import { SortableHeaderCell } from './SortableHeaderCell';
 
 const styles = {
+  usageTable: css({
+    tableLayout: 'fixed',
+  }),
   nameCol: css({
-    width: '30%',
+    width: '28%',
   }),
   typeCol: css({
     width: '20%',
   }),
-  usageCol: css({
-    width: 'auto',
+  environmentsCol: css({
+    width: '12%',
+  }),
+  rolesCol: css({
+    width: '8%',
+  }),
+  localesCol: css({
+    width: '9%',
+  }),
+  contentTypesCol: css({
+    width: '13%',
+  }),
+  recordsCol: css({
+    width: '10%',
   }),
   actionsCol: css({
-    width: '60px',
+    width: '50px',
   }),
 };
 
@@ -74,15 +89,15 @@ export const SpacePlansTableNew = ({
 
   return (
     <>
-      <Table>
+      <Table className={styles.usageTable}>
         <colgroup>
           <col className={styles.nameCol} />
           <col className={styles.typeCol} />
-          <col className={styles.usageCol} />
-          <col className={styles.usageCol} />
-          <col className={styles.usageCol} />
-          <col className={styles.usageCol} />
-          <col className={styles.usageCol} />
+          <col className={styles.environmentsCol} />
+          <col className={styles.rolesCol} />
+          <col className={styles.localesCol} />
+          <col className={styles.contentTypesCol} />
+          <col className={styles.recordsCol} />
           <col className={styles.actionsCol} />
         </colgroup>
         <TableHead>
