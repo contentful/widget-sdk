@@ -14,7 +14,8 @@ const ReadOnlySpaceHome = ({ isAdmin }) => {
       <Typography>
         <Heading>You’re viewing a read-only space</Heading>
         <Paragraph>
-          All of your existing content is saved, but you canʼt create or edit anything.{' '}
+          All of your existing content is saved, but you canʼt create or edit anything. Some
+          features may not be available.{' '}
           {isAdmin
             ? 'Get in touch with us to continue work.'
             : 'Weʼve informed your Contentful admin about it.'}
