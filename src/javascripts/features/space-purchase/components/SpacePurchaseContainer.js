@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { Grid, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
-import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
+import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import {
   Organization as OrganizationPropType,
@@ -77,12 +77,12 @@ export const SpacePurchaseContainer = ({
   currentSpacePlan,
   currentSpacePlanIsLegacy,
 }) => {
-  const { dispatch } = useContext(SpacePurchaseState);
+  const {
+    state: { selectedPlan },
+    dispatch,
+  } = useContext(SpacePurchaseState);
 
   const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
-  const [spaceName, setSpaceName] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState(null);
 
   const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
@@ -103,19 +103,6 @@ export const SpacePurchaseContainer = ({
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
-  const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
-
-  const onSelectTemplate = (selectedTemplate) => {
-    trackWithSession(EVENTS.SPACE_TEMPLATE_SELECTED, {
-      selectedTemplate: selectedTemplate?.name,
-    });
-
-    setSelectedTemplate(selectedTemplate);
-  };
-
-  const onChangeSpaceName = (changedSpaceName) => {
-    setSpaceName(changedSpaceName);
-  };
 
   const goToStep = (nextStep) => {
     trackWithSession(EVENTS.NAVIGATE, {
@@ -139,7 +126,6 @@ export const SpacePurchaseContainer = ({
       selectedPlan,
     });
 
-    setSelectedPlan(selectedPlan);
     dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedPlan });
 
     // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
@@ -149,20 +135,6 @@ export const SpacePurchaseContainer = ({
       goToStep(STEPS.BILLING_DETAILS);
     } else {
       goToStep(STEPS.SPACE_DETAILS);
-    }
-  };
-
-  const onSubmitSpaceDetails = () => {
-    trackWithSession(EVENTS.SPACE_DETAILS_ENTERED);
-
-    if (spaceIsFree) {
-      // Since the space is free, they can immediately create the space (which happens on the receipt page)
-      goToStep(STEPS.RECEIPT);
-    } else if (organization.isBillable) {
-      // Since they already have billing details, they can go straight to the confirmation page to confirm their purchase
-      goToStep(STEPS.CONFIRMATION);
-    } else {
-      goToStep(STEPS.BILLING_DETAILS);
     }
   };
 
@@ -187,13 +159,21 @@ export const SpacePurchaseContainer = ({
         return (
           <SpaceDetailsStep
             onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
-            spaceName={spaceName}
-            onChangeSpaceName={onChangeSpaceName}
+            track={trackWithSession}
             templatesList={templatesList}
-            onSelectTemplate={onSelectTemplate}
-            selectedTemplate={selectedTemplate}
-            onSubmit={onSubmitSpaceDetails}
-            spaceIsFree={spaceIsFree}
+            onSubmit={() => {
+              trackWithSession(EVENTS.SPACE_DETAILS_ENTERED);
+
+              if (isFreeProductPlan(selectedPlan)) {
+                // Since the space is free, they can immediately create the space (which happens on the receipt page)
+                goToStep(STEPS.RECEIPT);
+              } else if (organization.isBillable) {
+                // Since they already have billing details, they can go straight to the confirmation page to confirm their purchase
+                goToStep(STEPS.CONFIRMATION);
+              } else {
+                goToStep(STEPS.BILLING_DETAILS);
+              }
+            }}
           />
         );
       case STEPS.BILLING_DETAILS:
@@ -244,9 +224,7 @@ export const SpacePurchaseContainer = ({
           />
         );
       case STEPS.RECEIPT:
-        return (
-          <SpaceCreationReceiptStep spaceName={spaceName} selectedTemplate={selectedTemplate} />
-        );
+        return <SpaceCreationReceiptStep />;
       case STEPS.UPGRADE_RECEIPT:
         return <SpaceUpgradeReceiptStep />;
     }

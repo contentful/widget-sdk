@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { go } from 'states/Navigator';
@@ -8,7 +7,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
-import { SpacePurchaseState } from '../../context';
+import { renderWithProvider } from '../../testHelpers';
 
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
@@ -50,7 +49,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should show the plan name and plan type in the paragraph when the space has been successfully created', async () => {
-    build();
+    await build();
 
     await waitFor(expect(makeNewSpace).toBeCalled);
 
@@ -65,7 +64,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should call makeNewSpace and fire an analytic event when there is no selectedTemplate', async () => {
-    build();
+    await build();
 
     await waitFor(() => {
       expect(makeNewSpace).toBeCalledWith(mockOrganization.sys.id, mockSelectedPlan, spaceName);
@@ -78,7 +77,8 @@ describe('SpaceCreationReceiptStep', () => {
 
   it('should call createTemplate when there is a selectedTemplate', async () => {
     const mockTemplate = { test: true };
-    build({ selectedTemplate: mockTemplate });
+
+    await build(null, { selectedTemplate: mockTemplate });
 
     await waitFor(() => {
       expect(createTemplate).toBeCalledWith(mockCreatedSpace, mockTemplate);
@@ -96,7 +96,8 @@ describe('SpaceCreationReceiptStep', () => {
   it('should display an error and fire an analytic event if the creation of the space errored', async () => {
     const err = new Error('Something went wrong');
     makeNewSpace.mockRejectedValueOnce(err);
-    build();
+
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('receipt.error-face')).toBeVisible();
@@ -112,7 +113,8 @@ describe('SpaceCreationReceiptStep', () => {
     const err = new Error('Something went wrong');
     makeNewSpace.mockResolvedValueOnce({ newSpace: 'test' });
     createTemplate.mockRejectedValueOnce(err);
-    build({ selectedTemplate: {} });
+
+    await build(null, { selectedTemplate: {} });
 
     await waitFor(() => {
       expect(screen.queryByTestId('receipt-page.template-creation-error')).toBeVisible();
@@ -126,7 +128,8 @@ describe('SpaceCreationReceiptStep', () => {
 
   it('should restart the space creation if it errs and the user clicks the button again', async () => {
     makeNewSpace.mockRejectedValueOnce(new Error('Something went wrong'));
-    build();
+
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('receipt.error-face')).toBeVisible();
@@ -143,7 +146,8 @@ describe('SpaceCreationReceiptStep', () => {
 
   it('should show a warning note if template content creation fails', async () => {
     createTemplate.mockRejectedValueOnce(new Error('Something went wrong'));
-    build({ selectedTemplate: {} });
+
+    await build(null, { selectedTemplate: {} });
 
     await waitFor(() => {
       expect(createTemplate).toBeCalled();
@@ -158,7 +162,8 @@ describe('SpaceCreationReceiptStep', () => {
       createSpacePromise = new Promise(() => {});
       return createSpacePromise;
     });
-    build();
+
+    await build();
 
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
     expect(redirectToNewSpace).toHaveAttribute('disabled');
@@ -176,7 +181,7 @@ describe('SpaceCreationReceiptStep', () => {
 
     $rootScope.$on.mockReturnValue(mockOffCb);
 
-    build();
+    await build();
 
     expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
     expect($rootScope.$on).toHaveBeenCalledWith('$stateChangeStart', expect.any(Function));
@@ -193,7 +198,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should redirect to the new space when clicking on the button after the space has been', async () => {
-    build();
+    await build();
 
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
 
@@ -212,25 +217,20 @@ describe('SpaceCreationReceiptStep', () => {
   });
 });
 
-function build(customProps, customState) {
+async function build(customProps, customState) {
   const props = {
-    spaceName,
     ...customProps,
   };
 
-  const contextValue = {
-    state: {
+  await renderWithProvider(
+    SpaceCreationReceiptStep,
+    {
       organization: mockOrganization,
+      spaceName,
       selectedPlan: mockSelectedPlan,
       sessionId: mockSessionMetadata.sessionId,
       ...customState,
     },
-    dispatch: jest.fn(),
-  };
-
-  render(
-    <SpacePurchaseState.Provider value={contextValue}>
-      <SpaceCreationReceiptStep {...props} />
-    </SpacePurchaseState.Provider>
+    props
   );
 }

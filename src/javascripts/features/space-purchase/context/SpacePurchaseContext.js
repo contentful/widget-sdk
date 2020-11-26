@@ -11,6 +11,8 @@ const initialState = {
   billingDetails: {},
   billingDetailsLoading: false,
   paymentDetails: {},
+  spaceName: '',
+  selectedTemplate: null,
 };
 
 export const SpacePurchaseState = createContext();
