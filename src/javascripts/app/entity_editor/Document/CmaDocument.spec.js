@@ -3,7 +3,7 @@ import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
 import { Action } from 'data/CMA/EntityActions';
 import { State as EntityState } from 'data/CMA/EntityState';
-import { linkedTags, newAsset, newContentType, newEntry } from './__fixtures__';
+import { linkedTags, newAsset, newContentType, newEntry, PATHS } from './__fixtures__';
 import testDocumentBasics, { expectDocError } from './__tests__/testDocument';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -74,8 +74,8 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
 
 describe('CmaDocument', () => {
   testDocumentBasics(createCmaDocument);
-  const fieldPath = ['fields', 'fieldA', 'en-US'];
-  const metadataPath = ['metadata', 'tags'];
+  const { fieldPath, anotherFieldPath, tagsPath } = PATHS;
+
   /**
    * @type {Document}
    */
@@ -142,9 +142,9 @@ describe('CmaDocument', () => {
     });
   });
 
-  describe('5 sec. after setValueAt(metadataPath) on a field', () => {
+  describe('5 sec. after setValueAt(tagsPath) on a field', () => {
     beforeEach(async () => {
-      await doc.setValueAt(metadataPath, linkedTags);
+      await doc.setValueAt(tagsPath, linkedTags);
       jest.runAllTimers();
     });
 
@@ -159,9 +159,9 @@ describe('CmaDocument', () => {
 
   describe('multiple changes within 5s', () => {
     it('sends only one CMA request', async () => {
-      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
-      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'another updated');
-      await doc.setValueAt(['metadata', 'tags'], linkedTags);
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      await doc.setValueAt(anotherFieldPath, 'another updated');
+      await doc.setValueAt(tagsPath, linkedTags);
       expect(entityRepo.update).not.toHaveBeenCalled();
 
       jest.runAllTimers();
@@ -186,17 +186,17 @@ describe('CmaDocument', () => {
         });
       });
 
-      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.advanceTimersByTime(THROTTLE_TIME);
 
       K.assertCurrentValue(doc.state.isSaving$, true);
-      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'value set during saving');
+      await doc.setValueAt(anotherFieldPath, 'value set during saving');
       cmaResolve();
       await wait();
       K.assertCurrentValue(doc.state.isSaving$, false);
 
       // Ensure the value was not overwritten by the response entity.
-      expect(doc.getValueAt(['fields', 'fieldB', 'en-US'])).toBe('value set during saving');
+      expect(doc.getValueAt(anotherFieldPath)).toBe('value set during saving');
 
       jest.advanceTimersByTime(THROTTLE_TIME - 100);
       expect(entityRepo.update).toBeCalledTimes(1);
@@ -222,12 +222,12 @@ describe('CmaDocument', () => {
         });
       });
 
-      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'A updated');
+      await doc.setValueAt(fieldPath, 'A updated');
 
       jest.advanceTimersByTime(THROTTLE_TIME);
 
       // Second change, while initial change is being saved:
-      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'B updated');
+      await doc.setValueAt(anotherFieldPath, 'B updated');
 
       jest.advanceTimersByTime(THROTTLE_TIME * 2);
       cmaResolve();
@@ -252,7 +252,7 @@ describe('CmaDocument', () => {
         throw DisconnectedError;
       });
 
-      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.advanceTimersByTime(THROTTLE_TIME);
       expect(entityRepo.update).toBeCalledTimes(1);
       expectDocError(doc.state.error$, DocError.Disconnected);

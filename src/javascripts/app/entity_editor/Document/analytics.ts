@@ -1,7 +1,7 @@
 import { intersection } from 'lodash';
 import { Entity } from './types';
 import * as Analytics from 'analytics/Analytics';
-import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
+import { changedEntityFieldPaths, changedEntitytagsPaths } from './changedPaths';
 import * as logger from 'services/logger';
 import { getState, State } from 'data/CMA/EntityState';
 
@@ -30,15 +30,15 @@ export async function trackEditConflict({
   const remoteChangedFieldPaths = formatFieldPaths(
     changedEntityFieldPaths(localEntity.fields, remoteEntity.fields)
   );
-  const localChangedMetadataPaths = formatMetadataPaths(
-    changedEntityMetadataPaths(localEntity.metadata, changedLocalEntity.metadata)
+  const localChangedtagsPaths = formattagsPaths(
+    changedEntitytagsPaths(localEntity.metadata, changedLocalEntity.metadata)
   );
-  const remoteChangedMetadataPaths = formatMetadataPaths(
-    changedEntityMetadataPaths(localEntity.metadata, remoteEntity.metadata)
+  const remoteChangedtagsPaths = formattagsPaths(
+    changedEntitytagsPaths(localEntity.metadata, remoteEntity.metadata)
   );
 
-  const localChangesPaths = localChangedFieldPaths.concat(localChangedMetadataPaths);
-  const remoteChangesPaths = remoteChangedFieldPaths.concat(remoteChangedMetadataPaths);
+  const localChangesPaths = localChangedFieldPaths.concat(localChangedtagsPaths);
+  const remoteChangesPaths = remoteChangedFieldPaths.concat(remoteChangedtagsPaths);
   const data = {
     entityId: localEntity.sys.id,
     entityType: localEntity.sys.type,
@@ -65,11 +65,11 @@ export async function trackEditConflict({
       localFieldLocaleChangesCount: localChangedFieldPaths.length,
       remoteFieldLocaleChangesCount: remoteChangedFieldPaths.length,
       sameMetadataConflictsCount: intersection(
-        localChangedMetadataPaths,
-        remoteChangedMetadataPaths
+        localChangedtagsPaths,
+        remoteChangedtagsPaths
       ).length,
-      localMetadataChangesCount: localChangedMetadataPaths.length,
-      remoteMetadataChangesCount: remoteChangedMetadataPaths.length,
+      localMetadataChangesCount: localChangedtagsPaths.length,
+      remoteMetadataChangesCount: remoteChangedtagsPaths.length,
     },
   };
   Analytics.track('entity_editor:edit_conflict', data);
@@ -79,7 +79,7 @@ function formatFieldPaths(paths) {
   return paths.map((path) => `fields:${path.join(':')}`);
 }
 
-function formatMetadataPaths(paths) {
+function formattagsPaths(paths) {
   return paths.map((path) => `metadata:${path.join(':')}`);
 }
 

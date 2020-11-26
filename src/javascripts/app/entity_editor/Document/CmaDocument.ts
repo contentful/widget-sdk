@@ -13,7 +13,7 @@ import * as StringField from 'data/document/StringFieldSetter';
 import { ConflictType, trackEditConflict } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
 import { EntityRepo, EntityRepoChangeInfo } from 'data/CMA/EntityRepo';
-import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
+import { changedEntityFieldPaths, changedEntitytagsPaths } from './changedPaths';
 import { Document } from './typesDocument';
 import { getState, State } from 'data/CMA/EntityState';
 import type { ContentType } from 'contentful-ui-extensions-sdk';
@@ -494,17 +494,17 @@ export function create(
       intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
         .length > 0;
 
-    const localChangedMetadataPaths = changedEntityMetadataPaths(
+    const localChangedtagsPaths = changedEntitytagsPaths(
       lastSavedEntity.metadata,
       entity.metadata
     );
-    const remoteChangedMetadataPaths = changedEntityMetadataPaths(
+    const remoteChangedtagsPaths = changedEntitytagsPaths(
       lastSavedEntity.metadata,
       remoteEntity.metadata
     );
 
     const hasUnresolvableMetadataConflict =
-      localChangedMetadataPaths.length && remoteChangedMetadataPaths.length;
+      localChangedtagsPaths.length && remoteChangedtagsPaths.length;
 
     if (hasUnresolvableFieldsConflict || hasUnresolvableMetadataConflict) {
       trackVersionMismatch(entity, remoteEntity, ConflictType.NotAutoResolvable);
@@ -512,8 +512,8 @@ export function create(
       return false;
     }
 
-    const hasLocalChange = localChangedFieldPaths.length || localChangedMetadataPaths.length;
-    const hasRemoteChange = remoteChangedFieldPaths.length || remoteChangedMetadataPaths.length;
+    const hasLocalChange = localChangedFieldPaths.length || localChangedtagsPaths.length;
+    const hasRemoteChange = remoteChangedFieldPaths.length || remoteChangedtagsPaths.length;
     const hasResolvableConflictingChanges = hasLocalChange && hasRemoteChange;
 
     if (hasResolvableConflictingChanges) {
@@ -523,7 +523,7 @@ export function create(
     const setRemoteFieldsValues = remoteChangedFieldPaths.map((path) =>
       setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path]))
     );
-    const setRemoteMetadataValues = remoteChangedMetadataPaths.map((path) =>
+    const setRemoteMetadataValues = remoteChangedtagsPaths.map((path) =>
       setValueAt(['metadata', ...path], get(remoteEntity, ['metadata', ...path]))
     );
 

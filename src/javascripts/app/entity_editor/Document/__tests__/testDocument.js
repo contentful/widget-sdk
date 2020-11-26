@@ -4,7 +4,7 @@ import * as K from '../../../../../../test/utils/kefir';
 import * as Kefir from 'core/utils/kefir';
 import * as Permissions from 'access_control/EntityPermissions';
 
-import { initiallyLinkedTags, linkedTags, newEntry } from '../__fixtures__';
+import { initiallyLinkedTags, linkedTags, newEntry, PATHS } from '../__fixtures__';
 
 const kefirHelpers = jestKefir(Kefir);
 const { value } = kefirHelpers;
@@ -29,9 +29,8 @@ export function expectDocError(docError$, docErrorOrConstructor) {
 
 export default (createDocument) => {
   describe('Document', () => {
-    const fieldPath = ['fields', 'fieldA', 'en-US'];
-    const anotherFieldPath = ['fields', 'fieldB', 'en-US'];
-    const tagsPath = ['metadata', 'tags'];
+    const { fieldPath, otherLocalePath, anotherFieldPath, tagsPath, listFieldPath } = PATHS;
+
     /**
      * @var {Document} doc
      */
@@ -50,16 +49,13 @@ export default (createDocument) => {
       });
 
       describe('emits the changed value immediately after', () => {
-        const fieldPath = ['fields', 'fieldA', 'en-US'];
-
         it('setValueAt(fieldPath) on a field', () => {
           expect(doc.changes).toEmit([value(fieldPath)], () => {
             doc.setValueAt(fieldPath, 'en-US-updated');
           });
         });
 
-        it('pushValueAt(fieldPath) on a field', () => {
-          const listFieldPath = ['fields', 'listField', 'en-US'];
+        it('pushValueAt(fieldPath) on an array field', () => {
           expect(doc.changes).toEmit([value(listFieldPath)], () => {
             doc.pushValueAt(listFieldPath, 'en-US-updated-2');
           });
@@ -205,7 +201,7 @@ export default (createDocument) => {
 
     describe('getValueAt(fieldPath)', () => {
       it('returns initial value', () => {
-        expect(doc.getValueAt(['fields', 'fieldA', 'en-US'])).toBe('en');
+        expect(doc.getValueAt(fieldPath)).toBe('en');
       });
 
       it('returns initial tags value', () => {
@@ -304,15 +300,18 @@ export default (createDocument) => {
 
     describe('removeValueAt()', () => {
       it('removes a value from a field locale', () => {
-        doc.removeValueAt(['fields', 'fieldB', 'en-US']);
-        expect(doc.getValueAt(['fields', 'fieldB', 'en-US'])).toBeUndefined();
-        expect(doc.getValueAt(['fields', 'fieldB', 'de'])).toBe('val-DE');
+        doc.removeValueAt(fieldPath);
+        expect(doc.getValueAt(fieldPath)).toBeUndefined();
+        expect(doc.getValueAt(otherLocalePath)).toBe('val-DE');
       });
-      it('removes a whole field', () => {
-        doc.removeValueAt(['fields', 'fieldA']);
-        expect(doc.getValueAt(['fields', 'fieldA'])).toBeUndefined();
+      it('removes a whole field (all locale values)', () => {
+        const path = fieldPath.slice(0, -1);
+        doc.removeValueAt(path);
+        expect(doc.getValueAt(fieldPath)).toBeUndefined();
+        expect(doc.getValueAt(otherLocalePath)).toBeUndefined();
+        expect(doc.getValueAt(path)).toBeUndefined();
       });
-      it('does not throw when removed a non-existing path', () => {
+      it('does not throw when removing a non-existing path', () => {
         expect(() => doc.removeValueAt(['fields', 'non-existing', 'field'])).not.toThrow();
       });
     });

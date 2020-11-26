@@ -279,6 +279,7 @@ export default ($scope, $state) => {
         return doc.pushValueAt(['fields', field.id, localeCode], link);
       },
       remove: (index) => {
+        console.log('remove', ['fields', field.id, localeCode, index]);
         return doc.removeValueAt(['fields', field.id, localeCode, index]);
       },
       close: (closeReason) => {

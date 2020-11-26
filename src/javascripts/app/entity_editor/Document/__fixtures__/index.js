@@ -5,6 +5,29 @@ export const linkedTags = [
 
 export const initiallyLinkedTags = [{ sys: { id: 'tagId', type: 'Link', linkType: 'Tag' } }];
 
+export const PATHS = {
+  /**
+   * Path to a basic field locale.
+   */
+  fieldPath: ['fields', 'fieldA', 'en-US'],
+  /**
+   * Same path as `fieldPath` but another locale.
+   */
+  otherLocalePath: ['fields', 'fieldA', 'de'],
+  /**
+   * Path to another field than `fieldPath`.
+   */
+  anotherFieldPath: ['fields', 'fieldB', 'en-US'],
+  /**
+   * Path to a list field.
+   */
+  listFieldPath: ['fields', 'listField', 'en-US'],
+  /**
+   * Path to a metadata tags.
+   */
+  tagsPath: ['metadata', 'tags'],
+};
+
 export const newEntry = (fields, metadata) => ({
   sys: {
     type: 'Entry',
@@ -18,8 +41,8 @@ export const newEntry = (fields, metadata) => ({
     },
   },
   fields: fields || {
-    fieldA: { 'en-US': 'en' },
-    fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
+    fieldA: { 'en-US': 'en', de: 'val-DE' },
+    fieldB: { 'en-US': 'val-EN' },
     listField: { 'en-US': ['one'] },
     symbolField: { 'en-US': 'symbol value' },
     textField: { 'en-US': 'text value' },

@@ -37,7 +37,7 @@ function isTheSamePath(path1: string[], path2: string[]) {
  * Takes two entities' `entity.metadata` and returns all paths that are
  * different i.e. changed, added or deleted.
  */
-export function changedEntityMetadataPaths(
+export function changedEntitytagsPaths(
   metadata1: Metadata = { tags: [] },
   metadata2: Metadata = { tags: [] }
 ): string[][] {
