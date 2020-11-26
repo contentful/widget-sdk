@@ -1,6 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
-import { css } from 'emotion';
+import { css, keyframes } from 'emotion';
 import PropTypes from 'prop-types';
 
 import {
@@ -13,6 +13,15 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import { PinLabel } from './PinLabel';
+
+const pulse = keyframes({
+  from: {
+    boxShadow: '0px 0px 10px 0px rgb(46, 117, 212, 0)',
+  },
+  to: {
+    boxShadow: '0px 0px 10px 5px rgb(46, 117, 212, 0.65)',
+  },
+});
 
 const styles = {
   card: css({
@@ -36,6 +45,7 @@ const styles = {
       borderRadius: tokens.spacingL,
       textTransform: 'uppercase',
       fontSize: tokens.fontSizeS,
+      animation: `${pulse} 700ms ease alternate infinite`,
     },
   }),
   mediumWeight: css({
