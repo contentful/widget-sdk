@@ -33,7 +33,7 @@ const styles = {
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
-const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
+export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
@@ -49,13 +49,12 @@ export const PlatformSelectionStep = ({ track }) => {
           <Heading
             id="platform-selection-heading"
             element="h2"
-            className={cn(styles.fullRow, styles.mediumWeight, styles.heading)}
-            testId="platform-selection.heading">
+            className={cn(styles.fullRow, styles.mediumWeight, styles.heading)}>
             Choose the package that fits your organization needs
           </Heading>
 
           <ExternalTextLink
-            testId="platform-selection.package-comparison-link"
+            testId="package-comparison-link"
             href={PACKAGES_COMPARISON_HREF}
             onClick={() => {
               track(EVENTS.EXTERNAL_LINK_CLICKED, {

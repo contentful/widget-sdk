@@ -135,6 +135,12 @@ describe('SpacePurchaseContainer', () => {
     expect(screen.getByTestId('space-selection-section')).toBeVisible();
   });
 
+  it('should render PLATFORM_SELECTION page when user has never purchased apps', async () => {
+    await build({ customProps: { hasPurchasedApps: false } });
+
+    expect(screen.getByTestId('platform-selection-section')).toBeVisible();
+  });
+
   it('should render SPACE_DETAILS when a plan has been selected', async () => {
     await build();
 
@@ -496,7 +502,10 @@ async function build(options) {
     </SpacePurchaseState.Provider>
   );
 
-  await waitFor(() => screen.getAllByTestId('select-space-cta'));
+  // Platform step does not need to wait for cta to load
+  if (props.hasPurchasedApps) {
+    await waitFor(() => screen.getAllByTestId('select-space-cta'));
+  }
 }
 
 async function waitForZuoraToRender() {

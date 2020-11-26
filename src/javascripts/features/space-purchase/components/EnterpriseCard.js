@@ -52,7 +52,7 @@ const styles = {
 
 export const EnterpriseCard = ({ organizationId, handleSelect }) => {
   return (
-    <div className={styles.enterprise}>
+    <div className={styles.enterprise} data-test-id="enterprise-card">
       {/** TODO: replace skeletons with final illustration */}
       <SkeletonContainer svgWidth={70} svgHeight={70}>
         <SkeletonImage />

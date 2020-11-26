@@ -14,7 +14,12 @@ export const CONTACT_SALES_HREF = buildUrlWithUtmParams({
   content: 'contact-us',
 })(salesUrl);
 
-function EnterpriseTalkToUs({ organizationId, handleSelect, disabled = false, testId }) {
+function EnterpriseTalkToUs({
+  organizationId,
+  handleSelect,
+  disabled = false,
+  testId = 'talk-to-us',
+}) {
   const handleClick = () => {
     // TODO: investigate if we still need this handleSelect prop,
     // since we can handle tracking in this component
