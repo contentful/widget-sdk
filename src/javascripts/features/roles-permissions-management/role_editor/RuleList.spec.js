@@ -3,7 +3,9 @@ import { screen, render, fireEvent } from '@testing-library/react';
 import { RuleList } from 'features/roles-permissions-management/role_editor/RuleList';
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 
-const addRule = jest.fn(() => (x) => x);
+const addRule = jest.fn(() => () => 'sampleDraftId');
+const addDraftRuleId = jest.fn((x) => x);
+const removeDraftRuleId = jest.fn((x) => x);
 
 describe('RuleList component', () => {
   it('does render the component', () => {
@@ -206,6 +208,32 @@ describe('RuleList component', () => {
 
     expect(screen.queryByTestId('rules-filter-action-select')).toHaveValue('clean');
   });
+
+  it('updates draftId list when allowed rule is added', () => {
+    const props = {
+      rules: getRules(),
+    };
+
+    renderRuleList(props);
+
+    fireEvent.click(screen.getByTestId('add-allowed-rule'));
+
+    expect(addDraftRuleId).toHaveBeenCalledWith('sampleDraftId');
+  });
+
+  it('updates draftId list when denied rule is removed', () => {
+    const props = {
+      rules: getRules(),
+    };
+
+    renderRuleList(props);
+
+    const firstDeleteButton = screen.getAllByText('Delete rule')[0];
+
+    fireEvent.click(firstDeleteButton);
+
+    expect(removeDraftRuleId).toHaveBeenCalledWith('firstAllowedRuleId');
+  });
 });
 
 function renderRuleList(props) {
@@ -253,6 +281,10 @@ function renderRuleList(props) {
     searchEntities: jest.fn(),
     getEntityTitle: jest.fn(),
     hasClpFeature: true,
+    draftRulesIds: [],
+    addDraftRuleId,
+    removeDraftRuleId,
+    editedRuleIds: [],
   };
 
   const defaultTagsRepo = {
@@ -277,7 +309,7 @@ function getRules() {
   return {
     allowed: [
       {
-        id: 'NFfVjXMhlwMD5a43',
+        id: 'firstAllowedRuleId',
         entity: 'entry',
         action: 'read',
         scope: 'any',
