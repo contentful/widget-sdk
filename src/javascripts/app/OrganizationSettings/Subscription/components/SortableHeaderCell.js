@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
-import { TableCell, IconButton } from '@contentful/forma-36-react-components';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export const SortableHeaderCell = ({ displayName, onSort }) => {
-  const [sortDirection, setSortDirection] = useState(null);
+import { TableCell, IconButton } from '@contentful/forma-36-react-components';
 
+export const SortableHeaderCell = ({ displayName, sortOrder, id, onSort }) => {
   const handleClick = () => {
-    const newSortDirection =
-      sortDirection === null || sortDirection === 'ascending' ? 'descending' : 'ascending';
-    onSort(newSortDirection);
-    setSortDirection(newSortDirection);
+    onSort(id);
   };
 
-  const sortDirectionIcon = () => {
-    switch (sortDirection) {
-      case 'ascending':
+  const getSortIcon = (columnOrder) => {
+    switch (columnOrder) {
+      case 'ASC':
         return 'ArrowUp';
-      case 'descending':
+      case 'DESC':
         return 'ArrowDown';
       default:
         return 'Code';
@@ -29,10 +25,9 @@ export const SortableHeaderCell = ({ displayName, onSort }) => {
       <IconButton
         tabIndex="-1"
         label="change-sort-order"
-        // className={styles.marginLeftXS}
         buttonType="muted"
         iconProps={{
-          icon: sortDirectionIcon(),
+          icon: getSortIcon(sortOrder[id]),
         }}
       />
     </TableCell>
@@ -41,5 +36,7 @@ export const SortableHeaderCell = ({ displayName, onSort }) => {
 
 SortableHeaderCell.propTypes = {
   displayName: PropTypes.string.isRequired,
+  sortOrder: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
   onSort: PropTypes.func.isRequired,
 };

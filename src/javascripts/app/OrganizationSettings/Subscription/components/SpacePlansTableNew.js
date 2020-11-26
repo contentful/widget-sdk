@@ -48,33 +48,26 @@ export const SpacePlansTableNew = ({
   });
   const [plansLookup, setPlansLookup] = useState();
 
-  const [order, setOrder] = useState('space_name');
+  const [sortState, setSortState] = useState({ spaceName: 'ASC' });
+
+  const onSort = (columnName) => {
+    const newSortState =
+      sortState[columnName] === undefined || sortState[columnName] === 'ASC' ? 'DESC' : 'ASC';
+    setSortState({ [columnName]: newSortState });
+  };
 
   const fetchSpacesUsage = useCallback(() => {
     const orgEndpoint = createOrganizationEndpoint(organizationId);
     const query = {
-      order: order,
       skip: pagination.skip,
       limit: pagination.limit,
     };
     return getSpacesUsage(orgEndpoint, query);
-  }, [organizationId, pagination.skip, pagination.limit, order]);
+  }, [organizationId, pagination.skip, pagination.limit]);
 
   const { isLoading, error, data = {} } = useAsync(fetchSpacesUsage);
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
-
-  const handlePaginationChange = ({ skip, limit }) => {
-    setPagination({
-      skip,
-      limit,
-    });
-  };
-
-  const handleSort = (columnName, sortDirection) => {
-    const order = `${sortDirection === 'ascending' ? '' : '-'}${columnName}`;
-    setOrder(order);
-  };
 
   return (
     <div>
@@ -91,27 +84,42 @@ export const SpacePlansTableNew = ({
         </colgroup>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <SortableHeaderCell
+              id="spaceName"
+              displayName="Name"
+              onSort={onSort}
+              sortOrder={sortState}
+            />
             <TableCell>Space type</TableCell>
             <SortableHeaderCell
+              id="environments"
               displayName="Environments"
-              onSort={(sortDirection) => handleSort('environments.utilization', sortDirection)}
+              onSort={onSort}
+              sortOrder={sortState}
             />
             <SortableHeaderCell
+              id="roles"
               displayName="Roles"
-              onSort={(sortDirection) => handleSort('roles.utilization', sortDirection)}
+              onSort={onSort}
+              sortOrder={sortState}
             />
             <SortableHeaderCell
+              id="locales"
               displayName="Locales"
-              onSort={(sortDirection) => handleSort('locales.utilization', sortDirection)}
+              onSort={onSort}
+              sortOrder={sortState}
             />
             <SortableHeaderCell
+              id="contentTypes"
               displayName="Content types"
-              onSort={(sortDirection) => handleSort('contentTypes.utilization', sortDirection)}
+              onSort={onSort}
+              sortOrder={sortState}
             />
             <SortableHeaderCell
+              id="records"
               displayName="Records"
-              onSort={(sortDirection) => handleSort('records.utilization', sortDirection)}
+              onSort={onSort}
+              sortOrder={sortState}
             />
             <TableCell />
           </TableRow>
@@ -148,7 +156,7 @@ export const SpacePlansTableNew = ({
           {...pagination}
           total={data.total}
           loading={isLoading}
-          onChange={handlePaginationChange}
+          onChange={setPagination}
         />
       )}
     </div>
