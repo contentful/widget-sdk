@@ -71,8 +71,8 @@ export const SpacePlansTableNew = ({
     });
   };
 
-  const handleSort = (colName, isAscending) => {
-    const order = `${isAscending ? '' : '-'}${colName}`;
+  const handleSort = (columnName, sortDirection) => {
+    const order = `${sortDirection === 'ascending' ? '' : '-'}${columnName}`;
     setOrder(order);
   };
 
@@ -91,16 +91,28 @@ export const SpacePlansTableNew = ({
         </colgroup>
         <TableHead>
           <TableRow>
-            <SortableHeaderCell
-              displayName="Name"
-              onSort={(isAscending) => handleSort('space_name', isAscending)}
-            />
+            <TableCell>Name</TableCell>
             <TableCell>Space type</TableCell>
-            <TableCell>Environments</TableCell>
-            <TableCell>Roles</TableCell>
-            <TableCell>Locales</TableCell>
-            <TableCell>Content types</TableCell>
-            <TableCell>Records</TableCell>
+            <SortableHeaderCell
+              displayName="Environments"
+              onSort={(sortDirection) => handleSort('environments.utilization', sortDirection)}
+            />
+            <SortableHeaderCell
+              displayName="Roles"
+              onSort={(sortDirection) => handleSort('roles.utilization', sortDirection)}
+            />
+            <SortableHeaderCell
+              displayName="Locales"
+              onSort={(sortDirection) => handleSort('locales.utilization', sortDirection)}
+            />
+            <SortableHeaderCell
+              displayName="Content types"
+              onSort={(sortDirection) => handleSort('contentTypes.utilization', sortDirection)}
+            />
+            <SortableHeaderCell
+              displayName="Records"
+              onSort={(sortDirection) => handleSort('records.utilization', sortDirection)}
+            />
             <TableCell />
           </TableRow>
         </TableHead>

@@ -3,12 +3,24 @@ import { TableCell, IconButton } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 
 export const SortableHeaderCell = ({ displayName, onSort }) => {
-  const [isAscending, setIsAscending] = useState(true);
+  const [sortDirection, setSortDirection] = useState(null);
 
   const handleClick = () => {
-    const toggled = !isAscending;
-    onSort(toggled);
-    setIsAscending(toggled);
+    const newSortDirection =
+      sortDirection === null || sortDirection === 'ascending' ? 'descending' : 'ascending';
+    onSort(newSortDirection);
+    setSortDirection(newSortDirection);
+  };
+
+  const sortDirectionIcon = () => {
+    switch (sortDirection) {
+      case 'ascending':
+        return 'ArrowUp';
+      case 'descending':
+        return 'ArrowDown';
+      default:
+        return 'Code';
+    }
   };
 
   return (
@@ -20,7 +32,7 @@ export const SortableHeaderCell = ({ displayName, onSort }) => {
         // className={styles.marginLeftXS}
         buttonType="muted"
         iconProps={{
-          icon: isAscending ? 'ArrowUp' : 'ArrowDown',
+          icon: sortDirectionIcon(),
         }}
       />
     </TableCell>
