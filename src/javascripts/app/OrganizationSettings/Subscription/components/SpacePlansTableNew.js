@@ -33,10 +33,11 @@ const styles = {
 };
 
 const buildSortParam = (sortState) => {
-  const [columnNameAndOrder] = Object.entries(sortState);
+  const [columnNameAndOrder = []] = Object.entries(sortState);
   const [name, sortOrder] = columnNameAndOrder;
-  const isSpaceName = name === 'spaceName';
-  return `${sortOrder === 'DESC' ? '-' : ''}${name}${isSpaceName ? '' : '.utilization'}`;
+  return columnNameAndOrder.length
+    ? `${sortOrder === 'DESC' ? '-' : ''}${name}.utilization`
+    : undefined;
 };
 
 export const SpacePlansTableNew = ({
@@ -50,13 +51,11 @@ export const SpacePlansTableNew = ({
   organizationId,
 }) => {
   const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
-  const [plansLookup, setPlansLookup] = useState();
-  const [sortState, setSortState] = useState({ spaceName: 'ASC' });
+  const [plansLookup, setPlansLookup] = useState({});
+  const [sortState, setSortState] = useState({});
 
   const handleSort = (columnName) => {
-    const newSortState =
-      sortState[columnName] === undefined || sortState[columnName] === 'ASC' ? 'DESC' : 'ASC';
-    setSortState({ [columnName]: newSortState });
+    setSortState({ [columnName]: sortState[columnName] === 'ASC' ? 'DESC' : 'ASC' });
   };
 
   const fetchSpacesUsage = useCallback(() => {
@@ -88,12 +87,7 @@ export const SpacePlansTableNew = ({
         </colgroup>
         <TableHead>
           <TableRow>
-            <SortableHeaderCell
-              id="spaceName"
-              displayName="Name"
-              onSort={handleSort}
-              sortOrder={sortState}
-            />
+            <TableCell>Name</TableCell>
             <TableCell>Space type</TableCell>
             <SortableHeaderCell
               id="environments"
