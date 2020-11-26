@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useAsync } from 'core/hooks';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { keyBy } from 'lodash';
 import {
   Table,
   TableHead,
@@ -14,7 +15,6 @@ import { SpacePlanRowNew } from '../SpacePlanRowNew';
 import Pagination from 'app/common/Pagination';
 import { getSpacesUsage } from '../SpacesUsageService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { keyBy } from 'lodash';
 import { SortableHeaderCell } from './SortableHeaderCell';
 
 const styles = {
@@ -47,12 +47,15 @@ const styles = {
   }),
 };
 
+// FIXME rename space_name to spaceName once the endpoint is fixed
+const SORT_BY_NAME_COL = 'space_name';
+
 const buildSortParam = (sortState) => {
   const [columnNameAndOrder = []] = Object.entries(sortState);
   const [name, sortOrder] = columnNameAndOrder;
-  return columnNameAndOrder.length
-    ? `${sortOrder === 'DESC' ? '-' : ''}${name}.utilization`
-    : undefined;
+  return `${sortOrder === 'DESC' ? '-' : ''}${name}${
+    name === SORT_BY_NAME_COL ? '' : '.utilization'
+  }`;
 };
 
 export const SpacePlansTableNew = ({
@@ -67,7 +70,7 @@ export const SpacePlansTableNew = ({
 }) => {
   const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const [plansLookup, setPlansLookup] = useState({});
-  const [sortState, setSortState] = useState({});
+  const [sortState, setSortState] = useState({ [SORT_BY_NAME_COL]: 'ASC' });
 
   const handleSort = (columnName) => {
     setSortState({ [columnName]: sortState[columnName] === 'ASC' ? 'DESC' : 'ASC' });
@@ -83,7 +86,7 @@ export const SpacePlansTableNew = ({
     return getSpacesUsage(orgEndpoint, query);
   }, [organizationId, pagination.skip, pagination.limit, sortState]);
 
-  const { isLoading, error, data = {} } = useAsync(fetchSpacesUsage);
+  const { isLoading, error, data = { total: 0 } } = useAsync(fetchSpacesUsage);
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
 
@@ -102,7 +105,12 @@ export const SpacePlansTableNew = ({
         </colgroup>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <SortableHeaderCell
+              id="space_name"
+              displayName="Name"
+              onSort={handleSort}
+              sortOrder={sortState}
+            />
             <TableCell>Space type</TableCell>
             <SortableHeaderCell
               id="environments"
@@ -160,14 +168,7 @@ export const SpacePlansTableNew = ({
           )}
         </TableBody>
       </Table>
-      {data.total && (
-        <Pagination
-          {...pagination}
-          total={data.total}
-          loading={isLoading}
-          onChange={setPagination}
-        />
-      )}
+      <Pagination {...pagination} total={data.total} loading={isLoading} onChange={setPagination} />
     </>
   );
 };
