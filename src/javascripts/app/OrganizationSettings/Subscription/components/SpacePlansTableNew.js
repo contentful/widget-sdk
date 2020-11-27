@@ -50,7 +50,11 @@ const styles = {
 const buildSortParam = (sortState) => {
   const [columnNameAndOrder = []] = Object.entries(sortState);
   const [name, sortOrder] = columnNameAndOrder;
-  return `${sortOrder === 'DESC' ? '-' : ''}${name}${name === 'spaceName' ? '' : '.utilization'}`;
+  const firstLevelSortDirection = sortOrder === 'DESC' ? '-' : '';
+  const secondLevelSortDirection = sortOrder === 'DESC' ? '' : '-';
+  return `${firstLevelSortDirection}${name}${
+    name === 'spaceName' ? '' : `.utilization,${secondLevelSortDirection}${name}.limit`
+  }`;
 };
 
 export const SpacePlansTableNew = ({
