@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import classNames from 'classnames';
+import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 import { TableCell, IconButton } from '@contentful/forma-36-react-components';
@@ -26,15 +25,12 @@ const styles = {
 };
 
 export const SortableHeaderCell = ({ displayName, sortOrder, id, onSort }) => {
-  const handleClick = () => {
-    onSort(id);
-  };
-
+  const handleClick = () => onSort(id);
   const sortDirection = sortOrder[id];
 
   return (
     <TableCell
-      className={classNames({ [styles.sortable]: true, [styles.emphasize]: sortOrder[id] })}
+      className={cx({ [styles.sortable]: true, [styles.emphasize]: sortOrder[id] })}
       onClick={handleClick}>
       <span className={styles.flexCenter}>
         {displayName}

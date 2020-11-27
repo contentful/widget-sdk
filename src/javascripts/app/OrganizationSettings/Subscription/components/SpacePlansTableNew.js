@@ -47,7 +47,7 @@ const styles = {
   }),
 };
 
-// FIXME rename space_name to spaceName once the endpoint is fixed
+// FIXME rename space_name to spaceName once the endpoint gets fixed
 const SORT_BY_NAME_COL = 'space_name';
 
 const buildSortParam = (sortState) => {
@@ -74,18 +74,17 @@ export const SpacePlansTableNew = ({
 
   const handleSort = (columnName) => {
     setSortState({ [columnName]: sortState[columnName] === 'DESC' ? 'ASC' : 'DESC' });
-    // Go to page zero on User sort request
+    // Goto page zero on User sort
     setPagination({ ...pagination, skip: 0 });
   };
 
   const fetchSpacesUsage = useCallback(() => {
     const orgEndpoint = createOrganizationEndpoint(organizationId);
-    const query = {
+    return getSpacesUsage(orgEndpoint, {
       order: buildSortParam(sortState),
       skip: pagination.skip,
       limit: pagination.limit,
-    };
-    return getSpacesUsage(orgEndpoint, query);
+    });
   }, [organizationId, pagination.skip, pagination.limit, sortState]);
 
   const { isLoading, error, data = { total: 0 } } = useAsync(fetchSpacesUsage);
