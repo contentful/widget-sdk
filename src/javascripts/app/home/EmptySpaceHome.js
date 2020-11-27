@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
@@ -14,9 +14,8 @@ import * as CreateSpace from 'services/CreateSpace';
 import Illustration from 'svg/illustrations/readonly-space-home-ill.svg';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 import { useAsync } from 'core/hooks';
-import * as K from 'core/utils/kefir';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getSpaces, user$ } from 'services/TokenStore';
+import { getSpaces, getUserSync } from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -92,7 +91,7 @@ const initialLoad = (orgId) => async () => {
     });
   }
 
-  const user = K.getValue(user$);
+  const user = getUserSync();
   const org = getOrg(user, orgId);
 
   if (!org) {
@@ -109,29 +108,39 @@ const initialLoad = (orgId) => async () => {
 };
 
 const EmptySpaceHomePage = ({ orgId }) => {
-  const { isLoading, data } = useAsync(useCallback(initialLoad(orgId), []));
+  const { isLoading, data, error } = useAsync(useCallback(initialLoad(orgId), []));
+
+  useEffect(() => {
+    if (error) {
+      go({
+        path: ['error'],
+      });
+    }
+  }, [error]);
 
   return (
     <div className="home home-section" data-test-id="empty-space-home.container">
       <DocumentTitle title="Space home" />
-      {isLoading && (
+      {(isLoading || !data) && (
         <EmptyStateContainer>
           <Spinner size="large" />
         </EmptyStateContainer>
       )}
-      {!isLoading && data.userIsOrgAdminOrOwner && (
+      {!isLoading && data && data.userIsOrgAdminOrOwner && (
         <EmptyStateContainer data-test-id="cf-ui-empty-space-admin">
           <EmptyStateAdminIllustration className={defaultSVGStyle} />
           <Heading>Starting something new?</Heading>
           <Paragraph>
             A space is an area to manage and store content for a specific project.
           </Paragraph>
-          <Button onClick={() => CreateSpace.beginSpaceCreation(data.organization.sys.id)}>
+          <Button
+            testId="cf-ui-empty-space-admin.create-space"
+            onClick={() => CreateSpace.beginSpaceCreation(data.organization.sys.id)}>
             Add a space
           </Button>
         </EmptyStateContainer>
       )}
-      {!isLoading && !data.userIsOrgAdminOrOwner && (
+      {!isLoading && data && !data.userIsOrgAdminOrOwner && (
         <EmptyStateContainer data-test-id="cf-ui-empty-space">
           <Illustration className={defaultSVGStyle} />
           <Typography>
