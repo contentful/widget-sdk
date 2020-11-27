@@ -238,7 +238,7 @@ registerGenericEvent('content_preview:created');
 registerGenericEvent('content_preview:updated');
 registerGenericEvent('content_preview:deleted');
 
-registerGenericEvent('planner_app:deep_link');
+registerGenericEvent('launch_app:link_clicked');
 
 registerEvent(
   'release:dialog_box_open',

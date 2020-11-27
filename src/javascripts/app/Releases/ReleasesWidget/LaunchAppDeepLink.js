@@ -4,6 +4,7 @@ import { css, cx } from 'emotion';
 import { TextLink, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   noteWrapper: css({
@@ -34,7 +35,7 @@ const styles = {
   }),
 };
 
-export const LaunchAppDeepLink = ({ className }) => {
+export const LaunchAppDeepLink = ({ className, origin }) => {
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
   const launchAppLink = `https://launch.contentful.com/spaces/${spaceId}`;
   return (
@@ -44,6 +45,11 @@ export const LaunchAppDeepLink = ({ className }) => {
         Plan and schedule releases in the new Contentful{' '}
         <TextLink
           href={launchAppLink}
+          onClick={() =>
+            track('launch_app:link_clicked', {
+              eventOrigin: origin,
+            })
+          }
           target="_blank"
           rel="noopener noreferrer"
           linkType="muted"
@@ -59,4 +65,5 @@ export const LaunchAppDeepLink = ({ className }) => {
 
 LaunchAppDeepLink.propTypes = {
   className: PropTypes.string,
+  origin: PropTypes.string,
 };

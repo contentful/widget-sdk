@@ -208,6 +208,7 @@ export const validEvents = {
     'space_template_created',
     'error',
   ],
+  launch_app: ['link_clicked'],
 };
 
 export const validateEvent = (eventName) => {
