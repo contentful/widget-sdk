@@ -103,7 +103,7 @@ const PageShell = ({ children, setIsRelaseDialogShown }) => {
       {!islaunchAppAccessLoading && launchAppAccessEnabled ? (
         <Workbench.Header
           className={styles.deepLinkHeader}
-          title={<LaunchAppDeepLink origin="release-list-page" />}
+          title={<LaunchAppDeepLink eventOrigin="release-list-page" />}
         />
       ) : null}
       <Workbench.Content type="text" className={styles.workbenchContent}>

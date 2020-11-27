@@ -5,6 +5,7 @@ import { TextLink, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { track } from 'analytics/Analytics';
+import { useFeatureFlagAccessToLaunchApp } from '../ReleasesFeatureFlag';
 
 const styles = {
   noteWrapper: css({
@@ -35,11 +36,15 @@ const styles = {
   }),
 };
 
-export const LaunchAppDeepLink = ({ className, origin }) => {
+export const LaunchAppDeepLink = ({ className, eventOrigin }) => {
+  const { launchAppAccessEnabled, islaunchAppAccessLoading } = useFeatureFlagAccessToLaunchApp();
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
+
+  if (islaunchAppAccessLoading || !launchAppAccessEnabled) return null;
+
   const launchAppLink = `https://launch.contentful.com/spaces/${spaceId}`;
   return (
-    <div className={cx(className, styles.noteWrapper)}>
+    <div className={cx(className, styles.noteWrapper)} data-test-id="launch-app-deep-link">
       <div className={styles.pill}>New</div>
       <Paragraph>
         Plan and schedule releases in the new Contentful{' '}
@@ -47,7 +52,7 @@ export const LaunchAppDeepLink = ({ className, origin }) => {
           href={launchAppLink}
           onClick={() =>
             track('launch_app:link_clicked', {
-              eventOrigin: origin,
+              eventOrigin: eventOrigin,
             })
           }
           target="_blank"
@@ -65,5 +70,5 @@ export const LaunchAppDeepLink = ({ className, origin }) => {
 
 LaunchAppDeepLink.propTypes = {
   className: PropTypes.string,
-  origin: PropTypes.string,
+  eventOrigin: PropTypes.string,
 };

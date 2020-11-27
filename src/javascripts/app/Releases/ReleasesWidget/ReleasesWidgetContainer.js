@@ -88,7 +88,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       </div>
       {!islaunchAppAccessLoading && launchAppAccessEnabled ? (
         <Card className={styles.launchAppNote}>
-          <LaunchAppDeepLink className={styles.linkCard} origin="releases-widget" />
+          <LaunchAppDeepLink className={styles.linkCard} eventOrigin="releases-widget" />
         </Card>
       ) : null}
       {isRelaseDialogShown && (
