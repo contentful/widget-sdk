@@ -60,6 +60,8 @@ export function createFieldWidgetSDK({
     internalContentType,
     doc,
     fieldLocaleListeners: fieldLocaleListeners.lookup,
+    widgetNamespace,
+    widgetId,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
