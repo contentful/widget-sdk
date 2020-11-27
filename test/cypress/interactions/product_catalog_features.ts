@@ -13,6 +13,7 @@ const productCatalogCustomSidebar = require('../fixtures/responses/product-catal
 const productCatalogTeams = require('../fixtures/responses/product-catalog-teams.json');
 const productCatalogSelfConfigureSso = require('../fixtures/responses/product-catalog-self-configure-sso.json');
 const productCatalogScim = require('../fixtures/responses/product-catalog-scim.json');
+const productCatalogLaunchApp = require('../fixtures/responses/product-catalog-launch-app.json');
 
 enum States {
   ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
@@ -121,6 +122,26 @@ export const queryForReleasesInDefaultSpace = {
     }).as('queryForReleasesInDefaultSpace');
 
     return '@queryForReleasesInDefaultSpace';
+  },
+};
+
+export const getLaunchAppFeatureInDefaultSpace = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "launch app" feature for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=planner_app'),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: productCatalogLaunchApp,
+      },
+    }).as('getLaunchAppFeatureInDefaultSpace');
+
+    return '@getLaunchAppFeatureInDefaultSpace';
   },
 };
 

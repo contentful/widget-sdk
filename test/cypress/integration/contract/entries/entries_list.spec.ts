@@ -23,6 +23,7 @@ import {
   queryForBasicAppsInDefaultSpace,
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
+  getLaunchAppFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { severalEntriesResponse } from '../../../fixtures/responses/entries-several';
 
@@ -136,6 +137,7 @@ describe('Entries list page', () => {
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
       ];
       cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
       cy.findByTestId('create-entry-button-menu-trigger').click();

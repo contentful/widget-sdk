@@ -22,6 +22,7 @@ import {
   queryForTasksInDefaultSpace,
   queryForTeamsInDefaultOrg,
   queryForScimInDefaultOrg,
+  getLaunchAppFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import {
   createScheduledReleaseForDefaultSpace,
@@ -49,6 +50,8 @@ describe('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnNone();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        const getLaunchAppFeature = getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
+        cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
 
@@ -66,6 +69,8 @@ describe('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        const getLaunchAppFeature = getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
+        cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
 
@@ -106,6 +111,8 @@ describe('Releases', () => {
         getReleaseActionInteraction = publishRelease.willSucceed();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        const getLaunchAppFeature = getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
+        cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
 
@@ -130,6 +137,8 @@ describe('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        const getLaunchAppFeature = getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
+        cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
 
