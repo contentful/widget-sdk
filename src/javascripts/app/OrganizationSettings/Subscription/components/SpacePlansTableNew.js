@@ -47,15 +47,10 @@ const styles = {
   }),
 };
 
-// FIXME rename space_name to spaceName once the endpoint gets fixed
-const SORT_BY_NAME_COL = 'space_name';
-
 const buildSortParam = (sortState) => {
   const [columnNameAndOrder = []] = Object.entries(sortState);
   const [name, sortOrder] = columnNameAndOrder;
-  return `${sortOrder === 'DESC' ? '-' : ''}${name}${
-    name === SORT_BY_NAME_COL ? '' : '.utilization'
-  }`;
+  return `${sortOrder === 'DESC' ? '-' : ''}${name}${name === 'spaceName' ? '' : '.utilization'}`;
 };
 
 export const SpacePlansTableNew = ({
@@ -70,7 +65,7 @@ export const SpacePlansTableNew = ({
 }) => {
   const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const [plansLookup, setPlansLookup] = useState({});
-  const [sortState, setSortState] = useState({ [SORT_BY_NAME_COL]: 'ASC' });
+  const [sortState, setSortState] = useState({ spaceName: 'ASC' });
 
   const handleSort = (columnName) => {
     setSortState({ [columnName]: sortState[columnName] === 'DESC' ? 'ASC' : 'DESC' });
@@ -107,7 +102,7 @@ export const SpacePlansTableNew = ({
         <TableHead>
           <TableRow>
             <SortableHeaderCell
-              id="space_name"
+              id="spaceName"
               displayName="Name"
               onSort={handleSort}
               sortOrder={sortState}
