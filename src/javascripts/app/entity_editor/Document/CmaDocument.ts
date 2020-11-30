@@ -264,12 +264,18 @@ export function create(
     },
     async removeValueAt(path: string[]) {
       if (path[0] === 'metadata') {
+        // TODO: This just returns a rejected promise. Consider this unspecified behavior. It would
+        //  conceptually make sense to allow removing a specific tag, e.g. ['metadata', 'tags', 2]
         throw new Error("you can't remove any metadata field or itself");
+      }
+      const parentValue = path.length > 0 && get(entity, path.slice(0, -1));
+      const index = Number(path.slice(-1));
+      if (Array.isArray(parentValue) && Number.isInteger(index)) {
+        parentValue.splice(index, 1);
       } else {
         unset(entity, path);
-        changesBus.emit(path);
       }
-      return;
+      changesBus.emit(path);
     },
 
     destroy: once(destroy),
@@ -494,10 +500,7 @@ export function create(
       intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
         .length > 0;
 
-    const localChangedtagsPaths = changedEntitytagsPaths(
-      lastSavedEntity.metadata,
-      entity.metadata
-    );
+    const localChangedtagsPaths = changedEntitytagsPaths(lastSavedEntity.metadata, entity.metadata);
     const remoteChangedtagsPaths = changedEntitytagsPaths(
       lastSavedEntity.metadata,
       remoteEntity.metadata

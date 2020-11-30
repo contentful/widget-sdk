@@ -304,6 +304,7 @@ export default (createDocument) => {
         expect(doc.getValueAt(fieldPath)).toBeUndefined();
         expect(doc.getValueAt(otherLocalePath)).toBe('val-DE');
       });
+
       it('removes a whole field (all locale values)', () => {
         const path = fieldPath.slice(0, -1);
         doc.removeValueAt(path);
@@ -311,8 +312,27 @@ export default (createDocument) => {
         expect(doc.getValueAt(otherLocalePath)).toBeUndefined();
         expect(doc.getValueAt(path)).toBeUndefined();
       });
+
       it('does not throw when removing a non-existing path', () => {
         expect(() => doc.removeValueAt(['fields', 'non-existing', 'field'])).not.toThrow();
+      });
+
+      // ShareJS keeps `[undefined]` and seems to deal with it on the server side. If we wanted to satisfy the test
+      // for OtDoc we could add it to the normalization step but it seems overkill consider we won't need it later.
+      itSkipOtDocument('leaves no hole when removing an array value, like _.unset() would', () => {
+        expect(doc.getValueAt(listFieldPath)).toEqual(['one']);
+        doc.removeValueAt([...listFieldPath, 0]);
+        expect(doc.getValueAt(listFieldPath)).toBeUndefined();
+
+        doc.setValueAt(listFieldPath, ['one', 'two', '', 'three']);
+        doc.removeValueAt([...listFieldPath, 1]);
+        expect(doc.getValueAt(listFieldPath)).toEqual(['one', '', 'three']);
+      });
+
+      itSkipOtDocument('removing the last item of an array removes the array', () => {
+        expect(doc.getValueAt(listFieldPath.slice(0, -1))).not.toBeUndefined();
+        doc.removeValueAt([...listFieldPath, 0]);
+        expect(doc.getValueAt(listFieldPath.slice(0, -1))).toBeUndefined();
       });
     });
 
@@ -381,5 +401,14 @@ export default (createDocument) => {
         }
       });
     });
+
+    function itSkipOtDocument(desc, test) {
+      it(desc, function (...args) {
+        if (doc.isOtDocument) {
+          return;
+        }
+        test.apply(this, args);
+      });
+    }
   });
 };

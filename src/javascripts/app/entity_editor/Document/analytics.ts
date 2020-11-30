@@ -64,10 +64,8 @@ export async function trackEditConflict({
         .length,
       localFieldLocaleChangesCount: localChangedFieldPaths.length,
       remoteFieldLocaleChangesCount: remoteChangedFieldPaths.length,
-      sameMetadataConflictsCount: intersection(
-        localChangedtagsPaths,
-        remoteChangedtagsPaths
-      ).length,
+      sameMetadataConflictsCount: intersection(localChangedtagsPaths, remoteChangedtagsPaths)
+        .length,
       localMetadataChangesCount: localChangedtagsPaths.length,
       remoteMetadataChangesCount: remoteChangedtagsPaths.length,
     },
