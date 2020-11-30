@@ -61,7 +61,7 @@ export const LaunchAppDeepLink = ({ className, eventOrigin }) => {
           className={styles.textLink}
           icon="ChevronRight"
           iconPosition="right">
-          Planner
+          Launch
         </TextLink>
       </Paragraph>
     </div>
