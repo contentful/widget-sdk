@@ -88,7 +88,7 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
-      getTaskListError().should('be.visible');
+      getTaskListError().scrollIntoView().should('be.visible');
     });
   });
 
