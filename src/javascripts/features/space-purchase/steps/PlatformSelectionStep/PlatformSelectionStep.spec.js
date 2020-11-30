@@ -66,7 +66,7 @@ describe('PlatformSelectionStep', () => {
     });
 
     it('should have a "Talk to us" button', () => {
-      const talkToUs = screen.getByTestId('talk-to-us');
+      const talkToUs = screen.getByTestId('enterprise-talk-to-us');
       expect(talkToUs).toBeVisible();
     });
   });

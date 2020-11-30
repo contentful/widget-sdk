@@ -87,7 +87,7 @@ export const PlatformCard = ({ onClick, selected = false, isNew = false, content
           /month
         </Paragraph>
       ) : (
-        <PinLabel label="Your current package" />
+        <PinLabel labelText="Your current package" />
       )}
     </Card>
   );

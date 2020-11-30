@@ -151,7 +151,7 @@ export const SpacePlanSelectionStep = ({
               selected={isCurrentPlan}
               plan={plan}
               content={spaceContent}
-              handleSelect={getSelectHandler(spaceContent.type)}
+              onSelect={getSelectHandler(spaceContent.type)}
               organizationId={organization?.sys.id}
             />
           );
@@ -171,7 +171,7 @@ export const SpacePlanSelectionStep = ({
                 </div>
 
                 {currentSpacePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
-                  <PinLabel label="Current space" />
+                  <PinLabel labelText="Current space" />
                 ) : (
                   <Tooltip
                     testId="read-only-tooltip"

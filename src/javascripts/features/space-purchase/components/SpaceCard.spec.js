@@ -53,13 +53,13 @@ describe('SpaceCard', () => {
   });
 
   it('should call CTA function if clicked', () => {
-    const handleSelect = jest.fn();
+    const onSelect = jest.fn();
 
-    build({ handleSelect });
+    build({ onSelect });
 
     userEvent.click(screen.getByTestId('select-space-cta'));
 
-    expect(handleSelect).toBeCalled();
+    expect(onSelect).toBeCalled();
   });
 
   it('should render "Talk to us" button if it is an enterprise card', () => {
@@ -94,7 +94,7 @@ function build(customProps) {
       limitsTitle: 'These are the limits:',
       limits: mockLimits,
     },
-    handleSelect: () => {},
+    onSelect: () => {},
     ...customProps,
   };
 

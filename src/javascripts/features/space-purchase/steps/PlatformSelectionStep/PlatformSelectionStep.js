@@ -77,7 +77,7 @@ export const PlatformSelectionStep = ({ track }) => {
             <PlatformCard
               key={idx}
               selected={selectedPlatform === platform.type}
-              handleClick={() => setSelectedPlatform(platform.type)}
+              onClick={() => setSelectedPlatform(platform.type)}
               content={content}
               isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
             />
