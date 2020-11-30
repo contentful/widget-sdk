@@ -49,8 +49,6 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
         [styles.usageNegative]: icon?.color === 'negative',
         [styles.usageWarning]: icon?.color === 'warning',
       })}>
-      <span className={cx({ [styles.usageEmphasized]: approachingLimit })}>{usage}</span>/{limit}
-      &nbsp;
       {approachingLimit && (
         <Tooltip
           content={
@@ -71,7 +69,8 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
             testId="subscription-page.spaces-list.usage-tooltip-trigger"
           />
         </Tooltip>
-      )}
+      )}{' '}
+      <span className={cx({ [styles.usageEmphasized]: approachingLimit })}>{usage}</span>/{limit}
     </TableCell>
   );
 };
