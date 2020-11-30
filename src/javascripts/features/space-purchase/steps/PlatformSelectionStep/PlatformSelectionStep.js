@@ -15,7 +15,7 @@ import { EVENTS } from '../../utils/analyticsTracking';
 import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
 import { PlatformCard } from '../../components/PlatformCard';
 import { EnterpriseCard } from '../../components/EnterpriseCard';
-import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUs';
+import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 
 const styles = {
   fullRow: css({

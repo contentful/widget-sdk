@@ -14,7 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { EnterpriseTalkToUs } from './EnterpriseTalkToUs';
+import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 const styles = {
   mediumWeight: css({
@@ -82,7 +82,7 @@ export const EnterpriseCard = ({ organizationId, onSelect }) => {
         </List>
       </span>
 
-      <EnterpriseTalkToUs organizationId={organizationId} onSelect={onSelect} />
+      <EnterpriseTalkToUsButton organizationId={organizationId} onSelect={onSelect} />
     </div>
   );
 };

@@ -2,12 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { EnterpriseTalkToUs } from './EnterpriseTalkToUs';
+import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 const mockTestId = 'enterprise-cta';
 const mockSelect = jest.fn();
 
-describe('EnterpriseTalkToUs', () => {
+describe('EnterpriseTalkToUsButton', () => {
   it('should render a button with an href to sales if it is an enterprise card', () => {
     build();
 
@@ -37,5 +37,5 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<EnterpriseTalkToUs {...props} />);
+  render(<EnterpriseTalkToUsButton {...props} />);
 }

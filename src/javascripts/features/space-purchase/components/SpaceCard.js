@@ -22,7 +22,7 @@ import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
 import { PinLabel } from './PinLabel';
-import { EnterpriseTalkToUs } from '../components/EnterpriseTalkToUs';
+import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
   medium: 'webapp',
@@ -132,7 +132,7 @@ export const SpaceCard = ({
               )}
             </Paragraph>
             {isEnterpriseCard && (
-              <EnterpriseTalkToUs
+              <EnterpriseTalkToUsButton
                 organizationId={organizationId}
                 handleSelect={handleSelect}
                 disabled={disabled}

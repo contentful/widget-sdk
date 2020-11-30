@@ -14,7 +14,7 @@ export const CONTACT_SALES_HREF = buildUrlWithUtmParams({
   content: 'contact-us',
 })(salesUrl);
 
-function EnterpriseTalkToUs({
+function EnterpriseTalkToUsButton({
   organizationId,
   onSelect,
   disabled = false,
@@ -45,11 +45,11 @@ function EnterpriseTalkToUs({
     </Button>
   );
 }
-EnterpriseTalkToUs.propTypes = {
+EnterpriseTalkToUsButton.propTypes = {
   organizationId: PropTypes.string,
   onSelect: PropTypes.func,
   disabled: PropTypes.bool,
   testId: PropTypes.string,
 };
 
-export { EnterpriseTalkToUs };
+export { EnterpriseTalkToUsButton };
