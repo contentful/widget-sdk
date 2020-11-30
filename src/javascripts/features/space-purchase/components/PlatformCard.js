@@ -60,13 +60,13 @@ const styles = {
   }),
 };
 
-export const PlatformCard = ({ handleClick, selected = false, isNew = false, content }) => {
+export const PlatformCard = ({ onClick, selected = false, isNew = false, content }) => {
   return (
     <Card
       className={cn(styles.card, { [styles.newTag]: isNew })}
       padding="large"
       selected={selected}
-      onClick={handleClick}
+      onClick={onClick}
       testId="platform-card">
       {/** TODO: replace skeletons with final illustration */}
       <SkeletonContainer svgWidth={70} svgHeight={70}>
@@ -94,7 +94,7 @@ export const PlatformCard = ({ handleClick, selected = false, isNew = false, con
 };
 
 PlatformCard.propTypes = {
-  handleClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
