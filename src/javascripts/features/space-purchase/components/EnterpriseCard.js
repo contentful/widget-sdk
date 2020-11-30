@@ -32,6 +32,7 @@ const styles = {
     justifyItems: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    borderRadius: tokens.borderRadiusMedium,
   }),
   enterpriseFeatures: css({
     marginTop: tokens.spacingXs,
