@@ -16,15 +16,15 @@ export const CONTACT_SALES_HREF = buildUrlWithUtmParams({
 
 function EnterpriseTalkToUs({
   organizationId,
-  handleSelect,
+  onSelect,
   disabled = false,
-  testId = 'talk-to-us',
+  testId = 'enterprise-talk-to-us',
 }) {
   const handleClick = () => {
-    // TODO: investigate if we still need this handleSelect prop,
+    // TODO: investigate if we still need this onSelect prop,
     // since we can handle tracking in this component
-    if (handleSelect) {
-      handleSelect();
+    if (onSelect) {
+      onSelect();
     }
 
     // TODO: Do we want to track this as a CTA upgrade to enterprise click as well?
@@ -47,7 +47,7 @@ function EnterpriseTalkToUs({
 }
 EnterpriseTalkToUs.propTypes = {
   organizationId: PropTypes.string,
-  handleSelect: PropTypes.func,
+  onSelect: PropTypes.func,
   disabled: PropTypes.bool,
   testId: PropTypes.string,
 };

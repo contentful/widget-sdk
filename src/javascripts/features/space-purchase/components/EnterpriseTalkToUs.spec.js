@@ -19,8 +19,8 @@ describe('EnterpriseTalkToUs', () => {
     );
   });
 
-  it('should call handleSelect function when clicked', () => {
-    build();
+  it('should call onSelect function when clicked', () => {
+    build({ onSelect: mockSelect });
 
     const enterpriseButton = screen.getByTestId(mockTestId);
     userEvent.click(enterpriseButton);
@@ -32,7 +32,6 @@ describe('EnterpriseTalkToUs', () => {
 function build(customProps) {
   const props = {
     organizationId: 'random_org_id',
-    handleSelect: mockSelect,
     disabled: false,
     testId: mockTestId,
     ...customProps,

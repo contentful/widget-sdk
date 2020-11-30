@@ -50,7 +50,7 @@ const styles = {
   }),
 };
 
-export const EnterpriseCard = ({ organizationId, handleSelect }) => {
+export const EnterpriseCard = ({ organizationId, onSelect }) => {
   return (
     <div className={styles.enterprise} data-test-id="enterprise-card">
       {/** TODO: replace skeletons with final illustration */}
@@ -82,11 +82,11 @@ export const EnterpriseCard = ({ organizationId, handleSelect }) => {
         </List>
       </span>
 
-      <EnterpriseTalkToUs organizationId={organizationId} handleSelect={handleSelect} />
+      <EnterpriseTalkToUs organizationId={organizationId} onSelect={onSelect} />
     </div>
   );
 };
 EnterpriseCard.propTypes = {
   organizationId: PropTypes.string,
-  handleSelect: PropTypes.func,
+  onSelect: PropTypes.func,
 };
