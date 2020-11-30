@@ -13,16 +13,16 @@ const styles = {
   }),
 };
 
-export function PinLabel({ label }) {
+export function PinLabel({ labelText }) {
   return (
     <SectionHeading className={styles.currentSpaceLabel} element="p">
       <span role="img" aria-label="Pin">
         📍
       </span>{' '}
-      {label}
+      {labelText}
     </SectionHeading>
   );
 }
 PinLabel.propTypes = {
-  label: PropTypes.string.isRequired,
+  labelText: PropTypes.string.isRequired,
 };
