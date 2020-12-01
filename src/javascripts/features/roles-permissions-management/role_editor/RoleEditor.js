@@ -1,5 +1,16 @@
-import React from 'react';
-import { findIndex, map, remove, set, update } from 'lodash/fp';
+import { Note, Notification, TabPanel, Tabs } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import * as PolicyBuilder from 'access_control/PolicyBuilder';
+import FeedbackButton from 'app/common/FeedbackButton';
+import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import { Route, RouteTab } from 'core/routing';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { css } from 'emotion';
+import { MetadataTags } from 'features/content-tags';
+import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
+import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
+import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
 import {
   cloneDeep,
   extend,
@@ -12,29 +23,19 @@ import {
   omit,
   startsWith,
 } from 'lodash';
+import { findIndex, map, remove, set, update } from 'lodash/fp';
 import PropTypes from 'prop-types';
-import { Note, Notification, TabPanel, Tabs } from '@contentful/forma-36-react-components';
-import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
-import { css } from 'emotion';
-import { getLocales } from '../utils/getLocales';
-import * as PolicyBuilder from 'access_control/PolicyBuilder';
-import * as logger from 'services/logger';
+import React from 'react';
 import TheLocaleStore from 'services/localeStore';
+import * as logger from 'services/logger';
 import * as Navigator from 'states/Navigator';
+import { RoleEditRoutes } from 'states/settingsRolesPermissions';
 
 import * as RoleListHandler from '../components/RoleListHandler';
-import { RoleEditorActions } from './RoleEditorActions';
 import { createRoleRemover } from '../components/RoleRemover';
-import DocumentTitle from 'components/shared/DocumentTitle';
-import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
-import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
-import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
-import tokens from '@contentful/forma-36-tokens';
-import { RoleEditRoutes } from 'states/settingsRolesPermissions';
-import { Route, RouteTab } from 'core/routing';
-import { MetadataTags } from 'features/content-tags';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
+import { getLocales } from '../utils/getLocales';
+import { RoleEditorActions } from './RoleEditorActions';
 
 const styles = {
   tabs: css({
@@ -44,6 +45,20 @@ const styles = {
   }),
   tabPanel: css({
     padding: tokens.spacing2Xl,
+  }),
+  actionsWrapper: css({
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  }),
+  feedback: css({
+    flexGrow: '',
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    marginRight: tokens.spacingXl,
+    marginLeft: tokens.spacingXl,
+    minWidth: '120px',
   }),
 };
 
@@ -406,18 +421,28 @@ export class RoleEditor extends React.Component {
             this.navigateToList();
           }}
           actions={
-            <RoleEditorActions
-              hasCustomRolesFeature={hasCustomRolesFeature}
-              canModifyRoles={canModifyRoles}
-              showTranslator={showTranslator}
-              dirty={dirty}
-              saving={saving}
-              isLegacy={isLegacy}
-              internal={internal}
-              onSave={this.save}
-              onDuplicate={this.duplicate}
-              onDelete={this.delete}
-            />
+            <div className={styles.actionsWrapper}>
+              <div className={styles.feedback}>
+                <FeedbackButton
+                  className={styles.feedback}
+                  about="Roles & Permissions"
+                  target="devWorkflows"
+                  label={'Give feedback'}
+                />
+              </div>
+              <RoleEditorActions
+                hasCustomRolesFeature={hasCustomRolesFeature}
+                canModifyRoles={canModifyRoles}
+                showTranslator={showTranslator}
+                dirty={dirty}
+                saving={saving}
+                isLegacy={isLegacy}
+                internal={internal}
+                onSave={this.save}
+                onDuplicate={this.duplicate}
+                onDelete={this.delete}
+              />
+            </div>
           }>
           <Tabs withDivider className={styles.tabs}>
             <RouteTab {...RoleEditRoutes.Details} />
