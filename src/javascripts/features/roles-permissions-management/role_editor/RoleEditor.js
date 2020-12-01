@@ -184,7 +184,8 @@ export class RoleEditor extends React.Component {
     const { entityCache } = this.state;
     const entityType = contentTypeId ? 'Entry' : 'Asset';
 
-    // entities have different formats if they are fetched via the DataLoader or the entitySelector
+    // entities have different formats if they are fetched via the app/entity_editor/DataLoader or the entitySelector
+    // TODO: We're actually not using DataLoader anymore. Simplify expected data structure.
     const data = entities[entityType][entityId]
       ? entities[entityType][entityId].entity.data
       : entityCache[entityType][entityId];
