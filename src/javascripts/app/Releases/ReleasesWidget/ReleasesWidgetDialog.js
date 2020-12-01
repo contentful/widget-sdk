@@ -113,9 +113,9 @@ export default class ReleasesWidgetDialog extends Component {
   }
 
   handleSuccess(release) {
-    const { releaseContentTitle, rootEntity, handleReleaseRefresh, selectedEntities } = this.props;
+    const { releaseContentTitle, handleReleaseRefresh, selectedEntities } = this.props;
     const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
-    const predicate = rootEntity || pluralize('was', uniqueSelectedEntities.length, true);
+    const predicate = pluralize('was', uniqueSelectedEntities.length);
 
     handleReleaseRefresh && handleReleaseRefresh();
 
