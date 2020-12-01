@@ -1,6 +1,5 @@
 import React from 'react';
-import cn from 'classnames';
-import { css } from 'emotion';
+import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
 import {
@@ -59,24 +58,24 @@ export const EnterpriseCard = ({ organizationId, onSelect }) => {
         <SkeletonImage />
       </SkeletonContainer>
 
-      <Heading element="h3" className={cn(styles.centeredText, styles.mediumWeight)}>
+      <Heading element="h3" className={cx(styles.centeredText, styles.mediumWeight)}>
         Enterprise
       </Heading>
 
       <span>
         <Paragraph className={styles.textLeft}>Space + Compose + Launch plus:</Paragraph>
         <List className={styles.enterpriseFeatures} testId="platform-limits">
-          <ListItem className={cn(styles.listItem, styles.textLeft)}>
+          <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
             <Paragraph>Customization of roles &amp; tasks </Paragraph>
           </ListItem>
-          <ListItem className={cn(styles.listItem, styles.textLeft)}>
+          <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
             <Paragraph>
               Access to Professional Services, Solution Architects &amp; Customer Success Managers
             </Paragraph>
           </ListItem>
-          <ListItem className={cn(styles.listItem, styles.textLeft)}>
+          <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
             <Paragraph>SSO, Teams, and User Management API</Paragraph>
           </ListItem>
