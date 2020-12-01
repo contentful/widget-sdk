@@ -8,9 +8,8 @@ const initialState = {
   currentSpaceRatePlan: undefined,
   selectedPlan: undefined,
   sessionId: undefined,
-  billingDetails: {},
-  billingDetailsLoading: false,
-  paymentDetails: {},
+  billingDetails: undefined,
+  paymentDetails: undefined,
   spaceName: '',
   selectedTemplate: null,
 };

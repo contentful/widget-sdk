@@ -107,7 +107,6 @@ describe('SpacePlanSelectionStep', () => {
 function build(customProps, customState) {
   const props = {
     loading: false,
-    organizationId: mockOrganization.sys.id,
     onSelectPlan: mockSelectPlan,
     canCreateFreeSpace: true,
     track: () => {},

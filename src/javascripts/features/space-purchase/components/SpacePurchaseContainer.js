@@ -54,8 +54,6 @@ const generateBreadcrumbItems = (step) => {
 
 // Fetch billing and payment information if organziation already has billing information
 const fetchBillingDetails = async (organization, dispatch) => {
-  dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: true });
-
   const [billingDetails, paymentDetails] = await Promise.all([
     getBillingDetails(organization.sys.id),
     getDefaultPaymentMethod(organization.sys.id),
@@ -63,7 +61,6 @@ const fetchBillingDetails = async (organization, dispatch) => {
 
   dispatch({ type: actions.SET_PAYMENT_DETAILS, payload: paymentDetails });
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
-  dispatch({ type: actions.SET_BILLING_DETAILS_LOADING, payload: false });
 };
 
 export const SpacePurchaseContainer = ({
@@ -84,7 +81,6 @@ export const SpacePurchaseContainer = ({
 
   const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
 
-  const organizationId = organization?.sys?.id;
   const hasBillingInformation = !!organization?.isBillable;
   const userIsOrgOwner = !!organization && isOrgOwner(organization);
 
@@ -143,7 +139,6 @@ export const SpacePurchaseContainer = ({
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
-            organizationId={organizationId}
             onSelectPlan={onSelectPlan}
             canCreateFreeSpace={canCreateFreeSpace}
             canCreatePaidSpace={canCreatePaidSpace}
@@ -190,7 +185,6 @@ export const SpacePurchaseContainer = ({
       case STEPS.CREDIT_CARD_DETAILS:
         return (
           <CreditCardDetailsStep
-            organizationId={organizationId}
             onBack={() => goToStep(STEPS.BILLING_DETAILS)}
             track={trackWithSession}
             onSubmit={() => {
@@ -203,10 +197,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.CONFIRMATION:
         return (
           <ConfirmationStep
-            organizationId={organizationId}
             track={trackWithSession}
-            showBillingDetails={userIsOrgOwner}
-            showEditLink={organization.isBillable}
             onBack={() => {
               if (!organization.isBillable) {
                 goToStep(STEPS.CREDIT_CARD_DETAILS);

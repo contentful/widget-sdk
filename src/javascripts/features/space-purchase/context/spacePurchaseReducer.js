@@ -4,7 +4,6 @@ export const actions = {
   SET_CURRENT_SPACE_RATE_PLAN: 'SET_CURRENT_SPACE_RATE_PLAN',
   SET_SELECTED_PLAN: 'SET_SELECTED_PLAN',
   SET_BILLING_DETAILS: 'SET_BILLING_DETAILS',
-  SET_BILLING_DETAILS_LOADING: 'SET_BILLING_DETAILS_LOADING',
   SET_PAYMENT_DETAILS: 'SET_PAYMENT_DETAILS',
   SET_SPACE_NAME: 'SET_SPACE_NAME',
   SET_SELECTED_TEMPLATE: 'SET_SELECTED_TEMPLATE',
@@ -22,8 +21,6 @@ export const spacePurchaseReducer = (state, action) => {
       return { ...state, currentSpaceRatePlan: action.payload };
     case actions.SET_BILLING_DETAILS:
       return { ...state, billingDetails: action.payload };
-    case actions.SET_BILLING_DETAILS_LOADING:
-      return { ...state, billingDetailsLoading: action.payload };
     case actions.SET_PAYMENT_DETAILS:
       return { ...state, paymentDetails: action.payload };
     case actions.SET_SPACE_NAME:

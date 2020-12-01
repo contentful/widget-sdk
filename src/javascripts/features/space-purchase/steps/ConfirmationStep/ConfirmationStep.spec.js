@@ -3,11 +3,19 @@ import { screen } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { EVENTS } from '../../utils/analyticsTracking';
+import { setUser } from 'services/OrganizationRoles';
 
 import { ConfirmationStep } from './ConfirmationStep';
 import { renderWithProvider } from '../../__tests__/helpers';
 
 const mockOrganization = Fake.Organization();
+const mockOrgOwner = Fake.User({
+  organizationMemberships: [{ organization: mockOrganization, role: 'owner' }],
+});
+const mockOrgAdmin = Fake.User({
+  organizationMemberships: [{ organization: mockOrganization, role: 'admin' }],
+});
+
 const mockSelectedPlan = Fake.Plan();
 const mockBillingDetails = {
   firstName: 'John',
@@ -31,15 +39,38 @@ jest.mock('states/Navigator', () => ({
 }));
 
 describe('ConfirmationStep', () => {
-  it('should not show the edit link when showEditLink is false', async () => {
+  beforeEach(() => {
+    setUser(mockOrgOwner);
+  });
+
+  it('should not show the edit link when the organization is not billable', async () => {
     await build();
 
     expect(screen.queryByTestId('confirmation-page.edit-billing-link')).toBeNull();
   });
 
-  it('should show the edit link when showEditLink is true and track clicks on it', async () => {
+  it('should not show the edit link if the user is not org owner, even if the org is billable', async () => {
+    setUser(mockOrgAdmin);
+
+    await build(null, {
+      organization: Object.assign({}, mockOrganization, {
+        isBillable: true,
+      }),
+    });
+
+    expect(screen.queryByTestId('confirmation-page.edit-billing-link')).toBeNull();
+  });
+
+  it('should show the edit link when the org is billable and track clicks on it', async () => {
     const track = jest.fn();
-    await build({ showEditLink: true, track });
+    await build(
+      { track },
+      {
+        organization: Object.assign({}, mockOrganization, {
+          isBillable: true,
+        }),
+      }
+    );
 
     const editBillingLink = screen.getByTestId('confirmation-page.edit-billing-link');
 
@@ -58,28 +89,35 @@ describe('ConfirmationStep', () => {
     });
   });
 
-  it('should not show a loading state if the payment and billing details have loaded', async () => {
+  it('should show the loading state if the payment and billing details are null and the org is billable', async () => {
+    await build(null, {
+      billingDetails: null,
+      paymentDetails: null,
+    });
+
+    expect(screen.getByTestId('billing-details-loading')).toBeVisible();
+    expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
+  });
+
+  it('should not show the loading state if the payment and billing details have loaded', async () => {
     await build();
 
     expect(screen.queryByTestId('billing-details-loading')).toBeNull();
     expect(screen.queryByTestId('credit-card-details-loading')).toBeNull();
   });
 
-  it('should show a loading state if the payment and billing details are loading', async () => {
-    await build(null, { billingDetailsLoading: true });
+  it('should not show the billing details section if the user is not org owner', async () => {
+    setUser(mockOrgAdmin);
 
-    expect(screen.getByTestId('billing-details-loading')).toBeVisible();
-    expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
-  });
-
-  it('should not show the billing details section if showBillingDetails is false', async () => {
-    await build({ showBillingDetails: false });
+    await build();
 
     expect(screen.queryByTestId('new-space-confirmation.billing-details')).toBeNull();
   });
 
-  it('should render the payment section with buttons if showBillingDetails is false', async () => {
-    await build({ showBillingDetails: false });
+  it('should render the payment section with buttons if the user is not org owner', async () => {
+    setUser(mockOrgAdmin);
+
+    await build();
 
     expect(screen.getByTestId('order-summary.buttons')).toBeVisible();
   });
@@ -87,10 +125,7 @@ describe('ConfirmationStep', () => {
 
 async function build(customProps, customState) {
   const props = {
-    organizationId: mockOrganization.sys.id,
     track: () => {},
-    showBillingDetails: true,
-    showEditLink: false,
     onSubmit: () => {},
     onBack: () => {},
     ...customProps,
@@ -99,6 +134,7 @@ async function build(customProps, customState) {
   await renderWithProvider(
     ConfirmationStep,
     {
+      organization: mockOrganization,
       selectedPlan: mockSelectedPlan,
       billingDetails: mockBillingDetails,
       paymentDetails: mockPaymentMethod,

@@ -14,6 +14,7 @@ import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { go } from 'states/Navigator';
+import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
 
@@ -43,24 +44,13 @@ const styles = {
   }),
 };
 
-const redirectToEditPayment = (orgId) => {
-  go({
-    path: 'account.organizations.billing',
-    params: { orgId },
-  });
-};
-
-export const ConfirmationStep = ({
-  organizationId,
-  showEditLink,
-  showBillingDetails,
-  track,
-  onBack,
-  onSubmit,
-}) => {
+export const ConfirmationStep = ({ track, onBack, onSubmit }) => {
   const {
-    state: { billingDetails, billingDetailsLoading, paymentDetails },
+    state: { organization, billingDetails, paymentDetails },
   } = useContext(SpacePurchaseState);
+
+  const userIsOrgOwner = isOrgOwner(organization);
+  const showEditLink = organization.isBillable;
 
   return (
     <section
@@ -74,7 +64,7 @@ export const ConfirmationStep = ({
         Complete your payment
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
-        {showBillingDetails && (
+        {userIsOrgOwner && (
           <Card className={styles.card} testId="new-space-confirmation.billing-details">
             <Flex justifyContent="space-between">
               <Subheading className={styles.cardTitle} element="h3">
@@ -94,7 +84,10 @@ export const ConfirmationStep = ({
                         intent: 'edit_billing',
                       });
 
-                      redirectToEditPayment(organizationId);
+                      go({
+                        path: 'account.organizations.billing',
+                        params: { orgId: organization.sys.id },
+                      });
                     }}>
                     Edit
                   </TextLink>
@@ -102,13 +95,13 @@ export const ConfirmationStep = ({
               )}
             </Flex>
             <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-              {billingDetailsLoading && (
+              {!billingDetails && (
                 <>
                   <CreditCardDetailsLoading />
                   <BillingDetailsLoading />
                 </>
               )}
-              {!billingDetailsLoading && (
+              {billingDetails && (
                 <>
                   <CreditCardInformation creditCardInfo={paymentDetails} />
                   <BillingInformation billingDetails={billingDetails} />
@@ -129,16 +122,13 @@ export const ConfirmationStep = ({
             </Flex>
           </Card>
         )}
-        <PaymentSummary showButtons={!showBillingDetails} onConfirm={onSubmit} onBack={onBack} />
+        <PaymentSummary showButtons={!userIsOrgOwner} onConfirm={onSubmit} onBack={onBack} />
       </Grid>
     </section>
   );
 };
 
 ConfirmationStep.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  showEditLink: PropTypes.bool.isRequired,
-  showBillingDetails: PropTypes.bool.isRequired,
   track: PropTypes.func.isRequired,
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
