@@ -89,10 +89,10 @@ export const createAddToReleaseDialogContent = (entityTitle, selectedEntities, r
   const referencesAmount = selectedEntities.length;
 
   if (doesContainRootEntry) {
-    return `${entityTitle} and ${referencesAmount - 1} ${pluralize(
-      referencesAmount - 1,
-      'reference'
-    )}`;
+    const referencesLength = referencesAmount - 1;
+    return !referencesLength
+      ? entityTitle
+      : `${entityTitle} and ${referencesLength} ${pluralize(referencesLength, 'reference')}`;
   }
 
   return `${referencesAmount} ${pluralize(referencesAmount, 'reference')}`;
