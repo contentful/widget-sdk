@@ -1,7 +1,7 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
-import { newContentType, newEntry } from './__fixtures__';
+import { newContentType, newEntry, PATHS } from './__fixtures__';
 import { expectDocError } from './__tests__/testDocument';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -69,10 +69,8 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
 }
 
 describe('CmaDocument - conflict resolution', () => {
-  const fieldPath = ['fields', 'fieldA', 'en-US'];
-  const otherLocalePath = ['fields', 'fieldA', 'de'];
-  const otherFieldPath = ['fields', 'fieldB', 'en-US'];
-  const metadataPath = ['metadata', 'tags'];
+  const { fieldPath, anotherFieldPath, otherLocalePath, tagsPath } = PATHS;
+
   /**
    * @type {Document}
    */
@@ -153,7 +151,7 @@ describe('CmaDocument - conflict resolution', () => {
 
       beforeEach(async () => {
         remoteEntity = cloneDeep(entry);
-        set(remoteEntity, metadataPath, remoteMetadata);
+        set(remoteEntity, tagsPath, remoteMetadata);
         remoteEntity.sys.version++;
         remoteEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
         remoteEntity.sys.updatedBy.sys.id = 'otherUserId';
@@ -161,7 +159,7 @@ describe('CmaDocument - conflict resolution', () => {
           throw newError('VersionMismatch', 'API request failed');
         });
 
-        await doc.setValueAt(metadataPath, localMetadata);
+        await doc.setValueAt(tagsPath, localMetadata);
       });
 
       it('tracks the conflict and emits VersionMismatch', async () => {
@@ -176,8 +174,8 @@ describe('CmaDocument - conflict resolution', () => {
           {
             entity: entry,
             remoteEntity,
-            localChangesPaths: [metadataPath.join(':')],
-            remoteChangesPaths: [metadataPath.join(':')],
+            localChangesPaths: [tagsPath.join(':')],
+            remoteChangesPaths: [tagsPath.join(':')],
             isConflictAutoResolvable: false,
             precomputed: {
               sameFieldLocaleConflictsCount: 0,
@@ -249,7 +247,7 @@ describe('CmaDocument - conflict resolution', () => {
 
       it('handles another VersionMismatch on updating remote entity', async () => {
         const newRemoteEntity = cloneDeep(remoteEntity);
-        set(newRemoteEntity, otherFieldPath, 'en-US-B-updated-remotely');
+        set(newRemoteEntity, anotherFieldPath, 'en-US-B-updated-remotely');
         newRemoteEntity.sys.version++;
         newRemoteEntity.sys.updatedAt = '2020-06-06T14:58:25.641Z';
         newRemoteEntity.sys.updatedBy.sys.id = 'anotherUserId';
@@ -261,7 +259,7 @@ describe('CmaDocument - conflict resolution', () => {
         expect.assertions(9);
 
         doc.changes.bufferWithCount(2).onValue((paths) => {
-          expect(paths).toIncludeSameMembers([fieldPath, otherFieldPath]);
+          expect(paths).toIncludeSameMembers([fieldPath, anotherFieldPath]);
         });
 
         jest.advanceTimersByTime(THROTTLE_TIME);
@@ -270,7 +268,7 @@ describe('CmaDocument - conflict resolution', () => {
         expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 3);
         expect(K.getValue(doc.data$).fields).toMatchObject({
           [fieldPath[1]]: { [fieldPath[2]]: 'en-US-updated-remotely' },
-          [otherFieldPath[1]]: { [otherFieldPath[2]]: 'en-US-B-updated-remotely' },
+          [anotherFieldPath[1]]: { [anotherFieldPath[2]]: 'en-US-B-updated-remotely' },
           [otherLocalePath[1]]: { [otherLocalePath[2]]: 'de-updated-locally' },
         });
 
@@ -296,7 +294,7 @@ describe('CmaDocument - conflict resolution', () => {
             entity: remoteEntity,
             remoteEntity: newRemoteEntity,
             localChangesPaths: [otherLocalePath.join(':')],
-            remoteChangesPaths: [otherFieldPath.join(':')],
+            remoteChangesPaths: [anotherFieldPath.join(':')],
             isConflictAutoResolvable: true,
             precomputed: {
               sameFieldLocaleConflictsCount: 0,
@@ -320,8 +318,8 @@ describe('CmaDocument - conflict resolution', () => {
         remoteEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
         remoteEntity.sys.updatedBy.sys.id = 'otherUserId';
         set(remoteEntity, fieldPath, 'en-US-updated-remotely');
-        set(remoteEntity, otherFieldPath, 'en-US-updated-remotely-2');
-        set(remoteEntity, metadataPath, remoteMetadata);
+        set(remoteEntity, anotherFieldPath, 'en-US-updated-remotely-2');
+        set(remoteEntity, tagsPath, remoteMetadata);
 
         entityRepo.update.mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
@@ -333,7 +331,7 @@ describe('CmaDocument - conflict resolution', () => {
 
       it('tracks the conflict, applies remote changes locally and updates remote entity', async (done) => {
         doc.changes.bufferWithCount(2).onValue((paths) => {
-          expect(paths).toIncludeSameMembers([fieldPath, otherFieldPath]);
+          expect(paths).toIncludeSameMembers([fieldPath, anotherFieldPath]);
           done();
         });
 
@@ -343,7 +341,7 @@ describe('CmaDocument - conflict resolution', () => {
         expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 2);
         expect(K.getValue(doc.data$).fields).toMatchObject({
           [fieldPath[1]]: { [fieldPath[2]]: 'en-US-updated-remotely' },
-          [otherFieldPath[1]]: { [otherFieldPath[2]]: 'en-US-updated-remotely-2' },
+          [anotherFieldPath[1]]: { [anotherFieldPath[2]]: 'en-US-updated-remotely-2' },
           [otherLocalePath[1]]: { [otherLocalePath[2]]: 'de-updated-locally' },
         });
         expect(K.getValue(doc.data$).metadata.tags).toMatchObject(remoteMetadata);
@@ -357,8 +355,8 @@ describe('CmaDocument - conflict resolution', () => {
             localChangesPaths: [otherLocalePath.join(':')],
             remoteChangesPaths: [
               fieldPath.join(':'),
-              otherFieldPath.join(':'),
-              metadataPath.join(':'),
+              anotherFieldPath.join(':'),
+              tagsPath.join(':'),
             ],
             isConflictAutoResolvable: true,
             precomputed: {

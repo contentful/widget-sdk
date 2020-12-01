@@ -1,5 +1,5 @@
 import { forEach, omit } from 'lodash';
-import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
+import { changedEntityFieldPaths, changedEntitytagsPaths } from './changedPaths';
 import * as fake from 'test/helpers/fakeFactory';
 
 describe('changedEntityFieldPaths(fields1, fields2)', () => {
@@ -89,7 +89,7 @@ describe('changedEntityFieldPaths(fields1, fields2)', () => {
   });
 });
 
-describe('changedEntityMetadataPaths', () => {
+describe('changedEntitytagsPaths', () => {
   const TAG_1 = fake.Link('Tag', 'tag1');
   const TAG_2 = fake.Link('Tag', 'tag2');
   const TAG_3 = fake.Link('Tag', 'tag3');
@@ -168,8 +168,8 @@ describe('changedEntityMetadataPaths', () => {
     const { metadata1, metadata2, result } = testCase;
 
     it(`handles ${description}`, () => {
-      expect(changedEntityMetadataPaths(metadata1, metadata2)).toIncludeSameMembers(result);
-      expect(changedEntityMetadataPaths(metadata2, metadata1)).toIncludeSameMembers(result);
+      expect(changedEntitytagsPaths(metadata1, metadata2)).toIncludeSameMembers(result);
+      expect(changedEntitytagsPaths(metadata2, metadata1)).toIncludeSameMembers(result);
     });
   });
 });

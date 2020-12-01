@@ -10,7 +10,6 @@ import contentTypes from './contentTypes';
 import { appRoute as apps } from 'features/apps';
 import { apiKeysState } from './settingsApiKeys';
 import { assetViewState, entryViewState } from 'features/entity-views';
-import home from './spaceHome';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
 import scheduledActions from 'app/ScheduledActions/routes';
@@ -18,6 +17,8 @@ import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import releasesActions from 'app/Releases/routes';
+
+import SpaceHomePage from 'app/home/SpaceHomePage';
 
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
@@ -35,6 +36,12 @@ const resolveSpaceData = [
   '$stateParams',
   ($stateParams) => TokenStore.getSpace($stateParams.spaceId),
 ];
+
+const spaceHome = {
+  name: 'home',
+  url: '/home',
+  component: SpaceHomePage,
+};
 
 const spaceEnvironment = {
   name: 'environment',
@@ -127,7 +134,7 @@ const spaceDetail = {
     assetViewState,
     apiKeysState,
     settings,
-    home,
+    spaceHome,
     spaceEnvironment,
     stackOnboarding,
     apps,

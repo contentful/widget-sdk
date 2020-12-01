@@ -7,7 +7,7 @@ import { DocLoad } from 'data/sharejs/Connection';
 import ShareJsDocMock from './__mocks__/ShareJsDocMock';
 import { Error as DocError } from '../../../data/document/Error';
 
-import { newContentType, newEntry } from './__fixtures__';
+import { newContentType, newEntry, PATHS } from './__fixtures__';
 import testDocumentBasics from './__tests__/testDocument';
 
 const kefirHelpers = jestKefir(Kefir); // https://github.com/kefirjs/jest-kefir
@@ -64,7 +64,7 @@ function createOtDocument(initialEntity, contentTypeFields) {
 describe('OtDocument', () => {
   testDocumentBasics(createOtDocument);
 
-  const fieldPath = ['fields', 'fieldA', 'en-US'];
+  const { fieldPath } = PATHS;
   let doc;
   let entry;
 

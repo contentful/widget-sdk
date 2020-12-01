@@ -7,6 +7,7 @@ import { onValue } from 'core/utils/kefir';
 import { noop } from 'lodash';
 import * as Kefir from 'kefir';
 import jestKefir from 'jest-kefir';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const kefirHelpers = jestKefir(Kefir);
 
@@ -65,6 +66,8 @@ describe('createEntryApi', () => {
       doc,
       setInvalid,
       fieldLocaleListeners: {},
+      widgetId: 'my-app',
+      widgetNamespace: WidgetNamespace.APP,
     });
   });
 
@@ -127,6 +130,8 @@ describe('createEntryApi', () => {
         doc,
         setInvalid,
         fieldLocaleListeners: {},
+        widgetId: 'my-app',
+        widgetNamespace: WidgetNamespace.APP,
       });
     });
     it('returns the metaData from doc', () => {

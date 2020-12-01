@@ -21,6 +21,7 @@ describe('SpacePlanTabelCell', () => {
       screen.getByTestId('subscription-page.spaces-list.usage-tooltip');
     }).toThrow();
   });
+
   it('warns the usage is approaching the limit', () => {
     const props = {
       limit: 10,
@@ -32,7 +33,9 @@ describe('SpacePlanTabelCell', () => {
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
       'Approaching limit (80%)'
     );
+    expect(screen.getByTestId('cf-contact-us-button')).toBeDefined();
   });
+
   it('warns the usage is exceeding the limit', () => {
     const props = {
       limit: 10,
@@ -44,6 +47,7 @@ describe('SpacePlanTabelCell', () => {
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
       'Exceeding limit (110%)'
     );
+    expect(screen.getByTestId('cf-contact-us-button')).toBeDefined();
   });
   it('warns the usage has reached the limit', () => {
     const props = {

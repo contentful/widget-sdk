@@ -130,11 +130,7 @@ const SpacesRoute = ({ orgId }) => {
           {isLoading && <LoadingState />}
           {!isLoading && error && <ErrorState />}
           {!isLoading && !error && !spaces.length && (
-            <EmptySpaceState
-              orgId={orgId}
-              orgOwnerOrAdmin={true}
-              data-test-id="v1-spaces-list-empty-state"
-            />
+            <EmptySpaceState orgId={orgId} data-test-id="v1-spaces-list-empty-state" />
           )}
           {!isLoading && !error && spaces.length > 0 && (
             <Table>

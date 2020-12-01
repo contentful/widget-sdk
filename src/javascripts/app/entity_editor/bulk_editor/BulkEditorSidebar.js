@@ -56,11 +56,11 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
       const contentType = isObject(ctOrCtId)
         ? ctOrCtId
         : currentSpaceContentTypes.find((ct) => ct.sys.id === ctOrCtId);
-      return spaceApiClient.createEntry(contentType.getId(), {}).then((entry) => {
+      return spaceApiClient.createEntry(contentType.sys.id, {}).then((entry) => {
         Analytics.track('entry:create', {
           eventOrigin: 'bulk-editor',
-          contentType: contentType.data,
-          response: entry.data,
+          contentType,
+          response: entry,
         });
         track.addNew();
         return addLinks([linkEntity(entry)]);

@@ -20,6 +20,8 @@ import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
 import { getReleaseActions, getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesListdialog from './ReleasesListDialog';
+import { LaunchAppDeepLink } from '../ReleasesWidget/LaunchAppDeepLink';
+import { useFeatureFlagAccessToLaunchApp } from '../ReleasesFeatureFlag';
 
 const styles = {
   workbenchContent: css({
@@ -31,6 +33,9 @@ const styles = {
   loadMoreButtonWrapper: css({
     display: 'flex',
     justifyContent: 'center',
+  }),
+  deepLinkHeader: css({
+    height: tokens.spacing2Xl,
   }),
 };
 
@@ -77,26 +82,36 @@ const TabsData = {
   },
 };
 
-const PageShell = ({ children, setIsRelaseDialogShown }) => (
-  <Workbench>
-    <Workbench.Header
-      icon={<Icon icon="Release" color="positive" size="large" />}
-      title="Content releases"
-      onBack={() => window.history.back()}
-      actions={
-        <Button
-          buttonType="primary"
-          testId="create-new-release"
-          onClick={() => setIsRelaseDialogShown(true)}>
-          Create new Release
-        </Button>
-      }
-    />
-    <Workbench.Content type="text" className={styles.workbenchContent}>
-      <div>{children}</div>
-    </Workbench.Content>
-  </Workbench>
-);
+const PageShell = ({ children, setIsRelaseDialogShown }) => {
+  const { launchAppAccessEnabled, islaunchAppAccessLoading } = useFeatureFlagAccessToLaunchApp();
+
+  return (
+    <Workbench>
+      <Workbench.Header
+        icon={<Icon icon="Release" color="positive" size="large" />}
+        title="Content releases"
+        onBack={() => window.history.back()}
+        actions={
+          <Button
+            buttonType="primary"
+            testId="create-new-release"
+            onClick={() => setIsRelaseDialogShown(true)}>
+            Create new Release
+          </Button>
+        }
+      />
+      {!islaunchAppAccessLoading && launchAppAccessEnabled ? (
+        <Workbench.Header
+          className={styles.deepLinkHeader}
+          title={<LaunchAppDeepLink eventOrigin="release-list-page" />}
+        />
+      ) : null}
+      <Workbench.Content type="text" className={styles.workbenchContent}>
+        <div>{children}</div>
+      </Workbench.Content>
+    </Workbench>
+  );
+};
 
 PageShell.propTypes = {
   setIsRelaseDialogShown: PropTypes.func,

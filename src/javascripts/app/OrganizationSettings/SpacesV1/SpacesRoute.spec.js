@@ -6,10 +6,11 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import createResourceService from 'services/ResourceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { getSpaces } from 'services/TokenStore';
+import { getSpaces, getUserSync } from 'services/TokenStore';
 import { go } from 'states/Navigator';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 import * as fake from 'test/helpers/fakeFactory';
+import { setUser } from 'services/OrganizationRoles';
 
 const DEFAULT_CREATED_AT_STRING = '2020-05-07T10:48:53Z';
 const CREATED_AT_FROM_NOW = moment(DEFAULT_CREATED_AT_STRING).fromNow();
@@ -24,6 +25,7 @@ const fakeResources = [
   { sys: { id: 'entry' }, usage: ENTRY_COUNT },
   { sys: { id: 'content_delivery_api_request' }, usage: REQUEST_COUNT },
 ];
+const mockOrganization = fake.Organization();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(),
@@ -46,7 +48,8 @@ jest.mock('services/CreateSpace', () => ({
 }));
 
 jest.mock('services/TokenStore', () => ({
-  getSpaces: jest.fn(),
+  getSpaces: jest.fn().mockResolvedValue(),
+  getUserSync: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -54,12 +57,25 @@ jest.mock('states/Navigator', () => ({
 }));
 
 const build = async () => {
-  render(<SpacesRoute />);
+  render(<SpacesRoute orgId={mockOrganization.sys.id} />);
 
   return waitFor(() => expect(getAllSpaces).toHaveBeenCalled());
 };
 
 describe('SpacesRoute', () => {
+  beforeEach(() => {
+    const user = {
+      organizationMemberships: [
+        {
+          organization: mockOrganization,
+          role: 'owner',
+        },
+      ],
+    };
+
+    setUser(user);
+    getUserSync.mockReturnValue(user);
+  });
   describe('it renders loading state', () => {
     it('should show an loading icon when waiting for data fetch', async () => {
       const loading = build();
@@ -93,7 +109,7 @@ describe('SpacesRoute', () => {
   describe('it renders with no spaces', () => {
     beforeEach(() => {
       getAllSpaces.mockReset().mockReturnValue([]);
-      getSpaces.mockReset().mockReturnValue([]);
+      getSpaces.mockReset().mockResolvedValue([]);
     });
 
     it('should not call resource service', async () => {
@@ -106,6 +122,8 @@ describe('SpacesRoute', () => {
     it('should render empty space home when there are no spaces', async () => {
       await build();
 
+      await waitFor(() => expect(getUserSync).toBeCalled());
+
       expect(screen.queryByTestId('cf-ui-empty-space-admin')).toBeVisible();
     });
   });
@@ -116,7 +134,7 @@ describe('SpacesRoute', () => {
 
       createResourceService().getAll.mockReset().mockReturnValue(fakeResources);
 
-      getSpaces.mockReset().mockReturnValue([fakeSpace1, fakeSpace2]);
+      getSpaces.mockReset().mockResolvedValue([fakeSpace1, fakeSpace2]);
     });
 
     it('should fetch space and resource data when the component renders', async () => {
@@ -237,7 +255,7 @@ describe('SpacesRoute', () => {
 
     it('should navigate to space home if it is accessible to the user', async () => {
       // fakeSpace1 is not accessible
-      getSpaces.mockReset().mockReturnValue([fakeSpace2]);
+      getSpaces.mockReset().mockResolvedValue([fakeSpace2]);
       await build();
 
       const actionIcons = screen.queryAllByTestId('v1-spaces-row.dropdown-menu.trigger');

@@ -122,7 +122,7 @@ describe('Space Plan Row', () => {
     it('should display space environments usage', () => {
       build();
       expect(screen.getByTestId('subscription-page.spaces-list.environments')).toHaveTextContent(
-        `${mockUsage.usage + 1}/${mockUsage.limit + 1}`
+        `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 

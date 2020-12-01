@@ -28,6 +28,7 @@ import {
   queryForSelfConfigureSsoInDefaultOrg,
   queryForScimInDefaultOrg,
   queryForReleasesInDefaultSpace,
+  getLaunchAppFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
@@ -172,5 +173,6 @@ function basicServerSetUp(): string[] {
     queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
     queryForScimInDefaultOrg.willFindFeatureEnabled(),
     queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+    getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
   ];
 }

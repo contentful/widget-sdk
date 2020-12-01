@@ -5,7 +5,8 @@ import { spaceResolver } from 'states/Resolvers';
 export function redirectReadOnlySpace(space) {
   if (space.readOnlyAt) {
     go({
-      path: ['home'],
+      path: ['spaces', 'detail', 'home'],
+      params: { spaceId: space.sys.id },
     });
   }
 }

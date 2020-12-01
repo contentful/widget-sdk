@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, TableCell, Tooltip } from '@contentful/forma-36-react-components';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {
   icon: css({
@@ -48,17 +49,28 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
         [styles.usageNegative]: icon?.color === 'negative',
         [styles.usageWarning]: icon?.color === 'warning',
       })}>
-      <span className={cx({ [styles.usageEmphasized]: percentage >= 80 })}>{usage}</span>/{limit}
-      &nbsp;
       {approachingLimit && (
-        <Tooltip content={label} testId="subscription-page.spaces-list.usage-tooltip">
+        <Tooltip
+          content={
+            <div>
+              {label}
+              <br />
+              <ContactUsButton noIcon isLink>
+                Get in touch
+              </ContactUsButton>{' '}
+              to upgrade
+            </div>
+          }
+          closeOnMouseLeave={false}
+          testId="subscription-page.spaces-list.usage-tooltip">
           <Icon
             className={styles.icon}
             {...icon}
             testId="subscription-page.spaces-list.usage-tooltip-trigger"
           />
         </Tooltip>
-      )}
+      )}{' '}
+      <span className={cx({ [styles.usageEmphasized]: approachingLimit })}>{usage}</span>/{limit}
     </TableCell>
   );
 };

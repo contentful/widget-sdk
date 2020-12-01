@@ -62,6 +62,8 @@ export const createEditorExtensionSDK = ({
     // field, but in context of editor there is no current field. We should move
     // it to field-locale level in a long run.
     setInvalid: noop,
+    widgetNamespace,
+    widgetId,
   });
 
   const idsApi = createIdsApiWithoutField({
