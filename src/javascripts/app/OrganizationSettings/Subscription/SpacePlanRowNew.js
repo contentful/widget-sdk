@@ -18,7 +18,6 @@ import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
 import { SpaceUsageTableCell } from './components/SpaceUsageTableCell';
-import { addMasterEnvironment } from './SpacesUsageService';
 
 const styles = {
   star: css({ color: tokens.colorOrangeMid, fontSize: tokens.fontSizeS, cursor: 'default' }),
@@ -130,7 +129,7 @@ export const SpacePlanRowNew = ({
       </TableCell>
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.environments"
-        {...addMasterEnvironment(spaceUsage.environments)}
+        {...spaceUsage.environments}
       />
       <SpaceUsageTableCell testId="subscription-page.spaces-list.roles" {...spaceUsage.roles} />
       <SpaceUsageTableCell testId="subscription-page.spaces-list.locales" {...spaceUsage.locales} />

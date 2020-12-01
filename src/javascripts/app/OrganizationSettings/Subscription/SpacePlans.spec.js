@@ -32,6 +32,7 @@ jest.mock('utils/SubscriptionUtils', () => ({
     return [];
   }),
 }));
+
 const mockOnChangeSpace = jest.fn();
 const mockOnDeleteSpace = jest.fn();
 const mockOnCreateSpace = jest.fn();
