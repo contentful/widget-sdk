@@ -93,13 +93,13 @@ export const SpacePurchaseContainer = ({
   spaceRatePlans,
   currentSpacePlan,
   currentSpacePlanIsLegacy,
-  hasPurchasedApps,
+  purchasingApps,
 }) => {
   const { dispatch } = useContext(SpacePurchaseState);
 
   // if the user has already purchased apps, we want them to start at the space selection step
   // otherwise, they should start in the platfform and space selection step
-  const initialStep = hasPurchasedApps ? STEPS.SPACE_PLAN_SELECTION : STEPS.PLATFORM_SELECTION;
+  const initialStep = purchasingApps ? STEPS.SPACE_PLAN_SELECTION : STEPS.PLATFORM_SELECTION;
 
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [spaceName, setSpaceName] = useState('');
@@ -358,5 +358,5 @@ SpacePurchaseContainer.propTypes = {
   }),
   currentSpace: SpacePropType,
   currentSpacePlanIsLegacy: PropTypes.bool,
-  hasPurchasedApps: PropTypes.bool,
+  purchasingApps: PropTypes.bool,
 };
