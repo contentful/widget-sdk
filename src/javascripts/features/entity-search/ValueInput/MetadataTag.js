@@ -34,9 +34,17 @@ class MetadataTag extends React.Component {
     onChange: noop,
   };
 
+  static getDerivedStateFromProps(nextProps) {
+    const { value, selectedTags } = nextProps;
+    return {
+      value,
+      selectedTags,
+    };
+  }
+
   state = {
-    value: this.props.value,
-    selectedTags: this.props.selectedTags,
+    value: '',
+    selectedTags: [],
   };
 
   onChange = (selectedTags) => {
