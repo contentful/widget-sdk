@@ -1,12 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import SnapshotPresenterWidgets from './SnapshotPresenterWidgets';
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
 import { Entity } from '../entity_editor/Document/types';
 import { Field, Locale } from '../entity_editor/EntityField/types';
 import { InternalContentType } from '../widgets/ExtensionSDKs/createContentTypeApi';
 import { LegacyWidget } from '../../widgets/WidgetCompat';
-import { EditorInterfaceProps } from 'contentful-management/types';
 
 // This cannot be moved or replaced by a function because of how jest.mock works
 jest.mock('./SnapshotPresenterCustomWidget', () => () => (
@@ -59,7 +58,7 @@ const getMockedProps = ({
     },
     editorData: {
       contentType: { data: {} as InternalContentType },
-      editorInterface: {} as EditorInterfaceProps,
+      editorInterface: {} as EditorInterface,
     },
     entity: {} as Entity,
     locale: {} as Locale,

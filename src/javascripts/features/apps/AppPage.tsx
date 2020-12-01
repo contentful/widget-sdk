@@ -33,11 +33,11 @@ import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
 import {
   WidgetRenderer,
   WidgetLocation,
+  Location,
   buildAppDefinitionWidget,
   Widget,
 } from '@contentful/widget-renderer';
 import { AppExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { AppDefinitionProps } from 'contentful-management/types';
 
 enum InstallationState {
   Installation = 'installation',
@@ -74,6 +74,16 @@ interface Props {
   hasAdvancedAppsFeature: boolean;
 }
 
+interface AppDefinition {
+  sys: {
+    type: 'AppDefinition';
+    id: string;
+  };
+  name: string;
+  src?: string;
+  locations?: Location[];
+} // TODO: import this from widget-renderer, or CMA
+
 interface State {
   ready: boolean;
   appLoaded: boolean;
@@ -81,7 +91,7 @@ interface State {
   loadingError: boolean;
   title: string;
   appIcon: string;
-  appDefinition: AppDefinitionProps | null;
+  appDefinition: AppDefinition | null;
   isInstalled: boolean;
   actionList: any[];
   installationState: InstallationState;
@@ -116,7 +126,7 @@ export class AppRoute extends Component<Props, State> {
     }
   }
 
-  checkAppStatus = async (appDefinition: AppDefinitionProps | null = this.state.appDefinition) => {
+  checkAppStatus = async (appDefinition: AppDefinition | null = this.state.appDefinition) => {
     try {
       return {
         appDefinition,
@@ -390,7 +400,7 @@ export class AppRoute extends Component<Props, State> {
     const { appDefinition, appLoaded } = this.state;
 
     const widget = buildAppDefinitionWidget(
-      appDefinition as AppDefinitionProps,
+      appDefinition as AppDefinition,
       // This should never be null, as we check - as this function is only
       // called once an appDefinition exists
       getMarketplaceDataProvider()

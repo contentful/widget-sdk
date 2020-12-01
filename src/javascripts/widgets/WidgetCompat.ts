@@ -1,4 +1,10 @@
-import { WidgetNamespace, HostingType, WidgetLocation, Widget } from '@contentful/widget-renderer';
+import {
+  WidgetNamespace,
+  HostingType,
+  WidgetLocation,
+  Widget,
+  EntryFieldLocation,
+} from '@contentful/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 
 export interface LegacyWidget {
@@ -23,20 +29,18 @@ export interface LegacyWidget {
 }
 
 export const toLegacyWidget = (widget: Widget): LegacyWidget => {
-  const locations = widget.locations.map((l) => l.location as WidgetLocation);
+  const locations = widget.locations.map((l) => l.location);
   const entryFieldLocation = widget.locations.find(
     (l) => l.location === WidgetLocation.ENTRY_FIELD
-  ) as any;
-  let fieldTypes = [];
-  if (entryFieldLocation && Array.isArray(entryFieldLocation.fieldTypes)) {
-    fieldTypes = entryFieldLocation.fieldTypes.map(toInternalFieldType);
-  }
+  );
 
   const legacy: LegacyWidget = {
     namespace: widget.namespace,
     id: widget.id,
     name: widget.name,
-    fieldTypes,
+    fieldTypes: entryFieldLocation
+      ? (entryFieldLocation as EntryFieldLocation).fieldTypes.map(toInternalFieldType)
+      : [],
     locations,
     sidebar: locations.includes(WidgetLocation.ENTRY_FIELD_SIDEBAR),
     parameters: widget.parameters.definitions.instance,

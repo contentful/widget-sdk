@@ -3,14 +3,10 @@ import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'loda
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
+import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
 import APIClient from 'data/APIClient';
-import {
-  AppInstallationProps,
-  ContentTypeProps,
-  EditorInterfaceProps,
-} from 'contentful-management/types';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -40,7 +36,7 @@ export async function getDefaultEditors(
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-function isCurrentApp(widget: any, appInstallation: AppInstallationProps): boolean {
+function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
   return widget.widgetNamespace === WidgetNamespace.APP && widget.widgetId === widgetId;
@@ -62,7 +58,7 @@ function isCurrentApp(widget: any, appInstallation: AppInstallationProps): boole
 export async function transformEditorInterfacesToTargetState(
   cma: APIClient,
   targetState: Record<string, Record<string, PartialTargetState>>,
-  appInstallation: AppInstallationProps,
+  appInstallation: AppInstallation,
   spaceData
 ) {
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
@@ -137,12 +133,12 @@ function transformWidgetList(
 }
 
 function transformSingleEditorInterfaceToTargetState(
-  ei: EditorInterfaceProps,
+  ei: EditorInterface,
   defaultSidebar: { widgetId: string; widgetNamespace: WidgetNamespace }[],
   defaultEditors: { widgetId: string; widgetNamespace: WidgetNamespace }[],
-  targetState: Record<ContentTypeProps['sys']['id'], PartialTargetState>,
-  appInstallation: AppInstallationProps
-): EditorInterfaceProps {
+  targetState: Record<ContentType['sys']['id'], PartialTargetState>,
+  appInstallation: AppInstallation
+): EditorInterface {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
   const result = removeSingleEditorInterfaceReferences(ei, appInstallation);
@@ -215,7 +211,7 @@ function transformSingleEditorInterfaceToTargetState(
 
 export async function removeAllEditorInterfaceReferences(
   cma: APIClient,
-  appInstallation: AppInstallationProps
+  appInstallation: AppInstallation
 ) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
@@ -231,11 +227,11 @@ export async function removeAllEditorInterfaceReferences(
 }
 
 function removeSingleEditorInterfaceReferences(
-  ei: EditorInterfaceProps,
-  appInstallation: AppInstallationProps
-): EditorInterfaceProps {
+  ei: EditorInterface,
+  appInstallation: AppInstallation
+): EditorInterface {
   ei = cloneDeep(ei);
-  const result: EditorInterfaceProps = { sys: ei.sys };
+  const result: EditorInterface = { sys: ei.sys };
 
   if (Array.isArray(ei.controls)) {
     // If the app is used in `controls`, reset it to the default.

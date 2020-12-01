@@ -7,6 +7,7 @@ import { Entity } from 'app/entity_editor/Document/types';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
+import { EditorInterface } from '@contentful/widget-renderer';
 import { LegacyWidget } from 'widgets/WidgetCompat';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
@@ -15,7 +16,6 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createCache from 'data/userCache';
 import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
 import { SpaceEndpoint } from 'data/CMA/types';
-import { EditorInterfaceProps } from 'contentful-management/types';
 
 const SnapshotPresenterRichText = ({
   className,
@@ -96,7 +96,7 @@ interface SnapshotPresenterRichTextProps {
   value: any;
   editorData: {
     contentType: { data: InternalContentType };
-    editorInterface: EditorInterfaceProps;
+    editorInterface: EditorInterface;
   };
   entity: Entity;
   field: Field;

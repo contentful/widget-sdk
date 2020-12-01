@@ -1,7 +1,7 @@
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
-import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
+import { EditorInterface, WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { SpaceEndpoint } from 'data/CMA/types';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import { PubSubClient } from 'services/PubSubService';
@@ -22,11 +22,10 @@ import { createIdsApi } from '../createIdsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { proxify } from 'core/services/proxy';
-import { EditorInterfaceProps } from 'contentful-management/types';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
-  editorInterface: EditorInterfaceProps;
+  editorInterface: EditorInterface;
   endpoint: SpaceEndpoint;
   entry: Entity;
   publicFieldId: Field['id'] | Field['apiName'];
