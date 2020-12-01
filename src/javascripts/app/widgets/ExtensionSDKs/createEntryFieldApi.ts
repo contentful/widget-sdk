@@ -1,6 +1,8 @@
 import { get, noop } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
+import { WidgetNamespace } from '@contentful/widget-renderer';
+import * as Analytics from 'analytics/Analytics';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
@@ -59,6 +61,8 @@ export interface CreateEntryFieldApiProps {
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
+  widgetNamespace: string;
+  widgetId: string;
 }
 
 export function createEntryFieldApi({
@@ -67,6 +71,8 @@ export function createEntryFieldApi({
   setInvalid,
   fieldLocaleListeners,
   readOnly,
+  widgetNamespace,
+  widgetId,
 }: CreateEntryFieldApiProps): EntryFieldAPI {
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
@@ -119,9 +125,20 @@ export function createEntryFieldApi({
       }
 
       const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
+      const entrySys = K.getValue(doc.sysProperty);
 
       try {
         await doc.setValueAt(currentPath, value);
+
+        Analytics.track('extension:set_value', {
+          contentTypeId: entrySys.contentType.sys.id,
+          entryId: entrySys.id,
+          fieldId: internalField.id,
+          localeCode: publicLocaleCode,
+          extensionId: widgetId,
+          appDefinitionId: widgetNamespace === WidgetNamespace.APP ? widgetId : null,
+        });
+
         return value;
       } catch (err) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);

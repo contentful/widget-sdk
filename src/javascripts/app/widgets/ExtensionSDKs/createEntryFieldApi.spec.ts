@@ -2,6 +2,8 @@ import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentTypeField } from './createContentTypeApi';
 import { onValueWhile } from 'core/utils/kefir';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import * as Analytics from 'analytics/Analytics';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('core/utils/kefir', () => {
@@ -10,6 +12,7 @@ jest.mock('core/utils/kefir', () => {
   return {
     ...originalModule,
     onValueWhile: jest.fn(),
+    getValue: jest.fn((arg) => arg),
   };
 });
 
@@ -26,6 +29,12 @@ jest.mock('services/localeStore', () => {
   };
 });
 
+jest.mock('analytics/Analytics', () => {
+  return {
+    track: jest.fn(),
+  };
+});
+
 const defaultDoc = ({
   changes: {
     filter: jest.fn(),
@@ -35,6 +44,10 @@ const defaultDoc = ({
   removeValueAt: jest.fn(),
   permissions: {
     canEditFieldLocale: jest.fn(),
+  },
+  sysProperty: {
+    contentType: { sys: { id: 'content-type-id' } },
+    id: 'entry-id',
   },
 } as unknown) as jest.Mocked<Document>;
 
@@ -189,7 +202,10 @@ describe('createEntryFieldApi', () => {
           true
         );
 
-        const entryFieldApi = buildEntryFieldApi();
+        const entryFieldApi = buildEntryFieldApi({
+          widgetId: 'my-app',
+          widgetNamespace: WidgetNamespace.APP,
+        });
 
         await entryFieldApi.setValue('a new value');
 
@@ -197,6 +213,7 @@ describe('createEntryFieldApi', () => {
           ['fields', 'internal_id', 'internalCode'],
           'a new value'
         );
+        expect(Analytics.track).toHaveBeenCalled();
       });
     });
 

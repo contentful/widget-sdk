@@ -110,6 +110,8 @@ export function createReadonlyFieldWidgetSDK({
     setInvalid: noop,
     fieldLocaleListeners: {},
     readOnly: true,
+    widgetId,
+    widgetNamespace,
   });
 
   const contentTypeApi = createContentTypeApi(internalContentType);
