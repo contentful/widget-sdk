@@ -1,21 +1,43 @@
+import {
+  Button,
+  Heading,
+  Paragraph,
+  Tooltip,
+  Typography,
+} from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
-import { Button, Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
+import { useCanManageTags } from '../hooks';
+import { ConditionalWrapper } from './ConditionalWrapper';
 
 const NoTagsContainer = ({ onCreate, headline, body, buttonLabel }) => {
+  const canManageTags = useCanManageTags();
   return (
     <EmptyStateContainer>
       <EmptyContentTags className={defaultSVGStyle} />
       <Typography>
         <Heading>{headline}</Heading>
         <Paragraph>{body}</Paragraph>
-        <Button buttonType="primary" onClick={onCreate}>
-          {buttonLabel}
-        </Button>
+        <ConditionalWrapper
+          condition={!canManageTags}
+          wrapper={(children) => (
+            <Tooltip
+              content={
+                "You don't have permission to create new tags. Ask a space admin to give you permission."
+              }
+              id="admin-tip"
+              place="top">
+              {children}
+            </Tooltip>
+          )}>
+          <Button buttonType="primary" onClick={onCreate} disabled={!canManageTags}>
+            {buttonLabel}
+          </Button>
+        </ConditionalWrapper>
       </Typography>
     </EmptyStateContainer>
   );
