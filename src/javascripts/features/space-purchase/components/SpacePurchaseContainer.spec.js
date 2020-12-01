@@ -40,8 +40,6 @@ const mockFreeSpaceResource = {
   },
 };
 
-const trackWithSession = jest.fn();
-
 const mockPlanCharges = [
   FakeFactory.RatePlanCharge('Environments', 3),
   FakeFactory.RatePlanCharge('Roles', 3),
@@ -143,7 +141,7 @@ describe('SpacePurchaseContainer', () => {
   });
 
   it('should render BILLING_DETAILS when space details have been filled out with the selected space plan', async () => {
-    await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
+    await build(null, { selectedPlan: mockSpaceRatePlans[1] });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
@@ -212,9 +210,9 @@ describe('SpacePurchaseContainer', () => {
       expirationDate: { month: 1, year: '2020' },
     });
 
-    await build({
-      customProps: { organization: { ...mockOrganization, isBillable: true } },
-      customState: { selectedPlan: mockSpaceRatePlans[1] },
+    await build(null, {
+      organization: { ...mockOrganization, isBillable: true },
+      selectedPlan: mockSpaceRatePlans[1],
     });
 
     // Space Selection Page
@@ -254,15 +252,18 @@ describe('SpacePurchaseContainer', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
+
+      const track = jest.fn();
+
+      await build({ track }, { selectedPlan: mockSpaceRatePlans[1] });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, {
+      expect(track).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, {
         selectedPlan: mockSpaceRatePlans[1],
       });
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_PLAN_SELECTION',
         toStep: 'SPACE_DETAILS',
       });
@@ -274,8 +275,8 @@ describe('SpacePurchaseContainer', () => {
 
       userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.SPACE_DETAILS_ENTERED);
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toHaveBeenCalledWith(EVENTS.SPACE_DETAILS_ENTERED);
+      expect(track).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_DETAILS',
         toStep: 'BILLING_DETAILS',
       });
@@ -294,8 +295,8 @@ describe('SpacePurchaseContainer', () => {
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED);
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED);
+      expect(track).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'BILLING_DETAILS',
         toStep: 'CREDIT_CARD_DETAILS',
       });
@@ -305,24 +306,24 @@ describe('SpacePurchaseContainer', () => {
 
       successCb({ success: true, refId: mockRefId });
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.PAYMENT_DETAILS_ENTERED);
+      expect(track).toHaveBeenCalledWith(EVENTS.PAYMENT_DETAILS_ENTERED);
 
       // ------ Confirmation page ------
       await waitFor(() => {
         expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
       });
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'CREDIT_CARD_DETAILS',
         toStep: 'CONFIRMATION',
       });
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.PAYMENT_METHOD_CREATED);
+      expect(track).toHaveBeenCalledWith(EVENTS.PAYMENT_METHOD_CREATED);
 
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.CONFIRM_PURCHASE);
-      expect(trackWithSession).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toHaveBeenCalledWith(EVENTS.CONFIRM_PURCHASE);
+      expect(track).toHaveBeenCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'CONFIRMATION',
         toStep: 'RECEIPT',
       });
@@ -343,10 +344,12 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('should track user navigation', async () => {
-      await build();
+      const track = jest.fn();
+
+      await build({ track });
 
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
-      expect(trackWithSession).toBeCalledWith(EVENTS.NAVIGATE, {
+      expect(track).toBeCalledWith(EVENTS.NAVIGATE, {
         fromStep: 'SPACE_PLAN_SELECTION',
         toStep: 'SPACE_DETAILS',
       });
@@ -357,7 +360,7 @@ describe('SpacePurchaseContainer', () => {
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
       });
-      await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
+      await build(null, { selectedPlan: mockSpaceRatePlans[1] });
 
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -403,7 +406,7 @@ describe('SpacePurchaseContainer', () => {
   });
 
   it('should display saved billing details when navigating back from Credit Card Page', async () => {
-    await build({ customState: { selectedPlan: mockSpaceRatePlans[1] } });
+    await build(null, { selectedPlan: mockSpaceRatePlans[1] });
 
     // ------ Space select page------
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
@@ -463,19 +466,10 @@ describe('SpacePurchaseContainer', () => {
   });
 });
 
-async function build(options) {
+async function build(customProps, customState) {
   const props = {
-    trackWithSession,
-    organization: mockOrganization,
-    sessionMetadata: mockSessionMetadata,
-    templatesList: [],
-    canCreateFreeSpace: true,
-    spaceRatePlans: mockSpaceRatePlans,
-    pageContent: {
-      pageName: 'Space Purchase',
-      content: [],
-    },
-    ...options?.customProps,
+    track: () => {},
+    ...customProps,
   };
 
   await renderWithProvider(
@@ -483,7 +477,14 @@ async function build(options) {
     {
       organization: mockOrganization,
       sessionId: mockSessionMetadata.sessionId,
-      ...options?.customState,
+      templatesList: [],
+      freeSpaceResource: mockFreeSpaceResource,
+      spaceRatePlans: mockSpaceRatePlans,
+      pageContent: {
+        pageName: 'Space Purchase',
+        content: [],
+      },
+      ...customState,
     },
     props
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -15,7 +15,6 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
-import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
@@ -26,27 +25,14 @@ import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 
+import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-function createEventMetadataFromData(data, sessionType) {
-  const { organizationMembership, basePlan, canCreateFreeSpace, currentSpaceRatePlan } = data;
-
-  // Note: currentSpaceRatePlan will be null when upgrading a micro or small space, or creating when a new space
-
-  return {
-    userOrganizationRole: organizationMembership.role,
-    organizationPlatform: basePlan.customerType,
-    canCreateFreeSpace,
-    sessionType,
-    currentSpacePlan: currentSpaceRatePlan,
-  };
-}
-
-const initialFetch = (orgId, spaceId, dispatch) => async () => {
+const initialFetch = (orgId, spaceId, sessionId, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE);
@@ -71,26 +57,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     fetchSpacePurchaseContent(),
   ]);
 
-  const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
-
-  let showLegacyPlanWarning = false;
-  let currentSpaceRatePlan;
-  if (spaceId && spaceRatePlans.length > 0) {
-    currentSpaceRatePlan = spaceRatePlans.find((plan) => plan.currentPlan);
-
-    // if currentSpaceRatePlan was not found by checking unavailabilityReasons
-    // it means this space is probably on a legacy plan (Micro or Small), so we need to use getSincleSpacePlan to get the rate plan
-    if (!currentSpaceRatePlan) {
-      currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
-
-      // if the plan is not in productRatePlans, it is Micro or Small
-      // but if it is in productRatePlans then it's a free space
-      showLegacyPlanWarning =
-        currentSpaceRatePlan &&
-        !spaceRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
-    }
-  }
-
   const canAccess =
     isOwnerOrAdmin(organization) && (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
 
@@ -103,8 +69,19 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     return;
   }
 
-  // User can't create another community plan if they've already reached their limit
-  const canCreateFreeSpace = !resourceIncludedLimitReached(freeSpaceResource);
+  const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
+
+  let currentSpaceRatePlan;
+
+  if (spaceId && spaceRatePlans.length > 0) {
+    currentSpaceRatePlan = spaceRatePlans.find((plan) => plan.currentPlan);
+
+    // if currentSpaceRatePlan was not found by checking unavailabilityReasons
+    // it means this space is probably on a legacy plan (Micro or Small), so we need to use getSingleSpacePlan to get the rate plan
+    if (!currentSpaceRatePlan) {
+      currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
+    }
+  }
 
   dispatch({
     type: actions.SET_INITIAL_STATE,
@@ -112,55 +89,43 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
       organization,
       currentSpace,
       currentSpaceRatePlan,
-      sessionId: alnum(16),
+      sessionId,
+      templatesList,
+      spaceRatePlans,
+      freeSpaceResource,
+      pageContent,
     },
   });
 
+  // Now that all the data has been loaded (and dispatched), we can track the "begin" event
+  trackEvent(
+    EVENTS.BEGIN,
+    {
+      organizationId: orgId,
+      spaceId,
+      sessionId,
+    },
+    {
+      userOrganizationRole: organizationMembership.role,
+      organizationPlatform: basePlan.customerType,
+      canCreateFreeSpace: !resourceIncludedLimitReached(freeSpaceResource),
+      sessionType: spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION,
+      currentSpacePlan: currentSpaceRatePlan,
+    }
+  );
+
   return {
-    organization,
-    templatesList,
-    canCreateFreeSpace,
-    pageContent,
-    basePlan,
-    organizationMembership,
-    currentSpace,
-    spaceRatePlans,
-    currentSpaceRatePlan,
-    showLegacyPlanWarning,
     purchasingApps,
   };
 };
 
 export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
-  const {
-    dispatch,
-    state: { sessionId },
-  } = useContext(SpacePurchaseState);
+  const sessionId = useMemo(() => alnum(16), []);
+  const { dispatch } = useContext(SpacePurchaseState);
 
-  const sessionMetadata = {
-    organizationId: orgId,
-    sessionId,
-    spaceId,
-  };
-
-  const trackWithSession = (eventName, eventMetadata) => {
-    trackEvent(eventName, sessionMetadata, eventMetadata);
-  };
-
-  const { isLoading, data, error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, dispatch), [])
+  const { data, error } = useAsync(
+    useCallback(initialFetch(orgId, spaceId, sessionId, dispatch), [])
   );
-
-  useEffect(() => {
-    if (!isLoading && data) {
-      const sessionType = spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION;
-      const eventMetadata = createEventMetadataFromData(data, sessionType);
-
-      trackWithSession(EVENTS.BEGIN, eventMetadata);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, data]);
 
   if (error) {
     return <ErrorState />;
@@ -170,15 +135,17 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
     <>
       <DocumentTitle title="Space purchase" />
       <SpacePurchaseContainer
-        trackWithSession={trackWithSession}
-        organization={data?.organization}
-        templatesList={data?.templatesList}
-        canCreateFreeSpace={data?.canCreateFreeSpace}
-        pageContent={data?.pageContent}
-        currentSpace={data?.currentSpace}
-        spaceRatePlans={data?.spaceRatePlans}
-        currentSpacePlan={data?.currentSpaceRatePlan}
-        currentSpacePlanIsLegacy={data?.showLegacyPlanWarning}
+        track={(eventName, metadata) => {
+          trackEvent(
+            eventName,
+            {
+              organizationId: orgId,
+              spaceId,
+              sessionId,
+            },
+            metadata
+          );
+        }}
         purchasingApps={data?.purchasingApps}
       />
     </>
@@ -186,6 +153,6 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
 };
 
 SpacePurchaseRoute.propTypes = {
-  orgId: PropTypes.string,
+  orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
 };
