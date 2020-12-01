@@ -49,6 +49,8 @@ function createEventMetadataFromData(data, sessionType) {
 const initialFetch = (orgId, spaceId, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
+  const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE);
+
   const [
     organization,
     organizationMembership,
@@ -58,7 +60,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     freeSpaceResource,
     templatesList,
     pageContent,
-    composeLaunchPurchaseEnabled,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
     getOrganizationMembership(orgId),
@@ -68,7 +69,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
     fetchSpacePurchaseContent(),
-    getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE),
   ]);
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
@@ -127,7 +127,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     spaceRatePlans,
     currentSpaceRatePlan,
     showLegacyPlanWarning,
-    composeLaunchPurchaseEnabled,
+    purchasingApps,
   };
 };
 
@@ -179,7 +179,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
         spaceRatePlans={data?.spaceRatePlans}
         currentSpacePlan={data?.currentSpaceRatePlan}
         currentSpacePlanIsLegacy={data?.showLegacyPlanWarning}
-        composeLaunchPurchaseEnabled={data?.composeLaunchPurchaseEnabled}
+        purchasingApps={data?.purchasingApps}
       />
     </>
   );
