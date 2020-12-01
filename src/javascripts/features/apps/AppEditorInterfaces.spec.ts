@@ -2,23 +2,24 @@ import {
   removeAllEditorInterfaceReferences,
   transformEditorInterfacesToTargetState,
 } from './AppEditorInterfaces';
-import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import {
   makeGetDefaultByType,
   PositionalWidget,
   positionalWidgetFixtures,
 } from './__mocks__/positional-widget';
+import { AppInstallationProps } from 'contentful-management/types';
 
 const APP_ID = 'appid';
 
-const installation: AppInstallation = {
+const installation = {
   sys: {
     type: 'AppInstallation',
     appDefinition: {
       sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID },
     },
   },
-};
+} as AppInstallationProps;
 
 describe('AppEditorInterfaces', () => {
   let cma, transform, remove;

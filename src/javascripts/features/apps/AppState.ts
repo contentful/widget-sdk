@@ -1,6 +1,7 @@
 import { get, isObject, set, isPlainObject as _isPlainObject, isUndefined } from 'lodash';
-import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { AppState } from 'contentful-ui-extensions-sdk';
+import { Control, Editor, SidebarItem } from 'contentful-management/types';
 
 export type PartialTargetState =
   | boolean

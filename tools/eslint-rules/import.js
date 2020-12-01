@@ -1,5 +1,5 @@
 const jsExtensions = ['.js', '.jsx'];
-const tsExtensions = ['.ts', '.tsx'];
+const tsExtensions = ['.d.ts', '.ts', '.tsx'];
 const allExtensions = jsExtensions.concat(tsExtensions);
 
 module.exports = {

@@ -1,6 +1,6 @@
 import mitt from 'mitt';
 import { isObject } from 'lodash';
-import { AppParameterValues } from '@contentful/widget-renderer';
+import { FreeFormParameters } from 'contentful-management/types';
 
 /**
  * A communication bus to be used to realize App lifecycle hooks.
@@ -35,14 +35,14 @@ export const APP_EVENTS_IN = {
 export interface AppHookBus {
   on: (eventName: string, handler: mitt.Handler) => void;
   emit: (eventName: string, data?: any) => void;
-  setInstallation: (value: { parameters: AppParameterValues } | null) => void;
+  setInstallation: (value: { parameters: FreeFormParameters } | null) => void;
   getInstallation: () => Record<string, any> | null;
 }
 
 export function makeAppHookBus(): AppHookBus {
   const bus = mitt();
 
-  let installation: null | { parameters: AppParameterValues } = null;
+  let installation: null | { parameters: FreeFormParameters } = null;
 
   return {
     on: (eventName, handler) => {

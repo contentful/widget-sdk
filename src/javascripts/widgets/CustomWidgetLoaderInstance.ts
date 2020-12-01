@@ -35,7 +35,7 @@ export async function getCustomWidgetLoader() {
   const accessToken = await getToken();
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.cma.envId;
+  const environmentId = spaceContext.getEnvironmentId();
   const cachePath = [accessToken, spaceId, environmentId];
 
   let loader: WidgetLoader = get(cache, cachePath);
