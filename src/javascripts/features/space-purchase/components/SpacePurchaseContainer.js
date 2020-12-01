@@ -8,7 +8,6 @@ import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
-import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
@@ -60,7 +59,7 @@ const fetchBillingDetails = async (organization, dispatch) => {
 
 export const SpacePurchaseContainer = ({ track }) => {
   const {
-    state: { organization, selectedPlan, spaceRatePlans, currentSpace },
+    state: { organization, selectedPlan, currentSpace },
     dispatch,
   } = useContext(SpacePurchaseState);
 
@@ -83,35 +82,23 @@ export const SpacePurchaseContainer = ({ track }) => {
     setCurrentStep(nextStep);
   };
 
-  const onSelectPlan = (planType) => {
-    if (!Object.values(SPACE_PURCHASE_TYPES).includes(planType)) {
-      throw Error();
-    }
-
-    const selectedPlan = spaceRatePlans.find((plan) => {
-      return plan.name.toLowerCase() === planType.toLowerCase();
-    });
-
-    track(EVENTS.SPACE_PLAN_SELECTED, {
-      selectedPlan,
-    });
-
-    dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedPlan });
-
-    // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
-    if (currentSpace && organization.isBillable) {
-      goToStep(STEPS.CONFIRMATION);
-    } else if (currentSpace && !organization.isBillable) {
-      goToStep(STEPS.BILLING_DETAILS);
-    } else {
-      goToStep(STEPS.SPACE_DETAILS);
-    }
-  };
-
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.SPACE_PLAN_SELECTION:
-        return <SpacePlanSelectionStep onSelectPlan={onSelectPlan} track={track} />;
+        return (
+          <SpacePlanSelectionStep
+            onSubmit={() => {
+              if (currentSpace && organization.isBillable) {
+                goToStep(STEPS.CONFIRMATION);
+              } else if (currentSpace && !organization.isBillable) {
+                goToStep(STEPS.BILLING_DETAILS);
+              } else {
+                goToStep(STEPS.SPACE_DETAILS);
+              }
+            }}
+            track={track}
+          />
+        );
       case STEPS.SPACE_DETAILS:
         return (
           <SpaceDetailsStep

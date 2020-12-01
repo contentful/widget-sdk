@@ -27,7 +27,7 @@ import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/S
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
-import { SpacePurchaseState } from '../../context';
+import { actions, SpacePurchaseState } from '../../context';
 import { FAQAccordion } from '../../components/FAQAccordion';
 import { usePageContent } from '../../hooks/usePageContent';
 
@@ -75,7 +75,7 @@ const styles = {
 // Exported for testing only
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
-export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
+export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
   const {
     state: {
       organization,
@@ -85,28 +85,18 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
       freeSpaceResource,
       pageContent,
     },
+    dispatch,
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
-  const getSelectHandler = (planType) => {
-    if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
-      return () => {
-        track(EVENTS.EXTERNAL_LINK_CLICKED, {
-          href: SPACE_PURCHASE_CONTACT_SALES_HREF,
-          intent: 'upgrade_to_enterprise',
-        });
+  const selectPlan = (plan) => {
+    track(EVENTS.SPACE_PLAN_SELECTED, {
+      selectedPlan: plan,
+    });
 
-        // Do we want to track this as a CTA upgrade to enterprise click as well?
-        trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId: organization.sys.id,
-        });
-      };
-    }
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
 
-    return () => {
-      // NOTE: Add SELECT_PLAN space wizard tracking here
-      onSelectPlan(planType);
-    };
+    onSubmit();
   };
 
   // We want these to be undefined/true/false, rather than simply true/false, so that we don't
@@ -116,7 +106,7 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
   const canCreateFreeSpace = freeSpaceResource && !resourceIncludedLimitReached(freeSpaceResource);
 
   const isFreeSpaceDisabled =
-    spaceRatePlans && spaceRatePlans.find((plan) => plan.name === 'Community')?.disabled;
+    spaceRatePlans && spaceRatePlans.find((plan) => plan.price === 0)?.disabled;
 
   // If the plan is not in the product rate plans, it's legacy.
   const showLegacyPlanWarning =
@@ -163,6 +153,7 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
           const plan =
             spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type);
           const isCurrentPlan = currentSpaceRatePlan?.name === spaceContent.type;
+          const isEnterprisePlan = spaceContent.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
           return (
             <SpaceCard
@@ -172,7 +163,21 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
               selected={isCurrentPlan}
               plan={plan}
               content={spaceContent}
-              handleSelect={getSelectHandler(spaceContent.type)}
+              handleSelect={() => {
+                if (isEnterprisePlan) {
+                  track(EVENTS.EXTERNAL_LINK_CLICKED, {
+                    href: SPACE_PURCHASE_CONTACT_SALES_HREF,
+                    intent: 'upgrade_to_enterprise',
+                  });
+
+                  // Do we want to track this as a CTA upgrade to enterprise click as well?
+                  trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+                    organizationId: organization.sys.id,
+                  });
+                } else {
+                  selectPlan(plan);
+                }
+              }}
             />
           );
         })}
@@ -198,7 +203,11 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
                     content={getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled)}>
                     <Button
                       testId="space-selection-community-select-button"
-                      onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
+                      onClick={() => {
+                        const freeProductRatePlan = spaceRatePlans.find((plan) => plan.price === 0);
+
+                        selectPlan(freeProductRatePlan);
+                      }}
                       disabled={!canCreateFreeSpace || isFreeSpaceDisabled}>
                       Select
                     </Button>
@@ -229,7 +238,7 @@ export const SpacePlanSelectionStep = ({ onSelectPlan, track }) => {
 };
 
 SpacePlanSelectionStep.propTypes = {
-  onSelectPlan: PropTypes.func,
+  onSubmit: PropTypes.func.isRequired,
   track: PropTypes.func.isRequired,
 };
 

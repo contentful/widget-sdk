@@ -5,7 +5,6 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { setUser } from 'services/OrganizationRoles';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SpacePlanSelectionStep, FEATURE_OVERVIEW_HREF } from './SpacePlanSelectionStep';
-import { SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { renderWithProvider } from '../../__tests__/helpers';
 
 const mockOrganization = FakeFactory.Organization();
@@ -21,7 +20,6 @@ const mockProductRatePlan = FakeFactory.Plan();
 const mockProductRatePlan2 = FakeFactory.Plan();
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
-const mockSelectPlan = jest.fn();
 
 describe('SpacePlanSelectionStep', () => {
   beforeEach(() => {
@@ -121,12 +119,14 @@ describe('SpacePlanSelectionStep', () => {
     });
   });
 
-  it('should call onSelectPlan when the medium or large space is selected', async () => {
-    await build();
+  it('should call onSubmit when the medium or large space is selected', async () => {
+    const onSubmit = jest.fn();
+
+    await build({ onSubmit });
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-    expect(mockSelectPlan).toBeCalledWith(SPACE_PURCHASE_TYPES.MEDIUM);
+    expect(onSubmit).toBeCalled();
   });
 
   it('should enable the community plan button if the user can create a free space', async () => {
@@ -146,11 +146,21 @@ describe('SpacePlanSelectionStep', () => {
 
     expect(communitySelectButton).toHaveProperty('disabled', true);
   });
+
+  it('should call onSubmit when the free plan is clicked', async () => {
+    const onSubmit = jest.fn();
+
+    await build({ onSubmit });
+
+    userEvent.click(screen.getByTestId('space-selection-community-select-button'));
+
+    expect(onSubmit).toBeCalled();
+  });
 });
 
 async function build(customProps, customState) {
   const props = {
-    onSelectPlan: mockSelectPlan,
+    onSubmit: () => {},
     track: () => {},
     ...customProps,
   };
