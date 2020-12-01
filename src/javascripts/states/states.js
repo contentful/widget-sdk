@@ -1,12 +1,12 @@
 import accountState from './account';
 import spacesState from 'states/Spaces';
-import homeState from 'states/Home';
 import DeeplinkPage from 'states/deeplink/DeeplinkPage';
 import { getMarketplaceApps } from 'states/deeplink/utils';
 import userInvitationState from 'states/UserInvitationState';
 import { getQueryString, getLocationHref } from 'utils/location';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import ErrorPage from './ErrorPage';
+import HomePage from 'app/home/EmptySpaceHome';
 
 import { getModule } from 'core/NgRegistry';
 
@@ -44,6 +44,16 @@ const deeplinkState = {
   ],
 };
 
+const homePageState = {
+  name: 'home',
+  url: '/',
+  params: {
+    orgId: null,
+  },
+  navComponent: EmptyNavigationBar,
+  component: HomePage,
+};
+
 /**
  * Imports all the root states and and adds them to the router.
  * Needs to be called in a 'run' hook to make the application work
@@ -52,7 +62,7 @@ export function loadAll() {
   load([
     accountState,
     spacesState,
-    homeState,
+    homePageState,
     deeplinkState,
     userInvitationState,
     {

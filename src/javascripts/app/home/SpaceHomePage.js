@@ -1,12 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Spinner } from '@contentful/forma-36-react-components';
 import AuthorEditorSpaceHome from './AuthorEditorSpaceHome';
 import AdminSpaceHome from './AdminSpaceHome';
 import TEAAdminSpaceHome from './TEAAdminSpaceHome';
 import ModernStackAdminSpaceHome from './ModernStackAdminSpaceHome';
 import ReadOnlySpaceHome from './ReadOnlySpaceHome';
-import EmptySpaceHome from './EmptySpaceHome';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import {
   getPerson,
@@ -25,12 +23,12 @@ import {
   isAdmin,
   getSpaceRoles,
   isSpaceReadyOnly,
-  getOrganizationId,
   getOrganizationName,
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
 import { isSpaceOnTrial } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
+import { getModule } from 'core/NgRegistry';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -100,21 +98,21 @@ const fetchData = (
   }
 };
 
-// TODO should fix this template being used by both spaceHome and Home
-const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
+const SpaceHomePage = () => {
   const {
     currentSpaceId,
     currentSpace,
     currentSpaceName,
     currentSpaceContentTypes,
+    currentOrganizationId,
   } = useSpaceEnvContext();
   const [
     { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
+  const [spaceTemplateCreated, setSpaceTemplateCreated] = useState(false);
   const spaceRoles = getSpaceRoles(currentSpace);
-  const organizationId = getOrganizationId(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
   const isSpaceAdmin = isAdmin(currentSpace);
   const readOnlySpace = isSpaceReadyOnly(currentSpace);
@@ -123,13 +121,22 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
   const isTrialSpace = currentSpace && isSpaceOnTrial(currentSpace.data);
+
   const spaceHomeProps = {
-    orgId: organizationId,
+    orgId: currentOrganizationId,
     orgName: organizationName,
     spaceId: currentSpaceId,
     spaceName: currentSpaceName,
   };
   let adminSpaceHomePage;
+
+  useEffect(() => {
+    const $rootScope = getModule('$rootScope');
+
+    return $rootScope.$on('spaceTemplateCreated', () => {
+      setSpaceTemplateCreated(true);
+    });
+  }, []);
 
   useAsync(
     useCallback(
@@ -146,7 +153,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
     )
   );
 
-  if (currentSpace && !isLoading && isSpaceAdmin) {
+  if (!isLoading && isSpaceAdmin) {
     if (isTEA && cdaToken && cpaToken) {
       adminSpaceHomePage = (
         <TEAAdminSpaceHome
@@ -188,9 +195,6 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
-      {!isLoading && !currentSpace && (
-        <EmptySpaceHome orgId={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
-      )}
       {isLoading && (
         <EmptyStateContainer>
           <Spinner size="large" />
@@ -211,12 +215,6 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
       )}
     </div>
   );
-};
-
-SpaceHomePage.propTypes = {
-  spaceTemplateCreated: PropTypes.bool,
-  orgOwnerOrAdmin: PropTypes.bool,
-  orgId: PropTypes.string,
 };
 
 export default SpaceHomePage;
