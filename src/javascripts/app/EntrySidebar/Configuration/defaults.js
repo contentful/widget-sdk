@@ -2,6 +2,8 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getSpaceEntitlementSet } from 'app/SpaceSettings/Usage/services/EntitlementService';
 
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
@@ -97,6 +99,15 @@ const getAvailabilityMap = (spaceId) => ({
 });
 
 export const getEntryConfiguration = async ({ spaceId }) => {
+  // Note: this is a call to test the new entitlements service under production load
+  // it will be removed shortly and we do not care about the response
+  // in the future this service will be used to check space features and quotas
+  getVariation(FLAGS.ENTITLEMENTS_API).then((enabled) => {
+    if (enabled) {
+      getSpaceEntitlementSet(spaceId).catch(() => {});
+    }
+  });
+
   const availabilityMap = getAvailabilityMap(spaceId);
   const availability = await Promise.all(
     EntryConfiguration.map((widget) => {
