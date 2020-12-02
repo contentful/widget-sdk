@@ -8,6 +8,10 @@ const initialState = {
   currentSpaceRatePlan: undefined,
   selectedPlan: undefined,
   sessionId: undefined,
+  billingDetails: undefined,
+  paymentDetails: undefined,
+  spaceName: '',
+  selectedTemplate: null,
 };
 
 export const SpacePurchaseState = createContext();

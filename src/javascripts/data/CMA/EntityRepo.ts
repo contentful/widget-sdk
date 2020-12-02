@@ -53,6 +53,7 @@ export function create(
     skipTransformation: options.skipTransformation,
   });
   const endpointPutOptions = getSpaceEndpointOptions(options);
+  const onAssetFileProcessed = createAssetFileProcessedHandler(spaceEndpoint, pubSubClient);
   const applyAction = makeApply(spaceEndpoint);
 
   return { onAssetFileProcessed, onContentEntityChanged, get, update, applyAction };
@@ -96,8 +97,10 @@ export function create(
     pubSubClient.on(CONTENT_ENTITY_UPDATED_EVENT, handler);
     return () => pubSubClient.off(CONTENT_ENTITY_UPDATED_EVENT, handler);
   }
+}
 
-  function onAssetFileProcessed(entitySys, callback) {
+export function createAssetFileProcessedHandler(spaceEndpoint, pubSubClient) {
+  return function onAssetFileProcessed(entitySys, callback) {
     const handler = (msg: AssetProcessingFinishedPayload) => {
       const envId = spaceEndpoint.envId || 'master';
       if (
@@ -110,7 +113,7 @@ export function create(
     };
     pubSubClient.on(ASSET_PROCESSING_FINISHED_EVENT, handler);
     return () => pubSubClient.off(ASSET_PROCESSING_FINISHED_EVENT, handler);
-  }
+  };
 }
 
 function getSpaceEndpointOptions(entityRepoOptions: EntityRepoOptions) {

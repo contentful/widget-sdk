@@ -14,8 +14,7 @@ export default class GreetingWidget extends React.Component {
     if (isTrialSpace) {
       return (
         <div className="greeting-widget__header">
-          Welcome to your <span className="greeting-widget__space-name">{spaceName}</span> space{' '}
-          (Trial Space)
+          Welcome to your <span className="greeting-widget__space-name">{spaceName}</span> space
         </div>
       );
     }

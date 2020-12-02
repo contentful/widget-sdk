@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -14,7 +14,10 @@ import {
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
+import { EVENTS } from '../../utils/analyticsTracking';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import TemplateSelector from 'app/SpaceWizards/shared/TemplateSelector';
+import { actions, SpacePurchaseState } from '../../context';
 
 const styles = {
   form: css({
@@ -43,16 +46,14 @@ const styles = {
   }),
 };
 
-export const SpaceDetailsStep = ({
-  onBack,
-  spaceName,
-  onChangeSpaceName,
-  templatesList,
-  selectedTemplate,
-  onSelectTemplate,
-  onSubmit,
-  spaceIsFree,
-}) => {
+export const SpaceDetailsStep = ({ onBack, track, onSubmit }) => {
+  const {
+    state: { spaceName, selectedTemplate, selectedPlan, templatesList },
+    dispatch,
+  } = useContext(SpacePurchaseState);
+
+  const spaceIsFree = isFreeProductPlan(selectedPlan);
+
   return (
     <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
       <Grid columns={1} rows="repeat(2, 'auto')">
@@ -87,12 +88,18 @@ export const SpaceDetailsStep = ({
                 placeholder: 'My space',
                 maxLength: 30,
               }}
-              onChange={(e) => onChangeSpaceName(e.target.value)}
+              onChange={(e) => dispatch({ type: actions.SET_SPACE_NAME, payload: e.target.value })}
             />
 
             <TemplateSelector
               isNewSpacePurchaseFlow={true}
-              onSelect={onSelectTemplate}
+              onSelect={(template) => {
+                track(EVENTS.SPACE_TEMPLATE_SELECTED, {
+                  selectedTemplate: template?.name,
+                });
+
+                dispatch({ type: actions.SET_SELECTED_TEMPLATE, payload: template });
+              }}
               templates={templatesList}
               selectedTemplate={selectedTemplate}
             />
@@ -117,11 +124,6 @@ export const SpaceDetailsStep = ({
 
 SpaceDetailsStep.propTypes = {
   onBack: PropTypes.func.isRequired,
-  onChangeSpaceName: PropTypes.func.isRequired,
-  spaceName: PropTypes.string.isRequired,
-  templatesList: PropTypes.array.isRequired,
-  selectedTemplate: PropTypes.object,
-  onSelectTemplate: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  spaceIsFree: PropTypes.bool,
+  track: PropTypes.func.isRequired,
 };

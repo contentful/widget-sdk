@@ -208,24 +208,18 @@ function SpacePlans({
           Create Space
         </TextLink>
       </Paragraph>
-      {canManageSpaces ? (
-        isSpaceUsageSummaryEnabled ? (
-          <Note className={styles.note}>
-            {'Check out your space usage in our new overview below! Got Questions? See '}
-            <TextLink
-              href={withUtmParams(`${helpCenterUrl}/subscription-plan/`)}
-              target="_blank"
-              rel="noopener noreferrer">
-              this article
-            </TextLink>
-            {'.'}
-          </Note>
-        ) : (
-          <Note className={styles.note}>
-            {'Click the "change" link next to the space type to change it.'}
-          </Note>
-        )
-      ) : null}
+      {isSpaceUsageSummaryEnabled && numSpaces > 0 && (
+        <Note className={styles.note}>
+          {'Check out your space usage in our new overview below! Got Questions? See '}
+          <TextLink
+            href={withUtmParams(`${helpCenterUrl}/subscription-plan/`)}
+            target="_blank"
+            rel="noopener noreferrer">
+            this article
+          </TextLink>
+          {'.'}
+        </Note>
+      )}
       {(initialLoad || numSpaces > 0) &&
         (canManageSpaces ? (
           <>

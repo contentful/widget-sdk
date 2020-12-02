@@ -25,8 +25,7 @@ const AdminSpaceHome = ({
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <Heading className={styles.header}>
-            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space{' '}
-            {isTrialSpace ? '(Trial Space)' : null}
+            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space
           </Heading>
           {!isTrialSpace && (
             <Subheading className={styles.description}>

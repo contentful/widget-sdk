@@ -34,7 +34,7 @@ import SpacePlans from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { PlatformTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
+import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
   sidebar: css({
@@ -209,7 +209,7 @@ export default function SubscriptionPage({
             )}
           </div>
           <div className={styles.trialSection}>
-            {organization && <PlatformTrialInfo organization={organization} />}
+            {organization && <EnterpriseTrialInfo organization={organization} />}
           </div>
           {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.leftSection}>

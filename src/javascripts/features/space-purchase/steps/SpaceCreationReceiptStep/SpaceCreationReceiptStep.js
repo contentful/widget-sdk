@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { Button, Note } from '@contentful/forma-36-react-components';
@@ -29,9 +28,9 @@ const styles = {
   }),
 };
 
-export const SpaceCreationReceiptStep = ({ selectedTemplate, spaceName }) => {
+export const SpaceCreationReceiptStep = () => {
   const {
-    state: { selectedPlan },
+    state: { spaceName, selectedTemplate, selectedPlan },
   } = useContext(SpacePurchaseState);
 
   const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation(
@@ -84,9 +83,4 @@ export const SpaceCreationReceiptStep = ({ selectedTemplate, spaceName }) => {
       </Flex>
     </section>
   );
-};
-
-SpaceCreationReceiptStep.propTypes = {
-  spaceName: PropTypes.string.isRequired,
-  selectedTemplate: PropTypes.object,
 };
