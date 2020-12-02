@@ -74,7 +74,6 @@ const styles = {
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
 export const SpacePlanSelectionStep = ({
-  organizationId,
   onSelectPlan,
   track,
   canCreateFreeSpace,
@@ -86,7 +85,7 @@ export const SpacePlanSelectionStep = ({
   faqEntries,
 }) => {
   const {
-    state: { currentSpace, currentSpaceRatePlan },
+    state: { organization, currentSpace, currentSpaceRatePlan },
   } = useContext(SpacePurchaseState);
 
   const getSelectHandler = (planType) => {
@@ -99,7 +98,7 @@ export const SpacePlanSelectionStep = ({
 
         // Do we want to track this as a CTA upgrade to enterprise click as well?
         trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId,
+          organizationId: organization.sys.id,
         });
       };
     }
@@ -216,7 +215,6 @@ export const SpacePlanSelectionStep = ({
 };
 
 SpacePlanSelectionStep.propTypes = {
-  organizationId: PropTypes.string,
   onSelectPlan: PropTypes.func,
   track: PropTypes.func.isRequired,
   canCreateFreeSpace: PropTypes.bool,

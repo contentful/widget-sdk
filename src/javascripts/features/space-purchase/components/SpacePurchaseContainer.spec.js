@@ -1,12 +1,11 @@
-import React from 'react';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 import { SpacePurchaseContainer } from './SpacePurchaseContainer';
 import { isOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
-import { SpacePurchaseState } from '../context';
+import { renderWithProvider } from '../__tests__/helpers';
 
 import {
   createBillingDetails,
@@ -464,11 +463,6 @@ describe('SpacePurchaseContainer', () => {
   });
 });
 
-const mockInitialState = {
-  organization: mockOrganization,
-  sessionId: mockSessionMetadata.sessionId,
-};
-
 async function build(options) {
   const props = {
     trackWithSession,
@@ -484,15 +478,14 @@ async function build(options) {
     ...options?.customProps,
   };
 
-  const contextValue = {
-    state: { ...mockInitialState, ...options?.customState },
-    dispatch: jest.fn(),
-  };
-
-  render(
-    <SpacePurchaseState.Provider value={contextValue}>
-      <SpacePurchaseContainer {...props} />
-    </SpacePurchaseState.Provider>
+  await renderWithProvider(
+    SpacePurchaseContainer,
+    {
+      organization: mockOrganization,
+      sessionId: mockSessionMetadata.sessionId,
+      ...options?.customState,
+    },
+    props
   );
 
   await waitFor(() => screen.getAllByTestId('select-space-cta'));

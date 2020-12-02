@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -14,16 +14,14 @@ import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { go } from 'states/Navigator';
+import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
-import {
-  BillingDetailsLoading,
-  CreditCardDetailsLoading,
-  BillingDetailsPropType,
-} from 'features/organization-billing';
+import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
 
 import { CreditCardInformation } from '../../components/CreditCardInformation';
 import { PaymentSummary } from '../../components/PaymentSummary';
 import { BillingInformation } from './BillingInformation';
+import { SpacePurchaseState } from '../../context';
 
 const styles = {
   grid: css({
@@ -46,24 +44,14 @@ const styles = {
   }),
 };
 
-const redirectToEditPayment = (orgId) => {
-  go({
-    path: 'account.organizations.billing',
-    params: { orgId },
-  });
-};
+export const ConfirmationStep = ({ track, onBack, onSubmit }) => {
+  const {
+    state: { organization, billingDetails, paymentDetails },
+  } = useContext(SpacePurchaseState);
 
-export const ConfirmationStep = ({
-  organizationId,
-  billingDetailsLoading,
-  showEditLink,
-  showBillingDetails,
-  billingDetails,
-  paymentDetails,
-  track,
-  onBack,
-  onSubmit,
-}) => {
+  const userIsOrgOwner = isOrgOwner(organization);
+  const showEditLink = organization.isBillable;
+
   return (
     <section
       aria-labelledby="new-space-confirmation-section"
@@ -76,7 +64,7 @@ export const ConfirmationStep = ({
         Complete your payment
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
-        {showBillingDetails && (
+        {userIsOrgOwner && (
           <Card className={styles.card} testId="new-space-confirmation.billing-details">
             <Flex justifyContent="space-between">
               <Subheading className={styles.cardTitle} element="h3">
@@ -96,7 +84,10 @@ export const ConfirmationStep = ({
                         intent: 'edit_billing',
                       });
 
-                      redirectToEditPayment(organizationId);
+                      go({
+                        path: 'account.organizations.billing',
+                        params: { orgId: organization.sys.id },
+                      });
                     }}>
                     Edit
                   </TextLink>
@@ -104,13 +95,13 @@ export const ConfirmationStep = ({
               )}
             </Flex>
             <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-              {billingDetailsLoading && (
+              {!billingDetails && (
                 <>
                   <CreditCardDetailsLoading />
                   <BillingDetailsLoading />
                 </>
               )}
-              {!billingDetailsLoading && (
+              {billingDetails && (
                 <>
                   <CreditCardInformation creditCardInfo={paymentDetails} />
                   <BillingInformation billingDetails={billingDetails} />
@@ -131,19 +122,13 @@ export const ConfirmationStep = ({
             </Flex>
           </Card>
         )}
-        <PaymentSummary showButtons={!showBillingDetails} onConfirm={onSubmit} onBack={onBack} />
+        <PaymentSummary showButtons={!userIsOrgOwner} onConfirm={onSubmit} onBack={onBack} />
       </Grid>
     </section>
   );
 };
 
 ConfirmationStep.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  billingDetailsLoading: PropTypes.bool.isRequired,
-  showEditLink: PropTypes.bool.isRequired,
-  showBillingDetails: PropTypes.bool.isRequired,
-  billingDetails: BillingDetailsPropType,
-  paymentDetails: PropTypes.object,
   track: PropTypes.func.isRequired,
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

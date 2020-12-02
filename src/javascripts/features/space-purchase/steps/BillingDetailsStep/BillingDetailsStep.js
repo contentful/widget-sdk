@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { isEmpty } from 'lodash';
@@ -9,6 +9,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { PaymentSummary } from '../../components/PaymentSummary';
 import { BillingDetailsForm } from 'features/organization-billing';
+import { actions, SpacePurchaseState } from '../../context';
 
 const styles = {
   grid: css({
@@ -24,7 +25,12 @@ const styles = {
   }),
 };
 
-export const BillingDetailsStep = ({ onBack, billingDetails, onSubmit }) => {
+export const BillingDetailsStep = ({ onBack, onSubmit }) => {
+  const {
+    state: { billingDetails },
+    dispatch,
+  } = useContext(SpacePurchaseState);
+
   return (
     <section
       aria-labelledby="new-space-billing-details-section"
@@ -48,7 +54,11 @@ export const BillingDetailsStep = ({ onBack, billingDetails, onSubmit }) => {
           </Typography>
 
           <BillingDetailsForm
-            onSubmit={onSubmit}
+            onSubmit={(newBillingDetails) => {
+              dispatch({ type: actions.SET_BILLING_DETAILS, payload: newBillingDetails });
+
+              onSubmit();
+            }}
             onCancel={onBack}
             submitText="Continue"
             cancelText="Back"
@@ -63,6 +73,5 @@ export const BillingDetailsStep = ({ onBack, billingDetails, onSubmit }) => {
 
 BillingDetailsStep.propTypes = {
   onBack: PropTypes.func.isRequired,
-  billingDetails: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
 };
