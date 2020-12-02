@@ -43,6 +43,52 @@ export const severalEntryReferencesResponse = {
   },
 };
 
+export const severalEntryReferencesWithUnresolvedResponse = {
+  sys: {
+    type: 'Array',
+  },
+  items: [
+    entry({
+      sys: { id: Matchers.somethingLike(defaultEntryId) },
+      fields: {
+        entryRef1: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'EntryId_01',
+            },
+          },
+        },
+        unresolvedEntryReference: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'unresolved_id',
+            },
+          },
+        },
+        entryRef2: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'EntryId_02',
+            },
+          },
+        },
+      },
+    }),
+  ],
+  includes: {
+    Entry: [
+      entry({ sys: { id: Matchers.somethingLike('EntryId_01') }, fields: {} }),
+      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} }),
+    ],
+  },
+};
+
 export const validateEntryReferencesSeveralRequest = {
   action: 'publish',
   entities: [

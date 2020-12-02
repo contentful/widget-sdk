@@ -191,7 +191,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
               )}
               <Paragraph className={styles.paragraph}>
                 This entry has {''}
-                {initialReferencesAmount - 1} {pluralize(initialReferencesAmount - 1, 'reference')}
+                {initialReferencesAmount} {pluralize(initialReferencesAmount, 'reference')}
               </Paragraph>
             </>
           )}

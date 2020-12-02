@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, wait, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import resolveResponse from 'contentful-resolve-response';
 import { ReferencesContext } from './ReferencesContext';
@@ -24,7 +24,10 @@ import {
   unresolvedReferences,
   simpleReferencesValidationErrorResponse,
   rootReferencesValidationErrorResponse,
+  mixedLocalizedReferencesToEntities,
 } from './__fixtures__';
+
+import * as entityHelpers from 'app/entity_editor/entityHelpers';
 
 import ReferencesTree from './ReferencesTree';
 
@@ -226,7 +229,7 @@ describe('ReferencesTree component', () => {
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES_MAP, value: new Map() });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES, value: [] });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_ACTIONS_DISABLED, value: true });
-    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_INITIAL_REFERENCES_AMOUNT, value: 4 });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_INITIAL_REFERENCES_AMOUNT, value: 3 });
     expect(dispatchSpy).toHaveBeenCalledWith({
       type: SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
       value: 0,
@@ -252,5 +255,45 @@ describe('ReferencesTree component', () => {
       </MockPovider>
     );
     expect(queryAllByTestId('validation-error')).toHaveLength(1);
+  });
+
+  it('should render only unique references on the same level of the tree disregarding the locale', async () => {
+    jest.spyOn(entityHelpers, 'newForLocale').mockImplementation(() => ({
+      entityTitle: jest.fn((entity) => Promise.resolve(entity.fields.name['en-US'])),
+    }));
+
+    const onReferenceCardClick = jest.fn();
+    const response = resolveResponse(mixedLocalizedReferencesToEntities);
+    const selectedEntitiesMap = responseMap(response);
+    const dispatchSpy = jest.fn();
+    const { queryAllByText, queryAllByTestId } = render(
+      <MockPovider
+        references={response}
+        dispatch={dispatchSpy}
+        selectedEntitiesMap={selectedEntitiesMap}>
+        <ReferencesTree
+          defaultLocale="en-US"
+          maxLevel={5}
+          onReferenceCardClick={onReferenceCardClick}
+        />
+      </MockPovider>
+    );
+
+    await waitFor(() =>
+      queryAllByText(mixedLocalizedReferencesToEntities.includes.Entry[0].fields.name['en-US'])
+    );
+    expect(queryAllByTestId('cf-ui-card')).toHaveLength(
+      // +2, because 1 extra card is the root entity card
+      // and another one is for an entry, that is referenced twice on different levels and hence is expected to be rendered twice
+      mixedLocalizedReferencesToEntities.includes.Entry.length + 2
+    );
+    mixedLocalizedReferencesToEntities.includes.Entry.forEach((entry, index) => {
+      if (index === 1) {
+        // this entity is referenced on 2 different levels in mocks. Please check the mock file for more info
+        expect(queryAllByText(entry.fields.name['en-US'])).toHaveLength(2);
+      } else {
+        expect(queryAllByText(entry.fields.name['en-US'])).toHaveLength(1);
+      }
+    });
   });
 });

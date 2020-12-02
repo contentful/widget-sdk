@@ -1,81 +1,241 @@
-import { get } from 'lodash';
-import type { Entity } from '@contentful/types';
-import type { Document, Node, Block } from '@contentful/rich-text-types';
+import { EntitySys } from 'app/entity_editor/Document/types';
+import * as EntityState from 'data/CMA/EntityState';
 
-type EntityType = 'Link' | 'Entry' | 'Asset';
-type EntityLinksMap = Record<EntityType, Map<string, Entity>>;
+// If there is a circular reference that is not handled this will keep us from endless.
+const FAILSAFE_LEVEL = 15;
+const entityTypes = ['Asset', 'Entry'];
 
-interface Entry {
+interface Entity {
+  sys: EntitySys;
+}
+
+interface Entry extends Entity {
+  sys: EntitySys;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Record<string, any>>;
 }
 
-// NOTE: addLinksFromRichTextNode and getRichTextEntities are pulled from @contentful/rich-text-links
-// except that they allow for non-Link objects
+type TreeNode = {
+  key: string;
+  entity: Entity;
+  level: number;
+  isCircular: boolean;
+  isResolved: boolean;
+  type: string;
+  children: TreeNode[];
+  addChild: (entity: Entity, key: string) => TreeNode | undefined;
+};
 
-function addLinksFromRichTextNode(node: Node, links: EntityLinksMap): void {
-  const toCrawl: Node[] = [node];
-
-  while (toCrawl.length > 0) {
-    const { data, content } = toCrawl.pop() as Block;
-
-    if (data?.target?.sys?.type) {
-      links[data.target.sys.type].set(data.target.sys.id, data.target);
-    }
-
-    if (Array.isArray(content)) {
-      for (const childNode of content) {
-        toCrawl.push(childNode);
-      }
-    }
-  }
-}
-
-function getRichTextEntities(document: Document): { [type in EntityType]: Entity[] } {
-  const entityLinks: Record<EntityType, Map<string, Entity>> = {
-    Entry: new Map(),
-    Asset: new Map(),
-    Link: new Map(),
-  };
-
-  const content = document?.content || ([] as Node[]);
-  for (const node of content) {
-    addLinksFromRichTextNode(node, entityLinks);
-  }
+/**
+ * Converts the entity into a tree node
+ * @param entity
+ * @param key a unique index of the entity in the tree
+ * @param level level of depth in the tree at which the given entity was located
+ */
+const createTreeNode = (entity: Entity, key: string, level: number): TreeNode => {
+  const children = [] as TreeNode[];
 
   return {
-    Asset: Array.from(entityLinks.Asset.values()),
-    Entry: Array.from(entityLinks.Entry.values()),
-    Link: Array.from(entityLinks.Link.values()),
+    key,
+    entity,
+    level,
+    isCircular: false,
+    isResolved: entity && entityTypes.includes(entity.sys.type),
+    type: entity.sys.type,
+    children,
+    addChild(entity, key) {
+      // PUL-1239 - skipping if the same reference was rendered on this level and it's just the same one for different locale
+      const existingChild = children.find(
+        (childNode) =>
+          childNode.entity.sys.id === entity.sys.id && childNode.type === entity.sys.type
+      );
+
+      if (existingChild) {
+        return;
+      }
+      const childNode = createTreeNode(entity, key, level + 1);
+      children.push(childNode);
+      return childNode;
+    },
   };
-}
+};
 
-const isPresent = (needle: Entity, haystack: Entity[]): boolean =>
-  haystack.some((entity) => needle.sys.id === entity.sys.id && needle.sys.type === entity.sys.type);
+type Tree = {
+  root: TreeNode;
+};
 
-export function getReferencesFromEntry({ fields }: Entry): Entity[] {
-  const references: Entity[] = [];
+/**
+ * Returns a tree structure with a root entity as a root tree node
+ * @param rootEntity
+ */
+const createTree = (rootEntity: Entity): Tree => {
+  const root = createTreeNode(rootEntity, '0', 0);
 
-  Object.entries(fields).forEach(([_, fieldValue]) => {
-    Object.entries(fieldValue).forEach(([_, localizedFieldValue]) => {
-      // if field is an array of entities
+  return {
+    root,
+  };
+};
+
+/**
+ * Goes over each of the tree node, looking for more references on a level deeper
+ * @param treeNode - node to search deeper from
+ * @param visitedEntities - array of ids of already discovered entitoes on levels above the given treeNode, and the treeNode itself. Is used to discover circular references and not end in an infinite loop
+ */
+const traverse = (treeNode: TreeNode, visitedEntities) => {
+  const { entity, key: entityIndexInTree } = treeNode;
+  const { fields } = entity as Entry;
+  const referenceNodes = [] as any[];
+
+  Object.entries(fields).forEach(([_fieldName, fieldValue], fieldIndex) => {
+    Object.entries(fieldValue).forEach(([_locale, localizedFieldValue], localeIndex) => {
+      // if field is an array of entity references
       if (Array.isArray(localizedFieldValue) && localizedFieldValue.every((value) => value.sys)) {
-        references.push(...localizedFieldValue.filter((entity) => !isPresent(entity, references)));
+        localizedFieldValue.forEach((entityReference, entityReferenceIndexInArray) => {
+          const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}.${localeIndex}.${entityReferenceIndexInArray}`;
+          visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
+          referenceNodes.push(treeNode.addChild(entityReference, nextEntityIndexInTree));
+        });
         // if rich text field
-      } else if (Array.isArray(get(localizedFieldValue, 'content'))) {
-        const entitiesByType = getRichTextEntities(localizedFieldValue);
-        references.push(...entitiesByType.Entry.filter((entry) => !isPresent(entry, references)));
-        references.push(...entitiesByType.Asset.filter((asset) => !isPresent(asset, references)));
-        references.push(...entitiesByType.Link.filter((link) => !isPresent(link, references)));
+      } else if (Array.isArray(localizedFieldValue?.content)) {
+        const getRichTextReferences = (content, parentIndex) => {
+          const maybeSearchRichTextNodeForReferences = (entity, entityIndex) =>
+            Array.isArray(entity.content) && entity.content.length
+              ? getRichTextReferences(entity.content, entityIndex)
+              : [];
 
-        // if plain entity
-      } else if (get(localizedFieldValue, 'sys')) {
-        if (!isPresent(localizedFieldValue, references)) {
-          references.push(localizedFieldValue);
-        }
+          content.forEach((richTextNode, richTextNodedIndex) => {
+            const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${localeIndex}.${richTextNodedIndex}`;
+            visitedEntities[nextEntityIndexInTree] = [...visitedEntities[parentIndex]];
+            // we search each rich text node deeper
+            maybeSearchRichTextNodeForReferences(richTextNode, nextEntityIndexInTree);
+            if (
+              [
+                'embedded-asset-block',
+                'embedded-entry-block',
+                'embedded-entry-inline',
+                'entry-hyperlink',
+              ].includes(richTextNode.nodeType)
+            ) {
+              const entityPayload = richTextNode.data.target;
+              referenceNodes.push(treeNode.addChild(entityPayload, nextEntityIndexInTree));
+            }
+          });
+        };
+        getRichTextReferences(localizedFieldValue.content, entityIndexInTree);
+        // if single ref
+      } else if (localizedFieldValue?.sys) {
+        const nextEntityIndexInTree = `${entityIndexInTree}.${localeIndex}.${fieldIndex}`;
+        visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
+        referenceNodes.push(treeNode.addChild(localizedFieldValue, nextEntityIndexInTree));
       }
     });
   });
 
-  return references;
-}
+  return referenceNodes;
+};
+
+type ReferenceTreeMetadata = {
+  maxLevel: number;
+  areAllReferencesSelected: boolean;
+  selectedStates: string[];
+};
+
+/**
+ * Looks for references in the fields of the given entity. Breadth-first.
+ * @param root - root entity to start looking from
+ * @param metadata - information, related to rendering or a state of rendered tree, like selection, maxLevel of rendering and etc
+ */
+const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) => {
+  const { maxLevel, areAllReferencesSelected, selectedStates } = metadata;
+  const visitedEntities = { '0': [] } as Record<string, string[]>;
+
+  let circularReferenceCount = 0;
+
+  const getReferencesInNodes = (treeNodes: TreeNode[]): TreeNode[] => {
+    if (!treeNodes.length) {
+      return [];
+    }
+
+    const discoveredReferenceNodes = [] as TreeNode[];
+
+    for (const treeNode of treeNodes) {
+      const { entity, level, key: entityIndexInTree } = treeNode;
+      const { fields } = entity as Entry;
+
+      if (!fields || level > FAILSAFE_LEVEL) {
+        continue;
+      }
+
+      if (entityIndexInTree !== '0' && visitedEntities[entityIndexInTree].includes(entity.sys.id)) {
+        treeNode.isCircular = true;
+        circularReferenceCount++;
+        continue;
+      }
+
+      if (entity.sys.id) {
+        visitedEntities[entityIndexInTree].push(entity.sys.id);
+      }
+
+      const referenceNodes = traverse(treeNode, visitedEntities);
+      discoveredReferenceNodes.push(...referenceNodes.filter((node) => node && node.entity));
+    }
+    return discoveredReferenceNodes;
+  };
+
+  const selectionMap = new Map<string, Entity>();
+  const tree = createTree(root);
+  const entitiesPerLevel = [] as number[];
+  let currentLevelTreeNodes = [tree.root];
+
+  const maybeMarkAsSelected = (treeNode: TreeNode) => {
+    const { entity, type, isResolved } = treeNode;
+
+    if (!isResolved) {
+      return;
+    }
+
+    if (areAllReferencesSelected) {
+      selectionMap.set(`${entity.sys.id}-${type}`, entity);
+    } else if (selectedStates?.length && type !== 'Link') {
+      const stateName = EntityState.stateName(EntityState.getState(entity.sys));
+      selectedStates.forEach((entityState) => {
+        if (stateName === entityState) {
+          selectionMap.set(`${entity.sys.id}-${type}`, entity);
+        }
+      });
+    }
+  };
+
+  maybeMarkAsSelected(tree.root);
+
+  do {
+    const nextLevelTreeNodes = getReferencesInNodes(currentLevelTreeNodes);
+
+    if (nextLevelTreeNodes.length) {
+      const currentLevel = currentLevelTreeNodes[0].level;
+      entitiesPerLevel[currentLevel] = nextLevelTreeNodes.length;
+    }
+
+    const level = currentLevelTreeNodes[0].level;
+
+    // Remove this check if you want to attempt to publish even entities deeper than maxLevel
+    // Since at the time of writing, API returns only 10 levels deep of entities, such entities are unresolved (type: Link, linkType: Entry|Asset)
+    // which results in ValidationError if publishing is attempted
+    if (level < maxLevel) {
+      for (const treeNode of nextLevelTreeNodes) {
+        maybeMarkAsSelected(treeNode);
+      }
+    }
+
+    currentLevelTreeNodes = nextLevelTreeNodes;
+  } while (currentLevelTreeNodes.length);
+
+  return {
+    circularReferenceCount,
+    entitiesPerLevel,
+    selectionMap,
+    tree,
+  };
+};
+
+export { createTreeNode, createTree, buildTreeOfReferences, traverse };

@@ -2,12 +2,11 @@ import React, { useContext, useMemo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { List, ListItem } from '@contentful/forma-36-react-components';
-import * as EntityState from 'data/CMA/EntityState';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { track } from 'analytics/Analytics';
 import { ReferencesContext } from './ReferencesContext';
-import { getReferencesFromEntry } from './referenceUtils';
+import { buildTreeOfReferences } from './referenceUtils';
 import {
   SET_SELECTED_ENTITIES,
   SET_SELECTED_ENTITIES_MAP,
@@ -49,9 +48,6 @@ const styles = {
   }),
 };
 
-// If there is a circular reference that is not handled this will keep us from endless.
-const failsaveLevel = 10;
-
 const trackingEvents = {
   dialogOpen: 'entry_references:dialog_open',
 };
@@ -81,118 +77,72 @@ function ReferenceCards({
   setInitialReferenceAmount,
 }) {
   let isMoreCardRendered = false;
-  let depth = 0;
-  let circularReferenceCount = 0;
   let maxLevelReached = false;
 
   const [initialized, setInitialized] = useState(false);
-  const entitiesPerLevel = [];
-  const visitedEntities = { 0: [root.sys.id] };
-  const initialSelectedEntitiesMap = new Map();
 
-  const toReferenceCard = (entity, level, entityIndexInTree) => {
-    if (level === maxLevel) {
-      maxLevelReached = true;
-    }
-    /**
-     * if level > than maxLevel we still want to
-     * know the max depth of the client's reference
-     * tree so we continue the recursion without
-     * returning a reference card
-     */
-    if (level > maxLevel) {
-      // eslint-disable-next-line
-      renderLayer(entity, level + 1, entityIndexInTree);
-      if (!isMoreCardRendered) {
-        isMoreCardRendered = true;
-        return <ReferenceCard key={entity.sys.id} isMoreCard />;
+  const renderTreeNodes = (treeNodes) => {
+    const toReferenceCard = (treeNodes) => {
+      if (!Array.isArray(treeNodes) || !treeNodes.length) {
+        return null;
       }
-      return null;
-    }
-    isMoreCardRendered = false;
 
-    // deleted entity is still referenced
-    if (entity.sys.type === 'Link') {
-      return (
-        <ReferenceCard
-          entity={entity}
-          key={`deleted-${entityIndexInTree}-${entity.sys.id}`}
-          isUnresolved
-        />
-      );
-    }
+      return treeNodes.map((treeNode) => {
+        const { entity, isCircular, level, key: entityIndexInTree, type } = treeNode;
 
-    // eslint-disable-next-line
-    const nextLevelCards = renderLayer(entity, level + 1, entityIndexInTree);
-    const isCircular =
-      visitedEntities[entityIndexInTree].filter((entityId) => entityId === entity.sys.id).length >
-      1;
-
-    return (
-      <React.Fragment key={`container-${entityIndexInTree}-${entity.sys.id}`}>
-        <ReferenceCard
-          key={`entity-${entityIndexInTree}-${entity.sys.id}`}
-          entity={entity}
-          onClick={onReferenceCardClick}
-          isCircular={isCircular}
-          validationError={findValidationErrorForEntity(entity.sys.id, validations)}
-          isReferenceSelected={allReferencesSelected}
-          onReferenceCheckboxClick={(checked, entity) => handleSelect(checked, entity)}
-        />
-        {/* recursevly get all cards for the entitiy fields */}
-        {nextLevelCards}
-      </React.Fragment>
-    );
-  };
-
-  const renderLayer = (entity, level, entityIndexInTree) => {
-    if (level > depth) {
-      depth = level;
-    }
-
-    const { fields } = entity;
-
-    // TODO: revisit the indexing to have items rendered on the correct layer
-    const levelIndex = level - 1;
-    entitiesPerLevel[levelIndex] = entitiesPerLevel[levelIndex]
-      ? entitiesPerLevel[levelIndex] + 1
-      : 1;
-
-    if (allReferencesSelected) {
-      initialSelectedEntitiesMap.set(`${entity.sys.id}-${entity.sys.type}`, entity);
-    } else if (selectedStates && selectedStates.length > 0) {
-      const stateName = EntityState.stateName(EntityState.getState(entity.sys));
-      selectedStates.forEach((entityState) => {
-        if (stateName === entityState) {
-          initialSelectedEntitiesMap.set(`${entity.sys.id}-${entity.sys.type}`, entity);
+        if (level === maxLevel) {
+          maxLevelReached = true;
         }
+        /**
+         * if level > than maxLevel we still want to
+         * know the max depth of the client's reference
+         * tree so we continue the recursion without
+         * returning a reference card
+         */
+        if (level > maxLevel) {
+          if (!isMoreCardRendered) {
+            isMoreCardRendered = true;
+            return <ReferenceCard key={entity.sys.id} isMoreCard />;
+          }
+          return null;
+        }
+        isMoreCardRendered = false;
+
+        // deleted entity is still referenced
+        if (type === 'Link') {
+          return (
+            <ReferenceCard
+              entity={entity}
+              key={`deleted-${entityIndexInTree}-${entity.sys.id}`}
+              isUnresolved
+            />
+          );
+        }
+
+        // eslint-disable-next-line
+        const nextLevelCards = renderTreeNodes(treeNode.children);
+
+        return (
+          <React.Fragment key={`container-${entityIndexInTree}-${entity.sys.id}`}>
+            <ReferenceCard
+              key={`entity-${entityIndexInTree}-${entity.sys.id}`}
+              entity={entity}
+              onClick={onReferenceCardClick}
+              isCircular={isCircular}
+              validationError={findValidationErrorForEntity(entity.sys.id, validations)}
+              isReferenceSelected={allReferencesSelected}
+              onReferenceCheckboxClick={(checked, entity) => handleSelect(checked, entity)}
+            />
+            {/* recursevly get all cards for the entitiy fields */}
+            {nextLevelCards}
+          </React.Fragment>
+        );
       });
-    }
+    };
 
-    if (!fields || level > failsaveLevel) {
-      return null;
-    }
+    const nextLevelReferenceCards = toReferenceCard(treeNodes);
 
-    if (entityIndexInTree !== 0 && visitedEntities[entityIndexInTree].includes(entity.sys.id)) {
-      circularReferenceCount++;
-      return null;
-    } else {
-      if (entity.sys.id) {
-        visitedEntities[entityIndexInTree].push(entity.sys.id);
-      }
-    }
-
-    const nextLevelReferences = getReferencesFromEntry({ fields });
-
-    const nextLevelReferenceCards = nextLevelReferences.reduce((allCards, entity, index) => {
-      const nextEntityIndexInTree = `${entityIndexInTree}.${index}`;
-      visitedEntities[nextEntityIndexInTree] = [...visitedEntities[entityIndexInTree]];
-
-      allCards = [...allCards, toReferenceCard(entity, level, nextEntityIndexInTree)];
-      return allCards;
-    }, []);
-
-    if (!nextLevelReferenceCards.length) {
+    if (!nextLevelReferenceCards) {
       return null;
     }
 
@@ -203,12 +153,19 @@ function ReferenceCards({
     );
   };
 
-  const level = 1;
-  const parentIndexInTree = 0;
-  const referenceCards = renderLayer(root, level, parentIndexInTree);
+  const { circularReferenceCount, tree, entitiesPerLevel, selectionMap } = buildTreeOfReferences(
+    root,
+    {
+      maxLevel,
+      selectedStates,
+      areAllReferencesSelected: allReferencesSelected,
+    }
+  );
+  const depth = entitiesPerLevel.length;
+  const referenceCards = renderTreeNodes(tree.root.children);
 
   if (!initialized) {
-    setInitialEntities(initialSelectedEntitiesMap);
+    setInitialEntities(selectionMap);
     setInitialReferenceAmount(entitiesPerLevel);
     if (maxLevelReached) {
       setIsTreeMaxDepthReached(true);
@@ -273,10 +230,12 @@ const ReferencesTree = ({
     (entitiesPerLevel) => {
       dispatch({
         type: SET_INITIAL_REFERENCES_AMOUNT,
-        value: entitiesPerLevel.reduce((a, b) => a + b, 0),
+        // TODO: remove slice if we want to display the amount of references, including those that may be > maxLevel levels deeper
+        // (and hence not seen in the tree, as they are hidden under + More card)
+        value: entitiesPerLevel.slice(0, maxLevel).reduce((a, b) => a + b, 0),
       });
     },
-    [dispatch]
+    [dispatch, maxLevel]
   );
 
   const MemoizedReferencesCards = useMemo(
@@ -292,6 +251,7 @@ const ReferencesTree = ({
         selectedStates={selectedStates}
         setIsTreeMaxDepthReached={setIsTreeMaxDepthReached}
         handleSelect={handleSelect}
+        // TODO: rename to setSelectedReferences or setSelectedEntities
         setInitialEntities={setInitialEntities}
         setInitialReferenceAmount={setInitialReferenceAmount}
       />
