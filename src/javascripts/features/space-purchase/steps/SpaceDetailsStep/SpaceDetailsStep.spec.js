@@ -23,7 +23,7 @@ describe('SpaceDetailsStep', () => {
   it('should call onSubmit when the button is clicked', async () => {
     const onSubmit = jest.fn();
 
-    await build({ spaceName: 'my space name' }, { onSubmit });
+    await build({ onSubmit }, { spaceName: 'my space name' });
 
     userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
@@ -33,7 +33,7 @@ describe('SpaceDetailsStep', () => {
   it('should track when a template is selected', async () => {
     const track = jest.fn();
 
-    await build(null, { track });
+    await build({ track });
 
     userEvent.click(
       within(screen.getByTestId('template-toggle-true')).getByTestId('cf-ui-controlled-input')
@@ -47,7 +47,7 @@ describe('SpaceDetailsStep', () => {
   it('should call onBack when the back button is clicked', async () => {
     const onBack = jest.fn();
 
-    await build(null, { onBack });
+    await build({ onBack });
 
     userEvent.click(screen.getByTestId('navigate-back'));
 
@@ -55,9 +55,8 @@ describe('SpaceDetailsStep', () => {
   });
 });
 
-async function build(customState, customProps) {
+async function build(customProps, customState) {
   const props = {
-    templatesList: [mockTemplate],
     track: () => {},
     onSubmit: () => {},
     onBack: () => {},
@@ -71,6 +70,7 @@ async function build(customState, customProps) {
         name: 'Medium',
         price: 123,
       },
+      templatesList: [mockTemplate],
       ...customState,
     },
     props

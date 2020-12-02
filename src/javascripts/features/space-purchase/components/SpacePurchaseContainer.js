@@ -7,13 +7,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
-import {
-  Organization as OrganizationPropType,
-  Space as SpacePropType,
-} from 'app/OrganizationSettings/PropTypes';
 import { EVENTS } from '../utils/analyticsTracking';
-import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
-import { usePageContent } from '../hooks/usePageContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
@@ -63,45 +57,24 @@ const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
 };
 
-export const SpacePurchaseContainer = ({
-  organization,
-  trackWithSession,
-  templatesList,
-  canCreateFreeSpace,
-  pageContent,
-  currentSpace,
-  spaceRatePlans,
-  currentSpacePlan,
-  currentSpacePlanIsLegacy,
-}) => {
+export const SpacePurchaseContainer = ({ track }) => {
   const {
-    state: { selectedPlan },
+    state: { organization, selectedPlan, currentSpace },
     dispatch,
   } = useContext(SpacePurchaseState);
 
   const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
 
-  const hasBillingInformation = !!organization?.isBillable;
-  const userIsOrgOwner = !!organization && isOrgOwner(organization);
-
-  useTrackCancelEvent(trackWithSession, { currentStep, finalStep: STEPS.RECEIPT });
-
-  // This is explicitly undefined/true/false, not just true/false, so that `canCreatePaidSpace`
-  // when passed to `<SpaceSelection />` doesn't render the "no payment details" note until we
-  // truly know if the user can create a paid space, which requires the organization to have loaded.
-  const canCreatePaidSpace = organization && (userIsOrgOwner || hasBillingInformation);
+  useTrackCancelEvent(track, { currentStep, finalStep: STEPS.RECEIPT });
 
   useEffect(() => {
-    if (userIsOrgOwner && organization?.isBillable) {
+    if (organization?.isBillable && isOrgOwner(organization)) {
       fetchBillingDetails(organization, dispatch);
     }
-  }, [userIsOrgOwner, organization, dispatch]);
-
-  // Space Purchase content
-  const { faqEntries } = usePageContent(pageContent);
+  }, [organization, dispatch]);
 
   const goToStep = (nextStep) => {
-    trackWithSession(EVENTS.NAVIGATE, {
+    track(EVENTS.NAVIGATE, {
       fromStep: STEPS[currentStep],
       toStep: STEPS[nextStep],
     });
@@ -109,55 +82,30 @@ export const SpacePurchaseContainer = ({
     setCurrentStep(nextStep);
   };
 
-  const onSelectPlan = (planType) => {
-    if (!Object.values(SPACE_PURCHASE_TYPES).includes(planType)) {
-      throw Error();
-    }
-
-    const selectedPlan = spaceRatePlans.find((plan) => {
-      return plan.name.toLowerCase() === planType.toLowerCase();
-    });
-
-    trackWithSession(EVENTS.SPACE_PLAN_SELECTED, {
-      selectedPlan,
-    });
-
-    dispatch({ type: actions.SET_SELECTED_PLAN, payload: selectedPlan });
-
-    // If there is a currentSpace and they have billingDetails they go straight to the confirmation page
-    if (currentSpace && organization.isBillable) {
-      goToStep(STEPS.CONFIRMATION);
-    } else if (currentSpace && !organization.isBillable) {
-      goToStep(STEPS.BILLING_DETAILS);
-    } else {
-      goToStep(STEPS.SPACE_DETAILS);
-    }
-  };
-
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
-            onSelectPlan={onSelectPlan}
-            canCreateFreeSpace={canCreateFreeSpace}
-            canCreatePaidSpace={canCreatePaidSpace}
-            track={trackWithSession}
-            spaceRatePlans={spaceRatePlans}
-            loading={!spaceRatePlans}
-            currentSpacePlan={currentSpacePlan}
-            currentSpacePlanIsLegacy={currentSpacePlanIsLegacy}
-            faqEntries={faqEntries}
+            onSubmit={() => {
+              if (currentSpace && organization.isBillable) {
+                goToStep(STEPS.CONFIRMATION);
+              } else if (currentSpace && !organization.isBillable) {
+                goToStep(STEPS.BILLING_DETAILS);
+              } else {
+                goToStep(STEPS.SPACE_DETAILS);
+              }
+            }}
+            track={track}
           />
         );
       case STEPS.SPACE_DETAILS:
         return (
           <SpaceDetailsStep
             onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
-            track={trackWithSession}
-            templatesList={templatesList}
+            track={track}
             onSubmit={() => {
-              trackWithSession(EVENTS.SPACE_DETAILS_ENTERED);
+              track(EVENTS.SPACE_DETAILS_ENTERED);
 
               if (isFreeProductPlan(selectedPlan)) {
                 // Since the space is free, they can immediately create the space (which happens on the receipt page)
@@ -176,7 +124,7 @@ export const SpacePurchaseContainer = ({
           <BillingDetailsStep
             onBack={() => goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)}
             onSubmit={() => {
-              trackWithSession(EVENTS.BILLING_DETAILS_ENTERED);
+              track(EVENTS.BILLING_DETAILS_ENTERED);
 
               goToStep(STEPS.CREDIT_CARD_DETAILS);
             }}
@@ -186,9 +134,9 @@ export const SpacePurchaseContainer = ({
         return (
           <CreditCardDetailsStep
             onBack={() => goToStep(STEPS.BILLING_DETAILS)}
-            track={trackWithSession}
+            track={track}
             onSubmit={() => {
-              trackWithSession(EVENTS.PAYMENT_METHOD_CREATED);
+              track(EVENTS.PAYMENT_METHOD_CREATED);
 
               goToStep(STEPS.CONFIRMATION);
             }}
@@ -197,7 +145,7 @@ export const SpacePurchaseContainer = ({
       case STEPS.CONFIRMATION:
         return (
           <ConfirmationStep
-            track={trackWithSession}
+            track={track}
             onBack={() => {
               if (!organization.isBillable) {
                 goToStep(STEPS.CREDIT_CARD_DETAILS);
@@ -208,7 +156,7 @@ export const SpacePurchaseContainer = ({
               }
             }}
             onSubmit={() => {
-              trackWithSession(EVENTS.CONFIRM_PURCHASE);
+              track(EVENTS.CONFIRM_PURCHASE);
 
               goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
             }}
@@ -238,21 +186,5 @@ export const SpacePurchaseContainer = ({
 };
 
 SpacePurchaseContainer.propTypes = {
-  trackWithSession: PropTypes.func.isRequired,
-  spaceRatePlans: PropTypes.array,
-  currentSpacePlan: PropTypes.object,
-  organization: OrganizationPropType,
-  templatesList: PropTypes.array,
-  canCreateFreeSpace: PropTypes.bool,
-  pageContent: PropTypes.shape({
-    pageName: PropTypes.string.isRequired,
-    content: PropTypes.arrayOf(
-      PropTypes.shape({
-        sys: PropTypes.object,
-        fields: PropTypes.object,
-      })
-    ).isRequired,
-  }),
-  currentSpace: SpacePropType,
-  currentSpacePlanIsLegacy: PropTypes.bool,
+  track: PropTypes.func.isRequired,
 };

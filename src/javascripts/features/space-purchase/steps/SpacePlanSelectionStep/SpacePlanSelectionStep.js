@@ -18,16 +18,18 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
+import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
-import { SpacePurchaseState } from '../../context';
+import { actions, SpacePurchaseState } from '../../context';
 import { FAQAccordion } from '../../components/FAQAccordion';
+import { usePageContent } from '../../hooks/usePageContent';
 
 const styles = {
   fullRow: css({
@@ -73,44 +75,43 @@ const styles = {
 // Exported for testing only
 export const FEATURE_OVERVIEW_HREF = websiteUrl('pricing/#feature-overview');
 
-export const SpacePlanSelectionStep = ({
-  onSelectPlan,
-  track,
-  canCreateFreeSpace,
-  canCreatePaidSpace,
-  spaceRatePlans,
-  currentSpacePlan,
-  loading,
-  currentSpacePlanIsLegacy,
-  faqEntries,
-}) => {
+export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
   const {
-    state: { organization, currentSpace, currentSpaceRatePlan },
+    state: {
+      organization,
+      currentSpace,
+      currentSpaceRatePlan,
+      spaceRatePlans,
+      freeSpaceResource,
+      pageContent,
+    },
+    dispatch,
   } = useContext(SpacePurchaseState);
+  const { faqEntries } = usePageContent(pageContent);
 
-  const getSelectHandler = (planType) => {
-    if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
-      return () => {
-        track(EVENTS.EXTERNAL_LINK_CLICKED, {
-          href: SPACE_PURCHASE_CONTACT_SALES_HREF,
-          intent: 'upgrade_to_enterprise',
-        });
+  const selectPlan = (plan) => {
+    track(EVENTS.SPACE_PLAN_SELECTED, {
+      selectedPlan: plan,
+    });
 
-        // Do we want to track this as a CTA upgrade to enterprise click as well?
-        trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId: organization.sys.id,
-        });
-      };
-    }
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
 
-    return () => {
-      // NOTE: Add SELECT_PLAN space wizard tracking here
-      onSelectPlan(planType);
-    };
+    onSubmit();
   };
 
+  // We want these to be undefined/true/false, rather than simply true/false, so that we don't
+  // show the relevant components until we have a boolean value.
+  const canCreatePaidSpace =
+    organization && (isOrgOwner(organization) || !!organization.isBillable);
+  const canCreateFreeSpace = freeSpaceResource && !resourceIncludedLimitReached(freeSpaceResource);
+
   const isFreeSpaceDisabled =
-    spaceRatePlans && spaceRatePlans.find((plan) => plan.name === 'Community')?.disabled;
+    spaceRatePlans && spaceRatePlans.find((plan) => plan.price === 0)?.disabled;
+
+  // If the plan is not in the product rate plans, it's legacy.
+  const showLegacyPlanWarning =
+    currentSpaceRatePlan &&
+    !spaceRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
 
   return (
     <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
@@ -124,49 +125,66 @@ export const SpacePlanSelectionStep = ({
             to add payment details and start purchasing spaces.
           </Note>
         )}
-        {loading ? (
-          <SkeletonContainer svgHeight={47} className={styles.fullRow}>
-            <SkeletonDisplayText />
-          </SkeletonContainer>
-        ) : (
+        {spaceRatePlans && (
           <Heading
             id="space-selection-heading"
             element="h2"
             className={cn(styles.fullRow, styles.sectionHeading)}
             testId="space-selection.heading">
-            {!currentSpacePlan
-              ? 'Choose the space that’s right for your project'
-              : 'Choose the space you’d like to change to'}
+            {currentSpaceRatePlan
+              ? 'Choose the space you’d like to change to'
+              : 'Choose the space that’s right for your project'}
           </Heading>
         )}
+        {!spaceRatePlans && (
+          <SkeletonContainer
+            svgHeight={47}
+            className={styles.fullRow}
+            testId="space-rate-plans-loading">
+            <SkeletonDisplayText />
+          </SkeletonContainer>
+        )}
 
-        {currentSpacePlanIsLegacy && currentSpace && currentSpaceRatePlan && (
+        {showLegacyPlanWarning && (
           <LegacySpaceWarning spaceName={currentSpace.name} spacePlan={currentSpaceRatePlan} />
         )}
 
         {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => {
           const plan =
             spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type);
-          const isCurrentPlan = currentSpacePlan?.name === spaceContent.type;
+          const isCurrentPlan = currentSpaceRatePlan?.name === spaceContent.type;
+          const isEnterprisePlan = spaceContent.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
           return (
             <SpaceCard
               key={idx}
-              loading={loading}
+              loading={!spaceRatePlans}
               disabled={!canCreatePaidSpace || plan?.disabled}
               selected={isCurrentPlan}
               plan={plan}
               content={spaceContent}
-              handleSelect={getSelectHandler(spaceContent.type)}
+              handleSelect={() => {
+                if (isEnterprisePlan) {
+                  track(EVENTS.EXTERNAL_LINK_CLICKED, {
+                    href: SPACE_PURCHASE_CONTACT_SALES_HREF,
+                    intent: 'upgrade_to_enterprise',
+                  });
+
+                  // Do we want to track this as a CTA upgrade to enterprise click as well?
+                  trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+                    organizationId: organization.sys.id,
+                  });
+                } else {
+                  selectPlan(plan);
+                }
+              }}
             />
           );
         })}
 
         <div className={cn(styles.fullRow, styles.communitySection)}>
           <Card className={styles.communityCard} testId="space-selection.community-card">
-            {loading ? (
-              <CommunityLoadingState />
-            ) : (
+            {spaceRatePlans && (
               <Flex justifyContent="space-between" alignItems="center">
                 <div>
                   <Heading element="h3" className={styles.normalWeight}>
@@ -175,7 +193,7 @@ export const SpacePlanSelectionStep = ({
                   <Paragraph>Free space limited to 1 per organization.</Paragraph>
                 </div>
 
-                {currentSpacePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
+                {currentSpaceRatePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
                   <CurrentSpaceLabel />
                 ) : (
                   <Tooltip
@@ -185,7 +203,11 @@ export const SpacePlanSelectionStep = ({
                     content={getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled)}>
                     <Button
                       testId="space-selection-community-select-button"
-                      onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
+                      onClick={() => {
+                        const freeProductRatePlan = spaceRatePlans.find((plan) => plan.price === 0);
+
+                        selectPlan(freeProductRatePlan);
+                      }}
                       disabled={!canCreateFreeSpace || isFreeSpaceDisabled}>
                       Select
                     </Button>
@@ -193,6 +215,7 @@ export const SpacePlanSelectionStep = ({
                 )}
               </Flex>
             )}
+            {!spaceRatePlans && <CommunityLoadingState />}
           </Card>
           <ExternalTextLink
             testId="space-selection.feature-overview-link"
@@ -215,20 +238,13 @@ export const SpacePlanSelectionStep = ({
 };
 
 SpacePlanSelectionStep.propTypes = {
-  onSelectPlan: PropTypes.func,
+  onSubmit: PropTypes.func.isRequired,
   track: PropTypes.func.isRequired,
-  canCreateFreeSpace: PropTypes.bool,
-  canCreatePaidSpace: PropTypes.bool,
-  spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
-  currentSpacePlan: PlanPropType,
-  loading: PropTypes.bool,
-  currentSpacePlanIsLegacy: PropTypes.bool,
-  faqEntries: PropTypes.arrayOf(PropTypes.object),
 };
 
 function CommunityLoadingState() {
   return (
-    <SkeletonContainer svgHeight={45}>
+    <SkeletonContainer svgHeight={45} testId="free-space-loading">
       <SkeletonDisplayText width={120} />
       <SkeletonBodyText offsetTop={29} lineHeight={16} numberOfLines={1} width={240} />
     </SkeletonContainer>
@@ -249,7 +265,7 @@ function getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled) {
 
 function LegacySpaceWarning({ spaceName, spacePlan }) {
   return (
-    <Card className={styles.fullRow}>
+    <Card className={styles.fullRow} testId="legacy-space-plan-warning">
       <b>
         {spaceName} is currently a {spacePlan.name} space
       </b>{' '}

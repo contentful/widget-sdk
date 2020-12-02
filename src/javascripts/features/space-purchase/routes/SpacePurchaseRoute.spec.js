@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { getBasePlan, getRatePlans, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
@@ -11,13 +11,13 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { SpacePurchaseState } from '../context';
+import { renderWithProvider } from '../__tests__/helpers';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
 const mockUserRole = 'admin';
 const mockOrganizationPlatform = 'Free';
-const createResourceServiceResolvedValue = { usage: 0, limits: { maximum: 1 } };
+const mockFreeSpaceResource = { usage: 0, limits: { maximum: 1 } };
 const mockSpaceRatePlans = ['plan1', 'plan2', 'plan3'];
 const mockCurrentSpacePlan = { unavailabilityReasons: [{ type: 'currentPlan' }] };
 const mockUpgradeSpaceRatePlans = [
@@ -81,7 +81,7 @@ jest.mock('../components/SpacePurchaseContainer', () => ({
 
 describe('SpacePurchaseRoute', () => {
   beforeEach(() => {
-    createResourceService().get.mockResolvedValue(createResourceServiceResolvedValue);
+    createResourceService().get.mockResolvedValue(mockFreeSpaceResource);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
     getRatePlans.mockResolvedValue();
@@ -92,8 +92,8 @@ describe('SpacePurchaseRoute', () => {
     transformSpaceRatePlans.mockReturnValue();
   });
 
-  it('should render the space plan selection page while loading', () => {
-    build();
+  it('should render the space plan selection page while loading', async () => {
+    await build();
 
     expect(screen.getByTestId('new-space-page')).toBeVisible();
   });
@@ -101,7 +101,7 @@ describe('SpacePurchaseRoute', () => {
   it('should redirect to space home if the user is not org admin or owner', async () => {
     isOwnerOrAdmin.mockReturnValueOnce(false);
 
-    build();
+    await build();
 
     await waitFor(() => {
       expect(go).toBeCalledWith({
@@ -114,7 +114,7 @@ describe('SpacePurchaseRoute', () => {
   it('should redirect to space home if the base plan is not self-service or free', async () => {
     getBasePlan.mockReturnValueOnce({ customerType: 'Enterprise' });
 
-    build();
+    await build();
 
     await waitFor(() => {
       expect(go).toBeCalledWith({
@@ -125,7 +125,7 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should render the NewSpacePage and fire an event after loading', async () => {
-    build();
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('new-space-page')).toBeVisible();
@@ -148,24 +148,21 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should fetch and transform the space rate plans', async () => {
-    build();
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('new-space-page')).toBeVisible();
     });
 
     expect(getSpaceRatePlans).toBeCalled();
-    expect(transformSpaceRatePlans).toBeCalledWith(
-      mockSpaceRatePlans,
-      createResourceServiceResolvedValue
-    );
+    expect(transformSpaceRatePlans).toBeCalledWith(mockSpaceRatePlans, mockFreeSpaceResource);
   });
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {
     TokenStore.getSpace.mockReturnValueOnce(mockSpace);
     transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 
-    build({ spaceId: mockSpace.sys.id });
+    await build({ spaceId: mockSpace.sys.id });
 
     await waitFor(() => {
       expect(screen.getByTestId('new-space-page')).toBeVisible();
@@ -191,7 +188,7 @@ describe('SpacePurchaseRoute', () => {
   it('should show an error page if the fetch fails', async () => {
     TokenStore.getOrganization.mockRejectedValueOnce(new Error());
 
-    build();
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('cf-ui-error-state')).toBeVisible();
@@ -199,20 +196,11 @@ describe('SpacePurchaseRoute', () => {
   });
 });
 
-const mockContextValue = {
-  state: { sessionId: 'random_id' },
-  dispatch: jest.fn(),
-};
-
-function build(customProps) {
+async function build(customProps) {
   const props = {
     orgId: mockOrganization.sys.id,
     ...customProps,
   };
 
-  render(
-    <SpacePurchaseState.Provider value={mockContextValue}>
-      <SpacePurchaseRoute {...props} />
-    </SpacePurchaseState.Provider>
-  );
+  await renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
 }
