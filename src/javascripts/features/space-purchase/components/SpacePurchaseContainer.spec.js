@@ -133,7 +133,7 @@ describe('SpacePurchaseContainer', () => {
   });
 
   it('should render PLATFORM_SELECTION page when user has never purchased apps', async () => {
-    await build({ customProps: { hasPurchasedApps: false } });
+    await build({ purchasingApps: true });
 
     expect(screen.getByTestId('platform-selection-section')).toBeVisible();
   });
@@ -475,6 +475,7 @@ describe('SpacePurchaseContainer', () => {
 async function build(customProps, customState) {
   const props = {
     track: () => {},
+    purchasingApps: false,
     ...customProps,
   };
 

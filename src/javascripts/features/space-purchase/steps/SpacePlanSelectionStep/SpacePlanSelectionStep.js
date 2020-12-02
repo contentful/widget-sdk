@@ -164,7 +164,7 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
               plan={plan}
               content={spaceContent}
               organizationId={organization?.sys.id}
-              handleSelect={() => {
+              onSelect={() => {
                 if (isEnterprisePlan) {
                   track(EVENTS.EXTERNAL_LINK_CLICKED, {
                     href: SPACE_PURCHASE_CONTACT_SALES_HREF,
