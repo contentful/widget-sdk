@@ -112,6 +112,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
       organization,
       currentSpace,
       currentSpaceRatePlan,
+      spaceRatePlans,
       sessionId: alnum(16),
     },
   });

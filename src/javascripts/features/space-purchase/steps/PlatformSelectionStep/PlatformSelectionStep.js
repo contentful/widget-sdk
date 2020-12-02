@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
-import cn from 'classnames';
-import { css } from 'emotion';
+import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
@@ -13,14 +12,13 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { SpacePurchaseState } from '../../context';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
+import { SPACE_PLANS_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
 import { PlatformCard } from '../../components/PlatformCard';
+import { SpacePlanCard } from '../../components/SpacePlanCard';
 import { EnterpriseCard } from '../../components/EnterpriseCard';
 import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 
 const styles = {
-  fullRow: css({
-    gridColumn: '1 / 4',
-  }),
   headingContainer: css({
     marginBottom: tokens.spacingL,
   }),
@@ -30,6 +28,9 @@ const styles = {
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
   }),
+  bigMarginTop: css({
+    marginTop: tokens.spacing4Xl,
+  }),
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
@@ -37,7 +38,7 @@ export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
-    state: { organization },
+    state: { organization, spaceRatePlans },
   } = useContext(SpacePurchaseState);
 
   const [selectedPlatform, setSelectedPlatform] = useState('');
@@ -49,7 +50,7 @@ export const PlatformSelectionStep = ({ track }) => {
           <Heading
             id="platform-selection-heading"
             element="h2"
-            className={cn(styles.fullRow, styles.mediumWeight, styles.heading)}>
+            className={cx(styles.mediumWeight, styles.heading)}>
             Choose the package that fits your organization needs
           </Heading>
 
@@ -91,6 +92,31 @@ export const PlatformSelectionStep = ({ track }) => {
             intent: 'upgrade_to_enterprise',
           })}
         />
+
+        <GridItem
+          columnStart={1}
+          columnEnd={4}
+          className={cx(styles.headingContainer, styles.bigMarginTop)}>
+          <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
+            Choose the space size that right for your project
+          </Heading>
+        </GridItem>
+
+        {SPACE_PLANS_CONTENT.filter(
+          (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
+        ).map((spacePlanContent, idx) => {
+          const plan =
+            spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spacePlanContent.type);
+
+          const content = {
+            title: spacePlanContent.title,
+            description: spacePlanContent.description,
+            price: plan ? plan.price : 0,
+            limits: spacePlanContent.limits, // TODO: we need to use plan.inlcudedResources somehow
+          };
+
+          return <SpacePlanCard key={idx} onClick={() => console.log(plan)} content={content} />;
+        })}
       </Grid>
     </section>
   );
