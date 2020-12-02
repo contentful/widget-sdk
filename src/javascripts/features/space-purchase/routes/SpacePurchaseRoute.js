@@ -41,6 +41,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     organization,
     organizationMembership,
     currentSpace,
+    currentSpaceRatePlan,
     basePlan,
     rawSpaceRatePlans,
     freeSpaceResource,
@@ -50,6 +51,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     TokenStore.getOrganization(orgId),
     getOrganizationMembership(orgId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
+    spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
     getSpaceRatePlans(endpoint, spaceId),
     createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
@@ -70,18 +72,6 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   }
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
-
-  let currentSpaceRatePlan;
-
-  if (spaceId && spaceRatePlans.length > 0) {
-    currentSpaceRatePlan = spaceRatePlans.find((plan) => plan.currentPlan);
-
-    // if currentSpaceRatePlan was not found by checking unavailabilityReasons
-    // it means this space is probably on a legacy plan (Micro or Small), so we need to use getSingleSpacePlan to get the rate plan
-    if (!currentSpaceRatePlan) {
-      currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
-    }
-  }
 
   const sessionId = alnum(16);
 

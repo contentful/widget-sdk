@@ -52,6 +52,7 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
   const spacePurchaseFlowAllowedForPlanChange = await isSpacePurchaseFlowAllowedForChange(
     organizationId
   );
+
   const isEnterpriseSpaceChangeAllowed = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, {
     organizationId,
   });
