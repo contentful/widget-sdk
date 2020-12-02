@@ -1,5 +1,5 @@
 export { TrialTag } from './components/TrialTag';
-export { PlatformTrialInfo } from './components/PlatformTrialInfo';
+export { EnterpriseTrialInfo } from './components/EnterpriseTrialInfo';
 export { SpacesListForMembers } from './components/SpacesListForMembers';
 export { SpaceTrialWidget } from './components/SpaceTrialWidget';
 
