@@ -34,10 +34,9 @@ describe('SpaceTrialWidget', () => {
   });
 
   it('renders correctly when the space is on trial', async () => {
-    const { container } = build();
+    build();
 
     await waitFor(() => expect(screen.queryByTestId('space-trial-widget')).toBeInTheDocument());
-    expect(container).toMatchSnapshot();
   });
 
   it('does not render when the space is not on trial', async () => {
