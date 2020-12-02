@@ -25,6 +25,7 @@ describe('Space Template creation service', () => {
       createLocaleRepo: sinon.stub().returns({
         save: sinon.stub().returns(Promise.resolve({ code: 'something' })),
       }),
+      createAssetFileProcessedHandler: sinon.stub().returns((_, callback) => callback()),
     };
 
     this.system.set('data/EndpointFactory', {
@@ -33,6 +34,10 @@ describe('Space Template creation service', () => {
 
     this.system.set('data/CMA/LocaleRepo', {
       default: stubs.createLocaleRepo,
+    });
+
+    this.system.set('data/CMA/EntityRepo', {
+      createAssetFileProcessedHandler: stubs.createAssetFileProcessedHandler,
     });
 
     this.system.set('analytics/Analytics', { track: _.noop });
@@ -161,18 +166,6 @@ describe('Space Template creation service', () => {
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
           getContentType: sinon.stub().resolves(),
-        },
-        docConnection: {
-          open: sinon.stub().returns(
-            Promise.resolve({
-              destroy: _.noop,
-              doc: {
-                on: (_event, handler) => handler([{ p: ['fields', 'file'], oi: { url: 'url' } }]),
-                removeListener: sinon.stub(),
-                close: sinon.stub(),
-              },
-            })
-          ),
         },
         cma: {
           updateEditorInterface: sinon.stub().resolves(),
