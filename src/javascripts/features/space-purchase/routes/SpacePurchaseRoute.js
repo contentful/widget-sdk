@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -32,7 +32,7 @@ import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (orgId, spaceId, sessionId, dispatch) => async () => {
+const initialFetch = (orgId, spaceId, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE);
@@ -83,6 +83,8 @@ const initialFetch = (orgId, spaceId, sessionId, dispatch) => async () => {
     }
   }
 
+  const sessionId = alnum(16);
+
   dispatch({
     type: actions.SET_INITIAL_STATE,
     payload: {
@@ -120,12 +122,12 @@ const initialFetch = (orgId, spaceId, sessionId, dispatch) => async () => {
 };
 
 export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
-  const sessionId = useMemo(() => alnum(16), []);
-  const { dispatch } = useContext(SpacePurchaseState);
+  const {
+    state: { sessionId },
+    dispatch,
+  } = useContext(SpacePurchaseState);
 
-  const { data, error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, sessionId, dispatch), [])
-  );
+  const { data, error } = useAsync(useCallback(initialFetch(orgId, spaceId, dispatch), []));
 
   if (error) {
     return <ErrorState />;
