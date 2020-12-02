@@ -125,7 +125,7 @@ export default function ContentTypeForm(props) {
             validationMessage={state.touched ? validationErrors.name : ''}
             countCharacters
             textInputProps={{
-              maxLength: 64,
+              maxLength: 50,
               placeholder: props.namePlaceholder,
             }}
           />

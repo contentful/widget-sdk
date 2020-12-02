@@ -2801,3 +2801,433 @@ export const simpleReferencesPublicationInvalidErrorResponse = {
     ],
   },
 };
+
+export const mixedLocalizedReferencesToEntities = {
+  sys: {
+    type: 'Array',
+  },
+  items: [
+    {
+      sys: {
+        space: {
+          sys: {
+            type: 'Link',
+            linkType: 'Space',
+            id: 'uxn1u7m0txgd',
+          },
+        },
+        id: '4zaYBA8hYIxwRHsKfyJOVN',
+        type: 'Entry',
+        createdAt: '2019-12-16T12:22:36.218Z',
+        updatedAt: '2020-03-04T16:36:17.263Z',
+        environment: {
+          sys: {
+            id: 'master',
+            type: 'Link',
+            linkType: 'Environment',
+          },
+        },
+        publishedVersion: 3,
+        publishedAt: '2019-12-16T14:00:10.531Z',
+        firstPublishedAt: '2019-12-16T14:00:10.531Z',
+        createdBy: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
+        },
+        updatedBy: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
+        },
+        publishedCounter: 1,
+        version: 26,
+        publishedBy: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
+        },
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: 'user',
+          },
+        },
+      },
+      fields: {
+        name: {
+          de: 'test',
+          'en-US': 'Root',
+        },
+        arrayOfRefs: {
+          de: [
+            {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: '3ADrOROW1jot5jExFOjt4i',
+              },
+            },
+            {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: '5yFvj9td7s9n7GlRH1wqSA',
+              },
+            },
+          ],
+          'en-US': [
+            {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: '5yFvj9td7s9n7GlRH1wqSA',
+              },
+            },
+            {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: 'iFsN9FnCxUVNrXnUbGeJu',
+              },
+            },
+          ],
+        },
+        tags: {
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
+  ],
+  includes: {
+    Entry: [
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: 'uxn1u7m0txgd',
+            },
+          },
+          id: '3ADrOROW1jot5jExFOjt4i',
+          type: 'Entry',
+          createdAt: '2020-02-04T15:20:18.181Z',
+          updatedAt: '2020-02-04T15:20:18.181Z',
+          environment: {
+            sys: {
+              id: 'master',
+              type: 'Link',
+              linkType: 'Environment',
+            },
+          },
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          publishedCounter: 0,
+          version: 1,
+          contentType: {
+            sys: {
+              type: 'Link',
+              linkType: 'ContentType',
+              id: 'user',
+            },
+          },
+        },
+        fields: {
+          name: {
+            de: 'Test (1)',
+            'en-US': 'Entry 3',
+          },
+          references: {
+            'en-US': [
+              {
+                sys: {
+                  type: 'Link',
+                  linkType: 'Entry',
+                  id: '4ADrOROW1jot5jExFOjt41',
+                },
+              },
+              {
+                sys: {
+                  type: 'Link',
+                  linkType: 'Entry',
+                  id: '5yFvj9td7s9n7GlRH1wqSA',
+                },
+              },
+            ],
+            de: [
+              {
+                sys: {
+                  type: 'Link',
+                  linkType: 'Entry',
+                  id: '4ADrOROW1jot5jExFOjt41',
+                },
+              },
+              {
+                sys: {
+                  type: 'Link',
+                  linkType: 'Entry',
+                  id: '3yFvj9td7s9n7GlRH1wqSB',
+                },
+              },
+            ],
+          },
+        },
+      },
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: 'uxn1u7m0txgd',
+            },
+          },
+          id: '5yFvj9td7s9n7GlRH1wqSA',
+          type: 'Entry',
+          createdAt: '2020-01-10T16:22:32.755Z',
+          updatedAt: '2020-01-10T16:22:32.755Z',
+          environment: {
+            sys: {
+              id: 'master',
+              type: 'Link',
+              linkType: 'Environment',
+            },
+          },
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          publishedCounter: 0,
+          version: 1,
+          contentType: {
+            sys: {
+              type: 'Link',
+              linkType: 'ContentType',
+              id: 'user',
+            },
+          },
+        },
+        fields: {
+          name: {
+            de: 'Entry 2 DE',
+            'en-US': 'Entry 2',
+          },
+        },
+      },
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: 'uxn1u7m0txgd',
+            },
+          },
+          id: 'iFsN9FnCxUVNrXnUbGeJu',
+          type: 'Entry',
+          createdAt: '2019-12-17T10:57:56.591Z',
+          updatedAt: '2020-03-03T15:01:58.131Z',
+          environment: {
+            sys: {
+              id: 'master',
+              type: 'Link',
+              linkType: 'Environment',
+            },
+          },
+          publishedVersion: 11,
+          publishedAt: '2020-01-10T16:22:14.228Z',
+          firstPublishedAt: '2020-01-10T16:22:14.228Z',
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          publishedCounter: 1,
+          version: 14,
+          publishedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          contentType: {
+            sys: {
+              type: 'Link',
+              linkType: 'ContentType',
+              id: 'user',
+            },
+          },
+        },
+        fields: {
+          name: {
+            de: 'Entry 1 DE',
+            'en-US': 'Entry 1',
+          },
+        },
+      },
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: 'uxn1u7m0txgd',
+            },
+          },
+          id: '4ADrOROW1jot5jExFOjt41',
+          type: 'Entry',
+          createdAt: '2019-12-17T10:57:56.591Z',
+          updatedAt: '2020-03-03T15:01:58.131Z',
+          environment: {
+            sys: {
+              id: 'master',
+              type: 'Link',
+              linkType: 'Environment',
+            },
+          },
+          publishedVersion: 11,
+          publishedAt: '2020-01-10T16:22:14.228Z',
+          firstPublishedAt: '2020-01-10T16:22:14.228Z',
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          publishedCounter: 1,
+          version: 14,
+          publishedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          contentType: {
+            sys: {
+              type: 'Link',
+              linkType: 'ContentType',
+              id: 'user',
+            },
+          },
+        },
+        fields: {
+          name: {
+            de: 'Nested Entry 1 DE',
+            'en-US': 'Nested Entry 1',
+          },
+        },
+      },
+      {
+        sys: {
+          space: {
+            sys: {
+              type: 'Link',
+              linkType: 'Space',
+              id: 'uxn1u7m0txgd',
+            },
+          },
+          id: '3yFvj9td7s9n7GlRH1wqSB',
+          type: 'Entry',
+          createdAt: '2019-12-17T10:57:56.591Z',
+          updatedAt: '2020-03-03T15:01:58.131Z',
+          environment: {
+            sys: {
+              id: 'master',
+              type: 'Link',
+              linkType: 'Environment',
+            },
+          },
+          publishedVersion: 11,
+          publishedAt: '2020-01-10T16:22:14.228Z',
+          firstPublishedAt: '2020-01-10T16:22:14.228Z',
+          createdBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          updatedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          publishedCounter: 1,
+          version: 14,
+          publishedBy: {
+            sys: {
+              type: 'Link',
+              linkType: 'User',
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
+          },
+          contentType: {
+            sys: {
+              type: 'Link',
+              linkType: 'ContentType',
+              id: 'user',
+            },
+          },
+        },
+        fields: {
+          name: {
+            de: 'Nested Entry 2 DE',
+            'en-US': 'Nested Entry 2',
+          },
+        },
+      },
+    ],
+    Asset: [],
+  },
+};

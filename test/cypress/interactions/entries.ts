@@ -12,6 +12,7 @@ import { newEntryResponse } from '../fixtures/responses/entry-new';
 import { severalEntriesResponse } from '../fixtures/responses/entries-several';
 import {
   severalEntryReferencesResponse,
+  severalEntryReferencesWithUnresolvedResponse,
   validateEntryReferencesSeveralRequest,
   publishEntryReferencesSeveralRequest,
   validateEntryReferencesSeveralErrorsResponse,
@@ -28,6 +29,7 @@ export enum States {
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
   SEVERAL_REFERENCES_FOR_ENTRY = 'entries/several-references',
+  SEVERAL_REFERENCES_WITH_UNRESOLVED_FOR_ENTRY = 'entries/several-references-with-unresolved',
   NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
   NO_LINKS_TO_DEFAULT_ASSET = 'entries/no-links-to-default-asset',
   NO_SNAPSHOTS_FOR_DEFAULT_ENTRY = 'entries/no-snapshots-for-default-entry',
@@ -287,6 +289,30 @@ export const getEntryReferences = {
     }).as('getEntryReferences');
 
     return '@getEntryReferences';
+  },
+  willReturnSeveralWithUnresolved() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.SEVERAL_REFERENCES_WITH_UNRESOLVED_FOR_ENTRY,
+      uponReceiving: `get references, including unresolved, for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
+        headers: {
+          ...defaultHeader,
+          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: severalEntryReferencesWithUnresolvedResponse,
+      },
+    }).as('getEntryReferencesWithUnresolved');
+
+    return '@getEntryReferencesWithUnresolved';
   },
 };
 

@@ -18,6 +18,14 @@ import { useAsync } from 'core/hooks';
 import { isSpaceOnTrial } from '../services/TrialService';
 import { getSpace } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { websiteUrl, helpCenterUrl, developerDocsUrl } from 'Config';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'trial-space-home',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   flexContainer: css({
@@ -78,11 +86,39 @@ export const SpaceTrialWidget = ({ spaceId }) => {
             Trial spaces are intended for non-production development and testing purposes only
           </ListItem>
         </List>
-        <Subheading>What happens at the end of my trial?</Subheading>
+        <Subheading>Need more help to get started with Contentful?</Subheading>
         <Paragraph>
-          If you choose not to buy a subscription plan, your space will become <b>read-only</b>.
-          Want to bring your space back to life? Simply buy a subscription plan and you&apos;ll be
-          back to editing content in no time
+          Check out{' '}
+          <TextLink
+            href={withInAppHelpUtmParams(
+              websiteUrl('/resources/contentful-1-2-3-program-sign-up/')
+            )}
+            rel="noopener noreferrer"
+            target="_blank">
+            Contentful 1-2-3
+          </TextLink>
+          , the Contentful{' '}
+          <TextLink
+            href={withInAppHelpUtmParams('https://public.learningcenter.contentful.com/index/')}
+            rel="noopener noreferrer"
+            target="_blank">
+            Learning Center
+          </TextLink>
+          , our{' '}
+          <TextLink
+            href={withInAppHelpUtmParams(helpCenterUrl)}
+            rel="noopener noreferrer"
+            target="_blank">
+            help center
+          </TextLink>{' '}
+          or our{' '}
+          <TextLink
+            href={withInAppHelpUtmParams(`${developerDocsUrl}/`)}
+            rel="noopener noreferrer"
+            target="_blank">
+            developer portal
+          </TextLink>
+          .
         </Paragraph>
         <Paragraph>
           Got questions?{' '}

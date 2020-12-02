@@ -13,7 +13,7 @@ const resourceToEntitlementMapping = {
 export function getEntitlementByResourceKey(resourceKey, entitlementsSet) {
   const entitlementKey = resourceToEntitlementMapping[resourceKey];
 
-  return entitlementsSet.quotas[entitlementKey].value;
+  return entitlementsSet.quotas[entitlementKey]?.value;
 }
 
 export async function getSpaceEntitlementSet(spaceId) {

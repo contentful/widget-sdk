@@ -14,6 +14,7 @@ import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { createAssetFileProcessedHandler } from 'data/CMA/EntityRepo';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -331,48 +332,30 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function processAsset(asset, version) {
-    let destroyDoc;
+    let destroySubscription;
+    const onAssetFileProcessed = createAssetFileProcessedHandler(
+      spaceContext.endpoint,
+      spaceContext.pubSubClient
+    );
     return new Promise((resolve, reject) => {
       const processingTimeout = setTimeout(() => {
-        if (destroyDoc) {
-          destroyDoc();
+        if (destroySubscription) {
+          destroySubscription();
         }
         // eslint-disable-next-line prefer-promise-reject-errors
         reject({ error: 'timeout processing' });
       }, ASSET_PROCESSING_TIMEOUT);
 
-      // TODO: this is the only place where we use
-      // docConnection outside of spaceContext. We
-      // need to wait for assets to process in order
-      // to publish them in the next step.
-      spaceContext.docConnection.open(asset).then(
-        (info) => {
-          destroyDoc = info.destroy;
-          info.doc.on('remoteop', (ops) => remoteOpHandler(ops, { resolve, processingTimeout }));
-          asset.process(version, selectedLocaleCode);
-        },
-        (err) => {
+      asset.process(version, selectedLocaleCode);
+      destroySubscription = onAssetFileProcessed(_.get(asset, 'data.sys'), () => {
+        const $rootScope = getModule('$rootScope');
+        $rootScope.$apply(() => {
           clearTimeout(processingTimeout);
-          reject(err);
-        }
-      );
-    });
-
-    function remoteOpHandler(ops, { resolve, processingTimeout }) {
-      const $rootScope = getModule('$rootScope');
-      $rootScope.$apply(() => {
-        clearTimeout(processingTimeout);
-        const op = ops && ops.length > 0 ? ops[0] : null;
-        if (op && op.p && op.oi) {
-          const path = op.p;
-          const inserted = op.oi;
-          if (path[0] === 'fields' && path[1] === 'file' && 'url' in inserted) {
-            destroyDoc();
-            resolve(asset);
-          }
-        }
+          resolve(asset);
+          destroySubscription();
+        });
       });
-    }
+    });
   }
 
   function publishAssets(assets) {

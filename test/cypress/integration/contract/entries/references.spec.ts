@@ -129,6 +129,24 @@ describe('Entry references', () => {
         .should('be.visible')
         .should('contain', 'We were unable to publish one and 2 references');
     });
+
+    it('publishes release skipping unresolved entities', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithUnresolved();
+      const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
+
+      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.findByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.findByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'one and 2 references were published successfully');
+    });
   });
 });
 
