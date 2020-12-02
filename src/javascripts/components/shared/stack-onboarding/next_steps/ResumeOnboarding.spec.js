@@ -3,7 +3,7 @@ import { render, screen, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ResumeOnboarding from './ResumeOnboarding';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { trackClickCTA } from 'app/home/tracking';
+import { trackClickCTA } from 'features/space-home';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { go } from 'states/Navigator';
 import { openDeleteSpaceDialog } from 'features/space-settings';
@@ -11,7 +11,7 @@ import * as TokenStore from 'services/TokenStore';
 
 const mockSpace = FakeFactory.Space();
 
-jest.mock('app/home/tracking', () => ({
+jest.mock('features/space-home', () => ({
   trackClickCTA: jest.fn(),
 }));
 

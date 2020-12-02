@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Paragraph, Button, TextLink } from '@contentful/forma-36-react-components';
-import { trackClickCTA } from 'app/home/tracking';
+import { trackClickCTA } from 'features/space-home';
 
 const styles = {
   flexContainer: css({ display: 'flex', justifyContent: 'space-between' }),
