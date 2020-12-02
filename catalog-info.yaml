@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: user_interface
+  description: the user facing application for editing and managing content, administering spaces and organizations
+  tags:
+    - chapter-frontend
+    - type-application
+  annotations:
+    github.com/team-slug: contentful/chapter-frontend
+    backstage.io/managed-by-location: github:http://github.com/contentful/user_interface/catalog-info.yaml
+    backstage.io/techdocs-ref: dir:./
+    github.com/project-slug: contentful/user_interface
+    circleci.com/project-slug: github/contentful/user_interface
+    sentry.io/project-slug: user-interface
+spec:
+  type: website
+  owner: dev-frontend@contentful.com
+  lifecycle: production
