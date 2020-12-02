@@ -2,6 +2,8 @@ import React from 'react';
 import SpaceUsage from './SpaceUsage';
 import { render, screen } from '@testing-library/react';
 import { getVariation } from 'LaunchDarkly';
+import { cloneDeep, keyBy } from 'lodash';
+import { getSpaceEntitlementSet } from './services/EntitlementService';
 
 const spaceId = 'spaceId';
 const environmentMetaMock = {
@@ -155,6 +157,15 @@ const mockResourcesResponse = [
   },
 ];
 
+function getAllRenderedResources() {
+  const displayedResources = ['Content type', 'Entry', 'Asset', 'Role', 'Locale'];
+
+  return displayedResources.reduce((memo, resource) => {
+    memo[resource] = screen.getByTestId(resource);
+    return memo;
+  }, {});
+}
+
 jest.mock('services/ResourceService', () => ({
   __esModule: true,
   default: () => ({
@@ -164,7 +175,7 @@ jest.mock('services/ResourceService', () => ({
 
 jest.mock('./services/EntitlementService', () => ({
   ...jest.requireActual('./services/EntitlementService'),
-  getSpaceEntitlementSet: jest.fn(() => mockedResponse),
+  getSpaceEntitlementSet: jest.fn(async () => mockedResponse),
 }));
 
 describe('SpaceUsage', () => {
@@ -173,77 +184,46 @@ describe('SpaceUsage', () => {
     await screen.findByTestId('resource-list');
   };
 
-  beforeEach(() => {
-    getVariation.mockResolvedValue(false);
+  describe('when Entitlements API is disabled', () => {
+    beforeEach(async () => {
+      getVariation.mockResolvedValue(false);
+      await build();
+    });
+
+    it('should render resources from Recources API when flag is disabled', async () => {
+      const mockData = keyBy(mockResourcesResponse, 'name');
+      const resources = getAllRenderedResources();
+      expect(resources['Content type']).toHaveTextContent(mockData['Content type'].limits.maximum);
+      expect(resources['Entry']).toHaveTextContent(mockData['Entry'].limits.maximum);
+      expect(resources['Asset']).toHaveTextContent(mockData['Asset'].limits.maximum);
+      expect(resources['Role']).toHaveTextContent(mockData['Role'].limits.maximum);
+      expect(resources['Locale']).toHaveTextContent(mockData['Locale'].limits.maximum);
+    });
   });
 
-  it('should render Content type entiltement from Recources when flag is disabled', async () => {
-    await build();
-    const entitlement = screen.getByTestId('Content type');
-    expect(entitlement).toHaveTextContent(mockResourcesResponse[0].limits.maximum);
+  describe('when Entitlements API is enabled', () => {
+    beforeEach(async () => {
+      getVariation.mockResolvedValueOnce(true);
+      await build();
+    });
+
+    it('should render Content type entiltement from new API when flag is enabled', async () => {
+      const resources = getAllRenderedResources();
+      expect(resources['Content type']).toHaveTextContent(mockedResponse.quotas.contentTypes.value);
+      expect(resources['Role']).toHaveTextContent(mockedResponse.quotas.roles.value);
+      expect(resources['Entry']).toHaveTextContent(mockedResponse.quotas.records.value);
+      expect(resources['Asset']).toHaveTextContent(mockedResponse.quotas.records.value);
+      expect(resources['Locale']).toHaveTextContent(mockedResponse.quotas.locales.value);
+    });
   });
 
-  it('should render Entry entiltement from Recources when flag is disabled', async () => {
-    await build();
-    const entitlement = screen.getByTestId('Entry');
-    expect(entitlement).toHaveTextContent(mockResourcesResponse[1].limits.maximum);
-  });
-
-  it('should render Asset entiltement from Recources when flag is disabled', async () => {
-    await build();
-    const entitlement = screen.getByTestId('Asset');
-    expect(entitlement).toHaveTextContent(mockResourcesResponse[2].limits.maximum);
-  });
-
-  it('should render Role entiltement from Recources when flag is disabled', async () => {
-    await build();
-    const entitlement = screen.getByTestId('Role');
-    expect(entitlement).toHaveTextContent(mockResourcesResponse[3].limits.maximum);
-  });
-
-  it('should render Locale entiltement from Recources when flag is disabled', async () => {
-    await build();
-    const entitlement = screen.getByTestId('Locale');
-    expect(entitlement).toHaveTextContent(mockResourcesResponse[4].limits.maximum);
-  });
-
-  it('should render Content type entiltement from new API when flag is enabled', async () => {
+  it('should still render when entitlement is not available', async () => {
+    const mockData = cloneDeep(mockedResponse);
+    delete mockData.quotas.roles;
+    getSpaceEntitlementSet.mockResolvedValueOnce(mockData);
     getVariation.mockResolvedValueOnce(true);
     await build();
-
-    const entitlement = screen.getByTestId('Content type');
-    expect(entitlement).toHaveTextContent(mockedResponse.quotas.contentTypes.value);
-  });
-
-  it('should render Role entiltement from new API when flag is enabled', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    await build();
-
-    const rolesEntiltement = screen.getByTestId('Role');
-    expect(rolesEntiltement).toHaveTextContent(mockedResponse.quotas.roles.value);
-  });
-
-  it('should render Locale entiltement from new API when flag is enabled', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    await build();
-
-    const entiltement = screen.getByTestId('Locale');
-    expect(entiltement).toHaveTextContent(mockedResponse.quotas.locales.value);
-  });
-
-  it('should render Environment entiltement from new API when flag is enabled', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    await build();
-
-    const entiltement = screen.getByTestId('Environment');
-    expect(entiltement).toHaveTextContent(mockedResponse.quotas.environments.value);
-  });
-
-  it('should render Record entiltement from new API when flag is enabled', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    await build();
-
-    const entiltement = screen.getByTestId('Record');
-    expect(entiltement).toHaveTextContent(mockedResponse.quotas.records.value);
+    const resources = getAllRenderedResources();
+    expect(resources['Role']).not.toHaveTextContent();
   });
 });
