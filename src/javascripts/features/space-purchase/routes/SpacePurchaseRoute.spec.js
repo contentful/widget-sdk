@@ -2,7 +2,12 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { getBasePlan, getRatePlans, getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
+import {
+  getBasePlan,
+  getRatePlans,
+  getSpaceRatePlans,
+  getSingleSpacePlan,
+} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
@@ -159,6 +164,15 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {
+    const mockSpaceRatePlan = {
+      sys: {
+        id: 'Plan',
+      },
+      ratePlanCharges: [],
+      gatekeeperKey: 'abcd',
+    };
+
+    getSingleSpacePlan.mockResolvedValue(mockSpaceRatePlan);
     TokenStore.getSpace.mockReturnValueOnce(mockSpace);
     transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 
@@ -180,7 +194,7 @@ describe('SpacePurchaseRoute', () => {
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'upgrade_space',
-        currentSpacePlan: { ...mockCurrentSpacePlan, currentPlan: true },
+        currentSpacePlan: mockSpaceRatePlan,
       }
     );
   });
