@@ -62,6 +62,7 @@ export const SPACE_PURCHASE_CONTENT = [
   },
 ];
 
+// TODO: refactor SpacePlanSelectionStep to use this content as well and delete the one above
 export const SPACE_PLANS_CONTENT = [
   {
     type: SPACE_PURCHASE_TYPES.COMMUNITY,

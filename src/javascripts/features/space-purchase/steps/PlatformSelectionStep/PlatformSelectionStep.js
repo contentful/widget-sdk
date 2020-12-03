@@ -1,13 +1,14 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { usePrevious } from 'core/hooks';
 
 import { SpacePurchaseState } from '../../context';
 import { EVENTS } from '../../utils/analyticsTracking';
@@ -19,6 +20,7 @@ import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 
 const styles = {
   headingContainer: css({
+    gridColumn: '1 / 4',
     marginBottom: tokens.spacingL,
     opacity: 1,
     transition: 'opacity 0.2s ease-in-out',
@@ -48,10 +50,23 @@ export const PlatformSelectionStep = ({ track }) => {
   const [selectedPlatform, setSelectedPlatform] = useState('');
   const [selectedSpacePlan, setSelectedSpacePlan] = useState('');
 
+  const prevSelectedPlatform = usePrevious(selectedPlatform);
+  const spaceSectionRef = createRef();
+
+  useEffect(() => {
+    // we want to scroll the user to space selection only the first time they select a platform
+    if (!prevSelectedPlatform && selectedPlatform) {
+      spaceSectionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }, [prevSelectedPlatform, selectedPlatform, spaceSectionRef]);
+
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
       <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
-        <GridItem columnStart={1} columnEnd={4} className={styles.headingContainer}>
+        <span className={styles.headingContainer}>
           <Heading
             id="platform-selection-heading"
             element="h2"
@@ -70,7 +85,7 @@ export const PlatformSelectionStep = ({ track }) => {
             }}>
             See comparison packages
           </ExternalTextLink>
-        </GridItem>
+        </span>
 
         {PLATFORM_CONTENT.map((platform, idx) => {
           const content = {
@@ -100,16 +115,15 @@ export const PlatformSelectionStep = ({ track }) => {
           })}
         />
 
-        <GridItem
-          columnStart={1}
-          columnEnd={4}
+        <span
+          ref={spaceSectionRef}
           className={cx(styles.headingContainer, styles.bigMarginTop, {
             [styles.disabled]: !selectedPlatform,
           })}>
           <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
             Choose the space size that right for your project
           </Heading>
-        </GridItem>
+        </span>
 
         {SPACE_PLANS_CONTENT.filter(
           (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
