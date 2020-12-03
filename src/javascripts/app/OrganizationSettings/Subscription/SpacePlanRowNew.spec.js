@@ -32,6 +32,7 @@ const mockSelfServicePlan = {
 const mockUsage = {
   limit: 10,
   usage: 1,
+  utilization: 1 / 10,
 };
 const mockSpaceUsage = {
   environments: mockUsage,

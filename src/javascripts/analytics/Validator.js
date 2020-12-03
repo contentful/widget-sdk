@@ -215,7 +215,6 @@ export const validEvents = {
   ],
   launch_app: ['link_clicked'],
   space_usage_summary: [
-    'get_in_touch_clicked',
     'usage_tooltip_hovered',
     'go_to_space_home',
     'go_to_detailed_usage',

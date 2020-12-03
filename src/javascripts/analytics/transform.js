@@ -378,7 +378,6 @@ registerSpacePurchaseEvent('space_purchase:space_type_change');
 registerSpacePurchaseEvent('space_purchase:space_template_created');
 registerSpacePurchaseEvent('space_purchase:error');
 
-registerGenericEvent('space_usage_summary:get_in_touch_clicked');
 registerGenericEvent('space_usage_summary:usage_tooltip_hovered');
 registerGenericEvent('space_usage_summary:go_to_space_home');
 registerGenericEvent('space_usage_summary:go_to_detailed_usage');
