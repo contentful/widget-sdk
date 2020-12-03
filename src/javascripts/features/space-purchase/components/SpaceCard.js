@@ -21,7 +21,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
-import { CurrentSpaceLabel } from '../components/CurrentSpaceLabel';
+import { PinLabel } from './PinLabel';
+import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 export const SPACE_PURCHASE_CONTACT_SALES_HREF = buildUrlWithUtmParams({
   medium: 'webapp',
@@ -92,11 +93,12 @@ const styles = {
 
 export const SpaceCard = ({
   content,
-  handleSelect,
+  onSelect,
   plan,
   disabled = false,
   loading = true,
   selected = false,
+  organizationId,
 }) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
@@ -130,25 +132,22 @@ export const SpaceCard = ({
               )}
             </Paragraph>
             {isEnterpriseCard && (
-              <Button
-                href={SPACE_PURCHASE_CONTACT_SALES_HREF}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleSelect}
+              <EnterpriseTalkToUsButton
+                organizationId={organizationId}
+                onSelect={onSelect}
+                disabled={disabled}
                 testId="select-space-cta"
-                disabled={disabled}>
-                {content.callToAction}
-              </Button>
+              />
             )}
             {!isEnterpriseCard && !selected && (
               <Tooltip
                 content={disabled ? 'You are using more resources than this plan offers' : ''}>
-                <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
+                <Button onClick={onSelect} testId="select-space-cta" disabled={disabled}>
                   {content.callToAction}
                 </Button>
               </Tooltip>
             )}
-            {!isEnterpriseCard && selected && <CurrentSpaceLabel />}
+            {!isEnterpriseCard && selected && <PinLabel labelText="Current space" />}
           </Typography>
 
           <div className={styles.limitsSection}>
@@ -182,11 +181,12 @@ SpaceCard.propTypes = {
     limitsTitle: PropTypes.string,
     limits: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
-  handleSelect: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   plan: PropTypes.object,
   loading: PropTypes.bool,
   selected: PropTypes.bool,
+  organizationId: PropTypes.string,
 };
 
 function getSpaceColorCSS(backgroundColor) {

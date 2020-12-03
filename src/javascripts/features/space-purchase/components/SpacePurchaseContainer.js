@@ -16,6 +16,7 @@ import {
   BillingDetailsStep,
   CreditCardDetailsStep,
   ConfirmationStep,
+  PlatformSelectionStep,
   SpaceDetailsStep,
   SpacePlanSelectionStep,
   SpaceCreationReceiptStep,
@@ -23,6 +24,7 @@ import {
 } from '../steps';
 
 const STEPS = {
+  PLATFORM_SELECTION: 'PLATFORM_SELECTION',
   SPACE_PLAN_SELECTION: 'SPACE_PLAN_SELECTION',
   SPACE_DETAILS: 'SPACE_DETAILS',
   BILLING_DETAILS: 'BILLING_DETAILS',
@@ -33,14 +35,16 @@ const STEPS = {
 };
 
 const generateBreadcrumbItems = (step) => {
-  const spaceSteps = [STEPS.SPACE_PLAN_SELECTION, STEPS.SPACE_DETAILS];
+  const stepIsPlatform = step === STEPS.PLATFORM_SELECTION;
+
+  const spaceSteps = [STEPS.PLATFORM_SELECTION, STEPS.SPACE_PLAN_SELECTION, STEPS.SPACE_DETAILS];
 
   const paymentSteps = [STEPS.BILLING_DETAILS, STEPS.CREDIT_CARD_DETAILS, STEPS.CONFIRMATION];
 
   const confirmationSteps = [STEPS.RECEIPT, STEPS.UPGRADE_RECEIPT];
 
   return [
-    { text: '1.Spaces', isActive: spaceSteps.includes(step) },
+    { text: stepIsPlatform ? '1.Subscription' : '1.Spaces', isActive: spaceSteps.includes(step) },
     { text: '2.Payment', isActive: paymentSteps.includes(step) },
     { text: '3.Confirmation', isActive: confirmationSteps.includes(step) },
   ];
@@ -57,13 +61,16 @@ const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
 };
 
-export const SpacePurchaseContainer = ({ track }) => {
+export const SpacePurchaseContainer = ({ track, purchasingApps }) => {
   const {
     state: { organization, selectedPlan, currentSpace },
     dispatch,
   } = useContext(SpacePurchaseState);
 
-  const [currentStep, setCurrentStep] = useState(STEPS.SPACE_PLAN_SELECTION);
+  // if the user has already purchased apps, we want them to start at the space selection step
+  // otherwise, they should start in the platfform and space selection step
+  const initialStep = purchasingApps ? STEPS.PLATFORM_SELECTION : STEPS.SPACE_PLAN_SELECTION;
+  const [currentStep, setCurrentStep] = useState(initialStep);
 
   useTrackCancelEvent(track, { currentStep, finalStep: STEPS.RECEIPT });
 
@@ -84,6 +91,8 @@ export const SpacePurchaseContainer = ({ track }) => {
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
+      case STEPS.PLATFORM_SELECTION:
+        return <PlatformSelectionStep track={track} />;
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
@@ -176,7 +185,7 @@ export const SpacePurchaseContainer = ({ track }) => {
         icon={<ProductIcon icon="Purchase" size="large" />}
       />
       <Workbench.Content>
-        <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+        <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingXl">
           <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
           {getComponentForStep(currentStep)}
         </Grid>
@@ -187,4 +196,5 @@ export const SpacePurchaseContainer = ({ track }) => {
 
 SpacePurchaseContainer.propTypes = {
   track: PropTypes.func.isRequired,
+  purchasingApps: PropTypes.bool,
 };

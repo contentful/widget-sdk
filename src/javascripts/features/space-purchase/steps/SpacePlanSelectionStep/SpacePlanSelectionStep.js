@@ -26,7 +26,7 @@ import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
-import { CurrentSpaceLabel } from '../../components/CurrentSpaceLabel';
+import { PinLabel } from '../../components/PinLabel';
 import { actions, SpacePurchaseState } from '../../context';
 import { FAQAccordion } from '../../components/FAQAccordion';
 import { usePageContent } from '../../hooks/usePageContent';
@@ -163,7 +163,8 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
               selected={isCurrentPlan}
               plan={plan}
               content={spaceContent}
-              handleSelect={() => {
+              organizationId={organization?.sys.id}
+              onSelect={() => {
                 if (isEnterprisePlan) {
                   track(EVENTS.EXTERNAL_LINK_CLICKED, {
                     href: SPACE_PURCHASE_CONTACT_SALES_HREF,
@@ -194,7 +195,7 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
                 </div>
 
                 {currentSpaceRatePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
-                  <CurrentSpaceLabel />
+                  <PinLabel labelText="Current space" />
                 ) : (
                   <Tooltip
                     testId="read-only-tooltip"

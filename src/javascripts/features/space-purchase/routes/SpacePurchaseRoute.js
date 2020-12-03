@@ -123,9 +123,11 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
     return <ErrorState />;
   }
 
+  const documentTitle = data?.purchasingApps ? 'Subscription purchase' : 'Space purchase';
+
   return (
     <>
-      <DocumentTitle title="Space purchase" />
+      <DocumentTitle title={documentTitle} />
       <SpacePurchaseContainer
         track={(eventName, metadata) => {
           trackEvent(
