@@ -48,6 +48,7 @@ const mockPlanCharges = [
   FakeFactory.RatePlanCharge('Records', 3),
 ];
 
+// TODO: make these mocks available to everyone
 const mockSpaceRatePlans = [
   {
     name: 'Community',

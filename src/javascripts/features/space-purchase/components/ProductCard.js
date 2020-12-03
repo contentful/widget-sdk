@@ -102,7 +102,7 @@ export const ProductCard = ({
   content,
   isNew = false,
   cardType = 'space',
-  testId = 'card',
+  testId = 'product-card',
 }) => {
   return (
     <Card
@@ -138,7 +138,7 @@ export const ProductCard = ({
         <PinLabel labelText="Your current package" />
       )}
       {!loading && content.price != undefined && (
-        <Paragraph className={styles.price} testId="space-plan-price">
+        <Paragraph className={styles.price} testId="product-price">
           {content.price === 0 ? (
             <>
               <b>Free</b>
