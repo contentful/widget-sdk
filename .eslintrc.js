@@ -60,7 +60,7 @@ module.exports = {
     },
     /** Karma tests */
     {
-      files: ['test/**'],
+      files: ['test/!(contract)/**'],
       rules: {
         'import/no-unresolved': 'off',
         'rulesdir/relative-imports': 'off',
@@ -76,6 +76,7 @@ module.exports = {
         'src/**/*.spec.{js,ts,tsx}',
         'src/**/__tests__/**/*.{js,ts,tsx}',
         'src/javascripts/**/__mocks__/**/*.{js,ts,tsx}',
+        'test/contract/**/*.spec.{js,ts,tsx}',
       ],
       extends: [require.resolve('./tools/eslint-rules/jest.js')],
     },
