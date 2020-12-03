@@ -130,7 +130,7 @@ describe('Entry references', () => {
         .should('contain', 'We were unable to publish one and 2 references');
     });
 
-    it('publishes release skipping unresolved entities', () => {
+    it.skip('publishes release skipping unresolved entities', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithUnresolved();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
