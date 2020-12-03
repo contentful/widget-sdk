@@ -82,9 +82,9 @@ interface RuleListProps {
   searchEntities: () => void;
   getEntityTitle: () => void;
   hasClpFeature: boolean;
-  draftRulesIds: string[];
-  addDraftRuleId: (ruleId: string) => void;
-  removeDraftRuleId: (ruleId: string) => void;
+  newRuleIds: string[];
+  addNewRule: (ruleId: string) => void;
+  removeNewRule: (ruleId: string) => void;
   editedRuleIds: string[];
   addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
 }
@@ -102,9 +102,9 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
     searchEntities,
     getEntityTitle,
     hasClpFeature,
-    draftRulesIds,
-    addDraftRuleId,
-    removeDraftRuleId,
+    newRuleIds,
+    addNewRule,
+    removeNewRule,
     editedRuleIds,
     addEditedRule,
   } = props;
@@ -128,20 +128,20 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
   const addRuleAndResetFilters = useCallback(
     (ruleType: RuleType) => {
       const draftRuleId = onAddRule(ruleType)();
-      addDraftRuleId(draftRuleId);
+      addNewRule(draftRuleId);
       resetFilters();
       setScroll(true);
     },
-    [onAddRule, resetFilters, addDraftRuleId]
+    [onAddRule, resetFilters, addNewRule]
   );
 
   const removeRule = useCallback(
     (ruleType: RuleType, ruleId) => {
       onRemoveRule(ruleType, ruleId)();
-      removeDraftRuleId(ruleId);
+      removeNewRule(ruleId);
       setScroll(false);
     },
-    [onRemoveRule, removeDraftRuleId]
+    [onRemoveRule, removeNewRule]
   );
 
   const updateRuleAttribute = useCallback(
@@ -234,7 +234,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
         </Paragraph>
         {filteredRules.allowed.map((rule) => {
           const isTheNewRule =
-            draftRulesIds.length > 0 && rule.id === draftRulesIds[draftRulesIds.length - 1];
+            newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
           return (
             <Rule
               key={rule.id}
@@ -249,7 +249,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
               getEntityTitle={getEntityTitle}
               hasClpFeature={hasClpFeature}
               focus={isTheNewRule && scroll}
-              isNew={draftRulesIds.includes(rule.id)}
+              isNew={newRuleIds.includes(rule.id)}
               modified={editedRuleIds.includes(rule.id)}
             />
           );
@@ -273,7 +273,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
           <div className="rule-list__rule" data-test-id="rule-exceptions">
             {filteredRules.denied.map((rule) => {
               const isTheNewRule =
-                draftRulesIds.length > 0 && rule.id === draftRulesIds[draftRulesIds.length - 1];
+                newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
               return (
                 <Rule
                   key={rule.id}
@@ -288,7 +288,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
                   getEntityTitle={getEntityTitle}
                   hasClpFeature={hasClpFeature}
                   focus={isTheNewRule && scroll}
-                  isNew={draftRulesIds.includes(rule.id)}
+                  isNew={newRuleIds.includes(rule.id)}
                   modified={editedRuleIds.includes(rule.id)}
                 />
               );

@@ -41,9 +41,9 @@ type Props = {
     action: string;
   };
   updateFilter: (filterName: string, value: string) => void;
-  draftRulesIds: string[];
-  addDraftRuleId: (ruleId: string) => void;
-  removeDraftRuleId: (ruleId: string) => void;
+  newRuleIds: string[];
+  addNewRule: (ruleId: string) => void;
+  removeNewRule: (ruleId: string) => void;
   editedRuleIds: string[];
   addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
 };
@@ -73,9 +73,9 @@ const RoleEditorEntities: React.FC<Props> = ({
   updateRoleFromTextInput,
   resetPolicies,
   hasClpFeature,
-  draftRulesIds,
-  addDraftRuleId,
-  removeDraftRuleId,
+  newRuleIds,
+  addNewRule,
+  removeNewRule,
   editedRuleIds,
   addEditedRule,
 }) => {
@@ -105,9 +105,9 @@ const RoleEditorEntities: React.FC<Props> = ({
           searchEntities={searchEntities}
           getEntityTitle={getEntityTitle}
           hasClpFeature={hasClpFeature}
-          draftRulesIds={draftRulesIds}
-          addDraftRuleId={addDraftRuleId}
-          removeDraftRuleId={removeDraftRuleId}
+          newRuleIds={newRuleIds}
+          addNewRule={addNewRule}
+          removeNewRule={removeNewRule}
           editedRuleIds={editedRuleIds}
           addEditedRule={addEditedRule}
         />

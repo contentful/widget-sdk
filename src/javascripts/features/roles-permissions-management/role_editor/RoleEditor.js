@@ -170,7 +170,7 @@ export class RoleEditor extends React.Component {
       },
       saving: false,
       dirty: isDuplicate,
-      draftRuleIds: {
+      newRules: {
         entries: [],
         assets: [],
       },
@@ -399,32 +399,22 @@ export class RoleEditor extends React.Component {
     );
   };
 
-  // TODO: Should we have 4 different functions or can the functionality somehow be reused?
-  updateDraftRuleIds = {
-    addEntryDraftRuleId: (draftRuleId) => {
-      this.setState(({ draftRuleIds }) => {
-        draftRuleIds.entries = [...draftRuleIds.entries, draftRuleId];
-        return draftRuleIds;
+  addNewRule = (entity) => {
+    return (ruleId) => {
+      this.setState(({ newRules }) => {
+        newRules[entity] = [...newRules[entity], ruleId];
+        return newRules;
       });
-    },
-    removeEntryDraftRuleId: (draftRuleId) => {
-      this.setState(({ draftRuleIds }) => {
-        draftRuleIds.entries = draftRuleIds.entries.filter((id) => id !== draftRuleId);
-        return draftRuleIds;
+    };
+  };
+
+  removeNewRule = (entity) => {
+    return (ruleId) => {
+      this.setState(({ newRules }) => {
+        newRules[entity] = newRules[entity].filter((id) => id !== ruleId);
+        return newRules;
       });
-    },
-    addAssetDraftRuleId: (draftRuleId) => {
-      this.setState(({ draftRuleIds }) => {
-        draftRuleIds.assets = [...draftRuleIds.assets, draftRuleId];
-        return draftRuleIds;
-      });
-    },
-    removeAssetDraftRuleId: (draftRuleId) => {
-      this.setState(({ draftRuleIds }) => {
-        draftRuleIds.assets = draftRuleIds.assets.filter((id) => id !== draftRuleId);
-        return draftRuleIds;
-      });
-    },
+    };
   };
 
   addEditedRule = (entity) => {
@@ -576,9 +566,9 @@ export class RoleEditor extends React.Component {
                   getEntityTitle={this.getEntityTitle}
                   resetPolicies={this.resetPolicies}
                   hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
-                  draftRulesIds={this.state.draftRuleIds.entries}
-                  addDraftRuleId={this.updateDraftRuleIds.addEntryDraftRuleId}
-                  removeDraftRuleId={this.updateDraftRuleIds.removeEntryDraftRuleId}
+                  newRuleIds={this.state.newRules.entries}
+                  addNewRule={this.addNewRule('entries')}
+                  removeNewRule={this.removeNewRule('entries')}
                   editedRuleIds={Object.keys(this.state.editedRules.entries)}
                   addEditedRule={this.addEditedRule('entries')}
                 />
@@ -601,9 +591,9 @@ export class RoleEditor extends React.Component {
                   getEntityTitle={this.getEntityTitle}
                   resetPolicies={this.resetPolicies}
                   hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
-                  draftRulesIds={this.state.draftRuleIds.assets}
-                  addDraftRuleId={this.updateDraftRuleIds.addAssetDraftRuleId}
-                  removeDraftRuleId={this.updateDraftRuleIds.removeAssetDraftRuleId}
+                  newRuleIds={this.state.newRules.assets}
+                  addNewRule={this.addNewRule('assets')}
+                  removeNewRule={this.removeNewRule('assets')}
                   editedRuleIds={Object.keys(this.state.editedRules.assets)}
                   addEditedRule={this.addEditedRule('assets')}
                 />
