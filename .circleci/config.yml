@@ -121,7 +121,7 @@ orbs:
             type: string
             default: ''
         docker:
-          - image: 806120774687.dkr.ecr.us-east-1.amazonaws.com/contentful/e2e-tests:master
+          - image: 806120774687.dkr.ecr.us-east-1.amazonaws.com/contentful/e2e-tests:facb043b5605c148be1985e567f8678aeda606f9
             aws_auth:
               aws_access_key_id: $AWS_ACCESS_KEY_ID
               aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
@@ -433,19 +433,19 @@ workflows:
           samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
           requires:
             - copy-assets-to-s3
-      - saucelabs/run:
-          name: run-win10-edge-tests
-          browser: 'MicrosoftEdge'
-          selenium: '3.14.0'
-          requires:
-            - copy-assets-to-s3
-          <<: *run_only_on_master_branch
-      - saucelabs/run:
-          name: run-win10-firefox-tests
-          browser: 'firefox'
-          requires:
-            - copy-assets-to-s3
-          <<: *run_only_on_master_branch
+      # - saucelabs/run:
+      #     name: run-win10-edge-tests
+      #     browser: 'MicrosoftEdge'
+      #     selenium: '3.14.0'
+      #     requires:
+      #       - copy-assets-to-s3
+      #     <<: *run_only_on_master_branch
+      # - saucelabs/run:
+      #     name: run-win10-firefox-tests
+      #     browser: 'firefox'
+      #     requires:
+      #       - copy-assets-to-s3
+      #     <<: *run_only_on_master_branch
 verify-contract:
   when: << pipeline.parameters.contract_url >>
   jobs:
