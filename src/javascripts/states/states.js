@@ -6,7 +6,7 @@ import userInvitationState from 'states/UserInvitationState';
 import { getQueryString, getLocationHref } from 'utils/location';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import ErrorPage from './ErrorPage';
-import HomePage from 'app/home/EmptySpaceHome';
+import { homeState } from 'features/home';
 
 import { getModule } from 'core/NgRegistry';
 
@@ -44,16 +44,6 @@ const deeplinkState = {
   ],
 };
 
-const homePageState = {
-  name: 'home',
-  url: '/',
-  params: {
-    orgId: null,
-  },
-  navComponent: EmptyNavigationBar,
-  component: HomePage,
-};
-
 /**
  * Imports all the root states and and adds them to the router.
  * Needs to be called in a 'run' hook to make the application work
@@ -62,7 +52,7 @@ export function loadAll() {
   load([
     accountState,
     spacesState,
-    homePageState,
+    homeState,
     deeplinkState,
     userInvitationState,
     {

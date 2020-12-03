@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ModifyContentDrawer from 'components/shared/stack-onboarding/next_steps/ModifyContentDrawer';
 import SetupWebhooksDrawer from 'components/shared/stack-onboarding/next_steps/SetupWebhooksDrawer';
-import AccordionComponent from 'app/home/components/AccordionComponent';
+import { AccordionComponent } from 'features/space-home';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
