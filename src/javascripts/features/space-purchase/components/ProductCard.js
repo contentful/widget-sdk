@@ -33,6 +33,8 @@ const styles = {
     justifyItems: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    opacity: 1,
+    transition: 'opacity 0.2s ease-in-out',
   }),
   platform: css({
     gridTemplateRows: '70px auto 1fr auto',
@@ -84,11 +86,17 @@ const styles = {
     marginTop: '2px', // necessary to center the check with the line height of the text
     marginRight: tokens.spacingXs,
   }),
+
+  disabled: css({
+    opacity: 0.3,
+    pointerEvents: 'none',
+  }),
 };
 
 export const ProductCard = ({
   onClick,
   selected = false,
+  disabled = false,
   content,
   isNew = false,
   cardType = 'space',
@@ -100,6 +108,7 @@ export const ProductCard = ({
         [styles.spacePlan]: cardType === 'space',
         [styles.platform]: cardType === 'platform',
         [styles.newTag]: isNew,
+        [styles.disabled]: disabled,
       })}
       padding="large"
       selected={selected}
@@ -159,6 +168,7 @@ ProductCard.propTypes = {
   cardType: PropTypes.oneOf(['platform', 'space']),
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool,
+  disabled: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,

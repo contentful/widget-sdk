@@ -20,6 +20,8 @@ import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 const styles = {
   headingContainer: css({
     marginBottom: tokens.spacingL,
+    opacity: 1,
+    transition: 'opacity 0.2s ease-in-out',
   }),
   heading: css({
     marginBottom: tokens.spacingXs,
@@ -29,6 +31,9 @@ const styles = {
   }),
   bigMarginTop: css({
     marginTop: tokens.spacing4Xl,
+  }),
+  disabled: css({
+    opacity: 0.3,
   }),
 };
 
@@ -98,7 +103,9 @@ export const PlatformSelectionStep = ({ track }) => {
         <GridItem
           columnStart={1}
           columnEnd={4}
-          className={cx(styles.headingContainer, styles.bigMarginTop)}>
+          className={cx(styles.headingContainer, styles.bigMarginTop, {
+            [styles.disabled]: !selectedPlatform,
+          })}>
           <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
             Choose the space size that right for your project
           </Heading>
@@ -122,6 +129,7 @@ export const PlatformSelectionStep = ({ track }) => {
             <ProductCard
               key={idx}
               cardType="space"
+              disabled={!selectedPlatform}
               selected={selectedSpacePlan === plan.name}
               onClick={() => setSelectedSpacePlan(plan.name)}
               content={content}
