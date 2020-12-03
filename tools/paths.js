@@ -16,4 +16,5 @@ module.exports = {
   appSrcJavascripts: resolveApp('src/javascripts'),
   appNodeModules: resolveApp('node_modules'),
   appCoverage: resolveApp('.coverage'),
+  appContractTests: resolveApp('test/contract'),
 };

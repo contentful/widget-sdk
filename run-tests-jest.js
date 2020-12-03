@@ -36,8 +36,8 @@ argv.push(
     createJestConfig(
       (relativePath) => path.resolve(__dirname, relativePath),
       paths.appPath,
-      [paths.appSrcJavascripts, paths.appTools],
-      paths.appCoverage
+      [paths.appSrcJavascripts, paths.appTools, paths.appContractTests],
+      paths.appCoverage,
     )
   )
 );

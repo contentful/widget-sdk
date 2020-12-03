@@ -5,6 +5,7 @@ import { SpaceUsageTableCell } from './SpaceUsageTableCell';
 const defaultProps = {
   limit: 10,
   usage: 1,
+  utilization: 1 / 10,
 };
 
 const build = (props = defaultProps) => {
@@ -26,6 +27,7 @@ describe('SpacePlanTabelCell', () => {
     const props = {
       limit: 10,
       usage: 8,
+      utilization: 8 / 10,
     };
     build(props);
 
@@ -33,13 +35,13 @@ describe('SpacePlanTabelCell', () => {
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
       'Approaching limit (80%)'
     );
-    expect(screen.getByTestId('cf-contact-us-button')).toBeDefined();
   });
 
   it('warns the usage is exceeding the limit', () => {
     const props = {
       limit: 10,
       usage: 11,
+      utilization: 11 / 10,
     };
     build(props);
 
@@ -47,12 +49,12 @@ describe('SpacePlanTabelCell', () => {
     expect(screen.getByTestId('subscription-page.spaces-list.usage-tooltip')).toHaveTextContent(
       'Exceeding limit (110%)'
     );
-    expect(screen.getByTestId('cf-contact-us-button')).toBeDefined();
   });
   it('warns the usage has reached the limit', () => {
     const props = {
       limit: 10,
       usage: 10,
+      utilization: 10 / 10,
     };
     build(props);
 

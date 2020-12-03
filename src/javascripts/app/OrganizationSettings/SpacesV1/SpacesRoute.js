@@ -20,7 +20,7 @@ import { css } from 'emotion';
 import { keyBy } from 'lodash';
 import { go } from 'states/Navigator';
 import { beginSpaceCreation } from 'services/CreateSpace';
-import EmptySpaceState from 'app/home/EmptySpaceHome';
+import { EmptyHome } from 'features/home';
 import LoadingState from 'app/common/LoadingState';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ErrorState from 'app/common/ErrorState';
@@ -130,7 +130,7 @@ const SpacesRoute = ({ orgId }) => {
           {isLoading && <LoadingState />}
           {!isLoading && error && <ErrorState />}
           {!isLoading && !error && !spaces.length && (
-            <EmptySpaceState orgId={orgId} data-test-id="v1-spaces-list-empty-state" />
+            <EmptyHome orgId={orgId} data-test-id="v1-spaces-list-empty-state" />
           )}
           {!isLoading && !error && spaces.length > 0 && (
             <Table>

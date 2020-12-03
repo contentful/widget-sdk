@@ -52,7 +52,7 @@ describe('SpaceTrialWidget', () => {
 
     await waitFor(() => fireEvent.click(screen.queryByTestId('cf-contact-us-button')));
 
-    expect(track).toHaveBeenCalledWith('trial:get_in_touch_clicked');
+    expect(track).toHaveBeenCalledWith('trial:get_in_touch_clicked', {});
   });
 
   it('tracks the fair_use_policy link click event', async () => {
@@ -60,6 +60,6 @@ describe('SpaceTrialWidget', () => {
 
     await waitFor(() => fireEvent.click(screen.queryByTestId('fair_use_policy_link')));
 
-    expect(track).toHaveBeenCalledWith('trial:fair_use_policy_clicked');
+    expect(track).toHaveBeenCalledWith('trial:fair_use_policy_clicked', {});
   });
 });

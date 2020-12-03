@@ -11,7 +11,6 @@ import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
-import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as Loader from 'ui/Loader';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { BulkEditor } from 'app/entity_editor/bulk_editor/BulkEditor';
@@ -221,7 +220,6 @@ function getModule(name) {
   const allowedModules = {
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'app/entity_editor/bulk_editor/BulkEditor': { default: BulkEditor },
     'app/entry_editor/EntryEditor': { default: EntryEditor },
     'app/asset_editor/AssetEditor': { default: AssetEditor },

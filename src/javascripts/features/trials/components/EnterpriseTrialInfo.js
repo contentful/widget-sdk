@@ -12,7 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { isOrganizationOnTrial } from '../services/TrialService';
 import { developerDocsUrl, helpCenterUrl, websiteUrl } from 'Config';
-import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { EVENTS, trackEvent, withInAppHelpUtmParamsSubscription } from '../utils/analyticsTracking';
 
 const styles = {
   list: css({
@@ -25,16 +25,19 @@ const styles = {
   }),
 };
 
-const withInAppHelpUtmParams = buildUrlWithUtmParams({
-  source: 'webapp',
-  medium: 'subscription-enterprise-trial',
-  campaign: 'in-app-help',
-});
-
 export const EnterpriseTrialInfo = ({ organization }) => {
   if (!isOrganizationOnTrial(organization)) {
     return null;
   }
+
+  const learningCenterLink = withInAppHelpUtmParamsSubscription(
+    'https://public.learningcenter.contentful.com/index/'
+  );
+  const helpCenterLink = withInAppHelpUtmParamsSubscription(helpCenterUrl);
+  const developerDocsLink = withInAppHelpUtmParamsSubscription(`${developerDocsUrl}/`);
+  const contentful123Link = withInAppHelpUtmParamsSubscription(
+    websiteUrl('/resources/contentful-1-2-3-program-sign-up/')
+  );
 
   return (
     <Typography testId="platform-trial-info">
@@ -43,9 +46,8 @@ export const EnterpriseTrialInfo = ({ organization }) => {
         <ListItem className={styles.listItem}>
           First steps{' '}
           <TextLink
-            href={withInAppHelpUtmParams(
-              websiteUrl('/resources/contentful-1-2-3-program-sign-up/')
-            )}
+            href={contentful123Link}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: contentful123Link })}
             rel="noopener noreferrer"
             target="_blank">
             Contentful 1-2-3
@@ -54,7 +56,8 @@ export const EnterpriseTrialInfo = ({ organization }) => {
         <ListItem className={styles.listItem}>
           Contentful{' '}
           <TextLink
-            href={withInAppHelpUtmParams('https://public.learningcenter.contentful.com/index/')}
+            href={learningCenterLink}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: learningCenterLink })}
             rel="noopener noreferrer"
             target="_blank">
             Learning Center
@@ -62,7 +65,8 @@ export const EnterpriseTrialInfo = ({ organization }) => {
         </ListItem>
         <ListItem className={styles.listItem}>
           <TextLink
-            href={withInAppHelpUtmParams(helpCenterUrl)}
+            href={helpCenterLink}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: helpCenterLink })}
             rel="noopener noreferrer"
             target="_blank">
             Help center
@@ -70,7 +74,8 @@ export const EnterpriseTrialInfo = ({ organization }) => {
         </ListItem>
         <ListItem className={styles.listItem}>
           <TextLink
-            href={withInAppHelpUtmParams(`${developerDocsUrl}/`)}
+            href={developerDocsLink}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: developerDocsLink })}
             rel="noopener noreferrer"
             target="_blank">
             Developer portal

@@ -15,7 +15,7 @@ const StateLink = ({
   ...rest
 }) => {
   const trackClick = () => {
-    if (trackingEvent && trackParams) {
+    if (trackingEvent) {
       track(trackingEvent, trackParams);
     }
   };

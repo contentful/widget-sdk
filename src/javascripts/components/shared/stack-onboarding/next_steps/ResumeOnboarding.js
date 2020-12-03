@@ -12,7 +12,7 @@ import {
   Card,
   Typography,
 } from '@contentful/forma-36-react-components';
-import { trackClickCTA } from 'app/home/tracking';
+import { trackClickCTA } from 'features/space-home';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { go } from 'states/Navigator';
