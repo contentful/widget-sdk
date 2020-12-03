@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Icon, TableCell, Tooltip } from '@contentful/forma-36-react-components';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ContactUsButton from 'ui/Components/ContactUsButton';
 import { track } from 'analytics/Analytics';
 
 const styles = {
@@ -26,10 +25,12 @@ const trackClickEvent = (eventName) => () => {
   track(`space_usage_summary:${eventName}`);
 };
 
-export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
-  const percentage = Math.round((usage / limit) * 100);
+const UTILIZATION_THRESHOLD = 80;
+
+export const SpaceUsageTableCell = ({ usage, utilization, limit, testId }) => {
+  const percentage = Math.round(utilization * 100);
   const lowLimitResource = limit < 5 && limit - usage === 1;
-  const approachingLimit = percentage >= 80 || lowLimitResource;
+  const approachingLimit = percentage >= UTILIZATION_THRESHOLD || lowLimitResource;
   let label;
   let icon;
 
@@ -56,23 +57,13 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
       })}>
       {approachingLimit && (
         <Tooltip
-          content={
-            <div>
-              {label}
-              <br />
-              <ContactUsButton noIcon isLink onClick={trackClickEvent('get_in_touch_clicked')}>
-                Get in touch
-              </ContactUsButton>{' '}
-              to upgrade
-            </div>
-          }
-          closeOnMouseLeave={false}
+          content={<div>{label}</div>}
           onMouseOver={trackClickEvent('usage_tooltip_hovered')}
           testId="subscription-page.spaces-list.usage-tooltip">
           <Icon
             className={styles.icon}
-            {...icon}
             testId="subscription-page.spaces-list.usage-tooltip-trigger"
+            {...icon}
           />
         </Tooltip>
       )}{' '}
@@ -83,6 +74,7 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
 
 SpaceUsageTableCell.propTypes = {
   limit: PropTypes.number.isRequired,
+  utilization: PropTypes.number.isRequired,
   usage: PropTypes.number.isRequired,
   testId: PropTypes.string,
 };
