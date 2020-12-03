@@ -7,7 +7,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { initTrialProductTour } from '../services/intercomProductTour';
-import { calcTrialDaysLeft } from '../utils';
+import { calcTrialDaysLeft } from '../utils/utils';
 import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService';
@@ -15,6 +15,7 @@ import { logError } from 'services/logger';
 import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
+import { EVENTS } from '../utils/analyticsTracking';
 
 const styles = {
   tag: css({
@@ -84,7 +85,7 @@ export const TrialTag = () => {
   const trialType = isEnterpriseTrial ? 'platform' : 'space';
 
   const tracking = {
-    trackingEvent: 'trial:trial_tag_clicked',
+    trackingEvent: `trial:${EVENTS.TRIAL_TAG}`,
     trackParams: {
       type: trialType,
       numTrialDaysLeft: daysLeft,

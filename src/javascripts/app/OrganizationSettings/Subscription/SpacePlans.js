@@ -32,6 +32,8 @@ import { UnassignedPlansTable } from './components/UnassignedPlansTable';
 import { SpacePlansTable } from './components/SpacePlansTable';
 import { SpacePlansTableNew } from './components/SpacePlansTableNew';
 
+import { track } from 'analytics/Analytics';
+
 const styles = {
   total: css({
     marginBottom: '1.5em',
@@ -70,6 +72,8 @@ const withUtmParams = buildUrlWithUtmParams({
   medium: 'subscription-space-table',
   campaign: 'in-app-help',
 });
+
+const trackHelpLink = () => track('space_usage_summary:help_link_clicked');
 
 function SpacePlans({
   initialLoad,
@@ -213,6 +217,7 @@ function SpacePlans({
           {'Check out your space usage in our new overview below! Got Questions? See '}
           <TextLink
             href={withUtmParams(`${helpCenterUrl}/subscription-plan/`)}
+            onClick={trackHelpLink}
             target="_blank"
             rel="noopener noreferrer">
             this article

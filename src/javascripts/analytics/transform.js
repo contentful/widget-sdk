@@ -123,6 +123,7 @@ registerGenericEvent('quick_navigation:opened_by_shortcut');
 registerGenericEvent('trial:trial_tag_clicked');
 registerGenericEvent('trial:fair_use_policy_clicked');
 registerGenericEvent('trial:get_in_touch_clicked');
+registerGenericEvent('trial:help_link_clicked');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');
@@ -376,6 +377,14 @@ registerSpacePurchaseEvent('space_purchase:space_created');
 registerSpacePurchaseEvent('space_purchase:space_type_change');
 registerSpacePurchaseEvent('space_purchase:space_template_created');
 registerSpacePurchaseEvent('space_purchase:error');
+
+registerGenericEvent('space_usage_summary:get_in_touch_clicked');
+registerGenericEvent('space_usage_summary:usage_tooltip_hovered');
+registerGenericEvent('space_usage_summary:go_to_space_home');
+registerGenericEvent('space_usage_summary:go_to_detailed_usage');
+registerGenericEvent('space_usage_summary:column_sorted');
+registerGenericEvent('space_usage_summary:pagination_changed');
+registerGenericEvent('space_usage_summary:help_link_clicked');
 
 /**
  * Registers an event to be tracked by snowplow.

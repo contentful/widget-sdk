@@ -16,6 +16,7 @@ import Pagination from 'app/common/Pagination';
 import { getSpacesUsage } from '../SpacesUsageService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { SortableHeaderCell } from './SortableHeaderCell';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   usageTable: css({
@@ -75,6 +76,12 @@ export const SpacePlansTableNew = ({
     setSortState({ [columnName]: sortState[columnName] === 'DESC' ? 'ASC' : 'DESC' });
     // Goto page zero on User sort
     setPagination({ ...pagination, skip: 0 });
+    track('space_usage_summary:column_sorted', { sortBy: columnName });
+  };
+
+  const handlePaginationChange = (pagination) => {
+    setPagination(pagination);
+    track('space_usage_summary:pagination_changed');
   };
 
   const fetchSpacesUsage = useCallback(() => {
@@ -168,7 +175,12 @@ export const SpacePlansTableNew = ({
           )}
         </TableBody>
       </Table>
-      <Pagination {...pagination} total={data.total} loading={isLoading} onChange={setPagination} />
+      <Pagination
+        {...pagination}
+        total={data.total}
+        loading={isLoading}
+        onChange={handlePaginationChange}
+      />
     </>
   );
 };

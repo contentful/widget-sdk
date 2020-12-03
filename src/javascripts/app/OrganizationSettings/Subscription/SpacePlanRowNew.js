@@ -18,6 +18,7 @@ import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
 import { SpaceUsageTableCell } from './components/SpaceUsageTableCell';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   star: css({ color: tokens.colorOrangeMid, fontSize: tokens.fontSizeS, cursor: 'default' }),
@@ -49,13 +50,15 @@ export const SpacePlanRowNew = ({
         ).format('DD/MM/YYYY')}`
       : 'Become a space member to view expiration date';
 
-  const onViewUsage = () =>
+  const onViewUsage = () => {
+    track('space_usage_summary:go_to_detailed_usage');
     go({
       path: ['spaces', 'detail', 'settings', 'usage'],
       params: {
         spaceId: space.sys.id,
       },
     });
+  };
 
   return (
     <TableRow
@@ -69,7 +72,8 @@ export const SpacePlanRowNew = ({
             path="spaces.detail"
             params={{
               spaceId: space.sys.id,
-            }}>
+            }}
+            trackingEvent={'space_usage_summary:go_to_space_home'}>
             {space.name || '-'}
           </StateLink>
         ) : (

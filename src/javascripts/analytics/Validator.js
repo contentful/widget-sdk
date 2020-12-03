@@ -188,7 +188,12 @@ export const validEvents = {
   pricing_update: ['communication_seen'],
   space_assignment: ['change', 'continue', 'confirm', 'back'],
   degraded_app_performance: ['modal_shown'],
-  trial: ['trial_tag_clicked', 'fair_use_policy_clicked', 'get_in_touch_clicked'],
+  trial: [
+    'trial_tag_clicked',
+    'fair_use_policy_clicked',
+    'get_in_touch_clicked',
+    'help_link_clicked',
+  ],
   space_purchase: [
     'begin',
     'cancel',
@@ -209,6 +214,15 @@ export const validEvents = {
     'error',
   ],
   launch_app: ['link_clicked'],
+  space_usage_summary: [
+    'get_in_touch_clicked',
+    'usage_tooltip_hovered',
+    'go_to_space_home',
+    'go_to_detailed_usage',
+    'column_sorted',
+    'pagination_changed',
+    'help_link_clicked',
+  ],
 };
 
 export const validateEvent = (eventName) => {

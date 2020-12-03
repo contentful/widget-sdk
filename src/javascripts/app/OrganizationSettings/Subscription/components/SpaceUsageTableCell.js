@@ -4,6 +4,7 @@ import { Icon, TableCell, Tooltip } from '@contentful/forma-36-react-components'
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ContactUsButton from 'ui/Components/ContactUsButton';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   icon: css({
@@ -19,6 +20,10 @@ const styles = {
   usageEmphasized: css({
     fontWeight: tokens.fontWeightDemiBold,
   }),
+};
+
+const trackClickEvent = (eventName) => () => {
+  track(`space_usage_summary:${eventName}`);
 };
 
 export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
@@ -55,13 +60,14 @@ export const SpaceUsageTableCell = ({ usage, limit, testId }) => {
             <div>
               {label}
               <br />
-              <ContactUsButton noIcon isLink>
+              <ContactUsButton noIcon isLink onClick={trackClickEvent('get_in_touch_clicked')}>
                 Get in touch
               </ContactUsButton>{' '}
               to upgrade
             </div>
           }
           closeOnMouseLeave={false}
+          onMouseOver={trackClickEvent('usage_tooltip_hovered')}
           testId="subscription-page.spaces-list.usage-tooltip">
           <Icon
             className={styles.icon}

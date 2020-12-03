@@ -17,15 +17,8 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 import { useAsync } from 'core/hooks';
 import { isSpaceOnTrial } from '../services/TrialService';
 import { getSpace } from 'services/TokenStore';
-import { track } from 'analytics/Analytics';
-import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { websiteUrl, helpCenterUrl, developerDocsUrl } from 'Config';
-
-const withInAppHelpUtmParams = buildUrlWithUtmParams({
-  source: 'webapp',
-  medium: 'trial-space-home',
-  campaign: 'in-app-help',
-});
+import { trackEvent, EVENTS, withInAppHelpUtmParamsSpaceHome } from '../utils/analyticsTracking';
 
 const styles = {
   flexContainer: css({
@@ -44,15 +37,11 @@ const styles = {
   }),
 };
 
-const trackClickEvent = (eventName) => {
-  track(`trial:${eventName}`);
-};
-
 const FairUsePolicyLink = () => (
   <TextLink
     href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
     target="_blank"
-    onClick={() => trackClickEvent('fair_use_policy_clicked')}
+    onClick={trackEvent(EVENTS.FAIR_USAGE_POLICY)}
     data-test-id="fair_use_policy_link"
     rel="noopener noreferrer"
     className={styles.learnMoreLink}>
@@ -73,6 +62,15 @@ export const SpaceTrialWidget = ({ spaceId }) => {
     return null;
   }
 
+  const learningCenterLink = withInAppHelpUtmParamsSpaceHome(
+    'https://public.learningcenter.contentful.com/index/'
+  );
+  const helpCenterLink = withInAppHelpUtmParamsSpaceHome(helpCenterUrl);
+  const developerDocsLink = withInAppHelpUtmParamsSpaceHome(`${developerDocsUrl}/`);
+  const contentful123Link = withInAppHelpUtmParamsSpaceHome(
+    websiteUrl('/resources/contentful-1-2-3-program-sign-up/')
+  );
+
   return (
     <Card padding="large" className={styles.flexContainer} testId="space-trial-widget">
       <Typography>
@@ -90,30 +88,32 @@ export const SpaceTrialWidget = ({ spaceId }) => {
         <Paragraph>
           Check out{' '}
           <TextLink
-            href={withInAppHelpUtmParams(
-              websiteUrl('/resources/contentful-1-2-3-program-sign-up/')
-            )}
+            href={contentful123Link}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: contentful123Link })}
             rel="noopener noreferrer"
             target="_blank">
             Contentful 1-2-3
           </TextLink>
           , the Contentful{' '}
           <TextLink
-            href={withInAppHelpUtmParams('https://public.learningcenter.contentful.com/index/')}
+            href={learningCenterLink}
             rel="noopener noreferrer"
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: learningCenterLink })}
             target="_blank">
             Learning Center
           </TextLink>
           , our{' '}
           <TextLink
-            href={withInAppHelpUtmParams(helpCenterUrl)}
+            href={helpCenterLink}
             rel="noopener noreferrer"
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: helpCenterLink })}
             target="_blank">
             help center
           </TextLink>{' '}
           or our{' '}
           <TextLink
-            href={withInAppHelpUtmParams(`${developerDocsUrl}/`)}
+            href={developerDocsLink}
+            onClick={trackEvent(EVENTS.HELP_LINK, { href: developerDocsLink })}
             rel="noopener noreferrer"
             target="_blank">
             developer portal
@@ -122,7 +122,7 @@ export const SpaceTrialWidget = ({ spaceId }) => {
         </Paragraph>
         <Paragraph>
           Got questions?{' '}
-          <ContactUsButton noIcon isLink onClick={() => trackClickEvent('get_in_touch_clicked')}>
+          <ContactUsButton noIcon isLink onClick={trackEvent(EVENTS.GET_IN_TOUCH)}>
             Get in touch
           </ContactUsButton>{' '}
           or check our <FairUsePolicyLink />
