@@ -13,8 +13,7 @@ import { SpacePurchaseState } from '../../context';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
 import { SPACE_PLANS_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
-import { PlatformCard } from '../../components/PlatformCard';
-import { SpacePlanCard } from '../../components/SpacePlanCard';
+import { ProductCard } from '../../components/ProductCard';
 import { EnterpriseCard } from '../../components/EnterpriseCard';
 import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 
@@ -76,12 +75,14 @@ export const PlatformSelectionStep = ({ track }) => {
           };
 
           return (
-            <PlatformCard
+            <ProductCard
               key={idx}
+              cardType="platform"
               selected={selectedPlatform === platform.type}
               onClick={() => setSelectedPlatform(platform.type)}
               content={content}
               isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
+              testId="platform-card"
             />
           );
         })}
@@ -118,11 +119,13 @@ export const PlatformSelectionStep = ({ track }) => {
           };
 
           return (
-            <SpacePlanCard
+            <ProductCard
               key={idx}
+              cardType="space"
               selected={selectedSpacePlan === plan.name}
               onClick={() => setSelectedSpacePlan(plan.name)}
               content={content}
+              testId="space-plan-card"
             />
           );
         })}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { cx, css } from 'emotion';
+import { cx, css, keyframes } from 'emotion';
 import PropTypes from 'prop-types';
 
 import {
@@ -9,24 +9,57 @@ import {
   Icon,
   List,
   ListItem,
+  SkeletonContainer,
+  SkeletonImage,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+
+import { PinLabel } from './PinLabel';
+
+const pulse = keyframes({
+  from: {
+    boxShadow: '0px 0px 10px 0px rgb(46, 117, 212, 0)',
+  },
+  to: {
+    boxShadow: '0px 0px 10px 5px rgb(46, 117, 212, 0.65)',
+  },
+});
 
 const styles = {
   card: css({
     position: 'relative',
     display: 'grid',
-    gridTemplateRows: 'auto 1fr auto 2fr', // TODO: this is the only different style compared to PlatformCard
     rowGap: tokens.spacingXs,
     justifyItems: 'center',
     alignItems: 'center',
     textAlign: 'center',
   }),
-  // TODO: same as in PlatformCard, consider refactoring
+  platform: css({
+    gridTemplateRows: '70px auto 1fr auto',
+  }),
+  spacePlan: css({
+    gridTemplateRows: 'auto 1fr auto 2fr',
+  }),
+
+  newTag: css({
+    '&:before': {
+      content: '"New!"',
+      backgroundColor: tokens.colorBlueMid,
+      position: 'absolute',
+      top: '-13px',
+      color: tokens.colorWhite,
+      fontWeight: tokens.fontWeightNormal,
+      padding: `${tokens.spacing2Xs} ${tokens.spacingL}`,
+      borderRadius: tokens.spacingL,
+      textTransform: 'uppercase',
+      fontSize: tokens.fontSizeS,
+      animation: `${pulse} 700ms ease alternate infinite`,
+    },
+  }),
+
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
   }),
-  // TODO: same as in PlatformCard, consider refactoring
   price: css({
     lineHeight: tokens.lineHeightCondensed,
     '& b': {
@@ -53,26 +86,39 @@ const styles = {
   }),
 };
 
-/**
- * TODO: to make it generic for platform and space plan we need:
- * - New! tag
- * - handle illustration
- * - to deal with <PinLabel />
- */
-
-export const SpacePlanCard = ({ onClick, selected = false, content }) => {
+export const ProductCard = ({
+  onClick,
+  selected = false,
+  content,
+  isNew = false,
+  cardType = 'space',
+  testId = 'card',
+}) => {
   return (
     <Card
-      className={styles.card}
+      className={cx(styles.card, {
+        [styles.spacePlan]: cardType === 'space',
+        [styles.platform]: cardType === 'platform',
+        [styles.newTag]: isNew,
+      })}
       padding="large"
       selected={selected}
       onClick={onClick}
-      testId="space-plan-card">
+      testId={testId}>
+      {/** TODO: replace skeletons with final illustration */}
+      {cardType === 'platform' && (
+        <SkeletonContainer svgWidth={70} svgHeight={70}>
+          <SkeletonImage />
+        </SkeletonContainer>
+      )}
+
       <Heading element="h3" className={styles.mediumWeight}>
         {content.title}
       </Heading>
 
       <Paragraph>{content.description}</Paragraph>
+
+      {cardType === 'platform' && !content.price && <PinLabel labelText="Your current package" />}
 
       {content.price !== undefined && (
         <Paragraph className={styles.price} testId="space-plan-price">
@@ -109,13 +155,16 @@ export const SpacePlanCard = ({ onClick, selected = false, content }) => {
   );
 };
 
-SpacePlanCard.propTypes = {
+ProductCard.propTypes = {
+  cardType: PropTypes.oneOf(['platform', 'space']),
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool,
+  isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     price: PropTypes.number,
     limits: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
+  testId: PropTypes.string,
 };
