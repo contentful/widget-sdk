@@ -42,6 +42,7 @@ export const PlatformSelectionStep = ({ track }) => {
   } = useContext(SpacePurchaseState);
 
   const [selectedPlatform, setSelectedPlatform] = useState('');
+  const [selectedSpacePlan, setSelectedSpacePlan] = useState('');
 
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
@@ -105,8 +106,9 @@ export const PlatformSelectionStep = ({ track }) => {
         {SPACE_PLANS_CONTENT.filter(
           (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
         ).map((spacePlanContent, idx) => {
-          const plan =
-            spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spacePlanContent.type);
+          const plan = spaceRatePlans
+            ? spaceRatePlans.find((plan) => plan.name === spacePlanContent.type)
+            : {};
 
           const content = {
             title: spacePlanContent.title,
@@ -115,7 +117,14 @@ export const PlatformSelectionStep = ({ track }) => {
             limits: spacePlanContent.limits, // TODO: we need to use plan.inlcudedResources somehow
           };
 
-          return <SpacePlanCard key={idx} onClick={() => console.log(plan)} content={content} />;
+          return (
+            <SpacePlanCard
+              key={idx}
+              selected={selectedSpacePlan === plan.name}
+              onClick={() => setSelectedSpacePlan(plan.name)}
+              content={content}
+            />
+          );
         })}
       </Grid>
     </section>
