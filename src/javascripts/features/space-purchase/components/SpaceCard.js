@@ -186,7 +186,7 @@ SpaceCard.propTypes = {
   plan: PropTypes.object,
   loading: PropTypes.bool,
   selected: PropTypes.bool,
-  organizationId: PropTypes.string.isRequired,
+  organizationId: PropTypes.string,
 };
 
 function getSpaceColorCSS(backgroundColor) {
