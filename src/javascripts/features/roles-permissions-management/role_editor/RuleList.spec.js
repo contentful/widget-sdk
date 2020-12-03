@@ -4,8 +4,8 @@ import { RuleList } from 'features/roles-permissions-management/role_editor/Rule
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 
 const addRule = jest.fn(() => () => 'sampleDraftId');
-const addDraftRuleId = jest.fn((x) => x);
-const removeDraftRuleId = jest.fn((x) => x);
+const addNewRule = jest.fn((x) => x);
+const removeNewRule = jest.fn((x) => x);
 
 describe('RuleList component', () => {
   it('does render the component', () => {
@@ -218,7 +218,7 @@ describe('RuleList component', () => {
 
     fireEvent.click(screen.getByTestId('add-allowed-rule'));
 
-    expect(addDraftRuleId).toHaveBeenCalledWith('sampleDraftId');
+    expect(addNewRule).toHaveBeenCalledWith('sampleDraftId');
   });
 
   it('updates draftId list when denied rule is removed', () => {
@@ -232,7 +232,7 @@ describe('RuleList component', () => {
 
     fireEvent.click(firstDeleteButton);
 
-    expect(removeDraftRuleId).toHaveBeenCalledWith('firstAllowedRuleId');
+    expect(removeNewRule).toHaveBeenCalledWith('firstAllowedRuleId');
   });
 });
 
@@ -281,9 +281,9 @@ function renderRuleList(props) {
     searchEntities: jest.fn(),
     getEntityTitle: jest.fn(),
     hasClpFeature: true,
-    draftRulesIds: [],
-    addDraftRuleId,
-    removeDraftRuleId,
+    newRuleIds: [],
+    addNewRule,
+    removeNewRule,
     editedRuleIds: [],
   };
 
