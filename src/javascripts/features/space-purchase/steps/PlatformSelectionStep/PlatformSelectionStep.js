@@ -143,6 +143,7 @@ export const PlatformSelectionStep = ({ track }) => {
             <ProductCard
               key={idx}
               cardType="space"
+              loading={!spaceRatePlans}
               disabled={!selectedPlatform}
               selected={selectedSpacePlan === plan.name}
               onClick={() => setSelectedSpacePlan(plan.name)}

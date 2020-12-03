@@ -11,6 +11,7 @@ import {
   ListItem,
   SkeletonContainer,
   SkeletonImage,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -95,8 +96,9 @@ const styles = {
 
 export const ProductCard = ({
   onClick,
-  selected = false,
+  loading = false,
   disabled = false,
+  selected = false,
   content,
   isNew = false,
   cardType = 'space',
@@ -127,9 +129,15 @@ export const ProductCard = ({
 
       <Paragraph>{content.description}</Paragraph>
 
-      {cardType === 'platform' && !content.price && <PinLabel labelText="Your current package" />}
-
-      {content.price !== undefined && (
+      {loading && (
+        <SkeletonContainer svgHeight={52}>
+          <SkeletonBodyText lineHeight={16} numberOfLines={2} />
+        </SkeletonContainer>
+      )}
+      {!loading && !content.price && cardType === 'platform' && (
+        <PinLabel labelText="Your current package" />
+      )}
+      {!loading && content.price != undefined && (
         <Paragraph className={styles.price} testId="space-plan-price">
           {content.price === 0 ? (
             <>
@@ -167,8 +175,9 @@ export const ProductCard = ({
 ProductCard.propTypes = {
   cardType: PropTypes.oneOf(['platform', 'space']),
   onClick: PropTypes.func.isRequired,
-  selected: PropTypes.bool,
+  loading: PropTypes.bool,
   disabled: PropTypes.bool,
+  selected: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
