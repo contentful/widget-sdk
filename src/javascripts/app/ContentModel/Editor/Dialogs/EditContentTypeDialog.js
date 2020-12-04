@@ -57,7 +57,7 @@ export function EditContentForm(props) {
             validationMessage={!name && 'Name is required'}
             countCharacters
             textInputProps={{
-              maxLength: 64,
+              maxLength: 50,
               placeholder: 'For example Product, Blog Post, Author',
             }}
           />
