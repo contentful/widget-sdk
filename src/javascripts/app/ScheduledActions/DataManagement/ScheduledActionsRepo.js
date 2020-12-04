@@ -19,6 +19,7 @@ const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
     order: 'scheduledFor.datetime',
     'sys.status': 'scheduled',
     'environment.sys.id': environmentId,
+    limit: 500,
   });
 });
 
