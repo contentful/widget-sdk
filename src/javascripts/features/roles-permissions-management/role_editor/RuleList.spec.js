@@ -7,6 +7,9 @@ const addRule = jest.fn(() => () => 'sampleDraftId');
 const addNewRule = jest.fn((x) => x);
 const removeNewRule = jest.fn((x) => x);
 
+const allRules = getRules();
+const allRulesCount = allRules.allowed.length + allRules.denied.length;
+
 describe('RuleList component', () => {
   it('does render the component', () => {
     const entity = 'entry';
@@ -24,7 +27,7 @@ describe('RuleList component', () => {
 
     expect(screen.getByTestId(`rule-list-${props.entity}`)).toBeInTheDocument();
     const rules = screen.getAllByTestId('rule-item');
-    expect(rules).toHaveLength(12);
+    expect(rules).toHaveLength(allRulesCount);
   });
 
   it('shows the ContentType filter when the entity is "entry"', async () => {
@@ -56,13 +59,16 @@ describe('RuleList component', () => {
 
     renderRuleList(props);
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(12);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
 
     fireEvent.change(screen.getByTestId('rules-filter-action-select'), {
       target: { value: 'read' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(5);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      allRules.allowed.filter(({ action }) => action === 'read').length +
+        allRules.denied.filter(({ action }) => action === 'read').length
+    );
   });
 
   it('can filter the rules by "scope"', () => {
@@ -72,13 +78,35 @@ describe('RuleList component', () => {
 
     renderRuleList(props);
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(12);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
 
     fireEvent.change(screen.getByTestId('rules-filter-scope-select'), {
       target: { value: 'user' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(4);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      allRules.allowed.filter(({ scope }) => scope === 'user').length +
+        allRules.denied.filter(({ scope }) => scope === 'user').length
+    );
+  });
+
+  it('treats "metadataTagIds" same as "scope === any" scope filter', () => {
+    const props = {
+      rules: getRules(),
+    };
+
+    renderRuleList(props);
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
+
+    fireEvent.change(screen.getByTestId('rules-filter-scope-select'), {
+      target: { value: 'any' },
+    });
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      allRules.allowed.filter(({ scope }) => scope === 'metadataTagIds' || scope === 'any').length +
+        allRules.denied.filter(({ scope }) => scope === 'metadataTagIds' || scope === 'any').length
+    );
   });
 
   it('can filter the rules by "contentType"', () => {
@@ -89,13 +117,16 @@ describe('RuleList component', () => {
 
     renderRuleList(props);
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(12);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
 
     fireEvent.change(screen.getByTestId('rules-filter-content-type-select'), {
       target: { value: 'author' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(3);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      allRules.allowed.filter(({ contentType }) => contentType === 'author').length +
+        allRules.denied.filter(({ contentType }) => contentType === 'author').length
+    );
   });
 
   it('can filter the rules by "action", "scope" and "contentType" at the same time', () => {
@@ -110,17 +141,36 @@ describe('RuleList component', () => {
       target: { value: 'read' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(5);
+    let filteredRules = {
+      allowed: allRules.allowed.filter(({ action }) => action === 'read'),
+      denied: allRules.denied.filter(({ action }) => action === 'read'),
+    };
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      filteredRules.allowed.length + filteredRules.denied.length
+    );
 
     fireEvent.change(screen.getByTestId('rules-filter-scope-select'), {
       target: { value: 'user' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(3);
+    filteredRules = {
+      allowed: filteredRules.allowed.filter(({ scope }) => scope === 'user'),
+      denied: filteredRules.denied.filter(({ scope }) => scope === 'user'),
+    };
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      filteredRules.allowed.length + filteredRules.denied.length
+    );
 
     fireEvent.change(screen.getByTestId('rules-filter-content-type-select'), {
       target: { value: 'photoGallery' },
     });
+
+    filteredRules = {
+      allowed: filteredRules.allowed.filter(({ contentType }) => contentType === 'photoGallery'),
+      denied: filteredRules.denied.filter(({ contentType }) => contentType === 'photoGallery'),
+    };
 
     expect(screen.queryAllByTestId('rule-item')).toHaveLength(1);
   });
@@ -154,23 +204,37 @@ describe('RuleList component', () => {
 
     renderRuleList(props);
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(12);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
 
     fireEvent.change(screen.getByTestId('rules-filter-action-select'), {
       target: { value: 'update' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(3);
+    let filteredRules = {
+      allowed: allRules.allowed.filter(({ action }) => action === 'update'),
+      denied: allRules.denied.filter(({ action }) => action === 'update'),
+    };
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      filteredRules.allowed.length + filteredRules.denied.length
+    );
 
     fireEvent.change(screen.getByTestId('rules-filter-scope-select'), {
       target: { value: 'any' },
     });
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(2);
+    filteredRules = {
+      allowed: filteredRules.allowed.filter(({ scope }) => scope === 'any'),
+      denied: filteredRules.denied.filter(({ scope }) => scope === 'any'),
+    };
+
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(
+      filteredRules.allowed.length + filteredRules.denied.length
+    );
 
     fireEvent.click(screen.getByTestId('clear-filters'));
 
-    expect(screen.queryAllByTestId('rule-item')).toHaveLength(12);
+    expect(screen.queryAllByTestId('rule-item')).toHaveLength(allRulesCount);
   });
 
   it('clears filter when new allowed rule is added', () => {
@@ -232,7 +296,7 @@ describe('RuleList component', () => {
 
     fireEvent.click(firstDeleteButton);
 
-    expect(removeNewRule).toHaveBeenCalledWith('firstAllowedRuleId');
+    expect(removeNewRule).toHaveBeenCalledWith(allRules.allowed[0].id);
   });
 });
 
@@ -306,10 +370,10 @@ function renderRuleList(props) {
 }
 
 function getRules() {
-  return {
+  const rules = {
     allowed: [
       {
-        id: 'firstAllowedRuleId',
+        id: 'X80gmqmq9LC5dv2Q',
         entity: 'entry',
         action: 'read',
         scope: 'any',
@@ -318,28 +382,63 @@ function getRules() {
         field: '__cf_internal_all_paths_valid',
       },
       {
-        id: 'P8qQL0ykXJq1DdBK',
-        entity: 'entry',
-        action: 'update',
-        scope: 'user',
-        locale: '__cf_internal_all_locales__',
-        contentType: '__cf_internal_all_cts__',
-        field: '__cf_internal_all_fields__',
-        metadataTagId: ['helloTaggy'],
-        isPath: true,
-      },
-      {
-        id: 'Wgf6VLjKQcvmMFk2',
+        id: 'eovMNQDffA2hid48',
         entity: 'entry',
         action: 'delete',
+        scope: 'user',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'fD1k8jvF7jgI1J6v',
+        entity: 'entry',
+        action: 'all',
         scope: 'entityId',
+        locale: null,
+        contentType: 'author',
+        field: '__cf_internal_all_paths_valid',
+        entityId: '2JA7S5tIHhz2XqKEEsOkrw',
+      },
+      {
+        id: 'eXIaICq5hO6NvGqo',
+        entity: 'entry',
+        action: 'archive',
+        scope: 'metadataTagIds',
         locale: null,
         contentType: 'category',
         field: '__cf_internal_all_paths_valid',
-        entityId: '29kRhleVWFjbRBCDDpG7cL',
+        metadataTagIds: ['testjanko2'],
       },
       {
-        id: 'v0BD3g6QzQEzag6H',
+        id: 'pJPZ7cDLd3Pcjmi5',
+        entity: 'entry',
+        action: 'create',
+        scope: 'any',
+        locale: null,
+        contentType: 'image',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'M7XG8WqohdyBDWno',
+        entity: 'entry',
+        action: 'read',
+        scope: 'any',
+        locale: null,
+        contentType: 'ref',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'oAWpHpQlpJ5GmQ8X',
+        entity: 'entry',
+        action: 'archive',
+        scope: 'any',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'MpoBzOz9c3W0GHqw',
         entity: 'entry',
         action: 'all',
         scope: 'any',
@@ -348,34 +447,25 @@ function getRules() {
         field: '__cf_internal_all_paths_valid',
       },
       {
-        id: 'hZd9Jy86nnh4Qm4e',
+        id: 'J4FJ1DDylM3n9O7F',
         entity: 'entry',
-        action: 'create',
+        action: 'all',
+        scope: 'any',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'oXeffbbIe67jhaHd',
+        entity: 'entry',
+        action: 'update',
         scope: 'any',
         locale: null,
         contentType: 'author',
         field: '__cf_internal_all_paths_valid',
       },
       {
-        id: 'bLBp1J7B9qc0HJ7j',
-        entity: 'entry',
-        action: 'update',
-        scope: 'any',
-        locale: null,
-        contentType: 'category',
-        field: '__cf_internal_all_paths_valid',
-      },
-      {
-        id: 'XVNEwnfA3iAkfkD8',
-        entity: 'entry',
-        action: 'read',
-        scope: 'user',
-        locale: null,
-        contentType: '__cf_internal_all_cts__',
-        field: '__cf_internal_all_paths_valid',
-      },
-      {
-        id: 'vZGeCzp7KBN3fppb',
+        id: 'mFWEzVlMeZ1w8nd5',
         entity: 'entry',
         action: 'all',
         scope: 'any',
@@ -386,35 +476,7 @@ function getRules() {
     ],
     denied: [
       {
-        id: 'POmEihn8nzen7fNP',
-        entity: 'entry',
-        action: 'read',
-        scope: 'entityId',
-        locale: null,
-        contentType: 'superSimpleTestCase',
-        field: '__cf_internal_all_paths_valid',
-        entityId: '5Tzc9rGqeEvG9oT5EhtLWo',
-      },
-      {
-        id: 'pnyDO63Zlehf3BzG',
-        entity: 'entry',
-        action: 'update',
-        scope: 'any',
-        locale: null,
-        contentType: 'author',
-        field: '__cf_internal_all_paths_valid',
-      },
-      {
-        id: 'BHxIMF4EffPEzmoG',
-        entity: 'entry',
-        action: 'read',
-        scope: 'user',
-        locale: null,
-        contentType: 'superSimpleTestCase',
-        field: '__cf_internal_all_paths_valid',
-      },
-      {
-        id: 'Yhq1jpElM89Wa8Yf',
+        id: 'NKjxizDC5gIH0CAe',
         entity: 'entry',
         action: 'read',
         scope: 'user',
@@ -422,6 +484,43 @@ function getRules() {
         contentType: 'photoGallery',
         field: '__cf_internal_all_paths_valid',
       },
+      {
+        id: 'LnIiI2QxbnpmClae',
+        entity: 'entry',
+        action: 'create',
+        scope: 'any',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'vM0q2nLLbD53amyo',
+        entity: 'entry',
+        action: 'all',
+        scope: 'any',
+        locale: null,
+        contentType: 'author',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'gQVAo7VzN2cBzD0o',
+        entity: 'entry',
+        action: 'read',
+        scope: 'any',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
+      {
+        id: 'W4j11df4VPqPdj0k',
+        entity: 'entry',
+        action: 'delete',
+        scope: 'any',
+        locale: null,
+        contentType: '__cf_internal_all_cts__',
+        field: '__cf_internal_all_paths_valid',
+      },
     ],
   };
+  return rules;
 }
