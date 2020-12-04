@@ -23,7 +23,7 @@ const styles = {
     tableLayout: 'fixed',
   }),
   nameCol: css({
-    width: '28%',
+    width: '26%',
   }),
   typeCol: css({
     width: '20%',
@@ -38,13 +38,16 @@ const styles = {
     width: '9%',
   }),
   contentTypesCol: css({
-    width: '13%',
+    width: '14%',
   }),
   recordsCol: css({
-    width: '10%',
+    width: '12%',
   }),
   actionsCol: css({
     width: '50px',
+  }),
+  iconCol: css({
+    width: '5px',
   }),
 };
 
@@ -103,10 +106,15 @@ export const SpacePlansTableNew = ({
         <colgroup>
           <col className={styles.nameCol} />
           <col className={styles.typeCol} />
+          <col className={styles.iconCol} />
           <col className={styles.environmentsCol} />
+          <col className={styles.iconCol} />
           <col className={styles.rolesCol} />
+          <col className={styles.iconCol} />
           <col className={styles.localesCol} />
+          <col className={styles.iconCol} />
           <col className={styles.contentTypesCol} />
+          <col className={styles.iconCol} />
           <col className={styles.recordsCol} />
           <col className={styles.actionsCol} />
         </colgroup>
@@ -119,30 +127,35 @@ export const SpacePlansTableNew = ({
               sortOrder={sortState}
             />
             <TableCell>Space type</TableCell>
+            <TableCell />
             <SortableHeaderCell
               id="environments"
               displayName="Environments"
               onSort={handleSort}
               sortOrder={sortState}
             />
+            <TableCell />
             <SortableHeaderCell
               id="roles"
               displayName="Roles"
               onSort={handleSort}
               sortOrder={sortState}
             />
+            <TableCell />
             <SortableHeaderCell
               id="locales"
               displayName="Locales"
               onSort={handleSort}
               sortOrder={sortState}
             />
+            <TableCell />
             <SortableHeaderCell
               id="contentTypes"
               displayName="Content types"
               onSort={handleSort}
               sortOrder={sortState}
             />
+            <TableCell />
             <SortableHeaderCell
               id="records"
               displayName="Records"
@@ -154,7 +167,7 @@ export const SpacePlansTableNew = ({
         </TableHead>
         <TableBody>
           {initialLoad || isLoading || !!error ? (
-            <SkeletonRow columnCount={8} rowCount={pagination.limit} />
+            <SkeletonRow columnCount={12} rowCount={pagination.limit} />
           ) : (
             data.items.map((spaceUsage) => {
               const spaceId = spaceUsage.sys.space.sys.id;
