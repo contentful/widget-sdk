@@ -17,14 +17,22 @@ import {
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
+import { SpaceUsageIconCell } from './components/SpaceUsageIconCell';
 import { SpaceUsageTableCell } from './components/SpaceUsageTableCell';
 import { track } from 'analytics/Analytics';
 
 const styles = {
-  star: css({ color: tokens.colorOrangeMid, fontSize: tokens.fontSizeS, cursor: 'default' }),
   hasUpgraded: css({ backgroundColor: tokens.colorMintMid }),
   moreButton: css({ verticalAlign: 'middle' }),
-  helpIcon: css({ marginTop: `-${tokens.spacing2Xs}`, verticalAlign: 'middle' }),
+  helpIcon: css({
+    star: css({
+      color: tokens.colorOrangeMid,
+      fontSize: tokens.fontSizeS,
+      cursor: 'default',
+    }),
+    marginTop: `-${tokens.spacing2Xs}`,
+    verticalAlign: 'middle',
+  }),
 };
 
 export const SpacePlanRowNew = ({
@@ -131,17 +139,45 @@ export const SpacePlanRowNew = ({
           </>
         )}{' '}
       </TableCell>
-      <SpaceUsageTableCell
-        testId="subscription-page.spaces-list.environments"
+
+      <SpaceUsageIconCell
+        testId="subscription-page.spaces-list.icon.environments"
         {...spaceUsage.environments}
       />
-      <SpaceUsageTableCell testId="subscription-page.spaces-list.roles" {...spaceUsage.roles} />
-      <SpaceUsageTableCell testId="subscription-page.spaces-list.locales" {...spaceUsage.locales} />
       <SpaceUsageTableCell
-        testId="subscription-page.spaces-list.content-types"
+        testId="subscription-page.spaces-list.usage.environments"
+        {...spaceUsage.environments}
+      />
+      <SpaceUsageIconCell testId="subscription-page.spaces-list.icon.roles" {...spaceUsage.roles} />
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.usage.roles"
+        {...spaceUsage.roles}
+      />
+      <SpaceUsageIconCell
+        testId="subscription-page.spaces-list.icon.locales"
+        {...spaceUsage.locales}
+      />
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.usage.locales"
+        {...spaceUsage.locales}
+      />
+      <SpaceUsageIconCell
+        testId="subscription-page.spaces-list.icon.content-types"
         {...spaceUsage.contentTypes}
       />
-      <SpaceUsageTableCell testId="subscription-page.spaces-list.records" {...spaceUsage.records} />
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.usage.content-types"
+        {...spaceUsage.contentTypes}
+      />
+      <SpaceUsageIconCell
+        testId="subscription-page.spaces-list.icon.records"
+        {...spaceUsage.records}
+      />
+      <SpaceUsageTableCell
+        testId="subscription-page.spaces-list.usage.records"
+        {...spaceUsage.records}
+      />
+
       <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
         <CardActions
           iconButtonProps={{

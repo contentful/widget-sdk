@@ -122,37 +122,37 @@ describe('Space Plan Row', () => {
 
     it('should display space environments usage', () => {
       build();
-      expect(screen.getByTestId('subscription-page.spaces-list.environments')).toHaveTextContent(
-        `${mockUsage.usage}/${mockUsage.limit}`
-      );
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.usage.environments')
+      ).toHaveTextContent(`${mockUsage.usage}/${mockUsage.limit}`);
     });
 
     it('should display space locales usage', () => {
       build();
-      expect(screen.getByTestId('subscription-page.spaces-list.locales')).toHaveTextContent(
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.locales')).toHaveTextContent(
         `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 
     it('should display space records usage', () => {
       build();
-      expect(screen.getByTestId('subscription-page.spaces-list.records')).toHaveTextContent(
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.records')).toHaveTextContent(
         `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 
     it('should display space roles usage', () => {
       build();
-      expect(screen.getByTestId('subscription-page.spaces-list.roles')).toHaveTextContent(
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.roles')).toHaveTextContent(
         `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 
     it('should display space content types usage', () => {
       build();
-      expect(screen.getByTestId('subscription-page.spaces-list.content-types')).toHaveTextContent(
-        `${mockUsage.usage}/${mockUsage.limit}`
-      );
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.usage.content-types')
+      ).toHaveTextContent(`${mockUsage.usage}/${mockUsage.limit}`);
     });
 
     it('should not show change-plan-link if showSpacePlanChangeBtn is false', () => {
