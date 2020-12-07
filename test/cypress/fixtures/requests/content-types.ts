@@ -5,13 +5,14 @@ const editorInterfaceWithoutSidebarResponseBody = require('../responses/editor-i
 
 const defaultContentType = severalContentTypesBody.items[0];
 
-export const createReguestWithNewField = ({ name, apiName, type, linkType }) => {
+export const createReguestWithNewField = ({ name, apiName, type, linkType, validations }) => {
   const newField = {
     name,
     apiName,
     type,
     linkType,
     id: Matchers.string(),
+    validations: validations,
   };
   const contentType = cloneDeep(defaultContentType);
 
@@ -19,7 +20,7 @@ export const createReguestWithNewField = ({ name, apiName, type, linkType }) => 
   return contentType;
 };
 
-export const createResponseWithNewField = ({ name, apiName, type, linkType }) => {
+export const createResponseWithNewField = ({ name, apiName, type, linkType, validations }) => {
   const newField = {
     name,
     apiName,
@@ -28,7 +29,7 @@ export const createResponseWithNewField = ({ name, apiName, type, linkType }) =>
     id: 'pGKCEEBPbMDHwO69',
     localized: false,
     required: false,
-    validations: [],
+    validations: validations || [],
     disabled: false,
     omitted: false,
   };

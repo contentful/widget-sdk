@@ -29,16 +29,27 @@ describe('Content type page', () => {
     it('adds new Text field', () => {
       const fieldName = 'new text field';
       const fieldId = 'newTextField';
+      const validations = [
+        {
+          size: {
+            min: 10,
+            max: 20,
+          },
+          message: 'message',
+        },
+      ];
       const interactions = [
         saveDefaultContentTypeWithNewField.willSucceed({
           name: fieldName,
           apiName: fieldId,
           type: 'Symbol',
+          validations,
         }),
         publishDefaultContentTypeWithNewField.willSucceed({
           name: fieldName,
           apiName: fieldId,
           type: 'Symbol',
+          validations,
         }),
         saveDefaultContentTypeEditorInterfaceWithNewField.willSucceed({
           apiName: fieldId,
@@ -54,7 +65,14 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+      cy.get('.ct-field').contains(fieldName).parent().findByText('Settings').click();
+      cy.findByText('Validation').click();
+      cy.findByLabelText('Limit character count').check();
+      cy.findByLabelText('Minimum size').type(validations[0].size.min.toString());
+      cy.findByLabelText('Maximum size').type(validations[0].size.max.toString());
+      cy.findByLabelText('Custom error message').type(validations[0].message);
+      cy.findByTestId('field-dialog').findByText('Save').click();
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -63,16 +81,23 @@ describe('Content type page', () => {
     it('adds new Number field', () => {
       const fieldName = 'new number field';
       const fieldId = 'newNumberField';
+      const validations = [
+        {
+          in: [1, 2, 3],
+        },
+      ];
       const interactions = [
         saveDefaultContentTypeWithNewField.willSucceed({
           name: fieldName,
           apiName: fieldId,
           type: 'Integer',
+          validations,
         }),
         publishDefaultContentTypeWithNewField.willSucceed({
           name: fieldName,
           apiName: fieldId,
           type: 'Integer',
+          validations,
         }),
         saveDefaultContentTypeEditorInterfaceWithNewField.willSucceed({
           apiName: fieldId,
@@ -88,7 +113,12 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+      cy.get('.ct-field').contains(fieldName).parent().findByText('Settings').click();
+      cy.findByText('Validation').click();
+      cy.findByLabelText('Accept only specified values').check();
+      cy.findByLabelText('addPredefinedValue').type('1{enter}2{enter}3{enter}');
+      cy.findByTestId('field-dialog').findByText('Save').click();
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -122,7 +152,6 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -156,7 +185,7 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -165,14 +194,21 @@ describe('Content type page', () => {
     it('adds new Media field', () => {
       const fieldName = 'new Media field';
       const fieldId = 'newMediaField';
+      const validations = [
+        {
+          linkMimetypeGroup: ['attachment'],
+        },
+      ];
       const interactions = [
         saveDefaultContentTypeWithNewField.willSucceed({
+          validations,
           name: fieldName,
           apiName: fieldId,
           type: 'Link',
           linkType: 'Asset',
         }),
         publishDefaultContentTypeWithNewField.willSucceed({
+          validations,
           name: fieldName,
           apiName: fieldId,
           type: 'Link',
@@ -181,7 +217,6 @@ describe('Content type page', () => {
         saveDefaultContentTypeEditorInterfaceWithNewField.willSucceed({
           apiName: fieldId,
           widgetId: 'assetLinkEditor',
-          linkType: 'Asset',
         }),
       ];
 
@@ -192,8 +227,12 @@ describe('Content type page', () => {
       cy.findByLabelText('Media').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
-      cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+      cy.findByText('Create and configure').click();
+      cy.findByText('Validation').click();
+      cy.findByLabelText('Accept only specified file types').check();
+      cy.findByLabelText('Attachment').check();
+      cy.findByTestId('field-dialog').findByText('Save').click();
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -227,7 +266,7 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -261,7 +300,7 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -286,7 +325,6 @@ describe('Content type page', () => {
         saveDefaultContentTypeEditorInterfaceWithNewField.willSucceed({
           apiName: fieldId,
           widgetId: 'entryLinkEditor',
-          linkType: 'Entry',
         }),
       ];
 
@@ -298,7 +336,7 @@ describe('Content type page', () => {
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -307,13 +345,47 @@ describe('Content type page', () => {
     it('adds new Rich text field', () => {
       const fieldName = 'new Rich text field';
       const fieldId = 'newRichTextField';
+      const validations = [
+        {
+          enabledNodeTypes: [
+            'heading-4',
+            'heading-5',
+            'heading-6',
+            'ordered-list',
+            'unordered-list',
+            'hr',
+            'blockquote',
+            'embedded-asset-block',
+            'entry-hyperlink',
+            'asset-hyperlink',
+            'embedded-entry-inline',
+          ],
+          message:
+            'Only heading 4, heading 5, heading 6, ordered list, unordered list, horizontal rule, quote, asset, link to entry, link to asset, and inline entry nodes are allowed',
+        },
+        {
+          nodes: {
+            'embedded-asset-block': [
+              {
+                size: {
+                  min: 1,
+                  max: 5,
+                },
+                message: null,
+              },
+            ],
+          },
+        },
+      ];
       const interactions = [
         saveDefaultContentTypeWithNewField.willSucceed({
+          validations,
           name: fieldName,
           apiName: fieldId,
           type: 'RichText',
         }),
         publishDefaultContentTypeWithNewField.willSucceed({
+          validations,
           name: fieldName,
           apiName: fieldId,
           type: 'RichText',
@@ -331,8 +403,20 @@ describe('Content type page', () => {
       cy.findByLabelText('Rich text').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
-      cy.findByText('Create').click();
-      cy.get('.ct-field').contains(fieldName);
+      cy.findByText('Create and configure').click();
+      cy.findByText('H1').click();
+      cy.findByText('H2').click();
+      cy.findByText('H3').click();
+      cy.findByText('Link to URL').click();
+      cy.findByText('Entry').click();
+      cy.findAllByText('Validation').click();
+      cy.findByTestId('field-validations--embeddedAssetBlockSize')
+        .findByLabelText('Limit number of entries')
+        .check();
+      cy.findByLabelText('Minimum size').type('1');
+      cy.findByLabelText('Maximum size').type('5');
+      cy.findByTestId('field-dialog').findByText('Save').click();
+
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);

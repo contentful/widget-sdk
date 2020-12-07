@@ -337,11 +337,13 @@ export const saveDefaultContentTypeWithNewField = {
     apiName,
     type,
     linkType,
+    validations,
   }: {
     name: string;
     apiName: string;
     type: string;
     linkType?: string;
+    validations?: any;
   }) {
     cy.addInteraction({
       provider: 'content_types',
@@ -351,14 +353,14 @@ export const saveDefaultContentTypeWithNewField = {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
         headers: defaultHeader,
-        body: createReguestWithNewField({ name, apiName, type, linkType }),
+        body: createReguestWithNewField({ name, apiName, type, linkType, validations }),
       },
       willRespondWith: {
         status: 200,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: createResponseWithNewField({ name, apiName, type, linkType }),
+        body: createResponseWithNewField({ name, apiName, type, linkType, validations }),
       },
     }).as(`saveDefaultContentTypeWithNewField${apiName}`);
 
@@ -372,11 +374,13 @@ export const publishDefaultContentTypeWithNewField = {
     apiName,
     type,
     linkType,
+    validations,
   }: {
     name: string;
     apiName: string;
     type: string;
     linkType?: string;
+    validations?: any;
   }) {
     cy.addInteraction({
       provider: 'content_types',
@@ -392,7 +396,7 @@ export const publishDefaultContentTypeWithNewField = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: createResponseWithNewField({ name, apiName, type, linkType }),
+        body: createResponseWithNewField({ name, apiName, type, linkType, validations }),
       },
     }).as(`publishDefaultContentTypeWithNewField${apiName}`);
 
