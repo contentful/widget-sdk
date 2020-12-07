@@ -40,10 +40,8 @@ describe('PlatformSelectionStep', () => {
     });
 
     it('should select the card when user clicks on it', () => {
-      // This is necessary because jest-dom does not have scrollIntoView
-      const scrollIntoViewMock = jest.fn();
       // eslint-disable-next-line no-undef
-      HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
+      const scrollIntoViewMock = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');
 
       for (const platformCard of platformCards) {
         userEvent.click(platformCard);
