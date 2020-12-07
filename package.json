@@ -141,6 +141,7 @@
     "@babel/traverse": "^7.8.4",
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.3.4",
+    "@contentful/browserslist-config": "^1.0.1",
     "@contentful/cypress-pact": "3.2.1",
     "@contentful/pact-node-utils": "^3.0.1",
     "@dr.pogodin/babel-preset-svgr": "^1.0.10",
@@ -309,12 +310,7 @@
   "bugs": {
     "url": "https://github.com/contentful/user_interface/issues"
   },
-  "browserslist": [
-    "Chrome >= 75",
-    "Edge >= 17",
-    "Firefox >= 70",
-    "Safari >= 12"
-  ],
+  "browserslist": "extends @contentful/browserslist-config",
   "homepage": "https://github.com/contentful/user_interface",
   "husky": {
     "hooks": {
