@@ -1,9 +1,7 @@
 import { omit } from 'lodash';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { fetchAll } from './FetchAll';
 
-// TODO: rename me to 'locales' once migration is over
-const LOCALE_ENDPOINT = 'localez';
+const LOCALE_ENDPOINT = 'locales';
 
 /**
  * @name LocaleRepo.create
@@ -26,9 +24,7 @@ export default function create(spaceEndpoint) {
    * @returns {Promise<API.Locale[]}
    */
   async function getAll() {
-    const ldCtx = { spaceId: spaceEndpoint.spaceId };
-    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT, ldCtx);
-    const path = [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales'];
+    const path = [LOCALE_ENDPOINT];
 
     return fetchAll(spaceEndpoint, path, 100);
   }
@@ -45,10 +41,8 @@ export default function create(spaceEndpoint) {
   async function save(locale) {
     const sys = locale.sys;
     const isNew = !sys || !sys.id;
-    const ldCtx = { spaceId: spaceEndpoint.spaceId };
-    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT_WRITE, ldCtx);
 
-    const path = [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales'].concat(isNew ? [] : [sys.id]);
+    const path = [LOCALE_ENDPOINT].concat(isNew ? [] : [sys.id]);
     const method = isNew ? 'POST' : 'PUT';
     const version = isNew ? undefined : sys.version;
 
@@ -71,12 +65,9 @@ export default function create(spaceEndpoint) {
    * @param {integer} version
    */
   async function remove(id, version) {
-    const ldCtx = { spaceId: spaceEndpoint.spaceId };
-    const shouldUseNewEndpoint = await getVariation(FLAGS.NEW_LOCALES_ENDPOINT_WRITE, ldCtx);
-
     await spaceEndpoint({
       method: 'DELETE',
-      path: [shouldUseNewEndpoint ? LOCALE_ENDPOINT : 'locales', id],
+      path: [LOCALE_ENDPOINT, id],
       version,
     });
   }
