@@ -13,6 +13,7 @@ const initialState = {
   paymentDetails: undefined,
   spaceName: '',
   selectedTemplate: null,
+  purchasingApps: undefined,
 };
 
 export const SpacePurchaseState = createContext();

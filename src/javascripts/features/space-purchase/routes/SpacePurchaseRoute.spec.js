@@ -86,7 +86,9 @@ jest.mock('states/Navigator', () => ({
 
 // Mock SpacePurchaseContainer in order to not have to mock the imports/on render effects it has
 jest.mock('../components/SpacePurchaseContainer', () => ({
-  SpacePurchaseContainer: jest.fn().mockReturnValue(<div data-test-id="new-space-page" />),
+  SpacePurchaseContainer: jest
+    .fn()
+    .mockReturnValue(<div data-test-id="space-purchase-container" />),
 }));
 
 describe('SpacePurchaseRoute', () => {
@@ -103,10 +105,20 @@ describe('SpacePurchaseRoute', () => {
     getVariation.mockResolvedValue(false);
   });
 
-  it('should render the space plan selection page while loading', async () => {
+  it('should render the generic loading component until the apps purchase state is loaded', async () => {
+    await build(null, false);
+
+    expect(screen.getByTestId('cf-ui-fetcher-loading')).toBeVisible();
+
+    await waitFor(() => expect(getVariation).toBeCalled());
+
+    expect(screen.findByTestId('cf-ui-fetcher-loading')).toBeNull();
+  });
+
+  it('should render the space plan selection page while loading, after the apps purchase state has been loaded', async () => {
     await build();
 
-    expect(screen.getByTestId('new-space-page')).toBeVisible();
+    expect(screen.getByTestId('space-purchase-container')).toBeVisible();
   });
 
   it('should redirect to space home if the user is not org admin or owner', async () => {
@@ -139,7 +151,7 @@ describe('SpacePurchaseRoute', () => {
     await build();
 
     await waitFor(() => {
-      expect(screen.getByTestId('new-space-page')).toBeVisible();
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
     expect(trackEvent).toBeCalledWith(
@@ -162,7 +174,7 @@ describe('SpacePurchaseRoute', () => {
     await build();
 
     await waitFor(() => {
-      expect(screen.getByTestId('new-space-page')).toBeVisible();
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
     expect(getSpaceRatePlans).toBeCalled();
@@ -170,10 +182,10 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should fetch the space plan selection FAQs by default', async () => {
-    build();
+    await build();
 
     await waitFor(() => {
-      expect(screen.getByTestId('new-space-page')).toBeVisible();
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
     expect(fetchSpacePurchaseContent).toBeCalled();
@@ -181,10 +193,10 @@ describe('SpacePurchaseRoute', () => {
 
   it('should fetch the platform selection FAQs by when user is purchasing campaigns', async () => {
     getVariation.mockResolvedValue(true);
-    build();
+    await build();
 
     await waitFor(() => {
-      expect(screen.getByTestId('new-space-page')).toBeVisible();
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
     expect(fetchPlatformPurchaseContent).toBeCalledWith();
@@ -206,7 +218,7 @@ describe('SpacePurchaseRoute', () => {
     await build({ spaceId: mockSpace.sys.id });
 
     await waitFor(() => {
-      expect(screen.getByTestId('new-space-page')).toBeVisible();
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
     expect(trackEvent).toBeCalledWith(
@@ -237,11 +249,15 @@ describe('SpacePurchaseRoute', () => {
   });
 });
 
-async function build(customProps) {
+async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
     ...customProps,
   };
 
   await renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
+
+  if (shouldWait) {
+    await waitFor(() => expect(getVariation).toBeCalled());
+  }
 }

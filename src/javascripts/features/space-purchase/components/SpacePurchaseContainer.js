@@ -61,9 +61,9 @@ const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
 };
 
-export const SpacePurchaseContainer = ({ track, purchasingApps }) => {
+export const SpacePurchaseContainer = ({ track }) => {
   const {
-    state: { organization, selectedPlan, currentSpace },
+    state: { organization, selectedPlan, currentSpace, purchasingApps },
     dispatch,
   } = useContext(SpacePurchaseState);
 
@@ -196,5 +196,4 @@ export const SpacePurchaseContainer = ({ track, purchasingApps }) => {
 
 SpacePurchaseContainer.propTypes = {
   track: PropTypes.func.isRequired,
-  purchasingApps: PropTypes.bool,
 };

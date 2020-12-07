@@ -9,7 +9,7 @@ function ComponentEncapsulator({ children, initialState = {} }) {
 
   useEffect(() => {
     dispatch({
-      type: actions.SET_INITIAL_STATE,
+      type: actions.SET_STATE,
       payload: initialState,
     });
 
