@@ -6,6 +6,7 @@ const initialState = {
   organization: undefined,
   currentSpace: undefined,
   currentSpaceRatePlan: undefined,
+  spaceRatePlans: undefined,
   selectedPlan: undefined,
   sessionId: undefined,
   billingDetails: undefined,

@@ -1,34 +1,41 @@
-import React, { useContext, useState } from 'react';
-import cn from 'classnames';
-import { css } from 'emotion';
+import React, { useContext, useState, useEffect, createRef } from 'react';
+import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { usePrevious } from 'core/hooks';
 
 import { SpacePurchaseState } from '../../context';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
-import { PlatformCard } from '../../components/PlatformCard';
+import { SPACE_PLANS_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
+import { ProductCard } from '../../components/ProductCard';
 import { EnterpriseCard } from '../../components/EnterpriseCard';
 import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 
 const styles = {
-  fullRow: css({
-    gridColumn: '1 / 4',
-  }),
   headingContainer: css({
+    gridColumn: '1 / 4',
     marginBottom: tokens.spacingL,
+    opacity: 1,
+    transition: 'opacity 0.2s ease-in-out',
   }),
   heading: css({
     marginBottom: tokens.spacingXs,
   }),
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
+  }),
+  bigMarginTop: css({
+    marginTop: tokens.spacing4Xl,
+  }),
+  disabled: css({
+    opacity: 0.3,
   }),
 };
 
@@ -37,19 +44,33 @@ export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
-    state: { organization },
+    state: { organization, spaceRatePlans },
   } = useContext(SpacePurchaseState);
 
   const [selectedPlatform, setSelectedPlatform] = useState('');
+  const [selectedSpacePlan, setSelectedSpacePlan] = useState('');
+
+  const prevSelectedPlatform = usePrevious(selectedPlatform);
+  const spaceSectionRef = createRef();
+
+  useEffect(() => {
+    // we want to scroll the user to space selection only the first time they select a platform
+    if (!prevSelectedPlatform && selectedPlatform) {
+      spaceSectionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }, [prevSelectedPlatform, selectedPlatform, spaceSectionRef]);
 
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
       <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
-        <GridItem columnStart={1} columnEnd={4} className={styles.headingContainer}>
+        <span className={styles.headingContainer}>
           <Heading
             id="platform-selection-heading"
             element="h2"
-            className={cn(styles.fullRow, styles.mediumWeight, styles.heading)}>
+            className={cx(styles.mediumWeight, styles.heading)}>
             Choose the package that fits your organization needs
           </Heading>
 
@@ -64,7 +85,7 @@ export const PlatformSelectionStep = ({ track }) => {
             }}>
             See comparison packages
           </ExternalTextLink>
-        </GridItem>
+        </span>
 
         {PLATFORM_CONTENT.map((platform, idx) => {
           const content = {
@@ -74,12 +95,14 @@ export const PlatformSelectionStep = ({ track }) => {
           };
 
           return (
-            <PlatformCard
+            <ProductCard
               key={idx}
+              cardType="platform"
               selected={selectedPlatform === platform.type}
               onClick={() => setSelectedPlatform(platform.type)}
               content={content}
               isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
+              testId="platform-card"
             />
           );
         })}
@@ -91,6 +114,44 @@ export const PlatformSelectionStep = ({ track }) => {
             intent: 'upgrade_to_enterprise',
           })}
         />
+
+        <span
+          ref={spaceSectionRef}
+          className={cx(styles.headingContainer, styles.bigMarginTop, {
+            [styles.disabled]: !selectedPlatform,
+          })}>
+          <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
+            Choose the space size that right for your project
+          </Heading>
+        </span>
+
+        {SPACE_PLANS_CONTENT.filter(
+          (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
+        ).map((spacePlanContent, idx) => {
+          const plan = spaceRatePlans
+            ? spaceRatePlans.find((plan) => plan.name === spacePlanContent.type)
+            : {};
+
+          const content = {
+            title: spacePlanContent.title,
+            description: spacePlanContent.description,
+            price: plan ? plan.price : 0,
+            limits: spacePlanContent.limits, // TODO: we need to use plan.inlcudedResources somehow
+          };
+
+          return (
+            <ProductCard
+              key={idx}
+              cardType="space"
+              loading={!spaceRatePlans}
+              disabled={!selectedPlatform}
+              selected={selectedSpacePlan === plan.name}
+              onClick={() => setSelectedSpacePlan(plan.name)}
+              content={content}
+              testId="space-plan-card"
+            />
+          );
+        })}
       </Grid>
     </section>
   );

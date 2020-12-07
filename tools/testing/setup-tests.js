@@ -82,3 +82,6 @@ if (global.document) {
     getClientRects: () => [],
   });
 }
+
+// eslint-disable-next-line no-undef
+HTMLElement.prototype.scrollIntoView = function scrollIntoView() {};
