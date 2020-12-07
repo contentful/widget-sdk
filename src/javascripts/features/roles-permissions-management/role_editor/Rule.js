@@ -87,6 +87,7 @@ export class Rule extends React.Component {
       entityId: PropTypes.string,
       field: PropTypes.string,
       locale: PropTypes.string,
+      metadataTagIds: PropTypes.arrayOf(PropTypes.string),
     }),
     entity: PropTypes.string,
     onRemove: PropTypes.func.isRequired,
@@ -313,7 +314,10 @@ export class Rule extends React.Component {
           </Select>
         )}
         {this.props.hasClpFeature && !['all', 'create'].includes(rule.action) && (
-          <RuleTagsSelection rule={rule} onChange={onUpdateAttribute('metadataTagIds')} />
+          <RuleTagsSelection
+            rule={rule}
+            onChange={onUpdateAttribute('metadataTagIds', rule.metadataTagIds)}
+          />
         )}
         {!isDisabled && (
           <Button onClick={onRemove} buttonType="naked" icon="Delete">

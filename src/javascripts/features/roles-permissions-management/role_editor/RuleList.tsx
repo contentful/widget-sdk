@@ -53,7 +53,9 @@ const filterRules: (
 } = (rules, filters) => {
   const filterByFilterCriteria = (rule) =>
     (rule.action === filters.action || filters.action === 'clean') &&
-    (rule.scope === filters.scope || filters.scope === 'clean') &&
+    (rule.scope === filters.scope ||
+      filters.scope === 'clean' ||
+      (filters.scope === 'any' && rule.scope === 'metadataTagIds')) &&
     (rule.contentType === filters.contentType || filters.contentType === 'clean');
 
   return {
