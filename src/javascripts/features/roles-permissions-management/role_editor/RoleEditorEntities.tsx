@@ -12,22 +12,40 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { RuleInterface } from 'features/roles-permissions-management/@types';
 
 type Props = {
   entity: string;
   entities: string;
   internal: Internal;
-  rules: unknown[];
-  updateRuleAttribute: (entities: string) => void;
-  addRule: (entity: string, entities: string) => void;
-  removeRule: (entities: string) => void;
+  rules: {
+    allowed: RuleInterface[];
+    denied: RuleInterface[];
+  };
+  updateRuleAttribute: (
+    entities: string
+  ) => (
+    rulesKey: string,
+    id: string
+  ) => (attribute: string) => (event: React.ChangeEvent<{ value: string }>) => void;
+  addRule: (entity: string, entities: string) => (rulesKey) => () => string;
+  removeRule: (entities: string) => (rulesKey: string, id: string) => () => void;
   canModifyRoles: boolean;
   contentTypes: string[];
-  searchEntities: string[];
+  searchEntities: () => void;
   getEntityTitle: () => string;
   resetPolicies: () => void;
   updateRoleFromTextInput: (path: string) => (...args) => void;
   hasClpFeature: boolean;
+  filters: {
+    action: string;
+  };
+  updateFilter: (filterName: string, value: string) => void;
+  newRuleIds: string[];
+  addNewRule: (ruleId: string) => void;
+  removeNewRule: (ruleId: string) => void;
+  editedRuleIds: string[];
+  addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
 };
 
 const styles = {
@@ -55,6 +73,11 @@ const RoleEditorEntities: React.FC<Props> = ({
   updateRoleFromTextInput,
   resetPolicies,
   hasClpFeature,
+  newRuleIds,
+  addNewRule,
+  removeNewRule,
+  editedRuleIds,
+  addEditedRule,
 }) => {
   return (
     <>
@@ -82,6 +105,11 @@ const RoleEditorEntities: React.FC<Props> = ({
           searchEntities={searchEntities}
           getEntityTitle={getEntityTitle}
           hasClpFeature={hasClpFeature}
+          newRuleIds={newRuleIds}
+          addNewRule={addNewRule}
+          removeNewRule={removeNewRule}
+          editedRuleIds={editedRuleIds}
+          addEditedRule={addEditedRule}
         />
       ) : (
         <>

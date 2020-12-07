@@ -2,16 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
+import classNames from 'classnames';
 import { getLocales } from '../utils/getLocales';
 import tokens from '@contentful/forma-36-tokens';
-import { Select, Option, Button } from '@contentful/forma-36-react-components';
+import { Select, Option, Button, SectionHeading } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
 import { RuleTagsSelection } from 'features/roles-permissions-management/components/RuleTagsSelection';
+import { getEntityName } from './RuleList';
 
 const { TAGS, NO_PATH_CONSTRAINT } = PolicyBuilderConfig;
 
-const contentTypesToOptions = (contentTypes) =>
+export const contentTypesToOptions = (contentTypes) =>
   [
     {
       id: PolicyBuilderConfig.ALL_CTS,
@@ -19,13 +21,36 @@ const contentTypesToOptions = (contentTypes) =>
     },
   ].concat(contentTypes.map(({ sys: { id }, name }) => ({ id, name })));
 
-const getEntityName = (entity) => {
-  if (entity === 'entry') {
-    return ['Entry', 'Entries'];
-  } else {
-    return ['Asset', 'Assets'];
-  }
-};
+export const actionsOptions = [
+  {
+    value: 'all',
+    text: 'All actions',
+  },
+  {
+    value: 'read',
+    text: 'Read',
+  },
+  {
+    value: 'update',
+    text: 'Edit',
+  },
+  {
+    value: 'create',
+    text: 'Create',
+  },
+  {
+    value: 'delete',
+    text: 'Delete',
+  },
+  {
+    value: 'archive',
+    text: 'Archive/Unarchive',
+  },
+  {
+    value: 'publish',
+    text: 'Publish/Unpublish',
+  },
+];
 
 const styles = {
   ruleList: css({
@@ -38,6 +63,15 @@ const styles = {
     marginRight: tokens.spacingS,
     marginTop: tokens.spacingXs,
     marginBottom: tokens.spacingXs,
+  }),
+  newRule: css({
+    color: tokens.colorPrimary,
+  }),
+  modifiedRule: css({
+    color: tokens.colorWarning,
+  }),
+  ruleLabel: css({
+    marginRight: tokens.spacingM,
   }),
 };
 
@@ -53,6 +87,7 @@ export class Rule extends React.Component {
       entityId: PropTypes.string,
       field: PropTypes.string,
       locale: PropTypes.string,
+      metadataTagIds: PropTypes.arrayOf(PropTypes.string),
     }),
     entity: PropTypes.string,
     onRemove: PropTypes.func.isRequired,
@@ -62,9 +97,14 @@ export class Rule extends React.Component {
     searchEntities: PropTypes.func.isRequired,
     getEntityTitle: PropTypes.func.isRequired,
     hasClpFeature: PropTypes.bool,
+    focus: PropTypes.bool,
+    modified: PropTypes.bool.isRequired,
+    isNew: PropTypes.bool.isRequired,
   };
 
-  state = {};
+  state = {
+    ref: React.createRef(),
+  };
 
   constructor(props) {
     super(props);
@@ -114,17 +154,20 @@ export class Rule extends React.Component {
   }
 
   searchEntitiesAndUpdate = () => {
-    const { entity, searchEntities, onUpdateAttribute } = this.props;
+    const { entity, searchEntities, onUpdateAttribute, rule } = this.props;
     const entityName = getEntityName(entity);
 
     return searchEntities(entityName[0]).then((entity) => {
       if (entity) {
         if (entityName[0] === 'Entry') {
-          onUpdateAttribute('contentType')({
+          onUpdateAttribute(
+            'contentType',
+            rule.contentType
+          )({
             target: { value: entity.sys.contentType.sys.id },
           });
         }
-        onUpdateAttribute('entityId')({ target: { value: entity.sys.id } });
+        onUpdateAttribute('entityId', rule.entityId)({ target: { value: entity.sys.id } });
         return entity.sys.id;
       }
       return null;
@@ -136,12 +179,12 @@ export class Rule extends React.Component {
     if (event.target.value === 'entityId' && !rule.entityId) {
       return this.searchEntitiesAndUpdate().then((entityId) => {
         if (entityId) {
-          return onUpdateAttribute('scope')({ target: { value: 'entityId' } });
+          return onUpdateAttribute('scope', rule.scope)({ target: { value: 'entityId' } });
         }
         return null;
       });
     }
-    return onUpdateAttribute('scope')(event);
+    return onUpdateAttribute('scope', rule.scope)(event);
   };
 
   render() {
@@ -153,24 +196,44 @@ export class Rule extends React.Component {
       rule,
       privateLocales,
       getEntityTitle,
+      focus,
+      isNew,
+      modified,
     } = this.props;
     const entityName = getEntityName(entity);
+
+    if (focus && this.state.ref.current) {
+      this.state.ref.current.scrollIntoView({ behaviour: 'smooth', block: 'center' });
+      const firstSelectComponent = this.state.ref.current.children[1];
+      firstSelectComponent?.firstElementChild?.focus();
+    }
+
     return (
-      <div className={styles.ruleList} data-test-id="rule-item">
+      <div ref={this.state.ref} className={classNames(styles.ruleList)} data-test-id="rule-item">
+        {!isNew && modified && (
+          <SectionHeading className={classNames(styles.ruleLabel, styles.modifiedRule)}>
+            Edited
+          </SectionHeading>
+        )}
+        {isNew && (
+          <SectionHeading className={classNames(styles.ruleLabel, styles.newRule)}>
+            New
+          </SectionHeading>
+        )}
         <Select
           className={styles.select}
           width="medium"
           testId="action"
           isDisabled={isDisabled}
           value={rule.action}
-          onChange={onUpdateAttribute('action')}>
-          <Option value="all">All actions</Option>
-          <Option value="read">Read</Option>
-          <Option value="update">Edit</Option>
-          <Option value="create">Create</Option>
-          <Option value="delete">Delete</Option>
-          <Option value="archive">Archive/Unarchive</Option>
-          <Option value="publish">Publish/Unpublish</Option>
+          onChange={onUpdateAttribute('action', rule.action)}>
+          {actionsOptions.map(({ value, text }) => {
+            return (
+              <Option key={value} value={value}>
+                {text}
+              </Option>
+            );
+          })}
         </Select>
         <Select
           className={styles.select}
@@ -196,7 +259,7 @@ export class Rule extends React.Component {
               testId="contentType"
               isDisabled={rule.scope === 'entityId' || isDisabled}
               value={rule.contentType}
-              onChange={onUpdateAttribute('contentType')}>
+              onChange={onUpdateAttribute('contentType', rule.contentType)}>
               {this.contentTypes.map(({ id, name }) => (
                 <Option value={id} key={id}>
                   {name}
@@ -210,7 +273,7 @@ export class Rule extends React.Component {
                 testId="field"
                 isDisabled={rule.contentType === 'all' || isDisabled}
                 value={rule.field}
-                onChange={onUpdateAttribute('field')}>
+                onChange={onUpdateAttribute('field', rule.field)}>
                 {this.state.contentTypeFields.map(({ id, name }) => (
                   <Option value={id} key={id}>
                     {name}
@@ -227,7 +290,7 @@ export class Rule extends React.Component {
             testId="asset_field"
             isDisabled={isDisabled}
             value={rule.field}
-            onChange={onUpdateAttribute('field')}>
+            onChange={onUpdateAttribute('field', rule.field)}>
             {this.state.assetFields.map(({ id, name }) => (
               <Option value={id} key={id}>
                 {name}
@@ -242,7 +305,7 @@ export class Rule extends React.Component {
             testId="locale"
             isDisabled={isDisabled || rule.field === TAGS || rule.field === NO_PATH_CONSTRAINT}
             value={rule.locale}
-            onChange={onUpdateAttribute('locale')}>
+            onChange={onUpdateAttribute('locale', rule.locale)}>
             {getLocales(privateLocales).map(({ code, name }) => (
               <Option value={code} key={code}>
                 {name}
@@ -251,7 +314,10 @@ export class Rule extends React.Component {
           </Select>
         )}
         {this.props.hasClpFeature && !['all', 'create'].includes(rule.action) && (
-          <RuleTagsSelection rule={rule} onChange={onUpdateAttribute('metadataTagIds')} />
+          <RuleTagsSelection
+            rule={rule}
+            onChange={onUpdateAttribute('metadataTagIds', rule.metadataTagIds)}
+          />
         )}
         {!isDisabled && (
           <Button onClick={onRemove} buttonType="naked" icon="Delete">

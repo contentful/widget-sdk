@@ -5,7 +5,6 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
 import { RoleEditorRoute, RolesListRoute } from 'features/roles-permissions-management';
-import { mapRoutes, withRouteProvider } from 'core/routing';
 import { getBatchingApiClient } from '../app/widgets/WidgetApi/BatchingApiClient';
 
 const list = {
@@ -26,18 +25,36 @@ const list = {
 };
 
 export const RoleEditRoutes = {
-  Details: { name: 'details', url: '/details', label: 'Role detail' },
-  Content: { name: 'content', url: '/content', label: 'Content' },
-  Media: { name: 'media', url: '/media', label: 'Media' },
-  Permissions: { name: 'permissions', url: '/permissions', label: 'Permissions' },
+  Details: {
+    name: 'details',
+    url: 'details',
+    label: 'Role detail',
+  },
+  Content: {
+    name: 'content',
+    url: 'content',
+    label: 'Content',
+  },
+  Media: {
+    name: 'media',
+    url: 'media',
+    label: 'Media',
+  },
+  Permissions: {
+    name: 'permissions',
+    url: 'permissions',
+    label: 'Permissions',
+  },
 };
 
 const newRole = {
-  redirectTo: '.details',
   name: 'new',
-  url: '/new',
+  url: '/new?{tab:string}',
   params: {
     baseRoleId: null,
+    tab: {
+      value: RoleEditRoutes.Details.url,
+    },
   },
   resolve: {
     roleRepo: ['spaceContext', (spaceContext) => RoleRepository.getInstance(spaceContext.space)],
@@ -48,8 +65,7 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null,
     ],
   },
-  children: mapRoutes(RoleEditRoutes),
-  component: withRouteProvider(RoleEditorRoute),
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
     'spaceContext',
@@ -82,9 +98,13 @@ const newRole = {
 };
 
 const detail = {
-  redirectTo: '.details',
   name: 'detail',
-  url: '/:roleId',
+  url: '/:roleId?{tab:string}',
+  params: {
+    tab: {
+      value: RoleEditRoutes.Details.url,
+    },
+  },
   resolve: {
     role: [
       'spaceContext',
@@ -93,8 +113,7 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
     ],
   },
-  children: mapRoutes(RoleEditRoutes),
-  component: withRouteProvider(RoleEditorRoute),
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
     'spaceContext',

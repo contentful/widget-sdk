@@ -48,7 +48,7 @@ export const RuleTagsSelection: React.FC<Props> = ({ rule, onChange }) => {
         {tagValues.length ? (
           <span>
             Tagged {tagValues[0].label}
-            {tagValues.length > 1 && <span> and {tagValues.length - 1} more</span>}
+            {tagValues.length > 1 && <span> or {tagValues.length - 1} more</span>}
           </span>
         ) : (
           <Spinner />
