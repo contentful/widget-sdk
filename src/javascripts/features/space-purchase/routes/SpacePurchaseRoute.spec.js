@@ -9,7 +9,10 @@ import {
   getSingleSpacePlan,
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
-import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
+import {
+  fetchSpacePurchaseContent,
+  fetchPlatformPurchaseContent,
+} from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { getOrganizationMembership, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
@@ -17,6 +20,7 @@ import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { renderWithProvider } from '../__tests__/helpers';
+import { getVariation } from 'LaunchDarkly';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -60,6 +64,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
   fetchSpacePurchaseContent: jest.fn(),
+  fetchPlatformPurchaseContent: jest.fn(),
 }));
 
 jest.mock('services/ResourceService', () => {
@@ -95,6 +100,7 @@ describe('SpacePurchaseRoute', () => {
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
+    getVariation.mockResolvedValue(false);
   });
 
   it('should render the space plan selection page while loading', async () => {
@@ -161,6 +167,27 @@ describe('SpacePurchaseRoute', () => {
 
     expect(getSpaceRatePlans).toBeCalled();
     expect(transformSpaceRatePlans).toBeCalledWith(mockSpaceRatePlans, mockFreeSpaceResource);
+  });
+
+  it('should fetch the space plan selection FAQs by default', async () => {
+    build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-page')).toBeVisible();
+    });
+
+    expect(fetchSpacePurchaseContent).toBeCalled();
+  });
+
+  it('should fetch the platform selection FAQs by when user is purchasing campaigns', async () => {
+    getVariation.mockResolvedValue(true);
+    build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-page')).toBeVisible();
+    });
+
+    expect(fetchPlatformPurchaseContent).toBeCalledWith();
   });
 
   it('should render the NewSpacePage and fire the upgrade_space event after loading when passed a spaceId', async () => {

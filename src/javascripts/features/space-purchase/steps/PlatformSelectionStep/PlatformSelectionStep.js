@@ -10,15 +10,24 @@ import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { usePrevious } from 'core/hooks';
 
-import { SpacePurchaseState } from '../../context';
-import { EVENTS } from '../../utils/analyticsTracking';
-import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
-import { SPACE_PLANS_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
-import { ProductCard } from '../../components/ProductCard';
-import { EnterpriseCard } from '../../components/EnterpriseCard';
-import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
+import { SpacePurchaseState } from 'features/space-purchase/context/index';
+import { EVENTS } from 'features/space-purchase/utils/analyticsTracking';
+import { PLATFORM_CONTENT, PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
+import {
+  SPACE_PLANS_CONTENT,
+  SPACE_PURCHASE_TYPES,
+} from 'features/space-purchase/utils/spacePurchaseContent';
+import { ProductCard } from 'features/space-purchase/components/ProductCard';
+import { EnterpriseCard } from 'features/space-purchase/components/EnterpriseCard';
+import { CONTACT_SALES_HREF } from 'features/space-purchase/components/EnterpriseTalkToUsButton';
+import { FAQAccordion } from 'features/space-purchase/components/FAQAccordion';
+import { usePageContent } from 'features/space-purchase/hooks/usePageContent.ts';
 
 const styles = {
+  faqContainer: css({
+    gridColumn: '1 / 4',
+    marginTop: tokens.spacingL,
+  }),
   headingContainer: css({
     gridColumn: '1 / 4',
     marginBottom: tokens.spacingL,
@@ -44,8 +53,9 @@ export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
-    state: { organization, spaceRatePlans },
+    state: { organization, spaceRatePlans, pageContent },
   } = useContext(SpacePurchaseState);
+  const { faqEntries } = usePageContent(pageContent);
 
   const [selectedPlatform, setSelectedPlatform] = useState('');
   const [selectedSpacePlan, setSelectedSpacePlan] = useState('');
@@ -152,6 +162,10 @@ export const PlatformSelectionStep = ({ track }) => {
             />
           );
         })}
+
+        <div className={styles.faqContainer}>
+          <FAQAccordion entries={faqEntries} track={track} />
+        </div>
       </Grid>
     </section>
   );

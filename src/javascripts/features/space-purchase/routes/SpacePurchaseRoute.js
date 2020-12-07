@@ -15,7 +15,10 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
-import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
+import {
+  fetchSpacePurchaseContent,
+  fetchPlatformPurchaseContent,
+} from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
@@ -56,7 +59,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     getSpaceRatePlans(endpoint, spaceId),
     createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
-    fetchSpacePurchaseContent(),
+    purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
   ]);
 
   const canAccess =
