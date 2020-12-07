@@ -129,7 +129,7 @@ export function createEntryFieldApi({
 
       // Asset doesn't have a `contentType.sys.id`,
       // so for analytics tracking we can just send 'Asset' as the id instead
-      const contentTypeId = entrySys.type === 'Asset' ? 'Asset' : entrySys.contentType.sys.id;
+      const contentTypeId = entrySys.type === 'Asset' ? 'asset' : entrySys.contentType.sys.id;
 
       try {
         await doc.setValueAt(currentPath, value);
