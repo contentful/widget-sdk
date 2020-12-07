@@ -127,12 +127,12 @@ export function createEntryFieldApi({
       const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
       const entrySys = K.getValue(doc.sysProperty);
 
-      // Asset doesn't have a `contentType.sys.id`,
-      // so for analytics tracking we can just send 'Asset' as the id instead
-      const contentTypeId = entrySys.type === 'Asset' ? 'asset' : entrySys.contentType.sys.id;
-
       try {
         await doc.setValueAt(currentPath, value);
+
+        // Asset doesn't have a `contentType.sys.id`,
+        // so for analytics tracking we can just send 'asset' as the id instead
+        const contentTypeId = entrySys?.type === 'Asset' ? 'asset' : entrySys?.contentType?.sys.id;
 
         Analytics.track('extension:set_value', {
           contentTypeId,
