@@ -427,7 +427,7 @@ export class RoleEditor extends React.Component {
 
         if (!editedRules[entity][editRuleId][field]) {
           editedRules[entity][editRuleId][field] = {
-            initialValue,
+            initialValue: field === 'metadataTagIds' && !initialValue ? [] : initialValue,
           };
         }
 
