@@ -1,6 +1,6 @@
 import * as React from 'react';
 import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
+import orderBy from 'lodash/orderBy';
 import some from 'lodash/some';
 import { Widget, Doc, EditorContext, LocaleData, LoadEvents, EditorData } from './types';
 
@@ -88,6 +88,8 @@ export function EntityField(props: EntityFieldProps) {
     return null;
   }
 
+  const sortedFieldLocales = orderBy(fieldLocales || [], ['default', 'name'], ['desc', 'asc']);
+
   return (
     <div
       className="entity-editor__field-group"
@@ -98,7 +100,7 @@ export function EntityField(props: EntityFieldProps) {
       data-field-items-type={field.items?.type}
       aria-current={fieldHasFocus}
       aria-invalid={fieldHasErrors}>
-      {sortBy(fieldLocales || [], 'name').map((locale) => {
+      {sortedFieldLocales.map((locale) => {
         return (
           <EntityFieldLocale
             key={`${widget.fieldId}.${locale.internal_code}`}
