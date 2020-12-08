@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EditorContext, Locale, OtDoc, Widget } from 'app/entity_editor/EntityField/types';
+import { EditorContext, Locale, Doc, Widget } from 'app/entity_editor/EntityField/types';
 import { createFieldLocaleController } from 'app/entity_editor/fieldLocaleController';
 import * as K from 'core/utils/kefir';
 import { set, isEqual } from 'lodash';
@@ -13,13 +13,18 @@ export interface FieldLocaleListener {
 
 export type FieldLocaleLookup = Record<string, Record<string, FieldLocaleListener>>;
 
+export type FieldLocaleListeners = {
+  lookup: FieldLocaleLookup;
+  flat: FieldLocaleListener[];
+};
+
 export const makeFieldLocaleListeners = (
   controls: Widget[],
   editorContext: EditorContext,
   privateLocales: Locale[],
   defaultLocale: Locale,
-  otDoc: OtDoc
-) => {
+  otDoc: Doc
+): FieldLocaleListeners => {
   const lookup: FieldLocaleLookup = {};
   const flat: FieldLocaleListener[] = [];
 
@@ -33,9 +38,9 @@ export const makeFieldLocaleListeners = (
       const localeCode = locale.code;
 
       const { access$, errors$ } = createFieldLocaleController({
-        widget,
+        field: widget.field,
         locale,
-        otDoc,
+        doc: otDoc,
         editorContext,
       });
 
@@ -60,7 +65,7 @@ export const useFieldLocaleListeners = (
   editorContext: EditorContext,
   privateLocales: Locale[],
   defaultLocale: Locale,
-  otDoc: OtDoc
+  otDoc: Doc
 ) => {
   return useMemo(
     () => makeFieldLocaleListeners(controls, editorContext, privateLocales, defaultLocale, otDoc),

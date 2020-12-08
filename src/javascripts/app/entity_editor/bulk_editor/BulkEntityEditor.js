@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import AngularComponent from 'ui/Framework/AngularComponent';
 import BulkEditorTitle from './BulkEditorTitle';
 import BulkEntityEditorActionsDropdown from './BulkEntityEditorActionsDropdown';
 import BulkEntityEditorStatusDropdown from './BulkEntityEditorStatusDropdown';
@@ -19,6 +18,7 @@ import { getEditorState } from '../editorState';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { trackEntryView } from '../Tracking';
+import { EntityField } from '../EntityField/EntityField';
 
 const styles = {
   workbench: css({
@@ -182,17 +182,6 @@ export const BulkEntityEditor = ({
     onRemove();
   };
 
-  const scope = {
-    preferences,
-    widgets,
-    editorContext,
-    editorData,
-    entityInfo,
-    localeData,
-    fieldLocaleListeners,
-    otDoc: doc,
-  };
-
   return (
     <div data-test-id="entity-workbench">
       <Workbench className={styles.workbench}>
@@ -224,15 +213,33 @@ export const BulkEntityEditor = ({
         {isExpanded && (
           <Workbench.Content type="text">
             {customEditor ? (
-              <CustomEditorExtensionRenderer extension={customEditor} scope={scope} />
-            ) : (
-              <AngularComponent
-                with$Apply
-                template={
-                  '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
-                }
-                scope={scope}
+              <CustomEditorExtensionRenderer
+                extension={customEditor}
+                scope={{
+                  preferences,
+                  widgets,
+                  editorContext,
+                  editorData,
+                  entityInfo,
+                  localeData,
+                  fieldLocaleListeners,
+                  otDoc: doc,
+                }}
               />
+            ) : (
+              widgets.map((widget, index) => (
+                <EntityField
+                  key={widget.fieldId}
+                  doc={doc}
+                  editorContext={editorContext}
+                  editorData={editorData}
+                  fieldLocaleListeners={fieldLocaleListeners}
+                  index={index}
+                  localeData={localeData}
+                  preferences={preferences}
+                  widget={widget}
+                />
+              ))
             )}
           </Workbench.Content>
         )}

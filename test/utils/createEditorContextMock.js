@@ -1,6 +1,5 @@
 import * as K from './kefir';
 import _ from 'lodash';
-import * as Focus from 'app/entity_editor/Focus';
 import sinon from 'sinon';
 
 // TODO replace sinon with jest when test/helpers/mocks/editor_context.js is migrated
@@ -10,7 +9,7 @@ export const createEditorContextMock = () => {
   function create() {
     return {
       validator: createValidator(),
-      focus: Focus.create(),
+      hasInitialFocus: false,
       entityInfo: {
         id: 'ENTITY ID',
         type: 'Entry',

@@ -25,12 +25,9 @@ export const angularInitRun = [
     const modules = await Promise.all([
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/EntityField/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
-      // TODO Remove temporary FieldLocaleController as soon as `cf-entity-field` is migrated
-      import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleControllerBridge'),
     ]);
     modules.forEach((module) => module.default());
 

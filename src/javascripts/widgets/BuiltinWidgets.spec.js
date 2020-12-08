@@ -9,7 +9,9 @@ const EDITOR_WIDGETS_COUNT = widgetList.filter(
   (widget) => widget.namespace == WidgetNamespace.EDITOR_BUILTIN
 ).length;
 
-jest.mock('ui/Framework/AngularComponent', () => () => null);
+jest.mock('app/entity_editor/EntityField/EntityField', () => ({
+  EntityField: () => null,
+}));
 
 describe('BuiltinWidgets', () => {
   describe('#create()', () => {

@@ -133,7 +133,7 @@ export function createWidgetLinkRenderEventsHandler({
   widget,
   locale,
   loadEvents,
-  editorData,
+  getValue,
   trackLinksRendered,
 }) {
   return function handleWidgetLinkRenderEvents() {
@@ -159,7 +159,7 @@ export function createWidgetLinkRenderEventsHandler({
       widget,
       locale,
       loadEvents,
-      editorData,
+      getValue,
       trackLinksRendered,
       getLinkCountForField,
     });
@@ -170,14 +170,12 @@ function handleField({
   widget,
   locale,
   loadEvents,
-  editorData,
+  getValue,
   trackLinksRendered,
   getLinkCountForField,
 }) {
-  // TODO: We shouldn't have to deal with `editorData` but a simple entity in here.
   const fieldId = widget.fieldId;
-  const internalFieldId = widget.field.id;
-  const localeFieldOrNull = getLocaleFieldOrNull(editorData, internalFieldId, locale);
+  const localeFieldOrNull = getValue() || null;
   const linkCount = localeFieldOrNull ? getLinkCountForField(localeFieldOrNull) : 0;
   if (linkCount === 0) {
     trackLinksRendered();
@@ -236,13 +234,4 @@ function isMultiReferenceField(field) {
 
 function isLinkField(field) {
   return isRichTextField(field) || isSingleReferenceField(field) || isMultiReferenceField(field);
-}
-
-function getLocaleFieldOrNull(editorData, fieldId, locale) {
-  const { fields } = editorData.entity.data;
-  const field = fields[fieldId];
-  if (!field) {
-    return null;
-  }
-  return field[locale.internal_code] || null;
 }
