@@ -14,6 +14,7 @@ jest.mock('services/localeStore', () => ({
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
+jest.mock('ui/Framework/AngularComponent', () => () => <div data-test-id="angular-component" />);
 jest.mock('app/entry_editor/CustomEditorExtensionRenderer', () => () => (
   <div data-test-id="custom-editor-extension-renderer" />
 ));
@@ -24,10 +25,8 @@ jest.mock('./BulkEntityEditorStatusDropdown', () => () => (
   <div data-test-id="bulk-entity-editor-status-dropdown" />
 ));
 jest.mock('app/entity_editor/Validator', () => ({
-  createForEntity: jest.fn().mockReturnValue({ hasFieldLocaleError: jest.fn() }),
-}));
-jest.mock('app/entity_editor/EntityField/EntityField', () => ({
-  EntityField: () => <div data-test-id="entity-field-controls" />,
+  createForEntry: jest.fn().mockReturnValue('validator'),
+  createForEntity: jest.fn().mockReturnValue('validator'),
 }));
 jest.mock('../stateController', () => ({
   initStateController: jest.fn(),
@@ -41,17 +40,6 @@ jest.mock('app/entity_editor/Document', () => ({
 }));
 jest.mock('app/widgets/ExtensionSDKs', () => ({
   createEditorExtensionSDK: jest.fn(),
-}));
-jest.mock('app/entry_editor/formWidgetsController', () => ({
-  filterWidgets: jest.fn().mockReturnValue([
-    {
-      fieldId: '1',
-      field: {
-        disabled: false,
-      },
-      isVisible: true,
-    },
-  ]),
 }));
 
 localFieldChanges.mockReturnValue(K.createBus().stream);
@@ -126,10 +114,10 @@ describe('BulkEntityEditor', () => {
     expect(queryByTestId('entity-loader')).toBeInTheDocument();
   });
 
-  it('should render the workbench with the field editor after initial load', async () => {
+  it('should render the workbench with the angular component after initial load', async () => {
     const { props, editorData, queryByTestId } = renderComponent();
     await waitFor(() => expect(queryByTestId('entity-workbench')).toBeInTheDocument());
-    expect(queryByTestId('entity-field-controls')).toBeInTheDocument();
+    expect(queryByTestId('angular-component')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).toBeInTheDocument();
 
@@ -161,7 +149,7 @@ describe('BulkEntityEditor', () => {
       bulkEditorContext: { loadEditorData: jest.fn().mockResolvedValue(null) },
     });
     await waitFor(() => expect(queryByTestId('entity-loader')).not.toBeInTheDocument());
-    expect(queryByTestId('entity-field-controls')).not.toBeInTheDocument();
+    expect(queryByTestId('angular-component')).not.toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).not.toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).not.toBeInTheDocument();
 
@@ -172,15 +160,15 @@ describe('BulkEntityEditor', () => {
   it('should be able to collapse the entity', async () => {
     const { props, editorData, queryByTestId } = renderComponent();
     await waitFor(() => expect(queryByTestId('entity-workbench')).toBeInTheDocument());
-    expect(queryByTestId('entity-field-controls')).toBeInTheDocument();
+    expect(queryByTestId('angular-component')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-actions-dropdown')).toBeInTheDocument();
     expect(queryByTestId('bulk-entity-editor-status-dropdown')).toBeInTheDocument();
 
     queryByTestId('bulk-editor-title').click();
-    await waitFor(() => expect(queryByTestId('entity-field-controls')).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByTestId('angular-component')).not.toBeInTheDocument());
 
     queryByTestId('bulk-editor-title').click();
-    await waitFor(() => expect(queryByTestId('entity-field-controls')).toBeInTheDocument());
+    await waitFor(() => expect(queryByTestId('angular-component')).toBeInTheDocument());
 
     expect(initDocErrorHandler).toHaveBeenCalledTimes(1);
     expect(initStateController).toHaveBeenCalledTimes(1);

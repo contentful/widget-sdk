@@ -1,5 +1,6 @@
 import * as K from 'core/utils/kefir';
 import { truncate } from 'utils/StringUtils';
+import * as Focus from 'app/entity_editor/Focus';
 import * as logger from 'services/logger';
 import localeStore from 'services/localeStore';
 import { valuePropertyAt } from 'app/entity_editor/Document';
@@ -74,6 +75,7 @@ export const getEditorState = ({
       editorContext: {
         entityInfo,
         validator,
+        focus: Focus.create(),
         hasInitialFocus,
       },
     };

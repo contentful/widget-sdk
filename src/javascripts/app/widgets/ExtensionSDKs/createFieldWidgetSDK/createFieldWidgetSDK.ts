@@ -25,7 +25,7 @@ export function createFieldWidgetSDK({
   editorData,
   localeData,
   preferences,
-  setInvalid,
+  fieldController,
   doc,
   internalContentType,
   fieldLocaleListeners,
@@ -39,7 +39,7 @@ export function createFieldWidgetSDK({
   editorData: any;
   localeData: any;
   preferences: any;
-  setInvalid: any;
+  fieldController: any;
   doc: Document;
   internalContentType: InternalContentType;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
@@ -66,8 +66,8 @@ export function createFieldWidgetSDK({
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
     setInvalid: (localeCode, isInvalid) => {
-      if (setInvalid) {
-        return setInvalid(localeCode, isInvalid);
+      if (fieldController) {
+        return fieldController.setInvalid(localeCode, isInvalid);
       }
     },
   });

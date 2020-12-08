@@ -189,6 +189,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             widgets,
             noLocalizedFieldsAdviceProps,
             fieldLocaleListeners,
+            entityInfo,
             ...props,
           });
         } else {

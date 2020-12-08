@@ -8,56 +8,22 @@ import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { LocaleData } from './types';
-import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
 
-type EntityFieldControlProps = {
-  hasInitialFocus: boolean;
-  widget: any;
-  locale: {
-    code: any;
-  };
-  editorData: {
-    entityInfo: {
-      contentType: any;
-      type: any;
-    };
-  };
-  doc: any;
-  fieldLocale: any;
-  loadEvents: Function;
-  localeData: LocaleData;
-  preferences: Preferences;
-  setInvalid: Function;
-  onBlur: (...args: any[]) => any;
-  onFocus: (...args: any[]) => any;
-  fieldLocaleListeners: any;
-};
-
-export function EntityFieldControl(props: EntityFieldControlProps) {
+export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean }) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
-  const {
-    hasInitialFocus,
-    widget,
-    locale,
-    editorData,
-    doc,
-    fieldLocale,
-    loadEvents,
-    localeData,
-    preferences,
-    setInvalid,
-    fieldLocaleListeners,
-    onBlur,
-    onFocus,
-  } = props;
-
-  const internalContentType = editorData.entityInfo.contentType;
-
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
+    const {
+      widget,
+      locale,
+      editorData,
+      fieldController,
+      localeData,
+      preferences,
+      otDoc: doc,
+    } = props.scope;
     const { widgetNamespace, widgetId, fieldId, parameters } = widget;
 
     return createFieldWidgetSDK({
@@ -66,43 +32,28 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       widgetNamespace,
       widgetId,
       editorData,
-      setInvalid,
+      fieldController,
       localeData,
       preferences,
       spaceContext,
       doc,
-      internalContentType,
-      fieldLocaleListeners,
+      internalContentType: props.scope.entityInfo.contentType,
+      fieldLocaleListeners: props.scope.fieldLocaleListeners,
       parameters,
     });
-  }, [
-    doc,
-    editorData,
-    internalContentType,
-    fieldLocaleListeners,
-    setInvalid,
-    locale.code,
-    localeData,
-    preferences,
-    widget,
-  ]);
+  }, [props.scope]);
 
   return (
     <>
       <div className="entity-editor__control-group">
         <WidgetRenderer
-          onFocus={onFocus}
-          onBlur={onBlur}
-          hasInitialFocus={hasInitialFocus}
-          isRtl={isRtlLocale(locale.code)}
-          loadEvents={loadEvents}
-          entityType={editorData.entityInfo.type}
-          locale={locale}
-          widget={widget}
+          scope={props.scope}
           widgetApi={widgetApi}
+          hasInitialFocus={props.hasInitialFocus}
+          isRtl={isRtlLocale(props.scope.locale.code)}
         />
         <Collaborators
-          users={fieldLocale.collaborators}
+          users={props.scope.fieldLocale.collaborators}
           className="entity-editor__field-collaborators"
         />
       </div>

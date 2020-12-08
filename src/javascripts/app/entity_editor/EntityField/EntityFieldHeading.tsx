@@ -35,7 +35,7 @@ export function EntityFieldHeading(props: {
         {withLocaleName && <span> – {locale.name}</span>}
       </label>
       {access && access.type === FieldAccess.DENIED.type && (
-        <div className="entity-editor__no-permission-info" data-test-id="field-locale-denied">
+        <div className="entity-editor__no-permission-info" data-test-id="field-locale-permissions">
           <FieldLockIndicator
             text="This field is locked"
             tooltipContent="You don’t have a permission to edit this field. To change your permission setting contact your space administrator."
@@ -43,9 +43,7 @@ export function EntityFieldHeading(props: {
         </div>
       )}
       {access && access.type === FieldAccess.EDITING_DISABLED.type && (
-        <div
-          className="entity-editor__no-permission-info"
-          data-test-id="field-locale-editing_disabled">
+        <div className="entity-editor__no-permission-info" data-test-id="field-locale-disabled">
           <FieldLockIndicator
             tooltipContent="Editing of this field is disabled. To change your content model contact your space administrator."
             text="This field is disabled"

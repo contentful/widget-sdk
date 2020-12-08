@@ -16,9 +16,9 @@ import { createFieldLocaleDocument } from './fieldLocaleDocument';
  *
  */
 export const createFieldLocaleController = ({
-  field,
+  widget: { field },
   locale,
-  doc,
+  otDoc,
   // Provided by the entry and asset controllers
   editorContext,
 }) => {
@@ -26,10 +26,10 @@ export const createFieldLocaleController = ({
   const fieldPath = ['fields', field.id];
   const localePath = fieldPath.concat([locale.internal_code]);
 
-  controller.canEditLocale = doc.permissions.canEditFieldLocale(field.apiName, locale.code);
+  controller.canEditLocale = otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
 
   controller.doc = createFieldLocaleDocument(
-    doc,
+    otDoc,
     field,
     locale.internal_code,
     controller.canEditLocale
