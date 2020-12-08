@@ -131,7 +131,7 @@ export function createEntryFieldApi({
         await doc.setValueAt(currentPath, value);
 
         Analytics.track('extension:set_value', {
-          contentTypeId: entrySys.contentType?.sys?.id,
+          contentTypeId: entrySys.contentType?.sys.id,
           entryId: entrySys.id,
           fieldId: internalField.id,
           localeCode: publicLocaleCode,
