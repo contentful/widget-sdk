@@ -17,6 +17,7 @@ import {
   TabPanel,
 } from '@contentful/forma-36-react-components';
 import { getVariation, FLAGS } from 'LaunchDarkly';
+import StateLink from 'app/common/StateLink';
 
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl, helpCenterUrl } from 'Config';
@@ -95,6 +96,7 @@ function SpacePlans({
   const [isSpaceAssignmentExperimentEnabled, setIsSpaceAssignmentExperimentEnabled] = useState(
     false
   );
+  const [isSpaceCreateForSpacePlanEnabled, setIsSpaceCreateForSpacePlanEnabled] = useState(false);
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
@@ -103,6 +105,9 @@ function SpacePlans({
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId });
+      const isSpaceCreateForSpacePlanEnabled = await getVariation(
+        FLAGS.CREATE_SPACE_FOR_SPACE_PLAN
+      );
       const isExperimentFeatureFlagEnabled = await getVariation(
         FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
         { organizationId }
@@ -122,6 +127,7 @@ function SpacePlans({
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);
       setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
+      setIsSpaceCreateForSpacePlanEnabled(isSpaceCreateForSpacePlanEnabled);
     }
     fetch();
   }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
@@ -208,9 +214,15 @@ function SpacePlans({
             per month.{' '}
           </span>
         )}
-        <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
-          Create Space
-        </TextLink>
+        {enterprisePlan && isSpaceCreateForSpacePlanEnabled ? (
+          <StateLink component={TextLink} path=".space_create">
+            Create Space
+          </StateLink>
+        ) : (
+          <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
+            Create Space
+          </TextLink>
+        )}
       </Paragraph>
       {isSpaceUsageSummaryEnabled && numSpaces > 0 && (
         <Note className={styles.note}>

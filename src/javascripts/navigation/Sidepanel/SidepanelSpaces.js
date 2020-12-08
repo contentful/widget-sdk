@@ -8,27 +8,39 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import { Button, Heading, Paragraph, TextLink, List } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration.svg';
+import StateLink from 'app/common/StateLink';
 
 const styles = { svgContainer: css({ width: '150px' }) };
 
-function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
+function OrgSpacesHeader({
+  canCreateSpaceInCurrOrg,
+  showCreateSpaceModal,
+  isSpaceCreateForSpacePlanEnabled,
+}) {
   return (
     <div className="nav-sidepanel__spaces-header">
       <Paragraph className="nav-sidepanel__spaces-header-heading">Spaces</Paragraph>
-      {canCreateSpaceInCurrOrg && (
-        <TextLink
-          className="text-link"
-          onClick={showCreateSpaceModal}
-          data-test-id="sidepanel-add-space-link">
-          + Create space
-        </TextLink>
-      )}
+      {canCreateSpaceInCurrOrg ? (
+        isSpaceCreateForSpacePlanEnabled ? (
+          <StateLink component={TextLink} path=".space_create">
+            + Create space
+          </StateLink>
+        ) : (
+          <TextLink
+            className="text-link"
+            onClick={showCreateSpaceModal}
+            data-test-id="sidepanel-add-space-link">
+            + Create space
+          </TextLink>
+        )
+      ) : null}
     </div>
   );
 }
 OrgSpacesHeader.propTypes = {
   canCreateSpaceInCurrOrg: PropTypes.bool,
   showCreateSpaceModal: PropTypes.func.isRequired,
+  isSpaceCreateForSpacePlanEnabled: PropTypes.bool,
 };
 
 function SpaceList(props) {
@@ -145,7 +157,13 @@ NoSpacesMsg.propTypes = {
 };
 
 export default function SidepanelSpaces(props) {
-  const { currOrg, spacesByOrg, canCreateSpaceInCurrOrg, showCreateSpaceModal } = props;
+  const {
+    currOrg,
+    spacesByOrg,
+    canCreateSpaceInCurrOrg,
+    showCreateSpaceModal,
+    isSpaceCreateForSpacePlanEnabled,
+  } = props;
   const spaces = currOrg && spacesByOrg[currOrg.sys.id];
 
   return (
@@ -154,6 +172,7 @@ export default function SidepanelSpaces(props) {
         <OrgSpacesHeader
           canCreateSpaceInCurrOrg={canCreateSpaceInCurrOrg}
           showCreateSpaceModal={showCreateSpaceModal}
+          isSpaceCreateForSpacePlanEnabled={isSpaceCreateForSpacePlanEnabled}
         />
       )}
       {spaces && <SpaceList {...props} spaces={spaces} />}
@@ -173,4 +192,5 @@ SidepanelSpaces.propTypes = {
   spacesByOrg: PropTypes.object.isRequired,
   currOrg: PropTypes.object.isRequired,
   goToSpace: PropTypes.func.isRequired,
+  isSpaceCreateForSpacePlanEnabled: PropTypes.bool,
 };
