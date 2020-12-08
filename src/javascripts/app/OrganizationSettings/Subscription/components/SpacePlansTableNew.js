@@ -57,7 +57,9 @@ const buildSortParam = (sortState) => {
   const firstLevelSortDirection = sortOrder === 'DESC' ? '-' : '';
   const secondLevelSortDirection = sortOrder === 'DESC' ? '' : '-';
   return `${firstLevelSortDirection}${name}${
-    name === 'spaceName' ? '' : `.utilization,${secondLevelSortDirection}${name}.limit`
+    ['spaceName', 'planName'].includes(name)
+      ? ''
+      : `.utilization,${secondLevelSortDirection}${name}.limit`
   }`;
 };
 
@@ -126,7 +128,12 @@ export const SpacePlansTableNew = ({
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell>Space type</TableCell>
+            <SortableHeaderCell
+              id="planName"
+              displayName="Space type"
+              onSort={handleSort}
+              sortOrder={sortState}
+            />
             <TableCell />
             <SortableHeaderCell
               id="environments"
