@@ -84,8 +84,11 @@ export const SpacePlansTableNew = ({
     track('space_usage_summary:column_sorted', { sortBy: columnName });
   };
 
-  const handlePaginationChange = (pagination) => {
-    setPagination(pagination);
+  const handlePaginationChange = (newPagination) => {
+    setPagination({
+      ...newPagination,
+      ...(newPagination.limit !== pagination.limit && { skip: 0 }),
+    });
     track('space_usage_summary:pagination_changed');
   };
 
