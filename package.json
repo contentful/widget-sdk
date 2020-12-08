@@ -49,7 +49,7 @@
     "@contentful/rich-text-types": "^14.1.2",
     "@contentful/sharejs": "^2.15.0",
     "@contentful/validation": "^12.13.4",
-    "@contentful/widget-renderer": "^0.13.0",
+    "@contentful/widget-renderer": "^0.13.1",
     "@contentful/worf": "^4.7.1",
     "@sentry/browser": "^5.20.1",
     "ajv": "^5.5.2",

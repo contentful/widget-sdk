@@ -12,11 +12,12 @@ import SnapshotPresenterLocation from './SnapshotPresenterLocation';
 import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
-import { EditorInterface, isCustomWidget, WidgetNamespace } from '@contentful/widget-renderer';
+import { isCustomWidget, WidgetNamespace } from '@contentful/widget-renderer';
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
 import { Entity } from 'app/entity_editor/Document/types';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
+import { EditorInterfaceProps } from 'contentful-management/types';
 
 const styles = {
   rtl: css({
@@ -27,7 +28,7 @@ const styles = {
 interface SnapshotPresenterWidgetsProps {
   editorData: {
     contentType: { data: InternalContentType };
-    editorInterface: EditorInterface;
+    editorInterface: EditorInterfaceProps;
   };
   entity: Entity;
   linkType?: string;

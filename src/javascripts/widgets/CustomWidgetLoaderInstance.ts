@@ -35,8 +35,8 @@ export async function getCustomWidgetLoader() {
   const accessToken = await getToken();
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.cma.envId;
-  const cachePath = [accessToken, spaceId, environmentId];
+  const aliasOrEnvId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
+  const cachePath = [accessToken, spaceId, aliasOrEnvId];
 
   let loader: WidgetLoader = get(cache, cachePath);
 
@@ -52,7 +52,7 @@ export async function getCustomWidgetLoader() {
       { type: 'plain' }
     );
 
-    loader = new WidgetLoader(client, getMarketplaceDataProvider(), spaceId, environmentId);
+    loader = new WidgetLoader(client, getMarketplaceDataProvider(), spaceId, aliasOrEnvId);
 
     set(cache, cachePath, loader);
   }

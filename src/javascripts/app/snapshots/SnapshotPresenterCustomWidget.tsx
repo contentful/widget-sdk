@@ -2,12 +2,7 @@ import React, { useMemo } from 'react';
 
 import { FieldExtensionSDK, KnownSDK } from 'contentful-ui-extensions-sdk';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
-import {
-  EditorInterface,
-  Widget,
-  WidgetLocation,
-  WidgetRenderer,
-} from '@contentful/widget-renderer';
+import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-renderer';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
@@ -19,6 +14,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
 import { SpaceEndpoint } from 'data/CMA/types';
 import createUsersCache from 'data/userCache';
+import { EditorInterfaceProps } from 'contentful-management/types';
 
 interface SnapshotPresenterCustomWIdgetProps {
   locale: Locale;
@@ -29,7 +25,7 @@ interface SnapshotPresenterCustomWIdgetProps {
   entity: Entity;
   editorData: {
     contentType: { data: InternalContentType };
-    editorInterface: EditorInterface;
+    editorInterface: EditorInterfaceProps;
   };
   value: any;
   widget: Widget;

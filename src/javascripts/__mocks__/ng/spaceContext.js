@@ -48,6 +48,7 @@ export const hasOptedIntoAliases = jest.fn();
 export const endpoint = jest.fn();
 
 export const getEnvironmentId = jest.fn();
+export const getAliasId = jest.fn();
 
 export const space = {
   getId: jest.fn(),
