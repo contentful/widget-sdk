@@ -175,87 +175,89 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
 
   return (
     <div className="rule-list" data-test-id={`rule-list-${entity}`}>
-      <div className="rule-list__section" data-test-id={`rule-list-${entity}-section`}>
-        <Subheading>Filter rules by</Subheading>
-        <div className={styles.filtersContainer}>
+      <Subheading>Filter rules by</Subheading>
+      <div className={styles.filtersContainer}>
+        <SelectPill
+          testId="rules-filter-action-select"
+          isActive={actionFilter !== 'clean'}
+          isDisabled={isDisabled}
+          value={actionFilter}
+          onChange={(event) => setActionFilter(event.target.value)}>
+          {filterActionOptions.map(({ value, text }) => (
+            <Option value={value} key={value}>
+              {text}
+            </Option>
+          ))}
+        </SelectPill>
+
+        <SelectPill
+          testId="rules-filter-scope-select"
+          isActive={scopeFilter !== 'clean'}
+          isDisabled={isDisabled}
+          value={scopeFilter}
+          onChange={(event) => setScopeFilter(event.target.value)}>
+          <Option value="clean">{`${entityName[1]} (all)`}</Option>
+          <Option value="any">{`Any ${entityName[0].toLowerCase()}`}</Option>
+          <Option value="user">{`${entityName[1]} created by user`}</Option>
+          <Option value="entityId">{`A specific ${entityName[0].toLowerCase()}`}</Option>
+        </SelectPill>
+        {entity === 'entry' && (
           <SelectPill
-            testId="rules-filter-action-select"
-            isActive={actionFilter !== 'clean'}
+            testId="rules-filter-content-type-select"
+            isActive={contentTypeFilter !== 'clean'}
             isDisabled={isDisabled}
-            value={actionFilter}
-            onChange={(event) => setActionFilter(event.target.value)}>
-            {filterActionOptions.map(({ value, text }) => (
-              <Option value={value} key={value}>
-                {text}
+            value={contentTypeFilter}
+            onChange={(event) => setContentTypeFilter(event.target.value)}>
+            {filterContentTypeOptions.map(({ id, name }) => (
+              <Option value={id} key={id}>
+                {name}
               </Option>
             ))}
           </SelectPill>
-
-          <SelectPill
-            testId="rules-filter-scope-select"
-            isActive={scopeFilter !== 'clean'}
-            isDisabled={isDisabled}
-            value={scopeFilter}
-            onChange={(event) => setScopeFilter(event.target.value)}>
-            <Option value="clean">{`${entityName[1]} (all)`}</Option>
-            <Option value="any">{`Any ${entityName[0].toLowerCase()}`}</Option>
-            <Option value="user">{`${entityName[1]} created by user`}</Option>
-            <Option value="entityId">{`A specific ${entityName[0].toLowerCase()}`}</Option>
-          </SelectPill>
-          {entity === 'entry' && (
-            <SelectPill
-              testId="rules-filter-content-type-select"
-              isActive={contentTypeFilter !== 'clean'}
-              isDisabled={isDisabled}
-              value={contentTypeFilter}
-              onChange={(event) => setContentTypeFilter(event.target.value)}>
-              {filterContentTypeOptions.map(({ id, name }) => (
-                <Option value={id} key={id}>
-                  {name}
-                </Option>
-              ))}
-            </SelectPill>
-          )}
-          {activeFilter && (
-            <TextLink
-              className={styles.clearFilters}
-              disabled={false}
-              iconPosition="right"
-              linkType="primary"
-              testId="clear-filters"
-              onClick={() => resetFilters()}>
-              Clear filters
-            </TextLink>
-          )}
-        </div>
+        )}
+        {activeFilter && (
+          <TextLink
+            className={styles.clearFilters}
+            disabled={false}
+            iconPosition="right"
+            linkType="primary"
+            testId="clear-filters"
+            onClick={() => resetFilters()}>
+            Clear filters
+          </TextLink>
+        )}
+      </div>
+      <div className="rule-list__section" data-test-id={`rule-list-${entity}-section`}>
         <Heading>{hasRules ? 'Allowed' : 'Everything is denied for this rule.'}</Heading>
-        <Paragraph className={hasRules ? undefined : styles.addLink}>
+        <Paragraph className={styles.addLink}>
           {hasRules
             ? 'Users with this role can:'
             : "Users with this role can't do anything. Add a rule to allow certain actions."}
         </Paragraph>
-        {filteredRules.allowed.map((rule) => {
-          const isTheNewRule =
-            newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
-          return (
-            <Rule
-              key={rule.id}
-              rule={rule}
-              onUpdateAttribute={updateRuleAttribute('allowed', rule.id)}
-              onRemove={() => removeRule('allowed', rule.id)}
-              entity={entity}
-              isDisabled={isDisabled}
-              privateLocales={privateLocales}
-              contentTypes={contentTypes}
-              searchEntities={searchEntities}
-              getEntityTitle={getEntityTitle}
-              hasClpFeature={hasClpFeature}
-              focus={isTheNewRule && scroll}
-              isNew={newRuleIds.includes(rule.id)}
-              modified={editedRuleIds.includes(rule.id)}
-            />
-          );
-        })}
+        <div className="rule-list__rule" data-test-id="rule-allowed">
+          {filteredRules.allowed.map((rule) => {
+            const isTheNewRule =
+              newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
+            return (
+              <Rule
+                key={rule.id}
+                rule={rule}
+                onUpdateAttribute={updateRuleAttribute('allowed', rule.id)}
+                onRemove={() => removeRule('allowed', rule.id)}
+                entity={entity}
+                isDisabled={isDisabled}
+                privateLocales={privateLocales}
+                contentTypes={contentTypes}
+                searchEntities={searchEntities}
+                getEntityTitle={getEntityTitle}
+                hasClpFeature={hasClpFeature}
+                focus={isTheNewRule && scroll}
+                isNew={newRuleIds.includes(rule.id)}
+                modified={editedRuleIds.includes(rule.id)}
+              />
+            );
+          })}
+        </div>
         {!isDisabled && (
           <Button
             className={styles.addLink}
@@ -268,7 +270,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
       {rules.allowed.length > 0 && (
         <div className="rule-list__section">
           <Heading>Denied</Heading>
-          <Paragraph className={rules.denied.length ? undefined : styles.addLink}>
+          <Paragraph className={styles.addLink}>
             Users with this role can
             <strong> not</strong>:
           </Paragraph>
