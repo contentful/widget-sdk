@@ -479,7 +479,7 @@ async function build(customProps, customState) {
     ...customProps,
   };
 
-  await renderWithProvider(
+  renderWithProvider(
     SpacePurchaseContainer,
     {
       organization: mockOrganization,

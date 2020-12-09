@@ -7,6 +7,7 @@ import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import {
   getBasePlan,
   getSpaceRatePlans,
@@ -82,7 +83,7 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
   const sessionId = alnum(16);
 
   dispatch({
-    type: actions.SET_STATE,
+    type: actions.SET_INITIAL_STATE,
     payload: {
       organization,
       currentSpace,
@@ -126,7 +127,11 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (purchasingApps === undefined) {
-    return <FetcherLoading />;
+    return (
+      <EmptyStateContainer>
+        <FetcherLoading />
+      </EmptyStateContainer>
+    );
   }
 
   if (error) {

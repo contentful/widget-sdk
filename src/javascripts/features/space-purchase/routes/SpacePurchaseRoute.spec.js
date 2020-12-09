@@ -106,13 +106,13 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should render the generic loading component until the apps purchase state is loaded', async () => {
-    await build(null, false);
+    build(null, false);
 
-    expect(screen.getByTestId('cf-ui-fetcher-loading')).toBeVisible();
+    expect(screen.getByTestId('cf-ui-empty-state')).toBeVisible();
 
     await waitFor(() => expect(getVariation).toBeCalled());
 
-    expect(screen.findByTestId('cf-ui-fetcher-loading')).toBeNull();
+    expect(screen.queryByTestId('cf-ui-empty-state')).toBeNull();
   });
 
   it('should render the space plan selection page while loading, after the apps purchase state has been loaded', async () => {
@@ -255,9 +255,9 @@ async function build(customProps, shouldWait = true) {
     ...customProps,
   };
 
-  await renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
+  renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
 
   if (shouldWait) {
-    await waitFor(() => expect(getVariation).toBeCalled());
+    await waitFor(() => expect(screen.queryByTestId('cf-ui-empty-state')).toBeNull());
   }
 }

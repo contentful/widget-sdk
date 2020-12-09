@@ -1,4 +1,5 @@
 import React, { createContext, useReducer } from 'react';
+import PropTypes from 'prop-types';
 
 import { spacePurchaseReducer } from './spacePurchaseReducer';
 
@@ -27,3 +28,21 @@ export function SpacePurchaseContextProvider({ children }) {
     </SpacePurchaseState.Provider>
   );
 }
+
+// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
+export function SpacePurchaseTestContextProvider({ children, additionalInitialState = {} }) {
+  const [state, dispatch] = useReducer(spacePurchaseReducer, {
+    ...initialState,
+    ...additionalInitialState,
+  });
+
+  return (
+    <SpacePurchaseState.Provider value={{ dispatch, state }}>
+      {children}
+    </SpacePurchaseState.Provider>
+  );
+}
+
+SpacePurchaseTestContextProvider.propTypes = {
+  additionalInitialState: PropTypes.object,
+};
