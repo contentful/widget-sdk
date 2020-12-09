@@ -12,15 +12,10 @@ import { billing } from './links';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
-}));
-
-jest.mock('services/ChangeSpaceService', () => ({
-  beginSpaceChange: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -51,15 +46,6 @@ const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
 
-const mockSpacePlans = [
-  Fake.Plan({
-    space: Fake.Space(),
-  }),
-  Fake.Plan({
-    space: Fake.Space(),
-  }),
-];
-
 describe('SubscriptionPage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
@@ -80,14 +66,6 @@ describe('SubscriptionPage', () => {
 
     expect(screen.getByTestId('subscription-page.base-plan-details')).toHaveTextContent(
       mockBasePlan.name
-    );
-  });
-
-  it('should show the right number of space plan rows', () => {
-    build({ spacePlans: mockSpacePlans });
-
-    expect(screen.getAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(
-      mockSpacePlans.length
     );
   });
 
@@ -262,22 +240,6 @@ describe('SubscriptionPage', () => {
       organizationId: mockOrganization.sys.id,
     });
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
-  });
-
-  it('should track a click and call beginSpaceChange when onChangeSpace is clicked', () => {
-    build({ spacePlans: mockSpacePlans });
-
-    // Click on the first space plan's upgrade link
-    userEvent.click(screen.getAllByTestId('subscription-page.spaces-list.upgrade-plan-link')[0]);
-    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-      organizationId: mockOrganization.sys.id,
-      spaceId: mockSpacePlans[0].space.sys.id,
-    });
-    expect(beginSpaceChange).toBeCalledWith({
-      organizationId: mockOrganization.sys.id,
-      space: mockSpacePlans[0].space,
-      onSubmit: expect.any(Function),
-    });
   });
 
   it('should show CTA to talk to support', () => {

@@ -3,11 +3,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SpacePlans from './SpacePlans';
 import * as trackCTA from 'analytics/trackCTA';
-import { getVariation } from 'LaunchDarkly';
 import * as fake from 'test/helpers/fakeFactory';
 import { getSpacesUsage } from './SpacesUsageService';
 
-const mockSpaceForPlanOne = fake.Space();
+const fakeSpaceId = 'fake_space_id';
+const mockSpaceForPlanOne = fake.Space({ sys: { id: fakeSpaceId } });
+const mockSpaceForPlanTwo = fake.Space();
+
 const mockPlanOne = {
   sys: { id: 'random_id_1' },
   name: 'random_name_1',
@@ -15,11 +17,12 @@ const mockPlanOne = {
   space: mockSpaceForPlanOne,
   price: 789,
 };
+
 const mockPlanTwo = {
   sys: { id: 'random_id_2' },
   name: 'random_name_2',
   planType: 'free_space',
-  space: fake.Space(),
+  space: mockSpaceForPlanTwo,
   price: 456,
 };
 
@@ -30,7 +33,7 @@ const mockUsage = {
   limit: 100,
   utilization: 1,
 };
-const fakeSpaceId = 'fake_space_id';
+
 const mockSpaceUsage = {
   contentTypes: mockUsage,
   environments: mockUsage,
@@ -65,30 +68,11 @@ const mockOnDeleteSpace = jest.fn();
 const mockOnCreateSpace = jest.fn();
 
 describe('Space Plan', () => {
-  beforeEach(() => {
-    getVariation.mockClear().mockResolvedValue(false);
-  });
-
   describe('should load correctly', () => {
-    it('should display the skelton template while loading', async () => {
-      build({ initialLoad: true });
-
-      await waitFor(() =>
-        screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => expect(ele).toBeVisible())
-      );
-    });
-
     it('should not display the export btn while loading', async () => {
-      getVariation.mockResolvedValue(true);
       build({ initialLoad: true });
 
       await waitFor(() => expect(screen.queryByTestId('subscription-page.export-csv')).toBeNull());
-    });
-
-    it('should not display the skelton template after loading', async () => {
-      build();
-
-      await waitFor(() => expect(screen.queryAllByTestId('cf-ui-skeleton-form')).toEqual([]));
     });
   });
 
@@ -139,9 +123,10 @@ describe('Space Plan', () => {
     });
 
     it('should render SpacePlanRows when there are plans', async () => {
+      getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
       build();
       await waitFor(() =>
-        expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(2)
+        expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1)
       );
     });
 
@@ -153,6 +138,7 @@ describe('Space Plan', () => {
     });
 
     it('should render an upgraded SpacePlanRow when it has been upgraded', async () => {
+      getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
       build({ upgradedSpaceId: mockSpaceForPlanOne.sys.id });
 
       await waitFor(() =>
@@ -173,7 +159,6 @@ describe('Space Plan', () => {
     });
 
     it('should render a help icon and tooltip when anySpacesInaccessible is true', async () => {
-      getVariation.mockResolvedValue(true);
       build({ anySpacesInaccessible: true });
 
       const helpIcon = screen.getByTestId('inaccessible-help-icon');
@@ -204,7 +189,6 @@ describe('Space Plan', () => {
     });
 
     it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
-      getVariation.mockResolvedValue(true);
       const mockPlanLocalOne = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',
@@ -245,22 +229,10 @@ describe('Space Plan', () => {
     });
 
     it('should display 1 tab for enterprise organization if there are no plans unassigned.', async () => {
-      getVariation.mockResolvedValue(true);
       getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
-      const mockPlanLocalOne = {
-        sys: { id: 'random_id_1' },
-        name: 'random_name_1',
-        gatekeeperKey: 'randomKey',
-        planType: 'space',
-        space: fake.Space({ sys: { id: fakeSpaceId } }),
-        price: 789,
-      };
-
-      const mockedPlansLocal = [mockPlanLocalOne];
 
       build({
         enterprisePlan: true,
-        spacePlans: mockedPlansLocal,
         initialLoad: false,
         isOwnerOrAdmin: true,
       });
@@ -274,7 +246,6 @@ describe('Space Plan', () => {
     });
 
     it('should display the export btn', async () => {
-      getVariation.mockResolvedValue(true);
       build();
 
       await waitFor(() =>
@@ -283,7 +254,6 @@ describe('Space Plan', () => {
     });
 
     it('should not display the export btn if there are no assigned spaces', async () => {
-      getVariation.mockResolvedValue(true);
       const mockUnAssignedSpacePlan = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',

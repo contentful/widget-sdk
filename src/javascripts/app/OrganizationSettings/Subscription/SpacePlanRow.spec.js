@@ -1,184 +1,250 @@
 import React from 'react';
-import { render, screen, wait, fireEvent, within } from '@testing-library/react';
-import SpacePlanRow from './SpacePlanRow';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
 import { go } from 'states/Navigator';
-import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
+import { SpacePlanRow } from './SpacePlanRow';
+import {
+  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+  SELF_SERVICE,
+} from 'account/pricing/PricingDataProvider';
 
-const MOCK_USER_NAME = 'John Doe';
-const SPACE_NAME = 'SPACE_NAME';
-const MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR = fake.CREATED_AT_TIME_DAY_MONTH_YEAR;
-const MOCK_EXPIRES_AT_DAY_MONTH_YEAR = '01/01/2020';
+const TODAY = '2019-10-01T03:00:00.000Z';
+const YESTERDAY = '2019-09-30T03:00:00.000Z';
 
-const mockBasePlan = fake.Plan();
-const mockPlan = {
+const mockTrialPlan = {
   sys: { id: 'random_id' },
-  name: SPACE_NAME,
+  name: TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
   planType: 'free_space',
   space: fake.Space(),
   price: 1337,
 };
 
+const mockSelfServicePlan = {
+  sys: { id: 'random_id' },
+  name: SELF_SERVICE,
+  planType: 'free_space',
+  space: fake.Space(),
+  price: 1337,
+};
+
+const mockUsage = {
+  limit: 10,
+  usage: 1,
+  utilization: 1 / 10,
+};
+
+const mockSpaceUsage = {
+  environments: mockUsage,
+  locales: mockUsage,
+  contentTypes: mockUsage,
+  records: mockUsage,
+  roles: mockUsage,
+  sys: { id: 'random_id' },
+};
+
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+  href: jest.fn(),
 }));
-
-jest.mock('utils/SubscriptionUtils', () => ({
-  getEnabledFeatures: jest.fn().mockImplementation(() => {
-    return [];
-  }),
-}));
-
-jest.mock('moment', () => {
-  const fn = jest.fn(() => ({
-    format: jest.fn(() => MOCK_EXPIRES_AT_DAY_MONTH_YEAR),
-  }));
-
-  fn.utc = jest.fn(() => {
-    return {
-      format: jest.fn(() => {
-        return MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR;
-      }),
-    };
-  });
-  return fn;
-});
 
 const mockOnChangeSpace = jest.fn();
 const mockOnDeleteSpace = jest.fn();
 
+const build = (input = {}) => {
+  const options = {
+    plan: mockTrialPlan,
+    spaceUsage: mockSpaceUsage,
+    hasUpgraded: false,
+    enterprisePlan: false,
+    showSpacePlanChangeBtn: false,
+    ...input,
+  };
+
+  if ('isAccessible' in input) {
+    options.plan.space.isAccessible = options.isAccessible;
+  } else {
+    options.plan.space.isAccessible = true;
+  }
+
+  if ('expiresAt' in options) {
+    options.plan.space.expiresAt = options.expiresAt;
+  } else {
+    delete options.plan.space.expiresAt;
+  }
+
+  render(
+    <table>
+      <tbody>
+        <SpacePlanRow
+          plan={options.plan}
+          spaceUsage={options.spaceUsage}
+          onChangeSpace={mockOnChangeSpace}
+          onDeleteSpace={mockOnDeleteSpace}
+          hasUpgraded={options.hasUpgraded}
+          enterprisePlan={options.enterprisePlan}
+          showSpacePlanChangeBtn={options.showSpacePlanChangeBtn}
+        />
+      </tbody>
+    </table>
+  );
+};
+
 describe('Space Plan Row', () => {
+  beforeEach(() => {
+    const now = new Date(TODAY).valueOf();
+    jest.spyOn(Date, 'now').mockImplementation(() => now);
+  });
   describe('should display basic plan information', () => {
-    it('should display the name of the plan', async () => {
-      await build();
+    it('should display the name of the space', () => {
+      build();
       expect(screen.getByTestId('subscription-page.spaces-list.space-name')).toHaveTextContent(
-        mockPlan.space.name
+        mockTrialPlan.space.name
       );
     });
 
-    it('should display the space type of the plan', async () => {
-      await build();
+    it('should display the space type of the plan', () => {
+      build();
       expect(screen.getByTestId('subscription-page.spaces-list.space-type')).toHaveTextContent(
-        SPACE_NAME
+        TRIAL_SPACE_FREE_SPACE_PLAN_NAME
       );
     });
 
     it('should call onChangeSpace when upgrade-space-link is clicked', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.upgrade-plan-link'));
+      build();
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.upgrade-plan-link'));
+      });
 
       expect(mockOnChangeSpace).toHaveBeenCalled();
     });
 
-    it('should display the user who created', async () => {
-      await build();
-      expect(screen.getByTestId('subscription-page.spaces-list.created-by')).toHaveTextContent(
-        MOCK_USER_NAME
+    it('should display space environments usage', () => {
+      build();
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.usage.environments')
+      ).toHaveTextContent(`${mockUsage.usage}/${mockUsage.limit}`);
+    });
+
+    it('should display space locales usage', () => {
+      build();
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.locales')).toHaveTextContent(
+        `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 
-    it('should display the date it was created on', async () => {
-      await build();
-      expect(screen.getByTestId('subscription-page.spaces-list.created-on')).toHaveTextContent(
-        MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR
+    it('should display space records usage', () => {
+      build();
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.records')).toHaveTextContent(
+        `${mockUsage.usage}/${mockUsage.limit}`
       );
     });
 
-    it('should not show change-plan-link if showSpacePlanChangeBtn is false', async () => {
-      await build({ showSpacePlanChangeBtn: false });
+    it('should display space roles usage', () => {
+      build();
+      expect(screen.getByTestId('subscription-page.spaces-list.usage.roles')).toHaveTextContent(
+        `${mockUsage.usage}/${mockUsage.limit}`
+      );
+    });
+
+    it('should display space content types usage', () => {
+      build();
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.usage.content-types')
+      ).toHaveTextContent(`${mockUsage.usage}/${mockUsage.limit}`);
+    });
+
+    it('should not show change-plan-link if showSpacePlanChangeBtn is false', () => {
+      build({ showSpacePlanChangeBtn: false });
       expect(screen.queryByTestId('subscription-page.spaces-list.change-plan-link')).toBeNull();
     });
 
-    it('should display the expiry date column if showExpiresAtColumn is true', async () => {
-      await build({ showExpiresAtColumn: true });
-      expect(screen.getByTestId('subscription-page.spaces-list.expires-at')).toHaveTextContent(
-        MOCK_EXPIRES_AT_DAY_MONTH_YEAR
-      );
-    });
+    it('should navigate to space when space-link is clicked', async () => {
+      build({ isAccessible: true });
 
-    it('should not display the expiry date column if showExpiresAtColumn is false', async () => {
-      await build({ showExpiresAtColumn: false });
-      expect(screen.queryByTestId('subscription-page.spaces-list.expires-at')).toBeNull();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.space-link'));
+      });
+
+      expect(go).toHaveBeenCalledWith({
+        path: 'spaces.detail',
+        params: { spaceId: mockTrialPlan.space.sys.id },
+      });
     });
   });
 
   describe('render variations', () => {
-    it("hides the price when it's an enterprise plan", async () => {
-      await build({ enterprisePlan: true });
+    it('does not show the space name link if the space is not accessible', () => {
+      build({ isAccessible: false });
+      expect(() => screen.getByTestId('subscription-page.spaces-list.space-link')).toThrow();
+    });
+
+    it('hides the price when it`s an enterprise plan', () => {
+      build({ enterprisePlan: true });
 
       expect(() => {
         screen.getByTestId('subscription-page.spaces-list.plan-price');
       }).toThrow();
     });
 
-    it('shows price when not an enterprise plan', async () => {
-      await build();
+    it('shows price when not an enterprise plan', () => {
+      build();
 
       expect(screen.getByTestId('subscription-page.spaces-list.plan-price')).toBeDefined();
     });
 
-    it('hides the enterprise tooltip when plan is not committed', async () => {
-      await build();
+    it('shows the trial space tooltip when the trial space is on an active trial', async () => {
+      build({ expiresAt: TODAY });
 
-      expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip');
-      }).toThrow();
-    });
-
-    it('shows the enterprise tooltip when plan is committed', async () => {
-      await build({ committed: true });
-
-      fireEvent.mouseOver(
-        screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip-trigger')
-      );
-      expect(screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip')).toBeDefined();
-    });
-
-    it('hides the feature tooltips when the plan does not have enabled features', async () => {
-      await build();
-
-      expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger');
-      }).toThrow();
-    });
-
-    it('shows the feature tooltip(s) when the plan has enabled features', async () => {
-      // 'FakeFeature1' is just filler text for the array so it has a length more than 0
-      getEnabledFeatures.mockImplementation(() => {
-        return ['FakeFeature1'];
+      await act(async () => {
+        fireEvent.mouseOver(
+          screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip-trigger')
+        );
       });
-      await build();
-
-      fireEvent.mouseOver(
-        screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger')
-      );
-
-      expect(screen.getByTestId('subscription-page.spaces-list.features-tooltip')).toBeDefined();
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip')
+      ).toHaveTextContent('Expires');
     });
 
-    it('shows the PoC tooltip when the space is an existing POC', async () => {
-      await build({ createdAsPOC: true });
+    it('shows the trial space tooltip when the trial is expired', async () => {
+      build({ expiresAt: YESTERDAY });
 
-      fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.poc-tooltip-trigger'));
-
-      expect(screen.getByTestId('subscription-page.spaces-list.poc-tooltip')).toBeDefined();
-    });
-
-    it('does not show the feature tooltip when the PoC tooltip is present', async () => {
-      getEnabledFeatures.mockImplementation(() => {
-        return ['FakeFeature1'];
+      await act(async () => {
+        fireEvent.mouseOver(
+          screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip-trigger')
+        );
       });
-      await build({ createdAsPOC: true });
-
-      expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger');
-      }).toThrow();
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip')
+      ).toHaveTextContent('Expired');
     });
 
-    it('does not have special className when not upgraded', async () => {
-      await build({ hasUpgraded: false });
+    it('shows the trial space tooltip when the trial space is not accessible', async () => {
+      build({ isAccessible: false, expiresAt: undefined });
+
+      await act(async () => {
+        fireEvent.mouseOver(
+          screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip-trigger')
+        );
+      });
+
+      expect(
+        screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip')
+      ).not.toHaveTextContent('Expire');
+    });
+
+    it('does not show the trial space tooltip when it is not a Trial Space', () => {
+      build({ plan: mockSelfServicePlan });
+
+      expect(() =>
+        screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip-trigger')
+      ).toThrow();
+    });
+
+    it('does not have successful-upgrade styling when not upgraded', () => {
+      build({ hasUpgraded: false });
 
       // The class 'x--success' comes from the SpacePlanRow.js file
       expect(
@@ -188,8 +254,8 @@ describe('Space Plan Row', () => {
       ).toBeFalsy();
     });
 
-    it('has upgraded className when upgraded', async () => {
-      await build({ hasUpgraded: true });
+    it('has successful-upgrade styling when upgraded', () => {
+      build({ hasUpgraded: true });
 
       // The class 'hasUpgraded' comes from the SpacePlanRow.js file
       expect(
@@ -201,46 +267,25 @@ describe('Space Plan Row', () => {
   });
 
   describe('drop down menu options', () => {
-    it('should stay hidden when not clicked', async () => {
-      await build();
-
-      expect(() => {
-        screen.getByTestId('cf-ui-card-actions-container');
-      }).toThrow();
-    });
-
-    it('should drop down when clicked', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-
-      expect(screen.getByTestId('cf-ui-card-actions-container')).toBeDefined();
-    });
-
     it('should call onChangeSpace when change-space-link is clicked', async () => {
-      await build({ enterprisePlan: true });
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.change-space-link'));
+      build({ enterprisePlan: true });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.change-space-link'));
+      });
 
       expect(mockOnChangeSpace).toHaveBeenCalled();
     });
 
-    it('the view space button should be disabled when it is not accessible', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-
-      const spaceLinkButtonContainer = screen.getByTestId(
-        'subscription-page.spaces-list.space-link'
-      );
-      const spaceLinkButton = within(spaceLinkButtonContainer).getByTestId(
-        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
-      );
-
-      expect(spaceLinkButton.hasAttribute('disabled')).toBeTruthy();
-    });
-
     it('the view space-usage button should be disabled when it is not accessible', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      build({ isAccessible: false });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      });
 
       const spaceUsageLinkButtonContainer = screen.getByTestId(
         'subscription-page.spaces-list.space-usage-link'
@@ -252,95 +297,41 @@ describe('Space Plan Row', () => {
       expect(spaceUsageLinkButton.hasAttribute('disabled')).toBeTruthy();
     });
 
-    it('should navigate to space when space-link is clicked', async () => {
-      await build({ basePlan: mockBasePlan, plan: mockPlan, isAccessible: true });
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-
-      const spaceLinkButtonContainer = screen.getByTestId(
-        'subscription-page.spaces-list.space-link'
-      );
-      fireEvent.click(
-        within(spaceLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
-      );
-
-      expect(go).toHaveBeenCalledWith({
-        path: ['spaces', 'detail', 'home'],
-        params: { spaceId: mockPlan.space.sys.id },
-        options: { reload: true },
-      });
-    });
-
     it('should navigate to space-usage when space-usage-link is clicked', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      build({ isAccessible: true });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      });
+
       const spaceUsageLinkButtonContainer = screen.getByTestId(
         'subscription-page.spaces-list.space-usage-link'
       );
-      fireEvent.click(
-        within(spaceUsageLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
-      );
+
+      await act(async () => {
+        fireEvent.click(
+          within(spaceUsageLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+        );
+      });
 
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail', 'settings', 'usage'],
-        params: { spaceId: mockPlan.space.sys.id },
-        options: { reload: true },
+        params: { spaceId: mockTrialPlan.space.sys.id },
       });
     });
 
     it('should call onDeleteSpace when delete-space-link is clicked', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.delete-space-link'));
+      build();
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      });
+
+      await act(() => {
+        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.delete-space-link'));
+      });
 
       expect(mockOnDeleteSpace).toHaveBeenCalled();
     });
   });
 });
-
-function build(input = {}) {
-  const options = {
-    plan: mockPlan,
-    isAccessible: false,
-    committed: false,
-    hasUpgraded: false,
-    enterprisePlan: false,
-    showSpacePlanChangeBtn: false,
-    ...input,
-  };
-
-  if (options.isAccessible) {
-    options.plan.space.isAccessible = true;
-  }
-
-  if (options.committed) {
-    options.plan.committed = true;
-  }
-
-  if (options.showExpiresAtColumn) {
-    options.plan.space.expiresAt = '2020-01-01';
-  }
-
-  if (options.createdAsPOC) {
-    options.plan.space.createdAsPOC = true;
-  }
-
-  render(
-    <table>
-      <tbody>
-        <SpacePlanRow
-          plan={options.plan}
-          onChangeSpace={mockOnChangeSpace}
-          onDeleteSpace={mockOnDeleteSpace}
-          hasUpgraded={options.hasUpgraded}
-          enterprisePlan={options.enterprisePlan}
-          showSpacePlanChangeBtn={options.showSpacePlanChangeBtn}
-          showExpiresAtColumn={options.showExpiresAtColumn}
-        />
-      </tbody>
-    </table>
-  );
-
-  // the component makes requests on mount.
-  // wait until there are changes as effect of the calls.
-  return wait();
-}
