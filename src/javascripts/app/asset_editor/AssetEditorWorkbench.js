@@ -22,6 +22,9 @@ import { useFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListene
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { styles as editorStyles } from './../entry_editor/styles';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
+import { getModule } from 'core/NgRegistry';
 
 const styles = {
   sidebar: css({
@@ -41,6 +44,7 @@ const AssetTabs = {
 const AssetEditorWorkbench = ({
   title,
   localeData,
+  preferences,
   state,
   statusNotificationProps,
   entrySidebarProps,
@@ -61,13 +65,42 @@ const AssetEditorWorkbench = ({
   );
 
   const { tagsEnabled } = useTagsFeatureEnabled();
-  const [selectedTab, setSelectedTab] = useState(AssetTabs.Editor);
+  const [selectedTab, setSelectedTab] = useState(() =>
+    Object.values(AssetTabs).includes(preferences.tab) ? preferences.tab : AssetTabs.Editor
+  );
+
+  // angular url updates to persist tab selection on reload
+  // kill this with fire when react migration allows it
+  const { currentSpace } = useSpaceEnvContext();
+  const routeIsUnscoped = isUnscopedRoute(currentSpace);
+  const $state = getModule('$state');
+  const setTabInUrl = (tab) =>
+    $state.transitionTo(
+      routeIsUnscoped ? 'spaces.detail.assets.detail' : 'spaces.detail.environment.assets.detail',
+      { tab: tab === 'Editor' ? null : tab },
+      {
+        location: true, // This makes it update URL
+        inherit: true,
+        relative: $state.$current,
+        notify: false, // This makes it not reload
+      }
+    );
+
+  const navigateToTab = (tab) => {
+    setTabInUrl(tab);
+    setSelectedTab(tab);
+  };
+
+  const onBack = async () => {
+    await setTabInUrl(null);
+    goToPreviousSlideOrExit('arrow_back');
+  };
 
   return (
     <div className="asset-editor">
       <Workbench>
         <Workbench.Header
-          onBack={() => goToPreviousSlideOrExit('arrow_back')}
+          onBack={onBack}
           title={
             <WorkbenchTitle
               title={title}
@@ -100,7 +133,7 @@ const AssetEditorWorkbench = ({
               className={styles.tab}
               selected={selectedTab === AssetTabs.Editor}
               id={AssetTabs.Editor}
-              onSelect={setSelectedTab}>
+              onSelect={navigateToTab}>
               <Icon icon={'Entry'} color="muted" className={editorStyles.tabIcon} />
               {AssetTabs.Editor}
             </Tab>
@@ -109,7 +142,7 @@ const AssetEditorWorkbench = ({
                 className={editorStyles.tab}
                 selected={selectedTab === AssetTabs.Tags}
                 id={AssetTabs.Tags}
-                onSelect={setSelectedTab}>
+                onSelect={navigateToTab}>
                 <Icon icon={'Tags'} color="muted" className={editorStyles.tabIcon} />
                 {AssetTabs.Tags}
                 <Tag className={editorStyles.promotionTag}>new</Tag>
@@ -181,6 +214,7 @@ AssetEditorWorkbench.propTypes = {
   state: PropTypes.shape({
     delete: PropTypes.object,
   }),
+  preferences: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,

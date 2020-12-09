@@ -74,7 +74,8 @@ const slideStrategies = [
   {
     TYPE: TYPES.ENTRY,
     STATE_PATH: '^.^.entries.detail',
-    newFromStateParams: ({ entryId: id }) => (id ? { id, type: TYPES.ENTRY } : null),
+    newFromStateParams: ({ entryId: id, tab }) =>
+      id ? { id, type: TYPES.ENTRY, ...(tab ? { tab } : {}) } : null,
     newFromQS: (string) => (isValidResourceId(string) ? { id: string, type: TYPES.ENTRY } : null),
     toStateParams: ({ id: entryId }) => ({ entryId, bulkEditor: null }),
     toString: ({ id }) => id,
@@ -82,7 +83,8 @@ const slideStrategies = [
   {
     TYPE: TYPES.ASSET,
     STATE_PATH: '^.^.assets.detail',
-    newFromStateParams: ({ assetId: id }) => (id ? { id, type: TYPES.ASSET } : null),
+    newFromStateParams: ({ assetId: id, tab }) =>
+      id ? { id, type: TYPES.ASSET, ...(tab ? { tab } : {}) } : null,
     newFromQS: (_string) => null, // Assets can't be in query string.
     toStateParams: ({ id: assetId }) => ({ assetId }),
     toString: ({ id }) => `${TYPES.ASSET}^${id}`,

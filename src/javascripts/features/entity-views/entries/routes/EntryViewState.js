@@ -38,7 +38,7 @@ function entriesBaseState(withSnapshots) {
 function detail(withSnapshots) {
   return base({
     name: 'detail',
-    url: '/:entryId?previousEntries&bulkEditor',
+    url: '/:entryId?previousEntries&bulkEditor&tab',
     children: withSnapshots ? [snapshotsRoute] : [],
     params: { addToContext: true },
     template: entityPageTemplate,

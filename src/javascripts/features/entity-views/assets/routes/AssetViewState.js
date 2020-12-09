@@ -21,7 +21,7 @@ const list = {
 
 const detail = {
   name: 'detail',
-  url: '/:assetId?previousEntries',
+  url: '/:assetId?previousEntries&tab',
   params: { addToContext: true },
   template: entityPageTemplate,
   controller: ['$scope', '$state', createEntityPageController],

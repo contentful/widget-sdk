@@ -49,6 +49,23 @@ describe('SlideInNavigator', () => {
     );
 
     testFn(
+      'returns ids and tab from query string',
+      {
+        params: {
+          entryId: 'entry-id-2',
+          tab: 'Editor',
+        },
+        search: {
+          previousEntries: 'entry-id',
+        },
+      },
+      [
+        { id: 'entry-id', type: 'Entry' },
+        { id: 'entry-id-2', type: 'Entry', tab: 'Editor' },
+      ]
+    );
+
+    testFn(
       'ignores empty values',
       {
         params: {

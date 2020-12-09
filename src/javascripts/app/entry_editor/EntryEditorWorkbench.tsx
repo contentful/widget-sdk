@@ -30,6 +30,8 @@ import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsCon
 import { useFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
+import { getModule } from 'core/NgRegistry';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -84,6 +86,18 @@ interface EntryEditorWorkbenchProps {
   fields: Record<string, any>;
 }
 
+// Is the selected tab available? Do we need to provide a default tab?
+function validateTab(tabKey, tabs) {
+  if (tabs.some((key) => `${key.widgetNamespace}-${key.widgetId}` === tabKey)) {
+    return tabKey;
+  }
+  return tabs.length ? `${tabs[0].widgetNamespace}-${tabs[0].widgetId}` : null;
+}
+
+function tabIsDefault(tabKey, tabs) {
+  return tabs.length ? tabKey === `${tabs[0].widgetNamespace}-${tabs[0].widgetId}` : true;
+}
+
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
   const {
@@ -109,12 +123,30 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const availableTabs = editorData.editorsExtensions.filter(
     (editor) => !editor.disabled && !editor.problem
   );
-  const defaultTabKey = availableTabs.length
-    ? `${availableTabs[0].widgetNamespace}-${availableTabs[0].widgetId}`
-    : null;
 
-  const [selectedTab, setSelectedTab] = useState(defaultTabKey);
+  const [selectedTab, setSelectedTab] = useState(() => validateTab(preferences.tab, availableTabs));
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
+
+  // kill this with fire when react migration allows it
+  const $state = getModule('$state');
+  const { currentSpace } = useSpaceEnvContext();
+  const routeIsUnscoped = isUnscopedRoute(currentSpace);
+  const setTabInUrl = (tab) =>
+    $state.transitionTo(
+      routeIsUnscoped ? 'spaces.detail.entries.detail' : 'spaces.detail.environment.entries.detail',
+      { tab: tabIsDefault(tab, availableTabs) ? null : tab },
+      {
+        location: true, // This makes it update URL
+        inherit: true,
+        relative: $state.$current,
+        notify: false, // This controls reload
+      }
+    );
+
+  const navigateToTab = (tab) => {
+    setTabInUrl(tab);
+    setSelectedTab(tab);
+  };
 
   const widgets = filterWidgets(
     localeData,
@@ -137,7 +169,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     getFeatureFlagVariation();
   }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible]);
 
-  const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
+  const onRootReferenceCardClick = () => navigateToTab(validateTab(null, availableTabs));
 
   const fieldLocaleListeners = useFieldLocaleListeners(
     editorData.fieldControls.all,
@@ -209,7 +241,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         }
       },
       onClick(selectedTab) {
-        setSelectedTab(selectedTab);
+        navigateToTab(selectedTab);
         trackTabOpen(selectedTab);
         selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) &&
           setHasReferenceTabBeenClicked(true);
@@ -222,11 +254,16 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const visibleTabs = tabs.filter(({ isVisible }) => isVisible);
 
+  const onBack = async () => {
+    await setTabInUrl(null);
+    goToPreviousSlideOrExit('arrow_back');
+  };
+
   return (
     <div className="entry-editor">
       <Workbench>
         <Workbench.Header
-          onBack={() => goToPreviousSlideOrExit('arrow_back')}
+          onBack={onBack}
           title={
             <WorkbenchTitle
               title={title}

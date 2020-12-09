@@ -168,7 +168,11 @@ export default ($scope, $state) => {
         buildSlideEditorViewProps = (editorData, trackLoadEvent) => ({
           editorData,
           trackLoadEvent,
-          preferences: { ...$scope.preferences, hasInitialFocus: i + 1 === slides.length },
+          preferences: {
+            ...$scope.preferences,
+            hasInitialFocus: i + 1 === slides.length,
+            tab: slide.tab,
+          },
         });
       } else if (slide.type === 'BulkEditor') {
         entityType = 'Entry';
