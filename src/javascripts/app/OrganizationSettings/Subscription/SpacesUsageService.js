@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { downloadBlob } from 'core/utils/downloadBlob';
@@ -33,5 +34,6 @@ export const downloadSpacesUsage = async (orgId) => {
   const orgEndpoint = createOrganizationEndpoint(orgId);
   const csvString = await exportCSV(orgEndpoint);
   const blob = new window.Blob([csvString], { type: 'text/csv' });
-  downloadBlob(blob, `spaces-usage-${orgId}.csv`);
+  const filename = `contentful-space-usage-${orgId}-${moment().format('YYYYMMDD')}.csv`;
+  downloadBlob(blob, filename);
 };

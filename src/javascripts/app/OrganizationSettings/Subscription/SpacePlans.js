@@ -219,7 +219,7 @@ function SpacePlans({
             {'. '}
           </>
         ) : (
-          "Your organization doesn't have any spaces."
+          "Your organization doesn't have any spaces. "
         )}
         {!enterprisePlan && totalCost > 0 && (
           <span data-test-id="subscription-page.non-enterprise-price-information">
@@ -286,7 +286,7 @@ function SpacePlans({
                   loading={isExportingCSV}
                   buttonType="muted"
                   onClick={handleExportBtnClick}>
-                  Export CSV
+                  Export
                 </Button>
               )}
             </Tabs>
@@ -333,7 +333,7 @@ function SpacePlans({
                 loading={isExportingCSV}
                 buttonType="muted"
                 onClick={handleExportBtnClick}>
-                Export CSV
+                Export
               </Button>
             )}
             <SpacePlansTable
