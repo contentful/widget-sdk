@@ -2,10 +2,12 @@ import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import {
   getBasePlan,
   getSpaceRatePlans,
@@ -35,10 +37,12 @@ import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (orgId, spaceId, dispatch) => async () => {
-  const endpoint = createOrganizationEndpoint(orgId);
+const initialFetch = (organizationId, spaceId, dispatch) => async () => {
+  const endpoint = createOrganizationEndpoint(organizationId);
 
-  const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE);
+  const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, { organizationId });
+
+  dispatch({ type: actions.SET_PURCHASING_APPS, payload: purchasingApps });
 
   const [
     organization,
@@ -51,13 +55,13 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
     templatesList,
     pageContent,
   ] = await Promise.all([
-    TokenStore.getOrganization(orgId),
-    getOrganizationMembership(orgId),
+    TokenStore.getOrganization(organizationId),
+    getOrganizationMembership(organizationId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
     getSpaceRatePlans(endpoint, spaceId),
-    createResourceService(orgId, 'organization').get(FREE_SPACE_IDENTIFIER),
+    createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
   ]);
@@ -68,7 +72,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   if (!canAccess) {
     go({
       path: ['account', 'organizations', 'subscription_new'],
-      params: { orgId },
+      params: { orgId: organizationId },
     });
 
     return;
@@ -96,7 +100,7 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
   trackEvent(
     EVENTS.BEGIN,
     {
-      organizationId: orgId,
+      organizationId,
       spaceId,
       sessionId,
     },
@@ -108,25 +112,33 @@ const initialFetch = (orgId, spaceId, dispatch) => async () => {
       currentSpacePlan: currentSpaceRatePlan,
     }
   );
-
-  return {
-    purchasingApps,
-  };
 };
 
 export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
   const {
-    state: { sessionId },
+    state: { sessionId, purchasingApps },
     dispatch,
   } = useContext(SpacePurchaseState);
 
-  const { data, error } = useAsync(useCallback(initialFetch(orgId, spaceId, dispatch), []));
+  // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
+  // knows which specific first step component to display (with its loading state). Not separating them
+  // will cause an empty screen while all the data loads, which is undesireable.
+  const { error } = useAsync(useCallback(initialFetch(orgId, spaceId, dispatch), []));
+
+  // Show the generic loading state until we know if we're purchasing apps or not
+  if (purchasingApps === undefined) {
+    return (
+      <EmptyStateContainer>
+        <FetcherLoading />
+      </EmptyStateContainer>
+    );
+  }
 
   if (error) {
     return <ErrorState />;
   }
 
-  const documentTitle = data?.purchasingApps ? 'Subscription purchase' : 'Space purchase';
+  const documentTitle = purchasingApps ? 'Subscription purchase' : 'Space purchase';
 
   return (
     <>
@@ -143,7 +155,6 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
             metadata
           );
         }}
-        purchasingApps={data?.purchasingApps}
       />
     </>
   );
