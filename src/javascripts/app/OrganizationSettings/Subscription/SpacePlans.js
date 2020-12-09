@@ -15,6 +15,8 @@ import {
   Tabs,
   Tab,
   TabPanel,
+  Button,
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import StateLink from 'app/common/StateLink';
@@ -34,6 +36,7 @@ import { SpacePlansTable } from './components/SpacePlansTable';
 import { SpacePlansTableNew } from './components/SpacePlansTableNew';
 
 import { track } from 'analytics/Analytics';
+import { downloadSpacesUsage } from './SpacesUsageService';
 
 const styles = {
   total: css({
@@ -63,6 +66,11 @@ const styles = {
   isVisible: css({
     display: 'block',
     padding: `${tokens.spacingM} 0 0 0`,
+  }),
+  exportButton: css({
+    marginLeft: 'auto',
+    float: 'right',
+    marginBottom: tokens.spacingM,
   }),
 };
 const USED_SPACES = 'usedSpaces';
@@ -101,6 +109,7 @@ function SpacePlans({
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
   const [isSpaceUsageSummaryEnabled, setIsSpaceUsageSummaryEnabled] = useState(false);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
 
   useEffect(() => {
     async function fetch() {
@@ -141,6 +150,19 @@ function SpacePlans({
       organizationId,
     });
   };
+
+  const handleExportBtnClick = async () => {
+    setIsExportingCSV(true);
+    try {
+      await downloadSpacesUsage(organizationId);
+    } catch {
+      Notification.error('Could not export the space usage.');
+    }
+    setIsExportingCSV(false);
+  };
+
+  const showExportBtn =
+    !initialLoad && isSpaceUsageSummaryEnabled && assignedSpacePlans?.length > 0;
 
   return (
     <>
@@ -203,7 +225,7 @@ function SpacePlans({
             {'. '}
           </>
         ) : (
-          "Your organization doesn't have any spaces. "
+          "Your organization doesn't have any spaces."
         )}
         {!enterprisePlan && totalCost > 0 && (
           <span data-test-id="subscription-page.non-enterprise-price-information">
@@ -224,6 +246,7 @@ function SpacePlans({
           </TextLink>
         )}
       </Paragraph>
+
       {isSpaceUsageSummaryEnabled && numSpaces > 0 && (
         <Note className={styles.note}>
           {'Check out your space usage in our new overview below! Got Questions? See '}
@@ -237,6 +260,7 @@ function SpacePlans({
           {'.'}
         </Note>
       )}
+
       {(initialLoad || numSpaces > 0) &&
         (canManageSpaces ? (
           <>
@@ -259,6 +283,17 @@ function SpacePlans({
                   Unused spaces{' '}
                   {unassignedSpacePlans.length > 0 && `(${unassignedSpacePlans.length})`}
                 </Tab>
+              )}
+              {showExportBtn && (
+                <Button
+                  testId="subscription-page.export-csv"
+                  className={styles.exportButton}
+                  disabled={isExportingCSV}
+                  loading={isExportingCSV}
+                  buttonType="muted"
+                  onClick={handleExportBtnClick}>
+                  Export CSV
+                </Button>
               )}
             </Tabs>
             <TabPanel
@@ -307,27 +342,42 @@ function SpacePlans({
               </TabPanel>
             )}
           </>
-        ) : isSpaceUsageSummaryEnabled ? (
-          <SpacePlansTableNew
-            plans={spacePlans}
-            organizationId={organizationId}
-            initialLoad={initialLoad}
-            upgradedSpaceId={upgradedSpaceId}
-            onChangeSpace={onChangeSpace}
-            onDeleteSpace={onDeleteSpace}
-            enterprisePlan={enterprisePlan}
-            showSpacePlanChangeBtn={canManageSpaces}
-          />
         ) : (
-          <SpacePlansTable
-            plans={spacePlans}
-            initialLoad={initialLoad}
-            upgradedSpaceId={upgradedSpaceId}
-            onChangeSpace={onChangeSpace}
-            onDeleteSpace={onDeleteSpace}
-            enterprisePlan={enterprisePlan}
-            showSpacePlanChangeBtn={canManageSpaces}
-          />
+          <>
+            {showExportBtn && (
+              <Button
+                testId="subscription-page.export-csv"
+                className={styles.exportButton}
+                disabled={isExportingCSV}
+                loading={isExportingCSV}
+                buttonType="muted"
+                onClick={handleExportBtnClick}>
+                Export CSV
+              </Button>
+            )}
+            {isSpaceUsageSummaryEnabled ? (
+              <SpacePlansTableNew
+                plans={spacePlans}
+                organizationId={organizationId}
+                initialLoad={initialLoad}
+                upgradedSpaceId={upgradedSpaceId}
+                onChangeSpace={onChangeSpace}
+                onDeleteSpace={onDeleteSpace}
+                enterprisePlan={enterprisePlan}
+                showSpacePlanChangeBtn={canManageSpaces}
+              />
+            ) : (
+              <SpacePlansTable
+                plans={spacePlans}
+                initialLoad={initialLoad}
+                upgradedSpaceId={upgradedSpaceId}
+                onChangeSpace={onChangeSpace}
+                onDeleteSpace={onDeleteSpace}
+                enterprisePlan={enterprisePlan}
+                showSpacePlanChangeBtn={canManageSpaces}
+              />
+            )}
+          </>
         ))}
     </>
   );

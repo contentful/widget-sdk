@@ -5,6 +5,7 @@ import SpacePlans from './SpacePlans';
 import * as trackCTA from 'analytics/trackCTA';
 import { getVariation } from 'LaunchDarkly';
 import * as fake from 'test/helpers/fakeFactory';
+import { getSpacesUsage } from './SpacesUsageService';
 
 const mockSpaceForPlanOne = fake.Space();
 const mockPlanOne = {
@@ -24,6 +25,28 @@ const mockPlanTwo = {
 
 const mockPlans = [mockPlanOne, mockPlanTwo];
 
+const mockUsage = {
+  usage: 100,
+  limit: 100,
+  utilization: 1,
+};
+const fakeSpaceId = 'fake_space_id';
+const mockSpaceUsage = {
+  contentTypes: mockUsage,
+  environments: mockUsage,
+  records: mockUsage,
+  locales: mockUsage,
+  roles: mockUsage,
+  sys: {
+    id: '123',
+    space: {
+      sys: {
+        id: fakeSpaceId,
+      },
+    },
+  },
+};
+
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('utils/SubscriptionUtils', () => ({
@@ -31,6 +54,10 @@ jest.mock('utils/SubscriptionUtils', () => ({
   getEnabledFeatures: jest.fn().mockImplementation(() => {
     return [];
   }),
+}));
+
+jest.mock('./SpacesUsageService', () => ({
+  getSpacesUsage: jest.fn().mockResolvedValue({ items: [], total: 0 }),
 }));
 
 const mockOnChangeSpace = jest.fn();
@@ -49,6 +76,13 @@ describe('Space Plan', () => {
       await waitFor(() =>
         screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => expect(ele).toBeVisible())
       );
+    });
+
+    it('should not display the export btn while loading', async () => {
+      getVariation.mockResolvedValue(true);
+      build({ initialLoad: true });
+
+      await waitFor(() => expect(screen.queryByTestId('subscription-page.export-csv')).toBeNull());
     });
 
     it('should not display the skelton template after loading', async () => {
@@ -139,7 +173,7 @@ describe('Space Plan', () => {
     });
 
     it('should render a help icon and tooltip when anySpacesInaccessible is true', async () => {
-      getVariation.mockResolvedValueOnce(true);
+      getVariation.mockResolvedValue(true);
       build({ anySpacesInaccessible: true });
 
       const helpIcon = screen.getByTestId('inaccessible-help-icon');
@@ -170,7 +204,7 @@ describe('Space Plan', () => {
     });
 
     it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
-      getVariation.mockResolvedValueOnce(true);
+      getVariation.mockResolvedValue(true);
       const mockPlanLocalOne = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',
@@ -198,7 +232,7 @@ describe('Space Plan', () => {
       });
 
       await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());
-      expect(screen.getByTestId('tab-unusedSpaces')).toBeInTheDocument();
+      expect(screen.queryByTestId('tab-unusedSpaces')).toBeInTheDocument();
 
       const tabs = screen.getAllByRole('tab');
       expect(tabs).toHaveLength(2);
@@ -211,25 +245,18 @@ describe('Space Plan', () => {
     });
 
     it('should display 1 tab for enterprise organization if there are no plans unassigned.', async () => {
-      getVariation.mockResolvedValueOnce(true);
+      getVariation.mockResolvedValue(true);
+      getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
       const mockPlanLocalOne = {
         sys: { id: 'random_id_1' },
         name: 'random_name_1',
         gatekeeperKey: 'randomKey',
         planType: 'space',
-        space: fake.Space(),
+        space: fake.Space({ sys: { id: fakeSpaceId } }),
         price: 789,
       };
-      const mockPlanLocalTwo = {
-        sys: { id: 'random_id_2' },
-        name: 'random_name_2',
-        gatekeeperKey: 'randomKey',
-        planType: 'space',
-        space: fake.Space(),
-        price: 456,
-      };
 
-      const mockedPlansLocal = [mockPlanLocalOne, mockPlanLocalTwo];
+      const mockedPlansLocal = [mockPlanLocalOne];
 
       build({
         enterprisePlan: true,
@@ -243,7 +270,31 @@ describe('Space Plan', () => {
       expect(tabs).toHaveLength(1);
 
       expect(screen.getByTestId('subscription-page.table')).toBeVisible();
-      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(2);
+      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1);
+    });
+
+    it('should display the export btn', async () => {
+      getVariation.mockResolvedValue(true);
+      build();
+
+      await waitFor(() =>
+        expect(screen.getByTestId('subscription-page.export-csv')).toBeInTheDocument()
+      );
+    });
+
+    it('should not display the export btn if there are no assigned spaces', async () => {
+      getVariation.mockResolvedValue(true);
+      const mockUnAssignedSpacePlan = {
+        sys: { id: 'random_id_1' },
+        name: 'random_name_1',
+        gatekeeperKey: null,
+        planType: 'space',
+        space: null,
+        price: 789,
+      };
+      build({ spacePlans: [mockUnAssignedSpacePlan] });
+
+      await waitFor(() => expect(screen.queryByTestId('subscription-page.export-csv')).toBeNull());
     });
   });
 });

@@ -36,6 +36,7 @@ import { toLocaleString } from 'utils/NumberUtils';
 import { go } from 'states/Navigator';
 
 import { EditBillingDetailsModal } from '../components/EditBillingDetailsModal';
+import { downloadBlob } from 'core/utils/downloadBlob';
 
 const styles = {
   editLink: css({
@@ -62,26 +63,6 @@ const downloadInvoice = async (organizationId, invoiceId) => {
 
   downloadBlob(invoicePDF, `invoice-${invoiceId}.pdf`);
 };
-
-function downloadBlob(blob, filename) {
-  // https://blog.logrocket.com/programmatic-file-downloads-in-the-browser-9a5186298d5c/
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-
-  a.href = url;
-  a.download = filename;
-
-  // Without the setTimeout, the URL is revoked before the browser can download it
-  const clickHandler = () => {
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      a.removeEventListener('click', clickHandler);
-    });
-  };
-
-  a.addEventListener('click', clickHandler, false);
-  a.click();
-}
 
 async function openEditBillingDetailsModal(organizationId, billingDetails, onEditBillingDetails) {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {

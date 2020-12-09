@@ -107,7 +107,7 @@ export const SpacePlansTableNew = ({
 
   return (
     <>
-      <Table className={styles.usageTable}>
+      <Table className={styles.usageTable} testId="subscription-page.table">
         <colgroup>
           <col className={styles.nameCol} />
           <col className={styles.typeCol} />
