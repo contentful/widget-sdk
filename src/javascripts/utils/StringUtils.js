@@ -339,3 +339,18 @@ export function pieces(string, pieceSize = Infinity) {
 
   return _.chunk(chars, pieceSize).map((splitPiece) => splitPiece.join(''));
 }
+
+/**
+ * Replaces characters of a string with a another predefined character.
+ * Optionally displays a portion of the original characters.
+ *
+ * hideCharacters('foobar') // => '••••••'
+ * hideCharacters('foobar', 3) // => 'foo•••'
+ * hideCharacters('foobar', 3, '*') // => 'foo***'
+ */
+export function hideCharacters(string, showAmount = 0, replacementChar = '•') {
+  const replacementSize = string.length - showAmount;
+  const replacement = new Array(replacementSize).fill(replacementChar).join('');
+
+  return string.substr(0, showAmount).concat(replacement);
+}

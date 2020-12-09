@@ -162,7 +162,7 @@ describe('utils/StringUtils', () => {
     });
   });
 
-  describe('parseList', () => {
+  describe('#parseList', () => {
     it('returns an empty array', () => {
       const result = utils.parseList('');
       expect(result).toEqual([]);
@@ -190,6 +190,11 @@ describe('utils/StringUtils', () => {
     it('ignores empty items', () => {
       const result = utils.parseList('banana, , pear');
       expect(result).toEqual(['banana', 'pear']);
+    });
+
+    it('accepts empty spaces', () => {
+      const result = utils.parseList('banana, green apple, pear');
+      expect(result).toEqual(['banana', 'green apple', 'pear']);
     });
 
     it('returns unique items', () => {
@@ -281,6 +286,25 @@ describe('utils/StringUtils', () => {
     it('should return the article and the word together if second argument is true', () => {
       expect(utils.article('apple', true)).toBe('an apple');
       expect(utils.article('test', true)).toBe('a test');
+    });
+  });
+
+  describe('hideCharacters', () => {
+    const string = 'Lorem ipsum dolor sit amet';
+
+    it('replaces each character of a string', () => {
+      const result = utils.hideCharacters(string);
+      expect(result).toEqual('••••••••••••••••••••••••••');
+    });
+
+    it('replaces each character of a string with a custom character', () => {
+      const result = utils.hideCharacters(string, 0, '*');
+      expect(result).toEqual('**************************');
+    });
+
+    it('replaces only a portion of the string', () => {
+      const result = utils.hideCharacters(string, 5);
+      expect(result).toEqual('Lorem•••••••••••••••••••••');
     });
   });
 });

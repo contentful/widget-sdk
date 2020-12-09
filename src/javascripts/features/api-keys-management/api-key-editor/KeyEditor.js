@@ -238,6 +238,7 @@ export function KeyEditor({
         <InputWithCopy
           key="content-delivery-api"
           value={apiKey.accessToken}
+          hideValue
           name="delivery-token"
           track={() => {
             trackCopy('cda');
@@ -248,6 +249,7 @@ export function KeyEditor({
         <InputWithCopy
           key="content-preview-api"
           value={get(apiKey, 'preview_api_key.accessToken', '')}
+          hideValue
           name="preview-token"
           track={() => {
             trackCopy('cpa');
@@ -352,11 +354,20 @@ function Input({ canEdit, model, update, name, isRequired = false, label, descri
   );
 }
 
-function InputWithCopy({ value, name, track, label, description = '' }) {
+function InputWithCopy({ value, name, track, label, description = '', hideValue = false }) {
+  const [showValue, setShowValue] = useState(!hideValue);
+
   const textInputProps = {
     onCopy: track,
     withCopyButton: true,
     disabled: true,
+    type: showValue ? 'text' : 'password',
+  };
+
+  const textLinkProps = {
+    text: showValue ? 'Hide' : 'Show',
+    icon: 'Preview',
+    onClick: () => setShowValue(!showValue),
   };
 
   return (
@@ -367,6 +378,7 @@ function InputWithCopy({ value, name, track, label, description = '' }) {
       helpText={description}
       value={value}
       textInputProps={textInputProps}
+      textLinkProps={hideValue ? textLinkProps : null}
     />
   );
 }
