@@ -1,0 +1,76 @@
+import React, { useCallback, useContext } from 'react';
+import PropTypes from 'prop-types';
+import { sortBy } from 'lodash';
+import { SpacePlanSelection } from 'features/space-plan-assignment';
+import { actions, SpaceCreationState } from '../context';
+import { useAsync } from 'core/hooks/useAsync';
+import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
+import createResourceService from 'services/ResourceService';
+import { CREATION_FLOW_TYPE } from '../utils/utils';
+
+const DEFAULT_ROLE_SET = { roles: ['Editor'] };
+
+export const SpacePlanStep = ({ orgId, navigateToNextStep }) => {
+  const {
+    state: { selectedPlan },
+    dispatch,
+  } = useContext(SpaceCreationState);
+  const getPlans = useCallback(async () => {
+    const orgEndpoint = createOrganizationEndpoint(orgId);
+    const orgResources = createResourceService(orgId, 'organization');
+
+    const [plans, ratePlans, freeSpaceResource] = await Promise.all([
+      getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
+      getRatePlans(orgEndpoint),
+      orgResources.get(FREE_SPACE_IDENTIFIER),
+    ]);
+
+    const freeSpaceRatePlan = ratePlans.find(
+      (plan) => plan.productPlanType === FREE_SPACE_IDENTIFIER
+    );
+
+    // enhence plans with roleSet in order to display tooltip text for Roles
+    const enhancedPlans = plans.items.map((plan) => {
+      return {
+        ...plan,
+        roleSet:
+          ratePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ?? DEFAULT_ROLE_SET,
+      };
+    });
+
+    return {
+      plans: sortBy(enhancedPlans, 'price'),
+      ratePlans,
+      freePlan: freeSpaceRatePlan,
+      freeSpaceResource,
+    };
+  }, [orgId]);
+
+  const { isLoading, data } = useAsync(getPlans);
+
+  // TODO add loading state
+  return (
+    <>
+      {!isLoading && data && (
+        <SpacePlanSelection
+          flowType={CREATION_FLOW_TYPE}
+          ratePlans={data.ratePlans}
+          selectedPlan={selectedPlan}
+          plans={[...data.plans, data.freePlan]}
+          onPlanSelected={(plan) => dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan })}
+          onNext={navigateToNextStep}
+          showComparison={false}
+          freePlan={data.freePlan}
+          freeSpaceResource={data.freeSpaceResource}
+        />
+      )}
+    </>
+  );
+};
+
+SpacePlanStep.propTypes = {
+  orgId: PropTypes.string.isRequired,
+  navigateToNextStep: PropTypes.func.isRequired,
+};

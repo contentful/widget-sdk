@@ -1,7 +1,7 @@
 import React from 'react';
 import { organizationRoute } from 'states/utils';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
-import { spaceCreateState } from 'features/space-create';
+import { spaceCreationState } from 'features/space-creation';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
 import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';
@@ -10,7 +10,7 @@ import { go } from 'states/Navigator';
 const subscriptionPageState = {
   name: 'overview',
   url: '/subscription_overview',
-  children: [spacePlanAssignmentState, spaceCreateState],
+  children: [spacePlanAssignmentState, spaceCreationState],
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SubscriptionPageRoute }) => {

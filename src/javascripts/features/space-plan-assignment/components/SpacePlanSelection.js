@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cn from 'classnames';
 import {
   Space as SpacePropType,
   Plan as PlanPropType,
@@ -9,20 +8,19 @@ import {
 import {
   Typography,
   Heading,
-  Card,
   Button,
-  RadioButton,
-  Tag,
   List,
   ListItem,
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
-import { SpacePlanComparison } from './SpacePlanComparison';
-import { ExpandableElement } from './ExpandableElement';
+import { groupPlans, buildPlanKey, orderPlanKeys, ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
+import { CREATION_FLOW_TYPE } from 'features/space-creation';
+import { SpacePlanCard } from './SpacePlanCard';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { canPlanBeAssigned, groupPlans, buildPlanKey, orderPlanKeys } from '../utils/utils';
 
 export function SpacePlanSelection({
   plans,
@@ -33,19 +31,37 @@ export function SpacePlanSelection({
   selectedPlan,
   onPlanSelected,
   onNext,
+  flowType,
+  freeSpaceResource,
 }) {
+  const isCreationFlow = flowType === CREATION_FLOW_TYPE;
   const groupedPlans = groupPlans(plans);
   const defaultRatePlanKeys = ratePlans.map((plan) =>
     buildPlanKey(plan.name, plan.productRatePlanCharges)
   );
   const orderedPlanKeys = orderPlanKeys(groupedPlans, defaultRatePlanKeys);
+  const freePlanCount = freeSpaceResource?.limits?.maximum - freeSpaceResource?.usage;
+
+  const styles = {
+    freePlanNote: css({
+      color: tokens.colorTextMid,
+      marginTop: tokens.spacingL,
+      marginBottom: tokens.spacingXs,
+    }),
+    listItem: css({ listStyleType: 'none' }),
+  };
 
   return (
     <>
       <Typography>
-        <Heading element="h2">
-          Choose a new space type for {space.name} ({currentPlanName})
-        </Heading>
+        {isCreationFlow ? (
+          <Heading element="h2">Choose a space type for your new space</Heading>
+        ) : (
+          <Heading element="h2">
+            Choose a new space type for {space?.name}
+            {currentPlanName && <span>({currentPlanName})</span>}
+          </Heading>
+        )}
       </Typography>
       <List>
         {orderedPlanKeys.map((key, index) => {
@@ -54,85 +70,27 @@ export function SpacePlanSelection({
           // In the future we may use the `quantity` attribute instead of
           // multiple instances of the same plan.
           const plan = groupedPlans[key][0];
-          const planCount = groupedPlans[key].length;
-          const setPlanColor =
-            plan.name === 'Large' || plan.name === 'Medium'
-              ? tokens.colorGreenLight
-              : tokens.colorBlueMid;
+          const isFree = isFreeProductPlan(plan);
+          const planCount = isFree ? freePlanCount : groupedPlans[key].length;
+          const isCustomPlan = isFree ? false : !defaultRatePlanKeys.includes(key);
 
-          const styles = {
-            cardItem: css({
-              marginBottom: tokens.spacingM,
-              position: 'relative',
-
-              '&:before': css({
-                content: '""',
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                width: '8px',
-                height: '100%',
-                backgroundColor: `${setPlanColor}`,
-              }),
-            }),
-            cardItemActive: css({
-              outline: 'none',
-              border: `1px solid ${tokens.colorPrimary}`,
-              boxShadow: `${tokens.glowPrimary}`,
-            }),
-            radioButtonLarge: css({
-              // TODO: as soon as it goes to prod permanently, move large radio to F36
-              width: '18px', // basic size of icon
-              height: '18px', // basic size of icon
-            }),
-            disabled: css({ opacity: 0.5 }),
-            custom: css({
-              fontWeight: `${tokens.fontWeightNormal}`,
-              color: `${tokens.colorTextLightest}`,
-            }),
-          };
-
-          const isDisabled = !canPlanBeAssigned(plan, spaceResources);
-          const isCustomPlan = !defaultRatePlanKeys.includes(key);
           return (
-            <ListItem key={plan.sys.id} testId="space-plan-item">
-              <Card
-                testId={`space-plan-card-${index}`}
-                padding="large"
-                className={cn(styles.cardItem, {
-                  [styles.cardItemActive]: plan === selectedPlan,
-                })}>
-                <Flex
-                  htmlTag="label"
-                  justifyContent="start"
-                  alignItems="center"
-                  marginBottom="spacingM"
-                  className={cn({
-                    [styles.disabled]: isDisabled,
-                  })}>
-                  <RadioButton
-                    disabled={isDisabled}
-                    checked={plan === selectedPlan}
-                    onChange={() => onPlanSelected(plan)}
-                    labelText={plan.name}
-                    className={styles.radioButtonLarge}
-                  />
-                  <Flex
-                    marginLeft={'spacingS'}
-                    fullWidth={true}
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Heading element="h3">
-                      {plan.name}{' '}
-                      {isCustomPlan && <span className={styles.custom}> (Customized)</span>}
-                    </Heading>
-                    <Tag tagType="positive">{planCount} available</Tag>
-                  </Flex>
-                </Flex>
-                <ExpandableElement id={index}>
-                  <SpacePlanComparison plan={plan} spaceResources={spaceResources} />
-                </ExpandableElement>
-              </Card>
+            <ListItem key={plan.sys.id} testId="space-plan-item" className={styles.listItem}>
+              {isCreationFlow && isFree && (
+                <Subheading className={styles.freePlanNote}>
+                  Test out new projects for 30 days, free of charge.
+                </Subheading>
+              )}
+              <SpacePlanCard
+                index={index}
+                plan={plan}
+                planCount={planCount}
+                spaceResources={spaceResources}
+                isCustomPlan={isCustomPlan}
+                flowType={flowType}
+                selectedPlan={selectedPlan}
+                onPlanSelected={onPlanSelected}
+              />
             </ListItem>
           );
         })}
@@ -146,7 +104,8 @@ export function SpacePlanSelection({
           icon="ChevronLeft"
           trackingEvent={'space_assignment:back'}
           trackParams={{
-            space_id: space.sys.id,
+            space_id: space?.sys.id,
+            // TODO change flow id for create
             flow: 'assing_plan_to_space',
           }}>
           Go back
@@ -166,10 +125,12 @@ export function SpacePlanSelection({
 SpacePlanSelection.propTypes = {
   plans: PropTypes.arrayOf(PlanPropType).isRequired,
   ratePlans: PropTypes.arrayOf(PlanPropType).isRequired,
-  space: SpacePropType.isRequired,
+  space: SpacePropType,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
-  currentPlanName: PropTypes.string.isRequired,
+  currentPlanName: PropTypes.string,
   onPlanSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,
+  flowType: PropTypes.oneOf([CREATION_FLOW_TYPE, ASSIGNMENT_FLOW_TYPE]),
+  freeSpaceResource: ResourcePropType,
 };

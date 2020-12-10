@@ -168,9 +168,7 @@ describe('SpacePlanAssignment', () => {
 
   it('should render first step with a list of available plans grouped by type and limits', async () => {
     await build();
-    expect(
-      screen.getByText('Choose a new space type for Test Space (Performance 2x)')
-    ).toBeVisible();
+    expect(screen.getByText('Choose a new space type for Test Space')).toBeVisible();
     expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
     expect(screen.getByTestId('go-back-btn')).toBeVisible();
     expect(screen.getByTestId('continue-btn')).toBeVisible();
@@ -269,11 +267,6 @@ describe('SpacePlanAssignment', () => {
     userEvent.click(screen.getByTestId('continue-btn'));
     expect(screen.getByText('One more thing', { exact: false })).toBeVisible();
   });
-
-  //todo implement test case after HEJO-1767
-  // it('should warn users about assigning new plan to POC or Trial spaces', async () => {
-  //   await build();
-  // });
 
   it('should show call service call with correct arguments', async () => {
     await build();

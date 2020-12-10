@@ -17,6 +17,7 @@ import { track } from 'analytics/Analytics';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
 import { EmptyState } from './EmptyState';
 import { AssignmentLoadingCard } from './AssignmentLoadingCard';
+import { ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Choose space type', isActive: true },
@@ -147,6 +148,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
             <Breadcrumbs items={steps} isActive={steps} />
             {steps.indexOf(currentStep) === 0 && (
               <SpacePlanSelection
+                flowType={ASSIGNMENT_FLOW_TYPE}
                 space={data.space}
                 spaceResources={data.spaceResources}
                 plans={data.plans}

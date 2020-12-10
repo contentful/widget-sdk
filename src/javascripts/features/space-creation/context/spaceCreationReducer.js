@@ -5,7 +5,7 @@ export const actions = {
   SET_SELECTED_PLAN: 'SET_SELECTED_PLAN',
 };
 
-export const spaceCreateReducer = (state, action) => {
+export const spaceCreationReducer = (state, action) => {
   switch (action.type) {
     case actions.SET_INITIAL_STATE:
       return { ...state, ...action.payload };

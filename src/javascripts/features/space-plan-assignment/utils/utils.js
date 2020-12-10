@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import pluralize from 'pluralize';
-
+export const ASSIGNMENT_FLOW_TYPE = 'assignment';
 export const resourcesToDisplay = [
   { id: 'environment', name: 'Environments' },
   { id: 'role', name: 'Roles' },
@@ -38,7 +38,9 @@ export function orderPlanKeys(groupedPlans, defaultRatePlanKeys) {
 export function groupPlans(plans) {
   const groupedPlans = {};
   plans.forEach((plan) => {
-    const key = buildPlanKey(plan.name, plan.ratePlanCharges);
+    // handle free plan case which does not have a subscription
+    const planCharges = plan.ratePlanCharges ?? plan.productRatePlanCharges;
+    const key = buildPlanKey(plan.name, planCharges);
     if (key in groupedPlans) {
       groupedPlans[key].push(plan);
     } else {
@@ -70,7 +72,9 @@ export function getIncludedResources(charges) {
 
 export function canPlanBeAssigned(plan, spaceResources) {
   const planLimits = Object.values(resourcesToValidate).reduce((memo, { id, name }) => {
-    const charge = plan.ratePlanCharges.find((charge) => charge.name === name);
+    // handle free plan case which does not have a subscription
+    const planCharges = plan.ratePlanCharges ?? plan.productRatePlanCharges;
+    const charge = planCharges.find((charge) => charge.name === name);
     memo[id] = get(charge, 'tiers[0].endingUnit');
     return memo;
   }, {});

@@ -5,7 +5,7 @@ import UserProvisioning from 'app/OrganizationSettings/UserProvisioning/UserProv
 import SubscriptionPageRoute from 'app/OrganizationSettings/Subscription/SubscriptionPageRouter';
 import { SSOSetup } from 'features/sso';
 import { SpacePlanAssignmentRoute } from 'features/space-plan-assignment';
-import { SpaceCreateRoute } from 'features/space-create';
+import { SpaceCreationRoute } from 'features/space-creation';
 
 export {
   NewUserRoute,
@@ -15,5 +15,5 @@ export {
   SubscriptionPageRoute,
   SSOSetup,
   SpacePlanAssignmentRoute,
-  SpaceCreateRoute,
+  SpaceCreationRoute,
 };
