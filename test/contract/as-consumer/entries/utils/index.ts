@@ -1,10 +1,10 @@
 import { startMockServer } from '@contentful/pact-node-utils';
-import { defaultSpaceId } from '../../../cypress/util/requests';
+import { defaultSpaceId } from '../../../../cypress/util/requests';
 import { noop } from 'lodash';
-import { createSpaceEndpoint } from '../../../../src/javascripts/data/Endpoint';
-import { create as createEntityRepo } from '../../../../src/javascripts/data/CMA/EntityRepo';
-import { createPubSubClientForSpace } from '../../../../src/javascripts/__mocks__/services/PubSubService';
-import constants from '../../../constants';
+import { createSpaceEndpoint } from '../../../../../src/javascripts/data/Endpoint';
+import { create as createEntityRepo } from '../../../../../src/javascripts/data/CMA/EntityRepo';
+import { createPubSubClientForSpace } from '../../../../../src/javascripts/__mocks__/services/PubSubService';
+import constants from '../../../../constants';
 import fetch from 'node-fetch';
 
 // TODO: This is a hack to ensure the underlying window.fetch is actually called.

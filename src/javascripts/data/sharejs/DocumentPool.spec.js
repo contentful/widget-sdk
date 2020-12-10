@@ -1,4 +1,4 @@
-import { getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import * as K from '../../../../test/utils/kefir';
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { create as createPool } from 'data/sharejs/DocumentPool';
@@ -24,6 +24,11 @@ const mockEntityRepo = { entityRepo: true };
 jest.mock('data/CMA/EntityRepo', () => ({
   create: jest.fn(() => mockEntityRepo),
 }));
+
+// We have to provide vales for these because they're overridden as
+// undefined in the LaunchDarkly mocks.
+FLAGS['SHAREJS_REMOVAL'] = Symbol('SHAREJS_REMOVAL');
+FLAGS['PATCH_ENTRY_UPDATES'] = Symbol('PATCH_ENTRY_UPDATES');
 
 let mockDoc1;
 let mockDoc2;
@@ -67,9 +72,13 @@ describe('DocumentPool', () => {
       open: jest.fn().mockResolvedValue({}),
     };
 
-    getVariation.mockResolvedValue({
-      Entry: false,
-      Asset: false,
+    getVariation.mockImplementation((flag) => {
+      switch (flag) {
+        case FLAGS.SHAREJS_REMOVAL:
+          return Promise.resolve({ Entry: false, Asset: false });
+        case FLAGS.PATCH_ENTRY_UPDATES:
+          return Promise.resolve(false);
+      }
     });
     otDocumentPool = await createPool(connection, spaceEndpoint);
   });
@@ -116,15 +125,21 @@ describe('DocumentPool', () => {
     });
 
     it('creates cma doc or ot doc instance, depending on the feature flag values', async function () {
-      getVariation.mockResolvedValue({
-        Entry: true,
-        Asset: false,
+      getVariation.mockImplementation((flag) => {
+        switch (flag) {
+          case FLAGS.SHAREJS_REMOVAL:
+            return Promise.resolve({ Entry: true, Asset: false });
+          case FLAGS.PATCH_ENTRY_UPDATES:
+            return Promise.resolve(false);
+        }
       });
       cmaDocumentPool = await createPool(connection, spaceEndpoint);
 
       get('id', 'Entry', cmaDocumentPool);
       expect(createCmaDoc).toBeCalledTimes(1);
-      expect(createCmaDoc).toBeCalledWith(entry, ct, mockEntityRepo);
+      expect(createCmaDoc).toBeCalledWith(entry, ct, mockEntityRepo, {
+        patchEntryUpdates: false,
+      });
 
       get('id', 'Asset', cmaDocumentPool);
       expect(createOtDoc).toBeCalledTimes(1);
@@ -133,7 +148,14 @@ describe('DocumentPool', () => {
 
     describe('creating the CMA document', () => {
       beforeEach(() => {
-        getVariation.mockResolvedValue({ Entry: true });
+        getVariation.mockImplementation((flag) => {
+          switch (flag) {
+            case FLAGS.SHAREJS_REMOVAL:
+              return Promise.resolve({ Entry: true });
+            case FLAGS.PATCH_ENTRY_UPDATES:
+              return Promise.resolve(false);
+          }
+        });
       });
 
       describe('triggering the auto_save action', () => {
@@ -219,7 +241,14 @@ describe('DocumentPool', () => {
 
     describe('CMA document', () => {
       beforeEach(async () => {
-        getVariation.mockResolvedValue({ Entry: true });
+        getVariation.mockImplementation((flag) => {
+          switch (flag) {
+            case FLAGS.SHAREJS_REMOVAL:
+              return Promise.resolve({ Entry: true });
+            case FLAGS.PATCH_ENTRY_UPDATES:
+              return Promise.resolve(false);
+          }
+        });
         cmaDocumentPool = await createPool(connection, spaceEndpoint);
       });
 

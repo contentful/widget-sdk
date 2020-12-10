@@ -346,8 +346,6 @@ jobs:
           environment:
             JUNIT_REPORT_PATH: ./reports/karma
             JUNIT_REPORT_NAME: karma-test-results.xml
-      - store_test_results:
-          path: reports
 
   publish-pact-contracts:
     docker:
@@ -359,7 +357,7 @@ jobs:
       - run:
           name: Merge and publish contracts to pact-broker
           command: |
-            PACT_FILES=$(circleci tests glob "/pact/user_interface/pacts/**/*.json")
+            PACT_FILES=$(circleci tests glob "/pact/user_interface/pact*/**/*.json")
             /pact/entrypoint.sh publish $PACT_FILES --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
 
   verify-contracts: &verify-contracts
@@ -392,7 +390,14 @@ workflows:
       - build-with-statistics:
           requires:
             - lint
-      - run-unit-tests
+      - run-unit-tests:
+          post-steps:
+            - store_test_results:
+                path: reports
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                  - pact/*
       - polaris-scan/run-polaris-scan:
           requires_build: false
           context:
@@ -419,6 +424,7 @@ workflows:
           store_artifacts: true
       - publish-pact-contracts:
           requires:
+            - run-unit-tests
             - run-contract-tests
       - copy-assets/to-s3:
           name: copy-assets-to-s3

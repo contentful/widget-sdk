@@ -7,6 +7,7 @@ import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
 import * as fake from 'test/helpers/fakeFactory';
+import { getVariation } from 'LaunchDarkly';
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -41,6 +42,11 @@ const mockEntityRepo = () => ({
     entry.sys.version++;
     return Promise.resolve(entry);
   }),
+  patch: jest.fn().mockImplementation((_entity, entity) => {
+    const entry = cloneDeep(entity);
+    entry.sys.version++;
+    return Promise.resolve(entry);
+  }),
   get: jest.fn(),
   onContentEntityChanged: jest.fn().mockReturnValue(jest.fn()),
   onAssetFileProcessed: jest.fn().mockReturnValue(jest.fn()),
@@ -54,7 +60,7 @@ const newError = (code, msg, message) => {
   return error;
 };
 
-function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
+function createCmaDocument(initialEntity, contentTypeFields, saveThrottleMs) {
   const contentType =
     initialEntity.sys.type === 'Entry' &&
     newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
@@ -63,7 +69,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
       entityRepo,
-      throttleMs
+      { saveThrottleMs }
     ),
   };
 }
@@ -78,6 +84,7 @@ describe('CmaDocument - conflict resolution', () => {
   let entry;
 
   beforeEach(() => {
+    getVariation.mockClear().mockResolvedValue(false);
     jest.useFakeTimers();
     entry = newEntry();
     entityRepo = mockEntityRepo();

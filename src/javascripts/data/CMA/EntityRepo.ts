@@ -1,3 +1,4 @@
+import jiff from 'jiff';
 import {
   ASSET_PROCESSING_FINISHED_EVENT,
   CONTENT_ENTITY_UPDATED_EVENT,
@@ -13,19 +14,23 @@ import {
   ContentEntityUpdatedPayload,
 } from '@contentful/pubsub-types';
 
-const COLLECTION_ENDPOINTS = {
-  Entry: 'entries',
-  Asset: 'assets',
-};
+export enum CollectionEndpoint {
+  Entry = 'entries',
+  Asset = 'assets',
+}
 
 export type EntityRepo = {
   get(entityType: string, entityId: string): Promise<Entity>;
   onContentEntityChanged: (
     entitySys: { type: string; id: string },
     callback: (info: EntityRepoChangeInfo) => {}
-  ) => () => any;
-  onAssetFileProcessed: (entitySys: { type: string; id: string }, callback: any) => () => any;
+  ) => () => ReturnType<PubSubClient['off']>;
+  onAssetFileProcessed: (
+    entitySys: { type: string; id: string },
+    callback: Function
+  ) => () => ReturnType<PubSubClient['off']>;
   update: (entity: Entity) => Promise<Entity>;
+  patch: (lastSavedEntity: Entity, entity: Entity) => Promise<Entity>;
   applyAction: (action: EntityAction, uiState: EntityState, data: Entity) => Entity;
 };
 
@@ -37,6 +42,14 @@ interface EntityRepoOptions {
   skipDraftValidation?: boolean;
   skipTransformation?: boolean;
   indicateAutoSave?: boolean;
+}
+
+function getCollection(entity: Entity): CollectionEndpoint {
+  const collection = CollectionEndpoint[entity.sys.type];
+  if (!collection) {
+    throw new Error('Invalid entity type');
+  }
+  return collection;
 }
 
 export function create(
@@ -56,13 +69,10 @@ export function create(
   const onAssetFileProcessed = createAssetFileProcessedHandler(spaceEndpoint, pubSubClient);
   const applyAction = makeApply(spaceEndpoint);
 
-  return { onAssetFileProcessed, onContentEntityChanged, get, update, applyAction };
+  return { onAssetFileProcessed, onContentEntityChanged, get, update, patch, applyAction };
 
-  async function update(entity: Entity) {
-    const collection = COLLECTION_ENDPOINTS[entity.sys.type];
-    if (!collection) {
-      throw new Error('Invalid entity type');
-    }
+  async function update(entity: Entity): Promise<Entity> {
+    const collection = getCollection(entity);
     const body = {
       method: 'PUT',
       path: [collection, entity.sys.id],
@@ -74,8 +84,24 @@ export function create(
     return updatedEntity;
   }
 
-  function get(entityType: string, entityId: string) {
-    const collection = COLLECTION_ENDPOINTS[entityType];
+  async function patch(lastSavedEntity: Entity, entity: Entity): Promise<Entity> {
+    const collection = getCollection(entity);
+    const body = {
+      method: 'PATCH',
+      path: [collection, entity.sys.id],
+      version: entity.sys.version,
+      data: jiff.diff(lastSavedEntity, entity),
+    };
+    const updatedEntity = await spaceEndpoint(body, {
+      ...endpointPutOptions,
+      'Content-Type': 'application/json-patch+json',
+    });
+    triggerCmaAutoSave();
+    return updatedEntity;
+  }
+
+  function get(entityType: CollectionEndpoint, entityId: string) {
+    const collection = CollectionEndpoint[entityType];
     const body = {
       method: 'GET',
       path: [collection, entityId],

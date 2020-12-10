@@ -48,6 +48,7 @@ export const FLAGS = {
   WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
   COMBINED_REFERENCE_ACTIONS: 'feature-pen-11-2020-combined-reference-actions',
   COMPOSE_LAUNCH_PURCHASE: 'feature-ahoy-11-2020-compose-launch-purchase',
+  PATCH_ENTRY_UPDATES: 'feature-penguin-12-2020-patch-entry-updates',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -76,6 +77,7 @@ const FALLBACK_VALUES = {
   [FLAGS.WORKFLOWS_APP]: false,
   [FLAGS.COMBINED_REFERENCE_ACTIONS]: false,
   [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false,
+  [FLAGS.PATCH_ENTRY_UPDATES]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

@@ -30,7 +30,7 @@ export async function create(
     spaceId,
     environmentId,
   });
-
+  const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES);
   return { get, destroy };
 
   /**
@@ -86,7 +86,7 @@ export async function create(
           skipTransformation: true,
           indicateAutoSave: true,
         });
-        doc = createCmaDoc(entity, contentTypeData, entityRepo);
+        doc = createCmaDoc(entity, contentTypeData, entityRepo, { patchEntryUpdates });
         cleanup = () => doc.destroy().finally(destroyConnection);
       } else {
         const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, {

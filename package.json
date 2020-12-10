@@ -79,6 +79,7 @@
     "immer": "6.0.5",
     "is-hotkey": "^0.1.6",
     "is-html": "2.0.0",
+    "jiff": "^0.7.3",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.1",
     "js-htmlencode": "^0.3.0",

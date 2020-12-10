@@ -42,6 +42,11 @@ const mockEntityRepo = () => ({
     entry.sys.version++;
     return Promise.resolve(entry);
   }),
+  patch: jest.fn().mockImplementation((_entity, entity) => {
+    const entry = cloneDeep(entity);
+    entry.sys.version++;
+    return Promise.resolve(entry);
+  }),
   get: jest.fn(),
   onContentEntityChanged: jest.fn().mockReturnValue(jest.fn()),
   onAssetFileProcessed: jest.fn().mockReturnValue(jest.fn()),
@@ -58,7 +63,12 @@ const newError = (code, msg, message) => {
 
 const DisconnectedError = newError(-1, 'API request failed');
 
-function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
+function createCmaDocument(
+  initialEntity,
+  contentTypeFields,
+  saveThrottleMs = THROTTLE_TIME,
+  patchEntryUpdates = false
+) {
   const contentType =
     initialEntity.sys.type === 'Entry' &&
     newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
@@ -67,7 +77,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
       entityRepo,
-      throttleMs
+      { saveThrottleMs, patchEntryUpdates }
     ),
   };
 }
@@ -128,32 +138,78 @@ describe('CmaDocument', () => {
   });
 
   describe('5 sec. after setValueAt(fieldPath) on a field', () => {
-    beforeEach(async () => {
+    const setValue = async () => {
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
+      await wait();
+    };
+
+    describe('when patching entry updates is disabled', () => {
+      it('triggers CMA request', async () => {
+        await setValue();
+        expect(entityRepo.update).toBeCalledTimes(1);
+        expect(entityRepo.patch).not.toHaveBeenCalled();
+      });
+
+      it('bumps sysProperty version after remote update', async () => {
+        await setValue();
+        expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      });
     });
 
-    it('triggers CMA request', () => {
-      expect(entityRepo.update).toBeCalledTimes(1);
-    });
+    describe('when patching entry updates is enabled', () => {
+      beforeEach(() => {
+        doc = createCmaDocument(entry, undefined, THROTTLE_TIME, true).document;
+      });
 
-    it('bumps sysProperty version after remote update', () => {
-      expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      it('triggers CMA request', async () => {
+        await setValue();
+        expect(entityRepo.patch).toBeCalledTimes(1);
+        expect(entityRepo.update).not.toHaveBeenCalled();
+      });
+
+      it('bumps sysProperty version after remote update', async () => {
+        await setValue();
+        expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      });
     });
   });
 
   describe('5 sec. after setValueAt(tagsPath) on a field', () => {
-    beforeEach(async () => {
+    const setValue = async () => {
       await doc.setValueAt(tagsPath, linkedTags);
       jest.runAllTimers();
+      await wait();
+    };
+
+    describe('when patching entry updates is disabled', () => {
+      it('triggers CMA request', async () => {
+        await setValue();
+        expect(entityRepo.update).toBeCalledTimes(1);
+        expect(entityRepo.patch).not.toHaveBeenCalled();
+      });
+
+      it('bumps sysProperty version after remote update', async () => {
+        await setValue();
+        expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      });
     });
 
-    it('triggers CMA request', () => {
-      expect(entityRepo.update).toBeCalledTimes(1);
-    });
+    describe('when patching entry updates is enabled', () => {
+      beforeEach(() => {
+        doc = createCmaDocument(entry, undefined, THROTTLE_TIME, true).document;
+      });
 
-    it('bumps sysProperty version after remote update', () => {
-      expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      it('triggers CMA request', async () => {
+        await setValue();
+        expect(entityRepo.patch).toBeCalledTimes(1);
+        expect(entityRepo.update).not.toHaveBeenCalled();
+      });
+
+      it('bumps sysProperty version after remote update', async () => {
+        await setValue();
+        expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+      });
     });
   });
 
@@ -248,19 +304,20 @@ describe('CmaDocument', () => {
 
   describe('when CMA call fails due to a network error', () => {
     it('retries to save every 5s until successful', async () => {
-      entityRepo.update.mockImplementation(() => {
-        throw DisconnectedError;
-      });
+      entityRepo.update.mockImplementation(() => Promise.reject(DisconnectedError));
 
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.advanceTimersByTime(THROTTLE_TIME);
+      await wait();
       expect(entityRepo.update).toBeCalledTimes(1);
       expectDocError(doc.state.error$, DocError.Disconnected);
 
       jest.advanceTimersByTime(THROTTLE_TIME);
+      await wait();
       expect(entityRepo.update).toBeCalledTimes(2);
 
       jest.advanceTimersByTime(THROTTLE_TIME);
+      await wait();
       expect(entityRepo.update).toBeCalledTimes(3);
 
       entityRepo.update.mockImplementation(async (entity) => {
@@ -396,9 +453,9 @@ describe('CmaDocument', () => {
 
     describe('error$', () => {
       it('emits OpenForbidden on AccessDenied error code', async () => {
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('AccessDenied', 'API request failed');
-        });
+        entityRepo.update.mockImplementationOnce(() =>
+          Promise.reject(newError('AccessDenied', 'API request failed'))
+        );
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
@@ -406,9 +463,9 @@ describe('CmaDocument', () => {
       });
 
       it('emits VersionMismatch on BadRequest error code and archived message', async () => {
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('BadRequest', 'API request failed', 'Cannot edit archived');
-        });
+        entityRepo.update.mockImplementationOnce(() =>
+          Promise.reject(newError('BadRequest', 'API request failed', 'Cannot edit archived'))
+        );
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
@@ -416,20 +473,16 @@ describe('CmaDocument', () => {
       });
 
       it('emits Disconnected on -1 error code', async () => {
-        entityRepo.update.mockImplementationOnce(() => {
-          throw DisconnectedError;
-        });
+        entityRepo.update.mockImplementationOnce(() => Promise.reject(DisconnectedError));
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
-        // We don't call `await wait()` for this error because it will clear out after a retry
+        await wait();
         expectDocError(doc.state.error$, DocError.Disconnected);
       });
 
       it('emits CmaInternalServerError(originalError) on ServerError error code', async () => {
         const error = newError('ServerError', 'API request failed');
-        entityRepo.update.mockImplementationOnce(() => {
-          throw error;
-        });
+        entityRepo.update.mockImplementationOnce(() => Promise.reject(error));
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
@@ -438,9 +491,7 @@ describe('CmaDocument', () => {
 
       it('emits CmaInternalServerError(originalError) on any other error code', async () => {
         const error = newError('SomeRandomError', 'API request failed');
-        entityRepo.update.mockImplementationOnce(() => {
-          throw error;
-        });
+        entityRepo.update.mockImplementationOnce(() => Promise.reject(error));
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
@@ -454,12 +505,11 @@ describe('CmaDocument', () => {
       });
 
       it('is `false` while CMA can not be reached', async () => {
-        entityRepo.update.mockImplementation(() => {
-          throw DisconnectedError;
-        });
+        entityRepo.update.mockImplementation(() => Promise.reject(DisconnectedError));
 
         await doc.setValueAt(fieldPath, 'new value');
         jest.advanceTimersByTime(THROTTLE_TIME);
+        await wait();
         K.assertCurrentValue(doc.state.isConnected$, false);
 
         entityRepo.update.mockImplementation((entity) => {
@@ -537,9 +587,9 @@ describe('CmaDocument', () => {
 
   describe('edit conflict tracking', () => {
     it('does not happen when the remote entity was archived', async () => {
-      entityRepo.update.mockImplementationOnce(() => {
-        throw newError('BadRequest', 'Cannot edit archived');
-      });
+      entityRepo.update.mockImplementationOnce(() =>
+        Promise.reject(newError('BadRequest', 'Cannot edit archived'))
+      );
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
       await wait();
@@ -548,9 +598,9 @@ describe('CmaDocument', () => {
     });
 
     it('does not happen when the remote entity was deleted', async () => {
-      entityRepo.update.mockImplementationOnce(() => {
-        throw newError('BadRequest', 'Missing content type parameter');
-      });
+      entityRepo.update.mockImplementationOnce(() =>
+        Promise.reject(newError('BadRequest', 'Missing content type parameter'))
+      );
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
       await wait();

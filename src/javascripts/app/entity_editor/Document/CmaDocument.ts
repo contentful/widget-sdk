@@ -31,7 +31,7 @@ export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
   contentType: ContentType,
   entityRepo: EntityRepo,
-  saveThrottleMs: number = THROTTLE_TIME
+  options: { patchEntryUpdates?: boolean; saveThrottleMs?: number } = {}
 ): Document {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
   const entity: Entity = cloneDeep(initialEntity.data);
@@ -44,6 +44,7 @@ export function create(
       TheLocaleStore.getPrivateLocales()
     );
   normalize();
+  const saveThrottleMs = options.saveThrottleMs || THROTTLE_TIME;
 
   const cleanupTasks: Function[] = [];
   let isDestroyed = false;
@@ -350,6 +351,15 @@ export function create(
     return saveEntity(...args);
   }
 
+  async function putOrPatchEntity(oldEntity: Entity, newEntity: Entity): Promise<Entity> {
+    // PUT won't be supported for assets initially. Should rename `patchEntryUpdates` if we ever add this.
+    if (options.patchEntryUpdates && newEntity.sys.type === 'Entry') {
+      return entityRepo.patch(oldEntity, newEntity);
+    } else {
+      return entityRepo.update(newEntity);
+    }
+  }
+
   /**
    * @param options.updateEmitters Is used to save an entity on destroy without updating
    *  the document that is already destroyed once CMA response is received
@@ -380,7 +390,7 @@ export function create(
     }
     if (!options.updateEmitters) {
       try {
-        const newEntry = await entityRepo.update(entity);
+        const newEntry = await putOrPatchEntity(lastSavedEntity, entity);
         setLastSavedEntity(newEntry);
       } catch (e) {
         // TODO: Use affordable analytics to track how often this happens.
@@ -392,7 +402,7 @@ export function create(
     // Clone as `entity` could get mutated while waiting for CMA request.
     const changedLocalEntity: Entity = cloneDeep(entity);
     try {
-      const newEntry = await entityRepo.update(changedLocalEntity);
+      const newEntry = await putOrPatchEntity(lastSavedEntity, changedLocalEntity);
       setLastSavedEntity(newEntry);
     } catch (e) {
       if (e.code === 'VersionMismatch') {

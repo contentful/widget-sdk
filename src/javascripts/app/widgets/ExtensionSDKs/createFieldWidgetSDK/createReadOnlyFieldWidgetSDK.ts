@@ -81,8 +81,7 @@ export function createReadonlyFieldWidgetSDK({
       setDeleted: noop,
     },
     internalContentType,
-    readOnlyEntityRepo,
-    5000
+    readOnlyEntityRepo
   );
 
   const userApi = createUserApi(spaceMember);
