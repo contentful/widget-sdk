@@ -4,7 +4,7 @@ import { Icon, TableCell, Tooltip } from '@contentful/forma-36-react-components'
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { track } from 'analytics/Analytics';
-import { utilizationState } from '../utils';
+import { utils } from '../utils';
 
 const styles = {
   cell: css({
@@ -65,7 +65,7 @@ export const SpaceUsageIconCell = ({
   limit,
   testId = 'subscription-page.spaces-list.usage-icon',
 }) => {
-  const { state, percentage } = utilizationState({ usage, limit, utilization });
+  const { state, percentage } = utils.utilizationState({ usage, limit, utilization });
   const { icon, label } = iconAndTooltipContent({ state, percentage });
   return (
     <TableCell

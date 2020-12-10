@@ -4,7 +4,7 @@ import { cx, css } from 'emotion';
 import { TableCell } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { utilizationState } from '../utils';
+import { utils } from '../utils';
 
 const styles = {
   warning: css({
@@ -24,7 +24,7 @@ export const SpaceUsageTableCell = ({
   utilization,
   testId = 'subscription-page.spaces-list.usage',
 }) => {
-  const { state } = utilizationState({ usage, limit, utilization });
+  const { state } = utils.utilizationState({ usage, limit, utilization });
 
   return (
     <TableCell

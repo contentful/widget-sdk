@@ -1,10 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SpacePlans from './SpacePlans';
+
 import * as trackCTA from 'analytics/trackCTA';
 import * as fake from 'test/helpers/fakeFactory';
-import { getSpacesUsage } from './SpacesUsageService';
+
+import { SpacePlans } from './SpacePlans';
+import { getSpacesUsage } from '../services/SpacesUsageService';
 
 const fakeSpaceId = 'fake_space_id';
 const mockSpaceForPlanOne = fake.Space({ sys: { id: fakeSpaceId } });
@@ -59,7 +61,7 @@ jest.mock('utils/SubscriptionUtils', () => ({
   }),
 }));
 
-jest.mock('./SpacesUsageService', () => ({
+jest.mock('../services/SpacesUsageService', () => ({
   getSpacesUsage: jest.fn().mockResolvedValue({ items: [], total: 0 }),
 }));
 

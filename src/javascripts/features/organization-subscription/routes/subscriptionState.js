@@ -3,9 +3,10 @@ import { organizationRoute } from 'states/utils';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import { spaceCreationState } from 'features/space-creation';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import importer from 'app/OrganizationSettings/importer';
 import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';
 import { go } from 'states/Navigator';
+
+import { importer } from './importer';
 
 const subscriptionPageState = {
   name: 'overview',
@@ -13,25 +14,14 @@ const subscriptionPageState = {
   children: [spacePlanAssignmentState, spaceCreationState],
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
-      {({ SubscriptionPageRoute }) => {
-        return <SubscriptionPageRoute {...props} />;
+      {({ SubscriptionPageRouter }) => {
+        return <SubscriptionPageRouter {...props} />;
       }}
     </LazyLoadedComponent>
   ),
 };
 
-/*
-  This state (account.organizations.subscription_new) originally only pointed
-  to the subscription page. However, the original route was defined in such a way
-  that if you wanted to add children, it would inherit the route, e.g.:
-  /account/organizations/:id/subscription_overview/new_space
-  This is problematic as it meant that scoping things under the "subscription" tab in the
-  organization settings meant inheriting that route, which is long and annoying. To get
-  around this, the original route is now a child of this one, and if we internally
-  route to `account.organizations.subscription_new` it will automatically redirect
-  to the overview route.
- */
-export default organizationRoute({
+export const subscriptionState = organizationRoute({
   name: 'subscription_new',
   url: '',
   children: [newSpaceState, upgradeSpaceState, subscriptionPageState],

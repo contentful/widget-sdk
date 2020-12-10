@@ -18,7 +18,7 @@ import {
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { billing } from './links';
+import { links } from '../utils';
 import { go } from 'states/Navigator';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
@@ -28,9 +28,9 @@ import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
-import BasePlan from './BasePlan';
-import UsersForPlan from './UsersForPlan';
-import SpacePlans from './SpacePlans';
+import { BasePlan } from './BasePlan';
+import { UsersForPlan } from './UsersForPlan';
+import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
@@ -91,10 +91,10 @@ const styles = {
 };
 
 const goToBillingPage = (organizationId) => {
-  go(billing(organizationId));
+  go(links.billing(organizationId));
 };
 
-export default function SubscriptionPage({
+export function SubscriptionPage({
   basePlan,
   usersMeta,
   organization,

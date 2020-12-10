@@ -11,9 +11,9 @@ import {
   TableBody,
   SkeletonRow,
 } from '@contentful/forma-36-react-components';
-import { SpacePlanRow } from '../SpacePlanRow';
 import Pagination from 'app/common/Pagination';
-import { getSpacesUsage } from '../SpacesUsageService';
+import { SpacePlanRow } from './SpacePlanRow';
+import { getSpacesUsage } from '../services/SpacesUsageService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { SortableHeaderCell } from './SortableHeaderCell';
 import { track } from 'analytics/Analytics';
