@@ -13,7 +13,7 @@ const messages = {
   },
 
   linkContentType: function (error, ctRepo) {
-    const ct = ctRepo.get(error.contentTypeId);
+    const ct = ctRepo && ctRepo.get(error.contentTypeId);
     if (ct) {
       return 'Linked Entry’s content type must be ' + ct.getName() + '.';
     } else {
