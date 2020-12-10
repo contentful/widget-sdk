@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import BasePlan from './BasePlan';
+import { BasePlan } from './BasePlan';
 import {
-  PARTNER_PLATFORM_BASE_PLAN_NAME,
   ENTERPRISE,
   FREE,
+  PARTNER_PLATFORM_BASE_PLAN_NAME,
   SELF_SERVICE,
 } from 'account/pricing/PricingDataProvider';
 

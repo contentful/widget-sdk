@@ -1,7 +1,7 @@
 import base from 'states/Base';
 import { iframeStateWrapper } from 'states/utils';
 import * as Analytics from 'analytics/Analytics';
-import subscriptionState from './Subscription/SubscriptionState';
+import { subscriptionState } from 'features/organization-subscription';
 import { usageState } from 'features/organization-usage';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';

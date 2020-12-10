@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
 import moment from 'moment';
 import tokens from '@contentful/forma-36-tokens';
-import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 import {
   Icon,
   TextLink,
@@ -14,11 +13,13 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
+import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
-import { SpaceUsageIconCell } from './components/SpaceUsageIconCell';
-import { SpaceUsageTableCell } from './components/SpaceUsageTableCell';
+
+import { SpaceUsageIconCell } from './SpaceUsageIconCell';
+import { SpaceUsageTableCell } from './SpaceUsageTableCell';
 import { track } from 'analytics/Analytics';
 
 const styles = {

@@ -31,11 +31,11 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { Pluralized, Price } from 'core/components/formatting';
 
-import { UnassignedPlansTable } from './components/UnassignedPlansTable';
-import { SpacePlansTable } from './components/SpacePlansTable';
+import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
+import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 
 import { track } from 'analytics/Analytics';
-import { downloadSpacesUsage } from './SpacesUsageService';
+import { downloadSpacesUsage } from '../services/SpacesUsageService';
 
 const styles = {
   total: css({
@@ -84,7 +84,7 @@ const withUtmParams = buildUrlWithUtmParams({
 
 const trackHelpLink = () => track('space_usage_summary:help_link_clicked');
 
-function SpacePlans({
+export function SpacePlans({
   initialLoad,
   spacePlans,
   upgradedSpaceId,
@@ -372,5 +372,3 @@ SpacePlans.defaultProps = {
   upgradedSpaceId: '',
   anySpacesInaccessible: false,
 };
-
-export default SpacePlans;

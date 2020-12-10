@@ -16,7 +16,7 @@ const styles = {
   }),
 };
 
-function BasePlan({ basePlan }) {
+export function BasePlan({ basePlan }) {
   const enabledFeaturesNames = basePlan ? getEnabledFeatures(basePlan).map(({ name }) => name) : [];
   const hasAnyPlanFeatures = enabledFeaturesNames.length > 0;
   const basePlanIsPartner = isPartnerPlan(basePlan);
@@ -52,5 +52,3 @@ BasePlan.propTypes = {
 BasePlan.defaultProps = {
   basePlan: undefined,
 };
-
-export default BasePlan;

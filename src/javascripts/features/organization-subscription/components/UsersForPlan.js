@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
-import { memberships as orgMemberships, billing } from './links';
 import { Pluralized, Price } from 'core/components/formatting';
 import StateLink from 'app/common/StateLink';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import * as Config from 'Config';
 import { go } from 'states/Navigator';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { links } from '../utils';
 
 const ENTERPRISE_FREE_USER_COUNT = 10;
 const ENTERPRISE_ADDITIONAL_USER_COST = 15;
@@ -26,7 +26,7 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
       organizationId: organizationId,
     });
 
-    go(billing(organizationId));
+    go(links.billing(organizationId));
   };
 
   const onContactSupport = () => {
@@ -40,7 +40,7 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
       <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free' : null} with
       your subscription.{' '}
       <StateLink
-        {...orgMemberships(organizationId)}
+        {...links.memberships(organizationId)}
         component={TextLink}
         testId="subscription-page.org-memberships-link">
         Manage users
@@ -94,7 +94,7 @@ EnterpriseTrialWarning.propTypes = {
   numberUsers: PropTypes.number,
 };
 
-function UsersForPlan({
+export function UsersForPlan({
   organizationId,
   numberFreeUsers,
   numberPaidUsers,
@@ -135,7 +135,7 @@ function UsersForPlan({
         {isOnEnterpriseTrial && <EnterpriseTrialWarning numberUsers={numberFreeUsers} />}
         {!isAboveHardLimit && (
           <StateLink
-            {...orgMemberships(organizationId)}
+            {...links.memberships(organizationId)}
             component={TextLink}
             testId="subscription-page.org-memberships-link">
             Manage users
@@ -162,5 +162,3 @@ UsersForPlan.defaultProps = {
   numberPaidUsers: 0,
   costOfUsers: 0,
 };
-
-export default UsersForPlan;

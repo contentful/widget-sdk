@@ -2,12 +2,13 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
-import SubscriptionPage from './SubscriptionPage';
 import { getVariation } from 'LaunchDarkly';
 
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
-import { billing } from './links';
+
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { SubscriptionPage } from './SubscriptionPage';
+import { links } from '../utils';
 
 import * as trackCTA from 'analytics/trackCTA';
 
@@ -23,9 +24,11 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
 }));
 
-jest.mock('./links', () => ({
-  billing: jest.fn(),
-  memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
+jest.mock('../utils', () => ({
+  links: {
+    billing: jest.fn(),
+    memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
+  },
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -92,7 +95,7 @@ describe('SubscriptionPage', () => {
 
   it('should show user details and CTA to upgrade for the Community customers', () => {
     const navigatorObject = { test: true };
-    billing.mockReturnValue(navigatorObject);
+    links.billing.mockReturnValue(navigatorObject);
 
     const usersMeta = {
       numFree: 5,
@@ -118,7 +121,7 @@ describe('SubscriptionPage', () => {
       organizationId: mockOrganization.sys.id,
     });
 
-    expect(billing).toHaveBeenCalledWith(mockOrganization.sys.id);
+    expect(links.billing).toHaveBeenCalledWith(mockOrganization.sys.id);
     expect(go).toHaveBeenCalledWith(navigatorObject);
   });
 
@@ -219,7 +222,7 @@ describe('SubscriptionPage', () => {
     const navigatorObject = { test: true };
     const nonBillableOrganization = Fake.Organization({ isBillable: false });
     isOwner.mockReturnValue(true);
-    billing.mockReturnValue(navigatorObject);
+    links.billing.mockReturnValue(navigatorObject);
 
     build({
       organization: nonBillableOrganization,
@@ -228,7 +231,7 @@ describe('SubscriptionPage', () => {
     });
 
     userEvent.click(screen.getByTestId('subscription-page.add-billing-button'));
-    expect(billing).toHaveBeenCalledWith(nonBillableOrganization.sys.id);
+    expect(links.billing).toHaveBeenCalledWith(nonBillableOrganization.sys.id);
     expect(go).toHaveBeenCalledWith(navigatorObject);
   });
 

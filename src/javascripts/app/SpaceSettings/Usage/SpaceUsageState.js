@@ -1,8 +1,9 @@
-import { can } from 'access_control/AccessChecker';
-import SpaceUsage from './SpaceUsage';
 import { Notification } from '@contentful/forma-36-react-components';
+
+import { can } from 'access_control/AccessChecker';
 import { go } from 'states/Navigator';
-import { memberships } from 'app/OrganizationSettings/Subscription/links';
+
+import SpaceUsage from './SpaceUsage';
 
 export default {
   name: 'usage',
@@ -22,7 +23,14 @@ export default {
         Notification.warning(`You don't have permission to view the space usage.`, {
           cta: {
             label: 'Update your role',
-            textLinkProps: { onClick: () => go(memberships(orgId)) },
+            textLinkProps: {
+              onClick: () =>
+                go({
+                  path: ['account', 'organizations', 'users', 'list'],
+                  params: { orgId },
+                  options: { reload: true },
+                }),
+            },
           },
         });
       } else {

@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-
 import { get, isUndefined } from 'lodash';
 
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
   getRatePlans,
@@ -13,21 +13,19 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
-
 import DocumentTitle from 'components/shared/DocumentTitle';
-
-import SubscriptionPage from './SubscriptionPage';
-
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 
+import { SubscriptionPage } from '../components/SubscriptionPage';
+
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
+
 const getSpacePlans = (plans, accessibleSpaces) =>
   plans.items
     .filter(({ planType }) => ['space', 'free_space'].includes(planType))
@@ -130,7 +128,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   };
 };
 
-export default function SubscriptionPageRouter({ orgId: organizationId }) {
+export function SubscriptionPageRouter({ orgId: organizationId }) {
   const [spacePlans, setSpacePlans] = useState([]);
   const [grandTotal, setGrandTotal] = useState(0);
 

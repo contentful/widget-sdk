@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, within, act } from '@testing-library/react';
-import { go } from 'states/Navigator';
 
 import * as fake from 'test/helpers/fakeFactory';
+import { go } from 'states/Navigator';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
+
 import { SpacePlanRow } from './SpacePlanRow';
 import {
   TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
