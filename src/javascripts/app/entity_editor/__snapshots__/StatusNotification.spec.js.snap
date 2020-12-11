@@ -13,10 +13,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -58,10 +57,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -103,10 +101,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -148,10 +145,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -193,10 +189,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -238,10 +233,9 @@ exports[`StatusNotification archived when the entity label is "asset" matches sn
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -284,10 +278,9 @@ exports[`StatusNotification archived when the entity label is "entry" matches sn
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -330,10 +323,9 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -374,10 +366,9 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -418,10 +409,9 @@ exports[`StatusNotification deleted when the entity label is "asset" matches sna
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -464,10 +454,9 @@ exports[`StatusNotification deleted when the entity label is "entry" matches sna
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -510,10 +499,9 @@ exports[`StatusNotification edit-conflict when the entity label is "asset" match
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -576,10 +564,9 @@ exports[`StatusNotification edit-conflict when the entity label is "entry" match
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -642,10 +629,9 @@ exports[`StatusNotification editing-not-allowed when the entity label is "asset"
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -688,10 +674,9 @@ exports[`StatusNotification editing-not-allowed when the entity label is "entry"
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -734,10 +719,9 @@ exports[`StatusNotification internal-server-error when the entity label is "asse
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -780,10 +764,9 @@ exports[`StatusNotification internal-server-error when the entity label is "entr
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -826,10 +809,9 @@ exports[`StatusNotification ot-connection-error when the entity label is "asset"
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -870,10 +852,9 @@ exports[`StatusNotification ot-connection-error when the entity label is "entry"
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"

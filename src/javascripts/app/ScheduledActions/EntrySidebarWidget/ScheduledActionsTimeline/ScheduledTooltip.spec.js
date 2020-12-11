@@ -40,7 +40,6 @@ describe('ScheduleTooltip', () => {
 
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
-    expect(wrapper.find('Tooltip').prop('isVisible')).toBe(false);
   });
 
   it('should ble able to process the array of jobs to show the correct data for the entry', async () => {

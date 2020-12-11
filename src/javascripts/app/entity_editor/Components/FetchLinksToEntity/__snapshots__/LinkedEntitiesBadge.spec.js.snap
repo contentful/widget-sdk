@@ -96,10 +96,9 @@ Object {
           <svg
             class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
             data-test-id="cf-ui-icon"
-            height="18"
+            height="1em"
             viewBox="0 0 24 24"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
           >
             <path
               d="M0 0h24v24H0z"
@@ -217,10 +216,9 @@ Object {
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -346,10 +344,9 @@ Object {
           <svg
             class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
             data-test-id="cf-ui-icon"
-            height="18"
+            height="1em"
             viewBox="0 0 24 24"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
           >
             <path
               d="M0 0h24v24H0z"
@@ -418,10 +415,9 @@ Object {
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"
@@ -588,10 +584,9 @@ Object {
           <svg
             class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ emotion-0"
             data-test-id="cf-ui-icon"
-            height="18"
+            height="1em"
             viewBox="0 0 24 24"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
           >
             <path
               d="M0 0h24v24H0z"
@@ -730,10 +725,9 @@ Object {
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ emotion-0"
           data-test-id="cf-ui-icon"
-          height="18"
+          height="1em"
           viewBox="0 0 24 24"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M0 0h24v24H0z"

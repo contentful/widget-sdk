@@ -41,10 +41,9 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
           data-test-id="cf-ui-icon"
-          height="24"
+          height="1em"
           viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M7 10l5 5 5-5z"
@@ -101,10 +100,9 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
           data-test-id="cf-ui-icon"
-          height="24"
+          height="1em"
           viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
         >
           <path
             d="M7 10l5 5 5-5z"
