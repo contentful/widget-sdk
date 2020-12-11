@@ -86,12 +86,9 @@ export function create(
   function onContentEntityChanged(entitySys, callback) {
     const handler = (msg: ContentEntityUpdatedPayload) => {
       const envId = spaceEndpoint.envId || 'master';
-      const isSameEntityType = msg.entityType === entitySys.type || msg.entityType === `Deleted${entitySys.type}`; // deleted entities return entityType=DeletedEntry
-      if (
-        isSameEntityType &&
-        msg.entityId === entitySys.id &&
-        msg.environmentId === envId
-      ) {
+      const isSameEntityType =
+        msg.entityType === entitySys.type || msg.entityType === `Deleted${entitySys.type}`; // deleted entities return entityType=DeletedEntry
+      if (isSameEntityType && msg.entityId === entitySys.id && msg.environmentId === envId) {
         callback({ newVersion: msg.version });
       }
     };
