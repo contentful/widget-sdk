@@ -8,6 +8,12 @@ import { PlatformSelectionStep, PACKAGES_COMPARISON_HREF } from './PlatformSelec
 
 const mockTrack = jest.fn();
 const mockOrganization = FakeFactory.Organization();
+const mockSubscriptionPlans = [{ name: 'Medium' }];
+const mockProductRatePlans = [
+  { name: 'Community', price: 0 },
+  { name: 'Medium', price: 489 },
+  { name: 'Large', price: 889 },
+];
 
 describe('PlatformSelectionStep', () => {
   it('should render a link to the package comparison page in the website', async () => {
@@ -104,11 +110,8 @@ async function build(customProps, customState) {
     PlatformSelectionStep,
     {
       organization: mockOrganization,
-      spaceRatePlans: [
-        { name: 'Community', price: 0 },
-        { name: 'Medium', price: 489 },
-        { name: 'Large', price: 889 },
-      ],
+      spaceRatePlans: mockProductRatePlans,
+      subscriptionPlans: mockSubscriptionPlans,
       sessionId: 'random_id',
       ...customState,
     },

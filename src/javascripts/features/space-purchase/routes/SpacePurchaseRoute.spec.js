@@ -7,6 +7,7 @@ import {
   getRatePlans,
   getSpaceRatePlans,
   getSingleSpacePlan,
+  getSubscriptionPlans,
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {
@@ -21,6 +22,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
+import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -58,6 +60,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getBasePlan: jest.fn(),
   getSpaceRatePlans: jest.fn(),
   getSingleSpacePlan: jest.fn(),
+  getSubscriptionPlans: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
@@ -102,6 +105,7 @@ describe('SpacePurchaseRoute', () => {
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
+    getSubscriptionPlans.mockReturnValue({ items: [] });
     getVariation.mockResolvedValue(false);
   });
 
@@ -179,6 +183,16 @@ describe('SpacePurchaseRoute', () => {
 
     expect(getSpaceRatePlans).toBeCalled();
     expect(transformSpaceRatePlans).toBeCalledWith(mockSpaceRatePlans, mockFreeSpaceResource);
+  });
+
+  it('should fetch the subscriptionPlans', async () => {
+    await build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
+
+    expect(getSubscriptionPlans).toBeCalledWith(mockEndpoint, { plan_type: 'space' });
   });
 
   it('should fetch the space plan selection FAQs by default', async () => {

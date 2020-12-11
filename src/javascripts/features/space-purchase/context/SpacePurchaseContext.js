@@ -8,6 +8,7 @@ const initialState = {
   currentSpace: undefined,
   currentSpaceRatePlan: undefined,
   spaceRatePlans: undefined,
+  subscriptionPlans: undefined,
   selectedPlan: undefined,
   sessionId: undefined,
   billingDetails: undefined,

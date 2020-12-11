@@ -13,23 +13,18 @@ import { usePrevious } from 'core/hooks';
 import { SpacePurchaseState } from 'features/space-purchase/context/index';
 import { EVENTS } from 'features/space-purchase/utils/analyticsTracking';
 import { PLATFORM_CONTENT, PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
-import {
-  SPACE_PLANS_CONTENT,
-  SPACE_PURCHASE_TYPES,
-} from 'features/space-purchase/utils/spacePurchaseContent';
 import { ProductCard } from 'features/space-purchase/components/ProductCard';
+import { SpacePlanCards } from 'features/space-purchase/components/SpacePlanCards';
 import { EnterpriseCard } from 'features/space-purchase/components/EnterpriseCard';
 import { CONTACT_SALES_HREF } from 'features/space-purchase/components/EnterpriseTalkToUsButton';
 import { FAQAccordion } from 'features/space-purchase/components/FAQAccordion';
 import { usePageContent } from 'features/space-purchase/hooks/usePageContent.ts';
 
 const styles = {
-  faqContainer: css({
+  fullRow: css({
     gridColumn: '1 / 4',
-    marginTop: tokens.spacingL,
   }),
   headingContainer: css({
-    gridColumn: '1 / 4',
     marginBottom: tokens.spacingL,
     opacity: 1,
     transition: 'opacity 0.2s ease-in-out',
@@ -53,7 +48,7 @@ export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
-    state: { organization, spaceRatePlans, pageContent },
+    state: { organization, spaceRatePlans, subscriptionPlans, pageContent },
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
@@ -62,6 +57,8 @@ export const PlatformSelectionStep = ({ track }) => {
 
   const prevSelectedPlatform = usePrevious(selectedPlatform);
   const spaceSectionRef = createRef();
+
+  const orgHasPaidSpaces = subscriptionPlans?.length > 0;
 
   useEffect(() => {
     // we want to scroll the user to space selection only the first time they select a platform
@@ -73,10 +70,15 @@ export const PlatformSelectionStep = ({ track }) => {
     }
   }, [prevSelectedPlatform, selectedPlatform, spaceSectionRef]);
 
+  useEffect(() => {
+    // we unselect any space plan when user changes platform
+    setSelectedSpacePlan('');
+  }, [selectedPlatform]);
+
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
       <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
-        <span className={styles.headingContainer}>
+        <span className={cx(styles.headingContainer, styles.fullRow)}>
           <Heading
             id="platform-selection-heading"
             element="h2"
@@ -127,7 +129,7 @@ export const PlatformSelectionStep = ({ track }) => {
 
         <span
           ref={spaceSectionRef}
-          className={cx(styles.headingContainer, styles.bigMarginTop, {
+          className={cx(styles.headingContainer, styles.fullRow, styles.bigMarginTop, {
             [styles.disabled]: !selectedPlatform,
           })}>
           <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
@@ -135,35 +137,15 @@ export const PlatformSelectionStep = ({ track }) => {
           </Heading>
         </span>
 
-        {SPACE_PLANS_CONTENT.filter(
-          (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
-        ).map((spacePlanContent, idx) => {
-          const plan = spaceRatePlans
-            ? spaceRatePlans.find((plan) => plan.name === spacePlanContent.type)
-            : {};
+        <SpacePlanCards
+          spaceRatePlans={spaceRatePlans}
+          selectedPlatform={selectedPlatform}
+          selectedSpacePlan={selectedSpacePlan}
+          onSelect={setSelectedSpacePlan}
+          orgHasPaidSpaces={orgHasPaidSpaces}
+        />
 
-          const content = {
-            title: spacePlanContent.title,
-            description: spacePlanContent.description,
-            price: plan ? plan.price : 0,
-            limits: spacePlanContent.limits, // TODO: we need to use plan.inlcudedResources somehow
-          };
-
-          return (
-            <ProductCard
-              key={idx}
-              cardType="space"
-              loading={!spaceRatePlans}
-              disabled={!selectedPlatform}
-              selected={selectedSpacePlan === plan.name}
-              onClick={() => setSelectedSpacePlan(plan.name)}
-              content={content}
-              testId="space-plan-card"
-            />
-          );
-        })}
-
-        <div className={styles.faqContainer}>
+        <div className={cx(styles.fullRow, styles.bigMarginTop)}>
           <FAQAccordion entries={faqEntries} track={track} />
         </div>
       </Grid>

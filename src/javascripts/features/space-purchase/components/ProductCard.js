@@ -12,6 +12,7 @@ import {
   SkeletonContainer,
   SkeletonImage,
   SkeletonBodyText,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -30,6 +31,7 @@ const styles = {
   card: css({
     position: 'relative',
     display: 'grid',
+    height: '100%',
     rowGap: tokens.spacingXs,
     justifyItems: 'center',
     alignItems: 'center',
@@ -99,76 +101,80 @@ export const ProductCard = ({
   loading = false,
   disabled = false,
   selected = false,
+  showTooltip = false,
   content,
   isNew = false,
   cardType = 'space',
   testId = 'product-card',
 }) => {
   return (
-    <Card
-      className={cx(styles.card, {
-        [styles.spacePlan]: cardType === 'space',
-        [styles.platform]: cardType === 'platform',
-        [styles.newTag]: isNew,
-        [styles.disabled]: disabled,
-      })}
-      padding="large"
-      selected={selected}
-      onClick={onClick}
-      testId={testId}>
-      {/** TODO: replace skeletons with final illustration */}
-      {cardType === 'platform' && (
-        <SkeletonContainer svgWidth={70} svgHeight={70}>
-          <SkeletonImage />
-        </SkeletonContainer>
-      )}
+    <ProductCardTooltip enabled={showTooltip}>
+      <Card
+        className={cx(styles.card, {
+          [styles.spacePlan]: cardType === 'space',
+          [styles.platform]: cardType === 'platform',
+          [styles.newTag]: isNew,
+          [styles.disabled]: disabled,
+        })}
+        aria-disabled={disabled}
+        padding="large"
+        selected={selected}
+        onClick={onClick}
+        testId={testId}>
+        {/** TODO: replace skeletons with final illustration */}
+        {cardType === 'platform' && (
+          <SkeletonContainer svgWidth={70} svgHeight={70}>
+            <SkeletonImage />
+          </SkeletonContainer>
+        )}
 
-      <Heading element="h3" className={styles.mediumWeight}>
-        {content.title}
-      </Heading>
+        <Heading element="h3" className={styles.mediumWeight}>
+          {content.title}
+        </Heading>
 
-      <Paragraph>{content.description}</Paragraph>
+        <Paragraph>{content.description}</Paragraph>
 
-      {loading && (
-        <SkeletonContainer svgHeight={52}>
-          <SkeletonBodyText lineHeight={16} numberOfLines={2} />
-        </SkeletonContainer>
-      )}
-      {!loading && !content.price && cardType === 'platform' && (
-        <PinLabel labelText="Your current package" />
-      )}
-      {!loading && content.price != undefined && (
-        <Paragraph className={styles.price} testId="product-price">
-          {content.price === 0 ? (
-            <>
-              <b>Free</b>
-              <br />
-              forever
-            </>
-          ) : (
-            <>
-              $<b>{content.price}</b>
-              <br />
-              /month
-            </>
-          )}
-        </Paragraph>
-      )}
+        {loading && (
+          <SkeletonContainer svgHeight={52}>
+            <SkeletonBodyText lineHeight={16} numberOfLines={2} />
+          </SkeletonContainer>
+        )}
+        {!loading && !content.price && cardType === 'platform' && (
+          <PinLabel labelText="Your current package" />
+        )}
+        {!loading && content.price != undefined && (
+          <Paragraph className={styles.price} testId="product-price">
+            {content.price === 0 ? (
+              <>
+                <b>Free</b>
+                <br />
+                forever
+              </>
+            ) : (
+              <>
+                $<b>{content.price}</b>
+                <br />
+                /month
+              </>
+            )}
+          </Paragraph>
+        )}
 
-      {content.limits && (
-        <div className={styles.limitsSection}>
-          <Paragraph>What are the space limits:</Paragraph>
-          <List className={styles.limitsList} testId="space-limits">
-            {content.limits.map((limit, idx) => (
-              <ListItem key={idx} className={cx(styles.listItem, styles.textLeft)}>
-                <Icon icon="CheckCircle" color="positive" className={styles.check} />
-                <Paragraph>{limit}</Paragraph>
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      )}
-    </Card>
+        {content.limits && (
+          <div className={styles.limitsSection}>
+            <Paragraph>What are the space limits:</Paragraph>
+            <List className={styles.limitsList} testId="space-limits">
+              {content.limits.map((limit, idx) => (
+                <ListItem key={idx} className={cx(styles.listItem, styles.textLeft)}>
+                  <Icon icon="CheckCircle" color="positive" className={styles.check} />
+                  <Paragraph>{limit}</Paragraph>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        )}
+      </Card>
+    </ProductCardTooltip>
   );
 };
 
@@ -178,6 +184,7 @@ ProductCard.propTypes = {
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
   selected: PropTypes.bool,
+  showTooltip: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
@@ -186,4 +193,18 @@ ProductCard.propTypes = {
     limits: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   testId: PropTypes.string,
+};
+
+function ProductCardTooltip({ children, enabled }) {
+  return (
+    <Tooltip
+      testId="plan-card-tooltip"
+      place="top"
+      content={enabled ? 'You must have a paid space to purchase Compose + Launch' : ''}>
+      {children}
+    </Tooltip>
+  );
+}
+ProductCardTooltip.propTypes = {
+  enabled: PropTypes.bool,
 };

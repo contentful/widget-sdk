@@ -39,6 +39,7 @@ const mockFreeSpaceResource = {
     maximum: 1,
   },
 };
+const mockSubscriptionPlans = [{ name: 'Medium' }];
 
 const mockPlanCharges = [
   FakeFactory.RatePlanCharge('Environments', 3),
@@ -487,6 +488,7 @@ async function build(customProps, customState) {
       templatesList: [],
       freeSpaceResource: mockFreeSpaceResource,
       spaceRatePlans: mockSpaceRatePlans,
+      subscriptionPlans: mockSubscriptionPlans,
       pageContent: {
         pageName: 'Space Purchase',
         content: [],
