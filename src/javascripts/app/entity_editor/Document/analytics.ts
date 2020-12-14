@@ -16,12 +16,14 @@ export async function trackEditConflict({
   changedLocalEntity,
   remoteEntity,
   isConflictAutoResolvable,
+  isUsingPatchForEntries,
 }: {
   localEntity: Entity;
   localEntityFetchedAt: Date;
   changedLocalEntity: Entity;
   remoteEntity: Entity;
   isConflictAutoResolvable: boolean;
+  isUsingPatchForEntries: boolean;
 }) {
   // TODO: Get rid of the repetition between the code below and the code in CmaDocument.updateEntity
   const localChangedFieldPaths = formatFieldPaths(
@@ -39,9 +41,10 @@ export async function trackEditConflict({
 
   const localChangesPaths = localChangedFieldPaths.concat(localChangedtagsPaths);
   const remoteChangesPaths = remoteChangedFieldPaths.concat(remoteChangedtagsPaths);
+  const entityType = localEntity.sys.type;
   const data = {
     entityId: localEntity.sys.id,
-    entityType: localEntity.sys.type,
+    entityType,
     localChangesPaths,
     remoteChangesPaths,
     localEntityState: stateTrackingString(getState(localEntity.sys)),
@@ -58,7 +61,8 @@ export async function trackEditConflict({
     // v1: Initial implementation without any conflict resolution.
     // v2: Auto-merging of different field locales or metadata.tags remotely vs. locally.
     // v3: Syncing remote entity changes back to local state via pubsub.
-    autoConflictResolutionVersion: 3,
+    // v4: Using PATCH for updating entries (asset conflicts stay on v3).
+    autoConflictResolutionVersion: isUsingPatchForEntries && entityType === 'Entry' ? 4 : 3,
     precomputed: {
       sameFieldLocaleConflictsCount: intersection(localChangedFieldPaths, remoteChangedFieldPaths)
         .length,

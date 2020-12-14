@@ -1,7 +1,7 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
-import { newContentType, newEntry, PATHS } from './__fixtures__';
+import { newContentType, newEntry, newAsset, PATHS } from './__fixtures__';
 import { expectDocError } from './__tests__/testDocument';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -60,16 +60,19 @@ const newError = (code, msg, message) => {
   return error;
 };
 
-function createCmaDocument(initialEntity, contentTypeFields, saveThrottleMs) {
+function throwVersionMismatchError() {
+  throw newError('VersionMismatch', 'API request failed');
+}
+
+function createCmaDocument(initialEntity, options) {
   const contentType =
-    initialEntity.sys.type === 'Entry' &&
-    newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
+    initialEntity.sys.type === 'Entry' && newContentType(initialEntity.sys.contentType.sys);
   return {
     document: CmaDocument.create(
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
       entityRepo,
-      { saveThrottleMs }
+      options
     ),
   };
 }
@@ -82,6 +85,15 @@ describe('CmaDocument - conflict resolution', () => {
    */
   let doc;
   let entry;
+  let remoteEntity;
+
+  const newRemoteEntity = (entity) => {
+    const newEntity = cloneDeep(entity);
+    newEntity.sys.version++;
+    newEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
+    newEntity.sys.updatedBy.sys.id = 'otherUserId';
+    return newEntity;
+  };
 
   beforeEach(() => {
     getVariation.mockClear().mockResolvedValue(false);
@@ -95,19 +107,63 @@ describe('CmaDocument - conflict resolution', () => {
     jest.restoreAllMocks();
   });
 
+  describe('autoConflictResolutionVersion info', () => {
+    const setupConflictEntity = (entity) => {
+      const newEntity = newRemoteEntity(entity);
+      set(newEntity, fieldPath, 'en-US-remote-updated');
+      return newEntity;
+    };
+
+    it('is 3 without CmaDocument `patchEntryUpdates` option', async () => {
+      remoteEntity = setupConflictEntity(entry);
+      entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
+      doc = createCmaDocument(entry, { patchEntryUpdates: false }).document;
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      entityRepo.get.mockImplementationOnce(async () => cloneDeep(remoteEntity));
+
+      jest.runAllTimers();
+      await wait();
+
+      expectDocError(doc.state.error$, DocError.VersionMismatch);
+      expect(track.mock.calls[0][1].autoConflictResolutionVersion).toEqual(3);
+    });
+
+    it('is 4 with CmaDocument `patchEntryUpdates` option', async () => {
+      remoteEntity = setupConflictEntity(entry);
+      entityRepo.patch.mockImplementationOnce(throwVersionMismatchError);
+      doc = createCmaDocument(entry, { patchEntryUpdates: true }).document;
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      entityRepo.get.mockImplementationOnce(async () => cloneDeep(remoteEntity));
+
+      jest.runAllTimers();
+      await wait();
+
+      expectDocError(doc.state.error$, DocError.VersionMismatch);
+      expect(track.mock.calls[0][1].autoConflictResolutionVersion).toEqual(4);
+    });
+
+    it('is 3 with CmaDocument `patchEntryUpdates` on an asset', async () => {
+      const asset = newAsset();
+      remoteEntity = setupConflictEntity(asset);
+      entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
+      doc = createCmaDocument(asset, { patchEntryUpdates: false }).document;
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      entityRepo.get.mockImplementationOnce(async () => cloneDeep(remoteEntity));
+
+      jest.runAllTimers();
+      await wait();
+
+      expectDocError(doc.state.error$, DocError.VersionMismatch);
+      expect(track.mock.calls[0][1].autoConflictResolutionVersion).toEqual(3);
+    });
+  });
+
   describe('basic field/metadata conflict resolution', () => {
     describe('when there is a conflict on the same field locale', () => {
-      let remoteEntity;
-
       beforeEach(async () => {
-        remoteEntity = cloneDeep(entry);
+        remoteEntity = newRemoteEntity(entry);
         set(remoteEntity, fieldPath, 'en-US-remote-updated');
-        remoteEntity.sys.version++;
-        remoteEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
-        remoteEntity.sys.updatedBy.sys.id = 'otherUserId';
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        });
+        entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
 
         await doc.setValueAt(fieldPath, 'en-US-updated');
       });
@@ -157,14 +213,9 @@ describe('CmaDocument - conflict resolution', () => {
       let remoteEntity;
 
       beforeEach(async () => {
-        remoteEntity = cloneDeep(entry);
+        remoteEntity = newRemoteEntity(entry);
         set(remoteEntity, tagsPath, remoteMetadata);
-        remoteEntity.sys.version++;
-        remoteEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
-        remoteEntity.sys.updatedBy.sys.id = 'otherUserId';
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        });
+        entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
 
         await doc.setValueAt(tagsPath, localMetadata);
       });
@@ -201,14 +252,9 @@ describe('CmaDocument - conflict resolution', () => {
       let remoteEntity;
 
       beforeEach(async () => {
-        remoteEntity = cloneDeep(entry);
+        remoteEntity = newRemoteEntity(entry);
         set(remoteEntity, fieldPath, 'en-US-updated-remotely');
-        remoteEntity.sys.version++;
-        remoteEntity.sys.updatedAt = '2020-06-06T13:58:25.641Z';
-        remoteEntity.sys.updatedBy.sys.id = 'otherUserId';
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        });
+        entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
         entityRepo.get.mockImplementationOnce(async () => cloneDeep(remoteEntity));
 
         await doc.setValueAt(otherLocalePath, 'de-updated-locally');
@@ -253,15 +299,13 @@ describe('CmaDocument - conflict resolution', () => {
       });
 
       it('handles another VersionMismatch on updating remote entity', async () => {
-        const newRemoteEntity = cloneDeep(remoteEntity);
-        set(newRemoteEntity, anotherFieldPath, 'en-US-B-updated-remotely');
-        newRemoteEntity.sys.version++;
-        newRemoteEntity.sys.updatedAt = '2020-06-06T14:58:25.641Z';
-        newRemoteEntity.sys.updatedBy.sys.id = 'anotherUserId';
+        const remoteEntity2 = newRemoteEntity(remoteEntity);
+        remoteEntity2.sys.updatedBy.sys.id = 'anotherUserId';
+        set(remoteEntity2, anotherFieldPath, 'en-US-B-updated-remotely');
         entityRepo.update.mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
         });
-        entityRepo.get.mockImplementationOnce(async () => cloneDeep(newRemoteEntity));
+        entityRepo.get.mockImplementationOnce(async () => cloneDeep(remoteEntity2));
 
         expect.assertions(9);
 
@@ -299,7 +343,7 @@ describe('CmaDocument - conflict resolution', () => {
           },
           {
             entity: remoteEntity,
-            remoteEntity: newRemoteEntity,
+            remoteEntity: remoteEntity2,
             localChangesPaths: [otherLocalePath.join(':')],
             remoteChangesPaths: [anotherFieldPath.join(':')],
             isConflictAutoResolvable: true,
@@ -328,9 +372,7 @@ describe('CmaDocument - conflict resolution', () => {
         set(remoteEntity, anotherFieldPath, 'en-US-updated-remotely-2');
         set(remoteEntity, tagsPath, remoteMetadata);
 
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        });
+        entityRepo.update.mockImplementationOnce(throwVersionMismatchError);
         entityRepo.get.mockImplementationOnce(async () => remoteEntity);
 
         await doc.setValueAt(otherLocalePath, 'de-updated-locally');
@@ -390,19 +432,10 @@ function expectEditConflictTracking(conflicts) {
     const [id, body] = track.mock.calls[i];
     expect(id).toBe('entity_editor:edit_conflict');
 
-    const {
-      entity,
-      remoteEntity,
-      localChangesPaths,
-      remoteChangesPaths,
-      isConflictAutoResolvable,
-      precomputed,
-    } = conflicts[i];
+    const { entity, remoteEntity, ...otherData } = conflicts[i];
     expect(body).toEqual({
       entityId: entity.sys.id,
       entityType: entity.sys.type,
-      localChangesPaths,
-      remoteChangesPaths,
       localEntityState: 'draft',
       localStateChange: null,
       remoteEntityState: 'draft',
@@ -412,9 +445,8 @@ function expectEditConflictTracking(conflicts) {
       remoteEntityUpdatedAtTstamp: remoteEntity.sys.updatedAt,
       remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy.sys.id,
       localEntityLastFetchedAtTstamp: new Date(now).toISOString(),
-      isConflictAutoResolvable,
       autoConflictResolutionVersion: 3,
-      precomputed,
+      ...otherData,
     });
   }
 }

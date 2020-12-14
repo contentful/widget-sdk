@@ -352,7 +352,7 @@ export function create(
   }
 
   async function putOrPatchEntity(oldEntity: Entity, newEntity: Entity): Promise<Entity> {
-    // PUT won't be supported for assets initially. Should rename `patchEntryUpdates` if we ever add this.
+    // PATCH won't be supported for assets initially. Should rename `patchEntryUpdates` if we ever add this.
     if (options.patchEntryUpdates && newEntity.sys.type === 'Entry') {
       return entityRepo.patch(oldEntity, newEntity);
     } else {
@@ -439,6 +439,7 @@ export function create(
       changedLocalEntity,
       remoteEntity,
       isConflictAutoResolvable,
+      isUsingPatchForEntries: !!options.patchEntryUpdates,
     });
   }
 
