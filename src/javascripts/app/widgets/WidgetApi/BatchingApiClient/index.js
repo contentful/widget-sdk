@@ -9,7 +9,7 @@ const instances = new WeakMap();
  * does one batch request to the getResources() equivalent once per tick instead of
  * calling getResource() immediately.
  *
- * @param {Data.APIClient} cma
+ * @param {data/APIClient} cma
  * @returns {Object} With same interface as `cma`.
  */
 export const getBatchingApiClient = (cma) => {

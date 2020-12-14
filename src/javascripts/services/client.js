@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import LegacyClient from 'libs/legacy_client/client';
 import { apiUrl } from 'Config';
 import * as Auth from 'Authentication';
@@ -33,7 +32,7 @@ async function buildRequest(data) {
   const req = {
     method: data.method,
     url: [baseUrl, data.path.replace(/^\/+/, '')].join('/'),
-    headers: _.extend({}, defaultHeaders, data.headers),
+    headers: { ...defaultHeaders, ...data.headers },
   };
 
   if (data.method === 'GET') {
@@ -56,7 +55,15 @@ function createSpace(payload, organizationId) {
 
 const legacyClient = new LegacyClient({ request: request });
 
-export default _.extend(legacyClient, {
+/**
+ * @deprecated
+ * This client uses `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs, something we
+ * generally want to avoid in the web app now. Use {data/APIClient} instead e.g. via `spaceContext.cma` or
+ * `sdk.space` wherever possible.
+ */
+const extendedClient = Object.assign(legacyClient, {
   request,
   createSpace,
 });
+
+export default extendedClient;

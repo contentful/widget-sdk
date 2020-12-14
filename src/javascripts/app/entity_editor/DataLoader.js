@@ -43,9 +43,6 @@ const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
  * When loading an entry the returned object has an additional
  * `contentType` property. Its value is an instance of a client
  * library content type.
- *
- * Editor data can be mocked using the
- * 'mocks/app/entity_editor/DataLoader' module.
  */
 
 /**
@@ -54,6 +51,17 @@ const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
  * @param {SpaceContext} spaceContext
  * @param {string} id
  * @returns {object}
+ * @deprecated
+ * Instead of `loadEntry` use
+ * ```
+ * const cma = getBatchingApiClient(spaceContext.cma)
+ * Promise.all([cma.getEntry(id1), cma.getEntry(id2)])
+ * ```
+ * This results in a single optimized CMA request.
+ * When an instance of `skd` or `widgetApi` is available:
+ * ```
+ * Promise.all([sdk.space.getEntry(id1), sdk.space.getEntry(id2)])
+ * ```
  */
 // TODO we should accept a specialized object instead of the whole
 // space context.

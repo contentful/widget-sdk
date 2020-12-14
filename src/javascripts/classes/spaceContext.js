@@ -135,7 +135,12 @@ export default function register() {
           const self = this;
           accessChecker.setSpace(spaceData);
 
-          // `space` is @contentful/client.Space instance!
+          /**
+           * @deprecated
+           * This is a legacy client instance which returns entities as `.data` and uses
+           * `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs.
+           * Use e.g. `spaceContext.cma` or `sdk.space`  instead wherever possible.
+           */
           let space = client.newSpace(spaceData);
 
           if (uriEnvOrAliasId) {
@@ -148,6 +153,7 @@ export default function register() {
           self.endpoint = createSpaceEndpoint(Config.apiUrl(), spaceId, Auth, uriEnvOrAliasId);
 
           resetMembers(self);
+
           self.space = space;
           self.cma = new APIClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
@@ -229,6 +235,10 @@ export default function register() {
          * @description
          * Returns current space, if set
          * @returns Object
+         * @deprecated
+         * This is a legacy @contentful/client instance which returns entities as `.data` and uses
+         * `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs.
+         * Use e.g. `spaceContext.cma` or `sdk.space`  instead wherever possible.
          */
         getSpace: function () {
           return this.space;

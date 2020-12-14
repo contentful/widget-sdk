@@ -1,21 +1,30 @@
 import _ from 'lodash';
 import qs from 'qs';
 
-/*
- * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
- * as if it were an external service. As such it might not reflect other patterns present throughout the app.
- *
- * It's been modified to use Angular's $http for requests and with some smaller features removed.
- *
- * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
- */
-
 const parseableResourceTypes = {
   Asset: Asset,
   ContentType: ContentType,
   Entry: Entry,
   Space: Space,
 };
+
+/**
+ * This is a fork of an old version of https://github.com/contentful/contentful.js which allows us to use Contentful
+ * as if it were an external service. As such it might not reflect other patterns present throughout the app.
+ *
+ * It's been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
+ *
+ * @param {Object} params
+ * @returns {Client}
+ *
+ * @deprecated
+ * This client uses `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs, something we
+ * generally want to avoid in the web app now. Use {data/APIClient} instead e.g. via `spaceContext.cma` or
+ * `sdk.space` wherever possible.
+ */
+export default function newClient(params) {
+  return new Client(params);
+}
 
 function Client(options) {
   enforcep(options, 'host');
@@ -252,8 +261,4 @@ function getLink(response, link) {
   return (
     _.find(response.items, pred) || (response.includes && _.find(response.includes[type], pred))
   );
-}
-
-export default function newClient(params) {
-  return new Client(params);
 }
