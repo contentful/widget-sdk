@@ -221,6 +221,7 @@ export const validEvents = {
     'column_sorted',
     'pagination_changed',
     'help_link_clicked',
+    'export',
   ],
 };
 

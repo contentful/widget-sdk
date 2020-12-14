@@ -384,6 +384,7 @@ registerGenericEvent('space_usage_summary:go_to_detailed_usage');
 registerGenericEvent('space_usage_summary:column_sorted');
 registerGenericEvent('space_usage_summary:pagination_changed');
 registerGenericEvent('space_usage_summary:help_link_clicked');
+registerGenericEvent('space_usage_summary:export');
 
 /**
  * Registers an event to be tracked by snowplow.
