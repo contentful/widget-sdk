@@ -25,6 +25,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl, helpCenterUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { track } from 'analytics/Analytics';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
@@ -34,7 +35,6 @@ import { Pluralized, Price } from 'core/components/formatting';
 import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 
-import { track } from 'analytics/Analytics';
 import { downloadSpacesUsage } from '../services/SpacesUsageService';
 
 const styles = {
@@ -149,6 +149,7 @@ export function SpacePlans({
   const handleExportBtnClick = async () => {
     setIsExportingCSV(true);
     try {
+      track('space_usage_summary:export');
       await downloadSpacesUsage(organizationId);
     } catch {
       Notification.error('Could not export the space usage.');
