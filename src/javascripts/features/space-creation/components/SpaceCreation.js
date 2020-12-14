@@ -4,6 +4,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { SpacePlanStep } from './SpacePlanStep';
+import { SpaceCreationConfirm } from './SpaceCreationConfirm';
 
 const CREATE_SPACE_STEPS = [
   { text: '1.Choose space type', isActive: true },
@@ -35,14 +36,16 @@ export const SpaceCreation = ({ orgId }) => {
     }
   };
 
-  // const navigateToPreviousStep = () => {
-  //   const currentStepIndex = steps.indexOf(currentStep);
-  //   const previousStep = steps[currentStepIndex - 1];
+  const navigateToPreviousStep = () => {
+    const currentStepIndex = steps.indexOf(currentStep);
+    const previousStep = steps[currentStepIndex - 1];
 
-  //   if (previousStep) {
-  //     navigateToStep(previousStep);
-  //   }
-  // };
+    if (previousStep) {
+      navigateToStep(previousStep);
+    }
+  };
+
+  const submit = () => {};
 
   return (
     <Workbench>
@@ -54,7 +57,10 @@ export const SpaceCreation = ({ orgId }) => {
         <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
           <Breadcrumbs items={CREATE_SPACE_STEPS} />
           {steps.indexOf(currentStep) === 0 && (
-            <SpacePlanStep orgId={orgId} navigateToNextStep={navigateToNextStep} />
+            <SpacePlanStep orgId={orgId} onNext={navigateToNextStep} />
+          )}
+          {steps.indexOf(currentStep) === 2 && (
+            <SpaceCreationConfirm onPrev={navigateToPreviousStep} onNext={submit} />
           )}
         </Grid>
       </Workbench.Content>

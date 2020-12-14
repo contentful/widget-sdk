@@ -13,18 +13,13 @@ import {
   Tag,
   Subheading,
   Button,
-  List,
-  ListItem,
   Icon,
-  Tooltip,
 } from '@contentful/forma-36-react-components';
 import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
-import { getIncludedResources, resourcesToDisplay, getTooltip } from '../utils/utils';
-import { getRolesTooltip } from 'utils/RoleTooltipCopy';
-import { shorten } from 'utils/NumberUtils';
+import { SpacePlanResourceList } from './SpacePlanResourceList';
 
 const styles = {
   text: css({
@@ -36,17 +31,6 @@ const styles = {
   }),
   header: css({
     marginBottom: tokens.spacingM,
-  }),
-  listItem: css({
-    marginBottom: tokens.spacingS,
-    display: 'grid',
-    gridAutoFlow: 'column',
-    gridAutoColumns: 'max-content',
-    columnGap: tokens.spacingS,
-    alignItems: 'center',
-    ':last-child': {
-      marginBottom: 0,
-    },
   }),
   divider: css({
     display: 'flex',
@@ -60,7 +44,6 @@ const styles = {
     left: -9,
     background: 'white',
   }),
-  tooltipPointer: css({ cursor: 'pointer' }),
 };
 
 export function SpacePlanAssignmentConfirmation({
@@ -72,11 +55,6 @@ export function SpacePlanAssignmentConfirmation({
   onNext,
   inProgress,
 }) {
-  const currentPlanResources = getIncludedResources(
-    currentPlan.ratePlanCharges ?? currentPlan.productRatePlanCharges
-  );
-  const selectedPlanResources = getIncludedResources(selectedPlan.ratePlanCharges);
-
   return (
     <>
       <Typography className={styles.text}>
@@ -102,24 +80,7 @@ export function SpacePlanAssignmentConfirmation({
                 <Tag tagType="muted">Current type</Tag>
                 <Subheading>{currentPlan.name}</Subheading>
               </header>
-              <List>
-                {resourcesToDisplay.map(({ name, id }) => {
-                  let usage = spaceResources[id].usage;
-                  // Add "extra" environment and role to include `master` and `admin`
-                  if (['environment', 'role'].includes(id)) {
-                    usage = usage + 1;
-                  }
-
-                  return (
-                    <ListItem key={id} className={styles.listItem}>
-                      <Icon icon="CheckCircle" color="muted" />
-                      <span>
-                        Using {shorten(usage)} of {shorten(currentPlanResources[id])} {name}
-                      </span>
-                    </ListItem>
-                  );
-                })}
-              </List>
+              <SpacePlanResourceList plan={currentPlan} spaceResources={spaceResources} />
             </div>
 
             <div className={styles.divider}>
@@ -131,29 +92,7 @@ export function SpacePlanAssignmentConfirmation({
                 <Tag tagType="muted">New type</Tag>
                 <Subheading>{selectedPlan.name}</Subheading>
               </header>
-              <List>
-                {resourcesToDisplay.map(({ name, id }) => {
-                  let tooltipText = '';
-                  // get tooltips texts for env, records and role
-                  ['role'].includes(id)
-                    ? (tooltipText = getRolesTooltip(
-                        selectedPlanResources[id],
-                        selectedPlan.roleSet
-                      ))
-                    : (tooltipText = getTooltip(id, selectedPlanResources[id]));
-
-                  return (
-                    <ListItem key={id} className={styles.listItem}>
-                      <Icon icon="CheckCircle" color="positive" className={styles.icon} />{' '}
-                      <Tooltip place="top" content={tooltipText}>
-                        <span className={tooltipText && styles.tooltipPointer}>
-                          {shorten(selectedPlanResources[id])} {name}
-                        </span>
-                      </Tooltip>
-                    </ListItem>
-                  );
-                })}
-              </List>
+              <SpacePlanResourceList plan={selectedPlan} />
             </div>
           </Grid>
         </Card>

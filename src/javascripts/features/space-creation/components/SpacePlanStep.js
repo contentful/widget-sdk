@@ -12,7 +12,7 @@ import { CREATION_FLOW_TYPE } from '../utils/utils';
 
 const DEFAULT_ROLE_SET = { roles: ['Editor'] };
 
-export const SpacePlanStep = ({ orgId, navigateToNextStep }) => {
+export const SpacePlanStep = ({ orgId, onNext }) => {
   const {
     state: { selectedPlan },
     dispatch,
@@ -60,7 +60,7 @@ export const SpacePlanStep = ({ orgId, navigateToNextStep }) => {
           selectedPlan={selectedPlan}
           plans={[...data.plans, data.freePlan]}
           onPlanSelected={(plan) => dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan })}
-          onNext={navigateToNextStep}
+          onNext={onNext}
           showComparison={false}
           freePlan={data.freePlan}
           freeSpaceResource={data.freeSpaceResource}
@@ -72,5 +72,5 @@ export const SpacePlanStep = ({ orgId, navigateToNextStep }) => {
 
 SpacePlanStep.propTypes = {
   orgId: PropTypes.string.isRequired,
-  navigateToNextStep: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired,
 };
