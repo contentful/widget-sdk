@@ -147,9 +147,10 @@ orbs:
       run:
         description: 'Run ui-extensions-sdk integration suite'
         docker:
-          - image: cypress/browsers:node10.16.0-chrome77
+          - image: cypress/browsers:node12.18.0-chrome83-ff77
             environment:
               TERM: xterm
+        resource_class: large
         environment:
           CYPRESS_baseUrl: http://localhost:3001
           TEST_LOCAL_SDK: true
@@ -165,6 +166,8 @@ orbs:
               name: Install user_interface dependencies
               working_directory: /home/circleci/components/user_interface
               command: npm ci
+              environment:
+                CYPRESS_INSTALL_BINARY: 0
           - run:
               name: Clone master branch of ui-extensions-sdk
               command: git clone git@github.com:contentful/ui-extensions-sdk.git .
@@ -179,6 +182,7 @@ orbs:
           - run:
               name: Wait http://localhost:3001/app/app.js to be ready
               command: npm run wait-for-app
+              working_directory: /home/circleci/components/user_interface
           - run:
               name: Run integration tests
               environment:
@@ -433,8 +437,8 @@ workflows:
                 env: 'flinkly'
           requires:
             - build-with-statistics
-      # - ui-extensions-sdk/run:
-      #     name: run-ui-extensions-integration
+      - ui-extensions-sdk/run:
+          name: run-ui-extensions-integration
       - samson/trigger-samson:
           samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
           requires:
