@@ -7,6 +7,7 @@ import * as logger from 'services/logger';
 
 import { getSchemaForEvent } from 'analytics/transform';
 import * as Snowplow from 'analytics/snowplow';
+import { render } from 'analytics/AnalyticsConsole.tsx';
 
 /**
  * @description
@@ -24,7 +25,6 @@ import * as Snowplow from 'analytics/snowplow';
 const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
 
 let isEnabled = false;
-let el = null;
 let scope = null;
 
 const eventsBus = K.createBus();
@@ -54,19 +54,11 @@ function getScope() {
  * Activates the console.
  */
 function show(overrideScopeOptions) {
-  const $compile = getModule('$compile');
-  const scope = getScope();
-
-  el = el || $compile('<cf-analytics-console />')(scope);
-  const first = el[0];
-  if (!first.parentElement) {
-    document.body.appendChild(first);
-  }
-
-  scope.$applyAsync(() => {
-    scope.isVisible = true;
-    Object.assign(scope, overrideScopeOptions);
-  });
+  const setIsVisible = (isVisible) => {
+    const scope = getScope();
+    render({ ...scope, ...overrideScopeOptions, isVisible, setIsVisible });
+  };
+  setIsVisible(true);
 
   return 'enjoy tracking! :wave:';
 }
