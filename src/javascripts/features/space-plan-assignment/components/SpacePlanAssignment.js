@@ -16,7 +16,7 @@ import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
 import { EmptyState } from './EmptyState';
-import { AssignmentLoadingCard } from './AssignmentLoadingCard';
+import { LoadingCard } from 'features/space-creation';
 import { ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 
 const ASSIGNMENT_STEPS = [
@@ -141,7 +141,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         icon={<ProductIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
-        {isLoading && <AssignmentLoadingCard />}
+        {isLoading && <LoadingCard />}
         {!isLoading && data?.plans.length === 0 && <EmptyState />}
         {!isLoading && data?.plans.length > 0 && (
           <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">

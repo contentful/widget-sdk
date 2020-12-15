@@ -16,7 +16,7 @@ import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentServic
 import { formatError } from '../utils/errors';
 import { keyBy } from 'lodash';
 import createResourceService from 'services/ResourceService';
-import { AssignmentLoadingCard } from './AssignmentLoadingCard';
+import { LoadingCard } from 'features/space-creation';
 import { EmptyState } from './EmptyState';
 
 const ASSIGNMENT_STEPS = [
@@ -140,7 +140,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         icon={<ProductIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
-        {isLoading && <AssignmentLoadingCard />}
+        {isLoading && <LoadingCard />}
         {!isLoading && data?.spaces.length === 0 && <EmptyState />}
         {!isLoading && data && (
           <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">

@@ -8,7 +8,7 @@ import {
   SkeletonImage,
 } from '@contentful/forma-36-react-components';
 
-export function AssignmentLoadingCard() {
+export function LoadingCard() {
   return (
     <>
       <SkeletonContainer svgHeight={40}>

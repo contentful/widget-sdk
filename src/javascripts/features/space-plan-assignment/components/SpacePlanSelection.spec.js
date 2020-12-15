@@ -71,6 +71,7 @@ const mockFreePlan = Fake.Plan({
   productRatePlanCharges: mockRatePlanCharges,
   roleSet: { roles: [] },
 });
+const mockFreeSpaceResource = Fake.OrganizationResource(1, 5, 'free_space');
 
 const mockOnPlanSelected = jest.fn();
 const mockHandleNavigationNext = jest.fn();
@@ -158,7 +159,7 @@ describe('SpacePlanSelection', () => {
     };
 
     it('should render create flow with available plans list grouped', async () => {
-      build();
+      build({ freeSpaceResource: mockFreeSpaceResource });
       expect(screen.getByText('Choose a space type for your new space')).toBeVisible();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
       expect(screen.getAllByLabelText(mockLargePlan.name)).toHaveLength(2);

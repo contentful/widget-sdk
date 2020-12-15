@@ -7,13 +7,22 @@ import {
 import cn from 'classnames';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Card, RadioButton, Tag, Heading } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  RadioButton,
+  Tag,
+  Heading,
+  Tooltip,
+  Icon,
+} from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { ASSIGNMENT_FLOW_TYPE, canPlanBeAssigned } from '../utils/utils';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
 import { SpacePlanEntitlements } from './SpacePlanEntitlements';
 import { SpacePlanComparison } from './SpacePlanComparison';
 import { ExpandableElement } from './ExpandableElement';
+import { Pluralized } from 'core/components/formatting';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 
 export function SpacePlanCard({
   index,
@@ -24,6 +33,7 @@ export function SpacePlanCard({
   flowType,
   selectedPlan,
   onPlanSelected,
+  freeSpaceResource,
 }) {
   const isDisabled = spaceResources && !canPlanBeAssigned(plan, spaceResources);
   const planColor =
@@ -59,6 +69,10 @@ export function SpacePlanCard({
       fontWeight: `${tokens.fontWeightNormal}`,
       color: `${tokens.colorTextLightest}`,
     }),
+    helpIcon: css({
+      fill: tokens.colorElementDarkest,
+      marginRight: tokens.spacingXs,
+    }),
   };
 
   return (
@@ -91,7 +105,25 @@ export function SpacePlanCard({
           <Heading element="h3">
             {plan.name} {isCustomPlan && <span className={styles.custom}> (Customized)</span>}
           </Heading>
-          <Tag tagType="positive">{planCount} available</Tag>
+          <Flex alignItems="center">
+            {isFreeProductPlan(plan) && (
+              <Tooltip
+                testId="space-plan-tooltip"
+                content={
+                  <>
+                    You can have up to{' '}
+                    <Pluralized text="Trial Space" count={freeSpaceResource?.limits?.maximum} />.
+                  </>
+                }>
+                <Icon
+                  icon="HelpCircle"
+                  className={styles.helpIcon}
+                  testId="space-plan-tooltip-trigger"
+                />
+              </Tooltip>
+            )}
+            <Tag tagType="positive">{planCount} available</Tag>
+          </Flex>
         </Flex>
       </Flex>
       {flowType === CREATION_FLOW_TYPE ? (
@@ -118,4 +150,5 @@ SpacePlanCard.propTypes = {
   isCustomPlan: PropTypes.bool,
   selectedPlan: PlanPropType,
   onPlanSelected: PropTypes.func,
+  freeSpaceResource: ResourcePropType,
 };

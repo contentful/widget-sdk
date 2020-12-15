@@ -2,6 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
 import { SpacePlanSelection } from 'features/space-plan-assignment';
+import { LoadingCard } from './LoadingCard';
 import { actions, SpaceCreationState } from '../context';
 import { useAsync } from 'core/hooks/useAsync';
 import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
@@ -30,9 +31,11 @@ export const SpacePlanStep = ({ orgId, onNext }) => {
     const freeSpaceRatePlan = ratePlans.find(
       (plan) => plan.productPlanType === FREE_SPACE_IDENTIFIER
     );
+    // filter plans that already have a space assigned (gatekeeperKey)
+    const availablePlans = plans.items.filter((plan) => !plan.gatekeeperKey);
 
     // enhence plans with roleSet in order to display tooltip text for Roles
-    const enhancedPlans = plans.items.map((plan) => {
+    const enhancedPlans = availablePlans.map((plan) => {
       return {
         ...plan,
         roleSet:
@@ -50,9 +53,9 @@ export const SpacePlanStep = ({ orgId, onNext }) => {
 
   const { isLoading, data } = useAsync(getPlans);
 
-  // TODO add loading state
   return (
     <>
+      {isLoading && <LoadingCard />}
       {!isLoading && data && (
         <SpacePlanSelection
           flowType={CREATION_FLOW_TYPE}

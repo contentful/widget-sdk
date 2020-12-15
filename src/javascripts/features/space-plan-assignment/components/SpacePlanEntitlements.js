@@ -2,15 +2,13 @@ import React from 'react';
 
 import { Plan as PlanPropType } from 'app/OrganizationSettings/PropTypes';
 import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import { resourcesToDisplay, getIncludedResources, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
-  flexItem: css({ marginLeft: '2.25rem' }),
-  warning: css({ color: tokens.colorWarning }),
+  flexItem: css({ marginRight: '2.25rem' }),
   tooltipPointer: css({ cursor: 'pointer', span: { textDecoration: 'underline' } }),
 };
 
@@ -19,7 +17,7 @@ export function SpacePlanEntitlements({ plan }) {
   const charges = plan.ratePlanCharges ?? plan.productRatePlanCharges;
   const planResources = getIncludedResources(charges);
   return (
-    <Flex justifyContent="space-between" marginLeft="spacingXl">
+    <Flex justifyContent="flex-start" marginLeft="spacingXl">
       {resourcesToDisplay.map(({ id, name }) => {
         let tooltipText = '';
         // get tooltips texts for env, records and role
@@ -28,7 +26,7 @@ export function SpacePlanEntitlements({ plan }) {
           : (tooltipText = getTooltip(id, planResources[id]));
 
         return (
-          <Flex key={id}>
+          <Flex key={id} className={styles.flexItem}>
             <span className={tooltipText && styles.tooltipPointer}>
               {planResources[id]}{' '}
               <Tooltip place="right" content={tooltipText}>

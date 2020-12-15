@@ -88,6 +88,7 @@ export function SpacePlanSelection({
                 spaceResources={spaceResources}
                 isCustomPlan={isCustomPlan}
                 flowType={flowType}
+                freeSpaceResource={freeSpaceResource}
                 selectedPlan={selectedPlan}
                 onPlanSelected={onPlanSelected}
               />
