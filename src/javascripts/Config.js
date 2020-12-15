@@ -170,6 +170,11 @@ export const pusher = settings.pusher;
 export const launchDarkly = settings.launchDarkly;
 
 /**
+ * Contentful Launch
+ */
+export const launchAppUrl = 'https://launch.contentful.com';
+
+/**
  * Builds tools API URL. This is the service for creating
  * zip files with project boilerplates.
  */

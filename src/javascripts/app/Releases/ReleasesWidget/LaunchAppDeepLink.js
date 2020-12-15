@@ -6,6 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { track } from 'analytics/Analytics';
 import { useFeatureFlagAccessToLaunchApp } from '../ReleasesFeatureFlag';
+import { launchAppUrl } from 'Config';
 
 const styles = {
   noteWrapper: css({
@@ -36,20 +37,30 @@ const styles = {
   }),
 };
 
+function getDeepLink(spaceId, environmentId) {
+  const base = launchAppUrl;
+  return !environmentId || environmentId === 'master'
+    ? `${base}/spaces/${spaceId}`
+    : `${base}/spaces/${spaceId}/environments/${environmentId}`;
+}
+
 export const LaunchAppDeepLink = ({ className, eventOrigin }) => {
   const { launchAppAccessEnabled, islaunchAppAccessLoading } = useFeatureFlagAccessToLaunchApp();
-  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+  const {
+    currentSpaceId: spaceId,
+    currentEnvironmentId,
+    currentEnvironmentAliasId,
+  } = useSpaceEnvContext();
 
   if (islaunchAppAccessLoading || !launchAppAccessEnabled) return null;
 
-  const launchAppLink = `https://launch.contentful.com/spaces/${spaceId}`;
   return (
     <div className={cx(className, styles.noteWrapper)} data-test-id="launch-app-deep-link">
       <div className={styles.pill}>New</div>
       <Paragraph>
         Plan and schedule releases in the new Contentful{' '}
         <TextLink
-          href={launchAppLink}
+          href={getDeepLink(spaceId, currentEnvironmentAliasId || currentEnvironmentId)}
           onClick={() =>
             track('launch_app:link_clicked', {
               eventOrigin: eventOrigin,

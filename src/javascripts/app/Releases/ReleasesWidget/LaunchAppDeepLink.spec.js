@@ -10,25 +10,33 @@ jest.mock('analytics/Analytics', () => ({ track: jest.fn() }));
 jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn(),
 }));
-useSpaceEnvContext.mockReturnValue({
-  currentSpaceId: 'testSpaceId',
-});
+
 jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
-  useFeatureFlagAccessToLaunchApp: jest.fn().mockReturnValue({
-    launchAppAccessEnabled: true,
-    islaunchAppAccessLoading: false,
-  }),
+  useFeatureFlagAccessToLaunchApp: jest.fn(),
 }));
 
-jest.mock('analytics/Analytics', () => ({ track: jest.fn() }));
+const defaultSpaceContextValues = {
+  currentSpaceId: 'testSpaceId',
+  currentEnvironmentId: 'master',
+  currentEnvironmentAliasId: undefined,
+};
+
 describe('components/ui/Loader', () => {
+  beforeEach(() => {
+    useSpaceEnvContext.mockReturnValue(defaultSpaceContextValues);
+
+    useFeatureFlagAccessToLaunchApp.mockReturnValue({
+      launchAppAccessEnabled: true,
+      islaunchAppAccessLoading: false,
+    });
+  });
+
   it('render the component', () => {
-    const { currentSpaceId } = useSpaceEnvContext();
     const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
     const textLink = getByTestId('cf-ui-text-link');
     expect(textLink).toHaveAttribute(
       'href',
-      `https://launch.contentful.com/spaces/${currentSpaceId}`
+      `https://launch.contentful.com/spaces/${defaultSpaceContextValues.currentSpaceId}`
     );
   });
 
@@ -39,6 +47,39 @@ describe('components/ui/Loader', () => {
     expect(Analytics.track).toHaveBeenCalledWith('launch_app:link_clicked', {
       eventOrigin: 'test-page',
     });
+  });
+
+  it('should take environment into account if not master', () => {
+    const expectedValues = {
+      currentSpaceId: 'testSpaceId',
+      currentEnvironmentId: 'development',
+    };
+
+    useSpaceEnvContext.mockReturnValue(expectedValues);
+
+    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const textLink = getByTestId('cf-ui-text-link');
+    expect(textLink).toHaveAttribute(
+      'href',
+      `https://launch.contentful.com/spaces/${expectedValues.currentSpaceId}/environments/${expectedValues.currentEnvironmentId}`
+    );
+  });
+
+  it('should take alias id instead of environment if provided', () => {
+    const expectedValues = {
+      currentSpaceId: 'testSpaceId',
+      currentEnvironmentId: 'development-2020-08-02',
+      currentEnvironmentAliasId: 'development',
+    };
+
+    useSpaceEnvContext.mockReturnValue(expectedValues);
+
+    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const textLink = getByTestId('cf-ui-text-link');
+    expect(textLink).toHaveAttribute(
+      'href',
+      `https://launch.contentful.com/spaces/${expectedValues.currentSpaceId}/environments/${expectedValues.currentEnvironmentAliasId}`
+    );
   });
 
   it('should not display component when feature flag is disabled', () => {
