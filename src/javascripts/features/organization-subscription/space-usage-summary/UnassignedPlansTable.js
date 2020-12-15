@@ -18,7 +18,12 @@ const styles = {
   }),
 };
 
-export function UnassignedPlansTable({ plans, initialLoad, spaceAssignmentExperiment }) {
+export function UnassignedPlansTable({
+  plans,
+  initialLoad,
+  spaceAssignmentExperiment,
+  canCreateSpaceWithPlan,
+}) {
   return (
     <Table testId="subscription-page.unassigned-plans-table">
       <colgroup>
@@ -46,7 +51,7 @@ export function UnassignedPlansTable({ plans, initialLoad, spaceAssignmentExperi
                       <StateLink
                         testId="subscription-page.spaces-list.change-plan-link"
                         component={TextLink}
-                        path="^.space_plans"
+                        path=".space_plans"
                         params={{ planId: plan.sys.id }}
                         trackingEvent={'space_assignment:change'}
                         trackParams={{
@@ -54,6 +59,23 @@ export function UnassignedPlansTable({ plans, initialLoad, spaceAssignmentExperi
                           flow: 'assing_space_to_plan',
                         }}>
                         use space
+                      </StateLink>
+                    </>
+                  )}
+                  {canCreateSpaceWithPlan && (
+                    <>
+                      -{' '}
+                      <StateLink
+                        testId="subscription-page.spaces-list.create-with-plan"
+                        component={TextLink}
+                        path=".space_create"
+                        params={{ planId: plan.sys.id }}
+                        trackingEvent={'space_assignment:create_space'}
+                        trackParams={{
+                          plan_id: plan.sys.id,
+                          flow: 'assing_space_to_plan',
+                        }}>
+                        new space
                       </StateLink>
                     </>
                   )}
@@ -71,4 +93,5 @@ UnassignedPlansTable.propTypes = {
   plans: PropTypes.array.isRequired,
   initialLoad: PropTypes.bool,
   spaceAssignmentExperiment: PropTypes.bool,
+  canCreateSpaceWithPlan: PropTypes.bool,
 };

@@ -6,7 +6,7 @@ import { SpaceCreationContextProvider } from '../context';
 
 export const spaceCreationState = organizationRoute({
   name: 'space_create',
-  url: '/space_create',
+  url: '/space_create?planId',
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SpaceCreationRoute }) => {

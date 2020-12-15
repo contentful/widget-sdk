@@ -319,6 +319,7 @@ export function SpacePlans({
                     initialLoad={initialLoad}
                     showSpacePlanChangeBtn={canManageSpaces}
                     spaceAssignmentExperiment={isSpaceAssignmentExperimentEnabled}
+                    canCreateSpaceWithPlan={isSpaceCreateForSpacePlanEnabled}
                   />
                 )}
               </TabPanel>
