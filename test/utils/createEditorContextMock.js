@@ -10,6 +10,7 @@ export const createEditorContextMock = () => {
   function create() {
     return {
       validator: createValidator(),
+      hasInitialFocus: false,
       focus: Focus.create(),
       entityInfo: {
         id: 'ENTITY ID',

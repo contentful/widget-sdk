@@ -1,8 +1,15 @@
-export type OtDoc = {};
+import { EntityType } from 'contentful-ui-extensions-sdk';
+
+export type Doc = {};
+
+export type EditorData = {};
+
+export type LoadEvents = {};
 
 export type Widget = {
   fieldId: string;
   isVisible: boolean;
+  isFocusable: boolean;
   field: Field;
   settings?: {
     helpText?: string;
@@ -10,9 +17,13 @@ export type Widget = {
 };
 
 export type EditorContext = {
-  validator: { hasFieldLocaleError: (...args: any) => boolean };
+  hasInitialFocus: boolean;
+  validator: {
+    hasFieldLocaleError: (...args: any) => boolean;
+    hasFieldError: (...args: any) => boolean;
+  };
   entityInfo: {
-    type: 'Entry' | 'Asset';
+    type: EntityType;
     contentType?: {
       name: string;
       sys: {

@@ -25,6 +25,8 @@ import { styles as editorStyles } from './../entry_editor/styles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
 import { getModule } from 'core/NgRegistry';
+import { useMigratedEntityField } from 'app/entity_editor/EntityField/useEntityFieldFeatureFlag';
+import { EntityField } from 'app/entity_editor/EntityField/EntityField';
 
 const styles = {
   sidebar: css({
@@ -96,6 +98,8 @@ const AssetEditorWorkbench = ({
     goToPreviousSlideOrExit('arrow_back');
   };
 
+  const migratedEntityFieldEnabled = useMigratedEntityField();
+
   return (
     <div className="asset-editor">
       <Workbench>
@@ -160,22 +164,39 @@ const AssetEditorWorkbench = ({
                 'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
               }>
               <StatusNotification {...statusNotificationProps} />
-              <AngularComponent
-                with$Apply
-                template={
-                  '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
-                }
-                scope={{
-                  fieldLocaleListeners,
-                  widgets,
-                  localeData,
-                  editorContext,
-                  fields,
-                  entityInfo,
-                  otDoc,
-                  editorData,
-                }}
-              />
+              {migratedEntityFieldEnabled ? (
+                widgets.map((widget, index) => (
+                  <EntityField
+                    editorContext={editorContext}
+                    editorData={editorData}
+                    fieldLocaleListeners={fieldLocaleListeners}
+                    fields={fields}
+                    index={index}
+                    key={widget.fieldId}
+                    localeData={localeData}
+                    doc={otDoc}
+                    preferences={preferences}
+                    widget={widget}
+                  />
+                ))
+              ) : (
+                <AngularComponent
+                  with$Apply
+                  template={
+                    '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>'
+                  }
+                  scope={{
+                    fieldLocaleListeners,
+                    widgets,
+                    localeData,
+                    editorContext,
+                    fields,
+                    entityInfo,
+                    otDoc,
+                    editorData,
+                  }}
+                />
+              )}
             </div>
           </TabPanel>
           <TabPanel

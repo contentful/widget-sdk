@@ -207,7 +207,7 @@ export default ({
           widgetId: widget.widgetId,
           spaceContext,
           editorData,
-          fieldController,
+          setInvalid: fieldController?.setInvalid,
           localeData,
           preferences,
           doc: otDoc,

@@ -32,7 +32,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       widgetNamespace,
       widgetId,
       editorData,
-      fieldController,
+      setInvalid: fieldController?.setInvalid,
       localeData,
       preferences,
       spaceContext,

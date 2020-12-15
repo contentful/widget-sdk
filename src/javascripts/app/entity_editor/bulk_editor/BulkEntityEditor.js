@@ -19,6 +19,8 @@ import { getEditorState } from '../editorState';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { trackEntryView } from '../Tracking';
+import { EntityField } from '../EntityField/EntityField';
+import { useMigratedEntityField } from '../EntityField/useEntityFieldFeatureFlag';
 
 const styles = {
   workbench: css({
@@ -76,6 +78,8 @@ export const BulkEntityEditor = ({
       }),
     [entityContext.id, currentEnvironmentId, isMasterEnvironment, currentSpaceId]
   );
+
+  const migratedEntityFieldEnabled = useMigratedEntityField();
 
   const { editorSettings: preferences, track } = bulkEditorContext;
 
@@ -225,6 +229,20 @@ export const BulkEntityEditor = ({
           <Workbench.Content type="text">
             {customEditor ? (
               <CustomEditorExtensionRenderer extension={customEditor} scope={scope} />
+            ) : migratedEntityFieldEnabled ? (
+              widgets.map((widget, index) => (
+                <EntityField
+                  key={widget.fieldId}
+                  doc={doc}
+                  editorContext={editorContext}
+                  editorData={editorData}
+                  fieldLocaleListeners={fieldLocaleListeners}
+                  index={index}
+                  localeData={localeData}
+                  preferences={preferences}
+                  widget={widget}
+                />
+              ))
             ) : (
               <AngularComponent
                 with$Apply

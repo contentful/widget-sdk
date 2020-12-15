@@ -6,6 +6,7 @@ import ReferencesTab from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { ContentTagsTab } from 'app/entity_editor/ContentTagsTab';
 import { styles } from './styles';
+import { EntityField } from 'app/entity_editor/EntityField/EntityField';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -23,6 +24,7 @@ export default function renderDefaultEditor(
     onRootReferenceCardClick,
     fieldLocaleListeners,
     noLocalizedFieldsAdviceProps,
+    migratedEntityFieldEnabled,
   }
 ) {
   const widgetComponents = {
@@ -45,22 +47,40 @@ export default function renderDefaultEditor(
 
     [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
-        <AngularComponent
-          with$Apply
-          template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
-          scope={{
-            widgets,
-            editorContext,
-            localeData,
-            fields,
-            loadEvents,
-            editorData,
-            fieldLocaleListeners,
-            otDoc,
-            preferences,
-            entityInfo,
-          }}
-        />
+        {migratedEntityFieldEnabled ? (
+          widgets.map((widget, index) => (
+            <EntityField
+              editorContext={editorContext}
+              editorData={editorData}
+              fieldLocaleListeners={fieldLocaleListeners}
+              fields={fields}
+              index={index}
+              key={widget.fieldId}
+              loadEvents={loadEvents}
+              localeData={localeData}
+              doc={otDoc}
+              preferences={preferences}
+              widget={widget}
+            />
+          ))
+        ) : (
+          <AngularComponent
+            with$Apply
+            template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
+            scope={{
+              widgets,
+              editorContext,
+              localeData,
+              fields,
+              loadEvents,
+              editorData,
+              fieldLocaleListeners,
+              otDoc,
+              preferences,
+              entityInfo,
+            }}
+          />
+        )}
         {noLocalizedFieldsAdviceProps && (
           <NoLocalizedFieldsAdvice {...noLocalizedFieldsAdviceProps} />
         )}
