@@ -139,36 +139,38 @@ export function AppPermissions(props) {
           Cancel
         </Button>
       </div>
-      <div className={styles.legal}>
-        <Paragraph>You can revoke access at any time by uninstalling the app.</Paragraph>
-        <Paragraph className={styles.moreP}>
-          By proceeding, you agree to the{' '}
-          <TextLink
-            {...linkProps}
-            href="https://www.contentful.com/legal/de/marketplace-terms-of-service-customers/">
-            Contentful Marketplace Terms of Service
-          </TextLink>
-        </Paragraph>
-        <Paragraph>
-          {legal.eula && (
-            <>
-              and the {title} app{' '}
-              <TextLink {...linkProps} href={legal.eula}>
-                EULA
-              </TextLink>
-            </>
-          )}
-          {legal.privacyPolicy && (
-            <>
-              {' '}
-              and{' '}
-              <TextLink {...linkProps} href={legal.privacyPolicy}>
-                Privacy Policy
-              </TextLink>
-            </>
-          )}
-        </Paragraph>
-      </div>
+      {legal && (
+        <div className={styles.legal}>
+          <Paragraph>You can revoke access at any time by uninstalling the app.</Paragraph>
+          <Paragraph className={styles.moreP}>
+            By proceeding, you agree to the{' '}
+            <TextLink
+              {...linkProps}
+              href="https://www.contentful.com/legal/de/marketplace-terms-of-service-customers/">
+              Contentful Marketplace Terms of Service
+            </TextLink>
+          </Paragraph>
+          <Paragraph>
+            {legal.eula && (
+              <>
+                and the {title} app{' '}
+                <TextLink {...linkProps} href={legal.eula}>
+                  EULA
+                </TextLink>
+              </>
+            )}
+            {legal.privacyPolicy && (
+              <>
+                {' '}
+                and{' '}
+                <TextLink {...linkProps} href={legal.privacyPolicy}>
+                  Privacy Policy
+                </TextLink>
+              </>
+            )}
+          </Paragraph>
+        </div>
+      )}
     </div>
   );
 }

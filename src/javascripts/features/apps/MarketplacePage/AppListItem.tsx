@@ -1,32 +1,19 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { TextLink, Heading, Tag } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
-import { styles } from './styles';
+import { styles } from '../styles';
 import { Notification } from '@contentful/forma-36-react-components';
-import { AppIcon } from './AppIcon';
+import { AppIcon } from '../AppIcon';
+import { MarketplaceApp } from '../../apps-core';
 
-export class AppListItem extends Component {
-  static propTypes = {
-    app: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      tagLine: PropTypes.string,
-      icon: PropTypes.string,
-      appInstallation: PropTypes.object,
-      appDefinition: PropTypes.shape({
-        sys: {
-          id: PropTypes.string.isRequired,
-        },
-      }),
-      isPrivateApp: PropTypes.bool,
-      isEarlyAccess: PropTypes.bool.isRequired,
-    }).isRequired,
-    openDetailModal: PropTypes.func.isRequired,
-    canManageApps: PropTypes.bool,
-    orgId: PropTypes.string.isRequired,
-  };
+interface AppListItemProps {
+  app: MarketplaceApp;
+  openDetailModal: (app: MarketplaceApp) => void;
+  canManageApps: boolean;
+  orgId: string;
+}
 
+export class AppListItem extends Component<AppListItemProps> {
   determineOnClick = (onClick, openDetailsFunc, showPermissionsErrorFunc, canManageApps) => {
     const { app } = this.props;
 

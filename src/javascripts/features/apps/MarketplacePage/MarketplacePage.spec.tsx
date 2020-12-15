@@ -1,19 +1,20 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
-import { AppsListPage } from './AppsListPage';
-import repoAppsMock from './__mocks__/repoAppsMock.json';
+import { MarketplacePage } from './index';
+import {
+  apps as repoAppsMock,
+  contentfulApps as repoContentfulAppsMock,
+} from '../__mocks__/repoAppsMock';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 
-jest.mock('MicroBackendsClient', () => {
-  return () => {};
-});
+jest.mock('MicroBackendsClient', () => () => ({}));
 
 jest.mock('access_control/AccessChecker', () => ({
   getSectionVisibility: () => ({ apps: true }),
 }));
 
-describe('AppsListPage', () => {
+describe('MarketplacePage', () => {
   const orgId = '123';
   const spaceId = '456';
   const userId = '000';
@@ -29,11 +30,9 @@ describe('AppsListPage', () => {
 
   it('should match snapshot for loading state', async () => {
     const { container } = render(
-      <AppsListPage
-        goToContent={() => {}}
+      <MarketplacePage
         repo={{ getApps: jest.fn() }}
         organizationId={orgId}
-        spaceId={spaceId}
         userId={userId}
         hasAppsFeature={true}
         spaceInformation={spaceInformation}
@@ -51,11 +50,9 @@ describe('AppsListPage', () => {
     };
 
     const { container } = render(
-      <AppsListPage
-        goToContent={() => {}}
+      <MarketplacePage
         repo={mockRepo}
         organizationId={orgId}
-        spaceId={spaceId}
         userId={userId}
         hasAppsFeature={true}
         spaceInformation={spaceInformation}
@@ -75,17 +72,37 @@ describe('AppsListPage', () => {
     };
 
     const { container } = render(
-      <AppsListPage
-        goToContent={() => {}}
+      <MarketplacePage
         repo={mockRepo}
         organizationId={orgId}
-        spaceId={spaceId}
         userId={userId}
         hasAppsFeature={true}
         hasAdvancedAppsFeature={false}
         spaceInformation={spaceInformation}
         // limit the access
         canManageApps={false}
+      />
+    );
+
+    await wait();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot of apps and contentful apps', async () => {
+    const mockRepo = {
+      getApps: jest.fn(() => Promise.resolve(repoContentfulAppsMock)),
+    };
+
+    const { container } = render(
+      <MarketplacePage
+        repo={mockRepo}
+        organizationId={orgId}
+        userId={userId}
+        hasAppsFeature={true}
+        hasAdvancedAppsFeature={false}
+        spaceInformation={spaceInformation}
+        canManageApps={true}
       />
     );
 

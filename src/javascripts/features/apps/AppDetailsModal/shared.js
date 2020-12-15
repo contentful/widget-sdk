@@ -9,14 +9,14 @@ export const AppPropType = PropTypes.shape({
       title: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
     }).isRequired
-  ).isRequired,
+  ),
   author: PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     icon: PropTypes.node.isRequired,
   }).isRequired,
   icon: PropTypes.string.isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  categories: PropTypes.arrayOf(PropTypes.string.isRequired),
   supportUrl: PropTypes.string,
 });
 

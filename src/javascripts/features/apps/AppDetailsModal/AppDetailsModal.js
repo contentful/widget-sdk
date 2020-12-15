@@ -26,6 +26,7 @@ export function AppDetailsModal(props) {
         setShowPermissions={setShowPermissions}
         usageExceeded={props.usageExceeded}
         canManageApps={props.canManageApps}
+        isContentfulApp={props.isContentfulApp}
         hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
       />
     </Modal>
@@ -39,10 +40,14 @@ AppDetailsModal.propTypes = {
   spaceInformation: PropTypes.shape({
     spaceId: PropTypes.string.isRequired,
     spaceName: PropTypes.string.isRequired,
-    envName: PropTypes.string.isRequired,
-    envIsMaster: PropTypes.bool.isRequired,
+    envMeta: PropTypes.shape({
+      environmentId: PropTypes.string.isRequired,
+      isMasterEnvironment: PropTypes.bool.isRequired,
+      aliasId: PropTypes.string,
+    }),
   }),
   usageExceeded: PropTypes.bool,
   canManageApps: PropTypes.bool.isRequired,
   hasAdvancedAppsFeature: PropTypes.bool,
+  isContentfulApp: PropTypes.bool,
 };

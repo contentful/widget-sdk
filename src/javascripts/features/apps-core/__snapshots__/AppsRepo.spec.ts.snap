@@ -3,6 +3,35 @@
 exports[`AppsRepo getApps should return an array of apps when the marketplace endpoint returns good data 1`] = `
 Array [
   Object {
+    "appDefinition": Object {
+      "locations": Array [
+        "app",
+        "entry-sidebar",
+      ],
+      "name": "Compose",
+      "src": "http://localhost:1234",
+      "sys": Object {
+        "id": "6TfQEqkcINtj1MS0TuQTWJ",
+        "type": "AppDefinition",
+      },
+    },
+    "appInstallation": undefined,
+    "author": Object {
+      "icon": undefined,
+      "name": undefined,
+      "url": undefined,
+    },
+    "definitionId": "6TfQEqkcINtj1MS0TuQTWJ",
+    "description": "Placeholder description",
+    "featureFlagName": "COMPOSE_APP_LISTING_EAP",
+    "icon": "",
+    "id": "5ZSCLEfnoPdTF3agzaGGRb",
+    "isContentfulApp": true,
+    "tagLine": "Easily create and edit content at scale in a completely new way.",
+    "targetUrl": "https://compose.contentful.com",
+    "title": "Compose",
+  },
+  Object {
     "actionList": Array [
       undefined,
       undefined,

@@ -14,12 +14,12 @@ import MarkdownRenderer from 'app/common/MarkdownRenderer';
 import { AppPropType, externalLinkProps } from './shared';
 import { AppPermissionScreen } from './AppPermissionsScreen';
 import { AppHeader } from './AppHeader';
-import { getUsageExceededMessage } from '../isUsageExceeded';
 import tokens from '@contentful/forma-36-tokens';
 import cx from 'classnames';
 import { css } from 'emotion';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import moment from 'moment';
+import { getUsageExceededMessage } from '../isUsageExceeded';
 
 const styles = {
   root: css({
@@ -110,6 +110,7 @@ export function AppDetails(props) {
     usageExceeded,
     canManageApps,
     hasAdvancedAppsFeature,
+    isContentfulApp = false,
   } = props;
 
   if (showPermissions) {
@@ -144,7 +145,7 @@ export function AppDetails(props) {
               isFullWidth
               buttonType="primary"
               disabled={usageExceeded || !canManageApps}>
-              {installed ? 'Configure' : 'Install'}
+              {installed ? 'Configure' : isContentfulApp ? 'Enable for this space' : 'Install'}
             </Button>
           )}
         </StateLink>
@@ -196,7 +197,7 @@ export function AppDetails(props) {
         </TextLink>
         <div className={styles.sidebarSpacing} />
 
-        {app.links.length > 0 && (
+        {app.links && app.links.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>
               Links
@@ -243,7 +244,7 @@ export function AppDetails(props) {
 
         <div className={styles.sidebarSpacing} />
 
-        {app.categories.length > 0 && (
+        {app.categories && app.categories.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>
               Categories
@@ -274,4 +275,5 @@ AppDetails.propTypes = {
   usageExceeded: PropTypes.bool,
   canManageApps: PropTypes.bool.isRequired,
   hasAdvancedAppsFeature: PropTypes.bool,
+  isContentfulApp: PropTypes.bool,
 };

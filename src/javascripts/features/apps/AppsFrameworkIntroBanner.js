@@ -45,11 +45,11 @@ export const AppsFrameworkIntroBanner = ({ canManageApps }) => {
   return (
     <Card className={styles.flexContainer} padding="large">
       <div>
-        <Heading className={styles.heading}>Getting started with Contentful apps</Heading>
+        <Heading className={styles.heading}>Getting started with apps in Contentful</Heading>
         <Paragraph className={styles.description}>
-          Contentful apps extend the capabilities of the Contentful web app and the editors who use
-          it. Apps empower you to integrate third-party services, build efficient workflows and
-          customize the functionality of the Contentful web app.
+          Apps extend the capabilities of the Contentful web app and the editors who use it. Apps
+          empower you to integrate third-party services, build efficient workflows and customize the
+          functionality of the Contentful web app.
         </Paragraph>
         <Button
           className={styles.button}
@@ -63,7 +63,7 @@ export const AppsFrameworkIntroBanner = ({ canManageApps }) => {
           target="_blank"
           rel="noopener noreferrer"
           href={withInAppHelpUtmParams(ctaLink)}>
-          Learn more about Contentful apps
+          Learn more about apps
         </Button>
       </div>
       <div className={styles.illustrationContainer}>

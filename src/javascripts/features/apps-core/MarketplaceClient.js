@@ -12,11 +12,13 @@ const MARKETPLACE_SPACE_CDN_BASE_URL = `https://cdn.contentful.com/spaces/${MARK
 const { MARKETPLACE_SPACE_TOKEN, MARKETPLACE_SPACE_BASE_URL } = getMarketplaceSpaceUrlAndToken();
 const MARKETPLACE_LISTING_QUERY = '/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1';
 const MARKETPLACE_APPS_QUERY = '/entries?include=10&content_type=app';
+const CONTENTFUL_APPS_QUERY = '/entries?include=10&content_type=contentfulApp';
 
 // Cache globally (across all spaces and environments).
 // Changes in marketplace are very infrequent - we can live
 // with getting updates only on reload.
 let marketplaceAppsCache = null;
+let contentfulAppsCache = null;
 
 export async function fetchMarketplaceApps() {
   // Only retry if the cached value is clearly wrong.
@@ -45,6 +47,40 @@ export async function fetchMarketplaceApps() {
     .filter(({ definitionId }) => !!definitionId);
 
   return marketplaceAppsCache;
+}
+
+export async function fetchContentfulApps() {
+  if (Array.isArray(contentfulAppsCache) && contentfulAppsCache.length > 0) {
+    return contentfulAppsCache;
+  }
+
+  const response = await fetchWithAuth(
+    MARKETPLACE_SPACE_BASE_URL + CONTENTFUL_APPS_QUERY,
+    MARKETPLACE_SPACE_TOKEN
+  ).then((res) => res.json());
+
+  const allApps = resolveResponse(response);
+
+  contentfulAppsCache = allApps
+    .map((app) => ({
+      definitionId: get(app, ['fields', 'appDefinitionId']),
+      id: get(app, ['sys', 'id'], ''),
+      title: get(app, ['fields', 'title'], ''),
+      author: {
+        name: get(app, ['fields', 'developer', 'fields', 'name']),
+        url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
+        icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
+      },
+      description: get(app, ['fields', 'description'], ''),
+      tagLine: get(app, ['fields', 'tagLine'], ''),
+      icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
+      featureFlagName: get(app, ['fields', 'featureFlagName'], null),
+      targetUrl: get(app, ['fields', 'targetUrl'], ''),
+      isContentfulApp: true,
+    }))
+    .filter(({ definitionId }) => !!definitionId);
+
+  return contentfulAppsCache;
 }
 
 function fetchWithAuth(resource, authBearer) {

@@ -1,0 +1,1546 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarketplacePage should match snapshot for loading state 1`] = `
+.emotion-1 {
+  background-color: #f7f9fa;
+}
+
+.emotion-0 {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+<div>
+  <div
+    class="Workbench__Workbench___THi9K emotion-1"
+    data-test-id="cf-ui-workbench"
+  >
+    <div
+      class="Workbench__Workbench__header___2wo2E"
+      data-test-id="cf-ui-workbench-header"
+    >
+      <div
+        class="Workbench__Workbench__header-icon___1kJlL"
+      >
+        <div
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+          data-test-id="cf-ui-navigation-icon"
+        >
+          <svg
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+            fill="none"
+            height="1em"
+            viewBox="0 0 24 24"
+            width="1em"
+          >
+            <path
+              d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__header-title___3xp7b"
+        data-test-id="workbench-title"
+      >
+        <h1
+          class="Heading__Heading___83D3K"
+          data-test-id="cf-ui-heading"
+        >
+          Apps
+        </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          href="account.organizations.apps.list?orgId=123"
+        >
+          Manage private apps
+        </a>
+      </div>
+    </div>
+    <div
+      class="Workbench__Workbench__content-wrapper___3yWKi"
+    >
+      <div
+        class="Workbench__Workbench__content___1U8bV"
+        data-test-id="cf-ui-workbench-content"
+      >
+        <div
+          class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+        >
+          <div>
+            <svg
+              aria-label="Loading apps list..."
+              class="SkeletonContainer__SkeletonContainer___23jiu"
+              data-test-id="cf-ui-skeleton-form"
+              height="40"
+              preserveAspectRatio="xMidYMid meet"
+              role="img"
+              width="600"
+            >
+              <title>
+                Loading apps list...
+              </title>
+              <rect
+                clip-path="url(#cf-ui-skeleton-clip-0)"
+                height="100%"
+                style="fill: url(#cf-ui-skeleton-clip-gradient-1);"
+                width="100%"
+                x="0"
+                y="0"
+              />
+              <defs>
+                <clippath
+                  id="cf-ui-skeleton-clip-0"
+                >
+                  <rect
+                    height="21"
+                    rx="0"
+                    ry="0"
+                    width="100"
+                    x="0"
+                    y="0"
+                  />
+                </clippath>
+                <lineargradient
+                  id="cf-ui-skeleton-clip-gradient-1"
+                >
+                  <stop
+                    offset="0%"
+                    stop-color="#e5ebed"
+                    stop-opacity="1"
+                  >
+                    <animate
+                      attributeName="stop-color"
+                      dur="2s"
+                      id="animation-2"
+                      repeatCount="indefinite"
+                      values="#e5ebed; #f7f9fa; #e5ebed"
+                    />
+                  </stop>
+                  <stop
+                    offset="50%"
+                    stop-color="#f7f9fa"
+                    stop-opacity="1"
+                  >
+                    <animate
+                      attributeName="stop-color"
+                      begin="animation-2.begin+0.25s"
+                      dur="2s"
+                      repeatCount="indefinite"
+                      values="#e5ebed; #f7f9fa; #e5ebed"
+                    />
+                  </stop>
+                  <stop
+                    offset="100%"
+                    stop-color="#e5ebed"
+                    stop-opacity="1"
+                  >
+                    <animate
+                      attributeName="stop-color"
+                      begin="animation-2.begin+0.5s"
+                      dur="2s"
+                      repeatCount="indefinite"
+                      values="#e5ebed; #f7f9fa; #e5ebed"
+                    />
+                  </stop>
+                </lineargradient>
+              </defs>
+            </svg>
+            <div
+              class="Card__Card___1_26G emotion-0 Card__Card--padding-large___2KzUK"
+              data-test-id="cf-ui-card"
+            >
+              <svg
+                aria-label="Loading apps list..."
+                class="SkeletonContainer__SkeletonContainer___23jiu"
+                data-test-id="cf-ui-skeleton-form"
+                height="150"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                width="600"
+              >
+                <title>
+                  Loading apps list...
+                </title>
+                <rect
+                  clip-path="url(#cf-ui-skeleton-clip-3)"
+                  height="100%"
+                  style="fill: url(#cf-ui-skeleton-clip-gradient-4);"
+                  width="100%"
+                  x="0"
+                  y="0"
+                />
+                <defs>
+                  <clippath
+                    id="cf-ui-skeleton-clip-3"
+                  >
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="0"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="15"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="15"
+                    />
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="55"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="70"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="70"
+                    />
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="110"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="125"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="125"
+                    />
+                  </clippath>
+                  <lineargradient
+                    id="cf-ui-skeleton-clip-gradient-4"
+                  >
+                    <stop
+                      offset="0%"
+                      stop-color="#e5ebed"
+                      stop-opacity="1"
+                    >
+                      <animate
+                        attributeName="stop-color"
+                        dur="2s"
+                        id="animation-5"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                    <stop
+                      offset="50%"
+                      stop-color="#f7f9fa"
+                      stop-opacity="1"
+                    >
+                      <animate
+                        attributeName="stop-color"
+                        begin="animation-5.begin+0.25s"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                    <stop
+                      offset="100%"
+                      stop-color="#e5ebed"
+                      stop-opacity="1"
+                    >
+                      <animate
+                        attributeName="stop-color"
+                        begin="animation-5.begin+0.5s"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                  </lineargradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] = `
+.emotion-14 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.emotion-12 {
+  margin-top: 1.5rem;
+}
+
+.emotion-13 {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+
+.emotion-10 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.emotion-11 {
+  font-size: 0.875rem;
+  padding-right: 1.5rem;
+}
+
+.emotion-17 {
+  background-color: #f7f9fa;
+}
+
+.emotion-8 {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: baseline;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+
+.emotion-0 {
+  margin-bottom: 1rem;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-15 svg {
+  vertical-align: sub;
+  margin-left: 0.25rem;
+}
+
+.emotion-15:hover svg {
+  fill: #192532;
+  -webkit-transition: fill 0.1s ease-in-out;
+  transition: fill 0.1s ease-in-out;
+}
+
+.emotion-9 {
+  margin: 2rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #d3dce0;
+}
+
+.emotion-7 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.emotion-2 {
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin: auto 1rem;
+}
+
+.emotion-2 img {
+  max-height: 120px;
+}
+
+.emotion-2 svg {
+  max-height: 120px;
+}
+
+.emotion-6 {
+  -webkit-flex: 4;
+  -ms-flex: 4;
+  flex: 4;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-3 {
+  margin-top: 0.75rem;
+  margin-right: 1rem;
+}
+
+.emotion-3 > span {
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+}
+
+.emotion-16 {
+  margin-bottom: 3rem;
+}
+
+<div>
+  <div
+    class="Workbench__Workbench___THi9K emotion-17"
+    data-test-id="cf-ui-workbench"
+  >
+    <div
+      class="Workbench__Workbench__header___2wo2E"
+      data-test-id="cf-ui-workbench-header"
+    >
+      <div
+        class="Workbench__Workbench__header-icon___1kJlL"
+      >
+        <div
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+          data-test-id="cf-ui-navigation-icon"
+        >
+          <svg
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+            fill="none"
+            height="1em"
+            viewBox="0 0 24 24"
+            width="1em"
+          >
+            <path
+              d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__header-title___3xp7b"
+        data-test-id="workbench-title"
+      >
+        <h1
+          class="Heading__Heading___83D3K"
+          data-test-id="cf-ui-heading"
+        >
+          Apps
+        </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          href="account.organizations.apps.list?orgId=123"
+        >
+          Manage private apps
+        </a>
+      </div>
+    </div>
+    <div
+      class="Workbench__Workbench__content-wrapper___3yWKi"
+    >
+      <div
+        class="Workbench__Workbench__content___1U8bV"
+        data-test-id="cf-ui-workbench-content"
+      >
+        <div
+          class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+        >
+          <div>
+            <div
+              class="emotion-1"
+            >
+              <h2
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Contentful apps
+              </h2>
+            </div>
+            <div
+              class="Card__Card___1_26G emotion-8 Card__Card--padding-default___xgDF9"
+              data-test-id="cf-ui-card"
+            >
+              <div
+                class="emotion-7"
+              >
+                <div
+                  class="emotion-2"
+                >
+                  <img
+                    alt="Icon for Compose"
+                  />
+                </div>
+                <div
+                  class="emotion-6"
+                >
+                  <div
+                    class="emotion-5"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K"
+                      data-test-id="cf-ui-heading"
+                    >
+                      Compose
+                    </h3>
+                    <p
+                      class="Paragraph__Paragraph___2aO-9"
+                      data-test-id="cf-ui-paragraph"
+                    />
+                    <div>
+                      <button
+                        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-3 Button__Button--primary___JImeO"
+                        data-test-id="cf-ui-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                          tabindex="-1"
+                        >
+                          <svg
+                            class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ Button__Button__icon___2YX5-"
+                            data-test-id="cf-ui-icon"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            width="1em"
+                          >
+                            <path
+                              d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                            />
+                            <path
+                              d="M0 0h24v24H0z"
+                              fill="none"
+                            />
+                          </svg>
+                          <span
+                            class="Button__Button__label___3tcOj"
+                          >
+                            Open
+                          </span>
+                        </span>
+                      </button>
+                      <button
+                        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-3 Button__Button--muted___2Wair"
+                        data-test-id="cf-ui-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="Button__Button__label___3tcOj"
+                          >
+                            Uninstall
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr
+              class="emotion-9"
+            />
+            <div
+              class="Card__Card___1_26G emotion-14 Card__Card--padding-large___2KzUK"
+              data-test-id="cf-ui-card"
+            >
+              <div>
+                <h1
+                  class="Heading__Heading___83D3K emotion-10"
+                  data-test-id="cf-ui-heading"
+                >
+                  Getting started with apps in Contentful
+                </h1>
+                <p
+                  class="Paragraph__Paragraph___2aO-9 emotion-11"
+                  data-test-id="cf-ui-paragraph"
+                >
+                  Apps extend the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build efficient workflows and customize the functionality of the Contentful web app.
+                </p>
+                <a
+                  class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-12 Button__Button--primary___JImeO"
+                  data-test-id="cf-ui-button"
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/?utm_source=webapp&utm_medium=apps-cta-button&utm_campaign=in-app-help"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  type="button"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                    tabindex="-1"
+                  >
+                    <span
+                      class="Button__Button__label___3tcOj"
+                    >
+                      Learn more about apps
+                    </span>
+                  </span>
+                </a>
+              </div>
+              <div
+                class="emotion-13"
+              >
+                <connected-shapes.svg
+                  classname="css-k6epmy-svgContainerExtension"
+                />
+              </div>
+            </div>
+            <p
+              class="Paragraph__Paragraph___2aO-9 emotion-16"
+              data-test-id="cf-ui-paragraph"
+            >
+              Can’t find what you’re looking for?
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-15 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=build-apps&utm_campaign=in-app-help"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Build your own app
+                  <svg
+                    class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                    data-test-id="cf-ui-icon"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
+.emotion-24 {
+  background-color: #f7f9fa;
+}
+
+.emotion-10 {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: baseline;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+
+.emotion-0 {
+  margin-bottom: 1rem;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-1 {
+  color: #606C7C;
+}
+
+.emotion-11 {
+  margin-bottom: 2rem;
+}
+
+.emotion-22 svg {
+  vertical-align: sub;
+  margin-left: 0.25rem;
+}
+
+.emotion-22:hover svg {
+  fill: #192532;
+  -webkit-transition: fill 0.1s ease-in-out;
+  transition: fill 0.1s ease-in-out;
+}
+
+.emotion-23 {
+  margin-bottom: 3rem;
+}
+
+.emotion-9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5ebed;
+}
+
+.emotion-9:last-child {
+  border-bottom: none;
+}
+
+.emotion-7 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  display: block;
+}
+
+.emotion-15 {
+  font-size: 0.75rem;
+  color: #b4c3ca;
+}
+
+.emotion-6 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.emotion-8 {
+  display: block;
+}
+
+.emotion-8 button {
+  margin-left: 1rem;
+}
+
+.emotion-3 {
+  border-radius: 5px;
+  margin-right: 0.75rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 2px;
+  width: 35px;
+  height: 35px;
+}
+
+.emotion-5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-4 {
+  margin-top: 3px;
+  margin-left: 0.5rem;
+}
+
+<div>
+  <div
+    class="Workbench__Workbench___THi9K emotion-24"
+    data-test-id="cf-ui-workbench"
+  >
+    <div
+      class="Workbench__Workbench__header___2wo2E"
+      data-test-id="cf-ui-workbench-header"
+    >
+      <div
+        class="Workbench__Workbench__header-icon___1kJlL"
+      >
+        <div
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+          data-test-id="cf-ui-navigation-icon"
+        >
+          <svg
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+            fill="none"
+            height="1em"
+            viewBox="0 0 24 24"
+            width="1em"
+          >
+            <path
+              d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__header-title___3xp7b"
+        data-test-id="workbench-title"
+      >
+        <h1
+          class="Heading__Heading___83D3K"
+          data-test-id="cf-ui-heading"
+        >
+          Apps
+        </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          href="account.organizations.apps.list?orgId=123"
+        >
+          Manage private apps
+        </a>
+      </div>
+    </div>
+    <div
+      class="Workbench__Workbench__content-wrapper___3yWKi"
+    >
+      <div
+        class="Workbench__Workbench__content___1U8bV"
+        data-test-id="cf-ui-workbench-content"
+      >
+        <div
+          class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+        >
+          <div>
+            <div
+              class="emotion-2"
+            >
+              <h2
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Installed
+              </h2>
+              <div
+                class="emotion-1"
+              >
+                 
+                Usage: 1 / 10 apps installed
+                 
+              </div>
+            </div>
+            <div
+              class="Card__Card___1_26G emotion-10 Card__Card--padding-none___1_Xu1"
+              data-test-id="cf-ui-card"
+            >
+              <div
+                data-test-id="installed-list"
+              >
+                <div
+                  class="emotion-9"
+                >
+                  <div
+                    class="emotion-7"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-6"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-5"
+                        data-test-id="app-details"
+                      >
+                        <div
+                          class="emotion-3"
+                        >
+                          <span
+                            class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+                            data-test-id="cf-ui-navigation-icon"
+                          >
+                            <svg
+                              class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+                              fill="none"
+                              height="1em"
+                              viewBox="0 0 24 24"
+                              width="1em"
+                            >
+                              <path
+                                d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div>
+                          Example Private App
+                        </div>
+                        <div
+                          class="Tag__Tag___Y-myd emotion-4 Tag__Tag--primary___2Hk3I"
+                          data-test-id="cf-ui-tag"
+                        >
+                          Private
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        Configure
+                      </span>
+                    </button>
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        Edit app definition
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="Note__Note___2eSKN emotion-11 Note__Note--primary___-8-7D"
+              data-test-id="cf-ui-note"
+            >
+              <div
+                class="Note__Note__icon___20RqC"
+              >
+                <svg
+                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                  data-test-id="cf-ui-icon"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  width="1em"
+                >
+                  <path
+                    d="M0 0h24v24H0z"
+                    fill="none"
+                  />
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                  />
+                </svg>
+              </div>
+              <div
+                class="Note__Note__info___2m_-K"
+              >
+                <div>
+                  <a
+                    class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                    data-test-id="cf-ui-text-link"
+                    href="https://ctfl.io/apps-feedback"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span
+                      class="TabFocusTrap__TabFocusTrap___39Vty"
+                      tabindex="-1"
+                    >
+                      Give us feedback!
+                    </span>
+                  </a>
+                   
+                  Help us improve your experience with our apps and the App Framework.
+                </div>
+              </div>
+            </div>
+            <div
+              class="emotion-2"
+            >
+              <h2
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Available
+              </h2>
+            </div>
+            <div
+              class="Card__Card___1_26G emotion-10 Card__Card--padding-none___1_Xu1"
+              data-test-id="cf-ui-card"
+            >
+              <div>
+                <div
+                  class="emotion-9"
+                >
+                  <div
+                    class="emotion-7"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-6"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-5"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-3"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
+                        />
+                        <div>
+                          Netlify
+                          <div
+                            class="emotion-15"
+                          >
+                            Easily build and preview sites with the Netlify app 
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              class="Paragraph__Paragraph___2aO-9 emotion-23"
+              data-test-id="cf-ui-paragraph"
+            >
+              Can’t find what you’re looking for?
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-22 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=build-apps&utm_campaign=in-app-help"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Build your own app
+                  <svg
+                    class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                    data-test-id="cf-ui-icon"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarketplacePage should match snapshot of apps loaded with limited access 1`] = `
+.emotion-24 {
+  background-color: #f7f9fa;
+}
+
+.emotion-10 {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: baseline;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+
+.emotion-0 {
+  margin-bottom: 1rem;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-1 {
+  color: #606C7C;
+}
+
+.emotion-11 {
+  margin-bottom: 2rem;
+}
+
+.emotion-22 svg {
+  vertical-align: sub;
+  margin-left: 0.25rem;
+}
+
+.emotion-22:hover svg {
+  fill: #192532;
+  -webkit-transition: fill 0.1s ease-in-out;
+  transition: fill 0.1s ease-in-out;
+}
+
+.emotion-23 {
+  margin-bottom: 3rem;
+}
+
+.emotion-9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5ebed;
+}
+
+.emotion-9:last-child {
+  border-bottom: none;
+}
+
+.emotion-7 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  display: block;
+}
+
+.emotion-15 {
+  font-size: 0.75rem;
+  color: #b4c3ca;
+}
+
+.emotion-6 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.emotion-8 {
+  display: block;
+}
+
+.emotion-8 button {
+  margin-left: 1rem;
+}
+
+.emotion-3 {
+  border-radius: 5px;
+  margin-right: 0.75rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 2px;
+  width: 35px;
+  height: 35px;
+}
+
+.emotion-5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-4 {
+  margin-top: 3px;
+  margin-left: 0.5rem;
+}
+
+<div>
+  <div
+    class="Workbench__Workbench___THi9K emotion-24"
+    data-test-id="cf-ui-workbench"
+  >
+    <div
+      class="Workbench__Workbench__header___2wo2E"
+      data-test-id="cf-ui-workbench-header"
+    >
+      <div
+        class="Workbench__Workbench__header-icon___1kJlL"
+      >
+        <div
+          class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+          data-test-id="cf-ui-navigation-icon"
+        >
+          <svg
+            class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+            fill="none"
+            height="1em"
+            viewBox="0 0 24 24"
+            width="1em"
+          >
+            <path
+              d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__header-title___3xp7b"
+        data-test-id="workbench-title"
+      >
+        <h1
+          class="Heading__Heading___83D3K"
+          data-test-id="cf-ui-heading"
+        >
+          Apps
+        </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          href="account.organizations.apps.list?orgId=123"
+        >
+          Manage private apps
+        </a>
+      </div>
+    </div>
+    <div
+      class="Workbench__Workbench__content-wrapper___3yWKi"
+    >
+      <div
+        class="Workbench__Workbench__content___1U8bV"
+        data-test-id="cf-ui-workbench-content"
+      >
+        <div
+          class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+        >
+          <div>
+            <div
+              class="emotion-2"
+            >
+              <h2
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Installed
+              </h2>
+              <div
+                class="emotion-1"
+              >
+                 
+                Usage: 1 / 10 apps installed
+                 
+              </div>
+            </div>
+            <div
+              class="Card__Card___1_26G emotion-10 Card__Card--padding-none___1_Xu1"
+              data-test-id="cf-ui-card"
+            >
+              <div
+                data-test-id="installed-list"
+              >
+                <div
+                  class="emotion-9"
+                >
+                  <div
+                    class="emotion-7"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-6"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-5"
+                        data-test-id="app-details"
+                      >
+                        <div
+                          class="emotion-3"
+                        >
+                          <span
+                            class="ProductIcon__ProductIconContainer___KxjpT ProductIcon__ProductIconContainer--large___2-NC8"
+                            data-test-id="cf-ui-navigation-icon"
+                          >
+                            <svg
+                              class="ProductIcon__ProductIcon___3MTbf ProductIcon__ProductIcon--positive___3gPLA"
+                              fill="none"
+                              height="1em"
+                              viewBox="0 0 24 24"
+                              width="1em"
+                            >
+                              <path
+                                d="M18.364 11.09h.909a2.727 2.727 0 110 5.456h-.91v3.181A2.278 2.278 0 0116.092 22h-3.91v-1.818a2.001 2.001 0 00-4 0V22H4.274A2.278 2.278 0 012 19.727v-3.909h1.818a2.001 2.001 0 000-4H2.01V7.91a2.27 2.27 0 012.264-2.273h3.182v-.909a2.727 2.727 0 115.454 0v.91h3.182a2.278 2.278 0 012.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 000-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 00-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 012.91 2.91 2.91 2.91 0 01-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 012.909-2.908 2.91 2.91 0 012.909 2.909v.909h3z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div>
+                          Example Private App
+                        </div>
+                        <div
+                          class="Tag__Tag___Y-myd emotion-4 Tag__Tag--primary___2Hk3I"
+                          data-test-id="cf-ui-tag"
+                        >
+                          Private
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="Note__Note___2eSKN emotion-11 Note__Note--primary___-8-7D"
+              data-test-id="cf-ui-note"
+            >
+              <div
+                class="Note__Note__icon___20RqC"
+              >
+                <svg
+                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                  data-test-id="cf-ui-icon"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  width="1em"
+                >
+                  <path
+                    d="M0 0h24v24H0z"
+                    fill="none"
+                  />
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                  />
+                </svg>
+              </div>
+              <div
+                class="Note__Note__info___2m_-K"
+              >
+                <div>
+                  <a
+                    class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                    data-test-id="cf-ui-text-link"
+                    href="https://ctfl.io/apps-feedback"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span
+                      class="TabFocusTrap__TabFocusTrap___39Vty"
+                      tabindex="-1"
+                    >
+                      Give us feedback!
+                    </span>
+                  </a>
+                   
+                  Help us improve your experience with our apps and the App Framework.
+                </div>
+              </div>
+            </div>
+            <div
+              class="emotion-2"
+            >
+              <h2
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Available
+              </h2>
+            </div>
+            <div
+              class="Card__Card___1_26G emotion-10 Card__Card--padding-none___1_Xu1"
+              data-test-id="cf-ui-card"
+            >
+              <div>
+                <div
+                  class="emotion-9"
+                >
+                  <div
+                    class="emotion-7"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-6"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-5"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-3"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
+                        />
+                        <div>
+                          Netlify
+                          <div
+                            class="emotion-15"
+                          >
+                            Easily build and preview sites with the Netlify app 
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              class="Paragraph__Paragraph___2aO-9 emotion-23"
+              data-test-id="cf-ui-paragraph"
+            >
+              Can’t find what you’re looking for?
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-22 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=build-apps&utm_campaign=in-app-help"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Build your own app
+                  <svg
+                    class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                    data-test-id="cf-ui-icon"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

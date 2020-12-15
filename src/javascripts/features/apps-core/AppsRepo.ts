@@ -1,6 +1,51 @@
 import { omit, sortBy } from 'lodash';
 
-import { fetchMarketplaceApps } from './MarketplaceClient';
+import { fetchMarketplaceApps, fetchContentfulApps } from './MarketplaceClient';
+
+interface Link {
+  title: string;
+  shortTitle: string;
+  url: string;
+}
+
+export interface MarketplaceApp {
+  id: string;
+  title: string;
+  tagLine?: string;
+  icon?: string;
+  appInstallation?: object;
+  appDefinition: {
+    sys: {
+      type: 'AppDefinition';
+      id: string;
+      organization: {
+        sys: {
+          id: string;
+          [key: string]: any;
+        };
+      };
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
+  isPrivateApp?: boolean;
+  isEarlyAccess: boolean;
+  isListed?: boolean;
+  author?: {
+    name: string;
+    url: string;
+    icon: string;
+  };
+  categories?: string[];
+  description?: string;
+  links?: Link[];
+  legal?: { eula: string; privacyPolicy: string };
+  actionList?: { negative: boolean; info: string }[];
+  documentationLink?: Link;
+  featureFlagName?: string | null;
+  supportUrl?: string;
+  isContentfulApp?: boolean;
+}
 
 export function createAppsRepo(cma, appDefinitionLoader) {
   return {
@@ -13,25 +58,47 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     const apps = await getApps();
 
     const app = apps.find((app) => app.id === idOrSlug || app.appDefinition.sys.id === idOrSlug);
-
     if (app) {
       return app;
-    } else {
-      throw new Error(`Could not find an app with ID "${idOrSlug}".`);
     }
+
+    throw new Error(`Could not find an app with ID "${idOrSlug}".`);
   }
 
   async function getApps() {
-    const installationMap = await getAppDefinitionToInstallationMap();
-    const [marketplaceApps, orgDefinitions] = await Promise.all([
+    const [installationMap, marketplaceApps, contentfulApps, orgDefinitions] = await Promise.all([
+      getAppDefinitionToInstallationMap(),
       fetchMarketplaceApps(),
+      fetchContentfulApps(),
       appDefinitionLoader.getAllForCurrentOrganization(),
     ]);
 
+    const [resolvedMarketplaceApps, resolvedContentfulApps] = await Promise.all([
+      getMarketplaceApps(installationMap, marketplaceApps),
+      getContentfulApps(installationMap, contentfulApps),
+    ]);
+
     return [
-      ...(await getMarketplaceApps(installationMap, marketplaceApps)),
+      ...resolvedContentfulApps,
+      ...resolvedMarketplaceApps,
       ...getPrivateApps(installationMap, orgDefinitions),
     ];
+  }
+
+  async function getContentfulApps(installationMap, contentfulApps) {
+    const ctflAppDefs = await appDefinitionLoader.getByIds(
+      contentfulApps.map((c) => c.definitionId)
+    );
+    return sortBy(
+      contentfulApps
+        .map((app) => ({
+          ...app,
+          appDefinition: ctflAppDefs[app.definitionId],
+          appInstallation: installationMap[app.definitionId],
+        }))
+        .filter((app) => app.appDefinition),
+      (ctflApp) => ctflApp.title.toLowerCase()
+    );
   }
 
   async function getMarketplaceApps(installationMap, marketplaceApps) {
@@ -65,17 +132,19 @@ export function createAppsRepo(cma, appDefinitionLoader) {
   }
 
   async function getOnlyInstalledApps() {
-    const [installationsResponse, marketplaceApps] = await Promise.all([
+    const [installationsResponse, marketplaceApps, contentfulApps] = await Promise.all([
       cma.getAppInstallations(),
       fetchMarketplaceApps(),
+      fetchContentfulApps(),
     ]);
+    const availableApps = marketplaceApps.concat(contentfulApps);
 
     return installationsResponse.items.map((appInstallation) => {
       const definitionId = appInstallation.sys.appDefinition.sys.id;
       const appDefinition = installationsResponse.includes.AppDefinition.find((def) => {
         return def.sys.id === definitionId;
       });
-      const marketplaceApp = marketplaceApps.find((app) => {
+      const marketplaceApp = availableApps.find((app) => {
         return app.definitionId === definitionId;
       });
 

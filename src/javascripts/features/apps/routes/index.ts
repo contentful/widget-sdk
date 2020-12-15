@@ -1,6 +1,6 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
 import { get, memoize } from 'lodash';
-import { AppsListPage } from '../AppsListPage';
+import { MarketplacePage } from '../MarketplacePage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
@@ -66,7 +66,7 @@ export const appRoute = {
         hasAppsFeature: appsFeatureResolver,
         hasAdvancedAppsFeature: advancedAppsFeatureResolver,
       },
-      component: AppsListPage,
+      component: MarketplacePage,
       mapInjectedToProps: [
         'spaceContext',
         '$state',

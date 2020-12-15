@@ -2,8 +2,10 @@ import { createAppsRepo } from './AppsRepo';
 import { window } from 'core/services/window';
 import { appsListingEntryMock } from './__mocks__/appsListingEntryMock';
 import { appEntriesMock } from './__mocks__/appEntriesMock';
+import { contentfulAppEntriesMock } from './__mocks__/contentfulAppEntriesMock';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
+const COMPOSE_DEFINITION_ID = '6TfQEqkcINtj1MS0TuQTWJ';
 const FIRST_PARTY_DEFINITION_ID = '4iIetqcwsR1GIZxaYI6fRm';
 
 jest.mock('core/services/window', () => ({
@@ -36,6 +38,13 @@ describe('AppsRepo', () => {
     src: 'http://localhost:1234',
   };
 
+  const composeAppDefinition = {
+    sys: { type: 'AppDefinition', id: COMPOSE_DEFINITION_ID },
+    name: 'Compose',
+    locations: ['app', 'entry-sidebar'],
+    src: 'http://localhost:1234',
+  };
+
   const firstPartyInstallation = {
     sys: {
       type: 'AppInstallation',
@@ -64,7 +73,12 @@ describe('AppsRepo', () => {
   };
 
   const loader = {
-    getByIds: jest.fn(() => {
+    getByIds: jest.fn((ids) => {
+      if (ids.includes(COMPOSE_DEFINITION_ID)) {
+        return Promise.resolve({
+          [COMPOSE_DEFINITION_ID]: composeAppDefinition,
+        });
+      }
       return Promise.resolve({
         [NETLIFY_DEFINITION_ID]: netlifyDefinition,
         [FIRST_PARTY_DEFINITION_ID]: firstPartyDefinition,
@@ -77,12 +91,14 @@ describe('AppsRepo', () => {
 
   const cma = {
     getAppInstallations: jest.fn(() => {
-      return Promise.resolve({ items: [netlifyInstallation, firstPartyInstallation] });
+      return Promise.resolve({
+        items: [netlifyInstallation, firstPartyInstallation],
+      });
     }),
   };
 
   describe('getApps', () => {
-    it('should only return private apps if the marketplace endpoint returns no data', async () => {
+    it('should return only private apps if the marketplace endpoint returns no data', async () => {
       (window.fetch as jest.Mock).mockImplementation(() => {
         return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
       });
@@ -104,6 +120,13 @@ describe('AppsRepo', () => {
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
+      expect(
+        window.fetch
+      ).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=contentfulApp',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
@@ -115,7 +138,7 @@ describe('AppsRepo', () => {
       ]);
     });
 
-    it('should only return private apps the marketplace endpoint returns bad data', async () => {
+    it('should return only private apps if the marketplace endpoint returns bad data', async () => {
       (window.fetch as jest.Mock).mockImplementation(() => {
         return Promise.resolve({
           ok: true,
@@ -141,6 +164,8 @@ describe('AppsRepo', () => {
       (window.fetch as jest.Mock).mockImplementation((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
+          : url.includes('contentfulApp')
+          ? contentfulAppEntriesMock
           : appEntriesMock;
         return Promise.resolve({ ok: true, json: () => Promise.resolve(jsonResponse) });
       });
@@ -162,6 +187,13 @@ describe('AppsRepo', () => {
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
+      expect(
+        window.fetch
+      ).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=contentfulApp',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
       expect(result).toMatchSnapshot();
     });
   });
@@ -170,10 +202,10 @@ describe('AppsRepo', () => {
     beforeEach(() => {
       (window.fetch as jest.Mock).mockImplementation((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
-          ? // listing
-            appsListingEntryMock
-          : // apps
-            appEntriesMock;
+          ? appsListingEntryMock
+          : url.includes('contentfulApp')
+          ? contentfulAppEntriesMock
+          : appEntriesMock;
 
         return Promise.resolve({
           ok: true,
@@ -199,6 +231,9 @@ describe('AppsRepo', () => {
       const app4 = await repo.getApp(FIRST_PARTY_DEFINITION_ID);
       expect(app4.appDefinition).toEqual(firstPartyDefinition);
       expect(app4.appInstallation).toEqual(firstPartyInstallation);
+
+      const app5 = await repo.getApp(COMPOSE_DEFINITION_ID);
+      expect(app5.appDefinition).toEqual(composeAppDefinition);
     });
 
     it('fails if an app is not present', async () => {
