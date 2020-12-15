@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { SpacePlanStep } from './SpacePlanStep';
 import { SpaceCreationConfirm } from './SpaceCreationConfirm';
+import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
+import { getTemplatesList } from 'services/SpaceTemplateLoader';
+import { useAsync } from 'core/hooks/useAsync';
 
 const CREATE_SPACE_STEPS = [
   { text: '1.Choose space type', isActive: true },
@@ -15,6 +18,16 @@ const CREATE_SPACE_STEPS = [
 export const SpaceCreation = ({ orgId }) => {
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
   const currentStep = steps.find((item) => item.isActive);
+
+  const getTemplates = useCallback(async () => {
+    const [templatesList] = await Promise.all([getTemplatesList()]);
+
+    return {
+      templatesList,
+    };
+  }, []);
+
+  const { data } = useAsync(getTemplates);
 
   const navigateToStep = (newStep) => {
     const updatedSteps = steps.map((step) => {
@@ -55,9 +68,16 @@ export const SpaceCreation = ({ orgId }) => {
       />
       <Workbench.Content>
         <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
-          <Breadcrumbs items={CREATE_SPACE_STEPS} />
+          <Breadcrumbs items={steps} isActive={steps} />
           {steps.indexOf(currentStep) === 0 && (
             <SpacePlanStep orgId={orgId} onNext={navigateToNextStep} />
+          )}
+          {steps.indexOf(currentStep) === 1 && (
+            <SpaceDetailsSetupStep
+              onBack={navigateToPreviousStep}
+              onSubmit={navigateToNextStep}
+              templatesList={data.templatesList}
+            />
           )}
           {steps.indexOf(currentStep) === 2 && (
             <SpaceCreationConfirm onPrev={navigateToPreviousStep} onNext={submit} />
