@@ -7,7 +7,6 @@ import { getOrganization, getSpace } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
-import { initTrialProductTour } from '../services/intercomProductTour';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -65,10 +64,6 @@ jest.mock('states/Navigator', () => ({
   isSpaceRoute: jest.fn(),
 }));
 
-jest.mock('../services/intercomProductTour', () => ({
-  initTrialProductTour: jest.fn(),
-}));
-
 describe('TrialTag', () => {
   beforeEach(() => {
     getOrganization.mockResolvedValue(trialOrganization);
@@ -100,10 +95,10 @@ describe('TrialTag', () => {
     it('renders when the organization is on trial and the navbar is OrgSettingsNavbar', async () => {
       build();
 
-      await waitFor(() => expect(initTrialProductTour).toBeCalled());
-
-      expect(screen.getByTestId('platform-trial-tag')).toHaveTextContent(
-        `TRIAL - ${daysLeft} DAYS`
+      await waitFor(() =>
+        expect(screen.getByTestId('platform-trial-tag')).toHaveTextContent(
+          `TRIAL - ${daysLeft} DAYS`
+        )
       );
     });
 
@@ -129,9 +124,9 @@ describe('TrialTag', () => {
       getModule.mockReturnValue({ orgId: trialExpiredOrganization.sys.id });
       build();
 
-      await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
-
-      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument()
+      );
     });
 
     it('does not render if the organization is not on trial', async () => {
@@ -139,9 +134,9 @@ describe('TrialTag', () => {
       getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
       build();
 
-      await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
-
-      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument()
+      );
     });
 
     it('renders when the organization is on trial and the navbar is SpaceNavbar', async () => {
@@ -152,9 +147,7 @@ describe('TrialTag', () => {
       isSpaceRoute.mockReturnValue(true);
       build();
 
-      await waitFor(() => expect(initTrialProductTour).toBeCalled());
-
-      expect(screen.getByTestId('platform-trial-tag')).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByTestId('platform-trial-tag')).toBeInTheDocument());
     });
   });
 
