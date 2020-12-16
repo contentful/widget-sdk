@@ -193,10 +193,12 @@ function ValidationValues({
   const onSortAlphabetically = () => {
     const items = [...currentItems];
     items.sort((a, b) => {
-      if (a < b) {
+      const lowerCasedA = a.toLowerCase();
+      const lowerCasedB = b.toLowerCase();
+      if (lowerCasedA < lowerCasedB) {
         return -1;
       }
-      if (a > b) {
+      if (lowerCasedA > lowerCasedB) {
         return 1;
       }
       return 0;

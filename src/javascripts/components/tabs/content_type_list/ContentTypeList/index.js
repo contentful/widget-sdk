@@ -4,6 +4,7 @@ import { get, isEmpty } from 'lodash';
 import { isEdge } from 'utils/browser';
 const isEdgeBrowser = isEdge();
 import StateLink from 'app/common/StateLink';
+import SecretiveLink from 'components/shared/SecretiveLink';
 
 import {
   Table,
@@ -91,14 +92,16 @@ class ContentTypeList extends Component {
                 path="^.detail.fields"
                 params={{ contentTypeId: contentType.sys.id }}
                 key={contentType.sys.id}>
-                {({ onClick }) => {
+                {({ onClick, getHref }) => {
                   return (
                     <TableRow
                       className="ctf-ui-cursor--pointer"
                       data-test-id="content-type-item"
                       onClick={onClick}>
                       <TableCell className="x--medium-cell" data-test-id="cell-name">
-                        {isEmpty(contentType.name) ? 'Untitled' : contentType.name}
+                        <SecretiveLink href={getHref()}>
+                          {isEmpty(contentType.name) ? 'Untitled' : contentType.name}
+                        </SecretiveLink>
                       </TableCell>
                       <TableCell className="x--large-cell" data-test-id="cell-description">
                         {contentType.description}
