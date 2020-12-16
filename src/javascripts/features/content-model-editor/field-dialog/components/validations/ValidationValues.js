@@ -8,8 +8,10 @@ import {
   ValidationMessage,
   Pill,
   TextField,
+  Button,
   CheckboxField,
 } from '@contentful/forma-36-react-components';
+import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { normalizeWhiteSpace } from 'utils/StringUtils';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import arraySwap from 'utils/arraySwap';
@@ -188,6 +190,20 @@ function ValidationValues({
     setTextValue('');
   };
 
+  const onSortAlphabetically = () => {
+    const items = [...currentItems];
+    items.sort((a, b) => {
+      if (a < b) {
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      return 0;
+    });
+    onChangeItems(items);
+  };
+
   const onRemoveItem = (index) => {
     const items = [...currentItems];
     items.splice(index, 1);
@@ -232,18 +248,31 @@ function ValidationValues({
             )}
 
             {(currentItems && currentItems.length) > 0 && (
-              <SortablePills distance={10} onSortEnd={onSortEnd} axis="xy">
-                {currentItems.map((value, index) => {
-                  return (
-                    <SortablePill
-                      value={value.toString()}
-                      index={index}
-                      key={value + index}
-                      onRemoveItem={() => onRemoveItem(index)}
-                    />
-                  );
-                })}
-              </SortablePills>
+              <>
+                <SortablePills distance={10} onSortEnd={onSortEnd} axis="xy">
+                  {currentItems.map((value, index) => {
+                    return (
+                      <SortablePill
+                        value={value.toString()}
+                        index={index}
+                        key={value + index}
+                        onRemoveItem={() => onRemoveItem(index)}
+                      />
+                    );
+                  })}
+                </SortablePills>
+                {currentItems.length > 1 && (
+                  <Flex flexDirection="row-reverse" marginBottom="spacingM">
+                    <Button
+                      buttonType="naked"
+                      size="small"
+                      icon="Filter"
+                      onClick={onSortAlphabetically}>
+                      Sort items alphabetically
+                    </Button>
+                  </Flex>
+                )}
+              </>
             )}
           </div>
 
