@@ -1,10 +1,15 @@
 import * as logger from 'services/logger';
-import { getBrowserStorage } from 'core/services/BrowserStorage';
-import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils';
-import spaceContextMock from 'ng/spaceContext';
-import * as AccessCheckerMocked from 'access_control/AccessChecker';
-import { resolveLink } from './resolver';
-import { getOrganizationSpaces } from 'services/TokenStore';
+import { getBrowserStorage as _getBrowserStorage } from 'core/services/BrowserStorage';
+import {
+  getSpaceInfo as _getSpaceInfo,
+  checkOrgAccess as _checkOrgAccess,
+  getOrg as _getOrg,
+  getOnboardingSpaceId as _getOnboardingSpaceId,
+} from './utils';
+import * as spaceContextMock from '__mocks__/ng/spaceContext';
+import { canReadApiKeys as _canReadApiKeys } from 'access_control/AccessChecker';
+import { resolveLink, LinkType } from './resolver';
+import { getOrganizationSpaces as _getOrganizationSpaces } from 'services/TokenStore';
 
 const mockApiKeyRepo = {
   getAll: jest.fn(),
@@ -13,6 +18,7 @@ const mockApiKeyRepo = {
 jest.mock('access_control/AccessChecker', () => ({
   canReadApiKeys: jest.fn(),
 }));
+const canReadApiKeys = _canReadApiKeys as jest.Mock;
 
 jest.mock('./utils', () => ({
   getSpaceInfo: jest.fn(),
@@ -20,6 +26,10 @@ jest.mock('./utils', () => ({
   getOrg: jest.fn(),
   checkOrgAccess: jest.fn(),
 }));
+const getSpaceInfo = _getSpaceInfo as jest.Mock;
+const getOrg = _getOrg as jest.Mock;
+const checkOrgAccess = _checkOrgAccess as jest.Mock;
+const getOnboardingSpaceId = _getOnboardingSpaceId as jest.Mock;
 
 jest.mock('features/api-keys-management', () => ({
   getApiKeyRepo: () => mockApiKeyRepo,
@@ -32,6 +42,7 @@ jest.mock('ng/spaceContext', () => ({
 jest.mock('core/services/BrowserStorage', () => ({
   getBrowserStorage: jest.fn(),
 }));
+const getBrowserStorage = _getBrowserStorage as jest.Mock;
 
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboardingUtils', () => ({
   getStoragePrefix: jest.fn(),
@@ -42,6 +53,7 @@ jest.mock('services/TokenStore', () => ({
   getOrganizations: jest.fn(),
   getOrganizationSpaces: jest.fn(),
 }));
+const getOrganizationSpaces = _getOrganizationSpaces as jest.Mock;
 
 jest.mock('utils/ResourceUtils', () => ({
   isLegacyOrganization: jest.fn().mockReturnValue(true),
@@ -71,7 +83,7 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
     sys: { id: 'test' },
   };
 
-  getBrowserStorage.mockImplementation(() => ({
+  (getBrowserStorage as jest.Mock).mockImplementation(() => ({
     get: jest.fn(),
     set: jest.fn(),
   }));
@@ -96,7 +108,7 @@ describe('states/deeplink/resolver', () => {
   });
 
   it('should give generic error in case no link', async function () {
-    const result = await resolveLink('', {});
+    const result = await resolveLink(('' as unknown) as LinkType, {});
     expect(result).toEqual({ onboarding: false });
     expect(logger.logException).toHaveBeenCalledWith(expect.any(Error), {
       data: { link: '' },
@@ -116,9 +128,9 @@ describe('states/deeplink/resolver', () => {
       });
       mockApiKeyRepo.getAll.mockResolvedValue([]);
 
-      AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
+      canReadApiKeys.mockReturnValue(true);
 
-      const result = await resolveLink('api', {});
+      const result = await resolveLink(LinkType.API, {});
 
       expect(spaceContextMock.resetWithSpace).toHaveBeenCalledWith(space);
       expect(result).toEqual({
@@ -137,8 +149,8 @@ describe('states/deeplink/resolver', () => {
         space,
         spaceId: space.sys.id,
       });
-      AccessCheckerMocked.canReadApiKeys.mockReturnValue(false);
-      const result = await resolveLink('api', {});
+      canReadApiKeys.mockReturnValue(false);
+      const result = await resolveLink(LinkType.API, {});
       expect(result).toEqual({ onboarding: false });
     });
 
@@ -153,9 +165,9 @@ describe('states/deeplink/resolver', () => {
       });
       mockApiKeyRepo.getAll.mockResolvedValue([{ sys: { id: 'api-key-id' } }]);
 
-      AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
+      canReadApiKeys.mockReturnValue(true);
 
-      const result = await resolveLink('api', {});
+      const result = await resolveLink(LinkType.API, {});
 
       expect(spaceContextMock.resetWithSpace).toHaveBeenCalledWith(space);
       expect(result).toEqual({
@@ -267,7 +279,7 @@ describe('states/deeplink/resolver', () => {
         spaceId: space.sys.id,
       });
 
-      const result = await resolveLink('apps', {
+      const result = await resolveLink(LinkType.Apps, {
         id: 'netlify',
       });
 
@@ -298,7 +310,7 @@ describe('states/deeplink/resolver', () => {
         spaceId: space.sys.id,
       });
 
-      const result = await resolveLink('install-extension', {
+      const result = await resolveLink(LinkType.InstallExtension, {
         url: 'https://example.org',
       });
 
@@ -367,7 +379,7 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(true);
 
-      const result = await resolveLink('invite', {});
+      const result = await resolveLink(LinkType.Invite, {});
       expect(result).toEqual({
         path: ['account', 'organizations', 'users', 'new'],
         params: {
@@ -380,7 +392,7 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(false);
 
-      const result = await resolveLink('invite', {});
+      const result = await resolveLink(LinkType.Invite, {});
       expect(result).toEqual({
         onboarding: false,
       });
@@ -392,7 +404,7 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(true);
 
-      expect(await resolveLink('users', {})).toEqual({
+      expect(await resolveLink(LinkType.Users, {})).toEqual({
         path: ['account', 'organizations', 'users', 'list'],
         params: {
           orgId: 'some',
@@ -400,7 +412,7 @@ describe('states/deeplink/resolver', () => {
         },
       });
 
-      expect(await resolveLink('org', {})).toEqual({
+      expect(await resolveLink(LinkType.Org, {})).toEqual({
         path: ['account', 'organizations', 'edit'],
         params: {
           orgId: 'some',
@@ -408,7 +420,7 @@ describe('states/deeplink/resolver', () => {
         },
       });
 
-      expect(await resolveLink('subscription', {})).toEqual({
+      expect(await resolveLink(LinkType.Subscription, {})).toEqual({
         path: ['account', 'organizations', 'subscription'],
         params: {
           orgId: 'some',
@@ -421,15 +433,15 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(false);
 
-      expect(await resolveLink('invite', {})).toEqual({
+      expect(await resolveLink(LinkType.Invite, {})).toEqual({
         onboarding: false,
       });
 
-      expect(await resolveLink('subscription', {})).toEqual({
+      expect(await resolveLink(LinkType.Subscription, {})).toEqual({
         onboarding: false,
       });
 
-      expect(await resolveLink('org', {})).toEqual({
+      expect(await resolveLink(LinkType.Org, {})).toEqual({
         onboarding: false,
       });
     });
@@ -448,7 +460,7 @@ describe('states/deeplink/resolver', () => {
         },
       ]);
 
-      expect(await resolveLink('invitation-accepted', { orgId: 'testOrgId' })).toEqual({
+      expect(await resolveLink(LinkType.InvitationAccepted, { orgId: 'testOrgId' })).toEqual({
         path: ['spaces', 'detail', 'home'],
         params: {
           spaceId: 'testSpaceId1',
@@ -458,7 +470,7 @@ describe('states/deeplink/resolver', () => {
     it('should redirect to home if there are no accessible spaces in the invitation organization', async function () {
       getOrganizationSpaces.mockResolvedValue([]);
 
-      expect(await resolveLink('invitation-accepted', { orgId: 'testOrgId' })).toEqual({
+      expect(await resolveLink(LinkType.InvitationAccepted, { orgId: 'testOrgId' })).toEqual({
         path: ['home'],
         params: {
           orgId: 'testOrgId',

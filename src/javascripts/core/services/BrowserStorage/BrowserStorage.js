@@ -13,7 +13,7 @@ const SessionStorage = createClientStorage('session');
  * Allows for retrieving a store explicitly, used in cases
  * where you don't want browserStorage to decide where to save
  * your data.
- * @param  {String} storageType The storage type. Valid choices are local and session
+ * @param  {String} [storageType] The storage type. Valid choices are local and session
  * @return {StorageStore}
  */
 export function getBrowserStorage(storageType) {

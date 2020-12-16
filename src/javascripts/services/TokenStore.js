@@ -131,7 +131,7 @@ function prepareSpaces(spaces) {
 /**
  * @ngdoc method
  * @name TokenStore#getSpaces
- * @returns {Promise<API.Space>[]>}
+ * @returns {Promise<API.Space[]>>}
  * @description
  * This method returns a promise of the list of spaces.
  * If some calls are in progress, we're waiting until these are done.

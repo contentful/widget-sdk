@@ -1,5 +1,6 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import { SpaceData, User } from 'core/services/SpaceEnvContext/types';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getValue, onValue } from 'core/utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -11,19 +12,19 @@ import {
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { fetchMarketplaceApps } from 'features/apps-core';
 
-function getUser() {
+function getUser(): Promise<User> {
   // user$ is a property which starts with `null`
   // so it will never throw an error
   const user = getValue(user$);
 
   if (user) {
-    return user;
+    return Promise.resolve(user as User);
   }
 
   return new Promise((resolve) => {
     const off = onValue(user$, (user) => {
       if (user) {
-        resolve(user);
+        resolve(user as User);
         off();
       }
     });
@@ -33,7 +34,7 @@ function getUser() {
 export async function getOnboardingSpaceId() {
   const store = getBrowserStorage();
 
-  const [user, spaces] = await Promise.all([getUser(), getSpaces()]);
+  const [user, spaces]: [User, SpaceData[]] = await Promise.all([getUser(), getSpaces()]);
   const prefix = getStoragePrefix();
 
   const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;
@@ -66,11 +67,16 @@ export async function getOnboardingSpaceId() {
  * if there is no last used space in the store,
  * first available space is used
  */
-export async function getSpaceInfo() {
+interface SpaceInfo {
+  space: SpaceData;
+  spaces: SpaceData[];
+  spaceId: string;
+}
+export async function getSpaceInfo(): Promise<SpaceInfo> {
   const store = getBrowserStorage();
 
   const lastUsedId = store.get('lastUsedSpace');
-  const spaces = await getSpaces();
+  const spaces: SpaceData[] = await getSpaces();
 
   if (spaces.length === 0) {
     throw new Error('user has no spaces');
@@ -123,7 +129,7 @@ export async function getOrg() {
  * @param {string} orgId - selected organization id
  * @return {boolean} - has access or not
  */
-export async function checkOrgAccess(orgId) {
+export async function checkOrgAccess(orgId: string): Promise<boolean> {
   const org = await getOrganization(orgId);
   return isOwnerOrAdmin(org);
 }

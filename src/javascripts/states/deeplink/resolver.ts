@@ -10,16 +10,46 @@ import { getApiKeyRepo } from 'features/api-keys-management';
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 
+export enum LinkType {
+  API = 'api',
+  Invite = 'invite',
+  Subscription = 'subscription',
+  Org = 'org',
+  Apps = 'apps',
+  InstallExtension = 'install-extension',
+  WebhookTemplate = 'webhook-template',
+  Home = 'home',
+  GeneralSettings = 'general-settings',
+  Locales = 'locales',
+  Environments = 'environments',
+  RolesAndPermissions = 'roles-and-permissions',
+  ContentPreview = 'content-preview',
+  Content = 'content',
+  ContentModel = 'content-model',
+  Media = 'media',
+  Extensions = 'extensions',
+  OnboardingGetStarted = 'onboarding-get-started',
+  OnboardingCopy = 'onboarding-copy',
+  OnboardingExplore = 'onboarding-explore',
+  OnboardingDeploy = 'onboarding-deploy',
+  Users = 'users',
+  InvitationAccepted = 'invitation-accepted',
+}
+
+interface ResolvedLink {
+  path: string[];
+  params: Record<string, any>;
+}
+
 /**
  * @description Given a string identifier we return a state reference (for our
  * ui router). This allows you to link to a resource type without knowning
  * the full path of that resource.
- *
- * @param {string} link - one of `api`, `invite`, `users`, `subscription`, `org`.
- * @param {object} params - All queryParameters except `link`
- * @return {Promise<{path:string, params:Object}>} - promise with resolved path and params
  */
-export function resolveLink(link, params) {
+export function resolveLink(
+  link: LinkType,
+  params: Record<string, any>
+): Promise<ResolvedLink | { onboarding: boolean }> {
   return resolveParams(link, params).catch((e) => {
     logger.logException(e, {
       data: {
@@ -33,74 +63,72 @@ export function resolveLink(link, params) {
   });
 }
 
+// we map links from `link` queryParameter to resolve fn
+// keys are quoted for consistency, you can use special symbols
+//
+// Please document all possible links in the wiki
+// https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
+const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
+  // space scoped deeplinks
+  [LinkType.API]: resolveApi,
+  [LinkType.InstallExtension]: resolveInstallExtension,
+  [LinkType.WebhookTemplate]: resolveWebhookTemplate,
+  [LinkType.Apps]: resolveApps,
+  [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
+  [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
+  }),
+  [LinkType.Locales]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list'],
+  }),
+  [LinkType.Environments]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'environments'],
+  }),
+  [LinkType.RolesAndPermissions]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list'],
+  }),
+  [LinkType.ContentPreview]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
+  }),
+  [LinkType.Content]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'entries', 'list'],
+  }),
+  [LinkType.Media]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'assets', 'list'],
+  }),
+  [LinkType.ContentModel]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
+  }),
+  [LinkType.Extensions]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+  }),
+  [LinkType.OnboardingGetStarted]: createOnboardingScreenResolver('getStarted'),
+  [LinkType.OnboardingCopy]: createOnboardingScreenResolver('copy'),
+  [LinkType.OnboardingExplore]: createOnboardingScreenResolver('explore'),
+  [LinkType.OnboardingDeploy]: createOnboardingScreenResolver('deploy'),
+  // org scoped deeplinks
+  [LinkType.Invite]: makeOrgScopedPathResolver({
+    orgScopedPath: ['account', 'organizations', 'users', 'new'],
+  }),
+  [LinkType.Users]: makeOrgScopedPathResolver({
+    orgScopedPath: ['account', 'organizations', 'users', 'list'],
+    pathSuffix: '',
+  }),
+  [LinkType.Org]: makeOrgScopedPathResolver({
+    orgScopedPath: ['account', 'organizations', 'edit'],
+    pathSuffix: '',
+  }),
+  [LinkType.Subscription]: resolveSubscriptions,
+  [LinkType.InvitationAccepted]: resolveSpaceHome,
+};
+
 /**
- * @param {string} link Deeplink name
- * @param {object} params All queryParameters except, `link`
  * @description function to get all needed params
  * we assume this is a first page user is landed,
  * so nothing is available yet, so we download everything
  */
-function resolveParams(link, params) {
+function resolveParams(link: LinkType, params: Record<string, any>) {
   try {
-    // we map links from `link` queryParameter to resolve fn
-    // keys are quoted for consistency, you can use special symbols
-    //
-    // Please document all possible links in the wiki
-    // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
-    const mappings = {
-      // space scoped deeplinks
-      api: resolveApi,
-      'install-extension': resolveInstallExtension,
-      'webhook-template': resolveWebhookTemplate,
-      apps: resolveApps,
-      home: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
-      'general-settings': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
-      }),
-      locales: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list'],
-      }),
-      environments: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'environments'],
-      }),
-      'roles-and-permissions': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list'],
-      }),
-      'content-preview': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
-      }),
-      content: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'entries', 'list'],
-      }),
-      media: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'assets', 'list'],
-      }),
-      'content-model': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
-      }),
-      extensions: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list'],
-      }),
-      'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
-      'onboarding-copy': createOnboardingScreenResolver('copy'),
-      'onboarding-explore': createOnboardingScreenResolver('explore'),
-      'onboarding-deploy': createOnboardingScreenResolver('deploy'),
-      // org scoped deeplinks
-      invite: makeOrgScopedPathResolver({
-        orgScopedPath: ['account', 'organizations', 'users', 'new'],
-      }),
-      users: makeOrgScopedPathResolver({
-        orgScopedPath: ['account', 'organizations', 'users', 'list'],
-        pathSuffix: '',
-      }),
-      org: makeOrgScopedPathResolver({
-        orgScopedPath: ['account', 'organizations', 'edit'],
-        pathSuffix: '',
-      }),
-      subscription: resolveSubscriptions,
-      'invitation-accepted': resolveSpaceHome,
-    };
-
     const resolverFn = mappings[link];
 
     if (resolverFn) {
@@ -113,7 +141,7 @@ function resolveParams(link, params) {
   }
 }
 
-function makeSpaceScopedPathResolver({ spaceScopedPath }) {
+function makeSpaceScopedPathResolver({ spaceScopedPath }): () => Promise<ResolvedLink> {
   if (!spaceScopedPath || !Array.isArray(spaceScopedPath)) {
     throw new Error('A path for a deeplink to resolve to must be provided');
   }
@@ -271,7 +299,13 @@ async function resolveApps({ id, referrer }) {
   };
 }
 
-function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
+function makeOrgScopedPathResolver({
+  orgScopedPath,
+  pathSuffix,
+}: {
+  orgScopedPath: any;
+  pathSuffix?: string;
+}) {
   if (!orgScopedPath || !Array.isArray(orgScopedPath)) {
     throw new Error('A path for a deeplink to resolve to must be provided');
   }
@@ -282,7 +316,7 @@ function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
 
   return async function () {
     const { orgId } = await getOrg();
-    const params = pathSuffix === null ? { orgId } : { orgId, pathSuffix };
+    const params = pathSuffix === undefined ? { orgId } : { orgId, pathSuffix };
 
     return await applyOrgAccess(orgId, {
       path: orgScopedPath,
@@ -326,7 +360,7 @@ async function resolveSpaceHome({ orgId }) {
 }
 
 // return result only if user has access to organization settings
-async function applyOrgAccess(orgId, successResult) {
+async function applyOrgAccess(orgId: string, successResult) {
   // user should be owner or admin to access this section
   const hasAccess = await checkOrgAccess(orgId);
 
