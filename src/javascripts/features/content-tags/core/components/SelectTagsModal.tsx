@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { Button, Modal, Spinner } from '@contentful/forma-36-react-components';
 import { ModalProps } from '@contentful/forma-36-react-components/dist/components/Modal/Modal';
-import { useIsInitialLoadingOfTags } from '../hooks';
+import { useCanManageTags, useIsInitialLoadingOfTags, useReadTags } from '../hooks';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { FilteredTagsProvider, MetadataTags, orderByLabel } from 'features/content-tags';
@@ -10,6 +10,10 @@ import { TagsSelection } from 'features/content-tags/editor/components/TagsSelec
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { TagSelectionValue } from '../Types';
+import { NoTagsContainer } from './NoTagsContainer';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { go } from 'states/Navigator';
 
 const styles = {
   button: css({
@@ -52,6 +56,10 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
   const isInitialLoad = useIsInitialLoadingOfTags();
   const [localTags, setLocalTags] = useState<{ value: string; label: string }[]>(selectedTags);
 
+  const { hasTags } = useReadTags();
+  const canManageTags = useCanManageTags();
+  const { currentEnvironment } = useSpaceEnvContext();
+
   const onAdd = useCallback(
     (selection: TagSelectionValue) => {
       setLocalTags((prevState) => orderByLabel([selection, ...prevState]));
@@ -73,6 +81,14 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
     [localTags, onClose]
   );
 
+  const onCreate = useCallback(() => {
+    if (canManageTags) {
+      const isMaster = isMasterEnvironment(currentEnvironment);
+      go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
+      onPopupClose(true);
+    }
+  }, [canManageTags, currentEnvironment, onPopupClose]);
+
   return (
     <Modal isShown={isShown} onClose={() => onPopupClose(true)} title={mProps.title}>
       <div>
@@ -80,32 +96,36 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
           <div>
             <Spinner className={styles.loading} />
           </div>
+        ) : hasTags ? (
+          <>
+            <FilteredTagsProvider>
+              <TagsSelection
+                label={mProps.selectLabel}
+                selectedTags={localTags}
+                onAdd={onAdd}
+                onRemove={onRemove}
+              />
+            </FilteredTagsProvider>
+            <Button
+              className={styles.button}
+              testId={'create-content-tag-submit-button'}
+              onClick={() => onPopupClose(false)}
+              type="submit"
+              disabled={isInitialLoad}
+              buttonType="positive">
+              {mProps.submitLabel}
+            </Button>
+            <Button
+              testId={'create-content-tag-cancel-button'}
+              onClick={() => onPopupClose(true)}
+              type="reset"
+              buttonType="muted">
+              Cancel
+            </Button>
+          </>
         ) : (
-          <FilteredTagsProvider>
-            <TagsSelection
-              label={mProps.selectLabel}
-              selectedTags={localTags}
-              onAdd={onAdd}
-              onRemove={onRemove}
-            />
-          </FilteredTagsProvider>
+          <NoTagsContainer buttonLabel="Add tags" onCreate={onCreate} />
         )}
-        <Button
-          className={styles.button}
-          testId={'create-content-tag-submit-button'}
-          onClick={() => onPopupClose(false)}
-          type="submit"
-          disabled={isInitialLoad}
-          buttonType="positive">
-          {mProps.submitLabel}
-        </Button>
-        <Button
-          testId={'create-content-tag-cancel-button'}
-          onClick={() => onPopupClose(true)}
-          type="reset"
-          buttonType="muted">
-          Cancel
-        </Button>
       </div>
     </Modal>
   );

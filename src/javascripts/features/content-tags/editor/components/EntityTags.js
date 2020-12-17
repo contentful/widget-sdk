@@ -61,7 +61,7 @@ const EntityTags = ({ tags, onRemove, disabled, style = {}, tagGroups = [] }) =>
   }
 
   return (
-    <div>
+    <div data-test-id="selected-tags-list">
       {[
         result,
         ...groups
