@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
 import * as PricingService from 'services/PricingService';
@@ -19,7 +18,6 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
-  isSelfServicePlan,
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 
@@ -51,7 +49,7 @@ const styles = {
   }),
 };
 
-const initialFetch = (organization, space, basePlan) => async () => {
+const initialFetch = (organization, space) => async () => {
   const organizationId = organization.sys.id;
   const orgEndpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
@@ -63,14 +61,12 @@ const initialFetch = (organization, space, basePlan) => async () => {
     subscriptionPlans,
     rawSpaceRatePlans,
     recommendedPlan,
-    isPayingPreviousToV2,
   ] = await Promise.all([
     spaceResourceService.getAll(),
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
-    getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const spaceRatePlans = transformSpaceRatePlans({
@@ -84,8 +80,6 @@ const initialFetch = (organization, space, basePlan) => async () => {
   );
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
 
-  const shouldShowMicroSmallCTA = isPayingPreviousToV2 && isSelfServicePlan(basePlan);
-
   return {
     spaceResources,
     spaceRatePlans,
@@ -93,8 +87,6 @@ const initialFetch = (organization, space, basePlan) => async () => {
     currentSubscriptionPrice,
     currentSpaceSubscriptionPlan,
     freeSpaceResource,
-    isPayingPreviousToV2,
-    shouldShowMicroSmallCTA,
   };
 };
 
@@ -116,7 +108,7 @@ export default function Wizard(props) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedTab, setSelectedTab] = useState('spacePlanSelector');
 
-  const { organization, space, basePlan, sessionId, onClose, onProcessing } = props;
+  const { organization, space, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isChangingSpacePlan }, handleSubmit] = useAsyncFn(() =>
     submit(space, selectedPlan, sessionId, onProcessing, onClose)
@@ -131,9 +123,7 @@ export default function Wizard(props) {
     setSelectedTab(newTab);
   };
 
-  const { isLoading, data } = useAsync(
-    useCallback(initialFetch(organization, space, basePlan), [])
-  );
+  const { isLoading, data } = useAsync(useCallback(initialFetch(organization, space), []));
 
   if (isLoading) {
     return <Loader />;
@@ -195,7 +185,6 @@ export default function Wizard(props) {
                 goToBillingPage(organization, WIZARD_INTENT.CHANGE, sessionId, onClose)
               }
               spaceResources={data.spaceResources}
-              shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
               recommendedPlan={data.recommendedPlan}
               isChanging
             />
@@ -222,7 +211,6 @@ export default function Wizard(props) {
 Wizard.propTypes = {
   organization: PropTypes.object.isRequired,
   space: PropTypes.object.isRequired,
-  basePlan: PropTypes.object.isRequired,
   sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,

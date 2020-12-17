@@ -9,8 +9,6 @@ import {
   Organization as OrganizationPropType,
   Space as SpacePropType,
 } from 'app/OrganizationSettings/PropTypes';
-import ExternalTextLink from 'app/common/ExternalTextLink';
-import { websiteUrl } from 'Config';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
@@ -42,7 +40,6 @@ export default function SpacePlanSelector(props) {
     spaceResources,
     goToBillingPage,
     onSelectPlan,
-    shouldShowMicroSmallCTA,
     recommendedPlan,
     isChanging = false,
   } = props;
@@ -64,40 +61,6 @@ export default function SpacePlanSelector(props) {
           You are {isChanging ? `changing the space ${space.name}` : `creating this space`} for the
           organization {organization.name}.
         </Paragraph>
-
-        {shouldShowMicroSmallCTA && (
-          <>
-            <Paragraph className={styles.textCenter} testId="small-micro-cta">
-              <b>Where are the Micro and Small spaces?</b>{' '}
-              {isChanging ? (
-                <>
-                  We’ve changed our space plans.
-                  <br />
-                  Learn about the new, enhanced features now available{' '}
-                  <ExternalTextLink href={websiteUrl('pricing/')}>on our website</ExternalTextLink>.
-                </>
-              ) : (
-                <>
-                  You can continue to buy micro or small spaces by{' '}
-                  <ExternalTextLink
-                    href={websiteUrl(
-                      'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
-                    )}>
-                    submitting a support request
-                  </ExternalTextLink>
-                  . To learn about our space plan changes{' '}
-                  <ExternalTextLink
-                    href={websiteUrl(
-                      'pricing/?utm_medium=webapp&utm_source=product&utm_campaign=20q3-community-edition-launch'
-                    )}>
-                    visit our website
-                  </ExternalTextLink>
-                  .
-                </>
-              )}{' '}
-            </Paragraph>
-          </>
-        )}
 
         {atHighestPlan && (
           <div className={styles.marginBottom}>
@@ -148,6 +111,5 @@ SpacePlanSelector.propTypes = {
   selectedPlan: PropTypes.object,
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
-  shouldShowMicroSmallCTA: PropTypes.bool,
   isChanging: PropTypes.bool,
 };

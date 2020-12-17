@@ -2,7 +2,6 @@ import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -39,7 +38,6 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
-  isSelfServicePlan,
 } from 'account/pricing/PricingDataProvider';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
@@ -58,23 +56,16 @@ const styles = {
   }),
 };
 
-const initialFetch = (organization, basePlan) => async () => {
+const initialFetch = (organization) => async () => {
   const organizationId = organization.sys.id;
   const endpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
 
-  const [
-    freeSpaceResource,
-    rawSpaceRatePlans,
-    templates,
-    subscriptionPlans,
-    isPayingPreviousToV2,
-  ] = await Promise.all([
+  const [freeSpaceResource, rawSpaceRatePlans, templates, subscriptionPlans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
-    getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
@@ -84,16 +75,11 @@ const initialFetch = (organization, basePlan) => async () => {
     freeSpaceResource,
   });
 
-  const basePlanIsSelfService = isSelfServicePlan(basePlan);
-  const shouldShowMicroSmallCTA = isPayingPreviousToV2 && basePlanIsSelfService;
-
   return {
     freeSpaceResource,
     spaceRatePlans,
     templates,
     currentSubscriptionPrice,
-    isPayingPreviousToV2,
-    shouldShowMicroSmallCTA,
   };
 };
 
@@ -209,7 +195,7 @@ export default function CreateOnDemandWizard(props) {
     partnerDetails,
   } = state;
 
-  const { organization, basePlan, sessionId, onClose, onProcessing } = props;
+  const { organization, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isCreatingSpace }, handleSubmit] = useAsyncFn(() =>
     submit({
@@ -234,7 +220,7 @@ export default function CreateOnDemandWizard(props) {
     dispatch({ type: 'SET_SELECTED_TAB', payload: newTab });
   };
 
-  const { isLoading, data } = useAsync(useCallback(initialFetch(organization, basePlan), []));
+  const { isLoading, data } = useAsync(useCallback(initialFetch(organization), []));
 
   if (isLoading) {
     return <Loader />;
@@ -376,5 +362,4 @@ CreateOnDemandWizard.propTypes = {
   sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
-  basePlan: PropTypes.object.isRequired,
 };

@@ -290,7 +290,6 @@ function build(custom) {
       grandTotal: null,
       usersMeta: null,
       organization: null,
-      showMicroSmallSupportCard: null,
       onSpacePlansChange: null,
       newSpacePurchaseEnabled: true,
     },

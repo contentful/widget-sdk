@@ -99,7 +99,6 @@ export function SubscriptionPage({
   usersMeta,
   organization,
   grandTotal,
-  showMicroSmallSupportCard,
   organizationId,
   initialLoad,
   spacePlans,
@@ -278,7 +277,6 @@ export function SubscriptionPage({
                 onCreateSpace={createSpace}
                 onChangeSpace={changeSpace}
                 organizationId={organizationId}
-                showMicroSmallSupportCard={showMicroSmallSupportCard}
                 onDeleteSpace={deleteSpace}
                 enterprisePlan={enterprisePlan}
                 anySpacesInaccessible={anySpacesInaccessible}
@@ -300,7 +298,6 @@ SubscriptionPage.propTypes = {
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
   organization: PropTypes.object,
-  showMicroSmallSupportCard: PropTypes.bool,
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,

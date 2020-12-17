@@ -8,7 +8,6 @@ import {
   Paragraph,
   Heading,
   TextLink,
-  Card,
   Tooltip,
   Icon,
   Note,
@@ -21,12 +20,9 @@ import {
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import StateLink from 'app/common/StateLink';
 
-import ExternalTextLink from 'app/common/ExternalTextLink';
-import { websiteUrl, helpCenterUrl } from 'Config';
+import { helpCenterUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
-import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { track } from 'analytics/Analytics';
-import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
@@ -93,7 +89,6 @@ export function SpacePlans({
   onDeleteSpace,
   enterprisePlan,
   organizationId,
-  showMicroSmallSupportCard,
   anySpacesInaccessible,
   isOwnerOrAdmin,
 }) {
@@ -136,16 +131,6 @@ export function SpacePlans({
     fetch();
   }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
 
-  const linkToSupportPage = websiteUrl(
-    `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
-  );
-
-  const handleSupportRedirct = () => {
-    trackTargetedCTAClick(CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT, {
-      organizationId,
-    });
-  };
-
   const handleExportBtnClick = async () => {
     setIsExportingCSV(true);
     try {
@@ -180,35 +165,6 @@ export function SpacePlans({
           </Tooltip>
         )}
       </Heading>
-
-      {showMicroSmallSupportCard && (
-        <Card className={styles.planChangingCard} testId="subscription-page.support-request-card">
-          <Paragraph className={styles.cardTitle}>We&apos;re changing our plans</Paragraph>
-          <Paragraph className={styles.total}>
-            We recently updated the spaces available on our plans. For the remainder of 2020, you
-            can continue to purchase new small and micro spaces by submitting a support request. To
-            learn about the changes{' '}
-            <ExternalTextLink
-              testId="subscription-page.pricing-information-link"
-              href={websiteUrl('pricing/')}>
-              visit our website
-            </ExternalTextLink>
-            {'.'}
-          </Paragraph>
-          <TrackTargetedCTAImpression
-            impressionType={CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT}
-            meta={{ organizationId }}>
-            <ExternalTextLink
-              onClick={() => {
-                handleSupportRedirct();
-              }}
-              testId="subscription-page.support-request-link"
-              href={linkToSupportPage}>
-              Submit a support request
-            </ExternalTextLink>
-          </TrackTargetedCTAImpression>
-        </Card>
-      )}
 
       <Paragraph className={styles.total} testId="subscription-page.organization-information">
         {numSpaces > 0 ? (
@@ -356,7 +312,6 @@ export function SpacePlans({
 
 SpacePlans.propTypes = {
   initialLoad: PropTypes.bool,
-  showMicroSmallSupportCard: PropTypes.bool,
   organizationId: PropTypes.string,
   spacePlans: PropTypes.array.isRequired,
   onCreateSpace: PropTypes.func.isRequired,
