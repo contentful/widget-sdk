@@ -43,7 +43,7 @@ export function SpacePlanSelection({
   const freePlanCount = freeSpaceResource?.limits?.maximum - freeSpaceResource?.usage;
 
   const styles = {
-    freePlanNote: css({
+    subheading: css({
       color: tokens.colorTextMid,
       marginTop: tokens.spacingL,
       marginBottom: tokens.spacingXs,
@@ -52,7 +52,7 @@ export function SpacePlanSelection({
   };
 
   return (
-    <>
+    <div>
       <Typography>
         {isCreationFlow ? (
           <Heading element="h2">Choose a space type for your new space</Heading>
@@ -64,6 +64,11 @@ export function SpacePlanSelection({
         )}
       </Typography>
       <List>
+        {isCreationFlow && (
+          <Subheading className={styles.subheading}>
+            Select from the ones you’re not using yet.
+          </Subheading>
+        )}
         {orderedPlanKeys.map((key, index) => {
           // We use the first in the group plan to display the limits
           // Plans with the same name *should* be identical.
@@ -77,7 +82,7 @@ export function SpacePlanSelection({
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item" className={styles.listItem}>
               {isCreationFlow && isFree && (
-                <Subheading className={styles.freePlanNote}>
+                <Subheading className={styles.subheading}>
                   Test out new projects for 30 days, free of charge.
                 </Subheading>
               )}
@@ -119,7 +124,7 @@ export function SpacePlanSelection({
           Continue
         </Button>
       </Flex>
-    </>
+    </div>
   );
 }
 

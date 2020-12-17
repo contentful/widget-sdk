@@ -22,7 +22,7 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   warning: css({ color: tokens.colorWarning }),
-  tooltipPointer: css({ cursor: 'pointer' }),
+  tooltipPointer: css({ cursor: 'help' }),
 };
 
 export function SpacePlanComparison({ plan, spaceResources }) {

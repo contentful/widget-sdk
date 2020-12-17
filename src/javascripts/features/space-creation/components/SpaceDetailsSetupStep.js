@@ -46,7 +46,7 @@ const styles = {
 
 export const SpaceDetailsSetupStep = ({ onBack, onSubmit }) => {
   const {
-    state: { spaceName, selectedTemplate, templatesList },
+    state: { spaceName, selectedTemplate, templatesList, selectedPlan },
     dispatch,
   } = useContext(SpaceCreationState);
 
@@ -58,7 +58,7 @@ export const SpaceDetailsSetupStep = ({ onBack, onSubmit }) => {
           element="h2"
           testId="space-selection.heading"
           className={styles.sectionHeading}>
-          Set up your new space
+          Set up your new {selectedPlan.name} space
         </Heading>
 
         <Card testId="space-card" className={styles.card}>

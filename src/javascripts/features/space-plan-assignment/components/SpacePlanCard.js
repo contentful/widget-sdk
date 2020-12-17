@@ -36,8 +36,13 @@ export function SpacePlanCard({
   freeSpaceResource,
 }) {
   const isDisabled = spaceResources && !canPlanBeAssigned(plan, spaceResources);
-  const planColor =
-    plan.name === 'Large' || plan.name === 'Medium' ? tokens.colorGreenLight : tokens.colorBlueMid;
+  let planColor = tokens.colorBlueMid;
+  if (plan.name === 'Large' || plan.name === 'Medium') {
+    planColor = tokens.colorGreenLight;
+  }
+  if (isFreeProductPlan(plan)) {
+    planColor = tokens.colorElementLight;
+  }
 
   const styles = {
     cardItem: css({
@@ -72,6 +77,7 @@ export function SpacePlanCard({
     helpIcon: css({
       fill: tokens.colorElementDarkest,
       marginRight: tokens.spacingXs,
+      display: 'flex',
     }),
   };
 
@@ -105,7 +111,7 @@ export function SpacePlanCard({
           <Heading element="h3">
             {plan.name} {isCustomPlan && <span className={styles.custom}> (Customized)</span>}
           </Heading>
-          <Flex alignItems="center">
+          <Flex>
             {isFreeProductPlan(plan) && (
               <Tooltip
                 testId="space-plan-tooltip"

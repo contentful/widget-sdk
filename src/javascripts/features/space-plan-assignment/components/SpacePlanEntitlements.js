@@ -6,10 +6,11 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import { resourcesToDisplay, getIncludedResources, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { shorten } from 'utils/NumberUtils';
 
 const styles = {
   flexItem: css({ marginRight: '2.25rem' }),
-  tooltipPointer: css({ cursor: 'pointer', span: { textDecoration: 'underline' } }),
+  tooltipPointer: css({ cursor: 'help' }),
 };
 
 export function SpacePlanEntitlements({ plan }) {
@@ -28,7 +29,7 @@ export function SpacePlanEntitlements({ plan }) {
         return (
           <Flex key={id} className={styles.flexItem}>
             <span className={tooltipText && styles.tooltipPointer}>
-              {planResources[id]}{' '}
+              {shorten(planResources[id])}{' '}
               <Tooltip place="right" content={tooltipText}>
                 {name}
               </Tooltip>
