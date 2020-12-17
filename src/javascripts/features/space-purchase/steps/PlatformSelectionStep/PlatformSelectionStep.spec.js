@@ -5,15 +5,15 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformSelectionStep, PACKAGES_COMPARISON_HREF } from './PlatformSelectionStep';
+import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
 
 const mockTrack = jest.fn();
 const mockOrganization = FakeFactory.Organization();
-const mockSubscriptionPlans = [{ name: 'Medium' }];
-const mockProductRatePlans = [
-  { name: 'Community', price: 0 },
-  { name: 'Medium', price: 489 },
-  { name: 'Large', price: 889 },
-];
+
+jest.mock('../../utils/canCreateSpace', () => ({
+  canUserCreatePaidSpace: jest.fn(),
+  canOrgCreateFreeSpace: jest.fn().mockReturnValue(true),
+}));
 
 describe('PlatformSelectionStep', () => {
   it('should render a link to the package comparison page in the website', async () => {
@@ -33,19 +33,28 @@ describe('PlatformSelectionStep', () => {
   });
 
   describe('Platform cards', () => {
-    let platformCards;
-
-    beforeEach(async () => {
-      await build();
-      platformCards = screen.getAllByTestId('platform-card');
+    beforeEach(() => {
+      canUserCreatePaidSpace.mockReturnValue(true);
     });
 
-    it('should render two cards for platform cards', () => {
+    it('should render two platform cards', async () => {
+      await build();
+      const platformCards = screen.getAllByTestId('platform-card');
       expect(platformCards).toHaveLength(2);
       expect(within(platformCards[1]).getByTestId('product-price')).toBeDefined();
     });
 
-    it('should select the card when user clicks on it', () => {
+    it('should disable the Compose+Launch platform card when the user cannot buy spaces', async () => {
+      canUserCreatePaidSpace.mockReturnValue(false);
+
+      await build();
+      const platformCards = screen.getAllByTestId('platform-card');
+      expect(platformCards[1].getAttribute('class')).toContain('disabled');
+    });
+
+    it('should select the card when clicked', async () => {
+      await build();
+      const platformCards = screen.getAllByTestId('platform-card');
       // eslint-disable-next-line no-undef
       const scrollIntoViewMock = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');
 
@@ -110,8 +119,6 @@ async function build(customProps, customState) {
     PlatformSelectionStep,
     {
       organization: mockOrganization,
-      spaceRatePlans: mockProductRatePlans,
-      subscriptionPlans: mockSubscriptionPlans,
       sessionId: 'random_id',
       ...customState,
     },

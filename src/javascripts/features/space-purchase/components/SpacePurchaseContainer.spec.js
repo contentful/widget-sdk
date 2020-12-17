@@ -242,18 +242,6 @@ describe('SpacePurchaseContainer', () => {
     });
   });
 
-  it('should disable all paid space plans if the user is not org owner and the org does not have billing details', async () => {
-    isOwner.mockReturnValue(false);
-
-    await build();
-
-    const spacePlanCards = screen.getAllByTestId('space-card');
-
-    spacePlanCards.forEach((ele) => {
-      expect(within(ele).getByTestId('select-space-cta')).toHaveAttribute('disabled');
-    });
-  });
-
   describe('analytics tracking', () => {
     it('should track each event throughout the whole flow - no template', async () => {
       getDefaultPaymentMethod.mockResolvedValueOnce({

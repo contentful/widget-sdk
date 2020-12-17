@@ -19,6 +19,7 @@ import { EnterpriseCard } from 'features/space-purchase/components/EnterpriseCar
 import { CONTACT_SALES_HREF } from 'features/space-purchase/components/EnterpriseTalkToUsButton';
 import { FAQAccordion } from 'features/space-purchase/components/FAQAccordion';
 import { usePageContent } from 'features/space-purchase/hooks/usePageContent.ts';
+import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
 
 const styles = {
   fullRow: css({
@@ -48,7 +49,7 @@ export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
 export const PlatformSelectionStep = ({ track }) => {
   const {
-    state: { organization, spaceRatePlans, subscriptionPlans, pageContent },
+    state: { organization, pageContent },
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
@@ -58,7 +59,7 @@ export const PlatformSelectionStep = ({ track }) => {
   const prevSelectedPlatform = usePrevious(selectedPlatform);
   const spaceSectionRef = createRef();
 
-  const orgHasPaidSpaces = subscriptionPlans?.length > 0;
+  const canCreatePaidSpace = canUserCreatePaidSpace(organization);
 
   useEffect(() => {
     // we want to scroll the user to space selection only the first time they select a platform
@@ -106,12 +107,20 @@ export const PlatformSelectionStep = ({ track }) => {
             price: platform.price,
           };
 
+          // If they cannot create a paid space, then they cannot pay for compose+launch either.
+          const tooltipText =
+            platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
+              ? 'Please contact your organization owner and have them add billing information for your organization so you can purchase Space + Compose + Launch'
+              : '';
+
           return (
             <ProductCard
               key={idx}
               cardType="platform"
               selected={selectedPlatform === platform.type}
               onClick={() => setSelectedPlatform(platform.type)}
+              tooltipText={tooltipText}
+              disabled={!!tooltipText}
               content={content}
               isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
               testId="platform-card"
@@ -138,11 +147,9 @@ export const PlatformSelectionStep = ({ track }) => {
         </span>
 
         <SpacePlanCards
-          spaceRatePlans={spaceRatePlans}
           selectedPlatform={selectedPlatform}
           selectedSpacePlan={selectedSpacePlan}
           onSelect={setSelectedSpacePlan}
-          orgHasPaidSpaces={orgHasPaidSpaces}
         />
 
         <div className={cx(styles.fullRow, styles.bigMarginTop)}>

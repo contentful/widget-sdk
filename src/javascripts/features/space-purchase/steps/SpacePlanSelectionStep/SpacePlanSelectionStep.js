@@ -20,8 +20,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
-import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
@@ -30,6 +28,7 @@ import { PinLabel } from '../../components/PinLabel';
 import { actions, SpacePurchaseState } from '../../context';
 import { FAQAccordion } from '../../components/FAQAccordion';
 import { usePageContent } from '../../hooks/usePageContent';
+import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 
 const styles = {
   fullRow: css({
@@ -82,12 +81,17 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
       currentSpace,
       currentSpaceRatePlan,
       spaceRatePlans,
-      freeSpaceResource,
       pageContent,
+      freeSpaceResource,
     },
     dispatch,
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
+
+  const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
+  const canCreatePaidSpace = canUserCreatePaidSpace(organization);
+  const isFreeSpaceDisabled =
+    spaceRatePlans && spaceRatePlans.find((plan) => plan.price === 0)?.disabled;
 
   const selectPlan = (plan) => {
     track(EVENTS.SPACE_PLAN_SELECTED, {
@@ -98,15 +102,6 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
 
     onSubmit();
   };
-
-  // We want these to be undefined/true/false, rather than simply true/false, so that we don't
-  // show the relevant components until we have a boolean value.
-  const canCreatePaidSpace =
-    organization && (isOrgOwner(organization) || !!organization.isBillable);
-  const canCreateFreeSpace = freeSpaceResource && !resourceIncludedLimitReached(freeSpaceResource);
-
-  const isFreeSpaceDisabled =
-    spaceRatePlans && spaceRatePlans.find((plan) => plan.price === 0)?.disabled;
 
   // If the plan is not in the product rate plans, it's legacy.
   const showLegacyPlanWarning =

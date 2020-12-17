@@ -5,6 +5,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { setUser } from 'services/OrganizationRoles';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SpacePlanSelectionStep, FEATURE_OVERVIEW_HREF } from './SpacePlanSelectionStep';
+import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 import { renderWithProvider } from '../../__tests__/helpers';
 
 const mockOrganization = FakeFactory.Organization();
@@ -12,18 +13,21 @@ const mockSpace = FakeFactory.Space();
 const mockOrgOwner = FakeFactory.User({
   organizationMemberships: [{ organization: mockOrganization, role: 'owner' }],
 });
-const mockOrgAdmin = FakeFactory.User({
-  organizationMemberships: [{ organization: mockOrganization, role: 'admin' }],
-});
-const mockFreeSpaceResource = FakeFactory.OrganizationResource(1, 2, 'free_space');
 const mockProductRatePlan = FakeFactory.Plan();
 const mockProductRatePlan2 = FakeFactory.Plan();
+
+jest.mock('../../utils/canCreateSpace', () => ({
+  canUserCreatePaidSpace: jest.fn(),
+  canOrgCreateFreeSpace: jest.fn(),
+}));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 
 describe('SpacePlanSelectionStep', () => {
   beforeEach(() => {
     setUser(mockOrgOwner);
+    canUserCreatePaidSpace.mockReturnValue(true);
+    canOrgCreateFreeSpace.mockReturnValue(true);
   });
 
   it('should show a heading', async () => {
@@ -59,9 +63,8 @@ describe('SpacePlanSelectionStep', () => {
     expect(screen.getByTestId('legacy-space-plan-warning')).toBeVisible();
   });
 
-  it('should disable the paid space cards if the user is not an org owner', async () => {
-    setUser(mockOrgAdmin);
-
+  it('should disable the paid space cards if the user cannot create paid spaces', async () => {
+    canUserCreatePaidSpace.mockReturnValue(false);
     await build();
 
     const spaceCards = screen.getAllByTestId('space-card');
@@ -71,9 +74,8 @@ describe('SpacePlanSelectionStep', () => {
     }
   });
 
-  it('should show the payment details note if the user is not an org owner', async () => {
-    setUser(mockOrgAdmin);
-
+  it('should show the payment details note if the user cannot create paid spaces', async () => {
+    canUserCreatePaidSpace.mockReturnValue(false);
     await build();
 
     expect(screen.getByTestId('payment-details-required')).toBeVisible();
@@ -138,9 +140,8 @@ describe('SpacePlanSelectionStep', () => {
   });
 
   it('should disable the community plan button if there are no more free spaces available', async () => {
-    await build(null, {
-      freeSpaceResource: FakeFactory.OrganizationResource(2, 2, 'free_space'),
-    });
+    canOrgCreateFreeSpace.mockReturnValue(false);
+    await build();
 
     const communitySelectButton = screen.getByTestId('space-selection-community-select-button');
 
@@ -169,7 +170,6 @@ async function build(customProps, customState) {
     SpacePlanSelectionStep,
     {
       organization: mockOrganization,
-      freeSpaceResource: mockFreeSpaceResource,
       spaceRatePlans: [mockProductRatePlan, mockProductRatePlan2],
       sessionId: 'random_id',
       ...customState,

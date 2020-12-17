@@ -15,7 +15,7 @@ import {
   fetchPlatformPurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { getOrganizationMembership, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getOrganizationMembership, isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
@@ -52,6 +52,7 @@ jest.mock('../utils/transformSpaceRatePlans', () => ({
 
 jest.mock('services/OrganizationRoles', () => ({
   getOrganizationMembership: jest.fn(),
+  isOwner: jest.fn(),
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
@@ -103,6 +104,7 @@ describe('SpacePurchaseRoute', () => {
     getSpaceRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
+    isOwner.mockReturnValue(true);
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
     getSubscriptionPlans.mockReturnValue({ items: [] });

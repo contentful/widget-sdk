@@ -101,14 +101,14 @@ export const ProductCard = ({
   loading = false,
   disabled = false,
   selected = false,
-  showTooltip = false,
   content,
+  tooltipText = '',
   isNew = false,
   cardType = 'space',
   testId = 'product-card',
 }) => {
   return (
-    <ProductCardTooltip enabled={showTooltip}>
+    <Tooltip testId="plan-card-tooltip" place="top" content={tooltipText}>
       <Card
         className={cx(styles.card, {
           [styles.spacePlan]: cardType === 'space',
@@ -174,7 +174,7 @@ export const ProductCard = ({
           </div>
         )}
       </Card>
-    </ProductCardTooltip>
+    </Tooltip>
   );
 };
 
@@ -184,7 +184,6 @@ ProductCard.propTypes = {
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
   selected: PropTypes.bool,
-  showTooltip: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
@@ -193,18 +192,5 @@ ProductCard.propTypes = {
     limits: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   testId: PropTypes.string,
-};
-
-function ProductCardTooltip({ children, enabled }) {
-  return (
-    <Tooltip
-      testId="plan-card-tooltip"
-      place="top"
-      content={enabled ? 'You must have a paid space to purchase Compose + Launch' : ''}>
-      {children}
-    </Tooltip>
-  );
-}
-ProductCardTooltip.propTypes = {
-  enabled: PropTypes.bool,
+  tooltipText: PropTypes.string,
 };
