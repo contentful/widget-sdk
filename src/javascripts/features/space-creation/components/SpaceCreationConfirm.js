@@ -46,22 +46,19 @@ export function SpaceCreationConfirm({ onPrev, onNext, inProgress }) {
             <Subheading>{`${spaceName} (${selectedPlan.name})`}</Subheading>
           </Typography>
           <SpacePlanResourceList plan={selectedPlan} />
-          <Flex justifyContent="space-between" alignItems="center" marginTop="spacingXl">
-            <Button
-              buttonType="muted"
-              onClick={onPrev}
-              disabled={inProgress}
-              icon="ChevronLeft"
-              testId="go-back-btn">
-              Go back
+          <Flex justifyContent="flex-end" alignItems="center" marginTop="spacingL">
+            <Button buttonType="muted" onClick={onPrev} disabled={inProgress} testId="go-back-btn">
+              Back
             </Button>
-            <Button
-              buttonType="positive"
-              onClick={onNext}
-              loading={inProgress}
-              testId="confirm-btn">
-              Confim and create
-            </Button>
+            <Flex marginLeft="spacingM">
+              <Button
+                buttonType="positive"
+                onClick={onNext}
+                loading={inProgress}
+                testId="confirm-btn">
+                Confim and create
+              </Button>
+            </Flex>
           </Flex>
         </Card>
       </section>

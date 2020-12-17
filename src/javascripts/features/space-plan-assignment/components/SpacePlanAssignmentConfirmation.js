@@ -97,13 +97,8 @@ export function SpacePlanAssignmentConfirmation({
           </Grid>
         </Card>
         <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-          <Button
-            buttonType="muted"
-            onClick={onPrev}
-            disabled={inProgress}
-            icon="ChevronLeft"
-            testId="go-back-btn">
-            Go back
+          <Button buttonType="muted" onClick={onPrev} disabled={inProgress} testId="go-back-btn">
+            Back
           </Button>
           <Button buttonType="positive" onClick={onNext} loading={inProgress} testId="confirm-btn">
             Confim and change

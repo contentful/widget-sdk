@@ -11,7 +11,7 @@ import {
   TextField,
   Form,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import TemplateSelector from 'app/SpaceWizards/shared/TemplateSelector';
@@ -30,13 +30,6 @@ const styles = {
   }),
   cardTitle: css({
     marginBottom: tokens.spacingL,
-  }),
-  buttonsContainer: css({
-    display: 'flex',
-    justifyContent: 'flex-end',
-    '& button:last-child': {
-      marginLeft: tokens.spacingM,
-    },
   }),
   sectionHeading: css({
     marginBottom: tokens.spacingL,
@@ -96,17 +89,19 @@ export const SpaceDetailsSetupStep = ({ onBack, onSubmit }) => {
               selectedTemplate={selectedTemplate}
             />
 
-            <div className={styles.buttonsContainer}>
+            <Flex justifyContent="flex-end" alignItems="center">
               <Button onClick={onBack} testId="navigate-back" buttonType="muted">
                 Back
               </Button>
-              <Button
-                onClick={onSubmit}
-                disabled={spaceName === ''}
-                testId="next-step-new-details-page">
-                Continue
-              </Button>
-            </div>
+              <Flex marginLeft="spacingM">
+                <Button
+                  onClick={onSubmit}
+                  disabled={spaceName === ''}
+                  testId="next-step-new-details-page">
+                  Continue
+                </Button>
+              </Flex>
+            </Flex>
           </Form>
         </Card>
       </Grid>

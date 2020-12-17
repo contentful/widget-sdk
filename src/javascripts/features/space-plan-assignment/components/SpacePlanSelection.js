@@ -5,6 +5,7 @@ import {
   Plan as PlanPropType,
   Resource as ResourcePropType,
 } from 'app/OrganizationSettings/PropTypes';
+import { salesUrl } from 'Config';
 import {
   Typography,
   Heading,
@@ -12,6 +13,7 @@ import {
   List,
   ListItem,
   Subheading,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
@@ -21,6 +23,7 @@ import { SpacePlanCard } from './SpacePlanCard';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import * as Intercom from 'services/intercom';
 
 export function SpacePlanSelection({
   plans,
@@ -41,6 +44,15 @@ export function SpacePlanSelection({
   );
   const orderedPlanKeys = orderPlanKeys(groupedPlans, defaultRatePlanKeys);
   const freePlanCount = freeSpaceResource?.limits?.maximum - freeSpaceResource?.usage;
+
+  const handleGetInTouchClick = () => {
+    // TODO add tracking
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      window.open(salesUrl);
+    }
+  };
 
   const styles = {
     subheading: css({
@@ -101,28 +113,36 @@ export function SpacePlanSelection({
           );
         })}
       </List>
-      <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-        <StateLink
-          testId="go-back-btn"
-          component={Button}
-          buttonType="muted"
-          path={'^'}
-          icon="ChevronLeft"
-          trackingEvent={'space_assignment:back'}
-          trackParams={{
-            space_id: space?.sys.id,
-            // TODO change flow id for create
-            flow: 'assing_plan_to_space',
-          }}>
-          Go back
-        </StateLink>
-        <Button
-          buttonType="primary"
-          onClick={onNext}
-          testId="continue-btn"
-          disabled={!selectedPlan}>
-          Continue
-        </Button>
+      <Flex justifyContent="space-between" alignItems="center">
+        {isCreationFlow && (
+          <TextLink onClick={handleGetInTouchClick}>
+            Get in touch if you need something more
+          </TextLink>
+        )}
+        <Flex justifyContent="flex-end" alignItems="center">
+          <StateLink
+            testId="go-back-btn"
+            component={Button}
+            buttonType="muted"
+            path={'^'}
+            trackingEvent={'space_assignment:back'}
+            trackParams={{
+              space_id: space?.sys.id,
+              // TODO change flow id for create
+              flow: 'assing_plan_to_space',
+            }}>
+            Back
+          </StateLink>
+          <Flex marginLeft="spacingM">
+            <Button
+              buttonType="primary"
+              onClick={onNext}
+              testId="continue-btn"
+              disabled={!selectedPlan}>
+              Continue
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
     </div>
   );
