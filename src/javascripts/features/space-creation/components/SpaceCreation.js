@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
@@ -6,28 +6,20 @@ import { Breadcrumbs } from 'features/breadcrumbs';
 import { SpacePlanStep } from './SpacePlanStep';
 import { SpaceCreationConfirm } from './SpaceCreationConfirm';
 import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
-import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { useAsync } from 'core/hooks/useAsync';
-
-const CREATE_SPACE_STEPS = [
-  { text: '1.Choose space type', isActive: true },
-  { text: '2.Enter space details', isActive: false },
-  { text: '3.Confirm', isActive: false },
-];
+import { SpaceCreationState } from '../context';
 
 export const SpaceCreation = ({ orgId }) => {
+  const {
+    state: { selectedPlan },
+  } = useContext(SpaceCreationState);
+
+  const CREATE_SPACE_STEPS = [
+    { text: '1.Choose space type', isActive: selectedPlan ? false : true },
+    { text: '2.Enter space details', isActive: selectedPlan ? true : false },
+    { text: '3.Confirm', isActive: false },
+  ];
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
   const currentStep = steps.find((item) => item.isActive);
-
-  const getTemplates = useCallback(async () => {
-    const [templatesList] = await Promise.all([getTemplatesList()]);
-
-    return {
-      templatesList,
-    };
-  }, []);
-
-  const { data } = useAsync(getTemplates);
 
   const navigateToStep = (newStep) => {
     const updatedSteps = steps.map((step) => {
@@ -73,11 +65,7 @@ export const SpaceCreation = ({ orgId }) => {
             <SpacePlanStep orgId={orgId} onNext={navigateToNextStep} />
           )}
           {steps.indexOf(currentStep) === 1 && (
-            <SpaceDetailsSetupStep
-              onBack={navigateToPreviousStep}
-              onSubmit={navigateToNextStep}
-              templatesList={data.templatesList}
-            />
+            <SpaceDetailsSetupStep onBack={navigateToPreviousStep} onSubmit={navigateToNextStep} />
           )}
           {steps.indexOf(currentStep) === 2 && (
             <SpaceCreationConfirm onPrev={navigateToPreviousStep} onNext={submit} />

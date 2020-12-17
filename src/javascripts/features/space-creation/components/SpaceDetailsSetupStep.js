@@ -44,9 +44,9 @@ const styles = {
   }),
 };
 
-export const SpaceDetailsSetupStep = ({ onBack, onSubmit, templatesList }) => {
+export const SpaceDetailsSetupStep = ({ onBack, onSubmit }) => {
   const {
-    state: { spaceName, selectedTemplate },
+    state: { spaceName, selectedTemplate, templatesList },
     dispatch,
   } = useContext(SpaceCreationState);
 
@@ -117,5 +117,4 @@ export const SpaceDetailsSetupStep = ({ onBack, onSubmit, templatesList }) => {
 SpaceDetailsSetupStep.propTypes = {
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  templatesList: PropTypes.array,
 };

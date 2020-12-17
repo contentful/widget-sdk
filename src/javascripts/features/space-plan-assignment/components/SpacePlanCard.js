@@ -80,7 +80,7 @@ export function SpacePlanCard({
       testId={`space-plan-card-${index}`}
       padding="large"
       className={cn(styles.cardItem, {
-        [styles.cardItemActive]: plan === selectedPlan,
+        [styles.cardItemActive]: plan.sys.id === selectedPlan?.sys.id,
       })}>
       <Flex
         htmlTag="label"
@@ -92,7 +92,7 @@ export function SpacePlanCard({
         })}>
         <RadioButton
           disabled={isDisabled}
-          checked={plan === selectedPlan}
+          checked={plan.sys.id === selectedPlan?.sys.id}
           onChange={() => onPlanSelected(plan)}
           labelText={plan.name}
           className={styles.radioButtonLarge}
