@@ -1,16 +1,19 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench } from '@contentful/forma-36-react-components';
+import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { SpacePlanStep } from './SpacePlanStep';
 import { SpaceCreationConfirm } from './SpaceCreationConfirm';
 import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
+import { spaceCreation, createSpaceWithTemplate } from '../services/SpaceCreationService';
 import { SpaceCreationState } from '../context';
+import * as Navigator from 'states/Navigator';
+import { logError } from 'services/logger';
 
 export const SpaceCreation = ({ orgId }) => {
   const {
-    state: { selectedPlan },
+    state: { selectedPlan, spaceName, selectedTemplate },
   } = useContext(SpaceCreationState);
 
   const CREATE_SPACE_STEPS = [
@@ -19,6 +22,7 @@ export const SpaceCreation = ({ orgId }) => {
     { text: '3.Confirm', isActive: false },
   ];
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
+  const [inProgress, setInProgress] = useState(false);
   const currentStep = steps.find((item) => item.isActive);
 
   const navigateToStep = (newStep) => {
@@ -50,7 +54,22 @@ export const SpaceCreation = ({ orgId }) => {
     }
   };
 
-  const submit = () => {};
+  const submit = async () => {
+    setInProgress(true);
+    try {
+      if (selectedTemplate !== null) {
+        await createSpaceWithTemplate({ orgId, spaceName, selectedPlan, selectedTemplate });
+      } else {
+        await spaceCreation(orgId, spaceName, selectedPlan);
+      }
+      Navigator.go({ path: ['account', 'organizations', 'subscription_new', 'overview'] });
+      Notification.success(`${spaceName} was created successfully`);
+    } catch (error) {
+      Notification.error(`${spaceName} could not be created`);
+      logError('Could not create space', { error });
+    }
+    setInProgress(false);
+  };
 
   return (
     <Workbench>
@@ -68,7 +87,11 @@ export const SpaceCreation = ({ orgId }) => {
             <SpaceDetailsSetupStep onBack={navigateToPreviousStep} onSubmit={navigateToNextStep} />
           )}
           {steps.indexOf(currentStep) === 2 && (
-            <SpaceCreationConfirm onPrev={navigateToPreviousStep} onNext={submit} />
+            <SpaceCreationConfirm
+              onPrev={navigateToPreviousStep}
+              onNext={submit}
+              inProgress={inProgress}
+            />
           )}
         </Grid>
       </Workbench.Content>

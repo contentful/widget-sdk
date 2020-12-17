@@ -4,3 +4,4 @@ export {
   isSpacePurchaseFlowAllowed,
   isSpacePurchaseFlowAllowedForChange,
 } from './utils/isSpacePurchaseFlowAllowed';
+export { createTemplate } from './utils/spaceCreation';

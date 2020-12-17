@@ -22,7 +22,9 @@ function OrgSpacesHeader({
       <Paragraph className="nav-sidepanel__spaces-header-heading">Spaces</Paragraph>
       {canCreateSpaceInCurrOrg ? (
         isSpaceCreateForSpacePlanEnabled ? (
-          <StateLink component={TextLink} path=".space_create">
+          <StateLink
+            component={TextLink}
+            path="account.organizations.subscription_new.overview.space_create">
             + Create space
           </StateLink>
         ) : (
