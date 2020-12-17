@@ -3,13 +3,15 @@ import * as K from 'core/utils/kefir';
 import * as policyChecker from './PolicyChecker';
 import * as cache from './ResponseCache';
 import { create as createGKPermissionChecker } from './GKPermissionChecker';
-import resetEnforcements from './utils/resetEnforcements';
 import { toType, getContentTypeIdFor, isAuthor, shouldPerformNewUsageCheck } from './Utils';
 import { capitalize, capitalizeFirst } from 'utils/StringUtils';
 import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 import * as logger from 'services/logger';
-import { showPersistentNotification } from 'components/shared/persistent-notification/service';
+import {
+  showPersistentNotification,
+  hidePersistentNotification,
+} from 'components/shared/persistent-notification/service';
 import { isTrialSpaceType } from 'features/trials';
 
 /**
@@ -220,7 +222,7 @@ function setContext(context) {
   const hasReasonsDenied = (value) => value.reasons && value.reasons.length;
   const denied = chain(responses).values().flatMap(values).filter(hasReasonsDenied).value();
 
-  resetEnforcements();
+  hidePersistentNotification();
 
   if (denied.length) {
     // show the blue notification bar if space has reached a limit

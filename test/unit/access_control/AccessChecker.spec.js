@@ -8,7 +8,7 @@ describe('Access Checker', () => {
   let enforcements, OrganizationRoles, TokenStore, ac, changeSpace;
   let getResStub,
     reasonsDeniedStub,
-    resetEnforcements,
+    hidePersistentNotification,
     mockSpace,
     mockSpaceAuthContext,
     mockOrgEndpoint,
@@ -58,7 +58,7 @@ describe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = mockSpaceEndpoint = feature = resetEnforcements = null;
+    enforcements = OrganizationRoles = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = mockSpaceEndpoint = feature = null;
   });
 
   beforeEach(async function () {
@@ -73,7 +73,7 @@ describe('Access Checker', () => {
       user$: K.createMockProperty(),
     };
 
-    resetEnforcements = sinon.stub();
+    hidePersistentNotification = sinon.stub();
     getResStub = sinon.stub().returns(false);
     getSpaceFeature = sinon.stub();
     isTrialSpaceType = sinon.stub().returns(false);
@@ -97,8 +97,9 @@ describe('Access Checker', () => {
     this.system.set('services/logger', {
       logError: this.stubs.logError,
     });
-    this.system.set('access_control/AccessChecker/utils/resetEnforcements', {
-      default: resetEnforcements,
+    this.system.set('components/shared/persistent-notification/service', {
+      hidePersistentNotification,
+      showPersistentNotification: () => {},
     });
     this.system.set('access_control/Enforcements', {
       determineEnforcement: sinon.stub().returns(undefined),
@@ -238,7 +239,7 @@ describe('Access Checker', () => {
       });
 
       it('should reset the persistent notification', () => {
-        sinon.assert.called(resetEnforcements);
+        sinon.assert.called(hidePersistentNotification);
       });
     });
 
