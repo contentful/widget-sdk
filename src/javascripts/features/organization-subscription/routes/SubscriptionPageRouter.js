@@ -15,7 +15,6 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
-import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useAsync } from 'core/hooks';
@@ -101,14 +100,6 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plans, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const isOrgCreatedBeforeV2Pricing = await getVariation(FLAGS.PAYING_PREV_V2_ORG, {
-    organizationId,
-  });
-
-  // We only want to show this support card for self-service on-demand users who originally had access
-  // to these types of spaces and have since been migrated to the community plan.
-  const showMicroSmallSupportCard = isSelfServicePlan(basePlan) && isOrgCreatedBeforeV2Pricing;
-
   setSpacePlans(spacePlans);
   setGrandTotal(
     calculateTotalPrice({
@@ -123,7 +114,6 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     numMemberships,
     organization,
     productRatePlans,
-    showMicroSmallSupportCard,
     newSpacePurchaseEnabled,
   };
 };

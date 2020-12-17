@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import * as trackCTA from 'analytics/trackCTA';
 import * as fake from 'test/helpers/fakeFactory';
 
 import { SpacePlans } from './SpacePlans';
@@ -51,8 +50,6 @@ const mockSpaceUsage = {
     },
   },
 };
-
-const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('utils/SubscriptionUtils', () => ({
   calculatePlansCost: jest.fn().mockReturnValue(123),
@@ -152,14 +149,6 @@ describe('Space Plan', () => {
       );
     });
 
-    it('should not render a support card when showMicroSmallSupportCard is false', async () => {
-      build();
-
-      await waitFor(() =>
-        expect(screen.queryByTestId('subscription-page.support-request-card')).toBeNull()
-      );
-    });
-
     it('should render a help icon and tooltip when anySpacesInaccessible is true', async () => {
       build({ anySpacesInaccessible: true });
 
@@ -171,23 +160,6 @@ describe('Space Plan', () => {
       fireEvent.mouseEnter(helpIcon);
 
       await waitFor(() => expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible());
-    });
-
-    it('should fire an event when a user clicks on the link to support', async () => {
-      build({ showMicroSmallSupportCard: true });
-
-      expect(screen.getByTestId('subscription-page.support-request-card')).toBeVisible();
-
-      userEvent.click(screen.getByTestId('subscription-page.support-request-link'));
-
-      await waitFor(() =>
-        expect(trackTargetedCTAClick).toBeCalledWith(
-          trackCTA.CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT,
-          {
-            organizationId: '123',
-          }
-        )
-      );
     });
 
     it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
