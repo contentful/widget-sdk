@@ -6,15 +6,29 @@ import mitt from 'mitt';
 
 const SLIDES_BELOW_QS = 'previousEntries';
 
+let notify = true;
+
 export const slideInStackEmitter = mitt();
 
-export const onSlideInNavigation = (fn) => {
+export const SlideEventTypes = {
+  SLIDE_LEVEL_CHANGED: 'slideLevelChanged',
+  PARAMS_CHANGED: 'paramsChanged',
+};
+
+export const onSlideLevelChanged = (fn) => {
   const funcWrapper = ({ newSlideLevel, oldSlideLevel }) => {
     fn({ newSlideLevel, oldSlideLevel });
   };
-  slideInStackEmitter.on('changed', funcWrapper);
+  slideInStackEmitter.on(SlideEventTypes.SLIDE_LEVEL_CHANGED, funcWrapper);
   return () => {
-    slideInStackEmitter.off('changed', funcWrapper);
+    slideInStackEmitter.off(SlideEventTypes.SLIDE_LEVEL_CHANGED, funcWrapper);
+  };
+};
+
+export const onSlideStateChanged = (fn) => {
+  slideInStackEmitter.on(SlideEventTypes.PARAMS_CHANGED, fn);
+  return () => {
+    slideInStackEmitter.off(SlideEventTypes.PARAMS_CHANGED, fn);
   };
 };
 
@@ -31,13 +45,12 @@ export const getSlideAsString = slideHelper.toString;
  * duplicates as the same entity can not be displayed twice. An asset can only be
  * the top slide (last array value).
  *
+ * @param {object} state = getModule('$state')
  * @returns {Slide[]} Entity with "id" and "type" properties.
  */
-export function getSlideInEntities() {
-  const $state = getModule('$state');
-
-  const slidesBelow = deserializeQS();
-  const topSlide = slideHelper.newFromStateParams($state.params);
+export function getSlideInEntities(params = getModule('$state').params) {
+  const slidesBelow = deserializeQS(params[SLIDES_BELOW_QS]);
+  const topSlide = slideHelper.newFromStateParams(params);
   return uniqWith([...slidesBelow, topSlide], isEqual).filter((v) => !!v);
 }
 
@@ -59,15 +72,20 @@ export function goToSlideInEntity(slide) {
   );
   const reducedSlides = slides.slice(0, firstTargetSlideIndex);
   const slidesBelowQS = reducedSlides.map(slideHelper.toString).join(',');
-  $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS }));
+
+  const [path, params] = slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS });
+  if ($state.notify === false) {
+    notify = $state.notify;
+  }
+  $state.go(path, params, { notify });
 
   const result = {
     newSlideLevel: firstTargetSlideIndex,
     oldSlideLevel: currentSlides.length - 1,
   };
 
-  slideInStackEmitter.emit('changed', result);
-
+  slideInStackEmitter.emit(SlideEventTypes.SLIDE_LEVEL_CHANGED, result);
+  slideInStackEmitter.emit(SlideEventTypes.PARAMS_CHANGED, params);
   return result;
 }
 
@@ -94,9 +112,13 @@ export function goToPreviousSlideOrExit(eventLabel, onExit = null) {
   }
 }
 
-function deserializeQS() {
+function getSlidesBelowFromQS() {
   const params = new URLSearchParams(window.location.search);
-  const serializedEntities = (params.get(SLIDES_BELOW_QS) ?? '')
+  return params.get(SLIDES_BELOW_QS) ?? '';
+}
+
+function deserializeQS(slidesBelowQS = getSlidesBelowFromQS()) {
+  const serializedEntities = slidesBelowQS
     .split(',')
     .filter((v, i, self) => v !== '' && self.indexOf(v) === i);
   return serializedEntities.map((id) => slideHelper.newFromQS(id));

@@ -14,6 +14,7 @@ export interface LocaleData {
 
 export interface Preferences {
   showDisabledFields?: boolean;
+  hasInitialFocus?: boolean;
 }
 
 export function createEditorApi({

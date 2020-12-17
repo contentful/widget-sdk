@@ -14,8 +14,9 @@ import {
   useEmitter,
 } from '../entity_editor/useEditorHooks';
 
-export const EntryEditor = ({ getViewProps, currentSlideLevel, fieldController, fields }) => {
-  const viewProps = getViewProps();
+export const EntryEditor = (props) => {
+  // @TODO remove getViewProps() as soon as feature flag * is removed
+  const { viewProps = props.getViewProps(), fieldController, fields, currentSlideLevel } = props;
   const { editorData, trackLoadEvent } = viewProps;
 
   const emitter = useEmitter();
@@ -85,7 +86,8 @@ export const EntryEditor = ({ getViewProps, currentSlideLevel, fieldController, 
 };
 
 EntryEditor.propTypes = {
-  getViewProps: PropTypes.func.isRequired,
+  viewProps: PropTypes.object,
+  getViewProps: PropTypes.func,
   currentSlideLevel: PropTypes.number.isRequired,
   fieldController: PropTypes.object,
   fields: PropTypes.object,

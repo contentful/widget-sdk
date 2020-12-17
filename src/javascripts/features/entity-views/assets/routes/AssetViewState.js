@@ -1,5 +1,4 @@
-import createEntityPageController from 'app/entity_editor/EntityPageController';
-import entityPageTemplate from 'app/entity_editor/entity_page.html';
+import { assetDetail } from 'app/entity_editor/cfSlideInEditor';
 import { AssetView } from '../AssetView';
 
 const list = {
@@ -19,17 +18,9 @@ const list = {
   component: AssetView,
 };
 
-const detail = {
-  name: 'detail',
-  url: '/:assetId?previousEntries&tab',
-  params: { addToContext: true },
-  template: entityPageTemplate,
-  controller: ['$scope', '$state', createEntityPageController],
-};
-
 export const assetViewState = {
   name: 'assets',
   url: '/assets',
   abstract: true,
-  children: [list, detail],
+  children: [list, assetDetail()],
 };

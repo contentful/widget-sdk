@@ -1,7 +1,7 @@
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { NavigatorAPI, NavigatorPageResponse } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
-import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
+import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import * as Navigator from 'states/Navigator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { find } from 'lodash';
@@ -264,6 +264,6 @@ export function createNavigatorApi({
     openBulkEditor: (entryId, { fieldId, locale, index }) => {
       return navigateToBulkEditor({ entryId, fieldId, locale, index });
     },
-    onSlideInNavigation,
+    onSlideInNavigation: onSlideLevelChanged,
   };
 }

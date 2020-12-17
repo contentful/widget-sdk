@@ -74,7 +74,8 @@ const scrollToFocused = (ref) => {
   }
 };
 
-export const BulkEditor = ({ getReferenceContext, trackLoadEvent }) => {
+export const BulkEditor = (props) => {
+  const { referenceContext = props.getReferenceContext(), trackLoadEvent } = props;
   const spaceContext = useMemo(() => getModule('spaceContext'), []);
 
   const {
@@ -86,7 +87,7 @@ export const BulkEditor = ({ getReferenceContext, trackLoadEvent }) => {
     close,
     remove,
     add,
-  } = getReferenceContext();
+  } = referenceContext;
 
   const editorsLoaded = useRef(0);
 
@@ -199,6 +200,7 @@ export const BulkEditor = ({ getReferenceContext, trackLoadEvent }) => {
 };
 
 BulkEditor.propTypes = {
-  getReferenceContext: PropTypes.func.isRequired,
+  referenceContext: PropTypes.object,
+  getReferenceContext: PropTypes.func,
   trackLoadEvent: PropTypes.func,
 };

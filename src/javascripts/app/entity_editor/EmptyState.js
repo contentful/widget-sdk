@@ -58,7 +58,9 @@ export const EmptyState = ({ slideState }) => {
                 Error loading {lowerEntityType} with id&#32;
                 <code>{slide.type === BULK_EDITOR ? slide.path[0] : slide.id}</code>
               </div>
-              <div className={styles.emptyStateDescription}>{loadingError.body.message}</div>
+              <div className={styles.emptyStateDescription}>
+                {loadingError.body?.message || loadingError.message}
+              </div>
             </Fragment>
           )}
         </div>
@@ -69,13 +71,19 @@ export const EmptyState = ({ slideState }) => {
 
 EmptyState.propTypes = {
   slideState: PropTypes.shape({
-    slide: PropTypes.shape({
-      type: PropTypes.oneOf([ASSET, ENTRY, BULK_EDITOR]).isRequired,
-      path: PropTypes.arrayOf(PropTypes.number),
-      id: PropTypes.string,
-    }).isRequired,
+    slide: PropTypes.oneOfType([
+      PropTypes.shape({
+        type: PropTypes.oneOf([ASSET, ENTRY]).isRequired,
+        id: PropTypes.string,
+      }),
+      PropTypes.shape({
+        type: PropTypes.oneOf([BULK_EDITOR]).isRequired,
+        path: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+      }),
+    ]).isRequired,
     loadingError: PropTypes.shape({
       statusCode: PropTypes.number,
+      message: PropTypes.string,
       body: PropTypes.shape({
         message: PropTypes.string,
       }),

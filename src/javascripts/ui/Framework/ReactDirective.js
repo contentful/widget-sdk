@@ -18,6 +18,7 @@ import { EmptyState } from 'app/entity_editor/EmptyState';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { EntryEditor } from 'app/entry_editor/EntryEditor';
 import { AssetEditor } from 'app/asset_editor/AssetEditor';
+import { SlideInEditor } from 'app/entity_editor/SlideInEditor/SlideInEditor';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container) {
@@ -227,6 +228,7 @@ function getModule(name) {
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
     'app/entity_editor/EmptyState': { default: EmptyState },
+    'app/entity_editor/SlideInEditor/SlideInEditor': { default: SlideInEditor },
   };
 
   return get(allowedModules, name, null);

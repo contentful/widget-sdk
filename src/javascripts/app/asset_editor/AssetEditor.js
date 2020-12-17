@@ -11,8 +11,9 @@ import {
   useEmitter,
 } from '../entity_editor/useEditorHooks';
 
-export const AssetEditor = ({ getViewProps, fieldController, fields }) => {
-  const viewProps = getViewProps();
+export const AssetEditor = (props) => {
+  // @TODO remove getViewProps() as soon as feature flag * is removed
+  const { viewProps = props.getViewProps(), fieldController, fields } = props;
   const { editorData } = viewProps;
 
   const [preferences] = useProxyState({ ...viewProps.preferences });
@@ -73,7 +74,8 @@ export const AssetEditor = ({ getViewProps, fieldController, fields }) => {
 };
 
 AssetEditor.propTypes = {
-  getViewProps: PropTypes.func.isRequired,
+  viewProps: PropTypes.object,
+  getViewProps: PropTypes.func,
   fieldController: PropTypes.object,
   fields: PropTypes.object,
 };

@@ -1,8 +1,6 @@
-import base from 'states/Base';
-import createEntityPageController from 'app/entity_editor/EntityPageController';
-import entityPageTemplate from 'app/entity_editor/entity_page.html';
 import snapshotsRoute from 'app/snapshots';
 import { EntryView } from '../EntryView';
+import { entryDetail } from 'app/entity_editor/cfSlideInEditor';
 
 const list = {
   name: 'list',
@@ -31,17 +29,6 @@ function entriesBaseState(withSnapshots) {
     name: 'entries',
     url: '/entries',
     abstract: true,
-    children: [list, detail(withSnapshots)],
+    children: [list, entryDetail(withSnapshots ? [snapshotsRoute] : [])],
   };
-}
-
-function detail(withSnapshots) {
-  return base({
-    name: 'detail',
-    url: '/:entryId?previousEntries&bulkEditor&tab',
-    children: withSnapshots ? [snapshotsRoute] : [],
-    params: { addToContext: true },
-    template: entityPageTemplate,
-    controller: ['$scope', '$state', createEntityPageController],
-  });
 }

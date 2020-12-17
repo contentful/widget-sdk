@@ -1,5 +1,5 @@
 import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
-import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
+import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import * as Navigator from 'states/Navigator';
 import * as entityCreator from 'components/app_container/entityCreator';
@@ -405,7 +405,7 @@ describe('createNavigatorApi', () => {
         const callback = jest.fn();
         const navigatorApi = buildApi();
         navigatorApi.onSlideInNavigation(callback);
-        expect(onSlideInNavigation).toHaveBeenCalledWith(callback);
+        expect(onSlideLevelChanged).toHaveBeenCalledWith(callback);
       });
     });
   });

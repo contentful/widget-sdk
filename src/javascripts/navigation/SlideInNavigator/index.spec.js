@@ -4,6 +4,7 @@ import $state from 'ng/$state';
 
 jest.mock('analytics/Analytics', () => ({}));
 jest.mock('ng/$state', () => ({ params: {}, go: jest.fn() }));
+jest.spyOn(window.history, 'pushState');
 
 describe('SlideInNavigator', () => {
   const { location } = window;
@@ -203,6 +204,7 @@ describe('SlideInNavigator', () => {
           assetId: 'asset-id',
           previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5',
         },
+        { notify: true },
       ]
     );
 
@@ -224,6 +226,7 @@ describe('SlideInNavigator', () => {
           previousEntries: 'entry-id-1',
           bulkEditor: null,
         },
+        { notify: true },
       ]
     );
   });

@@ -23,6 +23,7 @@ export const angularInitRun = [
     componentsAppContainerCfAppContainerDirectiveEs6();
 
     const modules = await Promise.all([
+      import(/* webpackMode: "eager" */ 'app/entity_editor/cfSlideInEditor'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/EntityField/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),

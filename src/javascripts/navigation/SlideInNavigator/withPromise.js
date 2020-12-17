@@ -1,4 +1,4 @@
-import { goToSlideInEntity, slideInStackEmitter } from './index';
+import { goToSlideInEntity, SlideEventTypes, slideInStackEmitter } from './index';
 
 export async function goToSlideInEntityWithPromise(slide) {
   return new Promise((resolve) => {
@@ -9,12 +9,12 @@ export async function goToSlideInEntityWithPromise(slide) {
 
     const onGoBack = (newState) => {
       if (newState.newSlideLevel === result.oldSlideLevel) {
-        slideInStackEmitter.off('changed', onGoBack);
+        slideInStackEmitter.off(SlideEventTypes.SLIDE_LEVEL_CHANGED, onGoBack);
         resolve(result);
       }
     };
 
-    slideInStackEmitter.on('changed', onGoBack);
+    slideInStackEmitter.on(SlideEventTypes.SLIDE_LEVEL_CHANGED, onGoBack);
 
     result = goToSlideInEntity(slide);
   });
