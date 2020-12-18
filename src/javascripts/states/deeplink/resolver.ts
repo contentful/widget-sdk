@@ -16,6 +16,7 @@ export enum LinkType {
   Subscription = 'subscription',
   Org = 'org',
   Apps = 'apps',
+  AppDefinition = 'app-definition',
   InstallExtension = 'install-extension',
   WebhookTemplate = 'webhook-template',
   Home = 'home',
@@ -74,6 +75,7 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.InstallExtension]: resolveInstallExtension,
   [LinkType.WebhookTemplate]: resolveWebhookTemplate,
   [LinkType.Apps]: resolveApps,
+  [LinkType.AppDefinition]: resolveAppDefinition,
   [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
@@ -297,6 +299,29 @@ async function resolveApps({ id, referrer }) {
       selectEnvironment: true,
     },
   };
+}
+
+async function resolveAppDefinition({ id, tab, referrer }) {
+  if (id) {
+    const { orgId } = await getOrg();
+    const params = tab ? { definitionId: id, orgId, tab } : { definitionId: id, orgId };
+    return {
+      path: ['account', 'organizations', 'apps', 'definitions'],
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+      params,
+    };
+  } else {
+    const { orgId } = await getOrg();
+    const params = tab ? { orgId, tab } : { orgId };
+    return {
+      path: ['account', 'organizations', 'apps', 'definitions'],
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+      params,
+      deeplinkOptions: {
+        selectApp: true,
+      },
+    };
+  }
 }
 
 function makeOrgScopedPathResolver({

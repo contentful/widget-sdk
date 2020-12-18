@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import {
   isInstallLink,
   isWebhookLink,
@@ -13,38 +11,7 @@ import {
 } from './ExtensibilityDeeplinks';
 import { Heading, Form, SelectField, Option, Button } from '@contentful/forma-36-react-components';
 import { useComponentState } from './DeeplinkSelectSpaceEnvState';
-
-const styles = {
-  root: css({
-    marginTop: tokens.spacing3Xl,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  }),
-  card: css({
-    width: '500px',
-    border: `1px solid ${tokens.colorElementMid}`,
-    boxShadow: tokens.boxShadowDefault,
-  }),
-  form: css({
-    paddingLeft: tokens.spacingL,
-    paddingRight: tokens.spacingL,
-  }),
-  title: css({
-    textAlign: 'center',
-    marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL,
-  }),
-  buttonsPanel: css({
-    display: 'inline',
-    marginTop: tokens.spacingL,
-  }),
-  button: css({
-    marginLeft: tokens.spacingS,
-    marginRight: tokens.spacingS,
-    width: 120,
-  }),
-};
+import { styles } from './styles';
 
 function getCardTitle({ selectEnvironment, link, id }) {
   if (isInstallLink(link, id)) {

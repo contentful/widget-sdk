@@ -299,6 +299,61 @@ describe('states/deeplink/resolver', () => {
     });
   });
 
+  describe('appDefinition', () => {
+    beforeEach(() => {
+      getOrg.mockResolvedValue({ orgId: 'some' });
+      checkOrgAccess.mockResolvedValue(true);
+    });
+
+    describe('when an id is provided', () => {
+      const id = 'my-app-id';
+      it('should redirect the user to the appDefinition management screen for the app id', async () => {
+        const result = await resolveLink(LinkType.AppDefinition, { id });
+        expect(result).toEqual({
+          path: ['account', 'organizations', 'apps', 'definitions'],
+          params: {
+            orgId: 'some',
+            definitionId: 'my-app-id',
+          },
+          referrer: 'deeplink',
+        });
+      });
+
+      it('should redirect the user to the correct appDefinition tab', async () => {
+        ['events', 'security'].forEach(async (tab) => {
+          const result = await resolveLink(LinkType.AppDefinition, { id, tab });
+          expect(result).toEqual({
+            path: ['account', 'organizations', 'apps', 'definitions'],
+            params: {
+              orgId: 'some',
+              definitionId: 'my-app-id',
+              tab,
+            },
+            referrer: 'deeplink',
+          });
+        });
+      });
+    });
+    describe('when no id is provided', () => {
+      it('should redirect the user to the correct app select screen', async () => {
+        ['events', 'security'].forEach(async (tab) => {
+          const result = await resolveLink(LinkType.AppDefinition, { tab });
+          expect(result).toEqual({
+            deeplinkOptions: {
+              selectApp: true,
+            },
+            path: ['account', 'organizations', 'apps', 'definitions'],
+            params: {
+              orgId: 'some',
+              tab,
+            },
+            referrer: 'deeplink',
+          });
+        });
+      });
+    });
+  });
+
   describe('#install-extension', () => {
     it('should redirect user to the install extension screen with the url in state params', async function () {
       const space = {

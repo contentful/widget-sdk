@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
 
 import StateRedirect from 'app/common/StateRedirect';
-import DeeplinkSelectSpaceEnv from './DeeplinkSelectSpaceEnv/DeeplinkSelectSpaceEnv';
+import DeeplinkSelectSpaceEnv from './DeeplinkSelect/DeeplinkSelectSpaceEnv';
+import DeeplinkSelectApp from './DeeplinkSelect/DeeplinkSelectApp';
 import {
   Heading,
   Paragraph,
@@ -56,6 +57,7 @@ const PageStatuses = {
   onboardingError: 'onboarding_error',
   notExistError: 'not_exist_error',
   selectSpaceEnv: 'select_space_env',
+  selectApp: 'select_app',
 };
 
 export function useDeeplinkPage({ searchParams }) {
@@ -69,9 +71,12 @@ export function useDeeplinkPage({ searchParams }) {
     if (!result.path) {
       setStatus(result.onboarding ? PageStatuses.onboardingError : PageStatuses.notExistError);
     } else {
-      if (result.deeplinkOptions) {
+      if (result.deeplinkOptions?.selectSpace || result.deeplinkOptions?.selectEnvironment) {
         setDeeplinkOptions(result.deeplinkOptions);
         setStatus(PageStatuses.selectSpaceEnv);
+      } else if (result.deeplinkOptions?.selectApp) {
+        setDeeplinkOptions(result.deeplinkOptions);
+        setStatus(PageStatuses.selectApp);
       }
       setRedirect({
         path: result.path.join('.'),
@@ -86,13 +91,14 @@ export function useDeeplinkPage({ searchParams }) {
   };
 
   const updateRedirectLink = useCallback(
-    ({ spaceId, environmentId }) => {
+    ({ spaceId, environmentId, definitionId }) => {
       setRedirect({
         ...redirect,
         params: {
           ...redirect.params,
           spaceId,
           environmentId,
+          definitionId,
         },
       });
       setStatus(PageStatuses.redirecting);
@@ -142,6 +148,17 @@ export default function DeeplinkPage(props) {
             testId="deeplink-onboarding-error"
             title="Unfortunately, we didn't find your onboarding space."
             subtitle={<StateLink path="home">Go to the main page.</StateLink>}
+          />
+        )}
+        {status === PageStatuses.selectApp && (
+          <DeeplinkSelectApp
+            redirect={redirect}
+            onCancel={() => {
+              abort();
+            }}
+            onContinue={(definitionId) => {
+              updateRedirectLink({ definitionId });
+            }}
           />
         )}
         {status === PageStatuses.selectSpaceEnv && (

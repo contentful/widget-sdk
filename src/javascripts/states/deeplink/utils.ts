@@ -10,7 +10,7 @@ import {
   getStoragePrefix,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
-import { fetchMarketplaceApps } from 'features/apps-core';
+import { fetchMarketplaceApps, getAppDefinitionLoader } from 'features/apps-core';
 
 function getUser(): Promise<User> {
   // user$ is a property which starts with `null`
@@ -95,6 +95,10 @@ export async function getAllEnviroments(spaceId) {
   const { environments } = await spaceEnvRepo.getAll();
 
   return environments;
+}
+
+export async function getOrgApps(orgId) {
+  return getAppDefinitionLoader(orgId).getAllForCurrentOrganization();
 }
 
 export async function getMarketplaceApps() {
