@@ -7,10 +7,12 @@ import { useAsync } from 'core/hooks';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Spinner } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
-import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { actions, SpaceCreationState } from '../context';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
+
+const DEFAULT_ROLE_SET = { roles: ['Editor'] };
 
 const initialFetch = (orgId, dispatch) => async () => {
   const canCreateSpaceWithPlan = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN, {
@@ -20,17 +22,24 @@ const initialFetch = (orgId, dispatch) => async () => {
   const planId = qs.planId;
 
   const endpoint = createOrganizationEndpoint(orgId);
-  const [spacePlans, templatesList] = await Promise.all([
+  const [spacePlans, ratePlans, templatesList] = await Promise.all([
     getSubscriptionPlans(endpoint, { plan_type: 'space' }),
+    getRatePlans(endpoint),
     getTemplatesList(),
   ]);
 
-  const selectedPlan = spacePlans.items.find((plan) => plan.sys.id === planId);
+  const selectedPlan = spacePlans.items.find((plan) => plan.sys.id === planId); // enhence plans with roleSet in order to display tooltip text for Roles
+  const enhancedPlan = {
+    ...selectedPlan,
+    roleSet:
+      ratePlans.find((ratePlan) => ratePlan.name === selectedPlan.name)?.roleSet ??
+      DEFAULT_ROLE_SET,
+  };
 
   dispatch({
     type: actions.SET_INITIAL_STATE,
     payload: {
-      selectedPlan,
+      selectedPlan: enhancedPlan,
       templatesList,
     },
   });
