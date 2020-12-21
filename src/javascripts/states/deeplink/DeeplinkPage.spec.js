@@ -28,12 +28,12 @@ describe('deeplink/DeeplinkPage', () => {
     const { getByText } = render(
       <DeeplinkPage
         href="https://app.contentful.com"
+        marketplaceApps={{}}
         searchParams={{
           link: 'some-link',
           param1: '1',
           param2: '2',
         }}
-        marketplaceApps={{}}
       />
     );
 
@@ -89,11 +89,11 @@ describe('deeplink/DeeplinkPage', () => {
     const { getByText, getByTestId } = render(
       <DeeplinkPage
         href="https://app.contentful.com"
+        marketplaceApps={{}}
         searchParams={{
           link: 'some-link',
           spaceId: 'deeplink-space-id',
         }}
-        marketplaceApps={{}}
       />
     );
 

@@ -3,7 +3,6 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
-
 import StateRedirect from 'app/common/StateRedirect';
 import DeeplinkSelectSpaceEnv from './DeeplinkSelect/DeeplinkSelectSpaceEnv';
 import DeeplinkSelectApp from './DeeplinkSelect/DeeplinkSelectApp';
@@ -119,9 +118,9 @@ export function useDeeplinkPage({ searchParams }) {
   };
 }
 
-export default function DeeplinkPage(props) {
+export default function DeeplinkPage({ searchParams, href, marketplaceApps }) {
   const { status, redirect, deeplinkOptions, updateRedirectLink, abort } = useDeeplinkPage({
-    searchParams: props.searchParams,
+    searchParams,
   });
 
   return (
@@ -164,9 +163,9 @@ export default function DeeplinkPage(props) {
         {status === PageStatuses.selectSpaceEnv && (
           <DeeplinkSelectSpaceEnv
             {...deeplinkOptions}
-            href={props.href}
-            searchParams={props.searchParams}
-            marketplaceApps={props.marketplaceApps}
+            href={href}
+            searchParams={searchParams}
+            marketplaceApps={marketplaceApps}
             onContinue={({ spaceId, environmentId }) => {
               updateRedirectLink({ spaceId, environmentId });
             }}

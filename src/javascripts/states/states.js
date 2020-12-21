@@ -1,9 +1,7 @@
 import accountState from './account';
 import spacesState from 'states/Spaces';
-import DeeplinkPage from 'states/deeplink/DeeplinkPage';
-import { getMarketplaceApps } from 'states/deeplink/utils';
+import { DeeplinkRouteContainer } from 'states/deeplink/DeeplinkRouteContainer';
 import userInvitationState from 'states/UserInvitationState';
-import { getQueryString, getLocationHref } from 'utils/location';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import ErrorPage from './ErrorPage';
 import { homeState } from 'features/home';
@@ -28,20 +26,7 @@ import { getModule } from 'core/NgRegistry';
 const deeplinkState = {
   name: 'deeplink',
   url: '/deeplink',
-  component: DeeplinkPage,
-  resolve: {
-    searchParams: [() => getQueryString()],
-    marketplaceApps: ['searchParams', ({ link }) => (link === 'apps' ? getMarketplaceApps() : {})],
-  },
-  mapInjectedToProps: [
-    'searchParams',
-    'marketplaceApps',
-    (searchParams, marketplaceApps) => ({
-      href: getLocationHref(),
-      searchParams,
-      marketplaceApps,
-    }),
-  ],
+  component: DeeplinkRouteContainer,
 };
 
 /**
