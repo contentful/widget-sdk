@@ -35,7 +35,10 @@ export function SpacePlanCard({
   onPlanSelected,
   freeSpaceResource,
 }) {
-  const isDisabled = spaceResources && !canPlanBeAssigned(plan, spaceResources);
+  let isDisabled = spaceResources && !canPlanBeAssigned(plan, spaceResources);
+  if (flowType === CREATION_FLOW_TYPE && isFreeProductPlan(plan)) {
+    isDisabled = planCount === 0;
+  }
   let planColor = tokens.colorBlueMid;
   if (plan.name === 'Large' || plan.name === 'Medium') {
     planColor = tokens.colorGreenLight;

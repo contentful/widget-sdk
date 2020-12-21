@@ -14,9 +14,11 @@ import {
   ListItem,
   Subheading,
   TextLink,
+  Note,
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
+import { Pluralized } from 'core/components/formatting';
 import { groupPlans, buildPlanKey, orderPlanKeys, ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
 import { SpacePlanCard } from './SpacePlanCard';
@@ -44,6 +46,8 @@ export function SpacePlanSelection({
   );
   const orderedPlanKeys = orderPlanKeys(groupedPlans, defaultRatePlanKeys);
   const freePlanCount = freeSpaceResource?.limits?.maximum - freeSpaceResource?.usage;
+  const hasOnlyFreePlan = isCreationFlow && plans.length === 1;
+  const isContinueBtnDisabled = !selectedPlan || (hasOnlyFreePlan && freePlanCount === 0);
 
   const handleGetInTouchClick = () => {
     // TODO add tracking
@@ -61,6 +65,7 @@ export function SpacePlanSelection({
       marginBottom: tokens.spacingXs,
     }),
     listItem: css({ listStyleType: 'none' }),
+    note: css({ marginBottom: tokens.spacingM }),
   };
 
   return (
@@ -76,7 +81,7 @@ export function SpacePlanSelection({
         )}
       </Typography>
       <List>
-        {isCreationFlow && (
+        {!hasOnlyFreePlan && (
           <Subheading className={styles.subheading}>
             Select from the ones you’re not using yet.
           </Subheading>
@@ -94,9 +99,18 @@ export function SpacePlanSelection({
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item" className={styles.listItem}>
               {isCreationFlow && isFree && (
-                <Subheading className={styles.subheading}>
-                  Test out new projects for 30 days, free of charge.
-                </Subheading>
+                <>
+                  <Subheading className={styles.subheading}>
+                    Test out new projects for 30 days, free of charge.
+                  </Subheading>
+                  {freePlanCount === 0 && (
+                    <Note testId="reached-limit-note" className={styles.note}>
+                      You’ve created{' '}
+                      <Pluralized text="Trial Space" count={freeSpaceResource?.limits?.maximum} />.
+                      Delete an existing one or talk to us if you need more.
+                    </Note>
+                  )}
+                </>
               )}
               <SpacePlanCard
                 index={index}
@@ -138,7 +152,7 @@ export function SpacePlanSelection({
               buttonType="primary"
               onClick={onNext}
               testId="continue-btn"
-              disabled={!selectedPlan}>
+              disabled={isContinueBtnDisabled}>
               Continue
             </Button>
           </Flex>
