@@ -119,7 +119,7 @@ export function SpacePlanSelection({
             Get in touch if you need something more
           </TextLink>
         )}
-        <Flex justifyContent="flex-end" alignItems="center">
+        <Flex justifyContent="flex-end" alignItems="center" flexGrow="1">
           <StateLink
             testId="go-back-btn"
             component={Button}

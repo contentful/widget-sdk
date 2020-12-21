@@ -96,13 +96,19 @@ export function SpacePlanAssignmentConfirmation({
             </div>
           </Grid>
         </Card>
-        <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
+        <Flex justifyContent="flex-end" alignItems="center" flexGrow="1" marginTop="spacingL">
           <Button buttonType="muted" onClick={onPrev} disabled={inProgress} testId="go-back-btn">
             Back
           </Button>
-          <Button buttonType="positive" onClick={onNext} loading={inProgress} testId="confirm-btn">
-            Confim and change
-          </Button>
+          <Flex marginLeft="spacingM">
+            <Button
+              buttonType="positive"
+              onClick={onNext}
+              loading={inProgress}
+              testId="confirm-btn">
+              Confim and change
+            </Button>
+          </Flex>
         </Flex>
       </section>
     </>

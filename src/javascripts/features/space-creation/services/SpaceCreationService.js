@@ -3,12 +3,13 @@ import client from 'services/client';
 import * as TokenStore from 'services/TokenStore';
 import { createTemplate } from 'features/space-purchase';
 import { Notification } from '@contentful/forma-36-react-components';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 
 export async function makeNewSpace(orgId, selectedPlan, spaceName) {
   const spaceData = {
     defaultLocale: 'en-US',
     name: spaceName,
-    spacePlanId: get(selectedPlan, 'sys.id'),
+    ...(!isFreeProductPlan(selectedPlan) && { spacePlanId: get(selectedPlan, 'sys.id') }),
   };
 
   const newSpace = await client.createSpace(spaceData, orgId);

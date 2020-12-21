@@ -28,13 +28,17 @@ const initialFetch = (orgId, dispatch) => async () => {
     getTemplatesList(),
   ]);
 
-  const selectedPlan = spacePlans.items.find((plan) => plan.sys.id === planId); // enhence plans with roleSet in order to display tooltip text for Roles
-  const enhancedPlan = {
-    ...selectedPlan,
-    roleSet:
-      ratePlans.find((ratePlan) => ratePlan.name === selectedPlan.name)?.roleSet ??
-      DEFAULT_ROLE_SET,
-  };
+  const selectedPlan = spacePlans.items.find((plan) => plan.sys.id === planId);
+  let enhancedPlan;
+  if (selectedPlan) {
+    // enhance selectedPlan with roleSet in order to display tooltip text for Roles
+    enhancedPlan = {
+      ...selectedPlan,
+      roleSet:
+        ratePlans.find((ratePlan) => ratePlan.name === selectedPlan.name)?.roleSet ??
+        DEFAULT_ROLE_SET,
+    };
+  }
 
   dispatch({
     type: actions.SET_INITIAL_STATE,
