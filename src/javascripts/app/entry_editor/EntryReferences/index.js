@@ -33,7 +33,7 @@ const styles = {
     marginRight: tokens.spacingM,
     marginBottom: tokens.spacingM,
   }),
-  tooComplexNote: css({
+  note: css({
     marginBottom: tokens.spacingM,
   }),
   actionsWrapper: css({
@@ -102,6 +102,24 @@ const selectStatusCheckboxList = [
 
 const REFERENCES_LIMIT = 1000;
 
+const SlicedResultSetNote = () => (
+  <Note noteType="warning" className={styles.note}>
+    We are currently unable to display all the references for this entry. This may mean that this
+    entry has either hit the current limit of more than {REFERENCES_LIMIT} references or it is too
+    complex to show. We are currently rolling out this feature and are actively working on improving
+    this.
+  </Note>
+);
+
+const TooComplexNote = () => (
+  <Note noteType="negative" className={styles.note}>
+    We are currently unable to display the references for this entry. This may mean that this entry
+    has hit the current limit of more than {REFERENCES_LIMIT} references or there is a temporary
+    system error. We are currently rolling out this feature and are actively working on improving
+    this.
+  </Note>
+);
+
 const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
   const [allReferencesSelected, setAllReferencesSelected] = useState(false);
   const [selectedStates, setSelectedStates] = useState([]);
@@ -112,6 +130,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     isTreeMaxDepthReached,
     initialReferencesAmount,
     referenceTreeKey,
+    isSliced,
     isTooComplex,
     selectedEntitiesMap,
     initialUnqiueReferencesAmount,
@@ -205,14 +224,9 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
               />
             </div>
           )}
-
+          {isSliced && !isTooComplex && <SlicedResultSetNote />}
           {isTooComplex ? (
-            <Note noteType="negative" className={styles.tooComplexNote}>
-              We are currently unable to display the references for this entry. This may mean that
-              this entry has hit the current limit of more than {REFERENCES_LIMIT} references or
-              there is a temporary system error. We are currently rolling out this feature and are
-              actively working on improving this.
-            </Note>
+            <TooComplexNote />
           ) : references.length ? (
             <ReferencesTree
               root={references[0]}

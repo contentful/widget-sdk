@@ -9,6 +9,7 @@ import {
   SET_ACTIONS_DISABLED,
   SET_INITIAL_REFERENCES_AMOUNT,
   SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
+  SET_IS_SLICED,
 } from './state/actions';
 
 import {
@@ -225,11 +226,12 @@ describe('ReferencesTree component', () => {
       </MockPovider>
     );
     expect(queryAllByTestId('validation-error')).toHaveLength(2);
-    expect(dispatchSpy).toHaveBeenCalledTimes(5);
+    expect(dispatchSpy).toHaveBeenCalledTimes(6);
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES_MAP, value: new Map() });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES, value: [] });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_ACTIONS_DISABLED, value: true });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_INITIAL_REFERENCES_AMOUNT, value: 3 });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_IS_SLICED, value: false });
     expect(dispatchSpy).toHaveBeenCalledWith({
       type: SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
       value: 0,

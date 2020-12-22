@@ -146,14 +146,15 @@ type ReferenceTreeMetadata = {
  * @param metadata - information, related to rendering or a state of rendered tree, like selection, maxLevel of rendering and etc
  */
 const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) => {
+  const MAX_REF_NODES = 100;
   const { maxLevel, areAllReferencesSelected, selectedStates } = metadata;
   const visitedEntities = { '0': [] } as Record<string, string[]>;
 
   let circularReferenceCount = 0;
 
-  const getReferencesInNodes = (treeNodes: TreeNode[]): TreeNode[] => {
+  const getReferencesInNodes = (treeNodes: TreeNode[]): [TreeNode[], boolean] => {
     if (!treeNodes.length) {
-      return [];
+      return [[], false];
     }
 
     const discoveredReferenceNodes = [] as TreeNode[];
@@ -179,13 +180,19 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
       const referenceNodes = traverse(treeNode, visitedEntities);
       discoveredReferenceNodes.push(...referenceNodes.filter((node) => node && node.entity));
     }
-    return discoveredReferenceNodes;
+
+    if (discoveredReferenceNodes.length > MAX_REF_NODES) {
+      return [discoveredReferenceNodes.slice(0, MAX_REF_NODES), true];
+    }
+
+    return [discoveredReferenceNodes, false];
   };
 
   const selectionMap = new Map<string, Entity>();
   const tree = createTree(root);
   const entitiesPerLevel = [] as number[];
   let currentLevelTreeNodes = [tree.root];
+  let someLevelIsSliced = false;
 
   const maybeMarkAsSelected = (treeNode: TreeNode) => {
     const { entity, type, isResolved } = treeNode;
@@ -209,7 +216,8 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
   maybeMarkAsSelected(tree.root);
 
   do {
-    const nextLevelTreeNodes = getReferencesInNodes(currentLevelTreeNodes);
+    const [nextLevelTreeNodes, isSliced] = getReferencesInNodes(currentLevelTreeNodes);
+    someLevelIsSliced = someLevelIsSliced || isSliced;
 
     if (nextLevelTreeNodes.length) {
       const currentLevel = currentLevelTreeNodes[0].level;
@@ -235,6 +243,7 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
     entitiesPerLevel,
     selectionMap,
     tree,
+    isSliced: someLevelIsSliced,
   };
 };
 

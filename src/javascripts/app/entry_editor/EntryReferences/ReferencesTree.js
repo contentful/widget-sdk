@@ -13,6 +13,7 @@ import {
   SET_ACTIONS_DISABLED,
   SET_INITIAL_REFERENCES_AMOUNT,
   SET_INITIAL_UNIQUE_REFERENCES_AMOUNT,
+  SET_IS_SLICED,
 } from './state/actions';
 
 const styles = {
@@ -75,6 +76,7 @@ function ReferenceCards({
   handleSelect,
   selectedStates,
   setInitialReferenceAmount,
+  setIsSliced,
 }) {
   let isMoreCardRendered = false;
   let maxLevelReached = false;
@@ -153,13 +155,14 @@ function ReferenceCards({
     );
   };
 
-  const { circularReferenceCount, tree, entitiesPerLevel, selectionMap } = buildTreeOfReferences(
-    root,
-    {
-      maxLevel,
-      selectedStates,
-      areAllReferencesSelected: allReferencesSelected,
-    }
+  const { circularReferenceCount, tree, entitiesPerLevel, selectionMap, isSliced } = useMemo(
+    () =>
+      buildTreeOfReferences(root, {
+        maxLevel,
+        selectedStates,
+        areAllReferencesSelected: allReferencesSelected,
+      }),
+    [root, maxLevel, selectedStates, allReferencesSelected]
   );
   const depth = entitiesPerLevel.length;
   const referenceCards = renderTreeNodes(tree.root.children);
@@ -170,6 +173,7 @@ function ReferenceCards({
     if (maxLevelReached) {
       setIsTreeMaxDepthReached(true);
     }
+    setIsSliced(isSliced);
     track(trackingEvents.dialogOpen, {
       entity_id: root.sys.id,
       references_depth: depth,
@@ -238,6 +242,13 @@ const ReferencesTree = ({
     [dispatch, maxLevel]
   );
 
+  const setIsSliced = useCallback(
+    (isSliced) => {
+      dispatch({ type: SET_IS_SLICED, value: isSliced });
+    },
+    [dispatch]
+  );
+
   const MemoizedReferencesCards = useMemo(
     () => (
       <ReferenceCards
@@ -250,6 +261,7 @@ const ReferencesTree = ({
         onSelectEntities={onSelectEntities}
         selectedStates={selectedStates}
         setIsTreeMaxDepthReached={setIsTreeMaxDepthReached}
+        setIsSliced={setIsSliced}
         handleSelect={handleSelect}
         // TODO: rename to setSelectedReferences or setSelectedEntities
         setInitialEntities={setInitialEntities}
@@ -264,6 +276,7 @@ const ReferencesTree = ({
       onReferenceCardClick,
       onSelectEntities,
       setIsTreeMaxDepthReached,
+      setIsSliced,
       handleSelect,
       setInitialEntities,
       root,

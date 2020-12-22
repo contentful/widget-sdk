@@ -12,6 +12,7 @@ import {
   SET_IS_TOO_COMPLEX,
   SET_PROCESSING_ACTION,
   SET_SELECTED_ENTITIES_MAP,
+  SET_IS_SLICED,
 } from './actions';
 
 export type ReferencesState = {
@@ -20,6 +21,7 @@ export type ReferencesState = {
   selectedEntities: [];
   selectedEntitiesMap: Map<string, object>;
   validations: object | null;
+  isSliced: boolean;
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
   initialReferencesAmount: number;
@@ -42,7 +44,8 @@ export type Action = {
     | typeof SET_REFERENCE_TREE_KEY
     | typeof SET_IS_TOO_COMPLEX
     | typeof SET_PROCESSING_ACTION
-    | typeof SET_SELECTED_ENTITIES_MAP;
+    | typeof SET_SELECTED_ENTITIES_MAP
+    | typeof SET_IS_SLICED;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -53,6 +56,7 @@ export const initialState: ReferencesState = {
   selectedEntities: [],
   selectedEntitiesMap: new Map(),
   validations: null,
+  isSliced: false,
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
   initialReferencesAmount: 0,
@@ -88,6 +92,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
       return { ...state, isTooComplex: action.value };
     case SET_PROCESSING_ACTION:
       return { ...state, processingAction: action.value };
+    case SET_IS_SLICED:
+      return { ...state, isSliced: action.value };
     default:
       return state;
   }
