@@ -50,7 +50,6 @@ module.exports = function (fileInfo, { jscodeshift: j }) {
       'react-hotkeys',
       'react-redux',
       'react-tippy',
-      'redux',
       'redux-thunk',
       'rtl-detect',
       'sanitize-html',

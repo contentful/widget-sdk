@@ -50,11 +50,8 @@ const angular = (node) => {
     '$exceptionHandler',
     'core/NgRegistry',
     '$interval',
-    'modalDialog',
     'logger',
     'spaceContext',
-    'ui-command',
-    'ui-command-state',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
@@ -68,11 +65,7 @@ const hyperscript = (node) => {
   if (test(node)) {
     return false;
   }
-  const attributes = [
-    'utils/hyperscript',
-    'utils/legacy-html-hyperscript',
-    'utils/legacy-html-hyperscript/index',
-  ];
+  const attributes = ['utils/legacy-html-hyperscript'];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
 };
@@ -88,24 +81,17 @@ const react = (node) => {
   const attributes = [
     'react',
     'prop-types',
-    'redux',
-    'redux-thunk',
     'react-dom',
-    'react-redux',
     'react-router-dom',
     'react-animate-height',
-    'redux/store',
     '<react-component>',
   ];
+
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   if (intersection.length > 0) {
     return intersection;
   }
 
-  // mark all redux files as `react`
-  if (node.path.indexOf('redux') !== -1) {
-    return true;
-  }
   return false;
 };
 
@@ -121,12 +107,11 @@ const needsRefactoring = (node) => {
 
   const attributes = [
     'jquery',
-    'ui/Framework/CfComponentBridgeDirective',
-    'ui/Framework/Store',
-    'cf-component-bridge',
     'utils/command/command',
     'enzyme',
     'sinon',
+    'services/client',
+    'libs/legacy_client/client',
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
