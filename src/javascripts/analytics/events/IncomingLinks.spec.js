@@ -1,28 +1,23 @@
 import _ from 'lodash';
-import sinon from 'sinon';
+import * as incomingLinksEvents from './IncomingLinks';
+import * as analytics from 'analytics/Analytics';
+
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
 
 describe('IncomingLinks', () => {
-  beforeEach(async function () {
-    this.analytics = {
-      track: sinon.stub(),
-    };
-
-    this.system.set('analytics/Analytics', this.analytics);
-
-    this.incomingLinksEvents = await this.system.import('analytics/events/IncomingLinks');
-  });
-
   describe('onIncomingLinkClick', () => {
     it('tracks incoming links clicks', function () {
-      this.incomingLinksEvents.onIncomingLinkClick({
-        origin: this.incomingLinksEvents.Origin.SIDEBAR,
+      incomingLinksEvents.onIncomingLinkClick({
+        origin: incomingLinksEvents.Origin.SIDEBAR,
         entityId: 'foo',
         entityType: 'bar',
         linkEntityId: 'baz',
         incomingLinksCount: 19,
       });
 
-      sinon.assert.calledWith(this.analytics.track, 'incoming_links:sidebar_link_click', {
+      expect(analytics.track).toHaveBeenCalledWith('incoming_links:sidebar_link_click', {
         entity_id: 'foo',
         entity_type: 'bar',
         link_entity_id: 'baz',
@@ -32,8 +27,8 @@ describe('IncomingLinks', () => {
 
     describe('when the origin is the dialog', () => {
       it('tracks incoming links clicks, including the dialog session id', function () {
-        this.incomingLinksEvents.onIncomingLinkClick({
-          origin: this.incomingLinksEvents.Origin.DIALOG,
+        incomingLinksEvents.onIncomingLinkClick({
+          origin: incomingLinksEvents.Origin.DIALOG,
           entityId: 'foo',
           entityType: 'bar',
           linkEntityId: 'baz',
@@ -42,7 +37,7 @@ describe('IncomingLinks', () => {
           incomingLinksCount: 19,
         });
 
-        sinon.assert.calledWith(this.analytics.track, 'incoming_links:dialog_link_click', {
+        expect(analytics.track).toHaveBeenCalledWith('incoming_links:dialog_link_click', {
           entity_id: 'foo',
           entity_type: 'bar',
           link_entity_id: 'baz',
@@ -56,7 +51,7 @@ describe('IncomingLinks', () => {
 
   describe('onDialogOpen', () => {
     it('tracks the dialog open event', function () {
-      this.incomingLinksEvents.onDialogOpen({
+      incomingLinksEvents.onDialogOpen({
         entityId: 'foo',
         entityType: 'bar',
         dialogAction: 'publish',
@@ -64,7 +59,7 @@ describe('IncomingLinks', () => {
         incomingLinksCount: 19,
       });
 
-      sinon.assert.calledWith(this.analytics.track, 'incoming_links:dialog_open', {
+      expect(analytics.track).toHaveBeenCalledWith('incoming_links:dialog_open', {
         entity_id: 'foo',
         entity_type: 'bar',
         dialog_action: 'publish',
@@ -76,7 +71,7 @@ describe('IncomingLinks', () => {
 
   describe('onDialogConfirm', () => {
     it('tracks the dialog confirm event', function () {
-      this.incomingLinksEvents.onDialogConfirm({
+      incomingLinksEvents.onDialogConfirm({
         entityId: 'foo',
         entityType: 'bar',
         dialogAction: 'publish',
@@ -84,7 +79,7 @@ describe('IncomingLinks', () => {
         incomingLinksCount: 19,
       });
 
-      sinon.assert.calledWith(this.analytics.track, 'incoming_links:dialog_confirm', {
+      expect(analytics.track).toHaveBeenCalledWith('incoming_links:dialog_confirm', {
         entity_id: 'foo',
         entity_type: 'bar',
         dialog_action: 'publish',
@@ -98,13 +93,13 @@ describe('IncomingLinks', () => {
     it('tracks the link fetch event', function () {
       const incomingLinkIds = ['a', 'b', 'c', 'd', 'e'];
 
-      this.incomingLinksEvents.onFetchLinks({
+      incomingLinksEvents.onFetchLinks({
         entityId: 'foo',
         entityType: 'bar',
         incomingLinkIds,
       });
 
-      sinon.assert.calledWith(this.analytics.track, 'incoming_links:query', {
+      expect(analytics.track).toHaveBeenCalledWith('incoming_links:query', {
         entity_id: 'foo',
         entity_type: 'bar',
         incoming_links_count: 5,

@@ -162,10 +162,8 @@
 
       await SystemJS.import('test/helpers/mocks');
       await SystemJS.import('test/helpers/mocks/entity_editor_document');
-      await SystemJS.import('test/helpers/mocks/editor_context');
       await SystemJS.import('test/helpers/mocks/cf_stub');
       await SystemJS.import('test/helpers/mocks/space_context');
-      await SystemJS.import('test/helpers/mocks/widget_api');
 
       await SystemJS.import('prelude');
       await Promise.all(testModules.map((name) => SystemJS.import(name)));

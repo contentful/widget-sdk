@@ -1,4 +1,4 @@
-import { createMVar } from 'utils/Concurrent';
+import { createMVar } from '../Concurrent';
 
 describe('utils/Concurrent/MVar', function () {
   describe('createMVar', function () {

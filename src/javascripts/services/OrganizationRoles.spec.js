@@ -1,7 +1,9 @@
 import _ from 'lodash';
 
+import * as OrganizationRoles from './OrganizationRoles';
+
 describe('OrganizationRoles', () => {
-  let OrganizationRoles, ORG_1, ORG_2, ORG_3;
+  let ORG_1, ORG_2, ORG_3;
 
   function makeUser(organizations) {
     return {
@@ -12,8 +14,6 @@ describe('OrganizationRoles', () => {
   }
 
   beforeEach(async function () {
-    OrganizationRoles = await this.system.import('services/OrganizationRoles');
-
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };
     ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
