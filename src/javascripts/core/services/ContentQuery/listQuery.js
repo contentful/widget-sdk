@@ -1,6 +1,6 @@
+import { EditorialConstants } from '@contentful/editorial-primitives';
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields';
 
 import { buildQuery as buildQueryFromUISearch } from './QueryBuilder';
@@ -35,6 +35,7 @@ export async function getForEntries(opts) {
  * @returns {object}
  */
 export async function getForAssets(opts) {
+  const assetContentType = { data: EditorialConstants.assetContentType };
   return prepareEntityListQuery(assetContentType, opts);
 }
 /**

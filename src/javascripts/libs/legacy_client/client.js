@@ -2,7 +2,6 @@ import PersistenceContext from './persistence_context';
 import Space from './space';
 import Request from './request';
 import mixinChildResourceMethods from './child_resources';
-import assetContentType from './asset_content_type';
 
 /**
  * @deprecated
@@ -23,7 +22,5 @@ Client.prototype = {
 
 mixinChildResourceMethods(Client.prototype);
 Space.mixinFactoryMethods(Client.prototype, 'spaces');
-
-export { assetContentType };
 
 export default Client;

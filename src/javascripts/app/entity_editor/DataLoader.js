@@ -1,8 +1,8 @@
-import { get, find, isPlainObject, cloneDeep, memoize } from 'lodash';
+import { EditorialConstants } from '@contentful/editorial-primitives';
+import { get, find, isPlainObject, cloneDeep, memoize, constant } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
-import { assetContentType } from 'libs/legacy_client/client';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import TheLocaleStore from 'services/localeStore';
 
@@ -18,13 +18,10 @@ import {
 import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
-const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
-  assetContentType.data,
-  // "description" is a Symbol but for historical reasons
-  // we're using the multiline editor to render it, hence
-  // the override here.
-  { controls: [{ fieldId: 'description', widgetId: 'multipleLine' }] }
-);
+const assetContentType = {
+  getId: constant(undefined),
+  data: EditorialConstants.assetContentType,
+};
 
 /**
  * @ngdoc service
@@ -226,7 +223,7 @@ function makeAssetLoader(spaceContext) {
     // (/spaces/:sid/environments/:eid/asset_content_type(/editor_interface))
     // we could potentially enable UI Extensions for assets.
     getContentType: () => assetContentType,
-    getEditorInterface: () => assetEditorInterface,
+    getEditorInterface: () => EditorialConstants.assetEditorInterface,
   };
 }
 

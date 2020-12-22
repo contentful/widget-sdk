@@ -1,5 +1,3 @@
-/* global require module */
-
 const P = require('path');
 const express = require('express');
 
@@ -16,25 +14,25 @@ const filesNeededToRunTests = [
     pattern: 'src/javascripts/**/*.json',
     watched: true,
     served: true,
-    included: false
+    included: false,
   },
   {
     pattern: 'src/javascripts/**/*.html',
     watched: true,
     served: true,
-    included: false
+    included: false,
   },
   {
     pattern: 'src/javascripts/**/*.svg',
     watched: true,
     served: true,
-    included: false
+    included: false,
   },
   'test/utils/**/*.js',
-  'test/helpers/**/*.js'
+  'test/helpers/**/*.js',
 ];
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.plugins.push(
     // Serve static files from root directory under /base
     // Using the files array is too much overhead for files that are
@@ -42,10 +40,10 @@ module.exports = function(config) {
     {
       'middleware:static': [
         'factory',
-        function() {
+        function () {
           return express().use('/base', express.static(__dirname));
-        }
-      ]
+        },
+      ],
     }
   );
 
@@ -64,14 +62,14 @@ module.exports = function(config) {
       // We also need this to make sure that transition events are
       // triggered properly.
       'public/app/styles.css',
-      'public/app/dependencies.js'
+      'public/app/dependencies.js',
     ].concat(filesNeededToRunTests, [
       'test/unit/**/*.js',
       'test/unit/**/*.ts',
       'test/unit/**/*.tsx',
       'test/integration/**/*.js',
       'test/integration/**/*.ts',
-      'test/integration/**/*.tsx'
+      'test/integration/**/*.tsx',
     ]),
 
     middleware: ['static'],
@@ -92,7 +90,7 @@ module.exports = function(config) {
       'src/javascripts/**/*.tsx': ['babelTest', 'sourcemap'],
       'public/app/dependencies.js': ['sourcemap'],
       'vendor/jquery-shim.js': ['babelTest', 'sourcemap'],
-      'src/javascripts/**/*.svg': ['babelTest', 'sourcemap']
+      'src/javascripts/**/*.svg': ['babelTest', 'sourcemap'],
     },
 
     customPreprocessors: {
@@ -110,8 +108,8 @@ module.exports = function(config) {
               {
                 loose: false,
                 modules: false,
-                useBuiltIns: false
-              }
+                useBuiltIns: false,
+              },
             ],
             '@babel/preset-react',
             '@dr.pogodin/babel-preset-svgr',
@@ -119,19 +117,19 @@ module.exports = function(config) {
               require.resolve('@babel/preset-typescript'),
               {
                 allExtensions: true,
-                isTSX: true
-              }
-            ]
+                isTSX: true,
+              },
+            ],
           ],
           plugins: [
             '@babel/transform-modules-systemjs',
             '@babel/proposal-object-rest-spread',
             '@babel/proposal-class-properties',
-            '@babel/proposal-dynamic-import'
-          ]
+            '@babel/proposal-dynamic-import',
+          ],
         },
-        sourceFileName: makeSourceFileName
-      }
+        sourceFileName: makeSourceFileName,
+      },
     },
 
     // test results reporter to use
@@ -140,11 +138,11 @@ module.exports = function(config) {
     reporters: ['mocha'],
 
     specjsonReporter: {
-      outputFile: 'karma-specs.json'
+      outputFile: 'karma-specs.json',
     },
 
     mochaReporter: {
-      ignoreSkipped: true
+      ignoreSkipped: true,
     },
 
     // web server port
@@ -167,7 +165,7 @@ module.exports = function(config) {
     browsers: ['ChromeHeadless'],
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
   });
 };
 
