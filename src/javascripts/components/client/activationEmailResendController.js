@@ -1,5 +1,3 @@
-import { getModule } from 'core/NgRegistry';
-import _ from 'lodash';
 import moment from 'moment';
 import {
   openActivationEmailResendDialog,
@@ -46,8 +44,7 @@ async function showDialog(email) {
 }
 
 function resendActivationEmailWithDelay(email, delay) {
-  const $timeout = getModule('$timeout');
-  const delayed = $timeout(_.noop, delay);
+  const delayed = new Promise((resolve) => setTimeout(resolve, delay));
   return resendActivationEmail(email).then(
     () => delayed,
     () => delayed.then(() => Promise.reject())
