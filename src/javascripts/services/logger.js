@@ -134,7 +134,7 @@ export function enable(user) {
  * any 3rd party services running
  */
 export function disable() {
-  if (env === 'production' || env === 'unittest') {
+  if (env === 'production' || env === 'jest') {
     Bugsnag.disable();
   }
 }
@@ -148,7 +148,7 @@ export function disable() {
  */
 export function logException(exception, metaData) {
   const augmentedMetadata = augmentMetadata(metaData);
-  if (env !== 'production' && env !== 'unittest') {
+  if (env !== 'production' && env !== 'jest') {
     /* eslint no-console: off */
     console.error(exception, augmentedMetadata);
   }
@@ -281,7 +281,7 @@ function _log(type, severity, message, metadata) {
   metadata = metadata || {};
   metadata.groupingHash = metadata.groupingHash || message;
   const augmentedMetadata = augmentMetadata(metadata);
-  if (env !== 'production' && env !== 'unittest') {
+  if (env !== 'production' && env !== 'jest') {
     logToConsole(type, severity, message, augmentedMetadata);
   }
 

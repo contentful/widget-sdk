@@ -1,133 +1,125 @@
-import sinon from 'sinon';
 import _ from 'lodash';
+import * as logger from './logger';
+import * as Bugsnag from 'analytics/Bugsnag';
+
+jest.mock('analytics/Bugsnag', () => ({
+  enable: jest.fn(),
+  disable: jest.fn(),
+  notify: jest.fn(),
+  notifyException: jest.fn(),
+}));
+
+jest.mock('analytics/Sentry');
 
 describe('logger service', () => {
   let step = 0;
 
-  beforeEach(async function () {
-    this.bugsnag = {
-      enable: sinon.stub(),
-      disable: sinon.stub(),
-      notify: sinon.stub(),
-      notifyException: sinon.stub(),
-    };
-
-    this.system.set('analytics/Bugsnag', this.bugsnag);
-
-    this.logger = await this.system.import('services/logger');
-  });
-
   it('enables', function () {
-    this.logger.enable('USER');
-    sinon.assert.calledWithExactly(this.bugsnag.enable, 'USER');
+    logger.enable('USER');
+    expect(Bugsnag.enable).toHaveBeenCalledWith('USER');
   });
 
   it('disables', function () {
-    this.logger.disable();
-    sinon.assert.called(this.bugsnag.disable);
+    logger.disable();
+    expect(Bugsnag.disable).toHaveBeenCalled();
   });
 
   it('logs exceptions', function () {
     const exception = new Error();
-    this.logger.logException(exception, { meta: 'Data' });
-    sinon.assert.calledWith(
-      this.bugsnag.notifyException,
+    logger.logException(exception, { meta: 'Data' });
+
+    expect(Bugsnag.notifyException).toHaveBeenCalledWith(
       exception,
       null,
-      sinon.match({ meta: 'Data' }),
+      { meta: 'Data', params: {} },
       'error'
     );
   });
 
   it('logs errors', function () {
-    this.logger.logError('test', { meta: 'Data' });
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logError('test', { meta: 'Data' });
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged Error',
       'test',
-      sinon.match({ meta: 'Data' }),
+      { groupingHash: 'test', meta: 'Data', params: {} },
       'error'
     );
   });
 
   it('does not log errors with empty messages', function () {
-    this.logger.logError();
+    logger.logError();
 
-    sinon.assert.notCalled(this.bugsnag.notify);
+    expect(Bugsnag.notify).not.toHaveBeenCalled();
 
-    this.logger.logError(null, { meta: 'Something' });
+    logger.logError(null, { meta: 'Something' });
 
-    sinon.assert.notCalled(this.bugsnag.notify);
+    expect(Bugsnag.notify).not.toHaveBeenCalled();
 
-    this.logger.logError('', { meta: 'Something else' });
+    logger.logError('', { meta: 'Something else' });
 
-    sinon.assert.notCalled(this.bugsnag.notify);
+    expect(Bugsnag.notify).not.toHaveBeenCalled();
   });
 
   it('handles messages that are of type Error as well as String', function () {
     const err = new Error('Oops something went wrong');
     const errMsg = 'Wowzers this is messed up';
 
-    this.logger.logError(errMsg);
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logError(errMsg);
+
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged Error',
       errMsg,
-      sinon.match.object,
+      expect.objectContaining({}),
       'error'
     );
 
-    this.logger.logError(err);
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logError(err);
+
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged Error',
       err.message,
-      sinon.match.object,
+      expect.objectContaining({}),
       'error'
     );
   });
 
   it('logs warnings', function () {
-    this.logger.logWarn('test', { meta: 'Data' });
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logWarn('test', { meta: 'Data' });
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged Warning',
       'test',
-      sinon.match({ meta: 'Data' }),
+      expect.objectContaining({ meta: 'Data' }),
       'warning'
     );
   });
 
   it('logs sharejs errors', function () {
-    this.logger.logSharejsError('test', { meta: 'Data' });
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logSharejsError('test', { meta: 'Data' });
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged ShareJS Error',
       'test',
-      sinon.match({ meta: 'Data' }),
+      expect.objectContaining({ meta: 'Data' }),
       'error'
     );
   });
 
   it('logs sharejs warnings', function () {
-    this.logger.logSharejsWarn('test', { meta: 'Data' });
-    sinon.assert.calledWith(
-      this.bugsnag.notify,
+    logger.logSharejsWarn('test', { meta: 'Data' });
+    expect(Bugsnag.notify).toHaveBeenCalledWith(
       'Logged ShareJS Warning',
       'test',
-      sinon.match({ meta: 'Data' }),
+      expect.objectContaining({ meta: 'Data' }),
       'warning'
     );
   });
 
   describe('when receiving error with status code 0', () => {
     it('logs errors as cors warnings', function () {
-      this.logger.logServerError('test', { meta: 'Data', error: { statusCode: 0 } });
-      sinon.assert.calledWith(
-        this.bugsnag.notify,
+      logger.logServerError('test', { meta: 'Data', error: { statusCode: 0 } });
+      expect(Bugsnag.notify).toHaveBeenCalledWith(
         'CORS Warning',
         'test',
-        sinon.match({
+        expect.objectContaining({
           meta: 'Data',
           error: { statusCode: 0 },
         }),
@@ -135,12 +127,11 @@ describe('logger service', () => {
       );
     });
     it('logs warnings as cors warnings', function () {
-      this.logger.logServerWarn('test', { meta: 'Data', error: { statusCode: 0 } });
-      sinon.assert.calledWith(
-        this.bugsnag.notify,
+      logger.logServerWarn('test', { meta: 'Data', error: { statusCode: 0 } });
+      expect(Bugsnag.notify).toHaveBeenCalledWith(
         'CORS Warning',
         'test',
-        sinon.match({
+        expect.objectContaining({
           meta: 'Data',
           error: { statusCode: 0 },
         }),
@@ -151,7 +142,7 @@ describe('logger service', () => {
 
   describe('message processing', () => {
     beforeEach(function () {
-      this.logger.enable({
+      logger.enable({
         firstName: 'Hans',
         lastName: 'Wurst',
         sys: { id: 'h4nswur5t' },
@@ -163,12 +154,11 @@ describe('logger service', () => {
     });
 
     it('derives the grouping hash from the message if none provided', function () {
-      this.logger.logError('error');
-      sinon.assert.calledWith(
-        this.bugsnag.notify,
+      logger.logError('error');
+      expect(Bugsnag.notify).toHaveBeenCalledWith(
         'Logged Error',
         'error',
-        sinon.match({ groupingHash: 'error' }),
+        expect.objectContaining({ groupingHash: 'error' }),
         'error'
       );
     });
@@ -177,8 +167,8 @@ describe('logger service', () => {
       it('preparses the data property', function () {
         const data = { foo: { bar: {} } };
         data.foo.bar.baz = data;
-        this.logger.logError('error', { data: data });
-        const actual = this.bugsnag.notify.args[0][2];
+        logger.logError('error', { data: data });
+        const actual = Bugsnag.notify.mock.calls[0][2];
         expect(actual.data).toEqual({ foo: { bar: { baz: '[Circular ~]' } } });
       });
     });
@@ -212,8 +202,8 @@ describe('logger service', () => {
   });
 
   const BASE_META_DATA = {
-    groupingHash: jasmine.any(String),
-    params: jasmine.any(Object),
+    groupingHash: expect.any(String),
+    params: expect.any(Object),
   };
 
   const SERVER_LOGGING_CASES = {
@@ -275,20 +265,21 @@ describe('logger service', () => {
   function testServerErrorLogging(fnName, severity, testCase) {
     const severityLC = severity.toLowerCase();
 
+    let transformedData;
+
     beforeEach(function () {
       const metaData = testCase.data;
-      this.logger[fnName]('LOG_MSG', metaData);
-      this.transformedData = this.bugsnag.notify.firstCall.args[2];
+      logger[fnName]('LOG_MSG', metaData);
+      transformedData = Bugsnag.notify.mock.calls[0][2];
     });
 
     it('logs a server ' + severityLC, function () {
       const loggingType = 'Logged Server ' + severity;
-      sinon.assert.calledOnce(this.bugsnag.notify);
-      sinon.assert.calledWithExactly(
-        this.bugsnag.notify,
+      expect(Bugsnag.notify).toHaveBeenCalledTimes(1);
+      expect(Bugsnag.notify).toHaveBeenCalledWith(
         loggingType,
         'LOG_MSG',
-        sinon.match.object,
+        expect.objectContaining({}),
         severityLC
       );
     });
@@ -298,22 +289,22 @@ describe('logger service', () => {
 
       describe('“' + tabName + '” tab on Bugsnag', () => {
         it('will be present', function () {
-          expect(this.transformedData[name]).toEqual(jasmine.any(Object));
+          expect(transformedData[name]).toEqual(expect.any(Object));
         });
 
         it('has transformed data as expected', function () {
-          const tabData = this.transformedData[name];
+          const tabData = transformedData[name];
           expect(tabData).toEqual(value);
         });
       });
     });
 
     it('transforms all metaData as expected', function () {
-      const expectedMetaData = jasmine.objectContaining(
+      const expectedMetaData = expect.objectContaining(
         _.extend({}, BASE_META_DATA, testCase.expected)
       );
 
-      expect(this.transformedData).toEqual(expectedMetaData);
+      expect(transformedData).toEqual(expectedMetaData);
     });
   }
 

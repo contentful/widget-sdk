@@ -1,4 +1,4 @@
-import { makeCtor, makeMatcher } from 'utils/TaggedValues';
+import { makeCtor, makeMatcher } from './TaggedValues';
 
 describe('utils/TaggedValues', () => {
   it('names values with given tag', () => {
