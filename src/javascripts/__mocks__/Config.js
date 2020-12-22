@@ -15,6 +15,8 @@ export const launchDarkly = {
   envId: 'jest',
 };
 
+export const snowplow = {};
+
 export function readInjectedConfig() {
   return {
     config: {

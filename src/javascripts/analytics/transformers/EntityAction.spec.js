@@ -1,8 +1,6 @@
-describe('analytics/snowplow/transformers/EntityAction', () => {
-  beforeEach(async function () {
-    this.transform = (await this.system.import('analytics/transformers/EntityAction')).default;
-  });
+import transform from './EntityAction';
 
+describe('analytics/snowplow/transformers/EntityAction', () => {
   it('transforms `content_type_create`', function () {
     const eventData = {
       actionData: {
@@ -17,7 +15,7 @@ describe('analytics/snowplow/transformers/EntityAction', () => {
       organizationId: 'o1',
     };
 
-    const transformed = this.transform('e1', eventData);
+    const transformed = transform('e1', eventData);
     expect(transformed.data).toEqual({});
     expect(transformed.contexts).toEqual([
       {
@@ -49,7 +47,7 @@ describe('analytics/snowplow/transformers/EntityAction', () => {
       spaceId: 's1',
       organizationId: 'o1',
     };
-    const transformed = this.transform('e1', eventData);
+    const transformed = transform('e1', eventData);
     expect(transformed.contexts[0].data.revision).toBe(0);
     expect(transformed.contexts[0].data.content_type_id).toBe('ct2');
   });

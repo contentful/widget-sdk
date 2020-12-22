@@ -1,12 +1,7 @@
 import _ from 'lodash';
+import * as ViewSerializer from './ViewSerializer';
 
 describe('ViewSerializer', () => {
-  beforeEach(async function () {
-    const ViewSerializer = await this.system.import('data/ViewSerializer');
-    this.serialize = ViewSerializer.serialize;
-    this.unserialize = ViewSerializer.unserialize;
-  });
-
   function itRoundTrips(description, view, flattened) {
     itFlattens(description, view, flattened);
     itUnflattens(description, flattened, view);
@@ -15,24 +10,24 @@ describe('ViewSerializer', () => {
   function itFlattens(description, view, flattened) {
     it('does not mutate passed-in view object', function () {
       const viewClone = _.cloneDeep(view);
-      this.serialize(view);
+      ViewSerializer.serialize(view);
       expect(view).toEqual(viewClone);
     });
 
     it(`flattens ${description}`, function () {
-      expect(this.serialize(view)).toEqual(flattened);
+      expect(ViewSerializer.serialize(view)).toEqual(flattened);
     });
   }
 
   function itUnflattens(description, flattened, view) {
     it('does not mutate passed-in object', function () {
       const flattenedClone = _.cloneDeep(flattened);
-      this.unserialize(flattened);
+      ViewSerializer.unserialize(flattened);
       expect(flattened).toEqual(flattenedClone);
     });
 
     it(`unflattens ${description}`, function () {
-      expect(this.unserialize(flattened)).toEqual(view);
+      expect(ViewSerializer.unserialize(flattened)).toEqual(view);
     });
   }
 

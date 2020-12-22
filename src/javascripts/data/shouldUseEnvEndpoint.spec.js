@@ -1,4 +1,4 @@
-import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint';
+import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
 
 describe('shouldUseEnvEndpoint', () => {
   it('returns true when should use env endpoint for various input formats', () => {

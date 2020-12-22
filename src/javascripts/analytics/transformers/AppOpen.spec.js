@@ -1,10 +1,8 @@
-describe('App open transformer', () => {
-  beforeEach(async function () {
-    this.transformer = (await this.system.import('analytics/transformers/AppOpen')).default;
-  });
+import transformer from './AppOpen';
 
+describe('App open transformer', () => {
   it('transforms data', function () {
-    const transformed = this.transformer('global:app_loaded', {
+    const transformed = transformer('global:app_loaded', {
       userId: 'user-1',
       organizationId: 'org',
       spaceId: 's1',
@@ -20,7 +18,7 @@ describe('App open transformer', () => {
   });
 
   it('omits undefined values', function () {
-    const transformed = this.transformer('global:app_loaded', {
+    const transformed = transformer('global:app_loaded', {
       userId: 'user-1',
       organizationId: undefined,
       spaceId: undefined,
