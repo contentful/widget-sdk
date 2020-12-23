@@ -1,59 +1,39 @@
 import _ from 'lodash';
-import sinon from 'sinon';
-import { EntityType } from 'app/entity_editor/Components/constants';
-import { it } from 'test/utils/dsl';
+import { EntityType } from '../constants';
+import * as spaceContextMocked from 'ng/spaceContext';
+import { when } from 'jest-when';
+import fetchLinks from './fetchLinks';
+import * as Navigator from 'states/Navigator';
+
+const mockEntityHelper = jest.fn();
+
+jest.mock('ng/spaceContext', () => ({
+  cma: {
+    getEntries: jest.fn(),
+  },
+  publishedCTs: {
+    get: jest.fn().mockReturnValue({ data: { name: 'CT' } }),
+  },
+}));
+
+jest.mock('app/entity_editor/entityHelpers', () => ({
+  newForLocale: () => ({
+    entityTitle: mockEntityHelper,
+  }),
+}));
+
+jest.mock('states/Navigator', () => ({
+  makeEntityRef: jest.fn(),
+  href: jest.fn(),
+}));
+
+jest.mock('services/localeStore', () => ({
+  getDefaultLocale: () => ({
+    code: '',
+  }),
+}));
 
 describe('fetchLinks', () => {
-  beforeEach(async function () {
-    this.spaceContext = {
-      cma: {
-        getEntries: sinon.stub(),
-      },
-      publishedCTs: {
-        get: sinon.stub().returns({ data: { name: 'CT' } }),
-      },
-    };
-
-    this.entityHelper = {
-      entityTitle: sinon.stub(),
-    };
-
-    this.navigator = {
-      makeEntityRef: sinon.stub(),
-      href: sinon.stub(),
-    };
-
-    const EntityHelpers = {
-      newForLocale: () => this.entityHelper,
-    };
-    const TheLocaleStore = {
-      getDefaultLocale: () => ({
-        code: '',
-      }),
-    };
-
-    const getModuleStub = sinon.stub();
-    getModuleStub.withArgs('spaceContext').returns(this.spaceContext);
-
-    this.system.set('core/NgRegistry', {
-      getModule: getModuleStub,
-    });
-
-    this.system.set('app/entity_editor/entityHelpers', EntityHelpers);
-
-    this.system.set('services/localeStore', {
-      default: TheLocaleStore,
-    });
-
-    this.system.set('states/Navigator', this.navigator);
-
-    const { default: fetchLinks } = await this.system.import(
-      'app/entity_editor/Components/FetchLinksToEntity/fetchLinks'
-    );
-
-    this.fetchLinks = fetchLinks;
-  });
-
   function itCallsApiAndProcessEntity(type) {
     return async function () {
       const id = 'entity-id';
@@ -76,20 +56,22 @@ describe('fetchLinks', () => {
         },
       ];
 
-      this.spaceContext.cma.getEntries
-        .withArgs({
+      when(spaceContextMocked.cma.getEntries)
+        .calledWith({
           [type === EntityType.ASSET ? 'links_to_asset' : 'links_to_entry']: id,
         })
-        .returns(Promise.resolve({ items }));
+        .mockReturnValue(Promise.resolve({ items }));
 
       items.forEach((item, idx) => {
-        this.entityHelper.entityTitle.withArgs(item).returns(Promise.resolve(`title-${idx}`));
+        when(mockEntityHelper)
+          .calledWith(item)
+          .mockReturnValue(Promise.resolve(`title-${idx}`));
         const ref = `ref-${idx}`;
-        this.navigator.makeEntityRef.withArgs(item).returns(ref);
-        this.navigator.href.withArgs(ref).returns(`href-${idx}`);
+        when(Navigator.makeEntityRef).calledWith(item).mockReturnValue(ref);
+        when(Navigator.href).calledWith(ref).mockReturnValue(`href-${idx}`);
       });
 
-      const result = await this.fetchLinks(id, type);
+      const result = await fetchLinks(id, type);
 
       expect(result).toEqual([
         {
@@ -128,7 +110,7 @@ describe('fetchLinks', () => {
     const type = 'ENTITY';
 
     try {
-      await this.fetchLinks(id, type);
+      await fetchLinks(id, type);
     } catch (e) {
       expect(e.message).toEqual('Unsupported entityType ENTITY');
       return;
