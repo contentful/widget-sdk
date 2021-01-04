@@ -8,42 +8,64 @@ import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { createIdsApi } from './utils';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
+import { PubSubClient } from 'services/PubSubService';
+import { getEnvironment, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { createAPIClient } from 'core/services/APIClient/utils';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createUserCache from 'data/userCache';
 
 interface CreatePageWidgetSDKOptions {
-  spaceContext: any;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  contentTypes: any[];
+  environmentId: string;
+  space: any;
+  spaceId: string;
+  environmentAliasId: string | null;
+  pubSubClient: PubSubClient;
+  aliasesIds: string[];
 }
 
 export const createPageWidgetSDK = ({
-  spaceContext,
   widgetNamespace,
   widgetId,
   parameters,
+  spaceId,
+  environmentId,
+  environmentAliasId,
+  contentTypes,
+  aliasesIds,
+  space,
+  pubSubClient,
 }: CreatePageWidgetSDKOptions): PageExtensionSDK => {
-  const userApi = createUserApi(spaceContext.space.data.spaceMember);
+  const userApi = createUserApi(space.data.spaceMember);
+  const environment = getEnvironment(space);
+  const cma = createAPIClient(spaceId, environmentId);
+  const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+  const usersRepo = createUserCache(spaceEndpoint);
+  const isMaster = isMasterEnvironment(environment);
 
   const idsApi = createIdsApi({
-    spaceId: spaceContext.getId(),
-    envId: spaceContext.getEnvironmentId(),
-    envAliasId: spaceContext.getAliasId(),
+    spaceId,
+    envId: environmentId,
+    envAliasId: environmentAliasId,
     user: userApi,
     widgetNamespace,
     widgetId,
   });
 
   const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
-    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-    spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-    usersRepo: spaceContext.users,
+    cma: getBatchingApiClient(cma),
+    initialContentTypes: contentTypes,
+    pubSubClient,
+    environmentIds: [environmentId, ...aliasesIds],
+    spaceId,
+    tagsRepo: createTagsRepo(spaceEndpoint, environmentId),
+    usersRepo,
     appId: idsApi.app,
   });
 
@@ -52,10 +74,10 @@ export const createPageWidgetSDK = ({
   };
 
   const navigatorApi = createNavigatorApi({
-    environmentId: spaceContext.getEnvironmentId(),
-    spaceId: spaceContext.getId(),
-    cma: spaceContext.cma,
-    isMaster: spaceContext.isMasterEnvironment(),
+    environmentId,
+    spaceId,
+    cma,
+    isMaster,
     widgetNamespace,
     widgetId,
     isOnPageLocation: true,
@@ -63,7 +85,7 @@ export const createPageWidgetSDK = ({
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,
-    spaceMember: spaceContext.space.data.spaceMember as SpaceMember,
+    spaceMember: space.data.spaceMember as SpaceMember,
     locationApi,
     navigatorApi,
     spaceApi,

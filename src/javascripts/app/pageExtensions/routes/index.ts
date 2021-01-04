@@ -21,10 +21,16 @@ export default {
         environmentId: spaceContext.getEnvironmentId(),
         createPageExtensionSDK: memoize((widget: Widget, parameters: PageWidgetParameters) =>
           createPageWidgetSDK({
-            spaceContext,
             widgetNamespace: widget.namespace,
             widgetId: widget.id,
             parameters,
+            spaceId: spaceContext.getId(),
+            contentTypes: spaceContext.publishedCTs.getAllBare(),
+            environmentId: spaceContext.getEnvironmentId(),
+            aliasesIds: spaceContext.getAliasesIds(),
+            space: spaceContext.space,
+            pubSubClient: spaceContext.pubsubClient,
+            environmentAliasId: spaceContext.getAliasId(),
           })
         ),
       };

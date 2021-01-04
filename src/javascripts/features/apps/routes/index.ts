@@ -264,10 +264,16 @@ export const appRoute = {
             widget,
             createPageExtensionSDK: memoize((widget, parameters) =>
               createPageWidgetSDK({
-                spaceContext,
                 widgetNamespace: widget.namespace,
                 widgetId: widget.id,
                 parameters,
+                spaceId: spaceContext.getId(),
+                contentTypes: spaceContext.publishedCTs.getAllBare(),
+                environmentId: spaceContext.getEnvironmentId(),
+                aliasesIds: spaceContext.getAliasesIds(),
+                space: spaceContext.space,
+                pubSubClient: spaceContext.pubsubClient,
+                environmentAliasId: spaceContext.getAliasId(),
               })
             ),
             path: path.startsWith('/') ? path : `/${path}`,
