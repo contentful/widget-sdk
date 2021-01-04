@@ -24,7 +24,7 @@ export function idpSsoTargetUrl(value) {
   }
 
   // Taken from https://stackoverflow.com/a/3809435
-  const httpsUrlRegex = /https:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+  const httpsUrlRegex = /https:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,10}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
   return httpsUrlRegex.test(value);
 }
