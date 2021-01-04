@@ -118,6 +118,12 @@ registerGenericEvent('space_assignment:continue');
 registerGenericEvent('space_assignment:confirm');
 registerGenericEvent('space_assignment:back');
 
+registerGenericEvent('space_creation:begin');
+registerGenericEvent('space_creation:continue');
+registerGenericEvent('space_creation:confirm');
+registerGenericEvent('space_creation:back');
+registerGenericEvent('space_creation:get_in_touch');
+
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
 registerGenericEvent('trial:trial_tag_clicked');

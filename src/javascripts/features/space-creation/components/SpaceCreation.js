@@ -10,6 +10,7 @@ import { spaceCreation, createSpaceWithTemplate } from '../services/SpaceCreatio
 import { SpaceCreationState } from '../context';
 import * as Navigator from 'states/Navigator';
 import { logError } from 'services/logger';
+import { track } from 'analytics/Analytics';
 
 export const SpaceCreation = ({ orgId }) => {
   const {
@@ -42,6 +43,11 @@ export const SpaceCreation = ({ orgId }) => {
     const nextStep = steps[currentStepIndex + 1];
     if (nextStep) {
       navigateToStep(nextStep);
+      track('space_creation:continue', {
+        selected_plan_id: selectedPlan.sys.id,
+        selected_plan_name: selectedPlan.name,
+        flow: 'space_creation',
+      });
     }
   };
 
@@ -51,6 +57,9 @@ export const SpaceCreation = ({ orgId }) => {
 
     if (previousStep) {
       navigateToStep(previousStep);
+      track('space_creation:back', {
+        selected_plan_id: selectedPlan.sys.id,
+      });
     }
   };
 
@@ -59,8 +68,20 @@ export const SpaceCreation = ({ orgId }) => {
     try {
       if (selectedTemplate !== null) {
         await createSpaceWithTemplate({ orgId, spaceName, selectedPlan, selectedTemplate });
+        track('space_creation:confirm', {
+          selected_plan_id: selectedPlan.sys.id,
+          selected_plan_name: selectedPlan.name,
+          space_type: 'space_with_template',
+          flow: 'space_creation',
+        });
       } else {
         await spaceCreation(orgId, spaceName, selectedPlan);
+        track('space_creation:confirm', {
+          selected_plan_id: selectedPlan.sys.id,
+          selected_plan_name: selectedPlan.name,
+          space_type: 'empty_space',
+          flow: 'space_creation',
+        });
       }
       Navigator.go({ path: ['account', 'organizations', 'subscription_new', 'overview'] });
       Notification.success(`${spaceName} was created successfully`);

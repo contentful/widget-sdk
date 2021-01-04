@@ -188,7 +188,13 @@ export function SpacePlans({
           </span>
         )}
         {enterprisePlan && isSpaceCreateForSpacePlanEnabled ? (
-          <StateLink component={TextLink} path=".space_create">
+          <StateLink
+            component={TextLink}
+            path=".space_create"
+            trackingEvent={'space_creation:begin'}
+            trackParams={{
+              flow: 'space_creation',
+            }}>
             Create Space
           </StateLink>
         ) : (

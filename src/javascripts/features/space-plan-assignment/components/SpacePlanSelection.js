@@ -26,6 +26,7 @@ import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import * as Intercom from 'services/intercom';
+import { track } from 'analytics/Analytics';
 
 export function SpacePlanSelection({
   plans,
@@ -50,7 +51,10 @@ export function SpacePlanSelection({
   const isContinueBtnDisabled = !selectedPlan || (hasOnlyFreePlan && freePlanCount === 0);
 
   const handleGetInTouchClick = () => {
-    // TODO add tracking
+    track('space_creation:get_in_touch', {
+      flow: 'space_creation',
+    });
+
     if (Intercom.isEnabled()) {
       Intercom.open();
     } else {
@@ -139,11 +143,10 @@ export function SpacePlanSelection({
             component={Button}
             buttonType="muted"
             path={'^'}
-            trackingEvent={'space_assignment:back'}
+            trackingEvent={isCreationFlow ? 'space_creation:back' : 'space_assignment:back'}
             trackParams={{
               space_id: space?.sys.id,
-              // TODO change flow id for create
-              flow: 'assing_plan_to_space',
+              flow: isCreationFlow ? 'space_creation' : 'assing_plan_to_space',
             }}>
             Back
           </StateLink>

@@ -70,10 +70,10 @@ export function UnassignedPlansTable({
                         component={TextLink}
                         path=".space_create"
                         params={{ planId: plan.sys.id }}
-                        trackingEvent={'space_assignment:create_space'}
+                        trackingEvent={'space_creation:begin'}
                         trackParams={{
                           plan_id: plan.sys.id,
-                          flow: 'assing_space_to_plan',
+                          flow: 'space_creation_for_plan',
                         }}>
                         new space
                       </StateLink>

@@ -187,6 +187,7 @@ export const validEvents = {
   targeted_cta_impression: CTA_EVENTS,
   pricing_update: ['communication_seen'],
   space_assignment: ['change', 'continue', 'confirm', 'back'],
+  space_creation: ['begin', 'continue', 'confirm', 'back', 'get_in_touch'],
   degraded_app_performance: ['modal_shown'],
   trial: [
     'trial_tag_clicked',
