@@ -91,7 +91,14 @@ export const createSidebarWidgetSDK = ({
     appId: idsApi.app,
   });
 
-  const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+  const navigatorApi = createNavigatorApi({
+    environmentId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId(),
+    cma: spaceContext.cma,
+    isMaster: spaceContext.isMasterEnvironment(),
+    widgetNamespace,
+    widgetId,
+  });
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,

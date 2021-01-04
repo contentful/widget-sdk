@@ -33,10 +33,13 @@ async function navigateToBulkEditor(options) {
 }
 
 interface NavigatorProps {
-  spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   isOnPageLocation?: boolean;
+  isMaster: boolean;
+  spaceId: string;
+  environmentId: string;
+  cma: any;
 }
 
 const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
@@ -233,15 +236,14 @@ export function createEntityNavigatorApi({ cma }: { cma: any }) {
 }
 
 export function createNavigatorApi({
-  spaceContext,
   widgetNamespace,
   widgetId,
   isOnPageLocation = false,
+  spaceId,
+  environmentId,
+  isMaster,
+  cma,
 }: NavigatorProps): NavigatorAPI {
-  const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.getEnvironmentId();
-  const isMaster = spaceContext.isMasterEnvironment();
-
   const navigateToPage = makeNavigateToPage(
     {
       spaceId,
@@ -254,7 +256,7 @@ export function createNavigatorApi({
   );
 
   return {
-    ...createEntityNavigatorApi({ cma: spaceContext.cma }),
+    ...createEntityNavigatorApi({ cma }),
     openPageExtension: (opts) => {
       return navigateToPage({ ...opts, type: WidgetNamespace.EXTENSION });
     },

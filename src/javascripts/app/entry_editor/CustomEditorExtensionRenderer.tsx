@@ -3,7 +3,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { WidgetLocation, WidgetNamespace, WidgetRenderer } from '@contentful/widget-renderer';
 import { createEditorExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import { EditorExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { getModule } from 'core/NgRegistry';
+import { usePubSubClient } from 'core/hooks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { css } from 'emotion';
 import React from 'react';
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
@@ -40,8 +41,19 @@ interface Props {
 
 const CustomEditorExtensionRenderer = (props: Props) => {
   const { extension, scope } = props;
-  const spaceContext = getModule('spaceContext');
   const { descriptor, parameters } = extension;
+
+  const {
+    currentEnvironment,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceContentTypes,
+    currentSpaceId,
+  } = useSpaceEnvContext();
+
+  const pubSubClient = usePubSubClient();
+
+  if (!currentEnvironmentId || !currentSpaceId) return null;
 
   if (extension.problem) {
     return (
@@ -57,13 +69,18 @@ const CustomEditorExtensionRenderer = (props: Props) => {
     editorData: scope.editorData,
     localeData: scope.localeData,
     preferences: scope.preferences,
-    spaceContext,
     internalContentType: scope.entityInfo.contentType,
     widgetNamespace: extension.widgetNamespace,
     widgetId: extension.widgetId,
     parameters,
     doc: scope.otDoc,
     fieldLocaleListeners: scope.fieldLocaleListeners,
+    contentTypes: currentSpaceContentTypes,
+    environment: currentEnvironment,
+    environmentId: currentEnvironmentId,
+    space: currentSpace,
+    spaceId: currentSpaceId,
+    pubSubClient,
   });
 
   return (

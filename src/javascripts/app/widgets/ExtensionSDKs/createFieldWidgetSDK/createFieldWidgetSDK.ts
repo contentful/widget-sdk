@@ -72,7 +72,14 @@ export function createFieldWidgetSDK({
     },
   });
 
-  const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+  const navigatorApi = createNavigatorApi({
+    environmentId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId(),
+    cma: spaceContext.cma,
+    isMaster: spaceContext.isMasterEnvironment(),
+    widgetNamespace,
+    widgetId,
+  });
 
   const locationApi = {
     is: (location: string) => location === WidgetLocation.ENTRY_FIELD,

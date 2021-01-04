@@ -52,7 +52,10 @@ export const createPageWidgetSDK = ({
   };
 
   const navigatorApi = createNavigatorApi({
-    spaceContext,
+    environmentId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId(),
+    cma: spaceContext.cma,
+    isMaster: spaceContext.isMasterEnvironment(),
     widgetNamespace,
     widgetId,
     isOnPageLocation: true,

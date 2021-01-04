@@ -46,6 +46,7 @@ describe('createSidebarWidgetSDK', () => {
         getId: () => 'a-space-id',
         getEnvironmentId: () => 'an-env-id',
         getAliasesIds: () => [],
+        isMasterEnvironment: () => true,
         cma: {},
         space: { data: {} },
       },

@@ -52,7 +52,14 @@ export const createAppExtensionSDK = ({
     is: (location: string) => location === WidgetLocation.APP_CONFIG,
   };
 
-  const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+  const navigatorApi = createNavigatorApi({
+    environmentId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId(),
+    cma: spaceContext.cma,
+    isMaster: spaceContext.isMasterEnvironment(),
+    widgetNamespace,
+    widgetId,
+  });
 
   const base = createBaseExtensionSdk({
     parametersApi: { installation: {}, instance: {} },

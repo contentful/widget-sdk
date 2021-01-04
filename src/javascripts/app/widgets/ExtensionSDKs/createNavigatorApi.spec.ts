@@ -45,11 +45,6 @@ describe('createNavigatorApi', () => {
     const DEFAULT_WIDGET_ID = 'my_widget';
     const DEFAULT_ENVIRONMENT_ID = 'envid';
     const DEFAULT_SPACE_ID = 'spaceid';
-    const DEFAULT_SPACE_CONTEXT = {
-      getId: () => DEFAULT_SPACE_ID,
-      getEnvironmentId: () => DEFAULT_ENVIRONMENT_ID,
-      isMasterEnvironment: () => true,
-    };
     const mockAsset = {
       sys: {
         id: 'asset_id',
@@ -83,10 +78,16 @@ describe('createNavigatorApi', () => {
     const buildApi = ({
       widgetNamespace = DEFAULT_WIDGET_NAMESPACE,
       isOnPageLocation = false,
-      spaceContext = {},
+      spaceId = DEFAULT_SPACE_ID,
+      environmentId = DEFAULT_ENVIRONMENT_ID,
+      isMaster = true,
+      cma = {},
     } = {}) =>
       createNavigatorApi({
-        spaceContext: { ...DEFAULT_SPACE_CONTEXT, ...spaceContext },
+        spaceId,
+        environmentId,
+        isMaster,
+        cma,
         widgetNamespace,
         widgetId: DEFAULT_WIDGET_ID,
         isOnPageLocation,
@@ -94,13 +95,11 @@ describe('createNavigatorApi', () => {
 
     describe('openEntry', () => {
       it('calls navigateToContentEntity with the correct arguments', async () => {
-        const spaceContext = {
+        const navigatorApi = buildApi({
           cma: {
             getEntry: () => Promise.resolve(mockEntry),
           },
-        };
-
-        const navigatorApi = buildApi({ spaceContext });
+        });
         const result = await navigatorApi.openEntry('my_id', { slideIn: true });
         expect(result).toEqual({
           navigated: true,
@@ -109,14 +108,12 @@ describe('createNavigatorApi', () => {
       });
 
       it('rejects on error in navigateToContentEntity with waitForClose', async () => {
-        const spaceContext = {
+        let err;
+        const navigatorApi = buildApi({
           cma: {
             getEntry: () => Promise.reject({ code: 'SomeError' }),
           },
-        };
-
-        let err;
-        const navigatorApi = buildApi({ spaceContext });
+        });
         await navigatorApi
           .openEntry('my_id', { slideIn: { waitForClose: true } })
           .catch((e) => (err = e));
@@ -124,13 +121,11 @@ describe('createNavigatorApi', () => {
       });
 
       it('resolves if entity not found after navigateToContentEntity with waitForClose', async () => {
-        const spaceContext = {
+        const navigatorApi = buildApi({
           cma: {
             getEntry: () => Promise.reject({ code: 'NotFound' }),
           },
-        };
-
-        const navigatorApi = buildApi({ spaceContext });
+        });
         const result = await navigatorApi.openEntry('my_id', { slideIn: { waitForClose: true } });
         expect(result).toEqual({
           navigated: true,
@@ -139,13 +134,11 @@ describe('createNavigatorApi', () => {
       });
 
       it('calls navigateToContentEntity with slideIn = false', async () => {
-        const spaceContext = {
+        const navigatorApi = buildApi({
           cma: {
             getEntry: () => Promise.resolve(mockEntry),
           },
-        };
-
-        const navigatorApi = buildApi({ spaceContext });
+        });
         const result = await navigatorApi.openEntry('my_id', { slideIn: false });
         expect(result).toEqual({
           navigated: true,
@@ -156,17 +149,15 @@ describe('createNavigatorApi', () => {
 
     describe('openNewEntry', () => {
       it('calls navigateToContentEntity with correct arguments', async () => {
-        const spaceContext = {
-          cma: {
-            getEntry: () => Promise.resolve(mockEntry),
-          },
-        };
-
         (entityCreator.newEntry as jest.Mock).mockReturnValue({
           data: mockEntry,
         });
 
-        const navigatorApi = buildApi({ spaceContext });
+        const navigatorApi = buildApi({
+          cma: {
+            getEntry: () => Promise.resolve(mockEntry),
+          },
+        });
         const result = await navigatorApi.openNewEntry('content_type_id', { slideIn: true });
         expect(result).toEqual({
           navigated: true,
@@ -177,12 +168,11 @@ describe('createNavigatorApi', () => {
 
     describe('openAsset', () => {
       it('calls navigateToContentEntity with the correct arguments', async () => {
-        const spaceContext = {
+        const navigatorApi = buildApi({
           cma: {
             getAsset: () => Promise.resolve(mockAsset),
           },
-        };
-        const navigatorApi = buildApi({ spaceContext });
+        });
 
         const result = await navigatorApi.openAsset('known_asset_id', { slideIn: false });
         expect(result).toEqual({
@@ -198,13 +188,11 @@ describe('createNavigatorApi', () => {
           data: mockAsset,
         });
 
-        const spaceContext = {
+        const navigatorApi = buildApi({
           cma: {
             getAsset: () => Promise.resolve(mockAsset),
           },
-        };
-
-        const navigatorApi = buildApi({ spaceContext });
+        });
         const result = await navigatorApi.openNewAsset({ slideIn: false });
 
         expect(result).toEqual({

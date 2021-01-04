@@ -6,3 +6,4 @@ export { useFormState } from './useFormState';
 export { useStateWithDebounce } from './useStateWithDebounce';
 export { useSelectedEntities } from './useSelectedEntities';
 export { useBulkActions } from './useBulkActions';
+export { usePubSubClient } from './usePubSubClient';
