@@ -8,9 +8,14 @@ import TheLocaleStore from 'services/localeStore';
 import { createFieldWidgetSDK, createSidebarWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
+import createUserCache from 'data/userCache';
+import { user$ } from 'services/TokenStore';
+import {
+  getEnvironment,
+  isMasterEnvironment as isMaster,
+} from 'core/services/SpaceEnvContext/utils';
 
 export default ({
-  entityInfo,
   localeData,
   editorData,
   editorContext,
@@ -19,13 +24,19 @@ export default ({
   fieldController,
   preferences,
   emitter,
+  aliasId,
+  environmentId,
+  spaceId,
+  space,
+  spaceEndpoint,
 }) => {
   const spaceContext = getModule('spaceContext');
+  const isMasterEnvironment = isMaster(getEnvironment(space));
 
+  const { entityInfo } = editorData;
+  const users = createUserCache(spaceEndpoint);
+  const user = K.getValue(user$);
   const isEntry = entityInfo.type === 'Entry';
-  const aliasId = spaceContext.getAliasId();
-  const environmentId = spaceContext.getEnvironmentId();
-  const isMasterEnvironment = spaceContext.isMasterEnvironment();
 
   const initializeIncomingLinks = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
@@ -80,10 +91,10 @@ export default ({
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
         entity: entity && { ...entity }, // `undefined` after entity deletion.
-        spaceId: spaceContext.space.getId(),
+        spaceId,
         environmentId: aliasId || environmentId,
         isMasterEnvironment,
-        userId: spaceContext.user.sys.id,
+        userId: user?.sys.id,
         validator: editorContext.validator,
         commands: {
           primary: state.primary,
@@ -144,10 +155,10 @@ export default ({
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
         ...update,
         entityInfo: entityInfo,
-        endpoint: spaceContext.endpoint,
-        users: spaceContext.users,
-        currentUser: spaceContext.user,
-        isSpaceAdmin: (user) => spaceContext.space.isAdmin(user),
+        endpoint: spaceEndpoint,
+        users,
+        currentUser: user,
+        isSpaceAdmin: (user) => space.isAdmin(user),
       });
     };
     notifyUpdate({});
