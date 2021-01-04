@@ -74,6 +74,10 @@ javascript:window.location.href=`http://localhost:3001${window.location.pathname
 - Click on the bookmark
 - Start developing!
 
+
+
+> Use web app dev [Browser Extension](https://github.com/contentful/web-app-dev-extension)
+
 #### Setting up HTTPS (and handling CORS)
 
 Some features (such as secure assets) require that you're running your
