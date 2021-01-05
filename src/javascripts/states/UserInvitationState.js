@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { createEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -15,6 +16,7 @@ function UserInvitationState(props) {
   const [invitation, setInvitation] = useState();
   const [user, setUser] = useState();
   const [errored, setErrored] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
     const endpoint = createEndpoint();
@@ -51,13 +53,18 @@ function UserInvitationState(props) {
     }
 
     checkInvitationStatus();
+
+    // check whether the invitation has already expired
+    if (moment().isAfter(invitation.sys.expiresAt)) {
+      setExpired(true);
+    }
   }, [invitation]);
 
   if (!errored && (!user || !invitation)) {
     return <LoadingState loadingText="Loading your invitation…" />;
   }
 
-  return <UserInvitation invitation={invitation} user={user} errored={errored} />;
+  return <UserInvitation invitation={invitation} user={user} expired={expired} errored={errored} />;
 }
 
 UserInvitationState.propTypes = {

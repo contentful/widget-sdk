@@ -21,7 +21,7 @@ import { logError } from 'services/logger';
 export function UserInvitation(props) {
   const [accepting, setAccepting] = useState(false);
 
-  const { invitation = {}, errored, user = {} } = props;
+  const { invitation = {}, errored, expired, user = {} } = props;
   const { organizationName, role, inviterName } = invitation;
   const { email } = user;
 
@@ -101,7 +101,7 @@ export function UserInvitation(props) {
         <div className="user-invitation--box">
           {errored && (
             <React.Fragment>
-              <div className="user-invitation--error">
+              <div className="user-invitation--error" data-test-id="invitation.error">
                 <Icon name="invitation-not-found" />
                 <Heading element="h2" className="user-invitation--title">
                   This invitation doesn’t exist.
@@ -114,15 +114,30 @@ export function UserInvitation(props) {
               </div>
             </React.Fragment>
           )}
-          {!errored && (
+          {expired && (
             <React.Fragment>
-              <div className="user-invitation--info">
+              <div className="user-invitation--error" data-test-id="invitation.expired">
+                <Heading element="h2" className="user-invitation--title">
+                  This invitation to join <em>{organizationName}</em> has expired.
+                </Heading>
+                <Paragraph className="user-invitation--inviter">Invited by {inviterName}</Paragraph>
+                <Paragraph className="user-invitation--error-details">
+                  You can contact an organization administrator and ask them to send you a new
+                  invitation.
+                </Paragraph>
+              </div>
+            </React.Fragment>
+          )}
+          {!errored && !expired && (
+            <React.Fragment>
+              <div className="user-invitation--info" data-test-id="invitation.info">
                 <Heading element="h2" className="user-invitation--title">
                   You’ve been invited to the <em>{organizationName}</em> organization in Contentful
                   as {article(role)} {role}
                 </Heading>
                 <Paragraph className="user-invitation--inviter">Invited by {inviterName}</Paragraph>
                 <Button
+                  testId="invitation.accept"
                   buttonType="primary"
                   className="user-invitation--join-org-button"
                   disabled={accepting}
@@ -163,8 +178,10 @@ UserInvitation.propTypes = {
     inviterName: PropTypes.string.isRequired,
     sys: PropTypes.shape({
       id: PropTypes.string,
+      expiresAt: PropTypes.string.isRequired,
     }),
   }),
   errored: PropTypes.bool,
+  expired: PropTypes.bool,
   user: UserPropType,
 };
