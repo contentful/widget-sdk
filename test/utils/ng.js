@@ -90,32 +90,6 @@ export const $wait = async function () {
   return new Promise((resolve) => setTimeout(resolve));
 };
 
-export const $flush = function () {
-  const $http = $inject('$httpBackend');
-  const $timeout = $inject('$timeout');
-
-  // We need to run this multiple times because flushing an HTTP
-  // response might change something that requires another apply.
-  _.times(3, () => {
-    $apply();
-    // We ignore errors when there is nothing to be flushed
-    try {
-      $timeout.flush();
-    } catch (error) {
-      if (error.message !== 'No deferred tasks to be flushed') {
-        throw error;
-      }
-    }
-    try {
-      $http.flush();
-    } catch (error) {
-      if (error.message !== 'No pending request to flush !') {
-        throw error;
-      }
-    }
-  });
-};
-
 export const $initialize = async function (system, mock = () => {}) {
   const { angularInitRun } = await system.import('AngularInit');
 
