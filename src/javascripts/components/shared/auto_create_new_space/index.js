@@ -35,7 +35,7 @@ export function enable() {
  * @description
  * Auto creates a space using the product catalogue template
  * for a qualified user.
- * It is hooked up in the run block in application prelude.
+ * It's called on EmptyHomeRouter when the first route is loaded after a user is logged in.
  */
 export function init() {
   combine([user$, spacesByOrg$, enabled$])

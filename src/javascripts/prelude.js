@@ -236,10 +236,6 @@ angular
         /* webpackMode: "eager" */ 'services/TokenStore'
       );
 
-      const { init: initAutoCreateNewSpace } = await import(
-        /* webpackMode: "eager" */
-        'components/shared/auto_create_new_space'
-      );
       const { init: initBackendTracing } = await import(
         /* webpackMode: "eager" */ 'i13n/BackendTracing'
       );
@@ -348,19 +344,6 @@ angular
               });
             })
             .then(() => {
-              // Onboarding (aka automatic new space creation) is special, since it effectively
-              // takes over the user's experience when they load into the app after registering,
-              // and doesn't go away until the user has created their "example" space.
-              //
-              // This isn't desirable in every case though - we may want to bring the user to a
-              // different part of the app, through a different onboarding flow (for example, when
-              // the user is registering from a Compose+Launch marketing CTA).
-              //
-              // To allow for routes to bypass this, the auto space creation is initialized after the
-              // first route has been initialized.
-              initAutoCreateNewSpace();
-
-              // Finally, mark the app as loaded
               angular.module('contentful/app').loaded = true;
             });
         }
