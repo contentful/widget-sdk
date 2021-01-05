@@ -1,13 +1,13 @@
 import React from 'react';
-import { organizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/utils';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
 import { SpaceCreationContextProvider } from '../context';
 
-export const spaceCreationState = organizationRoute({
+export const spaceCreationState = {
   name: 'space_create',
   url: '/space_create?planId',
-  component: (props) => (
+  component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SpaceCreationRoute }) => {
         return (
@@ -17,5 +17,5 @@ export const spaceCreationState = organizationRoute({
         );
       }}
     </LazyLoadedComponent>
-  ),
-});
+  )),
+};

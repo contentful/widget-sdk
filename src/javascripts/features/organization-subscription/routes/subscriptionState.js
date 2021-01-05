@@ -1,5 +1,5 @@
 import React from 'react';
-import { organizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/utils';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import { spaceCreationState } from 'features/space-creation';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
@@ -21,14 +21,14 @@ const subscriptionPageState = {
   ),
 };
 
-export const subscriptionState = organizationRoute({
+export const subscriptionState = {
   name: 'subscription_new',
   url: '',
   children: [newSpaceState, upgradeSpaceState, subscriptionPageState],
-  component: () => {
+  component: withOrganizationRoute(() => {
     go({
       path: ['account', 'organizations', 'subscription_new', 'overview'],
     });
     return null;
-  },
-});
+  }),
+};

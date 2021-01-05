@@ -1,17 +1,17 @@
 import React from 'react';
-import { organizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/utils';
 import { TeamDetailsRoute } from './TeamDetailsRoute';
 import { TeamListRoute } from './TeamListRoute';
 
-const teamDetailState = organizationRoute({
+const teamDetailState = {
   name: 'detail',
   url: '/:teamId',
-  component: (props) => <TeamDetailsRoute {...props} />,
-});
+  component: withOrganizationRoute((props) => <TeamDetailsRoute {...props} />),
+};
 
-export const teamsState = organizationRoute({
+export const teamsState = {
   name: 'teams',
   children: [teamDetailState],
   url: '/teams',
-  component: (props) => <TeamListRoute {...props} />,
-});
+  component: withOrganizationRoute((props) => <TeamListRoute {...props} />),
+};

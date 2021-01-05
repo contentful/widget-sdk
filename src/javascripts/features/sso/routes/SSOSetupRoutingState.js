@@ -1,16 +1,16 @@
 import React from 'react';
-import { organizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/utils';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
 
-export const SSOSetupRoutingState = organizationRoute({
+export const SSOSetupRoutingState = {
   name: 'sso',
   url: '/sso',
-  component: (props) => (
+  component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SSOSetup }) => {
         return <SSOSetup {...props} />;
       }}
     </LazyLoadedComponent>
-  ),
-});
+  )),
+};
