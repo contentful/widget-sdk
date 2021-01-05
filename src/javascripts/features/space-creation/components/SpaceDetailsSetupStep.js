@@ -90,14 +90,11 @@ export const SpaceDetailsSetupStep = ({ onBack, onSubmit }) => {
             />
 
             <Flex justifyContent="flex-end" alignItems="center">
-              <Button onClick={onBack} testId="navigate-back" buttonType="muted">
+              <Button onClick={onBack} testId="go-back-btn" buttonType="muted">
                 Back
               </Button>
               <Flex marginLeft="spacingM">
-                <Button
-                  onClick={onSubmit}
-                  disabled={spaceName === ''}
-                  testId="next-step-new-details-page">
+                <Button onClick={onSubmit} disabled={spaceName === ''} testId="continue-btn">
                   Continue
                 </Button>
               </Flex>

@@ -56,7 +56,7 @@ export function SpaceCreationConfirm({ onPrev, onNext, inProgress }) {
                 onClick={onNext}
                 loading={inProgress}
                 testId="confirm-btn">
-                Confim and create
+                Confirm and create
               </Button>
             </Flex>
           </Flex>

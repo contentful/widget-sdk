@@ -13,6 +13,7 @@ import StateLink from 'app/common/StateLink';
 const styles = { svgContainer: css({ width: '150px' }) };
 
 function OrgSpacesHeader({
+  closeSidePanel,
   canCreateSpaceInCurrOrg,
   showCreateSpaceModal,
   isSpaceCreateForSpacePlanEnabled,
@@ -23,6 +24,7 @@ function OrgSpacesHeader({
       {canCreateSpaceInCurrOrg ? (
         isSpaceCreateForSpacePlanEnabled ? (
           <StateLink
+            onClick={closeSidePanel}
             component={TextLink}
             path="account.organizations.subscription_new.overview.space_create">
             + Create space
@@ -40,6 +42,7 @@ function OrgSpacesHeader({
   );
 }
 OrgSpacesHeader.propTypes = {
+  closeSidePanel: PropTypes.func.isRequired,
   canCreateSpaceInCurrOrg: PropTypes.bool,
   showCreateSpaceModal: PropTypes.func.isRequired,
   isSpaceCreateForSpacePlanEnabled: PropTypes.bool,
@@ -160,6 +163,7 @@ NoSpacesMsg.propTypes = {
 
 export default function SidepanelSpaces(props) {
   const {
+    closeSidePanel,
     currOrg,
     spacesByOrg,
     canCreateSpaceInCurrOrg,
@@ -172,6 +176,7 @@ export default function SidepanelSpaces(props) {
     <div className="nav-sidepanel__spaces-container">
       {spaces && (
         <OrgSpacesHeader
+          closeSidePanel={closeSidePanel}
           canCreateSpaceInCurrOrg={canCreateSpaceInCurrOrg}
           showCreateSpaceModal={showCreateSpaceModal}
           isSpaceCreateForSpacePlanEnabled={isSpaceCreateForSpacePlanEnabled}
@@ -189,6 +194,7 @@ export default function SidepanelSpaces(props) {
 }
 
 SidepanelSpaces.propTypes = {
+  closeSidePanel: PropTypes.func.isRequired,
   canCreateSpaceInCurrOrg: PropTypes.bool.isRequired,
   showCreateSpaceModal: PropTypes.func.isRequired,
   spacesByOrg: PropTypes.object.isRequired,

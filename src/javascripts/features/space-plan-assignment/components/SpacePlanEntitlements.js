@@ -18,7 +18,7 @@ export function SpacePlanEntitlements({ plan }) {
   const charges = plan.ratePlanCharges ?? plan.productRatePlanCharges;
   const planResources = getIncludedResources(charges);
   return (
-    <Flex justifyContent="flex-start" marginLeft="spacingXl">
+    <Flex justifyContent="flex-start" marginLeft="spacingXl" testId="space-plan-entitlements">
       {resourcesToDisplay.map(({ id, name }) => {
         let tooltipText = '';
         // get tooltips texts for env, records and role
