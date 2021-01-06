@@ -11,6 +11,7 @@ import { shorten } from 'utils/NumberUtils';
 const styles = {
   flexItem: css({ marginRight: '2.25rem' }),
   tooltipPointer: css({ cursor: 'help' }),
+  wrapper: css({ marginLeft: '2.4rem' }),
 };
 
 export function SpacePlanEntitlements({ plan }) {
@@ -18,7 +19,7 @@ export function SpacePlanEntitlements({ plan }) {
   const charges = plan.ratePlanCharges ?? plan.productRatePlanCharges;
   const planResources = getIncludedResources(charges);
   return (
-    <Flex justifyContent="flex-start" marginLeft="spacingXl" testId="space-plan-entitlements">
+    <Flex justifyContent="flex-start" className={styles.wrapper} testId="space-plan-entitlements">
       {resourcesToDisplay.map(({ id, name }) => {
         let tooltipText = '';
         // get tooltips texts for env, records and role

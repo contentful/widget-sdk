@@ -8,44 +8,27 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import { Button, Heading, Paragraph, TextLink, List } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration.svg';
-import StateLink from 'app/common/StateLink';
 
 const styles = { svgContainer: css({ width: '150px' }) };
 
-function OrgSpacesHeader({
-  closeSidePanel,
-  canCreateSpaceInCurrOrg,
-  showCreateSpaceModal,
-  isSpaceCreateForSpacePlanEnabled,
-}) {
+function OrgSpacesHeader({ canCreateSpaceInCurrOrg, triggerSpaceCreation }) {
   return (
     <div className="nav-sidepanel__spaces-header">
       <Paragraph className="nav-sidepanel__spaces-header-heading">Spaces</Paragraph>
       {canCreateSpaceInCurrOrg ? (
-        isSpaceCreateForSpacePlanEnabled ? (
-          <StateLink
-            onClick={closeSidePanel}
-            component={TextLink}
-            path="account.organizations.subscription_new.overview.space_create">
-            + Create space
-          </StateLink>
-        ) : (
-          <TextLink
-            className="text-link"
-            onClick={showCreateSpaceModal}
-            data-test-id="sidepanel-add-space-link">
-            + Create space
-          </TextLink>
-        )
+        <TextLink
+          className="text-link"
+          onClick={triggerSpaceCreation}
+          data-test-id="sidepanel-add-space-link">
+          + Create space
+        </TextLink>
       ) : null}
     </div>
   );
 }
 OrgSpacesHeader.propTypes = {
-  closeSidePanel: PropTypes.func.isRequired,
   canCreateSpaceInCurrOrg: PropTypes.bool,
-  showCreateSpaceModal: PropTypes.func.isRequired,
-  isSpaceCreateForSpacePlanEnabled: PropTypes.bool,
+  triggerSpaceCreation: PropTypes.func.isRequired,
 };
 
 function SpaceList(props) {
@@ -119,7 +102,7 @@ SpaceList.propTypes = {
   setOpenedSpaceId: PropTypes.func,
   environmentsEnabled: PropTypes.bool,
 };
-const getAdminEmptyState = (showCreateSpaceModal) => (
+const getAdminEmptyState = (triggerSpaceCreation) => (
   <EmptyStateContainer>
     <div className={styles.svgContainer}>
       <EmptyStateAdminIllustration />
@@ -131,7 +114,7 @@ const getAdminEmptyState = (showCreateSpaceModal) => (
       <br />
       for a specific project.
     </Paragraph>
-    <Button testId="sidepanel-create-space-btn" onClick={showCreateSpaceModal}>
+    <Button testId="sidepanel-create-space-btn" onClick={triggerSpaceCreation}>
       Add a space
     </Button>
   </EmptyStateContainer>
@@ -146,11 +129,11 @@ const getPractitionerEmptyState = () => (
     <Paragraph> Have a chat with your admin to get access to a space.</Paragraph>
   </EmptyStateContainer>
 );
-function NoSpacesMsg({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
+function NoSpacesMsg({ canCreateSpaceInCurrOrg, triggerSpaceCreation }) {
   return (
     <div className="nav-sidepanel__no-spaces" data-test-id="sidepanel-no-spaces">
       {canCreateSpaceInCurrOrg
-        ? getAdminEmptyState(showCreateSpaceModal)
+        ? getAdminEmptyState(triggerSpaceCreation)
         : getPractitionerEmptyState()}
     </div>
   );
@@ -158,35 +141,26 @@ function NoSpacesMsg({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
 
 NoSpacesMsg.propTypes = {
   canCreateSpaceInCurrOrg: PropTypes.bool,
-  showCreateSpaceModal: PropTypes.func.isRequired,
+  triggerSpaceCreation: PropTypes.func.isRequired,
 };
 
 export default function SidepanelSpaces(props) {
-  const {
-    closeSidePanel,
-    currOrg,
-    spacesByOrg,
-    canCreateSpaceInCurrOrg,
-    showCreateSpaceModal,
-    isSpaceCreateForSpacePlanEnabled,
-  } = props;
+  const { currOrg, spacesByOrg, canCreateSpaceInCurrOrg, triggerSpaceCreation } = props;
   const spaces = currOrg && spacesByOrg[currOrg.sys.id];
 
   return (
     <div className="nav-sidepanel__spaces-container">
       {spaces && (
         <OrgSpacesHeader
-          closeSidePanel={closeSidePanel}
           canCreateSpaceInCurrOrg={canCreateSpaceInCurrOrg}
-          showCreateSpaceModal={showCreateSpaceModal}
-          isSpaceCreateForSpacePlanEnabled={isSpaceCreateForSpacePlanEnabled}
+          triggerSpaceCreation={triggerSpaceCreation}
         />
       )}
       {spaces && <SpaceList {...props} spaces={spaces} />}
       {!spaces && (
         <NoSpacesMsg
           canCreateSpaceInCurrOrg={canCreateSpaceInCurrOrg}
-          showCreateSpaceModal={showCreateSpaceModal}
+          triggerSpaceCreation={triggerSpaceCreation}
         />
       )}
     </div>
@@ -194,11 +168,9 @@ export default function SidepanelSpaces(props) {
 }
 
 SidepanelSpaces.propTypes = {
-  closeSidePanel: PropTypes.func.isRequired,
   canCreateSpaceInCurrOrg: PropTypes.bool.isRequired,
-  showCreateSpaceModal: PropTypes.func.isRequired,
+  triggerSpaceCreation: PropTypes.func.isRequired,
   spacesByOrg: PropTypes.object.isRequired,
   currOrg: PropTypes.object.isRequired,
   goToSpace: PropTypes.func.isRequired,
-  isSpaceCreateForSpacePlanEnabled: PropTypes.bool,
 };

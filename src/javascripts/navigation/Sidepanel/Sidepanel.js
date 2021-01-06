@@ -35,7 +35,6 @@ export default class Sidepanel extends React.Component {
       spacesByOrg: {},
       openedSpaceId: null,
       environmentsEnabled: false,
-      isSpaceCreateForSpacePlanEnabled: false,
     };
   }
 
@@ -63,8 +62,6 @@ export default class Sidepanel extends React.Component {
       organizationId: currentOrgId,
     });
 
-    const isSpaceCreateForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
-
     this.setState(
       {
         orgs: orgs || [],
@@ -73,7 +70,6 @@ export default class Sidepanel extends React.Component {
         currentEnvId,
         currentAliasId,
         environmentsEnabled,
-        isSpaceCreateForSpacePlanEnabled,
       },
       () => {
         this.setCurrOrg(org);
@@ -146,7 +142,7 @@ export default class Sidepanel extends React.Component {
     });
   };
 
-  showCreateSpaceModal = () => {
+  triggerSpaceCreation = async () => {
     const organizationId = this.state.currOrg.sys.id;
 
     trackCTAClick(CTA_EVENTS.CREATE_SPACE, {
@@ -182,10 +178,9 @@ export default class Sidepanel extends React.Component {
             <SidepanelSpaces
               {...this.props}
               {...this.state}
-              showCreateSpaceModal={this.showCreateSpaceModal}
+              triggerSpaceCreation={this.triggerSpaceCreation}
               goToSpace={this.goToSpace}
               setOpenedSpaceId={this.setOpenedSpaceId}
-              isSpaceCreateForSpacePlanEnabled={this.state.isSpaceCreateForSpacePlanEnabled}
             />
             <OrgActions
               gotoOrgSettings={this.gotoOrgSettings}

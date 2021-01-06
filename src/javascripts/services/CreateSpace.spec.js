@@ -11,6 +11,7 @@ import {
 import { go } from 'states/Navigator';
 import { getOrganization } from 'services/TokenStore';
 import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const mockV1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
 const mockV2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
@@ -110,6 +111,24 @@ describe('CreateSpace', () => {
       await beginSpaceCreation('v2');
       getOrganization.mockResolvedValueOnce(mockV2Org);
       expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
+    });
+
+    it('sends user to the space_create page for enterprise orgs when feature flag enabled', async function () {
+      getSpaceRatePlans.mockResolvedValueOnce([mockRatePlans.enterprise]);
+      getBasePlan.mockResolvedValueOnce({ customerType: 'Enterprise' });
+      isEnterprisePlan.mockReturnValueOnce(true);
+      getVariation.mockImplementation((flag) => {
+        if (flag === FLAGS.CREATE_SPACE_FOR_SPACE_PLAN) {
+          return Promise.resolve(true);
+        }
+      });
+
+      await beginSpaceCreation('v2');
+
+      expect(go).toHaveBeenCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'overview', 'space_create'],
+        params: { orgId: 'v2' },
+      });
     });
   });
 });

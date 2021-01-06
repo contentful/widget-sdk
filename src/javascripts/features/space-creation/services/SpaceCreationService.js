@@ -35,8 +35,8 @@ export async function createSpaceWithTemplate({
     await createTemplate(newSpace, selectedTemplate);
   } catch (error) {
     Notification.error(
-      'We had a problem creating your template.Something happened while creating the template.You can still use your space, but some content from the template may be missing.',
-      { duration: 3000 }
+      'We had a problem creating your template. You can still use your space, but some content from the template may be missing.',
+      { duration: 4000 }
     );
   }
   return newSpace;

@@ -9,6 +9,9 @@ import { go } from 'states/Navigator';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
@@ -60,6 +63,20 @@ export async function beginSpaceCreation(organizationId) {
   if (spacePurchaseFlowAllowed) {
     go({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: { orgId: organizationId },
+    });
+    return;
+  }
+
+  // if newSpaceCreationFlow flag is on and org is Enterprise, they should go to /space_create
+  const isSpaceCreateForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
+  const endpoint = createOrganizationEndpoint(organizationId);
+  const basePlan = await getBasePlan(endpoint);
+  const hasEnterprisePlan = basePlan && isEnterprisePlan(basePlan);
+
+  if (isSpaceCreateForSpacePlanEnabled && hasEnterprisePlan) {
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'overview', 'space_create'],
       params: { orgId: organizationId },
     });
     return;
