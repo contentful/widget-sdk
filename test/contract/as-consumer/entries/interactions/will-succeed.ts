@@ -19,6 +19,7 @@ export const willSucceedGettingDefaultEntry = (): InteractionObject => ({
   willRespondWith: {
     status: 200,
     headers: {
+      'Accept-Patch': 'application/json-patch+json',
       'Content-Type': 'application/vnd.contentful.management.v1+json',
     },
     body: severalEntriesResponse().items[2],
