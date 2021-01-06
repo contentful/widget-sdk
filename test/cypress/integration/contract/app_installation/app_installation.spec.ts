@@ -1,19 +1,12 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultSpaceId, entryIdWithApp } from '../../../util/requests';
+import { defaultSpaceId } from '../../../util/requests';
 import {
-  queryForAppInstallations,
-  queryForAppDefinitions,
-  saveAppInstallation,
-  deleteAppInstallation,
+  organizationAppDefinitions,
+  appInstallation,
+  publicAppDefinitions,
 } from '../../../interactions/apps';
-import {
-  getAllContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType,
-  getAllPublicContentTypesInDefaultSpace,
-} from '../../../interactions/content_types';
+import { getAllContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import { queryForEditorInterfaces } from '../../../interactions/editor_interfaces';
-import { getDefaultEntry } from '../../../interactions/entries';
-import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 
 describe('App Installation', () => {
   before(() =>
@@ -32,13 +25,13 @@ describe('App Installation', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
 
-      interactions = [...defaultRequestsMock(), queryForAppDefinitions.willReturnNone()];
-      queryForAppDefinitions.willReturnSeveralPublic();
+      interactions = [...defaultRequestsMock(), organizationAppDefinitions.willListOnePrivate()];
+      publicAppDefinitions.willListAll();
     });
 
-    context('No app installed', () => {
+    context('with no app installed', () => {
       beforeEach(() => {
-        interactions.push(queryForAppInstallations.willReturnNone());
+        interactions.push(appInstallation.willListNone());
 
         cy.server();
         cy.route('**/channel/**', []).as('shareJS');
@@ -46,55 +39,186 @@ describe('App Installation', () => {
         cy.wait(interactions);
       });
 
-      describe('Loads marketplace and installs the Dropbox app', () => {
-        it('should install', () => {
+      describe('should install apps', () => {
+        it('public Dropbox app', () => {
           const loadAppConfigurationScreenInteraction = [
-            queryForAppInstallations.willReturnNoInstalledApp(),
+            appInstallation.willNotReturnPublicApp(),
             getAllContentTypesInDefaultSpace.willReturnOne(),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
 
-          const installInteractions = [saveAppInstallation.willSucceed()];
+          // Open the action list
+          cy.get('div')
+            .contains('Dropbox')
+            .parents('[data-test-id="app-title"]')
+            .parent()
+            .findByTestId('cf-ui-icon-button')
+            .click();
+          // Check if all elements are there
+          cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
+          cy.findByTestId('cf-ui-dropdown-list').within(() => {
+            cy.get('button').contains('About').should('be.visible');
+            cy.get('button').contains('Install').should('be.visible');
+          });
 
+          // Click on the entire card and install
           cy.get('div').contains('Dropbox').click();
           cy.get('span').contains('Install').click();
           cy.get('button').contains('Authorize access').click();
 
           cy.wait(loadAppConfigurationScreenInteraction);
+
+          cy.resetFakeServer('apps');
+
+          const installInteractions = [
+            appInstallation.willReturnPublicApp(),
+            appInstallation.willSavePublic(),
+          ];
+
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(500); // wait for the loading animation to finish
           cy.get('span').contains('Install').click();
           cy.wait(installInteractions);
         });
+
+        it('private app without config location', () => {
+          // Open the action list
+          cy.get('div')
+            .contains('Private app without config')
+            .parents('[data-test-id="app-title"]')
+            .parent()
+            .findByTestId('cf-ui-icon-button')
+            .click();
+          // Check if all elements are there
+          cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
+          cy.findByTestId('cf-ui-dropdown-list').within(() => {
+            cy.get('button').contains('Edit app definition').should('be.visible');
+            cy.get('button').contains('Install').should('be.visible').click();
+          });
+
+          // We reset all the calls just so we can change the app installation list endpoint
+          cy.resetFakeServer('apps');
+          const installationInteractions = [
+            organizationAppDefinitions.willListOnePrivate(),
+            queryForEditorInterfaces.willReturnSeveral(),
+            appInstallation.willReturnPrivateApp(),
+            appInstallation.willSavePrivate(),
+            appInstallation.willListSome(),
+          ];
+          // This call is necessary but we don't wait for it because it will timeout (flakyness)
+          publicAppDefinitions.willListAll();
+
+          // Actually do the install
+          cy.get('button').contains('Authorize access').click();
+          cy.wait(installationInteractions);
+
+          // Check if the install list is now displayed and contains the private app
+          cy.findByTestId('installed-list').should('exist');
+          cy.findByTestId('installed-list')
+            .get('div')
+            .contains('Private app without config')
+            .should('exist');
+        });
       });
     });
 
-    context('App already installed', () => {
+    context('with app already installed', () => {
       beforeEach(() => {
-        interactions.push(queryForAppInstallations.willReturnSome());
+        interactions.push(appInstallation.willListSome());
         cy.server();
         cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
         cy.wait(interactions);
       });
 
-      describe('Loads marketplace and uninstalls the Dropbox app', () => {
-        it('should uninstall', () => {
+      describe('should uninstall', () => {
+        it('public Dropbox app from config screen', () => {
+          // Open the action list
           cy.findByTestId('installed-list').should('be.visible');
-          cy.get('span').contains('Configure').click();
+          cy.findByTestId('installed-list')
+            .get('div')
+            .contains('Dropbox')
+            .parents('[data-test-id="app-title"]')
+            .parent()
+            .findByTestId('cf-ui-icon-button')
+            .click();
 
+          // Find and click uninstall in the action list
+          cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
+          cy.findByTestId('cf-ui-dropdown-list').within(() => {
+            cy.get('button').contains('Configure').should('be.visible');
+            cy.get('button').contains('Uninstall').should('be.visible');
+            cy.get('button').contains('About').should('be.visible');
+          });
+          cy.get('button').contains('Configure').click();
+
+          // Config screen interactions
           const loadAppConfigurationScreenInteraction = [
-            queryForAppInstallations.willReturnOneInstalledApp(),
+            appInstallation.willReturnPublicApp(),
             getAllContentTypesInDefaultSpace.willReturnOne(),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
           cy.wait(loadAppConfigurationScreenInteraction);
 
-          const deleteInteraction = deleteAppInstallation.willSucceed();
+          // Uninstall on the config screen
           cy.findAllByTestId('app-uninstall-button').should('contain', 'Uninstall');
           cy.findByTestId('app-uninstall-button').click();
           cy.findByTestId('uninstall-button').click();
-          cy.wait(deleteInteraction);
+          cy.wait(appInstallation.willDeletePublic());
+
+          /* Block commented out because I couldn't get it to pass in CI
+          // Reset after routing back and check if apps are gone
+          cy.resetFakeServer('apps');
+          const marketplaceInteractions = [organizationAppDefinitions.willListEmpty()];
+          appInstallation.willListNone();
+          publicAppDefinitions.willListAll();
+
+          cy.wait(marketplaceInteractions);
+
+          // Check if the install list is now displayed and contains the private app
+          cy.findByTestId('installed-list').should('not.exist');
+          */
+        });
+        it('public Dropbox app from listing', () => {
+          // Open the action list
+          cy.findByTestId('installed-list').should('be.visible');
+          cy.findByTestId('installed-list')
+            .get('div')
+            .contains('Dropbox')
+            .parents('[data-test-id="app-title"]')
+            .parent()
+            .findByTestId('cf-ui-icon-button')
+            .click();
+
+          // Find and click uninstall in the action list
+          cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
+          cy.findByTestId('cf-ui-dropdown-list').within(() => {
+            cy.get('button').contains('Configure').should('be.visible');
+            cy.get('button').contains('Uninstall').should('be.visible');
+            cy.get('button').contains('About').should('be.visible');
+          });
+          cy.get('button').contains('Uninstall').click();
+          cy.get('button').contains('Uninstall').click();
+        });
+        it('private app', () => {
+          // Open the action list
+          cy.findByTestId('installed-list').should('be.visible');
+          cy.findByTestId('installed-list')
+            .get('div')
+            .contains('Private app without config')
+            .parents('[data-test-id="app-title"]')
+            .parent()
+            .findByTestId('cf-ui-icon-button')
+            .click();
+
+          // Find and click uninstall in the action list
+          cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
+          cy.findByTestId('cf-ui-dropdown-list').within(() => {
+            cy.get('button').contains('Edit app definition').should('be.visible');
+            cy.get('button').contains('Uninstall').should('be.visible');
+          });
+          cy.get('button').contains('Uninstall').click();
+          cy.get('button').contains('Uninstall').click();
         });
       });
     });

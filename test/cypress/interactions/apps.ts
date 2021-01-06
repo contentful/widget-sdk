@@ -1,220 +1,227 @@
 import { defaultSpaceId, defaultHeader, defaultOrgId, defaultAppId } from '../util/requests';
-import { dropboxAppInstallation } from '../fixtures/responses/app_installations/app-installation';
+
+import { marketplaceEntryList } from '../fixtures/responses/app_definitions/apps-marketplace';
+
+// Installation Lists
 import { appInstallationsMarketPlace } from '../fixtures/responses/app_installations/app_installations';
+import { emptyAppInstallations } from '../fixtures/responses/app_installations/app_installations_empty';
 
-const appMarketplaceResponse = require('../fixtures/responses/app_definitions/apps-marketplace.json');
-const emptyAppInstallation = require('../fixtures/responses/app_installations/app_installations_empty');
-const empty = require('../fixtures/responses/empty');
-const appDefinitionsPublic = require('../fixtures/responses/app_definitions/app-definitions-public');
+// Single installations
+import { dropboxAppInstallation } from '../fixtures/responses/app_installations/app-installation';
+import { privateAppInstallation } from '../fixtures/responses/app_installations/app-installation-private';
 
-enum State {
-  APPS_MARKETPLACE = 'apps/marketplace',
-  APP_INSTALLATION_NONE = 'app_installations/none',
-  APP_INSTALLATION_SOME = 'app_installations/some',
-  APP_DEFINITIONS_NONE = 'app_definitions/none',
-  APP_DEFINITIONS_PUBLIC = 'app_definitions/public',
-  GET_APP_INSTALLATION = 'app_installation/some',
-  GET_APP_INSTALLATION_NONE = 'app_installation/none',
-  INSTALL_APP = 'app_installations/install',
-  UNINSTALL_APP = 'app_installations/uninstall',
+// AppDefinition Lists
+import { appDefinitionsPublic } from '../fixtures/responses/app_definitions/app-definitions-public';
+import { orgAppDefinitions } from '../fixtures/responses/app_definitions/app-definitions-private';
+
+const emptyOrgAppDefinitions = require('../fixtures/responses/empty');
+
+const privateAppId = orgAppDefinitions.items[0].sys.id;
+const contentfulJson = 'application/vnd.contentful.management.v1+json';
+
+function interaction(desc: string, req, res) {
+  const keywords = desc.split(' ');
+  const handle = keywords.map((str) => str[0].toUpperCase() + str.slice(1)).join('');
+  return function () {
+    cy.addInteraction({
+      provider: 'apps',
+      state: keywords.join('/'),
+      uponReceiving: desc,
+      withRequest: req,
+      willRespondWith: res,
+    }).as(handle);
+
+    return `@${handle}`;
+  };
 }
 
-export const queryForAllMarketplaceApps = {
-  willReturnSeveral() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.APPS_MARKETPLACE,
-      uponReceiving: `a request for all public apps in the marketplace for space ${defaultSpaceId}`,
-      withRequest: {
-        method: 'GET',
-        path: `/entries`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: appMarketplaceResponse,
-      },
-    }).as('queryForMarketplaceApps');
-
-    return '@queryForMarketplaceApps';
-  },
+export const marketplaceAppEntries = {
+  willListAll: interaction(
+    'request public marketplace apps',
+    {
+      method: 'GET',
+      path: `/entries`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: marketplaceEntryList,
+    }
+  ),
 };
 
-export const queryForAppInstallations = {
-  willReturnOneInstalledApp() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.GET_APP_INSTALLATION,
-      uponReceiving: `a request for an app installation`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
-        headers: defaultHeader,
+export const appInstallation = {
+  willSavePublic: interaction(
+    'save dropbox app installation',
+    {
+      method: 'PUT',
+      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      body: { parameters: {} },
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: dropboxAppInstallation,
+    }
+  ),
+  willSavePrivate: interaction(
+    'save private app installation',
+    {
+      method: 'PUT',
+      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      body: { parameters: {} },
+    },
+    {
+      status: 200,
+      headers: {
+        'Content-Type': contentfulJson,
       },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: dropboxAppInstallation,
-      },
-    }).as('queryForOneAppInstallation');
-
-    return '@queryForOneAppInstallation';
-  },
-  willReturnNoInstalledApp() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.GET_APP_INSTALLATION_NONE,
-      uponReceiving: `a request for an app installation ${defaultAppId} that is not yet installed`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: emptyAppInstallation,
-      },
-    }).as('queryForOneAppInstallation');
-
-    return '@queryForOneAppInstallation';
-  },
-  willReturnNone() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.APP_INSTALLATION_NONE,
-      uponReceiving: `a request for all app installations for space ${defaultSpaceId}`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/app_installations`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: emptyAppInstallation,
-      },
-    }).as('queryForAppInstallations');
-
-    return '@queryForAppInstallations';
-  },
-  willReturnSome() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.APP_INSTALLATION_SOME,
-      uponReceiving: `a request to get all installed apps in an environment`,
-      withRequest: {
-        path: `/spaces/${defaultSpaceId}/app_installations`,
-        method: 'GET',
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: appInstallationsMarketPlace,
-      },
-    }).as('queryForAppInstallationsWithInstalledApps');
-
-    return '@queryForAppInstallationsWithInstalledApps';
-  },
+      body: privateAppInstallation,
+    }
+  ),
+  willDeletePublic: interaction(
+    'delete Dropbox app installation',
+    {
+      method: 'DELETE',
+      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 204,
+    }
+  ),
+  willDeletePrivate: interaction(
+    'delete private app installation',
+    {
+      method: 'DELETE',
+      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 204,
+    }
+  ),
+  willReturnPublicApp: interaction(
+    'get existing Dropbox app installation',
+    {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: dropboxAppInstallation,
+    }
+  ),
+  willReturnPrivateApp: interaction(
+    'get existing private app installation',
+    {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: privateAppInstallation,
+    }
+  ),
+  willNotReturnPublicApp: interaction(
+    'fail get Dropbox installation',
+    {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 404,
+      headers: { 'Content-Type': contentfulJson },
+      body: emptyAppInstallations,
+    }
+  ),
+  willNotReturnPrivateApp: interaction(
+    'fail get private installation',
+    {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      headers: defaultHeader,
+    },
+    {
+      status: 404,
+      headers: { 'Content-Type': contentfulJson },
+      body: emptyAppInstallations,
+    }
+  ),
+  willListNone: interaction(
+    'empty list of app installations for space',
+    {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/app_installations`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: emptyAppInstallations,
+    }
+  ),
+  willListSome: interaction(
+    'list of app installations for space',
+    {
+      path: `/spaces/${defaultSpaceId}/app_installations`,
+      method: 'GET',
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: appInstallationsMarketPlace,
+    }
+  ),
 };
 
-export const deleteAppInstallation = {
-  willSucceed() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.UNINSTALL_APP,
-      uponReceiving: 'a request for deleting an app',
-      withRequest: {
-        method: 'DELETE',
-        path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 204,
-      },
-    }).as('deleteAppInstallation');
-
-    return '@deleteAppInstallation';
-  },
+export const organizationAppDefinitions = {
+  willListEmpty: interaction(
+    'list empty private app definitions for org',
+    {
+      method: 'GET',
+      path: `/organizations/${defaultOrgId}/app_definitions`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: emptyOrgAppDefinitions,
+    }
+  ),
+  willListOnePrivate: interaction(
+    'list private app definitions for org',
+    {
+      method: 'GET',
+      path: `/organizations/${defaultOrgId}/app_definitions`,
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: orgAppDefinitions,
+    }
+  ),
 };
-
-export const saveAppInstallation = {
-  willSucceed() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.INSTALL_APP,
-      uponReceiving: `a request for installing an app`,
-      withRequest: {
-        method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
-        body: { parameters: {} },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: dropboxAppInstallation,
-      },
-    }).as('saveAppInstallation');
-
-    return '@saveAppInstallation';
-  },
-};
-
-export const queryForAppDefinitions = {
-  willReturnNone() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.APP_DEFINITIONS_NONE,
-      uponReceiving: `a request for app definitions for organization ${defaultOrgId}`,
-      withRequest: {
-        method: 'GET',
-        path: `/organizations/${defaultOrgId}/app_definitions`,
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: empty,
-      },
-    }).as('queryForAppDefinitions');
-
-    return '@queryForAppDefinitions';
-  },
-  willReturnSeveralPublic() {
-    cy.addInteraction({
-      provider: 'apps',
-      state: State.APP_DEFINITIONS_PUBLIC,
-      uponReceiving: `a request for public app definitions provided by Contentful`,
-      withRequest: {
-        method: 'GET',
-        path: '/app_definitions',
-        headers: defaultHeader,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: appDefinitionsPublic,
-      },
-    }).as('queryForPublicAppDefinitions');
-
-    return '@queryForPublicAppDefinitions';
-  },
+export const publicAppDefinitions = {
+  willListAll: interaction(
+    'list public app definitions',
+    {
+      method: 'GET',
+      path: '/app_definitions',
+      headers: defaultHeader,
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: appDefinitionsPublic,
+    }
+  ),
 };

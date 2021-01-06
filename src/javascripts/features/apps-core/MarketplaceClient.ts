@@ -17,8 +17,9 @@ const CONTENTFUL_APPS_QUERY = '/entries?include=10&content_type=contentfulApp';
 // Cache globally (across all spaces and environments).
 // Changes in marketplace are very infrequent - we can live
 // with getting updates only on reload.
-let marketplaceAppsCache = null;
-let contentfulAppsCache = null;
+// Types are any as they get cast to MarketplaceApp once the appDefinition is resolved
+let contentfulAppsCache: any[] = [];
+let marketplaceAppsCache: any[] = [];
 
 export async function fetchMarketplaceApps() {
   // Only retry if the cached value is clearly wrong.
@@ -44,7 +45,7 @@ export async function fetchMarketplaceApps() {
 
   marketplaceAppsCache = allApps
     .map((a) => createAppObject(a, listedAppIds.has(a.sys.id)))
-    .filter(({ definitionId }) => !!definitionId);
+    .filter(({ definitionId }) => definitionId);
 
   return marketplaceAppsCache;
 }
@@ -62,23 +63,8 @@ export async function fetchContentfulApps() {
   const allApps = resolveResponse(response);
 
   contentfulAppsCache = allApps
-    .map((app) => ({
-      definitionId: get(app, ['fields', 'appDefinitionId']),
-      id: get(app, ['sys', 'id'], ''),
-      title: get(app, ['fields', 'title'], ''),
-      author: {
-        name: get(app, ['fields', 'developer', 'fields', 'name']),
-        url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
-        icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
-      },
-      description: get(app, ['fields', 'description'], ''),
-      tagLine: get(app, ['fields', 'tagLine'], ''),
-      icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-      featureFlagName: get(app, ['fields', 'featureFlagName'], null),
-      targetUrl: get(app, ['fields', 'targetUrl'], ''),
-      isContentfulApp: true,
-    }))
-    .filter(({ definitionId }) => !!definitionId);
+    .map(createContentfulAppObject)
+    .filter(({ definitionId }) => definitionId);
 
   return contentfulAppsCache;
 }
@@ -138,6 +124,25 @@ function createAppObject(entry, isListed) {
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map((msg) => msg.fields),
     featureFlagName: get(entry, ['fields', 'featureFlagName'], null),
     isEarlyAccess,
+  };
+}
+
+function createContentfulAppObject(entry) {
+  return {
+    definitionId: get(entry, ['fields', 'appDefinitionId']),
+    id: get(entry, ['sys', 'id'], ''),
+    title: get(entry, ['fields', 'title'], ''),
+    author: {
+      name: get(entry, ['fields', 'developer', 'fields', 'name']),
+      url: get(entry, ['fields', 'developer', 'fields', 'websiteUrl']),
+      icon: get(entry, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
+    },
+    description: get(entry, ['fields', 'description'], ''),
+    tagLine: get(entry, ['fields', 'tagLine'], ''),
+    icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
+    featureFlagName: get(entry, ['fields', 'featureFlagName'], null),
+    targetUrl: get(entry, ['fields', 'targetUrl'], ''),
+    isContentfulApp: true,
   };
 }
 

@@ -1,27 +1,32 @@
 import { Card, Heading } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import { AppListItem } from './AppListItem';
-import { MarketplaceApp } from '../../apps-core';
 import React from 'react';
+import { MarketplaceApp } from 'features/apps-core';
+import { AppManager } from '../AppOperations';
 
 interface AppListProps {
   apps: MarketplaceApp[];
+  appManager: AppManager;
   openDetailModal: (app: MarketplaceApp) => void;
   canManageApps: boolean;
   organizationId: string;
   title: string;
   info?: string;
   testId?: string;
+  hasAdvancedAppsFeature: boolean;
 }
 
 export const AppList = ({
   apps,
+  appManager,
   openDetailModal,
   canManageApps,
   organizationId,
   title,
   info,
   testId,
+  hasAdvancedAppsFeature,
 }: AppListProps) => {
   return (
     <>
@@ -35,8 +40,10 @@ export const AppList = ({
         <div data-test-id={testId}>
           {apps.map((app) => (
             <AppListItem
+              appManager={appManager}
               key={app.id}
               app={app}
+              hasAdvancedAppsFeature={hasAdvancedAppsFeature}
               canManageApps={canManageApps}
               openDetailModal={openDetailModal}
               orgId={organizationId}

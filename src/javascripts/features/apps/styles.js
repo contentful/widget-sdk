@@ -91,4 +91,7 @@ export const styles = {
     color: `${tokens.colorWhite} !important`,
     textTransform: 'uppercase',
   }),
+  listItemDropdown: css({
+    width: '160px',
+  }),
 };

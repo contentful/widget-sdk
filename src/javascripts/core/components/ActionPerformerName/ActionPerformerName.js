@@ -1,8 +1,7 @@
 import React from 'react';
 import { ActionPerformer } from '../ActionPerformer';
 
-// eslint-disable-next-line no-unused-vars
-export const ActionPerformerName = ({ children, ...props }) => (
+export const ActionPerformerName = ({ ...props }) => (
   <ActionPerformer {...props}>
     {({ formattedName, formattedNameAsString }) => (
       <span data-test-id="action-performer-name" title={formattedNameAsString}>

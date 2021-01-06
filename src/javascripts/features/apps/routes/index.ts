@@ -83,6 +83,7 @@ export const appRoute = {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
+            cma: spaceContext.cma,
             hasAppsFeature,
             hasAdvancedAppsFeature,
             organizationId: spaceContext.organization.sys.id,

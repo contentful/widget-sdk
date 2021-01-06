@@ -2,7 +2,8 @@ import React from 'react';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { TextLink, Heading } from '@contentful/forma-36-react-components';
-import { AppPropType, externalLinkProps } from './shared';
+import { externalLinkProps } from './shared';
+import { MarketplaceApp } from 'features/apps-core';
 
 const styles = {
   icon: css({
@@ -12,7 +13,7 @@ const styles = {
   }),
 };
 
-export function AppHeader(props) {
+export function AppHeader(props: { app: MarketplaceApp }) {
   const { app } = props;
   return (
     <div className={css({ display: 'flex', marginBottom: tokens.spacingL })}>
@@ -27,17 +28,15 @@ export function AppHeader(props) {
           })}>
           {app.title}
         </Heading>
-        <div>
-          App • Developed by{' '}
-          <TextLink href={app.author.url} {...externalLinkProps}>
-            {app.author.name}
-          </TextLink>
-        </div>
+        {app.author && (
+          <div>
+            App • Developed by{' '}
+            <TextLink href={app.author.url} {...externalLinkProps}>
+              {app.author.name}
+            </TextLink>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-AppHeader.propTypes = {
-  app: AppPropType.isRequired,
-};

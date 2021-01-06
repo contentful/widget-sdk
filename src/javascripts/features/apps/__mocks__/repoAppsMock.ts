@@ -1,4 +1,4 @@
-import { MarketplaceApp } from '../../apps-core';
+import { MarketplaceApp } from 'features/apps-core';
 
 export const apps: MarketplaceApp[] = [
   {
@@ -139,6 +139,7 @@ export const apps: MarketplaceApp[] = [
     },
     appInstallation: {
       sys: {
+        id: '29B6zorz8plUCN1auThiVH',
         type: 'AppInstallation',
         createdBy: {
           sys: {
@@ -223,7 +224,7 @@ export const contentfulApps: MarketplaceApp[] = [
       },
       name: 'Compose',
       src: '',
-      locations: [{}],
+      locations: [],
     },
     appInstallation: {
       sys: {

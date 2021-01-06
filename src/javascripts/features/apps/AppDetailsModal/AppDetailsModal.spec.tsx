@@ -2,6 +2,8 @@ import React from 'react';
 import { render, wait } from '@testing-library/react';
 
 import { AppDetails } from './AppDetails';
+import { AppManager } from '../AppOperations';
+import { MarketplaceApp } from 'features/apps-core';
 
 jest.mock('services/TokenStore', () => ({
   getDomains: () => ({
@@ -10,10 +12,17 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 describe('AppDetailsModal', () => {
+  const appManager = {} as AppManager;
   const modalProps = {
-    app: {
+    app: ({
       id: 'optimizely',
       title: 'Optimizely',
+      appDefinition: {
+        name: 'optimizely',
+        sys: {
+          id: 'optimizely-app-id',
+        },
+      },
       author: {
         name: 'Contentful',
         url: 'https://www.contentful.com',
@@ -23,6 +32,7 @@ describe('AppDetailsModal', () => {
       links: [
         {
           title: 'Documentation',
+          shortTitle: 'Documentation',
           url: 'https://www.contentful.com/developers/docs/extensibility/apps/optimizely/',
         },
       ],
@@ -36,14 +46,23 @@ describe('AppDetailsModal', () => {
 
 The Optimizely app makes it easier to power experiments with structured content.`,
       permissions: 'The app has full permission to the space it is installed in.',
-    },
-    showPermissions: null,
-    onClose: () => {},
+      supportUrl: '',
+    } as unknown) as MarketplaceApp,
+    showPermissions: false,
+    onClose: () => ({}),
     canManageApps: true,
+    spaceInformation: {
+      spaceId: 'some-space',
+      spaceName: 'space-name',
+      envMeta: {
+        environmentId: 'master',
+        isMasterEnvironment: true,
+      },
+    },
   };
 
   it('should match the snapshot', async () => {
-    const { container } = render(<AppDetails {...modalProps} />);
+    const { container } = render(<AppDetails appManager={appManager} {...modalProps} />);
 
     await wait();
 

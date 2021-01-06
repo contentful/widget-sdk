@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import tokens from '@contentful/forma-36-tokens';
 import { Card, Paragraph, Icon, Button, TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import PropTypes from 'prop-types';
 import SVGIcon from 'ui/Components/Icon';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
+import { AppIcon } from '../AppIcon';
 
 const styles = {
   container: css({
@@ -28,7 +28,7 @@ const styles = {
     alignItems: 'center',
     marginBottom: tokens.spacingM,
   }),
-  appIcon: css({
+  ctflIcon: css({
     svg: {
       width: '36px',
       height: '36px',
@@ -48,10 +48,18 @@ const styles = {
       marginBottom: tokens.spacingXs,
     }),
   }),
-  icon: css({
+  appIcon: css({
     width: '40px',
     height: '40px',
     marginRight: tokens.spacingXs,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // If it falls back to the forma-based default icon the <img> tag is replaced
+    // with an <svg> of fixed size, so we adjust the margin to align it again
+    '& svg': {
+      marginLeft: tokens.spacingXs,
+    },
   }),
   envMeta: css({
     display: 'flex',
@@ -84,16 +92,34 @@ const linkProps = {
   rel: 'noopener noreferrer',
 };
 
-export function AppPermissions(props) {
+interface AppPermissionProps {
+  onCancel: Function;
+  onAuthorize: Function;
+  title: string;
+  icon?: string;
+  space: string;
+  envMeta: {
+    environmentId: string;
+    isMasterEnvironment: boolean;
+    aliasId?: string;
+  };
+  legal?: {
+    eula: string;
+    privacyPolicy: string;
+  };
+}
+
+export function AppPermissions(props: AppPermissionProps) {
   const { title, icon, space, envMeta, legal } = props;
+  const [isUninstalling, setUninstalling] = useState(false);
 
   return (
     <div className={styles.container}>
       <div className={styles.logos}>
-        <img src={icon} className={styles.icon} />
+        <AppIcon icon={icon} className={styles.appIcon} />
         <Icon icon="ChevronLeft" color="muted" className={styles.arrowIcon} />
         <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
-        <SVGIcon name="contentful-logo-light" className={styles.appIcon} />
+        <SVGIcon name="contentful-logo-light" className={styles.ctflIcon} />
       </div>
       <Paragraph className={styles.heading}>
         The <b>{title} app</b> is asking for permission to access{' '}
@@ -125,8 +151,11 @@ export function AppPermissions(props) {
       </div>
       <div className={styles.actions}>
         <Button
+          loading={isUninstalling}
+          disabled={isUninstalling}
           buttonType="primary"
           onClick={() => {
+            setUninstalling(true);
             props.onAuthorize();
           }}>
           Authorize access
@@ -174,24 +203,3 @@ export function AppPermissions(props) {
     </div>
   );
 }
-
-AppPermissions.defaultProps = {
-  centered: false,
-};
-
-AppPermissions.propTypes = {
-  onCancel: PropTypes.func.isRequired,
-  onAuthorize: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-  space: PropTypes.string.isRequired,
-  envMeta: PropTypes.shape({
-    environmentId: PropTypes.string.isRequired,
-    isMasterEnvironment: PropTypes.bool.isRequired,
-    aliasId: PropTypes.string,
-  }),
-  legal: PropTypes.shape({
-    eula: PropTypes.string.isRequired,
-    privacyPolicy: PropTypes.string.isRequired,
-  }),
-};

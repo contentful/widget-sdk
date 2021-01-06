@@ -31,6 +31,7 @@ describe('MarketplacePage', () => {
   it('should match snapshot for loading state', async () => {
     const { container } = render(
       <MarketplacePage
+        cma={{}}
         repo={{ getApps: jest.fn() }}
         organizationId={orgId}
         userId={userId}
@@ -51,6 +52,7 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
+        cma={{}}
         repo={mockRepo}
         organizationId={orgId}
         userId={userId}
@@ -73,6 +75,7 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
+        cma={{}}
         repo={mockRepo}
         organizationId={orgId}
         userId={userId}
@@ -96,6 +99,7 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
+        cma={{}}
         repo={mockRepo}
         organizationId={orgId}
         userId={userId}

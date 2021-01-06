@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import * as AppLifecycleTracking from '../AppLifecycleTracking';
-import { AppPermissions } from '../AppPermissions';
-import { AppPropType } from './shared';
+import { AppPermissions } from './AppPermissions';
+import { SpaceInformation } from './shared';
 import { css } from 'emotion';
+import { MarketplaceApp } from 'features/apps-core';
 
 const styles = {
   permissions: css({
@@ -12,15 +12,29 @@ const styles = {
   }),
 };
 
-export function AppPermissionScreen({ app, onInstall, onCancel, onClose, spaceInformation }) {
+interface AppPermissionScreenProps {
+  app: MarketplaceApp;
+  onInstall: Function;
+  onCancel: Function;
+  onClose: Function;
+  spaceInformation: SpaceInformation;
+}
+
+export function AppPermissionScreen({
+  app,
+  onInstall,
+  onCancel,
+  onClose,
+  spaceInformation,
+}: AppPermissionScreenProps) {
   useEffect(() => {
     AppLifecycleTracking.permissionsOpened(app.id);
   }, [app.id]);
 
-  const onAuthorize = () => {
+  const onAuthorize = async () => {
     AppLifecycleTracking.permissionsAccepted(app.id);
+    await onInstall();
     onClose(true);
-    onInstall();
   };
 
   const onCancelTracked = () => {
@@ -42,19 +56,3 @@ export function AppPermissionScreen({ app, onInstall, onCancel, onClose, spaceIn
     </div>
   );
 }
-
-AppPermissionScreen.propTypes = {
-  app: AppPropType.isRequired,
-  onInstall: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  spaceInformation: PropTypes.shape({
-    spaceId: PropTypes.string.isRequired,
-    spaceName: PropTypes.string.isRequired,
-    envMeta: PropTypes.shape({
-      environmentId: PropTypes.string.isRequired,
-      isMasterEnvironment: PropTypes.bool.isRequired,
-      aliasId: PropTypes.string,
-    }),
-  }),
-};

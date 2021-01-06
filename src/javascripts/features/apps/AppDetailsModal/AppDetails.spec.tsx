@@ -1,14 +1,19 @@
 import { render, screen } from '@testing-library/react';
+import { AppDefinitionProps, AppInstallationProps } from 'contentful-management/types';
+import { MarketplaceApp } from 'features/apps-core';
 import noop from 'lodash/noop';
 import React from 'react';
+import { AppManager } from '../AppOperations';
 import { AppDetails } from './AppDetails';
+import { SpaceInformation } from './shared';
 
 jest.mock('core/components/ActionPerformerName', () => ({
   ActionPerformerName: ({ link }) => link.sys.id,
 }));
 
 describe('AppDetails', () => {
-  const app = {
+  const appManager = {} as AppManager;
+  const app: MarketplaceApp = {
     id: 'optimizely',
     title: 'Optimizely',
     author: {
@@ -20,6 +25,7 @@ describe('AppDetails', () => {
     links: [
       {
         title: 'Documentation',
+        shortTitle: 'Documentation',
         url: 'https://www.contentful.com/developers/docs/extensibility/apps/optimizely/',
       },
     ],
@@ -32,7 +38,23 @@ describe('AppDetails', () => {
 - item 2
 
 The Optimizely app makes it easier to power experiments with structured content.`,
-    permissions: 'The app has full permission to the space it is installed in.',
+    supportUrl: '',
+    legal: { eula: '', privacyPolicy: '' },
+    appDefinition: {
+      name: 'optimize',
+      sys: {
+        id: 'optimize-app-def-id',
+      } as AppDefinitionProps['sys'],
+    },
+  };
+
+  const spaceInformation: SpaceInformation = {
+    spaceId: '',
+    spaceName: '',
+    envMeta: {
+      environmentId: 'master',
+      isMasterEnvironment: true,
+    },
   };
 
   describe('Installation section', () => {
@@ -42,9 +64,11 @@ The Optimizely app makes it easier to power experiments with structured content.
           app={{
             ...app,
             appInstallation: {
-              sys: { createdBy: { sys: { id: 'creator' } } },
-            },
+              sys: { createdAt: '2020-01-01', createdBy: { sys: { id: 'creator' } } },
+            } as AppInstallationProps,
           }}
+          appManager={appManager}
+          spaceInformation={spaceInformation}
           onClose={noop}
           canManageApps
         />
@@ -53,7 +77,15 @@ The Optimizely app makes it easier to power experiments with structured content.
     });
 
     it('should not show if not installed', () => {
-      render(<AppDetails app={app} onClose={noop} canManageApps />);
+      render(
+        <AppDetails
+          spaceInformation={spaceInformation}
+          app={app}
+          appManager={appManager}
+          onClose={noop}
+          canManageApps
+        />
+      );
       expect(screen.queryByText('Installed by')).toBeNull();
     });
   });
@@ -63,6 +95,8 @@ The Optimizely app makes it easier to power experiments with structured content.
       render(
         <AppDetails
           app={{ ...app, supportUrl: 'https://www.contentful.com/support/ ' }}
+          appManager={appManager}
+          spaceInformation={spaceInformation}
           onClose={noop}
           canManageApps
         />
@@ -71,7 +105,15 @@ The Optimizely app makes it easier to power experiments with structured content.
     });
 
     it('should show correct text if supportUrl is missing', () => {
-      render(<AppDetails app={app} onClose={noop} canManageApps />);
+      render(
+        <AppDetails
+          appManager={appManager}
+          spaceInformation={spaceInformation}
+          app={app}
+          onClose={noop}
+          canManageApps
+        />
+      );
       expect(screen.queryByText('This app is not officially supported.')).toBeDefined();
     });
   });

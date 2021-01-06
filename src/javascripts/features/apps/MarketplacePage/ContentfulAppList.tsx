@@ -1,11 +1,9 @@
 import { styles } from './styles';
 import { Card, Heading, Paragraph, Button } from '@contentful/forma-36-react-components';
 import React from 'react';
-import StateLink from 'app/common/StateLink';
 
-const ContentfulAppListItem = ({ app, openDetailModal, canManageApps }) => {
+const ContentfulAppListItem = ({ app, openDetailModal, canManageApps, appManager }) => {
   const { title, tagLine, icon, appInstallation } = app;
-
   return (
     <Card padding="default" className={styles.appListCard}>
       <div className={styles.contentfulAppCard}>
@@ -28,13 +26,14 @@ const ContentfulAppListItem = ({ app, openDetailModal, canManageApps }) => {
                   Open
                 </Button>
                 {canManageApps && (
-                  <StateLink path="^.detail" params={{ appId: app.id }}>
-                    {({ onClick }) => (
-                      <Button onClick={onClick} buttonType="muted" className={styles.button}>
-                        Uninstall
-                      </Button>
-                    )}
-                  </StateLink>
+                  <Button
+                    onClick={() => {
+                      appManager.showUninstall(app);
+                    }}
+                    buttonType="muted"
+                    className={styles.button}>
+                    Uninstall
+                  </Button>
                 )}
               </div>
             ) : (
@@ -49,7 +48,7 @@ const ContentfulAppListItem = ({ app, openDetailModal, canManageApps }) => {
   );
 };
 
-export const ContentfulAppsList = ({ openDetailModal, apps, canManageApps }) => {
+export const ContentfulAppsList = ({ openDetailModal, apps, canManageApps, appManager }) => {
   return (
     <>
       <div className={styles.headingWrapper}>
@@ -60,6 +59,7 @@ export const ContentfulAppsList = ({ openDetailModal, apps, canManageApps }) => 
       {apps.map((app, key) => (
         <ContentfulAppListItem
           app={app}
+          appManager={appManager}
           openDetailModal={openDetailModal}
           canManageApps={canManageApps}
           key={key}

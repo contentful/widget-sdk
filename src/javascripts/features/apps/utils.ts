@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { BASIC_APPS_LIMIT, ADVANCED_APPS_LIMIT } from './limits';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 export const getUsageExceededMessage = (hasAdvancedAppsFeature = false) => {
   const spaceInstallationLimit = hasAdvancedAppsFeature ? ADVANCED_APPS_LIMIT : BASIC_APPS_LIMIT;
@@ -17,4 +18,13 @@ export function isUsageExceededErrorResponse(err) {
   const isUsageExceededReason = reason === 'Usage exceeded.';
 
   return isForbidden && isUsageExceededReason;
+}
+
+export function hasConfigLocation(appDefinition) {
+  if (!appDefinition) return false;
+
+  const locations = appDefinition.locations || [];
+  return locations.some(
+    (l: { location: WidgetLocation }) => l.location === WidgetLocation.APP_CONFIG
+  );
 }

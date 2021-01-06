@@ -28,8 +28,11 @@ NavigationAppIcon.propTypes = {
   icon: IconRaw.propTypes.icon,
 };
 
-const AppIcon = ({ icon }) => <IconRaw className={styles.icon} icon={icon} />;
+const AppIcon = ({ icon, className }) => (
+  <IconRaw className={className || styles.icon} icon={icon} />
+);
 AppIcon.propTypes = {
+  className: PropTypes.string,
   icon: IconRaw.propTypes.icon,
 };
 

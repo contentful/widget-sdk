@@ -1,3 +1,4 @@
+import { SysLink } from 'contentful-management/types';
 import { omit, sortBy } from 'lodash';
 
 import { fetchMarketplaceApps, fetchContentfulApps } from './MarketplaceClient';
@@ -13,23 +14,24 @@ export interface MarketplaceApp {
   title: string;
   tagLine?: string;
   icon?: string;
-  appInstallation?: object;
+  appInstallation?: {
+    sys: {
+      [key: string]: any;
+      appDefinition: SysLink;
+    };
+    [key: string]: any;
+  };
   appDefinition: {
     sys: {
-      type: 'AppDefinition';
+      type: string;
       id: string;
-      organization: {
-        sys: {
-          id: string;
-          [key: string]: any;
-        };
-      };
+      organization: SysLink;
       [key: string]: any;
     };
     [key: string]: any;
   };
   isPrivateApp?: boolean;
-  isEarlyAccess: boolean;
+  isEarlyAccess?: boolean;
   isListed?: boolean;
   author?: {
     name: string;
@@ -54,7 +56,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     getOnlyInstalledApps,
   };
 
-  async function getApp(idOrSlug: string) {
+  async function getApp(idOrSlug: string): Promise<MarketplaceApp> {
     const apps = await getApps();
 
     const app = apps.find((app) => app.id === idOrSlug || app.appDefinition.sys.id === idOrSlug);
@@ -65,7 +67,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     throw new Error(`Could not find an app with ID "${idOrSlug}".`);
   }
 
-  async function getApps() {
+  async function getApps(): Promise<MarketplaceApp[]> {
     const [installationMap, marketplaceApps, contentfulApps, orgDefinitions] = await Promise.all([
       getAppDefinitionToInstallationMap(),
       fetchMarketplaceApps(),
@@ -85,7 +87,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     ];
   }
 
-  async function getContentfulApps(installationMap, contentfulApps) {
+  async function getContentfulApps(installationMap, contentfulApps): Promise<MarketplaceApp[]> {
     const ctflAppDefs = await appDefinitionLoader.getByIds(
       contentfulApps.map((c) => c.definitionId)
     );
@@ -101,7 +103,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     );
   }
 
-  async function getMarketplaceApps(installationMap, marketplaceApps) {
+  async function getMarketplaceApps(installationMap, marketplaceApps): Promise<MarketplaceApp[]> {
     const definitionIds = marketplaceApps
       // show apps from the marketplace space which are in the public listing or are installed
       .filter((app) => app.isListed || !!installationMap[app.definitionId])
@@ -125,13 +127,13 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     );
   }
 
-  function getPrivateApps(installationMap, orgDefinitions) {
+  function getPrivateApps(installationMap, orgDefinitions): MarketplaceApp[] {
     return orgDefinitions.map((def) => {
       return makePrivateAppObject(def, installationMap[def.sys.id]);
     });
   }
 
-  async function getOnlyInstalledApps() {
+  async function getOnlyInstalledApps(): Promise<MarketplaceApp[]> {
     const [installationsResponse, marketplaceApps, contentfulApps] = await Promise.all([
       cma.getAppInstallations(),
       fetchMarketplaceApps(),
@@ -164,7 +166,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     };
   }
 
-  function makePrivateAppObject(appDefinition, appInstallation) {
+  function makePrivateAppObject(appDefinition, appInstallation): MarketplaceApp {
     return {
       id: appDefinition.sys.id,
       title: appDefinition.name,

@@ -37,11 +37,16 @@ describe('AppEditorInterfaces', () => {
     };
 
     transform = (targetState) => {
-      return transformEditorInterfacesToTargetState(cma, targetState, installation, spaceData);
+      return transformEditorInterfacesToTargetState(
+        cma,
+        targetState,
+        installation.sys.appDefinition.sys.id,
+        spaceData
+      );
     };
 
     remove = () => {
-      return removeAllEditorInterfaceReferences(cma, installation);
+      return removeAllEditorInterfaceReferences(cma, installation.sys.appDefinition.sys.id);
     };
   });
 

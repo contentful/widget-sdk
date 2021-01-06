@@ -83,9 +83,10 @@ function parseReasons(checked, customReason) {
     .concat(customReason ? [{ custom: customReason }] : []);
 }
 
-export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
+export function UninstallModal({ onConfirm, onClose, actionList, isShown, askForReasons = true }) {
   const [checked, onCheck] = useState({});
   const [customReason, setCustomReason] = useState('');
+  const [isUninstalling, setUninstalling] = useState(false);
 
   return (
     <Modal title="Uninstall app?" onClose={onClose} isShown={isShown} allowHeightOverflow>
@@ -93,46 +94,55 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
         <Paragraph>This will remove the app and its features</Paragraph>
       </Typography>
       <List testId="action-list">{actionList.map(createListItem)}</List>
-      <hr className={styles.separator} />
 
-      <Typography>
-        <Subheading>Reason for uninstalling (optional):</Subheading>
-      </Typography>
+      {askForReasons && (
+        <>
+          <hr className={styles.separator} />
+          <Typography>
+            <Subheading>Reason for uninstalling (optional):</Subheading>
+          </Typography>
+          <div data-test-id="reasons-list">
+            {reasons.map((reason, i) => (
+              <ListItem key={reason}>
+                <CheckboxField
+                  className={styles.checkbox}
+                  key={reason}
+                  labelText={reason}
+                  name="someOption"
+                  checked={checked[i]}
+                  onChange={(e) => onCheck({ ...checked, [i]: e.target.checked })}
+                  id={reason}
+                  testId={`reason-${i}`}
+                />
+              </ListItem>
+            ))}
 
-      <div data-test-id="reasons-list">
-        {reasons.map((reason, i) => (
-          <ListItem key={reason}>
-            <CheckboxField
-              className={styles.checkbox}
-              key={reason}
-              labelText={reason}
-              name="someOption"
-              checked={checked[i]}
-              onChange={(e) => onCheck({ ...checked, [i]: e.target.checked })}
-              id={reason}
-              testId={`reason-${i}`}
+            <FormLabel htmlFor="customReason" className={styles.customReasonLabel}>
+              What can we improve about the app?
+            </FormLabel>
+            <Textarea
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              rows={3}
+              maxLength={2000}
+              name="customReason"
+              id="customReason"
+              testId="reason-custom"
             />
-          </ListItem>
-        ))}
+          </div>
+          <hr className={styles.separator} />
+        </>
+      )}
 
-        <FormLabel htmlFor="customReason" className={styles.customReasonLabel}>
-          What can we improve about the app?
-        </FormLabel>
-        <Textarea
-          value={customReason}
-          onChange={(e) => setCustomReason(e.target.value)}
-          rows={3}
-          maxLength={2000}
-          name="customReason"
-          id="customReason"
-          testId="reason-custom"
-        />
-      </div>
-      <hr className={styles.separator} />
       <Button
         testId="uninstall-button"
-        onClick={() => onConfirm(parseReasons(checked, customReason))}
-        buttonType="negative">
+        onClick={() => {
+          setUninstalling(true);
+          onConfirm(parseReasons(checked, customReason));
+        }}
+        buttonType="negative"
+        loading={isUninstalling}
+        disabled={isUninstalling}>
         Uninstall
       </Button>
       <Button
@@ -149,6 +159,7 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
 UninstallModal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  askForReasons: PropTypes.bool,
   actionList: PropTypes.arrayOf(
     PropTypes.shape({
       info: PropTypes.string.isRequired,

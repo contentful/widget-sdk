@@ -1,4 +1,4 @@
-import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'lodash';
+import { isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
@@ -6,11 +6,7 @@ import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import APIClient from 'data/APIClient';
-import {
-  AppInstallationProps,
-  ContentTypeProps,
-  EditorInterfaceProps,
-} from 'contentful-management/types';
+import { ContentTypeProps, EditorInterfaceProps } from 'contentful-management/types';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -40,9 +36,7 @@ export async function getDefaultEditors(
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-function isCurrentApp(widget: any, appInstallation: AppInstallationProps): boolean {
-  const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
-
+function isCurrentApp(widget: any, widgetId: string): boolean {
   return widget.widgetNamespace === WidgetNamespace.APP && widget.widgetId === widgetId;
 }
 
@@ -62,7 +56,7 @@ function isCurrentApp(widget: any, appInstallation: AppInstallationProps): boole
 export async function transformEditorInterfacesToTargetState(
   cma: APIClient,
   targetState: Record<string, Record<string, PartialTargetState>>,
-  appInstallation: AppInstallationProps,
+  widgetId: string,
   spaceData
 ) {
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
@@ -78,7 +72,7 @@ export async function transformEditorInterfacesToTargetState(
         defaultSidebar,
         defaultEditors,
         targetState[ei.sys.contentType.sys.id] || {},
-        appInstallation
+        widgetId
       );
     })
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
@@ -141,13 +135,11 @@ function transformSingleEditorInterfaceToTargetState(
   defaultSidebar: { widgetId: string; widgetNamespace: WidgetNamespace }[],
   defaultEditors: { widgetId: string; widgetNamespace: WidgetNamespace }[],
   targetState: Record<ContentTypeProps['sys']['id'], PartialTargetState>,
-  appInstallation: AppInstallationProps
+  widgetId: string
 ): EditorInterfaceProps {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
-  const result = removeSingleEditorInterfaceReferences(ei, appInstallation);
-
-  const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+  const result = removeSingleEditorInterfaceReferences(ei, widgetId);
 
   // Target state object for controls: `{ fieldId }`
   if (Array.isArray(targetState.controls)) {
@@ -213,14 +205,11 @@ function transformSingleEditorInterfaceToTargetState(
   return result;
 }
 
-export async function removeAllEditorInterfaceReferences(
-  cma: APIClient,
-  appInstallation: AppInstallationProps
-) {
+export async function removeAllEditorInterfaceReferences(cma: APIClient, widgetId: string) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const updatePromises = editorInterfaces
-    .map((ei) => removeSingleEditorInterfaceReferences(ei, appInstallation))
+    .map((ei) => removeSingleEditorInterfaceReferences(ei, widgetId))
     // We always want at least the default editor, hence we remove
     // empty list to fallback to default editors
     .map(({ editors, ...ei }) => (isEmpty(editors) ? ei : { ...ei, editors }))
@@ -232,7 +221,7 @@ export async function removeAllEditorInterfaceReferences(
 
 function removeSingleEditorInterfaceReferences(
   ei: EditorInterfaceProps,
-  appInstallation: AppInstallationProps
+  widgetId: string
 ): EditorInterfaceProps {
   ei = cloneDeep(ei);
   const result: EditorInterfaceProps = { sys: ei.sys };
@@ -240,21 +229,21 @@ function removeSingleEditorInterfaceReferences(
   if (Array.isArray(ei.controls)) {
     // If the app is used in `controls`, reset it to the default.
     result.controls = ei.controls.map((control) => {
-      return isCurrentApp(control, appInstallation) ? { fieldId: control.fieldId } : control;
+      return isCurrentApp(control, widgetId) ? { fieldId: control.fieldId } : control;
     });
   }
 
   if (Array.isArray(ei.sidebar)) {
     // If the app is used in `sidebar`, remove it from the list.
-    result.sidebar = ei.sidebar.filter((widget) => !isCurrentApp(widget, appInstallation));
+    result.sidebar = ei.sidebar.filter((widget) => !isCurrentApp(widget, widgetId));
   }
 
   if (Array.isArray(ei.editors)) {
     // If the app is used as `editor`, remove it from the list.
-    result.editors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
+    result.editors = ei.editors.filter((widget) => !isCurrentApp(widget, widgetId));
   }
 
-  if (isObject(ei.editor) && !isCurrentApp(ei.editor, appInstallation)) {
+  if (isObject(ei.editor) && !isCurrentApp(ei.editor, widgetId)) {
     result.editor = ei.editor;
   }
 

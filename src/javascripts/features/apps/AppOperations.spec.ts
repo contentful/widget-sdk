@@ -1,10 +1,17 @@
 import * as AppOperations from './AppOperations';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { MarketplaceApp } from 'features/apps-core';
 
 const APP_ID = 'some-app';
 
 const status = {
-  appDefinition: { sys: { type: 'AppDefinition', id: APP_ID } },
+  appDefinition: {
+    sys: {
+      type: 'AppDefinition',
+      id: APP_ID,
+      organization: { sys: { id: 'org-id', type: 'Link', linkType: 'Organization' } },
+    },
+  },
   appInstallation: {
     sys: {
       type: 'AppInstallation',
@@ -23,9 +30,10 @@ describe('AppOperations', () => {
 
       try {
         await AppOperations.installOrUpdate(
+          {} as MarketplaceApp,
           {},
-          () => {},
-          () => {},
+          () => ({}),
+          () => ({} as any),
           {
             targetState: {
               EditorInterface: {
@@ -34,7 +42,8 @@ describe('AppOperations', () => {
                 },
               },
             },
-          }
+          },
+          {}
         );
       } catch (err) {
         expect(err.message).toMatch(/Invalid target sidebar/);
@@ -51,7 +60,7 @@ describe('AppOperations', () => {
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {
         spaceId: 'spaceId',
@@ -60,6 +69,7 @@ describe('AppOperations', () => {
       };
 
       await AppOperations.installOrUpdate(
+        {} as MarketplaceApp,
         cma,
         evictWidget,
         checkAppStatus,
@@ -82,7 +92,7 @@ describe('AppOperations', () => {
       const cma = {
         updateAppInstallation: jest.fn(() => Promise.reject('unprocessable')),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {
         spaceId: 'spaceId',
@@ -93,7 +103,14 @@ describe('AppOperations', () => {
       expect.assertions(3);
 
       try {
-        await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {}, spaceData);
+        await AppOperations.installOrUpdate(
+          {} as MarketplaceApp,
+          cma,
+          evictWidget,
+          checkAppStatus,
+          {},
+          spaceData
+        );
       } catch (err) {
         expect(err).toMatch('unprocessable');
         expect(cma.updateAppInstallation).toBeCalledTimes(1);
@@ -122,7 +139,7 @@ describe('AppOperations', () => {
         }),
         updateEditorInterface: jest.fn((ext) => Promise.resolve(ext)),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {
         spaceId: 'spaceId',
@@ -131,6 +148,7 @@ describe('AppOperations', () => {
       };
 
       await AppOperations.installOrUpdate(
+        { appDefinition: status.appDefinition } as MarketplaceApp,
         cma,
         evictWidget,
         checkAppStatus,
@@ -195,10 +213,10 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn((ei) => Promise.resolve(ei)),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
-      await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
+      await AppOperations.uninstall({} as MarketplaceApp, cma, checkAppStatus, evictWidget);
 
       expect(cma.getEditorInterfaces).toBeCalledTimes(1);
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
@@ -224,10 +242,10 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
-      await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
+      await AppOperations.uninstall({} as MarketplaceApp, cma, checkAppStatus, evictWidget);
 
       expect(cma.deleteAppInstallation).toBeCalledTimes(1);
       expect(cma.deleteAppInstallation).toBeCalledWith('some-app');
@@ -241,13 +259,18 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized')),
       };
-      const evictWidget = jest.fn().mockResolvedValue();
+      const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);
 
       try {
-        await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
+        await AppOperations.uninstall(
+          { appDefinition: status.appDefinition } as MarketplaceApp,
+          cma,
+          checkAppStatus,
+          evictWidget
+        );
       } catch (err) {
         expect(cma.deleteAppInstallation).toBeCalledWith('some-app');
         expect(err).toMatch('unauthorized');
