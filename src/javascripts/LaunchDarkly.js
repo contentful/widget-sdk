@@ -52,7 +52,7 @@ export const FLAGS = {
   PATCH_ENTRY_UPDATES: 'feature-penguin-12-2020-patch-entry-updates',
   COMPOSE_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-compose-eap',
   LAUNCH_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-launch-eap',
-
+  REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__: 'test-flag',
@@ -84,6 +84,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PATCH_ENTRY_UPDATES]: false,
   [FLAGS.COMPOSE_APP_LISTING_EAP]: false,
   [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
+  [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

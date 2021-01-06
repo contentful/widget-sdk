@@ -404,6 +404,29 @@ APIClient.prototype.executeRelease = function (action, entities, id = 'immediate
   );
 };
 
+/**
+ * @description
+ * Executes a given BulkAction (publish) on multiple entries/assets
+ *
+ * **action='publish'** it's necessary to specify a VersionedLink[]
+ *
+ * @param {Object} params
+ * @param {string} params.action
+ * @param {Object[]} params.entities
+ * @return {Promise}
+ */
+APIClient.prototype.executeBulkAction = function ({ action = 'publish', entities = [] }) {
+  return this._request({
+    method: 'POST',
+    path: ['bulk_actions', action],
+    data: {
+      entities: {
+        items: entities,
+      },
+    },
+  });
+};
+
 APIClient.prototype.publishContentType = function (data, version) {
   return this._setResourceFlag('content_types', data, 'published', version);
 };

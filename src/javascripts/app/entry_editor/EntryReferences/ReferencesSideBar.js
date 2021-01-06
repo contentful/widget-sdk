@@ -31,6 +31,8 @@ import {
 } from './state/actions';
 import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { publishBulkAction } from './BulkAction/BulkActionService';
 
 const styles = {
   sideBarWrapper: css({
@@ -70,17 +72,25 @@ const SELECTED_ENTITIES_LIMIT = 200;
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
-  const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
+
+  const [isReleaseDialogShown, setReleaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
-  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+  const [isBulkActionSupportEnabled, setIsBulkActionSupportEnabled] = useState(false);
+
+  // TODO check if it's actually `currentEnvironmentAliasId`
+  const { currentSpaceId: spaceId, currentEnvironmentId: environmentId } = useSpaceEnvContext();
 
   useEffect(() => {
-    async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
-      setisAddToReleaseEnabled(isAddToReleaseEnabled);
-    }
+    (async function () {
+      const addToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
+      const bulkActionEnabled = await getVariation(FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT, {
+        spaceId,
+        environmentId,
+      });
 
-    addToReleaseEnabled();
+      setisAddToReleaseEnabled(addToReleaseEnabled);
+      setIsBulkActionSupportEnabled(bulkActionEnabled);
+    })();
   });
 
   const displayValidation = (validationResponse) => {
@@ -112,7 +122,33 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       });
   };
 
-  const handlePublication = () => {
+  const getReferencesForEntry = () => {
+    return getReferencesForEntryId(entity.sys.id)
+      .then(({ resolved: fetchedRefs }) => dispatch({ type: SET_REFERENCES, value: fetchedRefs }))
+      .then(() => {
+        dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+      });
+  };
+
+  const publishSuccessMessage = () => {
+    return createSuccessMessage({
+      selectedEntities,
+      root: references[0],
+      entityTitle,
+      action: 'publish',
+    });
+  };
+
+  const publishErrorMessage = () => {
+    return createErrorMessage({
+      selectedEntities,
+      root: references[0],
+      entityTitle,
+      action: 'publish',
+    });
+  };
+
+  const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
     track(trackingEvents.publish, {
@@ -120,52 +156,35 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       references_count: selectedEntities.length,
     });
 
-    const entitiesToPublish = mapEntities(selectedEntities);
+    try {
+      if (isBulkActionSupportEnabled) {
+        await publishBulkAction(selectedEntities);
+      } else {
+        const entitiesToPublish = mapEntities(selectedEntities);
+        publishEntities({ entities: entitiesToPublish, action: 'publish' });
+      }
 
-    publishEntities({ entities: entitiesToPublish, action: 'publish' })
-      .then(() => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        getReferencesForEntryId(entity.sys.id)
-          .then(({ resolved: fetchedRefs }) =>
-            dispatch({ type: SET_REFERENCES, value: fetchedRefs })
-          )
-          .then(() => {
-            dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+      // After publishing
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      getReferencesForEntry();
 
-            Notification.success(
-              createSuccessMessage({
-                selectedEntities,
-                root: references[0],
-                entityTitle,
-              })
-            );
-          });
-      })
-      .catch((error) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        /**
-         * Separate validation response from failure response.
-         * Permisson errors have a different shape (without sys).
-         */
-        if (error.statusCode && error.statusCode === 422) {
-          const errored = error.data.details.errors;
-          if (errored.length && errored[0].sys) {
-            return displayValidation({ errored });
-          }
+      Notification.success(publishSuccessMessage());
+    } catch (error) {
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+
+      if (error.statusCode && error.statusCode === 422) {
+        const errored = error.data.details.errors;
+        if (errored.length && errored[0].sys) {
+          return displayValidation({ errored });
         }
-        Notification.error(
-          createErrorMessage({
-            selectedEntities,
-            root: references[0],
-            entityTitle,
-            action: 'publish',
-          })
-        );
-      });
+      }
+
+      Notification.error(publishErrorMessage());
+    }
   };
 
   const handleAddToRelease = () => {
-    setRelaseDialogShown(true);
+    setReleaseDialogShown(true);
   };
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');
@@ -241,7 +260,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           </TextLink>
         </div>
       </Note>
-      {isRelaseDialogShown && (
+      {isReleaseDialogShown && (
         <ReleasesWidgetDialog
           rootEntity={entity}
           selectedEntities={selectedEntities}
@@ -250,7 +269,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
             selectedEntities,
             references[0]
           )}
-          onCancel={() => setRelaseDialogShown(false)}
+          onCancel={() => setReleaseDialogShown(false)}
         />
       )}
     </div>
