@@ -56,6 +56,11 @@ function executeBulkAction({ entities, action }) {
   return apiClient.executeBulkAction({ action, entities });
 }
 
+function getBulkAction(id) {
+  const apiClient = new APIClient(createEndpoint());
+  return apiClient.getBulkAction(id);
+}
+
 export {
   getReferencesForEntryId,
   getDefaultLocale,
@@ -64,4 +69,5 @@ export {
   validateEntities,
   publishEntities,
   executeBulkAction,
+  getBulkAction,
 };

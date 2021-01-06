@@ -15,6 +15,7 @@ const PREFIXES = [
   'resources',
   'editor_interfaces',
   'app_installations',
+  'bulk_actions',
 ];
 
 // Given a path return `true` if the environment endpoint

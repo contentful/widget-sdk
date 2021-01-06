@@ -1,5 +1,8 @@
-import { executeBulkAction } from '../referencesService';
-import type { PublishableEntity } from '@contentful/types';
+import type { PublishableEntity, Link } from '@contentful/types';
+import { executeBulkAction, getBulkAction } from '../referencesService';
+
+const BULKACTION_REFRESH_LIMIT = 15; // number of times we want to perform a refresh
+const BULKACTION_REFRESH_INTERVAL = 1000; // in MS
 
 type VersionedLink = {
   sys: {
@@ -7,6 +10,35 @@ type VersionedLink = {
     linkType: string;
     type: 'Link';
     version: number;
+  };
+};
+
+enum BulkActionStatus {
+  Created = 'created',
+  InProgress = 'inProgress',
+  Succeeded = 'succeeded',
+  Failed = 'failed',
+}
+
+type BulkAction = {
+  sys: {
+    type: 'BulkAction';
+    id: string;
+    space: Link<'Space'>;
+    environment: Link<'Environment'>;
+    startedAt: string;
+    createdAt: string; // timestamp
+    completedAt: string;
+    createdBy: Link<'User'>;
+    status: BulkActionStatus;
+  };
+  action: 'publish';
+  error: {
+    sys: {
+      type: Error;
+      id: string;
+    };
+    message: string;
   };
 };
 
@@ -40,10 +72,39 @@ const mapEntities = (entities: PublishableEntity[]): VersionedLink[] => {
   return uniqEntities;
 };
 
-const publishBulkAction = async (entities) => {
-  const entitiesToPublish = mapEntities(entities);
+async function publishBulkActionAndWait(entities) {
+  let refreshCount = 0;
+  const bulkAction: BulkAction = await executeBulkAction({ entities, action: 'publish' });
 
-  return executeBulkAction({ entities: entitiesToPublish, action: 'publish' });
-};
+  return new Promise((resolve, reject) => {
+    const refreshInterval = setInterval(async () => {
+      try {
+        const refreshedBulkAction: BulkAction = await getBulkAction(bulkAction.sys.id);
 
-export { publishBulkAction };
+        if (refreshedBulkAction.sys.status === BulkActionStatus.Succeeded) {
+          clearInterval(refreshInterval);
+          resolve(refreshedBulkAction);
+        }
+
+        if (refreshedBulkAction.sys.status === BulkActionStatus.Failed) {
+          clearInterval(refreshInterval);
+          reject(refreshedBulkAction.error.message);
+        }
+
+        refreshCount += 1;
+
+        if (refreshCount >= BULKACTION_REFRESH_LIMIT) {
+          clearInterval(refreshInterval);
+          reject('Action took too long to respond');
+        }
+      } catch (error) {
+        reject('Failed');
+        clearInterval(refreshInterval);
+      }
+    }, BULKACTION_REFRESH_INTERVAL);
+  });
+}
+
+export async function publishBulkAction(entities) {
+  return publishBulkActionAndWait(mapEntities(entities));
+}
