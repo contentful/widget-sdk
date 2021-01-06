@@ -30,14 +30,14 @@ export class WebhookActivityLog extends React.Component {
   }
 
   componentDidMount() {
-    const { currentSpaceId: spaceId, currentSpace: space } = this.context;
-    this.fetch({ spaceId, space });
+    const { currentSpaceId: spaceId } = this.context;
+    this.fetch({ spaceId });
     this.props.registerLogRefreshAction(this.fetch.bind(this));
   }
 
-  fetch({ spaceId, space }) {
+  fetch({ spaceId }) {
     const { webhookId } = this.props;
-    const webhookRepo = getWebhookRepo({ spaceId, space });
+    const webhookRepo = getWebhookRepo({ spaceId });
 
     if (typeof webhookId !== 'string' || this.state.loading) {
       return Promise.resolve();

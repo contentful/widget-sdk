@@ -34,8 +34,8 @@ export class WebhookHealth extends React.Component {
 
   componentDidMount() {
     const { webhookId } = this.props;
-    const { currentSpaceId: spaceId, currentSpace: space } = this.context;
-    const webhookRepo = getWebhookRepo({ spaceId, space });
+    const { currentSpaceId: spaceId } = this.context;
+    const webhookRepo = getWebhookRepo({ spaceId });
 
     webhookRepo.logs.getHealth(webhookId).then(
       (data) => this.setState(calculateHealth(data) || { status: STATUS.NODATA }),

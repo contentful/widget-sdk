@@ -1,34 +1,38 @@
 import { get as getAtPath, cloneDeep } from 'lodash';
+import type { PlainClientAPI } from 'contentful-management';
+import type { WebhookProps } from 'contentful-management/types';
 
-export function createWebhookRepo(space) {
+export function createWebhookRepo({ client }: { client: PlainClientAPI }) {
   const logs = { getCall, getCalls, getHealth };
   return { getAll, get, save, remove, logs, hasValidBodyTransformation };
 
   function getAll() {
-    return getBaseCall()
-      .payload({ limit: 100 })
-      .get()
-      .then((res) => res.items.map(stringifyBodyTransformation));
+    return client.webhook.getMany({ query: { limit: 100 } }).then((response) => {
+      return response.items.map(stringifyBodyTransformation);
+    });
   }
 
-  function get(id) {
-    return getBaseCall(id).get().then(stringifyBodyTransformation);
+  function get(webhookDefinitionId: string) {
+    return client.webhook
+      .get({ webhookDefinitionId })
+      .then((data) => stringifyBodyTransformation(data));
   }
 
-  function getCall(webhookId, callId) {
-    return getLogsBaseCall(webhookId).paths(['calls', callId]).get();
+  function getCall(webhookDefinitionId: string, callId: string) {
+    return client.webhook.getCallDetails({ webhookDefinitionId, callId });
   }
 
-  function getCalls(webhookId) {
-    return getLogsBaseCall(webhookId)
-      .paths(['calls'])
-      .payload({ limit: 500 })
-      .get()
+  function getCalls(webhookDefinitionId: string) {
+    return client.webhook
+      .getManyCallDetails({
+        webhookDefinitionId,
+        query: { limit: 500 },
+      })
       .then((res) => res.items);
   }
 
-  function getHealth(webhookId) {
-    return getLogsBaseCall(webhookId).paths(['health']).get();
+  function getHealth(webhookDefinitionId: string) {
+    return client.webhook.getHealthStatus({ webhookDefinitionId });
   }
 
   function save(webhook) {
@@ -36,27 +40,18 @@ export function createWebhookRepo(space) {
     return createOrUpdate(webhook).then(stringifyBodyTransformation);
   }
 
-  function createOrUpdate(webhook) {
-    const id = getAtPath(webhook, ['sys', 'id']);
+  function createOrUpdate(webhook: WebhookProps) {
+    const webhookDefinitionId = getAtPath(webhook, ['sys', 'id']);
 
-    if (id) {
-      return getBaseCall(id, webhook.sys.version).payload(webhook).put();
+    if (webhookDefinitionId) {
+      return client.webhook.update({ webhookDefinitionId }, webhook);
     } else {
-      return getBaseCall().payload(webhook).post();
+      return client.webhook.create({}, webhook);
     }
   }
 
-  function remove(webhook) {
-    return getBaseCall(webhook.sys.id).delete();
-  }
-
-  function getBaseCall(id, version) {
-    const headers = typeof version !== 'undefined' ? { 'X-Contentful-Version': version } : {};
-    return space.endpoint('webhook_definitions', id).headers(headers);
-  }
-
-  function getLogsBaseCall(webhookId) {
-    return space.endpoint('webhooks', webhookId);
+  function remove(webhook: WebhookProps) {
+    return client.webhook.delete({ webhookDefinitionId: webhook.sys.id });
   }
 
   function stringifyBodyTransformation(webhook) {

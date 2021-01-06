@@ -10,8 +10,8 @@ import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const WebhookCallFetcher = createFetcherComponent((props) => {
-  const { webhookId, callId, space, spaceId } = props;
-  const webhookRepo = getWebhookRepo({ spaceId, space });
+  const { webhookId, callId, spaceId } = props;
+  const webhookRepo = getWebhookRepo({ spaceId });
 
   return Promise.all([webhookRepo.get(webhookId), webhookRepo.logs.getCall(webhookId, callId)]);
 });
@@ -26,13 +26,13 @@ export class WebhookCallRoute extends React.Component {
   static contextType = SpaceEnvContext;
 
   render() {
-    const { currentSpaceId, currentSpace } = this.context;
+    const { currentSpaceId } = this.context;
 
     if (!getSectionVisibility()['webhooks']) {
       return <ForbiddenPage />;
     }
     return (
-      <WebhookCallFetcher {...this.props} spaceId={currentSpaceId} space={currentSpace}>
+      <WebhookCallFetcher {...this.props} spaceId={currentSpaceId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <WebhookSkeletons.WebhookLoading />;

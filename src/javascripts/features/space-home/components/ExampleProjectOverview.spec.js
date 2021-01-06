@@ -11,7 +11,20 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { mockGetEntries } from '__mocks__/data/APIClient';
+
+const mockGetEntries = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  useSpaceEnvCMAClient: () => {
+    return {
+      spaceEnvCMAClient: {
+        entry: {
+          getMany: mockGetEntries,
+        },
+      },
+    };
+  },
+}));
 
 const mockSpace = FakeFactory.Space();
 
@@ -118,7 +131,10 @@ describe('ExampleProjectOverview', () => {
 
     userEvent.click(screen.getByTestId('example-project-card.edit-an-entry-button'));
     expect(mockGetEntries).toBeCalledWith({
-      content_type: 'course',
+      query: {
+        content_type: 'course',
+        limit: 1000,
+      },
     });
 
     await wait();
@@ -138,7 +154,10 @@ describe('ExampleProjectOverview', () => {
 
     userEvent.click(screen.getByTestId('example-project-card.edit-an-entry-button'));
     expect(mockGetEntries).toBeCalledWith({
-      content_type: 'course',
+      query: {
+        content_type: 'course',
+        limit: 1000,
+      },
     });
 
     await wait();

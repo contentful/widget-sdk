@@ -11,8 +11,8 @@ import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const WebhookFetcher = createFetcherComponent((props) => {
-  const { webhookId, spaceId, space } = props;
-  const webhookRepo = getWebhookRepo({ spaceId, space });
+  const { webhookId, spaceId } = props;
+  const webhookRepo = getWebhookRepo({ spaceId });
   return webhookRepo.get(webhookId);
 });
 
@@ -26,16 +26,13 @@ export class WebhookEditRoute extends React.Component {
   static contextType = SpaceEnvContext;
 
   render() {
-    const { currentSpaceId, currentSpace } = this.context;
+    const { currentSpaceId } = this.context;
 
     if (!getSectionVisibility()['webhooks']) {
       return <ForbiddenPage />;
     }
     return (
-      <WebhookFetcher
-        webhookId={this.props.webhookId}
-        spaceId={currentSpaceId}
-        space={currentSpace}>
+      <WebhookFetcher webhookId={this.props.webhookId} spaceId={currentSpaceId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <WebhookSkeletons.WebhookLoading />;

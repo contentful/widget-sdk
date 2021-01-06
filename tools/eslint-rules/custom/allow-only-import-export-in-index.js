@@ -19,7 +19,11 @@ module.exports = {
               message: "Please don't use anything except import / export in index files.",
             });
           };
-          if (['ExportNamedDeclaration', 'ExportDefaultDeclaration'].includes(childNode.type)) {
+          if (
+            ['ExportNamedDeclaration', 'ExportDefaultDeclaration', 'ExportAllDeclaration'].includes(
+              childNode.type
+            )
+          ) {
             if (childNode.declaration) {
               complain();
             }

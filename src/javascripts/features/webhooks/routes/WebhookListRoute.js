@@ -16,8 +16,8 @@ import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import * as TokenStore from 'services/TokenStore';
 
-const WebhooksFetcher = createFetcherComponent(({ spaceId, space, organizationId, userEmail }) => {
-  const webhookRepo = getWebhookRepo({ spaceId, space });
+const WebhooksFetcher = createFetcherComponent(({ spaceId, organizationId, userEmail }) => {
+  const webhookRepo = getWebhookRepo({ spaceId });
 
   return Promise.all([
     webhookRepo.getAll(),
@@ -31,12 +31,7 @@ const WebhooksFetcher = createFetcherComponent(({ spaceId, space, organizationId
 
 export function WebhookListRoute(props) {
   const { email: userEmail } = TokenStore.getUserSync();
-  const {
-    currentSpace,
-    currentSpaceId,
-    currentOrganizationId,
-    currentSpaceContentTypes,
-  } = useSpaceEnvContext();
+  const { currentSpaceId, currentOrganizationId, currentSpaceContentTypes } = useSpaceEnvContext();
 
   function setupTemplateOpener(hasAwsProxy = false) {
     return createWebhookTemplateDialogOpener(
@@ -46,8 +41,7 @@ export function WebhookListRoute(props) {
         domain: Config.domain,
         hasAwsProxy,
       },
-      currentSpaceId,
-      currentSpace
+      currentSpaceId
     );
   }
 
@@ -62,7 +56,6 @@ export function WebhookListRoute(props) {
   return (
     <WebhooksFetcher
       spaceId={currentSpaceId}
-      space={currentSpace}
       organizationId={currentOrganizationId}
       userEmail={userEmail}>
       {({ isLoading, isError, data }) => {

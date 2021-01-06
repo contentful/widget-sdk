@@ -8,7 +8,7 @@ import * as Analytics from 'analytics/Analytics';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
-import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
@@ -38,7 +38,7 @@ const linkEntity = (entity) => ({
 
 export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
   const { currentSpaceContentTypes } = useSpaceEnvContext();
-  const spaceApiClient = useCurrentSpaceAPIClient();
+  const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
   const entitySelectorSdk = useEntitySelectorSdk();
 
   // TODO necessary for entitySelector change it
@@ -56,17 +56,20 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
       const contentType = isObject(ctOrCtId)
         ? ctOrCtId
         : currentSpaceContentTypes.find((ct) => ct.sys.id === ctOrCtId);
-      return spaceApiClient.createEntry(contentType.sys.id, {}).then((entry) => {
-        Analytics.track('entry:create', {
-          eventOrigin: 'bulk-editor',
-          contentType,
-          response: entry,
+
+      return spaceEnvCMAClient.entry
+        .create({ contentTypeId: contentType.getId() })
+        .then((entry) => {
+          Analytics.track('entry:create', {
+            eventOrigin: 'bulk-editor',
+            contentType: contentType.data,
+            response: entry,
+          });
+          track.addNew();
+          return addLinks([linkEntity(entry)]);
         });
-        track.addNew();
-        return addLinks([linkEntity(entry)]);
-      });
     },
-    [currentSpaceContentTypes, spaceApiClient, track, addLinks]
+    [currentSpaceContentTypes, spaceEnvCMAClient, track, addLinks]
   );
 
   const addExistingEntries = useCallback(async () => {

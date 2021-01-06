@@ -2,10 +2,9 @@ import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
-import * as BackendTracing from 'i13n/BackendTracing';
 import queryString from 'query-string';
-import { gitRevision, env } from 'Config';
 import { fromPairs } from 'lodash';
+import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
 
 /**
  * @description
@@ -112,29 +111,6 @@ function withQuery(url, query) {
     return `${url}?${stringified}`;
   }
   return url;
-}
-
-// these headers are sent in all requests
-function getDefaultHeaders() {
-  const userAgentParts = ['app contentful.web-app', 'platform browser'];
-
-  // Add active git revision to headers
-  if (gitRevision) {
-    userAgentParts.push(`sha ${gitRevision}`);
-  }
-
-  // Add environment, so that local dev versus direct traffic can be differentiated
-  if (env !== 'production') {
-    userAgentParts.push(`env ${env}`);
-  }
-
-  return {
-    // we should be accepting only application/json. this is left over from $http
-    Accept: 'application/json, text/plain, */*',
-    'X-Contentful-User-Agent': userAgentParts.join('; '),
-    'Content-Type': 'application/vnd.contentful.management.v1+json',
-    ...BackendTracing.tracingHeaders(),
-  };
 }
 
 function wrapWithCounter(request) {

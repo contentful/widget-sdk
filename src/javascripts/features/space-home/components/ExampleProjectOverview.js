@@ -18,7 +18,7 @@ import * as TokenStore from 'services/TokenStore';
 import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 const styles = {
   flexContainer: css({ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between' }),
@@ -43,7 +43,7 @@ const styles = {
 
 export const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
   const { currentOrganization, currentSpaceId } = useSpaceEnvContext();
-  const apiClient = useCurrentSpaceAPIClient();
+  const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
   const [isLoading, setLoading] = useState(false);
   const deleteEnabled = isOwnerOrAdmin(currentOrganization);
 
@@ -65,8 +65,11 @@ export const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
     trackClickCTA('create_an_entry_button');
 
     // get all lesson entries
-    const courses = await apiClient.getEntries({
-      content_type: 'course',
+    const courses = await spaceEnvCMAClient.entry.getMany({
+      query: {
+        limit: 1000,
+        content_type: 'course',
+      },
     });
 
     // find a lesson where we want edit

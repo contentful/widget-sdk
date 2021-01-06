@@ -1,36 +1,41 @@
 import { createWebhookRepo } from './WebhookRepo';
+import { createClient } from 'contentful-management';
 
 describe('Webhook Repo', function () {
-  let space;
-  let endpoint;
+  let webhookMocks;
   let repo;
+  let client;
 
   beforeEach(async function () {
-    endpoint = {};
+    client = createClient(
+      { accessToken: 'token' },
+      { type: 'plain', defaults: { spaceId: 'space-id' } }
+    );
 
-    // chainable methods
-    ['payload', 'headers'].forEach((method) => {
-      endpoint[method] = jest.fn().mockReturnValue(endpoint);
-    });
+    webhookMocks = {
+      getMany: jest.fn(),
+      get: jest.fn(),
+      getCallDetails: jest.fn(),
+      getHealthStatus: jest.fn(),
+      update: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+    };
 
-    // terminal methods
-    ['get', 'delete', 'post', 'put'].forEach((method) => {
-      endpoint[method] = jest.fn();
-    });
+    client.webhook = webhookMocks;
 
-    space = { endpoint: jest.fn().mockReturnValue(endpoint) };
-
-    repo = createWebhookRepo(space);
+    repo = createWebhookRepo({ client });
   });
 
   describe('#getAll()', function () {
     it('calls endpoint and extracts items', async function () {
       const items = [1, 2, 3];
-      endpoint.get.mockResolvedValue({ items: items });
+      webhookMocks.getMany.mockResolvedValue({ items: items });
 
       const items2 = await repo.getAll();
-      expect(space.endpoint).toHaveBeenCalledTimes(1);
-      expect(space.endpoint).toHaveBeenCalledWith('webhook_definitions', undefined);
+
+      expect(webhookMocks.getMany).toHaveBeenCalledTimes(1);
+      expect(webhookMocks.getMany).toHaveBeenCalledWith({ query: { limit: 100 } });
       expect(items).toEqual(items2);
     });
   });
@@ -38,17 +43,19 @@ describe('Webhook Repo', function () {
   describe('#get()', function () {
     it('calls endpoint with an ID', async function () {
       const webhook = { url: 'http://test.com' };
-      endpoint.get.mockResolvedValue(webhook);
+
+      webhookMocks.get.mockResolvedValue(webhook);
 
       const fetched = await repo.get('whid');
-      expect(space.endpoint).toHaveBeenCalledTimes(1);
-      expect(space.endpoint).toHaveBeenCalledWith('webhook_definitions', 'whid');
+      expect(webhookMocks.get).toHaveBeenCalledTimes(1);
+      expect(webhookMocks.get).toHaveBeenCalledWith({ webhookDefinitionId: 'whid' });
       expect(webhook).toBe(fetched);
     });
 
     it('stringifies payload transformation', async function () {
       const webhook = { url: 'http://test.com', transformation: { body: { test: true } } };
-      endpoint.get.mockResolvedValue(webhook);
+
+      webhookMocks.get.mockResolvedValue(webhook);
 
       const fetched = await repo.get('whid');
       const expected = JSON.stringify({ test: true }, null, 2);
@@ -59,57 +66,54 @@ describe('Webhook Repo', function () {
   describe('#remove()', function () {
     it('calls endpoint with an ID extracted from a webook object', async function () {
       const webhook = { sys: { id: 'whid' } };
-      endpoint.delete.mockResolvedValue();
+      webhookMocks.delete.mockResolvedValue();
 
       await repo.remove(webhook);
 
-      expect(endpoint.delete).toHaveBeenCalledTimes(1);
-      expect(space.endpoint).toHaveBeenCalledWith('webhook_definitions', 'whid');
+      expect(webhookMocks.delete).toHaveBeenCalledTimes(1);
+      expect(webhookMocks.delete).toHaveBeenCalledWith({ webhookDefinitionId: 'whid' });
     });
   });
 
   describe('#save()', function () {
     it('for a new entity, posts to the endpoint with a webhook as a payload', async function () {
       const webhook = { url: 'http://test.com' };
-      endpoint.post.mockResolvedValue({ ...webhook, sys: { id: 'whid' } });
+      webhookMocks.create.mockResolvedValue({ ...webhook, sys: { id: 'whid' } });
 
       const created = await repo.save(webhook);
-      expect(space.endpoint).toHaveBeenCalledTimes(1);
-      expect(endpoint.payload).toHaveBeenCalledTimes(1);
-      expect(endpoint.post).toHaveBeenCalledTimes(1);
-      expect(space.endpoint).toHaveBeenCalledWith('webhook_definitions', undefined);
-      expect(endpoint.payload).toHaveBeenCalledWith(webhook);
+      expect(webhookMocks.create).toHaveBeenCalledTimes(1);
+      expect(webhookMocks.create).toHaveBeenCalledWith({}, { url: 'http://test.com' });
       expect(webhook.url).toBe(created.url);
     });
 
     it('for existing entity, puts to the endpoint with an ID, webhook as a payload and version header', async function () {
       const webhook = { sys: { id: 'whid', version: 7 }, url: 'http://test.com' };
-      endpoint.put.mockResolvedValue({ ...webhook, sys: { id: 'whid', version: 8 } });
+      webhookMocks.update.mockResolvedValue({ ...webhook, sys: { id: 'whid', version: 8 } });
 
       const saved = await repo.save(webhook);
-      expect(space.endpoint).toHaveBeenCalledWith('webhook_definitions', 'whid');
-      expect(endpoint.payload).toHaveBeenCalledTimes(1);
-      expect(endpoint.headers).toHaveBeenCalledTimes(1);
-      expect(endpoint.put).toHaveBeenCalledTimes(1);
-
-      expect(endpoint.payload.mock.calls[0][0].url).toBe('http://test.com');
-      expect(endpoint.headers.mock.calls[0][0]['X-Contentful-Version']).toBe(7);
+      expect(webhookMocks.update).toHaveBeenCalledWith(
+        { webhookDefinitionId: 'whid' },
+        { sys: { id: 'whid', version: 7 }, url: 'http://test.com' }
+      );
       expect(webhook.url).toBe(saved.url);
     });
 
     it('parses body transformation before saving and stringifies the result', async function () {
       const webhook = { url: 'http://test.com', transformation: { body: '{"test":true}' } };
-      endpoint.post.mockResolvedValue({
+      webhookMocks.create.mockResolvedValue({
         ...webhook,
         transformation: { body: { test: true } },
         sys: { id: 'whid' },
       });
 
       const saved = await repo.save(webhook);
-      expect(endpoint.payload).toHaveBeenCalledWith({
-        url: 'http://test.com',
-        transformation: { body: { test: true } },
-      });
+      expect(webhookMocks.create).toHaveBeenCalledWith(
+        {},
+        {
+          transformation: { body: { test: true } },
+          url: 'http://test.com',
+        }
+      );
       expect(saved.transformation.body).toBe(JSON.stringify({ test: true }, null, 2));
     });
   });
@@ -130,6 +134,7 @@ describe('Webhook Repo', function () {
     it('is invalid if a non-string value is given', function () {
       const webhook = { transformation: { body: { test: true } } };
       expect(repo.hasValidBodyTransformation(webhook)).toBe(false);
+      // @ts-expect-error
       webhook.transformation.body = null;
       expect(repo.hasValidBodyTransformation(webhook)).toBe(false);
     });

@@ -3,7 +3,6 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import SnapshotSelector from './SnapshotSelector';
 import moment from 'moment';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { CurrentSpaceAPIClientContext } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 jest.mock('data/userCache', () =>
   jest.fn().mockReturnValue({
@@ -37,10 +36,22 @@ const PER_PAGE = 20;
 
 const fakedSnapshots = Array.from({ length: PER_PAGE * 2 }).map(makeFakeSnapshot);
 
-const getEntrySnapshots = jest.fn().mockImplementation((_, query) => {
+const mockGetEntrySnapshots = jest.fn().mockImplementation(({ query }) => {
   const items = fakedSnapshots.slice(query.skip, query.skip + query.limit);
   return Promise.resolve({ items });
 });
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  useSpaceEnvCMAClient: () => {
+    return {
+      spaceEnvCMAClient: {
+        snapshot: {
+          getManyForEntry: mockGetEntrySnapshots,
+        },
+      },
+    };
+  },
+}));
 
 const goToSnapshot = jest.fn();
 const getProps = (args = {}) => {
@@ -69,9 +80,7 @@ const renderComponent = () => {
   const component = render(
     <SpaceEnvContext.Provider
       value={{ currentSpaceId: 'space-id', currentEnvironmentId: 'environment-id' }}>
-      <CurrentSpaceAPIClientContext.Provider value={{ getEntrySnapshots }}>
-        <SnapshotSelector {...getProps()} />
-      </CurrentSpaceAPIClientContext.Provider>
+      <SnapshotSelector {...getProps()} />
     </SpaceEnvContext.Provider>
   );
   const { getByTestId, queryByTestId } = component;
@@ -85,12 +94,12 @@ const renderComponent = () => {
     const button = getByTestId('snapshot-selector-button');
     expect(button).toBeInTheDocument();
     expect(queryByTestId('snapshot-selector-table')).not.toBeInTheDocument();
-    expect(getEntrySnapshots).not.toHaveBeenCalled();
+    expect(mockGetEntrySnapshots).not.toHaveBeenCalled();
     act(() => {
       button.click();
     });
     await waitFor(() => getByTestId('snapshot-selector-table'));
-    expect(getEntrySnapshots).toHaveBeenCalled();
+    expect(mockGetEntrySnapshots).toHaveBeenCalled();
   };
 
   const compareNthChild = (resultIdx, expectedIdx) => {
@@ -106,7 +115,7 @@ const renderComponent = () => {
 
 describe('SnapshotSelector', () => {
   afterEach(() => {
-    getEntrySnapshots.mockClear();
+    mockGetEntrySnapshots.mockClear();
     jest.clearAllMocks();
   });
 
@@ -144,18 +153,24 @@ describe('SnapshotSelector', () => {
       expect(
         queryByTestId(`snapshot-selector-table-row-${getSnapshotId(PER_PAGE + skip)}`)
       ).not.toBeInTheDocument();
-      expect(getEntrySnapshots).toHaveBeenCalledWith('entityId', { limit: PER_PAGE + 1, skip });
+      expect(mockGetEntrySnapshots).toHaveBeenCalledWith({
+        entryId: 'entityId',
+        query: { limit: PER_PAGE + 1, skip },
+      });
       scrollTable();
       skip += PER_PAGE;
       await findByTestId(`snapshot-selector-table-row-${getSnapshotId(skip)}`);
       expect(
         getByTestId(`snapshot-selector-table-row-${getSnapshotId(PER_PAGE + skip - 1)}`)
       ).toBeInTheDocument();
-      expect(getEntrySnapshots).toHaveBeenCalledWith('entityId', { limit: PER_PAGE + 1, skip });
-      expect(getEntrySnapshots).toHaveBeenCalledTimes(2);
+      expect(mockGetEntrySnapshots).toHaveBeenCalledWith({
+        entryId: 'entityId',
+        query: { limit: PER_PAGE + 1, skip },
+      });
+      expect(mockGetEntrySnapshots).toHaveBeenCalledTimes(2);
 
       scrollTable();
-      expect(getEntrySnapshots).toHaveBeenCalledTimes(2);
+      expect(mockGetEntrySnapshots).toHaveBeenCalledTimes(2);
     });
   });
   describe('sorting', () => {

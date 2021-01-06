@@ -86,13 +86,13 @@ export class WebhookEditor extends React.Component {
     return Navigator.go({ path: '^.list' });
   }
 
-  save = async (spaceId, space) => {
+  save = async (spaceId) => {
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      const saved = await WebhookEditorActions.save(webhook, spaceId, space);
+      const saved = await WebhookEditorActions.save(webhook, spaceId);
 
       if (fresh) {
         this.navigateToSaved(saved);
@@ -108,13 +108,13 @@ export class WebhookEditor extends React.Component {
     this.setState({ busy: false });
   };
 
-  remove = async (spaceId, space) => {
+  remove = async (spaceId) => {
     const { webhook } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      await WebhookEditorActions.remove(webhook, spaceId, space);
+      await WebhookEditorActions.remove(webhook, spaceId);
       this.navigateToList(true);
       Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
     } catch (err) {
@@ -136,6 +136,7 @@ export class WebhookEditor extends React.Component {
 
   renderTabs() {
     const { tab } = this.state;
+
     return (
       <Tabs role="tablist" className={style.tabs}>
         <Tab
@@ -158,7 +159,8 @@ export class WebhookEditor extends React.Component {
 
   render() {
     const { tab, webhook, fresh, dirty, busy } = this.state;
-    const { currentSpaceId, currentSpace } = this.context;
+
+    const { currentSpaceId } = this.context;
 
     return (
       <React.Fragment>
@@ -190,7 +192,7 @@ export class WebhookEditor extends React.Component {
                     buttonType="positive"
                     disabled={!dirty}
                     loading={busy}
-                    onClick={() => this.save(currentSpaceId, currentSpace)}>
+                    onClick={() => this.save(currentSpaceId)}>
                     Save
                   </Button>
                 )}
@@ -237,7 +239,7 @@ export class WebhookEditor extends React.Component {
           isShown={this.state.isDeleteDialogShown}
           webhookUrl={this.state.webhook.url}
           isConfirmLoading={busy}
-          onConfirm={() => this.remove(currentSpaceId, currentSpace)}
+          onConfirm={() => this.remove(currentSpaceId)}
           onCancel={() => {
             this.setState({ isDeleteDialogShown: false });
           }}
