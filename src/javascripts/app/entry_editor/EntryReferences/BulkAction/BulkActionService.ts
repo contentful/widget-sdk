@@ -1,7 +1,7 @@
 import type { PublishableEntity, Link } from '@contentful/types';
 import { executeBulkAction, getBulkAction } from '../referencesService';
 
-const BULKACTION_REFRESH_LIMIT = 15; // number of times we want to perform a refresh
+const BULKACTION_REFRESH_LIMIT = 60; // number of times we want to perform a refresh
 const BULKACTION_REFRESH_INTERVAL = 1000; // in MS
 
 type VersionedLink = {
