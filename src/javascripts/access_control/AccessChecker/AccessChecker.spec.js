@@ -1,11 +1,33 @@
-import * as K from 'test/utils/kefir';
+import * as K from '../../../../test/utils/kefir';
 import _ from 'lodash';
-import sinon from 'sinon';
-import { it } from 'test/utils/dsl';
-import { $initialize } from 'test/utils/ng';
+import * as ac from './index';
+
+import * as EndpointFactory from 'data/EndpointFactory';
+import * as ProductCatalog from 'data/CMA/ProductCatalog';
+import * as LegacyFeatureService from 'services/LegacyFeatureService';
+import * as Logger from 'services/logger';
+import * as Service from 'components/shared/persistent-notification/service';
+import * as Enforcements from 'access_control/Enforcements';
+import * as ResponseCache from 'access_control/AccessChecker/ResponseCache';
+import * as PolicyChecker from 'access_control/AccessChecker/PolicyChecker';
+import * as TokenStore from 'services/TokenStore';
+import * as Trials from 'features/trials';
+import * as OrganizationRoles from 'services/OrganizationRoles';
+
+jest.mock('data/EndpointFactory');
+jest.mock('data/CMA/ProductCatalog');
+jest.mock('services/LegacyFeatureService');
+jest.mock('services/logger');
+jest.mock('components/shared/persistent-notification/service');
+jest.mock('access_control/Enforcements');
+jest.mock('access_control/AccessChecker/ResponseCache');
+jest.mock('access_control/AccessChecker/PolicyChecker');
+jest.mock('services/TokenStore');
+jest.mock('features/trials');
 
 describe('Access Checker', () => {
-  let enforcements, OrganizationRoles, TokenStore, ac, changeSpace;
+  let stubs;
+  let changeSpace;
   let getResStub,
     reasonsDeniedStub,
     hidePersistentNotification,
@@ -32,12 +54,16 @@ describe('Access Checker', () => {
   }
 
   function setupForNewUsageEnforcement(permissionDenied) {
-    getResStub.withArgs('create', 'Asset').returns(false);
+    getResStub.mockImplementation((arg1, arg2) => {
+      if (arg1 === 'create' && arg2 === 'Asset') {
+        return false;
+      }
+    });
     triggerChange();
 
     const spaceAuthContext = {
-      reasonsDenied: sinon.stub().returns([]),
-      isPermissionDenied: sinon.stub().returns(permissionDenied),
+      reasonsDenied: jest.fn().mockReturnValue([]),
+      isPermissionDenied: jest.fn().mockReturnValue(permissionDenied),
       newEnforcement: {
         reasonsDenied: () => [
           'usageExceeded',
@@ -47,7 +73,7 @@ describe('Access Checker', () => {
       },
     };
 
-    const organizationCanStub = sinon.stub().returns('YES WE CAN');
+    const organizationCanStub = jest.fn().mockReturnValue('YES WE CAN');
 
     ac.setAuthContext({
       authContext: makeAuthContext({
@@ -58,79 +84,53 @@ describe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = mockSpaceEndpoint = feature = null;
+    ac.reset();
+    feature = null;
+    jest.clearAllMocks();
   });
 
   beforeEach(async function () {
-    this.stubs = {
-      logError: sinon.stub(),
-      canAccessEntries: sinon.stub().returns(false),
-      canAccessAssets: sinon.stub().returns(false),
-      canUpdateEntriesOfType: sinon.stub().returns(false),
-      canUpdateAssets: sinon.stub(),
-      canUpdateOwnAssets: sinon.stub(),
+    stubs = {
+      logError: jest.fn(),
+      canAccessEntries: jest.fn().mockReturnValue(false),
+      canAccessAssets: jest.fn().mockReturnValue(false),
+      canUpdateEntriesOfType: jest.fn().mockReturnValue(false),
+      canUpdateAssets: jest.fn(),
+      canUpdateOwnAssets: jest.fn(),
       organizations$: K.createMockProperty(),
       user$: K.createMockProperty(),
     };
 
-    hidePersistentNotification = sinon.stub();
-    getResStub = sinon.stub().returns(false);
-    getSpaceFeature = sinon.stub();
-    isTrialSpaceType = sinon.stub().returns(false);
+    hidePersistentNotification = jest.fn();
+    getResStub = jest.fn().mockReturnValue(false);
+    getSpaceFeature = jest.fn();
+    isTrialSpaceType = jest.fn().mockReturnValue(false);
 
-    this.system.set('data/EndpointFactory', {
-      createOrganizationEndpoint: () => mockOrgEndpoint,
-      createSpaceEndpoint: () => mockSpaceEndpoint,
+    EndpointFactory.createOrganizationEndpoint = jest.fn().mockReturnValue(mockOrgEndpoint);
+    EndpointFactory.createSpaceEndpoint = jest.fn().mockReturnValue(mockSpaceEndpoint);
+    ProductCatalog.getSpaceFeature = getSpaceFeature;
+    LegacyFeatureService.default = jest.fn().mockReturnValue({
+      get: async () => _.get(feature, 'enabled', false),
     });
-    this.system.set('data/CMA/ProductCatalog', {
-      getSpaceFeature: getSpaceFeature,
-    });
-    this.system.set('services/LegacyFeatureService', {
-      default: () => {
-        return {
-          get: () => {
-            return Promise.resolve(_.get(feature, 'enabled', false));
-          },
-        };
-      },
-    });
-    this.system.set('services/logger', {
-      logError: this.stubs.logError,
-    });
-    this.system.set('components/shared/persistent-notification/service', {
-      hidePersistentNotification,
-      showPersistentNotification: () => {},
-    });
-    this.system.set('access_control/Enforcements', {
-      determineEnforcement: sinon.stub().returns(undefined),
-    });
-    this.system.set('access_control/AccessChecker/ResponseCache', {
-      getResponse: getResStub,
-      reset: () => {},
-    });
-    this.system.set('access_control/AccessChecker/PolicyChecker', {
-      canAccessEntries: this.stubs.canAccessEntries,
-      canAccessAssets: this.stubs.canAccessAssets,
-      setMembership: sinon.stub(),
-      canUpdateEntriesOfType: this.stubs.canUpdateEntriesOfType,
-      canUpdateOwnEntries: sinon.stub(),
-      canUpdateAssets: this.stubs.canUpdateAssets,
-      canUpdateOwnAssets: this.stubs.canUpdateOwnAssets,
-    });
-    this.system.set('services/TokenStore', {
-      organizations$: this.stubs.organizations$,
-      user$: this.stubs.user$,
-    });
-    this.system.set('features/trials', {
-      isTrialSpaceType,
-    });
+    Logger.logError = stubs.logError;
+    Service.hidePersistentNotification = hidePersistentNotification;
+    Service.showPersistentNotification = jest.fn();
+    Enforcements.determineEnforcement = jest.fn().mockReturnValue(undefined);
+    ResponseCache.getResponse = getResStub;
+    ResponseCache.reset = jest.fn();
+    PolicyChecker.canAccessEntries = stubs.canAccessEntries;
+    PolicyChecker.canAccessAssets = stubs.canAccessAssets;
+    PolicyChecker.setMembership = jest.fn();
+    PolicyChecker.canUpdateEntriesOfType = stubs.canUpdateEntriesOfType;
+    PolicyChecker.canUpdateOwnEntries = jest.fn();
+    PolicyChecker.canUpdateAssets = stubs.canUpdateAssets;
+    PolicyChecker.canUpdateOwnAssets = stubs.canUpdateOwnAssets;
+    TokenStore.organizations$ = stubs.organizations$;
+    TokenStore.user$ = stubs.user$;
+    Trials.isTrialSpaceType = isTrialSpaceType;
 
-    enforcements = await this.system.import('access_control/Enforcements');
-    OrganizationRoles = await this.system.import('services/OrganizationRoles');
-    TokenStore = await this.system.import('services/TokenStore');
-
-    reasonsDeniedStub = sinon.stub().returns([]);
-    isPermissionDeniedStub = sinon.stub().returns(false);
+    reasonsDeniedStub = jest.fn().mockReturnValue([]);
+    isPermissionDeniedStub = jest.fn().mockReturnValue(false);
 
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
     mockSpaceAuthContext = {
@@ -138,8 +138,8 @@ describe('Access Checker', () => {
       isPermissionDenied: isPermissionDeniedStub,
       newEnforcement: {},
     };
-    mockOrgEndpoint = sinon.stub();
-    mockSpaceEndpoint = sinon.stub();
+    mockOrgEndpoint = jest.fn();
+    mockSpaceEndpoint = jest.fn();
 
     feature = {
       enabled: true,
@@ -148,10 +148,6 @@ describe('Access Checker', () => {
         id: 'customRoles',
       },
     };
-
-    ac = await this.system.import('access_control/AccessChecker');
-
-    await $initialize(this.system);
 
     changeSpace = function changeSpace({ hasFeature, isSpaceAdmin, userRoleName }) {
       ac.setSpace({
@@ -208,11 +204,15 @@ describe('Access Checker', () => {
         const responses = ac.getResponses();
         const keys = ['create', 'read', 'update'];
         const intersection = _.intersection(_.keys(responses), keys);
-        expect(intersection.length).toBe(keys.length);
+        expect(intersection).toHaveLength(keys.length);
       });
 
       it('should not hide or disable when operation can be performed', () => {
-        getResStub.withArgs('read', 'Entry').returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && arg2 === 'Entry') {
+            return true;
+          }
+        });
         triggerChange();
         const response = ac.getResponses().read.entry;
         expect(response.can).toBe(true);
@@ -221,7 +221,11 @@ describe('Access Checker', () => {
       });
 
       it('should disable, but not hide when operation cannot be performed and reasons for denial are given', () => {
-        reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
+        reasonsDeniedStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && arg2 === 'Entry') {
+            return ['DENIED!'];
+          }
+        });
         triggerChange();
         const response = ac.getResponses().read.entry;
         expect(response.can).toBe(false);
@@ -235,21 +239,21 @@ describe('Access Checker', () => {
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
-        expect(response.reasons).toBe(null);
+        expect(response.reasons).toBeNull();
       });
 
       it('should reset the persistent notification', () => {
-        sinon.assert.called(hidePersistentNotification);
+        expect(hidePersistentNotification).toHaveBeenCalled();
       });
     });
 
     describe('#getResponseByActionAndEntity', () => {
       it('returns undefined for an unknown action', () => {
-        expect(ac.getResponseByActionAndEntity('unknown')).toBe(undefined);
+        expect(ac.getResponseByActionAndEntity('unknown')).toBeUndefined();
       });
 
       it('returns undefined for an unknown action and entity', () => {
-        expect(ac.getResponseByActionAndEntity('create', 'unknown')).toBe(undefined);
+        expect(ac.getResponseByActionAndEntity('create', 'unknown')).toBeUndefined();
       });
 
       it('returns response for a known action', () => {
@@ -269,9 +273,13 @@ describe('Access Checker', () => {
       });
 
       it('checks if there is a "hide" flag for chosen actions', () => {
-        function test(action, key, val) {
+        function testHelper(action, key, val) {
           const entity = key.charAt(0).toUpperCase() + key.slice(1);
-          getResStub.withArgs(action, entity).returns(val);
+          getResStub.mockImplementation((arg1, arg2) => {
+            if (arg1 === action && arg2 === entity) {
+              return val;
+            }
+          });
           triggerChange();
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
@@ -282,56 +290,56 @@ describe('Access Checker', () => {
           ['read', 'apiKey'],
           ['update', 'settings'],
         ].forEach(([action, entityType]) => {
-          test(action, entityType, true);
-          test(action, entityType, false);
+          testHelper(action, entityType, true);
+          testHelper(action, entityType, false);
         });
       });
 
       it('should return false for apiKey if settings is not readable (permission denied)', () => {
-        getResStub.returns(true);
-        isPermissionDeniedStub.returns(true);
+        getResStub.mockReturnValue(true);
+        isPermissionDeniedStub.mockReturnValue(true);
         triggerChange();
 
         expect(ac.getSectionVisibility().apiKey).toBe(false);
       });
 
       it('should return true for apiKey if settings is readable (permission not denied)', () => {
-        getResStub.returns(true);
-        isPermissionDeniedStub.returns(false);
+        getResStub.mockReturnValue(true);
+        isPermissionDeniedStub.mockReturnValue(false);
         triggerChange();
 
         expect(ac.getSectionVisibility().apiKey).toBe(true);
       });
 
       it('should return false for environments if settings is not readable (permission denied)', () => {
-        getResStub.returns(true);
-        isPermissionDeniedStub.returns(true);
+        getResStub.mockReturnValue(true);
+        isPermissionDeniedStub.mockReturnValue(true);
         triggerChange();
 
         expect(ac.getSectionVisibility().environments).toBe(false);
       });
 
       it('should return true for environments if settings is readable (permission not denied)', () => {
-        getResStub.returns(true);
-        isPermissionDeniedStub.returns(false);
+        getResStub.mockReturnValue(true);
+        isPermissionDeniedStub.mockReturnValue(false);
         triggerChange();
 
         expect(ac.getSectionVisibility().environments).toBe(true);
       });
 
       it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function () {
-        function test(key, val) {
+        function testVisibility(key, val) {
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
 
-        test('entry', false);
-        test('asset', false);
-        this.stubs.canAccessEntries.returns(true);
-        this.stubs.canAccessAssets.returns(true);
+        testVisibility('entry', false);
+        testVisibility('asset', false);
+        stubs.canAccessEntries.mockReturnValue(true);
+        stubs.canAccessAssets.mockReturnValue(true);
 
         triggerChange();
-        test('entry', true);
-        test('asset', true);
+        testVisibility('entry', true);
+        testVisibility('asset', true);
       });
 
       it('should return "true" for spaceHome if user is admin', () => {
@@ -351,7 +359,7 @@ describe('Access Checker', () => {
         expect(ac.getSectionVisibility().spaceHome).toBe(false);
       });
       it('should return "true" for spaceHome if the space is a Trial Space if user is not an admin, editor or author', () => {
-        isTrialSpaceType.returns(true);
+        isTrialSpaceType.mockReturnValue(true);
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
         expect(ac.getSectionVisibility().spaceHome).toBe(true);
       });
@@ -359,7 +367,11 @@ describe('Access Checker', () => {
 
     describe('#shouldHide and #shouldDisable', () => {
       it('are shortcuts to response object properties', () => {
-        getResStub.withArgs('read', 'Entry').returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && arg2 === 'Entry') {
+            return false;
+          }
+        });
         triggerChange();
         const response = ac.getResponseByActionAndEntity('read', 'entry');
         expect(response.shouldHide).toBe(true);
@@ -394,8 +406,8 @@ describe('Access Checker', () => {
 
     describe('#shouldHide', () => {
       it('should return false if the read permission is denied, even if response.shouldHide is false', () => {
-        getResStub.returns(true);
-        isPermissionDeniedStub.returns(true);
+        getResStub.mockReturnValue(true);
+        isPermissionDeniedStub.mockReturnValue(true);
         triggerChange();
 
         const response = ac.getResponseByActionAndEntity('read', 'entry');
@@ -407,20 +419,34 @@ describe('Access Checker', () => {
     describe('#canPerformActionOnEntity', () => {
       it('calls "can" with entity data and extracts result from response', () => {
         const entity = { data: {} };
-        getResStub.withArgs('update', entity.data).returns('YES WE CAN');
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && _.isEqual(arg2, entity.data)) {
+            return 'YES WE CAN';
+          }
+        });
         const result = ac.canPerformActionOnEntity('update', entity);
-        sinon.assert.calledOnce(getResStub.withArgs('update', entity.data));
+        expect(getResStub).toHaveBeenLastCalledWith('update', entity.data, {});
         expect(result).toBe('YES WE CAN');
       });
 
       it('determines enforcements for entity type', () => {
         const reasons = ['DENIED!'];
         const entity = { data: { sys: { type: 'Entry' } } };
-        reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
-        getResStub.withArgs('update', entity.data).returns(false);
+        reasonsDeniedStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entity.data) {
+            return reasons;
+          }
+        });
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entity.data) {
+            return false;
+          }
+        });
         ac.canPerformActionOnEntity('update', entity);
-        sinon.assert.calledOnce(
-          enforcements.determineEnforcement.withArgs(mockSpace, reasons, entity.data.sys.type)
+        expect(Enforcements.determineEnforcement).toHaveBeenLastCalledWith(
+          mockSpace,
+          reasons,
+          entity.data.sys.type
         );
       });
     });
@@ -441,8 +467,14 @@ describe('Access Checker', () => {
           { data: { sys: { type: 'Entry' } } },
           { data: { sys: { type: 'Asset' } } },
         ];
-        getResStub.withArgs('read', entities[0].data).returns(true);
-        getResStub.withArgs('read', entities[1].data).returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && _.isEqual(arg2, entities[0].data)) {
+            return true;
+          }
+          if (arg1 === 'read' && _.isEqual(arg2, entities[1].data)) {
+            return true;
+          }
+        });
         expect(ac.canUserReadEntities(entities)).toEqual(true);
       });
 
@@ -453,17 +485,25 @@ describe('Access Checker', () => {
           { data: { sys: { type: 'Entry' } } },
           { data: { sys: { type: 'Asset' } } },
         ];
-        getResStub.withArgs('read', entities[0].data).returns(true);
-        getResStub.withArgs('read', entities[1].data).returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && arg2 === entities[0].data) {
+            return true;
+          }
+        });
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'read' && arg2 === entities[1].data) {
+            return false;
+          }
+        });
         expect(ac.canUserReadEntities(entities)).toEqual(false);
       });
     });
 
     describe('#canPerformActionOnEntryOfType', () => {
       it('calls "can" with fake entity of given content type and extracts result from response', () => {
-        getResStub.returns(true);
+        getResStub.mockReturnValue(true);
         const result = ac.canPerformActionOnEntryOfType('update', 'ctid');
-        const args = getResStub.lastCall.args;
+        const args = getResStub.mock.calls[getResStub.mock.calls.length - 1];
         expect(args[0]).toBe('update');
         expect(args[1].sys.contentType.sys.id).toBe('ctid');
         expect(args[1].sys.type).toBe('Entry');
@@ -475,28 +515,46 @@ describe('Access Checker', () => {
       const entry = { data: { sys: { contentType: { sys: { id: 'ctid' } } } } };
 
       it('returns true if "can" returns true', function () {
-        getResStub.withArgs('update', entry.data).returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entry.data) {
+            return true;
+          }
+        });
         expect(ac.canUpdateEntry(entry)).toBe(true);
       });
 
       it('returns false if "can" returns false and there are no allow policies', function () {
-        getResStub.withArgs('update', entry.data).returns(false);
-        this.stubs.canUpdateEntriesOfType.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entry.data) {
+            return false;
+          }
+        });
+        stubs.canUpdateEntriesOfType.mockReturnValue(false);
         expect(ac.canUpdateEntry(entry)).toBe(false);
-        sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
+        expect(stubs.canUpdateEntriesOfType).toHaveBeenCalledTimes(1);
+        expect(stubs.canUpdateEntriesOfType).toHaveBeenCalledWith('ctid');
       });
 
       it('returns true if "can" returns false but there are allow policies', function () {
-        getResStub.withArgs('update', entry.data).returns(false);
-        this.stubs.canUpdateEntriesOfType.returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entry.data) {
+            return false;
+          }
+        });
+        stubs.canUpdateEntriesOfType.mockReturnValue(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
-        sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
+        expect(stubs.canUpdateEntriesOfType).toHaveBeenCalledTimes(1);
+        expect(stubs.canUpdateEntriesOfType).toHaveBeenCalledWith('ctid');
       });
 
       it('returns false if permission is explicitly denied', function () {
-        isPermissionDeniedStub.returns(true);
-        getResStub.withArgs('update', entry.data).returns(true);
-        this.stubs.canUpdateEntriesOfType.returns(true);
+        isPermissionDeniedStub.mockReturnValue(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === entry.data) {
+            return true;
+          }
+        });
+        stubs.canUpdateEntriesOfType.mockReturnValue(true);
 
         expect(ac.canUpdateEntry(entry)).toBe(false);
       });
@@ -506,75 +564,120 @@ describe('Access Checker', () => {
       const asset = { data: {} };
 
       it('returns true if "can" returns true', () => {
-        getResStub.withArgs('update', asset.data).returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === asset.data) {
+            return true;
+          }
+        });
         expect(ac.canUpdateAsset(asset)).toBe(true);
       });
 
       it('returns false if "can" returns false and there are no allow policies', function () {
-        getResStub.withArgs('update', asset.data).returns(false);
-        this.stubs.canUpdateAssets.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === asset.data) {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(false);
         expect(ac.canUpdateAsset(asset)).toBe(false);
-        sinon.assert.calledOnce(this.stubs.canUpdateAssets);
+        expect(stubs.canUpdateAssets).toHaveBeenCalledTimes(1);
       });
 
       it('returns true if "can" returns false but there are allow policies', function () {
-        getResStub.withArgs('update', asset.data).returns(false);
-        this.stubs.canUpdateAssets.returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === asset.data) {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
-        sinon.assert.calledOnce(this.stubs.canUpdateAssets);
+        expect(stubs.canUpdateAssets).toHaveBeenCalledTimes(1);
       });
 
       it('returns false if permission is explicitly denied', function () {
-        isPermissionDeniedStub.returns(true);
-        getResStub.withArgs('update', asset.data).returns(true);
-        this.stubs.canUpdateEntriesOfType.returns(true);
-
+        isPermissionDeniedStub.mockReturnValue(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'update' && arg2 === asset.data) {
+            return true;
+          }
+        });
+        stubs.canUpdateEntriesOfType.mockReturnValue(true);
         expect(ac.canUpdateEntry(asset)).toBe(false);
       });
     });
 
     describe('#canUploadMultipleAssets', function () {
       it('returns false if assets cannot be created', function () {
-        getResStub.withArgs('create', 'Asset').returns(false);
-        getResStub.withArgs('update', 'Asset').returns(false);
-        this.stubs.canUpdateAssets.returns(false);
-        this.stubs.canUpdateOwnAssets.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'Asset') {
+            return false;
+          }
+          if (arg1 === 'update' && arg2 === 'Asset') {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(false);
+        stubs.canUpdateOwnAssets.mockReturnValue(false);
 
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
       it('returns false if assets cannot be updated', function () {
-        getResStub.withArgs('create', 'Asset').returns(true);
-        getResStub.withArgs('update', 'Asset').returns(false);
-        this.stubs.canUpdateAssets.returns(false);
-        this.stubs.canUpdateOwnAssets.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'Asset') {
+            return true;
+          }
+          if (arg1 === 'update' && arg2 === 'Asset') {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(false);
+        stubs.canUpdateOwnAssets.mockReturnValue(false);
 
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
       it('returns true if assets can be created and updated', function () {
-        getResStub.withArgs('create', 'Asset').returns(true);
-        getResStub.withArgs('update', 'Asset').returns(true);
-        this.stubs.canUpdateAssets.returns(false);
-        this.stubs.canUpdateOwnAssets.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'Asset') {
+            return true;
+          }
+          if (arg1 === 'update' && arg2 === 'Asset') {
+            return true;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(false);
+        stubs.canUpdateOwnAssets.mockReturnValue(false);
 
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
       it('returns true if assets can be created and updated with policy', function () {
-        getResStub.withArgs('create', 'Asset').returns(true);
-        getResStub.withArgs('update', 'Asset').returns(false);
-        this.stubs.canUpdateAssets.returns(true);
-        this.stubs.canUpdateOwnAssets.returns(false);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'Asset') {
+            return true;
+          }
+          if (arg1 === 'update' && arg2 === 'Asset') {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(true);
+        stubs.canUpdateOwnAssets.mockReturnValue(false);
 
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
       it('returns true if assets can be created and own assets can be updated', function () {
-        getResStub.withArgs('create', 'Asset').returns(true);
-        getResStub.withArgs('update', 'Asset').returns(false);
-        this.stubs.canUpdateAssets.returns(false);
-        this.stubs.canUpdateOwnAssets.returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'Asset') {
+            return true;
+          }
+          if (arg1 === 'update' && arg2 === 'Asset') {
+            return false;
+          }
+        });
+        stubs.canUpdateAssets.mockReturnValue(false);
+        stubs.canUpdateOwnAssets.mockReturnValue(true);
 
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
@@ -583,7 +686,11 @@ describe('Access Checker', () => {
     describe('#canModifyApiKeys', () => {
       it('returns related response', () => {
         expect(ac.canModifyApiKeys()).toBe(false);
-        getResStub.withArgs('create', 'ApiKey').returns(true);
+        getResStub.mockImplementation((arg1, arg2) => {
+          if (arg1 === 'create' && arg2 === 'ApiKey') {
+            return true;
+          }
+        });
         triggerChange();
         expect(ac.canModifyApiKeys()).toBe(true);
       });
@@ -593,13 +700,13 @@ describe('Access Checker', () => {
       it('returns true when has feature and is admin of space, false otherwise', async () => {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true });
-        getSpaceFeature.returns(false);
+        getSpaceFeature.mockReturnValue(false);
         expect(await ac.canModifyRoles()).toBe(false);
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
-        getSpaceFeature.returns(true);
+        getSpaceFeature.mockReturnValue(true);
         expect(await ac.canModifyRoles()).toBe(false);
         changeSpace({ hasFeature: true, isSpaceAdmin: true });
-        getSpaceFeature.returns(true);
+        getSpaceFeature.mockReturnValue(true);
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
@@ -607,10 +714,10 @@ describe('Access Checker', () => {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true }); // User is space admin
 
-        getSpaceFeature.returns(null);
+        getSpaceFeature.mockReturnValue(null);
         expect(await ac.canModifyRoles()).toBe(false);
 
-        getSpaceFeature.returns(undefined);
+        getSpaceFeature.mockReturnValue(undefined);
         expect(await ac.canModifyRoles()).toBe(false);
       });
 
@@ -646,7 +753,7 @@ describe('Access Checker', () => {
       });
 
       it('returns result of organization authContext "can" call', () => {
-        const organizationCanStub = sinon.stub().returns('YES WE CAN');
+        const organizationCanStub = jest.fn().mockReturnValue('YES WE CAN');
         changeAuthContext(
           makeAuthContext({
             orgid: organizationCanStub,
@@ -654,32 +761,35 @@ describe('Access Checker', () => {
         );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe('YES WE CAN');
-        sinon.assert.calledOnce(organizationCanStub.withArgs('create', 'Space'));
+        expect(organizationCanStub).toHaveBeenCalledTimes(1);
+        expect(organizationCanStub).toHaveBeenCalledWith('create', 'Space');
       });
 
       it('returns false and logs if organization authContext throws', function () {
         changeAuthContext(
           makeAuthContext({
-            orgid: sinon.stub().throws(),
+            orgid: jest.fn().mockImplementation(() => {
+              throw new Error();
+            }),
           })
         );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
-        sinon.assert.calledOnce(this.stubs.logError);
-        expect(this.stubs.logError.args[0][0].indexOf('Worf exception')).toBe(0);
+        expect(stubs.logError).toHaveBeenCalledTimes(1);
+        expect(stubs.logError.mock.calls[0][0].indexOf('Worf exception')).toBe(0);
       });
     });
 
     describe('#canCreateSpaceInAnyOrganization', () => {
       beforeEach(function () {
-        this.stubs.organizations$.set([{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }]);
+        stubs.organizations$.set([{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }]);
       });
 
       it('returns true if space can be created in at least on organization', () => {
         changeAuthContext(
           makeAuthContext({
-            org1: sinon.stub().returns(false),
-            org2: sinon.stub().returns(true),
+            org1: jest.fn().mockReturnValue(false),
+            org2: jest.fn().mockReturnValue(true),
           })
         );
 
@@ -689,8 +799,8 @@ describe('Access Checker', () => {
       it('returns false if space cannot be create in any organization', () => {
         changeAuthContext(
           makeAuthContext({
-            org1: sinon.stub().returns(false),
-            org2: sinon.stub().returns(false),
+            org1: jest.fn().mockReturnValue(false),
+            org2: jest.fn().mockReturnValue(false),
           })
         );
 
@@ -702,9 +812,9 @@ describe('Access Checker', () => {
       let organizationCanStub, canStub;
 
       beforeEach(function () {
-        organizationCanStub = sinon.stub().returns(false);
-        canStub = sinon.stub().returns(false);
-        this.stubs.organizations$.set([{ sys: { id: 'org1' } }]);
+        organizationCanStub = jest.fn().mockReturnValue(false);
+        canStub = jest.fn().mockReturnValue(false);
+        stubs.organizations$.set([{ sys: { id: 'org1' } }]);
         changeAuthContext(
           makeAuthContext(
             {
@@ -726,24 +836,24 @@ describe('Access Checker', () => {
       });
 
       it('returns false when cannot create space in some organization', () => {
-        organizationCanStub.returns(false);
+        organizationCanStub.mockReturnValue(false);
         expect(ac.canCreateSpace()).toBe(false);
-        sinon.assert.calledOnce(organizationCanStub);
+        expect(organizationCanStub).toHaveBeenCalledTimes(1);
       });
 
       it('returns true if can create space in some organization and can create space in general', () => {
-        organizationCanStub.returns(true);
-        canStub.returns(true);
+        organizationCanStub.mockReturnValue(true);
+        canStub.mockReturnValue(true);
         expect(ac.canCreateSpace()).toBe(true);
-        sinon.assert.calledOnce(organizationCanStub);
+        expect(organizationCanStub).toHaveBeenCalledTimes(1);
       });
 
       it('returns false if can create space in some organization but cannot create spaces in general', () => {
-        organizationCanStub.returns(true);
-        canStub.returns(false);
+        organizationCanStub.mockReturnValue(true);
+        canStub.mockReturnValue(false);
         expect(ac.canCreateSpace()).toBe(false);
-        sinon.assert.calledOnce(organizationCanStub);
-        sinon.assert.calledOnce(canStub);
+        expect(organizationCanStub).toHaveBeenCalledTimes(1);
+        expect(canStub).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -767,7 +877,7 @@ describe('Access Checker', () => {
  *
  * The argument is a map from organization IDs to 'can' functions.
  */
-function makeAuthContext(orgs, can = sinon.stub()) {
+function makeAuthContext(orgs, can = jest.fn()) {
   return {
     organization(id) {
       return { can: orgs[id] };

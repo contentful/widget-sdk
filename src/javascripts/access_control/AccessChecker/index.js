@@ -80,6 +80,21 @@ let gkPermissionChecker;
 let responses = {};
 let sectionVisibility = {};
 
+/**
+ * @name accessChecker#reset
+ * @description
+ * Used for testing - resets global variables to initial values
+ */
+export const reset = () => {
+  authContext = undefined;
+  spaceAuthContext = undefined;
+  space = undefined;
+  organization = undefined;
+  gkPermissionChecker = undefined;
+  responses = {};
+  sectionVisibility = {};
+};
+
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
 /**
