@@ -199,6 +199,34 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
   };
 };
 
+const makeNavigateToAppConfig = ({
+  widgetNamespace,
+  spaceId,
+  environmentId,
+  widgetId,
+}: {
+  widgetNamespace: string;
+  spaceId: string;
+  environmentId: string;
+  widgetId: string;
+}) => () => {
+  if (widgetNamespace === WidgetNamespace.APP) {
+    return Navigator.go({
+      path: ['spaces', 'detail', 'environment', 'apps', 'detail'],
+      params: {
+        spaceId,
+        environmentId,
+        appId: widgetId,
+      },
+      options: {
+        notify: true,
+      },
+    });
+  } else {
+    throw new Error('Only apps can use the openAppConfig method');
+  }
+};
+
 export function createReadOnlyNavigatorApi() {
   return {
     onSlideInNavigation: () => noop,
@@ -255,6 +283,13 @@ export function createNavigatorApi({
     isOnPageLocation
   );
 
+  const openAppConfig = makeNavigateToAppConfig({
+    widgetNamespace,
+    spaceId,
+    environmentId,
+    widgetId,
+  });
+
   return {
     ...createEntityNavigatorApi({ cma }),
     openPageExtension: (opts) => {
@@ -267,5 +302,9 @@ export function createNavigatorApi({
       return navigateToBulkEditor({ entryId, fieldId, locale, index });
     },
     onSlideInNavigation: onSlideLevelChanged,
+
+    // TODO: Once the new version of the APP-SDK is published this can be
+    // a normal property
+    ...({ openAppConfig } as any),
   };
 }

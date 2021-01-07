@@ -388,6 +388,32 @@ describe('createNavigatorApi', () => {
       });
     });
 
+    describe('openAppConfig', () => {
+      it('throws if called by an extension', () => {
+        const navigatorApi = buildApi({ widgetNamespace: WidgetNamespace.EXTENSION });
+
+        expect(() => (navigatorApi as any).openAppConfig()).toThrow();
+        expect(Navigator.go).not.toHaveBeenCalled();
+      });
+
+      it('navigates to the config location', async () => {
+        const navigatorApi = buildApi();
+        await (navigatorApi as any).openAppConfig();
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: true,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            appId: DEFAULT_WIDGET_ID,
+          },
+          path: ['spaces', 'detail', 'environment', 'apps', 'detail'],
+        });
+      });
+    });
+
     describe('onSlideInNavigation', () => {
       it('calls onSlideInNavigation from SlideInNavigator module', () => {
         const callback = jest.fn();
