@@ -12,6 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import moment from 'moment';
 import SpaceTrialIllustration from 'svg/illustrations/space-trial-illustration.svg';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { useAsync } from 'core/hooks';
@@ -28,7 +29,7 @@ const styles = {
   }),
   svgContainerExtension: css({ width: '300px' }),
   list: css({
-    marginBottom: tokens.spacingM,
+    marginBottom: tokens.spacingL,
     color: tokens.colorTextMid,
   }),
   listItem: css({
@@ -51,9 +52,13 @@ const FairUsePolicyLink = () => (
 
 export const SpaceTrialWidget = ({ spaceId }) => {
   const [isTrialSpace, setIsTrialSpace] = useState(false);
+  const [trialExpiresAt, setTrialExpiresAt] = useState();
 
   const fetchSpace = useCallback(async () => {
-    getSpace(spaceId).then((space) => setIsTrialSpace(isSpaceOnTrial(space)));
+    getSpace(spaceId).then((space) => {
+      setIsTrialSpace(isSpaceOnTrial(space));
+      setTrialExpiresAt(space.trialPeriodEndsAt);
+    });
   }, [spaceId]);
 
   const { isLoading } = useAsync(fetchSpace);
@@ -74,14 +79,15 @@ export const SpaceTrialWidget = ({ spaceId }) => {
   return (
     <Card padding="large" className={styles.flexContainer} testId="space-trial-widget">
       <Typography>
-        <Heading>Whatʼs a trial space?</Heading>
+        <Heading>Whatʼs a Trial Space?</Heading>
         <List className={styles.list}>
+          <ListItem className={styles.listItem}>Here to try out any new project</ListItem>
           <ListItem className={styles.listItem}>
-            A Trial Space is a sandbox to try out new projects, free of charge
+            Intended for non-production development and testing purposes only
           </ListItem>
-          <ListItem className={styles.listItem}>You can access it for a limited time</ListItem>
           <ListItem className={styles.listItem}>
-            Trial spaces are intended for non-production development and testing purposes only
+            Available until <strong>{moment(trialExpiresAt).format('D MMMM YYYY')}</strong>
+            {` (Want to keep it after and push to production? No problem, talk to your admin to buy a subscription)`}
           </ListItem>
         </List>
         <Subheading>Need more help to get started with Contentful?</Subheading>
