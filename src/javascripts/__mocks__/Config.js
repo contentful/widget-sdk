@@ -11,6 +11,7 @@ export const developerDocsUrl = 'https://www.contentful.com/developers/docs/';
 export const developersChangelogUrl = 'https://www.contentful.com/developers/changelog/';
 export const secureAssetsUrl = 'https://secure.ctfassets.net';
 export const launchAppUrl = 'https://launch.contentful.com';
+export const accountUrl = (path) => `//be.test.com/account${path}`;
 
 export const launchDarkly = {
   envId: 'jest',
