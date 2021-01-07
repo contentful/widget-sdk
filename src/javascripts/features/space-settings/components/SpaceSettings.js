@@ -132,6 +132,9 @@ export class SpaceSettings extends React.Component {
                     </>
                   </Paragraph>
                 )}
+                {isEnterprisePlan(plan) && (
+                  <Paragraph testId="space-settings-page.plan">{plan.name}</Paragraph>
+                )}
 
                 {/* Only org admins and owners can change the space type */}
                 {showChangeButton && (

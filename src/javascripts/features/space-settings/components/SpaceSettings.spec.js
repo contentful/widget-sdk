@@ -57,6 +57,13 @@ describe('SpaceSettings', () => {
     expect(screen.queryByTestId('space-settings-page.plan-price')).toBeNull();
   });
 
+  it('displays plan name for enterprise orgs', () => {
+    isEnterprisePlan.mockReturnValue(true);
+    renderComponent();
+
+    expect(screen.getByTestId('space-settings-page.plan')).toHaveTextContent('testPlanName');
+  });
+
   it('displays space createdAt and createdBy info', () => {
     renderComponent();
 
