@@ -33,6 +33,7 @@ import { getReferencesForEntryId, validateEntities, publishEntities } from './re
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
+import { convertBulkActionErrors } from './BulkAction/BulkActionError';
 
 const styles = {
   sideBarWrapper: css({
@@ -89,6 +90,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     })();
   });
 
+  const getReferencesForEntry = async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  };
+
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
 
@@ -97,7 +104,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       : Notification.success('All references passed validation');
   };
 
-  const handleValidation = () => {
+  const handleValidation = async () => {
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Validating' });
 
     track(trackingEvents.validate, {
@@ -107,26 +114,22 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
     const entitiesToValidate = mapEntities(selectedEntities);
 
-    validateEntities({ entities: entitiesToValidate, action: 'publish' })
-      .then((validationResponse) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        displayValidation(validationResponse);
-      })
-      .catch((_error) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        Notification.error('References validation failed');
+    try {
+      const validationResponse = await validateEntities({
+        entities: entitiesToValidate,
+        action: 'publish',
       });
-  };
-
-  const getReferencesForEntry = async () => {
-    const { resolved } = await getReferencesForEntryId(entity.sys.id);
-    dispatch({ type: SET_REFERENCES, value: resolved });
-    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      displayValidation(validationResponse);
+    } catch (error) {
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      Notification.error('References validation failed');
+    }
   };
 
   const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
-    dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
+    // dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
     track(trackingEvents.publish, {
       entity_id: entity.sys.id,
       references_count: selectedEntities.length,
@@ -134,10 +137,10 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
     try {
       /**
-       * If this Feature Flag is enabled, the publish action will
-       * be placed in a queue and processed assynchronously in the new bulk-actions-api.
+       * BULK-ACTIONS: If this Feature Flag is enabled, the publish action will
+       * be placed into a queue and processed assynchronously in the new bulk-actions-api.
        *
-       * Otherwise, fallback to the original release/execute logic
+       * Otherwise, fallback to the original release/immediate/execute logic
        **/
 
       if (isBulkActionSupportEnabled) {
@@ -161,10 +164,20 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
 
-      if (error.statusCode && error.statusCode === 422) {
-        const errored = error.data.details.errors;
-        if (errored.length && errored[0].sys) {
+      if (isBulkActionSupportEnabled) {
+        const validStatusCode =
+          error.statusCode && (error.statusCode > 400 || error.statusCode < 500);
+
+        if (validStatusCode) {
+          const errored = convertBulkActionErrors(error.data.details.errors);
           return displayValidation({ errored });
+        }
+      } else {
+        if (error.statusCode && error.statusCode === 422) {
+          const errored = error.data.details.errors;
+          if (errored.length && errored[0].sys) {
+            return displayValidation({ errored });
+          }
         }
       }
 
@@ -193,7 +206,9 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     isSelectedEntitesMoreThanLimit;
 
   return (
-    <div className={styles.sideBarWrapper}>
+    <div
+      className={styles.sideBarWrapper}
+      data-flag-references-bulkactions-enabled={isBulkActionSupportEnabled}>
       <header className="entity-sidebar__header">
         <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
           References
