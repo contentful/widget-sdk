@@ -7,6 +7,7 @@ import createResourceService from 'services/ResourceService';
 import { getProductPlans, getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { Notification } from '@contentful/forma-36-react-components';
 import userEvent from '@testing-library/user-event';
+import client from 'services/client';
 
 const mockOrg = Fake.Organization({ name: 'Test Org' });
 
@@ -122,6 +123,12 @@ jest.mock('features/space-plan-assignment/services/SpacePlanAssignmentService', 
   changeSpacePlanAssignment: jest.fn(),
 }));
 
+jest.mock('services/client', () => {
+  return {
+    createSpace: jest.fn(),
+  };
+});
+
 const initialState = {
   organization: mockOrg,
   spaceName: '',
@@ -213,6 +220,36 @@ describe('SpaceCreation', () => {
       expect(screen.getByText('Test (Medium)')).toBeVisible();
       expect(screen.getByTestId('go-back-btn')).toBeVisible();
       expect(screen.getByText('Confirm and create')).toBeVisible();
+    });
+
+    it('should call createSpace function with correct spacePlanId for Medium plan', async () => {
+      build({ ...initialState, selectedPlan: mockMediumPlan, spaceName: 'Test' });
+      userEvent.click(screen.getByTestId('continue-btn'));
+      userEvent.click(screen.getByText('Confirm and create'));
+
+      expect(client.createSpace).toBeCalledWith(
+        {
+          defaultLocale: 'en-US',
+          name: 'Test',
+          spacePlanId: mockMediumPlan.sys.id,
+        },
+        mockOrg.sys.id
+      );
+    });
+
+    it('should call createSpace function with correct payload for Trial Space', async () => {
+      build({ ...initialState, selectedPlan: mockFreePlan, spaceName: 'Test' });
+      userEvent.click(screen.getByTestId('continue-btn'));
+      userEvent.click(screen.getByText('Confirm and create'));
+
+      expect(client.createSpace).toBeCalledWith(
+        {
+          defaultLocale: 'en-US',
+          name: 'Test',
+          productRatePlanId: 'free',
+        },
+        mockOrg.sys.id
+      );
     });
   });
 });

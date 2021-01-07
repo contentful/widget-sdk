@@ -9,7 +9,9 @@ export async function makeNewSpace(orgId, selectedPlan, spaceName) {
   const spaceData = {
     defaultLocale: 'en-US',
     name: spaceName,
-    ...(!isFreeProductPlan(selectedPlan) && { spacePlanId: get(selectedPlan, 'sys.id') }),
+    ...(isFreeProductPlan(selectedPlan)
+      ? { productRatePlanId: 'free' }
+      : { spacePlanId: get(selectedPlan, 'sys.id') }),
   };
 
   const newSpace = await client.createSpace(spaceData, orgId);
