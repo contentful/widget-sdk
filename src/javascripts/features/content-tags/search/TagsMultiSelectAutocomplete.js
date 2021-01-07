@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState, useRef } from 'react';
 import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
 import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
@@ -26,27 +26,6 @@ const defaultStyles = {
   DropdownCheckboxField: css({ width: '100%' }),
 };
 
-// we keep an additional reference that can be used
-// in the onClose of the dropdown, which otherwise
-// has a stale state
-function useRefState(initialValue) {
-  const valueRef = useRef(initialValue);
-  const [currentValue, setValue] = useState(initialValue);
-
-  return {
-    get value() {
-      return currentValue;
-    },
-    set value(newValue) {
-      valueRef.current = newValue;
-      setValue(newValue);
-    },
-    get refValue() {
-      return valueRef.current;
-    },
-  };
-}
-
 function addOrRemoveTag(currentList, addedOrRemovedTag) {
   if (currentList.some(({ value }) => value === addedOrRemovedTag.value)) {
     // remove
@@ -68,14 +47,18 @@ const TagsMultiSelectAutocomplete = ({
   isFocused,
 }) => {
   const [isSearching, setIsSearching] = useState(isFocused);
-  const currentTags = useRefState(selectedTags);
+  const [currentTags, setCurrentTags] = useState(selectedTags);
   const tagsRef = useRef();
 
   setIsRemovable(!isSearching);
 
   const onSelectedTagChange = (tag) => {
-    currentTags.value = addOrRemoveTag(currentTags.value, tag);
+    setCurrentTags((currentTagsState) => addOrRemoveTag(currentTagsState, tag));
   };
+
+  useEffect(() => {
+    onChange(currentTags);
+  }, [currentTags, onChange]);
 
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
   // and the event toggles tags, so two events == the opposite)
@@ -93,11 +76,11 @@ const TagsMultiSelectAutocomplete = ({
       onChange={(evt) => {
         evt.stopPropagation();
       }}
-      checked={currentTags.value.some((selectedTag) => selectedTag.value === tag.value)}
+      checked={currentTags.some((selectedTag) => selectedTag.value === tag.value)}
     />
   );
 
-  // Previsouly checked tags are displayed first. Tags checked in this session
+  // Previously checked tags are displayed first. Tags checked in this session
   // remain in place until blur and onChange()
   // NB The order of items={} must match the order of {(options)=>{}}
   const sortedTags = [
@@ -109,7 +92,6 @@ const TagsMultiSelectAutocomplete = ({
     onQueryChange('');
     setIsSearching(false);
     setIsRemovable(true);
-    onChange(currentTags.refValue);
   };
 
   const handleSummaryKeyDown = ({ keyCode }) => {
