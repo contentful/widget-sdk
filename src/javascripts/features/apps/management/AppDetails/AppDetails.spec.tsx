@@ -1,4 +1,5 @@
 import { render, wait } from '@testing-library/react';
+import { noop } from 'lodash';
 import React from 'react';
 import mockDefinitions from '../__mocks__/mockDefinitions.json';
 import { AppDetails } from './AppDetails';
@@ -15,7 +16,7 @@ jest.mock('detect-browser', () => ({
 
 const props = {
   definition: mockDefinitions[0],
-  goToListView: () => {},
+  goToListView: noop,
   goToTab: jest.fn(),
   tab: '',
 };
@@ -23,7 +24,7 @@ const props = {
 describe('AppDetails', () => {
   describe('When passed a tab that is implemented', () => {
     it('gos to the general tab', async () => {
-      const localProps = { ...props, tab: 'events' };
+      const localProps: any = { ...props, tab: 'events' };
       render(<AppDetails {...localProps} />);
 
       await wait();
@@ -34,7 +35,7 @@ describe('AppDetails', () => {
 
   describe('When passed a tab that is not implemented', () => {
     it('gos to the general tab', async () => {
-      const localProps = { ...props, tab: 'not_a_real_tab' };
+      const localProps: any = { ...props, tab: 'not_a_real_tab' };
       render(<AppDetails {...localProps} />);
 
       await wait();

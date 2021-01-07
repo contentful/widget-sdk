@@ -20,7 +20,8 @@
 
     // enable the following when we ready
     "noImplicitAny": false,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "resolveJsonModule": true
   },
   "include": ["./src/javascripts/**/*", "../node_modules/@types/jest"],
   "exclude": ["**/node_modules"]

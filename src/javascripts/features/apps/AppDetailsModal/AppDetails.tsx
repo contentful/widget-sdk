@@ -183,6 +183,7 @@ export function AppDetails(props: AppDetailsProps) {
           <>
             <div className={styles.installation.container}>
               <div className={styles.installation.installerName}>
+                {/** @ts-ignore ActionPerformerName is not TS yet and props are infered wrong */}
                 <ActionPerformerName
                   link={app.appInstallation.sys.createdBy}
                   formatName={(name) => `Installed by ${name}`}

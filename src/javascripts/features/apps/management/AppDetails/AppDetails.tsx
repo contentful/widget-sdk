@@ -12,14 +12,15 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ModalLauncher, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import PropTypes from 'prop-types';
+import { AppDefinition } from 'contentful-management/types';
 import React from 'react';
 import { AppEditor, validate } from '../AppEditor';
+import { ValidationError } from '../AppEditor/types';
 import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
 import { AppEvents } from '../events';
 import { KeyListing } from '../keys/KeyListing';
-import { SigningSecret } from '../SigningSecret/';
+import { SigningSecret } from '../SigningSecret';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
 import { TAB_PATHS } from './constants';
@@ -35,7 +36,23 @@ function formatDate(date) {
 
 const userNameCache = {};
 
-export class AppDetails extends React.Component {
+interface Props {
+  definition: AppDefinition;
+  goToListView: () => void;
+  goToTab: (tab: string) => void;
+  tab: string;
+}
+
+interface State {
+  busy: boolean;
+  name: string;
+  definition: AppDefinition;
+  selectedTab: string;
+  creator: string;
+  errors: ValidationError[];
+}
+
+export class AppDetails extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -78,7 +95,7 @@ export class AppDetails extends React.Component {
         this.setState({
           errors: err.data.details.errors.map((error) => {
             if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
-              error.path[1] = this.state.definition.locations[error.path[1]].location;
+              error.path[1] = this.state.definition.locations![error.path[1]].location;
             }
             return error;
           }),
@@ -178,7 +195,7 @@ export class AppDetails extends React.Component {
               </div>
             </div>
             <div className={styles.info}>
-              <Paragraph title={new Date(definition.sys.createdAt)}>
+              <Paragraph>
                 <b>Created</b> {formatDate(definition.sys.createdAt)}
               </Paragraph>
               <Paragraph>
@@ -258,10 +275,3 @@ export class AppDetails extends React.Component {
     );
   }
 }
-
-AppDetails.propTypes = {
-  definition: PropTypes.object.isRequired,
-  goToListView: PropTypes.func.isRequired,
-  goToTab: PropTypes.func.isRequired,
-  tab: PropTypes.string.isRequired,
-};

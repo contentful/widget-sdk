@@ -20,7 +20,8 @@
     "sourceMap": true,
     "pretty": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "resolveJsonModule": true
   },
   "compileOnSave": false,
   "include": ["./**/*.ts", "../node_modules/cypress", "../node_modules/@contentful/cypress-pact"]
