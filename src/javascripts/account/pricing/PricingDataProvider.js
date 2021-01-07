@@ -99,38 +99,38 @@ export function getBasePlan(endpoint) {
  */
 
 export async function getPlansWithSpaces(endpoint) {
-  const [ratePlans, subscriptions, spaces] = await Promise.all([
-    getRatePlans(endpoint),
+  const [productPlans, subscriptionPlans, spaces] = await Promise.all([
+    getProductPlans(endpoint),
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint),
   ]);
 
-  const freeSpaceRatePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
-
-  const spaceSubscriptions = subscriptions.items.filter(
-    (subscription) => subscription.planType === 'space'
+  const freeSpaceProductPlan = productPlans.find(
+    (productPlan) => productPlan.productPlanType === 'free_space'
   );
 
-  const freeSpaces = spaces.filter((space) => {
-    // find all spaces that don't have a matching subscription.
-    // gatekeeperKey is the space ID
-    return !spaceSubscriptions.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
+  const spaceSubscriptionPlans = subscriptionPlans.items.filter(
+    (subscriptionPlan) => subscriptionPlan.planType === 'space'
+  );
+
+  const spacesWithoutSubscriptionPlan = spaces.filter((space) => {
+    return !spaceSubscriptionPlans.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
   });
 
   const findSpaceByPlan = (plan) =>
     plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
 
   const plansWithSpaces = {
-    plans: subscriptions,
+    plans: subscriptionPlans,
     items: [
-      ...subscriptions.items.map((plan) => ({
-        ...plan,
-        space: findSpaceByPlan(plan),
+      ...subscriptionPlans.items.map((subscriptionPlan) => ({
+        ...subscriptionPlan,
+        space: findSpaceByPlan(subscriptionPlan),
       })),
-      ...freeSpaces.map((space) => ({
+      ...spacesWithoutSubscriptionPlan.map((space) => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: freeSpaceRatePlan.name,
+        name: freeSpaceProductPlan.name,
         planType: 'free_space',
         space,
       })),
@@ -142,17 +142,18 @@ export async function getPlansWithSpaces(endpoint) {
     uniq(plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'))),
     (i) => !i
   );
+
   const users = await getUsersByIds(endpoint, userIds);
-  // Map users to spaces
+  // Plans with Spaces and Users
   return {
-    ...plansWithSpaces,
-    items: plansWithSpaces.items.map((plan) => ({
-      ...plan,
-      space: plan.space && {
-        ...plan.space,
+    plans: plansWithSpaces.plans,
+    items: plansWithSpaces.items.map((planWithSpace) => ({
+      ...planWithSpace,
+      space: planWithSpace.space && {
+        ...planWithSpace.space,
         sys: {
-          ...plan.space.sys,
-          createdBy: users.find(({ sys }) => sys.id === plan.space.sys.createdBy.sys.id),
+          ...planWithSpace.space.sys,
+          createdBy: users.find(({ sys }) => sys.id === planWithSpace.space.sys.createdBy.sys.id),
         },
       },
     })),
@@ -262,7 +263,7 @@ export function getSpaceRatePlans(endpoint, spaceId) {
 /**
  * Get base and all space rate plans available for the organization
  */
-export function getRatePlans(endpoint) {
+export function getProductPlans(endpoint) {
   return endpoint(
     {
       method: 'GET',

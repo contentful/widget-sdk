@@ -4,7 +4,7 @@ import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
   getBasePlan,
-  getRatePlans,
+  getProductPlans,
   getSpaceRatePlans,
   getSingleSpacePlan,
   getSubscriptionPlans,
@@ -57,7 +57,7 @@ jest.mock('services/OrganizationRoles', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getRatePlans: jest.fn(),
+  getProductPlans: jest.fn(),
   getBasePlan: jest.fn(),
   getSpaceRatePlans: jest.fn(),
   getSingleSpacePlan: jest.fn(),
@@ -100,7 +100,7 @@ describe('SpacePurchaseRoute', () => {
     createResourceService().get.mockResolvedValue(mockFreeSpaceResource);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
-    getRatePlans.mockResolvedValue();
+    getProductPlans.mockResolvedValue();
     getSpaceRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });

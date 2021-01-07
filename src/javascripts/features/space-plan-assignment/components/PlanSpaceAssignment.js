@@ -6,7 +6,7 @@ import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SpaceSelection } from './SpaceSelection';
@@ -37,7 +37,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
 
       const [plans, ratePlans, spaces] = await Promise.all([
         getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
-        getRatePlans(orgEndpoint),
+        getProductPlans(orgEndpoint),
         getAllSpaces(orgEndpoint),
       ]);
 

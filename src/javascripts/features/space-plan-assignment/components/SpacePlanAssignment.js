@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -41,7 +41,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
 
       const [plans, ratePlans, space, spaceResources] = await Promise.all([
         getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
-        getRatePlans(orgEndpoint),
+        getProductPlans(orgEndpoint),
         getSpace(spaceEndpoint),
         resourceService.getAll(),
       ]);
