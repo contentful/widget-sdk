@@ -33,7 +33,7 @@ import { getReferencesForEntryId, validateEntities, publishEntities } from './re
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
-import { convertBulkActionErrors } from './BulkAction/BulkActionError';
+import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
 
 const styles = {
   sideBarWrapper: css({
@@ -127,6 +127,38 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     }
   };
 
+  const handleError = (error) => {
+    if (isBulkActionSupportEnabled) {
+      const validStatusCode =
+        error.statusCode && (error.statusCode > 400 || error.statusCode < 500);
+
+      if (validStatusCode && error.statusCode === 429) {
+        return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
+      }
+
+      if (validStatusCode) {
+        const errored = convertBulkActionErrors(error.data.details.errors);
+        return displayValidation({ errored });
+      }
+    } else {
+      if (error.statusCode && error.statusCode === 422) {
+        const errored = error.data.details.errors;
+        if (errored.length && errored[0].sys) {
+          return displayValidation({ errored });
+        }
+      }
+
+      Notification.error(
+        createErrorMessage({
+          selectedEntities,
+          root: references[0],
+          entityTitle,
+          action: 'publish',
+        })
+      );
+    }
+  };
+
   const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
@@ -155,40 +187,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       getReferencesForEntry();
 
       Notification.success(
-        createSuccessMessage({
-          selectedEntities,
-          root: references[0],
-          entityTitle,
-        })
+        createSuccessMessage({ selectedEntities, root: references[0], entityTitle })
       );
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-
-      if (isBulkActionSupportEnabled) {
-        const validStatusCode =
-          error.statusCode && (error.statusCode > 400 || error.statusCode < 500);
-
-        if (validStatusCode) {
-          const errored = convertBulkActionErrors(error.data.details.errors);
-          return displayValidation({ errored });
-        }
-      } else {
-        if (error.statusCode && error.statusCode === 422) {
-          const errored = error.data.details.errors;
-          if (errored.length && errored[0].sys) {
-            return displayValidation({ errored });
-          }
-        }
-      }
-
-      Notification.error(
-        createErrorMessage({
-          selectedEntities,
-          root: references[0],
-          entityTitle,
-          action: 'publish',
-        })
-      );
+      handleError(error);
     }
   };
 

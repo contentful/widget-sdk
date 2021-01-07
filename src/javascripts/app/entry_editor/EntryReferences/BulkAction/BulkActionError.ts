@@ -1,11 +1,11 @@
 import type { EntityLink } from './BulkActionService';
 
-enum BulkActionErrorMessage {
-  VersionMismatch = 'Provided version is not valid.',
+export enum BulkActionErrorMessage {
+  RateLimitExceededError = 'You have reached the limit for the number of active jobs you can create at this time. Try again in a few minutes.',
+  VersionMismatch = 'A newer version of this Content might be available, please refresh.',
   Default = 'Something went wrong.',
 }
-
-type BulkActionError = {
+interface BulkActionError {
   entity: EntityLink;
   error: {
     sys: {
@@ -13,7 +13,7 @@ type BulkActionError = {
       id: string;
     };
   };
-};
+}
 
 interface ErroredEntity extends EntityLink {
   error: {
@@ -21,9 +21,11 @@ interface ErroredEntity extends EntityLink {
   };
 }
 
-// Converts the bulkActionError to current format of the ReferenceTree
-// Check: findValidationErrorForEntity in ../ReferencesTree.js
-// We can skip converting after A/B testing
+/**
+ * @description
+ * Converts the incoming BulkActionError[] to the current expected format in the ReferenceTree.
+ * Check: findValidationErrorForEntity function in ../ReferencesTree.js
+ * */
 export function convertBulkActionErrors(errors: BulkActionError[]): ErroredEntity[] {
   return errors.map((item) => ({
     sys: { ...item.entity.sys },
