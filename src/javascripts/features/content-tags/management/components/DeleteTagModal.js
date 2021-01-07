@@ -5,6 +5,7 @@ import {
   FieldGroup,
   Form,
   Modal,
+  Note,
   Notification,
   Paragraph,
 } from '@contentful/forma-36-react-components';
@@ -17,27 +18,41 @@ import { useDeleteTag, useReadTags } from 'features/content-tags/core/hooks';
 const styles = {
   controlsPanel: css({ display: 'flex', marginTop: tokens.spacingL }),
   marginLeftM: css({ marginLeft: tokens.spacingM }),
-  marginBottom: css({ marginBottom: tokens.spacingM }),
+  marginM: css({ marginTop: tokens.spacingM, marginBottom: tokens.spacingM }),
 };
 
 const FORM_RESET = 'FORM_RESET';
-const FORM_CONFIRM_CHANGED = 'FORM_CONFIRM_CHANGED';
-const FORM_CONFIRM_TOUCHED_CHANGED = 'FORM_CONFIRM_TOUCHED_CHANGED';
-const FORM_INITIAL_STATE = { confirm: false, confirmTouched: false };
+const FORM_FIRST_CONFIRM_CHANGED = 'FORM_FIRST_CONFIRM_CHANGED';
+const FORM_FIRST_CONFIRM_TOUCHED = 'FORM_FIRST_CONFIRM_TOUCHED';
+const FORM_SECOND_CONFIRM_CHANGED = 'FORM_SECOND_CONFIRM_CHANGED';
+const FORM_SECOND_CONFIRM_TOUCHED = 'FORM_SECOND_CONFIRM_TOUCHED';
+const FORM_INITIAL_STATE = {
+  firstConfirm: false,
+  firstConfirmTouched: false,
+  secondConfirm: false,
+  secondConfirmTouched: false,
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case FORM_CONFIRM_CHANGED:
-      return { ...state, confirm: action.payload };
-    case FORM_CONFIRM_TOUCHED_CHANGED:
-      return { ...state, confirmTouched: action.payload };
+    case FORM_FIRST_CONFIRM_CHANGED:
+      return { ...state, firstConfirm: action.payload };
+    case FORM_FIRST_CONFIRM_TOUCHED:
+      return { ...state, firstConfirmTouched: action.payload };
+    case FORM_SECOND_CONFIRM_CHANGED:
+      return { ...state, secondConfirm: action.payload };
+    case FORM_SECOND_CONFIRM_TOUCHED:
+      return { ...state, secondConfirmTouched: action.payload };
     case FORM_RESET:
       return FORM_INITIAL_STATE;
   }
 };
 
 function DeleteTagModal({ tag, isShown, onClose }) {
-  const [{ confirm, confirmTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
+  const [
+    { firstConfirm, firstConfirmTouched, secondConfirm, secondConfirmTouched },
+    dispatch,
+  ] = useReducer(reducer, FORM_INITIAL_STATE);
   const { reset } = useReadTags();
 
   const {
@@ -76,9 +91,14 @@ function DeleteTagModal({ tag, isShown, onClose }) {
     }
   }, [deleteTagData, tag, close]);
 
-  const onChange = (event) => {
-    dispatch({ type: FORM_CONFIRM_CHANGED, payload: event.target.checked });
-    dispatch({ type: FORM_CONFIRM_TOUCHED_CHANGED, payload: true });
+  const onChangeFirst = (event) => {
+    dispatch({ type: FORM_FIRST_CONFIRM_CHANGED, payload: event.target.checked });
+    dispatch({ type: FORM_FIRST_CONFIRM_TOUCHED, payload: true });
+  };
+
+  const onChangeSecond = (event) => {
+    dispatch({ type: FORM_SECOND_CONFIRM_CHANGED, payload: event.target.checked });
+    dispatch({ type: FORM_SECOND_CONFIRM_TOUCHED, payload: true });
   };
 
   if (!tag) {
@@ -86,23 +106,42 @@ function DeleteTagModal({ tag, isShown, onClose }) {
   }
 
   return (
-    <Modal title={'Delete tag'} isShown={isShown} onClose={close}>
-      <Paragraph className={styles.marginBottom}>
-        Are you sure you want to delete the tag {tag.name}?
-      </Paragraph>
+    <Modal title={`Delete tag "${tag.name}"`} isShown={isShown} onClose={close}>
+      <Note noteType="negative" title="This may have big implications for permissions">
+        Tag &quot;{tag.name}&quot; may be used to define access for a custom role in this space.
+      </Note>
+      <Paragraph className={styles.marginM}>Check both options to confirm:</Paragraph>
       <Form spacing={'condensed'} testId={'delete-tag-modal-form'}>
         <FieldGroup>
           <CheckboxField
-            testId="delete-tag-modal-confirm"
+            testId="delete-tag-modal-first-confirm-field"
             type="checkbox"
-            inputProps={{ testId: 'delete-tag-modal-input' }}
-            labelText={'Delete tag and remove it from all entries and assets.'}
-            validationMessage={confirmTouched && !confirm ? 'please confirm deletion.' : null}
-            checked={confirm}
+            inputProps={{ testId: 'delete-tag-modal-first-confirm-input' }}
+            labelText={`Remove "${tag.name}" from all entries and assets`}
+            helpText={'Any user may gain or lose access to content tagged with this tag'}
+            validationMessage={
+              firstConfirmTouched && !firstConfirm ? 'Check both options to confirm deletion' : null
+            }
+            checked={firstConfirm}
             value="yes"
-            onChange={onChange}
-            labelIsLight={true}
-            id="optIn"
+            onChange={onChangeFirst}
+            id="optInFirst"
+          />
+          <CheckboxField
+            testId="delete-tag-modal-second-confirm-field"
+            type="checkbox"
+            inputProps={{ testId: 'delete-tag-modal-second-confirm-input' }}
+            labelText={`Remove "${tag.name}" from all roles`}
+            helpText={`Users with roles that are defined using "${tag.name}" could gain or lose access to content tagged with this tag`}
+            validationMessage={
+              secondConfirmTouched && !secondConfirm
+                ? 'Check both options to confirm deletion'
+                : null
+            }
+            checked={secondConfirm}
+            value="yes"
+            onChange={onChangeSecond}
+            id="optInSecond"
           />
         </FieldGroup>
         <div className={styles.controlsPanel}>
@@ -112,7 +151,7 @@ function DeleteTagModal({ tag, isShown, onClose }) {
             type="submit"
             buttonType="negative"
             loading={deleteTagIsLoading}
-            disabled={!confirm || deleteTagIsLoading}>
+            disabled={!firstConfirm || !secondConfirm || deleteTagIsLoading}>
             Delete and remove
           </Button>
           <Button
