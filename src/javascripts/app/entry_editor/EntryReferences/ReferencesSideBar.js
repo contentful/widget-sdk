@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { isEqual, uniqWith, uniqueId } from 'lodash';
@@ -34,6 +34,7 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
+import { onSlideStateChanged } from 'navigation/SlideInNavigator';
 
 const styles = {
   sideBarWrapper: css({
@@ -80,6 +81,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const spaceContext = useSpaceEnvContext();
 
+  const getReferencesForEntry = useCallback(async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  }, [dispatch, entity]);
+
   useEffect(() => {
     (async function () {
       const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
@@ -90,11 +97,13 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     })();
   });
 
-  const getReferencesForEntry = async () => {
-    const { resolved } = await getReferencesForEntryId(entity.sys.id);
-    dispatch({ type: SET_REFERENCES, value: resolved });
-    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-  };
+  useEffect(() => {
+    onSlideStateChanged(getReferencesForEntry);
+
+    return () => {
+      onSlideStateChanged(() => null);
+    };
+  }, [getReferencesForEntry, dispatch]);
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });

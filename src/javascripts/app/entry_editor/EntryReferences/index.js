@@ -11,7 +11,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
-import { goToSlideInEntity, onSlideStateChanged } from 'navigation/SlideInNavigator';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
 import MultiSelect from './MultiSelect';
 import { getReferencesForEntryId, getDefaultLocale } from './referencesService';
@@ -158,7 +158,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
 
   useEffect(() => {
     (async () => fetchReferences())();
-  }, [fetchReferences, entity, dispatch]);
+  }, [fetchReferences]);
 
   const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
 
@@ -172,11 +172,8 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     return null;
   }
 
-  // TODO: add spec coverage
-  // Refetch entries after the slideIn animation is closed since one Entry might have changed its status
   const handleReferenceCardClick = (entity) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
-    onSlideStateChanged(fetchReferences);
   };
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');
