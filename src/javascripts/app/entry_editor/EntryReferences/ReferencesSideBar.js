@@ -138,14 +138,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const handleError = (error) => {
     if (isBulkActionSupportEnabled) {
-      const validStatusCode =
-        error.statusCode && (error.statusCode > 400 || error.statusCode < 500);
-
-      if (validStatusCode && error.statusCode === 429) {
+      if (error.statusCode && error.statusCode === 429) {
         return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
       }
 
-      if (validStatusCode) {
+      if (error.statusCode && error.data.details) {
         const errored = convertBulkActionErrors(error.data.details.errors);
         return displayValidation({ errored });
       }
