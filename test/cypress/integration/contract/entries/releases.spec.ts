@@ -29,7 +29,6 @@ import {
   cancelDefaultJobInDefaultSpace,
   queryAllScheduledJobsForDefaultRelease,
 } from '../../../interactions/jobs';
-import { severalEntriesResponse } from '../../../fixtures/responses/entries-several';
 
 describe('Releases', () => {
   let interactions: string[];

@@ -10,7 +10,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/create-compelling-experiences.svg';
 import ReleasesTimeline from './ReleasesTimeline';
-import { createRelease, getReleases, replaceReleaseById } from '../releasesService';
+import { createRelease, getReleases, updateRelease } from '../releasesService';
 import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
@@ -164,7 +164,7 @@ export default class ReleasesWidgetDialog extends Component {
         })),
       ];
 
-      await replaceReleaseById(release.sys.id, release.title, releaseItems);
+      await updateRelease(release, { items: releaseItems });
 
       this.handleSuccess(release);
     } catch (error) {

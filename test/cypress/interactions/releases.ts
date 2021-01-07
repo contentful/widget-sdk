@@ -204,6 +204,7 @@ export const deleteEntityFromRelease = {
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}`,
         headers: {
           ...defaultHeader,
+          'x-contentful-version': '1',
           'x-contentful-enable-alpha-feature': 'immediate-release',
         },
         body: deleteEntityBodyRequest(),

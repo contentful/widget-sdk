@@ -13,7 +13,7 @@ import {
   getReleasesFeatureVariation,
   useFeatureFlagAccessToLaunchApp,
 } from '../ReleasesFeatureFlag';
-import { replaceReleaseById } from '../releasesService';
+import { updateRelease } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
@@ -60,7 +60,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       entityType: entityInfo.type,
     });
 
-    replaceReleaseById(release.sys.id, release.title, releaseWithoutEntity)
+    updateRelease(release, { items: releaseWithoutEntity })
       .then(() => {
         handleReleaseRefresh();
         Notification.success(`${entityTitle || 'Untitled'} was removed from ${release.title}`);

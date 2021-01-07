@@ -1,4 +1,5 @@
 import { Matchers } from '@pact-foundation/pact-web';
+import { makeLink, ReleaseAction } from '@contentful/types';
 import {
   defaultAssetId,
   defaultEntryId,
@@ -25,45 +26,28 @@ export const emptyReleaseResponse = () => ({
     items: [],
   },
   sys: {
-    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-    environment: {
-      sys: {
-        id: defaultEnvironmentId,
-        type: 'Link',
-        linkType: 'Environment',
-      },
-    },
-    id: defaultReleaseId,
     type: 'Release',
+    id: defaultReleaseId,
+    space: makeLink('Space', defaultSpaceId),
+    environment: makeLink('Environment', defaultEnvironmentId),
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: makeLink('User', defaultUserId),
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+    version: Matchers.integer(1),
   },
 });
 
-export const releaseAction = (status) => ({
+export const releaseAction = (status: ReleaseAction['sys']['status']) => ({
   sys: {
     type: 'ReleaseAction',
     id: defaultReleaseActionId,
-    release: {
-      sys: {
-        type: 'Link',
-        linkType: 'Release',
-        id: defaultReleaseId,
-      },
-    },
-    status: status,
+    space: makeLink('Space', defaultSpaceId),
+    environment: makeLink('Environment', defaultEnvironmentId),
+    release: makeLink('Release', defaultReleaseId),
+    status,
     createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
-    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-    environment: {
-      sys: {
-        id: defaultEnvironmentId,
-        type: 'Link',
-        linkType: 'Environment',
-      },
-    },
+    createdBy: makeLink('User', defaultUserId),
   },
   action: 'publish',
 });
@@ -72,26 +56,18 @@ export const severalEntitiesReleaseResponse = () => ({
   title: 'Twentieth Release',
   entities: {
     sys: { type: 'Array' },
-    items: [
-      { sys: { id: defaultEntryId, linkType: 'Entry', type: 'Link' } },
-      { sys: { id: defaultAssetId, linkType: 'Asset', type: 'Link' } },
-    ],
+    items: [makeLink('Entry', defaultEntryId), makeLink('Asset', defaultAssetId)],
   },
   sys: {
-    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-    environment: {
-      sys: {
-        id: defaultEnvironmentId,
-        type: 'Link',
-        linkType: 'Environment',
-      },
-    },
-    id: defaultReleaseId,
     type: 'Release',
+    id: defaultReleaseId,
+    space: makeLink('Space', defaultSpaceId),
+    environment: makeLink('Environment', defaultEnvironmentId),
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: makeLink('User', defaultUserId),
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
     lastAction: releaseAction('succeeded'),
+    version: Matchers.integer(1),
   },
 });
 
@@ -102,28 +78,15 @@ export const severalReleases = ({ defaultActioned = false } = {}) => ({
   items: [
     {
       sys: {
-        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-        createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-        space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-        environment: {
-          sys: {
-            id: defaultEnvironmentId,
-            type: 'Link',
-            linkType: 'Environment',
-          },
-        },
-        id: defaultReleaseId,
         type: 'Release',
-        lastAction: defaultActioned
-          ? {
-              sys: {
-                type: 'Link',
-                linkType: 'ReleaseAction',
-                id: defaultReleaseActionId,
-              },
-            }
-          : undefined,
+        id: defaultReleaseId,
+        space: makeLink('Space', defaultSpaceId),
+        environment: makeLink('Environment', defaultEnvironmentId),
+        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+        createdBy: makeLink('User', defaultUserId),
+        lastAction: defaultActioned ? makeLink('ReleaseAction', defaultReleaseActionId) : undefined,
         updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+        version: Matchers.integer(1),
       },
       title: 'First release',
       entities: {
@@ -135,61 +98,40 @@ export const severalReleases = ({ defaultActioned = false } = {}) => ({
     },
     {
       sys: {
-        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-        createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-        space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-        environment: {
-          sys: {
-            id: defaultEnvironmentId,
-            type: 'Link',
-            linkType: 'Environment',
-          },
-        },
-        id: 'releaseId2',
         type: 'Release',
+        id: 'releaseId2',
+        space: makeLink('Space', defaultSpaceId),
+        environment: makeLink('Environment', defaultEnvironmentId),
+        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+        createdBy: makeLink('User', defaultUserId),
         updatedAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+        version: Matchers.integer(1),
       },
       title: 'Second release',
       entities: {
         sys: {
           type: 'Array',
         },
-        items: [
-          {
-            sys: { id: defaultEntryId, type: 'Link', linkType: 'Entry' },
-          },
-        ],
+        items: [makeLink('Entry', defaultEntryId)],
       },
     },
     {
       sys: {
-        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-        createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-        space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-        environment: {
-          sys: {
-            id: defaultEnvironmentId,
-            type: 'Link',
-            linkType: 'Environment',
-          },
-        },
-        id: 'releaseId3',
         type: 'Release',
+        id: 'releaseId3',
+        space: makeLink('Space', defaultSpaceId),
+        environment: makeLink('Environment', defaultEnvironmentId),
+        createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+        createdBy: makeLink('User', defaultUserId),
         updatedAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+        version: Matchers.integer(1),
       },
       title: 'Third release',
       entities: {
         sys: {
           type: 'Array',
         },
-        items: [
-          {
-            sys: { id: defaultEntryId, type: 'Link', linkType: 'Entry' },
-          },
-          {
-            sys: { id: defaultAssetId, type: 'Link', linkType: 'Asset' },
-          },
-        ],
+        items: [makeLink('Entry', defaultEntryId), makeLink('Asset', defaultAssetId)],
       },
     },
   ],
@@ -203,19 +145,14 @@ export const deleteEntityBodyResponse = () => ({
     items: [{ sys: { id: defaultAssetId, linkType: 'Asset', type: 'Link' } }],
   },
   sys: {
-    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
-    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
-    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
-    environment: {
-      sys: {
-        id: defaultEnvironmentId,
-        type: 'Link',
-        linkType: 'Environment',
-      },
-    },
-    id: defaultReleaseId,
     type: 'Release',
+    id: defaultReleaseId,
+    space: makeLink('Space', defaultSpaceId),
+    environment: makeLink('Environment', defaultEnvironmentId),
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: makeLink('User', defaultUserId),
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+    version: Matchers.integer(2), // Should be incremented
   },
 });
 

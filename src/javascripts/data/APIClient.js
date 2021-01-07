@@ -314,18 +314,19 @@ APIClient.prototype.getReleaseById = function (id) {
   );
 };
 
-APIClient.prototype.replaceReleaseById = function (id, title, items = []) {
+/**
+ * @param {import('@contentful/types').Release} release
+ */
+APIClient.prototype.updateRelease = function (release) {
+  // FIXIT API rejects if we send a sys, instead should be allowed but ignored
+  const { sys: _sys, ...data } = release;
+
   return this._request(
     {
       method: 'PUT',
-      path: ['releases', id],
-      data: {
-        title,
-        entities: {
-          sys: { type: 'Array' },
-          items,
-        },
-      },
+      path: ['releases', getId(release)],
+      data,
+      version: getVersion(release),
     },
     {
       ...getAlphaHeader(IMMEDIATE_RELEASE),

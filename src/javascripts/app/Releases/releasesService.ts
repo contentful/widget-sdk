@@ -4,10 +4,10 @@ import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient.js';
 import { create as createDto } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsFactory.js';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
-import type { Entity, Release, ReleaseAction } from '@contentful/types';
+import type { Entity, Link, Release, ReleaseAction } from '@contentful/types';
 import { track } from 'analytics/Analytics';
 
-const toArrayOfUnique = (entities: Entity[]) => uniqWith(entities, isEqual);
+const toArrayOfUnique = <T extends Entity>(entities: T[]): T[] => uniqWith(entities, isEqual);
 
 type ReleasableEntityType = 'Entry' | 'Asset';
 type ReleaseActionType = 'publish' | 'unpublish';
@@ -70,14 +70,30 @@ async function getReleaseById(releaseId: string) {
   return await apiClient.getReleaseById(releaseId);
 }
 
-async function replaceReleaseById(releaseId: string, title: string, items: Entity[]) {
-  const apiClient = new APIClient(createEndpoint());
-  return await apiClient.replaceReleaseById(releaseId, title, toArrayOfUnique(items));
-}
-
 async function publishRelease(releaseId: string, version: number) {
   const apiClient = new APIClient(createEndpoint());
   return await apiClient.publishRelease(releaseId, version);
+}
+
+interface UpdateReleaseFields {
+  title?: string;
+  items?: Link<'Entry' | 'Asset'>[];
+}
+async function updateRelease(release: Release, updates: UpdateReleaseFields) {
+  const title = updates.title ? updates.title : release.title;
+  const items = toArrayOfUnique(updates.items ? updates.items : release.entities.items);
+
+  const updatedRelease: Release = {
+    ...release,
+    title,
+    entities: {
+      sys: { type: 'Array' },
+      items,
+    },
+  };
+
+  const apiClient = new APIClient(createEndpoint());
+  return apiClient.updateRelease(updatedRelease);
 }
 
 async function getReleaseAction(releaseId: string, actionId: string) {
@@ -150,8 +166,8 @@ export {
   getReleasesIncludingEntity,
   deleteRelease,
   getReleaseById,
-  replaceReleaseById,
   publishRelease,
+  updateRelease,
   getReleaseAction,
   getReleaseActions,
   validateReleaseAction,

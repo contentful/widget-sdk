@@ -7,8 +7,8 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { ReleasesProvider, ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import {
   getReleaseById,
-  replaceReleaseById,
   publishRelease,
+  updateRelease,
   validateReleaseAction,
 } from '../releasesService';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
@@ -104,7 +104,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   const handleEntityDelete = (entity) => {
     const entityType = entity.sys.type;
     const releaseWithoutEntity = excludeEntityFromRelease(release, entity.sys.id);
-    replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
+    updateRelease(release, { items: releaseWithoutEntity })
       .then(() => {
         setEntityRefreshKey(entity.sys.id);
         newForLocale(defaultLocale)
