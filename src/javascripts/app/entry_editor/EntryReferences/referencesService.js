@@ -45,18 +45,18 @@ function validateEntities({ entities, action }) {
   return apiClient.validateRelease(action, entities);
 }
 
-function publishEntities({ entities, action }) {
+async function publishEntities({ entities, action }) {
   const apiClient = new APIClient(createEndpoint());
   return apiClient.executeRelease(action, entities);
 }
 
 // Used whenever the LaunchDarkly Flag is enabled
-function executeBulkAction({ entities, action }) {
+async function executeBulkAction({ entities, action }) {
   const apiClient = new APIClient(createEndpoint());
   return apiClient.executeBulkAction({ action, entities });
 }
 
-function getBulkAction(id) {
+async function getBulkAction(id) {
   const apiClient = new APIClient(createEndpoint());
   return apiClient.getBulkAction(id);
 }

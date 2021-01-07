@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { uniqueId, get, isObject } from 'lodash';
@@ -11,7 +11,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
-import { goToSlideInEntity } from 'navigation/SlideInNavigator';
+import { goToSlideInEntity, onSlideStateChanged } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
 import MultiSelect from './MultiSelect';
 import { getReferencesForEntryId, getDefaultLocale } from './referencesService';
@@ -138,25 +138,27 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
 
   const defaultLocale = getDefaultLocale().code;
 
-  useEffect(() => {
-    (async function fetchReferences() {
-      try {
-        const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
-        dispatch({ type: SET_REFERENCES, value: fetchedRefs });
-        dispatch({
-          type: SET_LINKS_COUNTER,
-          value: {
-            assets: get(response, 'includes.Asset.length') || 0,
-            entries: get(response, 'includes.Entry.length') || 0,
-          },
-        });
+  const fetchReferences = useCallback(async () => {
+    try {
+      const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
+      dispatch({ type: SET_REFERENCES, value: fetchedRefs });
+      dispatch({
+        type: SET_LINKS_COUNTER,
+        value: {
+          assets: get(response, 'includes.Asset.length') || 0,
+          entries: get(response, 'includes.Entry.length') || 0,
+        },
+      });
 
-        return fetchedRefs;
-      } catch {
-        dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
-      }
-    })();
+      return fetchedRefs;
+    } catch {
+      dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
+    }
   }, [entity, dispatch]);
+
+  useEffect(() => {
+    (async () => fetchReferences())();
+  }, [fetchReferences, entity, dispatch]);
 
   const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
 
@@ -170,8 +172,11 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     return null;
   }
 
+  // TODO: add spec coverage
+  // Refetch entries after the slideIn animation is closed since one Entry might have changed its status
   const handleReferenceCardClick = (entity) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
+    onSlideStateChanged(fetchReferences);
   };
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');

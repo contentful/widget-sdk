@@ -31,8 +31,8 @@ import {
 } from './state/actions';
 import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { publishBulkAction } from './BulkAction/BulkActionService';
+import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 
 const styles = {
   sideBarWrapper: css({
@@ -77,16 +77,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
   const [isBulkActionSupportEnabled, setIsBulkActionSupportEnabled] = useState(false);
 
-  // TODO check if it's actually `currentEnvironmentAliasId`
-  const { currentSpaceId: spaceId, currentEnvironmentId: environmentId } = useSpaceEnvContext();
+  const spaceContext = useSpaceEnvContext();
 
   useEffect(() => {
     (async function () {
-      const addToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
-      const bulkActionEnabled = await getVariation(FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT, {
-        spaceId,
-        environmentId,
-      });
+      const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
+      const bulkActionEnabled = await getBulkActionSupportFeatureFlag(spaceContext);
 
       setisAddToReleaseEnabled(addToReleaseEnabled);
       setIsBulkActionSupportEnabled(bulkActionEnabled);
@@ -122,30 +118,10 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       });
   };
 
-  const getReferencesForEntry = () => {
-    return getReferencesForEntryId(entity.sys.id)
-      .then(({ resolved: fetchedRefs }) => dispatch({ type: SET_REFERENCES, value: fetchedRefs }))
-      .then(() => {
-        dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-      });
-  };
-
-  const publishSuccessMessage = () => {
-    return createSuccessMessage({
-      selectedEntities,
-      root: references[0],
-      entityTitle,
-      action: 'publish',
-    });
-  };
-
-  const publishErrorMessage = () => {
-    return createErrorMessage({
-      selectedEntities,
-      root: references[0],
-      entityTitle,
-      action: 'publish',
-    });
+  const getReferencesForEntry = async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
   };
 
   const handlePublication = async () => {
@@ -157,18 +133,31 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     });
 
     try {
+      /**
+       * If this Feature Flag is enabled, the publish action will
+       * be placed in a queue and processed assynchronously in the new bulk-actions-api.
+       *
+       * Otherwise, fallback to the original release/execute logic
+       **/
+
       if (isBulkActionSupportEnabled) {
         await publishBulkAction(selectedEntities);
       } else {
         const entitiesToPublish = mapEntities(selectedEntities);
-        publishEntities({ entities: entitiesToPublish, action: 'publish' });
+        await publishEntities({ entities: entitiesToPublish, action: 'publish' });
       }
 
-      // After publishing
+      // After publishing, refetch entries
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
       getReferencesForEntry();
 
-      Notification.success(publishSuccessMessage());
+      Notification.success(
+        createSuccessMessage({
+          selectedEntities,
+          root: references[0],
+          entityTitle,
+        })
+      );
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
 
@@ -179,7 +168,14 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         }
       }
 
-      Notification.error(publishErrorMessage());
+      Notification.error(
+        createErrorMessage({
+          selectedEntities,
+          root: references[0],
+          entityTitle,
+          action: 'publish',
+        })
+      );
     }
   };
 
