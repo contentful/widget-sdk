@@ -6,7 +6,7 @@ import { get, isUndefined } from 'lodash';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
-  getRatePlans,
+  getProductPlans,
   TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -85,7 +85,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
 
   const [plans, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
-    getRatePlans(endpoint),
+    getProductPlans(endpoint),
     fetchNumMemberships(organizationId),
   ]);
 

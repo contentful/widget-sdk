@@ -100,8 +100,8 @@ export function SpacePlans({
     false
   );
   const [isSpaceCreateForSpacePlanEnabled, setIsSpaceCreateForSpacePlanEnabled] = useState(false);
-  const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
-  const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
+  const [unassignedSpacePlans, setUnassignedSpacePlans] = useState(null);
+  const [assignedSpacePlans, setAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
   const [isExportingCSV, setIsExportingCSV] = useState(false);
 
@@ -120,8 +120,8 @@ export function SpacePlans({
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
       const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
 
-      getUnassignedSpacePlans(sortedUnassignedPlans);
-      getAssignedSpacePlans(assignedSpacePlans);
+      setUnassignedSpacePlans(sortedUnassignedPlans);
+      setAssignedSpacePlans(assignedSpacePlans);
 
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);

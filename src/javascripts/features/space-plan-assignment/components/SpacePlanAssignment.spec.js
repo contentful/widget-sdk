@@ -4,7 +4,7 @@ import { SpacePlanAssignment } from './SpacePlanAssignment';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as PricingService from 'services/PricingService';
 import createResourceService from 'services/ResourceService';
-import { getRatePlans, getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
+import { getProductPlans, getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import userEvent from '@testing-library/user-event';
 import { track } from 'analytics/Analytics';
@@ -120,7 +120,7 @@ const mockSpaceResources = [
 ];
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getRatePlans: jest.fn(),
+  getProductPlans: jest.fn(),
   getSubscriptionPlans: jest.fn(),
   isFreeProductPlan: jest.fn(),
 }));
@@ -159,7 +159,7 @@ describe('SpacePlanAssignment', () => {
 
   beforeEach(() => {
     getSubscriptionPlans.mockResolvedValue({ total: mockPlans.length, items: mockPlans });
-    getRatePlans.mockResolvedValue(mockRatePlans);
+    getProductPlans.mockResolvedValue(mockRatePlans);
     getSpace.mockResolvedValue(mockSpace);
     createResourceService().getAll.mockResolvedValue(mockSpaceResources);
   });
