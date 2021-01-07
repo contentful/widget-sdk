@@ -129,7 +129,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
-    // dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
+    dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
     track(trackingEvents.publish, {
       entity_id: entity.sys.id,
       references_count: selectedEntities.length,
