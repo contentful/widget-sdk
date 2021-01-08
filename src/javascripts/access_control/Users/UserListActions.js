@@ -3,7 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { find, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { go } from 'states/Navigator';
 

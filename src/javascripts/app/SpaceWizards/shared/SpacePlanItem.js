@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { camelCase } from 'lodash';
 import { css, cx } from 'emotion';
-import { Tooltip, Icon, Card, Subheading } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, Tooltip, Icon, Card, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import PlanFeatures from '../shared/PlanFeatures';

@@ -32,7 +32,7 @@ import {
   removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import RemoveOrgMemberDialog from '../RemoveUserDialog';
 import Placeholder from 'app/common/Placeholder';
 import { UserListRow } from './UserListRow';

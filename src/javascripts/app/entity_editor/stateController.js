@@ -7,7 +7,7 @@ import { Notification, makeNotify } from 'app/entity_editor/Notifications';
 import * as logger from 'services/logger';
 
 import * as trackVersioning from 'analytics/events/versioning';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as random from 'utils/Random';
 
 import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog';

@@ -3,7 +3,7 @@ import { GlobalHotKeys } from 'react-hotkeys';
 import { Icon, Modal, Tooltip } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { trackOpenButtonClick, trackClose, trackOpenShortcut } from './analytics';
 import { QuickNavSearch } from './components/QuickNavSearch';
 

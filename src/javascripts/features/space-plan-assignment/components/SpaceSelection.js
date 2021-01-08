@@ -15,7 +15,7 @@ import {
   List,
   ListItem,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { SpacePlanComparison } from './SpacePlanComparison';
 import { ExpandableElement } from './ExpandableElement';

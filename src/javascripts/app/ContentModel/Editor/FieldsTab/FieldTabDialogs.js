@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { Modal, ModalLauncher, Button } from '@contentful/forma-36-react-components';
 
 import { htmlEncode } from 'utils/encoder';
 

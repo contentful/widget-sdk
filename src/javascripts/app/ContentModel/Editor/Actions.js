@@ -3,7 +3,7 @@ import { getModule } from 'core/NgRegistry';
 import { cloneDeep, map, get } from 'lodash';
 import validation from '@contentful/validation';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as notify from './Notifications';
 import * as Analytics from 'analytics/Analytics';

@@ -18,7 +18,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { resourcesToDisplay, getIncludedResources, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 
 const styles = {
   warning: css({ color: tokens.colorWarning }),

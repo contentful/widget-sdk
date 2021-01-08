@@ -5,7 +5,7 @@ import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';

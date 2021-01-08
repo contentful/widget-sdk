@@ -4,7 +4,7 @@ import { css, cx } from 'emotion';
 
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import React, { useReducer, useEffect } from 'react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Notification,

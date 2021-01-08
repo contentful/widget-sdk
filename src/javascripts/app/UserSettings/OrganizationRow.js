@@ -15,7 +15,7 @@ import {
 import { css } from 'emotion';
 import moment from 'moment';
 
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';

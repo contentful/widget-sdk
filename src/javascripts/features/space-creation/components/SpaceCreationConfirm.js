@@ -9,7 +9,7 @@ import {
   Subheading,
   Button,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { SpaceCreationState } from '../context';
 import { SpacePlanResourceList } from 'features/space-plan-assignment';

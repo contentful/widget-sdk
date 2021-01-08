@@ -7,8 +7,8 @@ import {
   updateMembership,
   removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import { Notification } from '@contentful/forma-36-react-components';
+import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
+
 import { go } from 'states/Navigator';
 
 const mockMember = fake.OrganizationMembership('member', 'active');

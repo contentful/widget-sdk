@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   ModalConfirm,
+  ModalLauncher,
   TextInput,
   Paragraph,
   Typography,

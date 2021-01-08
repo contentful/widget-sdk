@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState, useRef } from 'react';
 import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
-import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
+import { Autocomplete } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';

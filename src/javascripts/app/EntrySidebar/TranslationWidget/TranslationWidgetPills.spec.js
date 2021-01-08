@@ -3,8 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import TranslationWidgetPills from './TranslationWidgetPills';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import { TextLink, Pill } from '@contentful/forma-36-react-components';
+import { ModalLauncher, TextLink, Pill } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
 describe('EntrySidebar/TranslationWidgetPills', () => {

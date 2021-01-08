@@ -10,7 +10,7 @@ import {
 import UserDetails from './UserDetails';
 
 import * as fake from 'test/helpers/fakeFactory';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
 

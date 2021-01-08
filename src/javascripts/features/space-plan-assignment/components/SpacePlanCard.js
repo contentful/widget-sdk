@@ -15,7 +15,7 @@ import {
   Tooltip,
   Icon,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { ASSIGNMENT_FLOW_TYPE, canPlanBeAssigned } from '../utils/utils';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
 import { SpacePlanEntitlements } from './SpacePlanEntitlements';

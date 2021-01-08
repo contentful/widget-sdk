@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChangeSpaceWarning, { open, MODAL_TYPES } from './ChangeSpaceWarning';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 // Needed for ContactUsButton
 global.open = () => {};

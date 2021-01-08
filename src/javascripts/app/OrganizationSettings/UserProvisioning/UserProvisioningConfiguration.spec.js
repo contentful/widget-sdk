@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 jest.mock('features/api-keys-management', () => ({
   TokenResourceManager: {

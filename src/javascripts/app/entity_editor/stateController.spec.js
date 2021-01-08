@@ -1,7 +1,7 @@
 import { initStateController } from './stateController';
 
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import * as Analytics from 'analytics/Analytics';
 import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';

@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { AppDetailsModal } from '../AppDetailsModal';
 import * as AppLifecycleTracking from '../AppLifecycleTracking';

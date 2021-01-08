@@ -8,7 +8,7 @@ import {
   Typography,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { useSsoConnectionTest } from '../services/useSsoConnectionTest';
 import { formatConnectionTestErrors } from '../utils/utils';
 

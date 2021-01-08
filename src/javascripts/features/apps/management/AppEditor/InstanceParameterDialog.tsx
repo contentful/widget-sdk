@@ -13,7 +13,7 @@ import {
   TextLink,
   Tooltip,
 } from '@contentful/forma-36-react-components';
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, GridItem } from '@contentful/forma-36-react-components';
 import deepEqual from 'fast-deep-equal';
 import { isEmpty, isEqual, toNumber, toString } from 'lodash';
 import React, { ChangeEvent, ComponentType, useState } from 'react';

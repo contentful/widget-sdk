@@ -15,7 +15,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { links } from '../utils';

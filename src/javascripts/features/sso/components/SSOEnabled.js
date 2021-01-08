@@ -7,7 +7,7 @@ import {
   TextLink,
   TextField,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { css } from 'emotion';

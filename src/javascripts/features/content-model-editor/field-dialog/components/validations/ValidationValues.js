@@ -11,7 +11,7 @@ import {
   Button,
   CheckboxField,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { normalizeWhiteSpace } from 'utils/StringUtils';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import arraySwap from 'utils/arraySwap';

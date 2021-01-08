@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Typography, Paragraph, Button } from '@contentful/forma-36-react-components';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 export const MODAL_TYPES = {
   POC: 'POC',

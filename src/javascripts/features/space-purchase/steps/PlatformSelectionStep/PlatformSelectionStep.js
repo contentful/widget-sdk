@@ -2,8 +2,7 @@ import React, { useContext, useState, useEffect, useCallback, createRef } from '
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
-import { Button, Card, Heading, Tooltip } from '@contentful/forma-36-react-components';
+import { Button, Card, Flex, Grid, Heading, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';

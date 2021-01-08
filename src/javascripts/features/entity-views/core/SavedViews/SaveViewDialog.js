@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { SaveViewDialogComponent } from './SaveViewDialogComponent';
 
 export function SaveViewDialog({ allowViewTypeSelection = false, allowRoleAssignment = false }) {

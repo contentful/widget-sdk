@@ -10,7 +10,7 @@ import { without } from 'lodash';
 import * as TokenStore from 'services/TokenStore';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { go } from 'states/Navigator';
 

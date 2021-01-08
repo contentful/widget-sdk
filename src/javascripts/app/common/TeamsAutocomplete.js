@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Space } from 'app/OrganizationSettings/PropTypes';
-import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
+import { Autocomplete } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllTeams } from 'access_control/TeamRepository';
 import { useAsync } from 'core/hooks';

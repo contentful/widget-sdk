@@ -14,7 +14,7 @@ import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
 import ChangePasswordModal from './ChangePasswordModal';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 const styles = {
   spaceLeft: css({

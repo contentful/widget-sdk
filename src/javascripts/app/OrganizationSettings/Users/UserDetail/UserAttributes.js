@@ -15,7 +15,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { orgRoles } from 'utils/MembershipUtils';
 import SsoExemptionDialog from './SsoExemptionModal';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {

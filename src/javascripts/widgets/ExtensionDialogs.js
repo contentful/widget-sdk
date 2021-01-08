@@ -1,7 +1,12 @@
 import React from 'react';
 import { isPlainObject } from 'lodash';
-import { Modal, Button, ModalConfirm, TextInput } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import {
+  Modal,
+  ModalLauncher,
+  Button,
+  ModalConfirm,
+  TextInput,
+} from '@contentful/forma-36-react-components';
 
 export async function openAlert(options) {
   validateOptions(options);

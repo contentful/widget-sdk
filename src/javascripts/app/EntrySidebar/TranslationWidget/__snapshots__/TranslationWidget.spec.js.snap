@@ -5,23 +5,16 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is off should ma
   headerNode={
     <Select
       className="css-1frdblk-selectStyles"
-      hasError={false}
-      isDisabled={false}
       onChange={[Function]}
-      required={false}
-      testId="cf-ui-select"
       value="multiple"
       width="auto"
-      willBlurOnEsc={true}
     >
       <Option
-        testId="cf-ui-select-option"
         value="multiple"
       >
         Multiple locales
       </Option>
       <Option
-        testId="cf-ui-select-option"
         value="single"
       >
         Single locale
@@ -111,23 +104,16 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is on should mat
   headerNode={
     <Select
       className="css-1frdblk-selectStyles"
-      hasError={false}
-      isDisabled={false}
       onChange={[Function]}
-      required={false}
-      testId="cf-ui-select"
       value="single"
       width="auto"
-      willBlurOnEsc={true}
     >
       <Option
-        testId="cf-ui-select-option"
         value="multiple"
       >
         Multiple locales
       </Option>
       <Option
-        testId="cf-ui-select-option"
         value="single"
       >
         Single locale

@@ -9,7 +9,7 @@ import { supportUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { NewTeamDialog } from './NewTeamDialog';
 
 const styles = {

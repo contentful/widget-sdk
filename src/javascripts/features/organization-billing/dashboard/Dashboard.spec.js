@@ -3,7 +3,7 @@ import { render, screen, within, fireEvent, waitFor } from '@testing-library/rea
 import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';

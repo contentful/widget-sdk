@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, Flex } from '@contentful/forma-36-react-components';
 import {
   Card,
   Heading,
