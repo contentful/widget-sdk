@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import SecuritySection from './SecuritySection';
 import { window } from 'core/services/window';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { getUserTotp } from './AccountRepository';
 
 jest.mock('core/services/window', () => {

@@ -5,6 +5,9 @@ import {
   Workbench,
   Heading,
   Card,
+  Grid,
+  GridItem,
+  ModalLauncher,
   Typography,
   Paragraph,
   Table,
@@ -16,12 +19,7 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import {
-  ProductIcon,
-  Grid,
-  GridItem,
-  ModalLauncher,
-} from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import * as tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
 import { times } from 'lodash';

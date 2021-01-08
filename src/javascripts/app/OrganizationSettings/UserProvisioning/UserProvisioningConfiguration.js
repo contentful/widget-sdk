@@ -15,7 +15,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import { helpCenterUrl, apiUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { GenerateCMATokenDialog, TokenResourceManager } from 'features/api-keys-management';
 import * as Auth from 'Authentication';
 import UserProvisioningToken from './UserProvisioningToken';

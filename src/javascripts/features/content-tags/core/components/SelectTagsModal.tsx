@@ -7,7 +7,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { FilteredTagsProvider, MetadataTags, orderByLabel } from 'features/content-tags';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { TagSelectionValue } from '../Types';
 import { NoTagsContainer } from './NoTagsContainer';

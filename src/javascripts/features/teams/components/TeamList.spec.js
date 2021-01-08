@@ -5,7 +5,7 @@ import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-l
 import * as fake from 'test/helpers/fakeFactory';
 import { TeamList } from './TeamList';
 import { getAllTeams } from 'features/teams/services/TeamRepository';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 const teamA = fake.Team('Team A', 'the awesome team');
 const teamB = fake.Team('Team B', 'the brave team');

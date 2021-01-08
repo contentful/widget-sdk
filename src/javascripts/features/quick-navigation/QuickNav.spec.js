@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 
 import { QuickNavigation } from './QuickNav';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 let wrapper;
 

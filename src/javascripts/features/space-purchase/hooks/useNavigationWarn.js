@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';

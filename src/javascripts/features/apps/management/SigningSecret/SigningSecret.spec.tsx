@@ -1,5 +1,5 @@
 import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import React from 'react';
 import { SigningSecret } from './SigningSecret';
 import { ManagementApiClient } from '../ManagementApiClient';
@@ -13,7 +13,7 @@ jest.mock('../ManagementApiClient', () => {
   };
 });
 
-jest.mock('@contentful/forma-36-react-components/dist/alpha', () => {
+jest.mock('@contentful/forma-36-react-components', () => {
   return {
     ModalLauncher: {
       open: jest.fn(),

@@ -11,7 +11,7 @@ import {
   HelpText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
+import { Autocomplete } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';

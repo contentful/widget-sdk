@@ -4,7 +4,7 @@ import { render, fireEvent, within, wait, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import * as fakeFactory from 'test/helpers/fakeFactory';
 import { invite } from 'access_control/OrganizationMembershipRepository';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { createTeamMembership } from 'access_control/TeamRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';

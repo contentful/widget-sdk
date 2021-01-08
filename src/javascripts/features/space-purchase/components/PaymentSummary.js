@@ -11,7 +11,7 @@ import {
   ListItem,
   Button,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import { Price } from 'core/components/formatting';
 import tokens from '@contentful/forma-36-tokens';
 

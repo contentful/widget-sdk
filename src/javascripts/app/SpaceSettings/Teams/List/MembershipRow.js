@@ -8,7 +8,7 @@ import {
   ModalConfirm,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components';
 import pluralize from 'pluralize';
 import { truncate, map, intersection, isEmpty, filter, some } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';

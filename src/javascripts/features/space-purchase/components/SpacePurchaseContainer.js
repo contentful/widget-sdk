@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { Grid, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { Workbench } from '@contentful/forma-36-react-components';
+import { Grid, Workbench } from '@contentful/forma-36-react-components';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';

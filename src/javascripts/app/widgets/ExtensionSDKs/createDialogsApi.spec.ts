@@ -3,11 +3,11 @@ import { FieldExtensionSDK, IdsAPI } from 'contentful-ui-extensions-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import { entitySelector } from 'features/entity-search';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { DialogsAPI } from 'contentful-ui-extensions-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
-jest.mock('@contentful/forma-36-react-components/dist/alpha');
+jest.mock('@contentful/forma-36-react-components');
 jest.mock('widgets/ExtensionDialogs');
 jest.mock('features/entity-search', () => ({
   entitySelector: { openFromWidget: jest.fn() },

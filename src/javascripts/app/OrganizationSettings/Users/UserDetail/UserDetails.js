@@ -16,7 +16,7 @@ import UserCard from '../UserCard';
 import UserSpaceList from './UserSpaceList';
 import UserTeamList from './UserTeamList';
 import UserAttributes from './UserAttributes';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesModal';
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';

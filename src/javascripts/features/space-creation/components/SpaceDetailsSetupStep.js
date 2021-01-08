@@ -11,7 +11,7 @@ import {
   TextField,
   Form,
 } from '@contentful/forma-36-react-components';
-import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex, Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import TemplateSelector from 'app/SpaceWizards/shared/TemplateSelector';

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { css } from 'emotion';
 
 import { Button } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { useSpaceUpgrade } from 'features/space-purchase/hooks/useSpaceUpgrade';

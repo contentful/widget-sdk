@@ -9,8 +9,8 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
+  Grid,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes';

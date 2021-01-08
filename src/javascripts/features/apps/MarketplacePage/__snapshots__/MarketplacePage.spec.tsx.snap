@@ -178,6 +178,7 @@ exports[`MarketplacePage should match snapshot for loading state 1`] = `
                     id="cf-ui-skeleton-clip-3"
                   >
                     <rect
+                      data-test-id="cf-ui-skeleton-image"
                       height="36"
                       rx="36"
                       ry="36"
@@ -201,6 +202,7 @@ exports[`MarketplacePage should match snapshot for loading state 1`] = `
                       y="15"
                     />
                     <rect
+                      data-test-id="cf-ui-skeleton-image"
                       height="36"
                       rx="36"
                       ry="36"
@@ -224,6 +226,7 @@ exports[`MarketplacePage should match snapshot for loading state 1`] = `
                       y="70"
                     />
                     <rect
+                      data-test-id="cf-ui-skeleton-image"
                       height="36"
                       rx="36"
                       ry="36"

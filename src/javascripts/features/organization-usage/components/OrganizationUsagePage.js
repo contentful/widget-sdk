@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, GridItem } from '@contentful/forma-36-react-components';
 import { SpacesTabs } from './SpacesTabs';
 import { OrganizationBarChart } from './OrganizationBarChart';
 import { OrganizationUsageInfo } from './OrganizationUsageInfo';

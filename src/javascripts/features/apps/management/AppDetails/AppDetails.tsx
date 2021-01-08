@@ -2,6 +2,7 @@ import {
   Button,
   CopyButton,
   Heading,
+  ModalLauncher,
   Notification,
   Paragraph,
   Tab,
@@ -10,7 +11,7 @@ import {
   TextLink,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { ModalLauncher, ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { AppDefinition } from 'contentful-management/types';
 import React from 'react';

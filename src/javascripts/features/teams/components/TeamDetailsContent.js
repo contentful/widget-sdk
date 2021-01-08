@@ -30,7 +30,7 @@ import { AddToTeamModal } from './AddToTeamModal';
 import { TeamSpaceMembershipList } from './TeamSpaceMembershipList';
 import { AddToSpacesModal } from './AddToSpacesModal';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 const styles = {
   tabs: css({

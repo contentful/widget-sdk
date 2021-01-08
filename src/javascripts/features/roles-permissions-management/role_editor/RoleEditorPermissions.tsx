@@ -44,7 +44,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
           disabled={!canModifyRoles}
           checked={internal.contentModel.manage}
           onChange={updateRoleFromCheckbox('contentModel.manage')}
-          inputType="checkbox"
           className={styles.checkbox}
         />
       </div>
@@ -60,7 +59,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
               disabled={!canModifyRoles}
               checked={internal.tags.manage}
               onChange={updateRoleFromCheckbox('tags.manage')}
-              inputType="checkbox"
               className={styles.checkbox}
             />
           </div>
@@ -77,7 +75,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
             disabled={!canModifyRoles || internal.contentDelivery.manage}
             checked={internal.contentDelivery.read}
             onChange={updateRoleFromCheckbox('contentDelivery.read')}
-            inputType="checkbox"
             className={styles.checkbox}
           />
           <CheckboxField
@@ -88,7 +85,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
             disabled={!canModifyRoles}
             checked={internal.contentDelivery.manage}
             onChange={updateRoleFromCheckbox('contentDelivery.manage')}
-            inputType="checkbox"
             className={styles.checkbox}
           />
         </div>
@@ -104,7 +100,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
           labelIsLight
           checked={internal.environments.manage}
           onChange={updateRoleFromCheckbox('environments.manage')}
-          inputType="checkbox"
           className={styles.checkbox}
         />
         {hasEnvironmentAliasesEnabled && (
@@ -115,7 +110,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
               disabled={!canModifyRoles || !internal.environments.manage}
               checked={internal.environments.manage && internal.environmentAliases.manage}
               onChange={updateRoleFromCheckbox('environmentAliases.manage')}
-              inputType="checkbox"
               labelText="Can create environment aliases and change their target environment for this space."
               labelIsLight
               className={styles.checkbox}
@@ -131,7 +125,6 @@ const RoleEditorPermissions: React.FC<Props> = ({
           disabled={!canModifyRoles}
           checked={internal.settings.manage}
           onChange={updateRoleFromCheckbox('settings.manage')}
-          inputType="checkbox"
           labelIsLight
           labelText="Can modify space settings."
           helpText="This permission allows users to modify locales, webhooks, apps,

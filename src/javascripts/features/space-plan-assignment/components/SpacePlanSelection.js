@@ -16,7 +16,7 @@ import {
   TextLink,
   Note,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { Pluralized } from 'core/components/formatting';
 import { groupPlans, buildPlanKey, orderPlanKeys, ASSIGNMENT_FLOW_TYPE } from '../utils/utils';

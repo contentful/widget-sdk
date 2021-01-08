@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import { isEmpty } from 'lodash';
 
 import { Heading, Card, Typography, Subheading } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { PaymentSummary } from '../../components/PaymentSummary';

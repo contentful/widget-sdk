@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { getModule } from 'core/NgRegistry';

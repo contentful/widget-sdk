@@ -1,5 +1,5 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { KeyListing } from './KeyListing';
 import React from 'react';
@@ -15,7 +15,7 @@ jest.mock('./utils', () => {
   };
 });
 
-jest.mock('@contentful/forma-36-react-components/dist/alpha', () => {
+jest.mock('@contentful/forma-36-react-components', () => {
   return {
     ModalLauncher: {
       open: jest.fn(),

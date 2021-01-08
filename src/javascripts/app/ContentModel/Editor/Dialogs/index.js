@@ -1,6 +1,6 @@
 import React from 'react';
 import isNil from 'lodash/isNil';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { DuplicateContentTypeDialog } from './DuplicateContentTypeDialog';
 import { CreateContentTypeDialog } from './CreateContentTypeDialog';
 import EditContentTypeDialog from './EditContentTypeDialog';

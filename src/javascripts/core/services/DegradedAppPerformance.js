@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Typography, Paragraph, Button } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import * as Telemetry from 'i13n/Telemetry';
 import * as Analytics from 'analytics/Analytics';

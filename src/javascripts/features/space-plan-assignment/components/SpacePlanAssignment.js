@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench, Notification } from '@contentful/forma-36-react-components';
-import { ProductIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, Workbench, Notification } from '@contentful/forma-36-react-components';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';

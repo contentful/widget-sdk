@@ -10,7 +10,7 @@ import {
   Paragraph,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { go } from 'states/Navigator';

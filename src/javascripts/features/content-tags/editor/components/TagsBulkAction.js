@@ -1,4 +1,4 @@
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { Button, Modal, Workbench } from '@contentful/forma-36-react-components';
 import React, { useCallback, useEffect } from 'react';
 import { css } from 'emotion';

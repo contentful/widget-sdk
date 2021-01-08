@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import { UsersList } from './UsersList';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import {

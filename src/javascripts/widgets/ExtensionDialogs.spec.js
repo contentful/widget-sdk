@@ -1,5 +1,5 @@
 import * as Dialogs from './ExtensionDialogs';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 describe('ExtensionDialogs', () => {
   beforeEach(() => {

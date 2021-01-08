@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Accordion, AccordionItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Accordion, AccordionItem } from '@contentful/forma-36-react-components';
 import {
   Typography,
   Heading,

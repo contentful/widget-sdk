@@ -6,7 +6,7 @@ import EmptyStateContainer, {
 import { EmptyStateIllu } from './EmptyStateIllu';
 import StateLink from 'app/common/StateLink';
 import { salesUrl } from 'Config';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Flex } from '@contentful/forma-36-react-components';
 
 export function EmptyState() {
   return (

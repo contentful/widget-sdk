@@ -18,7 +18,7 @@ import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
 import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';

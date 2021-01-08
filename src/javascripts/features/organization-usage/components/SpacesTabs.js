@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid, GridItem } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { SpacesTable } from './SpacesTable';
 import { SpacesBarChart } from './SpacesBarChart';
