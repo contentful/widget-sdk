@@ -19,7 +19,7 @@ import {
   Typography,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { ProductIcon } from '@contentful/forma-36-react-components';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import PropTypes from 'prop-types';
