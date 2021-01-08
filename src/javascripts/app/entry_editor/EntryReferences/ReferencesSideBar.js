@@ -103,7 +103,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     return () => {
       onSlideStateChanged(() => null);
     };
-  }, [getReferencesForEntry, dispatch]);
+  }, [getReferencesForEntry]);
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });

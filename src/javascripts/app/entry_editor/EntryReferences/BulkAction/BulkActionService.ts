@@ -39,6 +39,7 @@ type BulkAction = {
       id: string;
     };
     message: string;
+    details?: object;
   };
 };
 
@@ -80,6 +81,12 @@ const mapEntities = (entities: PublishableEntity[], { includeVersion = false }):
   return uniqEntities;
 };
 
+// Used to conform to the error format expected from ReferencesSidebar and the one thrown by APIClient
+const errorData = ({ error: { details } }: BulkAction) => ({
+  statusCode: 400,
+  data: details,
+});
+
 async function executeActionAndWait({ entities, action }) {
   let attemptsCount = 0;
   const bulkAction: BulkAction = await executeBulkAction({ entities, action });
@@ -96,14 +103,14 @@ async function executeActionAndWait({ entities, action }) {
 
         if (refreshedBulkAction.sys.status === BulkActionStatus.Failed) {
           clearInterval(refreshInterval);
-          reject(refreshedBulkAction);
+          reject(errorData(refreshedBulkAction));
         }
 
         attemptsCount += 1;
 
         if (attemptsCount >= BULKACTION_REFRESH_MAX_ATTEMPTS) {
           clearInterval(refreshInterval);
-          reject(refreshedBulkAction);
+          reject(errorData(refreshedBulkAction));
         }
       } catch (error) {
         clearInterval(refreshInterval);
