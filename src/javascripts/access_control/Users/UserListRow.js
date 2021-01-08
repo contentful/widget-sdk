@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import { map, isEmpty } from 'lodash';
 import { joinAnd } from 'utils/StringUtils';
-import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 
 import tokens from '@contentful/forma-36-tokens';
 
@@ -16,6 +15,7 @@ import {
   DropdownListItem,
   Tooltip,
 } from '@contentful/forma-36-react-components';
+import UserCard from 'app/OrganizationSettings/Users/UserCard';
 
 const styles = {
   user: css({
@@ -49,14 +49,11 @@ const UserListRow = ({
   canModifyUsers,
 }) => {
   const {
-    sys: {
-      id,
-      user: { avatarUrl, activated },
-    },
+    sys: { id, user },
     roles,
   } = member;
 
-  const displayName = getUserName(member.sys.user);
+  // const displayName = getUserName(member.sys.user);
   const displayRoles = isEmpty(roles) ? 'Administrator' : joinAnd(map(roles, 'name'));
   const toolTipContent =
     numberOfTeamMemberships[id] > 0
@@ -65,25 +62,12 @@ const UserListRow = ({
 
   return (
     <li data-test-id="user-list.item" className={styles.user}>
-      <img
-        className={styles.userAvatar}
-        data-test-id="user-list.avatar"
-        src={avatarUrl}
-        width="50"
-        height="50"
-        alt="user avatar"
+      <UserCard
+        user={user}
+        status={member.sys.status}
+        description={displayRoles}
+        displayEmail={false}
       />
-      <div>
-        <strong data-test-id="user-list.name" className={styles.userName}>
-          {displayName}
-        </strong>
-        {!activated && (
-          <small data-test-id="user-list.not-confirmed" className={styles.notConfirmed}>
-            This account is not confirmed
-          </small>
-        )}
-        <div data-test-id="user-list.roles">{displayRoles}</div>
-      </div>
       <Tooltip place="auto" targetWrapperClassName={styles.userMenu} content={toolTipContent}>
         <CardActions
           iconButtonProps={{ buttonType: 'primary', testId: 'user-list.actions' }}

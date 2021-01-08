@@ -10,7 +10,7 @@ describe('User List Row', () => {
   const openRemovalConfirmationDialog = jest.fn();
 
   const defaultUser = fake.User();
-  const nonActivedUser = fake.User({ activated: false });
+  const nonActivedUser = fake.User({ firstName: null, lastName: null });
   const defaultSpace = fake.Link('Space');
   const defaultSpaceMembership = fake.SpaceMember(defaultSpace, defaultUser);
   const nonActivedUserSpaceMembership = fake.SpaceMember(defaultSpace, nonActivedUser);
@@ -42,22 +42,10 @@ describe('User List Row', () => {
   };
 
   describe('renders correctly', () => {
-    it('should render the user avatar properly', async () => {
-      await build();
-
-      const imgTag = screen.getByTestId('user-list.avatar');
-      const imageSourceWithOutHttps = imgTag.src.split('/').pop();
-
-      expect(imageSourceWithOutHttps).toEqual('avatar.jpg');
-      expect(imgTag.alt).toEqual('user avatar');
-      expect(imgTag.width).toEqual(50);
-      expect(imgTag.height).toEqual(50);
-    });
-
     it('should display the name correctly', async () => {
       await build();
 
-      expect(screen.getByTestId('user-list.name')).toHaveTextContent('John Doe');
+      expect(screen.getByTestId('user-card.name')).toHaveTextContent('John Doe');
     });
 
     it('should correctly display if the account is activated', async () => {
@@ -69,28 +57,26 @@ describe('User List Row', () => {
     it('should correctly display if the account is not activated', async () => {
       await build({ member: nonActivedUserSpaceMembership });
 
-      expect(screen.getByTestId('user-list.not-confirmed')).toHaveTextContent(
-        'This account is not confirmed'
-      );
+      expect(screen.getByTestId('user-card.status')).toHaveTextContent('Invited');
     });
 
     describe('Displays users role(s) correctly', () => {
       it('should display admin role correctly', async () => {
         await build();
 
-        expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Administrator');
+        expect(screen.getByTestId('user-card.description')).toHaveTextContent('Administrator');
       });
 
       it('should display a user with one role correctly', async () => {
         await build({ member: oneRoleSpaceMembership });
 
-        expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1');
+        expect(screen.getByTestId('user-card.description')).toHaveTextContent('Role 1');
       });
 
       it('should display a user with more than one role correctly', async () => {
         await build({ member: twoRoleSpaceMembership });
 
-        expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1 and Role 2');
+        expect(screen.getByTestId('user-card.description')).toHaveTextContent('Role 1 and Role 2');
       });
     });
 
