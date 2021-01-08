@@ -1,4 +1,4 @@
-import { get, uniqueId, uniq, reject } from 'lodash';
+import { get, uniqueId, uniq } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
@@ -90,14 +90,12 @@ export function getBasePlan(endpoint) {
 }
 
 /**
- * Gets all subscription plans (base and space) of the org with the associated
+ * Get all subscription plans (base and space) of the org with the associated
  * spaces for space plans, free spaces, and linked user data for each space's
  * `createdBy` field.
  * @param {object} endpoint an organization endpoint
- * @param {boolean} is POC enabled
- * @returns {Promise<object[]>} array of subscription plans w. spaces & users
+ * @returns {object} subscription plans w. spaces & users
  */
-
 export async function getPlansWithSpaces(endpoint) {
   const [productPlans, subscriptionPlans, spaces] = await Promise.all([
     getProductPlans(endpoint),
@@ -105,58 +103,43 @@ export async function getPlansWithSpaces(endpoint) {
     getAllSpaces(endpoint),
   ]);
 
+  const userIds = uniq(spaces.map((space) => get(space, 'sys.createdBy.sys.id')));
+  const users = await getUsersByIds(endpoint, userIds);
+
+  const linkUser = (space) => ({
+    ...space,
+    sys: {
+      ...space.sys,
+      createdBy: users.find(({ sys }) => sys.id === get(space, 'sys.createdBy.sys.id')),
+    },
+  });
+
   const freeSpaceProductPlan = productPlans.find(
     (productPlan) => productPlan.productPlanType === 'free_space'
   );
 
-  const spaceSubscriptionPlans = subscriptionPlans.items.filter(
-    (subscriptionPlan) => subscriptionPlan.planType === 'space'
+  const spacesWithoutSubscriptionPlan = spaces.filter(
+    (space) => !subscriptionPlans.items.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey)
   );
 
-  const spacesWithoutSubscriptionPlan = spaces.filter((space) => {
-    return !spaceSubscriptionPlans.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
-  });
-
-  const findSpaceByPlan = (plan) =>
-    plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
-
-  const plansWithSpaces = {
+  return {
     plans: subscriptionPlans,
     items: [
       ...subscriptionPlans.items.map((subscriptionPlan) => ({
         ...subscriptionPlan,
-        space: findSpaceByPlan(subscriptionPlan),
+        ...(subscriptionPlan.gatekeeperKey && {
+          space: linkUser(spaces.find(({ sys }) => sys.id === subscriptionPlan.gatekeeperKey)),
+        }),
       })),
+      // TODO: Handle Community, Exempt(e.g P&G) and Complimentary in GK
       ...spacesWithoutSubscriptionPlan.map((space) => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
         name: freeSpaceProductPlan.name,
         planType: 'free_space',
-        space,
+        space: linkUser(space),
       })),
     ],
-  };
-
-  // Get unique `createdBy` users for all spaces
-  const userIds = reject(
-    uniq(plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'))),
-    (i) => !i
-  );
-
-  const users = await getUsersByIds(endpoint, userIds);
-  // Plans with Spaces and Users
-  return {
-    plans: plansWithSpaces.plans,
-    items: plansWithSpaces.items.map((planWithSpace) => ({
-      ...planWithSpace,
-      space: planWithSpace.space && {
-        ...planWithSpace.space,
-        sys: {
-          ...planWithSpace.space.sys,
-          createdBy: users.find(({ sys }) => sys.id === planWithSpace.space.sys.createdBy.sys.id),
-        },
-      },
-    })),
   };
 }
 
