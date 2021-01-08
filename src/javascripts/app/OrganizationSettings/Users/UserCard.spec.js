@@ -1,7 +1,7 @@
 import React from 'react';
 import UserCard from './UserCard';
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 const user = {
   firstName: 'User',
@@ -12,25 +12,25 @@ const user = {
 
 describe('UserCard', () => {
   it('status is undefined, no INVITED tag present', () => {
-    const { getByTestId, queryByTestId } = render(<UserCard user={user} />);
-    const userNameAndStatus = getByTestId('user-card.name');
+    render(<UserCard user={user} />);
+    const userNameAndStatus = screen.getByTestId('user-card.name');
     expect(userNameAndStatus.textContent).toBe('User Test');
-    expect(queryByTestId('user-card.status')).toBeNull();
+    expect(screen.queryByTestId('user-card.status')).toBeNull();
   });
 
   it('status is active, no INVITED tag present', () => {
-    const { getByTestId, queryByTestId } = render(<UserCard user={user} status="active" />);
-    const userNameAndStatus = getByTestId('user-card.name');
+    render(<UserCard user={user} status="active" />);
+    const userNameAndStatus = screen.getByTestId('user-card.name');
     expect(userNameAndStatus.textContent).toBe('User Test');
-    expect(queryByTestId('user-card.status')).toBeNull();
+    expect(screen.queryByTestId('user-card.status')).toBeNull();
   });
 
   it('status is pending, first and last name with INVITED tag', () => {
-    const { getByTestId } = render(<UserCard user={user} status="pending" />);
+    render(<UserCard user={user} status="pending" />);
 
-    const userNameAndStatus = getByTestId('user-card.name');
+    const userNameAndStatus = screen.getByTestId('user-card.name');
     expect(userNameAndStatus.textContent).toBe('User Test');
-    expect(getByTestId('user-card.status').textContent).toBe('Invited');
+    expect(screen.getByTestId('user-card.status').textContent).toBe('Invited');
   });
 
   it('first name not defined, INVITED tag displayed only', () => {
@@ -38,9 +38,21 @@ describe('UserCard', () => {
       email: 'user.test@contentful.com',
       avatarUrl: '/testAvatar',
     };
-    const { getByTestId } = render(<UserCard user={user} />);
-    const userNameAndStatus = getByTestId('user-card.name');
+    render(<UserCard user={user} />);
+    const userNameAndStatus = screen.getByTestId('user-card.name');
     expect(userNameAndStatus.textContent).toBe(' ');
-    expect(getByTestId('user-card.status').textContent).toBe('Invited');
+    expect(screen.getByTestId('user-card.status').textContent).toBe('Invited');
+  });
+
+  it('does not display the email', () => {
+    render(<UserCard user={user} displayEmail={false} />);
+    const userNameAndStatus = screen.queryByTestId('user-card.email');
+    expect(userNameAndStatus).not.toBeInTheDocument();
+  });
+
+  it('displays a description the email', () => {
+    render(<UserCard user={user} displayEmail={false} description="Foo" />);
+    const description = screen.getByTestId('user-card.description');
+    expect(description).toHaveTextContent('Foo');
   });
 });

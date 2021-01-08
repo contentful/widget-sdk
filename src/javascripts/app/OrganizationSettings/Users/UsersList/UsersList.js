@@ -249,7 +249,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         confirmTestId="user-list.reinvite-confirmation"
         onCancel={() => onClose(false)}
         onConfirm={() => onClose(true)}>
-        <Paragraph>Send a new invitation to {getFullNameOrEmail(membership.sys.user)}?</Paragraph>
+        <Paragraph>Re-send invitation to {getFullNameOrEmail(membership.sys.user)}?</Paragraph>
       </ModalConfirm>
     ));
 

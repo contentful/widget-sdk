@@ -112,7 +112,7 @@ function UserActions({ membership, onRemove, onReinvite }) {
           <DropdownListItem
             testId="userlist.row.actions.reinvite"
             onClick={() => handleAction(onReinvite)}>
-            Send a new invitation
+            Re-send invitation
           </DropdownListItem>
         )}
       </DropdownList>

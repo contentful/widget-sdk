@@ -19,11 +19,14 @@ export default class UserCard extends React.Component {
     user: UserPropType.isRequired,
     size: PropTypes.oneOf(Object.values(CardSizes)),
     status: PropTypes.oneOf(Object.values(MembershipStatus)),
+    description: PropTypes.string,
+    displayEmail: PropTypes.bool,
   };
 
   static defaultProps = {
     size: CardSizes.SMALL,
     status: MembershipStatus.ACTIVE,
+    displayEmail: true,
   };
 
   shouldShowInvitedTag = () => {
@@ -35,6 +38,8 @@ export default class UserCard extends React.Component {
     const {
       user: { firstName, lastName, avatarUrl, email },
       size,
+      description,
+      displayEmail,
     } = this.props;
 
     return (
@@ -54,9 +59,16 @@ export default class UserCard extends React.Component {
           <Heading element="h2" className="user-card__name" testId="user-card.name">
             {firstName} {lastName}
           </Heading>
-          <span className="user-card__email" data-test-id="user-card.email">
-            {email}
-          </span>
+          {(displayEmail || !firstName) && (
+            <span className="user-card__email" data-test-id="user-card.email">
+              {email}
+            </span>
+          )}
+          {description && (
+            <span className="user-card__description" data-test-id="user-card.description">
+              {description}
+            </span>
+          )}
         </div>
       </div>
     );

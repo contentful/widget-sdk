@@ -2122,9 +2122,16 @@ pre,
     font-size: 14px;
   }
   .user-card__email,
-  .user-card__name {
+  .user-card__name,
+  .user-card__description {
     color: var(--color-text-base);
   }
+
+  .user-card__description {
+    display: block;
+    margin-top: var(--spacing-s)
+  }
+
   .membership-list__item__menu__button {
     -webkit-transition: none;
     transition: none;
