@@ -1,6 +1,6 @@
 import React from 'react';
 import { get } from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
+import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, getUsageExceededMessage } from './utils';
 
@@ -9,7 +9,6 @@ import {
   removeAllEditorInterfaceReferences,
 } from './AppEditorInterfaces';
 import { validateState } from './AppState';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { UninstallModal } from './UninstallModal';
 import { MarketplaceApp } from 'features/apps-core';
 
