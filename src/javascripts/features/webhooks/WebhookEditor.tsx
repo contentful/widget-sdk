@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import {
   Button,
@@ -19,21 +18,35 @@ import { WebhookRemovalDialog } from './dialogs/WebhookRemovalDialog';
 import { WebhookActivityLog } from './WebhookActivityLog';
 import * as Navigator from 'states/Navigator';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import type { WebhookProps } from 'contentful-management/types';
 
-const TABS = { SETTINGS: 1, LOG: 2 };
+enum TabType {
+  Settings = 1,
+  Log,
+}
 
 const style = {
   actionButton: css({ marginLeft: tokens.spacingM }),
   tabs: css({ marginBottom: tokens.spacingM }),
 };
 
-export class WebhookEditor extends React.Component {
-  static propTypes = {
-    initialWebhook: PropTypes.object.isRequired,
-    registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired,
-  };
+interface WebhookEditorProps {
+  initialWebhook: WebhookProps;
+  registerSaveAction: (save: (spaceId: string) => Promise<void>) => void;
+  setDirty: (dirty: boolean) => void;
+}
 
+interface WebhookEditorState {
+  tab: TabType;
+  webhook: WebhookProps;
+  fresh: boolean;
+  dirty: boolean;
+  busy: boolean;
+  isDeleteDialogShown: boolean;
+  refreshLog?: ({ spaceId }: { spaceId: string }) => Promise<void>;
+}
+
+export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEditorState> {
   static contextType = SpaceEnvContext;
 
   constructor(props) {
@@ -44,7 +57,7 @@ export class WebhookEditor extends React.Component {
 
     this.state = {
       // Fresh entities start with the Settings tab opened.
-      tab: fresh ? TABS.SETTINGS : TABS.LOG,
+      tab: fresh ? TabType.Settings : TabType.Log,
       webhook: props.initialWebhook,
       fresh,
       // Entity is "dirty" when not saved or there were changes to the initially loaded version.
@@ -72,11 +85,11 @@ export class WebhookEditor extends React.Component {
     );
   };
 
-  onSave(webhook) {
+  onSave(webhook: WebhookProps) {
     this.setState({ webhook, dirty: false, busy: false }, () => this.props.setDirty(false));
   }
 
-  navigateToSaved(webhook) {
+  navigateToSaved(webhook: WebhookProps) {
     this.props.setDirty(false);
     return Navigator.go({ path: '^.detail', params: { webhookId: webhook.sys.id } });
   }
@@ -86,7 +99,7 @@ export class WebhookEditor extends React.Component {
     return Navigator.go({ path: '^.list' });
   }
 
-  save = async (spaceId) => {
+  save = async (spaceId: string) => {
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
@@ -108,7 +121,7 @@ export class WebhookEditor extends React.Component {
     this.setState({ busy: false });
   };
 
-  remove = async (spaceId) => {
+  remove = async (spaceId: string) => {
     const { webhook } = this.state;
 
     this.setState({ busy: true });
@@ -125,11 +138,13 @@ export class WebhookEditor extends React.Component {
   };
 
   refreshLog = async () => {
+    const { currentSpaceId } = this.context;
+
     if (typeof this.state.refreshLog === 'function') {
       this.setState({ busy: true });
       // `this.state.refreshLog()` always resolves when HTTP communication is done.
       // `WebhookActivityLog` handles failures internally.
-      await this.state.refreshLog();
+      await this.state.refreshLog({ spaceId: currentSpaceId });
       this.setState({ busy: false });
     }
   };
@@ -142,15 +157,15 @@ export class WebhookEditor extends React.Component {
         <Tab
           id="webhook_settings"
           testId="webhook-settings-tab"
-          selected={tab === TABS.SETTINGS}
-          onSelect={() => this.setState({ tab: TABS.SETTINGS })}>
+          selected={tab === TabType.Settings}
+          onSelect={() => this.setState({ tab: TabType.Settings })}>
           Webhook settings
         </Tab>
         <Tab
           id="webhook_activity_log"
           testId="webhook-activity-tab"
-          selected={tab === TABS.LOG}
-          onSelect={() => this.setState({ tab: TABS.LOG })}>
+          selected={tab === TabType.Log}
+          onSelect={() => this.setState({ tab: TabType.Log })}>
           Activity log
         </Tab>
       </Tabs>
@@ -173,7 +188,7 @@ export class WebhookEditor extends React.Component {
             title={`Webhook: ${webhook.name || 'Unnamed'}${dirty ? '*' : ''}`}
             actions={
               <>
-                {tab === TABS.SETTINGS && !fresh && (
+                {tab === TabType.Settings && !fresh && (
                   <Button
                     className={style.actionButton}
                     testId="webhook-remove"
@@ -185,7 +200,7 @@ export class WebhookEditor extends React.Component {
                   </Button>
                 )}
 
-                {tab === TABS.SETTINGS && (
+                {tab === TabType.Settings && (
                   <Button
                     className={style.actionButton}
                     testId="webhook-save"
@@ -197,7 +212,7 @@ export class WebhookEditor extends React.Component {
                   </Button>
                 )}
 
-                {tab === TABS.LOG && (
+                {tab === TabType.Log && (
                   <Button
                     className={style.actionButton}
                     testId="webhook-refresh-log"
@@ -210,7 +225,7 @@ export class WebhookEditor extends React.Component {
               </>
             }
           />
-          {tab === TABS.SETTINGS && (
+          {tab === TabType.Settings && (
             <Workbench.Content type="full" testId="webhook-settings">
               {!fresh && this.renderTabs()}
               <TabPanel id="webhook_settings">
@@ -218,7 +233,7 @@ export class WebhookEditor extends React.Component {
               </TabPanel>
             </Workbench.Content>
           )}
-          {tab === TABS.LOG && (
+          {tab === TabType.Log && (
             <Workbench.Content type="full" testId="webhook-activity">
               {!fresh && this.renderTabs()}
               <TabPanel id="webhook_activity_log">
@@ -229,7 +244,7 @@ export class WebhookEditor extends React.Component {
               </TabPanel>
             </Workbench.Content>
           )}
-          {tab === TABS.SETTINGS && (
+          {tab === TabType.Settings && (
             <Workbench.Sidebar position="right">
               <WebhookSidebar />
             </Workbench.Sidebar>
