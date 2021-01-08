@@ -132,9 +132,25 @@ export const appRoute = {
         'app',
         'hasAppsFeature',
         ($state, $stateParams, spaceContext, app, hasAppsFeature) => {
+          // When executing `onEnter` after a page refresh
+          // the current state won't be initialized. For this reason
+          // we need to compute params and an absolute path manually.
+          const params: { spaceId: string; appId?: string; environmentId?: string } = {
+            spaceId: spaceContext.getId(),
+          };
+          let absoluteListPath = 'spaces.detail.apps.list';
+          if (!spaceContext.isMasterEnvironment()) {
+            params.environmentId = spaceContext.getEnvironmentId();
+            absoluteListPath = 'spaces.detail.environment.apps.list';
+          }
+
           // No need to consent for private apps.
           if (app.isPrivateApp) {
-            // Allow to continue page rendering.
+            if (!canUserManageApps()) {
+              // redirect users without management permissions to the app list
+              return $state.go(absoluteListPath, params);
+            }
+            // Otherwise allow to continue page rendering.
             return;
           }
 
@@ -144,22 +160,9 @@ export const appRoute = {
             !app.appInstallation && !$stateParams.acceptedPermissions;
 
           if (!canUserManageApps() || !hasAppsFeature || installingWithoutConsent) {
-            // When executing `onEnter` after a page refresh
-            // the current state won't be initialized. For this reason
-            // we need to compute params and an absolute path manually.
-            const params: { spaceId: string; appId?: string; environmentId?: string } = {
-              spaceId: spaceContext.getId(),
-            };
-
             if (hasAppsFeature) {
               // Passing this param will open the app dialog.
               params.appId = app.id;
-            }
-
-            let absoluteListPath = 'spaces.detail.apps.list';
-            if (!spaceContext.isMasterEnvironment()) {
-              params.environmentId = spaceContext.getEnvironmentId();
-              absoluteListPath = 'spaces.detail.environment.apps.list';
             }
 
             $state.go(absoluteListPath, params);

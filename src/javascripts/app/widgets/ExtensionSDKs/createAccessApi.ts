@@ -1,4 +1,5 @@
 import { can, Action } from 'access_control/AccessChecker';
+import { AccessAPI } from 'contentful-ui-extensions-sdk';
 import { get } from 'lodash';
 
 export const ALLOWED_ACTIONS = [
@@ -14,7 +15,7 @@ export const ALLOWED_ACTIONS = [
 
 export const ALLOWED_TYPES = ['ContentType', 'EditorInterface', 'Entry', 'Asset'];
 
-export function createAccessApi() {
+export function createAccessApi(): AccessAPI {
   return {
     can: (action: string, entity: any) => {
       if (!ALLOWED_ACTIONS.includes(action)) {
@@ -32,5 +33,10 @@ export function createAccessApi() {
 
       return Promise.resolve(can(action, entity));
     },
+    ...({
+      canEditAppConfig: () => {
+        return can(Action.UPDATE, 'settings');
+      },
+    } as any),
   };
 }

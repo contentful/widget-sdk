@@ -21,7 +21,9 @@ describe('createAccessApi', () => {
       });
 
       it('should throw when the action is not allowed', () => {
-        expect(() => accessApi.can('notAllowed', 'ContentType')).toThrow('Action not supported');
+        expect(() => accessApi.can('notAllowed' as any, 'ContentType')).toThrow(
+          'Action not supported'
+        );
       });
 
       it('should throw when the entity is not allowed', () => {
@@ -36,6 +38,27 @@ describe('createAccessApi', () => {
         expect(() => accessApi.can('update', { sys: { type: 'Extension' } })).toThrow(
           'Entity type not supported'
         );
+      });
+    });
+  });
+
+  describe('canEditAppConfig', () => {
+    const accessApi = createAccessApi();
+    describe('when allowed', () => {
+      it('returns true', () => {
+        (AccessChecker.can as jest.Mock).mockImplementationOnce(
+          (action, entity) => action === AccessChecker.Action.UPDATE && entity === 'settings'
+        );
+        const result = (accessApi as any).canEditAppConfig();
+        expect(result).toEqual(true);
+      });
+    });
+
+    describe('when not allowed', () => {
+      it('returns false', () => {
+        (AccessChecker.can as jest.Mock).mockReturnValue(false);
+        const result = (accessApi as any).canEditAppConfig();
+        expect(result).toEqual(false);
       });
     });
   });
