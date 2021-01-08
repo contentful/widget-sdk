@@ -91,7 +91,7 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown, askFor
   return (
     <Modal title="Uninstall app?" onClose={onClose} isShown={isShown} allowHeightOverflow>
       <Typography>
-        <Paragraph>This will remove the app and its features</Paragraph>
+        <Paragraph>This will remove the app and its features.</Paragraph>
       </Typography>
       <List testId="action-list">{actionList.map(createListItem)}</List>
 
@@ -130,9 +130,10 @@ export function UninstallModal({ onConfirm, onClose, actionList, isShown, askFor
               testId="reason-custom"
             />
           </div>
-          <hr className={styles.separator} />
         </>
       )}
+
+      <hr className={styles.separator} />
 
       <Button
         testId="uninstall-button"

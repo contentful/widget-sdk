@@ -106,7 +106,7 @@ export function AppListItem(props: AppListItemProps) {
             </TextLink>
           )
         ) : (
-          <CardActions>
+          <CardActions iconButtonProps={{ buttonType: 'primary' }}>
             <DropdownList className={styles.listItemDropdown}>
               {!app.isPrivateApp && (
                 <DropdownListItem onClick={openDetailsFunc}>About</DropdownListItem>

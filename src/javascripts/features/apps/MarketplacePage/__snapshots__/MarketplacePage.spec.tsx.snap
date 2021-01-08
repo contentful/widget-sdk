@@ -953,7 +953,7 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
                       <button
                         aria-expanded="false"
                         aria-haspopup="menu"
-                        class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--secondary___3Gc3d"
+                        class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
                         data-test-id="cf-ui-icon-button"
                         type="button"
                       >
@@ -1089,7 +1089,7 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
                       <button
                         aria-expanded="false"
                         aria-haspopup="menu"
-                        class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--secondary___3Gc3d"
+                        class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
                         data-test-id="cf-ui-icon-button"
                         type="button"
                       >
