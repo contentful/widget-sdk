@@ -2,24 +2,24 @@ import React, { useContext, useState, useEffect, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
-import { Heading } from '@contentful/forma-36-react-components';
+import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
+import { Button, Card, Heading, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { usePrevious } from 'core/hooks';
 
-import { SpacePurchaseState } from 'features/space-purchase/context/index';
-import { EVENTS } from 'features/space-purchase/utils/analyticsTracking';
-import { PLATFORM_CONTENT, PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
-import { ProductCard } from 'features/space-purchase/components/ProductCard';
-import { SpacePlanCards } from 'features/space-purchase/components/SpacePlanCards';
-import { EnterpriseCard } from 'features/space-purchase/components/EnterpriseCard';
-import { CONTACT_SALES_HREF } from 'features/space-purchase/components/EnterpriseTalkToUsButton';
-import { FAQAccordion } from 'features/space-purchase/components/FAQAccordion';
-import { usePageContent } from 'features/space-purchase/hooks/usePageContent.ts';
-import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
+import { actions, SpacePurchaseState } from '../../context';
+import { usePageContent } from '../../hooks/usePageContent.ts';
+import { ProductCard } from '../../components/ProductCard';
+import { SpacePlanCards } from '../../components/SpacePlanCards';
+import { EnterpriseCard } from '../../components/EnterpriseCard';
+import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
+import { FAQAccordion } from '../../components/FAQAccordion';
+import { EVENTS } from '../../utils/analyticsTracking';
+import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
+import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 
 const styles = {
   fullRow: css({
@@ -42,23 +42,52 @@ const styles = {
   disabled: css({
     opacity: 0.3,
   }),
+  chooseLaterCard: css({
+    width: '100%',
+    opacity: 1,
+    transition: 'opacity 0.2s ease-in-out',
+    '& p': { fontWeight: tokens.fontWeightMedium },
+  }),
+  stickyBar: css({
+    // necessary css hack to position the bar sticky to the bottom without overlapping Worckbench’s scrollbar
+    // and to fix some visible pixels from the rendered elements below the bar
+    position: 'sticky',
+    bottom: `-${tokens.spacingL}`,
+    marginLeft: '-5%',
+    width: '110%',
+    backgroundColor: tokens.colorWhite,
+    padding: `${tokens.spacingL} 0`,
+    '& > div': {
+      maxWidth: '1280px',
+      margin: '0 auto',
+    },
+  }),
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
 export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ track }) => {
+export const PlatformSelectionStep = ({ onSubmit, track }) => {
   const {
-    state: { organization, pageContent },
+    state: {
+      organization,
+      pageContent,
+      spaceRatePlans,
+      subscriptionPlans,
+      selectedPlatform,
+      selectedPlan,
+      freeSpaceResource,
+    },
+    dispatch,
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
-
-  const [selectedPlatform, setSelectedPlatform] = useState('');
-  const [selectedSpacePlan, setSelectedSpacePlan] = useState('');
 
   const prevSelectedPlatform = usePrevious(selectedPlatform);
   const spaceSectionRef = createRef();
 
+  const [chooseSpaceLaterSelected, setChooseSpaceLaterSelected] = useState(false);
+
+  const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
 
   useEffect(() => {
@@ -73,8 +102,27 @@ export const PlatformSelectionStep = ({ track }) => {
 
   useEffect(() => {
     // we unselect any space plan when user changes platform
-    setSelectedSpacePlan('');
-  }, [selectedPlatform]);
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: undefined });
+    setChooseSpaceLaterSelected(false);
+  }, [dispatch, selectedPlatform]);
+
+  const orgHasPaidSpaces = subscriptionPlans?.length > 0;
+  const continueDisabled = !selectedPlatform || (!selectedPlan && !chooseSpaceLaterSelected);
+
+  const onSelect = (plan) => {
+    track(EVENTS.SPACE_PLAN_SELECTED, {
+      selectedPlan: plan,
+    });
+
+    dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
+
+    // select/unselect "Choose space later" card
+    if (!plan) {
+      setChooseSpaceLaterSelected(true);
+    } else {
+      setChooseSpaceLaterSelected(false);
+    }
+  };
 
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
@@ -118,7 +166,9 @@ export const PlatformSelectionStep = ({ track }) => {
               key={idx}
               cardType="platform"
               selected={selectedPlatform === platform.type}
-              onClick={() => setSelectedPlatform(platform.type)}
+              onClick={() =>
+                dispatch({ type: actions.SET_SELECTED_PLATFORM, payload: platform.type })
+              }
               tooltipText={tooltipText}
               disabled={!!tooltipText}
               content={content}
@@ -147,18 +197,51 @@ export const PlatformSelectionStep = ({ track }) => {
         </span>
 
         <SpacePlanCards
+          spaceRatePlans={spaceRatePlans}
           selectedPlatform={selectedPlatform}
-          selectedSpacePlan={selectedSpacePlan}
-          onSelect={setSelectedSpacePlan}
+          selectedSpacePlanName={selectedPlan?.name}
+          canCreateFreeSpace={canCreateFreeSpace}
+          canCreatePaidSpace={canCreatePaidSpace}
+          orgHasPaidSpaces={orgHasPaidSpaces}
+          onSelect={onSelect}
+          track={track}
         />
+
+        {/* The option to "choose space later" should only be shown when an org has paid spaces and 
+      selects compose+launch, so they can buy compose+launch without having to buy a new space */}
+        {orgHasPaidSpaces && selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
+          <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
+            <Card
+              className={styles.chooseLaterCard}
+              padding="large"
+              testId="choose-space-later-button"
+              selected={chooseSpaceLaterSelected}
+              onClick={() => onSelect(undefined)}>
+              <Heading element="p">Choose space later</Heading>
+            </Card>
+          </Flex>
+        )}
 
         <div className={cx(styles.fullRow, styles.bigMarginTop)}>
           <FAQAccordion entries={faqEntries} track={track} />
         </div>
       </Grid>
+
+      <div className={styles.stickyBar}>
+        <Flex flexDirection="row" justifyContent="flex-end">
+          <Tooltip
+            place="top-end"
+            content={continueDisabled ? 'Select organization package and space to continue' : ''}>
+            <Button disabled={continueDisabled} onClick={onSubmit}>
+              Continue
+            </Button>
+          </Tooltip>
+        </Flex>
+      </div>
     </section>
   );
 };
 PlatformSelectionStep.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
   track: PropTypes.func.isRequired,
 };

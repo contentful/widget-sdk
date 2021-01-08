@@ -6,9 +6,17 @@ import { EVENTS } from '../../utils/analyticsTracking';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformSelectionStep, PACKAGES_COMPARISON_HREF } from './PlatformSelectionStep';
 import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
+import { PLATFORM_TYPES } from '../../utils/platformContent';
 
 const mockTrack = jest.fn();
+const mockOnSubmit = jest.fn();
 const mockOrganization = FakeFactory.Organization();
+
+const mockProductRatePlans = [
+  { name: 'Community', price: 0 },
+  { name: 'Medium', price: 489 },
+  { name: 'Large', price: 889 },
+];
 
 jest.mock('../../utils/canCreateSpace', () => ({
   canUserCreatePaidSpace: jest.fn(),
@@ -88,7 +96,10 @@ describe('PlatformSelectionStep', () => {
     let spacePlanCards;
 
     beforeEach(async () => {
-      await build();
+      await build(null, {
+        selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+        spaceRatePlans: mockProductRatePlans,
+      });
       spacePlanCards = screen.getAllByTestId('space-plan-card');
     });
 
@@ -107,10 +118,46 @@ describe('PlatformSelectionStep', () => {
       }
     });
   });
+
+  describe('Choose Space Later', () => {
+    it('should allow users to choose space later if they select Compose+Launch AND have already a paid space in the org', () => {
+      build(null, {
+        selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+        subscriptionPlans: mockProductRatePlans,
+        spaceRatePlans: mockProductRatePlans,
+      });
+
+      expect(screen.getByTestId('choose-space-later-button')).toBeDefined();
+      expect(screen.getByTestId('choose-space-later-button')).not.toContain('disabled');
+    });
+
+    it('should restrict users from choosing "space plan later" if they select Compose+Launch AND have no paid space in the org', () => {
+      build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH });
+
+      expect(screen.queryByTestId('choose-space-later-button')).toBeNull();
+    });
+
+    it('should unselect any space plan when clicking on "choose space later"', () => {
+      build(null, {
+        selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+        subscriptionPlans: mockProductRatePlans,
+        spaceRatePlans: mockProductRatePlans,
+      });
+      const spacePlanCards = screen.getAllByTestId('space-plan-card');
+
+      expect(screen.getByTestId('choose-space-later-button')).not.toContain('disabled');
+      userEvent.click(screen.getByTestId('choose-space-later-button'));
+
+      for (const spacePlanCard of spacePlanCards) {
+        expect(spacePlanCard.getAttribute('class')).not.toContain('--is-selected');
+      }
+    });
+  });
 });
 
 async function build(customProps, customState) {
   const props = {
+    onSubmit: mockOnSubmit,
     track: mockTrack,
     ...customProps,
   };

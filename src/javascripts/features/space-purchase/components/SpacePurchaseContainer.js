@@ -8,6 +8,7 @@ import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
+import { PLATFORM_TYPES } from '../utils/platformContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
@@ -63,7 +64,7 @@ const fetchBillingDetails = async (organization, dispatch) => {
 
 export const SpacePurchaseContainer = ({ track }) => {
   const {
-    state: { organization, selectedPlan, currentSpace, purchasingApps },
+    state: { organization, selectedPlatform, selectedPlan, currentSpace, purchasingApps },
     dispatch,
   } = useContext(SpacePurchaseState);
 
@@ -92,7 +93,18 @@ export const SpacePurchaseContainer = ({ track }) => {
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.PLATFORM_SELECTION:
-        return <PlatformSelectionStep track={track} />;
+        return (
+          <PlatformSelectionStep
+            track={track}
+            onSubmit={() => {
+              if (selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
+                goToStep(STEPS.CONFIRMATION);
+              } else {
+                goToStep(STEPS.SPACE_DETAILS);
+              }
+            }}
+          />
+        );
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep

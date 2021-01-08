@@ -1,16 +1,12 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
-import {
-  canUserCreatePaidSpace,
-  canOrgCreateFreeSpace,
-} from 'features/space-purchase/utils/canCreateSpace';
+import { PLATFORM_TYPES } from '../utils/platformContent';
 import { SpacePlanCards } from './SpacePlanCards';
-import { renderWithProvider } from '../__tests__/helpers';
 
 const mockOnSelect = jest.fn();
-const mockProductRatePlans = [
+const mockSpaceRatePlans = [
   { name: 'Community', price: 0 },
   { name: 'Medium', price: 489 },
   { name: 'Large', price: 889 },
@@ -23,13 +19,9 @@ jest.mock('features/space-purchase/utils/canCreateSpace', () => ({
 
 describe('SpacePlanCards', () => {
   let spacePlanCards;
-  beforeEach(() => {
-    canUserCreatePaidSpace.mockReturnValue(true);
-    canOrgCreateFreeSpace.mockReturnValue(true);
-  });
 
   it('should render three cards for the space plans initially disabled', () => {
-    build();
+    build({ selectedPlatform: undefined });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards).toHaveLength(3);
@@ -39,14 +31,14 @@ describe('SpacePlanCards', () => {
     }
   });
 
-  it('should call onSelect with the space plan name when user clicks on the card', () => {
+  it('should call onSelect with the space plan when user clicks on the card', () => {
     build();
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     for (const i in spacePlanCards) {
       const spacePlanCard = spacePlanCards[i];
       userEvent.click(spacePlanCard);
-      expect(mockOnSelect).toBeCalledWith(mockProductRatePlans[i].name);
+      expect(mockOnSelect).toBeCalledWith(mockSpaceRatePlans[i]);
     }
   });
 
@@ -58,7 +50,6 @@ describe('SpacePlanCards', () => {
     expect(spacePlanCards[0].getAttribute('class')).toContain('disabled');
     expect(spacePlanCards[1].getAttribute('class')).not.toContain('disabled');
     expect(spacePlanCards[2].getAttribute('class')).not.toContain('disabled');
-    expect(screen.queryByTestId('choose-space-later-button')).toBeNull();
 
     fireEvent.mouseOver(spacePlanCards[0]);
     await waitFor(() => {
@@ -66,12 +57,17 @@ describe('SpacePlanCards', () => {
     });
   });
 
+  it('should enable the free space plan card and when Compose+Launch is selected and the org has at least one paid space', async () => {
+    build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH, orgHasPaidSpaces: true });
+    spacePlanCards = screen.getAllByTestId('space-plan-card');
+
+    expect(spacePlanCards[0].getAttribute('class')).not.toContain('disabled');
+    expect(spacePlanCards[1].getAttribute('class')).not.toContain('disabled');
+    expect(spacePlanCards[2].getAttribute('class')).not.toContain('disabled');
+  });
+
   it('should disable Free Space Plan card and show tooltip when user cannot create any more free spaces', async () => {
-    canOrgCreateFreeSpace.mockReturnValue(false);
-    build(
-      { selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH },
-      { subscriptionPlans: mockProductRatePlans }
-    );
+    build({ canCreateFreeSpace: false });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards[0].getAttribute('class')).toContain('disabled');
@@ -85,8 +81,7 @@ describe('SpacePlanCards', () => {
   });
 
   it('should disable Paid Space Plan cards and show tooltip when user cannot create any paid spaces', async () => {
-    canUserCreatePaidSpace.mockReturnValue(false);
-    build({ selectedPlatform: PLATFORM_TYPES.SPACE });
+    build({ canCreatePaidSpace: false });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards[0].getAttribute('class')).not.toContain('disabled');
@@ -98,52 +93,19 @@ describe('SpacePlanCards', () => {
       expect(screen.getByTestId('plan-card-tooltip')).toBeDefined();
     });
   });
-
-  describe('Choose Space Later', () => {
-    it('should allow users to choose space later if they select Compose+Launch AND have already a paid space in the org', () => {
-      build(
-        { selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH },
-        { subscriptionPlans: mockProductRatePlans }
-      );
-
-      expect(screen.getByTestId('choose-space-later-button')).toBeDefined();
-      expect(screen.getByTestId('choose-space-later-button')).not.toContain('disabled');
-    });
-
-    it('should disallow users to choose space plan later if they select Compose+Launch AND have no paid space in the org', () => {
-      build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH });
-
-      expect(screen.queryByTestId('choose-space-later-button')).toBeNull();
-    });
-
-    it('should unselect any space plan when clicking on "choose space later"', () => {
-      build(
-        { selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH },
-        { subscriptionPlans: mockProductRatePlans }
-      );
-
-      expect(screen.getByTestId('choose-space-later-button')).not.toContain('disabled');
-      userEvent.click(screen.getByTestId('choose-space-later-button'));
-      expect(mockOnSelect).toBeCalledWith('');
-    });
-  });
 });
 
-function build(customProps, customState) {
+function build(customProps) {
   const props = {
-    selectedPlatform: undefined,
-    selectedSpacePlan: undefined,
+    spaceRatePlans: mockSpaceRatePlans,
+    selectedPlatform: PLATFORM_TYPES.SPACE,
+    selectedSpacePlanName: undefined,
+    canCreateFreeSpace: true,
+    canCreatePaidSpace: true,
+    orgHasPaidSpaces: false,
     onSelect: mockOnSelect,
     ...customProps,
   };
 
-  renderWithProvider(
-    SpacePlanCards,
-    {
-      spaceRatePlans: mockProductRatePlans,
-      subscriptionPlans: [],
-      ...customState,
-    },
-    props
-  );
+  render(<SpacePlanCards {...props} />);
 }

@@ -10,6 +10,7 @@ const initialState = {
   spaceRatePlans: [],
   subscriptionPlans: undefined,
   selectedPlan: undefined,
+  selectedPlatform: undefined,
   sessionId: undefined,
   billingDetails: undefined,
   paymentDetails: undefined,

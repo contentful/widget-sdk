@@ -1,38 +1,22 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 
-import { Card, Heading } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-
-import { SpacePurchaseState } from 'features/space-purchase/context/index';
 import { PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
 import {
   SPACE_PLANS_CONTENT,
   SPACE_PURCHASE_TYPES,
 } from 'features/space-purchase/utils/spacePurchaseContent';
 import { ProductCard } from './ProductCard';
-import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../utils/canCreateSpace';
 
-const styles = {
-  chooseLaterCard: css({
-    gridColumn: '1 / 4',
-    marginTop: tokens.spacingL,
-    opacity: 1,
-    transition: 'opacity 0.2s ease-in-out',
-    '& p': { fontWeight: tokens.fontWeightMedium },
-  }),
-};
-
-export const SpacePlanCards = ({ selectedPlatform, selectedSpacePlan, onSelect }) => {
-  const {
-    state: { subscriptionPlans, spaceRatePlans, freeSpaceResource, organization },
-  } = useContext(SpacePurchaseState);
-
-  const orgHasPaidSpaces = subscriptionPlans?.length > 0;
-  const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
-  const canCreatePaidSpace = canUserCreatePaidSpace(organization);
-
+export const SpacePlanCards = ({
+  spaceRatePlans,
+  selectedPlatform,
+  selectedSpacePlanName,
+  canCreateFreeSpace,
+  canCreatePaidSpace,
+  orgHasPaidSpaces,
+  onSelect,
+}) => {
   return (
     <>
       {SPACE_PLANS_CONTENT.filter(
@@ -43,7 +27,7 @@ export const SpacePlanCards = ({ selectedPlatform, selectedSpacePlan, onSelect }
 
         const tooltipText = getTooltipText(
           selectedPlatform,
-          spacePlanContent.type,
+          plan.name,
           orgHasPaidSpaces,
           canCreateFreeSpace,
           canCreatePaidSpace
@@ -56,32 +40,24 @@ export const SpacePlanCards = ({ selectedPlatform, selectedSpacePlan, onSelect }
             loading={!spaceRatePlans}
             disabled={!selectedPlatform || !!tooltipText}
             tooltipText={tooltipText}
-            selected={selectedSpacePlan === plan.name}
-            onClick={() => onSelect(plan.name)}
+            selected={!!plan.name && plan.name === selectedSpacePlanName}
+            onClick={() => onSelect(plan)}
             content={content}
             testId="space-plan-card"
           />
         );
       })}
-
-      {/* The option to "choose space later" should only be shown when an org has paid spaces and 
-      selects compose+launch, so they can buy compose+launch without having to buy a new space */}
-      {orgHasPaidSpaces && selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
-        <Card
-          className={styles.chooseLaterCard}
-          padding="large"
-          testId="choose-space-later-button"
-          onClick={() => onSelect('')}>
-          <Heading element="p">Choose space later</Heading>
-        </Card>
-      )}
     </>
   );
 };
 
 SpacePlanCards.propTypes = {
+  spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   selectedPlatform: PropTypes.string,
-  selectedSpacePlan: PropTypes.string,
+  selectedSpacePlanName: PropTypes.string,
+  canCreateFreeSpace: PropTypes.bool,
+  canCreatePaidSpace: PropTypes.bool,
+  orgHasPaidSpaces: PropTypes.bool,
   onSelect: PropTypes.func.isRequired,
 };
 
