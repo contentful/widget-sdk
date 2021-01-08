@@ -1,4 +1,27 @@
-# Contentful Web Application ![Production Build Commit](https://samson.contentful.org/projects/user_interface/stages/production.svg?token=8d70d6eaf8ef80c828d2f1472e89dc6d)
+# Contentful Web Application
+
+<!-- MarkdownTOC autolink="true" -->
+
+- [Introduction](#introduction)
+- [Quickstart](#quickstart)
+- [Running and developing](#running-and-developing)
+   - [Setting up `git`](#setting-up-git)
+      - [Necessary configuration](#necessary-configuration)
+      - [Other git configurations](#other-git-configurations)
+   - [Running the app](#running-the-app)
+      - [Setting up HTTPS \(and handling CORS\)](#setting-up-https-and-handling-cors)
+      - [Notes and limitations](#notes-and-limitations)
+   - [Running the tests](#running-the-tests)
+      - [Jest](#jest)
+      - [Cypress](#cypress)
+      - [Karma](#karma)
+      - [Additional documentation](#additional-documentation)
+   - [Running a full Contentful instance](#running-a-full-contentful-instance)
+   - [e2e tests](#e2e-tests)
+      - [Running an e2e PR with a UI branch](#running-an-e2e-pr-with-a-ui-branch)
+- [Component library](#component-library)
+
+<!-- /MarkdownTOC -->
 
 ## Introduction
 
@@ -21,6 +44,8 @@ the [Lab][lab].
 
 ### Setting up `git`
 
+#### Necessary configuration
+
 Before you get started with development, ensure your local `git` environment is set
 up correctly. The only thing that you need set up is your `git` email config.
 If you haven't done this already, run the following command:
@@ -29,8 +54,24 @@ If you haven't done this already, run the following command:
 git config --global user.email <email goes here>
 ```
 
-You can use any email tied to your Github account, but if you want to prevent your
-personal email from getting into the commits, you can use your [noreply Github email](https://github.com/settings/emails).
+If you want to prevent your personal email from getting into the commits, you can use
+your [noreply Github email](https://github.com/settings/emails).
+
+Note: the email here must be added to your Github account. This means that if you use your Contentful
+email, make sure it's added to your Github account or else your commits won't appear correct.
+
+#### Other git configurations
+
+If you often rebase your branches against master (or another branch) and are working on the same pieces of
+code within your team, you may experience the same rebase conflicts over and over. By default you'll need
+to resolve these each time you rebase, which can be annoying. To reduce the need to solve the same rebases
+over and over, you can enable recorded resolution reuse mode, or `rerere`. To enable, run the following command:
+
+```
+git config --global rerere.enabled 1
+```
+
+For more information about `git rerere`, please see [the official documentation](https://git-scm.com/docs/git-rerere).
 
 ### Running the app
 
@@ -74,9 +115,8 @@ javascript:window.location.href=`http://localhost:3001${window.location.pathname
 - Click on the bookmark
 - Start developing!
 
-
-
-> Use web app dev [Browser Extension](https://github.com/contentful/web-app-dev-extension)
+You may also wish to use the internal [web app development browser extension](https://github.com/contentful/web-app-dev-extension),
+which handles this detail as well as simplifies setting feature flags using `ui_enable_flags`.
 
 #### Setting up HTTPS (and handling CORS)
 
@@ -91,14 +131,14 @@ Process:
    to create trusted certificates for any domain you'd like. Make sure you've
    run `mkcert -install` after installing the tool itself.
 
-2. Create a new certificate pair for `*.joistio.com':
+2. Create a new certificate pair for `*.joistio.com`:
 
    ```sh
    # mkcert '*.joistio.com'
    ```
 
    This will create two files in your local directory:
-   _wildcard.joistio.com-key.pem and _wildcard.joistio.com.pem.
+   `_wildcard.joistio.com-key.pem` and `_wildcard.joistio.com.pem`.
 
    Note: `joistio.com` is a domain (with some subdomains, like `app.joistio.com`)
    controlled by Contentful that simply points to localhost (127.0.0.1). When
@@ -125,8 +165,7 @@ Process:
    usual, and any features that require HTTPS security and CORS from an official
    Contentful domain should be functional.
 
-
-6. (Optional) If you always want to run the server in HTTPS mode, you can add
+6) (Optional) If you always want to run the server in HTTPS mode, you can add
    these options to a `.envrc` file and use [`direnv`](https://direnv.net/) to
    automatically set these environment variables when you're in the
    `user_interface` project.
@@ -139,8 +178,6 @@ Process:
    ```
 
    Don't forget to `direnv allow` after modifying your `.envrc` file!
-
-
 
 #### Notes and limitations
 
