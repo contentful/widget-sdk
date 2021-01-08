@@ -2,7 +2,7 @@ import type { EntityLink } from './BulkActionService';
 
 export enum BulkActionErrorMessage {
   RateLimitExceededError = 'You have reached the limit for the number of active jobs you can create at this time. Try again in a few minutes.',
-  VersionMismatch = 'A new version of this Content might be available, please refresh.',
+  VersionMismatch = 'A newer version has been recently published. Refresh this page to get the updated content.',
   Default = 'Something went wrong.',
 }
 interface BulkActionError {
