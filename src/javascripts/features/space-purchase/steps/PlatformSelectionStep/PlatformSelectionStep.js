@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, createRef } from 'react';
+import React, { useContext, useState, useEffect, useCallback, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
@@ -8,7 +8,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { usePrevious } from 'core/hooks';
 
 import { actions, SpacePurchaseState } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
@@ -82,23 +81,12 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
-  const prevSelectedPlatform = usePrevious(selectedPlatform);
   const spaceSectionRef = createRef();
 
   const [chooseSpaceLaterSelected, setChooseSpaceLaterSelected] = useState(false);
 
   const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
-
-  useEffect(() => {
-    // we want to scroll the user to space selection only the first time they select a platform
-    if (!prevSelectedPlatform && selectedPlatform) {
-      spaceSectionRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }
-  }, [prevSelectedPlatform, selectedPlatform, spaceSectionRef]);
 
   useEffect(() => {
     // we unselect any space plan when user changes platform
@@ -108,6 +96,10 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
   const continueDisabled = !selectedPlatform || (!selectedPlan && !chooseSpaceLaterSelected);
+
+  const scrollToSpaceSelection = useCallback(() => {
+    spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [spaceSectionRef]);
 
   const onSelect = (plan) => {
     track(EVENTS.SPACE_PLAN_SELECTED, {
@@ -166,9 +158,10 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
               key={idx}
               cardType="platform"
               selected={selectedPlatform === platform.type}
-              onClick={() =>
-                dispatch({ type: actions.SET_SELECTED_PLATFORM, payload: platform.type })
-              }
+              onClick={() => {
+                dispatch({ type: actions.SET_SELECTED_PLATFORM, payload: platform.type });
+                scrollToSpaceSelection();
+              }}
               tooltipText={tooltipText}
               disabled={!!tooltipText}
               content={content}
@@ -207,7 +200,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
           track={track}
         />
 
-        {/* The option to "choose space later" should only be shown when an org has paid spaces and 
+        {/* The option to "choose space later" should only be shown when an org has paid spaces and
       selects compose+launch, so they can buy compose+launch without having to buy a new space */}
         {orgHasPaidSpaces && selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
           <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">

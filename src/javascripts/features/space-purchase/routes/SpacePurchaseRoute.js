@@ -16,12 +16,14 @@ import {
   isSelfServicePlan,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
+import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import {
   fetchSpacePurchaseContent,
   fetchPlatformPurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
+import { PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
@@ -38,7 +40,7 @@ import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (organizationId, spaceId, dispatch) => async () => {
+const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
 
   const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, { organizationId });
@@ -47,6 +49,7 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
 
   const [
     organization,
+    orgSpaceMetadata,
     organizationMembership,
     currentSpace,
     currentSpaceRatePlan,
@@ -58,6 +61,9 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
     pageContent,
   ] = await Promise.all([
     TokenStore.getOrganization(organizationId),
+
+    // We don't care about the actual space data, just the total number of spaces in the org
+    getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
@@ -83,6 +89,13 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
 
+  const numSpacesInOrg = orgSpaceMetadata.total;
+  let selectedPlatform;
+
+  if (viaMarketingCTA && numSpacesInOrg === 0) {
+    selectedPlatform = PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+  }
+
   const sessionId = alnum(16);
 
   dispatch({
@@ -97,6 +110,7 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
       subscriptionPlans: subscriptionPlans.items,
       freeSpaceResource,
       pageContent,
+      selectedPlatform,
     },
   });
 
@@ -118,7 +132,7 @@ const initialFetch = (organizationId, spaceId, dispatch) => async () => {
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA }) => {
   const {
     state: { sessionId, purchasingApps },
     dispatch,
@@ -127,7 +141,9 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
   // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
-  const { error } = useAsync(useCallback(initialFetch(orgId, spaceId, dispatch), []));
+  const { error } = useAsync(
+    useCallback(initialFetch(orgId, spaceId, viaMarketingCTA, dispatch), [])
+  );
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (purchasingApps === undefined) {
@@ -167,4 +183,5 @@ export const SpacePurchaseRoute = ({ orgId, spaceId }) => {
 SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
+  viaMarketingCTA: PropTypes.bool.isRequired,
 };

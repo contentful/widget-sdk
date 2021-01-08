@@ -11,9 +11,8 @@ import { EmptyHome } from './EmptyHome';
 
 const localStorage = getBrowserStorage();
 
-export function EmptyHomeRouter(props) {
-  const { appsPurchase } = props;
-  const [loading, setLoading] = useState(!!appsPurchase);
+export function EmptyHomeRouter({ appsPurchase }) {
+  const [loading, setLoading] = useState(appsPurchase);
 
   useEffect(() => {
     if (!appsPurchase) {
@@ -24,8 +23,8 @@ export function EmptyHomeRouter(props) {
 
     async function init() {
       const organizations = await TokenStore.getOrganizations();
-      const lastUsedOrgId = localStorage.get('lastUsedOrg');
 
+      const lastUsedOrgId = localStorage.get('lastUsedOrg');
       const lastUsedOrg = organizations.find((org) => org.sys.id === lastUsedOrgId);
 
       let organization = lastUsedOrg ?? organizations[0];
@@ -46,7 +45,7 @@ export function EmptyHomeRouter(props) {
       if (organization) {
         go({
           path: ['account', 'organizations', 'subscription_new', 'new_space'],
-          params: { orgId: organization.sys.id },
+          params: { orgId: organization.sys.id, viaMarketingCTA: true },
           options: { location: 'replace' },
         });
       } else {
@@ -60,11 +59,11 @@ export function EmptyHomeRouter(props) {
 
   if (loading) return <LoadingState />;
 
-  return <EmptyHome {...props} />;
+  return <EmptyHome />;
 }
 
 EmptyHomeRouter.propTypes = {
-  appsPurchase: PropTypes.bool,
+  appsPurchase: PropTypes.bool.isRequired,
 };
 
 // This routing declaration refers to the "root" home, rather than the space home.
