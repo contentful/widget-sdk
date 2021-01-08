@@ -20,6 +20,7 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
+import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
@@ -48,6 +49,10 @@ jest.mock('services/SpaceTemplateLoader', () => ({
 
 jest.mock('../utils/transformSpaceRatePlans', () => ({
   transformSpaceRatePlans: jest.fn(),
+}));
+
+jest.mock('access_control/OrganizationMembershipRepository', () => ({
+  getSpaces: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -109,6 +114,10 @@ describe('SpacePurchaseRoute', () => {
     transformSpaceRatePlans.mockReturnValue();
     getSubscriptionPlans.mockReturnValue({ items: [] });
     getVariation.mockResolvedValue(false);
+    getSpaces.mockResolvedValue({
+      total: 1,
+      items: [],
+    });
   });
 
   it('should render the generic loading component until the apps purchase state is loaded', async () => {
@@ -268,6 +277,7 @@ describe('SpacePurchaseRoute', () => {
 async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
+    viaMarketingCTA: false,
     ...customProps,
   };
 

@@ -27,6 +27,8 @@ jest.mock('components/shared/auto_create_new_space', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getOrganizations: jest.fn(),
+  getSpaces: jest.fn().mockResolvedValue([]),
+  getUserSync: jest.fn(),
 }));
 
 jest.mock('core/services/BrowserStorage', () => {
@@ -51,18 +53,23 @@ describe('EmptyHomeRouter', () => {
       mockOrg,
       mockOrg2,
     ]);
+
+    TokenStore.getSpaces.mockResolvedValue([]);
+    TokenStore.getUserSync.mockReturnValue({
+      organizationMemberships: [
+        {
+          organization: mockOrg,
+        },
+      ],
+    });
   });
 
-  it('should return if appsPurchase is not present', async () => {
-    render(<EmptyHomeRouter />);
+  it('should render the empty home component if appsPurchase is false', async () => {
+    render(<EmptyHomeRouter appsPurchase={false} />);
+
+    await waitFor(() => expect(screen.queryByTestId('cf-ui-loading-state')).toBeNull());
 
     expect(screen.getByTestId('empty-space-home.container')).toBeVisible();
-  });
-
-  it('should not enable onboarding if appsPurchase is present', async () => {
-    render(<EmptyHomeRouter appsPurchase={true} />);
-
-    await waitFor(() => expect(onboarding.init).not.toBeCalled());
   });
 
   it('should redirect to the lastUsedOrg purchase page if the lastUsedOrg is pricing v2', async () => {
@@ -70,41 +77,39 @@ describe('EmptyHomeRouter', () => {
 
     render(<EmptyHomeRouter appsPurchase={true} />);
 
-    await waitFor(() =>
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg2.sys.id },
-        options: { location: 'replace' },
-      })
-    );
+    await waitFor(() => expect(go).toBeCalled());
+
+    expect(go).toBeCalledWith({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: { orgId: mockOrg2.sys.id, viaMarketingCTA: true },
+      options: { location: 'replace' },
+    });
   });
 
   it('should redirect to the first available v2 org if the lastUsedOrg is pricing v1', async () => {
     getBrowserStorage().get.mockReturnValueOnce(mockOrgPricingV1_2.sys.id);
 
     render(<EmptyHomeRouter appsPurchase={true} />);
+    await waitFor(() => expect(go).toBeCalled());
 
-    await waitFor(() =>
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg.sys.id },
-        options: { location: 'replace' },
-      })
-    );
+    expect(go).toBeCalledWith({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: { orgId: mockOrg.sys.id, viaMarketingCTA: true },
+      options: { location: 'replace' },
+    });
   });
 
   it('should redirect to the first v2 org in the token if the lastUsedOrg does not exist', async () => {
     getBrowserStorage().get.mockReturnValueOnce('unknown-org-id');
 
     render(<EmptyHomeRouter appsPurchase={true} />);
+    await waitFor(() => expect(go).toBeCalled());
 
-    await waitFor(() =>
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg.sys.id },
-        options: { location: 'replace' },
-      })
-    );
+    expect(go).toBeCalledWith({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: { orgId: mockOrg.sys.id, viaMarketingCTA: true },
+      options: { location: 'replace' },
+    });
   });
 
   it('should not redirect and enable onboarding if no pricing v2 org was found', async () => {
@@ -112,10 +117,9 @@ describe('EmptyHomeRouter', () => {
 
     render(<EmptyHomeRouter appsPurchase={true} />);
 
-    await Promise.all([
-      waitFor(() => expect(go).not.toBeCalled()),
-      waitFor(() => expect(onboarding.init).toBeCalled()),
-    ]);
+    await waitFor(() => expect(onboarding.init).toBeCalled());
+
+    expect(go).not.toBeCalled();
   });
 
   it('should not attempt to redirect and re-enable onboarding if no organization was found', async () => {
@@ -123,9 +127,8 @@ describe('EmptyHomeRouter', () => {
 
     render(<EmptyHomeRouter appsPurchase={true} />);
 
-    await Promise.all([
-      waitFor(() => expect(go).not.toBeCalled()),
-      waitFor(() => expect(onboarding.init).toBeCalled()),
-    ]);
+    await waitFor(() => expect(onboarding.init).toBeCalled());
+
+    expect(go).not.toBeCalled();
   });
 });
