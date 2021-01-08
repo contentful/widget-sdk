@@ -26,9 +26,10 @@ import {
   getOrganizationName,
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
-import { isSpaceOnTrial } from 'features/trials';
+import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
+import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -102,6 +103,7 @@ export const SpaceHome = () => {
   const {
     currentSpaceId,
     currentSpace,
+    currentSpaceData,
     currentSpaceName,
     currentSpaceContentTypes,
     currentOrganizationId,
@@ -116,11 +118,12 @@ export const SpaceHome = () => {
   const organizationName = getOrganizationName(currentSpace);
   const isSpaceAdmin = isAdmin(currentSpace);
   const readOnlySpace = isSpaceReadyOnly(currentSpace);
+  const expiredTrialSpace = isExpiredTrialSpace(currentSpaceData);
   const isAuthorOrEditor = accessChecker.isAuthorOrEditor(spaceRoles ?? false);
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
-  const isTrialSpace = currentSpace && isSpaceOnTrial(currentSpace.data);
+  const isTrialSpace = isSpaceOnTrial(currentSpaceData);
 
   const spaceHomeProps = {
     orgId: currentOrganizationId,
@@ -200,7 +203,7 @@ export const SpaceHome = () => {
           <Spinner size="large" />
         </EmptyStateContainer>
       )}
-      {!isLoading && isAuthorOrEditor && !readOnlySpace && (
+      {!isLoading && isAuthorOrEditor && !readOnlySpace && !expiredTrialSpace && (
         <AuthorEditorSpaceHome
           spaceName={spaceHomeProps.spaceName}
           orgName={spaceHomeProps.orgName}
@@ -208,9 +211,10 @@ export const SpaceHome = () => {
           isTrialSpace={isTrialSpace}
         />
       )}
-      {!isLoading && isSpaceAdmin && !readOnlySpace && adminSpaceHomePage}
+      {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}
       {!isLoading && readOnlySpace && <ReadOnlySpaceHome isAdmin={isSpaceAdmin} />}
-      {!isLoading && !isSpaceAdmin && !isAuthorOrEditor && isTrialSpace && (
+      {!isLoading && <ExpiredTrialSpaceHome spaceId={spaceHomeProps.spaceId} />}
+      {!isLoading && !isSpaceAdmin && !isAuthorOrEditor && isTrialSpace && !readOnlySpace && (
         <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
       )}
     </div>

@@ -9,7 +9,11 @@ import { useAsync } from 'core/hooks';
 import { calcTrialDaysLeft } from '../utils/utils';
 import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
-import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService';
+import {
+  isOrganizationOnTrial,
+  isSpaceOnTrial,
+  isExpiredTrialSpace,
+} from '../services/TrialService';
 import { logError } from 'services/logger';
 import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
@@ -62,6 +66,7 @@ export const TrialTag = () => {
 
   const isEnterpriseTrial = isOrganizationOnTrial(organization);
   const isSpaceTrial = isSpaceOnTrial(space);
+  const isExpiredSpace = isExpiredTrialSpace(space);
 
   if (isEnterpriseTrial && isSpaceTrial) {
     logError('Unexpected behaviour, both space and organization are on trial', {
@@ -71,7 +76,7 @@ export const TrialTag = () => {
     return null;
   }
 
-  if (isLoading || (!isEnterpriseTrial && !isSpaceTrial)) {
+  if (isLoading || space?.readOnlyAt || (!isEnterpriseTrial && !isSpaceTrial && !isExpiredSpace)) {
     return null;
   }
 
@@ -105,7 +110,7 @@ export const TrialTag = () => {
           {...tracking}
           component={TextLink}
           linkType="white">
-          TRIAL - <Pluralized text="DAY" count={daysLeft} />
+          TRIAL - {isExpiredSpace ? 'EXPIRED' : <Pluralized text="DAY" count={daysLeft} />}
         </StateLink>
       </TrackTargetedCTAImpression>
     </Tag>

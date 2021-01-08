@@ -63,6 +63,7 @@ export interface SpaceData {
   name: string;
   activatedAt: unknown; // TODO: Confirm type
   readOnlyAt: string;
+  trialPeriodEndsAt: string;
   sys: SpaceDataSys;
   currentShard: CurrentShard;
   spaceMembership: SpaceMembership;

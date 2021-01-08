@@ -10,6 +10,7 @@ import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
+const readOnlyAt = '2020-08-13';
 const today = '2020-10-01T03:00:00.000Z';
 const daysLeft = 9;
 
@@ -31,6 +32,16 @@ const trialSpace = fake.Space({
 const trialExpiredSpace = fake.Space({
   trialPeriodEndsAt: trialEndedAt,
 });
+
+const readOnlyTrialSpace = {
+  ...trialSpace,
+  readOnlyAt: readOnlyAt,
+};
+
+const readOnlyExpiredTrialSpace = {
+  ...trialExpiredSpace,
+  readOnlyAt: readOnlyAt,
+};
 
 const spaceNotOnTrial = (organization) =>
   fake.Space({
@@ -167,6 +178,35 @@ describe('TrialTag', () => {
       );
     });
 
+    it('renders when the trial has ended', async () => {
+      getSpace.mockResolvedValue(trialExpiredSpace);
+      getModule.mockReturnValue({ spaceId: trialExpiredSpace.sys.id });
+
+      build();
+
+      await waitFor(() =>
+        expect(screen.queryByTestId('space-trial-tag')).toHaveTextContent('TRIAL - EXPIRED')
+      );
+    });
+
+    it('does not render when the active trial space becomes read-only', async () => {
+      getSpace.mockResolvedValue(readOnlyTrialSpace);
+      getModule.mockReturnValue({ spaceId: readOnlyTrialSpace.sys.id });
+
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
+    });
+
+    it('does not render when the expired trial space becomes read-only', async () => {
+      getSpace.mockResolvedValue(readOnlyExpiredTrialSpace);
+      getModule.mockReturnValue({ spaceId: readOnlyExpiredTrialSpace.sys.id });
+
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
+    });
+
     it('navigates to the space home when clicked', async () => {
       build();
 
@@ -181,15 +221,6 @@ describe('TrialTag', () => {
         numTrialDaysLeft: daysLeft,
         isOwnerOrAdmin: false,
       });
-    });
-
-    it('does not render if the space trial has ended', async () => {
-      getSpace.mockResolvedValue(trialExpiredSpace);
-      getModule.mockReturnValue({ spaceId: trialExpiredSpace.sys.id });
-
-      build();
-
-      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
     });
 
     it('does not render if neither the space nor organization is on trial', async () => {

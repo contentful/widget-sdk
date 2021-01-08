@@ -7,5 +7,6 @@ export {
   isOrganizationOnTrial,
   isSpaceOnTrial,
   isTrialSpaceType,
+  isExpiredTrialSpace,
   TRIAL_SPACE_DATE_INTRODUCED_AT,
 } from './services/TrialService';

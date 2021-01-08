@@ -87,31 +87,6 @@ export function determineEnforcement(space, reasons, entityType) {
         }
       },
     },
-    {
-      label: 'trialExpired',
-      message: () => {
-        const baseMessage =
-          'You’re viewing an expired Trial Space. All of your existing content is saved, but you canʼt create or edit anything. ';
-        if (OrganizationRoles.isOwnerOrAdmin(organization)) {
-          return `${baseMessage}Get in touch with us to continue work.`;
-        } else {
-          return `${baseMessage}Weʼve informed your Contentful admin about it.`;
-        }
-      },
-      icon: 'info',
-      link: () => {
-        const spaceId = space.sys.id;
-        const spaceName = space.name;
-        const talkToUsHref = `${supportUrl}?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
-
-        if (OrganizationRoles.isOwnerOrAdmin(organization)) {
-          return {
-            text: 'Talk to support',
-            href: talkToUsHref,
-          };
-        }
-      },
-    },
   ];
 
   const error = errorsByPriority.find(({ label }) => reasons.indexOf(label) >= 0);

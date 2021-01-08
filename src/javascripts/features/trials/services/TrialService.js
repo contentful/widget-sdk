@@ -43,3 +43,16 @@ export const isTrialSpaceType = (space) => {
   }
   return 'trialPeriodEndsAt' in space;
 };
+
+/**
+ * Return True if a trial space is expired.
+ *
+ * @param  {object} space - Space object
+ * @return {boolean}
+ */
+export const isExpiredTrialSpace = (space) => {
+  if (!space) {
+    return false;
+  }
+  return isTrialSpaceType(space) && !isSpaceOnTrial(space);
+};
