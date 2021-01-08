@@ -33,10 +33,8 @@ export function createAccessApi(): AccessAPI {
 
       return Promise.resolve(can(action, entity));
     },
-    ...({
-      canEditAppConfig: () => {
-        return can(Action.UPDATE, 'settings');
-      },
-    } as any),
+    canEditAppConfig: () => {
+      return Promise.resolve(can(Action.UPDATE, 'settings'));
+    },
   };
 }

@@ -392,13 +392,13 @@ describe('createNavigatorApi', () => {
       it('throws if called by an extension', () => {
         const navigatorApi = buildApi({ widgetNamespace: WidgetNamespace.EXTENSION });
 
-        expect(() => (navigatorApi as any).openAppConfig()).toThrow();
+        expect(() => navigatorApi.openAppConfig()).toThrow();
         expect(Navigator.go).not.toHaveBeenCalled();
       });
 
       it('navigates to the config location', async () => {
         const navigatorApi = buildApi();
-        await (navigatorApi as any).openAppConfig();
+        await navigatorApi.openAppConfig();
 
         expect(Navigator.go).toHaveBeenCalledWith({
           options: {

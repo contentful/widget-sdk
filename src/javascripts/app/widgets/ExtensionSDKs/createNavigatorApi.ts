@@ -237,6 +237,7 @@ export function createReadOnlyNavigatorApi() {
     openNewAsset: denyNavigate,
     openNewEntry: denyNavigate,
     openPageExtension: denyNavigate,
+    openAppConfig: denyNavigate,
   };
 }
 
@@ -302,9 +303,6 @@ export function createNavigatorApi({
       return navigateToBulkEditor({ entryId, fieldId, locale, index });
     },
     onSlideInNavigation: onSlideLevelChanged,
-
-    // TODO: Once the new version of the APP-SDK is published this can be
-    // a normal property
-    ...({ openAppConfig } as any),
+    openAppConfig,
   };
 }

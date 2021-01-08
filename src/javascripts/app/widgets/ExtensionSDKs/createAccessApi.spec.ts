@@ -45,19 +45,19 @@ describe('createAccessApi', () => {
   describe('canEditAppConfig', () => {
     const accessApi = createAccessApi();
     describe('when allowed', () => {
-      it('returns true', () => {
+      it('returns true', async () => {
         (AccessChecker.can as jest.Mock).mockImplementationOnce(
           (action, entity) => action === AccessChecker.Action.UPDATE && entity === 'settings'
         );
-        const result = (accessApi as any).canEditAppConfig();
+        const result = await accessApi.canEditAppConfig();
         expect(result).toEqual(true);
       });
     });
 
     describe('when not allowed', () => {
-      it('returns false', () => {
+      it('returns false', async () => {
         (AccessChecker.can as jest.Mock).mockReturnValue(false);
-        const result = (accessApi as any).canEditAppConfig();
+        const result = await accessApi.canEditAppConfig();
         expect(result).toEqual(false);
       });
     });
