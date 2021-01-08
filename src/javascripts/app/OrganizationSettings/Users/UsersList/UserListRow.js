@@ -2,11 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { startCase } from 'lodash';
 import { css } from 'emotion';
-import { Button, TableCell, TableRow, TextLink } from '@contentful/forma-36-react-components';
+import {
+  Dropdown,
+  DropdownList,
+  DropdownListItem,
+  IconButton,
+  TableCell,
+  TableRow,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import UserCard from '../UserCard';
-import { getLastActivityDate, get2FAStatus } from '../UserUtils';
+import { getLastActivityDate, get2FAStatus, getFullNameOrEmail } from '../UserUtils';
 import { OrganizationMembership as OrgMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+import { isPendingMember } from 'utils/MembershipUtils';
+import { href } from 'states/Navigator';
 
 const styles = {
   membershipLink: css({
@@ -21,18 +31,19 @@ const styles = {
 UserListRow.propTypes = {
   membership: OrgMembershipPropType.isRequired,
   onMembershipRemove: PropTypes.func.isRequired,
+  onReinvite: PropTypes.func.isRequired,
 };
 
-export function UserListRow({ membership, onMembershipRemove }) {
-  const getLinkToUser = (user) => {
-    return {
-      path: 'account.organizations.users.detail',
-      params: {
-        userId: user.sys.id,
-      },
-    };
+const getLinkToMembership = (membership) => {
+  return {
+    path: 'account.organizations.users.detail',
+    params: {
+      userId: membership.sys.id,
+    },
   };
+};
 
+export function UserListRow({ membership, onMembershipRemove, onReinvite }) {
   return (
     <TableRow
       key={membership.sys.id}
@@ -41,7 +52,7 @@ export function UserListRow({ membership, onMembershipRemove }) {
       <TableCell>
         <StateLink
           component={TextLink}
-          {...getLinkToUser(membership)}
+          {...getLinkToMembership(membership)}
           className={styles.membershipLink}>
           <UserCard user={membership.sys.user} status={membership.sys.status} />
         </StateLink>
@@ -50,25 +61,66 @@ export function UserListRow({ membership, onMembershipRemove }) {
       <TableCell>{getLastActivityDate(membership)}</TableCell>
       <TableCell>{get2FAStatus(membership)}</TableCell>
       <TableCell align="right">
-        <div className="membership-list__item__menu">
-          <Button
-            buttonType="muted"
-            size="small"
-            onClick={onMembershipRemove(membership)}
-            className="membership-list__item__menu__button">
-            Remove
-          </Button>
-          <StateLink
-            component={Button}
-            buttonType="muted"
-            size="small"
-            href={getLinkToUser(membership)}
-            className="membership-list__item__menu__button"
-            {...getLinkToUser(membership)}>
-            Edit
-          </StateLink>
-        </div>
+        <UserActions
+          membership={membership}
+          onRemove={onMembershipRemove}
+          onReinvite={onReinvite}
+        />
       </TableCell>
     </TableRow>
   );
 }
+
+function UserActions({ membership, onRemove, onReinvite }) {
+  const [isOpen, setOpen] = React.useState(false);
+  const userName = getFullNameOrEmail(membership.sys.user);
+
+  const canBeReinvited = isPendingMember(membership);
+  const handleAction = (action) => {
+    setOpen(false);
+    action();
+  };
+
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
+      toggleElement={
+        <IconButton
+          testId="userlist.row.actions"
+          onClick={() => {
+            setOpen(true);
+          }}
+          label="Actions"
+          iconProps={{
+            icon: 'MoreHorizontal',
+          }}
+        />
+      }>
+      <DropdownList>
+        <DropdownListItem
+          testId="userlist.row.actions.remove"
+          onClick={() => handleAction(onRemove(membership))}>
+          {isPendingMember(membership) ? 'Remove user' : `Remove ${userName}`}
+        </DropdownListItem>
+        <DropdownListItem
+          testId="userlist.row.actions.navigate"
+          href={href(getLinkToMembership(membership))}>
+          Edit
+        </DropdownListItem>
+        {canBeReinvited && (
+          <DropdownListItem
+            testId="userlist.row.actions.reinvite"
+            onClick={() => handleAction(onReinvite)}>
+            Send a new invitation
+          </DropdownListItem>
+        )}
+      </DropdownList>
+    </Dropdown>
+  );
+}
+UserActions.propTypes = {
+  membership: OrgMembershipPropType.isRequired,
+  onRemove: PropTypes.func.isRequired,
+  onReinvite: PropTypes.func.isRequired,
+};

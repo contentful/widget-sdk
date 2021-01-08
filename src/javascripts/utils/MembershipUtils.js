@@ -31,3 +31,13 @@ export function getRoleDescription(role) {
 
   return orgRole.description;
 }
+
+export const MembershipStatus = {
+  ACTIVE: 'active',
+  PENDING: 'pending',
+};
+
+export const isActiveMember = (membership = {}) =>
+  membership?.sys?.status === MembershipStatus.ACTIVE;
+export const isPendingMember = (membership = {}) =>
+  membership?.sys?.status === MembershipStatus.PENDING;

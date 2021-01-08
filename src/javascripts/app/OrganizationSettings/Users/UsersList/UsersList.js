@@ -17,6 +17,8 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   SkeletonImage,
+  ModalConfirm,
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
@@ -24,7 +26,11 @@ import { formatQuery, formatFilterValues } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
 import { UserListFilters } from './UserListFilters';
 import Pagination from 'app/common/Pagination';
-import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
+import {
+  getMemberships,
+  invite,
+  removeMembership,
+} from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import RemoveOrgMemberDialog from '../RemoveUserDialog';
@@ -43,6 +49,8 @@ import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { UserLimitBanner } from './UserLimitBanner';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import qs from 'qs';
+import { getFullNameOrEmail } from '../UserUtils';
+import { logError } from 'services/logger';
 
 const styles = {
   search: css({
@@ -228,6 +236,44 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
     });
   };
 
+  const reinvite = async (membership) => {
+    const orgEndpoint = createOrganizationEndpoint(orgId);
+
+    const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        isShown={isShown}
+        title="Are you sure?"
+        intent="positive"
+        confirmLabel="Send"
+        cancelLabel="Cancel"
+        confirmTestId="user-list.reinvite-confirmation"
+        onCancel={() => onClose(false)}
+        onConfirm={() => onClose(true)}>
+        <Paragraph>Send a new invitation to {getFullNameOrEmail(membership.sys.user)}?</Paragraph>
+      </ModalConfirm>
+    ));
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await invite(orgEndpoint, {
+        role: membership.role,
+        email: membership.sys.user.email,
+      });
+
+      Notification.success(
+        `A new invitation was sent to ${getFullNameOrEmail(membership.sys.user)}`
+      );
+    } catch (e) {
+      Notification.error(
+        `There was a problem sending an invitation to ${getFullNameOrEmail(membership.sys.user)}`
+      );
+      logError(`Failed to re-invite user`, { email: membership.sys.user.email, error: e });
+    }
+  };
+
   return (
     <Workbench testId="organization-users-page">
       <Workbench.Header
@@ -297,6 +343,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
                         key={membership.sys.id}
                         membership={membership}
                         onMembershipRemove={handleMembershipRemove}
+                        onReinvite={() => reinvite(membership)}
                       />
                     ))
                   )}

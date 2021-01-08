@@ -5,11 +5,16 @@ import { UsersList } from './UsersList';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
-import { removeMembership, getMemberships } from 'access_control/OrganizationMembershipRepository';
+import {
+  removeMembership,
+  getMemberships,
+  invite,
+} from 'access_control/OrganizationMembershipRepository';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import { getOrganization } from 'services/TokenStore';
 import { getBasePlan } from 'account/pricing/PricingDataProvider';
 import { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
+import userEvent from '@testing-library/user-event';
 
 const filters = generateFilterDefinitions({ hasSsoEnabled: true });
 
@@ -24,7 +29,7 @@ const getMockUsers = (numberOfUsers) =>
   Array.from(Array(numberOfUsers)).map((_, idx) =>
     fake.OrganizationMembership(
       'member',
-      'active',
+      'pending',
       fake.User({
         firstName: 'James',
         lastName: `Bond ${idx}`,
@@ -49,6 +54,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
   removeMembership: jest.fn(),
+  invite: jest.fn(),
 }));
 
 jest.useFakeTimers();
@@ -179,15 +185,33 @@ describe('UsersList', () => {
     expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, query);
     await screen.findAllByTestId('organization-membership-list-row');
   });
+
   it('should successfully remove user', async () => {
     await build();
-    const removeBtns = screen.getAllByText('Remove');
-    await waitFor(() => fireEvent.click(removeBtns[0]));
-    expect(ModalLauncher.open).toHaveBeenCalled();
+    const dropdown = screen.getAllByTestId('userlist.row.actions')[0];
+    userEvent.click(dropdown);
+    const removeBtn = screen.getByTestId('userlist.row.actions.remove').querySelector('button');
+    userEvent.click(removeBtn);
+
+    await waitFor(() => expect(ModalLauncher.open).toHaveBeenCalled());
+
     expect(removeMembership).toHaveBeenCalled();
     expect(screen.getAllByTestId('organization-membership-list-row')).toHaveLength(
       mockOrgMemberships.length - 1
     );
+    await waitFor(() => screen.getByTestId('cf-ui-notification'));
+  });
+
+  it('should successfully reinvite user', async () => {
+    await build();
+    const dropdown = screen.getAllByTestId('userlist.row.actions')[0];
+    userEvent.click(dropdown);
+    const reinviteBtn = screen.getByTestId('userlist.row.actions.reinvite').querySelector('button');
+    userEvent.click(reinviteBtn);
+
+    await waitFor(() => expect(ModalLauncher.open).toHaveBeenCalled());
+
+    expect(invite).toHaveBeenCalled();
     await waitFor(() => screen.getByTestId('cf-ui-notification'));
   });
 

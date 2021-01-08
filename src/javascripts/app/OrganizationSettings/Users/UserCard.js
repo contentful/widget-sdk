@@ -2,15 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
 import { Tag, Heading } from '@contentful/forma-36-react-components';
+import { MembershipStatus } from 'utils/MembershipUtils';
 
 const CardSizes = {
   SMALL: 'small',
   LARGE: 'large',
-};
-
-const MembershipStatus = {
-  ACTIVE: 'active',
-  PENDING: 'pending',
 };
 
 const CardClassNames = {
