@@ -14,12 +14,16 @@ jest.mock('ng/spaceContext', () => ({
   },
 }));
 
-jest.mock('@contentful/forma-36-react-components', () => ({
-  Notification: {
-    success: jest.fn(),
-    error: jest.fn(),
-  },
-}));
+jest.mock('@contentful/forma-36-react-components', () => {
+  const actual = jest.requireActual('@contentful/forma-36-react-components');
+  return {
+    ...actual,
+    Notification: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+  };
+});
 
 describe('entityCreator', () => {
   beforeEach(() => {

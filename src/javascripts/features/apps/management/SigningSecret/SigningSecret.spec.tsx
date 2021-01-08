@@ -14,7 +14,9 @@ jest.mock('../ManagementApiClient', () => {
 });
 
 jest.mock('@contentful/forma-36-react-components', () => {
+  const actual = jest.requireActual('@contentful/forma-36-react-components');
   return {
+    ...actual,
     ModalLauncher: {
       open: jest.fn(),
     },
