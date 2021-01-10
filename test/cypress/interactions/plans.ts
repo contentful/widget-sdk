@@ -84,7 +84,7 @@ const enterprisePlanResponse = {
       productRatePlanId: '2c92c0f8725aed5b01725b642ee83ac0',
       productName: 'Enterprise: Default (May 2020) Annual',
       planType: 'base',
-      gatekeeperKey: 'wmww4trw3d6y',
+      gatekeeperKey: defaultSpaceId,
       committed: false,
       customerType: 'Enterprise',
       ratePlanCharges: [],

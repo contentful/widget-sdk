@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { get, isUndefined } from 'lodash';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -83,27 +82,27 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     throw new Error();
   }
 
-  const [plans, productRatePlans, numMemberships] = await Promise.all([
+  const [plansWithSpaces, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
     getProductPlans(endpoint),
     fetchNumMemberships(organizationId),
   ]);
 
-  if (!plans || !productRatePlans) {
+  if (!plansWithSpaces || !productRatePlans) {
     throw new Error();
   }
 
   // spaces that current user has access to
   const accessibleSpaces = await getSpaces();
 
-  const basePlan = getBasePlan(plans);
-  const spacePlans = getSpacePlans(plans, accessibleSpaces);
+  const basePlan = getBasePlan(plansWithSpaces);
+  const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
   setSpacePlans(spacePlans);
   setGrandTotal(
     calculateTotalPrice({
-      allPlans: plans.items,
+      allPlans: plansWithSpaces.items,
       numMemberships,
     })
   );
@@ -130,12 +129,10 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
     if (spacePlans.length === 0 || !data.basePlan || !data.numMemberships) {
       return;
     }
-    // The spacePlans doesn't include the base plan, so we add it back in so that the total price can be calculatd.
-    const allPlans = spacePlans.concat([data.basePlan]);
 
     setGrandTotal(
       calculateTotalPrice({
-        allPlans,
+        allPlans: spacePlans.concat([data.basePlan]),
         numMemberships: data.numMemberships,
       })
     );
@@ -145,21 +142,21 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
     return <ForbiddenPage />;
   }
 
-  const props = {
-    ...data,
-    initialLoad: isLoading,
-    organizationId,
-    spacePlans,
-    grandTotal,
-    onSpacePlansChange: (newSpacePlans) => {
-      setSpacePlans(newSpacePlans);
-    },
-  };
-
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage {...props} />
+      <SubscriptionPage
+        basePlan={data.basePlan}
+        usersMeta={data.usersMeta}
+        organization={data.organization}
+        memberAccessibleSpaces={data.memberAccessibleSpaces}
+        grandTotal={grandTotal}
+        organizationId={organizationId}
+        initialLoad={isLoading}
+        spacePlans={spacePlans}
+        onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+        newSpacePurchaseEnabled
+      />
     </>
   );
 }
