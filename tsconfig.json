@@ -17,6 +17,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
+    "skipLibCheck": true,
 
     // enable the following when we ready
     "noImplicitAny": false,
