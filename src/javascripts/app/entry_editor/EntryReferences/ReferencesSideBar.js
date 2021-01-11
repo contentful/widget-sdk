@@ -95,7 +95,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       setisAddToReleaseEnabled(addToReleaseEnabled);
       setIsBulkActionSupportEnabled(bulkActionEnabled);
     })();
-  });
+  }, [spaceContext]);
 
   useEffect(() => {
     onSlideStateChanged(getReferencesForEntry);

@@ -16,4 +16,5 @@ export enum FeatureFlag {
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
   PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features',
   ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog',
+  REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
 }
