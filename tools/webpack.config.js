@@ -27,7 +27,7 @@ module.exports = () => {
 
   const appEntry = {
     // Main app bundle, with vendor files such as bcsocket and jquery-shim
-    app: ['./vendor/jquery-shim.js', './vendor/bcsocket-shim.js', './src/javascripts/prelude.js'],
+    app: ['./vendor/bcsocket-shim.js', './src/javascripts/prelude.js'],
   };
 
   const testDepEntry = {
