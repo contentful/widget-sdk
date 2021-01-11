@@ -34,8 +34,11 @@ export function SpacePlanCard({
   selectedPlan,
   onPlanSelected,
   freeSpaceResource,
+  isSameAsCurrentPlan,
+  spaceName,
 }) {
-  let isDisabled = spaceResources && !canPlanBeAssigned(plan, spaceResources);
+  let isDisabled =
+    spaceResources && (!canPlanBeAssigned(plan, spaceResources) || isSameAsCurrentPlan);
   if (flowType === CREATION_FLOW_TYPE && isFreeProductPlan(plan)) {
     isDisabled = planCount === 0;
   }
@@ -86,7 +89,7 @@ export function SpacePlanCard({
 
   return (
     <Card
-      testId={`space-plan-card-${index}`}
+      testId={`space-plan-card-${plan.name}`}
       padding="large"
       className={cn(styles.cardItem, {
         [styles.cardItemActive]: plan.sys.id === selectedPlan?.sys.id,
@@ -112,7 +115,17 @@ export function SpacePlanCard({
           justifyContent="space-between"
           alignItems="center">
           <Heading element="h3">
-            {plan.name} {isCustomPlan && <span className={styles.custom}> (Customized)</span>}
+            {plan.name}{' '}
+            {isCustomPlan ? (
+              <span className={styles.custom}> (Customized)</span>
+            ) : (
+              isSameAsCurrentPlan && (
+                <span className={styles.custom}>
+                  {' '}
+                  ({spaceName} is already a {plan.name} space)
+                </span>
+              )
+            )}
           </Heading>
           <Flex>
             {isFreeProductPlan(plan) && (
@@ -160,4 +173,6 @@ SpacePlanCard.propTypes = {
   selectedPlan: PlanPropType,
   onPlanSelected: PropTypes.func,
   freeSpaceResource: ResourcePropType,
+  isSameAsCurrentPlan: PropTypes.bool,
+  spaceName: PropTypes.string,
 };

@@ -33,7 +33,7 @@ export function SpacePlanSelection({
   ratePlans,
   space,
   spaceResources,
-  currentPlanName,
+  currentPlan,
   selectedPlan,
   onPlanSelected,
   onNext,
@@ -42,6 +42,9 @@ export function SpacePlanSelection({
 }) {
   const isCreationFlow = flowType === CREATION_FLOW_TYPE;
   const groupedPlans = groupPlans(plans);
+  const currentRatePlanKey = currentPlan?.ratePlanCharges
+    ? buildPlanKey(currentPlan.name, currentPlan.ratePlanCharges)
+    : null;
   const defaultRatePlanKeys = ratePlans.map((plan) =>
     buildPlanKey(plan.name, plan.productRatePlanCharges)
   );
@@ -80,7 +83,7 @@ export function SpacePlanSelection({
         ) : (
           <Heading element="h2">
             Choose a new space type for {space?.name}
-            {currentPlanName && <span>({currentPlanName})</span>}
+            {currentPlan?.name && <span> ({currentPlan.name})</span>}
           </Heading>
         )}
       </Typography>
@@ -99,6 +102,7 @@ export function SpacePlanSelection({
           const isFree = isFreeProductPlan(plan);
           const planCount = isFree ? freePlanCount : groupedPlans[key].length;
           const isCustomPlan = isFree ? false : !defaultRatePlanKeys.includes(key);
+          const isSameAsCurrentPlan = currentRatePlanKey && currentRatePlanKey === key;
 
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item" className={styles.listItem}>
@@ -126,6 +130,8 @@ export function SpacePlanSelection({
                 freeSpaceResource={freeSpaceResource}
                 selectedPlan={selectedPlan}
                 onPlanSelected={onPlanSelected}
+                isSameAsCurrentPlan={isSameAsCurrentPlan}
+                spaceName={space?.name}
               />
             </ListItem>
           );
@@ -171,7 +177,7 @@ SpacePlanSelection.propTypes = {
   space: SpacePropType,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
-  currentPlanName: PropTypes.string,
+  currentPlan: PlanPropType,
   onPlanSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,
   flowType: PropTypes.oneOf([CREATION_FLOW_TYPE, ASSIGNMENT_FLOW_TYPE]),

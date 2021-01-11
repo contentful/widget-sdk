@@ -222,24 +222,26 @@ export function SpacePlans({
         (canManageSpaces ? (
           <>
             <Tabs className={styles.tabs} withDivider>
-              <Tab
-                key={USED_SPACES}
-                id={USED_SPACES}
-                testId={`tab-${USED_SPACES}`}
-                selected={selectedTab === USED_SPACES}
-                onSelect={() => setSelectedTab(USED_SPACES)}>
-                Used spaces
-              </Tab>
               {unassignedSpacePlans.length > 0 && (
-                <Tab
-                  key={UNUSED_SPACES}
-                  id={UNUSED_SPACES}
-                  testId={`tab-${UNUSED_SPACES}`}
-                  selected={selectedTab === UNUSED_SPACES}
-                  onSelect={() => setSelectedTab(UNUSED_SPACES)}>
-                  Unused spaces{' '}
-                  {unassignedSpacePlans.length > 0 && `(${unassignedSpacePlans.length})`}
-                </Tab>
+                <>
+                  <Tab
+                    key={USED_SPACES}
+                    id={USED_SPACES}
+                    testId={`tab-${USED_SPACES}`}
+                    selected={selectedTab === USED_SPACES}
+                    onSelect={() => setSelectedTab(USED_SPACES)}>
+                    Used spaces
+                  </Tab>
+                  <Tab
+                    key={UNUSED_SPACES}
+                    id={UNUSED_SPACES}
+                    testId={`tab-${UNUSED_SPACES}`}
+                    selected={selectedTab === UNUSED_SPACES}
+                    onSelect={() => setSelectedTab(UNUSED_SPACES)}>
+                    Unused spaces{' '}
+                    {unassignedSpacePlans.length > 0 && `(${unassignedSpacePlans.length})`}
+                  </Tab>
+                </>
               )}
               {showExportBtn && (
                 <Button

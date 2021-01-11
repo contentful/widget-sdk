@@ -202,7 +202,7 @@ describe('Space Plan', () => {
       ).toHaveLength(1);
     });
 
-    it('should display 1 tab for enterprise organization if there are no plans unassigned.', async () => {
+    it('should display not display tabs for enterprise organization if there are no plans unassigned.', async () => {
       getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
 
       build({
@@ -211,12 +211,11 @@ describe('Space Plan', () => {
         isOwnerOrAdmin: true,
       });
 
-      await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());
-      const tabs = screen.getAllByRole('tab');
-      expect(tabs).toHaveLength(1);
-
-      expect(screen.getByTestId('subscription-page.table')).toBeVisible();
-      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1);
+      await waitFor(() =>
+        expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1)
+      );
+      const tabs = screen.queryAllByRole('tab');
+      expect(tabs).toHaveLength(0);
     });
 
     it('should display the export btn', async () => {

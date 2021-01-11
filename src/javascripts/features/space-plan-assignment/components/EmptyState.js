@@ -18,8 +18,8 @@ export function EmptyState() {
           It looks like you do not have any more available spaces. Contact us to add more spaces to
           your organization.
         </Paragraph>
-        <Flex alignItems="center" justifyContent="space-around">
-          <Flex>
+        <Flex alignItems="center" justifyContent="center">
+          <Flex marginRight="spacingM">
             <StateLink component={Button} buttonType="muted" path={'^'} icon="ChevronLeft">
               Go back
             </StateLink>

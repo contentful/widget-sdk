@@ -65,10 +65,26 @@ const mockPerformance1xPlan = Fake.Plan({
 });
 
 //currentPlan
-const mockPerformance2xPlan = Fake.Plan({
+const mockPerformance2xPlan1 = Fake.Plan({
   name: 'Performance 2x',
   ratePlanCharges: mockPerfRatePlanCharges,
   gatekeeperKey: mockSpace.sys.id,
+  roleSet: { roles: [] },
+});
+const mockPerformance2xPlan2 = Fake.Plan({
+  name: 'Performance 2x',
+  ratePlanCharges: mockPerfRatePlanCharges,
+  roleSet: { roles: [] },
+});
+const mockPerformance2xPlanCustom = Fake.Plan({
+  name: 'Performance 2x',
+  ratePlanCharges: [
+    Fake.RatePlanCharge('Environments', 12),
+    Fake.RatePlanCharge('Roles', 10),
+    Fake.RatePlanCharge('Locales', 30),
+    Fake.RatePlanCharge('Content types', 960),
+    Fake.RatePlanCharge('Records', 100000),
+  ],
   roleSet: { roles: [] },
 });
 
@@ -78,7 +94,9 @@ const mockPlans = [
   mockLargePlan2,
   mockLargePlanCustom,
   mockPerformance1xPlan,
-  mockPerformance2xPlan,
+  mockPerformance2xPlan1,
+  mockPerformance2xPlan2,
+  mockPerformance2xPlanCustom,
 ];
 
 const mockFreePlan = Fake.Plan({
@@ -87,6 +105,7 @@ const mockFreePlan = Fake.Plan({
   productRatePlanCharges: mockPerfRatePlanCharges,
   roleSet: { roles: [] },
 });
+
 const mockRatePlans = [
   Fake.Plan({
     name: 'Medium',
@@ -169,14 +188,13 @@ describe('SpacePlanAssignment', () => {
   it('should render first step with a list of available plans grouped by type and limits', async () => {
     await build();
     expect(screen.getByText('Choose a new space type for Test Space')).toBeVisible();
-    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
+    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(6);
     expect(screen.getByTestId('go-back-btn')).toBeVisible();
     expect(screen.getByTestId('continue-btn')).toBeVisible();
   });
 
   it('should disable plans that are too small for the selected space', async () => {
     await build();
-    //todo improve test case
     //current space is of type Performance 2x and has usage above Medium - see mockSpaceResources
     expect(screen.getByLabelText(mockMediumPlan.name)).toBeDisabled();
     expect(screen.getAllByLabelText(mockLargePlan1.name)[0]).not.toBeDisabled();
@@ -184,33 +202,58 @@ describe('SpacePlanAssignment', () => {
     expect(screen.getByLabelText(mockPerformance1xPlan.name)).not.toBeDisabled();
   });
 
+  it('should disable plans that are exactly the same as the current plan', async () => {
+    await build();
+    expect(screen.getAllByLabelText(mockPerformance2xPlan2.name)).toHaveLength(2);
+    const performance2xPlanCard = within(
+      screen.getAllByTestId(`space-plan-card-${mockPerformance2xPlanCustom.name}`)[0]
+    );
+    expect(performance2xPlanCard.getByLabelText(mockPerformance2xPlan2.name)).toBeDisabled();
+    const performance2xPlanCardCustom = within(
+      screen.getAllByTestId(`space-plan-card-${mockPerformance2xPlanCustom.name}`)[1]
+    );
+    expect(
+      performance2xPlanCardCustom.getByLabelText(mockPerformance2xPlanCustom.name)
+    ).not.toBeDisabled();
+
+    expect(performance2xPlanCardCustom.getByText('(Customized)')).toBeVisible();
+  });
+
   it('should group customized plans separately after the default one', async () => {
     await build();
-    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
+    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(6);
     expect(screen.getAllByLabelText('Large')).toHaveLength(2);
-    const largePlanCardCustom = within(screen.getByTestId('space-plan-card-2'));
+    const largePlanCardCustom = within(
+      screen.getAllByTestId(`space-plan-card-${mockLargePlanCustom.name}`)[1]
+    );
     expect(largePlanCardCustom.getByText('(Customized)')).toBeVisible();
   });
 
   it('should show number of available plans in each group', async () => {
     await build();
 
-    const mediumPlanCard = within(screen.getByTestId('space-plan-card-0'));
+    const mediumPlanCard = within(screen.getByTestId(`space-plan-card-${mockMediumPlan.name}`));
     expect(mediumPlanCard.getByText('1 available')).toBeVisible();
 
-    const largePlanCard = within(screen.getByTestId('space-plan-card-1'));
+    const largePlanCard = within(
+      screen.getAllByTestId(`space-plan-card-${mockLargePlan1.name}`)[0]
+    );
     expect(largePlanCard.getByText('2 available')).toBeVisible();
 
-    const largeCustomPlanCard = within(screen.getByTestId('space-plan-card-2'));
+    const largeCustomPlanCard = within(
+      screen.getAllByTestId(`space-plan-card-${mockLargePlan1.name}`)[1]
+    );
     expect(largeCustomPlanCard.getByText('1 available')).toBeVisible();
 
-    const performance1xPlanCard = within(screen.getByTestId('space-plan-card-3'));
+    const performance1xPlanCard = within(
+      screen.getByTestId(`space-plan-card-${mockPerformance1xPlan.name}`)
+    );
     expect(performance1xPlanCard.getByText('1 available')).toBeVisible();
   });
 
   it('should show and hide comparison table between current plan and the other plans', async () => {
     await build();
-    const mediumPlanCard = within(screen.getByTestId('space-plan-card-0'));
+    const mediumPlanCard = within(screen.getByTestId(`space-plan-card-${mockMediumPlan.name}`));
     const showTableLink = mediumPlanCard.getByText('Compare with current space type');
     expect(showTableLink).toBeVisible();
     userEvent.click(showTableLink);
@@ -244,8 +287,8 @@ describe('SpacePlanAssignment', () => {
     userEvent.click(screen.getByTestId('continue-btn'));
     expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:continue', {
       space_id: mockSpace.sys.id,
-      current_plan_id: mockPerformance2xPlan.sys.id,
-      current_plan_name: mockPerformance2xPlan.name,
+      current_plan_id: mockPerformance2xPlan1.sys.id,
+      current_plan_name: mockPerformance2xPlan1.name,
       new_plan_id: mockPerformance1xPlan.sys.id,
       new_plan_name: mockPerformance1xPlan.name,
       flow: 'assing_plan_to_space',
@@ -278,7 +321,7 @@ describe('SpacePlanAssignment', () => {
         mockSpace.organization.sys.id,
         mockSpace.sys.id,
         mockPerformance1xPlan,
-        mockPerformance2xPlan,
+        mockPerformance2xPlan1,
         mockFreePlan
       )
     );
@@ -313,8 +356,8 @@ describe('SpacePlanAssignment', () => {
     await waitFor(() =>
       expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:continue', {
         space_id: mockSpace.sys.id,
-        current_plan_id: mockPerformance2xPlan.sys.id,
-        current_plan_name: mockPerformance2xPlan.name,
+        current_plan_id: mockPerformance2xPlan1.sys.id,
+        current_plan_name: mockPerformance2xPlan1.name,
         new_plan_id: mockPerformance1xPlan.sys.id,
         new_plan_name: mockPerformance1xPlan.name,
         flow: 'assing_plan_to_space',

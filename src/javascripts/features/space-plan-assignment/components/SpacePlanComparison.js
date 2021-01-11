@@ -54,14 +54,16 @@ export function SpacePlanComparison({ plan, spaceResources }) {
             return (
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
                 {isOverLimit ? (
-                  <Tooltip
-                    place="right"
-                    content="Your current usage exceeds this space type's limit">
-                    <Flex justifyContent="left" alignItems="center">
-                      <Flex marginRight="spacing2Xs">{usage}</Flex>
-                      <Icon icon="Warning" color="warning" />
-                    </Flex>
-                  </Tooltip>
+                  <Flex justifyContent="left" alignItems="center">
+                    <Flex marginRight="spacing2Xs">{usage}</Flex>
+                    <Tooltip
+                      place="right"
+                      content="Your current usage exceeds this space type's limit">
+                      <Flex>
+                        <Icon icon="Warning" color="warning" />
+                      </Flex>
+                    </Tooltip>
+                  </Flex>
                 ) : (
                   <Flex justifyContent="left" alignItems="center">
                     <Flex marginRight="spacing2Xs">{usage}</Flex>

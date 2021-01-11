@@ -49,11 +49,8 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
       const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
 
-      // filter plans that already have a space assigned (gatekeeperKey) or are the same as the current plan
-      const availablePlans = filter(
-        plans.items,
-        (plan) => !plan.gatekeeperKey && (currentPlan ? plan.name !== currentPlan.name : true)
-      );
+      // filter plans that already have a space assigned (gatekeeperKey)
+      const availablePlans = filter(plans.items, (plan) => !plan.gatekeeperKey);
 
       // enhence plans with roleSet in order to display tooltip text for Roles
       const enhancedPlans = availablePlans.map((plan) => {
@@ -154,7 +151,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 plans={data.plans}
                 ratePlans={data.ratePlans}
                 selectedPlan={selectedPlan}
-                currentPlanName={data.currentPlan ? data.currentPlan.name : data.freePlan.name}
+                currentPlan={data.currentPlan ? data.currentPlan : data.freePlan}
                 onPlanSelected={setSelectedPlan}
                 onNext={navigateToNextStep}
               />
