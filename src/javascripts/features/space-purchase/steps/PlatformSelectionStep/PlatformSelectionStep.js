@@ -89,8 +89,10 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
   useEffect(() => {
     // we unselect any space plan when user changes platform
-    dispatch({ type: actions.SET_SELECTED_PLAN, payload: undefined });
-    setChooseSpaceLaterSelected(false);
+    if (selectedPlatform) {
+      dispatch({ type: actions.SET_SELECTED_PLAN, payload: undefined });
+      setChooseSpaceLaterSelected(false);
+    }
   }, [dispatch, selectedPlatform]);
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
@@ -172,10 +174,12 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
         <EnterpriseCard
           organizationId={organization?.sys.id}
-          handleSelect={track(EVENTS.EXTERNAL_LINK_CLICKED, {
-            href: CONTACT_SALES_HREF,
-            intent: 'upgrade_to_enterprise',
-          })}
+          handleSelect={() =>
+            track(EVENTS.EXTERNAL_LINK_CLICKED, {
+              href: CONTACT_SALES_HREF,
+              intent: 'upgrade_to_enterprise',
+            })
+          }
         />
 
         <span

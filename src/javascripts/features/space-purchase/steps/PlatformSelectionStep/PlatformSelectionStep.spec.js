@@ -99,7 +99,9 @@ describe('PlatformSelectionStep', () => {
       await build(null, {
         selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
         spaceRatePlans: mockProductRatePlans,
+        subscriptionPlans: mockProductRatePlans,
       });
+
       spacePlanCards = screen.getAllByTestId('space-plan-card');
     });
 
