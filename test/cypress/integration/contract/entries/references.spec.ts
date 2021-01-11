@@ -192,7 +192,6 @@ function basicServerSetUp(): string[] {
     consumer: 'user_interface',
     providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases', 'bulk_actions'],
     cors: true,
-    pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
     spec: 2,
   });

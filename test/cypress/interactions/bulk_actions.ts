@@ -27,7 +27,7 @@ const publishPayload = [
   },
   {
     sys: {
-      id: 'EntryId_01',
+      id: 'testEntryId1',
       linkType: 'Entry',
       type: 'Link',
       version: 1,
@@ -35,7 +35,7 @@ const publishPayload = [
   },
   {
     sys: {
-      id: 'EntryId_02',
+      id: 'testEntryId2',
       linkType: 'Entry',
       type: 'Link',
       version: 1,
@@ -102,10 +102,10 @@ export const getBulkAction = {
                 id: defaultEnvironmentId,
               },
             },
-            createdAt: '2020-12-15T17:12:43.215Z',
-            updatedAt: '2020-12-15T17:12:43.531Z',
-            startedAt: '2020-12-15T17:12:43.252Z',
-            completedAt: '2020-12-15T17:12:43.531Z',
+            createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.252Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
             createdBy: {
               sys: {
                 type: 'Link',
