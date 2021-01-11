@@ -116,7 +116,7 @@ class ContentTypeList extends Component {
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-created-by">
                         <ActionPerformerName
-                          link={get(contentType, ['sys', 'publishedBy'], {
+                          link={get(contentType, ['sys', 'updatedBy'], {
                             sys: {
                               linkType: 'User',
                               id: '',
