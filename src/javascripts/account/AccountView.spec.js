@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 
 import AccountView from './AccountView';
 
@@ -10,7 +16,6 @@ jest.mock('account/UrlSyncHelper', () => ({
 describe('AccountView', () => {
   const props = {
     title: 'My Account Page',
-    onReady: jest.fn(),
   };
 
   const build = () => {
@@ -23,15 +28,16 @@ describe('AccountView', () => {
     expect(getByTestId('account-iframe')).toHaveAttribute('src', 'account/gatekeeperpage');
   });
 
-  it('calls the onReady callback', async () => {
+  it('remove loading state when ready', async () => {
     const { getByTestId } = build();
     const iframe = getByTestId('account-iframe');
-    expect(props.onReady).not.toHaveBeenCalled();
+    const loadingState = screen.getByTestId('cf-ui-loading-state');
+    await waitFor(() => expect(loadingState).toBeVisible());
 
     fireEvent.load(iframe);
 
-    process.nextTick(() => {
-      expect(props.onReady).toHaveBeenCalled();
+    process.nextTick(async () => {
+      await waitForElementToBeRemoved(() => loadingState);
     });
   });
 });

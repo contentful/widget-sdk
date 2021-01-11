@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import LoadingState from 'app/common/LoadingState';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -14,11 +15,14 @@ const wrapperStyle = css({
   right: 0,
 });
 
-export default function AccountView({ title, icon, onReady }) {
+export default function AccountView({ title, icon, loadingText }) {
   const gatekeeperUrl = useMemo(() => getGatekeeperUrl(), []);
+  const [loading, setLoading] = useState(true);
 
   return (
     <Workbench testId="account-iframe-page">
+      {loading && <LoadingState loadingText={loadingText} />}
+
       <Workbench.Header
         title={title}
         icon={icon ? <ProductIcon icon={icon} size="large" /> : null}
@@ -30,7 +34,7 @@ export default function AccountView({ title, icon, onReady }) {
             width="100%"
             height="100%"
             id="accountViewFrame"
-            onLoad={() => onReady()}
+            onLoad={() => setLoading(false)}
             src={gatekeeperUrl}
           />
         </div>
@@ -40,7 +44,7 @@ export default function AccountView({ title, icon, onReady }) {
 }
 
 AccountView.propTypes = {
-  onReady: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
+  loadingText: PropTypes.string,
   icon: PropTypes.string,
 };

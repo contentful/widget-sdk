@@ -1,11 +1,10 @@
-import base from 'states/Base';
-import { iframeStateWrapper } from './utils';
-import { noop } from 'lodash';
+import React from 'react';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
 import SpaceMembershipsRouter from 'app/UserSettings/SpaceMembershipsRouter';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 import { UserCMATokensRoute } from 'features/api-keys-management';
+import AccountView from 'account/AccountView';
 
 const user = {
   name: 'user',
@@ -31,35 +30,38 @@ const cmaTokens = {
   component: UserCMATokensRoute,
 };
 
-const accessGrants = userBase({
+const accessGrants = {
   name: 'access_grants',
-  title: 'OAuth tokens',
-  icon: 'Token',
   url: '/access_grants{pathSuffix:PathSuffix}',
-});
+  params: {
+    pathSuffix: '',
+  },
+  component: () => (
+    <AccountView title="OAuth tokens" icon="Token" loadingText="Loading your account…" />
+  ),
+};
 
-const applications = userBase({
+const applications = {
   name: 'applications',
-  title: 'OAuth applications',
-  icon: 'Oauth',
   url: '/developers/applications{pathSuffix:PathSuffix}',
-});
+  params: {
+    pathSuffix: '',
+  },
+  component: () => (
+    <AccountView title="OAuth applications" icon="Oauth" loadingText="Loading your account…" />
+  ),
+};
 
-const userCancellation = userBase({
+const userCancellation = {
   name: 'user_cancellation',
-  title: 'User cancellation',
   url: '/user_cancellation{pathSuffix:PathSuffix}',
-});
+  params: {
+    pathSuffix: '',
+  },
+  component: () => <AccountView title="User cancellation" loadingText="Loading your account…" />,
+};
 
-function userBase(definition) {
-  return iframeStateWrapper({
-    loadingText: 'Loading your account…',
-    onEnter: [noop],
-    ...definition,
-  });
-}
-
-export default base({
+export default {
   name: 'profile',
   url: '/profile',
   abstract: true,
@@ -73,4 +75,4 @@ export default base({
     accessGrants,
     applications,
   ],
-});
+};

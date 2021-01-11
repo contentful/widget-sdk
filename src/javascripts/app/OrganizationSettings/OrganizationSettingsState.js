@@ -1,5 +1,5 @@
+import React from 'react';
 import base from 'states/Base';
-import { iframeStateWrapper } from 'states/utils';
 import * as Analytics from 'analytics/Analytics';
 import { subscriptionState } from 'features/organization-subscription';
 import { usageState } from 'features/organization-usage';
@@ -7,7 +7,15 @@ import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { SSOSetupRoutingState } from 'features/sso';
-import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
+import {
+  billing,
+  edit,
+  offsitebackup,
+  spaces,
+  subscription,
+  subscriptionBilling,
+  userGatekeeper,
+} from './OrganizationSettingsGatekeeperStates';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -17,6 +25,7 @@ import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { isOrganizationOnTrial } from 'features/trials';
+import AccountView from 'account/AccountView';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -66,12 +75,12 @@ const organizationSettings = {
 };
 
 export default [
-  iframeStateWrapper({
+  {
     name: 'new_organization',
     url: '/organizations/new',
     navComponent: EmptyNavigationBar,
-    title: 'Create new organization',
-  }),
+    component: () => <AccountView title="Create new organization" />,
+  },
   organizationSettings,
   base({
     name: 'organizations',
@@ -94,7 +103,13 @@ export default [
       SSOSetupRoutingState,
       accessToolsState,
       billingRoutingState,
-      ...gatekeeperStates,
+      billing,
+      edit,
+      offsitebackup,
+      spaces,
+      subscription,
+      subscriptionBilling,
+      userGatekeeper,
     ],
   }),
 ];

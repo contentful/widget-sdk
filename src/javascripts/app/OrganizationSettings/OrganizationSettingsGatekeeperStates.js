@@ -1,52 +1,66 @@
-import { iframeStateWrapper } from 'states/utils';
+import React from 'react';
+import { withOrganizationRoute } from 'states/utils';
 import SpacesRoute from './SpacesV1/SpacesRoute';
+import AccountView from 'account/AccountView';
 
-const edit = {
+export const edit = {
   name: 'edit',
-  title: 'Organization information',
-  icon: 'OrgInfo',
   url: '/edit{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => (
+    <AccountView title="Organization information" icon="OrgInfo" />
+  )),
 };
 
-const subscription = {
+export const subscription = {
   name: 'subscription',
-  title: 'Subscription',
-  icon: 'Subscription',
   url: '/z_subscription{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => <AccountView title="Subscription" icon="Subscription" />),
 };
 
-const subscriptionBilling = {
+export const subscriptionBilling = {
   name: 'subscription_billing',
-  title: 'Subscription',
-  icon: 'Subscription',
   url: '/subscription{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => <AccountView title="Subscription" icon="Subscription" />),
 };
 
-const spaces = {
+export const spaces = {
   name: 'spaces',
   url: '/spaces',
-  component: SpacesRoute,
+  component: withOrganizationRoute(SpacesRoute),
 };
 
-const offsitebackup = {
+export const offsitebackup = {
   name: 'offsitebackup',
-  title: 'Offsite backup',
   url: '/offsite_backup/edit{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => <AccountView title="Offsite backup" />),
 };
 
-const billing = {
+export const billing = {
   name: 'billing-gatekeeper',
-  title: 'Billing',
   url: '/z_billing{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => <AccountView title="Billing" />),
 };
 
-const userGatekeeper = {
+export const userGatekeeper = {
   name: 'gatekeeper',
-  title: 'Organization users',
   url: '/organization_memberships/{pathSuffix:PathSuffix}',
+  params: {
+    pathSuffix: '',
+  },
+  component: withOrganizationRoute(() => <AccountView title="Organization users" />),
 };
-
-export default [offsitebackup, billing, edit, subscription, subscriptionBilling, userGatekeeper]
-  .map(iframeStateWrapper)
-  // The following routes were already migrated to UI
-  .concat([spaces]);
