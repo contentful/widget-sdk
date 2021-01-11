@@ -1,6 +1,5 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { range } from 'lodash';
 import {
   Table,
@@ -16,47 +15,64 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const PER_PAGE = 30;
 
-export class WebhookActivityLog extends React.Component {
-  static propTypes = {
-    webhookId: PropTypes.string,
-    registerLogRefreshAction: PropTypes.func.isRequired,
+interface WebhookLogCall {
+  sys: {
+    id: string;
   };
+  statusCode: number;
+  errors: string[];
+  requestAt: string;
+}
 
+interface WebhookActivityLogProps {
+  webhookId?: string;
+  registerLogRefreshAction: (fetch: ({ spaceId: string }) => Promise<void>) => void;
+}
+
+interface WebhookActivityLogState {
+  page: number;
+  loading: boolean;
+  calls: WebhookLogCall[];
+}
+
+export class WebhookActivityLog extends React.Component<
+  WebhookActivityLogProps,
+  WebhookActivityLogState
+> {
   static contextType = SpaceEnvContext;
 
-  constructor(props) {
-    super(props);
-    this.state = { page: 0, loading: false, calls: [] };
-  }
+  state = { page: 0, loading: false, calls: [] };
 
   componentDidMount() {
     const { currentSpaceId: spaceId } = this.context;
     this.fetch({ spaceId });
-    this.props.registerLogRefreshAction(this.fetch.bind(this));
+    this.props.registerLogRefreshAction(this.fetch);
   }
 
-  fetch({ spaceId }) {
+  fetch = async ({ spaceId }: { spaceId: string }) => {
     const { webhookId } = this.props;
     const webhookRepo = getWebhookRepo({ spaceId });
 
     if (typeof webhookId !== 'string' || this.state.loading) {
-      return Promise.resolve();
+      return;
     }
 
     this.setState({ loading: true });
 
-    return new Promise((resolve) => {
-      webhookRepo.logs.getCalls(webhookId).then(
-        (calls) => this.setState({ page: 0, loading: false, calls }, () => resolve()),
-        () => this.setState({ page: 0, loading: false, calls: [] }, () => resolve())
-      );
-    });
-  }
+    try {
+      const calls = (await webhookRepo.logs.getCalls(webhookId)) as WebhookLogCall[];
+      this.setState({ page: 0, loading: false, calls });
+    } catch (_) {
+      this.setState({ page: 0, loading: false, calls: [] });
+    }
+  };
 
   render() {
     const { page, loading, calls } = this.state;
 
-    const pageCalls = calls.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+    // Assignment is done in `fetch`, therefore here calls can either be never[] or WebhookCall[]
+    // Given that fetch is the only place with assignment, we can force the type.
+    const pageCalls = (calls as WebhookLogCall[]).slice(page * PER_PAGE, (page + 1) * PER_PAGE);
     const pages = range(0, Math.ceil(calls.length / PER_PAGE));
 
     return (
@@ -72,12 +88,12 @@ export class WebhookActivityLog extends React.Component {
           <TableBody>
             {loading && (
               <TableRow>
-                <TableCell colSpan="3">Loading logs…</TableCell>
+                <TableCell colSpan={3}>Loading logs…</TableCell>
               </TableRow>
             )}
             {!loading && pageCalls.length < 1 && (
               <TableRow>
-                <TableCell colSpan="3">No webhook calls yet!</TableCell>
+                <TableCell colSpan={3}>No webhook calls yet!</TableCell>
               </TableRow>
             )}
             {!loading &&
