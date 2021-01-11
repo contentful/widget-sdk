@@ -50,7 +50,7 @@ const defaultContentTypeHeader = {
 const defaultBulkActionTestId = 'testBulkActionId';
 
 const getBulkActionRequest: any = {
-  provider: 'bulk_actions',
+  provider: 'bulk-actions',
   uponReceiving: `a request for BulkAction ${defaultBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'GET',
@@ -60,7 +60,7 @@ const getBulkActionRequest: any = {
 };
 
 const publishBulkActionRequest: any = {
-  provider: 'bulk_actions',
+  provider: 'bulk-actions',
   uponReceiving: `a request to publish a BulkAction on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'POST',

@@ -190,7 +190,7 @@ function basicServerSetUp(): string[] {
   // TODO: move this to a before block
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases', 'bulk_actions'],
+    providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases', 'bulk-actions'],
     cors: true,
     dir: Cypress.env('pactDir'),
     spec: 2,
