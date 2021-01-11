@@ -78,8 +78,6 @@ window.global = window;
 
 require('@babel/polyfill');
 
-window.jQuery = window.$ = require('jquery');
-
 window.libs = [
 ${uniqDeps
   .concat(testDepNames)
