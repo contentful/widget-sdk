@@ -4,3 +4,5 @@ export type TagSelectionValue = {
 };
 
 export type TagType = { sys: { id: string; name: string } };
+
+export type FilterOption = { label: string; value: string };
