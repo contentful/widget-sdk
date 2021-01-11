@@ -30,7 +30,6 @@ import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsCon
 import { useFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
 import { getModule } from 'core/NgRegistry';
 import { useMigratedEntityField } from 'app/entity_editor/EntityField/useEntityFieldFeatureFlag';
 
@@ -130,11 +129,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   // kill this with fire when react migration allows it
   const $state = getModule('$state');
-  const { currentSpace } = useSpaceEnvContext();
-  const routeIsUnscoped = isUnscopedRoute(currentSpace);
   const setTabInUrl = (tab) =>
     $state.transitionTo(
-      routeIsUnscoped ? 'spaces.detail.entries.detail' : 'spaces.detail.environment.entries.detail',
+      $state.current,
       { tab: tabIsDefault(tab, availableTabs) ? null : tab },
       {
         location: true, // This makes it update URL
