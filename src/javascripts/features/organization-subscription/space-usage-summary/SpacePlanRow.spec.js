@@ -70,9 +70,9 @@ const build = (input = {}) => {
   }
 
   if ('expiresAt' in options) {
-    options.plan.space.expiresAt = options.expiresAt;
+    options.spaceUsage.spaceTrialPeriodEndsAt = options.expiresAt;
   } else {
-    delete options.plan.space.expiresAt;
+    delete options.spaceUsage.spaceTrialPeriodEndsAt;
   }
 
   render(
@@ -220,20 +220,6 @@ describe('Space Plan Row', () => {
       expect(
         screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip')
       ).toHaveTextContent('Expired');
-    });
-
-    it('shows the trial space tooltip when the trial space is not accessible', async () => {
-      build({ isAccessible: false, expiresAt: undefined });
-
-      await act(async () => {
-        fireEvent.mouseOver(
-          screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip-trigger')
-        );
-      });
-
-      expect(
-        screen.getByTestId('subscription-page.spaces-list.trial-space-tooltip')
-      ).not.toHaveTextContent('Expire');
     });
 
     it('does not show the trial space tooltip when it is not a Trial Space', () => {

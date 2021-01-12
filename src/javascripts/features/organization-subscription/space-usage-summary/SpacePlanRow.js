@@ -13,7 +13,6 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
-import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
@@ -46,18 +45,13 @@ export const SpacePlanRow = ({
   showSpacePlanChangeBtn,
 }) => {
   const { space } = plan;
-  const hasTrialSpacePlan = plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME;
-  const isAccessible = Boolean(space.isAccessible);
-  const isLegacyPOC = isAccessible && hasTrialSpacePlan && space.expiresAt === undefined;
-  // if the space is not accessible, we cannot differenciate legacy POC from Trial Space
-  // in this case, treat it as Trial Space and show 'Become a space member to view expiration date' tooltip
-  const isTrialSpace = hasTrialSpacePlan && !isLegacyPOC;
-  const expiresAtTooltipContent =
-    isTrialSpace && isAccessible
-      ? `${moment().isAfter(moment(space.expiresAt), 'date') ? 'Expired' : 'Expires'} on ${moment(
-          space.expiresAt
-        ).format('DD/MM/YYYY')}`
-      : 'Become a space member to view expiration date';
+  const { isAccessible } = space;
+  const { spaceTrialPeriodEndsAt } = spaceUsage;
+  const expiresAtTooltipContent = spaceTrialPeriodEndsAt
+    ? `${
+        moment().isAfter(moment(spaceTrialPeriodEndsAt), 'date') ? 'Expired' : 'Expires'
+      } on ${moment(spaceTrialPeriodEndsAt).format('DD/MM/YYYY')}`
+    : '';
 
   const onViewUsage = () => {
     track('space_usage_summary:go_to_detailed_usage');
@@ -91,7 +85,7 @@ export const SpacePlanRow = ({
       </TableCell>
       <TableCell testId="subscription-page.spaces-list.space-type">
         <strong>{plan.name}</strong>&nbsp;
-        {isTrialSpace && (
+        {spaceTrialPeriodEndsAt && (
           <Tooltip
             content={expiresAtTooltipContent}
             testId="subscription-page.spaces-list.trial-space-tooltip">
