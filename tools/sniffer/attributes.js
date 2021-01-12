@@ -65,7 +65,7 @@ const hyperscript = (node) => {
   if (test(node)) {
     return false;
   }
-  const attributes = ['utils/legacy-html-hyperscript'];
+  const attributes = [];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
 };

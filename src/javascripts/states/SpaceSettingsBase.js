@@ -1,4 +1,3 @@
-import Base from 'states/Base';
 import { go } from 'states/Navigator';
 import { spaceResolver } from 'states/Resolvers';
 
@@ -19,5 +18,5 @@ export default function SpaceSettingsBase(definition) {
     onEnter: ['space', (space) => redirectReadOnlySpace(space)],
   };
 
-  return Base(Object.assign(defaults, definition));
+  return { ...defaults, ...definition };
 }

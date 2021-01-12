@@ -1,4 +1,3 @@
-import base from 'states/Base';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { registerDirective } from 'core/NgRegistry';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
@@ -24,7 +23,6 @@ const baseDetails = {
   template: `
     <react-component
       ng-if="isNewSlideInEditorEnabled"
-      ng-init="context.ready = true"
       name="app/entity_editor/SlideInEditor/SlideInEditor"
       props="props"
     ></react-component>
@@ -52,18 +50,18 @@ const baseDetails = {
 };
 
 export function entryDetail(children) {
-  return base({
+  return {
     ...baseDetails,
     url: '/:entryId?previousEntries&bulkEditor&tab',
     children: children,
-  });
+  };
 }
 
 export function assetDetail() {
-  return base({
+  return {
     ...baseDetails,
     url: '/:assetId?previousEntries&tab',
-  });
+  };
 }
 
 export default () =>

@@ -39,8 +39,6 @@ const compareWithCurrent = {
       trackVersioning.setData(editorData.entity.data, snapshot);
       trackVersioning.opened($stateParams.source);
 
-      $scope.context.ready = true;
-
       return {
         snapshot,
         widgets: filter(

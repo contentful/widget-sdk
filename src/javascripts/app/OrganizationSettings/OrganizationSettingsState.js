@@ -1,5 +1,4 @@
 import React from 'react';
-import base from 'states/Base';
 import * as Analytics from 'analytics/Analytics';
 import { subscriptionState } from 'features/organization-subscription';
 import { usageState } from 'features/organization-usage';
@@ -32,17 +31,17 @@ const resolveOrganizationData = [
   ($stateParams) => TokenStore.getOrganization($stateParams.orgId),
 ];
 
-const usersAndInvitationsState = base({
+const usersAndInvitationsState = {
   name: 'users',
   abstract: true,
   params: {
     orgId: '',
   },
   children: [inviteUsersState, userDetailState, usersListState],
-});
+};
 
 // Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.
-const organizationSettings = {
+export const organizationSettings = {
   name: 'organization_settings',
   url: '/organization_settings',
   params: { orgId: '' },
@@ -74,42 +73,40 @@ const organizationSettings = {
   ],
 };
 
-export default [
-  {
-    name: 'new_organization',
-    url: '/organizations/new',
-    navComponent: EmptyNavigationBar,
-    component: () => <AccountView title="Create new organization" />,
+export const newOrganization = {
+  name: 'new_organization',
+  url: '/organizations/new',
+  navComponent: EmptyNavigationBar,
+  component: () => <AccountView title="Create new organization" />,
+};
+
+export const organization = {
+  name: 'organizations',
+  url: '/organizations/:orgId',
+  abstract: true,
+  resolve: {
+    organizationData: resolveOrganizationData,
   },
-  organizationSettings,
-  base({
-    name: 'organizations',
-    url: '/organizations/:orgId',
-    abstract: true,
-    resolve: {
-      organizationData: resolveOrganizationData,
-    },
-    onEnter: [
-      'organizationData',
-      (organizationData) => Analytics.trackContextChange(undefined, organizationData),
-    ],
-    navComponent: OrganizationNavBar,
-    children: [
-      usageState,
-      usersAndInvitationsState,
-      subscriptionState,
-      teamsState,
-      appsState,
-      SSOSetupRoutingState,
-      accessToolsState,
-      billingRoutingState,
-      billing,
-      edit,
-      offsitebackup,
-      spaces,
-      subscription,
-      subscriptionBilling,
-      userGatekeeper,
-    ],
-  }),
-];
+  onEnter: [
+    'organizationData',
+    (organizationData) => Analytics.trackContextChange(undefined, organizationData),
+  ],
+  navComponent: OrganizationNavBar,
+  children: [
+    usageState,
+    usersAndInvitationsState,
+    subscriptionState,
+    teamsState,
+    appsState,
+    SSOSetupRoutingState,
+    accessToolsState,
+    billingRoutingState,
+    billing,
+    edit,
+    offsitebackup,
+    spaces,
+    subscription,
+    subscriptionBilling,
+    userGatekeeper,
+  ],
+};

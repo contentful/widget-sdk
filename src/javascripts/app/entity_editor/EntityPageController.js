@@ -39,7 +39,6 @@ export default ($scope, $state) => {
   $scope.slideStates = [];
   $scope.entityLoads = {};
   $scope.editorsData = {};
-  $scope.context.ready = true;
 
   $scope.getContext = (context) => () => context; // helper for BulkEditor
 
