@@ -3,23 +3,18 @@ import PropTypes from 'prop-types';
 import { get, isUndefined } from 'lodash';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import {
-  getPlansWithSpaces,
-  getProductPlans,
-  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
-} from 'account/pricing/PricingDataProvider';
+import { getPlansWithSpaces, getProductPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
-import { isOrganizationOnTrial, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
+import { isOrganizationOnTrial } from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
-
 import { SubscriptionPage } from '../components/SubscriptionPage';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
@@ -31,23 +26,13 @@ const getSpacePlans = (plans, accessibleSpaces) =>
       const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
       return name1.localeCompare(name2);
     })
-    // Set space.isAccessible to check if current user can go to space details.
     .map((plan) => {
       if (plan.space) {
         const accessibleSpace = accessibleSpaces.find(
           (space) => space.sys.id === plan.space.sys.id
         );
         plan.space.isAccessible = !!accessibleSpace;
-        if (plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME) {
-          plan.space.expiresAt = accessibleSpace && accessibleSpace.trialPeriodEndsAt;
-          plan.space.createdAsPOC =
-            new Date(plan.space.sys.createdAt) < new Date(TRIAL_SPACE_DATE_INTRODUCED_AT);
-        }
       }
-      // plan price is undefined for a free space
-      // later on in the code, we use mathematical ops (like comparison)
-      // using this value which fails. Therefore, setting this to 0
-      // makes all the later usages sane.
       if (isUndefined(plan.price)) {
         plan.price = 0;
       }
