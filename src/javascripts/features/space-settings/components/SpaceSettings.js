@@ -70,9 +70,9 @@ export class SpaceSettings extends React.Component {
       spaceId,
       plan,
       onChangeSpace,
+      createdBy,
     } = this.props;
 
-    const createdBy = getUserName(this.props.createdBy);
     const createdAt = moment.utc(this.props.createdAt).format('DD/MM/YYYY');
 
     return (
@@ -86,7 +86,7 @@ export class SpaceSettings extends React.Component {
             <Typography>
               <Heading>General</Heading>
               <Paragraph testId="space-created-at-by">
-                This space was created by {createdBy} at {createdAt}.
+                This space was created by {getUserName(createdBy)} on {createdAt}.
               </Paragraph>
               <TextField
                 name="space-id"
@@ -173,7 +173,7 @@ SpaceSettings.propTypes = {
   plan: PropTypes.object,
   spaceName: PropTypes.string.isRequired,
   createdAt: PropTypes.string.isRequired,
-  createdBy: PropTypes.object.isRequired,
+  createdBy: PropTypes.object,
   spaceId: PropTypes.string.isRequired,
   showDeleteButton: PropTypes.bool.isRequired,
   showChangeButton: PropTypes.bool.isRequired,

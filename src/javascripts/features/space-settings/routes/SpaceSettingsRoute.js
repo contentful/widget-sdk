@@ -19,6 +19,7 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import { Spinner } from '@contentful/forma-36-react-components';
 import { getSpaceVersion, getOrganization } from 'core/services/SpaceEnvContext/utils';
 import APIClient from 'data/APIClient';
+import { getUser } from 'access_control/OrganizationMembershipRepository';
 
 export class SpaceSettingsRoute extends React.Component {
   state = { plan: null, isLoading: true };
@@ -26,8 +27,9 @@ export class SpaceSettingsRoute extends React.Component {
   static contextType = SpaceEnvContext;
 
   async componentDidMount() {
-    const plan = await this.getSpacePlan();
-    this.setState({ plan: plan, isLoading: false });
+    const [plan, createdBy] = await Promise.all([this.getSpacePlan(), this.getCreatedBy()]);
+
+    this.setState({ plan: plan, createdBy, isLoading: false });
   }
 
   getSpacePlan = async () => {
@@ -42,6 +44,17 @@ export class SpaceSettingsRoute extends React.Component {
     }
 
     return plan;
+  };
+
+  getCreatedBy = async () => {
+    const { currentOrganizationId, currentSpaceData } = this.context;
+    const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
+    try {
+      return await getUser(orgEndpoint, currentSpaceData.sys.createdBy.sys.id);
+    } catch {
+      // user is not a member of the org. just return the link object
+      return currentSpaceData.sys.createdBy;
+    }
   };
 
   handleSaveError = (err) => {
@@ -132,7 +145,8 @@ export class SpaceSettingsRoute extends React.Component {
             spaceId={currentSpaceId}
             showDeleteButton={isOwnerOrAdmin(organization)}
             showChangeButton={isOwnerOrAdmin(organization)}
-            {...currentSpaceData.sys}
+            createdAt={currentSpaceData.sys.createdAt}
+            createdBy={this.state.createdBy}
           />
         )}
       </React.Fragment>
