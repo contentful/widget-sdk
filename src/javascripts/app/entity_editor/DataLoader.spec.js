@@ -1,58 +1,54 @@
-import * as K from 'test/utils/kefir';
+import * as K from '../../../../test/utils/kefir';
 import _ from 'lodash';
-import sinon from 'sinon';
-import { $initialize, $inject } from 'test/utils/ng';
-import { it } from 'test/utils/dsl';
+
+import * as DataLoader from 'app/entity_editor/DataLoader';
+
+import * as WidgetRenderable from 'widgets/WidgetRenderable';
+import * as LocaleStore from 'services/localeStore';
+import * as ProductCatalog from 'data/CMA/ProductCatalog';
+import * as CustomWidgetLoaderInstance from 'widgets/CustomWidgetLoaderInstance';
+
+jest.mock('widgets/WidgetRenderable');
+jest.mock('services/localeStore');
+jest.mock('data/CMA/ProductCatalog');
+jest.mock('widgets/CustomWidgetLoaderInstance');
+
+const $q = { resolve: jest.fn().mockImplementation((...args) => Promise.resolve(...args)) };
 
 describe('app/entity_editor/DataLoader', () => {
+  let stubs, spaceContext, loadEntry, loadAsset, makePrefetchEntryLoader;
   beforeEach(async function () {
-    this.stubs = {
-      buildRenderables: sinon.stub().returns({}),
+    stubs = {
+      buildRenderables: jest.fn().mockReturnValue({}),
     };
 
-    this.system.set('widgets/WidgetRenderable', {
-      buildRenderables: this.stubs.buildRenderables,
-      buildSidebarRenderables: sinon.stub().returns([]),
-      buildEditorsRenderables: sinon.stub().returns([]),
-    });
+    WidgetRenderable.buildRenderables = stubs.buildRenderables;
+    WidgetRenderable.buildSidebarRenderables = jest.fn().mockReturnValue([]);
+    WidgetRenderable.buildEditorsRenderables = jest.fn().mockReturnValue([]);
 
-    this.system.set('services/localeStore', {
-      default: {
-        getPrivateLocales: sinon.stub().returns([]),
-      },
-    });
+    LocaleStore.default.getPrivateLocales = jest.fn().mockReturnValue([]);
 
-    this.system.set('data/CMA/ProductCatalog', {
-      getOrgFeature: () => Promise.resolve(true),
-    });
+    ProductCatalog.getOrgFeature = () => Promise.resolve(true);
 
-    this.system.set('widgets/CustomWidgetLoaderInstance', {
-      getCustomWidgetLoader: () =>
-        Promise.resolve({
-          getWithEditorInterface: () => Promise.resolve([]),
-        }),
-    });
-
-    this.localeStore = (await this.system.import('services/localeStore')).default;
-
-    const DataLoader = await this.system.import('app/entity_editor/DataLoader');
-
-    await $initialize(this.system);
-
-    const $q = $inject('$q');
+    CustomWidgetLoaderInstance.getCustomWidgetLoader = () =>
+      Promise.resolve({
+        getWithEditorInterface: () => Promise.resolve([]),
+      });
 
     // TODO use space context mock
-    this.spaceContext = {
+    spaceContext = {
       getId: () => 'spaceid',
       getEnvironmentId: () => 'envid',
       space: {
-        getEntry: sinon.spy((id) => $q.resolve({ data: makeEntity(id, 'CTID') })),
+        getEntry: jest
+          .fn()
+          .mockImplementation((id) => $q.resolve({ data: makeEntity(id, 'CTID') })),
         getEntries: function (query) {
           const ids = query['sys.id[in]'].split(',');
           const items = ids.map((id) => ({ data: makeEntity(id, 'CTID') }));
           return $q.resolve(items);
         },
-        getAsset: sinon.spy((id) => $q.resolve({ data: makeEntity(id) })),
+        getAsset: jest.fn().mockImplementation((id) => $q.resolve({ data: makeEntity(id) })),
       },
       publishedCTs: {
         fetch: function (id) {
@@ -60,54 +56,54 @@ describe('app/entity_editor/DataLoader', () => {
         },
       },
       cma: {
-        getEditorInterface: sinon.stub().resolves({}),
+        getEditorInterface: jest.fn().mockResolvedValue({}),
       },
       docPool: {
-        get: sinon.stub(),
+        get: jest.fn(),
       },
       organization: {
         sys: { id: 'orgid' },
       },
     };
 
-    this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);
-    this.loadAsset = _.partial(DataLoader.loadAsset, this.spaceContext);
-    this.makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, this.spaceContext);
+    loadEntry = _.partial(DataLoader.loadEntry, spaceContext);
+    loadAsset = _.partial(DataLoader.loadAsset, spaceContext);
+    makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, spaceContext);
   });
 
   describe('#loadEntry()', function () {
     it('adds entry to context', async function () {
-      const editorData = await this.loadEntry('EID');
-      sinon.assert.calledWith(this.spaceContext.space.getEntry, 'EID');
+      const editorData = await loadEntry('EID');
+      expect(spaceContext.space.getEntry).toHaveBeenCalledWith('EID');
       expect(editorData.entity.data.sys.id).toEqual('EID');
     });
 
     it('adds the entry’s content type to the context', async function () {
-      const editorData = await this.loadEntry('EID');
+      const editorData = await loadEntry('EID');
       expect(editorData.contentType.data.sys.id).toEqual('CTID');
     });
 
     it('requests the editor interface', async function () {
-      await this.loadEntry('EID');
-      sinon.assert.calledWith(this.spaceContext.cma.getEditorInterface, 'CTID');
+      await loadEntry('EID');
+      expect(spaceContext.cma.getEditorInterface).toHaveBeenCalledWith('CTID');
     });
 
     it('builds field controls from editor interface', async function () {
       const ei = { controls: [] };
-      this.spaceContext.cma.getEditorInterface.resolves(ei);
-      await this.loadEntry('EID');
-      sinon.assert.calledWith(this.stubs.buildRenderables, [], sinon.match.array);
+      spaceContext.cma.getEditorInterface.mockResolvedValue(ei);
+      await loadEntry('EID');
+      expect(stubs.buildRenderables).toHaveBeenCalledWith([], expect.any(Array));
     });
 
     it('adds the entry’s field controls to the context', async function () {
       const controls = {};
-      this.stubs.buildRenderables.returns(controls);
-      const editorData = await this.loadEntry('EID');
+      stubs.buildRenderables.mockReturnValue(controls);
+      const editorData = await loadEntry('EID');
       expect(editorData.fieldControls).toBe(controls);
     });
 
     it('adds entityInfo to the context', async function () {
-      const { entityInfo } = await this.loadEntry('EID');
+      const { entityInfo } = await loadEntry('EID');
       expect(entityInfo.id).toBe('EID');
       expect(entityInfo.type).toBe('Entry');
       expect(entityInfo.contentTypeId).toBe('CTID');
@@ -115,7 +111,7 @@ describe('app/entity_editor/DataLoader', () => {
     });
 
     it('only adds specified properties', async function () {
-      const data = await this.loadEntry('EID');
+      const data = await loadEntry('EID');
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
@@ -132,91 +128,96 @@ describe('app/entity_editor/DataLoader', () => {
     });
 
     describe('sanitization', () => {
+      let entry;
       beforeEach(function () {
-        this.entry = makeEntity('EID', 'CTID');
-        this.spaceContext.space.getEntry = sinon.stub().resolves({ data: this.entry });
+        entry = makeEntity('EID', 'CTID');
+        spaceContext.space.getEntry = jest.fn().mockResolvedValue({ data: entry });
       });
 
       it('enforces field object', async function () {
-        this.entry.fields = null;
-        const editorData = await this.loadEntry('EID');
+        entry.fields = null;
+        const editorData = await loadEntry('EID');
         expect(_.isPlainObject(editorData.entity.data.fields)).toBe(true);
       });
 
       it('removes non object fields', async function () {
-        this.entry.fields = null;
-        this.entry.fields = { a: null, b: {} };
-        const editorData = await this.loadEntry('EID');
+        entry.fields = null;
+        entry.fields = { a: null, b: {} };
+        const editorData = await loadEntry('EID');
         expect(Object.keys(editorData.entity.data.fields)).toEqual(['b']);
       });
 
       it('removes unknown locale codes', async function () {
-        this.localeStore.getPrivateLocales.returns([
+        LocaleStore.default.getPrivateLocales.mockReturnValue([
           { internal_code: 'l1' },
           { internal_code: 'l2' },
         ]);
-        this.entry.fields = {
+        entry.fields = {
           a: {
             l1: true,
             l2: true,
             l3: true,
           },
         };
-        const editorData = await this.loadEntry('EID');
+        const editorData = await loadEntry('EID');
         expect(editorData.entity.data.fields.a).toEqual({ l1: true, l2: true });
       });
     });
 
     it('provides #openDoc() delegate', async function () {
-      this.spaceContext.docPool.get.returns('DOC');
-      const editorData = await this.loadEntry('EID');
+      spaceContext.docPool.get.mockReturnValue('DOC');
+      const editorData = await loadEntry('EID');
       const doc = editorData.openDoc();
       expect(doc).toBe('DOC');
-      sinon.assert.calledWith(
-        this.spaceContext.docPool.get,
+      expect(spaceContext.docPool.get).toHaveBeenCalledWith(
         editorData.entity,
-        editorData.contentType
+        editorData.contentType,
+        undefined,
+        undefined
       );
     });
   });
 
   describe('#loadAsset()', () => {
     it('adds asset to context', async function () {
-      const editorData = await this.loadAsset('EID');
-      sinon.assert.calledWith(this.spaceContext.space.getAsset, 'EID');
+      const editorData = await loadAsset('EID');
+      expect(spaceContext.space.getAsset).toHaveBeenCalledWith('EID');
       expect(editorData.entity.data.sys.id).toEqual('EID');
     });
 
     it('builds field controls from asset editor interface', async function () {
-      await this.loadAsset('EID');
-      sinon.assert.calledWith(
-        this.stubs.buildRenderables,
-        [
-          sinon.match({
-            fieldId: 'title',
-            widgetNamespace: 'builtin',
-            widgetId: 'singleLine',
-            field: sinon.match.has('id'),
-          }),
-          sinon.match({
-            fieldId: 'description',
-            widgetNamespace: 'builtin',
-            widgetId: 'multipleLine',
-            field: sinon.match.has('id'),
-          }),
-          sinon.match({
-            fieldId: 'file',
-            widgetNamespace: 'builtin',
-            widgetId: 'fileEditor',
-            field: sinon.match.has('id'),
-          }),
-        ],
-        sinon.match.array
-      );
+      await loadAsset('EID');
+
+      const matchArrayItems = (props, item) => {
+        Object.entries(props).forEach(([key, value]) => {
+          expect(item[key]).toBe(value);
+        });
+        expect(item.field).toHaveProperty('id');
+      };
+
+      const [arg1, arg2] = stubs.buildRenderables.mock.calls[0];
+      expect(arg2).toEqual(expect.any(Array));
+      [
+        {
+          fieldId: 'title',
+          widgetNamespace: 'builtin',
+          widgetId: 'singleLine',
+        },
+        {
+          fieldId: 'description',
+          widgetNamespace: 'builtin',
+          widgetId: 'multipleLine',
+        },
+        {
+          fieldId: 'file',
+          widgetNamespace: 'builtin',
+          widgetId: 'fileEditor',
+        },
+      ].forEach((props, i) => matchArrayItems(props, arg1[i]));
     });
 
     it('only adds specified properties', async function () {
-      const data = await this.loadAsset('EID');
+      const data = await loadAsset('EID');
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
@@ -234,11 +235,11 @@ describe('app/entity_editor/DataLoader', () => {
   });
 
   describe('#makePrefetchEntryLoader()', () => {
-    it('returns editor data', async function () {
+    it('mockReturnValue editor data', async function () {
       const controls = {};
-      this.stubs.buildRenderables.returns(controls);
+      stubs.buildRenderables.mockReturnValue(controls);
 
-      const load = this.makePrefetchEntryLoader(K.constant([]));
+      const load = makePrefetchEntryLoader(K.constant([]));
       const editorData = await load('EID');
 
       expect(editorData.entity.data.sys.id).toEqual('EID');
