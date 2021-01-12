@@ -1,5 +1,6 @@
 // import '@contentful/cypress-pact/add-commands';
 import { Matchers } from '@pact-foundation/pact-web';
+import { makeLink } from '@contentful/types';
 
 import {
   defaultHeader,
@@ -16,32 +17,55 @@ enum BulkActionStates {
   SEVERAL = 'bulk-actions/maximum-number-of-jobs-for-default-space',
 }
 
-const publishPayload = [
-  {
-    sys: {
-      type: 'Link',
-      linkType: 'Entry',
-      id: defaultEntryId,
-      version: 1,
-    },
+const publishPayload = {
+  entities: {
+    items: [
+      {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: defaultEntryId,
+          version: 1,
+        },
+      },
+      {
+        sys: {
+          id: 'testEntryId1',
+          linkType: 'Entry',
+          type: 'Link',
+          version: 1,
+        },
+      },
+      {
+        sys: {
+          id: 'testEntryId2',
+          linkType: 'Entry',
+          type: 'Link',
+          version: 1,
+        },
+      },
+    ],
   },
-  {
+};
+
+const bulkActionResponse = ({ action = 'publish', status = 'created' }) =>
+  Matchers.like({
     sys: {
-      id: 'testEntryId1',
-      linkType: 'Entry',
-      type: 'Link',
-      version: 1,
+      type: 'BulkAction',
+      id: defaultBulkActionTestId,
+      space: makeLink('Space', defaultSpaceId),
+      environment: makeLink('Environment', defaultEnvironmentId),
+      createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+      updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
+      startedAt: Matchers.somethingLike('2020-12-15T17:12:43.252Z'),
+      completedAt:
+        status === 'succeeded' ? Matchers.somethingLike('2020-12-15T17:12:43.252Z') : null,
+      createdBy: makeLink('User', defaultUserId),
+      status,
     },
-  },
-  {
-    sys: {
-      id: 'testEntryId2',
-      linkType: 'Entry',
-      type: 'Link',
-      version: 1,
-    },
-  },
-];
+    action,
+    payload: publishPayload,
+  });
 
 const defaultContentTypeHeader = {
   'Content-Type': 'application/vnd.contentful.management.v1+json',
@@ -66,16 +90,12 @@ const publishBulkActionRequest: any = {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
     headers: defaultHeader,
-    body: Matchers.like({
-      entities: {
-        items: publishPayload,
-      },
-    }),
+    body: Matchers.like(publishPayload),
   },
 };
 
 export const getBulkAction = {
-  willSucceed(): string {
+  willReturnStatusSucceeded(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
       state: BulkActionStates.ONE_COMPLETED,
@@ -84,48 +104,27 @@ export const getBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: Matchers.like({
-          sys: {
-            type: 'BulkAction',
-            id: defaultBulkActionTestId,
-            space: {
-              sys: {
-                type: 'Link',
-                linkType: 'Space',
-                id: defaultSpaceId,
-              },
-            },
-            environment: {
-              sys: {
-                type: 'Link',
-                linkType: 'Environment',
-                id: defaultEnvironmentId,
-              },
-            },
-            createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
-            updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
-            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.252Z'),
-            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
-            createdBy: {
-              sys: {
-                type: 'Link',
-                linkType: 'User',
-                id: defaultUserId,
-              },
-            },
-            status: 'succeeded',
-          },
-          action: 'publish',
-          payload: {
-            entities: {
-              items: publishPayload,
-            },
-          },
-        }),
+        body: bulkActionResponse({ action: 'publish', status: 'succeeded' }),
       },
-    }).as('getBulkAction');
+    }).as('getSucceededBulkAction');
 
-    return '@getBulkAction';
+    return '@getSucceededBulkAction';
+  },
+
+  willReturnStatusFailed(): string {
+    cy.addInteraction({
+      ...getBulkActionRequest,
+      state: BulkActionStates.ONE_FAILED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({ action: 'publish', status: 'failed' }),
+      },
+    }).as('getFailedBulkAction');
+
+    return '@getFailedBulkAction';
   },
 };
 
@@ -139,44 +138,7 @@ export const publishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: Matchers.like({
-          sys: {
-            type: 'BulkAction',
-            id: defaultBulkActionTestId,
-            space: {
-              sys: {
-                type: 'Link',
-                linkType: 'Space',
-                id: defaultSpaceId,
-              },
-            },
-            environment: {
-              sys: {
-                type: 'Link',
-                linkType: 'Environment',
-                id: defaultEnvironmentId,
-              },
-            },
-            createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
-            updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
-            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
-            completedAt: null,
-            createdBy: {
-              sys: {
-                type: 'Link',
-                linkType: 'User',
-                id: defaultUserId,
-              },
-            },
-            status: 'created',
-          },
-          action: 'publish',
-          payload: {
-            entities: {
-              items: publishPayload,
-            },
-          },
-        }),
+        body: bulkActionResponse({ action: 'publish', status: 'created' }),
       },
     }).as('publishBulkAction');
 

@@ -176,7 +176,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     try {
       /**
        * BULK-ACTIONS: If this Feature Flag is enabled, the publish action will
-       * be placed into a queue and processed assynchronously in the new bulk-actions-api.
+       * be placed into a queue and processed asynchronously in the new bulk-actions-api.
        *
        * Otherwise, fallback to the original release/immediate/execute logic
        **/
@@ -189,8 +189,8 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       }
 
       // After publishing, refetch entries
-      dispatch({ type: SET_PROCESSING_ACTION, value: null });
       getReferencesForEntry();
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
 
       Notification.success(
         createSuccessMessage({ selectedEntities, root: references[0], entityTitle })

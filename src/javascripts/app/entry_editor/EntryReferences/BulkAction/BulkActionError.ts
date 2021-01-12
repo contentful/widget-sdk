@@ -1,23 +1,28 @@
-import type { EntityLink } from './BulkActionService';
+import type { Link } from '@contentful/types';
+import { BulkActionErrorEntry } from '@contentful/errors';
 
 export enum BulkActionErrorMessage {
+  Default = 'Could not perform the given action',
+  InvalidEntry = 'Some required fields are missing',
   RateLimitExceededError = 'You have reached the limit for the number of active jobs you can create at this time. Try again in a few minutes.',
-  VersionMismatch = 'A newer version has been recently published. Refresh this page to get the updated content.',
-  Default = 'Something went wrong.',
+  VersionMismatch = 'A new version has already been published',
+  ValidationFailed = 'Validation Failed in some of the fields in this Content',
 }
-interface BulkActionError {
-  entity: EntityLink;
+
+export interface BulkActionErrorJSON extends Omit<BulkActionErrorEntry, 'error'> {
   error: {
     sys: {
-      type: 'Error';
       id: string;
+      type: 'Error';
     };
+    message?: string;
+    details?: object;
   };
 }
 
-interface ErroredEntity extends EntityLink {
+interface ErroredEntity extends Link {
   error: {
-    message: string;
+    message?: string;
   };
 }
 
@@ -25,8 +30,10 @@ interface ErroredEntity extends EntityLink {
  * @description
  * Converts the incoming BulkActionError[] to the current expected format in the ReferenceTree.
  * Check: findValidationErrorForEntity function in ../ReferencesTree.js
+ *
+ * Important: if the error already has a `message` property present, this function will still use it.
  * */
-export function convertBulkActionErrors(errors: BulkActionError[]): ErroredEntity[] {
+export function convertBulkActionErrors(errors: BulkActionErrorJSON[]): ErroredEntity[] {
   return errors.map((item) => ({
     sys: { ...item.entity.sys },
     error: {

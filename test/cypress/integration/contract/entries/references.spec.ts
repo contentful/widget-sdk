@@ -150,7 +150,7 @@ describe('Entry references', () => {
     });
   });
 
-  describe.only('FeatureFlag: BulkActions enabled', () => {
+  describe('FeatureFlag: BulkActions enabled', () => {
     beforeEach(() => {
       cy.enableFeatureFlags([
         FeatureFlag.RELEASES,
@@ -166,7 +166,7 @@ describe('Entry references', () => {
       // const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
       const publishEntryTreeInteraction = publishBulkAction.willSucceed();
-      const getBulkActionRequest = getBulkAction.willSucceed();
+      const getBulkActionRequest = getBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -176,7 +176,6 @@ describe('Entry references', () => {
       cy.wait(publishEntryTreeInteraction);
       cy.wait(getBulkActionRequest);
       // cy.wait(getEntryReferencesInteraction);
-
       cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
@@ -212,6 +211,5 @@ function basicServerSetUp(): string[] {
     queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
     queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-    // getBulkAction.willSucceed(),
   ];
 }

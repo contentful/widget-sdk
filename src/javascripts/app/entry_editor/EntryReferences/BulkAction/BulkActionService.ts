@@ -1,17 +1,13 @@
-import type { PublishableEntity, Link } from '@contentful/types';
-import { executeBulkAction, getBulkAction } from '../referencesService';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@contentful/types';
+
+import * as EndpointFactory from 'data/EndpointFactory';
+import { getModule } from 'core/NgRegistry';
+import APIClient, { APIClientError } from 'data/APIClient';
 
 const BULKACTION_REFRESH_MAX_ATTEMPTS = 30; // number of times we want to perform a refresh
-const BULKACTION_REFRESH_INTERVAL = 2000; // wait X amount of time on each refresh
-
-export interface EntityLink {
-  sys: {
-    id: string;
-    linkType: string;
-    type: 'Link';
-    version?: number;
-  };
-}
+const BULK_ACTION_INITIAL_SLEEP_MS = 1000; // Initial sleep to prevent users of waiting more than necessary
+const BULKACTION_REFRESH_INTERVAL_MS = 2000; // wait X amount of time on each refresh
 
 enum BulkActionStatus {
   Created = 'created',
@@ -20,117 +16,109 @@ enum BulkActionStatus {
   Failed = 'failed',
 }
 
-type BulkAction = {
-  sys: {
-    type: 'BulkAction';
-    id: string;
-    space: Link<'Space'>;
-    environment: Link<'Environment'>;
-    startedAt: string;
-    createdAt: string; // timestamp
-    completedAt: string;
-    createdBy: Link<'User'>;
-    status: BulkActionStatus;
-  };
-  action: 'publish';
-  error: {
-    sys: {
-      type: Error;
-      id: string;
-    };
-    message: string;
-    details?: object;
-  };
-};
-
-const entityLink = (entity: PublishableEntity, { includeVersion = false }): EntityLink => {
-  const link: EntityLink = {
-    sys: {
-      id: entity.sys.id,
-      linkType: entity.sys.type,
-      type: 'Link',
-    },
-  };
+function makeVersionedLink({ entity, includeVersion = false }): VersionedLink {
+  const link = makeLink(entity.sys.type, entity.sys.id) as VersionedLink;
 
   if (includeVersion) {
     link.sys.version = entity.sys.version;
   }
 
   return link;
-};
+}
 
 /**
  * Check if an entity exists in a given list of Entities (by id and type)
  **/
-const entityIsIncluded = (entitiesList: EntityLink[], entity: PublishableEntity) => {
-  return entitiesList.some((e) => e.sys.id === entity.sys.id && e.sys.type === entity.sys.type);
+function entityIsAlreadyIncludedInList(entitiesList: VersionedLink[], entity: PublishableEntity) {
+  return entitiesList.some(
+    (item) => item.sys.id === entity.sys.id && item.sys.type === entity.sys.type
+  );
+}
+
+type EntityToLinkOptions = {
+  entities: PublishableEntity[];
+  includeVersion?: boolean;
 };
 
-/**
- * Transform the selectedEntities to a list of unique EntityLinks
- */
-const mapEntities = (entities: PublishableEntity[], { includeVersion = false }): EntityLink[] => {
-  const uniqEntities: EntityLink[] = [];
+function entitiesToLinks({
+  entities,
+  includeVersion = false,
+}: EntityToLinkOptions): VersionedLink[] {
+  const entitiesList: VersionedLink[] = [];
 
   entities.forEach((entity) => {
-    const alreadyIncluded = entityIsIncluded(uniqEntities, entity);
+    const alreadyIncluded = entityIsAlreadyIncludedInList(entitiesList, entity);
 
-    if (!alreadyIncluded) uniqEntities.push(entityLink(entity, { includeVersion }));
+    if (!alreadyIncluded) {
+      entitiesList.push(makeVersionedLink({ entity, includeVersion }));
+    }
   });
 
-  return uniqEntities;
-};
+  return entitiesList;
+}
 
 // Used to conform to the error format expected from ReferencesSidebar and the one thrown by APIClient
-const errorData = ({ error: { details } }: BulkAction) => ({
-  statusCode: 400,
-  data: details,
-});
-
-async function executeActionAndWait({ entities, action }) {
-  let attemptsCount = 0;
-  const bulkAction: BulkAction = await executeBulkAction({ entities, action });
-
-  return new Promise((resolve, reject) => {
-    const refreshInterval = setInterval(async () => {
-      try {
-        const refreshedBulkAction: BulkAction = await getBulkAction(bulkAction.sys.id);
-
-        if (refreshedBulkAction.sys.status === BulkActionStatus.Succeeded) {
-          clearInterval(refreshInterval);
-          resolve(refreshedBulkAction);
-        }
-
-        if (refreshedBulkAction.sys.status === BulkActionStatus.Failed) {
-          clearInterval(refreshInterval);
-          reject(errorData(refreshedBulkAction));
-        }
-
-        attemptsCount += 1;
-
-        if (attemptsCount >= BULKACTION_REFRESH_MAX_ATTEMPTS) {
-          clearInterval(refreshInterval);
-          reject(errorData(refreshedBulkAction));
-        }
-      } catch (error) {
-        clearInterval(refreshInterval);
-        reject(error);
-      }
-    }, BULKACTION_REFRESH_INTERVAL);
-  });
+function toErrorDataFormat({ error: { details } }): APIClientError {
+  return {
+    statusCode: 400,
+    data: { details },
+  };
 }
 
-export async function publishBulkAction(entities) {
-  return executeActionAndWait({
-    entities: mapEntities(entities, { includeVersion: true }),
-    action: 'publish',
-  });
+async function sleep(waitMs) {
+  return new Promise((resolve) => setTimeout(resolve, waitMs));
 }
 
-// Example:
-export async function validateBulkAction(entities) {
-  return executeActionAndWait({
-    entities: mapEntities(entities, { includeVersion: false }),
-    action: 'validate',
-  });
+/**
+ * @description
+ * Given a BulkAction ID, returns if the BulkAction has `succeeded` or `failed`
+ * (or took too long)
+ */
+async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
+  let bulkAction: BulkAction;
+  let remainingAttempts = BULKACTION_REFRESH_MAX_ATTEMPTS;
+
+  // This is to prevent a short-running BulkAction of holding users more than necessary
+  await sleep(BULK_ACTION_INITIAL_SLEEP_MS);
+
+  while (remainingAttempts > 0) {
+    bulkAction = await apiClient().getBulkAction(id);
+
+    if (bulkAction.sys.status === BulkActionStatus.Succeeded) {
+      return bulkAction;
+    }
+
+    if (bulkAction.sys.status === BulkActionStatus.Failed) {
+      throw toErrorDataFormat(bulkAction as any);
+    }
+
+    remainingAttempts--;
+    await sleep(BULKACTION_REFRESH_INTERVAL_MS);
+  }
+
+  throw Error(`BulkAction ${id} is taking too long to refresh.`);
 }
+
+function createEndpoint() {
+  const spaceContext = getModule('spaceContext');
+  return EndpointFactory.createSpaceEndpoint(
+    spaceContext.space.data.sys.id,
+    spaceContext.getAliasId() || spaceContext.getEnvironmentId()
+  );
+}
+
+function apiClient() {
+  return new APIClient(createEndpoint());
+}
+
+async function publishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
+  const items = entitiesToLinks({ entities, includeVersion: true });
+  const bulkAction = await apiClient().createPublishBulkAction({
+    entities: { items },
+  });
+  const finalBulkAction = await waitForBulkActionCompletion({ id: bulkAction.sys.id });
+
+  return finalBulkAction;
+}
+
+export { publishBulkAction };

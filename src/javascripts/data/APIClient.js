@@ -9,6 +9,14 @@ import {
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
 /**
+ *
+ * @typedef {Object} APIClientError
+ * @property {number} statusCode
+ * @property {Object} data
+ * @property {Object} data.details
+ */
+
+/**
  * @description
  * A basic client for the CMA that manages the Content Types,
  * Editor Interfaces, Entries, Entry Snapshots, Assets, Extensions
@@ -405,32 +413,20 @@ APIClient.prototype.executeRelease = function (action, entities, id = 'immediate
 };
 
 /**
- * @description
- * Executes a given BulkAction (publish only) on multiple entries/assets
- *
- * **action='publish'** it's necessary to specify a VersionedLink[]
- *
- * @param {Object} params
- * @param {string} params.action
- * @param {Object[]} params.entities
- * @return {Promise}
+ * @param {Object} payload
+ * @returns {Promise<import('@contentful/types').BulkAction>}
  */
-APIClient.prototype.executeBulkAction = function ({ action = 'publish', entities = [] }) {
+APIClient.prototype.createPublishBulkAction = function (payload) {
   return this._request({
     method: 'POST',
-    path: ['bulk_actions', action],
-    data: {
-      entities: {
-        items: entities,
-      },
-    },
+    path: ['bulk_actions', 'publish'],
+    data: payload,
   });
 };
 
 /**
- * @description
- * Fetch a BulkAction by Id
  * @param {string} id
+ * @returns {Promise<import('@contentful/types').BulkAction>}
  */
 APIClient.prototype.getBulkAction = function (id) {
   return this._request({

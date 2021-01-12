@@ -50,17 +50,6 @@ async function publishEntities({ entities, action }) {
   return apiClient.executeRelease(action, entities);
 }
 
-// Used whenever the LaunchDarkly Flag is enabled
-async function executeBulkAction({ entities, action }) {
-  const apiClient = new APIClient(createEndpoint());
-  return apiClient.executeBulkAction({ action, entities });
-}
-
-async function getBulkAction(id) {
-  const apiClient = new APIClient(createEndpoint());
-  return apiClient.getBulkAction(id);
-}
-
 export {
   getReferencesForEntryId,
   getDefaultLocale,
@@ -68,6 +57,4 @@ export {
   getUserInfo,
   validateEntities,
   publishEntities,
-  executeBulkAction,
-  getBulkAction,
 };

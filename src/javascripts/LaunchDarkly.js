@@ -84,6 +84,8 @@ const FALLBACK_VALUES = {
   [FLAGS.PATCH_ENTRY_UPDATES]: false,
   [FLAGS.COMPOSE_APP_LISTING_EAP]: false,
   [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
+
+  // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
   // See above
