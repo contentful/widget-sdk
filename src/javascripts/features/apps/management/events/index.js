@@ -1,1 +1,1 @@
-export { AppEvents } from './AppEvents';
+export { AppEvents, validate } from './AppEvents';

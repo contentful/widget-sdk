@@ -16,9 +16,12 @@ jest.mock('detect-browser', () => ({
 
 const props = {
   definition: mockDefinitions[0],
+  events: { enabled: false, targetUrl: '', topics: [] },
   goToListView: noop,
   goToTab: jest.fn(),
   tab: '',
+  setRequestLeaveConfirmation: jest.fn(),
+  setDirty: jest.fn(),
 };
 
 describe('AppDetails', () => {

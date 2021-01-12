@@ -8,7 +8,7 @@ describe('validate', () => {
       locations: [{ location: 'dialog' }],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toStrictEqual([]);
   });
 
@@ -19,7 +19,7 @@ describe('validate', () => {
       locations: [{ location: 'dialog' }],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toHaveLength(1);
     expect(result[0].path).toStrictEqual(['name']);
   });
@@ -31,7 +31,7 @@ describe('validate', () => {
       locations: [{ location: 'dialog' }],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toStrictEqual([]);
   });
 
@@ -42,7 +42,7 @@ describe('validate', () => {
       locations: [{ location: 'dialog' }],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toHaveLength(1);
     expect(result[0].path).toStrictEqual(['src']);
   });
@@ -56,7 +56,7 @@ describe('validate', () => {
           locations: [{ location: 'dialog' }],
         };
 
-        const result = validate(definition);
+        const result = validate(definition, []);
         expect(result).toHaveLength(0);
       });
     }
@@ -72,7 +72,7 @@ describe('validate', () => {
       ],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toHaveLength(1);
     expect(result[0].path).toStrictEqual(['locations', 'page', 'navigationItem', 'name']);
   });
@@ -87,7 +87,7 @@ describe('validate', () => {
       ],
     };
 
-    const result = validate(definition);
+    const result = validate(definition, []);
     expect(result).toHaveLength(1);
     expect(result[0].path).toStrictEqual(['locations', 'page', 'navigationItem', 'path']);
   });

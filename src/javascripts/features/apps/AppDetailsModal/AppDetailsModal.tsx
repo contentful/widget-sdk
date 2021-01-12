@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
 import { Modal } from '@contentful/forma-36-react-components';
+import { MarketplaceApp } from 'features/apps-core';
+import React, { useState } from 'react';
+import { AppManager } from '../AppOperations';
 import { AppDetails } from './AppDetails';
 import { SpaceInformation } from './shared';
-import { MarketplaceApp } from 'features/apps-core';
-import { AppManager } from '../AppOperations';
 
-interface AppDetailsModalProps {
+interface Props {
   isShown: boolean;
-  onClose: Function;
+  onClose: () => void;
   app: MarketplaceApp;
   appManager: AppManager;
   spaceInformation: SpaceInformation;
@@ -17,12 +17,10 @@ interface AppDetailsModalProps {
   isContentfulApp?: boolean;
 }
 
-export function AppDetailsModal(props: AppDetailsModalProps) {
+export function AppDetailsModal(props: Props) {
   const [showPermissions, setShowPermissions] = useState(false);
-
   const modalTitle = showPermissions ? `Install ${props.app.title}` : 'App details';
   const modalSize = showPermissions ? undefined : '1000px';
-
   return (
     <Modal
       allowHeightOverflow
@@ -42,6 +40,7 @@ export function AppDetailsModal(props: AppDetailsModalProps) {
         setShowPermissions={setShowPermissions}
         usageExceeded={props.usageExceeded}
         canManageApps={props.canManageApps}
+        isContentfulApp={props.isContentfulApp}
         hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
       />
     </Modal>

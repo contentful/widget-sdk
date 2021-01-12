@@ -1,9 +1,9 @@
-import React from 'react';
+import { Heading, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { TextLink, Heading } from '@contentful/forma-36-react-components';
-import { externalLinkProps } from './shared';
 import { MarketplaceApp } from 'features/apps-core';
+import React from 'react';
+import { externalLinkProps } from './shared';
 
 const styles = {
   icon: css({

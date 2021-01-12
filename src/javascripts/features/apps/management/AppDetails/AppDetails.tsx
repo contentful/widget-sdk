@@ -1,33 +1,43 @@
 import {
   Button,
   CopyButton,
+  Dropdown,
+  DropdownList,
+  DropdownListItem,
+  Flex,
   Heading,
+  Icon,
   ModalLauncher,
   Notification,
   Paragraph,
   Tab,
   TabPanel,
   Tabs,
-  TextLink,
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { AppDefinition } from 'contentful-management/types';
+import deepEqual from 'fast-deep-equal';
 import React from 'react';
-import { AppEditor, validate } from '../AppEditor';
+import { AppEditor, validate as validateDefinition } from '../AppEditor';
 import { ValidationError } from '../AppEditor/types';
 import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
-import { AppEvents } from '../events';
+import { AppEvents, validate as validateEvents } from '../events';
 import { KeyListing } from '../keys/KeyListing';
-import { SigningSecret } from '../SigningSecret';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
+import { SigningSecret } from '../SigningSecret';
 import { TAB_PATHS } from './constants';
+import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
+import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
-function formatDate(date) {
+const ERROR_PATH_DEFINITION = ['definition'];
+const ERROR_PATH_EVENTS = ['events'];
+
+function formatDate(date: string) {
   return new Date(date).toLocaleString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -39,32 +49,52 @@ const userNameCache = {};
 
 interface Props {
   definition: AppDefinition;
+  events: {
+    enabled: boolean;
+    targetUrl: string;
+    topics: string[];
+  };
   goToListView: () => void;
   goToTab: (tab: string) => void;
   tab: string;
+
+  setDirty: (dirty: boolean) => void;
+  setRequestLeaveConfirmation: (fn: () => void) => void;
 }
 
 interface State {
+  dirty: boolean;
   busy: boolean;
   name: string;
+  savedDefinition: AppDefinition;
   definition: AppDefinition;
+  savedEvents: { enabled: boolean; targetUrl: string; topics: string[] };
+  events: { enabled: boolean; targetUrl: string; topics: string[] };
   selectedTab: string;
   creator: string;
   errors: ValidationError[];
+  actionsDropdownOpen: boolean;
 }
 
 export class AppDetails extends React.Component<Props, State> {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
+      dirty: false,
       busy: false,
       name: props.definition.name,
+      savedDefinition: props.definition,
       definition: props.definition,
+      savedEvents: props.events,
+      events: props.events,
       selectedTab: props.tab,
       creator: userNameCache[props.definition.sys.id] || '',
       errors: [],
+      actionsDropdownOpen: false,
     };
+
+    this.props.setRequestLeaveConfirmation(this.openUnsavecChangesDialog);
   }
 
   async componentDidMount() {
@@ -84,30 +114,161 @@ export class AppDetails extends React.Component<Props, State> {
     }
   }
 
+  validate = () => {
+    const errors = [
+      ...validateDefinition(this.state.definition, ERROR_PATH_DEFINITION),
+      ...validateEvents(this.state.events, ERROR_PATH_EVENTS),
+    ];
+    this.setState({ errors });
+    return errors;
+  };
+
+  /**
+   * Only gets called when dirty = true
+   */
+  openUnsavecChangesDialog = async () => {
+    const errors = this.validate();
+
+    if (errors.length > 0) {
+      return await ModalLauncher.open(({ isShown, onClose }) => (
+        <InvalidChangesDialog isShown={isShown} onClose={onClose} />
+      ));
+    }
+
+    return await ModalLauncher.open(({ isShown, onClose }) => (
+      <UnsavedChangesDialog save={this.save} isShown={isShown} onClose={onClose} />
+    ));
+  };
+
+  openSaveConfirmModal = async () => {
+    const errors = this.validate();
+    if (errors.length > 0) {
+      return;
+    }
+
+    await ModalLauncher.open(({ isShown, onClose }) => (
+      <SaveConfirmModal
+        isShown={isShown}
+        name={this.state.definition.name}
+        onConfirm={() => {
+          this.save();
+          onClose();
+        }}
+        onClose={onClose}
+      />
+    ));
+  };
+
   save = async () => {
     this.setState({ busy: true });
 
-    try {
-      const updated = await ManagementApiClient.save(this.state.definition);
-      this.setState({ name: updated.name, definition: updated });
-      Notification.success('App saved successfully.');
-    } catch (err) {
-      if (err.status === 422) {
-        this.setState({
-          errors: err.data.details.errors.map((error) => {
-            if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
-              error.path[1] = this.state.definition.locations![error.path[1]].location;
-            }
-            return error;
-          }),
-        });
-        Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
-      } else {
-        Notification.error("Something went wrong. Couldn't save app details.");
+    const [definitionResult, eventsResult] = await Promise.allSettled([
+      this.saveDefinition(),
+      this.saveEvents(),
+    ]);
+
+    let savedDefinition = this.state.savedDefinition;
+    let savedEvents = this.state.savedEvents;
+
+    const errors: ValidationError[] = [];
+    if (definitionResult.status === 'fulfilled') {
+      savedDefinition = definitionResult.value;
+      this.setState({ savedDefinition });
+      this.updateFormState({ definition: savedDefinition, events: savedEvents });
+    } else {
+      if (definitionResult.reason.status === 422) {
+        errors.push(...definitionResult.reason.data.details.errors);
       }
     }
 
+    if (eventsResult.status === 'fulfilled') {
+      savedEvents = eventsResult.value;
+      this.setState({ savedEvents });
+      this.updateFormState({ definition: savedDefinition, events: savedEvents });
+    } else {
+      if (eventsResult.reason.status === 422) {
+        errors.push(...eventsResult.reason.data.details.errors);
+      }
+    }
+
+    if (errors.length > 0) {
+      this.setState({ errors });
+    }
+
+    if (definitionResult.status === 'fulfilled' && eventsResult.status === 'fulfilled') {
+      Notification.success('App definition and events saved successfully.');
+    } else if (definitionResult.status === 'fulfilled' && eventsResult.status === 'rejected') {
+      Notification.success('App definition saved successfully.');
+      Notification.error(
+        errors.length > 0
+          ? ManagementApiClient.VALIDATION_MESSAGE
+          : "Something went wrong. Couldn't save app events."
+      );
+    } else if (definitionResult.status === 'rejected' && eventsResult.status === 'fulfilled') {
+      Notification.error(
+        errors.length > 0
+          ? ManagementApiClient.VALIDATION_MESSAGE
+          : "Something went wrong. Couldn't save app definition."
+      );
+      Notification.success('App events saved successfully.');
+    } else {
+      Notification.error(
+        errors.length > 0
+          ? ManagementApiClient.VALIDATION_MESSAGE
+          : "Something went wrong. Couldn't save app definition and events."
+      );
+    }
+
     this.setState({ busy: false });
+  };
+
+  saveDefinition = async () => {
+    try {
+      return await ManagementApiClient.save(this.state.definition);
+    } catch (err) {
+      if (err.status === 422) {
+        err.data.details.errors.forEeach((error: ValidationError) => {
+          if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            error.path[1] = this.state.definition.locations![error.path[1]].location;
+          }
+
+          error.path = [...ERROR_PATH_DEFINITION, ...error.path];
+        });
+      }
+
+      throw err;
+    }
+  };
+
+  saveEvents = async () => {
+    try {
+      if (this.state.events.enabled) {
+        const { targetUrl, topics } = await ManagementApiClient.updateAppEvents(
+          this.props.definition.sys.organization.sys.id,
+          this.props.definition.sys.id,
+          {
+            targetUrl: this.state.events.targetUrl,
+            topics: this.state.events.topics,
+          }
+        );
+        return { enabled: true, targetUrl, topics };
+      } else {
+        await ManagementApiClient.deleteAppEvents(
+          this.props.definition.sys.organization.sys.id,
+          this.props.definition.sys.id
+        );
+        return { enabled: false, targetUrl: '', topics: [] };
+      }
+    } catch (err) {
+      if (err.status === 422) {
+        return err.data.details.errors.forEeach((error: ValidationError) => {
+          error.path = [...ERROR_PATH_EVENTS, ...error.path];
+        });
+      }
+
+      throw err;
+    }
   };
 
   delete = async () => {
@@ -121,26 +282,6 @@ export class AppDetails extends React.Component<Props, State> {
       Notification.error('App failed to delete. Please try again');
       this.setState({ busy: false });
     }
-  };
-
-  openSaveConfirmModal = () => {
-    const errors = validate(this.state.definition);
-    this.setState({ errors });
-    if (errors.length > 0) {
-      return;
-    }
-
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <SaveConfirmModal
-        isShown={isShown}
-        name={this.state.definition.name}
-        onConfirm={() => {
-          this.save();
-          onClose();
-        }}
-        onClose={onClose}
-      />
-    ));
   };
 
   openInstallModal = () => {
@@ -163,13 +304,22 @@ export class AppDetails extends React.Component<Props, State> {
     ));
   };
 
-  onTabSelect = (tab) => {
+  onTabSelect = (tab: string) => {
     this.setState({ selectedTab: tab });
     this.props.goToTab(tab);
   };
 
+  updateFormState = ({ events, definition }) => {
+    const dirty =
+      !deepEqual(this.state.savedDefinition, definition) ||
+      !deepEqual(this.state.savedEvents, events);
+
+    this.setState({ events, definition, dirty });
+    this.props.setDirty(dirty);
+  };
+
   render() {
-    const { name, definition, busy, selectedTab } = this.state;
+    const { name, definition, events, savedEvents, errors, busy, selectedTab, dirty } = this.state;
 
     return (
       <Workbench>
@@ -177,9 +327,48 @@ export class AppDetails extends React.Component<Props, State> {
         <Workbench.Header
           title="App details"
           actions={
-            <Button disabled={busy} onClick={this.openInstallModal} testId="app-install">
-              Install to space
-            </Button>
+            <div className="workbench-header__actions">
+              <Dropdown
+                isOpen={this.state.actionsDropdownOpen}
+                onClose={() => this.setState({ actionsDropdownOpen: false })}
+                toggleElement={
+                  <Button
+                    buttonType="muted"
+                    indicateDropdown
+                    onClick={() =>
+                      this.setState({ actionsDropdownOpen: !this.state.actionsDropdownOpen })
+                    }>
+                    Actions
+                  </Button>
+                }>
+                <DropdownList>
+                  <DropdownListItem
+                    onClick={() => {
+                      this.setState({ actionsDropdownOpen: false });
+                      this.openInstallModal();
+                    }}>
+                    Install to space
+                  </DropdownListItem>
+                  <DropdownListItem
+                    onClick={() => {
+                      this.setState({ actionsDropdownOpen: false });
+                      this.openDeleteModal();
+                    }}
+                    testId="app-delete"
+                    isDisabled={busy}>
+                    Delete {name}
+                  </DropdownListItem>
+                </DropdownList>
+              </Dropdown>
+              <Button
+                loading={busy}
+                buttonType="positive"
+                disabled={busy || !dirty}
+                onClick={this.openSaveConfirmModal}
+                testId="app-save">
+                Save
+              </Button>
+            </div>
           }
           onBack={this.props.goToListView}
         />
@@ -211,7 +400,16 @@ export class AppDetails extends React.Component<Props, State> {
                 id={TAB_PATHS.GENERAL}
                 selected={selectedTab === TAB_PATHS.GENERAL}
                 onSelect={this.onTabSelect}>
-                General
+                <Flex alignItems="center">
+                  General
+                  {errors.find((error) => error.path[0] === 'definition') && (
+                    <Icon
+                      color="negative"
+                      icon="InfoCircle"
+                      className={styles.validationErrorIcon}
+                    />
+                  )}
+                </Flex>
               </Tab>
               <Tab
                 id={TAB_PATHS.SECURITY}
@@ -223,36 +421,28 @@ export class AppDetails extends React.Component<Props, State> {
                 id={TAB_PATHS.EVENTS}
                 selected={selectedTab === TAB_PATHS.EVENTS}
                 onSelect={this.onTabSelect}>
-                Events
+                <Flex alignItems="center">
+                  Events
+                  {errors.find((error) => error.path[0] === 'events') && (
+                    <Icon
+                      color="negative"
+                      icon="InfoCircle"
+                      className={styles.validationErrorIcon}
+                    />
+                  )}
+                </Flex>
               </Tab>
             </Tabs>
             {selectedTab === TAB_PATHS.GENERAL && (
               <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
-                <div>
-                  <AppEditor
-                    definition={definition}
-                    onChange={(definition) => this.setState({ definition })}
-                    errors={this.state.errors}
-                    onErrorsChange={(errors) => this.setState({ errors })}
-                  />
-                </div>
-                <div className={styles.formActions}>
-                  <Button
-                    loading={busy}
-                    buttonType="positive"
-                    disabled={busy}
-                    onClick={this.openSaveConfirmModal}
-                    testId="app-save">
-                    Save
-                  </Button>
-                  <TextLink
-                    linkType="negative"
-                    disabled={busy}
-                    onClick={this.openDeleteModal}
-                    testId="app-delete">
-                    Delete {name}
-                  </TextLink>
-                </div>
+                <AppEditor
+                  definition={definition}
+                  onChange={(definition) => this.updateFormState({ events, definition })}
+                  errorPath={ERROR_PATH_DEFINITION}
+                  errors={errors}
+                  onErrorsChange={(errors) => this.setState({ errors })}
+                  disabled={busy}
+                />
               </TabPanel>
             )}
             {selectedTab === TAB_PATHS.SECURITY && (
@@ -263,7 +453,16 @@ export class AppDetails extends React.Component<Props, State> {
             )}
             {selectedTab === TAB_PATHS.EVENTS && (
               <TabPanel id={TAB_PATHS.EVENTS} className={styles.tabPanel}>
-                <AppEvents definition={definition} />
+                <AppEvents
+                  definition={definition}
+                  events={events}
+                  savedEvents={savedEvents}
+                  onChange={(events) => this.updateFormState({ events, definition })}
+                  errorPath={ERROR_PATH_EVENTS}
+                  errors={errors}
+                  onErrorsChange={(errors) => this.setState({ errors })}
+                  disabled={busy}
+                />
               </TabPanel>
             )}
             {

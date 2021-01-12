@@ -1,9 +1,9 @@
+import { css } from 'emotion';
+import { MarketplaceApp } from 'features/apps-core';
 import React, { useEffect } from 'react';
 import * as AppLifecycleTracking from '../AppLifecycleTracking';
 import { AppPermissions } from './AppPermissions';
 import { SpaceInformation } from './shared';
-import { css } from 'emotion';
-import { MarketplaceApp } from 'features/apps-core';
 
 const styles = {
   permissions: css({
@@ -12,11 +12,11 @@ const styles = {
   }),
 };
 
-interface AppPermissionScreenProps {
+interface Props {
   app: MarketplaceApp;
-  onInstall: Function;
-  onCancel: Function;
-  onClose: Function;
+  onInstall: () => void;
+  onCancel: () => void;
+  onClose: (authorized: boolean) => void;
   spaceInformation: SpaceInformation;
 }
 
@@ -26,7 +26,7 @@ export function AppPermissionScreen({
   onCancel,
   onClose,
   spaceInformation,
-}: AppPermissionScreenProps) {
+}: Props) {
   useEffect(() => {
     AppLifecycleTracking.permissionsOpened(app.id);
   }, [app.id]);

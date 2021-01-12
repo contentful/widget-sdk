@@ -32,16 +32,20 @@ const PARAM_LIMIT = 8;
 interface Props {
   parameters: ParameterDefinition[];
   onChange: (parameters: ParameterDefinition[]) => void;
+  errorPath: string[];
   errors: ValidationError[];
   onErrorsChange: (errors: ValidationError[]) => void;
+  showWrongLocationNote: boolean;
   disabled: boolean;
 }
 
 export function InstanceParameterEditor({
   parameters,
   onChange,
+  errorPath = [],
   errors = [],
   onErrorsChange = noop,
+  showWrongLocationNote,
   disabled,
 }: Props) {
   const [newModalOpen, setNewModalOpen] = useState(false);
@@ -52,7 +56,9 @@ export function InstanceParameterEditor({
 
   const handleRemove = (paramIndex: number) => {
     onErrorsChange(
-      errors.filter((error) => !arrayStartsWith(error.path, ['parameters', 'instance']))
+      errors.filter(
+        (error) => !arrayStartsWith(error.path, [...errorPath, 'parameters', 'instance'])
+      )
     );
     onChange(parameters.filter((_, index) => index !== paramIndex));
   };
@@ -74,7 +80,7 @@ export function InstanceParameterEditor({
           </TextLink>
         </HelpText>
 
-        {disabled && (
+        {showWrongLocationNote && (
           <Note className={styles.instanceParameters.note}>
             Instance parameters require the entry field, entry sidebar or entry editor location to
             be enabled.
@@ -116,13 +122,19 @@ export function InstanceParameterEditor({
                     onErrorsChange(
                       errors.filter(
                         (error) =>
-                          !arrayStartsWith(error.path, ['parameters', 'instance', parameterIndex])
+                          !arrayStartsWith(error.path, [
+                            ...errorPath,
+                            'parameters',
+                            'instance',
+                            parameterIndex,
+                          ])
                       )
                     );
                   }}
                   onRemove={() => handleRemove(parameterIndex)}
+                  disabled={disabled}
                   errors={errors}
-                  errorPath={['parameters', 'instance', parameterIndex]}
+                  errorPath={[...errorPath, 'parameters', 'instance', parameterIndex]}
                 />
               ))}
             </TableBody>
@@ -147,11 +159,19 @@ interface ParameterRowProps {
   parameter: ParameterDefinition;
   onChange: (parameter: ParameterDefinition) => void;
   onRemove: () => void;
+  disabled: boolean;
   errors: ValidationError[];
   errorPath: ValidationError['path'];
 }
 
-function ParameterRow({ parameter, onRemove, onChange, errors, errorPath }: ParameterRowProps) {
+function ParameterRow({
+  parameter,
+  onRemove,
+  onChange,
+  disabled,
+  errors,
+  errorPath,
+}: ParameterRowProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -177,6 +197,7 @@ function ParameterRow({ parameter, onRemove, onChange, errors, errorPath }: Para
                 iconProps={{ icon: 'MoreHorizontal' }}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 label="Remove parameter"
+                disabled={disabled}
               />
             }>
             <DropdownList>

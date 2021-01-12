@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
 import { AppListing } from '../management/AppListing';
 import { AppDetails } from '../management/AppDetails';
 import { NewApp } from '../management/NewApp';
@@ -115,18 +114,50 @@ export const managementRoute = {
             }
           },
         ],
+        events: [
+          '$stateParams',
+          async ({ orgId, definitionId }) => {
+            try {
+              const { targetUrl, topics } = await getAppDefinitionLoader(orgId).getAppEvents(
+                definitionId
+              );
+              return { enabled: true, targetUrl, topics };
+            } catch (e) {
+              if (e.status === 404) {
+                return { enabled: false, targetUrl: '', topics: [] };
+              }
+
+              throw e;
+            }
+          },
+        ],
       },
       onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
+        '$scope',
         '$state',
         '$stateParams',
         'definition',
-        ($state, $stateParams, definition) => ({
+        'events',
+        ($scope, $state, $stateParams, definition, events) => ({
           goToListView: () => $state.go('^.list'),
           goToTab: (tab) =>
-            $state.go('^.definitions', { ...$stateParams, tab }, { location: 'replace' }),
+            $state.go(
+              '^.definitions',
+              { ...$stateParams, tab },
+              { location: 'replace', notify: false }
+            ),
           tab: $stateParams.tab,
           definition,
+          events,
+          setRequestLeaveConfirmation: (requestLeaveConfirmation) => {
+            $scope.context.requestLeaveConfirmation = requestLeaveConfirmation;
+            $scope.$applyAsync();
+          },
+          setDirty: (value) => {
+            $scope.context.dirty = value;
+            $scope.$applyAsync();
+          },
         }),
       ],
       component: AppDetails,

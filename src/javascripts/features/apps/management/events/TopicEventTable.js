@@ -11,7 +11,7 @@ import {
   changeAction,
 } from './TopicEventMap';
 
-export function TopicEventTable({ values, onChange, id }) {
+export function TopicEventTable({ values, onChange, id, disabled }) {
   const renderCheckbox = (entityType, action) => {
     const key = `${entityType}.${action}`;
 
@@ -32,6 +32,7 @@ export function TopicEventTable({ values, onChange, id }) {
             labelText={action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
             checked={isActionChecked(values, entityType, action)}
             onChange={(e) => onChange(changeAction(values, entityType, action, e.target.checked))}
+            disabled={disabled}
           />
           {action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
         </label>
@@ -72,4 +73,5 @@ TopicEventTable.propTypes = {
   values: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
 };

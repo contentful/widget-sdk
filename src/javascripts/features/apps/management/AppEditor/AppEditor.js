@@ -29,19 +29,19 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function validate(definition) {
+export function validate(definition, errorPath) {
   const errors = [];
 
   if (isEmpty(definition.name)) {
     errors.push({
-      path: ['name'],
+      path: [...errorPath, 'name'],
       details: 'Please enter an app name',
     });
   }
 
   if (!isEmpty(definition.src) && !SRC_REG_EXP.test(definition.src)) {
     errors.push({
-      path: ['src'],
+      path: [...errorPath, 'src'],
       details: 'Please enter a valid URL',
     });
   }
@@ -51,7 +51,7 @@ export function validate(definition) {
   );
   if (entryFieldLocation && (entryFieldLocation.fieldTypes ?? []).length === 0) {
     errors.push({
-      path: ['locations', 'entry-field', 'fieldTypes'],
+      path: [...errorPath, 'locations', 'entry-field', 'fieldTypes'],
       details: 'Please select at least one field type',
     });
   }
@@ -60,14 +60,14 @@ export function validate(definition) {
   if (pageLocation?.navigationItem) {
     if (isEmpty(pageLocation.navigationItem.name)) {
       errors.push({
-        path: ['locations', 'page', 'navigationItem', 'name'],
+        path: [...errorPath, 'locations', 'page', 'navigationItem', 'name'],
         details: 'Please enter a link name',
       });
     }
 
     if (!pageLocation?.navigationItem.path.startsWith('/')) {
       errors.push({
-        path: ['locations', 'page', 'navigationItem', 'path'],
+        path: [...errorPath, 'locations', 'page', 'navigationItem', 'path'],
         details: 'Please enter a path starting with /',
       });
     }
@@ -76,7 +76,14 @@ export function validate(definition) {
   return errors;
 }
 
-export function AppEditor({ definition, onChange, errors = [], onErrorsChange = noop }) {
+export function AppEditor({
+  definition,
+  onChange,
+  errorPath = [],
+  errors = [],
+  onErrorsChange = noop,
+  disabled,
+}) {
   definition.locations = definition.locations || [];
 
   const clearErrorForField = (path) => {
@@ -186,10 +193,13 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
           testId="app-name-input"
           value={definition.name || ''}
           onChange={(e) => {
-            clearErrorForField(['name']);
+            clearErrorForField([...errorPath, 'name']);
             onChange({ ...definition, name: e.target.value.trim() });
           }}
-          validationMessage={errors.find((error) => isEqual(error.path, ['name']))?.details}
+          validationMessage={
+            errors.find((error) => isEqual(error.path, [...errorPath, 'name']))?.details
+          }
+          textInputProps={{ disabled }}
         />
         <TextField
           className={styles.input()}
@@ -200,10 +210,13 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
           onChange={(e) => {
-            clearErrorForField(['src']);
+            clearErrorForField([...errorPath, 'src']);
             onChange({ ...definition, src: e.target.value.trim() });
           }}
-          validationMessage={errors.find((error) => isEqual(error.path, ['src']))?.details}
+          validationMessage={
+            errors.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details
+          }
+          textInputProps={{ disabled }}
         />
 
         {definition.src && (
@@ -232,7 +245,8 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                         testId={`app-location-${locationValue}`}
                         className={styles.locationToggle}
                         isActive={hasLocation(locationValue)}
-                        onClick={() => toggleLocation(locationValue)}>
+                        onClick={() => toggleLocation(locationValue)}
+                        isDisabled={disabled}>
                         <div className={styles.checkbox}>
                           <div>
                             {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
@@ -275,11 +289,17 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                   key={internalFieldType}
                                   labelText={label}
                                   onChange={() => {
-                                    clearErrorForField(['locations', 'entry-field', 'fieldTypes']);
+                                    clearErrorForField([
+                                      ...errorPath,
+                                      'locations',
+                                      'entry-field',
+                                      'fieldTypes',
+                                    ]);
                                     toggleFieldType(internalFieldType);
                                   }}
                                   checked={hasFieldType(internalFieldType)}
                                   id={`app-entry-field-type-${internalFieldType}`}
+                                  disabled={disabled}
                                 />
                               );
                             })}
@@ -323,6 +343,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 textInputProps={{
                                   maxLength: 40,
                                   placeholder: definition.name,
+                                  disabled,
                                 }}
                                 name="page-link-name"
                                 id="page-link-name"
@@ -332,6 +353,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 helpText="Maximum 40 characters."
                                 onChange={(e) => {
                                   clearErrorForField([
+                                    ...errorPath,
                                     'locations',
                                     'page',
                                     'navigationItem',
@@ -342,6 +364,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 validationMessage={
                                   errors.find((error) =>
                                     isEqual(error.path, [
+                                      ...errorPath,
                                       'locations',
                                       'page',
                                       'navigationItem',
@@ -356,6 +379,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 textInputProps={{
                                   maxLength: 512,
                                   placeholder: '/',
+                                  disabled,
                                 }}
                                 name="page-link-path"
                                 id="page-link-path"
@@ -365,6 +389,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 value={getNavigationItemValue('path')}
                                 onChange={(e) => {
                                   clearErrorForField([
+                                    ...errorPath,
                                     'locations',
                                     'page',
                                     'navigationItem',
@@ -375,6 +400,7 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                                 validationMessage={
                                   errors.find((error) =>
                                     isEqual(error.path, [
+                                      ...errorPath,
                                       'locations',
                                       'page',
                                       'navigationItem',
@@ -420,9 +446,20 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
                   },
                 })
               }
+              errorPath={errorPath}
               errors={errors}
               onErrorsChange={onErrorsChange}
+              showWrongLocationNote={
+                !definition.locations.some(({ location }) =>
+                  [
+                    WidgetLocation.ENTRY_EDITOR,
+                    WidgetLocation.ENTRY_FIELD,
+                    WidgetLocation.ENTRY_SIDEBAR,
+                  ].includes(location)
+                )
+              }
               disabled={
+                disabled ||
                 !definition.locations.some(({ location }) =>
                   [
                     WidgetLocation.ENTRY_EDITOR,
@@ -442,6 +479,8 @@ export function AppEditor({ definition, onChange, errors = [], onErrorsChange = 
 AppEditor.propTypes = {
   definition: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  errorPath: PropTypes.array,
   errors: PropTypes.array,
   onErrorsChange: PropTypes.func,
+  disabled: PropTypes.bool.isRequired,
 };

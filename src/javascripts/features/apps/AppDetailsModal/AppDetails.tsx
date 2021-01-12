@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Button,
   HelpText,
@@ -8,19 +7,20 @@ import {
   Subheading,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
-import MarkdownRenderer from 'app/common/MarkdownRenderer';
-import { externalLinkProps, SpaceInformation } from './shared';
-import { AppPermissionScreen } from './AppPermissionsScreen';
-import { AppHeader } from './AppHeader';
 import tokens from '@contentful/forma-36-tokens';
+import MarkdownRenderer from 'app/common/MarkdownRenderer';
+import StateLink from 'app/common/StateLink';
 import cx from 'classnames';
-import { css } from 'emotion';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
-import moment from 'moment';
-import { getUsageExceededMessage, hasConfigLocation } from '../utils';
+import { css } from 'emotion';
 import { MarketplaceApp } from 'features/apps-core';
+import moment from 'moment';
+import React from 'react';
 import { AppManager } from '../AppOperations';
+import { getUsageExceededMessage, hasConfigLocation } from '../utils';
+import { AppHeader } from './AppHeader';
+import { AppPermissionScreen } from './AppPermissionsScreen';
+import { externalLinkProps, SpaceInformation } from './shared';
 
 const styles = {
   root: css({
@@ -96,10 +96,10 @@ interface AppDetailsProps {
   app: MarketplaceApp;
   appManager: AppManager;
   spaceInformation: SpaceInformation;
-  onClose: Function;
+  onClose: () => void;
   canManageApps: boolean;
   showPermissions?: boolean;
-  setShowPermissions?: Function;
+  setShowPermissions?: (show: boolean) => void;
   usageExceeded?: boolean;
   hasAdvancedAppsFeature?: boolean;
   isContentfulApp?: boolean;

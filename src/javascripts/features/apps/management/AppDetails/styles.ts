@@ -34,12 +34,6 @@ export const styles = {
     padding: `${tokens.spacingL} 0`,
     marginBottom: tokens.spacing4Xl,
   }),
-  formActions: css({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: tokens.spacing2Xl,
-  }),
   creatorMissing: css({
     opacity: 0,
   }),
@@ -58,5 +52,8 @@ export const styles = {
       opacity: '1',
       transform: 'translateX(0)',
     }),
+  }),
+  validationErrorIcon: css({
+    marginLeft: tokens.spacing2Xs,
   }),
 };

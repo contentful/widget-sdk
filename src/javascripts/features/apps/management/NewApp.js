@@ -23,17 +23,8 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 const styles = {
-  spacerM: css({
-    marginBottom: tokens.spacingM,
-  }),
   spacerXl: css({
     marginBottom: tokens.spacingXl,
-  }),
-  spacer2Xl: css({
-    marginBottom: tokens.spacing2Xl,
-  }),
-  createButton: css({
-    marginBottom: tokens.spacing4Xl,
   }),
 };
 
@@ -93,6 +84,18 @@ export class NewApp extends React.Component {
           title="Create app"
           onBack={this.props.goToListView}
           icon={<ProductIcon icon="Apps" size="large" />}
+          actions={
+            <div className="workbench-header__actions">
+              <Button
+                loading={busy}
+                disabled={busy}
+                buttonType="positive"
+                onClick={this.save}
+                testId="app-create">
+                Create
+              </Button>
+            </div>
+          }
         />
         <Workbench.Content type="text">
           <Note className={styles.spacerXl}>
@@ -109,23 +112,13 @@ export class NewApp extends React.Component {
             </Paragraph>
           </Note>
 
-          <div className={styles.spacer2Xl}>
-            <AppEditor
-              definition={definition}
-              onChange={(definition) => this.setState({ definition })}
-              errors={this.state.errors}
-              onErrorsChange={(errors) => this.setState({ errors })}
-            />
-          </div>
-          <Button
-            className={styles.createButton}
-            loading={busy}
+          <AppEditor
+            definition={definition}
+            onChange={(definition) => this.setState({ definition })}
+            errors={this.state.errors}
+            onErrorsChange={(errors) => this.setState({ errors })}
             disabled={busy}
-            buttonType="positive"
-            onClick={this.save}
-            testId="app-create">
-            Create app
-          </Button>
+          />
         </Workbench.Content>
       </Workbench>
     );
