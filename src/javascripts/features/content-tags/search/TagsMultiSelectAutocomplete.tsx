@@ -1,15 +1,26 @@
-import React, { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
 import { Autocomplete } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import PropTypes from 'prop-types';
-import { summarizeTags } from '../editor/utils';
-import keycodes from 'utils/keycodes';
+import { css } from 'emotion';
 
-function shouldOpenSelector({ keyCode }) {
-  return keyCode === keycodes.DOWN || keyCode === keycodes.ENTER || keyCode === keycodes.SPACE;
+import { FilterOption } from '../core/Types';
+import { Keys } from 'features/entity-search';
+const summarizeTags = (tags: FilterOption[]) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return '';
+  }
+
+  if (tags.length === 1) {
+    return tags[0].label;
+  }
+
+  return `${tags[0].label} and ${tags.length - 1} more`;
+};
+
+function shouldOpenSelector(event: React.KeyboardEvent) {
+  return Keys.arrowDown(event) || Keys.enter(event) || Keys.space(event);
 }
 
 const defaultStyles = {
@@ -26,7 +37,18 @@ const defaultStyles = {
   DropdownCheckboxField: css({ width: '100%' }),
 };
 
-function addOrRemoveTag(currentList, addedOrRemovedTag) {
+type TagsMultiSelectAutocompleteProps = {
+  tags: FilterOption[];
+  selectedTags: FilterOption[];
+  onChange: (tags: FilterOption[]) => void;
+  onQueryChange: (query: string) => void;
+  setIsRemovable: (removable: boolean) => void;
+  maxHeight: number;
+  styles?: Partial<typeof defaultStyles>;
+  isFocused?: boolean;
+};
+
+function addOrRemoveTag(currentList: FilterOption[], addedOrRemovedTag: FilterOption) {
   if (currentList.some(({ value }) => value === addedOrRemovedTag.value)) {
     // remove
     return currentList.filter(({ value }) => value !== addedOrRemovedTag.value);
@@ -45,32 +67,32 @@ const TagsMultiSelectAutocomplete = ({
   maxHeight,
   styles = {},
   isFocused,
-}) => {
-  const [isSearching, setIsSearching] = useState(isFocused);
+}: TagsMultiSelectAutocompleteProps) => {
+  const [isSearching, setIsSearching] = useState<boolean>(isFocused ?? false);
   const [currentTags, setCurrentTags] = useState(selectedTags);
-  const tagsRef = useRef();
+  const tagsRef = useRef<HTMLDivElement>(null);
 
   setIsRemovable(!isSearching);
-
-  const onSelectedTagChange = (tag) => {
-    setCurrentTags((currentTagsState) => addOrRemoveTag(currentTagsState, tag));
-  };
 
   useEffect(() => {
     onChange(currentTags);
   }, [currentTags, onChange]);
 
+  const onSelectedTagChange = (tag: FilterOption) => {
+    setCurrentTags((currentTagsState) => addOrRemoveTag(currentTagsState, tag));
+  };
+
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
   // and the event toggles tags, so two events == the opposite)
-  const tagSelectRow = (tag) => (
+  const tagSelectRow = (tag: FilterOption) => (
     <CheckboxField
       className={styles.DropdownCheckboxField}
       key={tag.value}
       id={tag.value}
       labelText={tag.label}
       formLabelProps={{
-        onClick: (evt) => {
-          evt.preventDefault();
+        onClick: (event: React.MouseEvent<HTMLElement>) => {
+          event.preventDefault();
         },
       }}
       onChange={(evt) => {
@@ -94,14 +116,14 @@ const TagsMultiSelectAutocomplete = ({
     setIsRemovable(true);
   };
 
-  const handleSummaryKeyDown = ({ keyCode }) => {
-    if (shouldOpenSelector({ keyCode })) {
+  const handleSummaryKeyDown = (event: React.KeyboardEvent) => {
+    if (shouldOpenSelector(event)) {
       setIsSearching(true);
     }
   };
 
-  const handleSearchKeyDown = ({ keyCode }) => {
-    if (keyCode === keycodes.TAB) {
+  const handleSearchKeyDown = (event: React.KeyboardEvent) => {
+    if (Keys.tab(event)) {
       onClose();
     }
   };
@@ -111,7 +133,7 @@ const TagsMultiSelectAutocomplete = ({
       <div
         ref={tagsRef}
         onKeyDown={handleSummaryKeyDown}
-        tabIndex="0"
+        tabIndex={0}
         className={css(defaultStyles.TagSummary, styles.TagSummary)}
         onFocus={() => setIsSearching(true)}
         onClick={() => setIsSearching(true)}>
@@ -119,13 +141,11 @@ const TagsMultiSelectAutocomplete = ({
       </div>
       {isSearching && (
         <span onKeyDown={handleSearchKeyDown}>
-          <Autocomplete
+          <Autocomplete<FilterOption>
             items={sortedTags}
             width={'full'}
             onChange={onSelectedTagChange}
             willClearQueryOnClose={true}
-            willUpdateOnSelect={false}
-            takeFocus={true}
             onQueryChange={onQueryChange}
             maxHeight={maxHeight}
             placeholder={'Search for tags'}
@@ -141,6 +161,7 @@ const TagsMultiSelectAutocomplete = ({
               position: 'bottom-left',
               dropdownContainerClassName: 'tag-search-container',
               onClose,
+              children: null,
             }}
             className={css(defaultStyles.Autocomplete, styles.Autocomplete)}>
             {(options) => options.map(tagSelectRow)}
@@ -149,17 +170,6 @@ const TagsMultiSelectAutocomplete = ({
       )}
     </>
   );
-};
-
-TagsMultiSelectAutocomplete.propTypes = {
-  tags: PropTypes.array.isRequired,
-  selectedTags: PropTypes.array.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onQueryChange: PropTypes.func.isRequired,
-  setIsRemovable: PropTypes.func.isRequired,
-  maxHeight: PropTypes.number.isRequired,
-  styles: PropTypes.object,
-  isFocused: PropTypes.bool,
 };
 
 export { TagsMultiSelectAutocomplete };

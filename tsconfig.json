@@ -21,9 +21,9 @@
 
     // enable the following when we ready
     "noImplicitAny": false,
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "testing-library__jest-dom"],
     "resolveJsonModule": true
   },
-  "include": ["./src/javascripts/**/*", "../node_modules/@types/jest"],
+  "include": ["./src/javascripts/**/*"],
   "exclude": ["**/node_modules"]
 }

@@ -7,3 +7,4 @@ export { useSearchController } from './useSearchController';
 export { useListView } from './useListView';
 export { useEntitySelectorSdk } from './EntitySelector/useEntitySelectorSdk';
 export { entitySelector };
+export { Keys } from './Keys';
