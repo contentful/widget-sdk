@@ -15,6 +15,7 @@ import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
 import { GroupingHint } from 'features/content-tags/management/components/GroupingHint';
+import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -45,7 +46,7 @@ const reducer = (state, action) => {
 function validate(state, nameExistsValidator, idExistsValidator) {
   const errors = { id: null };
   if (state.id.length) {
-    if (state.id.startsWith('contentful.')) {
+    if (state.id.startsWith(CONTENTFUL_NAMESPACE)) {
       errors.id =
         'Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.';
     } else if (!isValidResourceId(state.id)) {

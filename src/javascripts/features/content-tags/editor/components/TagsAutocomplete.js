@@ -11,13 +11,13 @@ const styles = {
   }),
 };
 
-const TagsAutocomplete = ({ tags, isLoading, onChange, onQueryChange, disabled, style = {} }) => {
+const TagsAutocomplete = ({ tags, isLoading, onSelect, onQueryChange, disabled, style = {} }) => {
   return (
     <Autocomplete
       items={tags}
       width={'full'}
       onQueryChange={onQueryChange}
-      onChange={onChange}
+      onChange={onSelect}
       isLoading={isLoading}
       placeholder={'search for tags'}
       emptyListMessage={'no tags found'}
@@ -25,7 +25,18 @@ const TagsAutocomplete = ({ tags, isLoading, onChange, onQueryChange, disabled, 
       dropdownProps={{ isFullWidth: true }}
       disabled={disabled}
       className={css(styles.Autocomplete, style)}>
-      {(options) => options.map((option) => <span key={option.value}>{option.label}</span>)}
+      {(options) =>
+        options.map((option) => {
+          if (option.inLineCreation) {
+            return (
+              <span>
+                <strong>{option.label}</strong> (create new)
+              </span>
+            );
+          }
+          return <span key={option.value}>{option.label}</span>;
+        })
+      }
     </Autocomplete>
   );
 };
@@ -34,7 +45,7 @@ TagsAutocomplete.propTypes = {
   tags: PropTypes.array,
   isLoading: PropTypes.bool,
   disabled: PropTypes.bool,
-  onChange: PropTypes.func,
+  onSelect: PropTypes.func,
   onQueryChange: PropTypes.func,
   style: PropTypes.object,
 };

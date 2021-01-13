@@ -1,9 +1,18 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useMemo } from 'react';
-import { Paragraph, Tooltip } from '@contentful/forma-36-react-components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Paragraph,
+  Tooltip,
+  ValidationMessage,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
-import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
+import {
+  useIsInitialLoadingOfTags,
+  useReadTags,
+  useCreateTag,
+} from 'features/content-tags/core/hooks';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 
@@ -13,6 +22,8 @@ import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGro
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
+import * as stringUtils from 'utils/StringUtils';
+import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 
 const styles = {
   wrapper: css({
@@ -25,13 +36,41 @@ const styles = {
 };
 
 const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = 'Tags' }) => {
-  const { isLoading, hasTags } = useReadTags();
-  const { setSearch, filteredTags } = useFilteredTags();
+  const { isLoading, hasTags, addTagInCacheData } = useReadTags();
+  const { createTag, createTagData } = useCreateTag();
+  const { setSearch, filteredTags, search } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
+  const [validTagName, setValidTagName] = useState(true);
 
   const totalSelected = selectedTags.length;
   const maxTagsReached = totalSelected >= TAGS_PER_ENTITY;
+
+  useEffect(() => {
+    if (createTagData) {
+      addTagInCacheData(createTagData);
+      onAdd({ label: createTagData.name, value: createTagData.sys.id });
+    }
+  }, [createTagData, addTagInCacheData, onAdd]);
+
+  const onSelect = useCallback(
+    (item) => {
+      if (!validTagName) {
+        Notification.error(
+          `Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.`,
+          {
+            title: `Tag wasn’t created`,
+          }
+        );
+        return;
+      }
+      if (item.inLineCreation) {
+        return createTag(item.value, item.label);
+      }
+      onAdd(item);
+    },
+    [createTag, onAdd, validTagName]
+  );
 
   const localFilteredTags = useMemo(() => {
     const filtered = orderByLabel(
@@ -44,12 +83,33 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     return filtered.splice(0, Math.min(10, filtered.length));
   }, [filteredTags, selectedTags]);
 
+  useEffect(() => {
+    if (search.startsWith(CONTENTFUL_NAMESPACE)) {
+      return setValidTagName(false);
+    }
+    setValidTagName(true);
+  }, [search]);
+
+  // TODO: optimize some how the .some?
+  if (search && !localFilteredTags.some((tag) => tag.label === search)) {
+    localFilteredTags.push({
+      inLineCreation: true,
+      label: search,
+      value: stringUtils.toIdentifier(search),
+    });
+  }
+
   const renderTags = useMemo(() => {
     return (
       <FieldFocus>
         <div className={styles.wrapper}>
           <Paragraph>{label}</Paragraph>
         </div>
+        {!validTagName && (
+          <ValidationMessage>
+            {` Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.`}
+          </ValidationMessage>
+        )}
         <ConditionalWrapper
           condition={maxTagsReached || disabled}
           wrapper={(children) => (
@@ -69,7 +129,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
           <TagsAutocomplete
             tags={localFilteredTags}
             isLoading={isLoading}
-            onChange={onAdd}
+            onSelect={onSelect}
             disabled={maxTagsReached || disabled}
             onQueryChange={setSearch}
           />
@@ -86,13 +146,14 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     selectedTags,
     localFilteredTags,
     isLoading,
-    onAdd,
+    onSelect,
     setSearch,
     onRemove,
     tagGroups,
     maxTagsReached,
     disabled,
     label,
+    validTagName,
   ]);
 
   if (isInitialLoad) {

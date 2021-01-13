@@ -34,9 +34,9 @@ function useLocalTags(tags, setTags) {
   }, [tags, setLocalTags, data]);
 
   const addTag = useCallback(
-    (tagId) => {
+    (tag) => {
       setLocalTags((prevState) => {
-        const nextState = orderByLabel([...prevState, tagId]);
+        const nextState = orderByLabel([...prevState, tag]);
         setTags(nextState.map(({ value }) => value));
         return nextState;
       });
