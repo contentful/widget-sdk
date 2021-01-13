@@ -96,7 +96,7 @@ const bulkActionResponse = (options: any = { status: 'inProgress', action: 'publ
   });
 
 const defaultContentTypeHeader = {
-  'Content-Type': 'application/vnd.contentful.management.v1+json',
+  'Content-Type': 'application/json',
 };
 
 const defaultBulkActionTestId = 'testBulkActionId';
