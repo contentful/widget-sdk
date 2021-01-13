@@ -354,6 +354,23 @@ describe('states/deeplink/resolver', () => {
     });
   });
 
+  describe('appDefinitionList', () => {
+    beforeEach(() => {
+      getOrg.mockResolvedValue({ orgId: 'some' });
+      checkOrgAccess.mockResolvedValue(true);
+    });
+
+    it('should redirect the user to the appDefinition list for the current org id', async () => {
+      const result = await resolveLink(LinkType.AppDefinitionList, {});
+      expect(result).toEqual({
+        path: ['account', 'organizations', 'apps', 'list'],
+        params: {
+          orgId: 'some',
+        },
+      });
+    });
+  });
+
   describe('#install-extension', () => {
     it('should redirect user to the install extension screen with the url in state params', async function () {
       const space = {

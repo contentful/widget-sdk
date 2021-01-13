@@ -17,6 +17,7 @@ export enum LinkType {
   Org = 'org',
   Apps = 'apps',
   AppDefinition = 'app-definition',
+  AppDefinitionList = 'app-definition-list',
   InstallExtension = 'install-extension',
   WebhookTemplate = 'webhook-template',
   Home = 'home',
@@ -76,6 +77,9 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.WebhookTemplate]: resolveWebhookTemplate,
   [LinkType.Apps]: resolveApps,
   [LinkType.AppDefinition]: resolveAppDefinition,
+  [LinkType.AppDefinitionList]: makeOrgScopedPathResolver({
+    orgScopedPath: ['account', 'organizations', 'apps', 'list'],
+  }),
   [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
