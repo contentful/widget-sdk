@@ -28,13 +28,12 @@ export function enable(user) {
 
 export function logMessage(message, context) {
   callBuffer.call(() => {
-    const { fingerprint, tags, level, extra } = context;
+    const { tags, level, extra } = context;
 
     if (enabled) {
       Sentry.captureMessage(message, {
         level,
         tags,
-        fingerprint,
         extra,
       });
     }

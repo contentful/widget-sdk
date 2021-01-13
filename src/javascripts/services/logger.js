@@ -281,7 +281,6 @@ function _logCorsWarn(message, metaData) {
 function _log(type, severity, message, metadata) {
   metadata = metadata || {};
   metadata.groupingHash = metadata.groupingHash || message;
-  metadata.route = getCurrentStateName();
 
   const augmentedMetadata = augmentMetadata(metadata);
   if (env !== 'production' && env !== 'jest') {
@@ -302,13 +301,13 @@ function _log(type, severity, message, metadata) {
 
   Bugsnag.notify(type, message, augmentedMetadata, severity);
 
-  const { groupingHash: fingerprint, route, ...otherMetadata } = metadata;
+  // We don't care about the groupingHash, Sentry is smart enough in its filtering
+  const { groupingHash: _, ...otherMetadata } = metadata;
 
   Sentry.logMessage(message, {
     level: severity,
-    fingerprint,
     tags: {
-      route,
+      route: getCurrentStateName(),
     },
     extra: {
       ...otherMetadata,
