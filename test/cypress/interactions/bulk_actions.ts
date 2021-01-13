@@ -14,10 +14,10 @@ enum BulkActionStates {
   NO_BULK_ACTIONS = 'bulk-actions/no-bulk-actions-for-default-space',
   ONE_COMPLETED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
   ONE_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
-  SEVERAL = 'bulk-actions/maximum-number-of-jobs-for-default-space',
+  MAX_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs-for-default-space',
 }
 
-const publishPayload = {
+export const publishPayload = {
   entities: {
     items: [
       {
@@ -48,7 +48,35 @@ const publishPayload = {
   },
 };
 
-const bulkActionResponse = ({ action = 'publish', status = 'created' }) =>
+export const versionMismatchError = {
+  sys: {
+    type: 'Error',
+    id: 'BulkActionFailed',
+  },
+  message: 'Not all entities could be resolved',
+  details: {
+    errors: [
+      {
+        error: {
+          sys: {
+            type: 'Error',
+            id: 'VersionMismatch',
+          },
+        },
+        entity: {
+          sys: {
+            linkType: 'Entry',
+            id: defaultEntryId,
+            type: 'Link',
+            version: 1,
+          },
+        },
+      },
+    ],
+  },
+};
+
+const bulkActionResponse = (options: any = { status: 'inProgress', action: 'publish' }) =>
   Matchers.like({
     sys: {
       type: 'BulkAction',
@@ -61,10 +89,10 @@ const bulkActionResponse = ({ action = 'publish', status = 'created' }) =>
       completedAt:
         status === 'succeeded' ? Matchers.somethingLike('2020-12-15T17:12:43.252Z') : null,
       createdBy: makeLink('User', defaultUserId),
-      status,
+      status: options.status,
     },
-    action,
     payload: publishPayload,
+    ...options,
   });
 
 const defaultContentTypeHeader = {
@@ -120,7 +148,11 @@ export const getBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({ action: 'publish', status: 'failed' }),
+        body: bulkActionResponse({
+          action: 'publish',
+          status: 'failed',
+          error: versionMismatchError,
+        }),
       },
     }).as('getFailedBulkAction');
 
@@ -143,5 +175,25 @@ export const publishBulkAction = {
     }).as('publishBulkAction');
 
     return '@publishBulkAction';
+  },
+  willFailWithTooManyRequests(): string {
+    cy.addInteraction({
+      ...publishBulkActionRequest,
+      state: BulkActionStates.MAX_NUMBER_OF_JOBS,
+      willRespondWith: {
+        status: 429,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: {
+          sys: {
+            id: 'RateLimitExceeded',
+            type: 'Error',
+          },
+        },
+      },
+    }).as('publishBulkActionFailure');
+
+    return '@publishBulkActionFailure';
   },
 };

@@ -58,10 +58,10 @@ function entitiesToLinks({
 }
 
 // Used to conform to the error format expected from ReferencesSidebar and the one thrown by APIClient
-function toErrorDataFormat({ error: { details } }): APIClientError {
+function toErrorDataFormat({ error }): APIClientError {
   return {
     statusCode: 400,
-    data: { details },
+    data: { details: error?.details },
   };
 }
 

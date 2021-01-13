@@ -4,7 +4,7 @@ import { BulkActionErrorEntry } from '@contentful/errors';
 export enum BulkActionErrorMessage {
   Default = 'Could not perform the given action',
   InvalidEntry = 'Some required fields are missing',
-  RateLimitExceededError = 'You have reached the limit for the number of active jobs you can create at this time. Try again in a few minutes.',
+  RateLimitExceeded = 'You have reached the limit for the number of active jobs you can create at this time. Try again in a few minutes.',
   VersionMismatch = 'A new version has already been published',
   ValidationFailed = 'Validation Failed in some of the fields in this Content',
 }

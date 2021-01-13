@@ -142,7 +142,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
       }
 
-      if (error.statusCode && error.data.details) {
+      if (error.statusCode && error.data && error.data.details) {
         const errored = convertBulkActionErrors(error.data.details.errors);
         return displayValidation({ errored });
       }
@@ -153,16 +153,16 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           return displayValidation({ errored });
         }
       }
-
-      Notification.error(
-        createErrorMessage({
-          selectedEntities,
-          root: references[0],
-          entityTitle,
-          action: 'publish',
-        })
-      );
     }
+
+    Notification.error(
+      createErrorMessage({
+        selectedEntities,
+        root: references[0],
+        entityTitle,
+        action: 'publish',
+      })
+    );
   };
 
   const handlePublication = async () => {

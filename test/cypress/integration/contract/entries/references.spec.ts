@@ -163,7 +163,6 @@ describe('Entry references', () => {
 
     it('should publish Entities successfully', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithVersion();
-      // const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
       const publishEntryTreeInteraction = publishBulkAction.willSucceed();
       const getBulkActionRequest = getBulkAction.willReturnStatusSucceeded();
@@ -175,11 +174,31 @@ describe('Entry references', () => {
       cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
       cy.wait(getBulkActionRequest);
-      // cy.wait(getEntryReferencesInteraction);
+
       cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'one and 2 references were published successfully');
+    });
+
+    it('should display an error message when a BulkAction fails', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithVersion();
+
+      const publishEntryTreeInteraction = publishBulkAction.willSucceed();
+      const getBulkActionRequest = getBulkAction.willReturnStatusFailed();
+
+      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.findByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+      cy.wait(getBulkActionRequest);
+
+      cy.findByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'Some references did not pass validation');
     });
   });
 });
