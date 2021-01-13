@@ -228,7 +228,10 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
           <Tooltip
             place="top-end"
             content={continueDisabled ? 'Select organization package and space to continue' : ''}>
-            <Button disabled={continueDisabled} onClick={onSubmit}>
+            <Button
+              testId="platform-select-continue-button"
+              disabled={continueDisabled}
+              onClick={onSubmit}>
               Continue
             </Button>
           </Tooltip>

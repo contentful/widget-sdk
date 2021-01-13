@@ -153,15 +153,9 @@ describe('SpacePurchaseContainer', () => {
 
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-    await waitFor(() => {
-      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
-    });
+    expect(screen.getByTestId('new-space-details-section')).toBeVisible();
 
-    userEvent.type(
-      within(screen.getByTestId('space-name')).getByTestId('cf-ui-text-input'),
-      'random space name'
-    );
-
+    fillOutSpaceDetailsForm();
     userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
     await waitFor(() => {
@@ -230,16 +224,12 @@ describe('SpacePurchaseContainer', () => {
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
     // Space Details Page
-    const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
-
-    userEvent.type(input, 'test');
+    fillOutSpaceDetailsForm();
 
     userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
     // Confirmation Page
-    await waitFor(() => {
-      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
-    });
+    expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
   });
 
   describe('analytics tracking', () => {
@@ -265,9 +255,7 @@ describe('SpacePurchaseContainer', () => {
       });
 
       // ------ Space Details page------
-      const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
-
-      userEvent.type(input, 'test');
+      fillOutSpaceDetailsForm();
 
       userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
@@ -278,16 +266,7 @@ describe('SpacePurchaseContainer', () => {
       });
 
       // ------ Billing Details page ------
-      // Fill out all text fields
-      screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
-      });
-
-      const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
-        'cf-ui-select'
-      );
-
-      userEvent.selectOptions(countrySelect, ['Germany']);
+      fillOutBillingDetailsForm();
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
@@ -361,24 +340,13 @@ describe('SpacePurchaseContainer', () => {
       // ------ Space select page------
       userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-      const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
-
       // ------ Space Details page------
-      userEvent.type(input, 'test');
+      fillOutSpaceDetailsForm();
 
       userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
       // ------ Billing Details page ------
-      // Fill out all text fields
-      screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
-      });
-
-      const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
-        'cf-ui-select'
-      );
-
-      userEvent.selectOptions(countrySelect, ['Germany']);
+      fillOutBillingDetailsForm();
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
@@ -407,25 +375,12 @@ describe('SpacePurchaseContainer', () => {
     // ------ Space select page------
     userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
-    const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
-
     // ------ Space Details page------
-    userEvent.type(input, 'test');
-
+    fillOutSpaceDetailsForm();
     userEvent.click(screen.getByTestId('next-step-new-details-page'));
 
     // ------ Billing Details page ------
-    // Fill out all text fields
-    screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-      userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
-    });
-
-    const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
-      'cf-ui-select'
-    );
-
-    userEvent.selectOptions(countrySelect, ['Armenia']);
-
+    fillOutBillingDetailsForm();
     userEvent.click(screen.getByTestId('billing-details.submit'));
 
     // ------ Credit Card page------
@@ -443,6 +398,219 @@ describe('SpacePurchaseContainer', () => {
     // Check all text fields
     screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
       expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);
+    });
+  });
+
+  describe('navigation', () => {
+    beforeEach(() => {
+      getDefaultPaymentMethod.mockResolvedValue({
+        number: '************1111',
+        expirationDate: { month: 3, year: 2021 },
+      });
+    });
+
+    it('sucessful completion of organization without billing details - contentful platform', async () => {
+      await build(null, { purchasingApps: true });
+
+      // 1. Platform selection
+      await waitFor(() => {
+        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      });
+      // select a platform
+      userEvent.click(screen.getAllByTestId('platform-card')[0]);
+
+      // select a space
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // continue
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // Test back navigation
+      expect(screen.getByTestId('space-selection.heading')).toBeDefined();
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      // select a space as it becomes unselected (to be fixed)
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // 2. Space Details
+      fillOutSpaceDetailsForm();
+      userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('billing-details.cancel'));
+      expect(screen.getByTestId('space-selection.heading')).toBeDefined();
+      userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+      // 3. Billing Details
+      fillOutBillingDetailsForm();
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
+      expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
+      // 4. Credit Card Details
+      const successCb = await waitForZuoraToRender();
+      successCb({ success: true, refId: mockRefId });
+
+      // Test back navigation
+      await waitFor(() => {
+        expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      });
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
+      successCb({ success: true, refId: mockRefId });
+
+      // 5. Confirmation
+      await waitFor(() => {
+        expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      });
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      // 6. Reciept Page
+      expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
+    });
+
+    it('sucessful completion of organization with billing details - contentful platform', async () => {
+      await build(null, {
+        purchasingApps: true,
+        organization: { ...mockOrganization, isBillable: true },
+      });
+
+      // 1. Platform selection
+      await waitFor(() => {
+        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      });
+      // select a platform
+      userEvent.click(screen.getAllByTestId('platform-card')[0]);
+
+      // select a space
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // continue
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // Test back navigation
+      expect(screen.getByTestId('space-selection.heading')).toBeDefined();
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      // select a space as it becomes unselected (to be fixed)
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // 2. Space Details
+      fillOutSpaceDetailsForm();
+      userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('space-selection.heading')).toBeDefined();
+      userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+      // 4. Confirmation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      // 6. Reciept Page
+      expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
+    });
+
+    it('sucessful completion of organization without billing details - compose+launch platform', async () => {
+      await build(null, {
+        purchasingApps: true,
+      });
+
+      // 1. Platform selection
+      await waitFor(() => {
+        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      });
+      // select a platform
+      userEvent.click(screen.getAllByTestId('platform-card')[1]);
+
+      // select a space
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // continue
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('billing-details.cancel'));
+      expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      // select a space as it becomes unselected (to be fixed)
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // 2. Billing Details
+      fillOutBillingDetailsForm();
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
+      expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
+      // 3. Credit Card Details
+      const successCb = await waitForZuoraToRender();
+      successCb({ success: true, refId: mockRefId });
+
+      // Test back navigation
+      await waitFor(() => {
+        expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      });
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
+      successCb({ success: true, refId: mockRefId });
+
+      // 4. Confirmation
+      await waitFor(() => {
+        expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      });
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      // 5. Reciept Page
+      expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
+    });
+
+    it('sucessful completion of organization with billing details - compose+launch platform', async () => {
+      await build(null, {
+        purchasingApps: true,
+        organization: { ...mockOrganization, isBillable: true },
+      });
+
+      // 1. Platform selection
+      await waitFor(() => {
+        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      });
+      // select a platform
+      userEvent.click(screen.getAllByTestId('platform-card')[1]);
+
+      // select a space
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // continue
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      // select a space as it becomes unselected (to be fixed)
+      userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // 2. Confirmation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      // 3. Reciept Page
+      expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
   });
 
@@ -520,4 +688,21 @@ async function waitForZuoraToRender() {
   expect(screen.getByTestId('zuora-iframe.iframe-element')).toBeVisible();
 
   return successCb;
+}
+
+function fillOutSpaceDetailsForm() {
+  const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
+  userEvent.type(input, 'test');
+}
+
+function fillOutBillingDetailsForm() {
+  screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
+    userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
+  });
+
+  const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+    'cf-ui-select'
+  );
+
+  userEvent.selectOptions(countrySelect, ['Germany']);
 }

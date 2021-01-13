@@ -98,7 +98,7 @@ export const SpacePurchaseContainer = ({ track }) => {
             track={track}
             onSubmit={() => {
               if (selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
-                goToStep(STEPS.CONFIRMATION);
+                goToStep(organization.isBillable ? STEPS.CONFIRMATION : STEPS.BILLING_DETAILS);
               } else {
                 goToStep(STEPS.SPACE_DETAILS);
               }
@@ -123,7 +123,7 @@ export const SpacePurchaseContainer = ({ track }) => {
       case STEPS.SPACE_DETAILS:
         return (
           <SpaceDetailsStep
-            onBack={() => goToStep(STEPS.SPACE_PLAN_SELECTION)}
+            onBack={() => goToStep(initialStep)}
             track={track}
             onSubmit={() => {
               track(EVENTS.SPACE_DETAILS_ENTERED);
@@ -143,7 +143,13 @@ export const SpacePurchaseContainer = ({ track }) => {
       case STEPS.BILLING_DETAILS:
         return (
           <BillingDetailsStep
-            onBack={() => goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS)}
+            onBack={() => {
+              if (selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
+                goToStep(STEPS.PLATFORM_SELECTION);
+              } else {
+                goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS);
+              }
+            }}
             onSubmit={() => {
               track(EVENTS.BILLING_DETAILS_ENTERED);
 
@@ -171,7 +177,11 @@ export const SpacePurchaseContainer = ({ track }) => {
               if (!organization.isBillable) {
                 goToStep(STEPS.CREDIT_CARD_DETAILS);
               } else if (!currentSpace) {
-                goToStep(STEPS.SPACE_DETAILS);
+                goToStep(
+                  selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH
+                    ? STEPS.PLATFORM_SELECTION
+                    : STEPS.SPACE_DETAILS
+                );
               } else {
                 goToStep(STEPS.SPACE_PLAN_SELECTION);
               }
