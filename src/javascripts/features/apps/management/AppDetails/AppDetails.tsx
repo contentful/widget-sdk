@@ -254,10 +254,12 @@ export class AppDetails extends React.Component<Props, State> {
         );
         return { enabled: true, targetUrl, topics };
       } else {
-        await ManagementApiClient.deleteAppEvents(
-          this.props.definition.sys.organization.sys.id,
-          this.props.definition.sys.id
-        );
+        if (this.state.savedEvents.enabled) {
+          await ManagementApiClient.deleteAppEvents(
+            this.props.definition.sys.organization.sys.id,
+            this.props.definition.sys.id
+          );
+        }
         return { enabled: false, targetUrl: '', topics: [] };
       }
     } catch (err) {
