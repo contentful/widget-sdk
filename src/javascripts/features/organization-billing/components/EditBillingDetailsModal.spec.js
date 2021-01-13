@@ -10,7 +10,7 @@ import { mockEndpoint } from 'data/EndpointFactory';
 
 import { EditBillingDetailsModal } from './EditBillingDetailsModal';
 
-jest.useFakeTimers('modern');
+jest.useFakeTimers();
 
 when(mockEndpoint)
   .calledWith(expect.objectContaining({ path: ['billing_details'], method: 'PUT' }))

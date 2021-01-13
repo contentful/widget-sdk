@@ -13,6 +13,7 @@ jest.mock('core/services/window', () => ({
     ...global.window,
     fetch: jest.fn(),
     location: '',
+    addEventListener: jest.fn(),
   },
 }));
 

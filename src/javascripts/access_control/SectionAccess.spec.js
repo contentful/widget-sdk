@@ -13,7 +13,7 @@ jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
   // thing when mocking `getSectionVisibility`. Because SectionAccess relies on
   // other functions in this file.
-  const AccessChecker = require.requireActual('access_control/AccessChecker');
+  const AccessChecker = jest.requireActual('access_control/AccessChecker');
 
   return {
     ...AccessChecker,
