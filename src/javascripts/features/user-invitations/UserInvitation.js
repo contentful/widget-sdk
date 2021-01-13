@@ -17,6 +17,7 @@ import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
 import { logError } from 'services/logger';
+import StateLink from 'app/common/StateLink';
 
 export function UserInvitation(props) {
   const [accepting, setAccepting] = useState(false);
@@ -125,6 +126,13 @@ export function UserInvitation(props) {
                   You can contact an organization administrator and ask them to send you a new
                   invitation.
                 </Paragraph>
+                <StateLink
+                  path="home"
+                  component={Button}
+                  buttonType="muted"
+                  className="user-invitation--join-org-button">
+                  Go to app
+                </StateLink>
               </div>
             </React.Fragment>
           )}
