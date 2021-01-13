@@ -297,8 +297,8 @@ export class AppDetails extends React.Component<Props, State> {
       <DeleteAppDialog
         isShown={isShown}
         onCancel={onClose}
-        onConfirm={() => {
-          this.delete();
+        onConfirm={async () => {
+          await this.delete();
           onClose();
         }}
         appName={this.state.name}

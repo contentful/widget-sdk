@@ -29,7 +29,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function validate(definition, errorPath) {
+export function validate(definition, errorPath = []) {
   const errors = [];
 
   if (isEmpty(definition.name)) {

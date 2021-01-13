@@ -43,7 +43,7 @@ export class NewApp extends React.Component {
   }
 
   save = async () => {
-    const errors = validate(this.state.definition);
+    const errors = validate(this.state.definition, []);
     if (errors.length > 0) {
       this.setState({ errors });
       return;

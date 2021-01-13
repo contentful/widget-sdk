@@ -62,11 +62,13 @@ export function DeleteAppDialog({ onConfirm, appName, isShown, onCancel }) {
   const [value, setValue] = useState('');
   const [isLoading, setLoading] = useState(false);
 
-  const onConfirmHandler = useCallback(() => {
+  const onConfirmHandler = useCallback(async () => {
     setLoading(true);
-    onConfirm().finally(() => {
+    try {
+      await onConfirm();
+    } finally {
       setLoading(false);
-    });
+    }
   }, [onConfirm]);
 
   return (
