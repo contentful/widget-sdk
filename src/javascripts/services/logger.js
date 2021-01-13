@@ -3,6 +3,7 @@ import stringifySafe from 'json-stringify-safe';
 import { env } from 'Config';
 import * as Bugsnag from 'analytics/Bugsnag';
 import * as Sentry from 'analytics/Sentry';
+import { getCurrentStateName } from 'states/Navigator';
 
 /**
  * Log errors and exceptions to Bugsnag or the console.
@@ -280,6 +281,7 @@ function _logCorsWarn(message, metaData) {
 function _log(type, severity, message, metadata) {
   metadata = metadata || {};
   metadata.groupingHash = metadata.groupingHash || message;
+
   const augmentedMetadata = augmentMetadata(metadata);
   if (env !== 'production' && env !== 'jest') {
     logToConsole(type, severity, message, augmentedMetadata);
@@ -298,9 +300,19 @@ function _log(type, severity, message, metadata) {
   }
 
   Bugsnag.notify(type, message, augmentedMetadata, severity);
-  Sentry.logMessage(message, severity, {
-    ...augmentedMetadata,
-    type,
+
+  // We don't care about the groupingHash, Sentry is smart enough in its filtering
+  const { groupingHash: _, ...otherMetadata } = metadata;
+
+  Sentry.logMessage(message, {
+    level: severity,
+    tags: {
+      route: getCurrentStateName(),
+    },
+    extra: {
+      ...otherMetadata,
+      type,
+    },
   });
 }
 
