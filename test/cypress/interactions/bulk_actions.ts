@@ -19,6 +19,9 @@ enum BulkActionStates {
 
 export const publishPayload = {
   entities: {
+    sys: {
+      type: 'Array',
+    },
     items: [
       {
         sys: {
