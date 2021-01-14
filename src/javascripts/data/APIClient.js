@@ -413,7 +413,7 @@ APIClient.prototype.executeRelease = function (action, entities, id = 'immediate
 };
 
 /**
- * @param {Object} payload
+ * @param {import('@contentful/types').PublishBulkActionPayload} payload
  * @returns {Promise<import('@contentful/types').BulkAction>}
  */
 APIClient.prototype.createPublishBulkAction = function (payload) {

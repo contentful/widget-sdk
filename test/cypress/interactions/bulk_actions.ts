@@ -151,7 +151,7 @@ const publishBulkActionRequest: any = {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
     headers: {
-      'content-type': 'application/json',
+      ...defaultContentTypeHeader,
       ...defaultHeader,
     },
     body: publishPayload,

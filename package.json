@@ -50,7 +50,7 @@
     "@contentful/rich-text-react-renderer": "^14.1.2",
     "@contentful/rich-text-types": "^14.1.2",
     "@contentful/sharejs": "^2.15.0",
-    "@contentful/types": "^14.26.23",
+    "@contentful/types": "^14.27.1",
     "@contentful/validation": "^12.16.6",
     "@contentful/widget-renderer": "^0.15.1",
     "@contentful/worf": "^4.9.4",

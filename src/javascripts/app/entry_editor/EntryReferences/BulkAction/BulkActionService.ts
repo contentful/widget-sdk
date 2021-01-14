@@ -16,8 +16,8 @@ enum BulkActionStatus {
   Failed = 'failed',
 }
 
-function makeVersionedLink({ entity, includeVersion = false }): VersionedLink {
-  const link = makeLink(entity.sys.type, entity.sys.id) as VersionedLink;
+function makeVersionedLink({ entity, includeVersion = false }): VersionedLink<'Asset' | 'Entry'> {
+  const link = makeLink(entity.sys.type, entity.sys.id) as VersionedLink<any>;
 
   if (includeVersion) {
     link.sys.version = entity.sys.version;
@@ -40,11 +40,13 @@ type EntityToLinkOptions = {
   includeVersion?: boolean;
 };
 
+type VersionedCollection = VersionedLink<'Entry' | 'Asset'>[];
+
 function entitiesToLinks({
   entities,
   includeVersion = false,
-}: EntityToLinkOptions): VersionedLink[] {
-  const entitiesList: VersionedLink[] = [];
+}: EntityToLinkOptions): VersionedCollection {
+  const entitiesList: VersionedCollection = [];
 
   entities.forEach((entity) => {
     const alreadyIncluded = entityIsAlreadyIncludedInList(entitiesList, entity);
@@ -114,7 +116,10 @@ function apiClient() {
 async function publishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
   const items = entitiesToLinks({ entities, includeVersion: true });
   const bulkAction = await apiClient().createPublishBulkAction({
-    entities: { items },
+    entities: {
+      sys: { type: 'Array' },
+      items,
+    },
   });
   const finalBulkAction = await waitForBulkActionCompletion({ id: bulkAction.sys.id });
 
