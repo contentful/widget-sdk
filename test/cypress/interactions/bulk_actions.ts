@@ -125,7 +125,7 @@ const bulkActionResponse = (overrides = {}) => {
         updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
         createdBy: makeLink('User', defaultUserId),
       },
-      payload: publishPayload,
+      payload: Matchers.somethingLike(publishPayload),
     },
     overrides
   );
