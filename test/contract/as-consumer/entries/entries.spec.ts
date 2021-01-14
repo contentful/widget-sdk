@@ -1,6 +1,6 @@
 import { Provider } from '@contentful/pact-node-utils';
 import { defaultEntryId } from '../../../cypress/util/requests';
-import { willSucceedGettingDefaultEntry } from './interactions';
+import { willSucceedGettingDefaultEntry, willSucceedPatchingDefaultEntry } from './interactions';
 import { getServerAndClient } from './utils';
 
 type Await<T> = T extends PromiseLike<infer U> ? U : T;
@@ -40,7 +40,7 @@ describe('EntityRepo', () => {
   });
 
   // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip('PATCH requests', () => {
+  describe('PATCH requests', () => {
     describe('when requesting the default entry using the entity repo', () => {
       describe('and getting a success response', () => {
         it('returns the default entry', async () => {
