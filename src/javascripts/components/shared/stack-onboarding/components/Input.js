@@ -32,13 +32,18 @@ class Input extends React.Component {
         )}
         <input
           className="cfnext-form__input"
+          data-test-id="cfnext-form__input"
           type={type}
           value={value}
           placeholder={placeholder}
           onChange={(e) => this.onChange(e)}
           style={{ width }}
         />
-        {error && <p className="cfnext-form__field-error">{error}</p>}
+        {error && (
+          <p className="cfnext-form__field-error" data-test-id="cfnext-form__field-error">
+            {error}
+          </p>
+        )}
       </div>
     );
   }
