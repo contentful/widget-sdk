@@ -18,6 +18,7 @@ import {
   validateEntryReferencesSeveralErrorsResponse,
   publishEntryReferencesSeveralErrorsResponse,
   publishEntryReferencesSeveralSuccessResponse,
+  severalEntryReferencesWithVersionResponse,
 } from '../fixtures/responses/entry-several-references';
 import { Matchers } from '@pact-foundation/pact-web';
 import { ENTRY_REFERENCES_ENDPOINT } from '../../../src/javascripts/alphaHeaders';
@@ -289,6 +290,30 @@ export const getEntryReferences = {
     }).as('getEntryReferences');
 
     return '@getEntryReferences';
+  },
+  willReturnSeveralWithVersion() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.SEVERAL_REFERENCES_FOR_ENTRY,
+      uponReceiving: `get versioned references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
+        headers: {
+          ...defaultHeader,
+          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: severalEntryReferencesWithVersionResponse,
+      },
+    }).as('getVersionedEntryReferences');
+
+    return '@getVersionedEntryReferences';
   },
   willReturnSeveralWithUnresolved() {
     cy.addInteraction({

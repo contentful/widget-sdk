@@ -2,7 +2,7 @@ import cfResolveResponse from 'contentful-resolve-response';
 import { getModule } from 'core/NgRegistry';
 import { newForLocale } from 'app/entity_editor/entityHelpers.js';
 import * as EndpointFactory from 'data/EndpointFactory';
-import APIClient from 'data/APIClient.js';
+import APIClient from 'data/APIClient';
 import TheLocaleStore from 'services/localeStore';
 
 function createEndpoint() {
@@ -45,7 +45,7 @@ function validateEntities({ entities, action }) {
   return apiClient.validateRelease(action, entities);
 }
 
-function publishEntities({ entities, action }) {
+async function publishEntities({ entities, action }) {
   const apiClient = new APIClient(createEndpoint());
   return apiClient.executeRelease(action, entities);
 }

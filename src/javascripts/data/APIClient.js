@@ -9,6 +9,14 @@ import {
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
 /**
+ *
+ * @typedef {Object} APIClientError
+ * @property {number} statusCode
+ * @property {Object} data
+ * @property {Object} data.details
+ */
+
+/**
  * @description
  * A basic client for the CMA that manages the Content Types,
  * Editor Interfaces, Entries, Entry Snapshots, Assets, Extensions
@@ -402,6 +410,29 @@ APIClient.prototype.executeRelease = function (action, entities, id = 'immediate
       ...getAlphaHeader(IMMEDIATE_RELEASE),
     }
   );
+};
+
+/**
+ * @param {import('@contentful/types').PublishBulkActionPayload} payload
+ * @returns {Promise<import('@contentful/types').BulkAction>}
+ */
+APIClient.prototype.createPublishBulkAction = function (payload) {
+  return this._request({
+    method: 'POST',
+    path: ['bulk_actions', 'publish'],
+    data: payload,
+  });
+};
+
+/**
+ * @param {string} id
+ * @returns {Promise<import('@contentful/types').BulkAction>}
+ */
+APIClient.prototype.getBulkAction = function (id) {
+  return this._request({
+    method: 'GET',
+    path: ['bulk_actions', 'actions', id],
+  });
 };
 
 APIClient.prototype.publishContentType = function (data, version) {

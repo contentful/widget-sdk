@@ -43,6 +43,49 @@ export const severalEntryReferencesResponse = {
   },
 };
 
+export const severalEntryReferencesWithVersionResponse = {
+  sys: {
+    type: 'Array',
+  },
+  items: [
+    entry({
+      sys: { id: Matchers.somethingLike(defaultEntryId) },
+      fields: {
+        entryRef1: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'testEntryId1',
+            },
+          },
+        },
+        entryRef2: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'testEntryId2',
+            },
+          },
+        },
+      },
+    }),
+  ],
+  includes: {
+    Entry: [
+      entry({
+        sys: { id: Matchers.somethingLike('testEntryId1'), version: 1, publishedCounter: 0 },
+        fields: {},
+      }),
+      entry({
+        sys: { id: Matchers.somethingLike('testEntryId2'), version: 1, publishedCounter: 0 },
+        fields: {},
+      }),
+    ],
+  },
+};
+
 export const severalEntryReferencesWithUnresolvedResponse = {
   sys: {
     type: 'Array',

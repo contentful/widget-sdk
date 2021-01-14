@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { uniqueId, get, isObject } from 'lodash';
@@ -133,38 +133,40 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     isSliced,
     isTooComplex,
     selectedEntitiesMap,
-    initialUnqiueReferencesAmount,
+    initialUniqueReferencesAmount,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
 
-  useEffect(() => {
-    (async function fetchReferences() {
-      try {
-        const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
-        dispatch({ type: SET_REFERENCES, value: fetchedRefs });
-        dispatch({
-          type: SET_LINKS_COUNTER,
-          value: {
-            assets: get(response, 'includes.Asset.length') || 0,
-            entries: get(response, 'includes.Entry.length') || 0,
-          },
-        });
+  const fetchReferences = useCallback(async () => {
+    try {
+      const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
+      dispatch({ type: SET_REFERENCES, value: fetchedRefs });
+      dispatch({
+        type: SET_LINKS_COUNTER,
+        value: {
+          assets: get(response, 'includes.Asset.length') || 0,
+          entries: get(response, 'includes.Entry.length') || 0,
+        },
+      });
 
-        return fetchedRefs;
-      } catch {
-        dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
-      }
-    })();
+      return fetchedRefs;
+    } catch {
+      dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
+    }
   }, [entity, dispatch]);
+
+  useEffect(() => {
+    (async () => fetchReferences())();
+  }, [fetchReferences]);
 
   const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
 
   useEffect(() => {
-    if (initialUnqiueReferencesAmount !== selectedEntitiesMapSize) {
+    if (initialUniqueReferencesAmount !== selectedEntitiesMapSize) {
       setAllReferencesSelected(false);
     }
-  }, [initialUnqiueReferencesAmount, selectedEntitiesMapSize]);
+  }, [initialUniqueReferencesAmount, selectedEntitiesMapSize]);
 
   if (entity.sys.type === 'Asset' || !hasLinks(entity.fields)) {
     return null;

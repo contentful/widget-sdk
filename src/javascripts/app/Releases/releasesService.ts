@@ -1,7 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import { isEqual, uniqWith } from 'lodash';
 import * as EndpointFactory from 'data/EndpointFactory';
-import APIClient from 'data/APIClient.js';
+import APIClient from 'data/APIClient';
 import { create as createDto } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsFactory.js';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import type { Entity, Link, Release, ReleaseAction } from '@contentful/types';

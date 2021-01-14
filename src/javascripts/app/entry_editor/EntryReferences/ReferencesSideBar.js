@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { isEqual, uniqWith, uniqueId } from 'lodash';
@@ -31,6 +31,10 @@ import {
 } from './state/actions';
 import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { publishBulkAction } from './BulkAction/BulkActionService';
+import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
+import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
+import { onSlideStateChanged } from 'navigation/SlideInNavigator';
 
 const styles = {
   sideBarWrapper: css({
@@ -70,18 +74,36 @@ const SELECTED_ENTITIES_LIMIT = 200;
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
-  const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
+
+  const [isReleaseDialogShown, setReleaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
-  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+  const [isBulkActionSupportEnabled, setIsBulkActionSupportEnabled] = useState(false);
+
+  const spaceContext = useSpaceEnvContext();
+
+  const getReferencesForEntry = useCallback(async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  }, [dispatch, entity]);
 
   useEffect(() => {
-    async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
-      setisAddToReleaseEnabled(isAddToReleaseEnabled);
-    }
+    (async function () {
+      const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
+      const bulkActionEnabled = await getBulkActionSupportFeatureFlag(spaceContext);
 
-    addToReleaseEnabled();
-  });
+      setisAddToReleaseEnabled(addToReleaseEnabled);
+      setIsBulkActionSupportEnabled(bulkActionEnabled);
+    })();
+  }, [spaceContext]);
+
+  useEffect(() => {
+    onSlideStateChanged(getReferencesForEntry);
+
+    return () => {
+      onSlideStateChanged(() => null);
+    };
+  }, [getReferencesForEntry]);
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
@@ -91,7 +113,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       : Notification.success('All references passed validation');
   };
 
-  const handleValidation = () => {
+  const handleValidation = async () => {
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Validating' });
 
     track(trackingEvents.validate, {
@@ -101,18 +123,49 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
     const entitiesToValidate = mapEntities(selectedEntities);
 
-    validateEntities({ entities: entitiesToValidate, action: 'publish' })
-      .then((validationResponse) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        displayValidation(validationResponse);
-      })
-      .catch((_error) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        Notification.error('References validation failed');
+    try {
+      const validationResponse = await validateEntities({
+        entities: entitiesToValidate,
+        action: 'publish',
       });
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      displayValidation(validationResponse);
+    } catch (error) {
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      Notification.error('References validation failed');
+    }
   };
 
-  const handlePublication = () => {
+  const handleError = (error) => {
+    if (isBulkActionSupportEnabled) {
+      if (error.statusCode && error.statusCode === 429) {
+        return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
+      }
+
+      if (error.statusCode && error.data && error.data.details) {
+        const errored = convertBulkActionErrors(error.data.details.errors);
+        return displayValidation({ errored });
+      }
+    } else {
+      if (error.statusCode && error.statusCode === 422) {
+        const errored = error.data.details.errors;
+        if (errored.length && errored[0].sys) {
+          return displayValidation({ errored });
+        }
+      }
+    }
+
+    Notification.error(
+      createErrorMessage({
+        selectedEntities,
+        root: references[0],
+        entityTitle,
+        action: 'publish',
+      })
+    );
+  };
+
+  const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
     track(trackingEvents.publish, {
@@ -120,52 +173,36 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       references_count: selectedEntities.length,
     });
 
-    const entitiesToPublish = mapEntities(selectedEntities);
+    try {
+      /**
+       * BULK-ACTIONS: If this Feature Flag is enabled, the publish action will
+       * be placed into a queue and processed asynchronously in the new bulk-actions-api.
+       *
+       * Otherwise, fallback to the original release/immediate/execute logic
+       **/
 
-    publishEntities({ entities: entitiesToPublish, action: 'publish' })
-      .then(() => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        getReferencesForEntryId(entity.sys.id)
-          .then(({ resolved: fetchedRefs }) =>
-            dispatch({ type: SET_REFERENCES, value: fetchedRefs })
-          )
-          .then(() => {
-            dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+      if (isBulkActionSupportEnabled) {
+        await publishBulkAction(selectedEntities);
+      } else {
+        const entitiesToPublish = mapEntities(selectedEntities);
+        await publishEntities({ entities: entitiesToPublish, action: 'publish' });
+      }
 
-            Notification.success(
-              createSuccessMessage({
-                selectedEntities,
-                root: references[0],
-                entityTitle,
-              })
-            );
-          });
-      })
-      .catch((error) => {
-        dispatch({ type: SET_PROCESSING_ACTION, value: null });
-        /**
-         * Separate validation response from failure response.
-         * Permisson errors have a different shape (without sys).
-         */
-        if (error.statusCode && error.statusCode === 422) {
-          const errored = error.data.details.errors;
-          if (errored.length && errored[0].sys) {
-            return displayValidation({ errored });
-          }
-        }
-        Notification.error(
-          createErrorMessage({
-            selectedEntities,
-            root: references[0],
-            entityTitle,
-            action: 'publish',
-          })
-        );
-      });
+      // After publishing, refetch entries
+      getReferencesForEntry();
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+
+      Notification.success(
+        createSuccessMessage({ selectedEntities, root: references[0], entityTitle })
+      );
+    } catch (error) {
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      handleError(error);
+    }
   };
 
   const handleAddToRelease = () => {
-    setRelaseDialogShown(true);
+    setReleaseDialogShown(true);
   };
 
   const showPublishButtons = !!references.length && create(references[0]).can('publish');
@@ -178,7 +215,9 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     isSelectedEntitesMoreThanLimit;
 
   return (
-    <div className={styles.sideBarWrapper}>
+    <div
+      className={styles.sideBarWrapper}
+      data-flag-references-bulkactions-enabled={isBulkActionSupportEnabled}>
       <header className="entity-sidebar__header">
         <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
           References
@@ -241,7 +280,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           </TextLink>
         </div>
       </Note>
-      {isRelaseDialogShown && (
+      {isReleaseDialogShown && (
         <ReleasesWidgetDialog
           rootEntity={entity}
           selectedEntities={selectedEntities}
@@ -250,7 +289,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
             selectedEntities,
             references[0]
           )}
-          onCancel={() => setRelaseDialogShown(false)}
+          onCancel={() => setReleaseDialogShown(false)}
         />
       )}
     </div>

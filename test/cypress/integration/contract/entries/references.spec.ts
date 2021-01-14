@@ -20,6 +20,7 @@ import {
   queryForScheduledPublishingOnEntryPage,
   queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
+import { getBulkAction, publishBulkAction } from '../../../interactions/bulk_actions';
 
 describe('Entry references', () => {
   let interactions: string[];
@@ -148,6 +149,58 @@ describe('Entry references', () => {
         .should('contain', 'one and 2 references were published successfully');
     });
   });
+
+  describe('FeatureFlag: BulkActions enabled', () => {
+    beforeEach(() => {
+      cy.enableFeatureFlags([
+        FeatureFlag.RELEASES,
+        FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT,
+      ]);
+      cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
+      cy.wait(interactions, { timeout: 20000 });
+      cy.resetAllFakeServers();
+    });
+
+    it('should publish Entities successfully', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithVersion();
+
+      const publishEntryTreeInteraction = publishBulkAction.willSucceed();
+      const getBulkActionRequest = getBulkAction.willReturnStatusSucceeded();
+
+      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.findByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+      cy.wait(getBulkActionRequest);
+
+      cy.findByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'one and 2 references were published successfully');
+    });
+
+    it('should display an error message when a BulkAction fails', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveralWithVersion();
+
+      const publishEntryTreeInteraction = publishBulkAction.willSucceed();
+      const getBulkActionRequest = getBulkAction.willReturnStatusFailed();
+
+      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('selectAllReferences').check();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.findByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+      cy.wait(getBulkActionRequest);
+
+      cy.findByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'Some references did not pass validation');
+    });
+  });
 });
 
 function basicServerSetUp(): string[] {
@@ -155,9 +208,8 @@ function basicServerSetUp(): string[] {
   // TODO: move this to a before block
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases'],
+    providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases', 'bulk-actions'],
     cors: true,
-    pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
     spec: 2,
   });

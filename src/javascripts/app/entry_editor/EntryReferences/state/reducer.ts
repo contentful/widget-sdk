@@ -25,7 +25,7 @@ export type ReferencesState = {
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
   initialReferencesAmount: number;
-  initialUnqiueReferencesAmount: number;
+  initialUniqueReferencesAmount: number;
   referenceTreeKey: string;
   isTooComplex: boolean;
   processingAction: string | null;
@@ -60,7 +60,7 @@ export const initialState: ReferencesState = {
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
   initialReferencesAmount: 0,
-  initialUnqiueReferencesAmount: 0,
+  initialUniqueReferencesAmount: 0,
   referenceTreeKey: uniqueId('id_'),
   isTooComplex: false,
   processingAction: null,
@@ -71,7 +71,7 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
     case SET_REFERENCES:
       return { ...state, references: action.value };
     case SET_INITIAL_UNIQUE_REFERENCES_AMOUNT:
-      return { ...state, initialUnqiueReferencesAmount: action.value };
+      return { ...state, initialUniqueReferencesAmount: action.value };
     case SET_LINKS_COUNTER:
       return { ...state, linksCounter: action.value };
     case SET_SELECTED_ENTITIES:

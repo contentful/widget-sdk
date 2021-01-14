@@ -9,8 +9,10 @@ import { ReferencesContext } from './ReferencesContext';
 import ReferencesSideBar from './ReferencesSideBar';
 
 import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
-
 import { getReleases } from '../../Releases/releasesService';
+
+import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
+import { publishBulkAction } from './BulkAction/BulkActionService';
 
 import {
   entity,
@@ -23,6 +25,10 @@ import {
 } from './__fixtures__';
 
 import { releases } from '../../Releases/__fixtures__';
+import {
+  publishBulkActionSuccessResponse,
+  versionMismatchError as bulkActionVersionMismatchError,
+} from './BulkAction/__fixtures__';
 
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
@@ -52,6 +58,14 @@ jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
   getReleasesFeatureVariation: jest.fn().mockResolvedValue(true),
 }));
 
+jest.mock('./BulkAction/BulkActionService', () => ({
+  publishBulkAction: jest.fn(),
+}));
+
+jest.mock('./BulkAction/BulkActionFeatureFlag', () => ({
+  getBulkActionSupportFeatureFlag: jest.fn(),
+}));
+
 const MockPovider = ({ children, references, selectedEntities, dispatch }) => (
   <ReferencesContext.Provider value={{ state: { references, selectedEntities }, dispatch }}>
     {children}
@@ -66,6 +80,8 @@ describe('ReferencesSideBar component', () => {
   beforeEach(async () => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
+
+    getBulkActionSupportFeatureFlag.mockResolvedValue(false);
 
     getReleases.mockResolvedValue({ items: releases });
     getReferencesForEntryId.mockResolvedValue({
@@ -255,6 +271,62 @@ describe('ReferencesSideBar component', () => {
       expect(getByTestId('validateReferencesBtn')).toBeDisabled();
       expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
       expect(getByTestId('cf-ui-note-reference-limit')).toBeInTheDocument();
+    });
+  });
+
+  describe('FeatureFlag: BulkActions', () => {
+    it('should render the success notification after publication when using BulkActions', async () => {
+      publishBulkAction.mockResolvedValue(publishBulkActionSuccessResponse);
+      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
+
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider references={response} selectedEntities={selectedEntities}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('publishReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
+      });
+    });
+
+    it('should render the failed notification after failed BulkAction', async () => {
+      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
+      publishBulkAction.mockRejectedValue({
+        statusCode: 400,
+        data: bulkActionVersionMismatchError,
+      });
+
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('publishReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({ type: 'SET_VALIDATIONS', value: null });
+        expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+      });
     });
   });
 });
