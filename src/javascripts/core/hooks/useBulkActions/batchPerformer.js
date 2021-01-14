@@ -1,28 +1,12 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
-
 import * as Analytics from 'analytics/Analytics';
 
 import {
   appendDuplicateIndexToEntryTitle,
   alignSlugWithEntryTitle,
 } from 'app/entity_editor/entityHelpers';
-
-const ACTION_NAMES = {
-  publish: 'published',
-  unpublish: 'unpublished',
-  archive: 'archived',
-  unarchive: 'unarchived',
-  delete: 'deleted',
-  duplicate: 'duplicated',
-  save: 'saved',
-};
-
-const ENTITY_PLURAL_NAMES = {
-  Entry: 'Entries',
-  Asset: 'Assets',
-};
+import { ACTION_NAMES } from './constants';
 
 const getEditorData = _.memoize(
   (spaceContext, contentTypeId) => spaceContext.cma.getEditorInterface(contentTypeId),
@@ -43,15 +27,14 @@ export function createBatchPerformer(config) {
     const actions = _.map(config.entities, (entity) => performAction(entity, method));
 
     return Promise.all(actions).then(function handleResults(results) {
-      results = groupBySuccess(results);
-      notifyBatchResult(method, results);
+      const groupedResults = groupBySuccess(results);
       Analytics.track('entity_list:bulk_action_performed', {
         entityType,
         action: method,
-        succeeded_count: results.succeeded.length,
-        failed_count: results.failed.length,
+        succeeded_count: groupedResults.succeeded.length,
+        failed_count: groupedResults.failed.length,
       });
-      return results;
+      return { ...groupedResults, method, rawResults: results, entityType };
     });
   }
 
@@ -140,17 +123,5 @@ export function createBatchPerformer(config) {
       },
       { failed: [], succeeded: [] }
     );
-  }
-
-  function notifyBatchResult(method, results) {
-    const actionName = ACTION_NAMES[method];
-    const entityName = ENTITY_PLURAL_NAMES[entityType];
-
-    if (results.succeeded.length > 0) {
-      Notification.success(`${results.succeeded.length} ${entityName} ${actionName} successfully`);
-    }
-    if (results.failed.length > 0) {
-      Notification.error(`${results.failed.length} ${entityName} could not be ${actionName}`);
-    }
   }
 }

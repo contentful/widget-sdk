@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BatchErrorsModal should render correctly 1`] = `
+<Fragment>
+  <ModalHeader
+    onClose={[MockFunction]}
+    title="Bulk action results"
+  />
+  <ModalContent>
+    <Typography>
+      <Subheading>
+        Success
+      </Subheading>
+      <Paragraph>
+        1 entry saved successfully
+      </Paragraph>
+      <Subheading>
+        Failure
+      </Subheading>
+      <div
+        key="Failed to save 1 entry because a newer version exists."
+      >
+        <Paragraph>
+          Failed to save 1 entry because a newer version exists.
+        </Paragraph>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                Name
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow
+              key="some-entry-id"
+            >
+              <TableCell>
+                <TextLink
+                  onClick={[Function]}
+                >
+                  Entry Title
+                </TextLink>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    </Typography>
+  </ModalContent>
+  <ModalControls>
+    <Button
+      buttonType="muted"
+      onClick={[MockFunction]}
+      testId="close-modal"
+    >
+      Ok, close
+    </Button>
+  </ModalControls>
+</Fragment>
+`;

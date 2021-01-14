@@ -2,6 +2,10 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { useCallback, useMemo } from 'react';
 import { createBatchPerformer } from './batchPerformer';
 
+import { compileResultMessages } from './messages';
+import { Notification } from '@contentful/forma-36-react-components';
+import { openBatchErrorsModal } from './components/BatchErrorsModal';
+
 export const useBulkActions = ({ entityType, entities, updateEntities }) => {
   const performer = useMemo(() => createBatchPerformer({ entityType, entities }), [
     entityType,
@@ -17,10 +21,28 @@ export const useBulkActions = ({ entityType, entities, updateEntities }) => {
     );
   }, []);
 
+  const displayResults = async ({ results, method, entityType }) => {
+    const notificationMessages = await compileResultMessages({ method, results, entityType });
+
+    if (notificationMessages.errors.length === 0 && notificationMessages.success) {
+      return Notification.success(notificationMessages.success);
+    }
+
+    return openBatchErrorsModal({
+      successMessage: notificationMessages.success,
+      errorMessages: notificationMessages.errors,
+    });
+  };
+
   const handleAction = useCallback(
     (func, withUpdate) => async () => {
       const result = await func();
+      const { rawResults, method, entityType } = result;
+
       if (withUpdate) await updateEntities();
+
+      displayResults({ results: rawResults, method, entityType });
+
       return result;
     },
     [updateEntities]
