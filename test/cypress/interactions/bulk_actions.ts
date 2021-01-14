@@ -150,7 +150,10 @@ const publishBulkActionRequest: any = {
   withRequest: {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
-    headers: defaultHeader,
+    headers: {
+      'content-type': 'application/json',
+      ...defaultHeader,
+    },
     body: publishPayload,
   },
 };
