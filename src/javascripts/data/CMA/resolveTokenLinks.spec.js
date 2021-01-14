@@ -3,6 +3,7 @@ import resolveTokenLinks from 'data/CMA/resolveTokenLinks';
 const makeLink = (type, id) => ({ sys: { type: 'Link', linkType: type, id } });
 
 describe('data/CMA/resolveTokenLinks', () => {
+  let tokenData, includes;
   describe('link resolution', () => {
     beforeEach(function () {
       const foo0 = {
@@ -34,47 +35,47 @@ describe('data/CMA/resolveTokenLinks', () => {
         myBrother: makeLink('Baz', '0'),
       };
 
-      this.includes = {
+      includes = {
         Bar: [bar0, bar1],
         Baz: [baz0, baz1],
       };
 
-      this.tokenData = {
+      tokenData = {
         items: [foo0],
-        includes: this.includes,
+        includes: includes,
       };
     });
 
     it('resolves linked items, 1 level deep', function () {
-      const resolved = resolveTokenLinks(this.tokenData);
-      expect(resolved.myBar).toEqual(this.includes.Bar[0]);
+      const resolved = resolveTokenLinks(tokenData);
+      expect(resolved.myBar).toEqual(includes.Bar[0]);
     });
 
     it('resolves nested linked items', function () {
-      const resolved = resolveTokenLinks(this.tokenData);
-      expect(resolved.myBar.myBaz).toEqual(this.includes.Baz[0]);
+      const resolved = resolveTokenLinks(tokenData);
+      expect(resolved.myBar.myBaz).toEqual(includes.Baz[0]);
     });
 
     it('resolves circularly linked items', function () {
-      this.includes.Bar[0].myFoo = makeLink('Foo', '0');
-      const resolved = resolveTokenLinks(this.tokenData);
+      includes.Bar[0].myFoo = makeLink('Foo', '0');
+      const resolved = resolveTokenLinks(tokenData);
       expect(resolved.myBar.myFoo).toEqual(resolved);
     });
 
     it('resolves circular chains of linked items', function () {
-      this.includes.Baz[0].myFoo = makeLink('Foo', '0');
-      const resolved = resolveTokenLinks(this.tokenData);
+      includes.Baz[0].myFoo = makeLink('Foo', '0');
+      const resolved = resolveTokenLinks(tokenData);
       expect(resolved.myBar.myBaz.myFoo).toEqual(resolved);
     });
 
     it('resolves arrays of linked items', function () {
-      const resolved = resolveTokenLinks(this.tokenData);
-      expect(resolved.myBar.myBaz.bars).toEqual([this.includes.Bar[1], this.includes.Bar[0]]);
+      const resolved = resolveTokenLinks(tokenData);
+      expect(resolved.myBar.myBaz.bars).toEqual([includes.Bar[1], includes.Bar[0]]);
     });
 
     it('resolves links in non-referenced include items', function () {
-      resolveTokenLinks(this.tokenData);
-      expect(this.includes.Baz[1].myBrother).toEqual(this.includes.Baz[0]);
+      resolveTokenLinks(tokenData);
+      expect(includes.Baz[1].myBrother).toEqual(includes.Baz[0]);
     });
   });
 
