@@ -2,23 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 import { isOnboardingComplete } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import { cx } from 'emotion';
 
 const Step = ({ id, title, value, link, trackingElementId, active }) => {
-  const classNames = `
-        modern-stack-onboarding--navigation-circle
-        ${id <= active ? 'modern-stack-onboarding--navigation-circle__active' : ''}
-      `;
+  const className = 'modern-stack-onboarding--navigation-circle';
+  const activeClassName = id <= active ? `${className}__active` : '';
+  const classNames = cx(className, activeClassName);
   const linkMarkup =
     id < active ? (
       <WithLink trackingElementId={trackingElementId} link={link}>
         {(move) => (
-          <div className={classNames} onClick={move}>
+          <div className={classNames} onClick={move} data-test-id={activeClassName || className}>
             {value}
           </div>
         )}
       </WithLink>
     ) : (
-      <div className={classNames}>{value}</div>
+      <div className={classNames} data-test-id={activeClassName || className}>
+        {value}
+      </div>
     );
   return (
     <div className="modern-stack-onboarding--navigation-block">
