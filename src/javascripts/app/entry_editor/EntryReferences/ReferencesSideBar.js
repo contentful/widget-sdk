@@ -215,9 +215,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     isSelectedEntitesMoreThanLimit;
 
   return (
-    <div
-      className={styles.sideBarWrapper}
-      data-flag-references-bulkactions-enabled={isBulkActionSupportEnabled}>
+    <div className={styles.sideBarWrapper}>
       <header className="entity-sidebar__header">
         <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
           References
@@ -245,7 +243,8 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         className={styles.spacingTop}
         isFullWidth
         disabled={disableButton}
-        onClick={handlePublication}>
+        onClick={handlePublication}
+        data-flag-references-bulkactions-enabled={isBulkActionSupportEnabled}>
         {selectedEntities.length !== initialReferencesAmount ? 'Publish selected' : 'Publish all'}
       </Button>
       <Button
