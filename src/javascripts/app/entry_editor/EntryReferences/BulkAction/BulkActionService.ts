@@ -124,8 +124,7 @@ async function getUpdatedEntities(entities: PublishableEntity[]): Promise<Publis
   );
 }
 
-async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
-  const entities = await getUpdatedEntities(selectedEntities);
+async function createPublishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
   const items = entitiesToLinks({ entities, includeVersion: true });
 
   const bulkAction = await batchApiClient().createPublishBulkAction({
@@ -134,9 +133,21 @@ async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise
       items,
     },
   });
-  const finalBulkAction = await waitForBulkActionCompletion({ id: bulkAction.sys.id });
 
-  return finalBulkAction;
+  return waitForBulkActionCompletion({ id: bulkAction.sys.id });
 }
 
-export { publishBulkAction };
+async function createValidateBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
+  const items = entitiesToLinks({ entities, includeVersion: false });
+  const bulkAction = await batchApiClient().createValidationBulkAction({
+    action: 'publish',
+    entities: {
+      sys: { type: 'Array' },
+      items,
+    },
+  });
+
+  return waitForBulkActionCompletion({ id: bulkAction.sys.id });
+}
+
+export { createPublishBulkAction, createValidateBulkAction };

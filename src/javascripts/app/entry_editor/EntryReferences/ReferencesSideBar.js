@@ -31,7 +31,7 @@ import {
 } from './state/actions';
 import { validateEntities, getReferencesForEntryId } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { publishBulkAction } from './BulkAction/BulkActionService';
+import { createPublishBulkAction, createValidateBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
 
@@ -101,29 +101,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       : Notification.success('All references passed validation');
   };
 
-  const handleValidation = async () => {
-    dispatch({ type: SET_PROCESSING_ACTION, value: 'Validating' });
-
-    track(trackingEvents.validate, {
-      entity_id: entity.sys.id,
-      references_count: selectedEntities.length,
-    });
-
-    const entitiesToValidate = mapEntities(selectedEntities);
-
-    try {
-      const validationResponse = await validateEntities({
-        entities: entitiesToValidate,
-        action: 'publish',
-      });
-      dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      displayValidation(validationResponse);
-    } catch (error) {
-      dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      Notification.error('References validation failed');
-    }
-  };
-
   const handleError = (error) => {
     if (error.statusCode && error.statusCode === 429) {
       return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
@@ -144,6 +121,35 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     );
   };
 
+  const handleValidation = async () => {
+    dispatch({ type: SET_PROCESSING_ACTION, value: 'Validating' });
+    track(trackingEvents.validate, {
+      entity_id: entity.sys.id,
+      references_count: selectedEntities.length,
+    });
+
+    let validationResponse = {
+      errored: [],
+    };
+
+    try {
+      if (isBulkActionSupportEnabled) {
+        await createValidateBulkAction(selectedEntities);
+      } else {
+        const entitiesToValidate = mapEntities(selectedEntities);
+        validationResponse = await validateEntities({
+          entities: entitiesToValidate,
+          action: 'publish',
+        });
+      }
+      displayValidation(validationResponse);
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+    } catch (error) {
+      dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      handleError(error);
+    }
+  };
+
   const handlePublication = async () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
     dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
@@ -153,7 +159,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     });
 
     try {
-      await publishBulkAction(selectedEntities);
+      await createPublishBulkAction(selectedEntities);
 
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
       getReferencesForEntry();

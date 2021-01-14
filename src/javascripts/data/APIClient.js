@@ -441,6 +441,18 @@ APIClient.prototype.createPublishBulkAction = function (payload) {
 };
 
 /**
+ * @param {import('@contentful/types').ValidateBulkActionPayload} payload
+ * @returns {Promise<import('@contentful/types').BulkAction>}
+ */
+APIClient.prototype.createValidationBulkAction = function (payload) {
+  return this._request({
+    method: 'POST',
+    path: ['bulk_actions', 'validate'],
+    data: payload,
+  });
+};
+
+/**
  * @param {string} id
  * @returns {Promise<import('@contentful/types').BulkAction>}
  */
