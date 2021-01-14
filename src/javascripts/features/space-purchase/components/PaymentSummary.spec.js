@@ -6,16 +6,45 @@ import { SpacePurchaseState } from '../context';
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
+const mockSelectedPlatform = { title: 'Space + Compose + Launch', price: 999 };
+
+const formatPrice = (value) => `$${parseInt(value, 10).toLocaleString('en-US')}`;
 
 describe('PaymentSummary', () => {
-  it('should show the plan name and price', () => {
+  it('should show the plan name and monthly cost', () => {
     build();
 
     expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
       mockSelectedPlan.name
     );
-    expect(screen.getByTestId('order-summary.selected-plan-price')).toHaveTextContent(
+    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
       mockSelectedPlan.price
+    );
+  });
+
+  it('should show the platform and space plan names, prices and monthly cost', () => {
+    build(null, { selectedPlatform: mockSelectedPlatform });
+
+    expect(screen.getByTestId('order-summary.selected-platform')).toHaveTextContent(
+      `${mockSelectedPlatform.title} ${formatPrice(mockSelectedPlatform.price)}`
+    );
+    expect(screen.getByTestId('order-summary.selected-plan')).toHaveTextContent(
+      `${mockSelectedPlan.name} space ${formatPrice(mockSelectedPlan.price)}`
+    );
+    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
+      `Monthly cost ${formatPrice(mockSelectedPlatform.price + mockSelectedPlan.price)}`
+    );
+  });
+
+  it('should show the platform name, price and monthly cost when no space plan is selected', () => {
+    build(null, { selectedPlatform: mockSelectedPlatform, selectedPlan: undefined });
+
+    expect(screen.getByTestId('order-summary.selected-platform')).toHaveTextContent(
+      `${mockSelectedPlatform.title} ${formatPrice(mockSelectedPlatform.price)}`
+    );
+    expect(screen.queryByTestId('order-summary.selected-plan')).toBeNull();
+    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
+      `Monthly cost ${formatPrice(mockSelectedPlatform.price)}`
     );
   });
 

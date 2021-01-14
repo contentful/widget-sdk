@@ -142,12 +142,6 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
         </span>
 
         {PLATFORM_CONTENT.map((platform, idx) => {
-          const content = {
-            title: platform.title,
-            description: platform.description,
-            price: platform.price,
-          };
-
           // If they cannot create a paid space, then they cannot pay for compose+launch either.
           const tooltipText =
             platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
@@ -158,14 +152,17 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
             <ProductCard
               key={idx}
               cardType="platform"
-              selected={selectedPlatform === platform.type}
+              selected={selectedPlatform?.title === platform.title}
               onClick={() => {
-                dispatch({ type: actions.SET_SELECTED_PLATFORM, payload: platform.type });
+                dispatch({
+                  type: actions.SET_SELECTED_PLATFORM,
+                  payload: platform, // TODO: replace this with backend data
+                });
                 scrollToSpaceSelection();
               }}
               tooltipText={tooltipText}
               disabled={!!tooltipText}
-              content={content}
+              content={platform}
               isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
               testId="platform-card"
             />
@@ -194,7 +191,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
         <SpacePlanCards
           spaceRatePlans={spaceRatePlans}
-          selectedPlatform={selectedPlatform}
+          selectedPlatform={selectedPlatform?.title}
           selectedSpacePlanName={selectedPlan?.name}
           canCreateFreeSpace={canCreateFreeSpace}
           canCreatePaidSpace={canCreatePaidSpace}
@@ -205,7 +202,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
         {/* The option to "choose space later" should only be shown when an org has paid spaces and
       selects compose+launch, so they can buy compose+launch without having to buy a new space */}
-        {orgHasPaidSpaces && selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
+        {orgHasPaidSpaces && selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
           <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
             <Card
               className={styles.chooseLaterCard}

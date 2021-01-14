@@ -12,6 +12,12 @@ const mockTrack = jest.fn();
 const mockOnSubmit = jest.fn();
 const mockOrganization = FakeFactory.Organization();
 
+const mockSelectedPlatform = {
+  type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+  title: 'Space + Compose + Launch',
+  price: 999,
+};
+
 const mockProductRatePlans = [
   { name: 'Community', price: 0 },
   { name: 'Medium', price: 489 },
@@ -124,7 +130,7 @@ describe('PlatformSelectionStep', () => {
   describe('Choose Space Later', () => {
     it('should allow users to choose space later if they select Compose+Launch AND have already a paid space in the org', () => {
       build(null, {
-        selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+        selectedPlatform: mockSelectedPlatform,
         subscriptionPlans: mockProductRatePlans,
         spaceRatePlans: mockProductRatePlans,
       });
@@ -134,14 +140,14 @@ describe('PlatformSelectionStep', () => {
     });
 
     it('should restrict users from choosing "space plan later" if they select Compose+Launch AND have no paid space in the org', () => {
-      build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH });
+      build({ selectedPlatform: mockSelectedPlatform });
 
       expect(screen.queryByTestId('choose-space-later-button')).toBeNull();
     });
 
     it('should unselect any space plan when clicking on "choose space later"', () => {
       build(null, {
-        selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
+        selectedPlatform: mockSelectedPlatform,
         subscriptionPlans: mockProductRatePlans,
         spaceRatePlans: mockProductRatePlans,
       });

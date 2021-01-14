@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { cx, css } from 'emotion';
 
 import {
   Card,
@@ -33,6 +33,7 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   list: css({
+    borderTop: BORDER,
     borderBottom: BORDER,
     margin: `${tokens.spacingM} 0`,
   }),
@@ -42,9 +43,11 @@ const styles = {
     margin: 0,
     color: tokens.colorTextMid,
     justifyContent: 'space-between',
+    marginBottom: '0px',
+  }),
+  total: css({
     borderTop: BORDER,
     fontWeight: tokens.fontWeightDemiBold,
-    marginBottom: '0px',
   }),
   buttons: css({
     marginTop: tokens.spacing2Xl,
@@ -53,8 +56,16 @@ const styles = {
 
 export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfirm, onBack }) => {
   const {
-    state: { currentSpace, currentSpaceRatePlan, selectedPlan },
+    state: { currentSpace, currentSpaceRatePlan, selectedPlatform, selectedPlan },
   } = useContext(SpacePurchaseState);
+
+  let monthlyCost = 0;
+  if (selectedPlatform?.price) {
+    monthlyCost += selectedPlatform.price;
+  }
+  if (selectedPlan?.price) {
+    monthlyCost += selectedPlan.price;
+  }
 
   return (
     <Card className={styles.card} testId="order-summary.card">
@@ -66,16 +77,30 @@ export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfi
           {getSuccessMsg(
             currentSpace && currentSpace.name,
             currentSpaceRatePlan && currentSpaceRatePlan.name,
-            selectedPlan.name,
+            selectedPlan?.name,
             isReceipt
           )}
         </Paragraph>
         <List className={styles.list}>
-          <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
-            <span>Space</span> <span>{selectedPlan.name}</span>
-          </ListItem>
-          <ListItem testId="order-summary.selected-plan-price" className={styles.listItem}>
-            <span>Monthly cost</span> <Price value={selectedPlan.price} />
+          {selectedPlatform && (
+            <ListItem testId="order-summary.selected-platform" className={styles.listItem}>
+              <span>{selectedPlatform.title}</span> <Price value={selectedPlatform.price} />
+            </ListItem>
+          )}
+          {selectedPlatform && selectedPlan && (
+            <ListItem testId="order-summary.selected-plan" className={styles.listItem}>
+              <span>{selectedPlan.name} space</span> <Price value={selectedPlan.price} />
+            </ListItem>
+          )}
+          {!selectedPlatform && selectedPlan && (
+            <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
+              <span>Space</span> <span>{selectedPlan.name}</span>
+            </ListItem>
+          )}
+          <ListItem
+            testId="order-summary.monthly-cost"
+            className={cx(styles.listItem, styles.total)}>
+            <span>Monthly cost</span> <Price value={monthlyCost} />
           </ListItem>
         </List>
         <Paragraph>This price does not include sales tax, if applicable.</Paragraph>
