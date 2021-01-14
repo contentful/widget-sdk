@@ -92,7 +92,7 @@ export const bulkActionEntryNotFoundError = {
           sys: {
             type: 'Link',
             linkType: 'Entry',
-            id: 'testEntryId',
+            id: defaultEntryId,
             version: 1,
           },
         },
@@ -104,7 +104,7 @@ export const bulkActionEntryNotFoundError = {
           message: 'The resource could not be found.',
           details: {
             type: 'Entry',
-            id: 'testEntryId',
+            id: defaultEntryId,
           },
         },
       },
@@ -112,11 +112,11 @@ export const bulkActionEntryNotFoundError = {
   },
 };
 
-const bulkActionResponse = (options: any = { status: 'inProgress', action: 'publish' }) =>
+const bulkActionResponse = ({ status = 'inProgress', action = 'publish', overrides = {} }) =>
   Matchers.like({
     sys: {
       type: 'BulkAction',
-      id: defaultBulkActionTestId,
+      id: Matchers.somethingLike(defaultBulkActionTestId),
       space: makeLink('Space', defaultSpaceId),
       environment: makeLink('Environment', defaultEnvironmentId),
       createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
@@ -125,10 +125,11 @@ const bulkActionResponse = (options: any = { status: 'inProgress', action: 'publ
       completedAt:
         status === 'succeeded' ? Matchers.somethingLike('2020-12-15T17:12:43.252Z') : null,
       createdBy: makeLink('User', defaultUserId),
-      status: options.status,
+      status,
     },
+    action,
     payload: publishPayload,
-    ...options,
+    ...overrides,
   });
 
 const defaultContentTypeHeader = {
@@ -190,7 +191,7 @@ export const getBulkAction = {
         body: bulkActionResponse({
           action: 'publish',
           status: 'failed',
-          error: versionMismatchError,
+          overrides: { error: versionMismatchError },
         }),
       },
     }).as('getFailedBulkAction');
