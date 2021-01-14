@@ -1,6 +1,7 @@
 // import '@contentful/cypress-pact/add-commands';
 import { Matchers } from '@pact-foundation/pact-web';
 import { makeLink } from '@contentful/types';
+import { merge as deepMerge } from 'lodash';
 
 import {
   defaultHeader,
@@ -112,25 +113,25 @@ export const bulkActionEntryNotFoundError = {
   },
 };
 
-const bulkActionResponse = ({ status = 'inProgress', action = 'publish', overrides = {} }) =>
-  Matchers.like({
-    sys: {
-      type: 'BulkAction',
-      id: Matchers.somethingLike(defaultBulkActionTestId),
-      space: makeLink('Space', defaultSpaceId),
-      environment: makeLink('Environment', defaultEnvironmentId),
-      createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
-      updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
-      startedAt: Matchers.somethingLike('2020-12-15T17:12:43.252Z'),
-      completedAt:
-        status === 'succeeded' ? Matchers.somethingLike('2020-12-15T17:12:43.252Z') : null,
-      createdBy: makeLink('User', defaultUserId),
-      status,
+const bulkActionResponse = (overrides = {}) => {
+  const mergedResponse = deepMerge(
+    {
+      sys: {
+        type: 'BulkAction',
+        id: Matchers.somethingLike(defaultBulkActionTestId),
+        space: makeLink('Space', defaultSpaceId),
+        environment: makeLink('Environment', defaultEnvironmentId),
+        createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+        updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
+        createdBy: makeLink('User', defaultUserId),
+      },
+      payload: publishPayload,
     },
-    action,
-    payload: publishPayload,
-    ...overrides,
-  });
+    overrides
+  );
+
+  return Matchers.like(mergedResponse);
+};
 
 const defaultContentTypeHeader = {
   'content-type': 'application/vnd.contentful.management.v1+json',
@@ -163,6 +164,27 @@ const publishBulkActionRequest: any = {
 };
 
 export const getBulkAction = {
+  willReturnStatusInProgress(): string {
+    cy.addInteraction({
+      ...getBulkActionRequest,
+      state: BulkActionStates.ONE_COMPLETED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'inProgress',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'publish',
+        }),
+      },
+    }).as('getSucceededBulkAction');
+
+    return '@getSucceededBulkAction';
+  },
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
@@ -172,7 +194,14 @@ export const getBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({ action: 'publish', status: 'succeeded' }),
+        body: bulkActionResponse({
+          sys: {
+            status: 'succeeded',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'publish',
+        }),
       },
     }).as('getSucceededBulkAction');
 
@@ -189,9 +218,13 @@ export const getBulkAction = {
           ...defaultContentTypeHeader,
         },
         body: bulkActionResponse({
+          sys: {
+            status: 'failed',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
           action: 'publish',
-          status: 'failed',
-          overrides: { error: versionMismatchError },
+          error: versionMismatchError,
         }),
       },
     }).as('getFailedBulkAction');
@@ -210,7 +243,7 @@ export const publishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({ action: 'publish', status: 'created' }),
+        body: bulkActionResponse({ action: 'publish', sys: { status: 'created' } }),
       },
     }).as('publishBulkAction');
 
