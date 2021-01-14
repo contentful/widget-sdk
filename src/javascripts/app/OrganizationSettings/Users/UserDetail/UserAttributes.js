@@ -13,7 +13,7 @@ import {
   List,
   ListItem,
 } from '@contentful/forma-36-react-components';
-import { orgRoles } from 'utils/MembershipUtils';
+import { isPendingMember, orgRoles } from 'utils/MembershipUtils';
 import SsoExemptionDialog from './SsoExemptionModal';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation';
@@ -21,6 +21,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   updateMembership,
   removeMembership,
+  reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import RemoveUserConfirmation from '../RemoveUserDialog';
 import { go } from 'states/Navigator';
@@ -45,6 +46,7 @@ const styles = {
   item: css({
     display: 'flex',
     alignItems: 'center',
+    listStyle: 'none',
   }),
   label: css({
     marginRight: tokens.spacingS,
@@ -148,12 +150,24 @@ export default function UserAttributes({ membership, isSelf, isOwner, onRoleChan
               disableOwnerRole={!isOwner}
             />
           </ListItem>
-          <ListItem>
+          <ListItem className={styles.item}>
             <Paragraph>
               {orgRoles.find((role) => role.value === membership.role).description}
             </Paragraph>
           </ListItem>
-          <ListItem>
+          {isPendingMember(membership) && (
+            <ListItem className={styles.item}>
+              <Paragraph>
+                <TextLink
+                  linkType="primary"
+                  onClick={() => reinvite(membership)}
+                  testId="user-attributes.reinvite-button">
+                  Re-send invitation
+                </TextLink>
+              </Paragraph>
+            </ListItem>
+          )}
+          <ListItem className={styles.item}>
             <Paragraph>
               <TextLink
                 linkType="negative"

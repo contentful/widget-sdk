@@ -6,19 +6,23 @@ import { orgRoles } from 'utils/MembershipUtils';
 import {
   updateMembership,
   removeMembership,
+  reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
 
 import { go } from 'states/Navigator';
+import { act } from 'react-dom/test-utils';
 
 const mockMember = fake.OrganizationMembership('member', 'active');
 const mockDeveloper = fake.OrganizationMembership('developer', 'active');
 const mockOwner = fake.OrganizationMembership('owner', 'active');
+const pendingMember = fake.OrganizationMembership('member', 'pending');
 const onRoleChangeCb = jest.fn();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   updateMembership: jest.fn(async () => mockDeveloper),
   removeMembership: jest.fn(async () => {}),
+  reinvite: jest.fn(async () => {}),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -28,7 +32,9 @@ jest.mock('states/Navigator', () => ({
 describe('UserAttributes', () => {
   beforeEach(() => {
     jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
-    Notification.closeAll();
+    act(() => {
+      Notification.closeAll();
+    });
   });
 
   it('should display the list of options', () => {
@@ -91,6 +97,14 @@ describe('UserAttributes', () => {
     const notification = await screen.findByTestId('cf-ui-notification');
     expect(notification.textContent).toMatch('removed');
     expect(removeMembership).toHaveBeenCalledWith(expect.any(Function), mockMember.sys.id);
+  });
+
+  it('should reinvite the user', async () => {
+    build(false, false, pendingMember);
+    const reinviteButton = screen.getByTestId('user-attributes.reinvite-button');
+    fireEvent.click(reinviteButton);
+
+    expect(reinvite).toHaveBeenCalledWith(pendingMember);
   });
 
   it('should redirect to the user list after removing the member', async () => {

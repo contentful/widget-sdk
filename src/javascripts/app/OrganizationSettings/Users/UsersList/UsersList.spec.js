@@ -8,7 +8,7 @@ import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import {
   removeMembership,
   getMemberships,
-  invite,
+  reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import { getOrganization } from 'services/TokenStore';
@@ -54,7 +54,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
   removeMembership: jest.fn(),
-  invite: jest.fn(),
+  reinvite: jest.fn(),
 }));
 
 jest.useFakeTimers();
@@ -209,10 +209,7 @@ describe('UsersList', () => {
     const reinviteBtn = screen.getByTestId('userlist.row.actions.reinvite').querySelector('button');
     userEvent.click(reinviteBtn);
 
-    await waitFor(() => expect(ModalLauncher.open).toHaveBeenCalled());
-
-    expect(invite).toHaveBeenCalled();
-    await waitFor(() => screen.getByTestId('cf-ui-notification'));
+    expect(reinvite).toHaveBeenCalledWith(mockOrgMemberships[0]);
   });
 
   describe('show UsersLimitBanner', () => {
