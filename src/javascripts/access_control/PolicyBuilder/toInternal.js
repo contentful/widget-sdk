@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { DefaultRule } from './DefaultRule';
+import { Notification } from '@contentful/forma-36-react-components';
 
 function translatePolicies(external) {
   let policyString = '[]';
@@ -24,6 +25,7 @@ function translatePolicies(external) {
   function prepareExtension(p) {
     if (!p.action || !p.entityCollection || !p.effectCollection || !p.rule) {
       extension.uiCompatible = false;
+      Notification.error('There was an error parsing this role’s configuration.');
     } else {
       const rule = _.extend(p.rule, { action: p.action });
       extension[p.entityCollection][p.effectCollection].push(rule);
@@ -77,6 +79,8 @@ function extractConstraints(policy) {
     return policy.constraint;
   } else if (_.isObject(policy.constraint) && Array.isArray(policy.constraint.and)) {
     return policy.constraint.and;
+  } else {
+    return [];
   }
 }
 
