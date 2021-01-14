@@ -17,7 +17,6 @@ import { create } from 'components/shared/auto_create_new_space/CreateModernOnbo
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
 
-const store = getBrowserStorage();
 let creatingSampleSpace = false;
 
 const enabledBus = K.createPropertyBus(true);
@@ -31,6 +30,10 @@ export function enable() {
   enabledBus.set(true);
 }
 
+export function resetCreatingSampleSpace() {
+  creatingSampleSpace = false;
+}
+
 /**
  * @description
  * Auto creates a space using the product catalogue template
@@ -38,10 +41,15 @@ export function enable() {
  * It's called on EmptyHomeRouter when the first route is loaded after a user is logged in.
  */
 export function init() {
+  const store = getBrowserStorage();
   combine([user$, spacesByOrg$, enabled$])
     .filter(([user, spacesByOrg, enabled]) => {
       return (
-        enabled && user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace
+        enabled &&
+        user &&
+        spacesByOrg &&
+        qualifyUser(user, spacesByOrg, store) &&
+        !creatingSampleSpace
       );
     })
     .onValue(async ([user, spacesByOrg]) => {
@@ -52,7 +60,7 @@ export function init() {
       create({
         markOnboarding,
         onDefaultChoice: () => {
-          defaultChoice({ org, user });
+          defaultChoice({ org, user, store });
         },
         org,
         user,
@@ -64,7 +72,7 @@ export function init() {
     });
 }
 
-function defaultChoice({ org, user }) {
+function defaultChoice({ org, user, store }) {
   const handleSpaceCreationSuccess = (createdSpace) => {
     store.set(getSpaceAutoCreatedKey(user, 'success'), true);
     store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, createdSpace.sys.id);
@@ -91,9 +99,9 @@ function defaultChoice({ org, user }) {
   ));
 }
 
-function qualifyUser(user, spacesByOrg) {
+function qualifyUser(user, spacesByOrg, store) {
   return (
-    !attemptedSpaceAutoCreation(user) && // no auto space creation was attempted
+    !attemptedSpaceAutoCreation(user, store) && // no auto space creation was attempted
     currentUserIsCurrentOrgCreator(user) && // current user created the current org aka Pioneer User
     !hasAnOrgWithSpaces(spacesByOrg) && // user has no space memberships in any org that they are a member of
     ownsAtleastOneOrg(user) // user owns atleast one org
@@ -109,7 +117,7 @@ function currentUserIsCurrentOrgCreator(user) {
   return !!currOrg && isUserOrgCreator(user, currOrg);
 }
 
-function attemptedSpaceAutoCreation(user) {
+function attemptedSpaceAutoCreation(user, store) {
   return (
     store.get(getSpaceAutoCreatedKey(user, 'success')) ||
     store.get(getSpaceAutoCreatedKey(user, 'failure'))
