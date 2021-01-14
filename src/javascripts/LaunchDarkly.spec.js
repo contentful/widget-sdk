@@ -78,7 +78,13 @@ describe('LaunchDarkly', () => {
       identify: jest.fn().mockImplementation(async () => {
         return variations;
       }),
-      variation: jest.fn(),
+      variation: jest.fn((key, fallback) => {
+        if (variations[key]) {
+          return variations[key];
+        } else {
+          return fallback;
+        }
+      }),
     };
 
     ldClient.initialize.mockReturnValue(client);

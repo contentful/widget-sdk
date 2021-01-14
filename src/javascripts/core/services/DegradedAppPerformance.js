@@ -43,9 +43,7 @@ export function trigger(reason) {
           <strong>You can continue to use the app</strong>, but features may be unavailable and the
           app may be in a degraded state of performance.
         </Paragraph>
-        <Paragraph>
-          We recommend you refresh the page and disable any adblockers on Contentful.
-        </Paragraph>
+        <Paragraph>We recommend you refresh the page.</Paragraph>
         <Paragraph>
           <ContactUsButton isLink noIcon>
             Talk to us
