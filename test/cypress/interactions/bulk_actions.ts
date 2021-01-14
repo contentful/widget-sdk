@@ -76,6 +76,39 @@ export const versionMismatchError = {
   },
 };
 
+export const bulkActionEntryNotFoundError = {
+  sys: {
+    type: 'Error',
+    id: 'BulkActionFailed',
+  },
+  message: 'Cannot publish all content',
+  details: {
+    errors: [
+      {
+        entity: {
+          sys: {
+            type: 'Link',
+            linkType: 'Entry',
+            id: 'testEntryId',
+            version: 1,
+          },
+        },
+        error: {
+          sys: {
+            type: 'Error',
+            id: 'NotFound',
+          },
+          message: 'The resource could not be found.',
+          details: {
+            type: 'Entry',
+            id: 'testEntryId',
+          },
+        },
+      },
+    ],
+  },
+};
+
 const bulkActionResponse = (options: any = { status: 'inProgress', action: 'publish' }) =>
   Matchers.like({
     sys: {
@@ -118,7 +151,7 @@ const publishBulkActionRequest: any = {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
     headers: defaultHeader,
-    body: Matchers.like(publishPayload),
+    body: publishPayload,
   },
 };
 
