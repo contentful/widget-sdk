@@ -9,7 +9,7 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
 } from 'data/User';
-import { get, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
@@ -21,7 +21,7 @@ import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
 
-let identityCache = {};
+let cachedIdentifiedUser = null;
 let client = null;
 let variationCache = {};
 
@@ -104,7 +104,7 @@ const FALLBACK_VALUES = {
 export function reset() {
   if (process.env.NODE_ENV === 'test') {
     client = null;
-    identityCache = {};
+    cachedIdentifiedUser = {};
     variationCache = {};
     initializationPromise = null;
     initialized = false;
@@ -397,23 +397,13 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
     return FLAG_PROMISE_ERRED;
   }
 
-  let flags;
-
   const currentUser = await ldUser({ user, org, space, environmentId });
 
-  // Check to see if the LD user for this variation is the same as the current
-  // cached LD user. If they're the same, just set the flags, which lets us bypass
-  // making an unnecessary `client.identify` network call.
-  if (identityCache.user && isEqual(currentUser, identityCache.user)) {
-    flags = identityCache.flags;
-  } else {
+  if (!isEqual(currentUser, cachedIdentifiedUser)) {
     try {
-      flags = await client.identify(currentUser);
+      await client.identify(currentUser);
 
-      Object.assign(identityCache, {
-        user: currentUser,
-        flags,
-      });
+      cachedIdentifiedUser = currentUser;
     } catch (error) {
       logger.logError(`LaunchDarkly identify failed for ${flagName}`, {
         groupingHash: 'LDIdentifyFailed',
@@ -424,29 +414,13 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
     }
   }
 
-  const variation = get(flags, flagName, MISSING_VARIATION_VALUE);
-
-  // Since we have the flags above, we're calling `client.variation` here simply
-  // so that we can track which flags are being called as this functionality isn't
-  // exposed directly via the LD client.
-  //
-  // Note that this is a synchronous call (it won't result in a rejection)
-  client.variation(flagName);
+  const variation = client.variation(flagName, MISSING_VARIATION_VALUE);
 
   if (variation === MISSING_VARIATION_VALUE) {
-    // All flags are available once `client.idenfity` is finished, so we can
-    // see which flags the user actually had access to at this point.
-    //
-    // This should realistically only happen in two cases: 1. the flag was archived
-    // in LD; 2. LD has some error and returns faulty data
-    const availableFlagNames = Object.keys(flags);
-
     logger.logError(`Flag ${flagName} invalid or missing variation data`, {
       groupingHash: 'InvalidLDFlag',
       data: {
         flagName,
-        availableFlagNames:
-          availableFlagNames.length > 0 ? availableFlagNames.join(', ') : 'No flags',
         organizationId,
         spaceId,
         environmentId,
