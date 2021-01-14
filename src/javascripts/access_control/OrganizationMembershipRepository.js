@@ -1,6 +1,16 @@
+import React from 'react';
 import { fetchAll, fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import { uniq, identity, chunk, flatten } from 'lodash';
 import { PENDING_ORG_MEMBERSHIP, getAlphaHeader } from 'alphaHeaders.js';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import {
+  ModalConfirm,
+  ModalLauncher,
+  Notification,
+  Paragraph,
+} from '@contentful/forma-36-react-components';
+import { logError } from 'services/logger';
+import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
@@ -188,4 +198,44 @@ export function getSpaceMemberships(endpoint, query) {
 
 export function getAllSpaceMemberships(endpoint, query) {
   return fetchAllWithIncludes(endpoint, ['space_memberships'], BATCH_LIMIT, query);
+}
+
+export async function reinvite(orgMembership) {
+  const orgId = orgMembership.sys.organization.sys.id;
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+
+  const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      isShown={isShown}
+      title="Are you sure?"
+      intent="positive"
+      confirmLabel="Send"
+      cancelLabel="Cancel"
+      confirmTestId="user.reinvite-confirmation"
+      onCancel={() => onClose(false)}
+      onConfirm={() => onClose(true)}>
+      <Paragraph>Re-send invitation to {getFullNameOrEmail(orgMembership.sys.user)}?</Paragraph>
+    </ModalConfirm>
+  ));
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await invite(orgEndpoint, {
+      role: orgMembership.role,
+      email: orgMembership.sys.user.email,
+    });
+
+    Notification.success(
+      `A new invitation was sent to ${getFullNameOrEmail(orgMembership.sys.user)}`
+    );
+  } catch (e) {
+    Notification.error(
+      `There was a problem sending an invitation to ${getFullNameOrEmail(orgMembership.sys.user)}`
+    );
+
+    logError(`Failed to re-invite user`, { email: orgMembership.sys.user.email, error: e });
+  }
 }
