@@ -125,7 +125,24 @@ const bulkActionResponse = (overrides = {}) => {
         updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
         createdBy: makeLink('User', defaultUserId),
       },
-      payload: Matchers.somethingLike(publishPayload),
+      payload: {
+        entities: Matchers.somethingLike({
+          sys: {
+            type: 'Array',
+          },
+          items: Matchers.eachLike(
+            {
+              sys: {
+                id: 'testString',
+                linkType: 'Entry or Asset',
+                type: 'Link',
+                version: 1,
+              },
+            },
+            { min: 1 }
+          ),
+        }),
+      },
     },
     overrides
   );
