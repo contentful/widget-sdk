@@ -217,7 +217,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   return (
     <div
       className={styles.sideBarWrapper}
-      data-flag-references-bulkactions-enabled={isBulkActionSupportEnabled}>
+      data-test={isBulkActionSupportEnabled ? 'bulk-actions' : 'immediate'}>
       <header className="entity-sidebar__header">
         <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
           References
