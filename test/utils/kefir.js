@@ -2,6 +2,8 @@ import * as Kefir from 'core/utils/kefir';
 
 export * from 'core/utils/kefir';
 
+import { omit, pickBy } from 'lodash';
+
 /**
  * Returns an array that dynamically updates when the stream or
  * property emits a new value. The new value is prepended to the
@@ -66,4 +68,19 @@ export function assertMatchCurrentValue(prop, matcher) {
         `  to match ${matcher.message}\n`
     );
   }
+}
+
+export function assertContainingCurrentValue(prop, object) {
+  let called = false;
+  let actual;
+  const off = Kefir.onValue(prop, (value) => {
+    actual = value;
+    called = true;
+  });
+  off();
+  expect(called).toBe(true, 'Observable does not have current value');
+  const notContaining = pickBy(object, (value) => value === undefined);
+  const containing = omit(object, Object.keys(notContaining));
+  expect(actual).toEqual(expect.objectContaining(containing));
+  expect(actual).not.toEqual(expect.objectContaining(notContaining));
 }

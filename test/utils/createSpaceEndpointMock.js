@@ -1,4 +1,3 @@
-import { $q } from 'test/utils/ng';
 import { cloneDeep, mapValues, values } from 'lodash';
 import { assign, update } from 'utils/Collections';
 
@@ -138,7 +137,7 @@ function makeGenericEndpoint(resourceConfig) {
       if (id) {
         return getResource(store, id);
       } else {
-        return $q.resolve({
+        return Promise.resolve({
           items: values(store),
         });
       }
@@ -206,7 +205,7 @@ function updateResourceState(store, method, state, id, version) {
     }
   }
 
-  return $q.resolve(resource);
+  return Promise.resolve(resource);
 }
 
 /**
@@ -238,7 +237,7 @@ function makeSingletonEndpoint() {
 
 function getResource(store, id) {
   if (id in store) {
-    return $q.resolve(store[id]);
+    return Promise.resolve(store[id]);
   } else {
     return rejectNotFound();
   }
@@ -260,7 +259,7 @@ function putResource(resourceConfig, store, id, version, data) {
       sys.version++;
       const updatedResource = assign(data, { sys });
       store[id] = updatedResource;
-      return $q.resolve(updatedResource);
+      return Promise.resolve(updatedResource);
     } else {
       return rejectVersionMismatch();
     }
@@ -273,7 +272,7 @@ function putResource(resourceConfig, store, id, version, data) {
       },
     };
     store[id] = resourceConfig.transformNew(newResource);
-    return $q.resolve(newResource);
+    return Promise.resolve(newResource);
   }
 }
 
@@ -299,7 +298,7 @@ function deleteResource(store, id, version) {
   resource.sys.version++;
   resource.sys.deletedVersion = version;
   delete store[id];
-  return $q.resolve(resource);
+  return Promise.resolve(resource);
 }
 
 function rejectVersionMismatch() {
@@ -311,7 +310,7 @@ function rejectNotFound() {
 }
 
 function rejectResponse(status, message) {
-  return $q.reject(
+  return Promise.reject(
     Object.assign(new Error(`${status} ${message}`), {
       statusCode: status,
     })
