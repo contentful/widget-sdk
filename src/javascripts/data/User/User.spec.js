@@ -1,27 +1,34 @@
-import sinon from 'sinon';
-import * as K from 'test/utils/kefir';
-import { $initialize, $inject, $apply } from 'test/utils/ng';
+import * as K from '../../../../test/utils/kefir';
+import moment from 'moment';
+import * as TokenStore from 'services/TokenStore';
+import * as NgRegistry from 'core/NgRegistry';
+
+import * as utils from 'data/User';
+
+jest.mock('services/TokenStore');
+jest.mock('core/NgRegistry');
 
 describe('data/User', () => {
+  let tokenStore, spaceContext, $stateParams, orgs, $rootScope, set, spy;
   beforeEach(async function () {
-    this.tokenStore = {
+    tokenStore = {
       organizations$: K.createMockProperty(null),
       user$: K.createMockProperty(null),
       spacesByOrganization$: K.createMockProperty(null),
     };
 
-    this.spaceContext = {
+    spaceContext = {
       organization: {},
       space: {
         data: {},
       },
     };
 
-    this.$stateParams = {
+    $stateParams = {
       orgId: 1,
     };
 
-    this.orgs = [
+    orgs = [
       {
         role: 'owner',
         organization: { sys: { id: 'org-owner' } },
@@ -32,41 +39,56 @@ describe('data/User', () => {
       },
     ];
 
-    this.system.set('services/TokenStore', this.tokenStore);
-    this.moment = (await this.system.import('moment')).default;
-    this.utils = await this.system.import('data/User');
+    let $stateChangeSuccess;
+    const $on = (_, fn) => {
+      $stateChangeSuccess = fn;
+    };
+    const $broadcast = () => {
+      $stateChangeSuccess();
+    };
 
-    await $initialize(this.system, ($provide) => {
-      $provide.constant('spaceContext', this.spaceContext);
-      $provide.value('$stateParams', this.$stateParams);
+    $rootScope = { $on, $broadcast };
+
+    NgRegistry.getModule = jest.fn().mockImplementation((arg) => {
+      if (arg === 'spaceContext') {
+        return spaceContext;
+      }
+      if (arg === '$stateParams') {
+        return $stateParams;
+      }
+      if (arg === '$rootScope') {
+        return $rootScope;
+      }
+      return jest.requireActual('core/NgRegistry')(arg);
     });
 
-    this.$rootScope = $inject('$rootScope');
+    TokenStore.organizations$ = tokenStore.organizations$;
+    TokenStore.spacesByOrganization$ = tokenStore.spacesByOrganization$;
+    TokenStore.user$ = tokenStore.user$;
   });
 
   describe('#userDataBus$', () => {
     beforeEach(function () {
-      this.spy = sinon.spy();
-      this.utils.getUserDataBus().onValue(this.spy);
+      spy = jest.fn();
+      utils.getUserDataBus().onValue(spy);
 
-      this.set = function (params) {
+      set = function (params) {
         const {
-          user = K.getValue(this.tokenStore.user$),
-          orgs = K.getValue(this.tokenStore.organizations$),
-          spacesByOrg = K.getValue(this.tokenStore.spacesByOrganization$),
-          org = this.spaceContext.organization,
+          user = K.getValue(tokenStore.user$),
+          orgs = K.getValue(tokenStore.organizations$),
+          spacesByOrg = K.getValue(tokenStore.spacesByOrganization$),
+          org = spaceContext.organization,
           orgId,
-          space = this.spaceContext.space.data,
+          space = spaceContext.space.data,
         } = params;
 
-        this.tokenStore.organizations$.set(orgs);
-        this.tokenStore.spacesByOrganization$.set(spacesByOrg);
-        this.spaceContext.organization = org;
-        this.spaceContext.space.data = space;
-        this.$stateParams.orgId = orgId;
-        this.$rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
-        this.tokenStore.user$.set(user);
-        $apply();
+        tokenStore.organizations$.set(orgs);
+        tokenStore.spacesByOrganization$.set(spacesByOrg);
+        spaceContext.organization = org;
+        spaceContext.space.data = space;
+        $stateParams.orgId = orgId;
+        $rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
+        tokenStore.user$.set(user);
       };
     });
     it('emits [user, org, spacesByOrg, space] where space is optional', function () {
@@ -77,22 +99,21 @@ describe('data/User', () => {
       ];
       const org = { name: 'some org', sys: { id: 'some-org-1' } };
 
-      sinon.assert.notCalled(this.spy);
+      expect(spy).not.toHaveBeenCalled();
 
-      this.set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1 });
-      sinon.assert.calledOnce(this.spy);
+      set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1 });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, spaceContext.space.data]);
 
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      spy.mockClear();
+      set({ org });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith([user, org, {}, spaceContext.space.data]);
 
-      this.spy.reset();
-      this.set({ org });
-      sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, org, {}, this.spaceContext.space.data]);
-
-      this.spy.reset();
-      this.set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
-      sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      spy.mockClear();
+      set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, spaceContext.space.data]);
     });
     it('emits a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [
@@ -102,35 +123,35 @@ describe('data/User', () => {
       const user = { email: 'a@b' };
 
       // invalid user
-      this.set({ user: null });
-      sinon.assert.notCalled(this.spy);
+      set({ user: null });
+      expect(spy).not.toHaveBeenCalled();
 
       // valid user but org is falsy since org prop init val is null
-      this.set({ user });
-      sinon.assert.notCalled(this.spy);
+      set({ user });
+      expect(spy).not.toHaveBeenCalled();
 
       // spaces by org map is null
-      this.set({ user, orgs, spacesByOrg: null, orgId: 1 });
-      sinon.assert.notCalled(this.spy);
+      set({ user, orgs, spacesByOrg: null, orgId: 1 });
+      expect(spy).not.toHaveBeenCalled();
 
       // all valid valus, hence spy must be called
-      this.set({ user, orgs, spacesByOrg: {}, orgId: 1 });
-      sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}]);
+      set({ user, orgs, spacesByOrg: {}, orgId: 1 });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, {}]);
     });
     it('skips duplicates', function () {
-      const setter = this.set.bind(this, {
+      const setter = set.bind(this, {
         user: { email: 'a@b.c' },
         org: { name: 'org-1', sys: { id: 1 } },
         spacesByOrg: {},
         space: { name: 'space-1', sys: { id: 'space-1' } },
       });
       setter();
-      sinon.assert.calledOnce(this.spy);
+      expect(spy).toHaveBeenCalledTimes(1);
       setter();
-      sinon.assert.calledOnce(this.spy);
-      this.set({ space: null });
-      sinon.assert.calledTwice(this.spy);
+      expect(spy).toHaveBeenCalledTimes(1);
+      set({ space: null });
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -141,42 +162,37 @@ describe('data/User', () => {
       const user = {
         organizationMemberships: [{ role, organization: { sys: { id: orgId } } }],
       };
-      const foundRole = this.utils.getOrgRole(user, orgId);
+      const foundRole = utils.getOrgRole(user, orgId);
 
       expect(foundRole).toEqual(role);
     });
     it('returns undefined when org with given org id is not found', function () {
-      const foundRole = this.utils.getOrgRole(
-        [{ role: 'potato', organization: { sys: { id: 1 } } }],
-        2
-      );
+      const foundRole = utils.getOrgRole([{ role: 'potato', organization: { sys: { id: 1 } } }], 2);
 
-      expect(foundRole).toEqual(null);
+      expect(foundRole).toBeNull();
     });
   });
 
   describe('#getUserAgeInDays', () => {
     it("gets the user's age in days for older dates", function () {
       const diff = 7;
-      const creationDate = this.moment().subtract(diff, 'days');
+      const creationDate = moment().subtract(diff, 'days');
 
-      expect(this.utils.getUserAgeInDays({ sys: { createdAt: creationDate.toISOString() } })).toBe(
-        diff
-      );
+      expect(utils.getUserAgeInDays({ sys: { createdAt: creationDate.toISOString() } })).toBe(diff);
     });
     it('returns null if the operation throws', function () {
-      expect(
-        Number.isNaN(this.utils.getUserAgeInDays({ sys: { createdAt: 'some wrong date' } }))
-      ).toBe(true);
+      expect(Number.isNaN(utils.getUserAgeInDays({ sys: { createdAt: 'some wrong date' } }))).toBe(
+        true
+      );
     });
   });
 
   describe('#getUserCreationDateUnixTimestamp', () => {
     it('should return the user creation date as a unix timestamp', function () {
-      const creationDate = this.moment();
+      const creationDate = moment();
 
       expect(
-        this.utils.getUserCreationDateUnixTimestamp({
+        utils.getUserCreationDateUnixTimestamp({
           sys: { createdAt: creationDate.toISOString() },
         })
       ).toBe(creationDate.unix());
@@ -185,43 +201,42 @@ describe('data/User', () => {
 
   describe('#hasAnOrgWithSpaces', () => {
     it('returns true if any of the orgs user belongs to has one or more spaces', function () {
-      expect(this.utils.hasAnOrgWithSpaces({ org1: [1, 2] })).toBe(true);
-      expect(this.utils.hasAnOrgWithSpaces({ org1: [1, 2], org2: [] })).toBe(true);
+      expect(utils.hasAnOrgWithSpaces({ org1: [1, 2] })).toBe(true);
+      expect(utils.hasAnOrgWithSpaces({ org1: [1, 2], org2: [] })).toBe(true);
     });
     it('returns false otherwise', function () {
-      expect(this.utils.hasAnOrgWithSpaces({})).toBe(false);
-      expect(this.utils.hasAnOrgWithSpaces({ org1: [], org2: [] })).toBe(false);
+      expect(utils.hasAnOrgWithSpaces({})).toBe(false);
+      expect(utils.hasAnOrgWithSpaces({ org1: [], org2: [] })).toBe(false);
     });
   });
 
   describe('#ownsAtleastOneOrg', () => {
     it('returns true if user owns at least on org', function () {
-      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: this.orgs })).toBe(true);
+      expect(utils.ownsAtleastOneOrg({ organizationMemberships: orgs })).toBe(true);
     });
     it('returns false otherwise', function () {
-      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: [this.orgs[1]] })).toBe(false);
-      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: [] })).toBe(false);
-      expect(this.utils.ownsAtleastOneOrg({})).toBe(false);
+      expect(utils.ownsAtleastOneOrg({ organizationMemberships: [orgs[1]] })).toBe(false);
+      expect(utils.ownsAtleastOneOrg({ organizationMemberships: [] })).toBe(false);
+      expect(utils.ownsAtleastOneOrg({})).toBe(false);
     });
   });
 
   describe('#getOwnedOrgs', () => {
     it('returns a list of orgs the user is an owner of', function () {
-      expect(this.utils.getOwnedOrgs({ organizationMemberships: this.orgs })).toEqual([
-        this.orgs[0],
-      ]);
+      expect(utils.getOwnedOrgs({ organizationMemberships: orgs })).toEqual([orgs[0]]);
     });
     it('returns an empty list if user owns no orgs', function () {
-      expect(this.utils.getOwnedOrgs({ organizationMemberships: [this.orgs[1]] })).toEqual([]);
+      expect(utils.getOwnedOrgs({ organizationMemberships: [orgs[1]] })).toEqual([]);
     });
   });
 
   describe('#getFirstOwnedOrgWithoutSpaces', () => {
+    let testGetFirstOwnedOrgWithoutSpaces;
     beforeEach(function () {
-      this.testGetFirstOwnedOrgWithoutSpaces = (spacesByOrg, assertion) => {
-        const org = this.utils.getFirstOwnedOrgWithoutSpaces(
+      testGetFirstOwnedOrgWithoutSpaces = (spacesByOrg, assertion) => {
+        const org = utils.getFirstOwnedOrgWithoutSpaces(
           {
-            organizationMemberships: this.orgs,
+            organizationMemberships: orgs,
           },
           spacesByOrg
         );
@@ -230,25 +245,22 @@ describe('data/User', () => {
       };
     });
     it('returns the first org the user owns that has no spaces', function () {
-      this.testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [] }, (org) =>
-        expect(org).toBe(this.orgs[0].organization)
+      testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [] }, (org) =>
+        expect(org).toBe(orgs[0].organization)
       );
-      this.testGetFirstOwnedOrgWithoutSpaces({}, (org) =>
-        expect(org).toBe(this.orgs[0].organization)
-      );
+      testGetFirstOwnedOrgWithoutSpaces({}, (org) => expect(org).toBe(orgs[0].organization));
     });
     it('returns undefined otherwise', function () {
-      this.testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [1] }, (org) =>
-        expect(org).toBe(undefined)
-      );
+      testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [1] }, (org) => expect(org).toBeUndefined());
     });
   });
 
   describe('#isAutomationTestUser', () => {
+    let assertOnEmails;
     beforeEach(function () {
-      this.assertOnEmails = function (emails, value) {
+      assertOnEmails = function (emails, value) {
         emails.forEach((email) => {
-          expect(this.utils.isAutomationTestUser({ email })).toEqual(value);
+          expect(utils.isAutomationTestUser({ email })).toEqual(value);
         });
       };
     });
@@ -262,7 +274,7 @@ describe('data/User', () => {
         'autotest+flinkly_newuser_1235_1235@contentful.com',
       ];
 
-      this.assertOnEmails(userEmails, true);
+      assertOnEmails(userEmails, true);
     });
 
     it('returns false for all non test automation users', function () {
@@ -273,7 +285,7 @@ describe('data/User', () => {
         'omg@bbq.net',
       ];
 
-      this.assertOnEmails(userEmails, false);
+      assertOnEmails(userEmails, false);
     });
   });
 
@@ -282,25 +294,25 @@ describe('data/User', () => {
     const makeOrgCreatedByUserWithId = (id) => ({ sys: { createdBy: { sys: { id } } } });
 
     it('returns true if the current org was created by the current user', function () {
-      expect(this.utils.isUserOrgCreator(makeUserWithId(1), makeOrgCreatedByUserWithId(1))).toEqual(
+      expect(utils.isUserOrgCreator(makeUserWithId(1), makeOrgCreatedByUserWithId(1))).toEqual(
         true
       );
     });
 
     it('returns false if the current org was not created by the current user', function () {
-      expect(this.utils.isUserOrgCreator(makeUserWithId(1), makeOrgCreatedByUserWithId(2))).toEqual(
+      expect(utils.isUserOrgCreator(makeUserWithId(1), makeOrgCreatedByUserWithId(2))).toEqual(
         false
       );
     });
 
     it('throws if user is malformed', function () {
-      expect(() => this.utils.isUserOrgCreator({}, makeOrgCreatedByUserWithId(1))).toThrow(
+      expect(() => utils.isUserOrgCreator({}, makeOrgCreatedByUserWithId(1))).toThrow(
         new Error('Expected user to be an object')
       );
     });
 
     it('throws if org is malformed', function () {
-      expect(() => this.utils.isUserOrgCreator(makeUserWithId(42), {})).toThrow(
+      expect(() => utils.isUserOrgCreator(makeUserWithId(42), {})).toThrow(
         new Error('Expected org to be an object')
       );
     });
@@ -314,7 +326,7 @@ describe('data/User', () => {
           roles: [],
         },
       };
-      const roles = this.utils.getUserSpaceRoles(space);
+      const roles = utils.getUserSpaceRoles(space);
       expect(roles).toContain('admin');
     });
 
@@ -325,7 +337,7 @@ describe('data/User', () => {
           roles: [{ name: 'Some' }],
         },
       };
-      const roles = this.utils.getUserSpaceRoles(space);
+      const roles = utils.getUserSpaceRoles(space);
       expect(roles).toEqual(['some']);
     });
 
@@ -336,7 +348,7 @@ describe('data/User', () => {
           roles: [{ name: 'SoMe' }],
         },
       };
-      const roles = this.utils.getUserSpaceRoles(space);
+      const roles = utils.getUserSpaceRoles(space);
       expect(roles).toContain('some');
     });
   });
