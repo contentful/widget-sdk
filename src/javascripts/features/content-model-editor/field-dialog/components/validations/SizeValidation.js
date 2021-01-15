@@ -36,7 +36,7 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
             className={styles.textInputNumber}
             placeholder="Min"
             type="number"
-            value={toString(settings.min)}
+            value={toString(settings?.min)}
             onChange={({ target: { value } }) => {
               onChangeSettings({ min: normalizeValue(value) });
             }}
@@ -52,7 +52,7 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
             className={styles.textInputNumber}
             placeholder="Max"
             type="number"
-            value={toString(settings.max)}
+            value={toString(settings?.max)}
             onChange={({ target: { value } }) => {
               onChangeSettings({ max: normalizeValue(value) });
             }}
@@ -69,7 +69,7 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
               className={styles.textInputNumber}
               placeholder="Min"
               type="number"
-              value={toString(settings.min)}
+              value={toString(settings?.min)}
               onChange={({ target: { value } }) => {
                 onChangeSettings({ ...settings, min: normalizeValue(value) });
               }}
@@ -83,7 +83,7 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
               className={styles.textInputNumber}
               placeholder="Max"
               type="number"
-              value={toString(settings.max)}
+              value={toString(settings?.max)}
               onChange={({ target: { value } }) => {
                 onChangeSettings({ ...settings, max: normalizeValue(value) });
               }}

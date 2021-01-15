@@ -127,14 +127,14 @@ const DateRangeValidation = ({ validation, onChange, onBlur }) => {
           <ValidationRow
             id={'min'}
             checkboxLabel={'Later than'}
-            date={settings.min}
+            date={settings?.min}
             onDateUpdate={(min) => onChangeSettings({ ...settings, min })}
             onBlur={() => onBlur(type)}
           />
           <ValidationRow
             id={'max'}
             checkboxLabel={'Earlier than'}
-            date={settings.max}
+            date={settings?.max}
             onDateUpdate={(max) => onChangeSettings({ ...settings, max })}
             onBlur={() => onBlur(type)}
           />

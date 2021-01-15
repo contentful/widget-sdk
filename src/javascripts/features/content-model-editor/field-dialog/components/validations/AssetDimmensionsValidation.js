@@ -9,7 +9,9 @@ import { DimensionsParameters } from './DimensionsParametersComponent';
 const AssetDimmensionsValidation = ({ validation, onChange, onBlur }) => {
   const { name, helpText, type, message, settings, enabled } = validation.value;
 
-  const onSettingsChange = (settings) => onChange(type, { ...validation.value, settings });
+  const onSettingsChange = (settings) => {
+    onChange(type, { ...validation.value, settings });
+  };
   const onChangeMessage = (message) => onChange(type, { ...validation.value, message });
 
   const onWidthChange = (width) => onSettingsChange({ ...settings, width });

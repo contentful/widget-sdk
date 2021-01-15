@@ -70,8 +70,8 @@ function getInitialView(validation) {
   const type = validation.type;
   const settings = validation.settings;
   if (type === 'size' || type === 'range' || type === 'assetFileSize') {
-    const hasMin = typeof settings.min === 'number';
-    const hasMax = typeof settings.max === 'number';
+    const hasMin = typeof settings?.min === 'number';
+    const hasMax = typeof settings?.max === 'number';
     if (hasMin && hasMax) {
       return 'min-max';
     }

@@ -3,7 +3,7 @@ import { capitalize, joinWithAnd } from 'utils/StringUtils';
 import { richTextOptionsLabels } from './validationDecorator';
 
 const areSettingsEmpty = (settings) =>
-  isNull(settings) || (isNull(settings.min) && isNull(settings.max));
+  isNull(settings) || (isNull(settings?.min) && isNull(settings?.max));
 
 export const rangeTypes = {
   MIN: 'min',

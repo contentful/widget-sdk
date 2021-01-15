@@ -26,7 +26,7 @@ const AssetFileSizeValidation = ({ validation, onChange, onBlur }) => {
         return (
           <FileSizeComponent
             type={rangeTypes.MIN}
-            value={settings.min}
+            value={settings?.min}
             onUpdate={(min) => onSettingsChange({ ...settings, min })}
             onBlur={() => onBlur(type)}
           />
@@ -35,7 +35,7 @@ const AssetFileSizeValidation = ({ validation, onChange, onBlur }) => {
         return (
           <FileSizeComponent
             type={rangeTypes.MAX}
-            value={settings.max}
+            value={settings?.max}
             onUpdate={(max) => onSettingsChange({ ...settings, max })}
             onBlur={() => onBlur(type)}
           />
@@ -45,14 +45,14 @@ const AssetFileSizeValidation = ({ validation, onChange, onBlur }) => {
           <Fragment>
             <FileSizeComponent
               type={rangeTypes.MIN}
-              value={settings.min}
+              value={settings?.min}
               onUpdate={(min) => onSettingsChange({ ...settings, min })}
               onBlur={() => onBlur(type)}
             />
             <div>and</div>
             <FileSizeComponent
               type={rangeTypes.MAX}
-              value={settings.max}
+              value={settings?.max}
               onUpdate={(max) => onSettingsChange({ ...settings, max })}
               onBlur={() => onBlur(type)}
             />

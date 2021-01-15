@@ -23,10 +23,13 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
       return 'max';
     }
   };
-  const getCheckboxState = (settings) => Object.values(settings).some((item) => isNumber(item));
+  const getCheckboxState = (settings) =>
+    settings && Object.values(settings).some((item) => isNumber(item));
 
   const [isChecked, setChecked] = useState(() => getCheckboxState(settings));
-  const [currentView, setCurrentView] = useState(() => getCurrentViewState(settings) || 'min');
+  const [currentView, setCurrentView] = useState(
+    () => (settings && getCurrentViewState(settings)) || 'min'
+  );
 
   const normalizeValue = (value) => (isEmpty(value) ? null : toNumber(value));
 
@@ -36,7 +39,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
         return (
           <PxInputField
             id={`${type}-min-px-input`}
-            value={toString(settings.min)}
+            value={toString(settings?.min)}
             onChange={(value) => {
               setSettings({ ...settings, min: normalizeValue(value) });
             }}
@@ -48,7 +51,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
         return (
           <PxInputField
             id={`${type}-max-px-input`}
-            value={toString(settings.max)}
+            value={toString(settings?.max)}
             onChange={(value) => {
               setSettings({ ...settings, max: normalizeValue(value) });
             }}
@@ -61,7 +64,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
           <>
             <PxInputField
               id={`${type}-min-px-input`}
-              value={toString(settings.min)}
+              value={toString(settings?.min)}
               onChange={(value) => {
                 setSettings({ ...settings, min: normalizeValue(value) });
               }}
@@ -71,7 +74,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
             <div className={styles.union}>and</div>
             <PxInputField
               id={`${type}-max-px-input`}
-              value={toString(settings.max)}
+              value={toString(settings?.max)}
               onChange={(value) => {
                 setSettings({ ...settings, max: normalizeValue(value) });
               }}
@@ -84,7 +87,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
         return (
           <PxInputField
             id={`${type}-max-px-input`}
-            value={toString(settings.max)}
+            value={toString(settings?.max)}
             onChange={(value) => {
               setSettings({ min: normalizeValue(value), max: normalizeValue(value) });
             }}
