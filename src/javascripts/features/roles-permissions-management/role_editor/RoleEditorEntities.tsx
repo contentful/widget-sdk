@@ -115,7 +115,7 @@ const RoleEditorEntities: React.FC<Props> = ({
         <>
           <Heading element="h3">Policies</Heading>
           <Paragraph>
-            <span>The policy for this role cannot be represented visually. </span>
+            <span>The policy for this role cannot be represented visually.</span>
             {canModifyRoles && (
               <span>
                 You can continue to edit the JSON directly, or{' '}
@@ -128,6 +128,7 @@ const RoleEditorEntities: React.FC<Props> = ({
           </Paragraph>
           <div className="cfnext-form-option">
             <Textarea
+              className="cfnext-form__input--full-size"
               disabled={!canModifyRoles}
               value={internal.policyString || ''}
               onChange={updateRoleFromTextInput('policyString')}
