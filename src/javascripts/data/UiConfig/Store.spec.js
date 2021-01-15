@@ -1,32 +1,29 @@
 import { cloneDeep } from 'lodash';
 
-import sinon from 'sinon';
-import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
-import { $initialize } from 'test/utils/ng';
-import { it } from 'test/utils/dsl';
+import createMockSpaceEndpoint from '../../../../test/utils/createSpaceEndpointMock';
+import * as SearchAndViews from 'analytics/events/SearchAndViews';
+
+import createUiConfigStore from 'data/UiConfig/Store';
+
+jest.mock('analytics/events/SearchAndViews');
 
 describe('data/UiConfig/Store', () => {
+  let trackMigrationSpy, store, migrateStub, create, mockCt, withCts;
   beforeEach(async function () {
-    this.trackMigrationSpy = sinon.spy();
+    trackMigrationSpy = jest.fn();
 
-    this.system.set('analytics/events/SearchAndViews', {
-      searchTermsMigrated: this.trackMigrationSpy,
-    });
-
-    const { default: createUiConfigStore } = await this.system.import('data/UiConfig/Store');
-
-    await $initialize(this.system);
+    SearchAndViews.searchTermsMigrated = trackMigrationSpy;
 
     const endpoint = createMockSpaceEndpoint();
 
-    this.store = endpoint.stores.ui_config;
+    store = endpoint.stores.ui_config;
 
-    this.migrateStub = sinon.stub();
+    migrateStub = jest.fn();
 
-    this.create = (isAdmin = true) => {
+    create = (isAdmin = true) => {
       const ctRepo = { getAllBare: () => [{ sys: { id: 1 }, name: 'bar' }] };
       const viewMigrator = {
-        migrateUIConfigViews: this.migrateStub,
+        migrateUIConfigViews: migrateStub,
       };
       const spaceData = {
         sys: { id: 'spaceid' },
@@ -47,35 +44,35 @@ describe('data/UiConfig/Store', () => {
 
   describe('#entries.shared', () => {
     it('#get() returns and saves default values if not set', async function () {
-      const api = await this.create();
-      expect((await api.entries.shared.get()).length).toEqual(3);
+      const api = await create();
+      expect(await api.entries.shared.get()).toHaveLength(3);
     });
 
     it('#get() gets loaded config', async function () {
-      this.store.default = { _migrated: { entryListViews: 'DATA' } };
-      const api = await this.create();
+      store.default = { _migrated: { entryListViews: 'DATA' } };
+      const api = await create();
       expect(await api.entries.shared.get()).toEqual('DATA');
     });
 
     it('#set() creates, updates and reinitializes UiConfig', async function () {
-      const api = await this.create();
+      const api = await create();
 
       await api.entries.shared.set('DATA1');
-      expect(this.store.default._migrated.entryListViews).toEqual('DATA1');
+      expect(store.default._migrated.entryListViews).toEqual('DATA1');
 
       await api.entries.shared.set('DATA2');
-      expect(this.store.default._migrated.entryListViews).toEqual('DATA2');
+      expect(store.default._migrated.entryListViews).toEqual('DATA2');
 
       await api.entries.shared.set(undefined);
-      expect((await api.entries.shared.get()).length).toEqual(3);
+      expect(await api.entries.shared.get()).toHaveLength(3);
     });
   });
 
   describe('#addOrEditCt()', () => {
     beforeEach(function () {
-      this.mockCt = { sys: { id: 1 }, name: 'bar' };
+      mockCt = { sys: { id: 1 }, name: 'bar' };
 
-      this.withCts = {
+      withCts = {
         sys: { id: 'default', version: 1 },
         _migrated: {
           entryListViews: [
@@ -94,35 +91,34 @@ describe('data/UiConfig/Store', () => {
     });
 
     it('does nothing if config is not defined', async function () {
-      const api = await this.create();
+      const api = await create();
       await api.addOrEditCt({ name: 'new' });
-      expect(this.store.default).toBe(undefined);
+      expect(store.default).toBeUndefined();
     });
 
     it('does nothing if there is no "Content Type" folder', async function () {
       const config = { _migrated: { entryListViews: [{ title: 'foo' }] } };
-      this.store.default = cloneDeep(config);
-      const api = await this.create();
-      await api.addOrEditCt(this.mockCt);
-      expect(this.store.default).toEqual(config);
+      store.default = cloneDeep(config);
+      const api = await create();
+      await api.addOrEditCt(mockCt);
+      expect(store.default).toEqual(config);
     });
 
     it('does nothing if a user is not an admin', async function () {
-      this.store.default = cloneDeep(this.withCts);
-      const api = await this.create(false);
-      await api.addOrEditCt(this.mockCt);
-      expect(this.store.default).toEqual(this.withCts);
+      store.default = cloneDeep(withCts);
+      const api = await create(false);
+      await api.addOrEditCt(mockCt);
+      expect(store.default).toEqual(withCts);
     });
 
     it('adds content type if it doesn’t exist', async function () {
-      this.store.default = cloneDeep(this.withCts);
+      store.default = cloneDeep(withCts);
 
-      const api = await this.create();
-      await api.addOrEditCt(this.mockCt);
+      const api = await create();
+      await api.addOrEditCt(mockCt);
 
-      sinon.assert.match(
-        this.store.default._migrated.entryListViews,
-        sinon.match([
+      expect(store.default._migrated.entryListViews).toEqual(
+        expect.objectContaining([
           {
             title: 'Content Type',
             views: [
@@ -130,7 +126,7 @@ describe('data/UiConfig/Store', () => {
                 title: 'foo',
                 contentTypeId: 2,
               },
-              sinon.match({
+              expect.objectContaining({
                 title: 'bar',
                 contentTypeId: 1,
               }),
@@ -141,19 +137,18 @@ describe('data/UiConfig/Store', () => {
     });
 
     it('edits view title when existing Content Type is changed', async function () {
-      this.store.default = cloneDeep(this.withCts);
-      this.mockCt.sys.id = 2;
+      store.default = cloneDeep(withCts);
+      mockCt.sys.id = 2;
 
-      const api = await this.create();
-      await api.addOrEditCt(this.mockCt);
+      const api = await create();
+      await api.addOrEditCt(mockCt);
 
-      sinon.assert.match(
-        this.store.default._migrated.entryListViews,
-        sinon.match([
+      expect(store.default._migrated.entryListViews).toEqual(
+        expect.objectContaining([
           {
             title: 'Content Type',
             views: [
-              sinon.match({
+              expect.objectContaining({
                 title: 'bar',
                 contentTypeId: 2,
               }),
@@ -175,27 +170,27 @@ describe('data/UiConfig/Store', () => {
     };
 
     beforeEach(function () {
-      this.store.default = cloneDeep(INITIAL_DATA);
-      this.migrateStub.returns(MIGRATED_DATA);
+      store.default = cloneDeep(INITIAL_DATA);
+      migrateStub.mockReturnValue(MIGRATED_DATA);
     });
 
     // NOTE: We originally designed the migration to be stored back immediately
     // but ultimately decided against it (for now) to avoid "mass migration".
     it('does not immediately save migrated version back to store', async function () {
-      await this.create(true);
-      expect(this.store.default).toEqual(INITIAL_DATA);
+      await create(true);
+      expect(store.default).toEqual(INITIAL_DATA);
     });
 
     it('does not save migration back to store if non-admin user', async function () {
-      await this.create(false);
-      expect(this.store.default).toEqual(INITIAL_DATA);
+      await create(false);
+      expect(store.default).toEqual(INITIAL_DATA);
     });
 
     describe('migration', function () {
       it('results in `_migrated` property in payload', async function () {
-        const api = await this.create();
+        const api = await create();
         await api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
-        expect(this.store.default).toEqual({
+        expect(store.default).toEqual({
           sys: { version: 2 },
           _migrated: {
             entryListViews: 'UPDATED ENTRY LIST VIEWS',
@@ -211,14 +206,14 @@ describe('data/UiConfig/Store', () => {
     };
 
     beforeEach(function () {
-      this.store.default = cloneDeep(EMPTY_DATA);
-      this.migrateStub.resolves(EMPTY_DATA);
+      store.default = cloneDeep(EMPTY_DATA);
+      migrateStub.mockResolvedValue(EMPTY_DATA);
     });
 
     it('updating store does not track a migration', async function () {
-      const api = await this.create();
+      const api = await create();
       await api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
-      sinon.assert.notCalled(this.trackMigrationSpy);
+      expect(trackMigrationSpy).not.toHaveBeenCalled();
     });
   });
 });
