@@ -49,7 +49,7 @@ export function getCurrentState() {
 }
 
 // E.g. "/entry/:id/tasks/:id" will be tracked as "/:entity/:id/tasks/:id"
-const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots'];
+const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots', '/references'];
 // E.g. "/content_types/:id/editor_interface"
 const SECOND_LEVEL_PATHS = {
   '/content_types': ['/editor_interface'],

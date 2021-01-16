@@ -59,6 +59,7 @@ describe('data/Request/Utils', () => {
         'https://api.flinkly.com/spaces/i-_.d/assets/some-id/snapshots/i-_.d/THIS-WILL-BE-IGNORED',
         'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id?foo=bar',
       ],
+      '/:entity/:id/references': ['http://foo.com/spaces/id/entries/entry-id/references'],
     };
 
     forEach(urlsByExpectedEndpoint, (urls, expectedEndpoint) => {
