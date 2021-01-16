@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { isEqual, uniqWith, uniqueId } from 'lodash';
@@ -81,11 +81,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const spaceContext = useSpaceEnvContext();
 
-  const getReferencesForEntry = useCallback(async () => {
+  const getReferencesForEntry = async () => {
     const { resolved } = await getReferencesForEntryId(entity.sys.id);
     dispatch({ type: SET_REFERENCES, value: resolved });
     dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-  }, [dispatch, entity]);
+  };
 
   useEffect(() => {
     (async function () {
@@ -97,13 +97,21 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     })();
   }, [spaceContext]);
 
-  useEffect(() => {
-    onSlideStateChanged(getReferencesForEntry);
+  /**
+   * Reloads entries (once) whenever leaving an editing SlideIn.
+   * This is useful to keep the referenceTree updated whenever there's an edit.
+   * It also turns off the event if the Component is unmounted.
+   **/
 
-    return () => {
-      onSlideStateChanged(() => null);
-    };
-  }, [getReferencesForEntry]);
+  useEffect(() => {
+    const slider = onSlideStateChanged((params) => {
+      if (params.previousEntries === '') {
+        getReferencesForEntry();
+      }
+    });
+
+    return slider;
+  });
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
