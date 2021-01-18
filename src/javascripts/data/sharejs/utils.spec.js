@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import * as ShareJS from './utils';
-import sinon from 'sinon';
-import createOtDocMock from '../../../../test/helpers/mocks/ot_doc';
+import ShareJsDocMock from 'app/entity_editor/Document/__mocks__/ShareJsDocMock';
 
-const OtDocMock = createOtDocMock();
+const OtDocMock = ShareJsDocMock();
 
 describe('data/ShareJS/Utils', () => {
   describe('#peek', () => {
@@ -80,17 +79,17 @@ describe('data/ShareJS/Utils', () => {
       it('for primitives', function () {
         const doc = new OtDocMock();
         doc.snapshot.a = 'VALUE';
-        sinon.spy(doc, 'setAt'); // eslint-disable-line
+        jest.spyOn(doc, 'setAt');
         ShareJS.setDeep(doc, ['a'], 'VALUE');
-        sinon.assert.notCalled(doc.set); // eslint-disable-line
+        expect(doc.set).not.toHaveBeenCalled();
       });
 
       it('for references', function () {
         const doc = new OtDocMock();
         doc.snapshot.a = ['some', 'array'];
-        sinon.spy(doc, 'setAt'); // eslint-disable-line
+        jest.spyOn(doc, 'setAt');
         ShareJS.setDeep(doc, ['a'], ['some', 'array']);
-        sinon.assert.notCalled(doc.set); // eslint-disable-line
+        expect(doc.set).not.toHaveBeenCalled();
       });
     });
 

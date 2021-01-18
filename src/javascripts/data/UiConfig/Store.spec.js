@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 
-import createMockSpaceEndpoint from '../../../../test/utils/createSpaceEndpointMock';
+import createMockSpaceEndpoint from '__mocks__/createSpaceEndpointMock';
 import * as SearchAndViews from 'analytics/events/SearchAndViews';
 
 import createUiConfigStore from 'data/UiConfig/Store';

@@ -1,4 +1,4 @@
-import * as K from '../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import moment from 'moment';
 import * as TokenStore from 'services/TokenStore';
 import * as NgRegistry from 'core/NgRegistry';

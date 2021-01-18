@@ -1,4 +1,4 @@
-import createMockSpaceEndpoint from '../../../test/utils/createSpaceEndpointMock';
+import createMockSpaceEndpoint from '__mocks__/createSpaceEndpointMock';
 import { set } from 'lodash';
 
 import createLegacyFeatureService from 'services/LegacyFeatureService';

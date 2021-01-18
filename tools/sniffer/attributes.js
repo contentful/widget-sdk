@@ -11,10 +11,7 @@ const test = (node) => js(node) && node.path.indexOf('spec.') !== -1;
 
 const jest = (node) => test(node) && node.path.indexOf('src/javascripts') !== -1;
 
-const karma = (node) =>
-  test(node) &&
-  node.path.indexOf('src/javascripts') === -1 &&
-  node.path.indexOf('test/cypress') === -1;
+const karma = () => false;
 
 const angular = (node) => {
   const modules = node.modules;

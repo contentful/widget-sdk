@@ -3,7 +3,7 @@ import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
 import { newContentType, newEntry, newAsset, PATHS } from './__fixtures__';
 import { expectDocError } from './__tests__/testDocument';
-import * as K from '../../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
 import * as fake from 'test/helpers/fakeFactory';

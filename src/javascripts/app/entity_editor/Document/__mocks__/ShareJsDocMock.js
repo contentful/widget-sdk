@@ -162,12 +162,12 @@ export default function ShareJsDocMock() {
     }
   }
 
-  // sinon.spy(OtDoc.prototype, 'insert');
-  // sinon.spy(OtDoc.prototype, 'del');
-  // sinon.spy(OtDoc.prototype, 'remove');
-  // sinon.spy(OtDoc.prototype, 'removeAt');
-  // sinon.spy(OtDoc.prototype, 'set');
-  // sinon.spy(OtDoc.prototype, 'submitOp');
+  jest.spyOn(OtDoc.prototype, 'insert');
+  jest.spyOn(OtDoc.prototype, 'del');
+  jest.spyOn(OtDoc.prototype, 'remove');
+  jest.spyOn(OtDoc.prototype, 'removeAt');
+  jest.spyOn(OtDoc.prototype, 'set');
+  jest.spyOn(OtDoc.prototype, 'submitOp');
 
   function assertParentContainer(obj, path) {
     if (path.length < 1) {

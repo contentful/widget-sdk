@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import * as K from '../../../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as TokenStore from 'services/TokenStore';

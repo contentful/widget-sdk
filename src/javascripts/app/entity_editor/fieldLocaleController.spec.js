@@ -1,10 +1,10 @@
-import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';
 import { createFieldLocaleController } from './fieldLocaleController';
-import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
-import * as K from '../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { noop } from 'lodash';
 
 import { waitFor } from '@testing-library/dom';
+import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
+import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 
 jest.mock('services/logger', () => ({
   logSharejsError: jest.fn(),
@@ -139,7 +139,7 @@ describe('fieldLocaleController', () => {
     it('calls "otDoc.presence.focus()" if set to true', () => {
       const fieldLocaleController = create();
       fieldLocaleController.setActive(true);
-      expect(args.otDoc.presence.focus.calledWithExactly('FID', 'LID')).toBe(true);
+      expect(args.otDoc.presence.focus).toHaveBeenCalledWith('FID', 'LID');
     });
 
     it('sets the editor context field focus', () => {
@@ -151,7 +151,7 @@ describe('fieldLocaleController', () => {
 
     it('does not set focus on a disabled field', () => {
       const fieldLocaleController = create((args) => {
-        args.otDoc.permissions.canEditFieldLocale.returns(false);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(false);
       });
       fieldLocaleController.setActive(true);
       K.assertCurrentValue(args.editorContext.focus.field$, null);
@@ -169,7 +169,7 @@ describe('fieldLocaleController', () => {
   describe('#access', () => {
     it('is "disabled" and "disconnected" without connection and with permission', () => {
       const fieldLocaleController = create((args) => {
-        args.otDoc.permissions.canEditFieldLocale.returns(true);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
         args.otDoc.state.isConnected$.set(false);
       });
       expect(fieldLocaleController.access).toEqual({
@@ -194,7 +194,7 @@ describe('fieldLocaleController', () => {
     it('is "disabled" and "editing_disabled" if a field is disabled', () => {
       const fieldLocaleController = create((args) => {
         args.widget.field.disabled = true;
-        args.otDoc.permissions.canEditFieldLocale.returns(true);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
       });
       expect(fieldLocaleController.access).toEqual({
         editing_disabled: true,
@@ -205,7 +205,7 @@ describe('fieldLocaleController', () => {
 
     it('is "disabled" and "occupied" for `RichText` field with collaborators', () => {
       const fieldLocaleController = create((args) => {
-        args.otDoc.presence.collaboratorsFor.returns(K.createMockProperty([{}]));
+        args.otDoc.presence.collaboratorsFor.mockReturnValue(K.createMockProperty([{}]));
         args.widget.field.type = 'RichText';
       });
       expect(fieldLocaleController.access).toEqual({
@@ -218,7 +218,7 @@ describe('fieldLocaleController', () => {
     it('is "disabled" and "denied" without permissions and with connection', () => {
       const fieldLocaleController = create((args) => {
         args.otDoc.state.isConnected$.set(false);
-        args.otDoc.permissions.canEditFieldLocale.returns(false);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(false);
       });
       expect(fieldLocaleController.access).toEqual({
         denied: true,
@@ -230,7 +230,7 @@ describe('fieldLocaleController', () => {
     it('is "disabled" and "denied" without permissions and connection', () => {
       const fieldLocaleController = create((args) => {
         args.otDoc.state.isConnected$.set(false);
-        args.otDoc.permissions.canEditFieldLocale.returns(false);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(false);
       });
       expect(fieldLocaleController.access).toEqual({
         denied: true,
@@ -241,7 +241,7 @@ describe('fieldLocaleController', () => {
 
     it('is "editable" with permissions and connection', () => {
       const fieldLocaleController = create((args) => {
-        args.otDoc.permissions.canEditFieldLocale.returns(true);
+        args.otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
       });
       expect(fieldLocaleController.access).toEqual({
         editable: true,
@@ -255,10 +255,11 @@ describe('fieldLocaleController', () => {
     create();
     args.otDoc.changes.emit(['fields', 'FID', 'LID']);
     const validator = args.editorContext.validator;
-    expect(validator.validateFieldLocale.notCalled).toBe(true);
+    expect(validator.validateFieldLocale).not.toHaveBeenCalled();
     jest.advanceTimersByTime(800);
-    await waitFor(() =>
-      expect(validator.validateFieldLocale.calledOnceWith('FID', 'LID')).toBe(true)
-    );
+    await waitFor(() => {
+      expect(validator.validateFieldLocale).toHaveBeenCalledTimes(1);
+      expect(validator.validateFieldLocale).toHaveBeenCalledWith('FID', 'LID');
+    });
   });
 });

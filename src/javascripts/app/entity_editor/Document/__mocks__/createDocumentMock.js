@@ -1,11 +1,9 @@
-import sinon from 'sinon';
-import * as K from './kefir';
+import * as K from '__mocks__/kefirMock';
 import _ from 'lodash';
 import { create as createResourceState } from 'data/document/ResourceStateManager';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 
-// TODO replace sinon with jest when test/helpers/mocks/entity_editor_document.js is migrated
-export const createDocumentMock = ($q = Promise) => {
+export const createDocumentMock = () => {
   return {
     create(initialData, spaceEndpoint) {
       let currentData;
@@ -22,13 +20,13 @@ export const createDocumentMock = ($q = Promise) => {
       });
 
       const reverter = {
-        hasChanges: sinon.stub(),
-        revert: sinon.stub().resolves(),
+        hasChanges: jest.fn(),
+        revert: jest.fn().mockResolvedValue(),
       };
 
       const permissions = {
-        can: sinon.stub().returns(true),
-        canEditFieldLocale: sinon.stub().returns(true),
+        can: jest.fn().mockReturnValue(true),
+        canEditFieldLocale: jest.fn().mockReturnValue(true),
       };
 
       const sysProperty = valuePropertyAt(['sys']);
@@ -44,7 +42,7 @@ export const createDocumentMock = ($q = Promise) => {
 
       return {
         destroy: _.noop,
-        getVersion: sinon.stub(),
+        getVersion: jest.fn(),
 
         state: {
           isDirty$: K.createMockProperty(),
@@ -55,15 +53,15 @@ export const createDocumentMock = ($q = Promise) => {
           error$: K.createMockProperty(null),
         },
 
-        getData: sinon.spy(getData),
+        getData: jest.fn(getData),
         data$: data$,
 
-        getValueAt: sinon.spy(getValueAt),
+        getValueAt: jest.fn(getValueAt),
 
-        setValueAt: sinon.spy(setValueAt),
-        removeValueAt: sinon.spy((path) => setValueAt(path, undefined)),
-        insertValueAt: sinon.spy(insertValueAt),
-        pushValueAt: sinon.spy(pushValueAt),
+        setValueAt: jest.fn(setValueAt),
+        removeValueAt: jest.fn((path) => setValueAt(path, undefined)),
+        insertValueAt: jest.fn(insertValueAt),
+        pushValueAt: jest.fn(pushValueAt),
 
         changes: changesStream,
 
@@ -71,8 +69,8 @@ export const createDocumentMock = ($q = Promise) => {
 
         presence: {
           collaborators: K.createMockProperty([]),
-          collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
-          focus: sinon.spy(),
+          collaboratorsFor: jest.fn().mockReturnValue(K.createMockProperty([])),
+          focus: jest.fn(),
         },
 
         reverter: reverter,
@@ -108,7 +106,7 @@ export const createDocumentMock = ($q = Promise) => {
         list.splice(pos, 0, val);
         setValueAt(path, list);
         changesStream.emit([path]);
-        return $q.resolve(val);
+        return Promise.resolve(val);
       }
 
       function pushValueAt(path, val) {
@@ -116,7 +114,7 @@ export const createDocumentMock = ($q = Promise) => {
         list.push(val);
         setValueAt(path, list);
         changesStream.emit([path]);
-        return $q.resolve(val);
+        return Promise.resolve(val);
       }
 
       function setValueAt(path, value) {
@@ -130,7 +128,7 @@ export const createDocumentMock = ($q = Promise) => {
         }
 
         changesStream.emit(path);
-        return $q.resolve(value);
+        return Promise.resolve(value);
       }
     },
   };

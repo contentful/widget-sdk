@@ -1,4 +1,4 @@
-import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
+import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 import { createFieldLocaleDocument } from './fieldLocaleDocument';
 
 const fieldsPath = ['FID', 'LC'];
@@ -16,10 +16,10 @@ describe('fieldLocaleDocument', () => {
       it(`delegates calls to ${method} ${withArrayValue ? 'with array value' : ''}`, () => {
         const doc = create();
         withArrayValue && doc.set(['A', 'B']);
-        rootDoc[target].reset();
+        rootDoc[target].mockClear();
         doc[method].apply(null, args);
         const targetArgs = [path].concat(args);
-        expect(rootDoc[target].calledWith(...targetArgs)).toBe(true);
+        expect(rootDoc[target]).toHaveBeenCalledWith(...targetArgs);
       });
     };
 

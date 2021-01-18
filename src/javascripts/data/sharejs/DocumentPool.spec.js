@@ -1,5 +1,5 @@
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import * as K from '../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { create as createPool } from 'data/sharejs/DocumentPool';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';

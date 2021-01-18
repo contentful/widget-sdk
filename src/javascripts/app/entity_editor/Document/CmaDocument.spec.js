@@ -5,7 +5,7 @@ import { Action } from 'data/CMA/EntityActions';
 import { State as EntityState } from 'data/CMA/EntityState';
 import { linkedTags, newAsset, newContentType, newEntry, PATHS } from './__fixtures__';
 import testDocumentBasics, { expectDocError } from './__tests__/testDocument';
-import * as K from '../../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
 

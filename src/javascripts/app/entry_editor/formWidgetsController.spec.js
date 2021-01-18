@@ -1,4 +1,4 @@
-import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';
+import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { filterWidgets } from './formWidgetsController';
 
 const enLocale = { internal_code: 'en', code: 'en' };
@@ -19,6 +19,14 @@ const filter = () => {
   ];
 
   return filterWidgets(localeData, editorContext, controlsForm, showDisabledFields);
+};
+
+const withArgs = (fn, values, returnValue) => {
+  fn.mockImplementationOnce((...args) => {
+    if (args.every((arg, i) => values[i] === arg)) {
+      return returnValue;
+    }
+  });
 };
 
 describe('FormWidgetsController#widgets', () => {
@@ -77,7 +85,7 @@ describe('FormWidgetsController#widgets', () => {
           let validator;
           beforeEach(() => {
             validator = editorContext.validator;
-            validator.hasFieldLocaleError.withArgs('foo', 'en').returns(true);
+            withArgs(validator.hasFieldLocaleError, ['foo', 'en'], true);
           });
 
           it('shows the field', () => {
@@ -100,7 +108,7 @@ describe('FormWidgetsController#widgets', () => {
           field.disabled = false;
           showDisabledFields = true;
           const validator = editorContext.validator;
-          validator.hasFieldError.withArgs('foo').returns(true);
+          withArgs(validator.hasFieldError, ['foo'], true);
           validator.errors$.set([]);
         });
 
@@ -113,7 +121,7 @@ describe('FormWidgetsController#widgets', () => {
           let validator;
           beforeEach(() => {
             validator = editorContext.validator;
-            validator.hasFieldLocaleError.withArgs('foo', 'de').returns(true);
+            withArgs(validator.hasFieldLocaleError, ['foo', 'de'], true);
           });
 
           it('shows the field', () => {
@@ -159,7 +167,7 @@ describe('FormWidgetsController#widgets', () => {
             let validator;
             beforeEach(() => {
               validator = editorContext.validator;
-              validator.hasFieldLocaleError.withArgs('foo', 'de').returns(true);
+              withArgs(validator.hasFieldLocaleError, ['foo', 'de'], true);
             });
 
             it('shows the field', () => {
@@ -173,9 +181,9 @@ describe('FormWidgetsController#widgets', () => {
             let validator;
             beforeEach(() => {
               validator = editorContext.validator;
-              validator.hasFieldError.withArgs('foo').returns(true);
-              validator.hasFieldLocaleError.withArgs('foo', 'en').returns(true);
-              validator.hasFieldLocaleError.withArgs('foo', 'de').returns(false);
+              withArgs(validator.hasFieldError, ['foo'], true);
+              withArgs(validator.hasFieldLocaleError, ['foo', 'en'], true);
+              withArgs(validator.hasFieldLocaleError, ['foo', 'de'], false);
             });
 
             it('does not show the field', () => {
@@ -212,7 +220,7 @@ describe('FormWidgetsController#widgets', () => {
 
       it('shows the field if it has errors', () => {
         const validator = editorContext.validator;
-        validator.hasFieldError.withArgs('foo').returns(true);
+        withArgs(validator.hasFieldError, ['foo'], true);
         validator.errors$.set([]);
         const widgets = filter();
 

@@ -1,5 +1,5 @@
 import * as K from 'core/utils/kefir';
-import * as KMock from '../../../../test/utils/kefir';
+import * as KMock from '__mocks__/kefirMock';
 
 describe('core/utils/kefir', () => {
   let $rootScope, events;

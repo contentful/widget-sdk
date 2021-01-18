@@ -2,14 +2,16 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import BooleanSpaceFeature from './BooleanSpaceFeature';
-import flushPromises from 'test/helpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as ProductCatalog from 'data/CMA/ProductCatalog';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { waitFor } from '@testing-library/dom';
 
 const spaceId = 'space-id';
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getSpaceFeature: jest.fn() }));
+
+const flushPromises = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('BooleanSpaceFeature Component', () => {
   beforeEach(() => {
@@ -57,10 +59,9 @@ describe('BooleanSpaceFeature Component', () => {
         </SpaceEnvContextProvider>
       );
 
-      await flushPromises();
       wrapper.update();
 
-      expect(renderProp).toHaveBeenCalledWith({ currentVariation: true });
+      await waitFor(() => expect(renderProp).toHaveBeenCalledWith({ currentVariation: true }));
     });
   });
 });

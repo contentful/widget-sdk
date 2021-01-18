@@ -2,24 +2,24 @@
 
 <!-- MarkdownTOC autolink="true" -->
 
-- [Introduction](#introduction)
-- [Quickstart](#quickstart)
-- [Running and developing](#running-and-developing)
-   - [Setting up `git`](#setting-up-git)
+- [Contentful Web Application](#contentful-web-application)
+  - [Introduction](#introduction)
+  - [Quickstart](#quickstart)
+  - [Running and developing](#running-and-developing)
+    - [Setting up `git`](#setting-up-git)
       - [Necessary configuration](#necessary-configuration)
       - [Other git configurations](#other-git-configurations)
-   - [Running the app](#running-the-app)
-      - [Setting up HTTPS \(and handling CORS\)](#setting-up-https-and-handling-cors)
+    - [Running the app](#running-the-app)
+      - [Setting up HTTPS (and handling CORS)](#setting-up-https-and-handling-cors)
       - [Notes and limitations](#notes-and-limitations)
-   - [Running the tests](#running-the-tests)
+    - [Running the tests](#running-the-tests)
       - [Jest](#jest)
       - [Cypress](#cypress)
-      - [Karma](#karma)
       - [Additional documentation](#additional-documentation)
-   - [Running a full Contentful instance](#running-a-full-contentful-instance)
-   - [e2e tests](#e2e-tests)
+    - [Running a full Contentful instance](#running-a-full-contentful-instance)
+    - [e2e tests](#e2e-tests)
       - [Running an e2e PR with a UI branch](#running-an-e2e-pr-with-a-ui-branch)
-- [Component library](#component-library)
+  - [Component library](#component-library)
 
 <!-- /MarkdownTOC -->
 
@@ -189,9 +189,8 @@ Process:
 
 ### Running the tests
 
-We have tests in a few different frameworks: Jest, Cypress, and Karma. Jest is for our unit and React component tests,
-and Cypress is for our integration and contract tests. Karma has a mix of both, but is deprecated and you should
-prioritize migrating Karma tests to Jest (or possibly Cypress) as much as is feasible.
+We have tests in a few different frameworks: Jest and Cypress. Jest is for our unit and React component tests,
+and Cypress is for our integration and contract tests..
 
 #### Jest
 
@@ -210,16 +209,10 @@ application. Note that it requires Chrome to be available on your computer.
 > npm run cypress
 ```
 
-#### Karma
-
-To run the Karma tests, simply run `npm test` and go get a coffee, a tea, or a beer, because the tests
-are as slow as molasses in Kansas in the middle of winter -- meaning, they take a while to run.
-
 #### Additional documentation
 
 - [Running tests with Jest](./docs/guides/testing-jest.md)
 - [Running tests with Cypress](./docs/guides/testing-cypress.md)
-- [(Deprecated) Running tests with Karma](./docs/guides/testing-karma.md)
 - [Security and Compliance Tests in CI](./docs/guides/security_and_compliance.md)
 
 ### Running a full Contentful instance

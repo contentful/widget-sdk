@@ -1,4 +1,4 @@
-import * as K from '../../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 
 import * as TokenStore from 'services/TokenStore';
 import * as CreateModernOnboarding from 'components/shared/auto_create_new_space/CreateModernOnboarding';

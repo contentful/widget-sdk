@@ -3,8 +3,8 @@ import { mount } from 'enzyme';
 import 'jest-enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
-import flushPromises from 'test/helpers/flushPromises';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { waitFor } from '@testing-library/dom';
 
 const mockContentPreview = {
   replaceVariablesInUrl: jest.fn(),
@@ -112,10 +112,9 @@ describe('entity_editor/Components/SidebarContentPreviewContainer', () => {
     expect(mockContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     el.find('[data-test-id="open-preview"]').simulate('click');
-    await flushPromises();
     wrapper.update();
 
-    expect(mockContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(mockContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1));
     expect(window.open).toHaveBeenCalledWith(
       'https://google.com/search?q=VALUE',
       undefined,

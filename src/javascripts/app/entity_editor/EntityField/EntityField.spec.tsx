@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import createOtDocMock from '../../../../../test/helpers/mocks/ot_doc';
 import { EntityField } from './EntityField';
 import { EntityType } from 'contentful-ui-extensions-sdk';
+import ShareJsDocMock from '../Document/__mocks__/ShareJsDocMock';
 
 jest.mock('app/entity_editor/fieldLocaleController', () => ({
   createFieldLocaleController: jest.fn().mockReturnValue({
@@ -45,7 +45,7 @@ const getLocale = (overrides = {} as any) => {
 
 const renderComponent = (override = (props) => props) => {
   const defaultProps = {
-    doc: createOtDocMock(),
+    doc: ShareJsDocMock(),
     widget: {
       fieldId: 'widget-field-id',
       isVisible: true,

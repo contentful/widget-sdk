@@ -1,5 +1,5 @@
-import * as K from '../../../../test/utils/kefir';
-import createMockSpaceEndpoint from '../../../../test/utils/createSpaceEndpointMock';
+import * as K from '__mocks__/kefirMock';
+import createMockSpaceEndpoint from '__mocks__/createSpaceEndpointMock';
 import ShareJsDocMock from 'app/entity_editor/Document/__mocks__/ShareJsDocMock';
 import { Action, State } from 'data/CMA/EntityState';
 import { DocLoad } from 'data/sharejs/Connection';

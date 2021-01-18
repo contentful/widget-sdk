@@ -52,24 +52,6 @@ export function assertHasEnded(observable) {
   expect(hasEnded).toBe(true);
 }
 
-export function assertMatchCurrentValue(prop, matcher) {
-  let called = false;
-  let actual;
-  const off = Kefir.onValue(prop, (value) => {
-    actual = value;
-    called = true;
-  });
-  off();
-  expect(called).toBe(true, 'Observable does not have current value');
-  if (!matcher.test(actual)) {
-    throw new Error(
-      'Observable value did not match\n' +
-        `  expected ${jasmine.pp(actual)}\n` +
-        `  to match ${matcher.message}\n`
-    );
-  }
-}
-
 export function assertContainingCurrentValue(prop, object) {
   let called = false;
   let actual;

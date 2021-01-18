@@ -24,7 +24,7 @@ const TRAVIS_DESC =
   'For each of the three environments production, staging, and preview a file\n' +
   'distribution is created in `./output/files/${env}`.';
 
-const TEST_DESC = 'Run the karma and jest test suite.';
+const TEST_DESC = 'Run the jest test suite.';
 
 const SOURCEMAPS_DESC = 'Upload sourcemaps to Bugsnag. The version must be provided.';
 

@@ -1,6 +1,6 @@
-import * as K from '../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import { createBase } from 'app/entity_editor/Validator';
-import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
+import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 
 describe('app/entity_editor/Validator', () => {
   let schemaErrors;

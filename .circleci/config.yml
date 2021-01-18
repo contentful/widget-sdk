@@ -338,19 +338,6 @@ jobs:
           name: Run Jest tests
           command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
 
-      # Karma tests
-      - run:
-          name: Build test artifacts
-          command: NODE_ENV=test node --max_old_space_size=3072 ./tools/bin/build-test.js
-      - run:
-          name: Run Karma tests
-          command: |
-            mkdir -p ./reports/karma
-            npm run test:once
-          environment:
-            JUNIT_REPORT_PATH: ./reports/karma
-            JUNIT_REPORT_NAME: karma-test-results.xml
-
   publish-pact-contracts:
     docker:
       - image: pactfoundation/pact-cli:latest

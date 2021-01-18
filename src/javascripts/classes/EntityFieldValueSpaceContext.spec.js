@@ -230,12 +230,6 @@ describe('EntityFieldValueSpaceContext', () => {
       });
     });
 
-    //   beforeEach(async function() {
-
-    //     const CTRepo = await this.system.import('data/ContentTypeRepo/Published');
-    //     this.spaceContext.publishedCTs = stubAll(CTRepo.create());
-    //     this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
-    //   });
     describe('#entityDescription()', () => {
       it('returns value of first text or symbol field, falls back to default locale', function () {
         const desc = entityDescription(entry);

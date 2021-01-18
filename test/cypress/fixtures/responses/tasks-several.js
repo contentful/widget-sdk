@@ -1,5 +1,5 @@
 import { Matchers } from '@pact-foundation/pact-web';
-import { RESOURCE_ID_REGEXP } from '../../../../src/javascripts/data/utils';
+import { RESOURCE_ID_REGEXP } from '../../../../src/javascripts/data/utils'; // eslint-disable-line rulesdir/relative-imports
 import severalTasks from './tasks-several.json';
 
 export const severalTasksDefinition = {

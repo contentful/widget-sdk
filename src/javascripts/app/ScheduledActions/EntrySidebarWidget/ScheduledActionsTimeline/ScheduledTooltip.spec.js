@@ -3,10 +3,10 @@ import { shallow, mount } from 'enzyme';
 import 'jest-enzyme';
 import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
-import flushPromises from 'test/helpers/flushPromises';
 
 import ScheduleTooltip, { ScheduleTooltipContent } from './ScheduleTooltip';
 import * as FormattedDateAndTime from '../../FormattedDateAndTime';
+import { waitFor } from '@testing-library/dom';
 
 const formatDateAndTimeSpy = jest.spyOn(FormattedDateAndTime, 'formatDateAndTime');
 
@@ -98,10 +98,9 @@ describe('ScheduleTooltip', () => {
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
     wrapper.find('Tooltip').simulate('mouseEnter');
-    await flushPromises();
     wrapper.update();
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
-    expect(tooltipContent.exists()).toBe(true);
+    await waitFor(() => expect(tooltipContent.exists()).toBe(true));
     expect(tooltipContent.prop('job')).toEqual(jobs[jobs.length - 1]);
     expect(tooltipContent.prop('jobsCount')).toBe(jobs.length - 1);
   });
@@ -133,10 +132,9 @@ describe('ScheduleTooltip', () => {
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
     wrapper.find('Tooltip').simulate('mouseEnter');
-    await flushPromises();
     wrapper.update();
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
-    expect(tooltipContent.exists()).toBe(true);
+    await waitFor(() => expect(tooltipContent.exists()).toBe(true));
     expect(tooltipContent.prop('job')).toEqual(job);
     expect(tooltipContent.prop('jobsCount')).toBe(1);
     expect(filter).not.toHaveBeenCalled();

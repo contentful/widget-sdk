@@ -1,4 +1,4 @@
-import * as K from '../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import _ from 'lodash';
 import moment from 'moment';
 import { getBrowserStorage } from 'core/services/BrowserStorage';

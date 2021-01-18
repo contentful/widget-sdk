@@ -1,6 +1,6 @@
 import { noop } from 'lodash';
 import jestKefir from 'jest-kefir';
-import * as K from '../../../../../test/utils/kefir';
+import * as K from '__mocks__/kefirMock';
 import * as Kefir from 'core/utils/kefir';
 import * as OtDocument from './OtDocument';
 import { DocLoad } from 'data/sharejs/Connection';

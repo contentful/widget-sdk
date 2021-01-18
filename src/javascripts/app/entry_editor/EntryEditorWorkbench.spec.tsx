@@ -1,11 +1,11 @@
 import React from 'react';
 import EntryEditorWorkbench from './EntryEditorWorkbench';
 import { screen, render } from '@testing-library/react';
-import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';
-import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { EntityType } from 'app/entity_editor/Components/constants';
 import { EditorContext } from 'app/entity_editor/EntityField/types';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { createEditorContextMock } from '__mocks__/createEditorContextMock';
+import { createDocumentMock } from 'app/entity_editor/Document/__mocks__/createDocumentMock';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),

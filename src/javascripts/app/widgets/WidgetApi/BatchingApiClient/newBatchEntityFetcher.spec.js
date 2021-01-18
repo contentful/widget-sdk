@@ -1,6 +1,6 @@
 import newBatchEntityFetcher from './newBatchEntityFetcher';
 
-import flushPromises from 'test/helpers/flushPromises';
+import { waitFor } from '@testing-library/dom';
 
 jest.mock('Config', () => ({ apiUrl: (v) => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({
@@ -45,8 +45,7 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
     it('happens in the next tick', async () => {
       fetch('ID');
       expect(getResources).not.toHaveBeenCalled();
-      await flushPromises();
-      expect(getResources).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(getResources).toHaveBeenCalledTimes(1));
     });
 
     it('is cached within the same tick', async () => {

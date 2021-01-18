@@ -1,9 +1,7 @@
-import * as K from './kefir';
+import * as K from '__mocks__/kefirMock';
 import _ from 'lodash';
 import * as Focus from 'app/entity_editor/Focus';
-import sinon from 'sinon';
 
-// TODO replace sinon with jest when test/helpers/mocks/editor_context.js is migrated
 export const createEditorContextMock = () => {
   return { create: create };
 
@@ -25,13 +23,13 @@ export const createEditorContextMock = () => {
 
     return {
       errors$: errors$,
-      run: sinon.stub().returns(true),
-      hasFieldError: sinon.stub().returns(false),
-      hasFieldLocaleError: sinon.stub().returns(false),
-      setApiResponseErrors: sinon.spy((response) => {
+      run: jest.fn().mockReturnValue(true),
+      hasFieldError: jest.fn().mockReturnValue(false),
+      hasFieldLocaleError: jest.fn().mockReturnValue(false),
+      setApiResponseErrors: jest.fn((response) => {
         errors$.set(_.get(response, ['body', 'details', 'errors']));
       }),
-      validateFieldLocale: sinon.spy(),
+      validateFieldLocale: jest.fn(),
     };
   }
 };

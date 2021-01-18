@@ -13,30 +13,26 @@
       - [Static Rendering API with `Enzyme.render`](#static-rendering-api-with-enzymerender)
       - [`shallow` vs. `mount` vs. `render`](#shallow-vs-mount-vs-render)
     - [Jest](#jest)
-      - [Snapshots [deprecated]](#snapshots-[deprecated])
+      - [Snapshots [Deprecated]](#snapshots-deprecated)
   - [Writing tests](#writing-tests)
     - [Unit vs Component tests](#unit-vs-component-tests)
-    - [React Testing Library](#react-testing-library)
-      - [Cheatsheet](#cheatsheet)
-      - [Async Utils](#async-utils)
+      - [React Testing Library](#react-testing-library)
+        - [Cheatsheet](#cheatsheet)
+        - [Async Utils](#async-utils)
+      - [Commonly used Jest assertions](#commonly-used-jest-assertions)
       - [Testing custom react hooks](#testing-custom-react-hooks)
     - [Matchers](#matchers)
     - [Mocks](#mocks)
       - [Faker Library](#faker-library)
-      - [Mock functions](#mock-functions)
-      - [mockResolveValue vs mockReturnValue vs mockRejectedValueOnce](#mockResolveValue-vs-mockReturnValue-vs-mockRejectedValueOnce)
-      - [What not to mock](#What-not-to-mock)
-      - [Modals](#modals)
+      - [Mocking functions](#mocking-functions)
+      - [mockResolveValue vs mockReturnValue vs mockRejectedValueOnce](#mockresolvevalue-vs-mockreturnvalue-vs-mockrejectedvalueonce)
+      - [What not to mock](#what-not-to-mock)
+      - [Mocking Modals](#mocking-modals)
       - [Mock Angular modules](#mock-angular-modules)
   - [Skipping tests](#skipping-tests)
   - [Debugging tests](#debugging-tests)
     - [Debugging Tests in Chrome](#debugging-tests-in-chrome)
     - [Debugging Tests in Visual Studio Code](#debugging-tests-in-visual-studio-code)
-  - [Migration to Jest from Karma](#migration-to-jest-from-karma)
-    - [If your tests have no Angular dependencies](#if-your-tests-have-no-angular-dependencies)
-    - [If your tests have Angular dependencies and use injection](#if-your-tests-have-angular-dependencies-and-use-injection)
-      - [Proper way](#proper-way)
-      - [Quick way](#quick-way)
   - [Resources](#resources)
 
 ## Running tests
@@ -615,46 +611,6 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
     }
   ]
 }
-```
-
-## Migration to Jest from Karma
-
-### If your tests have no Angular dependencies
-
-Good news. Migration to Jest should be easy.
-
-- Move file from `test/**/*.spec.js` to `src/**/*.spec.js`, so file that is being tested is located in next to test file.
-- Import `sinon` directly as `import sinon from "sinon"` if it was used.
-- Fix all ESLint errors in the file.
-
-### If your tests have Angular dependencies and use injection
-
-Do all steps from the previous chapter.
-
-#### Proper way
-
-- Provide all Angular dependencies to React component using `ServicesConsumer`.
-- Get rid of `module('contentful/test')` and `$provide` in tests and inject all mocks using `MockedProvider`.
-
-#### Quick way
-
-We have to get rid of injection and use `jest.mock` to mock all imports of Angular modules.
-
-Let's say that some React component imports `$state` Angular service.
-
-```js
-import { getModule } from 'core/NgRegistry';
-const $state = getModule('$state');
-
-export default class TestedComponent extends React.Component {}
-```
-
-By using `jest.mock` with `virtual: true` we can mock import of the module and don't pull all Angular infrastructure to our test.
-
-```js
-import TestedComponent from '../TestedComponent';
-
-jest.mock('ng/$state', () => ({ go: jest.fn() }), { virtual: true });
 ```
 
 ## Resources

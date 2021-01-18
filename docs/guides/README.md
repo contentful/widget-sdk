@@ -75,7 +75,6 @@ This is a list of all the guides for developing the Contentful web application.
 
 - How to run tests
 - How to write tests
-- How to migrate from Karma to Jest
 
 ## [Testing with Cypress](./testing-cypress.md)
 
@@ -88,11 +87,5 @@ This is a list of all the guides for developing the Contentful web application.
 - How to prefetch data based on route and org role
 - How to use the prefetched data
 - How to check if prefetching finished
-
-## [(Legacy) Testing with Karma](./testing-karma.md)
-
-- How to run tests
-- How to write tests
-- Common patterns for Angular, mocks, etc.
 
 For additional context and documentation (or if you would like to suggest an improvement), checkout: [Enhancement proposals](../enhancement-proposals)

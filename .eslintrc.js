@@ -58,16 +58,6 @@ module.exports = {
         'rulesdir/allow-only-import-export-in-index': 'error',
       },
     },
-    /** Karma tests */
-    {
-      files: ['test/!(contract)/**'],
-      rules: {
-        'import/no-unresolved': 'off',
-        'rulesdir/relative-imports': 'off',
-        'rulesdir/restrict-inline-styles': 'off',
-        'rulesdir/enforce-getModule-call-inside-fn': 'off',
-      },
-    },
     /**
      * Jest tests
      */

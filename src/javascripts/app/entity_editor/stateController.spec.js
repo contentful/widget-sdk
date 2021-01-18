@@ -4,10 +4,10 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import * as Analytics from 'analytics/Analytics';
-import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';
-import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { waitFor } from '@testing-library/dom';
 import { makeNotify, Notification as MockedNotification } from 'app/entity_editor/Notifications';
+import { createEditorContextMock } from '__mocks__/createEditorContextMock';
+import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 
 jest.mock('navigation/SlideInNavigator', () => ({ goToPreviousSlideOrExit: jest.fn() }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
@@ -457,16 +457,16 @@ describe('stateController', () => {
 
   describe('#revertToPrevious command', () => {
     it('is available if document has changes and the document is editable', async () => {
-      doc.reverter.hasChanges.returns(true);
+      doc.reverter.hasChanges.mockReturnValue(true);
       doc.state.canEdit$.set(true);
       const controller = await init();
       expect(controller.revertToPrevious.isAvailable()).toBe(true);
 
-      doc.reverter.hasChanges.returns(true);
+      doc.reverter.hasChanges.mockReturnValue(true);
       doc.state.canEdit$.set(false);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
 
-      doc.reverter.hasChanges.returns(false);
+      doc.reverter.hasChanges.mockReturnValue(false);
       doc.state.canEdit$.set(true);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
     });
