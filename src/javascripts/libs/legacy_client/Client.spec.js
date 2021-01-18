@@ -1,15 +1,15 @@
-import sinon from 'sinon';
 import Client from 'libs/legacy_client/client';
-import describeSpaceInstance from 'test/helpers/libs/legacy_client/space_instance';
+import describeSpaceInstance from './__mocks__/space_instance';
 import _ from 'lodash';
 
 describe('legacyClient', function () {
+  const context = {};
   beforeEach(function () {
-    this.request = createRequestStub();
-    this.client = new Client({
+    context.request = createRequestStub();
+    context.client = new Client({
       request: ({ method, path, headers, payload }) => {
         const payloadKey = method === 'GET' ? 'params' : 'data';
-        return this.request.adapterRequest({
+        return context.request.adapterRequest({
           method,
           url: path,
           headers,
@@ -29,12 +29,12 @@ describe('legacyClient', function () {
       },
     });
 
-    describeSpaceInstance(serverSpaceData);
+    describeSpaceInstance(serverSpaceData, context);
   });
 });
 
 function createRequestStub() {
-  const request = sinon.spy(function ({ payload }) {
+  const request = jest.fn(function ({ payload }) {
     if (!request.responses.length) {
       throw new Error('No server responses provided');
     }
@@ -62,7 +62,7 @@ function createRequestStub() {
 
   request.reset = function () {
     this.responses = [];
-    sinon.spy.reset.call(this);
+    request.mockClear();
   };
 
   /**

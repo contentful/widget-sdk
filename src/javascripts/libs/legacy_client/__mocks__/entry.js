@@ -1,30 +1,29 @@
-import sinon from 'sinon';
 import describeEntity from './entity';
 import describeArchivable from './archivable';
 import { describeResource, describeGetResource, describeContentEntity } from './space_resource';
 
-export default function describeEntry() {
+export default function describeEntry(context) {
   const entry = { singular: 'entry', plural: 'entries' };
-  describeGetResource(entry);
-  describeContentEntity(entry, setupEntity);
-  describeEntity(entry, setupEntity);
-  describeArchivable(entry, setupEntity);
+  describeGetResource(entry, undefined, context);
+  describeContentEntity(entry, setupEntity, context);
+  describeEntity(entry, setupEntity, context);
+  describeArchivable(entry, setupEntity, context);
 
   function setupEntity() {
     beforeEach(function () {
-      this.entity = this.space.newEntry({
+      context.entity = context.space.newEntry({
         sys: { type: 'Entry', contentType: { sys: { id: 'abcd' } } },
       });
     });
   }
 
-  describeResource(entry);
+  describeResource(entry, undefined, context);
 
   describe('gets content type id', function () {
     setupEntity();
 
     it('gets content type id', function () {
-      expect(this.entity.getContentTypeId()).toEqual('abcd');
+      expect(context.entity.getContentTypeId()).toEqual('abcd');
     });
   });
 
@@ -36,9 +35,9 @@ export default function describeEntry() {
     });
 
     it('posts to server', async function () {
-      this.request.respond(serverData);
-      const resource = await this.space.createEntry('123', { name: 'my resource' });
-      sinon.assert.calledWith(this.request, {
+      context.request.respond(serverData);
+      const resource = await context.space.createEntry('123', { name: 'my resource' });
+      expect(context.request).toHaveBeenCalledWith({
         method: 'POST',
         url: '/spaces/42/entries',
         data: { name: 'my resource' },
@@ -48,8 +47,8 @@ export default function describeEntry() {
     });
 
     it('identical object is retrieved by .getId()', async function () {
-      this.request.respond(serverData);
-      const resource = await this.space.createEntry('123', { name: 'my resource' });
+      context.request.respond(serverData);
+      const resource = await context.space.createEntry('123', { name: 'my resource' });
       expect(resource.getId()).toEqual('43');
     });
 
@@ -58,9 +57,9 @@ export default function describeEntry() {
         name: 'my resource',
         sys: { id: '55' },
       };
-      this.request.respond(serverData);
-      await this.space.createEntry('123', newData);
-      sinon.assert.calledWith(this.request, {
+      context.request.respond(serverData);
+      await context.space.createEntry('123', newData);
+      expect(context.request).toHaveBeenCalledWith({
         method: 'PUT',
         url: '/spaces/42/entries/55',
         data: newData,

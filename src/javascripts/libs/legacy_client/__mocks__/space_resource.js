@@ -13,7 +13,6 @@
  */
 
 import { cloneDeep } from 'lodash';
-import sinon from 'sinon';
 
 const serverData = Object.freeze({
   name: 'my resource',
@@ -31,50 +30,49 @@ const serverList = Object.freeze({
  * Describe `getResource(id)` and `getResources(query)` factory
  * methods.
  */
-export const describeGetResource = entityDescription('resource factory', (names) => {
+export const describeGetResource = entityDescription('resource factory', (names, _, context) => {
   describe('.getOne(id)', function () {
     it('obtains resource from server', async function () {
-      this.request.respond(serverData);
-      const resource = await this.space[names.getOne]('43');
+      context.request.respond(serverData);
+      const resource = await context.space[names.getOne]('43');
       expect(resource.data).toEqual(serverData);
-      sinon.assert.calledWith(this.request, {
+      expect(context.request).toHaveBeenCalledWith({
         method: 'GET',
         url: `/spaces/42/${names.slug}/43`,
       });
     });
 
     it('returns identical object', async function () {
-      this.request.respond(serverData);
-      this.request.respond(serverData);
+      context.request.respond(serverData);
+      context.request.respond(serverData);
 
-      const resource1 = await this.space[names.getOne]('43');
-      const resource2 = await this.space[names.getOne]('43');
+      const resource1 = await context.space[names.getOne]('43');
+      const resource2 = await context.space[names.getOne]('43');
       expect(resource1).toEqual(resource2);
     });
 
     it('throws when id not given', function () {
-      expect(() => this.space[names.getOne]()).toThrow(new Error('No id provided'));
+      expect(() => context.space[names.getOne]()).toThrow(new Error('No id provided'));
     });
 
     it('rejects server error', async function () {
-      this.request.throw('server error');
+      context.request.throw('server error');
 
       try {
-        await this.space[names.getOne]('43');
+        await context.space[names.getOne]('43');
       } catch (err) {
         expect(err).toBe('server error');
         return;
       }
-      fail('should reject');
     });
   });
 
   describe('.getAll(query)', function () {
     it('obtains resource list from server', async function () {
-      this.request.respond(serverList);
-      const [resource] = await this.space[names.getAll]('myquery');
+      context.request.respond(serverList);
+      const [resource] = await context.space[names.getAll]('myquery');
       expect(resource.data).toEqual(serverData);
-      sinon.assert.calledWith(this.request, {
+      expect(context.request).toHaveBeenCalledWith({
         method: 'GET',
         url: `/spaces/42/${names.slug}`,
         params: 'myquery',
@@ -82,16 +80,16 @@ export const describeGetResource = entityDescription('resource factory', (names)
     });
 
     it('sets total on returned list', async function () {
-      this.request.respond(serverList);
-      const entries = await this.space[names.getAll]('myquery');
+      context.request.respond(serverList);
+      const entries = await context.space[names.getAll]('myquery');
       expect(entries.total).toEqual(123);
     });
 
     it('returns list with identitcal objects', async function () {
-      this.request.respond(serverList);
-      this.request.respond(serverList);
-      const entries1 = await this.space[names.getAll]('myquery');
-      const entries2 = await this.space[names.getAll]('myquery');
+      context.request.respond(serverList);
+      context.request.respond(serverList);
+      const entries1 = await context.space[names.getAll]('myquery');
+      const entries2 = await context.space[names.getAll]('myquery');
       const identical = entries1.every((_, i) => entries1[i] === entries2[i]);
       expect(identical).toBe(true);
     });
@@ -101,16 +99,16 @@ export const describeGetResource = entityDescription('resource factory', (names)
 /**
  * Describe `createResource(data)` factory method.
  */
-export const describeCreateResource = entityDescription('resource factory', (names) => {
+export const describeCreateResource = entityDescription('resource factory', (names, _, context) => {
   describe('.createOne(data)', function () {
     it('sends POST request without id', async function () {
       const newData = {
         name: 'my resource',
         fields: null,
       };
-      this.request.respond(serverData);
-      const resource = await this.space[names.createOne](newData);
-      sinon.assert.calledWith(this.request, {
+      context.request.respond(serverData);
+      const resource = await context.space[names.createOne](newData);
+      expect(context.request).toHaveBeenCalledWith({
         method: 'POST',
         url: `/spaces/42/${names.slug}`,
         data: newData,
@@ -124,9 +122,9 @@ export const describeCreateResource = entityDescription('resource factory', (nam
         name: 'my resource',
         fields: null,
       };
-      this.request.respond(serverData);
-      await this.space[names.createOne](newData);
-      sinon.assert.calledWith(this.request, {
+      context.request.respond(serverData);
+      await context.space[names.createOne](newData);
+      expect(context.request).toHaveBeenCalledWith({
         method: 'PUT',
         url: `/spaces/42/${names.slug}/55`,
         data: newData,
@@ -134,12 +132,12 @@ export const describeCreateResource = entityDescription('resource factory', (nam
     });
 
     it('identical object is retrieved by .getId()', async function () {
-      this.request.respond(serverData);
-      const resource1 = await this.space[names.createOne]({ name: 'my resource' });
+      context.request.respond(serverData);
+      const resource1 = await context.space[names.createOne]({ name: 'my resource' });
       expect(resource1.getId()).toEqual('43');
 
-      this.request.respond(serverData);
-      const resource2 = await this.space[names.getOne]('43');
+      context.request.respond(serverData);
+      const resource2 = await context.space[names.getOne]('43');
       expect(resource1).toEqual(resource2);
     });
   });
@@ -148,17 +146,17 @@ export const describeCreateResource = entityDescription('resource factory', (nam
 /**
  * Describe `newResource(data)` factory method.
  */
-export const describeNewResource = entityDescription('resource factory', (names) => {
+export const describeNewResource = entityDescription('resource factory', (names, _, context) => {
   it('.new(data)', async function () {
     // TODO this should be a promise for consistency
-    const resource = this.space[names.new]();
+    const resource = context.space[names.new]();
     expect(resource.getId()).toBeUndefined();
 
     resource.data.name = 'new name';
     const saveData = cloneDeep(resource.data);
-    this.request.respond(serverData);
+    context.request.respond(serverData);
     await resource.save();
-    sinon.assert.calledWith(this.request, {
+    expect(context.request).toHaveBeenCalledWith({
       method: 'POST',
       url: `/spaces/42/${names.slug}`,
       data: saveData,
@@ -171,65 +169,65 @@ export const describeNewResource = entityDescription('resource factory', (names)
  */
 export const describeContentEntity = entityDescription(
   'content entity methods',
-  (names, description) => {
+  (names, description, context) => {
     if (description) description();
 
     describe('#getName()', function () {
       it('returns id', function () {
-        this.entity.data.sys.id = 'myid';
-        expect(this.entity.getName()).toEqual('myid');
+        context.entity.data.sys.id = 'myid';
+        expect(context.entity.getName()).toEqual('myid');
       });
 
       it('returns undefined without data', function () {
-        delete this.entity.data;
-        expect(this.entity.getName()).toBeUndefined();
+        delete context.entity.data;
+        expect(context.entity.getName()).toBeUndefined();
       });
     });
 
     describe('#canPublish()', function () {
       it('true if no published version', function () {
-        this.entity.setPublishedVersion(null);
-        expect(this.entity.canPublish()).toBe(true);
+        context.entity.setPublishedVersion(null);
+        expect(context.entity.canPublish()).toBe(true);
       });
 
       it('false if entity deleted', function () {
-        expect(this.entity.canPublish()).toBe(true);
-        delete this.entity.data;
-        expect(this.entity.canPublish()).toBe(false);
+        expect(context.entity.canPublish()).toBe(true);
+        delete context.entity.data;
+        expect(context.entity.canPublish()).toBe(false);
       });
 
       it('false if entity is archvied', function () {
-        expect(this.entity.canPublish()).toBe(true);
-        this.entity.data.sys.archivedVersion = 1;
-        expect(this.entity.canPublish()).toBe(false);
+        expect(context.entity.canPublish()).toBe(true);
+        context.entity.data.sys.archivedVersion = 1;
+        expect(context.entity.canPublish()).toBe(false);
       });
 
       it('false if already published version', function () {
-        expect(this.entity.canPublish()).toBe(true);
+        expect(context.entity.canPublish()).toBe(true);
 
         const publishedVersion = 123;
-        this.entity.setVersion(publishedVersion + 1);
-        this.entity.setPublishedVersion(publishedVersion);
-        expect(this.entity.canPublish()).toBe(false);
+        context.entity.setVersion(publishedVersion + 1);
+        context.entity.setPublishedVersion(publishedVersion);
+        expect(context.entity.canPublish()).toBe(false);
       });
 
       it('true if entity is updated since publishing', function () {
         const publishedVersion = 123;
-        this.entity.setVersion(publishedVersion + 1);
-        this.entity.setPublishedVersion(publishedVersion);
-        expect(this.entity.canPublish()).toBe(false);
+        context.entity.setVersion(publishedVersion + 1);
+        context.entity.setPublishedVersion(publishedVersion);
+        expect(context.entity.canPublish()).toBe(false);
 
-        this.entity.setVersion(publishedVersion + 2);
-        expect(this.entity.canPublish()).toBe(true);
+        context.entity.setVersion(publishedVersion + 2);
+        expect(context.entity.canPublish()).toBe(true);
       });
     });
 
     describe('#unpublish', function () {
       it('sends DELETE request', async function () {
-        this.entity.data.sys.id = 'eid';
-        this.request.respond(this.entity.data);
-        await this.entity.unpublish();
-        sinon.assert.calledWith(this.request, {
+        context.entity.data.sys.id = 'eid';
+        context.request.respond(context.entity.data);
+        await context.entity.unpublish();
+        expect(context.request).toHaveBeenCalledWith({
           method: 'DELETE',
           url: `/spaces/42/${names.plural}/eid/published`,
         });
@@ -243,7 +241,7 @@ export const describeContentEntity = entityDescription(
  *
  * Sets up a new resource beforehand.
  */
-export const describeResource = entityDescription('resource', (names, description) => {
+export const describeResource = entityDescription('resource', (names, description, context) => {
   const contentTypeId = 'ctid';
   const serverData = Object.freeze({
     name: 'my resource',
@@ -255,10 +253,10 @@ export const describeResource = entityDescription('resource', (names, descriptio
   });
 
   beforeEach(async function () {
-    this.request.respond(serverData);
-    this.resource = await this.space[names.getOne](contentTypeId);
-    this[names.singular] = this.resource;
-    this.request.reset();
+    context.request.respond(serverData);
+    context.resource = await context.space[names.getOne](contentTypeId);
+    context[names.singular] = context.resource;
+    context.request.reset();
   });
 
   if (description) {
@@ -266,9 +264,9 @@ export const describeResource = entityDescription('resource', (names, descriptio
   }
 
   it('#delete()', async function () {
-    this.request.respond(null);
-    await this.resource.delete();
-    sinon.assert.calledWith(this.request, {
+    context.request.respond(null);
+    await context.resource.delete();
+    expect(context.request).toHaveBeenCalledWith({
       method: 'DELETE',
       url: `/spaces/42/${names.plural}/43`,
     });
@@ -276,14 +274,14 @@ export const describeResource = entityDescription('resource', (names, descriptio
 
   describe('#save() without id', function () {
     beforeEach(function () {
-      delete this.resource.data.sys.id;
+      delete context.resource.data.sys.id;
     });
 
     it('sends POST request', async function () {
-      const resourceData = cloneDeep(this.resource.data);
-      this.request.respond(resourceData);
-      await this.resource.save();
-      sinon.assert.calledWith(this.request, {
+      const resourceData = cloneDeep(context.resource.data);
+      context.request.respond(resourceData);
+      await context.resource.save();
+      expect(context.request).toHaveBeenCalledWith({
         method: 'POST',
         url: `/spaces/42/${names.plural}`,
         data: resourceData,
@@ -292,28 +290,28 @@ export const describeResource = entityDescription('resource', (names, descriptio
 
     it('updates from server response', async function () {
       const serverData = { name: 'server name' };
-      this.request.respond(serverData);
-      await this.resource.save();
-      expect(this.resource.data).toEqual(serverData);
+      context.request.respond(serverData);
+      await context.resource.save();
+      expect(context.resource.data).toEqual(serverData);
     });
 
     it('updates identity map', async function () {
-      this.request.respond(serverData);
-      await this.resource.save();
+      context.request.respond(serverData);
+      await context.resource.save();
 
-      this.request.respond(serverData);
-      const resource = await this.space[names.getOne]('43');
-      expect(resource).toEqual(this.resource);
+      context.request.respond(serverData);
+      const resource = await context.space[names.getOne]('43');
+      expect(resource).toEqual(context.resource);
     });
   });
 
   describe('#save() with id', function () {
     it('sends PUT request', async function () {
-      this.resource.data.name = 'my new resource';
-      const resourceData = cloneDeep(this.resource.data);
-      this.request.respond(resourceData);
-      await this.resource.save();
-      sinon.assert.calledWith(this.request, {
+      context.resource.data.name = 'my new resource';
+      const resourceData = cloneDeep(context.resource.data);
+      context.request.respond(resourceData);
+      await context.resource.save();
+      expect(context.request).toHaveBeenCalledWith({
         method: 'PUT',
         url: `/spaces/42/${names.plural}/43`,
         data: resourceData,
@@ -323,18 +321,18 @@ export const describeResource = entityDescription('resource', (names, descriptio
 
     it('updates from server response', async function () {
       const serverData = { name: 'server name' };
-      this.request.respond(serverData);
-      await this.resource.save();
-      expect(this.resource.data).toEqual(serverData);
+      context.request.respond(serverData);
+      await context.resource.save();
+      expect(context.resource.data).toEqual(serverData);
     });
 
     it('updates identity map', async function () {
-      this.request.respond(serverData);
-      await this.resource.save();
+      context.request.respond(serverData);
+      await context.resource.save();
 
-      this.request.respond(serverData);
-      const resource = await this.space[names.getOne]('43');
-      expect(resource).toEqual(this.resource);
+      context.request.respond(serverData);
+      const resource = await context.space[names.getOne]('43');
+      expect(resource).toEqual(context.resource);
     });
   });
 });
@@ -345,57 +343,60 @@ export const describeResource = entityDescription('resource', (names, descriptio
  * The same as `describeResource` except that it checks for version
  * headers.
  */
-export const describeVersionedResource = entityDescription('resource', (names, description) => {
-  const serverData = Object.freeze({
-    name: 'my resource',
-    sys: {
-      id: '43',
-      type: 'resource',
-      version: 123,
-    },
-  });
-
-  beforeEach(async function () {
-    this.request.respond(serverData);
-    this.resource = await this.space[names.getOne](serverData);
-    this[names.singular] = this.resource;
-    this.request.reset();
-  });
-
-  if (description) {
-    description(serverData);
-  }
-
-  it('#delete()', async function () {
-    this.request.respond(null);
-    await this.resource.delete();
-    sinon.assert.calledWith(this.request, {
-      method: 'DELETE',
-      url: `/spaces/42/${names.plural}/43`,
+export const describeVersionedResource = entityDescription(
+  'resource',
+  (names, description, context) => {
+    const serverData = Object.freeze({
+      name: 'my resource',
+      sys: {
+        id: '43',
+        type: 'resource',
+        version: 123,
+      },
     });
-  });
 
-  describe('#save()', function () {
-    it('sends put request with id', async function () {
-      this.resource.data.name = 'my new resource';
-      const resourceData = cloneDeep(this.resource.data);
-      this.request.respond(resourceData);
-      await this.resource.save();
-      sinon.assert.calledWith(this.request, {
-        method: 'PUT',
+    beforeEach(async function () {
+      context.request.respond(serverData);
+      context.resource = await context.space[names.getOne](serverData);
+      context[names.singular] = context.resource;
+      context.request.reset();
+    });
+
+    if (description) {
+      description(serverData);
+    }
+
+    it('#delete() ', async function () {
+      context.request.respond(null);
+      await context.resource.delete();
+      expect(context.request).toHaveBeenCalledWith({
+        method: 'DELETE',
         url: `/spaces/42/${names.plural}/43`,
-        data: resourceData,
-        headers: { 'X-Contentful-Version': 123 },
       });
     });
-  });
-});
+
+    describe('#save()', function () {
+      it('sends put request with id', async function () {
+        context.resource.data.name = 'my new resource';
+        const resourceData = cloneDeep(context.resource.data);
+        context.request.respond(resourceData);
+        await context.resource.save();
+        expect(context.request).toHaveBeenCalledWith({
+          method: 'PUT',
+          url: `/spaces/42/${names.plural}/43`,
+          data: resourceData,
+          headers: { 'X-Contentful-Version': 123 },
+        });
+      });
+    });
+  }
+);
 
 function entityDescription(label, descriptor) {
-  return function (names, extendedDescriptor) {
+  return function (names, extendedDescriptor, context) {
     names = makeNames(names);
     describe(`${names.singular} ${label}`, function () {
-      descriptor(names, extendedDescriptor);
+      descriptor(names, extendedDescriptor, context);
     });
   };
 }
