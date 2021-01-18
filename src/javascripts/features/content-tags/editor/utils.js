@@ -1,4 +1,5 @@
 import { camelCase, groupBy, min, sortBy, upperFirst } from 'lodash';
+import * as stringUtils from 'utils/StringUtils';
 
 export const tagPayloadToValue = (tag) => ({ value: tag.sys.id, label: tag.name });
 export const tagsPayloadToValues = (tags) => tags.map(tagPayloadToValue);
@@ -77,3 +78,13 @@ export const applyGroups = (tags, groups) => {
 
 export const groupByName = (tags, minGroupSize = 2) =>
   applyMinimumGroupSize(groupByField(tags, 'label', GROUP_DELIMITERS), minGroupSize);
+
+export const shouldAddInlineCreationItem = (search, localFilteredTags, selectedTags) => {
+  return (
+    search &&
+    !localFilteredTags.some(
+      (tag) => tag.label === search || tag.value === stringUtils.toIdentifier(search)
+    ) &&
+    !selectedTags.some((tag) => tag.value === stringUtils.toIdentifier(search))
+  );
+};

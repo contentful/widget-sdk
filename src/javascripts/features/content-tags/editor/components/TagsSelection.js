@@ -24,6 +24,7 @@ import { ConditionalWrapper } from 'features/content-tags/core/components/Condit
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
 import * as stringUtils from 'utils/StringUtils';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
+import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
 
 const styles = {
   wrapper: css({
@@ -90,8 +91,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     setValidTagName(true);
   }, [search]);
 
-  // TODO: optimize some how the .some?
-  if (search && !localFilteredTags.some((tag) => tag.label === search)) {
+  if (shouldAddInlineCreationItem(search, localFilteredTags, selectedTags)) {
     localFilteredTags.push({
       inLineCreation: true,
       label: search,

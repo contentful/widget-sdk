@@ -1,8 +1,15 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TagsAutocomplete } from './TagsAutocomplete';
-import { useReadTags } from 'features/content-tags/core/hooks';
-import { FormLabel, SkeletonRow, Table, TableBody } from '@contentful/forma-36-react-components';
+import { useReadTags, useCreateTag } from 'features/content-tags/core/hooks';
+import {
+  FormLabel,
+  Notification,
+  SkeletonRow,
+  Table,
+  TableBody,
+  ValidationMessage,
+} from '@contentful/forma-36-react-components';
 import {
   AddOrRemoveRow,
   BULK_ACTION,
@@ -12,6 +19,43 @@ import {
   useBulkTaggingProvider,
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
+import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
+import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
+import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
+import * as stringUtils from 'utils/StringUtils';
+
+function useAddTag(addToBulkList) {
+  // is adding is needed to get an updated version of addToBulkList
+  const [isAdding, setIsAdding] = useState(false);
+  const { createTag, createTagData, resetCreateTag, createTagError } = useCreateTag();
+  const { reset, addTagInCacheData } = useReadTags();
+  function addTag({ value, label }) {
+    createTag(value, label);
+  }
+  useEffect(() => {
+    if (createTagData) {
+      addTagInCacheData(createTagData);
+      reset();
+      setIsAdding(true);
+    }
+  }, [resetCreateTag, reset, addTagInCacheData, createTagData]);
+
+  useEffect(() => {
+    if (isAdding && createTagError) {
+      setIsAdding(false);
+      reset();
+    }
+  }, [reset, isAdding, setIsAdding, createTagError]);
+
+  useEffect(() => {
+    if (isAdding && createTagData) {
+      addToBulkList(createTagData.sys.id);
+      setIsAdding(false);
+      resetCreateTag();
+    }
+  }, [resetCreateTag, setIsAdding, addToBulkList, isAdding, createTagData]);
+  return addTag;
+}
 
 // fetch unique tags with info on how entities they are attached to
 const tagsWithOccurrence = (tags) => {
@@ -23,7 +67,8 @@ const tagsWithOccurrence = (tags) => {
 
 const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   const { isLoading, getTag } = useReadTags();
-  const { setSearch, filteredTags } = useFilteredTags();
+  const { setSearch, filteredTags, search } = useFilteredTags();
+  const [validTagName, setValidTagName] = useState(true);
   const entityCount = entities.length;
   const {
     push,
@@ -36,14 +81,19 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     hasChanges,
   } = useBulkTaggingProvider();
 
-  const tags = useMemo(() => {
-    if (filteredTags.length > 0) {
-      return filteredTags.map((tag) => ({ value: tag.sys.id, label: tag.name }));
-    }
-    return [];
-  }, [filteredTags]);
+  const localFilteredTags = useMemo(() => {
+    const orderedPayload = orderByLabel(tagsPayloadToValues(filteredTags));
+    const filtered = orderedPayload.filter((tag) => currentState && !currentState.has(tag.value));
 
-  const searchTags = tags.filter((tag) => currentState && !currentState.has(tag.value));
+    return filtered.splice(0, Math.min(10, filtered.length));
+  }, [filteredTags, currentState]);
+
+  useEffect(() => {
+    if (search.startsWith(CONTENTFUL_NAMESPACE)) {
+      return setValidTagName(false);
+    }
+    setValidTagName(true);
+  }, [search]);
 
   const tagEntry = useCallback(
     (tag, occurrence) => {
@@ -57,7 +107,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   );
 
   useEffect(() => {
-    if (tags.length > 0 && !hasChanges) {
+    if (filteredTags.length > 0 && !hasChanges) {
       const tagsSet = tagsWithOccurrence(entityTags);
 
       tagsSet.forEach((occurrence, tagId) => {
@@ -66,7 +116,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
 
       push(tagsSet);
     }
-  }, [push, tagEntry, tags, entityTags, getTag, hasChanges]);
+  }, [push, tagEntry, filteredTags, entityTags, getTag, hasChanges]);
 
   const onSearch = useCallback(
     (tagId) => {
@@ -74,6 +124,21 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     },
     [setSearch]
   );
+
+  const autocompleteItemTags = shouldAddInlineCreationItem(
+    search,
+    localFilteredTags,
+    entityTags.map((tagValue) => ({ value: tagValue }))
+  )
+    ? [
+        ...localFilteredTags,
+        {
+          inLineCreation: true,
+          label: search,
+          value: stringUtils.toIdentifier(search),
+        },
+      ]
+    : [...localFilteredTags];
 
   const onAction = useCallback(
     (tag, action) => {
@@ -97,7 +162,29 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     [tagEntry, entities.length, entityCount, tagReset, tagAdd, tagApplyToAll, tagRemove]
   );
 
-  const onChange = (tag) => onAction(tag.value, BULK_ACTION.ADD_TAG);
+  const addTag = useAddTag(
+    useCallback((tagId) => onAction(tagId, BULK_ACTION.ADD_TAG), [onAction])
+  );
+
+  const onSelect = useCallback(
+    (tagItem) => {
+      if (!validTagName) {
+        Notification.error(
+          `Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.`,
+          {
+            title: `Tag wasn’t created`,
+          }
+        );
+        return;
+      }
+      if (tagItem.inLineCreation) {
+        addTag(tagItem);
+      } else {
+        onAction(tagItem.value, BULK_ACTION.ADD_TAG);
+      }
+    },
+    [validTagName, onAction, addTag]
+  );
 
   const renderRow = useCallback(
     (tag) => {
@@ -131,10 +218,15 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   return (
     <div>
       <FormLabel htmlFor="Add tags">Add tags</FormLabel>
+      {!validTagName && (
+        <ValidationMessage>
+          {` Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.`}
+        </ValidationMessage>
+      )}
       <TagsAutocomplete
-        tags={searchTags.splice(0, Math.min(5, searchTags.length))}
+        tags={autocompleteItemTags}
         isLoading={isLoading}
-        onChange={onChange}
+        onSelect={onSelect}
         onQueryChange={onSearch}
       />
       <Table layout="embedded">
