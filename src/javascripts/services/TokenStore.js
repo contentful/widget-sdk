@@ -20,20 +20,24 @@ const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 const getFetchInfo = () => makeFetchWithAuth(auth);
 
-const userBus = K.createPropertyBus(null);
-const spacesBus = K.createPropertyBus(null);
-const organizationsBus = K.createPropertyBus([]);
+/**
+ * @TODO Rewrite to avoid global variables
+ */
+
+let userBus;
+let spacesBus;
+let organizationsBus;
 
 // Variable storing the token data, so that it can be accessed synchronously.
 // @todo - remove it and use promise
-let tokenInfo = null;
+let tokenInfo;
 
 // MVar that holds the token data
-const tokenInfoMVar = createMVar(null);
+let tokenInfoMVar;
 
-const tokenUpdate = K.createStreamBus();
+let tokenUpdate;
 
-export const tokenUpdate$ = tokenUpdate.stream;
+export let tokenUpdate$;
 
 /**
  * @ngdoc property
@@ -42,7 +46,7 @@ export const tokenUpdate$ = tokenUpdate.stream;
  * @description
  * The current user object from the token
  */
-export const user$ = userBus.property.skipDuplicates(isEqual);
+export let user$;
 
 /**
  * @ngdoc property
@@ -51,7 +55,7 @@ export const user$ = userBus.property.skipDuplicates(isEqual);
  * @description
  * The list of organizations user is a member of from the token
  */
-export const organizations$ = organizationsBus.property;
+export let organizations$;
 
 /**
  * @ngdoc property
@@ -60,9 +64,32 @@ export const organizations$ = organizationsBus.property;
  * @description
  * The list of spaces from the token grouped by organization
  */
-export const spacesByOrganization$ = spacesBus.property.map((spaces) => {
-  return spaces ? groupBy(spaces, (s) => s.organization.sys.id) : null;
-});
+export let spacesByOrganization$;
+
+/**
+ * @ngdoc property
+ * @name TokenStore#reset$
+ * @description
+ * Reset global variables to initial values
+ */
+export const reset = () => {
+  userBus = K.createPropertyBus(null);
+  spacesBus = K.createPropertyBus(null);
+  organizationsBus = K.createPropertyBus([]);
+
+  tokenInfoMVar = createMVar(null);
+  tokenInfo = null;
+  tokenUpdate = K.createStreamBus();
+
+  tokenUpdate$ = tokenUpdate.stream;
+  user$ = userBus.property.skipDuplicates(isEqual);
+  organizations$ = organizationsBus.property;
+  spacesByOrganization$ = spacesBus.property.map((spaces) => {
+    return spaces ? groupBy(spaces, (s) => s.organization.sys.id) : null;
+  });
+};
+
+reset();
 
 export function getTokenLookup() {
   return tokenInfo;

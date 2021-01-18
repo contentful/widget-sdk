@@ -82,5 +82,7 @@ export function assertContainingCurrentValue(prop, object) {
   const notContaining = pickBy(object, (value) => value === undefined);
   const containing = omit(object, Object.keys(notContaining));
   expect(actual).toEqual(expect.objectContaining(containing));
-  expect(actual).not.toEqual(expect.objectContaining(notContaining));
+  if (Object.keys(notContaining).length) {
+    expect(actual).not.toEqual(expect.objectContaining(notContaining));
+  }
 }
