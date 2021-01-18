@@ -30,7 +30,11 @@ export async function create(
     spaceId,
     environmentId,
   });
-  const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES);
+  const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES, {
+    organizationId,
+    spaceId,
+    environmentId,
+  });
   return { get, destroy };
 
   /**
