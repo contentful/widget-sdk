@@ -34,7 +34,7 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
-import { onSlideStateChanged } from 'navigation/SlideInNavigator';
+import { getUpdatedSelectedEntities } from './BulkAction/BulkActionUtils';
 
 const styles = {
   sideBarWrapper: css({
@@ -96,22 +96,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       setIsBulkActionSupportEnabled(bulkActionEnabled);
     })();
   }, [spaceContext]);
-
-  /**
-   * Reloads entries (once) whenever leaving an editing SlideIn.
-   * This is useful to keep the referenceTree updated whenever there's an edit.
-   * It also turns off the event if the Component is unmounted.
-   **/
-
-  useEffect(() => {
-    const slider = onSlideStateChanged((params) => {
-      if (params.previousEntries === '') {
-        getReferencesForEntry();
-      }
-    });
-
-    return slider;
-  });
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
@@ -188,9 +172,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
        *
        * Otherwise, fallback to the original release/immediate/execute logic
        **/
-
       if (isBulkActionSupportEnabled) {
-        await publishBulkAction(selectedEntities);
+        const { response } = await getReferencesForEntryId(entity.sys.id);
+        const updatedSelectedEntities = getUpdatedSelectedEntities(selectedEntities, response);
+
+        await publishBulkAction(updatedSelectedEntities);
       } else {
         const entitiesToPublish = mapEntities(selectedEntities);
         await publishEntities({ entities: entitiesToPublish, action: 'publish' });
