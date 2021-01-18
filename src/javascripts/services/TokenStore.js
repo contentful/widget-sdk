@@ -163,8 +163,10 @@ function prepareSpaces(spaces) {
  * This method returns a promise of the list of spaces.
  * If some calls are in progress, we're waiting until these are done.
  */
-export function getSpaces() {
-  return tokenInfoMVar.read().then(() => K.getValue(spacesBus.property));
+export async function getSpaces() {
+  await tokenInfoMVar.read();
+
+  return K.getValue(spacesBus.property);
 }
 
 /**
@@ -177,11 +179,17 @@ export function getSpaces() {
  * If some calls are in progress, we're waiting until these are done.
  * Promise is rejected if space with a provided ID couldn't be found.
  */
-export function getSpace(id) {
-  return getSpaces().then((spaces) => {
-    const found = find(spaces, { sys: { id } });
-    return found || Promise.reject(new Error('No space with given ID could be found.'));
-  });
+export async function getSpace(id) {
+  const asyncError = new Error('No space with given ID could be found.');
+
+  const spaces = await getSpaces();
+  const space = find(spaces, { sys: { id } });
+
+  if (space) {
+    return space;
+  } else {
+    throw asyncError;
+  }
 }
 
 /**
@@ -193,14 +201,15 @@ export function getSpace(id) {
  * This method returns a promise of all spaces one has access to,
  * that are part of the organization with the provided ID.
  */
-export function getOrganizationSpaces(id) {
-  return getSpaces().then((spaces) => {
-    return spaces.filter((space) => space.organization.sys.id === id);
-  });
+export async function getOrganizationSpaces(id) {
+  const spaces = await getSpaces();
+
+  return spaces.filter((space) => space.organization.sys.id === id);
 }
 
 export function getDomains() {
   const domains = get(tokenInfo, 'domains', []);
+
   return domains.reduce((map, value) => {
     map[value.name] = value.domain;
     return map;
@@ -217,11 +226,18 @@ export function getDomains() {
  * If some calls are in progress, we're waiting until these are done.
  * Promise is rejected if organization with a provided ID couldn't be found.
  */
-export function getOrganization(id) {
-  return getOrganizations().then((orgs) => {
-    const org = find(orgs, { sys: { id } });
-    return org || Promise.reject(new Error('No organization with given ID could be found.'));
-  });
+export async function getOrganization(id) {
+  const asyncError = new Error('No organization with given ID could be found.');
+
+  const orgs = await getOrganizations();
+
+  const org = find(orgs, { sys: { id } });
+
+  if (org) {
+    return org;
+  } else {
+    throw asyncError;
+  }
 }
 
 /**
@@ -233,15 +249,19 @@ export function getOrganization(id) {
  * If some calls are in progress, we're waiting until these are done.
  *
  */
-export function getOrganizations() {
-  return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(organizationsBus.property)));
+export async function getOrganizations() {
+  await tokenInfoMVar.read();
+
+  return deepFreezeClone(K.getValue(organizationsBus.property));
 }
 
 /*
   Gets the current user value of the user$ stream
  */
-export function getUser() {
-  return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(userBus.property)));
+export async function getUser() {
+  await tokenInfoMVar.read();
+
+  return deepFreezeClone(K.getValue(userBus.property));
 }
 
 /*
