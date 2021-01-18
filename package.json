@@ -55,7 +55,7 @@
     "@contentful/widget-renderer": "^0.15.1",
     "@contentful/worf": "^4.9.4",
     "@sentry/browser": "^5.20.1",
-    "ajv": "^5.5.2",
+    "ajv": "^6.12.6",
     "angular": "~1.8.0",
     "angular-animate": "~1.8.0",
     "angular-sanitize": "~1.8.0",
