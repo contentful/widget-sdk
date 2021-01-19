@@ -2,7 +2,7 @@
 import { get, memoize } from 'lodash';
 import { MarketplacePage } from '../MarketplacePage';
 import { AppRoute } from '../AppPage';
-import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
+import { makeAppHookBus, getAppsRepo, MarketplaceApp } from 'features/apps-core';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
@@ -12,6 +12,7 @@ import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
+import { MarketplacePageProps } from '../MarketplacePage/MarketplacePage';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -57,11 +58,7 @@ export const appRoute = {
   children: [
     {
       name: 'list',
-      url: '',
-      params: {
-        appId: null,
-        referrer: null,
-      },
+      url: '?app',
       resolve: {
         hasAppsFeature: appsFeatureResolver,
         hasAdvancedAppsFeature: advancedAppsFeatureResolver,
@@ -79,9 +76,8 @@ export const appRoute = {
           $stateParams,
           hasAppsFeature: boolean,
           hasAdvancedAppsFeature: boolean
-        ) => {
+        ): MarketplacePageProps => {
           return {
-            goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
             cma: spaceContext.cma,
             hasAppsFeature,
@@ -94,8 +90,10 @@ export const appRoute = {
             },
             userId: spaceContext.user.sys.id,
             canManageApps: canUserManageApps(),
-            deeplinkAppId: $stateParams.appId || null,
-            deeplinkReferrer: $stateParams.referrer || null,
+            detailsModalAppId: $stateParams.app || null,
+            openAppDetails: (app: MarketplaceApp) =>
+              $state.go('.', { app: app.id }, { notify: false }),
+            closeAppDetails: () => $state.go('.', { app: null }, { notify: false }),
           };
         },
       ],
@@ -135,7 +133,7 @@ export const appRoute = {
           // When executing `onEnter` after a page refresh
           // the current state won't be initialized. For this reason
           // we need to compute params and an absolute path manually.
-          const params: { spaceId: string; appId?: string; environmentId?: string } = {
+          const params: { spaceId: string; app?: string; environmentId?: string } = {
             spaceId: spaceContext.getId(),
           };
           let absoluteListPath = 'spaces.detail.apps.list';
@@ -162,7 +160,7 @@ export const appRoute = {
           if (!canUserManageApps() || !hasAppsFeature || installingWithoutConsent) {
             if (hasAppsFeature) {
               // Passing this param will open the app dialog.
-              params.appId = app.id;
+              params.app = app.id;
             }
 
             $state.go(absoluteListPath, params);

@@ -5,6 +5,7 @@ import {
   apps as repoAppsMock,
   contentfulApps as repoContentfulAppsMock,
 } from '../__mocks__/repoAppsMock';
+import { noop } from 'lodash';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 
@@ -39,6 +40,8 @@ describe('MarketplacePage', () => {
         spaceInformation={spaceInformation}
         canManageApps={true}
         hasAdvancedAppsFeature={false}
+        openAppDetails={noop}
+        closeAppDetails={noop}
       />
     );
 
@@ -60,6 +63,8 @@ describe('MarketplacePage', () => {
         spaceInformation={spaceInformation}
         canManageApps={true}
         hasAdvancedAppsFeature={false}
+        openAppDetails={noop}
+        closeAppDetails={noop}
       />
     );
 
@@ -84,6 +89,8 @@ describe('MarketplacePage', () => {
         spaceInformation={spaceInformation}
         // limit the access
         canManageApps={false}
+        openAppDetails={noop}
+        closeAppDetails={noop}
       />
     );
 
@@ -107,6 +114,8 @@ describe('MarketplacePage', () => {
         hasAdvancedAppsFeature={false}
         spaceInformation={spaceInformation}
         canManageApps={true}
+        openAppDetails={noop}
+        closeAppDetails={noop}
       />
     );
 

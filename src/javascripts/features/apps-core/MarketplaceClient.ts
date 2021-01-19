@@ -130,7 +130,7 @@ function createAppObject(entry, isListed) {
 function createContentfulAppObject(entry) {
   return {
     definitionId: get(entry, ['fields', 'appDefinitionId']),
-    id: get(entry, ['sys', 'id'], ''),
+    id: get(entry, ['fields', 'slug'], ''),
     title: get(entry, ['fields', 'title'], ''),
     author: {
       name: get(entry, ['fields', 'developer', 'fields', 'name']),

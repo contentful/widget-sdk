@@ -96,7 +96,7 @@ interface AppDetailsProps {
   app: MarketplaceApp;
   appManager: AppManager;
   spaceInformation: SpaceInformation;
-  onClose: () => void;
+  onClose: () => Promise<void> | void;
   canManageApps: boolean;
   showPermissions?: boolean;
   setShowPermissions?: (show: boolean) => void;
@@ -123,8 +123,8 @@ export function AppDetails(props: AppDetailsProps) {
 
   const determineOnClick = (onClick) =>
     installed
-      ? () => {
-          onClose();
+      ? async () => {
+          await onClose();
           if (installed && !hasConfig) {
             appManager.showUninstall(app);
           } else {
@@ -140,17 +140,17 @@ export function AppDetails(props: AppDetailsProps) {
           <AppPermissionScreen
             app={app}
             spaceInformation={spaceInformation}
-            onInstall={async (...args) => {
+            onInstall={async () => {
               if (!hasConfig) {
                 await appManager.installApp(app, hasAdvancedAppsFeature);
+                await onClose();
               } else {
-                onClick(...args);
+                onClick();
               }
             }}
             onCancel={() => {
               app.isPrivateApp ? onClose() : setShowPermissions(false);
             }}
-            onClose={onClose}
           />
         )}
       </StateLink>

@@ -288,7 +288,7 @@ describe('states/deeplink/resolver', () => {
         params: {
           spaceId: 'test-space-id',
           environmentId: 'master',
-          appId: 'netlify',
+          app: 'netlify',
           referrer: 'deeplink',
         },
         deeplinkOptions: {

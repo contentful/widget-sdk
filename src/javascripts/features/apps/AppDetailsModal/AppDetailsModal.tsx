@@ -7,7 +7,7 @@ import { SpaceInformation } from './shared';
 
 interface Props {
   isShown: boolean;
-  onClose: () => void;
+  onClose: () => Promise<void>;
   app: MarketplaceApp;
   appManager: AppManager;
   spaceInformation: SpaceInformation;

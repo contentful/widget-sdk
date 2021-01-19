@@ -25,7 +25,7 @@ Array [
     "description": "Placeholder description",
     "featureFlagName": "COMPOSE_APP_LISTING_EAP",
     "icon": "",
-    "id": "5ZSCLEfnoPdTF3agzaGGRb",
+    "id": "compose",
     "isContentfulApp": true,
     "tagLine": "Easily create and edit content at scale in a completely new way.",
     "targetUrl": "https://compose.contentful.com",

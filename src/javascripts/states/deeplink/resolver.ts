@@ -309,7 +309,7 @@ async function resolveContentfulApps(params: {
       spaceId,
       environmentId,
       referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
-      ...(params.id ? { appId: params.id } : {}),
+      ...(params.id ? { app: params.id } : {}),
     },
   };
 }
@@ -323,7 +323,7 @@ async function resolveApps(params: { id?: string; referrer?: string }) {
       spaceId,
       environmentId: 'master',
       referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
-      ...(params.id ? { appId: params.id } : {}),
+      ...(params.id ? { app: params.id } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,

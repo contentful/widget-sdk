@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
+import { noop } from 'lodash';
 
 import { AppDetails } from './AppDetails';
 import { AppManager } from '../AppOperations';
@@ -49,7 +50,7 @@ The Optimizely app makes it easier to power experiments with structured content.
       supportUrl: '',
     } as unknown) as MarketplaceApp,
     showPermissions: false,
-    onClose: () => ({}),
+    onClose: noop,
     canManageApps: true,
     spaceInformation: {
       spaceId: 'some-space',

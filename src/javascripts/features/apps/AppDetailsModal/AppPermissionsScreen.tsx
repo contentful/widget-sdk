@@ -14,19 +14,12 @@ const styles = {
 
 interface Props {
   app: MarketplaceApp;
-  onInstall: () => void;
+  onInstall: () => Promise<void>;
   onCancel: () => void;
-  onClose: (authorized: boolean) => void;
   spaceInformation: SpaceInformation;
 }
 
-export function AppPermissionScreen({
-  app,
-  onInstall,
-  onCancel,
-  onClose,
-  spaceInformation,
-}: Props) {
+export function AppPermissionScreen({ app, onInstall, onCancel, spaceInformation }: Props) {
   useEffect(() => {
     AppLifecycleTracking.permissionsOpened(app.id);
   }, [app.id]);
@@ -34,7 +27,6 @@ export function AppPermissionScreen({
   const onAuthorize = async () => {
     AppLifecycleTracking.permissionsAccepted(app.id);
     await onInstall();
-    onClose(true);
   };
 
   const onCancelTracked = () => {

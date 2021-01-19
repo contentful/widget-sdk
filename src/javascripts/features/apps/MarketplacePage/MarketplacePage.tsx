@@ -11,7 +11,6 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { AppDetailsModal } from '../AppDetailsModal';
 import * as AppLifecycleTracking from '../AppLifecycleTracking';
@@ -53,30 +52,7 @@ const getEnabledApps = async (apps, flagContext) => {
   return apps.filter((_, index) => appsFeatureFlagStatuses[index]);
 };
 
-const openDetailModal = ({
-  appManager,
-  spaceInformation,
-  usageExceeded,
-  canManageApps,
-  hasAdvancedAppsFeature,
-}) => (app) => {
-  AppLifecycleTracking.detailsOpened(app.id);
-
-  ModalLauncher.open(({ isShown, onClose }) => (
-    <AppDetailsModal
-      isShown={isShown}
-      onClose={onClose}
-      app={app}
-      appManager={appManager}
-      spaceInformation={spaceInformation}
-      usageExceeded={usageExceeded}
-      hasAdvancedAppsFeature={hasAdvancedAppsFeature}
-      canManageApps={canManageApps}
-    />
-  ));
-};
-
-interface MarketplacePageProps {
+export interface MarketplacePageProps {
   cma: any;
   repo: {
     getApps: () => Promise<MarketplaceApp[]>;
@@ -94,8 +70,11 @@ interface MarketplacePageProps {
   userId: string;
   hasAppsFeature: boolean;
   hasAdvancedAppsFeature: boolean;
-  deeplinkAppId?: string;
   canManageApps?: boolean;
+
+  detailsModalAppId?: string;
+  openAppDetails: (app: MarketplaceApp) => Promise<void> | void;
+  closeAppDetails: () => Promise<void> | void;
 }
 
 interface MarketplacePageState {
@@ -103,17 +82,30 @@ interface MarketplacePageState {
   installedApps: MarketplaceApp[];
   availableApps: MarketplaceApp[];
   contentfulApps: MarketplaceApp[];
-  appManager: AppManager | null;
+  appManager: AppManager;
+  appDetailsModalAppId: string | null;
 }
 
 export class MarketplacePage extends React.Component<MarketplacePageProps, MarketplacePageState> {
-  state = {
-    ready: false,
-    installedApps: [],
-    availableApps: [],
-    contentfulApps: [],
-    appManager: null,
-  } as MarketplacePageState;
+  constructor(props: MarketplacePageProps) {
+    super(props);
+
+    const environmentId = this.props.spaceInformation.envMeta.environmentId;
+    const spaceId = this.props.spaceInformation.spaceId;
+    const appManager = new AppManager(this.props.cma, environmentId, spaceId, async () => {
+      const appState = await this.loadApps();
+      this.setState(appState);
+    });
+
+    this.state = {
+      ready: false,
+      installedApps: [],
+      availableApps: [],
+      contentfulApps: [],
+      appManager,
+      appDetailsModalAppId: props.detailsModalAppId,
+    } as MarketplacePageState;
+  }
 
   async loadApps() {
     const environmentId = this.props.spaceInformation.envMeta.environmentId;
@@ -132,67 +124,74 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
 
   async componentDidMount() {
     try {
-      const environmentId = this.props.spaceInformation.envMeta.environmentId;
-      const spaceId = this.props.spaceInformation.spaceId;
-
       const appState = await this.loadApps();
-
-      const appManager = new AppManager(this.props.cma, environmentId, spaceId, async () => {
-        const appState = await this.loadApps();
-        this.setState(appState);
-      });
-
-      this.setState({ ready: true, appManager, ...appState }, () => {
-        this.openDeeplinkedAppDetails();
-      });
+      this.setState({ ready: true, ...appState });
     } catch (err) {
       Notification.error('Failed to load apps.');
     }
   }
 
-  openDeeplinkedAppDetails() {
-    const {
-      deeplinkAppId,
-      hasAppsFeature,
-      spaceInformation,
-      canManageApps,
-      hasAdvancedAppsFeature,
-    } = this.props;
-    const { appManager } = this.state;
+  openDetailModal = async (app: MarketplaceApp) => {
+    AppLifecycleTracking.detailsOpened(app.id);
+    this.setState({ appDetailsModalAppId: app.id });
+    await this.props.openAppDetails(app);
+  };
 
-    if (!hasAppsFeature || !deeplinkAppId) {
-      return;
+  closeDetailModal = async () => {
+    this.setState({ appDetailsModalAppId: null });
+    await this.props.closeAppDetails();
+  };
+
+  renderModal() {
+    const {
+      spaceInformation,
+      hasAppsFeature,
+      hasAdvancedAppsFeature,
+      canManageApps = false,
+    } = this.props;
+    const {
+      appManager,
+      appDetailsModalAppId,
+      installedApps,
+      availableApps,
+      contentfulApps,
+    } = this.state;
+
+    if (!hasAppsFeature || !appDetailsModalAppId) {
+      return null;
     }
 
-    const { installedApps, availableApps } = this.state;
-
-    const deeplinkedApp = installedApps.concat(availableApps).find((app) => {
+    const modalApp = [...installedApps, ...availableApps, ...contentfulApps].find((app) => {
       // Find either by marketplace ID ("slug", pretty)
       // or definition ID (Contentful UUID, ugly).
-      const byMarketplaceId = app.id === deeplinkAppId;
+      const byMarketplaceId = app.id === appDetailsModalAppId;
       const definitionId = get(app, ['appDefinition', 'sys', 'id']);
-      const byDefinitionId = definitionId === deeplinkAppId;
+      const byDefinitionId = definitionId === appDetailsModalAppId;
 
       return byMarketplaceId || byDefinitionId;
     });
 
-    if (deeplinkedApp && !deeplinkedApp.isPrivateApp) {
-      // TODO: we could potentially track the deeplink.
-      // Use `this.props.deeplinkReferrer`.
-      openDetailModal({
-        appManager,
-        spaceInformation,
-        usageExceeded: isUsageExceeded(installedApps, hasAdvancedAppsFeature),
-        hasAdvancedAppsFeature,
-        canManageApps,
-      })(deeplinkedApp);
+    if (!modalApp) {
+      return null;
     }
+
+    return (
+      <AppDetailsModal
+        isShown={true}
+        onClose={this.closeDetailModal}
+        app={modalApp}
+        appManager={appManager}
+        spaceInformation={spaceInformation}
+        usageExceeded={isUsageExceeded(installedApps, hasAdvancedAppsFeature)}
+        hasAdvancedAppsFeature={hasAdvancedAppsFeature}
+        canManageApps={canManageApps}
+      />
+    );
   }
 
   render() {
     const {
       organizationId,
-      spaceInformation,
       hasAppsFeature,
       hasAdvancedAppsFeature,
       canManageApps = false,
@@ -208,7 +207,6 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
       const spaceInstallationLimit = hasAdvancedAppsFeature
         ? ADVANCED_APPS_LIMIT
         : BASIC_APPS_LIMIT;
-      const usageExceeded = isUsageExceeded(installedApps, hasAdvancedAppsFeature);
       content = (
         <>
           {hasCtflApps && (
@@ -216,26 +214,14 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
               apps={contentfulApps}
               appManager={this.state.appManager}
               canManageApps={canManageApps}
-              openDetailModal={openDetailModal({
-                appManager,
-                spaceInformation,
-                usageExceeded,
-                hasAdvancedAppsFeature,
-                canManageApps,
-              })}
+              openDetailModal={this.openDetailModal}
             />
           )}
           {hasInstalledApps ? (
             <AppList
               apps={sortPrivateAppsFirst(installedApps, canManageApps)}
-              appManager={appManager!}
-              openDetailModal={openDetailModal({
-                appManager,
-                spaceInformation,
-                canManageApps,
-                usageExceeded,
-                hasAdvancedAppsFeature,
-              })}
+              appManager={appManager}
+              openDetailModal={this.openDetailModal}
               hasAdvancedAppsFeature={hasAdvancedAppsFeature}
               canManageApps={canManageApps}
               organizationId={organizationId}
@@ -260,14 +246,8 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
           {hasAvailableApps && (
             <AppList
               apps={sortPrivateAppsFirst(availableApps, canManageApps)}
-              appManager={appManager!}
-              openDetailModal={openDetailModal({
-                appManager,
-                spaceInformation,
-                usageExceeded,
-                hasAdvancedAppsFeature,
-                canManageApps,
-              })}
+              appManager={appManager}
+              openDetailModal={this.openDetailModal}
               hasAdvancedAppsFeature={hasAdvancedAppsFeature}
               canManageApps={!!canManageApps}
               organizationId={organizationId}
@@ -297,6 +277,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
         <AppsListShell organizationId={organizationId} appsFeatureDisabled={!hasAppsFeature}>
           {content}
         </AppsListShell>
+        {this.renderModal()}
       </>
     );
   }
