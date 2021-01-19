@@ -217,7 +217,6 @@ angular
     async ($state) => {
       await awaitInitReady();
 
-      const logger = await import(/* webpackMode: "eager" */ 'services/logger');
       const Config = await import(/* webpackMode: "eager" */ 'Config');
       const { default: handleGKMessage } = await import(
         /* webpackMode: "eager" */ 'account/handleGatekeeperMessage'
@@ -323,23 +322,15 @@ angular
         if (matchedParams) {
           matchFound = true;
 
-          go({
-            path: state.name.split('.'),
-            params: matchedParams,
-            options: { location: false },
-          })
-            .catch((err) => {
-              // If an error occurred, log it and continue. We don't want errors from
-              // above causing any issues for the app to fully "load", because
-              // `.loaded = true` is required to be set for the app to appear correctly.
-              logger.logException(err, {
-                state: state.name,
-                params: matchedParams,
-              });
-            })
-            .then(() => {
-              angular.module('contentful/app').loaded = true;
+          try {
+            go({
+              path: state.name.split('.'),
+              params: matchedParams,
+              options: { location: false },
             });
+          } finally {
+            angular.module('contentful/app').loaded = true;
+          }
         }
       }
     },
