@@ -213,15 +213,9 @@ angular
   ])
 
   .run([
-    '$injector',
     '$state',
-    async ($injector, $state) => {
+    async ($state) => {
       await awaitInitReady();
-
-      // Import and initialize core services
-      const { init: initSpaceContext } = $injector.get('spaceContext');
-
-      await initSpaceContext();
 
       const logger = await import(/* webpackMode: "eager" */ 'services/logger');
       const Config = await import(/* webpackMode: "eager" */ 'Config');

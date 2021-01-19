@@ -6,6 +6,28 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
 import { purgeContentPreviewCache } from 'features/content-preview';
 import { purgeApiKeyRepoCache } from 'features/api-keys-management';
 
+import * as ShareJSConnection from 'data/sharejs/Connection';
+import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint';
+import APIClient from 'data/APIClient';
+import * as Telemetry from 'i13n/Telemetry';
+import createUserCache from 'data/userCache';
+import TheLocaleStore from 'services/localeStore';
+import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
+import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo';
+import createLocaleRepo from 'data/CMA/LocaleRepo';
+import createUiConfigStore from 'data/UiConfig/Store';
+import { createSpaceEndpoint } from 'data/Endpoint';
+import * as PublishedCTRepo from 'data/ContentTypeRepo/Published';
+import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
+import * as accessChecker from 'access_control/AccessChecker';
+import * as DocumentPool from 'data/sharejs/DocumentPool';
+import * as EnforcementsService from 'services/EnforcementsService';
+import * as TokenStore from 'services/TokenStore';
+import * as Auth from 'Authentication';
+import * as Config from 'Config';
+import client from 'services/client';
+import { createPubSubClientForSpace } from 'services/PubSubService';
+
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -25,78 +47,7 @@ export default function register() {
       // Enforcements deinitialization function, when changing space
       let enforcementsDeInit;
 
-      let ShareJSConnection;
-      let shouldUseEnvEndpoint;
-      let APIClient;
-      let Telemetry;
-      let createUserCache;
-      let TheLocaleStore;
-      let createSpaceMembersRepo;
-      let createEnvironmentsRepo;
-      let createLocaleRepo;
-      let createUiConfigStore;
-      let createSpaceEndpoint;
-      let createPubSubClientForSpace;
-      let PublishedCTRepo;
-      let MembershipRepo;
-      let accessChecker;
-      let DocumentPool;
-      let EnforcementsService;
-      let TokenStore;
-      let Auth;
-      let Config;
-      let client;
-
       const spaceContext = {
-        async init() {
-          [
-            ShareJSConnection,
-            { default: shouldUseEnvEndpoint },
-            { default: APIClient },
-            Telemetry,
-            { default: createUserCache },
-            { default: TheLocaleStore },
-
-            { default: createSpaceMembersRepo },
-            { create: createEnvironmentsRepo },
-            { default: createLocaleRepo },
-            { default: createUiConfigStore },
-            { createSpaceEndpoint },
-            PublishedCTRepo,
-            MembershipRepo,
-            accessChecker,
-            DocumentPool,
-            EnforcementsService,
-            TokenStore,
-            Auth,
-            Config,
-            { default: client },
-            { createPubSubClientForSpace },
-          ] = await Promise.all([
-            import(/* webpackMode: "eager" */ 'data/sharejs/Connection'),
-            import(/* webpackMode: "eager" */ 'data/shouldUseEnvEndpoint'),
-            import(/* webpackMode: "eager" */ 'data/APIClient'),
-            import(/* webpackMode: "eager" */ 'i13n/Telemetry'),
-            import(/* webpackMode: "eager" */ 'data/userCache'),
-            import(/* webpackMode: "eager" */ 'services/localeStore'),
-            import(/* webpackMode: "eager" */ 'data/CMA/SpaceMembersRepo'),
-            import(/* webpackMode: "eager" */ 'data/CMA/SpaceEnvironmentsRepo'),
-            import(/* webpackMode: "eager" */ 'data/CMA/LocaleRepo'),
-            import(/* webpackMode: "eager" */ 'data/UiConfig/Store'),
-            import(/* webpackMode: "eager" */ 'data/Endpoint'),
-            import(/* webpackMode: "eager" */ 'data/ContentTypeRepo/Published'),
-            import(/* webpackMode: "eager" */ 'access_control/SpaceMembershipRepository'),
-            import(/* webpackMode: "eager" */ 'access_control/AccessChecker'),
-            import(/* webpackMode: "eager" */ 'data/sharejs/DocumentPool'),
-            import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
-            import(/* webpackMode: "eager" */ 'services/TokenStore'),
-            import(/* webpackMode: "eager" */ 'Authentication'),
-            import(/* webpackMode: "eager" */ 'Config'),
-            import(/* webpackMode: "eager" */ 'services/client'),
-            import(/* webpackMode: "eager" */ 'services/PubSubService'),
-          ]);
-        },
-
         /**
          * @type {Published}
          * @description
