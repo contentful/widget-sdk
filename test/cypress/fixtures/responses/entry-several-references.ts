@@ -56,7 +56,7 @@ export const severalEntryReferencesWithVersionResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'testEntryId1',
+              id: 'testEntryId2',
             },
           },
         },
@@ -65,7 +65,7 @@ export const severalEntryReferencesWithVersionResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'testEntryId2',
+              id: 'testEntryId3',
             },
           },
         },
@@ -75,11 +75,11 @@ export const severalEntryReferencesWithVersionResponse = {
   includes: {
     Entry: [
       entry({
-        sys: { id: Matchers.somethingLike('testEntryId1'), version: 1, publishedCounter: 0 },
+        sys: { id: Matchers.somethingLike('testEntryId2'), version: 1, publishedCounter: 0 },
         fields: {},
       }),
       entry({
-        sys: { id: Matchers.somethingLike('testEntryId2'), version: 1, publishedCounter: 0 },
+        sys: { id: Matchers.somethingLike('testEntryId3'), version: 1, publishedCounter: 0 },
         fields: {},
       }),
     ],

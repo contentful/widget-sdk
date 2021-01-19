@@ -176,6 +176,33 @@ export const queryForDefaultEntryInsideEnvironment = {
   },
 };
 
+const testIds = [defaultEntryId, 'testEntryId2', 'testEntryId3'];
+export const queryForDefaultEntries = {
+  willFindMultiple() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.SEVERAL,
+      uponReceiving: `a query for the entries "${testIds.join(
+        ','
+      )}" inside the environment "${defaultEnvironmentId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: severalEntriesResponse(),
+      },
+    }).as('queryForTestEntriesInsideEnvironment');
+
+    return '@queryForTestEntriesInsideEnvironment';
+  },
+};
+
 export const queryForDefaultEntryWithoutEnvironment = {
   willFindIt() {
     cy.addInteraction({

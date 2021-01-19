@@ -29,12 +29,11 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_PROCESSING_ACTION,
 } from './state/actions';
-import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
+import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
-import { getUpdatedSelectedEntities } from './BulkAction/BulkActionUtils';
 
 const styles = {
   sideBarWrapper: css({
@@ -81,12 +80,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const spaceContext = useSpaceEnvContext();
 
-  const getReferencesForEntry = async () => {
-    const { resolved } = await getReferencesForEntryId(entity.sys.id);
-    dispatch({ type: SET_REFERENCES, value: resolved });
-    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-  };
-
   useEffect(() => {
     (async function () {
       const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
@@ -96,6 +89,12 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       setIsBulkActionSupportEnabled(bulkActionEnabled);
     })();
   }, [spaceContext]);
+
+  const getReferencesForEntry = async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  };
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
@@ -173,18 +172,14 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
        * Otherwise, fallback to the original release/immediate/execute logic
        **/
       if (isBulkActionSupportEnabled) {
-        const { response } = await getReferencesForEntryId(entity.sys.id);
-        const updatedSelectedEntities = getUpdatedSelectedEntities(selectedEntities, response);
-
-        await publishBulkAction(updatedSelectedEntities);
+        await publishBulkAction(selectedEntities);
       } else {
         const entitiesToPublish = mapEntities(selectedEntities);
         await publishEntities({ entities: entitiesToPublish, action: 'publish' });
       }
 
-      // After publishing, refetch entries
-      getReferencesForEntry();
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      await getReferencesForEntry();
 
       Notification.success(
         createSuccessMessage({ selectedEntities, root: references[0], entityTitle })

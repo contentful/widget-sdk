@@ -113,7 +113,43 @@ function apiClient() {
   return new APIClient(createEndpoint());
 }
 
-async function publishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
+async function getEntries(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
+  const entries = entities.filter((entity) => entity.sys.type === 'Entry');
+
+  if (entries.length) {
+    const { items } = await apiClient().getEntries({
+      'sys.id[in]': entries.map((entity) => entity.sys.id).join(','),
+    });
+
+    return items;
+  }
+
+  return [];
+}
+
+async function getAssets(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
+  const assets = entities.filter((entity) => entity.sys.type === 'Asset');
+
+  if (assets.length) {
+    const { items } = await apiClient().getAssets({
+      'sys.id[in]': assets.map((entity) => entity.sys.id).join(','),
+    });
+
+    return items;
+  }
+
+  return [];
+}
+
+async function getUpdatedSelectedEntities(
+  entities: PublishableEntity[]
+): Promise<PublishableEntity[]> {
+  const [assets, entries] = await Promise.all([getAssets(entities), getEntries(entities)]);
+  return [...assets, ...entries];
+}
+
+async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
+  const entities = await getUpdatedSelectedEntities(selectedEntities);
   const items = entitiesToLinks({ entities, includeVersion: true });
   const bulkAction = await apiClient().createPublishBulkAction({
     entities: {

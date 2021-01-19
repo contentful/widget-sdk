@@ -49,6 +49,23 @@ export const queryForDefaultAssets = {
 
     return '@queryForAssets';
   },
+  willFindNone() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.NONE,
+      uponReceiving: `a request of entry "${defaultAssetId}" in space "${defaultSpaceId}"`,
+      withRequest: queryAllAssetsInTheDefaultSpaceRequest({}),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: empty,
+      },
+    }).as('queryForAssets');
+
+    return '@queryForAssets';
+  },
 };
 
 export const queryAllNonArchivedAssetsInTheDefaultSpace = {

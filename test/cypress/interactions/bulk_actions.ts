@@ -26,23 +26,23 @@ export const publishPayload = {
     items: [
       {
         sys: {
+          id: 'testEntryId3',
           type: 'Link',
           linkType: 'Entry',
-          id: defaultEntryId,
-          version: 1,
-        },
-      },
-      {
-        sys: {
-          id: 'testEntryId1',
-          linkType: 'Entry',
-          type: 'Link',
-          version: 1,
+          version: 3,
         },
       },
       {
         sys: {
           id: 'testEntryId2',
+          linkType: 'Entry',
+          type: 'Link',
+          version: 3,
+        },
+      },
+      {
+        sys: {
+          id: defaultEntryId,
           linkType: 'Entry',
           type: 'Link',
           version: 1,

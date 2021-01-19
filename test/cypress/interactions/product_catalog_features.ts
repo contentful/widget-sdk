@@ -1,5 +1,5 @@
 import { defaultHeader, defaultOrgId, defaultSpaceId } from '../util/requests';
-import { RequestOptions, Query } from '@pact-foundation/pact';
+import { RequestOptions, Query } from '@pact-foundation/pact-web';
 
 const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
 const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
