@@ -5,6 +5,7 @@ import {
   defaultEnvironmentId,
   defaultAssetId,
   defaultContentTypeId,
+  defaultEntryTestIds,
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -176,7 +177,11 @@ export const queryForDefaultEntryInsideEnvironment = {
   },
 };
 
-const testIds = [defaultEntryId, 'testEntryId2', 'testEntryId3'];
+const testIds = [
+  defaultEntryId,
+  defaultEntryTestIds.testEntryId2,
+  defaultEntryTestIds.testEntryId3,
+];
 export const queryForDefaultEntries = {
   willFindMultiple() {
     cy.addInteraction({

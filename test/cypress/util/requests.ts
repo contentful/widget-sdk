@@ -15,10 +15,6 @@ export const defaultAssetId = defaultAsset.sys.id;
 export const defaultPreviewName = 'Test Name';
 export const defaultPreviewDescription = 'Test Description';
 export const defaultPreviewId = '0xi0FU6rvrUVlJtPFuaUyl';
-export const defaultHeader = {
-  Accept: 'application/json, text/plain, */*',
-  Authorization: `Bearer ${constants.token}`,
-};
 export const defaultUserId = '1AMbGlddLG0ISEoa1I423p';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
@@ -27,6 +23,25 @@ export const defaultReleaseActionId = 'releaseActionId';
 export const defaultAppId = '6YdAwxoPHopeTeuwh43UJu';
 export const appContentTypeId = 'dropboxTest';
 export const entryIdWithApp = 'entryIdWithApp';
+
+export const defaultEntryTestIds = {
+  defaultId: defaultEntryId,
+  testEntryId2: 'testEntryId2',
+  testEntryId3: 'testEntryId3',
+  testEntryId4: 'testEntryId4',
+};
+
+export const defaultAssetTestIds = {
+  defaultId: defaultAssetId,
+  testAssetId: 'testAssetId',
+  testAssetId2: 'testAssetId2',
+  testAssetId3: 'testAssetId3',
+};
+
+export const defaultHeader = {
+  Accept: 'application/json, text/plain, */*',
+  Authorization: `Bearer ${constants.token}`,
+};
 
 export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
