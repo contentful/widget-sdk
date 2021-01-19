@@ -96,7 +96,7 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['spaces', 'detail', 'home'],
+        path: ['spaces', 'detail'],
         params: { spaceId: mockSpace2.sys.id },
         options: { location: 'replace' },
       });
@@ -112,7 +112,7 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['spaces', 'detail', 'home'],
+        path: ['spaces', 'detail'],
         params: { spaceId: mockSpace3.sys.id },
         options: { location: 'replace' },
       });
@@ -124,7 +124,7 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['spaces', 'detail', 'home'],
+        path: ['spaces', 'detail'],
         params: { spaceId: mockSpace2.sys.id },
         options: { location: 'replace' },
       });
@@ -207,7 +207,7 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['spaces', 'detail', 'home'],
+        path: ['spaces', 'detail'],
         params: { spaceId: mockSpace3.sys.id },
         options: { location: 'replace' },
       });
