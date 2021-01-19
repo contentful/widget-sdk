@@ -16,6 +16,7 @@ export enum LinkType {
   Subscription = 'subscription',
   Org = 'org',
   Apps = 'apps',
+  AppsContentful = 'apps-contentful',
   AppDefinition = 'app-definition',
   AppDefinitionList = 'app-definition-list',
   InstallExtension = 'install-extension',
@@ -76,6 +77,7 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.InstallExtension]: resolveInstallExtension,
   [LinkType.WebhookTemplate]: resolveWebhookTemplate,
   [LinkType.Apps]: resolveApps,
+  [LinkType.AppsContentful]: resolveContentfulApps,
   [LinkType.AppDefinition]: resolveAppDefinition,
   [LinkType.AppDefinitionList]: makeOrgScopedPathResolver({
     orgScopedPath: ['account', 'organizations', 'apps', 'list'],
@@ -287,7 +289,32 @@ async function resolveWebhookTemplate({ id, referrer }) {
   };
 }
 
-async function resolveApps({ id, referrer }) {
+async function resolveContentfulApps(params: {
+  id?: string;
+  referrer?: string;
+  spaceId?: string;
+  environmentId?: string;
+}) {
+  let spaceId;
+  if (params.spaceId) {
+    spaceId = params.spaceId;
+  } else {
+    spaceId = (await getSpaceInfo()).spaceId;
+  }
+  const environmentId = params.environmentId ? params.environmentId : 'master';
+
+  return {
+    path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+    params: {
+      spaceId,
+      environmentId,
+      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      ...(params.id ? { appId: params.id } : {}),
+    },
+  };
+}
+
+async function resolveApps(params: { id?: string; referrer?: string }) {
   const { spaceId } = await getSpaceInfo();
 
   return {
@@ -295,8 +322,8 @@ async function resolveApps({ id, referrer }) {
     params: {
       spaceId,
       environmentId: 'master',
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(id ? { appId: id } : {}),
+      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      ...(params.id ? { appId: params.id } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,
