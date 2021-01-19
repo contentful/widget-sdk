@@ -1,29 +1,12 @@
-import { defaultRequestsMock } from '../../../util/factories';
-import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
-import {
-  getAllPublicContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType,
-} from '../../../interactions/content_types';
-import {
-  getDefaultEntry,
-  validateEntryReferencesResponse,
-  publishEntryReferencesResponse,
-  queryLinksToDefaultEntry,
-  getFirst7SnapshotsOfDefaultEntry,
-  getEntryReferences,
-  queryForDefaultEntries,
-} from '../../../interactions/entries';
-import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
-import {
-  queryForTasksInDefaultSpace,
-  queryForBasicAppsInDefaultSpace,
-  queryForScheduledPublishingOnEntryPage,
-  queryForContentTagsInDefaultSpace,
-  queryForReleasesInDefaultSpace,
-  getLaunchAppFeatureInDefaultSpace,
-} from '../../../interactions/product_catalog_features';
-import { getBulkAction, publishBulkAction } from '../../../interactions/bulk_actions';
+import { defaultRequestsMock } from '../../../util/factories';
+import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
+
+import * as User from '../../../interactions/users';
+import * as ContentType from '../../../interactions/content_types';
+import * as Entry from '../../../interactions/entries';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
+import * as BulkAction from '../../../interactions/bulk_actions';
 
 function setupTestServers(): void {
   cy.resetAllFakeServers();
@@ -43,19 +26,22 @@ function setupTestServers(): void {
 describe('Entry references', () => {
   const setupInteractions = () => {
     defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
+      publicContentTypesResponse: ContentType.getAllPublicContentTypesInDefaultSpace.willReturnOne,
     });
-    queryFirst100UsersInDefaultSpace.willFindSeveral();
-    getDefaultEntry.willReturnIt();
-    queryLinksToDefaultEntry.willReturnNone();
-    getFirst7SnapshotsOfDefaultEntry.willReturnNone();
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    queryForTasksInDefaultSpace.willFindFeatureEnabled();
-    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled();
-    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled();
-    queryForContentTagsInDefaultSpace.willFindFeatureEnabled();
-    queryForReleasesInDefaultSpace.willFindFeatureEnabled();
-    getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
+    User.queryFirst100UsersInDefaultSpace.willFindSeveral();
+
+    Entry.getDefaultEntry.willReturnIt();
+    Entry.queryLinksToDefaultEntry.willReturnNone();
+    Entry.getFirst7SnapshotsOfDefaultEntry.willReturnNone();
+
+    ContentType.getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+
+    ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled();
+    ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled();
+    ProductCatalog.queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled();
+    ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled();
+    ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled();
+    ProductCatalog.getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
   };
 
   beforeEach(() => {
@@ -70,8 +56,8 @@ describe('Entry references', () => {
     });
 
     it('validates release without errors', () => {
-      getEntryReferences.willReturnSeveral();
-      validateEntryReferencesResponse.willReturnNoErrors();
+      Entry.getEntryReferences.willReturnSeveral();
+      Entry.validateEntryReferencesResponse.willReturnNoErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -84,8 +70,8 @@ describe('Entry references', () => {
     });
 
     it('validates release with errors', () => {
-      getEntryReferences.willReturnSeveral();
-      validateEntryReferencesResponse.willReturnErrors();
+      Entry.getEntryReferences.willReturnSeveral();
+      Entry.validateEntryReferencesResponse.willReturnErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -104,8 +90,8 @@ describe('Entry references', () => {
     });
 
     it('publishes release successfully', () => {
-      getEntryReferences.willReturnSeveral();
-      publishEntryReferencesResponse.willReturnNoErrors();
+      Entry.getEntryReferences.willReturnSeveral();
+      Entry.publishEntryReferencesResponse.willReturnNoErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -118,8 +104,8 @@ describe('Entry references', () => {
     });
 
     it('publishes release returns validation errors', () => {
-      getEntryReferences.willReturnSeveral();
-      publishEntryReferencesResponse.willReturnErrors();
+      Entry.getEntryReferences.willReturnSeveral();
+      Entry.publishEntryReferencesResponse.willReturnErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -132,8 +118,8 @@ describe('Entry references', () => {
     });
 
     it('publishes release fails', () => {
-      getEntryReferences.willReturnSeveral();
-      publishEntryReferencesResponse.willFail();
+      Entry.getEntryReferences.willReturnSeveral();
+      Entry.publishEntryReferencesResponse.willFail();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -146,8 +132,8 @@ describe('Entry references', () => {
     });
 
     it.skip('publishes release skipping unresolved entities', () => {
-      getEntryReferences.willReturnSeveralWithUnresolved();
-      publishEntryReferencesResponse.willReturnNoErrors();
+      Entry.getEntryReferences.willReturnSeveralWithUnresolved();
+      Entry.publishEntryReferencesResponse.willReturnNoErrors();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -171,10 +157,11 @@ describe('Entry references', () => {
     });
 
     it('should publish Entities successfully', () => {
-      getEntryReferences.willReturnSeveralWithVersion();
-      queryForDefaultEntries.willFindMultiple();
-      publishBulkAction.willSucceed();
-      getBulkAction.willReturnStatusSucceeded();
+      Entry.getEntryReferences.willReturnSeveralWithVersion();
+      Entry.queryForDefaultEntries.willFindMultiple();
+
+      BulkAction.publishBulkAction.willSucceed();
+      BulkAction.getBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -187,10 +174,11 @@ describe('Entry references', () => {
     });
 
     it('should display an error message when a BulkAction fails', () => {
-      getEntryReferences.willReturnSeveralWithVersion();
-      queryForDefaultEntries.willFindMultiple();
-      publishBulkAction.willSucceed();
-      getBulkAction.willReturnStatusFailed();
+      Entry.getEntryReferences.willReturnSeveralWithVersion();
+      Entry.queryForDefaultEntries.willFindMultiple();
+
+      BulkAction.publishBulkAction.willSucceed();
+      BulkAction.getBulkAction.willReturnStatusFailed();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
