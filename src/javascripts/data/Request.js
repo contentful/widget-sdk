@@ -67,7 +67,6 @@ async function fetchFn(config) {
  * if parsing fails, `null` will be returned.
  *
  * @param  {Response} response       window.fetch response
- * @return {<Object|ArrayBuffer>?}   Parsed JSON, ArrayBuffer, or null
  */
 async function safelyGetResponseBody(response) {
   const contentType = response.headers.get('Content-Type');

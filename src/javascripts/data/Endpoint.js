@@ -179,11 +179,14 @@ export function create(baseUrl, auth) {
       url: withBaseUrl(config.path),
     };
 
+    // Create the error before `await` so that the stack trace isn't swallowed
+    const asyncError = new Error('API request failed');
+
     try {
       const response = await baseRequest(req);
       return response.data;
     } catch (res) {
-      const error = extend(new Error('API request failed'), {
+      const error = extend(asyncError, {
         status: res.status,
         data: res.data,
         statusCode: res.status,
