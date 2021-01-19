@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Plan, Space } from 'test/helpers/fakeFactory';
 
+import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { SpacePurchaseState } from '../context';
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
-const mockSelectedPlatform = { title: 'Space + Compose + Launch', price: 999 };
+const mockSelectedPlatform = { title: PLATFORM_CONTENT.composePlatform.title, price: 999 };
 
 const formatPrice = (value) => `$${parseInt(value, 10).toLocaleString('en-US')}`;
 
@@ -70,27 +70,6 @@ describe('PaymentSummary', () => {
     fireEvent.click(screen.getByTestId('order-summary.back'));
 
     expect(onBack).toBeCalled();
-  });
-
-  it('should show Receipt copy when isReceipt is passed', () => {
-    build({ isReceipt: true });
-
-    expect(screen.getByTestId('space-heading').textContent).toEqual('Receipt');
-  });
-
-  it('should show space change copy', () => {
-    const currentSpace = Space({ name: 'Tomato' });
-    const currentSpaceRatePlan = Plan({ name: 'Medium' });
-    const selectedPlan = { name: 'Large' };
-    build(null, {
-      currentSpace,
-      currentSpaceRatePlan,
-      selectedPlan,
-    });
-    const paymentMsg = screen.getByTestId('payment-summary.message');
-    expect(paymentMsg.textContent).toContain('Tomato');
-    expect(paymentMsg.textContent).toContain('Medium');
-    expect(paymentMsg.textContent).toContain('Large');
   });
 });
 

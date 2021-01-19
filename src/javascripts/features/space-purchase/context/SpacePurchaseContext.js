@@ -14,7 +14,7 @@ const initialState = {
   sessionId: undefined,
   billingDetails: undefined,
   paymentDetails: undefined,
-  spaceName: '',
+  spaceName: 'New space',
   selectedTemplate: null,
   purchasingApps: undefined,
 };

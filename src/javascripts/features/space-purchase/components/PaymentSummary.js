@@ -54,9 +54,9 @@ const styles = {
   }),
 };
 
-export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfirm, onBack }) => {
+export const PaymentSummary = ({ showButtons = false, onConfirm, onBack }) => {
   const {
-    state: { currentSpace, currentSpaceRatePlan, selectedPlatform, selectedPlan },
+    state: { selectedPlatform, selectedPlan },
   } = useContext(SpacePurchaseState);
 
   let monthlyCost = 0;
@@ -71,16 +71,13 @@ export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfi
     <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
         <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
-          {isReceipt ? 'Receipt' : 'Payment summary'}
+          Order summary
         </Subheading>
         <Paragraph testId="payment-summary.message">
-          {getSuccessMsg(
-            currentSpace && currentSpace.name,
-            currentSpaceRatePlan && currentSpaceRatePlan.name,
-            selectedPlan?.name,
-            isReceipt
-          )}
+          You will be charged monthly and your receipt will be emailed to your account email
+          address. You can cancel any time.
         </Paragraph>
+
         <List className={styles.list}>
           {selectedPlatform && (
             <ListItem testId="order-summary.selected-platform" className={styles.listItem}>
@@ -104,6 +101,7 @@ export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfi
           </ListItem>
         </List>
         <Paragraph>This price does not include sales tax, if applicable.</Paragraph>
+
         {showButtons && (
           <Flex
             className={styles.buttons}
@@ -123,22 +121,7 @@ export const PaymentSummary = ({ isReceipt = false, showButtons = false, onConfi
 };
 
 PaymentSummary.propTypes = {
-  isReceipt: PropTypes.bool,
   showButtons: PropTypes.bool,
   onConfirm: PropTypes.func,
   onBack: PropTypes.func,
 };
-
-function getSuccessMsg(currentSpaceName, currentPlanName, selectedPlanName, isReceipt) {
-  let successMsg = '';
-
-  if (currentSpaceName && currentPlanName) {
-    successMsg = `You${
-      isReceipt ? '’ve changed the space' : ' are changing'
-    } ${currentSpaceName} from a ${currentPlanName} to a ${selectedPlanName} space`;
-  } else {
-    successMsg = 'Start using your new space today.';
-  }
-
-  return (successMsg += ' You will be charged monthly. You can cancel at anytime.');
-}

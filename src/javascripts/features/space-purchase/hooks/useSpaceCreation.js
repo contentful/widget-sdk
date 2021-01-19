@@ -27,9 +27,9 @@ const createSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) =
   }
 };
 
-export function useSpaceCreation(spaceName) {
+export function useSpaceCreation() {
   const {
-    state: { organization, selectedPlan },
+    state: { organization, selectedPlan, spaceName },
   } = useContext(SpacePurchaseState);
 
   const sessionMetadata = useSessionMetadata();

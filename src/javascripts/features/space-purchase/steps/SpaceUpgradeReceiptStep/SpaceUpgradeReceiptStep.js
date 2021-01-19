@@ -35,7 +35,7 @@ export const SpaceUpgradeReceiptStep = () => {
       aria-labelledby="upgrade-receipt-section-heading"
       data-test-id="upgrade-receipt-section">
       <Flex className={styles.grid} flexDirection="column" alignItems="center">
-        <ReceiptMessage pending={isUpgradingSpace} hasErrors={!!upgradeError} isUpgrade />
+        <ReceiptMessage pending={isUpgradingSpace} hasErrors={!!upgradeError} isSpaceUpgrade />
 
         <Button
           testId="receipt-page.redirect-to-upgraded-space"
@@ -47,7 +47,7 @@ export const SpaceUpgradeReceiptStep = () => {
         </Button>
 
         <div className={styles.paymentSummaryContainer}>
-          <PaymentSummary isReceipt />
+          <PaymentSummary />
         </div>
       </Flex>
     </section>

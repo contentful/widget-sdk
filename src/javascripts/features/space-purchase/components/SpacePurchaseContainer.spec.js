@@ -1,4 +1,4 @@
-import { screen, within, waitFor } from '@testing-library/react';
+import { screen, within, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
@@ -313,6 +313,10 @@ describe('SpacePurchaseContainer', () => {
 
       const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
 
+      // checks the default value of the input
+      expect(input.value).toEqual('New space');
+
+      fireEvent.change(input, { target: { value: '' } });
       userEvent.type(input, 'test');
 
       expect(input.value).toEqual('test');

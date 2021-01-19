@@ -141,11 +141,11 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
           </ExternalTextLink>
         </span>
 
-        {PLATFORM_CONTENT.map((platform, idx) => {
+        {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
           // If they cannot create a paid space, then they cannot pay for compose+launch either.
           const tooltipText =
             platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
-              ? 'Please contact your organization owner and have them add billing information for your organization so you can purchase Space + Compose + Launch'
+              ? `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`
               : '';
 
           return (

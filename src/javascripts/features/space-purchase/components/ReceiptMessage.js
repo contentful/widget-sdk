@@ -2,24 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { DisplayText, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  DisplayText,
+  Paragraph,
+  Typography,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+
+import { go } from 'states/Navigator';
+import { PLATFORM_CONTENT } from '../utils/platformContent';
 
 const styles = {
   sectionHeading: css({
     fontWeight: tokens.fontWeightMedium,
-    marginBottom: tokens.spacingXs,
+    marginBottom: tokens.spacingXl,
+  }),
+  centered: css({
+    textAlign: 'center',
   }),
 };
 
 export function ReceiptMessage({
   planName,
   spaceName,
+  spaceId,
   pending = true,
   hasErrors = false,
-  isUpgrade = false,
+  isSpaceUpgrade = false,
+  selectedCompose = false,
 }) {
-  const isSpaceCreation = !!planName && !!spaceName;
+  const selectedSpacePlan = !!planName && !!spaceName && !!spaceId;
+  const isSpaceCreation = selectedSpacePlan && !selectedCompose;
+
   return (
     <>
       <DisplayText
@@ -29,7 +44,7 @@ export function ReceiptMessage({
         className={styles.sectionHeading}>
         {pending && (
           <>
-            Hang on, {isUpgrade ? 'we’re changing your space ' : 'your new space is on its way '}
+            Hang on, {isSpaceUpgrade ? 'we’re changing your space ' : 'your order is on its way '}
             <span
               role="img"
               data-test-id="receipt.loading-envelope"
@@ -41,7 +56,7 @@ export function ReceiptMessage({
         {!pending && hasErrors && (
           <>
             Oh dear, we had some trouble{' '}
-            {isUpgrade ? 'changing your space ' : 'creating your new space '}
+            {isSpaceUpgrade ? 'changing your space ' : 'creating your new space '}
             <span
               role="img"
               data-test-id="receipt.error-face"
@@ -52,22 +67,49 @@ export function ReceiptMessage({
         )}
         {!pending && !hasErrors && (
           <>
-            Nice one!
+            Nice one!{' '}
             <span role="img" aria-label="Shopping bag">
               🛍
             </span>
           </>
         )}
       </DisplayText>
-      {!pending && (
-        <Paragraph testId="receipt.subtext">
-          {hasErrors &&
-            `Don’t worry, simply retrigger the space ${isUpgrade ? 'change' : 'creation'}.`}
-          {isSpaceCreation &&
-            !hasErrors &&
-            `You successfully purchased the ${planName} space ${spaceName}.`}
-        </Paragraph>
-      )}
+
+      <Typography className={styles.centered} testId="receipt.subtext">
+        {!pending && hasErrors && (
+          <Paragraph>
+            Don’t worry, simply retrigger the space {isSpaceUpgrade ? 'change' : 'creation'}.
+          </Paragraph>
+        )}
+
+        {!pending && !hasErrors && isSpaceCreation && (
+          <Paragraph>
+            You successfully purchased the {planName} space {spaceName}.
+          </Paragraph>
+        )}
+
+        {!pending && !hasErrors && selectedCompose && (
+          <>
+            <Paragraph>
+              You successfully purchased the {PLATFORM_CONTENT.composePlatform.title} package
+              {selectedSpacePlan && (
+                <>
+                  {' '}
+                  and a new {planName} space. Update the new space name anytime on the{' '}
+                  <TextLink
+                    onClick={() =>
+                      go({ path: ['spaces', 'detail', 'settings', 'space'], params: { spaceId } })
+                    }>
+                    Space Settings
+                  </TextLink>
+                </>
+              )}
+              .
+            </Paragraph>
+            <Paragraph>You can now enable Compose and Launch on any Space Home.</Paragraph>
+          </>
+        )}
+      </Typography>
     </>
   );
 }
@@ -76,6 +118,8 @@ ReceiptMessage.propTypes = {
   pending: PropTypes.bool,
   planName: PropTypes.string,
   spaceName: PropTypes.string,
+  spaceId: PropTypes.string,
   hasErrors: PropTypes.bool,
-  isUpgrade: PropTypes.bool,
+  isSpaceUpgrade: PropTypes.bool,
+  selectedCompose: PropTypes.bool,
 };

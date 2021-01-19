@@ -13,6 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
+import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 const styles = {
@@ -63,7 +64,9 @@ export const EnterpriseCard = ({ organizationId, onSelect }) => {
       </Heading>
 
       <span>
-        <Paragraph className={styles.textLeft}>Space + Compose + Launch plus:</Paragraph>
+        <Paragraph className={styles.textLeft}>
+          {PLATFORM_CONTENT.composePlatform.title} plus:
+        </Paragraph>
         <List className={styles.enterpriseFeatures} testId="platform-limits">
           <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />

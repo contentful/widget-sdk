@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { screen, within } from '@testing-library/react';
+import { screen, within, fireEvent } from '@testing-library/react';
 import { SpaceDetailsStep } from './SpaceDetailsStep';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { EVENTS } from '../../utils/analyticsTracking';
@@ -7,17 +7,16 @@ import { EVENTS } from '../../utils/analyticsTracking';
 const mockTemplate = { name: 'Cool template bro', sys: { id: 'template_abcd' } };
 
 describe('SpaceDetailsStep', () => {
-  it('should enable the button once a space name is typed', async () => {
+  it('should disable the button once a space name input is empty', async () => {
     await build();
 
-    expect(screen.getByTestId('next-step-new-details-page')).toHaveAttribute('disabled');
+    const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
+    const nextButton = screen.getByTestId('next-step-new-details-page');
 
-    userEvent.type(
-      within(screen.getByTestId('space-name')).getByTestId('cf-ui-text-input'),
-      'my space name'
-    );
-
-    expect(screen.getByTestId('next-step-new-details-page')).not.toHaveAttribute('disabled');
+    fireEvent.change(input, { target: { value: '' } });
+    expect(nextButton).toHaveAttribute('disabled');
+    userEvent.type(input, 'my space name');
+    expect(nextButton).not.toHaveAttribute('disabled');
   });
 
   it('should call onSubmit when the button is clicked', async () => {

@@ -22,6 +22,7 @@ import {
   SpacePlanSelectionStep,
   SpaceCreationReceiptStep,
   SpaceUpgradeReceiptStep,
+  ComposeAndLaunchReceiptStep,
 } from '../steps';
 
 const STEPS = {
@@ -33,6 +34,7 @@ const STEPS = {
   CONFIRMATION: 'CONFIRMATION',
   RECEIPT: 'RECEIPT',
   UPGRADE_RECEIPT: 'UPGRADE_RECEIPT',
+  COMPOSE_RECEIPT: 'COMPOSE_RECEIPT',
 };
 
 const generateBreadcrumbItems = (step) => {
@@ -42,7 +44,7 @@ const generateBreadcrumbItems = (step) => {
 
   const paymentSteps = [STEPS.BILLING_DETAILS, STEPS.CREDIT_CARD_DETAILS, STEPS.CONFIRMATION];
 
-  const confirmationSteps = [STEPS.RECEIPT, STEPS.UPGRADE_RECEIPT];
+  const confirmationSteps = [STEPS.RECEIPT, STEPS.UPGRADE_RECEIPT, STEPS.COMPOSE_RECEIPT];
 
   return [
     { text: stepIsPlatform ? '1.Subscription' : '1.Spaces', isActive: spaceSteps.includes(step) },
@@ -81,6 +83,8 @@ export const SpacePurchaseContainer = ({ track }) => {
     }
   }, [organization, dispatch]);
 
+  const selectedComposeLaunch = selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+
   const goToStep = (nextStep) => {
     track(EVENTS.NAVIGATE, {
       fromStep: STEPS[currentStep],
@@ -97,7 +101,7 @@ export const SpacePurchaseContainer = ({ track }) => {
           <PlatformSelectionStep
             track={track}
             onSubmit={() => {
-              if (selectedPlatform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
+              if (selectedComposeLaunch) {
                 goToStep(organization.isBillable ? STEPS.CONFIRMATION : STEPS.BILLING_DETAILS);
               } else {
                 goToStep(STEPS.SPACE_DETAILS);
@@ -144,7 +148,7 @@ export const SpacePurchaseContainer = ({ track }) => {
         return (
           <BillingDetailsStep
             onBack={() => {
-              if (selectedPlatform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
+              if (selectedComposeLaunch) {
                 goToStep(STEPS.PLATFORM_SELECTION);
               } else {
                 goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS);
@@ -177,11 +181,7 @@ export const SpacePurchaseContainer = ({ track }) => {
               if (!organization.isBillable) {
                 goToStep(STEPS.CREDIT_CARD_DETAILS);
               } else if (!currentSpace) {
-                goToStep(
-                  selectedPlatform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH
-                    ? STEPS.PLATFORM_SELECTION
-                    : STEPS.SPACE_DETAILS
-                );
+                goToStep(selectedComposeLaunch ? STEPS.PLATFORM_SELECTION : STEPS.SPACE_DETAILS);
               } else {
                 goToStep(STEPS.SPACE_PLAN_SELECTION);
               }
@@ -189,7 +189,13 @@ export const SpacePurchaseContainer = ({ track }) => {
             onSubmit={() => {
               track(EVENTS.CONFIRM_PURCHASE);
 
-              goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
+              if (selectedComposeLaunch) {
+                // if the user selected compose+launch platform and a space plan
+                // we send them to the normal space creation receipt page
+                goToStep(selectedPlan ? STEPS.RECEIPT : STEPS.COMPOSE_RECEIPT);
+              } else {
+                goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
+              }
             }}
           />
         );
@@ -197,6 +203,8 @@ export const SpacePurchaseContainer = ({ track }) => {
         return <SpaceCreationReceiptStep />;
       case STEPS.UPGRADE_RECEIPT:
         return <SpaceUpgradeReceiptStep />;
+      case STEPS.COMPOSE_RECEIPT:
+        return <ComposeAndLaunchReceiptStep />;
     }
   };
 

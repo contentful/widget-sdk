@@ -6,3 +6,4 @@ export { SpaceCreationReceiptStep } from './SpaceCreationReceiptStep/SpaceCreati
 export { SpaceDetailsStep } from './SpaceDetailsStep/SpaceDetailsStep';
 export { SpacePlanSelectionStep } from './SpacePlanSelectionStep/SpacePlanSelectionStep';
 export { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep/SpaceUpgradeReceiptStep';
+export { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep/ComposeAndLaunchReceiptStep';

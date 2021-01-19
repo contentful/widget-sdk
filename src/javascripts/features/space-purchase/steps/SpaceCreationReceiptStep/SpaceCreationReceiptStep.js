@@ -1,42 +1,18 @@
 import React, { useContext } from 'react';
-import { css } from 'emotion';
 
-import { Button, Note } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-
-import { SpacePurchaseState } from 'features/space-purchase/context';
-import { useSpaceCreation } from 'features/space-purchase/hooks/useSpaceCreation';
-import { useTemplateCreation } from 'features/space-purchase/hooks/useTemplateCreation';
-import { useNavigationWarn } from 'features/space-purchase/hooks/useNavigationWarn';
-import { PaymentSummary } from '../../components/PaymentSummary';
-import { ReceiptMessage } from '../../components/ReceiptMessage';
-
-const styles = {
-  grid: css({
-    margin: `${tokens.spacing2Xl} auto 0`,
-  }),
-  button: css({
-    marginTop: tokens.spacingXl,
-    marginBottom: tokens.spacingXl,
-  }),
-  templateCreationErrorNote: css({
-    marginBottom: tokens.spacingXl,
-  }),
-  paymentSummaryContainer: css({
-    maxWidth: '600px',
-  }),
-};
+import { PLATFORM_TYPES } from '../../utils/platformContent';
+import { SpacePurchaseState } from '../../context';
+import { useSpaceCreation } from '../../hooks/useSpaceCreation';
+import { useTemplateCreation } from '../../hooks/useTemplateCreation';
+import { useNavigationWarn } from '../../hooks/useNavigationWarn';
+import { ReceiptView } from '../../components/ReceiptView';
 
 export const SpaceCreationReceiptStep = () => {
   const {
-    state: { spaceName, selectedTemplate, selectedPlan },
+    state: { spaceName, selectedTemplate, selectedPlan, selectedPlatform },
   } = useContext(SpacePurchaseState);
 
-  const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation(
-    spaceName
-  );
-
+  const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation();
   const { isCreatingTemplate, templateCreationError } = useTemplateCreation(
     newSpace,
     selectedTemplate
@@ -44,43 +20,25 @@ export const SpaceCreationReceiptStep = () => {
 
   const pending = isCreatingSpace || isCreatingTemplate;
 
+  const selectedCompose = selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+
   useNavigationWarn(selectedPlan, pending);
 
   return (
     <section
       aria-labelledby="new-space-receipt-section-heading"
       data-test-id="new-space-receipt-section">
-      <Flex className={styles.grid} flexDirection="column" alignItems="center">
-        <ReceiptMessage
-          pending={pending}
-          planName={selectedPlan.name}
-          spaceName={spaceName}
-          hasErrors={!!spaceCreationError}
-        />
-
-        <Button
-          testId="receipt-page.redirect-to-new-space"
-          loading={pending}
-          disabled={pending}
-          onClick={buttonAction}
-          className={styles.button}>
-          {spaceCreationError ? 'Retrigger space creation' : `Take me to ${spaceName}`}
-        </Button>
-
-        <div className={styles.paymentSummaryContainer}>
-          {templateCreationError && (
-            <Note
-              noteType="warning"
-              title="We had a problem creating your template"
-              testId="receipt-page.template-creation-error"
-              className={styles.templateCreationErrorNote}>
-              Something happened while creating the template. You can still use your space, but some
-              content from the template may be missing.
-            </Note>
-          )}
-          <PaymentSummary isReceipt />
-        </div>
-      </Flex>
+      <ReceiptView
+        pending={pending}
+        planName={selectedPlan.name}
+        spaceName={spaceName}
+        spaceId={newSpace?.sys.id}
+        buttonAction={buttonAction}
+        buttonLabel={spaceCreationError ? 'Retrigger space creation' : 'Take me to my new space'}
+        spaceCreationError={spaceCreationError}
+        templateCreationError={templateCreationError}
+        selectedCompose={selectedCompose}
+      />
     </section>
   );
 };

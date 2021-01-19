@@ -6,7 +6,7 @@ import { EVENTS } from '../../utils/analyticsTracking';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformSelectionStep, PACKAGES_COMPARISON_HREF } from './PlatformSelectionStep';
 import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
-import { PLATFORM_TYPES } from '../../utils/platformContent';
+import { PLATFORM_TYPES, PLATFORM_CONTENT } from '../../utils/platformContent';
 
 const mockTrack = jest.fn();
 const mockOnSubmit = jest.fn();
@@ -14,7 +14,7 @@ const mockOrganization = FakeFactory.Organization();
 
 const mockSelectedPlatform = {
   type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH,
-  title: 'Space + Compose + Launch',
+  title: PLATFORM_CONTENT.composePlatform.title,
   price: 999,
 };
 
