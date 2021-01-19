@@ -1,5 +1,12 @@
+import { range } from 'lodash';
 import newEntityBatchLoaderFn from './newEntityBatchLoaderFn';
+import { fetchInChunks as fetchInChunksMocked } from './utils';
 import * as logger from 'services/logger';
+
+jest.mock('./utils', () => ({
+  ...jest.requireActual('./utils'),
+  fetchInChunks: jest.fn(() => Promise.resolve({ items: [] })),
+}));
 
 const PENDING = new Promise(() => {});
 
@@ -148,6 +155,33 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
           requestedIdsCharacterCount: 12,
         },
       });
+    });
+  });
+
+  describe('failing request because of ResponseSizeLimitExceeded error', () => {
+    const CLIENT_ERROR = {
+      status: 400,
+      data: {
+        message: 'Response size too big',
+      },
+    };
+
+    beforeEach(() => {
+      setup();
+      getResources.mockRejectedValueOnce(CLIENT_ERROR);
+    });
+
+    it('should retry fetching the entries in chunks', async () => {
+      const ids = range(0, 50).map((id) => `ID_${id}`);
+      await entityBatchLoaderFn(ids);
+      expect(fetchInChunksMocked).toHaveBeenCalledTimes(1);
+    });
+
+    it('should retry max 1 time', async () => {
+      const ids = range(0, 50).map((id) => `ID_${id}`);
+      await entityBatchLoaderFn(ids);
+      fetchInChunksMocked.mockRejectedValueOnce(CLIENT_ERROR);
+      expect(fetchInChunksMocked).toHaveBeenCalledTimes(1);
     });
   });
 

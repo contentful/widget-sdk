@@ -1,5 +1,10 @@
 import { mapKeys } from 'lodash';
 import { isValidResourceId } from 'data/utils';
+import {
+  isResponseSizeTooBigError,
+  fetchInChunks,
+  RESPONSE_SIZE_EXCEEDED_MAX_RETRIES,
+} from './utils';
 import * as logger from 'services/logger';
 
 /**
@@ -11,6 +16,7 @@ import * as logger from 'services/logger';
  */
 export default function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError }) {
   return (entityIds) => {
+    let responseSizeExceededRetries = 0;
     // Filter out IDs >64 chars (and otherwise invalid IDs) as multiple IDs >64
     // chars might result in a weird 504 CMA response before we hit the ~8000
     // character url limit that causes a proper 414 response.
@@ -28,6 +34,16 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
     }
 
     function handleError(error) {
+      if (
+        isResponseSizeTooBigError(error) &&
+        responseSizeExceededRetries < RESPONSE_SIZE_EXCEEDED_MAX_RETRIES
+      ) {
+        // If the server has responded with 400 due to the requested resources
+        // exceeding the hard limit of 7mb, then we attempt to fetch them in
+        // 5 chunks
+        responseSizeExceededRetries++;
+        return fetchInChunks(getResources, validIds).then(handleSuccess, handleError);
+      }
       logError(error);
       return entityIds.map(() => error);
     }
@@ -54,7 +70,7 @@ export const MAX_FETCH_LIMIT = 999;
 const FETCH_PARAM = 'sys.id[in]';
 export const WORST_CASE_QUERY_PARAMS = `limit=${MAX_FETCH_LIMIT}&${FETCH_PARAM}=`;
 
-function buildQueryParamsToFetchIds(ids) {
+export function buildQueryParamsToFetchIds(ids) {
   const params = {
     [FETCH_PARAM]: ids.join(','),
   };
