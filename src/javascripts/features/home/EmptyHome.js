@@ -85,7 +85,7 @@ const initialLoad = (orgId) => async () => {
 
   if (space) {
     return go({
-      path: ['spaces', 'detail', 'home'],
+      path: ['spaces', 'detail'],
       params: { spaceId: space.sys.id },
       options: { location: 'replace' },
     });
