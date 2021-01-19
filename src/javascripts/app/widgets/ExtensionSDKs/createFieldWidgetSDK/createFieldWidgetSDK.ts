@@ -15,13 +15,17 @@ import { noop, omit } from 'lodash';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import { createAPIClient } from 'core/services/APIClient/utils';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import createUserCache from 'data/userCache';
+import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { PubSubClient } from 'services/PubSubService';
 
 export function createFieldWidgetSDK({
   fieldId,
   localeCode,
   widgetNamespace,
   widgetId,
-  spaceContext,
   editorData,
   localeData,
   preferences,
@@ -30,12 +34,18 @@ export function createFieldWidgetSDK({
   internalContentType,
   fieldLocaleListeners,
   parameters,
+  spaceId,
+  environmentAliasId,
+  environmentId,
+  space,
+  environment,
+  contentTypes,
+  pubSubClient,
 }: {
   fieldId: string;
   localeCode: string;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
-  spaceContext: any;
   editorData: any;
   localeData: any;
   preferences: any;
@@ -47,7 +57,20 @@ export function createFieldWidgetSDK({
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
+  contentTypes: any[];
+  environment: any;
+  environmentId: string;
+  environmentAliasId?: string;
+  space: any;
+  spaceId: string;
+  pubSubClient?: PubSubClient;
 }): FieldExtensionSDK {
+  const cma = createAPIClient(spaceId, environmentId);
+  const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+  const usersRepo = createUserCache(spaceEndpoint);
+  const aliasesId = getEnvironmentAliasesIds(environment);
+  const isMaster = isMasterEnvironment(environment);
+
   const editorApi = createEditorApi({
     editorInterface: editorData.editorInterface,
     getLocaleData: () => localeData,
@@ -73,10 +96,10 @@ export function createFieldWidgetSDK({
   });
 
   const navigatorApi = createNavigatorApi({
-    environmentId: spaceContext.getEnvironmentId(),
-    spaceId: spaceContext.getId(),
-    cma: spaceContext.cma,
-    isMaster: spaceContext.isMasterEnvironment(),
+    environmentId,
+    spaceId,
+    cma,
+    isMaster,
     widgetNamespace,
     widgetId,
   });
@@ -87,12 +110,12 @@ export function createFieldWidgetSDK({
 
   const fieldApi = entryApi.fields[fieldId].getForLocale(localeCode);
 
-  const userApi = createUserApi(spaceContext.space.data.spaceMember);
+  const userApi = createUserApi(space.data.spaceMember);
 
   const idsApi = createIdsApi({
-    spaceId: spaceContext.getId(),
-    envId: spaceContext.getEnvironmentId(),
-    envAliasId: spaceContext.getAliasId(),
+    spaceId,
+    envId: environmentId,
+    envAliasId: environmentAliasId,
     contentType: internalContentType,
     entry: entryApi,
     field: fieldApi,
@@ -102,13 +125,13 @@ export function createFieldWidgetSDK({
   });
 
   const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
-    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-    spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
-    usersRepo: spaceContext.users,
+    cma: getBatchingApiClient(cma),
+    initialContentTypes: contentTypes,
+    pubSubClient,
+    environmentIds: [environmentId, ...aliasesId],
+    spaceId,
+    tagsRepo: createTagsRepo(spaceEndpoint, environmentId),
+    usersRepo,
     appId: idsApi.app,
   });
 
@@ -123,7 +146,7 @@ export function createFieldWidgetSDK({
   const baseSdk = createBaseExtensionSdk({
     parametersApi: parameters,
     spaceApi,
-    spaceMember: spaceContext.space.data.spaceMember,
+    spaceMember: space.data.spaceMember,
     locationApi,
     navigatorApi,
   });

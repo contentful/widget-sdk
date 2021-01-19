@@ -23,6 +23,7 @@ function getAngularSpaceContext() {
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
   currentSpaceContentTypes: [],
+  currentEnvironmentId: 'master',
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {

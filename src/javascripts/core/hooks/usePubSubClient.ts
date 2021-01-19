@@ -8,12 +8,16 @@ import noop from 'lodash/noop';
  */
 export const usePubSubClient = () => {
   const { currentSpaceId = '' } = useSpaceEnvContext();
-  const [pubSubClient, setPubSubClient] = useState<PubSubClient>({ on: noop, off: noop });
+  const [pubSubClient, setPubSubClient] = useState<PubSubClient | undefined>();
 
   useEffect(() => {
     const init = async () => {
-      const client = await createPubSubClientForSpace(currentSpaceId);
-      setPubSubClient(client as PubSubClient);
+      try {
+        const client = await createPubSubClientForSpace(currentSpaceId);
+        setPubSubClient(client as PubSubClient);
+      } catch (error) {
+        setPubSubClient({ on: noop, off: noop });
+      }
     };
     init();
   }, [currentSpaceId]);

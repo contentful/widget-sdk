@@ -4,17 +4,24 @@ import { WidgetRenderer } from 'app/entity_editor/WidgetRenderer';
 import Collaborators from 'app/entity_editor/Collaborators';
 import { isRtlLocale } from 'utils/locales';
 import { createFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
-import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { usePubSubClient } from 'core/hooks';
 
 export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean }) {
-  const { currentSpace } = useSpaceEnvContext();
+  const {
+    currentSpace,
+    currentSpaceId,
+    currentEnvironmentAliasId,
+    currentEnvironmentId,
+    currentEnvironment,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
+  const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const widgetApi = React.useMemo(() => {
-    const spaceContext = getModule('spaceContext');
     const {
       widget,
       locale,
@@ -26,6 +33,10 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
     } = props.scope;
     const { widgetNamespace, widgetId, fieldId, parameters } = widget;
 
+    if (!currentSpaceId) {
+      throw new Error('Space id needs to be defined');
+    }
+
     return createFieldWidgetSDK({
       fieldId,
       localeCode: locale.code,
@@ -35,13 +46,32 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       setInvalid: fieldController?.setInvalid,
       localeData,
       preferences,
-      spaceContext,
       doc,
       internalContentType: props.scope.entityInfo.contentType,
       fieldLocaleListeners: props.scope.fieldLocaleListeners,
       parameters,
+      spaceId: currentSpaceId,
+      environmentAliasId: currentEnvironmentAliasId,
+      environmentId: currentEnvironmentId,
+      space: currentSpace,
+      environment: currentEnvironment,
+      contentTypes: currentSpaceContentTypes,
+      pubSubClient,
     });
-  }, [props.scope]);
+  }, [
+    currentEnvironment,
+    currentEnvironmentAliasId,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceContentTypes,
+    currentSpaceId,
+    props.scope,
+    pubSubClient,
+  ]);
+
+  if (!widgetApi) {
+    return null;
+  }
 
   return (
     <>

@@ -1,7 +1,7 @@
 export interface SpaceEnvContextValue {
   currentEnvironment?: Environment;
   currentEnvironmentAliasId?: string;
-  currentEnvironmentId?: string;
+  currentEnvironmentId: string;
   currentEnvironmentName?: string;
   currentOrganization?: Organization;
   currentOrganizationId?: string;

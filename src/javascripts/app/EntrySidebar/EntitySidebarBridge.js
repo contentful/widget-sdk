@@ -29,6 +29,9 @@ export default ({
   spaceId,
   space,
   spaceEndpoint,
+  environment,
+  contentTypes,
+  pubSubClient,
 }) => {
   const spaceContext = getModule('spaceContext');
   const isMasterEnvironment = isMaster(getEnvironment(space));
@@ -216,7 +219,6 @@ export default ({
           localeCode: TheLocaleStore.getDefaultLocale().code,
           widgetNamespace: widget.widgetNamespace,
           widgetId: widget.widgetId,
-          spaceContext,
           editorData,
           setInvalid: fieldController?.setInvalid,
           localeData,
@@ -231,6 +233,13 @@ export default ({
             localeData.defaultLocale,
             otDoc
           ),
+          spaceId,
+          environmentAliasId: aliasId,
+          environmentId,
+          space,
+          environment,
+          contentTypes,
+          pubSubClient,
         })
       ),
       widget: toRendererWidget(widget.descriptor),

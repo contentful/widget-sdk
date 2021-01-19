@@ -4,7 +4,7 @@ import { WidgetNamespace } from '@contentful/widget-renderer';
 interface CreateIdsOptions {
   spaceId: string;
   envId: string;
-  envAliasId: string | null;
+  envAliasId: string | null | undefined;
   contentType: ContentType;
   entry: EntryAPI;
   field: FieldAPI;

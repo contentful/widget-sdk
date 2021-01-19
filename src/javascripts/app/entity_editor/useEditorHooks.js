@@ -11,6 +11,7 @@ import { getEditorState } from './editorState';
 import installTracking from './Tracking';
 import * as K from 'core/utils/kefir';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
+import { usePubSubClient } from 'core/hooks';
 
 export const useEmitter = () => {
   const { current: emitter } = useRef(mitt());
@@ -106,12 +107,16 @@ export const useEntrySidebarProps = ({
     currentSpaceId,
     currentEnvironmentAliasId,
     currentEnvironmentId,
+    currentSpaceContentTypes,
+    currentEnvironment,
   } = useSpaceEnvContext();
 
   const spaceEndpoint = useSpaceEnvEndpoint();
 
+  const pubSubClient = usePubSubClient();
+
   useEffect(() => {
-    if (state && !entrySidebarProps && currentSpace) {
+    if (state && pubSubClient && !entrySidebarProps && currentSpace) {
       const props = createEntrySidebarProps({
         aliasId: currentEnvironmentAliasId,
         editorContext,
@@ -126,6 +131,9 @@ export const useEntrySidebarProps = ({
         spaceId: currentSpaceId,
         state,
         spaceEndpoint,
+        contentTypes: currentSpaceContentTypes,
+        pubSubClient,
+        environment: currentEnvironment,
       });
       setEntrySidebarProps(props);
     }
@@ -144,6 +152,9 @@ export const useEntrySidebarProps = ({
     preferences,
     state,
     spaceEndpoint,
+    currentSpaceContentTypes,
+    pubSubClient,
+    currentEnvironment,
   ]);
 
   return entrySidebarProps;

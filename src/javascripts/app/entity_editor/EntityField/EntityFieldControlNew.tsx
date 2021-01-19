@@ -4,12 +4,12 @@ import { WidgetRenderer } from 'app/entity_editor/WidgetRendererNew';
 import Collaborators from 'app/entity_editor/Collaborators';
 import { isRtlLocale } from 'utils/locales';
 import { createFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
-import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { LocaleData } from './types';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
+import { usePubSubClient } from 'core/hooks';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -35,7 +35,15 @@ type EntityFieldControlProps = {
 };
 
 export function EntityFieldControl(props: EntityFieldControlProps) {
-  const { currentSpace } = useSpaceEnvContext();
+  const {
+    currentSpace,
+    currentSpaceId,
+    currentEnvironmentAliasId,
+    currentEnvironmentId,
+    currentEnvironment,
+    currentSpaceContentTypes,
+  } = useSpaceEnvContext();
+  const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const {
@@ -57,8 +65,11 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
   const internalContentType = editorData.entityInfo.contentType;
 
   const widgetApi = React.useMemo(() => {
-    const spaceContext = getModule('spaceContext');
     const { widgetNamespace, widgetId, fieldId, parameters } = widget;
+
+    if (!currentSpaceId) {
+      throw new Error('Space id needs to be defined');
+    }
 
     return createFieldWidgetSDK({
       localeCode: locale.code,
@@ -66,7 +77,6 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       setInvalid,
       localeData,
       preferences,
-      spaceContext,
       doc,
       internalContentType,
       fieldLocaleListeners,
@@ -74,18 +84,36 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       widgetId,
       fieldId,
       parameters,
+      spaceId: currentSpaceId,
+      environmentAliasId: currentEnvironmentAliasId,
+      environmentId: currentEnvironmentId,
+      space: currentSpace,
+      environment: currentEnvironment,
+      contentTypes: currentSpaceContentTypes,
+      pubSubClient,
     });
   }, [
-    doc,
-    editorData,
-    internalContentType,
-    fieldLocaleListeners,
-    setInvalid,
+    widget,
     locale.code,
+    editorData,
+    setInvalid,
     localeData,
     preferences,
-    widget,
+    doc,
+    internalContentType,
+    fieldLocaleListeners,
+    currentSpaceId,
+    currentEnvironmentAliasId,
+    currentEnvironmentId,
+    currentSpace,
+    currentEnvironment,
+    currentSpaceContentTypes,
+    pubSubClient,
   ]);
+
+  if (!widgetApi) {
+    return null;
+  }
 
   return (
     <>

@@ -39,7 +39,7 @@ interface CreateEditorExtensionSDKOptions {
   environmentId: string;
   space: any;
   spaceId: string;
-  pubSubClient: PubSubClient;
+  pubSubClient?: PubSubClient;
 }
 
 export const createEditorExtensionSDK = ({
