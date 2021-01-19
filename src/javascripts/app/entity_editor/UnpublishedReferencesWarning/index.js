@@ -41,9 +41,5 @@ export const showUnpublishedReferencesWarning = async ({
     />
   ));
 
-  if (!confirmation) {
-    throw new Error('Publication was terminated');
-  }
-
   return confirmation;
 };
