@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { AddAssetButton } from './AddAssetButton';
 import { AssetList } from './AssetList';
 import { useListView } from 'features/entity-search';
@@ -20,6 +19,14 @@ import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils'
 import { ScheduledActionsPageLink } from 'app/ScheduledActions';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
+import { go } from 'states/Navigator';
+
+const goTo = (assetId) => {
+  return go({
+    path: '^.detail',
+    params: { assetId },
+  });
+};
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -62,7 +69,7 @@ const createMultipleAssets = (updateEntities) => async () => {
   }
 };
 
-export const AssetView = ({ goTo }) => {
+export const AssetView = () => {
   const entityType = 'asset';
   const {
     currentEnvironmentId,
@@ -152,8 +159,4 @@ export const AssetView = ({ goTo }) => {
       )}
     />
   );
-};
-
-AssetView.propTypes = {
-  goTo: PropTypes.func.isRequired,
 };

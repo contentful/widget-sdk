@@ -4,17 +4,6 @@ import { AssetView } from '../AssetView';
 const list = {
   name: 'list',
   url: '',
-  mapInjectedToProps: [
-    '$state',
-    ($state) => {
-      return {
-        goTo: (assetId) => {
-          // X.list -> X.detail
-          $state.go('^.detail', { assetId });
-        },
-      };
-    },
-  ],
   component: AssetView,
 };
 
