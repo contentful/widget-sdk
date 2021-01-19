@@ -387,7 +387,11 @@ async function resolveSubscriptions() {
   const hasNewPricing = !isLegacyOrganization(org);
 
   return applyOrgAccess(orgId, {
-    path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
+    path: [
+      'account',
+      'organizations',
+      hasNewPricing ? 'subscription_new.overview' : 'subscription',
+    ],
     params: {
       orgId,
       // dummy pathsuffix since we don't want to redirect
