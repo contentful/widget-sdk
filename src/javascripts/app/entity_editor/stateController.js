@@ -247,12 +247,16 @@ export const initStateController = ({
 
   async function publishEntity() {
     try {
-      await showUnpublishedReferencesWarning({
+      const confirmed = await showUnpublishedReferencesWarning({
         entity: K.getValue(doc.data$),
         spaceId,
         environmentId,
         contentTypes,
       });
+
+      if (!confirmed) {
+        return;
+      }
 
       if (validator.run()) {
         try {
