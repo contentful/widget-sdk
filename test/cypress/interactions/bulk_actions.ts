@@ -27,10 +27,10 @@ export const publishPayload = {
     items: [
       {
         sys: {
-          id: defaultEntryTestIds.testEntryId3,
+          id: defaultEntryTestIds.defaultId,
           type: 'Link',
           linkType: 'Entry',
-          version: 3,
+          version: 1,
         },
       },
       {
@@ -43,10 +43,10 @@ export const publishPayload = {
       },
       {
         sys: {
-          id: defaultEntryId,
+          id: defaultEntryTestIds.testEntryId3,
           linkType: 'Entry',
           type: 'Link',
-          version: 1,
+          version: 3,
         },
       },
     ],

@@ -3,6 +3,7 @@ import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@content
 
 import { sleep } from 'utils/Concurrent';
 import APIClient, { APIClientError } from 'data/APIClient';
+import * as EndpointFactory from 'data/EndpointFactory';
 import { getModule } from 'core/NgRegistry';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
@@ -97,9 +98,21 @@ async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
   throw Error(`BulkAction ${id} is taking too long to refresh.`);
 }
 
+let apiClientMemo: APIClient;
+
 function batchApiClient(): APIClient {
+  if (apiClientMemo) return apiClientMemo;
+
   const spaceContext = getModule('spaceContext');
-  return getBatchingApiClient(spaceContext.cma) as APIClient;
+  const endpoint = EndpointFactory.createSpaceEndpoint(
+    spaceContext.space.data.sys.id,
+    spaceContext.getAliasId() || spaceContext.getEnvironmentId()
+  );
+
+  // We are using our Endpoint to make sure /environments/:id is present in the path
+  apiClientMemo = getBatchingApiClient(new APIClient(endpoint));
+
+  return apiClientMemo;
 }
 
 async function getUpdatedEntities(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
@@ -114,6 +127,7 @@ async function getUpdatedEntities(entities: PublishableEntity[]): Promise<Publis
 async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
   const entities = await getUpdatedEntities(selectedEntities);
   const items = entitiesToLinks({ entities, includeVersion: true });
+
   const bulkAction = await batchApiClient().createPublishBulkAction({
     entities: {
       sys: { type: 'Array' },
