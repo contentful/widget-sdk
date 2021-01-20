@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useBulkActions } from 'core/hooks';
-import LoadingOverlay from 'app/common/LoadingOverlay';
+import { LoadingOverlay } from 'features/loading-state';
 
 const useBulkSaveTags = (onClose, updateEntities) => {
   const [isRunning, setIsRunning] = useState(false);
@@ -15,7 +15,7 @@ const useBulkSaveTags = (onClose, updateEntities) => {
     if (!isRunning) {
       return null;
     }
-    return <LoadingOverlay message="Updating tags" />;
+    return <LoadingOverlay />;
   }, [isRunning]);
 
   useEffect(() => {

@@ -22,14 +22,15 @@ const styles = {
   }),
   spinner: css({
     marginBottom: tokens.spacingS,
+    marginLeft: tokens.spacingS,
   }),
 };
 
 function DeeplinkRedirectingMessage() {
   return (
     <div className={styles.messageContainer}>
+      <Heading as="h3">Redirecting</Heading>
       <Spinner className={styles.spinner} />
-      <Heading as="h3">Redirecting…</Heading>
     </div>
   );
 }

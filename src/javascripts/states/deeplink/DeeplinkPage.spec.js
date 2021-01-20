@@ -42,7 +42,7 @@ describe('deeplink/DeeplinkPage', () => {
       param2: '2',
     });
 
-    await waitFor(() => getByText('Redirecting…'));
+    await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
       'spaces.detail.environment.apps.list',
@@ -121,7 +121,7 @@ describe('deeplink/DeeplinkPage', () => {
 
     fireEvent.click($proceedButton);
 
-    await waitFor(() => getByText('Redirecting…'));
+    await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
       'spaces.detail.environment.apps.list',

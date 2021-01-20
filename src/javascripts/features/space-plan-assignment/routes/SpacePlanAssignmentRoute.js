@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { Spinner } from '@contentful/forma-36-react-components';
-
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SpacePlanAssignment } from '../components/SpacePlanAssignment';
 import { PlanSpaceAssignment } from '../components/PlanSpaceAssignment';
 import { useAsync } from 'core/hooks/useAsync';
 import queryString from 'query-string';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
+import { LoadingEmptyState } from 'features/loading-state';
 import StateRedirect from 'app/common/StateRedirect';
 
 const initialFetch = async (orgId) => {
@@ -27,11 +25,7 @@ const initialFetch = async (orgId) => {
 export const SpacePlanAssignmentRoute = ({ orgId }) => {
   const { isLoading, data } = useAsync(useCallback(() => initialFetch(orgId), [orgId]));
   if (isLoading) {
-    return (
-      <EmptyStateContainer>
-        <Spinner size="large" />
-      </EmptyStateContainer>
-    );
+    return <LoadingEmptyState />;
   }
 
   // redirect when data, but flag is disabled or spaceId and planId is not in the queryString

@@ -150,7 +150,7 @@ export const BulkEntityEditor = ({
   if (isLoading) {
     return (
       <div className={styles.loadingWrapper} data-test-id="entity-loader">
-        <Loader isShown message="Loading entry" />
+        <Loader isShown />
       </div>
     );
   }

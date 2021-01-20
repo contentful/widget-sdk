@@ -65,8 +65,8 @@ const renderComponent = (props = {}) => {
 describe('EntitiesView', () => {
   it('should initialize and render the empty view', async () => {
     const { queryByTestId } = renderComponent();
-    expect(queryByTestId('loading-spinner')).toBeInTheDocument();
-    await waitFor(() => expect(queryByTestId('loading-spinner')).not.toBeInTheDocument());
+    expect(queryByTestId('cf-ui-loading-state')).toBeInTheDocument();
+    await waitFor(() => expect(queryByTestId('cf-ui-loading-state')).not.toBeInTheDocument());
     expect(queryByTestId('entry-view')).toBeInTheDocument();
     expect(defaultProps.renderEmptyState).toHaveBeenCalled();
     expect(defaultProps.fetchEntities).toHaveBeenCalled();
@@ -81,7 +81,7 @@ describe('EntitiesView', () => {
     entities.total = 1;
     const fetchEntities = jest.fn().mockResolvedValue(entities);
     const { queryByTestId } = renderComponent({ fetchEntities });
-    await waitFor(() => expect(queryByTestId('loading-spinner')).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByTestId('cf-ui-loading-state')).not.toBeInTheDocument());
     expect(queryByTestId('empty-state')).not.toBeInTheDocument();
     expect(defaultProps.renderEntityList.mock.calls[0][0].entities).toBeDefined();
     expect(defaultProps.renderEntityList.mock.calls[0][0].updateEntities).toBeDefined();

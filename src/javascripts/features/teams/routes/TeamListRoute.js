@@ -32,7 +32,7 @@ export class TeamListRoute extends React.Component {
         <TeamListFetcher orgId={this.props.orgId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading..." />;
+              return <FetcherLoading />;
             }
             if (isError) {
               return <StateRedirect path="settings" />;

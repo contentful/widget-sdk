@@ -11,6 +11,7 @@ import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LocationProvider } from 'core/services/LocationContext';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -44,7 +45,11 @@ export default class UserListRoute extends React.Component {
         <UserListFetcher orgId={orgId}>
           {({ isLoading, isError, data = [] }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading users..." />;
+              return (
+                <EmptyStateContainer>
+                  <FetcherLoading /> {/* maybe we would like to refactor this component */}
+                </EmptyStateContainer>
+              );
             }
             if (isError) {
               return <StateRedirect path="spaces.detail.entries.list" />;

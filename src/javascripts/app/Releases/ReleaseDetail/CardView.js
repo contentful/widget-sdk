@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import EntityTimeline from './EntityTimeline';
@@ -52,7 +52,7 @@ const CardView = ({ handleEntityDelete, defaultLocale }) => {
     <div className={styles.cardView} data-test-id="release-detail-card-view">
       {isLoading ? (
         <div className={styles.loading}>
-          <LoadingState loadingText="Loading Entities..." />
+          <LoadingState />
         </div>
       ) : (
         <>

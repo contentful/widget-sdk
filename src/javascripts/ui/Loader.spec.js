@@ -11,8 +11,6 @@ describe('components/ui/Loader', () => {
     expect(loader).toHaveAttribute('aria-busy', 'true');
     expect(loader).toHaveAttribute('aria-label', 'loader-interstitial');
     expect(loader).toHaveAttribute('role', 'progressbar');
-    const loaderMessage = getByTestId('loading-indicator-message');
-    expect(loaderMessage.textContent).toBe('Please hold on...');
   });
 
   it('should not render anything if isShown=false', () => {

@@ -62,7 +62,7 @@ export default class UserDetailRoute extends React.Component {
         <UserDetailsFetcher orgId={orgId} userId={userId}>
           {({ isLoading, isError, error, data }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading user..." />;
+              return <FetcherLoading />;
             }
             if (isError) {
               logError('Failed to load org user page', { error });

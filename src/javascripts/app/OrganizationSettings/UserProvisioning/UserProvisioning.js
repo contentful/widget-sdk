@@ -20,7 +20,7 @@ export default function UserProvisioning({ orgId }) {
       <FeatureFetcher orgId={orgId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading..." />;
+            return <FetcherLoading />;
           }
           if (isError) {
             return <StateRedirect path="home" />;

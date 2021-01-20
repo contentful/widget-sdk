@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getBrowserStorage } from 'core/services/BrowserStorage';

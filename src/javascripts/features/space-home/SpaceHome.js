@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Spinner } from '@contentful/forma-36-react-components';
+import { LoadingState } from 'features/loading-state';
 import { AuthorEditorSpaceHome } from './AuthorEditorSpaceHome';
 import { AdminSpaceHome } from './AdminSpaceHome';
 import { TEAAdminSpaceHome } from './TEAAdminSpaceHome';
@@ -200,7 +200,7 @@ export const SpaceHome = () => {
       <DocumentTitle title="Space home" />
       {isLoading && (
         <EmptyStateContainer>
-          <Spinner size="large" />
+          <LoadingState />
         </EmptyStateContainer>
       )}
       {!isLoading && isAuthorOrEditor && !readOnlySpace && !expiredTrialSpace && (

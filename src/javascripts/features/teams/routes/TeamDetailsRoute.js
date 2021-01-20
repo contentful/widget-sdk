@@ -34,7 +34,7 @@ export class TeamDetailsRoute extends React.Component {
         <TeamDetailsFetcher orgId={this.props.orgId} teamId={this.props.teamId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading..." />;
+              return <FetcherLoading />;
             }
             if (isError) {
               return <StateRedirect path="teams" />;

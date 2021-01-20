@@ -14,9 +14,7 @@ import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-
-import { Spinner } from '@contentful/forma-36-react-components';
+import { LoadingEmptyState } from 'features/loading-state';
 import { getSpaceVersion, getOrganization } from 'core/services/SpaceEnvContext/utils';
 import APIClient from 'data/APIClient';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
@@ -129,11 +127,7 @@ export class SpaceSettingsRoute extends React.Component {
     return (
       <React.Fragment>
         <DocumentTitle title="Settings" />
-        {this.state.isLoading && (
-          <EmptyStateContainer data-test-id="loading-spinner">
-            <Spinner size="large" />
-          </EmptyStateContainer>
-        )}
+        {this.state.isLoading && <LoadingEmptyState testId="loading-spinner" />}
 
         {!this.state.isLoading && (
           <SpaceSettings

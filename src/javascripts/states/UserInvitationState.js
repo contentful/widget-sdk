@@ -9,7 +9,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { get } from 'lodash';
 import _ from 'lodash';
 import { UserInvitation } from 'features/user-invitations';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 
 function UserInvitationState(props) {
   const { invitationId } = props;
@@ -61,7 +61,7 @@ function UserInvitationState(props) {
   }, [invitation]);
 
   if (!errored && (!user || !invitation)) {
-    return <LoadingState loadingText="Loading your invitation…" />;
+    return <LoadingState />;
   }
 
   return <UserInvitation invitation={invitation} user={user} expired={expired} errored={errored} />;

@@ -12,10 +12,10 @@ import SecuritySection from './SecuritySection';
 import ManageCookieConsentSection from './ManageCookieConsentSection';
 
 import ErrorState from 'app/common/ErrorState';
-import LoadingState from 'app/common/LoadingState';
 import { getOrganizations } from 'services/TokenStore';
 import { OrgMembershipsSection } from './OrgMembershipsSection';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { LoadingEmptyState } from 'features/loading-state';
 
 const styles = {
   content: css({
@@ -57,7 +57,7 @@ export default function IndexPage() {
           icon={<ProductIcon icon="UserProfile" size="large" />}
         />
         <Workbench.Content className={styles.content}>
-          {isLoading && <LoadingState loadingText="Loading your account…" />}
+          {isLoading && <LoadingEmptyState testId="cf-ui-loading-state" />}
           {!isLoading && error && <ErrorState />}
           {!isLoading && !error && (
             <>

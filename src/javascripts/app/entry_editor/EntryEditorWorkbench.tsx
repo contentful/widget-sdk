@@ -12,8 +12,7 @@ import {
   ReferencesProvider,
   ReferencesContext,
 } from 'app/entry_editor/EntryReferences/ReferencesContext';
-import LoadingOverlay from 'app/common/LoadingOverlay';
-import { referenceText } from 'app/entry_editor/EntryReferences/utils';
+import { LoadingOverlay } from 'features/loading-state';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -117,7 +116,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     state: ReferencesState;
     dispatch: React.Dispatch<Action>;
   };
-  const { processingAction, references, selectedEntities } = referencesState;
+  const { processingAction } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
   const availableTabs = editorData.editorsExtensions.filter(
@@ -291,11 +290,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         <Workbench.Content
           type={editorData.customEditor ? 'full' : 'default'}
           className={styles.mainContent}>
-          {processingAction && (
-            <LoadingOverlay
-              message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
-            />
-          )}
+          {processingAction && <LoadingOverlay />}
           <Tabs className={styles.tabs} withDivider>
             {visibleTabs.map((tab) => (
               <Tab

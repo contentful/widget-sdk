@@ -8,7 +8,7 @@ export function id() {
   return letter(1) + alnum(15);
 }
 
-function fromArray(a) {
+export function fromArray(a) {
   return a[random(0, a.length - 1)];
 }
 

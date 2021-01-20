@@ -21,7 +21,7 @@ import { keyBy } from 'lodash';
 import { go } from 'states/Navigator';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { EmptyHome } from 'features/home';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ErrorState from 'app/common/ErrorState';
 import { openDeleteSpaceDialog } from 'features/space-settings';
@@ -127,7 +127,7 @@ const SpacesRoute = ({ orgId }) => {
           }
         />
         <Workbench.Content className={styles.content}>
-          {isLoading && <LoadingState />}
+          {isLoading && <LoadingState testId="cf-ui-loading-state" />}
           {!isLoading && error && <ErrorState />}
           {!isLoading && !error && !spaces.length && (
             <EmptyHome orgId={orgId} data-test-id="v1-spaces-list-empty-state" />

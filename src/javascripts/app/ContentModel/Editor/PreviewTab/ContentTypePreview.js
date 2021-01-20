@@ -10,7 +10,7 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   loadingText: css({
-    marginLeft: tokens.spacingM,
+    marginRight: tokens.spacingM,
   }),
   unsavedChanges: css({
     marginBottom: tokens.spacingL,
@@ -60,8 +60,8 @@ function ContentTypePreview(props) {
         <div>
           {isLoading && (
             <div className={styles.loaderContainer}>
-              <Spinner size="large" className={styles.spinner} />
               <div className={styles.loadingText}>Loading JSON preview</div>
+              <Spinner size="large" className={styles.spinner} />
             </div>
           )}
 

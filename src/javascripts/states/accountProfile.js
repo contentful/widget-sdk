@@ -36,9 +36,7 @@ const accessGrants = {
   params: {
     pathSuffix: '',
   },
-  component: () => (
-    <AccountView title="OAuth tokens" icon="Token" loadingText="Loading your account…" />
-  ),
+  component: () => <AccountView title="OAuth tokens" icon="Token" />,
 };
 
 const applications = {
@@ -47,9 +45,7 @@ const applications = {
   params: {
     pathSuffix: '',
   },
-  component: () => (
-    <AccountView title="OAuth applications" icon="Oauth" loadingText="Loading your account…" />
-  ),
+  component: () => <AccountView title="OAuth applications" icon="Oauth" />,
 };
 
 const userCancellation = {
@@ -58,7 +54,7 @@ const userCancellation = {
   params: {
     pathSuffix: '',
   },
-  component: () => <AccountView title="User cancellation" loadingText="Loading your account…" />,
+  component: () => <AccountView title="User cancellation" />,
 };
 
 export default {

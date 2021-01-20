@@ -70,7 +70,7 @@ const SpaceMembershipsRouter = () => {
   );
 
   if (!spaces) {
-    return <FetcherLoading message="Loading spaces..." />;
+    return <FetcherLoading />;
   }
 
   return <SpaceMembershipsList onLeave={onLeave} goToSpace={goToSpace} spaces={spaces} />;

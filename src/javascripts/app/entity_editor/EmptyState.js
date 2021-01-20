@@ -47,7 +47,7 @@ export const EmptyState = ({ slideState }) => {
   return (
     <div className={styles.wrapper}>
       {!loadingError ? (
-        <Loader testId="emptystate-loader" isShown message={`Loading ${lowerEntityType}…`} />
+        <Loader testId="emptystate-loader" isShown />
       ) : (
         <div className={styles.emptyState} data-test-id="emptystate-error">
           {loadingError.statusCode === 404 ? (

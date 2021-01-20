@@ -31,7 +31,7 @@ describe('AccountView', () => {
   it('remove loading state when ready', async () => {
     const { getByTestId } = build();
     const iframe = getByTestId('account-iframe');
-    const loadingState = screen.getByTestId('cf-ui-loading-state');
+    const loadingState = screen.getByTestId('cf-loading-state');
     await waitFor(() => expect(loadingState).toBeVisible());
 
     fireEvent.load(iframe);

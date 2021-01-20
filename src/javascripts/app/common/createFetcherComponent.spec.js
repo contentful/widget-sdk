@@ -15,7 +15,7 @@ describe('createFetcherComponent', () => {
       <Component param1="1" param2="2">
         {({ isLoading }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading test component..." />;
+            return <FetcherLoading />;
           }
           return null;
         }}

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import createFetcherComponent, { DelayedLoading } from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 
+import { LoadingState } from 'features/loading-state';
+
 const AsyncComponentFetcher = createFetcherComponent(async ({ importer, onReady }) => {
   onReady();
 
@@ -51,12 +53,7 @@ LazyLoadedComponent.propTypes = {
 };
 
 LazyLoadedComponent.defaultProps = {
-  fallback: () => (
-    <div className="loading-box--stretched">
-      <div className="loading-box__spinner" />
-      <div className="loading-box__message">Loading...</div>
-    </div>
-  ),
+  fallback: () => <LoadingState />,
   error: () => <StateRedirect path="home" />,
   onReady: () => {},
 };

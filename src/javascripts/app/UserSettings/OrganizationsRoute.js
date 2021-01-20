@@ -19,13 +19,13 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
-import LoadingState from 'app/common/LoadingState';
 import OrganizationRow from './OrganizationRow';
 import * as TokenStore from 'services/TokenStore';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/readonly-space-ill.svg';
+import { LoadingState } from 'features/loading-state';
 
 const styles = {
   content: css({
@@ -84,7 +84,7 @@ const OrganizationsRoute = () => {
           }
         />
         <Workbench.Content className={styles.content}>
-          {isLoading && <LoadingState loadingText="Loading your organization memberships..." />}
+          {isLoading && <LoadingState testId="cf-ui-loading-state" />}
           {!isLoading && error && <ErrorState />}
           {!isLoading &&
             !error &&

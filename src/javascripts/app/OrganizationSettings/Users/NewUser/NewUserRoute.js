@@ -6,7 +6,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 import { useAsync } from 'core/hooks';
 
 import { getOrganization } from 'services/TokenStore';
@@ -48,7 +48,7 @@ export default function NewUserRoute({ orgId }) {
     <Workbench title="Invite users">
       <Workbench.Header title="Invite users" icon={<ProductIcon icon="Users" size="large" />} />
       <Workbench.Content className={styles.content} type="text">
-        {isLoading && <LoadingState loadingText="Loading…" />}
+        {isLoading && <LoadingState testId="cf-ui-loading-state" />}
         {!isLoading && error && <ErrorState />}
         {!isLoading && !error && <NewUser orgId={orgId} {...componentProps} />}
       </Workbench.Content>

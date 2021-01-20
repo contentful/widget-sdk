@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { LoadingState } from 'features/loading-state';
+
 export class DelayedLoading extends React.Component {
   static propTypes = {
     delay: PropTypes.number.isRequired,
@@ -37,18 +39,11 @@ export class DelayedLoading extends React.Component {
   }
 }
 
-export const FetcherLoading = ({ message }) => (
+export const FetcherLoading = () => (
   <DelayedLoading>
-    <div className="loading-box--stretched" data-test-id="cf-ui-fetcher-loading">
-      <div className="loading-box__spinner" />
-      <div className="loading-box__message">{message || 'Loading...'}</div>
-    </div>
+    <LoadingState testId="cf-ui-loading-state" />
   </DelayedLoading>
 );
-
-FetcherLoading.propTypes = {
-  message: PropTypes.string,
-};
 
 const createFetcherComponent = (mapPropsToFetch) => {
   return class extends React.Component {

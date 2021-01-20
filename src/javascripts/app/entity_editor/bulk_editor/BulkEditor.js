@@ -164,9 +164,7 @@ export const BulkEditor = (props) => {
         onBack={onCloseWithReason('arrow_back')}
       />
       <Workbench.Content className={styles.workbenchContent}>
-        {!isLoaded && linkCount > 0 && (
-          <Loader testId="bulk-editor-loader" isShown message="Loading entries..." />
-        )}
+        {!isLoaded && linkCount > 0 && <Loader testId="bulk-editor-loader" isShown />}
         {linkCount === 0 && (
           <div className={styles.emptyState} data-test-id="bulk-editor-empty-state">
             There are no entries linked yet.

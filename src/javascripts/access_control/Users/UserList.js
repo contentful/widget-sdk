@@ -17,6 +17,7 @@ import UserListPresentation from './UserListPresentation';
 import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
@@ -95,7 +96,11 @@ const UserList = ({ jumpToRole }) => {
   }, [sortedMembers]);
 
   if (isLoading || !data) {
-    return <FetcherLoading message="Loading subscription" />;
+    return (
+      <EmptyStateContainer>
+        <FetcherLoading />
+      </EmptyStateContainer>
+    );
   }
 
   if (error) {

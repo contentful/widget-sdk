@@ -5,7 +5,7 @@ import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -15,13 +15,13 @@ const wrapperStyle = css({
   right: 0,
 });
 
-export default function AccountView({ title, icon, loadingText }) {
+export default function AccountView({ title, icon }) {
   const gatekeeperUrl = useMemo(() => getGatekeeperUrl(), []);
   const [loading, setLoading] = useState(true);
 
   return (
     <Workbench testId="account-iframe-page">
-      {loading && <LoadingState loadingText={loadingText} />}
+      {loading && <LoadingState />}
 
       <Workbench.Header
         title={title}
@@ -45,6 +45,5 @@ export default function AccountView({ title, icon, loadingText }) {
 
 AccountView.propTypes = {
   title: PropTypes.string.isRequired,
-  loadingText: PropTypes.string,
   icon: PropTypes.string,
 };

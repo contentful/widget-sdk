@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-import LoadingState from 'app/common/LoadingState';
+import { LoadingState } from 'features/loading-state';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';

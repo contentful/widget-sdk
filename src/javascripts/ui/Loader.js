@@ -1,25 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import { getModule } from 'core/NgRegistry';
 import { flow } from 'lodash';
 
-const styles = {
-  spinner: css({
-    display: 'block',
-  }),
-  spinnerText: css({
-    marginLeft: tokens.spacingS,
-    fontSize: tokens.fontSize2Xl,
-  }),
-};
+import { LoadingState } from 'features/loading-state';
 
-const Loader = function ({ isShown, message, watchStateChange, testId }) {
+const Loader = function ({ isShown, watchStateChange, testId }) {
   const [isOpen, setLoaderIsOpen] = useState(isShown);
-
-  const loaderMessage = ['undefined', 'null'].includes(message) ? 'Please hold on...' : message;
 
   useEffect(() => {
     let unsubscribe;
@@ -66,8 +53,6 @@ const Loader = function ({ isShown, message, watchStateChange, testId }) {
     };
   }, [watchStateChange]);
 
-  const messageTestId = `${testId}-message`;
-
   return isOpen ? (
     <div
       className="loader"
@@ -75,26 +60,19 @@ const Loader = function ({ isShown, message, watchStateChange, testId }) {
       aria-busy={isOpen}
       aria-label="loader-interstitial"
       data-test-id={testId}>
-      <div className="loader__container">
-        <Spinner size="large" className={styles.spinner} />
-        <div className={styles.spinnerText} data-test-id={messageTestId}>
-          {loaderMessage}
-        </div>
-      </div>
+      <LoadingState />
     </div>
   ) : null;
 };
 
 Loader.propTypes = {
   isShown: PropTypes.bool,
-  message: PropTypes.string,
   watchStateChange: PropTypes.bool,
   testId: PropTypes.string,
 };
 
 Loader.defaultProps = {
   isShown: false,
-  message: 'Please hold on...',
   watchStateChange: false,
   testId: 'loading-indicator',
 };

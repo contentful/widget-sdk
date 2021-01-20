@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Spinner, Workbench } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
@@ -17,6 +17,7 @@ import { PluralizeEntityMessage } from './PluralizeEntityMessage';
 import { Search, usePaginator, useSearchController } from 'features/entity-search';
 import { getCreatableContentTypes, getReadableContentTypes } from 'data/ContentTypeRepo/filter';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { LoadingEmptyState } from 'features/loading-state';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -147,10 +148,7 @@ export const EntitiesView = ({
       <DocumentTitle title={title} />
       {!isInitialized ? (
         <Workbench className={styles.flex}>
-          <div className={styles.loader} data-test-id="loading-spinner">
-            <Spinner size="large" className={styles.spinner} />
-            <div className={styles.spinnerText}>Loading {title.toLowerCase()}...</div>
-          </div>
+          <LoadingEmptyState testId="cf-ui-loading-state" />
         </Workbench>
       ) : (
         <Workbench testId={`${entityType}-view`}>
