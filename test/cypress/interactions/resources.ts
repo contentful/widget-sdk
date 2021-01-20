@@ -157,7 +157,7 @@ export const getContentTypeResource = {
       uponReceiving: `a request to get content types resource of space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/resources/content_type`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources/content_type`,
         headers: {
           Accept: 'application/json, text/plain, */*',
         },

@@ -6,13 +6,19 @@ import { LocationProvider } from 'core/services/LocationContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export function ContentTypesPage({ spaceId }) {
-  const { currentOrganization, currentOrganizationId } = useSpaceEnvContext();
+  const {
+    currentOrganization,
+    currentOrganizationId,
+    currentEnvironmentId,
+    currentEnvironmentAliasId,
+  } = useSpaceEnvContext();
   return (
     <>
       <DocumentTitle title="Content Model" />
       <LocationProvider>
         <ContentTypeListPage
           spaceId={spaceId}
+          environmentId={currentEnvironmentAliasId || currentEnvironmentId}
           currentOrganization={currentOrganization}
           currentOrganizationId={currentOrganizationId}
         />

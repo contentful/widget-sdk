@@ -38,7 +38,12 @@ const styles = {
   }),
 };
 
-export function ContentTypeListPage({ spaceId, currentOrganization, currentOrganizationId }) {
+export function ContentTypeListPage({
+  spaceId,
+  environmentId,
+  currentOrganization,
+  currentOrganizationId,
+}) {
   const updateLocation = useContext(LocationDispatchContext);
   const locationValue = useContext(LocationStateContext);
   const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
@@ -65,7 +70,7 @@ export function ContentTypeListPage({ spaceId, currentOrganization, currentOrgan
               spaceId,
               PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE
             ),
-            createResourceService(spaceId).get('contentType'),
+            createResourceService(spaceId).get('contentType', environmentId),
           ]),
           new Promise((resolve) => setTimeout(resolve, 2 * 1000)),
         ])
@@ -93,10 +98,9 @@ export function ContentTypeListPage({ spaceId, currentOrganization, currentOrgan
       usage,
       limit,
     };
-  }, [currentOrganization, currentOrganizationId, spaceId]);
+  }, [currentOrganization, currentOrganizationId, spaceId, environmentId]);
 
   const { isLoading, data } = useAsync(getData);
-
   const debouncedSearch = useCallback(
     debounce((searchTerm) => {
       setSearchTerm(searchTerm);
@@ -225,6 +229,7 @@ export function ContentTypeListPage({ spaceId, currentOrganization, currentOrgan
 
 ContentTypeListPage.propTypes = {
   spaceId: PropTypes.string,
+  environmentId: PropTypes.string,
   currentOrganization: OrganizationPropType,
   currentOrganizationId: PropTypes.string,
 };
