@@ -2,15 +2,15 @@ export type Assure<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 export interface BillingDetails {
   address1: string;
-  address2: string | null;
+  address2?: string;
   city: string;
   country: string;
   firstName: string;
   lastName: string;
   workEmail: string;
   zipCode: string;
-  vat: string | null;
-  state: string | null;
+  vat?: string;
+  state?: string;
 }
 
 export interface PaymentDetails {
@@ -36,12 +36,12 @@ export interface ProductRatePlan {
   productPlanType: 'space' | 'add_on';
   productRatePlanCharges: ProductRatePlanCharge[];
   productType: 'add_on' | 'on_demand';
-  roleSet: RoleSet | null;
+  roleSet?: RoleSet;
   sys: {
     type: 'ProductRatePlan';
     id: string;
   };
-  unavailabilityReasons: UnavailabilityReason[] | null;
+  unavailabilityReasons?: UnavailabilityReason[];
 }
 
 interface RoleSet {
@@ -71,7 +71,7 @@ interface ProductRatePlanCharge {
     type: 'ProductRatePlanCharge';
     id: string;
   };
-  tiers: Tier[] | null;
+  tiers?: Tier[];
   unitType: string;
   uom: unknown;
 }

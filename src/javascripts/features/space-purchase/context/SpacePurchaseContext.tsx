@@ -3,19 +3,23 @@ import type { State } from './types';
 
 import { spacePurchaseReducer, Action } from './spacePurchaseReducer';
 
-const initialState = {
+interface SpacePurchaseContext<S = State> {
+  state: S;
+  dispatch: React.Dispatch<Action>;
+}
+
+const initialState: State = {
   spaceRatePlans: [],
   spaceName: 'New space',
   selectedTemplate: null,
 };
 
-export const SpacePurchaseState = createContext<{ state: State; dispatch: React.Dispatch<Action> }>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  {} as any
-);
+export const SpacePurchaseState = createContext<SpacePurchaseContext>(({
+  state: initialState,
+} as unknown) as SpacePurchaseContext);
 
 export function useSpacePurchaseState<StateType = State>() {
-  return useContext(SpacePurchaseState) as { state: StateType; dispatch: React.Dispatch<Action> };
+  return useContext(SpacePurchaseState) as SpacePurchaseContext<StateType>;
 }
 
 export const SpacePurchaseContextProvider: React.FC = ({ children }) => {
@@ -28,7 +32,6 @@ export const SpacePurchaseContextProvider: React.FC = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
 export const SpacePurchaseTestContextProvider: React.FC<{ additionalInitialState: State }> = ({
   children,
   additionalInitialState = {},

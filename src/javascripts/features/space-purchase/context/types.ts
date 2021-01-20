@@ -13,7 +13,7 @@ export interface State {
   paymentDetails?: PaymentDetails;
   billingDetails?: BillingDetails;
   spaceName?: string;
-  selectedTemplate?: unknown | null;
+  selectedTemplate?: unknown;
   purchasingApps?: boolean;
   composeProductRatePlan?: ProductRatePlan;
 }
