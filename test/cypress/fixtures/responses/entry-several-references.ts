@@ -4,6 +4,7 @@ import {
   defaultEntryId,
   defaultSpaceId,
   defaultEnvironmentId,
+  defaultEntryTestIds,
 } from '../../util/requests';
 
 export const severalEntryReferencesResponse = {
@@ -56,7 +57,7 @@ export const severalEntryReferencesWithVersionResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'testEntryId1',
+              id: defaultEntryTestIds.testEntryId2,
             },
           },
         },
@@ -65,7 +66,7 @@ export const severalEntryReferencesWithVersionResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'testEntryId2',
+              id: defaultEntryTestIds.testEntryId3,
             },
           },
         },
@@ -75,11 +76,19 @@ export const severalEntryReferencesWithVersionResponse = {
   includes: {
     Entry: [
       entry({
-        sys: { id: Matchers.somethingLike('testEntryId1'), version: 1, publishedCounter: 0 },
+        sys: {
+          id: Matchers.somethingLike(defaultEntryTestIds.testEntryId2),
+          version: 1,
+          publishedCounter: 0,
+        },
         fields: {},
       }),
       entry({
-        sys: { id: Matchers.somethingLike('testEntryId2'), version: 1, publishedCounter: 0 },
+        sys: {
+          id: Matchers.somethingLike(defaultEntryTestIds.testEntryId3),
+          version: 1,
+          publishedCounter: 0,
+        },
         fields: {},
       }),
     ],

@@ -29,12 +29,11 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_PROCESSING_ACTION,
 } from './state/actions';
-import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
+import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
-import { onSlideStateChanged } from 'navigation/SlideInNavigator';
 
 const styles = {
   sideBarWrapper: css({
@@ -81,12 +80,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const spaceContext = useSpaceEnvContext();
 
-  const getReferencesForEntry = async () => {
-    const { resolved } = await getReferencesForEntryId(entity.sys.id);
-    dispatch({ type: SET_REFERENCES, value: resolved });
-    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
-  };
-
   useEffect(() => {
     (async function () {
       const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
@@ -97,21 +90,11 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     })();
   }, [spaceContext]);
 
-  /**
-   * Reloads entries (once) whenever leaving an editing SlideIn.
-   * This is useful to keep the referenceTree updated whenever there's an edit.
-   * It also turns off the event if the Component is unmounted.
-   **/
-
-  useEffect(() => {
-    const slider = onSlideStateChanged((params) => {
-      if (params.previousEntries === '') {
-        getReferencesForEntry();
-      }
-    });
-
-    return slider;
-  });
+  const getReferencesForEntry = async () => {
+    const { resolved } = await getReferencesForEntryId(entity.sys.id);
+    dispatch({ type: SET_REFERENCES, value: resolved });
+    dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
+  };
 
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
@@ -188,7 +171,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
        *
        * Otherwise, fallback to the original release/immediate/execute logic
        **/
-
       if (isBulkActionSupportEnabled) {
         await publishBulkAction(selectedEntities);
       } else {
@@ -196,9 +178,8 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         await publishEntities({ entities: entitiesToPublish, action: 'publish' });
       }
 
-      // After publishing, refetch entries
-      getReferencesForEntry();
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      getReferencesForEntry();
 
       Notification.success(
         createSuccessMessage({ selectedEntities, root: references[0], entityTitle })

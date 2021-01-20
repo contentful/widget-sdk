@@ -9,6 +9,7 @@ import {
   defaultEnvironmentId,
   defaultEntryId,
   defaultUserId,
+  defaultEntryTestIds,
 } from '../util/requests';
 
 enum BulkActionStates {
@@ -26,26 +27,26 @@ export const publishPayload = {
     items: [
       {
         sys: {
+          id: defaultEntryTestIds.defaultId,
           type: 'Link',
           linkType: 'Entry',
-          id: defaultEntryId,
           version: 1,
         },
       },
       {
         sys: {
-          id: 'testEntryId1',
+          id: defaultEntryTestIds.testEntryId2,
           linkType: 'Entry',
           type: 'Link',
-          version: 1,
+          version: 3,
         },
       },
       {
         sys: {
-          id: 'testEntryId2',
+          id: defaultEntryTestIds.testEntryId3,
           linkType: 'Entry',
           type: 'Link',
-          version: 1,
+          version: 3,
         },
       },
     ],

@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@contentful/types';
 
+import { sleep } from 'utils/Concurrent';
+import APIClient, { APIClientError } from 'data/APIClient';
 import * as EndpointFactory from 'data/EndpointFactory';
 import { getModule } from 'core/NgRegistry';
-import APIClient, { APIClientError } from 'data/APIClient';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 const BULKACTION_REFRESH_MAX_ATTEMPTS = 30; // number of times we want to perform a refresh
 const BULK_ACTION_INITIAL_SLEEP_MS = 1000; // Initial sleep to prevent users of waiting more than necessary
@@ -66,11 +68,6 @@ function toErrorDataFormat({ error }): APIClientError {
     data: { details: error?.details },
   };
 }
-
-async function sleep(waitMs) {
-  return new Promise((resolve) => setTimeout(resolve, waitMs));
-}
-
 /**
  * @description
  * Given a BulkAction ID, returns if the BulkAction has `succeeded` or `failed`
@@ -84,7 +81,7 @@ async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
   await sleep(BULK_ACTION_INITIAL_SLEEP_MS);
 
   while (remainingAttempts > 0) {
-    bulkAction = await apiClient().getBulkAction(id);
+    bulkAction = await batchApiClient().getBulkAction(id);
 
     if (bulkAction.sys.status === BulkActionStatus.Succeeded) {
       return bulkAction;
@@ -101,21 +98,37 @@ async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
   throw Error(`BulkAction ${id} is taking too long to refresh.`);
 }
 
-function createEndpoint() {
+let apiClientMemo: APIClient;
+
+function batchApiClient(): APIClient {
+  if (apiClientMemo) return apiClientMemo;
+
   const spaceContext = getModule('spaceContext');
-  return EndpointFactory.createSpaceEndpoint(
+  const endpoint = EndpointFactory.createSpaceEndpoint(
     spaceContext.space.data.sys.id,
     spaceContext.getAliasId() || spaceContext.getEnvironmentId()
   );
+
+  // We are using our Endpoint to make sure /environments/:id is present in the path
+  apiClientMemo = getBatchingApiClient(new APIClient(endpoint));
+
+  return apiClientMemo;
 }
 
-function apiClient() {
-  return new APIClient(createEndpoint());
+async function getUpdatedEntities(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
+  return Promise.all(
+    entities.map(({ sys }) => {
+      if (sys.type === 'Asset') return batchApiClient().getAsset(sys.id);
+      if (sys.type === 'Entry') return batchApiClient().getEntry(sys.id);
+    })
+  );
 }
 
-async function publishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
+async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
+  const entities = await getUpdatedEntities(selectedEntities);
   const items = entitiesToLinks({ entities, includeVersion: true });
-  const bulkAction = await apiClient().createPublishBulkAction({
+
+  const bulkAction = await batchApiClient().createPublishBulkAction({
     entities: {
       sys: { type: 'Array' },
       items,

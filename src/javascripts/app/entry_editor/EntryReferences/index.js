@@ -158,7 +158,8 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
 
   useEffect(() => {
     (async () => fetchReferences())();
-  }, [fetchReferences]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectedEntitiesMapSize = selectedEntitiesMap ? selectedEntitiesMap.size : 0;
 
