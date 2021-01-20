@@ -12,7 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
-import { WidgetLocation } from '@contentful/widget-renderer';
+import { WidgetLocation, Widget } from '@contentful/widget-renderer';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {
@@ -105,14 +105,17 @@ const buildAppsChildren = (apps, context) => {
     : [PromotionChild(context.canManageSpace)];
 };
 
-export const buildChildren = (apps, context) => {
+export const buildChildren = (
+  apps: Widget[] | null,
+  context: AppsNavigationItemProps['context']
+) => {
   const fixedChildren = buildTopChildren(context);
   const volatileChildren = apps ? buildAppsChildren(apps, context) : buildLoadingChildren();
 
   return [...fixedChildren, ...volatileChildren];
 };
 
-const AppPromotion = ({ canManageSpace }) => {
+const AppPromotion = ({ canManageSpace }: { canManageSpace: boolean }) => {
   return (
     <div className={styles.promotion}>
       <Tag className={styles.promotionTag}>new</Tag>
@@ -133,21 +136,13 @@ const AppPromotion = ({ canManageSpace }) => {
   );
 };
 
-AppPromotion.propTypes = {
-  canManageSpace: PropTypes.bool.isRequired,
-};
-
-const AppNavigationLink = ({ icon, title }) => {
+const AppNavigationLink = ({ icon, title }: { icon?: string; title: string }) => {
   return (
     <div className={styles.navbarItem}>
       <NavigationAppIcon icon={icon} />
       <span>{title}</span>
     </div>
   );
-};
-AppNavigationLink.propTypes = {
-  icon: PropTypes.string,
-  title: PropTypes.string.isRequired,
 };
 
 const AppsLoading = () => {
@@ -161,9 +156,14 @@ const AppsLoading = () => {
   );
 };
 
-export const AppsNavigationItem = ({ item, context }) => {
+interface AppsNavigationItemProps {
+  item: any;
+  context: { canManageSpace: boolean; isUnscopedRoute: boolean };
+}
+
+export const AppsNavigationItem = ({ item, context }: AppsNavigationItemProps) => {
   const [requestInFlight, setInFlight] = useState(false);
-  const [apps, setApps] = useState(null);
+  const [apps, setApps] = useState<Widget[] | null>(null);
   const onOpen = async () => {
     if (apps || requestInFlight) {
       return;
@@ -174,6 +174,7 @@ export const AppsNavigationItem = ({ item, context }) => {
     setApps(await loader.getInstalledApps());
     setInFlight(false);
   };
+
   const children = buildChildren(apps, context);
 
   return <NavigationDropdown item={{ ...item, children }} onOpen={onOpen} />;

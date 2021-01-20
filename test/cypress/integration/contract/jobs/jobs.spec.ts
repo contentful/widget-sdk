@@ -25,6 +25,7 @@ import {
   queryForAdvancedAppsInDefaultOrg,
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
+  getPerformancePackageFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 describe('Jobs page', () => {
@@ -60,6 +61,7 @@ describe('Jobs page', () => {
         queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
 
@@ -122,6 +124,7 @@ describe('Jobs page', () => {
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
@@ -176,6 +179,7 @@ describe('Jobs page', () => {
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);

@@ -53,6 +53,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
   return {
     getApp,
     getApps,
+    getContentfulApps,
     getOnlyInstalledApps,
   };
 

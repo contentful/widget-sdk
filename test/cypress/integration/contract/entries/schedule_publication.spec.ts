@@ -29,6 +29,7 @@ import {
   queryForScimInDefaultOrg,
   queryForReleasesInDefaultSpace,
   getLaunchAppFeatureInDefaultSpace,
+  getPerformancePackageFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
@@ -174,5 +175,6 @@ function basicServerSetUp(): string[] {
     queryForScimInDefaultOrg.willFindFeatureEnabled(),
     queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
     getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
+    getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
   ];
 }

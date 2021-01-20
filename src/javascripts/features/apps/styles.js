@@ -94,4 +94,8 @@ export const styles = {
   listItemDropdown: css({
     width: '160px',
   }),
+  contentfulAppsLearnMore: css({
+    marginTop: `-${tokens.spacingS}`,
+    textTransform: 'none',
+  }),
 };

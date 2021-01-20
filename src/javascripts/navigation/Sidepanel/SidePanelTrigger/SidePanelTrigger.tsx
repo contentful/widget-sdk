@@ -6,16 +6,22 @@ import cn from 'classnames';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 
-import Logo from 'svg/logo-label.svg';
+import ContentfulLogo from 'svg/logo-label.svg';
+import AppGridIcon from 'svg/app-grid-icon.svg';
 import * as K from 'core/utils/kefir';
 import Hamburger from 'svg/hamburger.svg';
 import { navState$, NavStates } from 'navigation/NavState';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { styles } from './SidePanelTrigger.styles';
+import { SkeletonContainer, SkeletonImage } from '@contentful/forma-36-react-components';
 
 interface Props {
-  onClick: React.MouseEventHandler;
+  onClickOrganization: React.MouseEventHandler;
+  openAppSwitcher?: () => void;
   testId?: string;
+  showIcon?: boolean;
+  // null meaning that the flag isn't yet loaded;
+  performancePackageIsEnabled: boolean | null;
 }
 
 type OrganizationProps = {
@@ -28,7 +34,39 @@ type environmentMetaProps = {
   isMasterEnvironment?: boolean;
 };
 
-export const SidePanelTrigger = ({ onClick, testId = 'sidepanel-trigger' }: Props) => {
+const TriggerIcon = ({
+  performancePackageIsEnabled,
+  openAppSwitcher,
+}: {
+  performancePackageIsEnabled: boolean | null;
+  openAppSwitcher?: () => void;
+}) => {
+  const onClick = (event) => {
+    event.stopPropagation();
+    openAppSwitcher?.();
+  };
+  if (performancePackageIsEnabled === true) {
+    return (
+      <button aria-label="Switch Contentful app" data-test-id="sidepanel-trigger-apps">
+        <AppGridIcon onClick={onClick} width={40} height={40} />
+      </button>
+    );
+  }
+  if (performancePackageIsEnabled === false) return <ContentfulLogo />;
+
+  return (
+    <SkeletonContainer svgWidth={24} svgHeight={24}>
+      <SkeletonImage width={24} height={24} radiusX={12} radiusY={12} />
+    </SkeletonContainer>
+  );
+};
+
+export const SidePanelTrigger = ({
+  onClickOrganization,
+  openAppSwitcher,
+  testId = 'sidepanel-trigger',
+  performancePackageIsEnabled,
+}: Props) => {
   const [navState, setNavState] = useState<unknown>(null);
   const [showOrganization, setShowOrganization] = useState(false);
 
@@ -49,18 +87,25 @@ export const SidePanelTrigger = ({ onClick, testId = 'sidepanel-trigger' }: Prop
   }, [navState, showOrganization]);
 
   return (
-    <button
+    <div
       className={styles.root}
-      onClick={onClick}
+      onClick={onClickOrganization}
       data-ui-tour-step="sidepanel-trigger"
-      data-test-id={testId}
-      aria-label="Switch Space/Organization">
-      <Logo />
-      <div className={styles.content} aria-current="location" aria-live="polite">
+      data-test-id={testId}>
+      <TriggerIcon
+        openAppSwitcher={openAppSwitcher}
+        performancePackageIsEnabled={performancePackageIsEnabled}
+      />
+      <button
+        className={styles.content}
+        aria-label="Switch Space/Organization"
+        aria-current="location"
+        aria-live="polite">
         {navState && renderContent({ navState, showOrganization })}
-      </div>
+      </button>
+      <div className={styles.hoverBackground} />
       <Hamburger fill={'white'} />
-    </button>
+    </div>
   );
 };
 

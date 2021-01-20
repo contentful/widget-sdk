@@ -3,20 +3,19 @@ import tokens from '@contentful/forma-36-tokens';
 
 export const styles = {
   root: css({
+    position: 'relative',
     alignItems: 'center',
     boxShadow: `inset -1px 0 2px 0 rgba(0,0,0,0.4), inset -2px 0 5px 0 rgba(0,0,0,0.35)`,
     backgroundColor: tokens.colorContrastMid,
     display: 'flex',
-    padding: `0 ${tokens.spacingM}`,
+    flexGrow: 1,
+    padding: `0 ${tokens.spacingM} 0 ${tokens.spacingM}`,
     textAlign: 'left',
-    transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
     width: '280px',
-    '&:hover, &:focus': {
-      backgroundColor: tokens.colorContrastDark,
-    },
-    ' > *': {
-      flexGrow: 0,
-      flexShrink: 0,
+    height: '100%',
+    transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
+    '> *': {
+      zIndex: 1,
     },
   }),
   content: css({
@@ -25,7 +24,9 @@ export const styles = {
     flexGrow: 1,
     flexShrink: 1,
     overflow: 'hidden',
-    padding: `0 ${tokens.spacingM}`,
+    textAlign: 'left',
+    padding: `0 ${tokens.spacingM} 0 ${tokens.spacingM}`,
+    outline: 'none',
   }),
   ellipsis: css({
     overflow: 'hidden',
@@ -46,4 +47,17 @@ export const styles = {
     lineHeight: tokens.lineHeightDefault,
   }),
   envLabel: css({ fontSize: tokens.fontSizeS }),
+  hoverBackground: css({
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
+    backgroundColor: tokens.colorContrastMid,
+    // change background on parent hover and sibling button focus
+    '*:hover > &, *:focus ~ &': {
+      backgroundColor: tokens.colorContrastDark,
+    },
+  }),
 };

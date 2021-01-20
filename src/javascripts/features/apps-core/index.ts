@@ -3,4 +3,4 @@ export type { AppHookBus } from './AppHookBus';
 export type { MarketplaceApp } from './AppsRepo';
 export { getAppsRepo } from './AppsRepoInstance';
 export { getAppDefinitionLoader } from './AppDefinitionLoaderInstance';
-export { fetchMarketplaceApps } from './MarketplaceClient';
+export { fetchMarketplaceApps, fetchContentfulApps } from './MarketplaceClient';

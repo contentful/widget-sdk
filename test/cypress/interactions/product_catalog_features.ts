@@ -14,6 +14,7 @@ const productCatalogTeams = require('../fixtures/responses/product-catalog-teams
 const productCatalogSelfConfigureSso = require('../fixtures/responses/product-catalog-self-configure-sso.json');
 const productCatalogScim = require('../fixtures/responses/product-catalog-scim.json');
 const productCatalogLaunchApp = require('../fixtures/responses/product-catalog-launch-app.json');
+const productCatalogPerformancePackage = require('../fixtures/responses/product-catalog-performance-package.json');
 
 enum States {
   ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
@@ -366,5 +367,27 @@ export const queryForScimInDefaultOrg = {
     }).as('queryForScimInDefaultOrg');
 
     return '@queryForScimInDefaultOrg';
+  },
+};
+
+export const getPerformancePackageFeatureInDefaultSpace = {
+  willFindFeatureDisabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "performance_package" feature for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=performance_package'
+      ),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: productCatalogPerformancePackage,
+      },
+    }).as('getPerformancePackageFeatureInDefaultSpace');
+
+    return '@getPerformancePackageFeatureInDefaultSpace';
   },
 };

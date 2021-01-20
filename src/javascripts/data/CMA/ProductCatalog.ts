@@ -1,3 +1,4 @@
+import React from 'react';
 import DataLoader from 'dataloader';
 import { memoize, get, uniq, isUndefined } from 'lodash';
 import * as Config from 'Config';
@@ -14,6 +15,7 @@ export const FEATURES = {
   PC_CONTENT_TAGS: 'content_tags',
   PC_SPACE_RELEASES: 'releases',
   PC_SPACE_REFERENCE_TREE: 'reference_tree',
+  PC_SPACE_PERFORMANCE_PACKAGE: 'performance_package',
   PC_ORG_PLANNER_APP: 'planner_app',
   CUSTOM_ROLES_FEATURE: 'custom_roles',
 };
@@ -53,7 +55,7 @@ const getLoaderForEndpoint = (endpoint) => {
   // disable batching in contract tests
   const enableBatchRequests = Config.env !== 'development';
   return new DataLoader(
-    async (featureIds) => {
+    async (featureIds: readonly string[]) => {
       // API quirk:
       // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
       const qs = featureIds
@@ -87,11 +89,11 @@ const getLoaderForOrg = memoize((orgId) => {
   return getLoaderForEndpoint(createOrganizationEndpoint(orgId));
 });
 
-const getLoaderForSpace = memoize((spaceId) => {
-  return getLoaderForEndpoint(createSpaceEndpoint(spaceId));
+const getLoaderForSpace = memoize((spaceId: string) => {
+  return getLoaderForEndpoint(createSpaceEndpoint(spaceId, null));
 });
 
-const load = async (loader, featureId, defaultValue = false, common = []) => {
+const load = async (loader, featureId, defaultValue = false, common: any[] = []) => {
   const featureIds = uniq([featureId, ...common]);
 
   try {
@@ -112,11 +114,32 @@ export const getOrgFeature = async (orgId, featureId, defaultValue) => {
   return load(getLoaderForOrg(orgId), featureId, defaultValue, COMMON_FOR_ORG);
 };
 
-export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
+export const getSpaceFeature = (
+  spaceId: string | undefined,
+  featureId: string,
+  defaultValue?: boolean
+) => {
   if (!spaceId || !featureId) {
     return isUndefined(defaultValue)
       ? Promise.reject('No spaceId or featureId provided when fetching a space feature')
       : Promise.resolve(defaultValue);
   }
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
+};
+
+export const useSpaceFeature = (
+  spaceId: string | undefined,
+  featureId: string,
+  defaultValue: boolean
+) => {
+  const [isEnabled, setIsEnabled] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    if (!spaceId) return;
+
+    getSpaceFeature(spaceId, featureId, defaultValue).then(setIsEnabled);
+    return () => setIsEnabled(null);
+  }, [defaultValue, featureId, spaceId]);
+
+  return isEnabled;
 };

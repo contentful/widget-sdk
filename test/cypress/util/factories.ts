@@ -3,6 +3,7 @@ import { getAllEnforcementsForDefaultSpace } from '../interactions/enforcements'
 import { getAllPublicContentTypesInDefaultSpace } from '../interactions/content_types';
 import { queryFirst101EnvironmentsInDefaultSpace } from '../interactions/environments';
 import { queryFirst100LocalesOfDefaultSpace } from '../interactions/locales';
+import { getPerformancePackageFeatureInDefaultSpace } from '../interactions/product_catalog_features';
 
 type DefaultHandlers = {
   tokenResponse: Function;
@@ -27,6 +28,7 @@ export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {
    * It can be used only if these requests are not the main aspect of the test.
    */
   const handlers = Object.assign({}, defaultHandlers, customHandlers);
+
   return [
     handlers.tokenResponse(),
     handlers.enforcementsResponse(),
