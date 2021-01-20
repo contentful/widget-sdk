@@ -2,9 +2,9 @@
 import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@contentful/types';
 
 import { sleep } from 'utils/Concurrent';
-import * as EndpointFactory from 'data/EndpointFactory';
-import { getModule } from 'core/NgRegistry';
 import APIClient, { APIClientError } from 'data/APIClient';
+import { getModule } from 'core/NgRegistry';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 const BULKACTION_REFRESH_MAX_ATTEMPTS = 30; // number of times we want to perform a refresh
 const BULK_ACTION_INITIAL_SLEEP_MS = 1000; // Initial sleep to prevent users of waiting more than necessary
@@ -80,7 +80,7 @@ async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
   await sleep(BULK_ACTION_INITIAL_SLEEP_MS);
 
   while (remainingAttempts > 0) {
-    bulkAction = await apiClient().getBulkAction(id);
+    bulkAction = await batchApiClient().getBulkAction(id);
 
     if (bulkAction.sys.status === BulkActionStatus.Succeeded) {
       return bulkAction;
@@ -97,57 +97,24 @@ async function waitForBulkActionCompletion({ id }): Promise<BulkAction> {
   throw Error(`BulkAction ${id} is taking too long to refresh.`);
 }
 
-function createEndpoint() {
+function batchApiClient(): APIClient {
   const spaceContext = getModule('spaceContext');
-  return EndpointFactory.createSpaceEndpoint(
-    spaceContext.space.data.sys.id,
-    spaceContext.getAliasId() || spaceContext.getEnvironmentId()
+  return getBatchingApiClient(spaceContext.cma) as APIClient;
+}
+
+async function getUpdatedEntities(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
+  return Promise.all(
+    entities.map(({ sys }) => {
+      if (sys.type === 'Asset') return batchApiClient().getAsset(sys.id);
+      if (sys.type === 'Entry') return batchApiClient().getEntry(sys.id);
+    })
   );
 }
 
-function apiClient() {
-  return new APIClient(createEndpoint());
-}
-
-async function getEntries(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
-  const entries = entities.filter((entity) => entity.sys.type === 'Entry');
-
-  if (!entries.length) {
-    return [];
-  }
-
-  const { items } = await apiClient().getEntries({
-    'sys.id[in]': entries.map((entity) => entity.sys.id).join(','),
-  });
-
-  return items;
-}
-
-async function getAssets(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
-  const assets = entities.filter((entity) => entity.sys.type === 'Asset');
-
-  if (!assets.length) {
-    return [];
-  }
-
-  const { items } = await apiClient().getAssets({
-    'sys.id[in]': assets.map((entity) => entity.sys.id).join(','),
-  });
-
-  return items;
-}
-
-async function getUpdatedSelectedEntities(
-  entities: PublishableEntity[]
-): Promise<PublishableEntity[]> {
-  const [assets, entries] = await Promise.all([getAssets(entities), getEntries(entities)]);
-  return [...assets, ...entries];
-}
-
 async function publishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
-  const entities = await getUpdatedSelectedEntities(selectedEntities);
+  const entities = await getUpdatedEntities(selectedEntities);
   const items = entitiesToLinks({ entities, includeVersion: true });
-  const bulkAction = await apiClient().createPublishBulkAction({
+  const bulkAction = await batchApiClient().createPublishBulkAction({
     entities: {
       sys: { type: 'Array' },
       items,
