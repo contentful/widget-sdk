@@ -47,7 +47,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
     await build();
     await waitFor(expect(getSpace).toBeCalled);
 
-    const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
     userEvent.click(redirectToSpace);
 
     expect(go).toBeCalledWith({

@@ -59,7 +59,7 @@ describe('SpaceCreationReceiptStep', () => {
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(mockSelectedPlan.name);
 
     // Need to wait for promise to resolve to catch act()
-    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();
     });
@@ -74,7 +74,7 @@ describe('SpaceCreationReceiptStep', () => {
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(mockSelectedPlan.name);
 
     // Need to wait for promise to resolve to catch act()
-    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();
     });
@@ -91,7 +91,7 @@ describe('SpaceCreationReceiptStep', () => {
     );
 
     // Need to wait for promise to resolve to catch act()
-    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();
     });
@@ -170,7 +170,7 @@ describe('SpaceCreationReceiptStep', () => {
 
     expect(makeNewSpace).toHaveBeenCalledTimes(1);
 
-    userEvent.click(screen.getByTestId('receipt-page.redirect-to-new-space'));
+    userEvent.click(screen.getByTestId('receipt-page.redirect-to-space'));
 
     await waitFor(() => {
       expect(makeNewSpace).toHaveBeenCalledTimes(2);
@@ -198,7 +198,7 @@ describe('SpaceCreationReceiptStep', () => {
 
     await build();
 
-    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     expect(redirectToNewSpace).toHaveAttribute('disabled');
     expect(within(redirectToNewSpace).getByTestId('cf-ui-spinner')).toBeVisible();
     expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
@@ -233,7 +233,7 @@ describe('SpaceCreationReceiptStep', () => {
   it('should redirect to the new space when clicking on the button after the space has been', async () => {
     await build();
 
-    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-new-space');
+    const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
 
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();

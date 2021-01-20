@@ -78,7 +78,7 @@ describe('SpaceUpgradeReceiptStep', () => {
 
     expect(changeSpacePlan).toHaveBeenCalledTimes(1);
 
-    userEvent.click(screen.getByTestId('receipt-page.redirect-to-upgraded-space'));
+    userEvent.click(screen.getByTestId('receipt-page.redirect-to-space'));
 
     await waitFor(() => {
       expect(changeSpacePlan).toHaveBeenCalledTimes(2);
@@ -93,7 +93,7 @@ describe('SpaceUpgradeReceiptStep', () => {
     });
     build();
 
-    const redirectToChangedSpace = screen.getByTestId('receipt-page.redirect-to-upgraded-space');
+    const redirectToChangedSpace = screen.getByTestId('receipt-page.redirect-to-space');
     expect(redirectToChangedSpace).toHaveAttribute('disabled');
     expect(within(redirectToChangedSpace).getByTestId('cf-ui-spinner')).toBeVisible();
     expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
@@ -102,7 +102,7 @@ describe('SpaceUpgradeReceiptStep', () => {
   it('should redirect to the new space when clicking on the button after the space has been', async () => {
     build();
 
-    const redirectToChangedSpace = screen.getByTestId('receipt-page.redirect-to-upgraded-space');
+    const redirectToChangedSpace = screen.getByTestId('receipt-page.redirect-to-space');
 
     await waitFor(() => {
       expect(redirectToChangedSpace.hasAttribute('disabled')).toBeFalsy();

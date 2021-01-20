@@ -1,27 +1,8 @@
 import React, { useContext } from 'react';
-import { css } from 'emotion';
-
-import { Button } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 
 import { useSpaceUpgrade } from 'features/space-purchase/hooks/useSpaceUpgrade';
 import { SpacePurchaseState } from 'features/space-purchase/context';
-import { PaymentSummary } from '../../components/PaymentSummary';
-import { ReceiptMessage } from '../../components/ReceiptMessage';
-
-const styles = {
-  grid: css({
-    margin: `${tokens.spacing2Xl} auto 0`,
-  }),
-  button: css({
-    marginTop: tokens.spacingXl,
-    marginBottom: tokens.spacingXl,
-  }),
-  paymentSummaryContainer: css({
-    maxWidth: '600px',
-  }),
-};
+import { ReceiptView } from '../../components/ReceiptView';
 
 export const SpaceUpgradeReceiptStep = () => {
   const {
@@ -34,22 +15,13 @@ export const SpaceUpgradeReceiptStep = () => {
     <section
       aria-labelledby="upgrade-receipt-section-heading"
       data-test-id="upgrade-receipt-section">
-      <Flex className={styles.grid} flexDirection="column" alignItems="center">
-        <ReceiptMessage pending={isUpgradingSpace} hasErrors={!!upgradeError} isSpaceUpgrade />
-
-        <Button
-          testId="receipt-page.redirect-to-upgraded-space"
-          loading={isUpgradingSpace}
-          disabled={isUpgradingSpace}
-          onClick={buttonAction}
-          className={styles.button}>
-          {upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
-        </Button>
-
-        <div className={styles.paymentSummaryContainer}>
-          <PaymentSummary />
-        </div>
-      </Flex>
+      <ReceiptView
+        pending={isUpgradingSpace}
+        buttonAction={buttonAction}
+        buttonLabel={upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
+        hasErrors={!!upgradeError}
+        isSpaceUpgrade
+      />
     </section>
   );
 };

@@ -30,8 +30,9 @@ export function ReceiptView({
   spaceId,
   buttonAction,
   buttonLabel,
-  spaceCreationError,
+  hasErrors,
   templateCreationError,
+  isSpaceUpgrade,
   selectedCompose,
 }) {
   return (
@@ -41,12 +42,13 @@ export function ReceiptView({
         planName={planName}
         spaceName={spaceName}
         spaceId={spaceId}
-        hasErrors={!!spaceCreationError}
+        hasErrors={hasErrors}
+        isSpaceUpgrade={isSpaceUpgrade}
         selectedCompose={selectedCompose}
       />
 
       <Button
-        testId="receipt-page.redirect-to-new-space"
+        testId="receipt-page.redirect-to-space"
         loading={pending}
         disabled={pending}
         onClick={buttonAction}
@@ -77,7 +79,8 @@ ReceiptView.propTypes = {
   spaceId: PropTypes.string,
   buttonAction: PropTypes.func,
   buttonLabel: PropTypes.string,
-  spaceCreationError: PropTypes.object,
+  hasErrors: PropTypes.bool,
   templateCreationError: PropTypes.object,
+  isSpaceUpgrade: PropTypes.bool,
   selectedCompose: PropTypes.bool,
 };

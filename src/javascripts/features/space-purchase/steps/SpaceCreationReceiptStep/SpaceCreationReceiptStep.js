@@ -35,7 +35,7 @@ export const SpaceCreationReceiptStep = () => {
         spaceId={newSpace?.sys.id}
         buttonAction={buttonAction}
         buttonLabel={spaceCreationError ? 'Retrigger space creation' : 'Take me to my new space'}
-        spaceCreationError={spaceCreationError}
+        hasErrors={!!spaceCreationError}
         templateCreationError={templateCreationError}
         selectedCompose={selectedCompose}
       />
