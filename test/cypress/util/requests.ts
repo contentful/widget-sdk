@@ -24,19 +24,19 @@ export const defaultAppId = '6YdAwxoPHopeTeuwh43UJu';
 export const appContentTypeId = 'dropboxTest';
 export const entryIdWithApp = 'entryIdWithApp';
 
-export const defaultEntryTestIds = {
-  defaultId: defaultEntryId,
-  testEntryId2: 'testEntryId2',
-  testEntryId3: 'testEntryId3',
-  testEntryId4: 'testEntryId4',
-};
+export enum defaultEntryTestIds {
+  defaultId = 'testEntryId',
+  testEntryId2 = 'testEntryId2',
+  testEntryId3 = 'testEntryId3',
+  testEntryId4 = 'testEntryId4',
+}
 
-export const defaultAssetTestIds = {
-  defaultId: defaultAssetId,
-  testAssetId: 'testAssetId',
-  testAssetId2: 'testAssetId2',
-  testAssetId3: 'testAssetId3',
-};
+export enum defaultAssetTestIds {
+  defaultId = 'Asset3',
+  testAssetId = 'testAssetId',
+  testAssetId2 = 'testAssetId2',
+  testAssetId3 = 'testAssetId3',
+}
 
 export const defaultHeader = {
   Accept: 'application/json, text/plain, */*',
