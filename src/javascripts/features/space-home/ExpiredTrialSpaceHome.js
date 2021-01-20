@@ -33,7 +33,7 @@ export const ExpiredTrialSpaceHome = ({ spaceId }) => {
         <Paragraph>
           All of your content is saved, but you can’t create or edit anything.
           <br />
-          Talk to your admin to upgrade and unlock this space again.
+          Contact us to upgrade and unlock this space again.
         </Paragraph>
       </Typography>
     </EmptyStateContainer>
