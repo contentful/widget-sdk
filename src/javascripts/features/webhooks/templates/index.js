@@ -8,7 +8,6 @@ import { PubNubWebhookTemplate } from './PubNubWebhookTemplate';
 import { CircleCIWebhookTemplate } from './CircleCIWebhookTemplate';
 import { HerokuWebhookTemplate } from './HerokuWebhookTemplate';
 import { TravisCIWebhookTemplate } from './TravisCIWebhookTemplate';
-import { WebtaskWebhookTemplate } from './WebtaskWebhookTemplate';
 import { GitlabWebhookTemplate } from './GitlabWebhookTemplate';
 import { AlgoliaWebhookTemplate } from './AlgoliaWebhookTemplate';
 import { ElasticWebhookTemplate } from './ElasticWebhookTemplate';
@@ -29,7 +28,6 @@ export const WebhookTemplates = [
   BitbucketWebhookTemplate,
   AwsLambdaWebhookTemplate,
   GoogleCloudWebhookTemplate,
-  WebtaskWebhookTemplate,
   SlackWebhookTemplate,
   TwilioWebhookTemplate,
   MailgunWebhookTemplate,

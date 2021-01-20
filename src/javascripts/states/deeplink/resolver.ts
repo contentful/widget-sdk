@@ -260,7 +260,6 @@ async function resolveInstallExtension({ url, referrer }) {
  * bitbucket-trigger-pipeline
  * aws-lambda-call-function
  * google-cloud-invoke-function
- * webtask-run-function
  * slack-post-message
  * twilio-send-sms
  * mailgun-send-mail
