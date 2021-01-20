@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@contentful/types';
 
+import { sleep } from 'utils/Concurrent';
 import * as EndpointFactory from 'data/EndpointFactory';
 import { getModule } from 'core/NgRegistry';
 import APIClient, { APIClientError } from 'data/APIClient';
@@ -66,11 +67,6 @@ function toErrorDataFormat({ error }): APIClientError {
     data: { details: error?.details },
   };
 }
-
-async function sleep(waitMs) {
-  return new Promise((resolve) => setTimeout(resolve, waitMs));
-}
-
 /**
  * @description
  * Given a BulkAction ID, returns if the BulkAction has `succeeded` or `failed`
@@ -116,29 +112,29 @@ function apiClient() {
 async function getEntries(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
   const entries = entities.filter((entity) => entity.sys.type === 'Entry');
 
-  if (entries.length) {
-    const { items } = await apiClient().getEntries({
-      'sys.id[in]': entries.map((entity) => entity.sys.id).join(','),
-    });
-
-    return items;
+  if (!entries.length) {
+    return [];
   }
 
-  return [];
+  const { items } = await apiClient().getEntries({
+    'sys.id[in]': entries.map((entity) => entity.sys.id).join(','),
+  });
+
+  return items;
 }
 
 async function getAssets(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
   const assets = entities.filter((entity) => entity.sys.type === 'Asset');
 
-  if (assets.length) {
-    const { items } = await apiClient().getAssets({
-      'sys.id[in]': assets.map((entity) => entity.sys.id).join(','),
-    });
-
-    return items;
+  if (!assets.length) {
+    return [];
   }
 
-  return [];
+  const { items } = await apiClient().getAssets({
+    'sys.id[in]': assets.map((entity) => entity.sys.id).join(','),
+  });
+
+  return items;
 }
 
 async function getUpdatedSelectedEntities(

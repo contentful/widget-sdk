@@ -179,7 +179,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       }
 
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      await getReferencesForEntry();
+      getReferencesForEntry();
 
       Notification.success(
         createSuccessMessage({ selectedEntities, root: references[0], entityTitle })
