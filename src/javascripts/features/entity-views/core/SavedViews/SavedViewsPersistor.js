@@ -15,17 +15,20 @@ const ensureValidViews = (folders) => {
 };
 
 export const createSavedViewsPersistor = ({ entityType, viewType, onUpdate = noop }) => {
-  const spaceContext = getSpaceContext();
-  const entityApi = spaceContext.uiConfig[pluralize(entityType)];
-  const scopedApi = entityApi[viewType];
+  const getScopedApi = () => {
+    const spaceContext = getSpaceContext();
+    const entityApi = spaceContext.uiConfig[pluralize(entityType)];
+    return entityApi[viewType];
+  };
 
-  const canEditScopedFolders = () => scopedApi.canEdit;
-  const getScopedFolders = () => scopedApi.get();
+  const canEditScopedFolders = () => getScopedApi().canEdit;
+  const getScopedFolders = () => getScopedApi().get();
 
   const trackingForScopedViews = tracking(viewType);
 
   const getRoleAssignment = () => {
     if (entityType === 'entry' && viewType === 'shared') {
+      const spaceContext = getSpaceContext();
       return {
         membership: spaceContext.space.data.spaceMember,
         endpoint: spaceContext.endpoint,
@@ -45,7 +48,7 @@ export const createSavedViewsPersistor = ({ entityType, viewType, onUpdate = noo
   };
 
   const resetScopedFolders = async () => {
-    await scopedApi.set(undefined);
+    await getScopedApi().set(undefined);
     const folders = await getPreparedScopedFolders();
     onUpdate(folders);
   };
@@ -63,7 +66,7 @@ export const createSavedViewsPersistor = ({ entityType, viewType, onUpdate = noo
     Notification.success('View(s) updated successfully.');
 
     try {
-      await scopedApi.set(updatedFolders);
+      await getScopedApi().set(updatedFolders);
     } catch (error) {
       Notification.error('Error while updating saved views. Your changes were reverted.');
     }
