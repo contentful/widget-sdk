@@ -1,4 +1,4 @@
-export type Assure<T, K extends keyof T> = T & Required<Pick<T, K>>;
+export type SetRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 export interface BillingDetails {
   address1: string;
