@@ -2,6 +2,7 @@ import { Notification as Notifier } from '@contentful/forma-36-react-components'
 import { get, omit, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
 import { window } from 'core/services/window';
+import { marketplaceEnvironment } from '../../Config';
 import qs from 'qs';
 
 const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
@@ -128,8 +129,11 @@ function createAppObject(entry, isListed) {
 }
 
 function createContentfulAppObject(entry) {
+  const definitionId =
+    get(entry, ['fields', 'appDefinitionIDs', marketplaceEnvironment]) ||
+    get(entry, ['fields', 'appDefinitionIDs', 'production']);
   return {
-    definitionId: get(entry, ['fields', 'appDefinitionId']),
+    definitionId,
     id: get(entry, ['fields', 'slug'], ''),
     title: get(entry, ['fields', 'title'], ''),
     author: {
@@ -138,6 +142,7 @@ function createContentfulAppObject(entry) {
       icon: get(entry, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
     },
     description: get(entry, ['fields', 'description'], ''),
+    supportUrl: get(entry, ['fields', 'supportUrl'], null),
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
     featureFlagName: get(entry, ['fields', 'featureFlagName'], null),

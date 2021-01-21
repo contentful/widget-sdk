@@ -69,5 +69,6 @@
   },
   "sentry": {
     "dsn": "https://6e36c49a29694909be49e9d45602a2e5@o2239.ingest.sentry.io/8049"
-  }
+  },
+  "marketplaceEnvironment": "preview"
 }

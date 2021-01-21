@@ -170,6 +170,13 @@ export const pusher = settings.pusher;
 export const launchDarkly = settings.launchDarkly;
 
 /**
+ * Marketplace environment
+ * Used to resolve which AppDefinition IDs should be used in the app listing
+ * The actual mapping is fetched over a contentful space
+ */
+export const marketplaceEnvironment = settings.marketplaceEnvironment;
+
+/**
  * Contentful Launch
  */
 export const launchAppUrl = 'https://launch.contentful.com';

@@ -46,6 +46,7 @@ module.exports = strictObject(
     {
       environment: { type: 'string' },
       main_domain: hostSchema,
+      marketplaceEnvironment: { type: 'string' },
       contentful: strictObject({
         spaceTemplateEntryContentTypeId: alnumExact(22),
         cdaApiUrl: subdomainHostSchema,
