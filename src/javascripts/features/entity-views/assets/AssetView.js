@@ -8,7 +8,7 @@ import * as Analytics from 'analytics/Analytics';
 import * as entityCreator from 'components/app_container/entityCreator';
 import { Notification } from '@contentful/forma-36-react-components';
 import TheLocaleStore from 'services/localeStore';
-import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
+import * as BulkAssetsCreator from './services/BulkAssetsCreator';
 import { AssetsEmptyState } from './AssetsEmptyState';
 import { delay, get } from 'lodash';
 import { EntitiesView } from '../core/EntitiesView';
@@ -19,6 +19,7 @@ import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils'
 import { ScheduledActionsPageLink } from 'app/ScheduledActions';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
+
 import { go } from 'states/Navigator';
 
 const goTo = (assetId) => {
@@ -53,7 +54,7 @@ const newAsset = (goTo) => async () => {
 
 const createMultipleAssets = (updateEntities) => async () => {
   Analytics.track('asset_list:add_asset_multiple');
-  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   try {
     await BulkAssetsCreator.open(defaultLocaleCode);
   } finally {
@@ -79,6 +80,7 @@ export const AssetView = () => {
     currentSpaceData,
     currentSpaceId,
   } = useSpaceEnvContext();
+
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const listViewContext = useListView({ entityType, isPersisted: true });
   const [scheduledActions, setScheduledActions] = useState([]);

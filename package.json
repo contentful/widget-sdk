@@ -65,7 +65,7 @@
     "codemirror": "^5.53.2",
     "color": "^2.0.1",
     "contentful": "^7.14.6",
-    "contentful-management": "^7.5.1",
+    "contentful-management": "^7.5.2",
     "contentful-resolve-response": "1.2.2",
     "contentful-ui-extensions-sdk": "^3.29.2",
     "core-js": "^3.6.5",
