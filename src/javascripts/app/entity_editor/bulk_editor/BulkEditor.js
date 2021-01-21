@@ -5,7 +5,6 @@ import Loader from 'ui/Loader';
 import { BulkEntityEditor } from './BulkEntityEditor';
 import { BulkEditorSidebar } from './BulkEditorSidebar';
 import { assignLocaleData } from 'app/entity_editor/setLocaleData';
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as List from 'utils/List';
@@ -15,6 +14,7 @@ import * as Tracking from 'app/entity_editor/bulk_editor/Tracking';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const heightWithoutHeader = 'calc(100% - 71px)';
 
@@ -76,7 +76,7 @@ const scrollToFocused = (ref) => {
 
 export const BulkEditor = (props) => {
   const { referenceContext = props.getReferenceContext(), trackLoadEvent } = props;
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const spaceContext = useMemo(() => getSpaceContext(), []);
 
   const {
     focusIndex = null,

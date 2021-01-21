@@ -1,9 +1,9 @@
 import { makeEntityRef, href } from 'states/Navigator';
 import { EntityType } from '../constants';
 import TheLocaleStore from 'services/localeStore';
-import { getModule } from 'core/NgRegistry';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import { onFetchLinks } from 'analytics/events/IncomingLinks';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const assertEntityTypeIsValid = (entityType) => {
   if (entityType !== EntityType.ENTRY && entityType !== EntityType.ASSET) {
@@ -12,7 +12,7 @@ const assertEntityTypeIsValid = (entityType) => {
 };
 
 export default (id, type) => {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

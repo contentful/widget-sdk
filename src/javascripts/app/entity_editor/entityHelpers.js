@@ -1,10 +1,10 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 import { makeSlug, slugify } from '@contentful/field-editor-slug';
+import { getSpaceContext } from 'classes/spaceContext';
 
 /**
  * TODO This module is basically an adapter for the entity helper methods on
@@ -77,7 +77,7 @@ export function newForLocale(localeCode) {
  * In particular it uses private ids.
  */
 function dataToEntity(data) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   let prepareFields = data.fields;
   const contentTypeId = _.get(data, 'sys.contentType.sys.id');
 

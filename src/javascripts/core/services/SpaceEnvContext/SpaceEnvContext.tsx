@@ -15,10 +15,11 @@ import {
 } from './utils';
 import { SpaceEnv, SpaceEnvContextValue, Environment } from './types';
 import { ContentType } from './types';
+import { getSpaceContext } from 'classes/spaceContext';
 
 // We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
 function getAngularSpaceContext() {
-  return getModule('spaceContext') ?? null;
+  return getSpaceContext() ?? null;
 }
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({

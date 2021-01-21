@@ -2,6 +2,7 @@ import React from 'react';
 import { render, wait } from '@testing-library/react';
 import { getModule } from 'core/NgRegistry';
 import * as random from 'utils/Random';
+import * as spaceContext from 'classes/spaceContext';
 
 import { View } from './View';
 
@@ -56,12 +57,13 @@ describe('View.js', () => {
       private: scopedApi,
     };
 
-    getModule.mockReturnValue({
+    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
       uiConfig: {
         entries: entityApi,
         assets: entityApi,
       },
-    });
+    }));
+    getModule.mockReturnValue();
   });
 
   it('should render the error note', async () => {

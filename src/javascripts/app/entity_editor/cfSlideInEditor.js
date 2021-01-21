@@ -3,22 +3,17 @@ import { registerDirective } from 'core/NgRegistry';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
 import entityPageTemplate from 'app/entity_editor/entity_page.html';
 
-export const isNewSlideInEditorEnabled = [
-  'spaceContext',
-  (spaceContext) =>
-    getVariation(FLAGS.NEW_SLIDE_IN_EDITOR, {
-      organizationId: spaceContext.organization.sys.id,
-      spaceId: spaceContext.space.data.sys.id,
-      environmentId: spaceContext.space.environment.sys.id,
-    }),
-];
+export const getIsNewSlideInEditorEnabled = (spaceContext) => {
+  return getVariation(FLAGS.NEW_SLIDE_IN_EDITOR, {
+    organizationId: spaceContext.organization.sys.id,
+    spaceId: spaceContext.space.data.sys.id,
+    environmentId: spaceContext.space.environment?.sys.id,
+  });
+};
 
 // Temporary route - handling requests according to feature flag
 const baseDetails = {
   name: 'detail',
-  resolve: {
-    isNewSlideInEditorEnabled,
-  },
   params: { addToContext: true },
   template: `
     <react-component
@@ -31,11 +26,11 @@ const baseDetails = {
   controller: [
     '$scope',
     '$state',
-    'isNewSlideInEditorEnabled',
-    ($scope, $state, isNewSlideInEditorEnabled) => {
-      $scope.isNewSlideInEditorEnabled = isNewSlideInEditorEnabled;
+    'spaceContext',
+    ($scope, $state, spaceContext) => {
+      $scope.isNewSlideInEditorEnabled = getIsNewSlideInEditorEnabled(spaceContext);
 
-      if (isNewSlideInEditorEnabled) {
+      if ($scope.isNewSlideInEditorEnabled) {
         // HACK (temporary) disable routing notification when using the new slide in editor
         $state.notify = false;
         // needs to be moved to `mapInjectedToProps` prop when feature flag is removed

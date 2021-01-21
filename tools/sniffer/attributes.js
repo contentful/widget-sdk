@@ -109,6 +109,7 @@ const needsRefactoring = (node) => {
     'sinon',
     'services/client',
     'libs/legacy_client/client',
+    'classes/spaceContext',
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 

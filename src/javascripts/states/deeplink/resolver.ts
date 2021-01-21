@@ -3,7 +3,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'features/api-keys-management';
@@ -160,7 +160,7 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }): () => Promise<Resolve
 
   return async function () {
     const { space, spaceId } = await getSpaceInfo();
-    const spaceContext = getModule('spaceContext');
+    const spaceContext = getSpaceContext();
     await spaceContext.resetWithSpace(space);
     return {
       path: spaceScopedPath,
@@ -198,7 +198,7 @@ function createOnboardingScreenResolver(screen) {
 // users can add a new key
 async function resolveApi() {
   const { space, spaceId } = await getSpaceInfo();
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   await spaceContext.resetWithSpace(space);
 
   // we need to set up space first, so accesses will be
@@ -232,7 +232,7 @@ async function resolveInstallExtension({ url, referrer }) {
     throw new Error(`Extension URL was not specified in the link you've used.`);
   }
   const { space, spaceId } = await getSpaceInfo();
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   await spaceContext.resetWithSpace(space);
   return {
     path: ['spaces', 'detail', 'environment', 'settings', 'extensions', 'list'],

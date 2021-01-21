@@ -6,6 +6,7 @@ import { serialize, unserialize } from 'data/ViewSerializer';
 import { getQueryString } from 'utils/location';
 import { getModule } from 'core/NgRegistry';
 import { getBlankAssetView, getBlankEntryView } from 'data/UiConfig/Blanks';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const getLegacyStoreKey = (entityKey, spaceId) => {
   const LEGACY_STORE_PREFIX = 'lastFilterQueryString';
@@ -49,7 +50,7 @@ const pickLegacyValue = (entityKey, spaceId) => {
 let initialized = false;
 
 export function createListViewPersistor({ entityType, isNative }) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
   const entityKey = getEntityKey(entityType);

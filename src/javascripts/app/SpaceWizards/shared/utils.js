@@ -12,6 +12,7 @@ import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 import { canCreate } from 'utils/ResourceUtils';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
+import { getSpaceContext } from 'classes/spaceContext';
 
 export const WIZARD_INTENT = {
   CHANGE: 'change',
@@ -247,7 +248,7 @@ export async function sendParnershipEmail(spaceId, fields) {
 }
 
 async function createTemplate(templateInfo) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
 
   const defaultLocale = 'en-US';
 

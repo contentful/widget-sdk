@@ -2,6 +2,7 @@ import * as K from '__mocks__/kefirMock';
 import moment from 'moment';
 import * as TokenStore from 'services/TokenStore';
 import * as NgRegistry from 'core/NgRegistry';
+import * as spaceContext from 'classes/spaceContext';
 
 import * as utils from 'data/User';
 
@@ -9,7 +10,7 @@ jest.mock('services/TokenStore');
 jest.mock('core/NgRegistry');
 
 describe('data/User', () => {
-  let tokenStore, spaceContext, $stateParams, orgs, $rootScope, set, spy;
+  let tokenStore, context, $stateParams, orgs, $rootScope, set, spy;
   beforeEach(async function () {
     tokenStore = {
       organizations$: K.createMockProperty(null),
@@ -17,7 +18,7 @@ describe('data/User', () => {
       spacesByOrganization$: K.createMockProperty(null),
     };
 
-    spaceContext = {
+    context = {
       organization: {},
       space: {
         data: {},
@@ -49,10 +50,9 @@ describe('data/User', () => {
 
     $rootScope = { $on, $broadcast };
 
+    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => context);
+
     NgRegistry.getModule = jest.fn().mockImplementation((arg) => {
-      if (arg === 'spaceContext') {
-        return spaceContext;
-      }
       if (arg === '$stateParams') {
         return $stateParams;
       }
@@ -77,15 +77,15 @@ describe('data/User', () => {
           user = K.getValue(tokenStore.user$),
           orgs = K.getValue(tokenStore.organizations$),
           spacesByOrg = K.getValue(tokenStore.spacesByOrganization$),
-          org = spaceContext.organization,
+          org = context.organization,
           orgId,
-          space = spaceContext.space.data,
+          space = context.space.data,
         } = params;
 
         tokenStore.organizations$.set(orgs);
         tokenStore.spacesByOrganization$.set(spacesByOrg);
-        spaceContext.organization = org;
-        spaceContext.space.data = space;
+        context.organization = org;
+        context.space.data = space;
         $stateParams.orgId = orgId;
         $rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
         tokenStore.user$.set(user);
@@ -103,17 +103,17 @@ describe('data/User', () => {
 
       set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1 });
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, spaceContext.space.data]);
+      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, context.space.data]);
 
       spy.mockClear();
       set({ org });
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, org, {}, spaceContext.space.data]);
+      expect(spy).toHaveBeenCalledWith([user, org, {}, context.space.data]);
 
       spy.mockClear();
       set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, spaceContext.space.data]);
+      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, context.space.data]);
     });
     it('emits a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [

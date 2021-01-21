@@ -4,13 +4,12 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import { when } from 'jest-when';
 import fetchLinks from './fetchLinks';
 import * as Navigator from 'states/Navigator';
+import * as spaceContext from 'classes/spaceContext';
 
 const mockEntityHelper = jest.fn();
 
-jest.mock('ng/spaceContext', () => ({
-  cma: {
-    getEntries: jest.fn(),
-  },
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+  ...spaceContextMocked,
   publishedCTs: {
     get: jest.fn().mockReturnValue({ data: { name: 'CT' } }),
   },

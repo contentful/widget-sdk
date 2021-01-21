@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const getPageRouteRef = (page = '') => {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const org = spaceContext.getData('organization');
 
   if (!org || !isOwnerOrAdmin(org)) {

@@ -1,5 +1,5 @@
 import { getSchema } from 'analytics/Schemas';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const Actions = {
   OPEN: 'open',
@@ -7,7 +7,7 @@ const Actions = {
 };
 
 function getEnvId() {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const environmentId = spaceContext.getEnvironmentId();
 
   return environmentId;

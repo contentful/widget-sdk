@@ -2,9 +2,9 @@ import { get, flatten, uniqBy } from 'lodash';
 import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { getSpaceContext } from 'classes/spaceContext';
 
 export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, (data) => {
@@ -56,7 +56,7 @@ const getReferenceEntitiesIds = (id, locale, editorData) => {
 };
 
 async function getReferencesContentTypes(editorData, locale) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
 
   const batchingApiClient = getBatchingApiClient(spaceContext.cma);
   const referenceFieldsIds = editorData.fieldControls.form

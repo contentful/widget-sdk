@@ -4,15 +4,15 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
-import { getModule } from 'core/NgRegistry';
 import { getBlankEntryView } from 'data/UiConfig/Blanks';
+import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('features/content-tags/core/hooks/useTagsFeatureEnabled', () => ({
   useTagsFeatureEnabled: jest.fn().mockReturnValue({ tagsEnabled: true }),
 }));
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-getModule.mockReturnValue({
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
   getId: jest.fn().mockReturnValue('spaceId'),
   getEnvironmentId: jest.fn().mockReturnValue('envId'),
   search: jest.fn(),
@@ -28,7 +28,7 @@ getModule.mockReturnValue({
         }
     ),
   },
-});
+}));
 
 let mockView = getBlankEntryView();
 

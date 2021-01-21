@@ -6,6 +6,25 @@ import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
 import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import * as spaceContext from 'classes/spaceContext';
+
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+  space: {
+    data: {
+      sys: {
+        id: 'space-id',
+      },
+    },
+    environment: {
+      sys: {
+        id: 'environment-id',
+      },
+    },
+  },
+  getData: () => {},
+  getId: () => {},
+  getEnvironmentId: () => {},
+}));
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -24,25 +43,6 @@ jest.mock('access_control/AccessChecker', () => {
 
 jest.mock('core/hooks/useBulkActions/batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
-}));
-jest.mock('core/NgRegistry', () => ({
-  getModule: () => ({
-    space: {
-      data: {
-        sys: {
-          id: 'space-id',
-        },
-      },
-      environment: {
-        sys: {
-          id: 'environment-id',
-        },
-      },
-    },
-    getData: () => {},
-    getId: () => {},
-    getEnvironmentId: () => {},
-  }),
 }));
 
 jest.mock('app/Releases/releasesService', () => ({

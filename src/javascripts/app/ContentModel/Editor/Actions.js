@@ -18,6 +18,7 @@ import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
 
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
+import { getSpaceContext } from 'classes/spaceContext';
 
 /**
  * @description
@@ -35,7 +36,7 @@ import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilde
  *   the duplication dialog to verify new IDs.
  */
 export default function create($scope, contentTypeIds) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const $q = getModule('$q');
   const $state = getModule('$state');
 

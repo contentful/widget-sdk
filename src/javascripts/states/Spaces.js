@@ -21,6 +21,7 @@ import { spaceHomeState } from 'features/space-home';
 
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const store = getBrowserStorage();
 
@@ -42,11 +43,10 @@ const spaceEnvironment = {
   resolve: {
     spaceData: resolveSpaceData,
     spaceContext: [
-      'spaceContext',
       'spaceData',
       '$stateParams',
-      (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
+      (spaceData, $stateParams) =>
+        getSpaceContext().resetWithSpace(spaceData, $stateParams.environmentId),
     ],
   },
   template: '<div />',
@@ -87,11 +87,10 @@ const spaceDetail = {
   resolve: {
     spaceData: resolveSpaceData,
     spaceContext: [
-      'spaceContext',
       'spaceData',
       '$stateParams',
-      (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
+      (spaceData, $stateParams) =>
+        getSpaceContext().resetWithSpace(spaceData, $stateParams.environmentId),
     ],
   },
   onEnter: [
@@ -106,8 +105,9 @@ const spaceDetail = {
     '$scope',
     '$state',
     'spaceData',
-    'spaceContext',
-    ($scope, $state, spaceData, spaceContext) => {
+    ($scope, $state, spaceData) => {
+      const spaceContext = getSpaceContext();
+
       const accessibleSref = getFirstAccessibleSref(spaceContext.space);
 
       if (isHibernated(spaceData)) {

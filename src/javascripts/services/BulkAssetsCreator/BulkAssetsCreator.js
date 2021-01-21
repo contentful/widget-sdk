@@ -3,7 +3,7 @@ import { FilestackService } from '@contentful/field-editor-file';
 import * as Config from 'Config';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import * as logger from 'services/logger';
 import delay from 'delay';
 
@@ -66,7 +66,7 @@ export function open(localeCode) {
   }
 
   function createAssetForFile(file) {
-    const spaceContext = getModule('spaceContext');
+    const spaceContext = getSpaceContext();
 
     const title = stringUtils.fileNameToTitle(file.fileName);
     const data = {

@@ -1,10 +1,10 @@
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { createContentPreview } from './createContentPreview';
 
 let contentPreviewInstance = null;
 
 export function getContentPreview() {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const space = spaceContext.getSpace();
 
   if (!contentPreviewInstance) {

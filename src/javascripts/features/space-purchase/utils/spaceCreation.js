@@ -7,6 +7,7 @@ import * as TokenStore from 'services/TokenStore';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import * as Analytics from 'analytics/Analytics';
 
 export async function makeNewSpace(organizationId, productRatePlan, spaceName) {
@@ -32,7 +33,7 @@ export async function createSpaceWithTemplate(
   const $rootScope = getModule('$rootScope');
 
   const newSpace = await makeNewSpace(organizationId, productRatePlan, spaceName);
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   // Need to set the correct space on the spaceContext
   await TokenStore.getSpace(newSpace.sys.id).then((newSpace) =>
     spaceContext.resetWithSpace(newSpace)
@@ -66,7 +67,7 @@ export async function createSpace(organizationId, productRatePlan, spaceName) {
 }
 
 export async function createTemplate(newSpace, templateInfo) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   // Need to set the correct space on the spaceContext
   await TokenStore.getSpace(newSpace.sys.id).then((newSpace) =>
     spaceContext.resetWithSpace(newSpace)

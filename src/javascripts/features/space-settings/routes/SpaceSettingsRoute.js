@@ -13,6 +13,7 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFa
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { getSpaceContext } from 'classes/spaceContext';
 
 import { LoadingEmptyState } from 'features/loading-state';
 import { getSpaceVersion, getOrganization } from 'core/services/SpaceEnvContext/utils';
@@ -72,7 +73,7 @@ export class SpaceSettingsRoute extends React.Component {
     const currentSpaceVersion = getSpaceVersion(currentSpace);
     const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
     const cma = new APIClient(spaceEndpoint);
-    const spaceContext = getModule('spaceContext'); // TODO: Only `resetWithSpace` needs it for now
+    const spaceContext = getSpaceContext(); // TODO: Only `resetWithSpace` needs it for now
 
     return cma
       .renameSpace(newName, currentSpaceVersion)
