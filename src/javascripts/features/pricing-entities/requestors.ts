@@ -1,5 +1,5 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { ProductRatePlan } from './types';
+import { SpaceProductRatePlan, AddOnProductRatePlan } from './types';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 
 interface CollectionResponse<T> {
@@ -20,7 +20,7 @@ const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
  * @param {OrganizationEndpoint} endpoint
  */
 export async function getAddOnProductRatePlans(endpoint: OrganizationEndpoint) {
-  const data: CollectionResponse<ProductRatePlan> = await endpoint(
+  const data: CollectionResponse<AddOnProductRatePlan> = await endpoint(
     {
       method: 'GET',
       path: ['product_rate_plans'],
@@ -85,7 +85,7 @@ export async function getSpaceProductRatePlans(endpoint: OrganizationEndpoint, s
     query.space_id = spaceId;
   }
 
-  const data: CollectionResponse<ProductRatePlan> = await endpoint(
+  const data: CollectionResponse<SpaceProductRatePlan> = await endpoint(
     {
       method: 'GET',
       path: ['product_rate_plans'],

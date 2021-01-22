@@ -16,6 +16,14 @@ export interface ProductRatePlan {
   unavailabilityReasons?: UnavailabilityReason[];
 }
 
+export interface SpaceProductRatePlan extends ProductRatePlan {
+  productPlanType: 'space';
+}
+
+export interface AddOnProductRatePlan extends ProductRatePlan {
+  productPlanType: 'add_on';
+}
+
 interface RoleSet {
   id: string;
   roles: string[];
