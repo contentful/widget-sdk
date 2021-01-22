@@ -7,7 +7,8 @@ import { useAsync } from 'core/hooks';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Spinner } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
-import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { actions, SpaceCreationState } from '../context';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
@@ -23,7 +24,7 @@ const initialFetch = (orgId, dispatch) => async () => {
 
   const endpoint = createOrganizationEndpoint(orgId);
   const [spacePlans, ratePlans, templatesList] = await Promise.all([
-    getSubscriptionPlans(endpoint, { plan_type: 'space' }),
+    getSpaceRatePlans(endpoint),
     getProductPlans(endpoint),
     getTemplatesList(),
   ]);

@@ -11,7 +11,6 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import {
   getBasePlan,
   getSingleSpacePlan,
-  getSubscriptionPlans,
   isSelfServicePlan,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
@@ -31,7 +30,11 @@ import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
-import { getAddOnProductRatePlans, getSpaceProductRatePlans } from 'features/pricing-entities';
+import {
+  getAddOnProductRatePlans,
+  getSpaceProductRatePlans,
+  getSpaceRatePlans,
+} from 'features/pricing-entities';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
@@ -69,7 +72,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
     getSpaceProductRatePlans(endpoint, spaceId),
-    getSubscriptionPlans(endpoint, { plan_type: 'space' }),
+    getSpaceRatePlans(endpoint),
     createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),

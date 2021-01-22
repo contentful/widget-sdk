@@ -6,7 +6,6 @@ import {
   getBasePlan,
   getProductPlans,
   getSingleSpacePlan,
-  getSubscriptionPlans,
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {
@@ -23,7 +22,11 @@ import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
-import { getAddOnProductRatePlans, getSpaceProductRatePlans } from 'features/pricing-entities';
+import {
+  getAddOnProductRatePlans,
+  getSpaceProductRatePlans,
+  getSpaceRatePlans,
+} from 'features/pricing-entities';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -67,13 +70,13 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getBasePlan: jest.fn(),
   getSpaceRatePlans: jest.fn(),
   getSingleSpacePlan: jest.fn(),
-  getSubscriptionPlans: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
 
 jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn(),
+  getSpaceRatePlans: jest.fn(),
 }));
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
@@ -117,7 +120,7 @@ describe('SpacePurchaseRoute', () => {
     isOwner.mockReturnValue(true);
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
-    getSubscriptionPlans.mockReturnValue({ items: [] });
+    getSpaceRatePlans.mockReturnValue({ items: [] });
     getVariation.mockResolvedValue(false);
     getSpaces.mockResolvedValue({
       total: 1,
@@ -294,7 +297,7 @@ describe('SpacePurchaseRoute', () => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
-    expect(getSubscriptionPlans).toBeCalledWith(mockEndpoint, { plan_type: 'space' });
+    expect(getSpaceRatePlans).toBeCalledWith(mockEndpoint);
   });
 
   it('should fetch the space plan selection FAQs by default', async () => {
