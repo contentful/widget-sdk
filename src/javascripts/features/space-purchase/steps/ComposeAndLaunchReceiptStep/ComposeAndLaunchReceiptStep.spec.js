@@ -1,15 +1,18 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as Fake from 'test/helpers/fakeFactory';
 
 import { go } from 'states/Navigator';
 import { getSpace } from 'services/TokenStore';
-
-import { Space } from 'test/helpers/fakeFactory';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_CONTENT } from '../../utils/platformContent';
+import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
+import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 
-const mockLastUsedSpace = Space();
+const mockOrganization = Fake.Organization();
+const mockLastUsedSpace = Fake.Space();
+const mockComposeProductRatePlan = Fake.Plan();
+const mockSelectedPlatform = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -17,6 +20,10 @@ jest.mock('states/Navigator', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  addProductRatePlanToSubscription: jest.fn(),
 }));
 
 jest.mock('core/services/BrowserStorage', () => {
@@ -35,8 +42,14 @@ describe('ComposeAndLaunchReceiptStep', () => {
   });
 
   it('should show message when Compose+Launch has been successfully ordered', async () => {
-    await build();
-    await waitFor(expect(getSpace).toBeCalled);
+    build();
+
+    await waitFor(() => {
+      expect(addProductRatePlanToSubscription).toBeCalledWith(
+        expect.any(Function),
+        mockComposeProductRatePlan.sys.id
+      );
+    });
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(
       `You successfully purchased the ${PLATFORM_CONTENT.composePlatform.title} package`
@@ -44,7 +57,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
   });
 
   it('should take the user to the last used space when "take me to" button is clicked', async () => {
-    await build();
+    build();
     await waitFor(expect(getSpace).toBeCalled);
 
     const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
@@ -57,10 +70,10 @@ describe('ComposeAndLaunchReceiptStep', () => {
   });
 });
 
-async function build(customProps, customState) {
-  const props = {
-    ...customProps,
-  };
-
-  await renderWithProvider(ComposeAndLaunchReceiptStep, customState, props);
+function build() {
+  renderWithProvider(ComposeAndLaunchReceiptStep, {
+    organization: mockOrganization,
+    selectedPlatform: mockSelectedPlatform,
+    composeProductRatePlan: mockComposeProductRatePlan,
+  });
 }

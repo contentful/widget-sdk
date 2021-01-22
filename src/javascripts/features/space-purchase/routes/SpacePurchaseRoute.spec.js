@@ -24,6 +24,7 @@ import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
+import { getAddOnProductRatePlans } from 'features/pricing-entities';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -37,6 +38,7 @@ const mockUpgradeSpaceRatePlans = [
   'plan2',
   'plan3',
 ];
+const mockComposeProductRatePlan = FakeFactory.Plan();
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -69,6 +71,10 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getSubscriptionPlans: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  getAddOnProductRatePlans: jest.fn(),
 }));
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
@@ -117,6 +123,10 @@ describe('SpacePurchaseRoute', () => {
     getSpaces.mockResolvedValue({
       total: 1,
       items: [],
+    });
+    getAddOnProductRatePlans.mockResolvedValue({
+      total: 1,
+      items: [mockComposeProductRatePlan],
     });
   });
 

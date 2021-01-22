@@ -1,9 +1,14 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
+import type { State } from '../context';
 import { SpacePurchaseTestContextProvider } from '../context';
 
-export function renderWithProvider(RenderedComponent, additionalInitialState, props) {
+export function renderWithProvider<ComponentPropsType = {}>(
+  RenderedComponent: React.FC<ComponentPropsType>,
+  additionalInitialState: State,
+  props: ComponentPropsType
+) {
   render(
     <SpacePurchaseTestContextProvider additionalInitialState={additionalInitialState}>
       <RenderedComponent {...props} />

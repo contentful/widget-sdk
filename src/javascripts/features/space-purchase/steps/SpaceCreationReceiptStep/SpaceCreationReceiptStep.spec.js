@@ -9,12 +9,15 @@ import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PLATFORM_TYPES, PLATFORM_CONTENT } from '../../utils/platformContent';
+import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 
-const mockSelectedPlaftorm = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
 const mockOrganization = FakeFactory.Organization();
 const mockCreatedSpace = FakeFactory.Space();
+const mockComposeProductRatePlan = FakeFactory.Plan();
+
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
   sessionId: 'some_random_id',
@@ -23,6 +26,10 @@ const mockSessionMetadata = {
 jest.mock('../../utils/spaceCreation', () => ({
   makeNewSpace: jest.fn(),
   createTemplate: jest.fn(),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  addProductRatePlanToSubscription: jest.fn(),
 }));
 
 jest.mock('../../utils/analyticsTracking', () => ({
@@ -51,7 +58,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should show the plan name and plan type in the paragraph when the space has been successfully created', async () => {
-    await build();
+    build();
 
     await waitFor(expect(makeNewSpace).toBeCalled);
 
@@ -66,7 +73,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should show the plan name defined by the user in the paragraph when the space has been successfully created', async () => {
-    await build(null, { spaceName });
+    build(null, { spaceName });
 
     await waitFor(expect(makeNewSpace).toBeCalled);
 
@@ -81,7 +88,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should show the default plan name and the compose+launch message when the space has been successfully created', async () => {
-    await build(null, { selectedPlatform: mockSelectedPlaftorm });
+    build(null, { selectedPlatform: mockSelectedPlatform });
 
     await waitFor(expect(makeNewSpace).toBeCalled);
 
@@ -98,7 +105,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should call makeNewSpace and fire an analytic event when there is no selectedTemplate', async () => {
-    await build(null, { spaceName });
+    build(null, { spaceName });
 
     await waitFor(() => {
       expect(makeNewSpace).toBeCalledWith(mockOrganization.sys.id, mockSelectedPlan, spaceName);
@@ -109,10 +116,46 @@ describe('SpaceCreationReceiptStep', () => {
     });
   });
 
+  it('should add the addon to the subscription if the selectedPlatform is SPACE_COMPOSE_LAUNCH', async () => {
+    build(null, { selectedPlatform: mockSelectedPlatform });
+
+    await waitFor(() => {
+      expect(addProductRatePlanToSubscription).toBeCalledWith(
+        expect.any(Function),
+        mockComposeProductRatePlan.sys.id
+      );
+    });
+  });
+
+  it('should create the space and purchase addon serially and show the loading state the whole time', async () => {
+    let resolveSpaceCreation;
+
+    makeNewSpace.mockImplementationOnce(
+      () => new Promise((resolve) => (resolveSpaceCreation = resolve.bind(null, mockCreatedSpace)))
+    );
+
+    build(null, { selectedPlatform: mockSelectedPlatform });
+
+    expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
+
+    await waitFor(() => expect(makeNewSpace).toBeCalled());
+    expect(addProductRatePlanToSubscription).not.toBeCalled();
+
+    expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
+
+    resolveSpaceCreation();
+
+    await waitFor(() => {
+      expect(addProductRatePlanToSubscription).toBeCalled();
+    });
+
+    expect(screen.queryByTestId('receipt.loading-envelope')).toBeNull();
+  });
+
   it('should call createTemplate when there is a selectedTemplate', async () => {
     const mockTemplate = { test: true };
 
-    await build(null, { selectedTemplate: mockTemplate });
+    build(null, { selectedTemplate: mockTemplate });
 
     await waitFor(() => {
       expect(createTemplate).toBeCalledWith(mockCreatedSpace, mockTemplate);
@@ -131,7 +174,7 @@ describe('SpaceCreationReceiptStep', () => {
     const err = new Error('Something went wrong');
     makeNewSpace.mockRejectedValueOnce(err);
 
-    await build();
+    build();
 
     await waitFor(() => {
       expect(screen.getByTestId('receipt.error-face')).toBeVisible();
@@ -143,11 +186,22 @@ describe('SpaceCreationReceiptStep', () => {
     });
   });
 
+  it('should display an error if the addon purchase erred', async () => {
+    const err = new Error('Something went wrong');
+    addProductRatePlanToSubscription.mockRejectedValueOnce(err);
+
+    build(null, { selectedPlatform: mockSelectedPlatform });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt.error-face')).toBeVisible();
+    });
+  });
+
   it('should display an error and fire an analytic event if creating the template of the space errored', async () => {
     const err = new Error('Something went wrong');
     createTemplate.mockRejectedValueOnce(err);
 
-    await build(null, { selectedTemplate: 'Test' });
+    build(null, { selectedTemplate: 'Test' });
 
     await waitFor(() => {
       expect(screen.queryByTestId('receipt-page.template-creation-error')).toBeVisible();
@@ -162,7 +216,7 @@ describe('SpaceCreationReceiptStep', () => {
   it('should restart the space creation if it errs and the user clicks the button again', async () => {
     makeNewSpace.mockRejectedValueOnce(new Error('Something went wrong'));
 
-    await build();
+    build();
 
     await waitFor(() => {
       expect(screen.getByTestId('receipt.error-face')).toBeVisible();
@@ -180,7 +234,7 @@ describe('SpaceCreationReceiptStep', () => {
   it('should show a warning note if template content creation fails', async () => {
     createTemplate.mockRejectedValueOnce(new Error('Something went wrong'));
 
-    await build(null, { selectedTemplate: {} });
+    build(null, { selectedTemplate: {} });
 
     await waitFor(() => {
       expect(createTemplate).toBeCalled();
@@ -196,7 +250,7 @@ describe('SpaceCreationReceiptStep', () => {
       return createSpacePromise;
     });
 
-    await build();
+    build();
 
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     expect(redirectToNewSpace).toHaveAttribute('disabled');
@@ -214,7 +268,7 @@ describe('SpaceCreationReceiptStep', () => {
 
     $rootScope.$on.mockReturnValue(mockOffCb);
 
-    await build();
+    build();
 
     expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
     expect($rootScope.$on).toHaveBeenCalledWith('$stateChangeStart', expect.any(Function));
@@ -231,7 +285,7 @@ describe('SpaceCreationReceiptStep', () => {
   });
 
   it('should redirect to the new space when clicking on the button after the space has been', async () => {
-    await build();
+    build();
 
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
 
@@ -250,16 +304,17 @@ describe('SpaceCreationReceiptStep', () => {
   });
 });
 
-async function build(customProps, customState) {
+function build(customProps, customState) {
   const props = {
     ...customProps,
   };
 
-  await renderWithProvider(
+  renderWithProvider(
     SpaceCreationReceiptStep,
     {
       organization: mockOrganization,
       selectedPlan: mockSelectedPlan,
+      composeProductRatePlan: mockComposeProductRatePlan,
       sessionId: mockSessionMetadata.sessionId,
       ...customState,
     },

@@ -1,5 +1,6 @@
 import type { Organization, SpaceData } from 'core/services/SpaceEnvContext/types';
-import type { ProductRatePlan, BillingDetails, PaymentDetails } from '../types';
+import type { BillingDetails, PaymentDetails } from '../types';
+import type { ProductRatePlan } from 'features/pricing-entities';
 
 export interface State {
   organization?: Organization;
