@@ -2,13 +2,13 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ProductRatePlan } from './types';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-type CollectionResponse<T> = {
+interface CollectionResponse<T> {
   sys: {
     type: 'Array';
   };
   total: number;
   items: T[];
-};
+}
 
 type OrganizationEndpoint = ReturnType<typeof createOrganizationEndpoint>;
 
