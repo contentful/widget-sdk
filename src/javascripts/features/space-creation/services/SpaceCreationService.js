@@ -1,11 +1,11 @@
 import { get } from 'lodash';
-import client from 'services/client';
 import * as TokenStore from 'services/TokenStore';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { createTemplate } from 'features/space-purchase';
 import { Notification } from '@contentful/forma-36-react-components';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 
-export async function makeNewSpace(orgId, selectedPlan, spaceName) {
+export async function makeNewSpace(organizationId, selectedPlan, spaceName) {
   const spaceData = {
     defaultLocale: 'en-US',
     name: spaceName,
@@ -14,7 +14,14 @@ export async function makeNewSpace(orgId, selectedPlan, spaceName) {
       : { spacePlanId: get(selectedPlan, 'sys.id') }),
   };
 
-  const newSpace = await client.createSpace(spaceData, orgId);
+  const client = getCMAClient();
+
+  const newSpace = await client.space.create(
+    {
+      organizationId,
+    },
+    spaceData
+  );
 
   await TokenStore.refresh();
 

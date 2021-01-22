@@ -7,7 +7,16 @@ import createResourceService from 'services/ResourceService';
 import { getProductPlans, getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { Notification } from '@contentful/forma-36-react-components';
 import userEvent from '@testing-library/user-event';
-import client from 'services/client';
+
+const mockCreateSpace = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getCMAClient: () => ({
+    space: {
+      create: mockCreateSpace,
+    },
+  }),
+}));
 
 const mockOrg = Fake.Organization({ name: 'Test Org' });
 
@@ -123,12 +132,6 @@ jest.mock('features/space-plan-assignment/services/SpacePlanAssignmentService', 
   changeSpacePlanAssignment: jest.fn(),
 }));
 
-jest.mock('services/client', () => {
-  return {
-    createSpace: jest.fn(),
-  };
-});
-
 const initialState = {
   organization: mockOrg,
   spaceName: '',
@@ -150,6 +153,7 @@ describe('SpaceCreation', () => {
     getSubscriptionPlans.mockResolvedValue({ total: mockPlans.length, items: mockPlans });
     getProductPlans.mockResolvedValue(mockRatePlans);
     createResourceService().get.mockResolvedValue(mockFreeSpaceResources);
+    mockCreateSpace.mockReset();
   });
 
   afterEach(Notification.closeAll);
@@ -227,13 +231,15 @@ describe('SpaceCreation', () => {
       userEvent.click(screen.getByTestId('continue-btn'));
       userEvent.click(screen.getByText('Confirm and create'));
 
-      expect(client.createSpace).toBeCalledWith(
+      expect(mockCreateSpace).toBeCalledWith(
+        {
+          organizationId: mockOrg.sys.id,
+        },
         {
           defaultLocale: 'en-US',
           name: 'Test',
           spacePlanId: mockMediumPlan.sys.id,
-        },
-        mockOrg.sys.id
+        }
       );
     });
 
@@ -242,13 +248,15 @@ describe('SpaceCreation', () => {
       userEvent.click(screen.getByTestId('continue-btn'));
       userEvent.click(screen.getByText('Confirm and create'));
 
-      expect(client.createSpace).toBeCalledWith(
+      expect(mockCreateSpace).toBeCalledWith(
+        {
+          organizationId: mockOrg.sys.id,
+        },
         {
           defaultLocale: 'en-US',
           name: 'Test',
           productRatePlanId: 'free',
-        },
-        mockOrg.sys.id
+        }
       );
     });
   });
