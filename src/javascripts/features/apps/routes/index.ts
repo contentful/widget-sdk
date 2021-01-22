@@ -13,6 +13,7 @@ import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-rend
 import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
 import { MarketplacePageProps } from '../MarketplacePage/MarketplacePage';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -25,11 +26,13 @@ function canUserManageApps() {
 }
 
 const appsFeatureResolver = [
-  'spaceContext',
-  async (spaceContext) => {
+  // DI used as a workaround for child routes to wait for the spacecontext
+  // to be initialized (defined in "src/javascripts/states/Spaces.js")
+  'initializeSpaceContext',
+  async () => {
     try {
       return await getSpaceFeature(
-        spaceContext.getId(),
+        getSpaceContext().getId(),
         BASIC_APPS_FEATURE_KEY,
         DEFAULT_FEATURE_STATUS
       );
@@ -40,10 +43,10 @@ const appsFeatureResolver = [
 ];
 
 const advancedAppsFeatureResolver = [
-  'spaceContext',
-  async (spaceContext) => {
+  'initializeSpaceContext',
+  async () => {
     try {
-      const orgId = spaceContext.organization.sys.id;
+      const orgId = getSpaceContext().organization.sys.id;
       return await getOrgFeature(orgId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS);
     } catch (err) {
       return DEFAULT_ADVANCED_APPS_STATUS;
@@ -65,18 +68,17 @@ export const appRoute = {
       },
       component: MarketplacePage,
       mapInjectedToProps: [
-        'spaceContext',
         '$state',
         '$stateParams',
         'hasAppsFeature',
         'hasAdvancedAppsFeature',
         (
-          spaceContext,
           $state,
           $stateParams,
           hasAppsFeature: boolean,
           hasAdvancedAppsFeature: boolean
         ): MarketplacePageProps => {
+          const spaceContext = getSpaceContext();
           return {
             repo: getAppsRepo(),
             cma: spaceContext.cma,
@@ -106,15 +108,13 @@ export const appRoute = {
       },
       component: AppRoute,
       resolve: {
-        // Define dependency on spaceContext so we load the app
-        // only when the space is initialized.
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        app: ['$stateParams', 'initializeSpaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         hasAppsFeature: appsFeatureResolver,
         hasAdvancedAppsFeature: advancedAppsFeatureResolver,
         canManageThisApp: [
           'app',
-          'spaceContext',
-          async ({ appDefinition }, { organization }) => {
+          async ({ appDefinition }) => {
+            const { organization } = getSpaceContext();
             const sameOrg = organization.sys.id === appDefinition.sys.organization.sys.id;
             const org = await TokenStore.getOrganization(organization.sys.id);
             const isDeveloperOrHigher = isOwnerOrAdmin(org) || isDeveloper(org);
@@ -126,10 +126,10 @@ export const appRoute = {
       onEnter: [
         '$state',
         '$stateParams',
-        'spaceContext',
         'app',
         'hasAppsFeature',
-        ($state, $stateParams, spaceContext, app, hasAppsFeature) => {
+        ($state, $stateParams, app, hasAppsFeature) => {
+          const spaceContext = getSpaceContext();
           // When executing `onEnter` after a page refresh
           // the current state won't be initialized. For this reason
           // we need to compute params and an absolute path manually.
@@ -168,12 +168,12 @@ export const appRoute = {
         },
       ],
       mapInjectedToProps: [
-        'spaceContext',
         '$state',
         '$scope',
         'app',
         'canManageThisApp',
-        (spaceContext: any, $state: any, $scope: any, app, canManageThisApp: boolean) => {
+        ($state: any, $scope: any, app, canManageThisApp: boolean) => {
+          const spaceContext = getSpaceContext();
           const appHookBus = makeAppHookBus();
 
           return {
@@ -214,7 +214,7 @@ export const appRoute = {
       url: '/app_installations/:appId{path:PathSuffix}',
       component: PageWidgetRenderer,
       resolve: {
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        app: ['$stateParams', 'initializeSpaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         widget: [
           'app',
           async ({ appDefinition }) => {
@@ -259,9 +259,9 @@ export const appRoute = {
       ],
       mapInjectedToProps: [
         '$stateParams',
-        'spaceContext',
         'widget',
-        ({ path = '' }, spaceContext, widget) => {
+        ({ path = '' }, widget) => {
+          const spaceContext = getSpaceContext();
           return {
             widget,
             createPageExtensionSDK: memoize((widget, parameters) =>

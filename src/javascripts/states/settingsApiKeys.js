@@ -4,6 +4,7 @@ import { redirectReadOnlySpace } from 'states/SpaceSettingsBase';
 import { spaceResolver } from 'states/Resolvers';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { ApiKeyListRoute, KeyEditorRoute, CMATokensRoute } from 'features/api-keys-management';
+import { getSpaceContext } from 'classes/spaceContext';
 
 /**
  * This module export the API section state.
@@ -46,22 +47,24 @@ export const apiKeysState = {
           mapInjectedToProps: [
             '$scope',
             '$stateParams',
-            'spaceContext',
-            ($scope, $stateParams, spaceContext) => ({
-              spaceEnvironmentsRepo: SpaceEnvironmentRepo.create(spaceContext.endpoint),
-              spaceAliasesRepo: SpaceAliasesRepo.create(spaceContext.endpoint),
-              apiKeyId: $stateParams.apiKeyId,
-              spaceId: spaceContext.getId(),
-              isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
-              registerSaveAction: (save) => {
-                $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
-                $scope.$applyAsync();
-              },
-              setDirty: (value) => {
-                $scope.context.dirty = value;
-                $scope.$applyAsync();
-              },
-            }),
+            ($scope, $stateParams) => {
+              const spaceContext = getSpaceContext();
+              return {
+                spaceEnvironmentsRepo: SpaceEnvironmentRepo.create(spaceContext.endpoint),
+                spaceAliasesRepo: SpaceAliasesRepo.create(spaceContext.endpoint),
+                apiKeyId: $stateParams.apiKeyId,
+                spaceId: spaceContext.getId(),
+                isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
+                registerSaveAction: (save) => {
+                  $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
+                  $scope.$applyAsync();
+                },
+                setDirty: (value) => {
+                  $scope.context.dirty = value;
+                  $scope.$applyAsync();
+                },
+              };
+            },
           ],
         },
       ],

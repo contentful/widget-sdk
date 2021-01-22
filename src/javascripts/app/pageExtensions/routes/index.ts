@@ -3,6 +3,7 @@ import PageExtensionRoute from './PageExtensionRoute';
 import { Widget } from '@contentful/widget-renderer';
 import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetParameters } from 'features/apps';
+import { getSpaceContext } from 'classes/spaceContext';
 
 export default {
   name: 'pageExtensions',
@@ -10,8 +11,8 @@ export default {
   component: PageExtensionRoute,
   mapInjectedToProps: [
     '$stateParams',
-    'spaceContext',
-    ($stateParams, spaceContext) => {
+    ($stateParams) => {
+      const spaceContext = getSpaceContext();
       const { extensionId, path = '' } = $stateParams;
 
       return {

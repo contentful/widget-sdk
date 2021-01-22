@@ -4,6 +4,7 @@ import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import createResourceService from 'services/ResourceService';
 import { generateMessage } from 'utils/ResourceUtils';
 import { LocalesListRoute, LocalesNewRoute, LocalesEditRoute } from 'features/locales-management';
+import { getSpaceContext } from 'classes/spaceContext';
 
 export const localesSettingsState = {
   name: 'locales',
@@ -31,28 +32,30 @@ export const localesSettingsState = {
         ],
       },
       mapInjectedToProps: [
-        'spaceContext',
         'localeResource',
-        (spaceContext, localeResource) => ({
-          showUpgradeSpaceDialog: ({ onSubmit }) => {
-            ChangeSpaceService.beginSpaceChange({
-              organizationId: spaceContext.organization.sys.id,
-              space: spaceContext.space.data,
-              onSubmit,
-            });
-          },
-          getComputeLocalesUsageForOrganization: () => {
-            /*
+        (localeResource) => {
+          const spaceContext = getSpaceContext();
+          return {
+            showUpgradeSpaceDialog: ({ onSubmit }) => {
+              ChangeSpaceService.beginSpaceChange({
+                organizationId: spaceContext.organization.sys.id,
+                space: spaceContext.space.data,
+                onSubmit,
+              });
+            },
+            getComputeLocalesUsageForOrganization: () => {
+              /*
               The expectation of this function is a bit strange as it returns either a string or null, as it is the
               result of some legacy code. This should be refactored to be more clear in its intention.
              */
-            if (generateMessage(localeResource).error) {
-              return generateMessage(localeResource).error;
-            } else {
-              return null;
-            }
-          },
-        }),
+              if (generateMessage(localeResource).error) {
+                return generateMessage(localeResource).error;
+              } else {
+                return null;
+              }
+            },
+          };
+        },
       ],
     },
     {

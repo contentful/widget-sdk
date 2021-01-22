@@ -42,7 +42,7 @@ const spaceEnvironment = {
   url: '/environments/:environmentId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: [
+    initializeSpaceContext: [
       'spaceData',
       '$stateParams',
       (spaceData, $stateParams) =>
@@ -86,7 +86,7 @@ const spaceDetail = {
   url: '/:spaceId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: [
+    initializeSpaceContext: [
       'spaceData',
       '$stateParams',
       (spaceData, $stateParams) =>

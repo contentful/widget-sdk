@@ -3,6 +3,7 @@ import GetStartedScreen from 'components/shared/stack-onboarding/screens/GetStar
 import CopyScreen from 'components/shared/stack-onboarding/screens/CopyScreen';
 import ExploreScreen from 'components/shared/stack-onboarding/screens/ExploreScreen';
 import DeployScreen from 'components/shared/stack-onboarding/screens/DeployScreen';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const getStarted = {
   name: 'getStarted',
@@ -34,8 +35,8 @@ export default {
   abstract: true,
   onEnter: [
     '$state',
-    'spaceContext',
-    function ($state, spaceContext) {
+    function ($state) {
+      const spaceContext = getSpaceContext();
       const spaceId = spaceContext.space && spaceContext.space.getId();
 
       // The onboarding steps are accessible only when

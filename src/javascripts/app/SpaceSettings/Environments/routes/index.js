@@ -1,3 +1,4 @@
+import { getSpaceContext } from 'classes/spaceContext';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import EnvironmentsRoute from './EnvironmentsRoute';
@@ -7,9 +8,9 @@ export default {
   url: '/environments',
   component: EnvironmentsRoute,
   mapInjectedToProps: [
-    'spaceContext',
     '$state',
-    (spaceContext, $state) => {
+    ($state) => {
+      const spaceContext = getSpaceContext();
       const { organization, endpoint, space, pubsubClient } = spaceContext;
       const spaceId = spaceContext.getId();
       const currentEnvironmentId = spaceContext.getEnvironmentId();

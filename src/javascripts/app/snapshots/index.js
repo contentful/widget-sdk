@@ -5,6 +5,7 @@ import * as Entries from 'data/entries';
 import { go } from 'states/Navigator';
 import SnapshotRedirect from './SnapshotRedirect';
 import SnapshotComparator from './SnapshotRouteComponent';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const compareWithCurrent = {
   name: 'withCurrent',
@@ -14,8 +15,8 @@ const compareWithCurrent = {
     snapshot: [
       '$stateParams',
       'editorData',
-      'spaceContext',
-      async ($stateParams, editorData, spaceContext) => {
+      async ($stateParams, editorData) => {
+        const spaceContext = getSpaceContext();
         const { entity, contentType } = editorData;
         const snapshot = await spaceContext.cma.getEntrySnapshot(
           entity.getId(),
@@ -32,10 +33,10 @@ const compareWithCurrent = {
   mapInjectedToProps: [
     '$stateParams',
     '$scope',
-    'spaceContext',
     'editorData',
     'snapshot',
-    ($stateParams, $scope, spaceContext, editorData, snapshot) => {
+    ($stateParams, $scope, editorData, snapshot) => {
+      const spaceContext = getSpaceContext();
       trackVersioning.setData(editorData.entity.data, snapshot);
       trackVersioning.opened($stateParams.source);
 
@@ -75,14 +76,17 @@ export default {
   component: SnapshotRedirect,
   resolve: {
     editorData: [
+      'spaceData',
       '$stateParams',
-      'spaceContext',
-      ({ entryId }, spaceContext) => loadEditorData(spaceContext, entryId),
+      async (spaceData, { entryId, environmentId }) => {
+        const spaceContext = await getSpaceContext().resetWithSpace(spaceData, environmentId);
+        return loadEditorData(spaceContext, entryId);
+      },
     ],
     snapshotId: [
       'editorData',
-      'spaceContext',
-      async (editorData, spaceContext) => {
+      async (editorData) => {
+        const spaceContext = getSpaceContext();
         const entityId = editorData.entity.getId();
         try {
           const res = await spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 });

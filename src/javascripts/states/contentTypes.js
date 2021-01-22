@@ -3,6 +3,7 @@ import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ContentTypesPage } from 'components/tabs/content_type_list/ContentTypesPage';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const list = {
   name: 'list',
@@ -44,9 +45,9 @@ const entryEditorConfiguration = {
 
 const widgetResolvers = {
   customWidgets: [
-    // Define dependency on spaceContext so we get custom widgets
-    // only when the space is initialized.
-    'spaceContext',
+    // DI used as a workaround for child routes to wait for the spacecontext
+    // to be initialized (defined in "src/javascripts/states/Spaces.js")
+    'initializeSpaceContext',
     async () => {
       const loader = await getCustomWidgetLoader();
       const widgets = await loader.getUncachedForListing();
@@ -55,27 +56,26 @@ const widgetResolvers = {
     },
   ],
   editorInterface: [
-    'spaceContext',
     'contentType',
-    async (spaceContext, contentType) => {
+    async (contentType) => {
       const ct = contentType.data;
-      const ei = await spaceContext.cma.getEditorInterface(ct.sys.id);
+      const ei = await getSpaceContext().cma.getEditorInterface(ct.sys.id);
       return EditorInterfaceTransformer.fromAPI(ct, ei);
     },
   ],
   hasAdvancedExtensibility: [
-    'spaceContext',
-    (spaceContext) => {
-      return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
+    'initializeSpaceContext',
+    () => {
+      return AdvancedExtensibilityFeature.isEnabled(getSpaceContext().organization.sys.id);
     },
   ],
 };
 
 const existingContentTypeIdsResolver = {
   contentTypeIds: [
-    'spaceContext',
-    async (spaceContext) => {
-      const contentTypes = await spaceContext.cma.getContentTypes();
+    'initializeSpaceContext',
+    async () => {
+      const contentTypes = await getSpaceContext().cma.getContentTypes();
       return contentTypes.items.map((ct) => ct.sys.id);
     },
   ],
@@ -87,9 +87,8 @@ const newState = editorBase(
     url: '_new',
     resolve: {
       contentType: [
-        'spaceContext',
-        (spaceContext) =>
-          spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] }),
+        'initializeSpaceContext',
+        () => getSpaceContext().space.newContentType({ sys: { type: 'ContentType' }, fields: [] }),
       ],
       publishedContentType: [() => null],
       ...widgetResolvers,
@@ -106,9 +105,8 @@ const detail = editorBase(
     resolve: {
       contentType: [
         '$stateParams',
-        'spaceContext',
-        ($stateParams, spaceContext) =>
-          spaceContext.space.getContentType($stateParams.contentTypeId),
+        'initializeSpaceContext',
+        ($stateParams) => getSpaceContext().space.getContentType($stateParams.contentTypeId),
       ],
       publishedContentType: [
         'contentType',
