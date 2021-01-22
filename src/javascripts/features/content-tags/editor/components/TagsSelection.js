@@ -37,7 +37,7 @@ const styles = {
 };
 
 const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = 'Tags' }) => {
-  const { isLoading, hasTags, addTagInCacheData } = useReadTags();
+  const { isLoading, hasTags, addTagInCacheData, reset } = useReadTags();
   const { createTag, createTagData } = useCreateTag();
   const { setSearch, filteredTags, search } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
@@ -51,8 +51,9 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     if (createTagData) {
       addTagInCacheData(createTagData);
       onAdd({ label: createTagData.name, value: createTagData.sys.id });
+      reset();
     }
-  }, [createTagData, addTagInCacheData, onAdd]);
+  }, [createTagData, addTagInCacheData, onAdd, reset]);
 
   const onSelect = useCallback(
     (item) => {

@@ -94,10 +94,10 @@ const launchConfirmModal = (onClose, onSave) => {
   });
 };
 
-const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities }) => {
+const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities, updateTags }) => {
   const { hasChanges, back, forward } = useBulkTaggingProvider();
   const { computeEntities } = useComputeTags();
-  const { setEntities, progressComponent } = useBulkSaveTags(onClose, updateEntities);
+  const { setEntities, progressComponent } = useBulkSaveTags(onClose, updateEntities, updateTags);
   const onKeyDown = useCallback(
     (event) => {
       const isModifierKey = event.metaKey || event.ctrlKey;
@@ -171,9 +171,10 @@ TagsBulkContent.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedEntities: PropTypes.array.isRequired,
   updateEntities: PropTypes.func,
+  updateTags: PropTypes.func,
 };
 
-const TagsBulkAction = (selectedEntities, updateEntities) => {
+const TagsBulkAction = (selectedEntities, updateEntities, updateTags) => {
   ModalLauncher.open(
     ({ isShown, onClose }) => {
       return (
@@ -183,6 +184,7 @@ const TagsBulkAction = (selectedEntities, updateEntities) => {
             onClose={onClose}
             selectedEntities={selectedEntities}
             updateEntities={updateEntities}
+            updateTags={updateTags}
           />
         </BulkTaggingProvider>
       );
