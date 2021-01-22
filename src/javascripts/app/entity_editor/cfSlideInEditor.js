@@ -27,8 +27,8 @@ const baseDetails = {
     '$scope',
     '$state',
     'spaceContext',
-    ($scope, $state, spaceContext) => {
-      $scope.isNewSlideInEditorEnabled = getIsNewSlideInEditorEnabled(spaceContext);
+    async ($scope, $state, spaceContext) => {
+      $scope.isNewSlideInEditorEnabled = await getIsNewSlideInEditorEnabled(spaceContext);
 
       if ($scope.isNewSlideInEditorEnabled) {
         // HACK (temporary) disable routing notification when using the new slide in editor
