@@ -5,6 +5,7 @@ import { SpacePurchaseState } from '../../context';
 import { useSpaceCreation } from '../../hooks/useSpaceCreation';
 import { useTemplateCreation } from '../../hooks/useTemplateCreation';
 import { useNavigationWarn } from '../../hooks/useNavigationWarn';
+import { usePurchaseAddOn } from '../../hooks/usePurchaseAddOn';
 import { ReceiptView } from '../../components/ReceiptView';
 
 export const SpaceCreationReceiptStep = () => {
@@ -17,8 +18,10 @@ export const SpaceCreationReceiptStep = () => {
     newSpace,
     selectedTemplate
   );
+  const { isLoading: isPurchasingAddOn, error: addOnPurchaseError } = usePurchaseAddOn(!!newSpace);
 
-  const pending = isCreatingSpace || isCreatingTemplate;
+  const pending = isCreatingSpace || isCreatingTemplate || isPurchasingAddOn;
+  const hasErrors = !!(spaceCreationError || addOnPurchaseError);
 
   const selectedCompose = selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
 
@@ -34,8 +37,8 @@ export const SpaceCreationReceiptStep = () => {
         spaceName={spaceName}
         spaceId={newSpace?.sys.id}
         buttonAction={buttonAction}
-        buttonLabel={spaceCreationError ? 'Retrigger space creation' : 'Take me to my new space'}
-        hasErrors={!!spaceCreationError}
+        buttonLabel={hasErrors ? 'Retrigger space creation' : 'Take me to my new space'}
+        hasErrors={hasErrors}
         templateCreationError={templateCreationError}
         selectedCompose={selectedCompose}
       />

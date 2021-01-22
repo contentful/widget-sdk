@@ -10,9 +10,12 @@ import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
 
 const upgradePlan = (space, plan, sessionMetadata) => async () => {
+  const endpoint = createSpaceEndpoint(space.sys.id);
+  let result;
+
   try {
-    const endpoint = createSpaceEndpoint(space.sys.id);
-    await changeSpacePlan(endpoint, plan.sys.id);
+    result = await changeSpacePlan(endpoint, plan.sys.id);
+
     trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata, { selectedPlan: plan });
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
@@ -21,6 +24,8 @@ const upgradePlan = (space, plan, sessionMetadata) => async () => {
     });
     throw error;
   }
+
+  return result;
 };
 
 export function useSpaceUpgrade() {
@@ -30,7 +35,10 @@ export function useSpaceUpgrade() {
 
   const sessionMetadata = useSessionMetadata();
 
-  const [{ isLoading: isUpgradingSpace, error: upgradeError }, runSpaceUpgrade] = useAsyncFn(
+  const [
+    { isLoading: isUpgradingSpace, data: upgradedSpace, error: upgradeError },
+    runSpaceUpgrade,
+  ] = useAsyncFn(
     useCallback(upgradePlan(currentSpace, selectedPlan, sessionMetadata), [currentSpace])
   );
 
@@ -52,5 +60,6 @@ export function useSpaceUpgrade() {
     isUpgradingSpace,
     upgradeError,
     buttonAction,
+    upgradedSpace,
   };
 }

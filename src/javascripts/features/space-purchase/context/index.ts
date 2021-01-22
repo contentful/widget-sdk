@@ -5,3 +5,4 @@ export {
   SpacePurchaseTestContextProvider,
   useSpacePurchaseState,
 } from './SpacePurchaseContext';
+export type { State } from './types';
