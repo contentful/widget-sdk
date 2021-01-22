@@ -1,4 +1,5 @@
-import { getSpaceRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from './ResourceService';
 import { resourceHumanNameMap, getResourceLimits } from 'utils/ResourceUtils';
@@ -52,7 +53,7 @@ function getRatePlanChargeFor(ratePlanCharges, resourceType) {
 async function getValidSpacePlans(orgId, spaceId, spaceResources) {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  const spaceRatePlans = await getSpaceRatePlans(endpoint, spaceId);
+  const spaceRatePlans = await getSpaceProductRatePlans(endpoint, spaceId);
 
   const validSpaceRatePlans = spaceRatePlans.filter((plan) => {
     // If a plan has any unavailability reasons, it is not valid

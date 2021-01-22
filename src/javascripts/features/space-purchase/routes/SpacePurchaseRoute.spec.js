@@ -5,7 +5,6 @@ import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
   getBasePlan,
   getProductPlans,
-  getSpaceRatePlans,
   getSingleSpacePlan,
   getSubscriptionPlans,
 } from 'account/pricing/PricingDataProvider';
@@ -24,7 +23,7 @@ import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
-import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import { getAddOnProductRatePlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -112,7 +111,7 @@ describe('SpacePurchaseRoute', () => {
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
     getProductPlans.mockResolvedValue();
-    getSpaceRatePlans.mockResolvedValue(mockSpaceRatePlans);
+    getSpaceProductRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     isOwner.mockReturnValue(true);
@@ -284,7 +283,7 @@ describe('SpacePurchaseRoute', () => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
-    expect(getSpaceRatePlans).toBeCalled();
+    expect(getSpaceProductRatePlans).toBeCalled();
     expect(transformSpaceRatePlans).toBeCalledWith(mockSpaceRatePlans, mockFreeSpaceResource);
   });
 

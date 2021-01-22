@@ -219,31 +219,6 @@ export function getBaseSubscription(endpoint) {
 }
 
 /**
- * Gets collection of space product rate plans.
- *
- * @param {object} endpoint an organization endpoint
- * @returns {Promise<object[]>} a Promise that resolves into an array of space rate plans
- */
-export function getSpaceRatePlans(endpoint, spaceId) {
-  const query = {
-    plan_type: 'space',
-  };
-
-  if (spaceId) {
-    query.space_id = spaceId;
-  }
-
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['product_rate_plans'],
-      query,
-    },
-    alphaHeader
-  ).then((data) => data.items);
-}
-
-/**
  * Get base and all space rate plans available for the organization
  */
 export function getProductPlans(endpoint) {

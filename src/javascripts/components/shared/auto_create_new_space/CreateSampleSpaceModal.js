@@ -7,7 +7,7 @@ import * as logger from 'services/logger';
 import ProgressScreen from 'app/SpaceWizards/shared/ProgressScreen';
 import { createSpaceWithTemplate, FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 
 const styles = {
   modal: css({
@@ -26,7 +26,7 @@ export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail,
       try {
         const organizationEndpoint = createOrganizationEndpoint(organization.sys.id);
         const [plans, template] = await Promise.all([
-          getSpaceRatePlans(organizationEndpoint),
+          getSpaceProductRatePlans(organizationEndpoint),
           loadExampleAppTemplate(),
         ]);
         const freeSpaceRatePlan = plans.find(

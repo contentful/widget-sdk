@@ -14,12 +14,9 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, calculateTotalPrice } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
@@ -65,7 +62,7 @@ const initialFetch = (organization, space) => async () => {
     spaceResourceService.getAll(),
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSubscriptionPlans(orgEndpoint),
-    getSpaceRatePlans(orgEndpoint, space.sys.id),
+    getSpaceProductRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
   ]);
 

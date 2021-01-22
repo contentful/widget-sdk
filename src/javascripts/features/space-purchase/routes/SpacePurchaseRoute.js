@@ -10,7 +10,6 @@ import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import {
   getBasePlan,
-  getSpaceRatePlans,
   getSingleSpacePlan,
   getSubscriptionPlans,
   isSelfServicePlan,
@@ -32,7 +31,7 @@ import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
-import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import { getAddOnProductRatePlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
@@ -69,7 +68,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
-    getSpaceRatePlans(endpoint, spaceId),
+    getSpaceProductRatePlans(endpoint, spaceId),
     getSubscriptionPlans(endpoint, { plan_type: 'space' }),
     createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),

@@ -34,11 +34,8 @@ import {
   sendParnershipEmail,
 } from '../shared/utils';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, calculateTotalPrice } from 'account/pricing/PricingDataProvider';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
@@ -63,7 +60,7 @@ const initialFetch = (organization) => async () => {
 
   const [freeSpaceResource, rawSpaceRatePlans, templates, subscriptionPlans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSpaceRatePlans(endpoint),
+    getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
   ]);

@@ -9,7 +9,7 @@ import {
 import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { createSpaceWithTemplate } from 'app/SpaceWizards/shared/utils';
-import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 import * as logger from 'services/logger';
 
 jest.mock('app/SpaceWizards/shared/utils', () => ({
@@ -142,7 +142,7 @@ function Test({
 
 describe('<CreateSampleSpaceModal />', () => {
   beforeEach(() => {
-    getSpaceRatePlans.mockResolvedValue(mockPlans);
+    getSpaceProductRatePlans.mockResolvedValue(mockPlans);
     getTemplatesList.mockResolvedValue(mockTemplates);
     createSpaceWithTemplate.mockResolvedValue(mockNewSpace);
   });

@@ -18,7 +18,8 @@ import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 
-import { getSpaceRatePlans, isHighDemandEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isHighDemandEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getSpaceProductRatePlans } from 'features/pricing-entities';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 
 import {
@@ -51,7 +52,7 @@ const initialFetch = (organization, basePlan) => async () => {
   const orgResources = createResourceService(organization.sys.id, 'organization');
   const [freeSpaceResource, spaceRatePlans, templates] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSpaceRatePlans(endpoint),
+    getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
   ]);
 
