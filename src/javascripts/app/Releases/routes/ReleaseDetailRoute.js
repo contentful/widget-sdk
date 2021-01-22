@@ -1,10 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import TheLocaleStore from 'services/localeStore';
 import StateRedirect from 'app/common/StateRedirect';
 import { useFeatureFlagAddToRelease } from '../ReleasesFeatureFlag';
 import ReleaseDetailPageContainer from '../ReleaseDetail/ReleaseDetailPageContainer';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
-const ReleaseDetailRoute = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
+const ReleaseDetailRoute = () => {
+  const { currentEnvironment } = useSpaceEnvContext();
+  const pathname = window.location.pathname.split('/');
+  const releasesPathnameIndex = pathname.findIndex((path) => path === 'releases');
+  const releaseId = pathname[releasesPathnameIndex + 1];
+  const isMaster = isMasterEnvironment(currentEnvironment);
+  const defaultLocale = TheLocaleStore.getDefaultLocale();
   const { addToReleaseEnabled, isAddToReleaseLoading } = useFeatureFlagAddToRelease();
 
   if (isAddToReleaseLoading) {
@@ -15,18 +23,12 @@ const ReleaseDetailRoute = ({ releaseId, defaultLocale, isMasterEnvironment }) =
       <ReleaseDetailPageContainer
         releaseId={releaseId}
         defaultLocale={defaultLocale}
-        isMasterEnvironment={isMasterEnvironment}
+        isMasterEnvironment={isMaster}
       />
     );
   } else {
     return <StateRedirect path="spaces.detail.entries.list" />;
   }
-};
-
-ReleaseDetailRoute.propTypes = {
-  defaultLocale: PropTypes.object.isRequired,
-  releaseId: PropTypes.string.isRequired,
-  isMasterEnvironment: PropTypes.bool.isRequired,
 };
 
 export default ReleaseDetailRoute;

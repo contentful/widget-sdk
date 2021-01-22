@@ -1,4 +1,3 @@
-import TheLocaleStore from 'services/localeStore';
 import ReleasesListRoute from './ReleasesListRoute';
 import ReleaseDetailRoute from './ReleaseDetailRoute';
 
@@ -10,15 +9,6 @@ const detail = {
     addToContext: true,
     releaseId: '',
   },
-  mapInjectedToProps: [
-    '$stateParams',
-    'spaceContext',
-    ({ releaseId }, spaceContext) => ({
-      releaseId,
-      isMasterEnvironment: spaceContext.isMasterEnvironment(),
-      defaultLocale: TheLocaleStore.getDefaultLocale(),
-    }),
-  ],
 };
 
 export default {
