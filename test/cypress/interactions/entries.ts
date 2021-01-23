@@ -31,6 +31,7 @@ export enum States {
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
   SEVERAL_REFERENCES_FOR_ENTRY = 'entries/several-references',
+  SEVERAL_REFERENCES_FOR_ENTRY_WITH_VERSION = 'entries/several-references-with-version',
   SEVERAL_REFERENCES_WITH_UNRESOLVED_FOR_ENTRY = 'entries/several-references-with-unresolved',
   NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
   NO_LINKS_TO_DEFAULT_ASSET = 'entries/no-links-to-default-asset',
@@ -326,7 +327,7 @@ export const getEntryReferences = {
   willReturnSeveralWithVersion() {
     cy.addInteraction({
       provider: 'entries',
-      state: States.SEVERAL_REFERENCES_FOR_ENTRY,
+      state: States.SEVERAL_REFERENCES_FOR_ENTRY_WITH_VERSION,
       uponReceiving: `get versioned references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',

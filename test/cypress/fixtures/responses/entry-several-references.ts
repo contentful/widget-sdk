@@ -78,16 +78,16 @@ export const severalEntryReferencesWithVersionResponse = {
       entry({
         sys: {
           id: Matchers.somethingLike(defaultEntryTestIds.testEntryId2),
-          version: 1,
-          publishedCounter: 0,
+          version: 3,
+          publishedCounter: 2,
         },
         fields: {},
       }),
       entry({
         sys: {
           id: Matchers.somethingLike(defaultEntryTestIds.testEntryId3),
-          version: 1,
-          publishedCounter: 0,
+          version: 3,
+          publishedCounter: 2,
         },
         fields: {},
       }),
