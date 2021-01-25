@@ -69,17 +69,15 @@ export const styles = {
   publicSwitch: css({
     marginTop: tokens.spacingL,
   }),
+  checkboxInput: css({
+    marginRight: tokens.spacingXs,
+  }),
   checkbox: css({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'pointer',
-    '& input': css({
-      verticalAlign: 'text-top',
-      marginRight: tokens.spacingXs,
-      cursor: 'pointer',
-    }),
     '& label': css({
       fontWeight: tokens.fontWeightMedium,
       marginRight: tokens.spacingXs,

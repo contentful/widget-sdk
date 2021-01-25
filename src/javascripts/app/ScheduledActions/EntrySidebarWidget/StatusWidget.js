@@ -27,7 +27,6 @@ const styles = {
     lineHeight: '1rem',
     display: 'flex',
     alignItems: 'center',
-    marginBottom: `-${tokens.spacingS}`,
     '> button': {
       height: '2.5rem',
     },
@@ -45,6 +44,15 @@ const styles = {
   }),
   sidebarHeadingStatus: css({
     marginRight: 'auto',
+  }),
+  resetRightBorder: css({
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  }),
+  resetLeftBorder: css({
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderLeftWidth: 0,
   }),
   dropdownItem: css({
     width: tokens.contentWidthFull,
@@ -111,6 +119,8 @@ class StatusWidget extends React.PureComponent {
     const secondaryActionsDisabled =
       every(secondary || [], (action) => action.isDisabled()) && !this.canSchedule();
 
+    const hasPrimaryButton = status !== 'published' && primary;
+
     return (
       <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
@@ -121,7 +131,7 @@ class StatusWidget extends React.PureComponent {
         <div className="entity-sidebar__state-select">
           <StatusBadge status={status} isScheduled={isScheduled} />
           <div className="publish-buttons-row">
-            {status !== 'published' && primary && (
+            {hasPrimaryButton && (
               <Button
                 isFullWidth
                 buttonType="positive"
@@ -135,7 +145,7 @@ class StatusWidget extends React.PureComponent {
                 onClick={() => {
                   primary.execute();
                 }}
-                className="primary-publish-button">
+                className={styles.resetRightBorder}>
                 {primary.label}
               </Button>
             )}
@@ -148,7 +158,7 @@ class StatusWidget extends React.PureComponent {
               }}
               toggleElement={
                 <Button
-                  className="secondary-publish-button"
+                  className={hasPrimaryButton ? styles.resetLeftBorder : ''}
                   isFullWidth
                   disabled={isDisabled || secondaryActionsDisabled}
                   testId="change-state-menu-trigger"

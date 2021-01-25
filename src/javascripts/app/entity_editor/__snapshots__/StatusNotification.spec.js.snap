@@ -22,7 +22,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -34,7 +34,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           Validation error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           The following locales have fields with errors: 
           English (United States)
         </div>
@@ -66,7 +68,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -78,7 +80,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           Validation error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           The following locales have fields with errors: 
           Spanish (Spain) and English (United States)
         </div>
@@ -110,7 +114,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -122,7 +126,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           Validation error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           The following locales have fields with errors: 
           Spanish (Spain), English (United States), and French (France)
         </div>
@@ -154,7 +160,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -166,7 +172,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           Validation error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           The following locales have fields with errors: 
           Spanish (Spain), Arabic (Egypt), English (United States), and 1 other
         </div>
@@ -198,7 +206,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -210,7 +218,9 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           Validation error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           The following locales have fields with errors: 
           Spanish (Spain), Arabic (Egypt), German (Germany), and 2 others
         </div>
@@ -254,7 +264,9 @@ exports[`StatusNotification archived when the entity label is "asset" matches sn
         >
           Archived
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This 
           asset
            is archived and cannot be modified. Please unarchive it to make any changes.
@@ -299,7 +311,9 @@ exports[`StatusNotification archived when the entity label is "entry" matches sn
         >
           Archived
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This 
           entry
            is archived and cannot be modified. Please unarchive it to make any changes.
@@ -332,7 +346,7 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -344,7 +358,9 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         >
           Asset missing
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This asset is missing a file for the default locale
         </div>
       </div>
@@ -375,7 +391,7 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -387,7 +403,9 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         >
           Asset missing
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This asset is missing a file for the default locale
         </div>
       </div>
@@ -418,7 +436,7 @@ exports[`StatusNotification deleted when the entity label is "asset" matches sna
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -430,7 +448,9 @@ exports[`StatusNotification deleted when the entity label is "asset" matches sna
         >
           Deleted
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This 
           asset
            has been deleted and cannot be modified anymore
@@ -463,7 +483,7 @@ exports[`StatusNotification deleted when the entity label is "entry" matches sna
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -475,7 +495,9 @@ exports[`StatusNotification deleted when the entity label is "entry" matches sna
         >
           Deleted
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           This 
           entry
            has been deleted and cannot be modified anymore
@@ -520,7 +542,9 @@ exports[`StatusNotification edit-conflict when the entity label is "asset" match
         >
           There is a new version of this asset
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           A new version of this 
           asset
            was created. To view or edit, refresh your browser or open the 
@@ -585,7 +609,9 @@ exports[`StatusNotification edit-conflict when the entity label is "entry" match
         >
           There is a new version of this entry
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           A new version of this 
           entry
            was created. To view or edit, refresh your browser or open the 
@@ -650,7 +676,9 @@ exports[`StatusNotification editing-not-allowed when the entity label is "asset"
         >
           Read-only
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           You have read-only access to this 
           asset
           . If you need to edit it please contact your administrator.
@@ -695,7 +723,9 @@ exports[`StatusNotification editing-not-allowed when the entity label is "entry"
         >
           Read-only
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           You have read-only access to this 
           entry
           . If you need to edit it please contact your administrator.
@@ -728,7 +758,7 @@ exports[`StatusNotification internal-server-error when the entity label is "asse
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -740,7 +770,9 @@ exports[`StatusNotification internal-server-error when the entity label is "asse
         >
           Server error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           Due to a server error, we could not process this 
           asset
           . The fields are temporarily locked so that you won’t lose any important changes.
@@ -773,7 +805,7 @@ exports[`StatusNotification internal-server-error when the entity label is "entr
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -785,7 +817,9 @@ exports[`StatusNotification internal-server-error when the entity label is "entr
         >
           Server error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           Due to a server error, we could not process this 
           entry
           . The fields are temporarily locked so that you won’t lose any important changes.
@@ -818,7 +852,7 @@ exports[`StatusNotification ot-connection-error when the entity label is "asset"
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -830,7 +864,9 @@ exports[`StatusNotification ot-connection-error when the entity label is "asset"
         >
           Connection error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
         </div>
       </div>
@@ -861,7 +897,7 @@ exports[`StatusNotification ot-connection-error when the entity label is "entry"
             fill="none"
           />
           <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
           />
         </svg>
       </div>
@@ -873,7 +909,9 @@ exports[`StatusNotification ot-connection-error when the entity label is "entry"
         >
           Connection error
         </div>
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
         </div>
       </div>

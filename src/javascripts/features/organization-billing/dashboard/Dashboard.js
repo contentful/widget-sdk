@@ -53,6 +53,13 @@ const styles = {
   noInvoices: css({
     columnSpan: 'all',
   }),
+  tableHeading: css({
+    marginTop: tokens.spacingM,
+    marginLeft: tokens.spacingM,
+  }),
+  invoiceTable: css({
+    borderTop: `1px solid ${tokens.colorElementLight}`,
+  }),
 };
 
 const downloadInvoice = async (organizationId, invoiceId) => {
@@ -167,15 +174,15 @@ export function Dashboard({
               className={cx({
                 [styles.enterpriseOrgInvoiceCard]: !shouldShowBillingDetails,
               })}>
-              <Card>
+              <Card padding="none">
                 <Typography>
-                  <Heading>Invoices</Heading>
+                  <Heading className={styles.tableHeading}>Invoices</Heading>
                   {!loading && orgIsEnterprise && (
                     <Paragraph testId="enterprise-ae">
                       To update your billing details contact your account executive.
                     </Paragraph>
                   )}
-                  <Table>
+                  <Table className={styles.invoiceTable} layout="embedded">
                     <TableHead>
                       <TableRow>
                         <TableCell width="37%">Date</TableCell>

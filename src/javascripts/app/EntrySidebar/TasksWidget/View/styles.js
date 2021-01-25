@@ -80,6 +80,7 @@ export const taskStyles = {
   }),
 
   checkboxWrapper: css({
+    marginTop: '2px',
     padding: tokens.spacingS,
     paddingRight: 0,
   }),

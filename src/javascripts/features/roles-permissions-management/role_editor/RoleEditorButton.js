@@ -1,12 +1,25 @@
 import React from 'react';
 import { update, negate, identity } from 'lodash/fp';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Dropdown,
   DropdownList,
   DropdownListItem,
   Button,
 } from '@contentful/forma-36-react-components';
+
+const styles = {
+  resetRightBorder: css({
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  }),
+  resetLeftBorder: css({
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderLeftWidth: 0,
+  }),
+};
 
 export class RoleEditorButton extends React.Component {
   static propTypes = {
@@ -34,7 +47,7 @@ export class RoleEditorButton extends React.Component {
     return (
       <div className="publish-buttons-row">
         <Button
-          className="primary-publish-button"
+          className={styles.resetRightBorder}
           testId="save-button"
           buttonType="positive"
           isFullWidth
@@ -45,10 +58,9 @@ export class RoleEditorButton extends React.Component {
         </Button>
         {showDropdown && (
           <Dropdown
-            className="secondary-publish-button-wrapper"
             toggleElement={
               <Button
-                className="secondary-publish-button"
+                className={styles.resetLeftBorder}
                 indicateDropdown
                 data-test-id="additional-role-editor"
                 buttonType="positive"

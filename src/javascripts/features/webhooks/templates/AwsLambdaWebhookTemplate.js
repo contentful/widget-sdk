@@ -1,5 +1,6 @@
 import React from 'react';
 import { AwsLogo } from './logos/AwsLogo';
+import { List, ListItem, Paragraph } from '@contentful/forma-36-react-components';
 
 export const AwsLambdaWebhookTemplate = {
   aws: true,
@@ -8,11 +9,11 @@ export const AwsLambdaWebhookTemplate = {
   subtitle: 'Invoke a function',
   logo: <AwsLogo />,
   description: (
-    <ul>
-      <li>Runs a Lambda function</li>
-      <li>Triggered when an entry is published</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Runs a Lambda function</ListItem>
+      <ListItem>Triggered when an entry is published</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -20,26 +21,26 @@ export const AwsLambdaWebhookTemplate = {
       type: 'text',
       title: 'AWS region',
       description: (
-        <p>
+        <Paragraph>
           The AWS region of your function. For example: <code>eu-west-1</code>.
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'functionName',
       type: 'text',
       title: 'Function name',
-      description: <p>The name of a function you want to invoke.</p>,
+      description: <Paragraph>The name of a function you want to invoke.</Paragraph>,
     },
     {
       name: 'accessKeyId',
       type: 'text',
       title: 'AWS Access Key Id',
       description: (
-        <p>
+        <Paragraph>
           Use a keypair with minimal access. The only required policy action is{' '}
           <code>lambda:InvokeFunction</code>.
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -47,9 +48,9 @@ export const AwsLambdaWebhookTemplate = {
       type: 'password',
       title: 'Secret Access Key',
       description: (
-        <p>
+        <Paragraph>
           Secret Access Key of the keypair used above. This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

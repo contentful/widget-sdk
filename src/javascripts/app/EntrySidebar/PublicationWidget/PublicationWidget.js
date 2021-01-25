@@ -22,6 +22,15 @@ const styles = {
     color: tokens.colorTextLight,
     marginTop: tokens.spacingXs,
   }),
+  resetRightBorder: css({
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  }),
+  resetLeftBorder: css({
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderLeftWidth: 0,
+  }),
 };
 
 const ActionRestrictedNote = ({ actionName, reason }) => (
@@ -79,22 +88,25 @@ export default class PublicationWidget extends React.PureComponent {
     const isPrimaryPublishBlocked =
       primary && primary.targetStateId === 'published' && !!publicationBlockedReason;
 
+    const hasPrimaryButton = status !== 'published' && primary;
+
     return (
       <EntrySidebarWidget title="Status">
         <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
-            {status !== 'published' && primary && (
+            {hasPrimaryButton && (
               <Button
                 isFullWidth
                 buttonType="positive"
                 disabled={primary.isDisabled() || isPrimaryPublishBlocked}
                 loading={primary.inProgress()}
+                data-test-type="primary-publishing-button"
                 testId={`change-state-${primary.targetStateId}`}
                 onClick={() => {
                   primary.execute();
                 }}
-                className="primary-publish-button">
+                className={styles.resetRightBorder}>
                 {primary.label}
               </Button>
             )}
@@ -107,7 +119,7 @@ export default class PublicationWidget extends React.PureComponent {
               }}
               toggleElement={
                 <Button
-                  className="secondary-publish-button"
+                  className={hasPrimaryButton ? styles.resetLeftBorder : ''}
                   isFullWidth
                   disabled={secondaryActionsDisabled}
                   testId="change-state-menu-trigger"

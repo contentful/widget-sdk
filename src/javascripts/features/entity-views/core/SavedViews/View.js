@@ -57,8 +57,6 @@ const styles = {
   stateWrapper: css({
     backgroundColor: tokens.colorElementLightest,
     height: '100%',
-    borderRight: `1px solid ${tokens.colorElementDarkest}`,
-    boxShadow: tokens.boxShadowDefault,
   }),
   errorWrapper: css({
     padding: tokens.spacingXs,

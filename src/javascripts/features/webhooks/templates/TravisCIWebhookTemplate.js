@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { TravisLogo } from './logos/TravisCILogo';
 
 export const TravisCIWebhookTemplate = {
@@ -7,28 +8,28 @@ export const TravisCIWebhookTemplate = {
   subtitle: 'Trigger a build',
   logo: <TravisLogo />,
   description: (
-    <ul>
-      <li>Triggers a Travis CI build</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-      <li>
+    <List>
+      <ListItem>Triggers a Travis CI build</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+      <ListItem>
         Passes entity ID, entity type, space ID and environment ID as build-time environment
         variables
-      </li>
-    </ul>
+      </ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'githubOrg',
       type: 'text',
       title: 'GitHub organization or user',
-      description: <p>The GitHub organization or user repository belongs to.</p>,
+      description: <Paragraph>The GitHub organization or user repository belongs to.</Paragraph>,
     },
     {
       name: 'githubRepo',
       type: 'text',
       title: 'GitHub repository',
-      description: <p>The name of the repository you want to build.</p>,
+      description: <Paragraph>The name of the repository you want to build.</Paragraph>,
     },
     {
       name: 'branch',
@@ -36,9 +37,9 @@ export const TravisCIWebhookTemplate = {
       title: 'Branch',
       defaultValue: 'master',
       description: (
-        <p>
+        <Paragraph>
           The source code branch, for example <code>master</code>
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -46,13 +47,13 @@ export const TravisCIWebhookTemplate = {
       type: 'password',
       title: 'Personal API Token',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a href="https://travis-ci.com/profile" target="_blank" rel="noopener noreferrer">
+          <TextLink href="https://travis-ci.com/profile" target="_blank" rel="noopener noreferrer">
             Travis CI Profile Page
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

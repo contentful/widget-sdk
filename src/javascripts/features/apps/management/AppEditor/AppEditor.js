@@ -1,5 +1,6 @@
 import {
   Card,
+  Checkbox,
   CheckboxField,
   FormLabel,
   Icon,
@@ -248,12 +249,10 @@ export function AppEditor({
                         onClick={() => toggleLocation(locationValue)}
                         isDisabled={disabled}>
                         <div className={styles.checkbox}>
-                          <div>
-                            {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
-                            <input
+                          <div className={styles.checkboxInput}>
+                            <Checkbox
                               onChange={() => {}}
                               name={`location-check-${name}`}
-                              type="checkbox"
                               checked={hasLocation(locationValue)}
                             />
                           </div>

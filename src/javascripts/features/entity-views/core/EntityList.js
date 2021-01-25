@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { noop } from 'lodash';
 import { css } from 'emotion';
 import {
+  Checkbox,
   CheckboxField,
   Icon,
   IconButton,
@@ -88,6 +89,7 @@ const styles = {
   }),
   // This z-index is needed to hit the sweet spot between hiding the app icon below the header and the header not overlapping the dropdown menu
   tableHeadCell: css({
+    verticalAlign: 'middle',
     zIndex: 2,
   }),
   cursorPointer: css({
@@ -103,12 +105,11 @@ const styles = {
     zIndex: tokens.zIndexDefault,
   }),
   checkboxCell: css({
-    width: tokens.spacingXl,
+    paddingRight: 0,
     zIndex: tokens.zIndexDefault,
-    verticalAlign: 'top',
-    '& > div': {
-      marginRight: tokens.spacingS,
-    },
+  }),
+  checkboxColumn: css({
+    width: '40px',
   }),
   statusColumn: css({
     width: '17%',
@@ -260,7 +261,7 @@ export const EntityList = ({
         aria-label="Content Search Results"
         cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
         <colgroup>
-          <col />
+          <col className={styles.checkboxColumn} />
           {/* checkbox column */}
           {displayedFields.map(({ colWidth = 'auto' }, i) => (
             <col key={i} className={css({ width: colWidth })} />
@@ -270,12 +271,15 @@ export const EntityList = ({
         </colgroup>
         <TableHead offsetTop={isEdge() ? '0px' : '-24px'} isSticky className={styles.tableHead}>
           <TableRow testId="column-names">
-            <CheckboxCell
-              visible
-              name="select-all"
-              checked={allSelected}
-              onClick={toggleAllSelected}
-            />
+            <TableCell className={styles.checkboxCell} onClick={toggleAllSelected}>
+              <Checkbox
+                id="select-all"
+                testId="select-all"
+                name="select-all"
+                checked={allSelected}
+                className={css({ marginTop: '2px' })}
+              />
+            </TableCell>
             {displayedFields.map(
               ({ id, className, name, onClick, isActiveSort, isSortable, direction }) => {
                 return (
@@ -333,6 +337,7 @@ export const EntityList = ({
                     return (
                       <TableRow
                         tabIndex="0"
+                        selected={entityIsSelected}
                         onKeyDown={onKeyDownEvent(onClick, false)}
                         className={cn(styles.cursorPointer, {
                           [styles.highlight]: entityIsSelected,

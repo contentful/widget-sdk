@@ -110,11 +110,7 @@ Object {
                       width="1em"
                     >
                       <path
-                        d="M7 10l5 5 5-5z"
-                      />
-                      <path
-                        d="M0 0h24v24H0z"
-                        fill="none"
+                        d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
                       />
                     </svg>
                   </div>
@@ -173,11 +169,7 @@ Object {
                       width="1em"
                     >
                       <path
-                        d="M7 10l5 5 5-5z"
-                      />
-                      <path
-                        d="M0 0h24v24H0z"
-                        fill="none"
+                        d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
                       />
                     </svg>
                   </div>
@@ -189,7 +181,7 @@ Object {
               data-test-id="cf-ui-modal-controls"
             >
               <button
-                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+                class="Button__Button___1ZfFj Button__Button--primary___JImeO"
                 data-test-id="continue-button"
                 type="button"
               >
@@ -205,7 +197,7 @@ Object {
                 </span>
               </button>
               <button
-                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--muted___2Wair"
+                class="Button__Button___1ZfFj Button__Button--muted___2Wair"
                 data-test-id="cf-ui-button"
                 type="button"
               >

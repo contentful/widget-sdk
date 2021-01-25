@@ -156,7 +156,7 @@ const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities })
               onClick={onSave}>
               Save
             </Button>
-            <Button buttonType={'naked'} onClick={close}>
+            <Button buttonType="muted" onClick={close}>
               Cancel
             </Button>
           </div>

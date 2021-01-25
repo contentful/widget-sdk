@@ -61,7 +61,10 @@ export const AppsListShell = (props: AppsListShellProps) => (
       title={<Header />}
       icon={<ProductIcon icon="Apps" size="large" />}
       actions={
-        <StateLink path="account.organizations.apps.list" params={{ orgId: props.organizationId }}>
+        <StateLink
+          path="account.organizations.apps.list"
+          component={TextLink}
+          params={{ orgId: props.organizationId }}>
           Manage private apps
         </StateLink>
       }

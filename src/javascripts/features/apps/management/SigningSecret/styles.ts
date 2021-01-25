@@ -29,10 +29,7 @@ export const styles = {
     },
   }),
   button: css({
-    paddingLeft: tokens.spacingXl,
-    paddingRight: tokens.spacingXl,
-    borderRadius: 0,
-    borderLeftWidth: 0,
+    marginLeft: tokens.spacingS,
   }),
   loading: css({
     marginTop: tokens.spacingS,

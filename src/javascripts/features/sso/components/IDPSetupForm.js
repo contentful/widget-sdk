@@ -34,6 +34,10 @@ const styles = {
   }),
   attrField: css({
     width: 'auto',
+    marginRight: tokens.spacingXs,
+    '&:last-child': {
+      marginRight: 0,
+    },
   }),
   helpText: css({
     marginTop: tokens.spacingXs,

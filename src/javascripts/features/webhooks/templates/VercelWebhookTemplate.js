@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { VercelLogo } from './logos/VercelLogo';
 
 export const VercelWebhookTemplate = {
@@ -7,11 +8,11 @@ export const VercelWebhookTemplate = {
   subtitle: 'Deploy a site',
   logo: <VercelLogo />,
   description: (
-    <ul>
-      <li>Deploys a Vercel site</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Deploys a Vercel site</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -19,16 +20,16 @@ export const VercelWebhookTemplate = {
       type: 'text',
       title: 'Vercel deploy hook URL',
       description: (
-        <p>
+        <Paragraph>
           To get the URL refer to{' '}
-          <a
+          <TextLink
             href="https://vercel.com/docs/more/deploy-hooks/"
             target="_blank"
             rel="noopener noreferrer">
             Vercel’s documentation
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
   ],

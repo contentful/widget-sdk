@@ -6,6 +6,9 @@ import {
   Button,
   Icon,
   ValidationMessage,
+  Select,
+  Option,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { values, isString } from 'lodash';
 
@@ -91,12 +94,12 @@ export class WebhookTemplateForm extends React.Component {
             <div className="entity-editor__field-hint">
               AWS Webhook Integration is available on our enterprise-grade Professional and Scale
               platforms (via Committed, annual plans).{' '}
-              <a
+              <TextLink
                 href="https://www.contentful.com/support/?upgrade-pricing=true"
                 target="_blank"
                 rel="noopener noreferrer">
                 Contact us
-              </a>{' '}
+              </TextLink>{' '}
               if you are interested in learning more about this feature.
             </div>
           </div>
@@ -133,20 +136,19 @@ export class WebhookTemplateForm extends React.Component {
                     {field.title}
                   </Label>
                   {templateContentTypes.length > 0 && (
-                    <select
-                      className="cfnext-select-box"
-                      data-test-id="webhook-template-field--content-type-selector"
+                    <Select
+                      testId="webhook-template-field--content-type-selector"
                       id={id}
                       value={this.state.fields[field.name] || ''}
                       disabled={notAvailable}
                       onChange={(e) => this.updateFieldState(field.name, e.target.value)}>
-                      <option value="">Select...</option>
+                      <Option value="">Select...</Option>
                       {templateContentTypes.map((ct) => (
-                        <option key={ct.id} value={ct.id}>
+                        <Option key={ct.id} value={ct.id}>
                           {ct.name}
-                        </option>
+                        </Option>
                       ))}
-                    </select>
+                    </Select>
                   )}
                   {templateContentTypes.length < 1 && (
                     <div className="webhook-template-form__error">

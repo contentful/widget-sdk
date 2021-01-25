@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { SlackLogo } from './logos/SlackLogo';
 
 export const SlackWebhookTemplate = {
@@ -7,34 +8,36 @@ export const SlackWebhookTemplate = {
   subtitle: 'Notify a channel',
   logo: <SlackLogo />,
   description: (
-    <ul>
-      <li>Posts a message to a Slack channel</li>
-      <li>Triggered when entries of a selected content type are published</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Posts a message to a Slack channel</ListItem>
+      <ListItem>Triggered when entries of a selected content type are published</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>,
+      description: (
+        <Paragraph>Select the content type of the entries triggering the webhook.</Paragraph>
+      ),
     },
     {
       name: 'url',
       type: 'text',
       title: 'Incoming Slack webhook URL',
       description: (
-        <p>
+        <Paragraph>
           To get the URL{' '}
-          <a
+          <TextLink
             href="https://api.slack.com/incoming-webhooks"
             target="_blank"
             rel="noopener noreferrer">
             refer to their documentation
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
   ],

@@ -20,7 +20,8 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
       '^(?!.*\\.(js|jsx|mjs|css|json)$)': resolve('tools/testing/file-transform.js'),
     },
     transformIgnorePatterns: [
-      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$',
+      '[/\\\\]underscore[/\\\\].+\\.(js|jsx|mjs)$',
+      '[/\\\\]make-error-cause[/\\\\].+\\.(js|jsx|mjs)$',
       '^.+\\.module\\.(css|sass|scss)$',
     ],
     moduleNameMapper: {

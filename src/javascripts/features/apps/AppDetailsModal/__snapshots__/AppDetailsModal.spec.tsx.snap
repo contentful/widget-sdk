@@ -283,7 +283,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
       class="emotion-19"
     >
       <button
-        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--full-width___3Fmpo"
+        class="Button__Button___1ZfFj Button__Button--primary___JImeO Button__Button--full-width___3Fmpo"
         data-test-id="cf-ui-button"
         type="button"
       >

@@ -24,7 +24,7 @@ const styles = {
     textAlign: 'center',
   }),
   enterprise: css({
-    backgroundColor: tokens.colorBlueLightest,
+    backgroundColor: tokens.colorElementLightest,
     padding: tokens.spacingL,
     display: 'grid',
     gridTemplateRows: '70px auto 1fr auto',

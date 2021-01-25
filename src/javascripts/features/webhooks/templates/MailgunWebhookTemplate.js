@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { MailgunLogo } from './logos/MailgunLogo';
 import { base64safe } from '../base64safe';
 
@@ -8,44 +9,49 @@ export const MailgunWebhookTemplate = {
   subtitle: 'Send an email',
   logo: <MailgunLogo />,
   description: (
-    <ul>
-      <li>Sends a mail with Mailgun</li>
-      <li>Triggered when entries of a selected content type are published</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Sends a mail with Mailgun</ListItem>
+      <ListItem>Triggered when entries of a selected content type are published</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>,
+      description: (
+        <Paragraph>Select the content type of the entries triggering the webhook.</Paragraph>
+      ),
     },
     {
       name: 'domain',
       type: 'text',
       title: 'Domain',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the Mailgun{' '}
-          <a href="https://app.mailgun.com/app/domains" target="_blank" rel="noopener noreferrer">
+          <TextLink
+            href="https://app.mailgun.com/app/domains"
+            target="_blank"
+            rel="noopener noreferrer">
             list of domains
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'from',
       type: 'text',
       title: 'Email address of the sender',
-      description: <p>Notifications will be sent from this email address.</p>,
+      description: <Paragraph>Notifications will be sent from this email address.</Paragraph>,
     },
     {
       name: 'to',
       type: 'text',
       title: 'Email address of the recipient',
-      description: <p>Email address you want to notify.</p>,
+      description: <Paragraph>Email address you want to notify.</Paragraph>,
     },
 
     {
@@ -53,16 +59,16 @@ export const MailgunWebhookTemplate = {
       type: 'password',
       title: 'Private API Key',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a
+          <TextLink
             href="https://app.mailgun.com/app/account/security"
             target="_blank"
             rel="noopener noreferrer">
             Mailgun Dashboard
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

@@ -31,6 +31,7 @@ const styles = {
     borderBottomColor: 'transparent',
     transition: 'border-top-color 0.1s ease-in-out',
   }),
+  tooltip: css({ textTransform: 'none', fontWeight: tokens.fontWeightNormal }),
   dropdownList: css({
     minWidth: 250,
   }),
@@ -40,7 +41,7 @@ const styles = {
     cursor: 'pointer',
   }),
   separator: css({
-    marginTop: tokens.spacingM,
+    marginTop: tokens.spacingXs,
   }),
   appTopBarAction: css({
     display: 'flex',

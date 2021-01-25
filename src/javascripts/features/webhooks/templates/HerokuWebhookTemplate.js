@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { HerokuLogo } from './logos/HerokuLogo';
 
 export const HerokuWebhookTemplate = {
@@ -7,11 +8,11 @@ export const HerokuWebhookTemplate = {
   subtitle: 'Trigger a build',
   logo: <HerokuLogo />,
   description: (
-    <ul>
-      <li>Triggers a Heroku build</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Triggers a Heroku build</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -19,16 +20,16 @@ export const HerokuWebhookTemplate = {
       type: 'text',
       title: 'Heroku application name',
       description: (
-        <p>
+        <Paragraph>
           Application name Heroku generated for your project. See{' '}
-          <a
+          <TextLink
             href="https://devcenter.heroku.com/articles/using-the-cli#app-commands"
             target="_blank"
             rel="noopener noreferrer">
             Heroku CLI manual
-          </a>{' '}
+          </TextLink>{' '}
           for instructions.
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -36,29 +37,29 @@ export const HerokuWebhookTemplate = {
       type: 'password',
       title: 'Heroku API key',
       description: (
-        <p>
+        <Paragraph>
           Check out the{' '}
-          <a
+          <TextLink
             href="https://devcenter.heroku.com/articles/platform-api-quickstart#authentication"
             target="_blank"
             rel="noopener noreferrer">
             Heroku CLI manual
-          </a>{' '}
+          </TextLink>{' '}
           for instructions. This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'githubOrg',
       type: 'text',
       title: 'GitHub organization or user',
-      description: <p>The Github organization or user repository belongs to.</p>,
+      description: <Paragraph>The Github organization or user repository belongs to.</Paragraph>,
     },
     {
       name: 'githubRepo',
       type: 'text',
       title: 'GitHub repository',
-      description: <p>The name of the repository you want to build.</p>,
+      description: <Paragraph>The name of the repository you want to build.</Paragraph>,
     },
     {
       name: 'branch',
@@ -66,9 +67,9 @@ export const HerokuWebhookTemplate = {
       title: 'Branch',
       defaultValue: 'master',
       description: (
-        <p>
+        <Paragraph>
           The source code branch, for example <code>master</code>
-        </p>
+        </Paragraph>
       ),
     },
   ],

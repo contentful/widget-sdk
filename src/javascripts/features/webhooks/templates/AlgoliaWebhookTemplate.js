@@ -1,5 +1,6 @@
 import React from 'react';
 import AlgoliaLogo from 'svg/logo-algolia.svg';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 
 export const AlgoliaWebhookTemplate = {
   id: 'algolia-index-entries',
@@ -7,12 +8,12 @@ export const AlgoliaWebhookTemplate = {
   subtitle: 'Index entries',
   logo: <AlgoliaLogo />,
   description: (
-    <ul>
-      <li>Creates Algolia record when an entry is published for the first time</li>
-      <li>Updates existing Algolia record when an entry is republished</li>
-      <li>Removes Algolia record when an entry is unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Creates Algolia record when an entry is published for the first time</ListItem>
+      <ListItem>Updates existing Algolia record when an entry is republished</ListItem>
+      <ListItem>Removes Algolia record when an entry is unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -20,39 +21,39 @@ export const AlgoliaWebhookTemplate = {
       type: 'text',
       title: 'Algolia Application ID',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a
+          <TextLink
             href="https://www.algolia.com/manage/applications"
             target="_blank"
             rel="noopener noreferrer">
             Algolia Dashboard
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'index',
       type: 'text',
       title: 'Index name',
-      description: <p>Name of an index within the selected application.</p>,
+      description: <Paragraph>Name of an index within the selected application.</Paragraph>,
     },
     {
       name: 'apiKey',
       type: 'password',
       title: 'API Key',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a
+          <TextLink
             href="https://www.algolia.com/manage/applications"
             target="_blank"
             rel="noopener noreferrer">
             Algolia Dashboard
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

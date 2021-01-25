@@ -1,5 +1,6 @@
 import React from 'react';
 import { TwilioLogo } from './logos/TwilioLogo';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { base64safe } from '../base64safe';
 
 export const TwilioWebhookTemplate = {
@@ -8,34 +9,36 @@ export const TwilioWebhookTemplate = {
   subtitle: 'Send a SMS',
   logo: <TwilioLogo />,
   description: (
-    <ul>
-      <li>Sends an SMS with Twilio</li>
-      <li>Triggered when entries of a selected content type are published</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Sends an SMS with Twilio</ListItem>
+      <ListItem>Triggered when entries of a selected content type are published</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>,
+      description: (
+        <Paragraph>Select the content type of the entries triggering the webhook.</Paragraph>
+      ),
     },
     {
       name: 'from',
       type: 'text',
       title: 'Phone number of the sender',
       description: (
-        <p>
+        <Paragraph>
           Use a Twilio{' '}
-          <a
+          <TextLink
             href="https://www.twilio.com/console/sms/getting-started/build"
             target="_blank"
             rel="noopener noreferrer">
             phone number with SMS capability
-          </a>
+          </TextLink>
           . Starts with <code>+</code> followed by digits.
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -43,9 +46,9 @@ export const TwilioWebhookTemplate = {
       type: 'text',
       title: 'Phone number of the receiver',
       description: (
-        <p>
+        <Paragraph>
           The phone number you plan to notify. (<code>+</code> area code)
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -53,13 +56,13 @@ export const TwilioWebhookTemplate = {
       type: 'text',
       title: 'Account SID',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
+          <TextLink href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
             Twilio Dashboard
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -67,13 +70,13 @@ export const TwilioWebhookTemplate = {
       type: 'password',
       title: 'Auth Token',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
+          <TextLink href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
             Twilio Dashboard
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

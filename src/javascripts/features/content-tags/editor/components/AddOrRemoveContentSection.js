@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import { TagsAutocomplete } from './TagsAutocomplete';
 import { useReadTags } from 'features/content-tags/core/hooks';
 import { FormLabel, SkeletonRow, Table, TableBody } from '@contentful/forma-36-react-components';
@@ -13,10 +12,6 @@ import {
   useBulkTaggingProvider,
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
-
-const styles = {
-  addOrRemoveTable: css({ border: 'none' }),
-};
 
 // fetch unique tags with info on how entities they are attached to
 const tagsWithOccurrence = (tags) => {
@@ -142,7 +137,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
         onChange={onChange}
         onQueryChange={onSearch}
       />
-      <Table className={styles.addOrRemoveTable}>
+      <Table layout="embedded">
         <TableBody>
           {!isLoading ? (
             <>

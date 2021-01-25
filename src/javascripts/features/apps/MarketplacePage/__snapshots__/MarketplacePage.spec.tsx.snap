@@ -54,9 +54,16 @@ exports[`MarketplacePage should match snapshot for loading state 1`] = `
         class="Workbench__Workbench__header-actions___mJoSR"
       >
         <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
           href="account.organizations.apps.list?orgId=123"
         >
-          Manage private apps
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Manage private apps
+          </span>
         </a>
       </div>
     </div>
@@ -487,9 +494,16 @@ exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] =
         class="Workbench__Workbench__header-actions___mJoSR"
       >
         <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
           href="account.organizations.apps.list?orgId=123"
         >
-          Manage private apps
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Manage private apps
+          </span>
         </a>
       </div>
     </div>
@@ -546,7 +560,7 @@ exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] =
                     />
                     <div>
                       <button
-                        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-3 Button__Button--primary___JImeO"
+                        class="Button__Button___1ZfFj emotion-3 Button__Button--primary___JImeO"
                         data-test-id="cf-ui-button"
                         type="button"
                       >
@@ -577,7 +591,7 @@ exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] =
                         </span>
                       </button>
                       <button
-                        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-3 Button__Button--muted___2Wair"
+                        class="Button__Button___1ZfFj emotion-3 Button__Button--muted___2Wair"
                         data-test-id="cf-ui-button"
                         type="button"
                       >
@@ -618,7 +632,7 @@ exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] =
                   Apps extend the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build efficient workflows and customize the functionality of the Contentful web app.
                 </p>
                 <a
-                  class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-12 Button__Button--primary___JImeO"
+                  class="Button__Button___1ZfFj emotion-12 Button__Button--primary___JImeO"
                   data-test-id="cf-ui-button"
                   href="https://www.contentful.com/developers/docs/extensibility/app-framework/?utm_source=webapp&utm_medium=apps-cta-button&utm_campaign=in-app-help"
                   rel="noopener noreferrer"
@@ -740,7 +754,6 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
   border-radius: 5px;
   margin-right: 0.75rem;
   background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   padding: 2px;
   width: 35px;
   height: 35px;
@@ -858,9 +871,16 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
         class="Workbench__Workbench__header-actions___mJoSR"
       >
         <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
           href="account.organizations.apps.list?orgId=123"
         >
-          Manage private apps
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Manage private apps
+          </span>
         </a>
       </div>
     </div>
@@ -1017,7 +1037,9 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
               <div
                 class="Note__Note__info___2m_-K"
               >
-                <div>
+                <div
+                  class="Note__Note__content___H1pf-"
+                >
                   <a
                     class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                     data-test-id="cf-ui-text-link"
@@ -1222,7 +1244,6 @@ exports[`MarketplacePage should match snapshot of apps loaded with limited acces
   border-radius: 5px;
   margin-right: 0.75rem;
   background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   padding: 2px;
   width: 35px;
   height: 35px;
@@ -1340,9 +1361,16 @@ exports[`MarketplacePage should match snapshot of apps loaded with limited acces
         class="Workbench__Workbench__header-actions___mJoSR"
       >
         <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
           href="account.organizations.apps.list?orgId=123"
         >
-          Manage private apps
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Manage private apps
+          </span>
         </a>
       </div>
     </div>
@@ -1460,7 +1488,9 @@ exports[`MarketplacePage should match snapshot of apps loaded with limited acces
               <div
                 class="Note__Note__info___2m_-K"
               >
-                <div>
+                <div
+                  class="Note__Note__content___H1pf-"
+                >
                   <a
                     class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                     data-test-id="cf-ui-text-link"

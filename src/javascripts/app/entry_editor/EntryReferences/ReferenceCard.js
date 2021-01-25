@@ -79,6 +79,7 @@ const styles = {
     alignItems: 'center',
   }),
   contentWrapper: css({
+    paddingLeft: tokens.spacing2Xs,
     cursor: 'pointer',
     display: 'flex',
     width: '95%',

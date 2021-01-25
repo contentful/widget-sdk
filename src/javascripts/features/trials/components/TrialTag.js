@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { css } from 'emotion';
 import { Tag, TextLink } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 import { Pluralized } from 'core/components/formatting';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
@@ -22,10 +21,7 @@ import { EVENTS } from '../utils/analyticsTracking';
 
 const styles = {
   tag: css({
-    background: tokens.colorPrimary,
     margin: 'auto',
-    padding: `${tokens.spacing2Xs} ${tokens.spacingXs}`,
-    borderRadius: tokens.spacing2Xs,
   }),
   link: css({
     ':link': {
@@ -96,7 +92,7 @@ export const TrialTag = () => {
   };
 
   return (
-    <Tag className={styles.tag} testId={`${trialType}-trial-tag`}>
+    <Tag className={styles.tag} tagType="primary-filled" testId={`${trialType}-trial-tag`}>
       <TrackTargetedCTAImpression
         impressionType={
           isEnterpriseTrial ? CTA_EVENTS.ENTERPRISE_TRIAL_TAG : CTA_EVENTS.TRIAL_SPACE_TAG

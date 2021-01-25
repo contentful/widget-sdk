@@ -39,7 +39,6 @@ export const styles = {
     icon,
     css({
       backgroundColor: '#fff',
-      boxShadow: tokens.boxShadowDefault,
       padding: '2px',
       width: '35px',
       height: '35px',

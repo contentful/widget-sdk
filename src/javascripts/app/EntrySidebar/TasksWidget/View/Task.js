@@ -15,6 +15,7 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Spinner,
+  Checkbox,
 } from '@contentful/forma-36-react-components';
 import Visible from 'components/shared/Visible';
 import { cx } from 'emotion';
@@ -181,17 +182,11 @@ export default class Task extends React.Component {
     const { isDone, canUpdateStatus } = this.props.viewData;
 
     const checkbox = (
-      // TODO: I don't know why we're not using a Forma <Checkbox />
-      // element here. In the meantime though the linter is yelling at
-      // me so here's this eslint workaround.
-      // eslint-disable-next-line rulesdir/restrict-non-f36-components
-      <input
-        type="checkbox"
-        data-test-id="status-checkbox"
+      <Checkbox
+        testId="status-checkbox"
         checked={isDone}
         onChange={(event) => this.handleStatusChange(event)}
         disabled={!canUpdateStatus}
-        className={canUpdateStatus ? '' : styles.checkboxDisabled}
       />
     );
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import NetlifyLogo from 'svg/logo-netlify.svg';
 
 export const NetlifyWebhookTemplate = {
@@ -7,11 +8,11 @@ export const NetlifyWebhookTemplate = {
   subtitle: 'Deploy a site',
   logo: <NetlifyLogo />,
   description: (
-    <ul>
-      <li>Deploys a Netlify site</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Deploys a Netlify site</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -19,16 +20,16 @@ export const NetlifyWebhookTemplate = {
       type: 'text',
       title: 'Netlify build hook URL',
       description: (
-        <p>
+        <Paragraph>
           To get the URL{' '}
-          <a
+          <TextLink
             href="https://www.netlify.com/docs/webhooks/"
             target="_blank"
             rel="noopener noreferrer">
             refer to their documentation
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
   ],

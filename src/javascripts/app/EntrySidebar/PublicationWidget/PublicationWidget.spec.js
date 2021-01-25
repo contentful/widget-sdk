@@ -54,8 +54,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
   const select = mapValues(TEST_IDS, (testId) => (elem) => elem.queryByTestId(testId));
   select.primaryActionButton = (elem) => {
-    // TODO: Use test-id once we do not need dynamic test id on this button for e2e tests.
-    return elem.container.querySelector('.primary-publish-button');
+    return elem.container.querySelector('[data-test-type="primary-publishing-button"]');
   };
   select.actionByCommand = (elem, { targetStateId }) =>
     elem.queryByTestId(`change-state-${targetStateId}`);

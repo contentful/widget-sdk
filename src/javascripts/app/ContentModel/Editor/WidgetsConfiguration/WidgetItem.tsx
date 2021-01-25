@@ -52,6 +52,7 @@ const styles = {
   item: css({
     border: `1px solid ${tokens.colorElementMid}`,
     backgroundColor: tokens.colorElementLightest,
+    borderRadius: tokens.borderRadiusMedium,
     marginBottom: tokens.spacingM,
     padding: `${tokens.spacingXs} ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingXl}`,
     position: 'relative',
@@ -59,6 +60,7 @@ const styles = {
   draggable: css({
     userSelect: 'none',
     marginBottom: tokens.spacingM,
+    borderRadius: tokens.borderRadiusMedium,
     cursor: 'grab',
     '&:focus': {
       outline: 'none',

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { JiraLogo } from './logos/JiraLogo';
 import { base64safe } from '../base64safe';
 
@@ -8,28 +9,30 @@ export const JiraWebhookTemplate = {
   subtitle: 'Create a task',
   logo: <JiraLogo />,
   description: (
-    <ul>
-      <li>Creates a Jira task</li>
-      <li>Triggered when new entries of a selected content type are created</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Creates a Jira task</ListItem>
+      <ListItem>Triggered when new entries of a selected content type are created</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>,
+      description: (
+        <Paragraph>Select the content type of the entries triggering the webhook.</Paragraph>
+      ),
     },
     {
       name: 'domain',
       type: 'text',
       title: 'Jira instance domain',
       description: (
-        <p>
+        <Paragraph>
           Enter the domain without the protocol. For example: <code>your-domain.atlassian.com</code>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -37,16 +40,16 @@ export const JiraWebhookTemplate = {
       type: 'text',
       title: 'Project ID',
       description: (
-        <p>
+        <Paragraph>
           The parent project ID for the tasks which will be created. You can{' '}
-          <a
+          <TextLink
             href="https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-project-get"
             target="_blank"
             rel="noopener noreferrer">
             list all your projects
-          </a>{' '}
+          </TextLink>{' '}
           with the API.
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -54,17 +57,17 @@ export const JiraWebhookTemplate = {
       type: 'text',
       title: 'Issue type ID',
       description: (
-        <p>
+        <Paragraph>
           The issue type ID for the tasks which will be created. You can list issue types for a
           project{' '}
-          <a
+          <TextLink
             href="https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-project-get"
             target="_blank"
             rel="noopener noreferrer">
             with the <code>expand</code> API parameter.
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -72,14 +75,16 @@ export const JiraWebhookTemplate = {
       type: 'text',
       title: 'Username',
       description: (
-        <p>Tasks will be created using this user. Consider creating a service account.</p>
+        <Paragraph>
+          Tasks will be created using this user. Consider creating a service account.
+        </Paragraph>
       ),
     },
     {
       name: 'password',
       type: 'password',
       title: 'Password',
-      description: <p>This value can’t be revealed once stored.</p>,
+      description: <Paragraph>This value can’t be revealed once stored.</Paragraph>,
     },
   ],
   mapParamsToDefinition: (params, name, templateContentTypes) => {

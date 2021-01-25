@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { GoogleCloudLogo } from './logos/GoogleCloudLogo';
 
 export const GoogleCloudWebhookTemplate = {
@@ -7,11 +8,11 @@ export const GoogleCloudWebhookTemplate = {
   subtitle: 'Run a function',
   logo: <GoogleCloudLogo />,
   description: (
-    <ul>
-      <li>Runs a Google Cloud Function</li>
-      <li>Triggered for all events</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Runs a Google Cloud Function</ListItem>
+      <ListItem>Triggered for all events</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -19,16 +20,16 @@ export const GoogleCloudWebhookTemplate = {
       type: 'text',
       title: 'HTTP trigger URL',
       description: (
-        <p>
+        <Paragraph>
           To get the URL{' '}
-          <a
+          <TextLink
             href="https://cloud.google.com/functions/docs/calling/http"
             target="_blank"
             rel="noopener noreferrer">
             refer to their documentation
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
   ],

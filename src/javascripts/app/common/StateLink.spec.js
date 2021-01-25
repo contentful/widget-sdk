@@ -33,20 +33,20 @@ describe('StateLink', () => {
     );
 
     expect(container).toMatchInlineSnapshot(`
-<div>
-  <a
-    class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
-    data-test-id="cf-ui-button"
-    href="home.list?foo=bar"
-    type="button"
-  >
-    <span
-      class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-      tabindex="-1"
-    />
-  </a>
-</div>
-`);
+      <div>
+        <a
+          class="Button__Button___1ZfFj Button__Button--primary___JImeO"
+          data-test-id="cf-ui-button"
+          href="home.list?foo=bar"
+          type="button"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+            tabindex="-1"
+          />
+        </a>
+      </div>
+    `);
 
     fireEvent.click(container.querySelector('a'));
 

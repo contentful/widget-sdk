@@ -82,7 +82,8 @@ ContentTypeFilterPill.propTypes = {
 
 const focus = {
   outline: 'none',
-  borderColor: tokens.colorBlueMid,
+  borderColor: tokens.colorPrimary,
+  boxShadow: tokens.glowPrimary,
   height: 'auto',
   overflow: 'visible',
 };
@@ -97,8 +98,9 @@ const styles = {
     paddingLeft: tokens.spacingXs,
     display: 'flex',
     background: tokens.colorWhite,
-    border: '1px solid transparent',
-    borderColor: tokens.colorElementMid,
+    border: `1px solid ${tokens.colorElementMid}`,
+    boxShadow: tokens.insetBoxShadowDefault,
+    borderRadius: tokens.borderRadiusMedium,
     height: '38px',
     overflow: 'hidden',
     '&:focus-within, &:focus': focus,
@@ -138,8 +140,12 @@ const styles = {
     fontSize: tokens.fontSizeS,
     color: tokens.colorBlueMid,
     borderLeft: '1px solid transparent',
+    borderTopRightRadius: tokens.borderRadiusMedium,
+    borderBottomRightRadius: tokens.borderRadiusMedium,
     '&:hover': {
       backgroundColor: tokens.colorElementLightest,
+      borderTopRightRadius: tokens.borderRadiusMedium,
+      borderBottomRightRadius: tokens.borderRadiusMedium,
     },
   }),
   filterActive: css({

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { GitlabLogo } from './logos/GitlabLogo';
 
 export const GitlabWebhookTemplate = {
@@ -7,28 +8,28 @@ export const GitlabWebhookTemplate = {
   subtitle: 'Trigger a pipeline',
   logo: <GitlabLogo />,
   description: (
-    <ul>
-      <li>Triggers a Gitlab pipeline</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-      <li>
+    <List>
+      <ListItem>Triggers a Gitlab pipeline</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+      <ListItem>
         Passes entity ID, entity type, space ID and environment ID as build-time environment
         variables
-      </li>
-    </ul>
+      </ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'gitlabOrg',
       type: 'text',
       title: 'GitLab organization or user',
-      description: <p>The GitLab organization or user repository belongs to.</p>,
+      description: <Paragraph>The GitLab organization or user repository belongs to.</Paragraph>,
     },
     {
       name: 'gitlabRepo',
       type: 'text',
       title: 'GitLab repository',
-      description: <p>The name of the repository you want to trigger.</p>,
+      description: <Paragraph>The name of the repository you want to trigger.</Paragraph>,
     },
     {
       name: 'branch',
@@ -36,9 +37,9 @@ export const GitlabWebhookTemplate = {
       title: 'Branch',
       defaultValue: 'master',
       description: (
-        <p>
+        <Paragraph>
           The source code branch, for example <code>master</code>
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -46,16 +47,16 @@ export const GitlabWebhookTemplate = {
       type: 'password',
       title: 'Personal API token',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a
+          <TextLink
             href="https://gitlab.com/profile/personal_access_tokens"
             target="_blank"
             rel="noopener noreferrer">
             Gitlab Settings
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

@@ -142,7 +142,7 @@ Object {
             class="Workbench__Workbench__header-actions___mJoSR"
           >
             <button
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              class="Button__Button___1ZfFj Button__Button--primary___JImeO"
               data-test-id="cf-ui-button"
               type="button"
             >
@@ -172,7 +172,7 @@ Object {
               <table
                 cellpadding="0"
                 cellspacing="0"
-                class="Table__Table___3vKIR"
+                class="Table__Table___3vKIR Table__Table--inline___2jv97"
                 data-test-id="cf-ui-table"
               >
                 <thead
@@ -913,7 +913,7 @@ Object {
           class="Workbench__Workbench__header-actions___mJoSR"
         >
           <button
-            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+            class="Button__Button___1ZfFj Button__Button--primary___JImeO"
             data-test-id="cf-ui-button"
             type="button"
           >
@@ -943,7 +943,7 @@ Object {
             <table
               cellpadding="0"
               cellspacing="0"
-              class="Table__Table___3vKIR"
+              class="Table__Table___3vKIR Table__Table--inline___2jv97"
               data-test-id="cf-ui-table"
             >
               <thead
@@ -1697,7 +1697,7 @@ Object {
               </p>
             </div>
             <button
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--disabled___1E20M"
+              class="Button__Button___1ZfFj Button__Button--primary___JImeO Button__Button--disabled___1E20M"
               data-test-id="cf-ui-button"
               disabled=""
               type="button"
@@ -1740,7 +1740,9 @@ Object {
             <div
               class="Note__Note__info___2m_-K"
             >
-              <div>
+              <div
+                class="Note__Note__content___H1pf-"
+              >
                 To start building apps for this organization, ask your admin to upgrade your account to the
                  
                 <a
@@ -1859,7 +1861,7 @@ Object {
             </p>
           </div>
           <button
-            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--disabled___1E20M"
+            class="Button__Button___1ZfFj Button__Button--primary___JImeO Button__Button--disabled___1E20M"
             data-test-id="cf-ui-button"
             disabled=""
             type="button"
@@ -1902,7 +1904,9 @@ Object {
           <div
             class="Note__Note__info___2m_-K"
           >
-            <div>
+            <div
+              class="Note__Note__content___H1pf-"
+            >
               To start building apps for this organization, ask your admin to upgrade your account to the
                
               <a
@@ -2078,7 +2082,7 @@ Object {
               </p>
             </div>
             <button
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              class="Button__Button___1ZfFj Button__Button--primary___JImeO"
               data-test-id="cf-ui-button"
               type="button"
             >
@@ -2192,7 +2196,7 @@ Object {
             </p>
           </div>
           <button
-            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+            class="Button__Button___1ZfFj Button__Button--primary___JImeO"
             data-test-id="cf-ui-button"
             type="button"
           >

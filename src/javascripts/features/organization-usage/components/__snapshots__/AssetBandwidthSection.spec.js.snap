@@ -97,7 +97,9 @@ exports[`AssetBandwidthSection should render 1`] = `
       <div
         class="Note__Note__info___2m_-K"
       >
-        <div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
           Please note that asset bandwidth is calculated daily with a 48 hour delay.
         </div>
       </div>

@@ -25,11 +25,11 @@ export const styles = {
     },
   }),
   mainSelect: css({
-    height: '30px',
+    height: tokens.spacingXl,
     justifyContent: 'center',
     overflow: 'hidden',
     position: 'relative',
-    width: '30px',
+    width: tokens.spacingXl,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   }),
@@ -41,6 +41,7 @@ export const styles = {
   dropdownButton: css({
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
+    border: 'none',
   }),
   dropdownList: css({
     padding: `${tokens.spacingXs} ${tokens.spacing2Xs}`,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { JiraLogo } from './logos/JiraLogo';
+import { List, ListItem, Paragraph } from '@contentful/forma-36-react-components';
 import { base64safe } from '../base64safe';
 
 export const BitbucketWebhookTemplate = {
@@ -8,24 +9,24 @@ export const BitbucketWebhookTemplate = {
   subtitle: 'Trigger a pipeline',
   logo: <JiraLogo />,
   description: (
-    <ul>
-      <li>Triggers a Bitbucket pipeline</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Triggers a Bitbucket pipeline</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'bbOrg',
       type: 'text',
       title: 'Bitbucket organization or user',
-      description: <p>The Bitbucket organization or user repository belongs to.</p>,
+      description: <Paragraph>The Bitbucket organization or user repository belongs to.</Paragraph>,
     },
     {
       name: 'bbRepo',
       type: 'text',
       title: 'Bitbucket repository',
-      description: <p>The name of the repository you want to trigger.</p>,
+      description: <Paragraph>The name of the repository you want to trigger.</Paragraph>,
     },
     {
       name: 'branch',
@@ -33,9 +34,9 @@ export const BitbucketWebhookTemplate = {
       title: 'Branch',
       defaultValue: 'master',
       description: (
-        <p>
+        <Paragraph>
           The source code branch, for example <code>master</code>
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -43,14 +44,16 @@ export const BitbucketWebhookTemplate = {
       type: 'text',
       title: 'Username',
       description: (
-        <p>Pipeline will be triggered using this user. Consider creating a service account.</p>
+        <Paragraph>
+          Pipeline will be triggered using this user. Consider creating a service account.
+        </Paragraph>
       ),
     },
     {
       name: 'password',
       type: 'password',
       title: 'Password',
-      description: <p>This value can’t be revealed once stored.</p>,
+      description: <Paragraph>This value can’t be revealed once stored.</Paragraph>,
     },
   ],
   mapParamsToDefinition: (params, name) => {

@@ -9,12 +9,11 @@ const styles = {
   item: css({
     backgroundColor: tokens.colorWhite,
     border: `1px solid ${tokens.colorElementMid}`,
+    borderRadius: tokens.borderRadiusMedium,
     height: `65px`,
     display: 'flex',
     padding: `${tokens.spacingXs} ${tokens.spacingM}`,
-  }),
-  notFirstItem: css({
-    borderTop: 'none',
+    marginBottom: tokens.spacingM,
   }),
   widgetHeader: css({
     display: 'flex',
@@ -53,18 +52,13 @@ export default function AvailableWidget({
   name,
   onClick,
   widgetNamespace,
-  index,
   availabilityStatus,
   location,
 }: AvailableWidgetProps) {
   const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
   return (
-    <div
-      className={cx(styles.item, {
-        [styles.notFirstItem]: index !== 0,
-      })}
-      data-test-id="available-widget">
+    <div className={cx(styles.item)} data-test-id="available-widget">
       <div className={styles.info}>
         <Paragraph className={styles.widgetHeader} element="h4">
           <div className={styles.widgetName}>{name}</div>{' '}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { CircleCILogo } from './logos/CircleCILogo';
 import { base64safe } from '../base64safe';
 
@@ -8,28 +9,28 @@ export const CircleCIWebhookTemplate = {
   subtitle: 'Trigger a build',
   logo: <CircleCILogo />,
   description: (
-    <ul>
-      <li>Triggers a CircleCI build</li>
-      <li>Triggered when an entry or asset is published or unpublished</li>
-      <li>Scoped to events in the master environment</li>
-      <li>
+    <List>
+      <ListItem>Triggers a CircleCI build</ListItem>
+      <ListItem>Triggered when an entry or asset is published or unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+      <ListItem>
         Passes entity ID, entity type, space ID and environment ID as build-time environment
         variables
-      </li>
-    </ul>
+      </ListItem>
+    </List>
   ),
   fields: [
     {
       name: 'githubOrg',
       type: 'text',
       title: 'GitHub organization or user',
-      description: <p>The GitHub organization or user repository belongs to.</p>,
+      description: <Paragraph>The GitHub organization or user repository belongs to.</Paragraph>,
     },
     {
       name: 'githubRepo',
       type: 'text',
       title: 'GitHub repository',
-      description: <p>The name of the repository you want to build.</p>,
+      description: <Paragraph>The name of the repository you want to build.</Paragraph>,
     },
     {
       name: 'branch',
@@ -37,9 +38,9 @@ export const CircleCIWebhookTemplate = {
       title: 'Branch',
       defaultValue: 'master',
       description: (
-        <p>
+        <Paragraph>
           The source code branch, for example <code>master</code>
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -47,13 +48,16 @@ export const CircleCIWebhookTemplate = {
       type: 'password',
       title: 'Personal API Token',
       description: (
-        <p>
+        <Paragraph>
           Can be found on the{' '}
-          <a href="https://circleci.com/account/api" target="_blank" rel="noopener noreferrer">
+          <TextLink
+            href="https://circleci.com/account/api"
+            target="_blank"
+            rel="noopener noreferrer">
             CircleCI Dashboard
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { PubNubLogo } from './logos/PubNubLogo';
 
 export const PubNubWebhookTemplate = {
@@ -7,11 +8,11 @@ export const PubNubWebhookTemplate = {
   subtitle: 'Publish a message',
   logo: <PubNubLogo />,
   description: (
-    <ul>
-      <li>Publishes a message to a PubNub channel</li>
-      <li>Triggered for all events</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>Publishes a message to a PubNub channel</ListItem>
+      <ListItem>Triggered for all events</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -19,36 +20,38 @@ export const PubNubWebhookTemplate = {
       type: 'text',
       title: 'Publish Key',
       description: (
-        <p>
+        <Paragraph>
           Can be found{' '}
-          <a href="https://admin.pubnub.com" target="_blank" rel="noopener noreferrer">
+          <TextLink href="https://admin.pubnub.com" target="_blank" rel="noopener noreferrer">
             in the PubNub Dashboard
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'subKey',
       type: 'text',
       title: 'Subscribe Key',
-      description: <p>The Subscribe Key from the same key pair as the Publish Key above.</p>,
+      description: (
+        <Paragraph>The Subscribe Key from the same key pair as the Publish Key above.</Paragraph>
+      ),
     },
     {
       name: 'channel',
       type: 'text',
       title: 'Channel name',
       description: (
-        <p>
+        <Paragraph>
           Channel to publish messages to.{' '}
-          <a
+          <TextLink
             href="https://www.pubnub.com/developers/tech/key-concepts/publish-subscribe/channels/"
             target="_blank"
             rel="noopener noreferrer">
             Check documentation
-          </a>{' '}
+          </TextLink>{' '}
           for valid channel names.
-        </p>
+        </Paragraph>
       ),
     },
   ],

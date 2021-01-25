@@ -1,11 +1,16 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { CheckboxField, ValidationMessage, TextField } from '@contentful/forma-36-react-components';
+import {
+  CheckboxField,
+  Grid,
+  GridItem,
+  ValidationMessage,
+  TextField,
+} from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
-import Datepicker from '@contentful/forma-36-react-datepicker';
-import Timepicker from '@contentful/forma-36-react-timepicker';
+import { Datepicker } from '@contentful/forma-36-react-datepicker';
+import { Timepicker } from '@contentful/forma-36-react-timepicker';
 import { UTCTimeZonePicker } from './UTCTimeZonePicker';
-import { cx } from 'emotion';
 import { styles } from './styles';
 import moment from 'moment';
 import { ValidationFieldType } from 'features/content-model-editor/field-dialog/utils/PropTypes';
@@ -58,40 +63,48 @@ const ValidationRow = ({ date: fullDate, onDateUpdate, checkboxLabel, id, onBlur
   };
 
   return (
-    <div className={cx(styles.validationRow, styles.flexAlignStart)}>
-      <CheckboxField
-        className={styles.checkbox}
-        labelText={checkboxLabel}
-        name={`${id}-value-checkbox`}
-        checked={isChecked}
-        onChange={() => setChecked(!isChecked)}
-        labelIsLight={true}
-        id={`${id}-value-checkbox`}
-      />
-      <Datepicker
-        labelText="Date"
-        id={`${id}-data-picker`}
-        disabled={!isChecked}
-        value={date}
-        dateFormat="yyyy-MM-dd"
-        onChange={onDateChange}
-        onBlur={onBlur}
-      />
-      <Timepicker
-        labelText="Time"
-        id={`${id}-time-picker`}
-        disabled={!isChecked}
-        date={date}
-        value={time}
-        onChange={onTimeChange}
-        onBlur={onBlur}
-      />
-      <UTCTimeZonePicker
-        value={timeZone}
-        disabled={!isChecked}
-        onChange={(value) => onTimeZoneChange(value)}
-      />
-    </div>
+    <Grid className={styles.validationRow} columns="repeat(4, 1fr)">
+      <GridItem className={styles.validationRowCheckboxCell}>
+        <CheckboxField
+          className={styles.checkbox}
+          labelText={checkboxLabel}
+          name={`${id}-value-checkbox`}
+          checked={isChecked}
+          onChange={() => setChecked(!isChecked)}
+          labelIsLight={true}
+          id={`${id}-value-checkbox`}
+        />
+      </GridItem>
+      <GridItem>
+        <Datepicker
+          labelText="Date"
+          id={`${id}-data-picker`}
+          disabled={!isChecked}
+          value={date}
+          dateFormat="yyyy-MM-dd"
+          onChange={onDateChange}
+          onBlur={onBlur}
+        />
+      </GridItem>
+      <GridItem>
+        <Timepicker
+          labelText="Time"
+          id={`${id}-time-picker`}
+          disabled={!isChecked}
+          date={date}
+          value={time}
+          onChange={onTimeChange}
+          onBlur={onBlur}
+        />
+      </GridItem>
+      <GridItem>
+        <UTCTimeZonePicker
+          value={timeZone}
+          disabled={!isChecked}
+          onChange={(value) => onTimeZoneChange(value)}
+        />
+      </GridItem>
+    </Grid>
   );
 };
 

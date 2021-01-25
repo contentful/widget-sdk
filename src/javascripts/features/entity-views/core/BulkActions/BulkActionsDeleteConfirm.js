@@ -2,16 +2,16 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { BulkActionLink } from './BulkActionsLink';
+import { BulkActionsButton } from './BulkActionsButton';
 
 export const BulkActionDeleteConfirm = ({ entityType, itemsCount, visible, fireAction }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <Fragment>
-      <BulkActionLink
+      <BulkActionsButton
         label="Delete"
-        linkType="negative"
+        buttonType="negative"
         onClick={() => setModalVisible(true)}
         visible={visible}
       />

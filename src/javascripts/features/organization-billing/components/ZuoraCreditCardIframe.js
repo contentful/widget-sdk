@@ -32,6 +32,8 @@ const styles = {
   }),
   container: css({
     height: '385px',
+    maxWidth: '600px',
+    margin: '0 auto',
     position: 'relative',
   }),
   loadingContainer: css({
@@ -41,10 +43,10 @@ const styles = {
   cancelButton: css({
     position: 'absolute',
     bottom: '0',
-    right: '75px',
+    right: '82px',
   }),
   cancelButtonLoading: css({
-    right: '125px',
+    right: '121px',
   }),
   hide: css({
     display: 'none',
@@ -241,7 +243,7 @@ function IframeLoadingState() {
       </div>
       <div className={cx(styles.gridItem, styles.submitButton, styles.gridFullWidth)}>
         <Button disabled loading>
-          Loading...
+          Loading
         </Button>
       </div>
     </div>

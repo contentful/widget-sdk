@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@contentful/forma-36-react-components';
 import { WebhookTemplates } from './templates';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
@@ -13,18 +14,22 @@ export const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
           <small>{template.subtitle}</small>
         </div>
         <div className="webhook-template-item__action">
-          <button
-            className="btn-link"
+          <Button
+            size="small"
+            buttonType="muted"
             onClick={() => openTemplateDialog(template.id, 'webhook-view')}>
             Add
-          </button>
+          </Button>
         </div>
       </div>
     ))}
     <div className="webhook-template-item webhook-template-item__see-all">
-      <button className="btn-link" onClick={() => openTemplateDialog(null, 'webhook-view')}>
+      <Button
+        size="small"
+        buttonType="muted"
+        onClick={() => openTemplateDialog(null, 'webhook-view')}>
         See all {WebhookTemplates.length} templates
-      </button>
+      </Button>
     </div>
   </WorkbenchSidebarItem>
 );

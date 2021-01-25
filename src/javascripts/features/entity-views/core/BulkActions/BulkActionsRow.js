@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { noop } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
-import { Spinner, TableCell, TableRow } from '@contentful/forma-36-react-components';
+import { Spinner, TableCell, TableRow, Flex } from '@contentful/forma-36-react-components';
 import { canUserReadEntities } from 'access_control/AccessChecker';
-import { BulkActionLink } from './BulkActionsLink';
+import { BulkActionsButton } from './BulkActionsButton';
 import { PluralizeEntityMessage } from '../PluralizeEntityMessage';
 import { BulkActionDeleteConfirm } from './BulkActionsDeleteConfirm';
 import { TagsBulkAction, useTagsFeatureEnabled } from 'features/content-tags';
@@ -120,58 +120,36 @@ export const BulkActionsRow = ({
     if (noActionAvailable)
       return <span data-test-id="no-actions-message">No bulk action available</span>;
     return (
-      <Fragment>
-        <BulkActionLink
-          label="Duplicate"
-          linkType="secondary"
-          onClick={fireAction}
-          visible={showDuplicate}
-        />
+      <Flex marginTop="spacingXs">
+        <BulkActionsButton label="Duplicate" onClick={fireAction} visible={showDuplicate} />
         <BulkActionDeleteConfirm
           itemsCount={selectedEntities.length}
           fireAction={fireAction}
           entityType={entityType}
           visible={showDelete}
         />
-        <BulkActionLink
-          label="Archive"
-          linkType="secondary"
-          onClick={fireAction}
-          visible={showArchive}
-        />
-        <BulkActionLink
-          label="Unarchive"
-          linkType="secondary"
-          onClick={fireAction}
-          visible={showUnarchive}
-        />
-        <BulkActionLink
-          label="Unpublish"
-          linkType="secondary"
-          onClick={fireAction}
-          visible={showUnpublish}
-        />
-        <BulkActionLink
+        <BulkActionsButton label="Archive" onClick={fireAction} visible={showArchive} />
+        <BulkActionsButton label="Unarchive" onClick={fireAction} visible={showUnarchive} />
+        <BulkActionsButton label="Unpublish" onClick={fireAction} visible={showUnpublish} />
+        <BulkActionsButton
           label={getPublishLabel(selectedEntities)}
-          linkType="positive"
+          buttonType="positive"
           onClick={fireAction}
           visible={showPublish}
         />
         {isReleaseFeatureEnabled ? (
-          <BulkActionLink
+          <BulkActionsButton
             label="Add to release"
-            linkType="secondary"
             onClick={() => openReleaseDialog(true)}
             visible={canAddToRelease}
           />
         ) : null}
-        <BulkActionLink
+        <BulkActionsButton
           label="Add or remove tags"
-          linkType="secondary"
           onClick={() => TagsBulkAction(selectedEntities, updateEntities)}
           visible={tagsEnabled}
         />
-      </Fragment>
+      </Flex>
     );
   };
 

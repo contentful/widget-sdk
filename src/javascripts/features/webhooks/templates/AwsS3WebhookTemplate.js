@@ -1,5 +1,6 @@
 import React from 'react';
 import { AwsLogo } from './logos/AwsLogo';
+import { List, ListItem } from '@contentful/forma-36-react-components';
 
 export const AwsS3WebhookTemplate = {
   aws: true,
@@ -8,15 +9,15 @@ export const AwsS3WebhookTemplate = {
   subtitle: 'Store entries',
   logo: <AwsLogo />,
   description: (
-    <ul>
-      <li>Stores entries in an S3 bucket every time they are modified</li>
-      <li>Scoped to events in the master environment</li>
-      <li>
+    <List>
+      <ListItem>Stores entries in an S3 bucket every time they are modified</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+      <ListItem>
         Object key is the entry ID and with <code>.json</code> suffix
-      </li>
-      <li>Object contains JSON data with all topic, user ID and the entity itself</li>
-      <li>Should be used with a versioned bucket</li>
-    </ul>
+      </ListItem>
+      <ListItem>Object contains JSON data with all topic, user ID and the entity itself</ListItem>
+      <ListItem>Should be used with a versioned bucket</ListItem>
+    </List>
   ),
   fields: [
     {

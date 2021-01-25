@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
 import { css, cx } from 'emotion';
-import { Button, Tooltip, RadioButton } from '@contentful/forma-36-react-components';
+import { Button, Tooltip, RadioButton, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
@@ -11,20 +11,11 @@ import EntrySidebarWidget from '../EntrySidebarWidget';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 const styles = {
-  table: css({
-    width: '100%',
-    lineHeight: '1.5',
-    margin: `0 0 ${tokens.spacingM}`,
-  }),
-  cell: css({
-    padding: `${tokens.spacingXs} 0`,
-  }),
-  dateCell: css({
-    padding: `${tokens.spacingXs} 0`,
-    width: '100%',
+  list: css({
+    listStyleType: 'none',
+    marginBottom: tokens.spacingM,
   }),
   radio: css({
-    verticalAlign: 'baseline',
     marginRight: tokens.spacingXs,
   }),
 };
@@ -55,6 +46,21 @@ CompareButton.propTypes = {
   selectedId: PropTypes.string,
 };
 
+const ToolTipContent = ({ version }) =>
+  version?.sys.createdBy && (
+    <React.Fragment>
+      Edited by{' '}
+      <ActionPerformerName
+        link={version?.sys.createdBy}
+        formatName={(name) => `${name === 'Me' ? name?.toLowerCase() : name}`}
+      />
+    </React.Fragment>
+  );
+
+ToolTipContent.propTypes = {
+  version: PropTypes.shape({}),
+};
+
 export default class VersionsWidget extends Component {
   static propTypes = {
     versions: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
@@ -69,56 +75,37 @@ export default class VersionsWidget extends Component {
 
   renderList(versions) {
     return versions.map((version) => (
-      <tr key={version.sys.id}>
-        <td className={styles.cell}>
-          <RadioButton
-            labelText="Select version"
-            type="radio"
-            id={`selected-${version.sys.id}`}
-            className={styles.radio}
-            disabled={version.sys.isCurrent}
-            value={version.sys.id}
-            name="selected"
-            aria-disabled={version.sys.isCurrent}
-            role="option"
-            onChange={(e) => {
-              this.setState({ selectedId: e.currentTarget.value });
-            }}
-          />
-        </td>
-        <td className={styles.dateCell}>
-          <Tooltip
-            content={
-              version.sys.createdBy && (
-                <React.Fragment>
-                  Edited by{' '}
-                  <ActionPerformerName
-                    link={version.sys.createdBy}
-                    formatName={(name) => `${name === 'Me' ? name.toLowerCase() : name}`}
-                  />
-                </React.Fragment>
-              )
-            }>
+      <Tooltip
+        containerElement="li"
+        place="auto-start"
+        key={version.sys.id}
+        content={<ToolTipContent version={version} />}>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Flex
+            htmlTag="label"
+            paddingTop="spacingXs"
+            paddingBottom="spacingXs"
+            alignItems="center">
+            <RadioButton
+              type="radio"
+              id={`selected-${version.sys.id}`}
+              className={styles.radio}
+              disabled={version.sys.isCurrent}
+              value={version.sys.id}
+              name="selected"
+              aria-disabled={version.sys.isCurrent}
+              role="option"
+              onChange={(e) => {
+                this.setState({ selectedId: e.currentTarget.value });
+              }}
+            />
             <RelativeDateTime value={version.sys.createdAt} className="radio-editor__label" />
-          </Tooltip>
-        </td>
-        <td className={styles.cell}>
-          <Tooltip
-            content={
-              version.sys.createdBy && (
-                <React.Fragment>
-                  Edited by{' '}
-                  <ActionPerformerName
-                    link={version.sys.createdBy}
-                    formatName={(name) => `${name === 'Me' ? name.toLowerCase() : name}`}
-                  />
-                </React.Fragment>
-              )
-            }>
+          </Flex>
+          <div>
             <SnapshotStatus {...version.sys} />
-          </Tooltip>
-        </td>
-      </tr>
+          </div>
+        </Flex>
+      </Tooltip>
     ));
   }
 
@@ -136,9 +123,9 @@ export default class VersionsWidget extends Component {
           )}
           {isLoaded && versions.length > 0 && (
             <React.Fragment>
-              <table className={cx('entity-sidebar__help-text', styles.table)} role="listbox">
-                <tbody>{this.renderList(versions)}</tbody>
-              </table>
+              <ul className={cx('entity-sidebar__help-text', styles.list)}>
+                {this.renderList(versions)}
+              </ul>
               <CompareButton selectedId={this.state.selectedId} entryId={this.props.entryId} />
               {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
               <p className="entity-sidebar__help-text" role="note" aria-multiselectable="false">

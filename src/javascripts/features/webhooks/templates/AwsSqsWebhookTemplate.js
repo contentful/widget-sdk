@@ -1,5 +1,6 @@
 import React from 'react';
 import { AwsLogo } from './logos/AwsLogo';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 
 export const AwsSqsWebhookTemplate = {
   aws: true,
@@ -8,12 +9,12 @@ export const AwsSqsWebhookTemplate = {
   subtitle: 'Send a message',
   logo: <AwsLogo />,
   description: (
-    <ul>
-      <li>Sends a message to an AWS SQS queue</li>
-      <li>Triggered for all entry actions</li>
-      <li>Scoped to events in the master environment</li>
-      <li>Message contains the action, entry ID and user ID</li>
-    </ul>
+    <List>
+      <ListItem>Sends a message to an AWS SQS queue</ListItem>
+      <ListItem>Triggered for all entry actions</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+      <ListItem>Message contains the action, entry ID and user ID</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -21,16 +22,16 @@ export const AwsSqsWebhookTemplate = {
       type: 'text',
       title: 'AWS Account Id',
       description: (
-        <p>
+        <Paragraph>
           Can be found in the{' '}
-          <a
+          <TextLink
             href="https://console.aws.amazon.com/billing/home?#/account"
             target="_blank"
             rel="noopener noreferrer">
             AWS Console
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -38,26 +39,26 @@ export const AwsSqsWebhookTemplate = {
       type: 'text',
       title: 'AWS region',
       description: (
-        <p>
+        <Paragraph>
           The AWS region of your queue. For example: <code>eu-west-1</code>.
-        </p>
+        </Paragraph>
       ),
     },
     {
       name: 'queue',
       type: 'text',
       title: 'Queue',
-      description: <p>The name of a queue you want to send your messages to.</p>,
+      description: <Paragraph>The name of a queue you want to send your messages to.</Paragraph>,
     },
     {
       name: 'accessKeyId',
       type: 'text',
       title: 'AWS Access Key Id',
       description: (
-        <p>
+        <Paragraph>
           Use a keypair with minimal access. The only required policy action is{' '}
           <code>sqs:SendMessage</code>
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -65,9 +66,9 @@ export const AwsSqsWebhookTemplate = {
       type: 'password',
       title: 'Secret Access Key',
       description: (
-        <p>
+        <Paragraph>
           Secret Access Key of the keypair used above. This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

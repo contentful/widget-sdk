@@ -3,14 +3,13 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   validationRow: css({
-    maxWidth: '50em',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
     marginLeft: tokens.spacingL,
-    '> div': {
-      marginRight: tokens.spacingS,
-    },
+    maxWidth: '50em',
+  }),
+  validationRowCheckboxCell: css({
+    alignSelf: 'center',
+    label: { whiteSpace: 'nowrap' },
+    paddingTop: tokens.spacingM,
   }),
   marginLeftL: css({
     marginLeft: tokens.spacingL,
@@ -74,9 +73,6 @@ const styles = {
     marginBottom: tokens.spacingS,
   }),
   checkbox: css({
-    minWidth: tokens.spacing4Xl,
-    alignSelf: 'center',
-    marginTop: tokens.spacingM,
     label: { whiteSpace: 'nowrap' },
   }),
   minWidth6rem: css({

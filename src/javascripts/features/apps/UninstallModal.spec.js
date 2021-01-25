@@ -41,13 +41,13 @@ describe('UninstallModal', () => {
   it('should pass reasons for uninstalling if some were checked', () => {
     const onConfirm = jest.fn();
 
-    const { getByTestId } = render(
+    const { getByTestId, getByLabelText } = render(
       <UninstallModal isShown actionList={actionList} onConfirm={onConfirm} onClose={() => {}} />
     );
 
     // access the checkboxes and click two
-    fireEvent.click(getByTestId('reason-0').children[0]);
-    fireEvent.click(getByTestId('reason-2').children[0]);
+    fireEvent.click(getByLabelText('Does not do what I expected'));
+    fireEvent.click(getByLabelText('App is not performing well'));
 
     getByTestId('uninstall-button').click();
 
@@ -60,14 +60,14 @@ describe('UninstallModal', () => {
   it('should pass reasons and a custom reason if filled in', () => {
     const onConfirm = jest.fn();
 
-    const { getByTestId } = render(
+    const { getByTestId, getByLabelText } = render(
       <UninstallModal isShown actionList={actionList} onConfirm={onConfirm} onClose={() => {}} />
     );
 
     const customReasonText = 'some custom reason';
 
     // access the checkboxes and click two
-    fireEvent.click(getByTestId('reason-0').children[0]);
+    fireEvent.click(getByLabelText('Does not do what I expected'));
     fireEvent.change(getByTestId('reason-custom'), { target: { value: customReasonText } });
 
     getByTestId('uninstall-button').click();
@@ -81,16 +81,14 @@ describe('UninstallModal', () => {
   it('should allow for deselecting reasons', () => {
     const onConfirm = jest.fn();
 
-    const { getByTestId } = render(
+    const { getByTestId, getByLabelText } = render(
       <UninstallModal isShown actionList={actionList} onConfirm={onConfirm} onClose={() => {}} />
     );
 
     // check the checkbox, then uncheck it
-    fireEvent.click(getByTestId('reason-0').children[0]);
-    fireEvent.click(getByTestId('reason-0').children[0]);
-
-    // check another reason
-    fireEvent.click(getByTestId('reason-1').children[0]);
+    fireEvent.click(getByLabelText('Does not do what I expected'));
+    fireEvent.click(getByLabelText('Does not do what I expected'));
+    fireEvent.click(getByLabelText('Not needed anymore'));
 
     getByTestId('uninstall-button').click();
 

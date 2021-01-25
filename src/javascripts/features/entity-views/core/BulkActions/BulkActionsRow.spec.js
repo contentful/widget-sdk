@@ -242,14 +242,14 @@ describe('BulkActionsRow', () => {
       const { getByTestId } = renderComponent({ selectedEntities: generateEntities(1, false) });
       const link = getByTestId('publish');
       expect(link).toBeInTheDocument();
-      expect(link.firstChild.innerHTML).toBe('Publish');
+      expect(link.firstChild.textContent).toBe('Publish');
     });
 
     it('should show the republish label', () => {
       const { getByTestId } = renderComponent({ selectedEntities: generateEntities(1) });
       const link = getByTestId('republish');
       expect(link).toBeInTheDocument();
-      expect(link.firstChild.innerHTML).toBe('Republish');
+      expect(link.firstChild.textContent).toBe('Republish');
     });
 
     it('should show the (re)publish label', () => {
@@ -258,7 +258,7 @@ describe('BulkActionsRow', () => {
       const { getByTestId } = renderComponent({ selectedEntities });
       const link = getByTestId('(re)publish');
       expect(link).toBeInTheDocument();
-      expect(link.firstChild.innerHTML).toBe('(Re)publish');
+      expect(link.firstChild.textContent).toBe('(Re)publish');
     });
   });
 

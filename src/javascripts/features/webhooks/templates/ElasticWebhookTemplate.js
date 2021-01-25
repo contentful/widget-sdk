@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextLink, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import { ElasticLogo } from './logos/ElasticLogo';
 import { base64safe } from '../base64safe';
 
@@ -8,12 +9,14 @@ export const ElasticWebhookTemplate = {
   subtitle: 'Index entries',
   logo: <ElasticLogo />,
   description: (
-    <ul>
-      <li>Creates Elasticsearch document when an entry is published for the first time</li>
-      <li>Updates existing Elasticsearch document when an entry is republished</li>
-      <li>Removes Elasticsearch document when an entry is unpublished</li>
-      <li>Scoped to events in the master environment</li>
-    </ul>
+    <List>
+      <ListItem>
+        Creates Elasticsearch document when an entry is published for the first time
+      </ListItem>
+      <ListItem>Updates existing Elasticsearch document when an entry is republished</ListItem>
+      <ListItem>Removes Elasticsearch document when an entry is unpublished</ListItem>
+      <ListItem>Scoped to events in the master environment</ListItem>
+    </List>
   ),
   fields: [
     {
@@ -21,14 +24,17 @@ export const ElasticWebhookTemplate = {
       type: 'text',
       title: 'Elasticsearch endpoint',
       description: (
-        <p>
+        <Paragraph>
           Provide a public Elasticsearch endpoint URL. If you use Elastic Cloud, it can be found on
           the{' '}
-          <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
+          <TextLink
+            href="https://cloud.elastic.co/deployments"
+            target="_blank"
+            rel="noopener noreferrer">
             dashboard
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -36,7 +42,9 @@ export const ElasticWebhookTemplate = {
       type: 'text',
       title: 'Index name',
       defaultValue: 'contentful-entries',
-      description: <p>Name of an index in which you want to store your documents.</p>,
+      description: (
+        <Paragraph>Name of an index in which you want to store your documents.</Paragraph>
+      ),
     },
     {
       name: 'user',
@@ -44,13 +52,16 @@ export const ElasticWebhookTemplate = {
       placeholder: 'elastic',
       title: 'User',
       description: (
-        <p>
+        <Paragraph>
           HTTP Basic Auth username. If you use Elastic Cloud, it can be found on the{' '}
-          <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
+          <TextLink
+            href="https://cloud.elastic.co/deployments"
+            target="_blank"
+            rel="noopener noreferrer">
             dashboard
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
       ),
     },
     {
@@ -58,13 +69,16 @@ export const ElasticWebhookTemplate = {
       type: 'password',
       title: 'Password',
       description: (
-        <p>
+        <Paragraph>
           HTTP Basic Auth password. If you use Elastic Cloud, it can be found on the{' '}
-          <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
+          <TextLink
+            href="https://cloud.elastic.co/deployments"
+            target="_blank"
+            rel="noopener noreferrer">
             dashboard
-          </a>
+          </TextLink>
           . This value can’t be revealed once stored.
-        </p>
+        </Paragraph>
       ),
     },
   ],

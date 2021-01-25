@@ -113,7 +113,7 @@ class FieldItem extends Component {
         {field.deleted && <div className="ct-field__status">Deleted</div>}
         {isTitle && <div className="ct-field__status">Entry title</div>}
         {canEdit && (
-          <div>
+          <>
             {!field.deleted && (
               <button
                 type="button"
@@ -190,7 +190,7 @@ class FieldItem extends Component {
                 )}
               </DropdownList>
             </Dropdown>
-          </div>
+          </>
         )}
       </div>
     );

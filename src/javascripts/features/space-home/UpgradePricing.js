@@ -1,5 +1,12 @@
 import React from 'react';
-import { Card } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  Button,
+  TextLink,
+  Typography,
+  Heading,
+  Paragraph,
+} from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import Icon from 'ui/Components/Icon';
 import { websiteUrl } from 'Config';
@@ -66,43 +73,44 @@ export class UpgradePricing extends React.Component {
     return (
       <Card padding="large" className="upgrade-space--container">
         <div className="upgrade-space--content">
-          <h2 className="home-section__heading" data-test-id="greeting">
-            Upgrade your Space to access our latest feature
-          </h2>
-          <p className="upgrade-space--text">
-            We made it easier to update and manage content models with our new{' '}
-            <a
-              href={withInAppHelpUtmParams(
-                websiteUrl('/developers/docs/concepts/multiple-environments/')
-              )}
-              rel="noopener noreferrer"
-              target="_blank">
-              Space environments feature
-            </a>{' '}
-            and migration CLI tool. To access this feature, submit a request to begin the process of
-            upgrading your space.
-            <br />
-            To learn more, read about our{' '}
-            <a
-              href={withInAppHelpUtmParams(
-                websiteUrl(
-                  '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
-                )
-              )}
-              rel="noopener noreferrer"
-              target="_blank">
-              Space types and pricing
-            </a>
-            .
-          </p>
-          <a
-            className="btn-secondary-action"
+          <Typography>
+            <Heading testId="greeting">Upgrade your Space to access our latest feature</Heading>
+            <Paragraph>
+              We made it easier to update and manage content models with our new{' '}
+              <TextLink
+                href={withInAppHelpUtmParams(
+                  websiteUrl('/developers/docs/concepts/multiple-environments/')
+                )}
+                rel="noopener noreferrer"
+                target="_blank">
+                Space environments feature
+              </TextLink>{' '}
+              and migration CLI tool. To access this feature, submit a request to begin the process
+              of upgrading your space.
+              <br />
+              To learn more, read about our{' '}
+              <TextLink
+                href={withInAppHelpUtmParams(
+                  websiteUrl(
+                    '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+                  )
+                )}
+                rel="noopener noreferrer"
+                target="_blank">
+                Space types and pricing
+              </TextLink>
+              .
+            </Paragraph>
+          </Typography>
+
+          <Button
+            buttonType="muted"
             onClick={this.onUpgradeClick}
             href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
             rel="noopener noreferrer"
             target="_blank">
             Submit a request
-          </a>
+          </Button>
         </div>
         <div className="upgrade-space--graphics">
           <Icon height={145} name={'space-diagram'} />

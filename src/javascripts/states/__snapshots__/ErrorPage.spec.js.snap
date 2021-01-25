@@ -104,7 +104,7 @@ exports[`ErrorPage should match the snapshot 1`] = `
                 if this keeps happening.
               </p>
               <button
-                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+                class="Button__Button___1ZfFj Button__Button--primary___JImeO"
                 data-test-id="home-button"
                 type="button"
               >

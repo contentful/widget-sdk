@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { css } from 'emotion';
 
 import {
-  Tag,
   Card,
   Icon,
   Dropdown,
@@ -51,6 +50,7 @@ const styles = {
     textOverflow: 'ellipsis',
     width: '70%',
     textTransform: 'none',
+    color: tokens.colorTextMid,
   }),
 };
 
@@ -97,9 +97,9 @@ export default class Release extends Component {
     return (
       <Card className={styles.card}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
-        <Tag testId="release-item" tagType="muted" title={release.title} className={styles.textTag}>
+        <strong testId="release-item" title={release.title} className={styles.textTag}>
           {release.title}
-        </Tag>
+        </strong>
         <Dropdown
           className={styles.dropdown}
           isOpen={this.state.isDropdownOpen}

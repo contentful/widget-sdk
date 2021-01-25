@@ -54,6 +54,7 @@ export function SpacePlanCard({
     cardItem: css({
       marginBottom: tokens.spacingM,
       position: 'relative',
+      overflow: 'hidden',
 
       '&:before': css({
         content: '""',

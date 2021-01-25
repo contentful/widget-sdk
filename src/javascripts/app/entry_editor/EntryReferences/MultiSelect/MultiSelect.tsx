@@ -1,10 +1,11 @@
 /* eslint-disable rulesdir/restrict-non-f36-components */
-import React, { useRef, useState, useEffect, MouseEventHandler, ChangeEvent } from 'react';
+import React, { useState, useEffect, MouseEventHandler, ChangeEvent } from 'react';
 import {
   Dropdown,
   DropdownList,
   DropdownListItem,
   Button,
+  Checkbox,
 } from '@contentful/forma-36-react-components';
 import { styles } from './MultiSelect.styles';
 
@@ -30,9 +31,8 @@ export interface MultiSelectProps {
 
 export const MultiSelect = (props: MultiSelectProps) => {
   const { onChange, checkboxList, selectAll = false, testId } = props;
-  const selectAllRef = useRef<HTMLInputElement>(null);
-  const selectAllCheckboxEl = selectAllRef.current;
   const [selectAllState, setSelectAllState] = useState<boolean>(selectAll);
+  const [indeterminate, setIndeterminate] = useState<boolean>(selectAll);
   const [checkboxes, setCheckboxes] = useState(checkboxList);
   const [isOpen, setOpen] = useState(false);
 
@@ -42,18 +42,19 @@ export const MultiSelect = (props: MultiSelectProps) => {
     const allSelected = checkedItems.length === checkboxes.length;
     const noneSelected = checkedItems.length === 0;
 
+    console.log(isIndeterminate);
     if (isIndeterminate) {
-      if (selectAllCheckboxEl) selectAllCheckboxEl.indeterminate = true;
+      setIndeterminate(true);
       setSelectAllState(false);
     }
 
     if (allSelected) {
-      if (selectAllCheckboxEl) selectAllCheckboxEl.indeterminate = false;
+      setIndeterminate(false);
       setSelectAllState(true);
     }
 
     if (noneSelected) {
-      if (selectAllCheckboxEl) selectAllCheckboxEl.indeterminate = false;
+      setIndeterminate(false);
       setSelectAllState(false);
     }
 
@@ -68,6 +69,7 @@ export const MultiSelect = (props: MultiSelectProps) => {
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.currentTarget;
     const changedCheckboxes = checkboxes.map((item) => {
+      console.log('name', name);
       if (name === 'select_all') {
         setSelectAllState(checked);
         return { ...item, checked };
@@ -81,15 +83,15 @@ export const MultiSelect = (props: MultiSelectProps) => {
   return (
     <div className={styles.root}>
       <label className={`${styles.mainSelect} ${styles.selectLabel}`}>
-        <input
+        <Checkbox
           type="checkbox"
+          indeterminate={indeterminate}
           onChange={handleCheckboxChange}
-          data-test-id={testId}
+          testId={testId}
+          labelText="Select all references"
           name="select_all"
           checked={selectAllState}
-          ref={selectAllRef}
         />
-        <span className={styles.mainSelectText}>Select all</span>
       </label>
       <Dropdown
         isOpen={isOpen}
@@ -101,7 +103,7 @@ export const MultiSelect = (props: MultiSelectProps) => {
             aria-label="Select Entities State"
             type="button"
             indicateDropdown
-            buttonType="naked"
+            buttonType="muted"
             isActive={isOpen}
             className={styles.dropdownButton}
             onClick={() => setOpen(!isOpen)}>
@@ -112,8 +114,9 @@ export const MultiSelect = (props: MultiSelectProps) => {
           {checkboxes.map((item, idx) => (
             <DropdownListItem key={`dropdown-list-item-${idx}`}>
               <label className={styles.selectLabel}>
-                <input
+                <Checkbox
                   type="checkbox"
+                  labelText={item.label}
                   className="multi-select__checkbox"
                   checked={item.checked}
                   onChange={handleCheckboxChange}

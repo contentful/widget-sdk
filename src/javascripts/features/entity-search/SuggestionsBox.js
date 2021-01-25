@@ -43,9 +43,11 @@ const styles = {
   }),
   suggestions: css({
     zIndex: tokens.zIndexDefault,
-    border: `solid ${tokens.colorBlueMid}`,
-    borderWidth: '0 1px 1px 1px',
+    border: `1px solid ${tokens.colorBlueMid}`,
+    borderRadius: tokens.borderRadiusMedium,
     background: tokens.colorWhite,
+    marginTop: tokens.spacingXs,
+    overflow: 'hidden',
   }),
   suggestionsContent: css({
     maxHeight: '50vh',
