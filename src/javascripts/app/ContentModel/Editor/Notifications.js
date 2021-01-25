@@ -89,22 +89,14 @@ export function saveInvalidError(error, contentType) {
   });
 }
 
-export function tooManyEditorsError(error, contentType, reason) {
+export function tooManyEditorsError(reason) {
   const max = get(reason, 'max', 10);
 
   Notification.error(messages.save.tooManyEditors(max), { title: 'Unable to save content type' });
-  logger.logServerWarn('Error saving invalid Content Type', {
-    error,
-    contentType: contentType.data,
-  });
 }
 
-export function saveOutdatedError(error, contentType) {
+export function saveOutdatedError() {
   Notification.error(messages.save.outdated);
-  logger.logServerWarn('Error activating outdated Content Type', {
-    error,
-    contentType: contentType.data,
-  });
 }
 
 export function saveNoFields() {
@@ -118,7 +110,6 @@ export function saveIdExists() {
 export function saveApiError(errData) {
   const message = saveError + getServerMessage(errData);
   Notification.error(message);
-  logger.logServerWarn('Error activating Content Type', { error: errData });
 }
 
 export function duplicateSuccess() {
