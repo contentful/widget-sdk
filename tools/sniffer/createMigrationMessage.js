@@ -15,8 +15,8 @@ module.exports = (diff) => {
 
   if (added.length > 0) {
     added.forEach(({ path, right }) => {
-      if (right.karma) {
-        suggestions.push(pathMessage(path, "Don't write new Karma tests."));
+      if (right.typescript) {
+        praise.push(`👾 The future is Typed! 👾`);
       }
       if (right.jade) {
         suggestions.push(pathMessage(path, "Don't create new `.jade` files."));
@@ -75,9 +75,6 @@ module.exports = (diff) => {
 
   if (deleted.length > 0) {
     deleted.forEach(({ path, left }) => {
-      if (left.karma) {
-        praise.push(pathMessage(path, '💯 points to your karma for removing Karma!'));
-      }
       if (left.jade) {
         praise.push(pathMessage(path, 'Thanks for removing `.jade` 💯 points to Griffindor!'));
       }

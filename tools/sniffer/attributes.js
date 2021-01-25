@@ -2,20 +2,19 @@ const _ = require('lodash');
 
 const all = () => true;
 
-const js = (node) =>
-  node.extension === '.js' || node.extension === '.ts' || node.extension === '.tsx';
+const typescript = (node) => node.extension === '.ts' || node.extension === '.tsx';
+
+const js = (node) => node.extension === '.js';
 
 const jade = (node) => node.extension === '.html';
 
-const test = (node) => js(node) && node.path.indexOf('spec.') !== -1;
+const test = (node) => (js(node) || typescript(node)) && node.path.indexOf('spec.') !== -1;
 
 const jest = (node) => test(node) && node.path.indexOf('src/javascripts') !== -1;
 
-const karma = () => false;
-
 const angular = (node) => {
   const modules = node.modules;
-  if (!js(node)) {
+  if (!js(node) && !typescript(node)) {
     return false;
   }
   if (test(node)) {
@@ -54,22 +53,9 @@ const angular = (node) => {
   return intersection.length > 0 ? intersection : false;
 };
 
-const hyperscript = (node) => {
-  const modules = node.modules;
-  if (!js(node)) {
-    return false;
-  }
-  if (test(node)) {
-    return false;
-  }
-  const attributes = [];
-  const intersection = _.intersectionWith(modules, attributes, _.isEqual);
-  return intersection.length > 0 ? intersection : false;
-};
-
 const react = (node) => {
   const modules = node.modules;
-  if (!js(node)) {
+  if (!js(node) && !typescript(node)) {
     return false;
   }
   if (test(node)) {
@@ -100,7 +86,6 @@ const needsRefactoring = (node) => {
   }
 
   const isAngular = angular(node);
-  const isHyperscript = hyperscript(node);
 
   const attributes = [
     'jquery',
@@ -115,9 +100,6 @@ const needsRefactoring = (node) => {
 
   if (isAngular) {
     intersection = intersection.concat(isAngular);
-  }
-  if (isHyperscript) {
-    intersection = intersection.concat(isHyperscript);
   }
 
   intersection = _.uniq(intersection);
@@ -135,9 +117,8 @@ module.exports = {
   jade: jade,
   test: test,
   jest: jest,
-  karma: karma,
+  typescript: typescript,
   angular: angular,
-  hyperscript: hyperscript,
   react: react,
   needsRefactoring: needsRefactoring,
 };
