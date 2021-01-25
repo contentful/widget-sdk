@@ -23,7 +23,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard, SPACE_PURCHASE_CONTACT_SALES_HREF } from '../../components/SpaceCard';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../../utils/spacePurchaseContent';
+import { SPACE_PURCHASE_CONTENT, SpacePlanKind } from '../../utils/spacePurchaseContent';
 import { PinLabel } from '../../components/PinLabel';
 import { actions, SpacePurchaseState } from '../../context';
 import { FAQAccordion } from '../../components/FAQAccordion';
@@ -148,7 +148,7 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
           const plan =
             spaceRatePlans && spaceRatePlans.find((plan) => plan.name === spaceContent.type);
           const isCurrentPlan = currentSpaceRatePlan?.name === spaceContent.type;
-          const isEnterprisePlan = spaceContent.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
+          const isEnterprisePlan = spaceContent.type === SpacePlanKind.ENTERPRISE;
 
           return (
             <SpaceCard
@@ -189,7 +189,7 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
                   <Paragraph>Free space limited to 1 per organization.</Paragraph>
                 </div>
 
-                {currentSpaceRatePlan?.name === SPACE_PURCHASE_TYPES.COMMUNITY ? (
+                {currentSpaceRatePlan?.name === SpacePlanKind.COMMUNITY ? (
                   <PinLabel labelText="Current space" />
                 ) : (
                   <Tooltip

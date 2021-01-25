@@ -2,16 +2,16 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { go } from 'states/Navigator';
+import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { SpaceCreationReceiptStep } from './SpaceCreationReceiptStep';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { makeNewSpace, createTemplate } from '../../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_TYPES, PLATFORM_CONTENT } from '../../utils/platformContent';
-import { addProductRatePlanToSubscription } from 'features/pricing-entities';
+import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 
-const mockSelectedPlatform = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123 };
 const mockOrganization = FakeFactory.Organization();

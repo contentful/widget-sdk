@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { SpacePlanKind } from '../utils/spacePurchaseContent';
 
 import { SpaceCard } from './SpaceCard';
 
 const mockLimits = ['limit 1', 'limit 2', 'limit 3'];
 const mockEnterpriseContent = {
-  type: SPACE_PURCHASE_TYPES.ENTERPRISE,
+  type: SpacePlanKind.ENTERPRISE,
   title: (
     <>
       <b>Enterprise</b>
@@ -76,7 +76,7 @@ function build(customProps) {
     organizationId: 'random_org_id',
     loading: false,
     content: {
-      type: SPACE_PURCHASE_TYPES.MEDIUM,
+      type: SpacePlanKind.MEDIUM,
       title: (
         <>
           <b>Team</b> Medium

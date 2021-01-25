@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
-import {
-  SPACE_PLANS_CONTENT,
-  SPACE_PURCHASE_TYPES,
-} from 'features/space-purchase/utils/spacePurchaseContent';
+import { PlatformKind } from '../utils/platformContent';
+import { SPACE_PLANS_CONTENT, SpacePlanKind } from '../utils/spacePurchaseContent';
 import { ProductCard } from './ProductCard';
 
 export const SpacePlanCards = ({
@@ -19,34 +16,34 @@ export const SpacePlanCards = ({
 }) => {
   return (
     <>
-      {SPACE_PLANS_CONTENT.filter(
-        (content) => content.type !== SPACE_PURCHASE_TYPES.ENTERPRISE
-      ).map((spacePlanContent, idx) => {
-        const plan = spaceRatePlans.find((plan) => plan.name === spacePlanContent.type) ?? {};
-        const content = formatSpacePlanContent(spacePlanContent, plan.price ?? 0);
+      {SPACE_PLANS_CONTENT.filter((content) => content.type !== SpacePlanKind.ENTERPRISE).map(
+        (spacePlanContent, idx) => {
+          const plan = spaceRatePlans.find((plan) => plan.name === spacePlanContent.type) ?? {};
+          const content = formatSpacePlanContent(spacePlanContent, plan.price ?? 0);
 
-        const tooltipText = getTooltipText(
-          selectedPlatform,
-          plan.name,
-          orgHasPaidSpaces,
-          canCreateFreeSpace,
-          canCreatePaidSpace
-        );
+          const tooltipText = getTooltipText(
+            selectedPlatform,
+            plan.name,
+            orgHasPaidSpaces,
+            canCreateFreeSpace,
+            canCreatePaidSpace
+          );
 
-        return (
-          <ProductCard
-            key={idx}
-            cardType="space"
-            loading={!spaceRatePlans}
-            disabled={!selectedPlatform || !!tooltipText}
-            tooltipText={tooltipText}
-            selected={!!plan.name && plan.name === selectedSpacePlanName}
-            onClick={() => onSelect(plan)}
-            content={content}
-            testId="space-plan-card"
-          />
-        );
-      })}
+          return (
+            <ProductCard
+              key={idx}
+              cardType="space"
+              loading={!spaceRatePlans}
+              disabled={!selectedPlatform || !!tooltipText}
+              tooltipText={tooltipText}
+              selected={!!plan.name && plan.name === selectedSpacePlanName}
+              onClick={() => onSelect(plan)}
+              content={content}
+              testId="space-plan-card"
+            />
+          );
+        }
+      )}
     </>
   );
 };
@@ -83,20 +80,20 @@ function getTooltipText(
 
   // freeSpace is disabled when selectedPlatform is SPACE+COMPOSE and they don't have any paid spaces
   if (
-    planType === SPACE_PURCHASE_TYPES.COMMUNITY &&
-    selectedPlatform === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH &&
+    planType === SpacePlanKind.COMMUNITY &&
+    selectedPlatform === PlatformKind.SPACE_COMPOSE_LAUNCH &&
     !orgHasPaidSpaces
   ) {
     return 'You must have a paid space to purchase Compose + Launch';
   }
 
   // freeSpace is disabled when user cannot make another freeSpace
-  if (planType === SPACE_PURCHASE_TYPES.COMMUNITY && !canCreateFreeSpace) {
+  if (planType === SpacePlanKind.COMMUNITY && !canCreateFreeSpace) {
     return 'You have already used your free space';
   }
 
   // paidSpaces are disabled when user can't create a paid space
-  if (planType !== SPACE_PURCHASE_TYPES.COMMUNITY && !canCreatePaidSpace) {
+  if (planType !== SpacePlanKind.COMMUNITY && !canCreatePaidSpace) {
     return 'Please contact your organization owner and have them add billing information for your organization so you can purchase spaces';
   }
 

@@ -5,14 +5,14 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getSpace } from 'services/TokenStore';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
+import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 
 const mockOrganization = Fake.Organization();
 const mockLastUsedSpace = Fake.Space();
 const mockComposeProductRatePlan = Fake.Plan();
-const mockSelectedPlatform = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),

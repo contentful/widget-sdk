@@ -18,7 +18,7 @@ import {
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { SpacePlanKind } from '../utils/spacePurchaseContent';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { salesUrl } from 'Config';
 import { PinLabel } from './PinLabel';
@@ -44,9 +44,9 @@ const styles = {
     borderRadius: '4px',
   }),
   spaceColor: {
-    [SPACE_PURCHASE_TYPES.MEDIUM]: getSpaceColorCSS(MEDIUM_PLAN_COLOR),
-    [SPACE_PURCHASE_TYPES.LARGE]: getSpaceColorCSS(LARGE_PLAN_COLOR),
-    [SPACE_PURCHASE_TYPES.ENTERPRISE]: getSpaceColorCSS(COMMUNITY_COLOR),
+    [SpacePlanKind.MEDIUM]: getSpaceColorCSS(MEDIUM_PLAN_COLOR),
+    [SpacePlanKind.LARGE]: getSpaceColorCSS(LARGE_PLAN_COLOR),
+    [SpacePlanKind.ENTERPRISE]: getSpaceColorCSS(COMMUNITY_COLOR),
   },
   // CSS for card content
   cardTitle: css({
@@ -85,9 +85,9 @@ const styles = {
     flexShrink: 0, // necessary to avoid icon being shrank by the text
   }),
   checkColor: {
-    [SPACE_PURCHASE_TYPES.MEDIUM]: css({ fill: MEDIUM_PLAN_COLOR }),
-    [SPACE_PURCHASE_TYPES.LARGE]: css({ fill: LARGE_PLAN_COLOR }),
-    [SPACE_PURCHASE_TYPES.ENTERPRISE]: css({ fill: COMMUNITY_COLOR }),
+    [SpacePlanKind.MEDIUM]: css({ fill: MEDIUM_PLAN_COLOR }),
+    [SpacePlanKind.LARGE]: css({ fill: LARGE_PLAN_COLOR }),
+    [SpacePlanKind.ENTERPRISE]: css({ fill: COMMUNITY_COLOR }),
   },
 };
 
@@ -100,7 +100,7 @@ export const SpaceCard = ({
   selected = false,
   organizationId,
 }) => {
-  const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
+  const isEnterpriseCard = content.type === SpacePlanKind.ENTERPRISE;
 
   return (
     <Card className={cn(styles.card, styles.spaceColor[content.type])} testId="space-card">

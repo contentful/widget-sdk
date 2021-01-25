@@ -9,14 +9,14 @@ import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 
 import { renderWithProvider } from '../../__tests__/helpers';
 import { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep';
-import { PLATFORM_TYPES } from '../../utils/platformContent';
+import { PlatformKind } from '../../utils/platformContent';
 
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
 const mockCurrentSpace = FakeFactory.Space();
 const mockComposeProductRatePlan = FakeFactory.Plan();
 
-const mockSelectedPlatform = { type: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
   sessionId: 'some_random_id',

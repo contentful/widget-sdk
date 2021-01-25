@@ -8,7 +8,7 @@ import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
-import { PLATFORM_TYPES } from '../utils/platformContent';
+import { PlatformKind } from '../utils/platformContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { actions, SpacePurchaseState } from '../context';
 
@@ -83,7 +83,7 @@ export const SpacePurchaseContainer = ({ track }) => {
     }
   }, [organization, dispatch]);
 
-  const selectedComposeLaunch = selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+  const selectedComposeLaunch = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
 
   const goToStep = (nextStep) => {
     track(EVENTS.NAVIGATE, {

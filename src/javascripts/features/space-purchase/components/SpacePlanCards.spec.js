@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PLATFORM_TYPES } from '../utils/platformContent';
+import { PlatformKind } from '../utils/platformContent';
 import { SpacePlanCards } from './SpacePlanCards';
 
 const mockOnSelect = jest.fn();
@@ -44,7 +44,7 @@ describe('SpacePlanCards', () => {
 
   // TODO: update userEvent dep so we can use userEvent.hover instead of fireEvent.mouseOver
   it('should disable the free space plan card and show a tooltip when Compose+Launch is selected and the org has no paid spaces', async () => {
-    build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH });
+    build({ selectedPlatform: PlatformKind.SPACE_COMPOSE_LAUNCH });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards[0].getAttribute('class')).toContain('disabled');
@@ -58,7 +58,7 @@ describe('SpacePlanCards', () => {
   });
 
   it('should enable the free space plan card and when Compose+Launch is selected and the org has at least one paid space', async () => {
-    build({ selectedPlatform: PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH, orgHasPaidSpaces: true });
+    build({ selectedPlatform: PlatformKind.SPACE_COMPOSE_LAUNCH, orgHasPaidSpaces: true });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards[0].getAttribute('class')).not.toContain('disabled');
@@ -98,7 +98,7 @@ describe('SpacePlanCards', () => {
 function build(customProps) {
   const props = {
     spaceRatePlans: mockSpaceRatePlans,
-    selectedPlatform: PLATFORM_TYPES.SPACE,
+    selectedPlatform: PlatformKind.SPACE,
     selectedSpacePlanName: undefined,
     canCreateFreeSpace: true,
     canCreatePaidSpace: true,

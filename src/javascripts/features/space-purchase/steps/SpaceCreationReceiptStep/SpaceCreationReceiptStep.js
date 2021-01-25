@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { PLATFORM_TYPES } from '../../utils/platformContent';
+import { PlatformKind } from '../../utils/platformContent';
 import { SpacePurchaseState } from '../../context';
 import { useSpaceCreation } from '../../hooks/useSpaceCreation';
 import { useTemplateCreation } from '../../hooks/useTemplateCreation';
@@ -23,7 +23,7 @@ export const SpaceCreationReceiptStep = () => {
   const pending = isCreatingSpace || isCreatingTemplate || isPurchasingAddOn;
   const hasErrors = !!(spaceCreationError || addOnPurchaseError);
 
-  const selectedCompose = selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+  const selectedCompose = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
 
   useNavigationWarn(selectedPlan, pending);
 

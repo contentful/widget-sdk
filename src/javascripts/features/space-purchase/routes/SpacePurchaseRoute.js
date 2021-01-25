@@ -23,7 +23,7 @@ import {
   fetchSpacePurchaseContent,
   fetchPlatformPurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
-import { PLATFORM_TYPES } from 'features/space-purchase/utils/platformContent';
+import { PlatformKind } from 'features/space-purchase/utils/platformContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
@@ -98,7 +98,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
   let selectedPlatform;
 
   if (viaMarketingCTA && numSpacesInOrg === 0) {
-    selectedPlatform = PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH;
+    selectedPlatform = PlatformKind.SPACE_COMPOSE_LAUNCH;
   }
 
   const sessionId = alnum(16);

@@ -16,7 +16,7 @@ import { EnterpriseCard } from '../../components/EnterpriseCard';
 import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 import { FAQAccordion } from '../../components/FAQAccordion';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { PLATFORM_CONTENT, PLATFORM_TYPES } from '../../utils/platformContent';
+import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 
 const styles = {
@@ -144,7 +144,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
         {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
           // If they cannot create a paid space, then they cannot pay for compose+launch either.
           const tooltipText =
-            platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
+            platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
               ? `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`
               : '';
 
@@ -163,7 +163,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
               tooltipText={tooltipText}
               disabled={!!tooltipText}
               content={platform}
-              isNew={platform.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH}
+              isNew={platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH}
               testId="platform-card"
             />
           );
@@ -202,7 +202,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
         {/* The option to "choose space later" should only be shown when an org has paid spaces and
       selects compose+launch, so they can buy compose+launch without having to buy a new space */}
-        {orgHasPaidSpaces && selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH && (
+        {orgHasPaidSpaces && selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
           <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
             <Card
               className={styles.chooseLaterCard}

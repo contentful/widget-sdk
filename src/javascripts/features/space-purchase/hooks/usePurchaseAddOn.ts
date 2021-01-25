@@ -6,7 +6,7 @@ import { useAsyncFn } from 'core/hooks/useAsync';
 import type { Organization } from 'core/services/SpaceEnvContext/types';
 import type { SetRequired } from '../types';
 
-import { PLATFORM_TYPES } from '../utils/platformContent';
+import { PlatformKind } from '../utils/platformContent';
 
 type ContextState = SetRequired<State, 'organization' | 'composeProductRatePlan'>;
 
@@ -37,7 +37,7 @@ export function usePurchaseAddOn(shouldBegin = true) {
   );
 
   useEffect(() => {
-    if (shouldBegin && selectedPlatform?.type === PLATFORM_TYPES.SPACE_COMPOSE_LAUNCH) {
+    if (shouldBegin && selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH) {
       callPurchase();
     }
 

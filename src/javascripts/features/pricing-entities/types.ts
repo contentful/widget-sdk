@@ -47,3 +47,16 @@ interface ProductRatePlanCharge {
   unitType: string;
   uom: unknown;
 }
+
+export interface BasePlan {
+  committed: boolean;
+  contentfulProductId?: string;
+  customerType: 'Self-service';
+  gatekeeperKey?: string;
+  name: string;
+  planType: 'base';
+  price: number;
+  productName: string;
+  productRatePlanId: string;
+  ratePlanCharges: ProductRatePlanCharge[];
+}
