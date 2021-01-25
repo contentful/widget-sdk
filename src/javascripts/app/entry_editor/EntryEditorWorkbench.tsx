@@ -12,7 +12,7 @@ import {
   ReferencesProvider,
   ReferencesContext,
 } from 'app/entry_editor/EntryReferences/ReferencesContext';
-import { LoadingOverlay } from 'features/loading-state';
+import { referenceText } from 'app/entry_editor/EntryReferences/utils';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -31,6 +31,7 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { useMigratedEntityField } from 'app/entity_editor/EntityField/useEntityFieldFeatureFlag';
+import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -116,7 +117,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     state: ReferencesState;
     dispatch: React.Dispatch<Action>;
   };
-  const { processingAction } = referencesState;
+  const { processingAction, references, selectedEntities } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
   const availableTabs = editorData.editorsExtensions.filter(
@@ -290,7 +291,11 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         <Workbench.Content
           type={editorData.customEditor ? 'full' : 'default'}
           className={styles.mainContent}>
-          {processingAction && <LoadingOverlay />}
+          {processingAction && (
+            <ReleasesLoadingOverlay
+              message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
+            />
+          )}
           <Tabs className={styles.tabs} withDivider>
             {visibleTabs.map((tab) => (
               <Tab
