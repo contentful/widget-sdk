@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -8,6 +9,9 @@ const styles = {
     boxSizing: 'border-box',
     overflow: 'hidden',
     transition: `height ${tokens.transitionDurationDefault}`,
+  }),
+  ExpandablePanelOpened: css({
+    overflow: 'visible',
   }),
 };
 
@@ -48,7 +52,7 @@ export function ExpandablePanel({ isExpanded, children, id }) {
       role="region"
       aria-labelledby={`expandable-panel--${id}`}
       aria-hidden={!isExpanded}
-      className={styles.ExpandablePanel}
+      className={cn(styles.ExpandablePanel, { [styles.ExpandablePanelOpened]: isExpanded })}
       ref={panelEl}>
       {children}
     </div>

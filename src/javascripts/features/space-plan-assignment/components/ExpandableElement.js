@@ -6,7 +6,7 @@ import { TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
-  toggleDetailsLink: css({ marginLeft: `calc(${tokens.spacingXl} + ${tokens.spacingXs})` }),
+  toggleDetailsLink: css({ marginLeft: `calc(${tokens.spacingL} + ${tokens.spacingXs})` }),
 };
 
 export function ExpandableElement({ children, id }) {
