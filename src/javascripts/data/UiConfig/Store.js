@@ -118,7 +118,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
         if (statusCode === 404) {
           return setUiConfig(type, {});
         } else {
-          logger.logServerWarn(`Could not load ${getEntityName(type)}`, { error });
           return Promise.reject(error);
         }
       }
