@@ -195,6 +195,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
       hasAppsFeature,
       hasAdvancedAppsFeature,
       canManageApps = false,
+      spaceInformation,
     } = this.props;
     const { installedApps, availableApps, contentfulApps, appManager } = this.state;
 
@@ -215,6 +216,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
               appManager={this.state.appManager}
               canManageApps={canManageApps}
               openDetailModal={this.openDetailModal}
+              spaceInformation={spaceInformation}
             />
           )}
           {hasInstalledApps ? (

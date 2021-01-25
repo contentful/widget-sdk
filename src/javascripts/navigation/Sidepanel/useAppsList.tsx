@@ -3,7 +3,7 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { fetchContentfulApps, getAppsRepo } from 'features/apps-core';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { WebAppSwitcherIcon } from './WebAppSwitcherIcon';
+import ContentfulLogo from 'svg/logo-label.svg';
 
 export interface NavigationSwitcherAppProps {
   id?: string;
@@ -20,7 +20,7 @@ export interface NavigationSwitcherAppProps {
 }
 
 const webApp: NavigationSwitcherAppProps = {
-  icon: <WebAppSwitcherIcon />,
+  icon: <ContentfulLogo width="32" />,
   href: '#',
   active: true,
   title: 'Web app',

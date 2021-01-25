@@ -1,8 +1,35 @@
 import { styles } from './styles';
 import { Card, Heading, Paragraph, Button } from '@contentful/forma-36-react-components';
 import React from 'react';
+import { MarketplaceApp } from 'features/apps-core';
+import { AppManager } from '../AppOperations';
 
-const ContentfulAppListItem = ({ app, openDetailModal, canManageApps, appManager }) => {
+interface Props {
+  apps: MarketplaceApp[];
+  openDetailModal: (app: MarketplaceApp) => Promise<void> | void;
+  canManageApps?: boolean;
+  appManager: AppManager;
+  spaceInformation: {
+    spaceId: string;
+    envMeta: {
+      environmentId: string;
+      isMasterEnvironment: boolean;
+    };
+  };
+}
+
+interface ItemProps extends Pick<Props, 'openDetailModal' | 'canManageApps' | 'appManager'> {
+  app: MarketplaceApp;
+  spaceEnvPath: string;
+}
+
+const ContentfulAppListItem = ({
+  app,
+  openDetailModal,
+  canManageApps,
+  appManager,
+  spaceEnvPath,
+}: ItemProps) => {
   const { title, tagLine, icon, appInstallation } = app;
   return (
     <Card padding="default" className={styles.appListCard}>
@@ -21,7 +48,7 @@ const ContentfulAppListItem = ({ app, openDetailModal, canManageApps, appManager
                   className={styles.button}
                   icon="ExternalLink"
                   onClick={() => {
-                    window.open(app.targetUrl, '_blank');
+                    window.open(`${app.targetUrl}/${spaceEnvPath || ''}`, '_blank');
                   }}>
                   Open
                 </Button>
@@ -48,7 +75,19 @@ const ContentfulAppListItem = ({ app, openDetailModal, canManageApps, appManager
   );
 };
 
-export const ContentfulAppsList = ({ openDetailModal, apps, canManageApps, appManager }) => {
+export const ContentfulAppsList = ({
+  openDetailModal,
+  apps,
+  canManageApps,
+  appManager,
+  spaceInformation,
+}: Props) => {
+  const { spaceId, envMeta } = spaceInformation;
+
+  const spaceEnvPath = `spaces/${spaceId}${
+    envMeta.isMasterEnvironment ? '' : `/environments/${envMeta.environmentId}`
+  }`;
+
   return (
     <>
       <div className={styles.headingWrapper}>
@@ -63,6 +102,7 @@ export const ContentfulAppsList = ({ openDetailModal, apps, canManageApps, appMa
           openDetailModal={openDetailModal}
           canManageApps={canManageApps}
           key={key}
+          spaceEnvPath={spaceEnvPath}
         />
       ))}
       <hr className={styles.splitter} />
