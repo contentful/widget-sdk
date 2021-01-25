@@ -8,6 +8,7 @@ import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const ApiKeyFetcher = createFetcherComponent(
   async ({ spaceId, organizationId, apiKeyId, spaceEnvironmentsRepo }) => {
@@ -36,7 +37,13 @@ const ApiKeyFetcher = createFetcherComponent(
 );
 
 export function KeyEditorRoute(props) {
-  const { currentSpaceId: spaceId, currentOrganizationId: organizationId } = useSpaceEnvContext();
+  const {
+    currentSpaceId: spaceId,
+    currentOrganizationId: organizationId,
+    currentSpace,
+  } = useSpaceEnvContext();
+  const isSpaceAdmin = isAdmin(currentSpace);
+
   return (
     <ApiKeyFetcher
       spaceId={spaceId}
@@ -53,6 +60,7 @@ export function KeyEditorRoute(props) {
         return (
           <KeyEditor
             {...props}
+            isAdmin={isSpaceAdmin}
             apiKey={data.apiKey}
             canEdit={data.canEdit}
             canCreate={data.canCreate}

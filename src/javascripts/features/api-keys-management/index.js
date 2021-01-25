@@ -7,4 +7,5 @@ export { UserCMATokensRoute } from './routes/UserCMATokensRoute';
 export { createApiKeyRepo } from './services/ApiKeyRepo';
 export { getApiKeyRepo, purgeApiKeyRepoCache } from './services/ApiKeyRepoInstance';
 export { GenerateCMATokenDialog } from './api-tokens/GenerateCMATokenDialog';
+export { KeyEditorContainer } from './KeyEditorContainer';
 export { TokenResourceManager };

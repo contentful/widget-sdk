@@ -1,10 +1,8 @@
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
-import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
-import { redirectReadOnlySpace } from 'states/SpaceSettingsBase';
-import { spaceResolver } from 'states/Resolvers';
-import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { ApiKeyListRoute, KeyEditorRoute, CMATokensRoute } from 'features/api-keys-management';
-import { getSpaceContext } from 'classes/spaceContext';
+import React from 'react';
+import PropTypes from 'prop-types';
+import * as TokenStore from 'services/TokenStore';
+import { ApiKeyListRoute, CMATokensRoute, KeyEditorContainer } from 'features/api-keys-management';
+import { go } from 'states/Navigator';
 
 /**
  * This module export the API section state.
@@ -16,19 +14,42 @@ import { getSpaceContext } from 'classes/spaceContext';
  * - /api/content_model   Redirection for the legacy content model explorer
  */
 
+function withRedirectReadOnlySpace(Component) {
+  function WithRedirectReadOnlySpace(props) {
+    const [space, setSpace] = React.useState(null);
+
+    React.useEffect(() => {
+      async function loadSpace() {
+        const space = await TokenStore.getSpace(props.spaceId);
+        setSpace(space);
+      }
+
+      loadSpace();
+    }, [props.spaceId]);
+
+    React.useEffect(() => {
+      if (space?.readOnlyAt) {
+        go({
+          path: ['spaces', 'detail', 'home'],
+          params: { spaceId: space.sys.id },
+        });
+      }
+    }, [space]);
+
+    return <Component {...props} />;
+  }
+
+  WithRedirectReadOnlySpace.propTypes = {
+    spaceId: PropTypes.string.isRequired,
+  };
+
+  return WithRedirectReadOnlySpace;
+}
+
 export const apiKeysState = {
   name: 'api',
   url: '/api',
   abstract: true,
-  resolve: {
-    space: spaceResolver,
-  },
-  onEnter: [
-    'space',
-    (space) => {
-      redirectReadOnlySpace(space);
-    },
-  ],
   children: [
     {
       name: 'keys',
@@ -38,41 +59,19 @@ export const apiKeysState = {
         {
           name: 'list',
           url: '',
-          component: ApiKeyListRoute,
+          component: withRedirectReadOnlySpace(ApiKeyListRoute),
         },
         {
           name: 'detail',
           url: '/:apiKeyId',
-          component: KeyEditorRoute,
-          mapInjectedToProps: [
-            '$scope',
-            '$stateParams',
-            ($scope, $stateParams) => {
-              const spaceContext = getSpaceContext();
-              return {
-                spaceEnvironmentsRepo: SpaceEnvironmentRepo.create(spaceContext.endpoint),
-                spaceAliasesRepo: SpaceAliasesRepo.create(spaceContext.endpoint),
-                apiKeyId: $stateParams.apiKeyId,
-                spaceId: spaceContext.getId(),
-                isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
-                registerSaveAction: (save) => {
-                  $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
-                  $scope.$applyAsync();
-                },
-                setDirty: (value) => {
-                  $scope.context.dirty = value;
-                  $scope.$applyAsync();
-                },
-              };
-            },
-          ],
+          component: withRedirectReadOnlySpace(KeyEditorContainer),
         },
       ],
     },
     {
       name: 'cma_tokens',
       url: '/cma_tokens',
-      component: CMATokensRoute,
+      component: withRedirectReadOnlySpace(CMATokensRoute),
     },
     {
       // Legacy path
