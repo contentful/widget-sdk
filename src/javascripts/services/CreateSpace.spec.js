@@ -2,16 +2,12 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { beginSpaceCreation } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import {
-  isEnterprisePlan,
-  isSelfServicePlan,
-  getBasePlan,
-} from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { go } from 'states/Navigator';
 import { getOrganization } from 'services/TokenStore';
 import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getSpaceProductRatePlans } from 'features/pricing-entities';
+import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 
 const mockV1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
 const mockV2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
@@ -50,11 +46,11 @@ jest.mock('features/space-purchase/utils/isSpacePurchaseFlowAllowed', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(() => false),
   isSelfServicePlan: jest.fn(() => false),
-  getBasePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 
 jest.mock('features/pricing-entities', () => ({
   getSpaceRatePlans: jest.fn(() => mockRatePlans),
+  getBaseRatePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals

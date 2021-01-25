@@ -16,6 +16,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -85,7 +86,7 @@ export const OrganizationUsage = () => {
 
         const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
         const service = createResourceService(orgId, 'organization');
-        const basePlan = await PricingDataProvider.getBasePlan(endpoint);
+        const basePlan = await getBasePlan(endpoint);
 
         const isTeamOrEnterpriseCustomer =
           PricingDataProvider.isEnterprisePlan(basePlan) ||

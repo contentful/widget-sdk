@@ -14,9 +14,9 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getSubscriptionPlans, calculateTotalPrice } from 'account/pricing/PricingDataProvider';
+import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
-import { getSpaceProductRatePlans } from 'features/pricing-entities';
+import { getAllPlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
@@ -55,13 +55,13 @@ const initialFetch = (organization, space) => async () => {
   const [
     spaceResources,
     freeSpaceResource,
-    subscriptionPlans,
+    ratePlans,
     rawSpaceRatePlans,
     recommendedPlan,
   ] = await Promise.all([
     spaceResourceService.getAll(),
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSubscriptionPlans(orgEndpoint),
+    getAllPlans(orgEndpoint),
     getSpaceProductRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
   ]);
@@ -72,10 +72,10 @@ const initialFetch = (organization, space) => async () => {
     freeSpaceResource,
   });
 
-  const currentSpaceSubscriptionPlan = subscriptionPlans.items.find(
+  const currentSpaceSubscriptionPlan = ratePlans.find(
     (plan) => plan.gatekeeperKey === space.sys.id
   );
-  const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
+  const currentSubscriptionPrice = calculateTotalPrice(ratePlans);
 
   return {
     spaceResources,

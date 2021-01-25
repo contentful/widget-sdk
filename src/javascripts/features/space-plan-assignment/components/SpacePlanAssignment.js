@@ -4,7 +4,7 @@ import { Grid, Workbench, Notification } from '@contentful/forma-36-react-compon
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { getProductPlans } from 'account/pricing/PricingDataProvider';
-import { getSpaceRatePlans } from 'features/pricing-entities';
+import { getSpacePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -41,7 +41,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const resourceService = createResourceService(spaceId, 'space');
 
       const [plans, ratePlans, space, spaceResources] = await Promise.all([
-        getSpaceRatePlans(orgEndpoint),
+        getSpacePlans(orgEndpoint),
         getProductPlans(orgEndpoint),
         getSpace(spaceEndpoint),
         resourceService.getAll(),

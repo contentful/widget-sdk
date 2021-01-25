@@ -1,5 +1,4 @@
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { getSpaceProductRatePlans } from 'features/pricing-entities';
+import { getSpaceProductRatePlans, getSpacePlanForSpace } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from './ResourceService';
 import { resourceHumanNameMap, getResourceLimits } from 'utils/ResourceUtils';
@@ -236,7 +235,7 @@ export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
   }
 
   const endpoint = createOrganizationEndpoint(orgId);
-  const currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
+  const currentSpaceRatePlan = await getSpacePlanForSpace(endpoint, spaceId);
 
   const currentRatePlanCharge = getRatePlanChargeFor(
     currentSpaceRatePlan.ratePlanCharges,

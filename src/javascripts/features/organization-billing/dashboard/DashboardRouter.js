@@ -4,11 +4,8 @@ import { Dashboard } from './Dashboard';
 import { useAsync } from 'core/hooks/useAsync';
 import { getBillingDetails, getInvoices } from '../services/BillingDetailsService';
 import { getDefaultPaymentMethod } from '../services/PaymentMethodService';
-import {
-  getBasePlan,
-  isSelfServicePlan,
-  isEnterprisePlan,
-} from 'account/pricing/PricingDataProvider';
+import { isSelfServicePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';

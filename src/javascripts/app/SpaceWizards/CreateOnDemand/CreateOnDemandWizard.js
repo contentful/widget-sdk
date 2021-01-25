@@ -34,8 +34,8 @@ import {
   sendParnershipEmail,
 } from '../shared/utils';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { getSubscriptionPlans, calculateTotalPrice } from 'account/pricing/PricingDataProvider';
-import { getSpaceProductRatePlans } from 'features/pricing-entities';
+import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
+import { getAllPlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
@@ -58,14 +58,14 @@ const initialFetch = (organization) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
 
-  const [freeSpaceResource, rawSpaceRatePlans, templates, subscriptionPlans] = await Promise.all([
+  const [freeSpaceResource, rawSpaceRatePlans, templates, ratePlans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
-    getSubscriptionPlans(endpoint),
+    getAllPlans(endpoint),
   ]);
 
-  const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
+  const currentSubscriptionPrice = calculateTotalPrice(ratePlans);
   const spaceRatePlans = transformSpaceRatePlans({
     organization,
     spaceRatePlans: rawSpaceRatePlans,

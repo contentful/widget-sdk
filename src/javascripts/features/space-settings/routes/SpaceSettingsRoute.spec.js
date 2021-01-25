@@ -9,7 +9,8 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
-import { getProductPlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getSpacePlanForSpace } from 'features/pricing-entities';
 
 import { SpaceSettingsRoute } from './SpaceSettingsRoute';
 import * as fake from 'test/helpers/fakeFactory';
@@ -35,9 +36,12 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSingleSpacePlan: jest.fn(),
   getProductPlans: jest.fn(),
   isEnterprisePlan: jest.fn().mockReturnValue(false),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  getSpaceRatePlanForSpace: jest.fn(),
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
@@ -62,7 +66,7 @@ describe('SpaceSettingsRoute', () => {
   const largePlan = { name: 'firstPlan', price: 99, sys: { id: 2 } };
   const notificationMessage = 'This is a notification';
 
-  getSingleSpacePlan.mockResolvedValue(mediumPlan);
+  getSpacePlanForSpace.mockResolvedValue(mediumPlan);
   getProductPlans.mockResolvedValue([mediumPlan, largePlan]);
 
   getSpace.mockResolvedValue(testSpace);
@@ -86,7 +90,7 @@ describe('SpaceSettingsRoute', () => {
   });
 
   it('should not throw an error when it is a v1 space with no plan', async () => {
-    getSingleSpacePlan.mockImplementation(() => {
+    getSpacePlanForSpace.mockImplementation(() => {
       throw new Error();
     });
 
@@ -97,7 +101,7 @@ describe('SpaceSettingsRoute', () => {
   });
 
   it('should with call changeSpaceDialog and track the CTA click', async () => {
-    getSingleSpacePlan.mockResolvedValue(mediumPlan);
+    getSpacePlanForSpace.mockResolvedValue(mediumPlan);
     beginSpaceChange.mockImplementation((argumentVariables) => {
       // Pretend that the user selected the large plan in the beginSpaceChange.
       argumentVariables.onSubmit(largePlan);

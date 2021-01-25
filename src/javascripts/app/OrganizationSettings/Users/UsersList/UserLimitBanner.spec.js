@@ -12,6 +12,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
+import * as PricingEntities from 'features/pricing-entities';
 
 import UserLimitBanner, { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 
@@ -50,7 +51,7 @@ describe('UserLimitBanner', () => {
   beforeEach(() => {
     mockOrgCall = jest.spyOn(TokenStore, 'getOrganization').mockImplementation(() => mockOrg);
     mockBasePlanCall = jest
-      .spyOn(PricingDataProvider, 'getBasePlan')
+      .spyOn(PricingEntities, 'getBaseRatePlan')
       .mockImplementation(() => mockBasePlan);
   });
 

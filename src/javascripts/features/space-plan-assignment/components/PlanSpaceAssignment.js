@@ -7,7 +7,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { useAsync } from 'core/hooks';
 import { getProductPlans } from 'account/pricing/PricingDataProvider';
-import { getSpaceRatePlans } from 'features/pricing-entities';
+import { getSpacePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SpaceSelection } from './SpaceSelection';
@@ -37,7 +37,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
       const orgEndpoint = createOrganizationEndpoint(orgId);
 
       const [plans, ratePlans, spaces] = await Promise.all([
-        getSpaceRatePlans(orgEndpoint),
+        getSpacePlans(orgEndpoint),
         getProductPlans(orgEndpoint),
         getAllSpaces(orgEndpoint),
       ]);

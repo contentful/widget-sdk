@@ -5,7 +5,8 @@ import { css } from 'emotion';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
-import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
@@ -73,7 +74,7 @@ export function UpgradeBanner() {
     }
 
     const endpoint = createOrganizationEndpoint(currentOrganizationId);
-    const basePlan = getBasePlan(endpoint);
+    const basePlan = await getBasePlan(endpoint);
     const basePlanIsEnterprise = isEnterprisePlan(basePlan);
 
     // We don't want to trigger this for enterprise users

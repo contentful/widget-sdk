@@ -7,7 +7,8 @@ import { alnum } from 'utils/Random';
 import { useAsync } from 'core/hooks/useAsync';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
-import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import {
   Organization as OrganizationPropType,
   Space as SpacePropType,

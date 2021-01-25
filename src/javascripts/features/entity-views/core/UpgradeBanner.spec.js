@@ -20,7 +20,10 @@ jest.mock('analytics/Analytics', () => ({
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(),
-  getBasePlan: jest.fn(),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  getBaseRatePlan: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({

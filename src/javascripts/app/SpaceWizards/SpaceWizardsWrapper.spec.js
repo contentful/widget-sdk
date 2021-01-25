@@ -3,6 +3,7 @@ import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-lib
 import userEvent from '@testing-library/user-event';
 import { when } from 'jest-when';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
+import * as PricingEntities from 'features/pricing-entities';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as Analytics from 'analytics/Analytics';
@@ -34,14 +35,14 @@ jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn().mockResolvedValue([]),
 }));
 
-jest.spyOn(PricingDataProvider, 'getBasePlan');
+jest.spyOn(PricingEntities, 'getBaseRatePlan');
 jest.spyOn(PricingDataProvider, 'isEnterprisePlan');
 
 describe('SpaceWizardsWrapper', () => {
   it('should always get the base plan and determine if the plan is enterprise', async () => {
     await build();
 
-    expect(PricingDataProvider.getBasePlan).toBeCalled();
+    expect(PricingEntities.getBasePlan).toBeCalled();
     expect(PricingDataProvider.isEnterprisePlan).toBeCalled();
   });
 
