@@ -116,7 +116,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       sessionId,
       templatesList,
       spaceRatePlans,
-      subscriptionPlans: subscriptionPlans.items,
+      subscriptionPlans,
       freeSpaceResource,
       pageContent,
       selectedPlatform,

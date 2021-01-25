@@ -1,6 +1,6 @@
 import { get, uniqueId, uniq } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
-import { getAllPlans } from 'features/pricing-entities';
+import { getAllPlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
@@ -64,8 +64,8 @@ export function isPOCSpacePlan(plan) {
  * @returns {object} subscription plans w. spaces & users
  */
 export async function getPlansWithSpaces(endpoint) {
-  const [productPlans, subscriptionPlans, spaces] = await Promise.all([
-    getProductPlans(endpoint),
+  const [productRatePlans, subscriptionPlans, spaces] = await Promise.all([
+    getAllProductRatePlans(endpoint),
     getAllPlans(endpoint),
     getAllSpaces(endpoint),
   ]);
@@ -81,18 +81,18 @@ export async function getPlansWithSpaces(endpoint) {
     },
   });
 
-  const freeSpaceProductPlan = productPlans.find(
+  const freeSpaceProductPlan = productRatePlans.find(
     (productPlan) => productPlan.productPlanType === 'free_space'
   );
 
   const spacesWithoutSubscriptionPlan = spaces.filter(
-    (space) => !subscriptionPlans.items.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey)
+    (space) => !subscriptionPlans.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey)
   );
 
   return {
     plans: subscriptionPlans,
     items: [
-      ...subscriptionPlans.items.map((subscriptionPlan) => ({
+      ...subscriptionPlans.map((subscriptionPlan) => ({
         ...subscriptionPlan,
         ...(subscriptionPlan.gatekeeperKey && {
           space: linkUser(spaces.find(({ sys }) => sys.id === subscriptionPlan.gatekeeperKey)),
@@ -124,26 +124,6 @@ export function changeSpacePlan(endpoint, productRatePlanId) {
 }
 
 /**
- * Update a space plan with a new assigned space.
- * The only required attributes are the `sys.id` and `gatekeeperKey`, `gatekeeperKey` being the space id.
- * @param {object} orgEndpoint
- * @param {object} plan a space plan object containing a `gatekeeperKey` property with a space id as the value
- * @returns{Promise<object>} updated plan
- */
-export function updateSpacePlan(orgEndpoint, plan) {
-  const planId = plan?.sys?.id;
-
-  return orgEndpoint(
-    {
-      method: 'PUT',
-      path: ['plans', planId],
-      data: plan,
-    },
-    alphaHeader
-  );
-}
-
-/**
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of features in {name, internal_name}
@@ -157,19 +137,6 @@ export function getEnabledFeatures(endpoint) {
     },
     alphaHeader
   ).then((features) => (features && features.items) || []);
-}
-
-/**
- * Get base and all space rate plans available for the organization
- */
-export function getProductPlans(endpoint) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['product_rate_plans'],
-    },
-    alphaHeader
-  ).then((data) => data.items);
 }
 
 /**

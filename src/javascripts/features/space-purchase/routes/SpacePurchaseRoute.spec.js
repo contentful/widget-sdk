@@ -2,7 +2,6 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { getProductPlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {
   fetchSpacePurchaseContent,
@@ -24,6 +23,7 @@ import {
   getSpacePlans,
   getSpacePlanForSpace,
   getBasePlan,
+  getAllProductRatePlans,
 } from 'features/pricing-entities';
 
 const mockOrganization = FakeFactory.Organization();
@@ -64,17 +64,16 @@ jest.mock('services/OrganizationRoles', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getProductPlans: jest.fn(),
-  getSpaceRatePlans: jest.fn(),
   isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
 
 jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn(),
-  getSpaceRatePlans: jest.fn(),
-  getBaseRatePlan: jest.fn(),
-  getSpaceRatePlanForSpace: jest.fn(),
+  getSpacePlans: jest.fn(),
+  getBasePlan: jest.fn(),
+  getSpacePlanForSpace: jest.fn(),
+  getAllProductRatePlans: jest.fn(),
 }));
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
@@ -111,7 +110,7 @@ describe('SpacePurchaseRoute', () => {
     createResourceService().get.mockResolvedValue(mockFreeSpaceResource);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
-    getProductPlans.mockResolvedValue();
+    getAllProductRatePlans.mockResolvedValue();
     getSpaceProductRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });

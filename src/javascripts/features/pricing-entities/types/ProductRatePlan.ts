@@ -1,3 +1,5 @@
+import { Tier } from './Shared';
+
 export interface ProductRatePlan {
   committed: boolean;
   contentfulProductId?: string;
@@ -34,14 +36,6 @@ interface UnavailabilityReason {
   additionalInfo: string;
 }
 
-interface Tier {
-  tier: number;
-  price: number;
-  startingUnit: number;
-  endingUnit: number;
-  priceFormat: 'FlatFee';
-}
-
 export interface ProductRatePlanCharge {
   chargeType: 'Recurring';
   model: 'PerUnit' | 'FlatFee' | 'Tiered';
@@ -54,17 +48,4 @@ export interface ProductRatePlanCharge {
   tiers?: Tier[];
   unitType: string;
   uom: unknown;
-}
-
-export interface BasePlan {
-  committed: boolean;
-  contentfulProductId?: string;
-  customerType: 'Self-service';
-  gatekeeperKey?: string;
-  name: string;
-  planType: 'base';
-  price: number;
-  productName: string;
-  productRatePlanId: string;
-  ratePlanCharges: ProductRatePlanCharge[];
 }

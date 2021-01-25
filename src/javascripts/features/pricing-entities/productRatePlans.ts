@@ -1,7 +1,25 @@
-import { SpaceProductRatePlan, AddOnProductRatePlan } from './types/ProductRatePlan';
+import {
+  ProductRatePlan,
+  SpaceProductRatePlan,
+  AddOnProductRatePlan,
+} from './types/ProductRatePlan';
 import { OrganizationEndpoint, CollectionResponse } from './types/Generic';
 
 import { withAlphaHeader } from './utils';
+
+/**
+ * Gets all the product rate plans available to the organization.
+ *
+ * @param {OrganizationEndpoint} endpoint
+ */
+export async function getAllProductRatePlans(endpoint: OrganizationEndpoint) {
+  const data = await withAlphaHeader<CollectionResponse<ProductRatePlan>>(endpoint)({
+    method: 'GET',
+    path: ['product_rate_plans'],
+  });
+
+  return data.items;
+}
 
 /**
  * Get all product rate plans that have a plan type of `add_on`.
@@ -24,7 +42,7 @@ export async function getAddOnProductRatePlans(endpoint: OrganizationEndpoint) {
 /**
  * Get product rate plans for organization that have a planType of `space`.
  *
- * If `spaceId` is provided, it will be passed along in the query and if that rate plan
+ * If `spaceId` is provided, it will be passed along in the query and if the plan
  * for that space matches one of the product rate plans, that product rate plan will
  * have an unavailability reason with type `currentPlan`.
  *

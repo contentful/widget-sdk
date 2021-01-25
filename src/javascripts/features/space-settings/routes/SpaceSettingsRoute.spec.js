@@ -9,8 +9,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
-import { getProductPlans } from 'account/pricing/PricingDataProvider';
-import { getSpacePlanForSpace } from 'features/pricing-entities';
+import { getSpacePlanForSpace, getAllProductRatePlans } from 'features/pricing-entities';
 
 import { SpaceSettingsRoute } from './SpaceSettingsRoute';
 import * as fake from 'test/helpers/fakeFactory';
@@ -36,11 +35,11 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getProductPlans: jest.fn(),
   isEnterprisePlan: jest.fn().mockReturnValue(false),
 }));
 
 jest.mock('features/pricing-entities', () => ({
+  getAllProductRatePlans: jest.fn(),
   getSpaceRatePlanForSpace: jest.fn(),
 }));
 
@@ -67,7 +66,7 @@ describe('SpaceSettingsRoute', () => {
   const notificationMessage = 'This is a notification';
 
   getSpacePlanForSpace.mockResolvedValue(mediumPlan);
-  getProductPlans.mockResolvedValue([mediumPlan, largePlan]);
+  getAllProductRatePlans.mockResolvedValue([mediumPlan, largePlan]);
 
   getSpace.mockResolvedValue(testSpace);
   getNotificationMessage.mockReturnValue(notificationMessage);

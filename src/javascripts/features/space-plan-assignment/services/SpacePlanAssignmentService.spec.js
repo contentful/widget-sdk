@@ -1,6 +1,6 @@
 import { changeSpacePlanAssignment } from './SpacePlanAssignmentService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { updateSpacePlan } from 'account/pricing/PricingDataProvider';
+import { updateSpacePlan } from 'features/pricing-entities';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 import * as fake from 'test/helpers/fakeFactory';
 import { track } from 'analytics/Analytics';
@@ -11,7 +11,7 @@ const oldPlan = fake.Plan({ gatekeeperKey: spaceId });
 const newPlan = fake.Plan({ gatekeeperKey: null });
 const freePlan = fake.Plan({ gatekeeperKey: null });
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
+jest.mock('features/pricing-entities', () => ({
   updateSpacePlan: jest.fn(async () => {}),
 }));
 
@@ -32,7 +32,7 @@ describe('SpacePlanAssignmentService', () => {
       })
     );
     expect(track).toHaveBeenCalledTimes(1);
-    await expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
+    expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
       space_id: spaceId,
       current_plan_id: freePlan.sys.id,
       current_plan_name: freePlan.name,
@@ -105,7 +105,7 @@ describe('SpacePlanAssignmentService', () => {
     await changeSpacePlanAssignment(orgId, spaceId, newPlan, oldPlan, freePlan);
 
     expect(track).toHaveBeenCalledTimes(1);
-    await expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
+    expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
       space_id: spaceId,
       current_plan_id: oldPlan.sys.id,
       current_plan_name: oldPlan.name,

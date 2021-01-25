@@ -1,4 +1,4 @@
-import { updateSpacePlan } from 'account/pricing/PricingDataProvider';
+import { updateSpacePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { track } from 'analytics/Analytics';
 

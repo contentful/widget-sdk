@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid, Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getProductPlans } from 'account/pricing/PricingDataProvider';
-import { getSpacePlans } from 'features/pricing-entities';
+import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -40,14 +39,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const spaceEndpoint = createSpaceEndpoint(spaceId);
       const resourceService = createResourceService(spaceId, 'space');
 
-      const [plans, ratePlans, space, spaceResources] = await Promise.all([
+      const [plans, productRatePlans, space, spaceResources] = await Promise.all([
         getSpacePlans(orgEndpoint),
-        getProductPlans(orgEndpoint),
+        getAllProductRatePlans(orgEndpoint),
         getSpace(spaceEndpoint),
         resourceService.getAll(),
       ]);
 
-      const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
+      const freePlan = productRatePlans.find((plan) => plan.productPlanType === 'free_space');
       const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
 
       // filter plans that already have a space assigned (gatekeeperKey)
@@ -58,12 +57,13 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         return {
           ...plan,
           roleSet:
-            ratePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ?? DEFAULT_ROLE_SET,
+            productRatePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ??
+            DEFAULT_ROLE_SET,
         };
       });
 
       return {
-        ratePlans,
+        productRatePlans,
         plans: sortBy(enhancedPlans, 'price'),
         space,
         currentPlan,

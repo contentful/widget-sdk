@@ -1,5 +1,5 @@
 import { OrganizationEndpoint, CollectionResponse } from './types/Generic';
-import { BasePlan } from './types/ProductRatePlan';
+import { Plan, BasePlan, SpacePlan } from './types/Plan';
 import { withAlphaHeader } from './utils';
 
 /**
@@ -30,7 +30,7 @@ export async function addProductRatePlanToSubscription(
  */
 export async function getSpacePlans(endpoint: OrganizationEndpoint) {
   // TODO(jo-sm): Add type for SpaceRatePlan
-  const data = await withAlphaHeader<CollectionResponse<unknown>>(endpoint)({
+  const data = await withAlphaHeader<CollectionResponse<SpacePlan>>(endpoint)({
     method: 'GET',
     path: ['plans'],
     query: {
@@ -49,7 +49,7 @@ export async function getSpacePlans(endpoint: OrganizationEndpoint) {
  * @param {string}               spaceId
  */
 export async function getSpacePlanForSpace(endpoint: OrganizationEndpoint, spaceId: string) {
-  const data = await withAlphaHeader<CollectionResponse<unknown>>(endpoint)({
+  const data = await withAlphaHeader<CollectionResponse<SpacePlan>>(endpoint)({
     method: 'GET',
     path: ['plans'],
     query: {
@@ -62,6 +62,25 @@ export async function getSpacePlanForSpace(endpoint: OrganizationEndpoint, space
   });
 
   return data.items[0];
+}
+
+/**
+ * Update a space plan with new data.
+ *
+ * The only required attributes are the `sys.id` and `gatekeeperKey`, where `gatekeeperKey` is
+ * the `spaceId` of the space that have the plan assigned to it.
+ *
+ * @param {OrganizationEndpoint} endpoint
+ * @param {SpacePlan} plan
+ */
+export async function updateSpacePlan(endpoint: OrganizationEndpoint, plan: SpacePlan) {
+  const updatedPlan = await withAlphaHeader<SpacePlan>(endpoint)({
+    method: 'PUT',
+    path: ['plans', plan.sys.id],
+    data: plan,
+  });
+
+  return updatedPlan;
 }
 
 /**
@@ -88,7 +107,7 @@ export async function getBasePlan(endpoint: OrganizationEndpoint) {
  * @param {OrganizationEndpoint} endpoint
  */
 export async function getAllPlans(endpoint: OrganizationEndpoint) {
-  const data = await withAlphaHeader<CollectionResponse<unknown>>(endpoint)({
+  const data = await withAlphaHeader<CollectionResponse<Plan>>(endpoint)({
     method: 'GET',
     path: ['plans'],
   });
