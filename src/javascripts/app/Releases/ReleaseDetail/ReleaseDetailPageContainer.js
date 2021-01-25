@@ -27,7 +27,7 @@ import {
   SET_RELEASE_LIST_SELECTED_TAB,
   SET_RELEASE_PROCESSING_ACTION,
 } from '../state/actions';
-import { LoadingOverlay } from 'features/loading-state';
+import { ReleasesLoadingOverlay } from '../ReleasesLoadingOverlay';
 import ReleaseActionJobDialog from './ReleaseScheduledActionDialog';
 import { excludeEntityFromRelease } from '../common/utils';
 import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../releasesService';
@@ -254,7 +254,9 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
 
   return (
     <div>
-      {processingAction && <LoadingOverlay />}
+      {processingAction && (
+        <ReleasesLoadingOverlay message={`${processingAction} ${release.title}`} />
+      )}
       {hasError ? (
         <Note noteType="negative" className={styles.errorNote}>
           We are currently unable to display the details for this release due to a temporary system
