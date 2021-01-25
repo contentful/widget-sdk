@@ -291,13 +291,11 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         <Workbench.Content
           type={editorData.customEditor ? 'full' : 'default'}
           className={styles.mainContent}>
-          {
-            processingAction && (
-              <ReleasesLoadingOverlay 
-                message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
-              />
-            )
-          }
+          {processingAction && (
+            <ReleasesLoadingOverlay
+              message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
+            />
+          )}
           <Tabs className={styles.tabs} withDivider>
             {visibleTabs.map((tab) => (
               <Tab

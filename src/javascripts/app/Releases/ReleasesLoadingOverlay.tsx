@@ -28,7 +28,9 @@ interface ReleasesLoadingOverlayProps {
   message: string;
 }
 
-export const ReleasesLoadingOverlay = ({ message }: ReleasesLoadingOverlayProps): React.ReactElement => {
+export const ReleasesLoadingOverlay = ({
+  message,
+}: ReleasesLoadingOverlayProps): React.ReactElement => {
   return (
     <div className={styles.overlay}>
       <EmptyStateContainer>
