@@ -50,7 +50,10 @@ export const severalEntryReferencesWithVersionResponse = {
   },
   items: [
     entry({
-      sys: { id: defaultEntryId },
+      sys: {
+        id: defaultEntryId,
+        version: 2,
+      },
       fields: {
         entryRef1: {
           'en-US': {
@@ -78,7 +81,7 @@ export const severalEntryReferencesWithVersionResponse = {
       entry({
         sys: {
           id: defaultEntryTestIds.testEntryId2,
-          version: 1,
+          version: 2,
           publishedCounter: 0,
         },
         fields: {},
@@ -86,7 +89,7 @@ export const severalEntryReferencesWithVersionResponse = {
       entry({
         sys: {
           id: defaultEntryTestIds.testEntryId3,
-          version: 1,
+          version: 2,
           publishedCounter: 0,
         },
         fields: {},
