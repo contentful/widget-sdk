@@ -8,6 +8,10 @@ const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 const COMPOSE_DEFINITION_ID = '6TfQEqkcINtj1MS0TuQTWJ';
 const FIRST_PARTY_DEFINITION_ID = '4iIetqcwsR1GIZxaYI6fRm';
 
+jest.mock('Config.js', () => ({
+  domain: 'contentful.com',
+}));
+
 jest.mock('core/services/window', () => ({
   window: {
     fetch: jest.fn(),

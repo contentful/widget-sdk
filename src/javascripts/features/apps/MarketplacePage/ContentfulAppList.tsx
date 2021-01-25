@@ -1,26 +1,21 @@
 import { styles } from './styles';
 import { Card, Heading, Paragraph, Button } from '@contentful/forma-36-react-components';
 import React from 'react';
-import { MarketplaceApp } from 'features/apps-core';
 import { AppManager } from '../AppOperations';
+import { MarketplaceApp } from 'features/apps-core';
+import { SpaceInformation } from '../AppDetailsModal/shared';
 
-interface Props {
+interface ListProps {
   apps: MarketplaceApp[];
-  openDetailModal: (app: MarketplaceApp) => Promise<void> | void;
-  canManageApps?: boolean;
+  openDetailModal: (app: MarketplaceApp) => void;
+  canManageApps: boolean;
   appManager: AppManager;
-  spaceInformation: {
-    spaceId: string;
-    envMeta: {
-      environmentId: string;
-      isMasterEnvironment: boolean;
-    };
-  };
+  spaceInformation: SpaceInformation;
 }
 
-interface ItemProps extends Pick<Props, 'openDetailModal' | 'canManageApps' | 'appManager'> {
+interface ItemProps extends Omit<ListProps, 'apps' | 'spaceInformation'> {
   app: MarketplaceApp;
-  spaceEnvPath: string;
+  spaceEnvPath?: string;
 }
 
 const ContentfulAppListItem = ({
@@ -28,9 +23,10 @@ const ContentfulAppListItem = ({
   openDetailModal,
   canManageApps,
   appManager,
-  spaceEnvPath,
+  spaceEnvPath = '/',
 }: ItemProps) => {
-  const { title, tagLine, icon, appInstallation } = app;
+  const { title, tagLine, icon, appInstallation, targetUrl } = app;
+  const targetUrlWithSpacePath = new URL(spaceEnvPath, targetUrl).toString();
   return (
     <Card padding="default" className={styles.appListCard}>
       <div className={styles.contentfulAppCard}>
@@ -48,7 +44,7 @@ const ContentfulAppListItem = ({
                   className={styles.button}
                   icon="ExternalLink"
                   onClick={() => {
-                    window.open(`${app.targetUrl}/${spaceEnvPath || ''}`, '_blank');
+                    window.open(targetUrlWithSpacePath, '_blank');
                   }}>
                   Open
                 </Button>
@@ -81,11 +77,10 @@ export const ContentfulAppsList = ({
   canManageApps,
   appManager,
   spaceInformation,
-}: Props) => {
-  const { spaceId, envMeta } = spaceInformation;
-
-  const spaceEnvPath = `spaces/${spaceId}${
-    envMeta.isMasterEnvironment ? '' : `/environments/${envMeta.environmentId}`
+}: ListProps) => {
+  const { isMasterEnvironment, environmentId } = spaceInformation.envMeta;
+  const spaceEnvPath = `/spaces/${spaceInformation.spaceId}${
+    isMasterEnvironment ? '' : `/environments/${environmentId}`
   }`;
 
   return (
