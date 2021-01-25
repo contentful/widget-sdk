@@ -54,7 +54,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
     organizationMembership,
     currentSpace,
     currentSpaceRatePlan,
-    addOnProductRatePlans,
     basePlan,
     rawSpaceRatePlans,
     subscriptionPlans,
@@ -69,7 +68,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
     getOrganizationMembership(organizationId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
     spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
-    getAddOnProductRatePlans(endpoint),
     getBasePlan(endpoint),
     getSpaceRatePlans(endpoint, spaceId),
     getSubscriptionPlans(endpoint, { plan_type: 'space' }),
@@ -77,6 +75,15 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
   ]);
+
+  let composeProductRatePlan;
+
+  if (purchasingApps) {
+    // TODO(jo-sm): We should be smarter about this, using `find`, once the `internalName` is finalized.
+    const addOnProductRatePlans = await getAddOnProductRatePlans(endpoint);
+
+    composeProductRatePlan = addOnProductRatePlans[0];
+  }
 
   const canAccess =
     isOwnerOrAdmin(organization) && (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
@@ -90,8 +97,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
     return;
   }
 
-  // TODO(jo-sm): We should be smarter about this, using `find`, once the `internalName` is finalized.
-  const composeProductRatePlan = addOnProductRatePlans[0];
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
 
   const numSpacesInOrg = orgSpaceMetadata.total;
