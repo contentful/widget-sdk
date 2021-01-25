@@ -47,13 +47,15 @@ function formatDate(date: string) {
 
 const userNameCache = {};
 
+interface Event {
+  enabled: boolean;
+  targetUrl: string;
+  topics: unknown[];
+}
+
 interface Props {
   definition: AppDefinition;
-  events: {
-    enabled: boolean;
-    targetUrl: string;
-    topics: string[];
-  };
+  events: Event;
   goToListView: () => void;
   goToTab: (tab: string) => void;
   tab: string;
@@ -68,8 +70,8 @@ interface State {
   name: string;
   savedDefinition: AppDefinition;
   definition: AppDefinition;
-  savedEvents: { enabled: boolean; targetUrl: string; topics: string[] };
-  events: { enabled: boolean; targetUrl: string; topics: string[] };
+  savedEvents: Event;
+  events: Event;
   selectedTab: string;
   creator: string;
   errors: ValidationError[];
