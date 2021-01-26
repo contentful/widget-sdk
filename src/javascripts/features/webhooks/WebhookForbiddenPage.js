@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { TextLink } from '@contentful/forma-36-react-components';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
 export const WebhookForbiddenPage = ({ templateId }) => {
@@ -13,9 +14,9 @@ export const WebhookForbiddenPage = ({ templateId }) => {
           <div>
             Share this with your admin and they can install it for you.
             <div>
-              <a href={fullUrl} target="_blank" rel="noopener noreferrer">
+              <TextLink href={fullUrl} target="_blank" rel="noopener noreferrer">
                 {fullUrl}
-              </a>
+              </TextLink>
             </div>
           </div>
         </Fragment>

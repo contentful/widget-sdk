@@ -8,7 +8,17 @@ import { transformTopicsToMap, transformMapToTopics } from './WebhookSegmentatio
 import { WebhookHeaders } from './WebhookHeaders';
 import { WebhookBasicAuth } from './WebhookBasicAuth';
 import { WebhookBodyTransformation } from './WebhookBodyTransformation';
-import { Paragraph } from '@contentful/forma-36-react-components';
+import {
+  FormLabel,
+  Heading,
+  Checkbox,
+  Paragraph,
+  Select,
+  Option,
+  TextInput,
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { WebhookFilters } from './WebhookFilters';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 import { WILDCARD } from './WebhookSegmentationState';
@@ -28,6 +38,31 @@ const CONTENT_TYPES = [
   `${FORM_URLENCODED_CONTENT_TYPE}; charset=utf-8`,
 ];
 
+const styles = {
+  contentLengthHeader: css({
+    fontSize: tokens.fontSizeM,
+  }),
+  contentLengthLabel: css({
+    marginTop: tokens.spacingS,
+    fontWeight: tokens.fontWeightNormal,
+  }),
+  webhookFormSection: css({
+    marginTop: tokens.spacingM,
+  }),
+  webhookLabel: css({
+    display: 'block',
+  }),
+  webhookMethodSettings: css({
+    display: 'flex',
+  }),
+  webhookMethod: css({
+    marginRight: tokens.spacingXs,
+  }),
+  webhookURL: css({
+    flexGrow: 1,
+  }),
+};
+
 export const WebhookForm = ({ webhook, onChange }) => {
   const { currentSpaceEnvironments } = useSpaceEnvContext();
   const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
@@ -45,39 +80,36 @@ export const WebhookForm = ({ webhook, onChange }) => {
   return (
     <div className="webhook-editor__settings f36-padding-top--s">
       <FormSection title="Details">
-        <div className="cfnext-form__field">
-          <label htmlFor="webhook-name">
-            Name <span>(required)</span>
-          </label>
-          <input
-            type="text"
-            className="cfnext-form__input"
+        <div className={styles.webhookFormSection}>
+          <FormLabel className={styles.webhookLabel} required={true} htmlFor="webhook-name">
+            Name
+          </FormLabel>
+          <TextInput
+            width={'full'}
             id="webhook-name"
             value={webhook.name || ''}
             onChange={(e) => onChange({ name: e.target.value })}
           />
         </div>
-        <div className="cfnext-form__field">
-          <label htmlFor="webhook-url">
-            URL <span>(required)</span>
-          </label>
-          <div className="webhook-editor__settings-row">
-            <select
-              data-test-id="webhook-method-select"
-              className="cfnext-select-box"
-              id="webhook-method"
+        <div className={styles.webhookFormSection}>
+          <FormLabel className={styles.webhookLabel} required={true}>
+            URL
+          </FormLabel>
+          <div className={styles.webhookMethodSettings}>
+            <Select
+              width={'auto'}
+              className={styles.webhookMethod}
+              testId="webhook-method-select"
               value={get(webhook, ['transformation', 'method'], METHODS[0])}
               onChange={(e) => onChange(updatedTransformation({ method: e.target.value }))}>
               {METHODS.map((m) => (
-                <option key={m} value={m}>
+                <Option key={m} value={m}>
                   {m}
-                </option>
+                </Option>
               ))}
-            </select>
-            <input
-              type="text"
-              className="cfnext-form__input"
-              id="webhook-url"
+            </Select>
+            <TextInput
+              className={styles.webhookURL}
               value={webhook.url || ''}
               onChange={(e) => onChange({ url: e.target.value })}
             />
@@ -110,19 +142,21 @@ export const WebhookForm = ({ webhook, onChange }) => {
           onChange={(credentials) => onChange(credentials)}
         />
         <div className="cfnext-form__field">
-          <label htmlFor="webhook-content-type">Content type</label>
-          <select
-            data-test-id="content-type-select"
-            className="cfnext-select-box"
+          <FormLabel className={styles.webhookLabel} htmlFor="webhook-content-type">
+            Content type
+          </FormLabel>
+          <Select
+            className={styles.webhookSelectCT}
             id="webhook-content-type"
+            testId="content-type-select"
             value={contentType}
             onChange={(e) => onChange(updatedTransformation({ contentType: e.target.value }))}>
             {CONTENT_TYPES.map((ct) => (
-              <option key={ct} value={ct}>
+              <Option key={ct} value={ct}>
                 {ct}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
           <Paragraph className="entity-editor__field-hint">
             Select one of allowed MIME types to be used as the value of the{' '}
             <code>Content-Type</code> header. Any custom <code>Content-Type</code> header will be
@@ -136,18 +170,18 @@ export const WebhookForm = ({ webhook, onChange }) => {
           )}
         </div>
         <div className="cfnext-form__field">
-          <label htmlFor="webhook-content-length">Content length</label>
-          <label htmlFor="webhook-content-length">
-            <input
-              id="webhook-content-length"
-              type="checkbox"
+          <Heading element="h3" className={styles.contentLengthHeader}>
+            Content length
+          </Heading>
+          <FormLabel className={styles.contentLengthLabel}>
+            <Checkbox
               checked={includeContentLength}
               onChange={(e) =>
                 onChange(updatedTransformation({ includeContentLength: e.target.checked }))
               }
             />{' '}
             Automatically compute the value of the <code>Content-Length</code> header
-          </label>
+          </FormLabel>
           <Paragraph className="entity-editor__field-hint">
             If this option is selected, the byte size of the final request body will be computed and
             used as the value of the <code>Content-Length</code> header.

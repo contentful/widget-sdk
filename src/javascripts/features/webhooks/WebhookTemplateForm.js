@@ -8,6 +8,7 @@ import {
   ValidationMessage,
   Select,
   Option,
+  Heading,
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { values, isString } from 'lodash';
@@ -84,7 +85,9 @@ export class WebhookTemplateForm extends React.Component {
 
     return (
       <div className="webhook-template-form">
-        <h2 className="webhook-template-form__title">{template.title}</h2>
+        <Heading element={'h2'} className={'webhook-template-form__title'}>
+          {template.title}
+        </Heading>
         {template.description && (
           <div className="webhook-template-form__description">{template.description}</div>
         )}
