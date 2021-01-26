@@ -13,7 +13,7 @@ import {
   getOrganizationName,
   getOrganization,
 } from './utils';
-import { SpaceEnv, SpaceEnvContextValue, Environment } from './types';
+import { SpaceEnv, SpaceEnvContextValue, Environment, SpaceEnvUsers } from './types';
 import { ContentType } from './types';
 import { getSpaceContext } from 'classes/spaceContext';
 
@@ -68,6 +68,10 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     return K.getValue(angularSpaceContext.publishedCTs.items$);
   }
 
+  function getUsers(): SpaceEnvUsers {
+    return angularSpaceContext?.users;
+  }
+
   // Most common values are exported as property values
   const value: SpaceEnvContextValue = {
     currentEnvironment: getEnvironment(space),
@@ -83,6 +87,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceId: getSpaceId(space),
     currentSpaceName: getSpaceName(space),
     currentSpaceContentTypes: contentTypes,
+    currentUsers: getUsers(),
   };
 
   return <SpaceEnvContext.Provider value={value}>{props.children}</SpaceEnvContext.Provider>;

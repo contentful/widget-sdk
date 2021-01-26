@@ -12,6 +12,12 @@ export interface SpaceEnvContextValue {
   currentSpaceId?: string;
   currentSpaceName?: string;
   currentSpaceContentTypes: ContentType[];
+  currentUsers?: SpaceEnvUsers;
+}
+
+export interface SpaceEnvUsers {
+  get: () => unknown;
+  getAll: () => unknown;
 }
 
 export interface ContentType {

@@ -67,6 +67,11 @@ export function isMasterEnvironment(environment?: Environment): boolean {
   );
 }
 
+export function isMasterEnvironmentById(environments: Environment[], envId) {
+  const envOrAlias = environments.find((env) => env.sys.id === envId);
+  return isMasterEnvironment(envOrAlias);
+}
+
 export function isUnscopedRoute(space?: SpaceEnv): boolean {
   return (
     space?.environmentMeta?.aliasId === 'master' ||
