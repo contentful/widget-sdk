@@ -105,11 +105,11 @@ export default class TasksPage extends Component {
       // getEntryTitle expects the entry field to be keyed by their internal ID,
       // not their API name. But we're using API data, so we need to convert
       // the field keys before passing them along.
-      return _.find(contentType.data.fields, { apiName: key }).id;
+      return _.find(contentType.fields, { apiName: key }).id;
     });
     return getEntryTitle({
       entry: { ...entry, fields },
-      contentType: contentType.data,
+      contentType: contentType,
       defaultInternalLocaleCode: this.props.defaultLocaleCode,
       defaultTitle: 'Untitled',
     });
