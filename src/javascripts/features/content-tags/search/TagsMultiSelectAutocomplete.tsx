@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
+import Checkbox from '@contentful/forma-36-react-components/dist/components/Checkbox';
 import { Autocomplete } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -34,7 +34,12 @@ const defaultStyles = {
     minWidth: 76,
     height: '100%',
   }),
-  DropdownCheckboxField: css({ width: '100%' }),
+  DropdownCheckboxField: css({
+    '& span': {
+      marginLeft: tokens.spacingXs,
+      fontWeight: tokens.fontWeightDemiBold,
+    },
+  }),
 };
 
 type TagsMultiSelectAutocompleteProps = {
@@ -80,21 +85,13 @@ const TagsMultiSelectAutocomplete = ({
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
   // and the event toggles tags, so two events == the opposite)
   const tagSelectRow = (tag: FilterOption) => (
-    <CheckboxField
-      className={styles.DropdownCheckboxField}
-      key={tag.value}
-      id={tag.value}
-      labelText={tag.label}
-      formLabelProps={{
-        onClick: (event: React.MouseEvent<HTMLElement>) => {
-          event.preventDefault();
-        },
-      }}
-      onChange={(evt) => {
-        evt.stopPropagation();
-      }}
-      checked={selectedTags.some((selectedTag) => selectedTag.value === tag.value)}
-    />
+    <li className={css(defaultStyles.DropdownCheckboxField)}>
+      <Checkbox
+        labelText={tag.label}
+        checked={selectedTags.some((selectedTag) => selectedTag.value === tag.value)}
+      />
+      <span>{tag.label}</span>
+    </li>
   );
 
   // Previously checked tags are displayed first. Tags checked in this session
