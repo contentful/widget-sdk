@@ -40,7 +40,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 
 jest.mock('features/pricing-entities', () => ({
   getAllProductRatePlans: jest.fn(),
-  getSpaceRatePlanForSpace: jest.fn(),
+  getSpacePlanForSpace: jest.fn(),
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');

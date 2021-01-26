@@ -14,7 +14,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 }));
 
 jest.mock('features/pricing-entities', () => ({
-  getBaseRatePlan: jest.fn(() => ({ customerType: 'Self-service' })),
+  getBasePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 
 describe('isSpacePurchaseFlowAllowed', () => {

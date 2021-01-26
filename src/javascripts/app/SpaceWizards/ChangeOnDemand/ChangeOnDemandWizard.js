@@ -22,7 +22,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
 import {
   changeSpacePlan,
-  transformSpaceRatePlans,
+  transformSpaceProductRatePlans,
   goToBillingPage,
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
@@ -55,8 +55,8 @@ const initialFetch = (organization, space) => async () => {
   const [
     spaceResources,
     freeSpaceResource,
-    ratePlans,
-    rawSpaceRatePlans,
+    plans,
+    rawSpaceProductRatePlans,
     recommendedPlan,
   ] = await Promise.all([
     spaceResourceService.getAll(),
@@ -66,16 +66,14 @@ const initialFetch = (organization, space) => async () => {
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
   ]);
 
-  const spaceRatePlans = transformSpaceRatePlans({
+  const spaceRatePlans = transformSpaceProductRatePlans({
     organization,
-    spaceRatePlans: rawSpaceRatePlans,
+    spaceProductRatePlans: rawSpaceProductRatePlans,
     freeSpaceResource,
   });
 
-  const currentSpaceSubscriptionPlan = ratePlans.find(
-    (plan) => plan.gatekeeperKey === space.sys.id
-  );
-  const currentSubscriptionPrice = calculateTotalPrice(ratePlans);
+  const currentSpaceSubscriptionPlan = plans.find((plan) => plan.gatekeeperKey === space.sys.id);
+  const currentSubscriptionPrice = calculateTotalPrice(plans);
 
   return {
     spaceResources,

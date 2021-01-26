@@ -180,7 +180,7 @@ describe('SpacePlanAssignment', () => {
   };
 
   beforeEach(() => {
-    getSpacePlans.mockResolvedValue({ total: mockPlans.length, items: mockPlans });
+    getSpacePlans.mockResolvedValue(mockPlans);
     getAllProductRatePlans.mockResolvedValue(mockRatePlans);
     getSpace.mockResolvedValue(mockSpace);
     createResourceService().getAll.mockResolvedValue(mockSpaceResources);

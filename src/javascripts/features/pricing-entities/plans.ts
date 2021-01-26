@@ -29,7 +29,6 @@ export async function addProductRatePlanToSubscription(
  * @param {OrganizationEndpoint} endpoint
  */
 export async function getSpacePlans(endpoint: OrganizationEndpoint) {
-  // TODO(jo-sm): Add type for SpaceRatePlan
   const data = await withAlphaHeader<CollectionResponse<SpacePlan>>(endpoint)({
     method: 'GET',
     path: ['plans'],

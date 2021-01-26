@@ -23,7 +23,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 }));
 
 jest.mock('features/pricing-entities', () => ({
-  getBaseRatePlan: jest.fn(),
+  getBasePlan: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({

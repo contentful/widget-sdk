@@ -50,13 +50,13 @@ const styles = {
 const initialFetch = (organization, basePlan) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const orgResources = createResourceService(organization.sys.id, 'organization');
-  const [freeSpaceResource, spaceRatePlans, templates] = await Promise.all([
+  const [freeSpaceResource, spaceProductRatePlans, templates] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
   ]);
 
-  const freeSpaceRatePlan = spaceRatePlans.find(
+  const freeSpaceRatePlan = spaceProductRatePlans.find(
     (plan) => plan.productPlanType === FREE_SPACE_IDENTIFIER
   );
 

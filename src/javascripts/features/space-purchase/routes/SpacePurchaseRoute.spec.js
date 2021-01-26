@@ -63,13 +63,9 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
-  isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
-}));
-
 jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn(),
+  getSpaceProductRatePlans: jest.fn(),
   getSpacePlans: jest.fn(),
   getBasePlan: jest.fn(),
   getSpacePlanForSpace: jest.fn(),
@@ -117,16 +113,13 @@ describe('SpacePurchaseRoute', () => {
     isOwner.mockReturnValue(true);
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
-    getSpacePlans.mockReturnValue({ items: [] });
+    getSpacePlans.mockReturnValue([]);
     getVariation.mockResolvedValue(false);
     getSpaces.mockResolvedValue({
       total: 1,
       items: [],
     });
-    getAddOnProductRatePlans.mockResolvedValue({
-      total: 1,
-      items: [mockComposeProductRatePlan],
-    });
+    getAddOnProductRatePlans.mockResolvedValue([mockComposeProductRatePlan]);
   });
 
   it('should render the generic loading component until the apps purchase state is loaded', async () => {

@@ -49,8 +49,8 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 }));
 
 jest.mock('features/pricing-entities', () => ({
-  getSpaceRatePlans: jest.fn(() => mockRatePlans),
-  getBaseRatePlan: jest.fn(() => ({ customerType: 'Self-service' })),
+  getSpaceProductRatePlans: jest.fn(),
+  getBasePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals

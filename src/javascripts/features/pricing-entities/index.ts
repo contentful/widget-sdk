@@ -11,5 +11,5 @@ export {
   getAllPlans,
   updateSpacePlan,
 } from './plans';
-export type { ProductRatePlanm, ProductRatePlanCharge } from './types/ProductRatePlan';
+export type { ProductRatePlan, ProductRatePlanCharge } from './types/ProductRatePlan';
 export type { BasePlan } from './types/Plan';

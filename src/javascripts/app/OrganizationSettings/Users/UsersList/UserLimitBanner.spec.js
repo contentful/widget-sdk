@@ -12,7 +12,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
-import * as PricingEntities from 'features/pricing-entities';
+import { getBasePlan } from 'features/pricing-entities';
 
 import UserLimitBanner, { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 
@@ -22,7 +22,11 @@ const mockSpaces = Array.from(Array(3)).map((_, idx) => fake.Space(`Space ${idx}
 const mockUsersEmpty = { items: [], total: 0 };
 
 let mockOrgCall;
-let mockBasePlanCall;
+
+jest.mock('features/pricing-entities', () => ({
+  getBasePlan: jest.fn(),
+}));
+
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 jest.spyOn(EndpointFactory, 'createOrganizationEndpoint').mockImplementation(() => jest.fn());
 jest.spyOn(TokenStore, 'getOrganization').mockImplementation(() => mockOrg);
@@ -50,14 +54,12 @@ async function build(customProps) {
 describe('UserLimitBanner', () => {
   beforeEach(() => {
     mockOrgCall = jest.spyOn(TokenStore, 'getOrganization').mockImplementation(() => mockOrg);
-    mockBasePlanCall = jest
-      .spyOn(PricingEntities, 'getBaseRatePlan')
-      .mockImplementation(() => mockBasePlan);
+    getBasePlan.mockResolvedValue(mockBasePlan);
   });
 
   afterEach(() => {
     mockOrgCall.mockRestore();
-    mockBasePlanCall.mockRestore();
+    getBasePlan.mockReset();
   });
 
   it('should not render if organizaion is LegacyOrganization (it is not pricing_version_2)', async () => {
@@ -125,7 +127,7 @@ describe('UserLimitBanner', () => {
     const mockUsers = { total: usersCount };
 
     it('should render if the user reached the limit of users for the plan', async () => {
-      mockBasePlanCall.mockImplementation(() =>
+      getBasePlan.mockImplementation(() =>
         fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE })
       );
       jest
@@ -140,7 +142,7 @@ describe('UserLimitBanner', () => {
     });
 
     it('should render if the user reached the limit of users for the plan and user is Owner', async () => {
-      mockBasePlanCall.mockImplementation(() =>
+      getBasePlan.mockImplementation(() =>
         fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE })
       );
       OrganizationRoles.isOwner.mockResolvedValueOnce(true);
@@ -166,7 +168,7 @@ describe('UserLimitBanner', () => {
       jest
         .spyOn(OrganizationMembershipRepository, 'getMemberships')
         .mockImplementation(() => mockUsers);
-      mockBasePlanCall.mockImplementation(() =>
+      getBasePlan.mockImplementation(() =>
         fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE })
       );
 

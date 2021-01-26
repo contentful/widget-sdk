@@ -17,8 +17,8 @@ jest.mock('app/SpaceWizards/shared/utils', () => ({
   createSpaceWithTemplate: jest.fn(),
 }));
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSpaceRatePlans: jest.fn(),
+jest.mock('features/pricing-entities', () => ({
+  getSpaceProductRatePlans: jest.fn(),
 }));
 
 jest.mock('services/SpaceTemplateLoader', () => ({

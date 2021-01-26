@@ -20,6 +20,16 @@ const mockBasePlan = Fake.Plan({ customerType: PricingDataProvider.ENTERPRISE })
 const mockFreeSpaceResource = Fake.OrganizationResource(1, 5, 'free_space');
 const mockSpaceResources = [Fake.SpaceResource(1, 3, 'environment')];
 
+// TODO(jo-sm): For some reason you can't do `jest.spyOn(PricingEntities, 'getBasePlan'). It returns
+// an error, `TypeError: Cannot redefine property: getBasePlan`. I think this is related to the
+// move to TS, and should be able to be fixed in tooling. This is a workaround.
+jest.mock('features/pricing-entities', () => ({
+  ...jest.requireActual('features/pricing-entities'),
+  getBasePlan: jest.fn((...args) =>
+    jest.requireActual('features/pricing-entities').getBasePlan(...args)
+  ),
+}));
+
 mockEndpoint.mockRejectedValue();
 when(mockEndpoint)
   .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
@@ -35,7 +45,6 @@ jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn().mockResolvedValue([]),
 }));
 
-jest.spyOn(PricingEntities, 'getBaseRatePlan');
 jest.spyOn(PricingDataProvider, 'isEnterprisePlan');
 
 describe('SpaceWizardsWrapper', () => {

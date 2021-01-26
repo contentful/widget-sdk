@@ -10,7 +10,7 @@ import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
-import { getSpaceRatePlanForSpace } from 'features/pricing-entities';
+import { getSpacePlanForSpace } from 'features/pricing-entities';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
@@ -35,9 +35,9 @@ export class SpaceSettingsRoute extends React.Component {
     const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
     let plan;
     try {
-      plan = await getSpaceRatePlanForSpace(orgEndpoint, currentSpaceId);
+      plan = await getSpacePlanForSpace(orgEndpoint, currentSpaceId);
     } catch (e) {
-      // await getSpaceRatePlanForSpace throws for spaces on the old pricing
+      // await getSpacePlanForSpace throws for spaces on the old pricing
       // because they don't have a space plan. We catch it, dialog can handle lack of plan
     }
 

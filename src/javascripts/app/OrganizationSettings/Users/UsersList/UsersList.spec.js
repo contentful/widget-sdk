@@ -56,7 +56,7 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   reinvite: jest.fn(),
 }));
 jest.mock('features/pricing-entities', () => ({
-  getBaseRatePlan: jest.fn(),
+  getBasePlan: jest.fn(),
 }));
 
 jest.useFakeTimers();

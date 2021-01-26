@@ -28,7 +28,7 @@ import {
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
   WIZARD_EVENTS,
-  transformSpaceRatePlans,
+  transformSpaceProductRatePlans,
   trackWizardEvent,
   goToBillingPage,
   sendParnershipEmail,
@@ -58,17 +58,17 @@ const initialFetch = (organization) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
 
-  const [freeSpaceResource, rawSpaceRatePlans, templates, ratePlans] = await Promise.all([
+  const [freeSpaceResource, rawSpaceProductRatePlans, templates, plans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
     getAllPlans(endpoint),
   ]);
 
-  const currentSubscriptionPrice = calculateTotalPrice(ratePlans);
-  const spaceRatePlans = transformSpaceRatePlans({
+  const currentSubscriptionPrice = calculateTotalPrice(plans);
+  const spaceRatePlans = transformSpaceProductRatePlans({
     organization,
-    spaceRatePlans: rawSpaceRatePlans,
+    spaceProductRatePlans: rawSpaceProductRatePlans,
     freeSpaceResource,
   });
 
