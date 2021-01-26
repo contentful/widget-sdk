@@ -10,8 +10,8 @@ import {
   Heading,
   Paragraph,
   Card,
-  Tag,
   Subheading,
+  SectionHeading,
   Button,
   Icon,
 } from '@contentful/forma-36-react-components';
@@ -77,7 +77,7 @@ export function SpacePlanAssignmentConfirmation({
           <Grid columns="1fr 0 1fr" rows="2" columnGap="spacing2Xl">
             <div>
               <header className={styles.header}>
-                <Tag tagType="muted">Current type</Tag>
+                <SectionHeading>Current type</SectionHeading>
                 <Subheading>{currentPlan.name}</Subheading>
               </header>
               <SpacePlanResourceList plan={currentPlan} spaceResources={spaceResources} />
@@ -89,7 +89,7 @@ export function SpacePlanAssignmentConfirmation({
 
             <div>
               <header className={styles.header}>
-                <Tag tagType="muted">New type</Tag>
+                <SectionHeading>New type</SectionHeading>
                 <Subheading>{selectedPlan.name}</Subheading>
               </header>
               <SpacePlanResourceList plan={selectedPlan} />
