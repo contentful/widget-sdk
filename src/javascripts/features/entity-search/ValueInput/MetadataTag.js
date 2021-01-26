@@ -6,7 +6,6 @@ import { Operator } from 'core/services/ContentQuery';
 import {
   useReadTags,
   TagsMultiSelectAutocomplete,
-  tagPayloadToValue,
   tagsPayloadToValues,
   orderByLabel,
   useFilteredTags,
@@ -94,7 +93,7 @@ class MetadataTag extends React.Component {
 // Functional component to match old style search state
 // with new style hook state
 export const MetadataTagWrapper = (props) => {
-  const { isLoading, error } = useReadTags();
+  const { isLoading, error, getTag } = useReadTags();
   const { setSearch, filteredTags } = useFilteredTags();
   const { value } = props;
   const onSearch = useCallback(
@@ -104,19 +103,19 @@ export const MetadataTagWrapper = (props) => {
     [setSearch]
   );
 
+  const selectedTagIds = value.split(',').map((id) => id.trim());
+
   if (isLoading === false && !error) {
     // Normalize incoming tags and use them as initial state
     // missing tags are thrown out...
-    const tags = orderByLabel(tagsPayloadToValues(filteredTags));
 
-    const initialTags = value
-      .split(',')
-      .map((id) => id.trim())
-      .map((id) => filteredTags.find((tag) => tag.sys.id === id))
-      .filter(Boolean)
-      .map(tagPayloadToValue);
-
-    return <MetadataTag tags={tags} selectedTags={initialTags} onSearch={onSearch} {...props} />;
+    const selectedTags = tagsPayloadToValues(selectedTagIds.map(getTag).filter(Boolean));
+    const orderedFilteredTags = orderByLabel(
+      tagsPayloadToValues(filteredTags.filter((tag) => !selectedTagIds.includes(tag.sys.id)))
+    );
+    const tags = [...selectedTags, ...orderedFilteredTags];
+    // we are making sure that the user will see all (tags > limit) the selected on top
+    return <MetadataTag tags={tags} selectedTags={selectedTags} onSearch={onSearch} {...props} />;
   }
   return (
     <fieldset className="search__input-text">
