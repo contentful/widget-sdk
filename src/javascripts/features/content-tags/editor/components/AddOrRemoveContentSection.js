@@ -28,7 +28,7 @@ function useAddTag(addToBulkList) {
   // is adding is needed to get an updated version of addToBulkList
   const [isAdding, setIsAdding] = useState(false);
   const { createTag, createTagData, resetCreateTag, createTagError } = useCreateTag();
-  const { reset, addTagInCacheData } = useReadTags();
+  const { reset, addTag: addTagInCacheData } = useReadTags();
   function addTag({ value, label }) {
     createTag(value, label);
   }
@@ -133,7 +133,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     ? [
         ...localFilteredTags,
         {
-          inLineCreation: true,
+          inlineCreation: true,
           label: search,
           value: stringUtils.toIdentifier(search),
         },
@@ -177,7 +177,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
         );
         return;
       }
-      if (tagItem.inLineCreation) {
+      if (tagItem.inlineCreation) {
         addTag(tagItem);
       } else {
         onAction(tagItem.value, BULK_ACTION.ADD_TAG);

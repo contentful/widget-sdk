@@ -6,6 +6,7 @@ import {
   Tooltip,
   ValidationMessage,
   Notification,
+  Spinner,
 } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import {
@@ -37,8 +38,8 @@ const styles = {
 };
 
 const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = 'Tags' }) => {
-  const { isLoading, hasTags, addTagInCacheData, reset } = useReadTags();
-  const { createTag, createTagData } = useCreateTag();
+  const { isLoading, hasTags, addTag, reset } = useReadTags();
+  const { createTag, createTagData, createTagIsLoading } = useCreateTag();
   const { setSearch, filteredTags, search } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
@@ -49,11 +50,11 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
 
   useEffect(() => {
     if (createTagData) {
-      addTagInCacheData(createTagData);
+      addTag(createTagData);
       onAdd({ label: createTagData.name, value: createTagData.sys.id });
       reset();
     }
-  }, [createTagData, addTagInCacheData, onAdd, reset]);
+  }, [createTagData, addTag, onAdd, reset]);
 
   const onSelect = useCallback(
     (item) => {
@@ -66,7 +67,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
         );
         return;
       }
-      if (item.inLineCreation) {
+      if (item.inlineCreation) {
         return createTag(item.value, item.label);
       }
       onAdd(item);
@@ -94,7 +95,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
 
   if (shouldAddInlineCreationItem(search, localFilteredTags, selectedTags)) {
     localFilteredTags.push({
-      inLineCreation: true,
+      inlineCreation: true,
       label: search,
       value: stringUtils.toIdentifier(search),
     });
@@ -135,12 +136,15 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
             onQueryChange={setSearch}
           />
         </ConditionalWrapper>
-        <EntityTags
-          disabled={disabled}
-          tags={selectedTags}
-          onRemove={onRemove}
-          tagGroups={tagGroups}
-        />
+        {createTagIsLoading && <Spinner size="large" />}
+        {!createTagIsLoading && (
+          <EntityTags
+            disabled={disabled}
+            tags={selectedTags}
+            onRemove={onRemove}
+            tagGroups={tagGroups}
+          />
+        )}
       </FieldFocus>
     );
   }, [
@@ -155,6 +159,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     disabled,
     label,
     validTagName,
+    createTagIsLoading,
   ]);
 
   if (isInitialLoad) {

@@ -2,7 +2,7 @@ import React from 'react';
 
 const ReadTagsContext = React.createContext({
   data: [],
-  addTagInCacheData: null,
+  addTag: null,
   isLoading: false,
   error: null,
   reset: null,

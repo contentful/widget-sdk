@@ -62,7 +62,7 @@ function ReadTagsProvider({ children }) {
 
   const getTag = useCallback((tagId) => cachedData.find((t) => t.sys.id === tagId), [cachedData]);
 
-  const addTagInCacheData = useCallback(
+  const addTag = useCallback(
     (tagData) => {
       setCachedData((prevState) => [...prevState, tagData]);
     },
@@ -73,7 +73,7 @@ function ReadTagsProvider({ children }) {
     <ReadTagsContext.Provider
       value={{
         data: cachedData,
-        addTagInCacheData,
+        addTag,
         isLoading,
         error,
         reset,

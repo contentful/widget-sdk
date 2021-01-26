@@ -27,7 +27,7 @@ const TagsAutocomplete = ({ tags, isLoading, onSelect, onQueryChange, disabled, 
       className={css(styles.Autocomplete, style)}>
       {(options) =>
         options.map((option) => {
-          if (option.inLineCreation) {
+          if (option.inlineCreation) {
             return (
               <span>
                 <strong>{option.label}</strong> (create new)

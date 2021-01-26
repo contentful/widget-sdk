@@ -5,7 +5,7 @@ import { TagSelectionValue } from '../Types';
 
 export const useTagsValuesForIdList = (
   tags: string[]
-): { tagValues: TagSelectionValue[]; getUpdatedTags: () => void } => {
+): { tagValues: TagSelectionValue[]; refreshTagValues: () => void } => {
   const { data, reset } = useReadTags();
   const tagValues = useMemo(() => {
     if (data.length) {
@@ -18,6 +18,6 @@ export const useTagsValuesForIdList = (
   }, [tags, data]);
   return {
     tagValues,
-    getUpdatedTags: (reset as unknown) as () => void,
+    refreshTagValues: (reset as unknown) as () => void,
   };
 };
