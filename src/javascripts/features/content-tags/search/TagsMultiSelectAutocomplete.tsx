@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import CheckboxField from '@contentful/forma-36-react-components/dist/components/CheckboxField';
 import { Autocomplete } from '@contentful/forma-36-react-components';
@@ -69,17 +69,12 @@ const TagsMultiSelectAutocomplete = ({
   isFocused,
 }: TagsMultiSelectAutocompleteProps) => {
   const [isSearching, setIsSearching] = useState<boolean>(isFocused ?? false);
-  const [currentTags, setCurrentTags] = useState(selectedTags);
   const tagsRef = useRef<HTMLDivElement>(null);
 
   setIsRemovable(!isSearching);
 
-  useEffect(() => {
-    onChange(currentTags);
-  }, [currentTags, onChange]);
-
   const onSelectedTagChange = (tag: FilterOption) => {
-    setCurrentTags((currentTagsState) => addOrRemoveTag(currentTagsState, tag));
+    onChange(addOrRemoveTag(selectedTags, tag));
   };
 
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
@@ -98,7 +93,7 @@ const TagsMultiSelectAutocomplete = ({
       onChange={(evt) => {
         evt.stopPropagation();
       }}
-      checked={currentTags.some((selectedTag) => selectedTag.value === tag.value)}
+      checked={selectedTags.some((selectedTag) => selectedTag.value === tag.value)}
     />
   );
 
