@@ -10,6 +10,7 @@ export interface NavigationSwitcherAppProps {
   definitionId?: string;
   icon: React.ReactNode;
   title: string;
+  tagLine?: string;
   description: string;
   targetUrl?: string;
   featureFlagName?: string;
@@ -68,6 +69,7 @@ export const useAppsList = () => {
             return appFlagIsEnabled
               ? {
                   ...app,
+                  description: app.tagLine,
                   href: isInstalled
                     ? `${app.targetUrl}/${spaceEnvPath}`
                     : `/${spaceEnvPath}/apps?app=${app.slug || app.id}`,

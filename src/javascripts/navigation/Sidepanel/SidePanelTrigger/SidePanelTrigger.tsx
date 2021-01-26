@@ -41,22 +41,33 @@ const TriggerIcon = ({
   performancePackageIsEnabled: boolean | null;
   openAppSwitcher?: () => void;
 }) => {
-  const onClick = (event) => {
+  const onClick: React.MouseEventHandler = (event) => {
     event.stopPropagation();
     openAppSwitcher?.();
   };
+  const appSwitcherIconWidth = 40;
+
   if (performancePackageIsEnabled === true) {
     return (
       <button aria-label="Switch Contentful app" data-test-id="sidepanel-trigger-apps">
-        <AppGridIcon onClick={onClick} width={40} height={40} />
+        <AppGridIcon onClick={onClick} width={appSwitcherIconWidth} height={appSwitcherIconWidth} />
       </button>
     );
   }
   if (performancePackageIsEnabled === false) return <ContentfulLogo />;
 
   return (
-    <SkeletonContainer svgWidth={24} svgHeight={24}>
-      <SkeletonImage width={24} height={24} radiusX={12} radiusY={12} />
+    <SkeletonContainer
+      backgroundOpacity={0.25}
+      foregroundOpacity={0.25}
+      svgWidth={appSwitcherIconWidth}
+      svgHeight={appSwitcherIconWidth}>
+      <SkeletonImage
+        width={appSwitcherIconWidth}
+        height={appSwitcherIconWidth}
+        radiusX={appSwitcherIconWidth / 2}
+        radiusY={appSwitcherIconWidth / 2}
+      />
     </SkeletonContainer>
   );
 };
@@ -92,10 +103,12 @@ export const SidePanelTrigger = ({
       onClick={onClickOrganization}
       data-ui-tour-step="sidepanel-trigger"
       data-test-id={testId}>
-      <TriggerIcon
-        openAppSwitcher={openAppSwitcher}
-        performancePackageIsEnabled={performancePackageIsEnabled}
-      />
+      <div className={styles.noShrink}>
+        <TriggerIcon
+          openAppSwitcher={openAppSwitcher}
+          performancePackageIsEnabled={performancePackageIsEnabled}
+        />
+      </div>
       <button
         className={styles.content}
         aria-label="Switch Space/Organization"
@@ -104,7 +117,7 @@ export const SidePanelTrigger = ({
         {navState && renderContent({ navState, showOrganization })}
       </button>
       <div className={styles.hoverBackground} />
-      <Hamburger fill={'white'} />
+      <Hamburger className={styles.noShrink} fill={'white'} />
     </div>
   );
 };

@@ -13,6 +13,7 @@ export const styles = {
     textAlign: 'left',
     width: '280px',
     height: '100%',
+    cursor: 'pointer',
     transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
     '> *': {
       zIndex: 1,
@@ -32,6 +33,7 @@ export const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    maxWidth: '100%',
   }),
   orgName: css({
     color: tokens.colorBlueLightest,
@@ -47,6 +49,7 @@ export const styles = {
     lineHeight: tokens.lineHeightDefault,
   }),
   envLabel: css({ fontSize: tokens.fontSizeS }),
+  noShrink: css({ display: 'flex', flexShrink: 0 }),
   hoverBackground: css({
     position: 'absolute',
     left: 0,
