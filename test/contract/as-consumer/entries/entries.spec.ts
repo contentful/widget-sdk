@@ -39,7 +39,6 @@ describe('EntityRepo', () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
   describe('PATCH requests', () => {
     describe('when requesting the default entry using the entity repo', () => {
       describe('and getting a success response', () => {
@@ -51,7 +50,7 @@ describe('EntityRepo', () => {
             ...entry,
             fields: {
               ...entry.fields,
-              fieldId: { 'en-US': 'updated-field-id' },
+              fieldID: { 'en-US': 'updated-field-id' },
             },
           });
           expect(newEntry.sys.id).toBe(defaultEntryId);

@@ -37,12 +37,13 @@ export const willSucceedPatchingDefaultEntry = (): InteractionObject => {
       headers: {
         ...defaultHeader,
         'Content-Type': 'application/json-patch+json',
+        'X-Contentful-Version': '1',
       },
       body: [
         {
-          op: 'add',
-          path: '/fields/fieldId',
-          value: { 'en-US': 'updated-field-id' },
+          op: 'replace',
+          path: '/fields/fieldID/en-US',
+          value: 'updated-field-id',
         },
       ],
     },
@@ -60,7 +61,7 @@ export const willSucceedPatchingDefaultEntry = (): InteractionObject => {
         },
         fields: {
           ...defaultEntry.fields,
-          fieldId: { 'en-US': 'updated-field-id' },
+          fieldID: { 'en-US': 'updated-field-id' },
         },
       },
     },
