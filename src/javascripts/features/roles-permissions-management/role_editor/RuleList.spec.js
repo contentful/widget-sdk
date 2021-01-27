@@ -30,6 +30,52 @@ describe('RuleList component', () => {
     expect(rules).toHaveLength(allRulesCount);
   });
 
+  it('shows incomplete allowed rules if there are any', async () => {
+    const props = {
+      rules: getRules(),
+      entity: 'entry',
+      incompleteRulesList: {
+        X80gmqmq9LC5dv2Q: ['contentType', 'tags'],
+      },
+    };
+
+    renderRuleList(props);
+    const rules = screen.getAllByTestId('rule-item');
+    expect(rules).toHaveLength(allRulesCount);
+    expect(screen.getByText(/incomplete allowed rules/i)).toBeInTheDocument();
+    expect(screen.getByText(/missing content type and tag\(s\)/i)).toBeInTheDocument();
+  });
+
+  it('shows incomplete denied rules if there are any', async () => {
+    const props = {
+      rules: getRules(),
+      entity: 'entry',
+      incompleteRulesList: {
+        NKjxizDC5gIH0CAe: ['entry', 'locale', 'tags'],
+      },
+    };
+
+    renderRuleList(props);
+    const rules = screen.getAllByTestId('rule-item');
+    expect(rules).toHaveLength(allRulesCount);
+    expect(screen.getByText(/incomplete denied rules/i)).toBeInTheDocument();
+    expect(screen.getByText(/missing entry, locale and tag\(s\)/i)).toBeInTheDocument();
+  });
+
+  it('shows does not show incomplete rules section if incompleteRulesList is empty', async () => {
+    const props = {
+      rules: getRules(),
+      entity: 'entry',
+      incompleteRulesList: {},
+    };
+
+    renderRuleList(props);
+    const rules = screen.getAllByTestId('rule-item');
+    expect(rules).toHaveLength(allRulesCount);
+    expect(screen.queryByText(/incomplete allowed rules/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/incomplete denied rules/i)).not.toBeInTheDocument();
+  });
+
   it('shows the ContentType filter when the entity is "entry"', async () => {
     const props = {
       rules: getRules(),
@@ -349,6 +395,7 @@ function renderRuleList(props) {
     addNewRule,
     removeNewRule,
     editedRuleIds: [],
+    incompleteRulesList: {},
   };
 
   const defaultTagsRepo = {

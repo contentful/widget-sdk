@@ -55,7 +55,7 @@ describe('role_editor/RoleEditor', () => {
 
       const initialRulesLength = screen.getAllByTestId('rule-item').length;
 
-      fireEvent.click(screen.getByRole('button', { name: /Add another rule/i }));
+      fireEvent.click(screen.getByRole('button', { name: /New allow rule/i }));
 
       expect(screen.getAllByTestId('rule-item')).toHaveLength(initialRulesLength + 1);
     });
@@ -63,27 +63,29 @@ describe('role_editor/RoleEditor', () => {
     describe('Adding rules', () => {
       it('adds a "new" label in front of new added rule', () => {
         renderRoleEditor({ tab: 'content' });
-        expect(screen.queryByText(/new/i)).not.toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: /Add another rule/i }));
-        expect(screen.getByText(/new/i)).toBeInTheDocument();
+        expect(screen.queryByTestId('new-rule-indicator')).not.toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: /New allow rule/i }));
+        expect(screen.getByTestId('new-rule-indicator')).toBeInTheDocument();
       });
 
       it('adds a "new" label to every new rule', () => {
         const NUMBER_OF_NEW_RULES = 3;
         renderRoleEditor({ tab: 'content' });
-        expect(screen.queryByText(/new/i)).not.toBeInTheDocument();
+        expect(screen.queryByTestId('new-rule-indicator')).not.toBeInTheDocument();
         for (let i = 0; i < NUMBER_OF_NEW_RULES; i++) {
-          fireEvent.click(screen.getByRole('button', { name: /Add another rule/i }));
+          fireEvent.click(screen.getByRole('button', { name: /New allow rule/i }));
         }
-        expect(screen.getAllByText(/new/i)).toHaveLength(NUMBER_OF_NEW_RULES);
+        expect(screen.getAllByTestId('new-rule-indicator')).toHaveLength(NUMBER_OF_NEW_RULES);
       });
 
       it('focus new exception rule', () => {
         renderRoleEditor({ tab: 'content' });
-        expect(screen.queryByText(/new/i)).not.toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: /Add another exception/i }));
-        expect(screen.getByText(/new/i)).toBeInTheDocument();
-        const lastRule = screen.getAllByTestId('rule-item')[6];
+        expect(screen.queryByTestId('new-rule-indicator')).not.toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: /New deny rule/i }));
+        expect(screen.getByTestId('new-rule-indicator')).toBeInTheDocument();
+        const allRules = screen.getAllByTestId('rule-item');
+        const ruleCount = allRules.length;
+        const lastRule = allRules[ruleCount - 1];
         const actionSelect = lastRule.children[1].firstChild;
         expect(document.activeElement === actionSelect).toBeTruthy();
       });
@@ -217,6 +219,9 @@ function renderRoleEditor(props = {}) {
     internal: {
       uiCompatible: true,
     },
+    tags: [],
+    fetchEntities: jest.fn(),
+    fetchEntity: jest.fn(),
     ...fixtures,
   };
 

@@ -3,16 +3,17 @@ import { RuleList } from './RuleList';
 import TheLocaleStore from 'services/localeStore';
 import { Internal } from './RoleTypes';
 import {
+  DisplayText,
   Heading,
-  Note,
   Paragraph,
   Textarea,
   TextLink,
+  Typography,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { RuleInterface } from 'features/roles-permissions-management/@types';
+import { IncompleteRulesList, RuleInterface } from 'features/roles-permissions-management/@types';
 
 type Props = {
   entity: string;
@@ -46,15 +47,15 @@ type Props = {
   removeNewRule: (ruleId: string) => void;
   editedRuleIds: string[];
   addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
+  incompleteRulesList: IncompleteRulesList;
 };
 
 const styles = {
-  note: css({
-    width: tokens.contentWidthText,
-    marginBottom: tokens.spacingXl,
+  title: css({
+    marginBottom: tokens.spacing2Xl,
   }),
-  nodeHeading: css({
-    fontWeight: tokens.fontWeightDemiBold,
+  heading: css({
+    marginBottom: tokens.spacingXs,
   }),
 };
 
@@ -78,20 +79,24 @@ const RoleEditorEntities: React.FC<Props> = ({
   removeNewRule,
   editedRuleIds,
   addEditedRule,
+  incompleteRulesList,
 }) => {
   return (
     <>
-      <Note className={styles.note}>
-        <span className={styles.nodeHeading}>
-          Anything that is not explicitly allowed, is denied.
-        </span>
-        <div>
-          Learn more about how to set up a{' '}
+      <Typography className={styles.title}>
+        <DisplayText className={styles.heading}>
+          {entity === 'asset' ? 'Media' : 'Content'}
+        </DisplayText>
+        <Paragraph>
+          Add allow and deny rules to define this role&apos;s access to{' '}
+          {entity === 'asset' ? 'media' : 'content'}
+          <br />
+          Anything that&apos;s not explicitly allowed is denied.{' '}
           <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/roles-permissions/">
-            custom role.
+            Learn more
           </ExternalTextLink>
-        </div>
-      </Note>
+        </Paragraph>
+      </Typography>
       {internal.uiCompatible ? (
         <RuleList
           rules={rules}
@@ -110,6 +115,7 @@ const RoleEditorEntities: React.FC<Props> = ({
           removeNewRule={removeNewRule}
           editedRuleIds={editedRuleIds}
           addEditedRule={addEditedRule}
+          incompleteRulesList={incompleteRulesList}
         />
       ) : (
         <>

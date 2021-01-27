@@ -134,35 +134,23 @@ const detail = {
         role,
         roleRepo: RoleRepository.getInstance(spaceContext.space),
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+        getEntity: async (id, type) => await fetchEntity(cma, id, type),
         getEntities: async () => {
           const result = {
             Entry: {},
             Asset: {},
           };
-
-          // Trap and ignore errors -
-          // perhaps the entities do not exist or can't be accessed but the rule should still be displayed
           await Promise.all([
             ...PolicyBuilder.findEntryIds(role.policies).map(async (entryId) => {
-              try {
-                const entry = await cma.getEntry(entryId);
-                // Use app/entity_editor/DataLoader data structure:
-                result.Entry[entryId] = { entity: { data: entry } };
-              } catch (_) {
-                logger.logWarn(`Could not find entry ${entryId} for rule`, {
-                  groupingHash: 'missingRolesAndPermissionsRuleEntity',
-                });
+              const entity = await fetchEntity(cma, entryId, 'entry');
+              if (entity) {
+                result.Entry[entryId] = entity;
               }
             }),
             ...PolicyBuilder.findAssetIds(role.policies).map(async (assetId) => {
-              try {
-                const asset = await cma.getAsset(assetId);
-                // Use app/entity_editor/DataLoader data structure:
-                result.Asset[assetId] = { entity: { data: asset } };
-              } catch (_) {
-                logger.logWarn(`Could not find asset ${assetId} for rule`, {
-                  groupingHash: 'missingRolesAndPermissionsRuleEntity',
-                });
+              const entity = await fetchEntity(cma, assetId, 'asset');
+              if (entity) {
+                result.Asset[assetId] = entity;
               }
             }),
           ]);
@@ -185,6 +173,31 @@ const detail = {
     },
   ],
 };
+
+// Trap and ignore "NotFound" errors -
+// if an entity does not exist, the corresponding rule will be displayed as incomplete
+async function fetchEntity(client, id, type) {
+  try {
+    let entity;
+    switch (type) {
+      case 'asset':
+        entity = await client.getAsset(id);
+        break;
+      case 'entry':
+        entity = await client.getEntry(id);
+        break;
+    }
+    // Use app/entity_editor/DataLoader data structure:
+    return { entity: { data: entity } };
+  } catch (err) {
+    if (err.code !== 'NotFound') {
+      throw err;
+    }
+    logger.logWarn(`Could not find ${type} ${id} for rule`, {
+      groupingHash: 'missingRolesAndPermissionsRuleEntity',
+    });
+  }
+}
 
 export const rolesPermissionsSettingsState = {
   name: 'roles',

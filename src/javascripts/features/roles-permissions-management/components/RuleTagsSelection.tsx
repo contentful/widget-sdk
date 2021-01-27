@@ -14,9 +14,18 @@ const styles = {
 type Props = {
   rule: { metadataTagIds?: string[] };
   onChange: (unknown) => void;
+  isDisabled: boolean;
+  ruleIsIncomplete: boolean;
+  fieldIsIncomplete: boolean;
 };
 
-export const RuleTagsSelection: React.FC<Props> = ({ rule, onChange }) => {
+export const RuleTagsSelection: React.FC<Props> = ({
+  rule,
+  onChange,
+  isDisabled,
+  ruleIsIncomplete,
+  fieldIsIncomplete,
+}) => {
   const ruleTags = useMemo(() => rule.metadataTagIds || [], [rule]);
   const { setLimit, setExcludedTags } = useFilteredTags();
   const tagValues = useTagsValuesForIdList(ruleTags);
@@ -44,12 +53,17 @@ export const RuleTagsSelection: React.FC<Props> = ({ rule, onChange }) => {
 
   const renderTagSelect = () => {
     return (
-      <FakeSelect onClick={onSelect}>
+      <FakeSelect
+        onClick={onSelect}
+        isDisabled={isDisabled || ruleIsIncomplete}
+        hasError={fieldIsIncomplete}>
         {tagValues.length ? (
           <span>
             Tagged {tagValues[0].label}
             {tagValues.length > 1 && <span> or {tagValues.length - 1} more</span>}
           </span>
+        ) : fieldIsIncomplete ? (
+          <span>Missing tag(s)</span>
         ) : (
           <Spinner />
         )}
@@ -60,7 +74,11 @@ export const RuleTagsSelection: React.FC<Props> = ({ rule, onChange }) => {
   return ruleTags.length ? (
     renderTagSelect()
   ) : (
-    <Button className={styles.addButton} buttonType={'naked'} onClick={onSelect}>
+    <Button
+      className={styles.addButton}
+      buttonType={'naked'}
+      disabled={isDisabled || ruleIsIncomplete}
+      onClick={onSelect}>
       + With tags
     </Button>
   );

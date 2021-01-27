@@ -24,7 +24,6 @@ const styles = {
     marginLeft: 'auto',
     marginTop: tokens.spacing4Xl,
     marginBottom: tokens.spacing4Xl,
-    width: '100%',
   }),
   help: css({
     marginRight: tokens.spacingXs,

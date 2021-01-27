@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Heading,
   Paragraph,
   Option,
@@ -13,7 +14,7 @@ import * as React from 'react';
 import { actionsOptions, contentTypesToOptions, Rule } from './Rule';
 import { useCallback, useMemo, useState } from 'react';
 import { SelectPill } from '../components/SelectPill';
-import { RuleInterface } from 'features/roles-permissions-management/@types';
+import { RuleInterface, IncompleteRulesList } from 'features/roles-permissions-management/@types';
 
 const styles = {
   note: css({
@@ -34,6 +35,13 @@ const styles = {
     marginLeft: tokens.spacingM,
     textDecoration: 'none',
   }),
+  warning: css({
+    color: tokens.colorNegative,
+    marginBottom: tokens.spacingS,
+  }),
+  incompleteSection: css({
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 export const getEntityName = (entity) => {
@@ -46,11 +54,12 @@ export const getEntityName = (entity) => {
 
 const filterRules: (
   rules: { allowed: RuleInterface[]; denied: RuleInterface[] },
+  incompleteRulesList: IncompleteRulesList,
   filters: { action: string; scope: string; contentType: string }
 ) => {
-  allowed: RuleInterface[];
-  denied: RuleInterface[];
-} = (rules, filters) => {
+  allowed: { incomplete: RuleInterface[]; complete: RuleInterface[] };
+  denied: { incomplete: RuleInterface[]; complete: RuleInterface[] };
+} = (rules, incompleteRulesList, filters) => {
   const filterByFilterCriteria = (rule) =>
     (rule.action === filters.action || filters.action === 'clean') &&
     (rule.scope === filters.scope ||
@@ -58,9 +67,22 @@ const filterRules: (
       (filters.scope === 'any' && rule.scope === 'metadataTagIds')) &&
     (rule.contentType === filters.contentType || filters.contentType === 'clean');
 
+  const splitCompleteAndIncomplete = (rules) => {
+    const complete: RuleInterface[] = [];
+    const incomplete: RuleInterface[] = [];
+    for (let i = 0; i < rules.length; i++) {
+      if (incompleteRulesList[rules[i].id]) {
+        incomplete.push(rules[i]);
+      } else {
+        complete.push(rules[i]);
+      }
+    }
+    return { complete, incomplete };
+  };
+
   return {
-    allowed: rules.allowed.filter(filterByFilterCriteria),
-    denied: rules.denied.filter(filterByFilterCriteria),
+    allowed: splitCompleteAndIncomplete(rules.allowed.filter(filterByFilterCriteria)),
+    denied: splitCompleteAndIncomplete(rules.denied.filter(filterByFilterCriteria)),
   };
 };
 
@@ -89,6 +111,7 @@ interface RuleListProps {
   removeNewRule: (ruleId: string) => void;
   editedRuleIds: string[];
   addEditedRule: (ruleId: string, field: string, initialValue: string, newValue: string) => void;
+  incompleteRulesList: IncompleteRulesList;
 }
 
 const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
@@ -109,6 +132,7 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
     removeNewRule,
     editedRuleIds,
     addEditedRule,
+    incompleteRulesList,
   } = props;
   const [actionFilter, setActionFilter] = useState('clean');
   const [scopeFilter, setScopeFilter] = useState('clean');
@@ -159,12 +183,12 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
 
   const filteredRules = useMemo(
     () =>
-      filterRules(rules, {
+      filterRules(rules, incompleteRulesList, {
         action: actionFilter,
         scope: scopeFilter,
         contentType: contentTypeFilter,
       }),
-    [rules, actionFilter, scopeFilter, contentTypeFilter]
+    [rules, actionFilter, scopeFilter, contentTypeFilter, incompleteRulesList]
   );
 
   const hasRules = rules.allowed.length;
@@ -172,6 +196,51 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
     actionFilter !== 'clean' || scopeFilter !== 'clean' || contentTypeFilter !== 'clean';
 
   const entityName = getEntityName(entity);
+
+  const renderRules = ({ complete, incomplete }, access: RuleType) => {
+    const renderRuleWithAccess = (access) => (rule) => renderRule(rule, access);
+    const result: React.ReactNode[] = [];
+    if (incomplete.length) {
+      result.push(
+        <Card key={access} padding="large" className={styles.incompleteSection}>
+          <Subheading className={styles.warning}>{`Incomplete ${access} rules`}</Subheading>
+          <Paragraph>
+            Some active rules are incomplete because they contain missing attributes. Those were
+            either deleted or only exist in another environment.
+          </Paragraph>
+          <Paragraph>
+            If these rules are no longer needed, delete them to prevent unwanted access.
+          </Paragraph>
+          {incomplete.map(renderRuleWithAccess(access))}
+        </Card>
+      );
+    }
+    result.push(complete.map(renderRuleWithAccess(access)));
+    return <>{result}</>;
+  };
+
+  const renderRule = (rule, access) => {
+    const isTheNewRule = newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
+    return (
+      <Rule
+        key={rule.id}
+        rule={rule}
+        onUpdateAttribute={updateRuleAttribute(access, rule.id)}
+        onRemove={() => removeRule(access, rule.id)}
+        entity={entity}
+        isDisabled={isDisabled}
+        privateLocales={privateLocales}
+        contentTypes={contentTypes}
+        searchEntities={searchEntities}
+        getEntityTitle={getEntityTitle}
+        hasClpFeature={hasClpFeature}
+        focus={isTheNewRule && scroll}
+        isNew={newRuleIds.includes(rule.id)}
+        modified={editedRuleIds.includes(rule.id)}
+        missing={incompleteRulesList[rule.id] || []}
+      />
+    );
+  };
 
   return (
     <div className="rule-list" data-test-id={`rule-list-${entity}`}>
@@ -235,35 +304,14 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
             : "Users with this role can't do anything. Add a rule to allow certain actions."}
         </Paragraph>
         <div className="rule-list__rule" data-test-id="rule-allowed">
-          {filteredRules.allowed.map((rule) => {
-            const isTheNewRule =
-              newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
-            return (
-              <Rule
-                key={rule.id}
-                rule={rule}
-                onUpdateAttribute={updateRuleAttribute('allowed', rule.id)}
-                onRemove={() => removeRule('allowed', rule.id)}
-                entity={entity}
-                isDisabled={isDisabled}
-                privateLocales={privateLocales}
-                contentTypes={contentTypes}
-                searchEntities={searchEntities}
-                getEntityTitle={getEntityTitle}
-                hasClpFeature={hasClpFeature}
-                focus={isTheNewRule && scroll}
-                isNew={newRuleIds.includes(rule.id)}
-                modified={editedRuleIds.includes(rule.id)}
-              />
-            );
-          })}
+          {renderRules(filteredRules.allowed, 'allowed')}
         </div>
         {!isDisabled && (
           <Button
             className={styles.addLink}
             testId="add-allowed-rule"
             onClick={() => addRuleAndResetFilters('allowed')}>
-            {rules.allowed.length > 0 ? 'Add another rule' : 'Add a rule'}
+            New allow rule
           </Button>
         )}
       </div>
@@ -275,35 +323,14 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
             <strong> not</strong>:
           </Paragraph>
           <div className="rule-list__rule" data-test-id="rule-exceptions">
-            {filteredRules.denied.map((rule) => {
-              const isTheNewRule =
-                newRuleIds.length > 0 && rule.id === newRuleIds[newRuleIds.length - 1];
-              return (
-                <Rule
-                  key={rule.id}
-                  rule={rule}
-                  onUpdateAttribute={updateRuleAttribute('denied', rule.id)}
-                  onRemove={() => removeRule('denied', rule.id)}
-                  entity={entity}
-                  isDisabled={isDisabled}
-                  privateLocales={privateLocales}
-                  contentTypes={contentTypes}
-                  searchEntities={searchEntities}
-                  getEntityTitle={getEntityTitle}
-                  hasClpFeature={hasClpFeature}
-                  focus={isTheNewRule && scroll}
-                  isNew={newRuleIds.includes(rule.id)}
-                  modified={editedRuleIds.includes(rule.id)}
-                />
-              );
-            })}
+            {renderRules(filteredRules.denied, 'denied')}
           </div>
           {!isDisabled && (
             <Button
               className={styles.addLink}
               testId="add-denied-rule"
               onClick={() => addRuleAndResetFilters('denied')}>
-              {rules.denied.length > 0 ? 'Add another exception' : 'Add an exception'}
+              New deny rule
             </Button>
           )}
         </div>

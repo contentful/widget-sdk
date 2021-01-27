@@ -8,22 +8,11 @@ import { Route, RouteTab } from 'core/routing';
 import { RouteProvider } from 'core/routing/RouteProvider';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { css } from 'emotion';
-import { MetadataTags } from 'features/content-tags';
+import { TagPropType, tagsPayloadToValues } from 'features/content-tags';
 import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
 import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
 import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
-import {
-  cloneDeep,
-  extend,
-  find,
-  flow,
-  get,
-  includes,
-  isObject,
-  isString,
-  omit,
-  startsWith,
-} from 'lodash';
+import { extend, find, flow, get, includes, isObject, isString, omit, startsWith } from 'lodash';
 import { findIndex, map, remove, set, update } from 'lodash/fp';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -68,16 +57,6 @@ const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
   read: PropTypes.bool,
 });
-
-const autofixPolicies = (internal, contentTypes) => {
-  const locales = getLocales(TheLocaleStore.getPrivateLocales());
-  const internalCopy = cloneDeep(internal);
-  const autofixed = PolicyBuilder.removeOutdatedRules(internalCopy, contentTypes, locales);
-  if (autofixed) {
-    return internalCopy;
-  }
-  return null;
-};
 
 export function handleSaveError(response) {
   const errors = get(response, 'body.details.errors', []);
@@ -126,7 +105,6 @@ export class RoleEditor extends React.Component {
     }).isRequired,
     entities: PropTypes.object.isRequired,
     baseRole: PropTypes.shape(),
-    autofixed: PropTypes.bool,
     contentTypes: PropTypes.array.isRequired,
     isNew: PropTypes.bool.isRequired,
     setDirty: PropTypes.func.isRequired,
@@ -140,6 +118,8 @@ export class RoleEditor extends React.Component {
     ngStateUrl: PropTypes.string.isRequired,
     tab: PropTypes.string.isRequired,
     hasClpFeature: PropTypes.bool.isRequired,
+    tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
+    fetchEntity: PropTypes.func.isRequired,
   };
 
   static contextType = SpaceEnvContext;
@@ -151,18 +131,11 @@ export class RoleEditor extends React.Component {
 
     const isDuplicate = !!baseRole;
 
-    let internal = PolicyBuilder.toInternal(
+    const internal = PolicyBuilder.toInternal(
       isDuplicate
         ? extend({ name: `Duplicate of ${baseRole.name}` }, omit(baseRole, ['name', 'sys']))
         : role
     );
-
-    if (props.hasCustomRolesFeature && props.canModifyRoles) {
-      const autofixedInternals = autofixPolicies(internal, props.contentTypes);
-      if (autofixedInternals) {
-        internal = autofixedInternals;
-      }
-    }
 
     this.state = {
       entityCache: {
@@ -179,14 +152,42 @@ export class RoleEditor extends React.Component {
         entries: {},
         assets: {},
       },
+      incompleteRulesList: {},
       internal,
       tab: this.props.tab || RoleEditRoutes.Details.url,
     };
   }
 
+  get entityIds() {
+    return [...Object.keys(this.props.entities.Asset), ...Object.keys(this.props.entities.Entry)];
+  }
+
+  get locales() {
+    return getLocales(TheLocaleStore.getPrivateLocales());
+  }
+
+  get tagIds() {
+    return this.props.hasContentTagsFeature
+      ? tagsPayloadToValues(this.props.tags).map(({ value }) => value)
+      : [];
+  }
+
   componentDidMount() {
+    const incompleteRulesList = this.getIncompleteRules(this.state.internal);
+    this.setState({ incompleteRulesList });
+
     this.props.setDirty(this.state.dirty);
     this.props.registerSaveAction(this.save);
+  }
+
+  getIncompleteRules(internal) {
+    return PolicyBuilder.collectIncompleteRules({
+      internal,
+      contentTypes: this.props.contentTypes,
+      entityIds: this.entityIds,
+      locales: this.locales,
+      tagIds: this.tagIds,
+    });
   }
 
   setDirty = (dirty) => {
@@ -271,7 +272,7 @@ export class RoleEditor extends React.Component {
     }
   };
 
-  save = (autofix = false) => {
+  save = () => {
     this.setState({ saving: true });
     const { isNew, baseRole } = this.props;
     const { internal } = this.state;
@@ -284,24 +285,21 @@ export class RoleEditor extends React.Component {
     const isDuplicate = !!baseRole;
     const method = isNew || isDuplicate ? 'create' : 'save';
     return this.props.roleRepo[method](external)
-      .then(this.handleSaveSuccess(autofix), handleSaveError)
+      .then(this.handleSaveSuccess, handleSaveError)
       .finally(() => this.setState({ saving: false }));
   };
 
-  handleSaveSuccess = (autofix) => (role) => {
+  handleSaveSuccess = (role) => {
     const { isNew } = this.props;
-    if (autofix) {
-      Notification.success('One or more rules referencing deleted data where removed');
-    } else {
-      Notification.success(`${role.name} role saved successfully`);
-    }
+    Notification.success(`${role.name} role saved successfully`);
 
     if (isNew) {
       this.setDirty(false);
       return Navigator.go({ path: '^.detail', params: { roleId: role.sys.id } });
     } else {
       const newInternal = PolicyBuilder.toInternal(role);
-      this.setState({ internal: newInternal });
+      const incompleteRulesList = this.getIncompleteRules(newInternal);
+      this.setState({ internal: newInternal, incompleteRulesList });
       this.setDirty(false);
       return Promise.resolve(role);
     }
@@ -330,6 +328,24 @@ export class RoleEditor extends React.Component {
     );
 
   updateRuleAttribute = (entities) => (rulesKey, id) => (attribute) => ({ target: { value } }) => {
+    if (attribute === 'entityId') {
+      const isEntityAvailable = (entityId, entityType) => {
+        return Object.keys(this.props.entities[entityType]).includes(entityId);
+      };
+      switch (entities) {
+        case 'entries':
+          if (!isEntityAvailable(value, 'Entry')) {
+            this.props.fetchEntity(value, 'entry');
+          }
+          break;
+        case 'assets':
+          if (!isEntityAvailable(value, 'Asset')) {
+            this.props.fetchEntity(value, 'asset');
+          }
+          break;
+      }
+    }
+
     const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.NO_PATH_CONSTRAINT;
     const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
 
@@ -478,14 +494,13 @@ export class RoleEditor extends React.Component {
   render() {
     const {
       role,
-      autofixed,
       canModifyRoles,
       hasCustomRolesFeature,
       hasContentTagsFeature,
       hasEnvironmentAliasesEnabled,
     } = this.props;
 
-    const { saving, internal, isLegacy, dirty } = this.state;
+    const { saving, internal, isLegacy, dirty, incompleteRulesList } = this.state;
 
     const showTranslator = startsWith(role.name, 'Translator');
 
@@ -498,124 +513,123 @@ export class RoleEditor extends React.Component {
 
     return (
       <RouteProvider ngStateUrl={this.state.tab}>
-        <MetadataTags>
-          <DocumentTitle title={`${title} | Roles`} />
-          <RolesWorkbenchSkeleton
-            type={'full'}
-            title={title}
-            onBack={() => {
-              this.navigateToList();
-            }}
-            actions={
-              <div className={styles.actionsWrapper}>
-                <div className={styles.feedback}>
-                  <FeedbackButton
-                    className={styles.feedback}
-                    about="Roles & Permissions"
-                    target="devWorkflows"
-                    label={'Give feedback'}
-                  />
-                </div>
-                <RoleEditorActions
-                  hasCustomRolesFeature={hasCustomRolesFeature}
-                  canModifyRoles={canModifyRoles}
-                  showTranslator={showTranslator}
-                  dirty={dirty}
-                  saving={saving}
-                  isLegacy={isLegacy}
-                  internal={internal}
-                  onSave={this.save}
-                  onDuplicate={this.duplicate}
-                  onDelete={this.delete}
+        <DocumentTitle title={`${title} | Roles`} />
+        <RolesWorkbenchSkeleton
+          type={'full'}
+          title={title}
+          onBack={() => {
+            this.navigateToList();
+          }}
+          actions={
+            <div className={styles.actionsWrapper}>
+              <div className={styles.feedback}>
+                <FeedbackButton
+                  className={styles.feedback}
+                  about="Roles & Permissions"
+                  target="devWorkflows"
+                  label={'Give feedback'}
                 />
               </div>
-            }>
-            <Tabs withDivider className={styles.tabs}>
-              <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Details} />
-              <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Content} />
-              <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Media} />
-              <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Permissions} />
-            </Tabs>
+              <RoleEditorActions
+                hasCustomRolesFeature={hasCustomRolesFeature}
+                canModifyRoles={canModifyRoles}
+                showTranslator={showTranslator}
+                dirty={dirty}
+                saving={saving}
+                isLegacy={isLegacy}
+                internal={internal}
+                onSave={this.save}
+                onDuplicate={this.duplicate}
+                onDelete={this.delete}
+              />
+            </div>
+          }>
+          <Tabs withDivider className={styles.tabs}>
+            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Details} />
+            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Content} />
+            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Media} />
+            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Permissions} />
+          </Tabs>
+          {/* TODO repurpose warning for incomplete rules or remove */}
+          {false && (
+            <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
+              Some rules have been removed because of changes in your content structure. Please
+              review your rules and click &quot;Save changes&quot;.
+            </Note>
+          )}
+          <TabPanel id={`role-tab-panel`} className={styles.tabPanel}>
+            <Route path={RoleEditRoutes.Details.url}>
+              <RoleEditorDetails
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                updateLocale={this.updateLocale}
+                canModifyRoles={canModifyRoles}
+                showTranslator={showTranslator}
+                hasCustomRolesFeature={hasCustomRolesFeature}
+                internal={internal}
+              />
+            </Route>
+            <Route path={RoleEditRoutes.Content.url}>
+              <RoleEditorEntities
+                title={'Content'}
+                entity={'entry'}
+                entities={'entries'}
+                rules={internal.entries}
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                addRule={this.addRule}
+                removeRule={this.removeRule}
+                updateRuleAttribute={this.updateRuleAttribute}
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                contentTypes={this.props.contentTypes}
+                searchEntities={this.searchEntities}
+                getEntityTitle={this.getEntityTitle}
+                resetPolicies={this.resetPolicies}
+                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                newRuleIds={this.state.newRules.entries}
+                addNewRule={this.addNewRule('entries')}
+                removeNewRule={this.removeNewRule('entries')}
+                editedRuleIds={Object.keys(this.state.editedRules.entries)}
+                addEditedRule={this.addEditedRule('entries')}
+                incompleteRulesList={incompleteRulesList}
+              />
+            </Route>
 
-            {autofixed && (
-              <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
-                Some rules have been removed because of changes in your content structure. Please
-                review your rules and click &quot;Save changes&quot;.
-              </Note>
-            )}
-
-            <TabPanel id={`role-tab-panel`} className={styles.tabPanel}>
-              <Route path={RoleEditRoutes.Details.url}>
-                <RoleEditorDetails
-                  updateRoleFromTextInput={this.updateRoleFromTextInput}
-                  updateLocale={this.updateLocale}
-                  canModifyRoles={canModifyRoles}
-                  showTranslator={showTranslator}
-                  hasCustomRolesFeature={hasCustomRolesFeature}
-                  internal={internal}
-                />
-              </Route>
-              <Route path={RoleEditRoutes.Content.url}>
-                <RoleEditorEntities
-                  title={'Content'}
-                  entity={'entry'}
-                  entities={'entries'}
-                  rules={internal.entries}
-                  internal={internal}
-                  canModifyRoles={canModifyRoles}
-                  addRule={this.addRule}
-                  removeRule={this.removeRule}
-                  updateRuleAttribute={this.updateRuleAttribute}
-                  updateRoleFromTextInput={this.updateRoleFromTextInput}
-                  contentTypes={this.props.contentTypes}
-                  searchEntities={this.searchEntities}
-                  getEntityTitle={this.getEntityTitle}
-                  resetPolicies={this.resetPolicies}
-                  hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
-                  newRuleIds={this.state.newRules.entries}
-                  addNewRule={this.addNewRule('entries')}
-                  removeNewRule={this.removeNewRule('entries')}
-                  editedRuleIds={Object.keys(this.state.editedRules.entries)}
-                  addEditedRule={this.addEditedRule('entries')}
-                />
-              </Route>
-
-              <Route path={RoleEditRoutes.Media.url}>
-                <RoleEditorEntities
-                  title={'Media'}
-                  entity={'asset'}
-                  entities={'assets'}
-                  rules={internal.assets}
-                  internal={internal}
-                  canModifyRoles={canModifyRoles}
-                  addRule={this.addRule}
-                  removeRule={this.removeRule}
-                  updateRuleAttribute={this.updateRuleAttribute}
-                  updateRoleFromTextInput={this.updateRoleFromTextInput}
-                  contentTypes={this.props.contentTypes}
-                  searchEntities={this.searchEntities}
-                  getEntityTitle={this.getEntityTitle}
-                  resetPolicies={this.resetPolicies}
-                  hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
-                  newRuleIds={this.state.newRules.assets}
-                  addNewRule={this.addNewRule('assets')}
-                  removeNewRule={this.removeNewRule('assets')}
-                  editedRuleIds={Object.keys(this.state.editedRules.assets)}
-                  addEditedRule={this.addEditedRule('assets')}
-                />
-              </Route>
-              <Route path={RoleEditRoutes.Permissions.url}>
-                <RoleEditorPermissions
-                  internal={internal}
-                  canModifyRoles={canModifyRoles}
-                  updateRoleFromCheckbox={this.updateRoleFromCheckbox}
-                  hasContentTagsFeature={hasContentTagsFeature}
-                  hasEnvironmentAliasesEnabled={hasEnvironmentAliasesEnabled}
-                />
-              </Route>
-            </TabPanel>
-          </RolesWorkbenchSkeleton>
-        </MetadataTags>
+            <Route path={RoleEditRoutes.Media.url}>
+              <RoleEditorEntities
+                title={'Media'}
+                entity={'asset'}
+                entities={'assets'}
+                rules={internal.assets}
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                addRule={this.addRule}
+                removeRule={this.removeRule}
+                updateRuleAttribute={this.updateRuleAttribute}
+                updateRoleFromTextInput={this.updateRoleFromTextInput}
+                contentTypes={this.props.contentTypes}
+                searchEntities={this.searchEntities}
+                getEntityTitle={this.getEntityTitle}
+                resetPolicies={this.resetPolicies}
+                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                newRuleIds={this.state.newRules.assets}
+                addNewRule={this.addNewRule('assets')}
+                removeNewRule={this.removeNewRule('assets')}
+                editedRuleIds={Object.keys(this.state.editedRules.assets)}
+                addEditedRule={this.addEditedRule('assets')}
+                incompleteRulesList={incompleteRulesList}
+              />
+            </Route>
+            <Route path={RoleEditRoutes.Permissions.url}>
+              <RoleEditorPermissions
+                internal={internal}
+                canModifyRoles={canModifyRoles}
+                updateRoleFromCheckbox={this.updateRoleFromCheckbox}
+                hasContentTagsFeature={hasContentTagsFeature}
+                hasEnvironmentAliasesEnabled={hasEnvironmentAliasesEnabled}
+              />
+            </Route>
+          </TabPanel>
+        </RolesWorkbenchSkeleton>
       </RouteProvider>
     );
   }

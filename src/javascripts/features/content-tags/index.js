@@ -11,6 +11,7 @@ export { create as createTagsRepo } from 'features/content-tags/core/state/TagsR
 export { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
 export { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 export { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
+export { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 export { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
 export { MetadataTags } from 'features/content-tags/core/state/MetadataTags';
 export { EditorTagsSkeleton } from 'features/content-tags/editor/skeletons/EditorTagsSkeleton';

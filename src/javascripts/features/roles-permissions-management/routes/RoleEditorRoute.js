@@ -8,9 +8,11 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
+import { EntitiesContext, EntitiesProvider } from '../role_editor/EntitiesProvider';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
+import { MetadataTags, ReadTagsContext } from 'features/content-tags';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const RoleEditorFetcher = createFetcherComponent(
@@ -22,7 +24,7 @@ const RoleEditorFetcher = createFetcherComponent(
       hasContentTagsFeature,
       hasClpFeature,
       resource,
-      entities,
+      _,
     ] = await Promise.all([
       getContentTypes(),
       getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_ALIASING),
@@ -36,7 +38,6 @@ const RoleEditorFetcher = createFetcherComponent(
     if (!hasCustomRolesFeature) {
       return {
         contentTypes,
-        entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: false,
         hasContentTagsFeature,
@@ -49,7 +50,6 @@ const RoleEditorFetcher = createFetcherComponent(
       Notification.error('Your organization has reached the limit for custom roles.');
       return {
         contentTypes,
-        entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: true,
         hasContentTagsFeature,
@@ -60,7 +60,6 @@ const RoleEditorFetcher = createFetcherComponent(
 
     return {
       contentTypes,
-      entities,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature: true,
       hasContentTagsFeature,
@@ -74,36 +73,58 @@ export function RoleEditorRoute(props) {
   const entitySelectorSdk = useEntitySelectorSdk();
 
   return (
-    <>
-      <DocumentTitle title="Roles" />
-      <RoleEditorFetcher
-        spaceId={props.spaceId}
-        organizationId={props.organizationId}
-        environmentId={props.environmentId}
-        getContentTypes={props.getContentTypes}
-        getEntities={props.getEntities}
-        isNew={props.isNew}>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <RolesWorkbenchSkeleton onBack={() => {}} />;
-          }
-          if (isError) {
-            return <StateRedirect path="spaces.detail.entries.list" />;
-          }
-
+    <EntitiesProvider getEntities={props.getEntities} getEntity={props.getEntity}>
+      <EntitiesContext.Consumer>
+        {({ entities, fetchEntities, fetchEntity }) => {
           return (
-            <RoleEditor
-              isLegacyOrganization={props.isLegacyOrganization}
-              {...data}
-              {...props}
-              openEntitySelectorForEntity={(entity) => {
-                return entitySelector.openFromRolesAndPermissions(entitySelectorSdk, entity);
-              }}
-            />
+            <MetadataTags>
+              <ReadTagsContext.Consumer>
+                {(tagsContext) => {
+                  return (
+                    <>
+                      <DocumentTitle title="Roles" />
+                      <RoleEditorFetcher
+                        spaceId={props.spaceId}
+                        organizationId={props.organizationId}
+                        environmentId={props.environmentId}
+                        getContentTypes={props.getContentTypes}
+                        getEntities={fetchEntities}
+                        isNew={props.isNew}>
+                        {({ isLoading, isError, data }) => {
+                          if (isLoading || tagsContext.isLoading) {
+                            return <RolesWorkbenchSkeleton onBack={() => {}} />;
+                          }
+                          if (isError || tagsContext.error) {
+                            return <StateRedirect path="spaces.detail.entries.list" />;
+                          }
+
+                          return (
+                            <RoleEditor
+                              isLegacyOrganization={props.isLegacyOrganization}
+                              {...data}
+                              {...props}
+                              tags={tagsContext.data}
+                              entities={entities}
+                              fetchEntity={fetchEntity}
+                              openEntitySelectorForEntity={(entity) => {
+                                return entitySelector.openFromRolesAndPermissions(
+                                  entitySelectorSdk,
+                                  entity
+                                );
+                              }}
+                            />
+                          );
+                        }}
+                      </RoleEditorFetcher>
+                    </>
+                  );
+                }}
+              </ReadTagsContext.Consumer>
+            </MetadataTags>
           );
         }}
-      </RoleEditorFetcher>
-    </>
+      </EntitiesContext.Consumer>
+    </EntitiesProvider>
   );
 }
 
@@ -118,5 +139,6 @@ RoleEditorRoute.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
   getContentTypes: PropTypes.func.isRequired,
   getEntities: PropTypes.func.isRequired,
+  getEntity: PropTypes.func.isRequired,
   isNew: PropTypes.bool.isRequired,
 };

@@ -1,1 +1,1 @@
-export type { RuleInterface } from './rules';
+export type { RuleInterface, IncompleteRulesList } from './rules';
