@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { throttle } from 'lodash';
-import { CheckboxField, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import { Paragraph, RadioButtonField, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
@@ -80,7 +80,7 @@ export class WebhookBodyTransformation extends React.Component {
           </TextLink>
         </Paragraph>
         <div className="webhook-editor__settings-option">
-          <CheckboxField
+          <RadioButtonField
             id={'default'}
             className={styles.checkbox}
             labelIsLight={true}
@@ -90,8 +90,9 @@ export class WebhookBodyTransformation extends React.Component {
           />
         </div>
         <div className="webhook-editor__settings-option">
-          <CheckboxField
+          <RadioButtonField
             id={'transformed'}
+            testId={'customize-webhook-payload'}
             className={styles.checkbox}
             labelIsLight={true}
             checked={hasBodyTransformation}

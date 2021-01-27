@@ -7,6 +7,7 @@ import {
   FormLabel,
   Paragraph,
   TextLink,
+  RadioButtonField,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -21,6 +22,9 @@ const styles = {
     display: 'inline-block',
     fontWeight: tokens.fontWeightNormal,
     marginRight: tokens.spacingS,
+  }),
+  checkbox: css({
+    verticalAlign: 'top',
   }),
   sectionHeader: css({
     display: 'block',
@@ -76,6 +80,7 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
             return (
               <FormLabel key={type} className={styles.checkboxLabel}>
                 <CheckboxField
+                  className={styles.checkbox}
                   checked={entity.extension.fieldTypes.includes(type)}
                   onChange={() => {
                     const cur = entity.extension.fieldTypes;
@@ -114,11 +119,11 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
           Hosting
         </FormLabel>
         <FormLabel className={styles.hostingOption}>
-          <CheckboxField checked={selfHosted} onChange={() => setSelfHosted(true)} />
+          <RadioButtonField checked={selfHosted} onChange={() => setSelfHosted(true)} />
           Self-hosted (<code>src</code>)
         </FormLabel>
         <FormLabel className={styles.hostingOption}>
-          <CheckboxField checked={!selfHosted} onChange={() => setSelfHosted(false)} />
+          <RadioButtonField checked={!selfHosted} onChange={() => setSelfHosted(false)} />
           Hosted by Contentful (<code>srcdoc</code>)
         </FormLabel>
       </div>
@@ -134,7 +139,7 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
             onChange={(e) => updateExtensionProp('src', e.target.value)}
           />
           {invalidUrl && (
-            <Paragraph className={styles.invalidURL}>
+            <Paragraph testId={'ext-url-error'} className={styles.invalidURL}>
               Valid URLs use{' '}
               <code>
                 https:

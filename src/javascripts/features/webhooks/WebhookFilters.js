@@ -119,6 +119,7 @@ export class WebhookFilters extends React.Component {
         <TextLink
           testId="remove-webhook-filter"
           className={styles.filterLink}
+          linkType={'negative'}
           onClick={() => this.removeByIndex(index)}>
           Remove
         </TextLink>

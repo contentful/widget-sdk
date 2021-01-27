@@ -87,7 +87,7 @@ export class WebhookHeaders extends React.Component {
                   readOnly={true}
                 />
               )}
-              <TextLink testId="remove-header" onClick={() => this.remove(i)}>
+              <TextLink testId="remove-header" linkType={'negative'} onClick={() => this.remove(i)}>
                 Remove
               </TextLink>
             </div>

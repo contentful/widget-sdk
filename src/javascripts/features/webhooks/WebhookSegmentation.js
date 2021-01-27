@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CheckboxField, Paragraph } from '@contentful/forma-36-react-components';
+import { FormLabel, Paragraph, RadioButton } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WebhookSegmentationTable } from './WebhookSegmentationTable';
@@ -10,8 +10,13 @@ const styles = {
   checkboxWrapper: css({
     marginBottom: tokens.spacingM,
   }),
-  checkbox: css({
-    marginTop: tokens.spacingXs,
+  note: css({
+    marginBottom: tokens.spacingS,
+  }),
+  formLabel: css({
+    fontWeight: tokens.fontWeightNormal,
+    color: tokens.colorTextMid,
+    display: 'block',
   }),
 };
 
@@ -23,16 +28,14 @@ export class WebhookSegmentation extends React.Component {
 
   renderOption(caption, checked, onChange) {
     return (
-      <div>
-        <CheckboxField
-          id={`wildcard-${checked}`}
-          className={styles.checkbox}
-          labelIsLight={true}
+      <FormLabel className={styles.formLabel}>
+        <RadioButton
+          testId={'webhook-editor-setting-option'}
           checked={checked}
-          labelText={` ${caption}`}
           onChange={onChange}
         />
-      </div>
+        {` ${caption}`}
+      </FormLabel>
     );
   }
 
@@ -42,7 +45,9 @@ export class WebhookSegmentation extends React.Component {
 
     return (
       <div className={styles.checkboxWrapper} id="webhook-segmentation">
-        <Paragraph>Specify for what kind of events this webhook should be triggered.</Paragraph>
+        <Paragraph className={styles.note}>
+          Specify for what kind of events this webhook should be triggered.
+        </Paragraph>
         {this.renderOption('Trigger for all events', isWildcarded, () => onChange(WILDCARD))}
         {this.renderOption('Select specific triggering events', !isWildcarded, () =>
           onChange(createMap(false))

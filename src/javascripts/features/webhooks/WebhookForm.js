@@ -92,7 +92,7 @@ export const WebhookForm = ({ webhook, onChange }) => {
           />
         </div>
         <div className={styles.webhookFormSection}>
-          <FormLabel className={styles.webhookLabel} required={true}>
+          <FormLabel className={styles.webhookLabel} htmlFor="webhook-url" required={true}>
             URL
           </FormLabel>
           <div className={styles.webhookMethodSettings}>
@@ -109,6 +109,7 @@ export const WebhookForm = ({ webhook, onChange }) => {
               ))}
             </Select>
             <TextInput
+              id={'webhook-url'}
               className={styles.webhookURL}
               value={webhook.url || ''}
               onChange={(e) => onChange({ url: e.target.value })}
@@ -175,6 +176,7 @@ export const WebhookForm = ({ webhook, onChange }) => {
           </Heading>
           <FormLabel className={styles.contentLengthLabel}>
             <Checkbox
+              id={'webhook-content-length'}
               checked={includeContentLength}
               onChange={(e) =>
                 onChange(updatedTransformation({ includeContentLength: e.target.checked }))
