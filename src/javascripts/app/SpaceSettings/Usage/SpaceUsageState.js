@@ -1,7 +1,6 @@
 import { Notification } from '@contentful/forma-36-react-components';
 
 import { can } from 'access_control/AccessChecker';
-import { getSpaceContext } from 'classes/spaceContext';
 import { go } from 'states/Navigator';
 
 import SpaceUsage from './SpaceUsage';
@@ -12,8 +11,8 @@ export default {
   template: '<react-component component="component" props="props"></react-component>',
   controller: [
     '$scope',
-    ($scope) => {
-      const spaceContext = getSpaceContext();
+    'spaceContext',
+    ($scope, spaceContext) => {
       const hasAccess = can('update', 'settings');
       const orgId = spaceContext.organization.sys.id;
 
