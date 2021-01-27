@@ -97,6 +97,7 @@ class StateChangeConfirmation extends React.Component {
               isShown={isShown}
               testId="state-change-confirmation-dialog"
               intent="negative"
+              size="large"
               title={requestState !== RequestState.PENDING ? title : ''}
               onConfirm={() => this.handleConfirm(links.length)}
               confirmLabel={confirm}

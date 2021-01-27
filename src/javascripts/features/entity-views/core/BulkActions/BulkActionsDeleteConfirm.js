@@ -20,6 +20,7 @@ export const BulkActionDeleteConfirm = ({ entityType, itemsCount, visible, fireA
           title={`Permanently delete ${pluralize(entityType, itemsCount, true)}?`}
           isShown={true}
           intent="negative"
+          size="large"
           secondaryIntent="muted"
           confirmLabel="Permanently delete"
           secondaryLabel="Archive instead"
