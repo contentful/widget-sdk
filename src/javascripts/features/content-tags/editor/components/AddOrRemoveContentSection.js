@@ -54,7 +54,7 @@ function useAddTag(addToBulkList) {
       resetCreateTag();
     }
   }, [resetCreateTag, setIsAdding, addToBulkList, isAdding, createTagData]);
-  return addTag;
+  return { addTag, createTagData };
 }
 
 // fetch unique tags with info on how entities they are attached to
@@ -162,9 +162,15 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     [tagEntry, entities.length, entityCount, tagReset, tagAdd, tagApplyToAll, tagRemove]
   );
 
-  const addTag = useAddTag(
+  const { addTag, createTagData } = useAddTag(
     useCallback((tagId) => onAction(tagId, BULK_ACTION.ADD_TAG), [onAction])
   );
+
+  useEffect(() => {
+    if (createTagData) {
+      Notification.success(`Successfully created tag "${createTagData.name}".`);
+    }
+  }, [createTagData]);
 
   const onSelect = useCallback(
     (tagItem) => {

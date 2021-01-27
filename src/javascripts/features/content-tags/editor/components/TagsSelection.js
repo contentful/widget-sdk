@@ -52,6 +52,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     if (createTagData) {
       addTag(createTagData);
       onAdd({ label: createTagData.name, value: createTagData.sys.id });
+      Notification.success(`Successfully created tag "${createTagData.name}".`);
       reset();
     }
   }, [createTagData, addTag, onAdd, reset]);
