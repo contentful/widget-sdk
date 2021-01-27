@@ -46,7 +46,7 @@ You can use `component` and `mapInjectedToProps` configuration options
 to use React components directly:
 
 ```js
-const spaceContext = getSpaceContext();
+const spaceContext = getModule('spaceContext');
 
 const states = {
   name: 'root',

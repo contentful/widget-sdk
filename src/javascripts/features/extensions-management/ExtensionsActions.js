@@ -14,12 +14,11 @@ import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { getModule } from 'core/NgRegistry';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { getSpaceContext } from 'classes/spaceContext';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
 async function install({ extension, type, url }) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const $state = getModule('$state');
 
   try {

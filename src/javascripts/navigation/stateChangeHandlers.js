@@ -2,7 +2,6 @@ import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as logger from 'services/logger';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance';
-import { getSpaceContext } from 'classes/spaceContext';
 
 import { updateNavState } from 'navigation/NavState';
 import * as Analytics from 'analytics/Analytics';
@@ -36,7 +35,7 @@ export function setupStateChangeHandlers() {
 }
 
 function stateChangeSuccessHandler(_event, toState, toStateParams, fromState, fromStateParams) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const $location = getModule('$location');
 
   updateNavState(toState, toStateParams, spaceContext);

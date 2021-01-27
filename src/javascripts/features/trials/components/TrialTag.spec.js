@@ -2,11 +2,11 @@ import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import { TrialTag } from './TrialTag';
 import * as fake from 'test/helpers/fakeFactory';
+import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
-import * as spaceContext from 'classes/spaceContext';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -65,6 +65,8 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
+
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
@@ -85,6 +87,7 @@ describe('TrialTag', () => {
   });
 
   it('does not render the trial tag if AccountSettingNavbar or ErrorNavbar', async () => {
+    getModule.mockReturnValue({});
     isOrgRoute.mockReturnValue(false);
     isSpaceRoute.mockReturnValue(false);
 
@@ -96,9 +99,7 @@ describe('TrialTag', () => {
 
   describe('Platform trial', () => {
     beforeEach(() => {
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        orgId: trialOrganization.sys.id,
-      }));
+      getModule.mockReturnValue({ orgId: trialOrganization.sys.id });
       isOwnerOrAdmin.mockReturnValue(false);
     });
 
@@ -131,9 +132,7 @@ describe('TrialTag', () => {
 
     it('does not render if the trial has ended', async () => {
       getOrganization.mockResolvedValue(trialExpiredOrganization);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        orgId: trialExpiredOrganization.sys.id,
-      }));
+      getModule.mockReturnValue({ orgId: trialExpiredOrganization.sys.id });
       build();
 
       await waitFor(() =>
@@ -143,9 +142,7 @@ describe('TrialTag', () => {
 
     it('does not render if the organization is not on trial', async () => {
       getOrganization.mockResolvedValue(organizationNotOnTrial);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        orgId: organizationNotOnTrial.sys.id,
-      }));
+      getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
       build();
 
       await waitFor(() =>
@@ -155,9 +152,7 @@ describe('TrialTag', () => {
 
     it('renders when the organization is on trial and the navbar is SpaceNavbar', async () => {
       const space = spaceNotOnTrial(trialOrganization);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: space.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: space.sys.id });
       getSpace.mockResolvedValue(space);
       isOrgRoute.mockReturnValue(false);
       isSpaceRoute.mockReturnValue(true);
@@ -169,9 +164,7 @@ describe('TrialTag', () => {
 
   describe('Space trial', () => {
     beforeEach(() => {
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: trialSpace.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: trialSpace.sys.id });
       isOwnerOrAdmin.mockReturnValue(false);
       isOrgRoute.mockReturnValue(false);
       isSpaceRoute.mockReturnValue(true);
@@ -187,9 +180,7 @@ describe('TrialTag', () => {
 
     it('renders when the trial has ended', async () => {
       getSpace.mockResolvedValue(trialExpiredSpace);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: trialExpiredSpace.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: trialExpiredSpace.sys.id });
 
       build();
 
@@ -200,9 +191,7 @@ describe('TrialTag', () => {
 
     it('does not render when the active trial space becomes read-only', async () => {
       getSpace.mockResolvedValue(readOnlyTrialSpace);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: readOnlyTrialSpace.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: readOnlyTrialSpace.sys.id });
 
       build();
 
@@ -211,9 +200,7 @@ describe('TrialTag', () => {
 
     it('does not render when the expired trial space becomes read-only', async () => {
       getSpace.mockResolvedValue(readOnlyExpiredTrialSpace);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: readOnlyExpiredTrialSpace.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: readOnlyExpiredTrialSpace.sys.id });
 
       build();
 
@@ -239,9 +226,7 @@ describe('TrialTag', () => {
     it('does not render if neither the space nor organization is on trial', async () => {
       const mockSpace = spaceNotOnTrial(organizationNotOnTrial);
       getSpace.mockResolvedValue(mockSpace);
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: mockSpace.sys.id,
-      }));
+      getModule.mockReturnValue({ spaceId: mockSpace.sys.id });
 
       build();
 
@@ -250,9 +235,7 @@ describe('TrialTag', () => {
     });
 
     it('does not render when the space is on trial but the navbar is OrgSettingsNavbar', async () => {
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
-        spaceId: organizationNotOnTrial.sys.id,
-      }));
+      getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
       isOrgRoute.mockReturnValue(true);
       isSpaceRoute.mockReturnValue(false);
 

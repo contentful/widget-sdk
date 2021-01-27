@@ -1,6 +1,6 @@
+import { getModule } from 'core/NgRegistry';
 import * as random from 'utils/Random';
 import { createSavedViewsPersistor } from './SavedViewsPersistor';
-import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/Random', () => ({ id: jest.fn() }));
@@ -32,7 +32,7 @@ describe('SavedViewsPersistor', () => {
       private: scopedApi,
     };
 
-    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    getModule.mockReturnValue({
       space: {
         data: {
           spaceMember: roleAssignment.membership,
@@ -43,7 +43,7 @@ describe('SavedViewsPersistor', () => {
         entries: entityApi,
         assets: entityApi,
       },
-    }));
+    });
   });
 
   it('should get the role assignment if entry', async () => {

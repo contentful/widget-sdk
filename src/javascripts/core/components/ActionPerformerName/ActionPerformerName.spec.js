@@ -1,20 +1,20 @@
 import React from 'react';
+import { getModule } from 'core/NgRegistry';
 import { render, within } from '@testing-library/react';
 import { ActionPerformerName } from './ActionPerformerName';
 import { mockUser } from './__mocks__/mockUser';
 import { mockApp } from './__mocks__/mockApp';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('widgets/CustomWidgetLoaderInstance', () => ({ getCustomWidgetLoader: jest.fn() }));
 
-jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+getModule.mockReturnValue({
   users: {
     get: () => Promise.resolve(mockUser),
   },
   user: mockUser,
-}));
+});
 
 getCustomWidgetLoader.mockReturnValue(
   Promise.resolve({
@@ -80,12 +80,12 @@ describe('ActionPerformerName', () => {
       sys: {},
     };
 
-    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    getModule.mockReturnValue({
       users: {
         get: () => Promise.resolve(null),
       },
       user: mockUser,
-    }));
+    });
 
     const { findByTestId } = render(
       <ActionPerformerName
@@ -101,12 +101,12 @@ describe('ActionPerformerName', () => {
       sys: {},
     };
 
-    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    getModule.mockReturnValue({
       users: {
         get: () => Promise.resolve(null),
       },
       user: mockUser,
-    }));
+    });
 
     const { findByTestId } = render(<ActionPerformerName link={brokenLink} />);
     expect(await findByTestId('action-performer-name')).toMatchSnapshot();

@@ -10,7 +10,6 @@ import { waitFor } from '@testing-library/dom';
 jest.mock('services/TokenStore');
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding');
 jest.mock('core/services/BrowserStorage');
-jest.unmock('classes/spaceContext');
 
 jest.mock('core/NgRegistry', () => ({
   getModule: (arg) =>

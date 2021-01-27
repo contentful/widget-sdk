@@ -1,7 +1,7 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 
 export async function fetchContentTypes() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   const { items } = await spaceContext.endpoint({
     method: 'GET',

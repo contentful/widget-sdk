@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers';
 import localeStore from 'services/localeStore';
@@ -9,7 +9,7 @@ import localeStore from 'services/localeStore';
  * Get a content type object by id
  */
 export function getContentTypeById(contentTypeId) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   return spaceContext.publishedCTs.get(contentTypeId);
 }
 
@@ -103,7 +103,7 @@ export function assetTitle(asset, localeCode, modelValue) {
  * given entities file. The promise may resolve with null.
  */
 export function entryImage(entry, localeCode) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   const link = getValueForMatchedField(entry, localeCode, {
     type: 'Link',

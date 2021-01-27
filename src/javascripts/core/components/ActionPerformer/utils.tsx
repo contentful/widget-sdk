@@ -2,14 +2,14 @@ import React from 'react';
 import Icon from 'ui/Components/Icon';
 import { styles } from './styles';
 import { get } from 'lodash';
+import { getModule } from 'core/NgRegistry';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { LinkSys } from 'core/services/SpaceEnvContext/types';
-import { getSpaceContext } from 'classes/spaceContext';
 
 export async function getUser(id: string) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const user = await spaceContext.users.get(id);
   if (!user) {
     return '';
@@ -51,7 +51,7 @@ export function formatUserName(user): string {
     return '';
   }
 
-  const currentUser = getSpaceContext().user;
+  const currentUser = getModule('spaceContext').user;
   if (currentUser && currentUser.sys.id === user.sys?.id) {
     return 'Me';
   }

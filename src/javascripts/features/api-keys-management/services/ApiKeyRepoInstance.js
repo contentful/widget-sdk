@@ -1,10 +1,10 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { createApiKeyRepo } from './ApiKeyRepo';
 
 let apiKeyRepoInstance = null;
 
 export function getApiKeyRepo() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   if (!apiKeyRepoInstance) {
     apiKeyRepoInstance = createApiKeyRepo(spaceContext.endpoint);
