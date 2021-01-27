@@ -88,32 +88,6 @@ export const getResourcesWithEnvironment = {
   },
 };
 
-export const getResourcesWithLocale = {
-  willReturnSeveral() {
-    cy.addInteraction({
-      provider: 'resources',
-      state: States.SEVERAL,
-      uponReceiving: `a request to get resources with locales of space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/resources/locale`,
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: resources,
-      },
-    }).as('getResourcesWithLocale');
-
-    return '@getResourcesWithLocale';
-  },
-};
-
 export const getResourcesForEnvironmentWithLocale = {
   willReturnSeveral() {
     cy.addInteraction({

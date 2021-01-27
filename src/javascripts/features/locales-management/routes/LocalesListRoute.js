@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import { LocalesListPricingOne } from '../LocalesListPricingOne';
@@ -20,6 +19,8 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { generateMessage } from 'utils/ResourceUtils';
+import * as ChangeSpaceService from 'services/ChangeSpaceService';
 
 const fetch = async ({
   organization,
@@ -80,16 +81,14 @@ const fetch = async ({
   };
 };
 
-export const LocalesListRoute = ({
-  showUpgradeSpaceDialog,
-  getComputeLocalesUsageForOrganization,
-}) => {
+export const LocalesListRoute = () => {
   const {
     currentOrganization,
     currentOrganizationId,
     currentSpaceId,
     currentEnvironmentId,
     currentSpace,
+    currentSpaceData,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { isLoading, error, data = {} } = useAsync(
@@ -111,15 +110,6 @@ export const LocalesListRoute = ({
       ]
     )
   );
-
-  if (!getSectionVisibility()['locales']) {
-    return <ForbiddenPage />;
-  }
-
-  if (error) {
-    return <StateRedirect path="spaces.detail.entries.list" />;
-  }
-
   const {
     locales,
     isLegacy,
@@ -131,6 +121,34 @@ export const LocalesListRoute = ({
     subscriptionPlanName,
     hasNextSpacePlan,
   } = data;
+
+  function handleShowUpgradeSpaceDialog() {
+    ChangeSpaceService.beginSpaceChange({
+      organizationId: currentOrganizationId,
+      space: currentSpaceData,
+      onSubmit: () => fetch(),
+    });
+  }
+
+  function getComputeLocalesUsageForOrganization() {
+    /*
+    The expectation of this function is a bit strange as it returns either a string or null, as it is the
+    result of some legacy code. This should be refactored to be more clear in its intention.
+   */
+    if (generateMessage(localeResource).error) {
+      return generateMessage(localeResource).error;
+    } else {
+      return null;
+    }
+  }
+
+  if (!getSectionVisibility()['locales']) {
+    return <ForbiddenPage />;
+  }
+
+  if (error) {
+    return <StateRedirect path="spaces.detail.entries.list" />;
+  }
 
   return (
     <>
@@ -157,19 +175,10 @@ export const LocalesListRoute = ({
           localeResource={localeResource}
           subscriptionState={getSubscriptionState()}
           insideMasterEnv={insideMasterEnv}
-          upgradeSpace={() =>
-            showUpgradeSpaceDialog({
-              onSubmit: () => fetch(),
-            })
-          }
+          upgradeSpace={handleShowUpgradeSpaceDialog}
           hasNextSpacePlan={hasNextSpacePlan}
         />
       )}
     </>
   );
-};
-
-LocalesListRoute.propTypes = {
-  showUpgradeSpaceDialog: PropTypes.func.isRequired,
-  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
 };

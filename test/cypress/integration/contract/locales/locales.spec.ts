@@ -2,7 +2,6 @@ import { defaultSpaceId } from '../../../util/requests';
 import { defaultRequestsMock } from '../../../util/factories';
 import {
   getResourcesForEnvironmentWithLocale,
-  getResourcesWithLocale,
   getResources,
 } from '../../../interactions/resources';
 import { getFeaturesWithCustomRoles } from '../../../interactions/features';
@@ -41,7 +40,6 @@ describe('Locales Management', () => {
     beforeEach(() => {
       interactions = [
         ...defaultRequestsMock(),
-        getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),
@@ -84,13 +82,7 @@ describe('Locales Management', () => {
       );
       cy.findByTestId('save-locale').click();
       cy.wait(creation);
-      cy.wait(
-        [
-          getResourcesWithLocale.willReturnSeveral(),
-          getFeaturesWithCustomRoles.willReturnSeveral(),
-        ],
-        { timeout: 20000 }
-      );
+      cy.wait([getFeaturesWithCustomRoles.willReturnSeveral()], { timeout: 20000 });
       hasNotification('saved');
     });
   });
@@ -101,7 +93,6 @@ describe('Locales Management', () => {
         ...defaultRequestsMock({
           localeResponse: queryFirst100LocalesOfDefaultSpace.willFindSeveral,
         }),
-        getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),

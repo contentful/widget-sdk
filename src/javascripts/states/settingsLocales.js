@@ -1,10 +1,55 @@
+import * as React from 'react';
 import _ from 'lodash';
-import * as ChangeSpaceService from 'services/ChangeSpaceService';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import createResourceService from 'services/ResourceService';
-import { generateMessage } from 'utils/ResourceUtils';
 import { LocalesListRoute, LocalesNewRoute, LocalesEditRoute } from 'features/locales-management';
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
+import { go } from 'states/Navigator';
+
+function withUnsavedChangesDialog(Component) {
+  return function WithUnsavedChangesDialog(props) {
+    const requestLeaveConfirmation = React.useRef();
+    const isDirty = React.useRef(false);
+
+    React.useEffect(() => {
+      const $rootScope = getModule('$rootScope');
+
+      const unsubscribe = $rootScope.$on('$stateChangeStart', (event, toState, toStateParams) => {
+        if (!isDirty.current || !requestLeaveConfirmation.current) return;
+
+        event.preventDefault();
+        requestLeaveConfirmation.current().then((confirmed) => {
+          if (!confirmed) return;
+
+          isDirty.current = false;
+          return go({ path: toState.name, params: toStateParams });
+        });
+      });
+
+      return unsubscribe;
+    }, []);
+
+    function registerSaveAction(save) {
+      requestLeaveConfirmation.current = createUnsavedChangesDialogOpener(save);
+    }
+
+    function setDirty(value) {
+      isDirty.current = value;
+    }
+
+    function goToList() {
+      return go({ path: '^.list' });
+    }
+
+    return (
+      <Component
+        {...props}
+        goToList={goToList}
+        setDirty={setDirty}
+        registerSaveAction={registerSaveAction}
+      />
+    );
+  };
+}
 
 export const localesSettingsState = {
   name: 'locales',
@@ -15,94 +60,16 @@ export const localesSettingsState = {
       name: 'list',
       url: '',
       component: LocalesListRoute,
-      resolve: {
-        localeResource: [
-          '$stateParams',
-          async ($stateParams) => {
-            /*
-              The locales page already fetches the resource as part of its initial requests. We should remove
-              this functionality from here and just keep it in the actual view.
-             */
-            const { spaceId } = $stateParams;
-
-            const resources = createResourceService(spaceId);
-
-            return resources.get('locale');
-          },
-        ],
-      },
-      mapInjectedToProps: [
-        'localeResource',
-        (localeResource) => {
-          const spaceContext = getSpaceContext();
-          return {
-            showUpgradeSpaceDialog: ({ onSubmit }) => {
-              ChangeSpaceService.beginSpaceChange({
-                organizationId: spaceContext.organization.sys.id,
-                space: spaceContext.space.data,
-                onSubmit,
-              });
-            },
-            getComputeLocalesUsageForOrganization: () => {
-              /*
-              The expectation of this function is a bit strange as it returns either a string or null, as it is the
-              result of some legacy code. This should be refactored to be more clear in its intention.
-             */
-              if (generateMessage(localeResource).error) {
-                return generateMessage(localeResource).error;
-              } else {
-                return null;
-              }
-            },
-          };
-        },
-      ],
     },
     {
       name: 'new',
       url: '_new',
-      component: LocalesNewRoute,
-      mapInjectedToProps: [
-        '$scope',
-        '$state',
-        ($scope, $state) => ({
-          registerSaveAction: (save) => {
-            $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
-            $scope.$applyAsync();
-          },
-          setDirty: (value) => {
-            $scope.context.dirty = value;
-            $scope.$applyAsync();
-          },
-          goToList: () => {
-            $state.go('^.list');
-          },
-        }),
-      ],
+      component: withUnsavedChangesDialog(LocalesNewRoute),
     },
     {
       name: 'detail',
       url: '/:localeId',
-      component: LocalesEditRoute,
-      mapInjectedToProps: [
-        '$scope',
-        '$stateParams',
-        '$state',
-        ($scope, $stateParams, $state) => ({
-          localeId: $stateParams.localeId,
-          registerSaveAction: (save) => {
-            $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
-            $scope.$applyAsync();
-          },
-          setDirty: (value) => {
-            $scope.context.dirty = value;
-            $scope.$applyAsync();
-          },
-          goToList: () => {
-            $state.go('^.list');
-          },
-        }),
-      ],
+      component: withUnsavedChangesDialog(LocalesEditRoute),
     },
   ],
 };
