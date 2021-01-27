@@ -9,6 +9,8 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { useSessionMetadata } from '../hooks/useSessionMetadata';
 
 import { go } from 'states/Navigator';
 import { PLATFORM_CONTENT } from '../utils/platformContent';
@@ -34,6 +36,13 @@ export function ReceiptMessage({
 }) {
   const selectedSpacePlan = !!planName && !!spaceName && !!spaceId;
   const isSpaceCreation = selectedSpacePlan && !selectedCompose;
+  const sessionMetadata = useSessionMetadata();
+
+  const onClickRenameSpaceLink = () => {
+    trackEvent(EVENTS.RENAME_SPACE_CLICKED, sessionMetadata);
+
+    go({ path: ['spaces', 'detail', 'settings', 'space'], params: { spaceId } });
+  };
 
   return (
     <>
@@ -96,10 +105,7 @@ export function ReceiptMessage({
                 <>
                   {' '}
                   and a new {planName} space. Update the new space name anytime on the{' '}
-                  <TextLink
-                    onClick={() =>
-                      go({ path: ['spaces', 'detail', 'settings', 'space'], params: { spaceId } })
-                    }>
+                  <TextLink testId="rename-space-button" onClick={onClickRenameSpaceLink}>
                     Space Settings
                   </TextLink>
                 </>

@@ -78,6 +78,21 @@ describe('PlatformSelectionStep', () => {
         expect(scrollIntoViewMock).toBeCalledWith({ behavior: 'smooth', block: 'start' });
       }
     });
+
+    it('should track the click on a platform card', async () => {
+      await build();
+      const platformCards = screen.getAllByTestId('platform-card');
+
+      userEvent.click(platformCards[0]);
+      expect(mockTrack).toHaveBeenCalledWith(EVENTS.PLATFORM_SELECTED, {
+        selectedPlatform: PLATFORM_CONTENT.spacePlatform,
+      });
+
+      userEvent.click(platformCards[1]);
+      expect(mockTrack).toHaveBeenCalledWith(EVENTS.PLATFORM_SELECTED, {
+        selectedPlatform: PLATFORM_CONTENT.composePlatform,
+      });
+    });
   });
 
   describe('Enterprise card', () => {
@@ -120,10 +135,14 @@ describe('PlatformSelectionStep', () => {
     });
 
     it('should select the card when user clicks on it', () => {
-      for (const spacePlanCard of spacePlanCards) {
+      spacePlanCards.forEach((spacePlanCard, i) => {
         userEvent.click(spacePlanCard);
         expect(spacePlanCard.getAttribute('class')).toContain('--is-selected');
-      }
+
+        expect(mockTrack).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, {
+          selectedPlan: mockProductRatePlans[i],
+        });
+      });
     });
   });
 

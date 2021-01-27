@@ -6,9 +6,10 @@ import { SpacePurchaseContextProvider } from '../context';
 
 export const newSpaceState = {
   name: 'new_space',
-  url: '/new_space',
+  url: '/new_space?{from:string}{viaMarketingCTA:bool}',
   params: {
     viaMarketingCTA: false,
+    from: '',
   },
   component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>

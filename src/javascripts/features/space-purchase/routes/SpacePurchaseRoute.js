@@ -41,7 +41,7 @@ import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => async () => {
+const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
 
   const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, { organizationId });
@@ -125,6 +125,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
     },
   });
 
+  // TODO: Once trials is further along, add logic to verify if user is in trial or not.
   // Now that all the data has been loaded (and dispatched), we can track the "begin" event
   trackEvent(
     EVENTS.BEGIN,
@@ -139,11 +140,14 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, dispatch) => asy
       canCreateFreeSpace: !resourceIncludedLimitReached(freeSpaceResource),
       sessionType: spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION,
       currentSpacePlan: currentSpaceRatePlan,
+      canPurchaseApps: purchasingApps,
+      from,
+      performancePackagePreselected: viaMarketingCTA,
     }
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) => {
   const {
     state: { sessionId, purchasingApps },
     dispatch,
@@ -153,7 +157,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA }) => {
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
   const { error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, viaMarketingCTA, dispatch), [])
+    useCallback(initialFetch(orgId, spaceId, viaMarketingCTA, from, dispatch), [])
   );
 
   // Show the generic loading state until we know if we're purchasing apps or not
@@ -195,4 +199,5 @@ SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
   viaMarketingCTA: PropTypes.bool.isRequired,
+  from: PropTypes.string,
 };

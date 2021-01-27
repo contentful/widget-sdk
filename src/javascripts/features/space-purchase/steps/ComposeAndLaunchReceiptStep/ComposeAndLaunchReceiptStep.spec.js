@@ -26,6 +26,10 @@ jest.mock('features/pricing-entities', () => ({
   addProductRatePlanToSubscription: jest.fn(),
 }));
 
+jest.mock('../../hooks/useSessionMetadata', () => ({
+  useSessionMetadata: jest.fn().mockReturnValue('sessionData'),
+}));
+
 jest.mock('core/services/BrowserStorage', () => {
   const store = {
     get: () => 'last_space_used_id',

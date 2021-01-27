@@ -102,7 +102,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
     spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [spaceSectionRef]);
 
-  const onSelect = (plan) => {
+  const onSelectSpace = (plan) => {
     track(EVENTS.SPACE_PLAN_SELECTED, {
       selectedPlan: plan,
     });
@@ -115,6 +115,18 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
     } else {
       setChooseSpaceLaterSelected(false);
     }
+  };
+
+  const onSelectPlatform = (platform) => {
+    track(EVENTS.PLATFORM_SELECTED, {
+      selectedPlatform: platform,
+    });
+
+    dispatch({
+      type: actions.SET_SELECTED_PLATFORM,
+      payload: platform, // TODO: replace this with backend data
+    });
+    scrollToSpaceSelection();
   };
 
   return (
@@ -153,13 +165,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
               key={idx}
               cardType="platform"
               selected={selectedPlatform?.title === platform.title}
-              onClick={() => {
-                dispatch({
-                  type: actions.SET_SELECTED_PLATFORM,
-                  payload: platform, // TODO: replace this with backend data
-                });
-                scrollToSpaceSelection();
-              }}
+              onClick={() => onSelectPlatform(platform)}
               tooltipText={tooltipText}
               disabled={!!tooltipText}
               content={platform}
@@ -196,7 +202,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
           canCreateFreeSpace={canCreateFreeSpace}
           canCreatePaidSpace={canCreatePaidSpace}
           orgHasPaidSpaces={orgHasPaidSpaces}
-          onSelect={onSelect}
+          onSelect={onSelectSpace}
           track={track}
         />
 
@@ -209,7 +215,9 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
               padding="large"
               testId="choose-space-later-button"
               selected={chooseSpaceLaterSelected}
-              onClick={() => onSelect(undefined)}>
+              onClick={() => {
+                onSelectSpace(undefined);
+              }}>
               <Heading element="p">Choose space later</Heading>
             </Card>
           </Flex>

@@ -191,6 +191,88 @@ describe('SpacePurchaseRoute', () => {
         userOrganizationRole: mockUserRole,
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'create_space',
+        canPurchaseApps: false,
+        performancePackagePreselected: false,
+        from: '',
+      }
+    );
+  });
+  it('should track if the user got to the flow through a CTA', async () => {
+    const otherPlaceInApp = 'other_place';
+    await build({ from: otherPlaceInApp });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
+
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
+        sessionId: expect.any(String),
+      },
+      {
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
+        canPurchaseApps: false,
+        performancePackagePreselected: false,
+        from: otherPlaceInApp,
+      }
+    );
+  });
+
+  it('should track if the performance package is pre-selected', async () => {
+    await build({ viaMarketingCTA: true });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
+
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
+        sessionId: expect.any(String),
+      },
+      {
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
+        canPurchaseApps: false,
+        performancePackagePreselected: true,
+        from: '',
+      }
+    );
+  });
+
+  it('should track if user cannot purchase apps', async () => {
+    getVariation.mockResolvedValue(true);
+    await build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
+
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
+        sessionId: expect.any(String),
+      },
+      {
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
+        canPurchaseApps: true,
+        performancePackagePreselected: false,
+        from: '',
       }
     );
   });
@@ -269,6 +351,9 @@ describe('SpacePurchaseRoute', () => {
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'upgrade_space',
         currentSpacePlan: mockSpaceRatePlan,
+        canPurchaseApps: false,
+        performancePackagePreselected: false,
+        from: '',
       }
     );
   });
@@ -288,6 +373,7 @@ async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
     viaMarketingCTA: false,
+    from: '',
     ...customProps,
   };
 
