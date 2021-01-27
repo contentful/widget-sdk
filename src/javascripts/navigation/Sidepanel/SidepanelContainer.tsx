@@ -58,7 +58,7 @@ const SidepanelContainer = () => {
           path: isMasterEnvironment(spaceEnv.currentEnvironment)
             ? 'spaces.detail.apps.list'
             : 'spaces.detail.environment.apps.list',
-          params: { environmentId: spaceEnv.currentEnvironmentId, appId: app.slug || app.id },
+          params: { environmentId: spaceEnv.currentEnvironmentId, app: app.slug || app.id },
         });
 
         action.event.preventDefault();
