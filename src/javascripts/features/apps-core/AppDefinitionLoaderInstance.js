@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createAppDefinitionLoader } from './AppDefinitionLoader';
@@ -9,7 +9,7 @@ import { createOrganizationEndpoint, createAppDefinitionsEndpoint } from 'data/E
 const perOrgCache = {};
 
 function currentSpaceOrgId() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   return spaceContext.getData(['organization', 'sys', 'id']);
 }

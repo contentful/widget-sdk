@@ -1,11 +1,10 @@
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { registerDirective } from 'core/NgRegistry';
+import { registerDirective, getModule } from 'core/NgRegistry';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
 import entityPageTemplate from 'app/entity_editor/entity_page.html';
-import { getSpaceContext } from 'classes/spaceContext';
 
 export const getIsNewSlideInEditorEnabled = () => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   return getVariation(FLAGS.NEW_SLIDE_IN_EDITOR, {
     organizationId: spaceContext.organization.sys.id,
     spaceId: spaceContext.space.data.sys.id,

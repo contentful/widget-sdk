@@ -35,6 +35,10 @@ jest.mock('features/api-keys-management', () => ({
   getApiKeyRepo: () => mockApiKeyRepo,
 }));
 
+jest.mock('ng/spaceContext', () => ({
+  resetWithSpace: jest.fn(),
+}));
+
 jest.mock('core/services/BrowserStorage', () => ({
   getBrowserStorage: jest.fn(),
 }));

@@ -4,6 +4,7 @@ import * as K from '__mocks__/kefirMock';
 import * as NgRegistry from 'core/NgRegistry';
 import * as TokenStore from 'services/TokenStore';
 import * as CreateModernOnboardingUtils from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+
 import Navigation from './Navigation';
 
 import { render } from '@testing-library/react';

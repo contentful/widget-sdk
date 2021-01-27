@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import { WidgetLoader, MarketplaceDataProvider } from '@contentful/widget-renderer';
 import { createClient } from 'contentful-management';
@@ -33,7 +33,7 @@ const cache = {};
 
 export async function getCustomWidgetLoader() {
   const accessToken = await getToken();
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const aliasOrEnvId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
   const cachePath = [accessToken, spaceId, aliasOrEnvId];

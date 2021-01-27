@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { isEqual, uniqWith } from 'lodash';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
@@ -18,7 +18,7 @@ const TrackingEvents = {
 };
 
 function getContextIds() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   return {
     spaceId: spaceContext.space.data.sys.id,

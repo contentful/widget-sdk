@@ -9,6 +9,8 @@ jest.mock('data/CMA/FetchAll', () => ({
   fetchAll: jest.fn().mockResolvedValue(),
 }));
 
+jest.mock('ng/spaceContext');
+
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'Brewser' }),
 }));

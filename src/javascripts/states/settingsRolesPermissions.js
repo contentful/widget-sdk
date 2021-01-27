@@ -6,15 +6,14 @@ import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
 import { RoleEditorRoute, RolesListRoute } from 'features/roles-permissions-management';
 import { getBatchingApiClient } from '../app/widgets/WidgetApi/BatchingApiClient';
-import { getSpaceContext } from 'classes/spaceContext';
 
 const list = {
   name: 'list',
   url: '',
   component: RolesListRoute,
   mapInjectedToProps: [
-    () => {
-      const spaceContext = getSpaceContext();
+    'spaceContext',
+    (spaceContext) => {
       return {
         spaceId: spaceContext.getId(),
         environmentId: spaceContext.getEnvironmentId(),
@@ -58,12 +57,7 @@ const newRole = {
     },
   },
   resolve: {
-    roleRepo: [
-      // DI used as a workaround for child routes to wait for the spacecontext
-      // to be initialized (defined in "src/javascripts/states/Spaces.js")
-      'initializeSpaceContext',
-      () => RoleRepository.getInstance(getSpaceContext().space),
-    ],
+    roleRepo: ['spaceContext', (spaceContext) => RoleRepository.getInstance(spaceContext.space)],
     baseRole: [
       'roleRepo',
       '$stateParams',
@@ -74,9 +68,9 @@ const newRole = {
   component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
+    'spaceContext',
     'baseRole',
-    ($scope, baseRole) => {
-      const spaceContext = getSpaceContext();
+    ($scope, spaceContext, baseRole) => {
       return {
         isNew: true,
         role: RoleRepository.getEmpty(),
@@ -113,18 +107,18 @@ const detail = {
   },
   resolve: {
     role: [
+      'spaceContext',
       '$stateParams',
-      'initializeSpaceContext',
-      ($stateParams) =>
-        RoleRepository.getInstance(getSpaceContext().space).get($stateParams.roleId),
+      (spaceContext, $stateParams) =>
+        RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
     ],
   },
   component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
+    'spaceContext',
     'role',
-    ($scope, role) => {
-      const spaceContext = getSpaceContext();
+    ($scope, spaceContext, role) => {
       const cma = getBatchingApiClient(spaceContext.cma);
       return {
         isNew: false,

@@ -1,5 +1,5 @@
 import { getUser, getApp, getActionPerformer } from './utils';
-import * as spaceContext from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { mockUser } from './__mocks__/mockUser';
 import { appWidgetMock } from './__mocks__/appWidget';
@@ -9,12 +9,12 @@ jest.mock('widgets/CustomWidgetLoaderInstance', () => ({ getCustomWidgetLoader: 
 
 describe('utils', () => {
   beforeEach(() => {
-    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    getModule.mockReturnValue({
       users: {
         get: () => Promise.resolve(mockUser),
       },
       user: mockUser,
-    }));
+    });
 
     getCustomWidgetLoader.mockResolvedValue({
       getOne: () => Promise.resolve(appWidgetMock),
@@ -27,11 +27,11 @@ describe('utils', () => {
     });
 
     it('should fail when there is no user found unter the given id ', async () => {
-      jest.spyOn(spaceContext, 'getSpaceContext').mockImplementationOnce(() => ({
+      getModule.mockReturnValueOnce({
         users: {
           get: () => Promise.resolve(null),
         },
-      }));
+      });
       expect(await getUser('i-do-not-exist')).toBe('');
     });
   });

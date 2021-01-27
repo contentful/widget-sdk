@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
@@ -28,7 +28,7 @@ const buildPathParams = (id, type) => {
 };
 
 const queryEntries = async (query) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
@@ -64,7 +64,7 @@ const queryEntries = async (query) => {
 };
 
 const queryAssets = async (query) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
@@ -99,7 +99,7 @@ const queryAssets = async (query) => {
 };
 
 const queryContentTypes = (query) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   if (!getSectionVisibility().contentType) {
     return {

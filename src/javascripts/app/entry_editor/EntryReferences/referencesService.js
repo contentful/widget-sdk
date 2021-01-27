@@ -1,12 +1,12 @@
 import cfResolveResponse from 'contentful-resolve-response';
+import { getModule } from 'core/NgRegistry';
 import { newForLocale } from 'app/entity_editor/entityHelpers.js';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
 import TheLocaleStore from 'services/localeStore';
-import { getSpaceContext } from 'classes/spaceContext';
 
 function createEndpoint() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   return EndpointFactory.createSpaceEndpoint(
     spaceContext.space.data.sys.id,
     spaceContext.getAliasId() || spaceContext.getEnvironmentId()
@@ -33,7 +33,7 @@ async function getEntityTitle(entity) {
 }
 
 function getUserInfo() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   return {
     userId: spaceContext.user.sys.id,
     orgId: spaceContext.organization.sys.id,

@@ -1,5 +1,5 @@
 import { chunk, uniq, flatten } from 'lodash';
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 
 const MAX_IN_IDS = 50;
 
@@ -13,7 +13,7 @@ const MAX_IN_IDS = 50;
  * @returns
  */
 export function fetchForType(type, ids) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   let fetch;
   if (type === 'Entry') {
     fetch = (query) => spaceContext.cma.getEntries(query);

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { createBatchPerformer } from './batchPerformer';
 import * as analytics from 'analytics/Analytics';
+import { getModule } from 'core/NgRegistry';
 import * as crypto from 'crypto';
-import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('analytics/Analytics');
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
@@ -192,7 +192,7 @@ describe('batch duplicate', () => {
       return Promise.resolve();
     };
 
-    jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    getModule.mockReturnValue({
       publishedCTs: {
         get: jest.fn().mockReturnValue(contentTypeFields || defaultContentTypeFields),
       },
@@ -202,7 +202,7 @@ describe('batch duplicate', () => {
           .mockResolvedValue(noControls ? null : editorControls || defaultEditorControls),
       },
       space: { createEntry },
-    }));
+    });
   };
 
   beforeEach(() => {
@@ -238,6 +238,7 @@ describe('batch duplicate', () => {
         },
       ],
     };
+    getModule.mockClear();
   });
 
   it('Should still work without contorls', async () => {

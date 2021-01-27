@@ -17,7 +17,6 @@ jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-
 jest.mock('app/entity_editor/DataLoader', () => ({ makePrefetchEntryLoader: jest.fn() }));
 jest.mock('ui/Framework/AngularComponent', () => () => <div data-test-id="angular-component" />);
 jest.mock('features/entity-search', () => ({

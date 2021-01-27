@@ -4,7 +4,6 @@ import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStor
 
 import { combine, onValue, getValue, createPropertyBus } from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
-import { getSpaceContext } from 'classes/spaceContext';
 
 /**
  * @description
@@ -216,13 +215,13 @@ function updateCurrOrgSpace(bus) {
  * @return {Object|null} org
  */
 export function getCurrOrg(orgs, orgId) {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0] || null;
 }
 
 function getCurrSpace() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   return get(spaceContext, 'space.data', null);
 }

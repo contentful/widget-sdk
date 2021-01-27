@@ -6,6 +6,14 @@ import Forma from '@contentful/forma-36-react-components';
 
 jest.mock('@contentful/forma-36-react-components', () => ({}));
 
+jest.mock('core/NgRegistry', () => ({
+  getModule: jest.fn().mockReturnValue({
+    publishedCTs: {
+      fetch: jest.fn().mockResolvedValue({ data: { fields: [] } }),
+    },
+  }),
+}));
+
 Forma.Notification = { error: jest.fn() };
 
 const onLoading = jest.fn();

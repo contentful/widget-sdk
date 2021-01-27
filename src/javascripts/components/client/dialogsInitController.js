@@ -1,4 +1,3 @@
-import { getSpaceContext } from 'classes/spaceContext';
 import { getModule } from 'core/NgRegistry';
 import { initActivationEmailResend } from './activationEmailResendController';
 import { hidePersistentNotification } from 'components/shared/persistent-notification/service';
@@ -9,7 +8,7 @@ import { hidePersistentNotification } from 'components/shared/persistent-notific
  * with eachother.
  */
 export function initDialogsController() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
 
   initActivationEmailResend();

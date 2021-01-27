@@ -2,7 +2,7 @@ import { isPlainObject, noop } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import pluralize from 'pluralize';
 import { makeBlankFolder } from 'data/UiConfig/Blanks';
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { forScopedViews as tracking } from 'analytics/events/SearchAndViews';
 
 const DEFAULT_ID = 'default';
@@ -15,7 +15,7 @@ const ensureValidViews = (folders) => {
 };
 
 export const createSavedViewsPersistor = ({ entityType, viewType, onUpdate = noop }) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const entityApi = spaceContext.uiConfig[pluralize(entityType)];
   const scopedApi = entityApi[viewType];
 

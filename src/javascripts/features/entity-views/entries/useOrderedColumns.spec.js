@@ -1,14 +1,13 @@
+import { getModule } from 'core/NgRegistry';
 import { useOrderedColumns as orderedColumns } from './useOrderedColumns';
-import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-
-jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+getModule.mockReturnValue({
   getId: jest.fn().mockReturnValue('spaceId'),
   getEnvironmentId: jest.fn().mockReturnValue('envId'),
   search: jest.fn(),
   replace: jest.fn(),
-}));
+});
 
 const listViewContext = {
   getView: jest.fn().mockReturnValue({ order: { fieldId: 123 } }),

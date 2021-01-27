@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -87,7 +87,7 @@ export function createBatchPerformer(config) {
     const sys = entity.getSys();
 
     if (sys.type === 'Entry') {
-      const spaceContext = getSpaceContext();
+      const spaceContext = getModule('spaceContext');
       const ctId = _.get(sys, 'contentType.sys.id');
       const contentType = spaceContext.publishedCTs.get(ctId);
       const editorData = await getEditorData(spaceContext, ctId);

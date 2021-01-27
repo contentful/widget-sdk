@@ -19,7 +19,7 @@ import {
 } from './Notifications';
 import { isAContentSpecificPage, isAnEnvironmentAwarePage, ACTION } from './Utils';
 
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 
 let aliasChangedToastVisible = false;
 
@@ -65,7 +65,7 @@ const notifyAliasChangeWithEnvironmentsAccess = ({
 export const triggerAliasChangedNotifications = ({ update, modalLauncher = ModalLauncher }) => {
   if (aliasChangedToastVisible) return;
   const { newTarget, oldTarget, aliasId } = update;
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const currentEnvironmentId = spaceContext.getEnvironmentId();
   const currentAliasId = spaceContext.space.environmentMeta.aliasId;
   if (oldTarget === null) {
@@ -152,7 +152,7 @@ export const triggerAliasCreatedOrDeletedNotifications = async ({
   }
 
   const { target, aliasId } = update;
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   if (update.action === ACTION.DELETE && aliasId === spaceContext.space.environmentMeta.aliasId) {
     return modalLauncher.open(({ onClose, isShown }) => (
       // reload to unscoped route, or move to the old target env

@@ -1,8 +1,11 @@
 import _ from 'lodash';
 import * as EntityResolver from './EntityResolver';
+import { getModule } from 'core/NgRegistry';
+
 import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
+getModule.mockReturnValue(spaceContextMocked);
 
 describe('EntityResolver', () => {
   it('fetches each ID', async () => {

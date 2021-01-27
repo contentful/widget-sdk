@@ -1,5 +1,4 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { getSpaceContext } from 'classes/spaceContext';
 import { ExtensionsListRoute, ExtensionEditorRoute } from 'features/extensions-management';
 
 export const extensionsSettingsState = {
@@ -18,8 +17,8 @@ export const extensionsSettingsState = {
       component: ExtensionsListRoute,
       mapInjectedToProps: [
         '$stateParams',
-        ($stateParams) => {
-          const spaceContext = getSpaceContext();
+        'spaceContext',
+        ($stateParams, spaceContext) => {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
@@ -35,9 +34,9 @@ export const extensionsSettingsState = {
       mapInjectedToProps: [
         '$scope',
         '$stateParams',
+        'spaceContext',
         '$state',
-        ($scope, $stateParams, $state) => {
-          const spaceContext = getSpaceContext();
+        ($scope, $stateParams, spaceContext, $state) => {
           return {
             extensionId: $stateParams.extensionId,
             registerSaveAction: (save) => {

@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import type { EntitySelectorExtensionSDK } from '@contentful/entity-search';
 import { EntitySelector } from '@contentful/entity-search';
 import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
@@ -6,7 +6,7 @@ import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
 const checkFeatureFlags = async () => {
   // temporary use of `spaceContext`
   // todo: should be deleted once we remove PC_CONTENT_TAGS feature flag
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
 
   try {

@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import { createAppsRepo } from './AppsRepo';
 import { getAppDefinitionLoader } from './AppDefinitionLoaderInstance';
@@ -8,7 +8,7 @@ import { getAppDefinitionLoader } from './AppDefinitionLoaderInstance';
 const perSpaceEnvCache = {};
 
 export function getAppsRepo() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
 

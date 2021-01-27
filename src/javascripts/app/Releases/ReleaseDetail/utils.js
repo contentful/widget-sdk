@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { stateName, getState } from 'data/CMA/EntityState';
@@ -8,7 +8,7 @@ import { newForLocale } from 'app/entity_editor/entityHelpers';
 const MAX_POLL_COUNT = 60;
 const MAX_POLL_INTERVAL = 1000;
 const releaseDetailNavigation = (release) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const path = ['spaces', 'detail', 'releases', 'detail'];
 
   if (!spaceContext.isMasterEnvironment()) {
@@ -22,7 +22,7 @@ const releaseDetailNavigation = (release) => {
 };
 
 const entityNavigation = (entity, pathType, entityType) => {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
   const path = ['spaces', 'detail', pathType, 'detail'];
 
   if (!spaceContext.isMasterEnvironment()) {

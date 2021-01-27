@@ -1,4 +1,4 @@
-import { getSpaceContext } from 'classes/spaceContext';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
@@ -24,7 +24,7 @@ const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
 });
 
 export async function getPendingScheduledActions() {
-  const spaceContext = getSpaceContext();
+  const spaceContext = getModule('spaceContext');
 
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
