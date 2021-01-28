@@ -66,8 +66,11 @@ export function createDialogsApi(
     openConfirm: ExtensionDialogs.openConfirm,
     openPrompt: ExtensionDialogs.openPrompt,
     selectSingleEntry: (async (opts) => {
+      const numberOfCTs = entitySelectorSdk.space.getCachedContentTypes().length;
+      const needToOverrideCts = numberOfCTs === opts?.contentTypes?.length;
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
+        contentTypes: needToOverrideCts ? [] : opts?.contentTypes,
         entityType: 'Entry',
       });
       if (result && result.length > 0) {
@@ -76,8 +79,11 @@ export function createDialogsApi(
       return null;
     }) as DialogExtensionSDK['dialogs']['selectSingleEntry'],
     selectMultipleEntries: (async (opts) => {
+      const numberOfCTs = entitySelectorSdk.space.getCachedContentTypes().length;
+      const needToOverrideCts = numberOfCTs === opts?.contentTypes?.length;
       const result = await entitySelector.openFromWidget(entitySelectorSdk, {
         ...opts,
+        contentTypes: needToOverrideCts ? [] : opts?.contentTypes,
         entityType: 'Entry',
         multiple: true,
       });
