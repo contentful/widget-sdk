@@ -23,7 +23,7 @@ export type CheckboxChangeStatus = {
 export interface MultiSelectProps {
   className?: string;
   checkboxList: CheckboxItem[];
-  onChange?: (status: CheckboxChangeStatus) => void;
+  onChange: (status: CheckboxChangeStatus) => void;
   onClick?: MouseEventHandler;
   selectAll: boolean;
   testId?: string;
@@ -42,7 +42,6 @@ export const MultiSelect = (props: MultiSelectProps) => {
     const allSelected = checkedItems.length === checkboxes.length;
     const noneSelected = checkedItems.length === 0;
 
-    console.log(isIndeterminate);
     if (isIndeterminate) {
       setIndeterminate(true);
       setSelectAllState(false);
@@ -58,18 +57,11 @@ export const MultiSelect = (props: MultiSelectProps) => {
       setSelectAllState(false);
     }
 
-    if (onChange) {
-      onChange({
-        allSelected: selectAllState,
-        checkboxes: checkboxes,
-      });
-    }
-  }, [checkboxes, selectAllState]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [checkboxes, selectAllState]);
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.currentTarget;
     const changedCheckboxes = checkboxes.map((item) => {
-      console.log('name', name);
       if (name === 'select_all') {
         setSelectAllState(checked);
         return { ...item, checked };
@@ -77,7 +69,9 @@ export const MultiSelect = (props: MultiSelectProps) => {
       return item.name === name ? { ...item, checked } : item;
     });
 
+    const checkedItems = changedCheckboxes.filter((item) => item.checked);
     setCheckboxes(changedCheckboxes);
+    onChange({ checkboxes: changedCheckboxes, allSelected: checkedItems.length === changedCheckboxes.length })
   };
 
   return (

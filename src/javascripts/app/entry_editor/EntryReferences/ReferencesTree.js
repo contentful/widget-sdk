@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback, useState } from 'react';
+import React, { useContext, useMemo, useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { List, ListItem } from '@contentful/forma-36-react-components';
@@ -174,15 +174,28 @@ function ReferenceCards({
       setIsTreeMaxDepthReached(true);
     }
     setIsSliced(isSliced);
-    track(trackingEvents.dialogOpen, {
-      entity_id: root.sys.id,
-      references_depth: depth,
-      references_per_level: entitiesPerLevel,
-      circular_references_count: circularReferenceCount,
-    });
     setInitialized(true);
   }
 
+  useEffect(() => {
+    /**
+     * IMPORTANT: this prevents the tracking from running on every single render of the tree.
+     * Currently the tree re-renders on every change in the selector (Draft,Changed,Published),
+     * thus calling the re-render of ALL ReferenceCards and initializing them again.
+     *
+     * This fix attempts to skip re-rendering on *any* checkbox changes
+     * */
+
+    if (initialized && selectedStates.length === 0 && !allReferencesSelected) {
+      track(trackingEvents.dialogOpen, {
+        entity_id: root.sys.id,
+        references_depth: depth,
+        references_per_level: entitiesPerLevel,
+        circular_references_count: circularReferenceCount,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return referenceCards;
 }
 
