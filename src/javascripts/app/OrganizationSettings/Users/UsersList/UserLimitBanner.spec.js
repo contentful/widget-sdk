@@ -134,7 +134,7 @@ describe('UserLimitBanner', () => {
       await build({ usersCount });
 
       expect(screen.getByTestId('users-limit-banner').textContent).toBe(
-        `Your organization has ${usersCount} users. 10 users are included free on the Team tear with a maximum of 25 users.To increase the limit, the organization owner must upgrade your organization to enterprise.`
+        `Your organization has ${usersCount} users. 10 users are included free on the Team tier with a maximum of 25 users.To increase the limit, the organization owner must upgrade your organization to enterprise.`
       );
     });
 
@@ -147,7 +147,7 @@ describe('UserLimitBanner', () => {
       await build({ usersCount });
 
       expect(screen.getByTestId('users-limit-banner').textContent).toBe(
-        `Your organization has ${usersCount} users. 10 users are included free on the Team tear with a maximum of 25 users.To increase the limit, talk to us about upgrading to enterprise.`
+        `Your organization has ${usersCount} users. 10 users are included free on the Team tier with a maximum of 25 users.To increase the limit, talk to us about upgrading to enterprise.`
       );
 
       const linkToSales = screen.getByTestId('link-to-sales');
