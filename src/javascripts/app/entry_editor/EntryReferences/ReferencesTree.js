@@ -185,8 +185,7 @@ function ReferenceCards({
      *
      * This fix attempts to skip re-rendering on *any* checkbox changes
      * */
-
-    if (initialized && selectedStates.length === 0 && !allReferencesSelected) {
+    if (initialized && selectedStates?.length === 0 && !allReferencesSelected) {
       track(trackingEvents.dialogOpen, {
         entity_id: root.sys.id,
         references_depth: depth,
