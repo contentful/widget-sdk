@@ -2,7 +2,6 @@ import * as Defaults from './Defaults';
 import { findIndex, get as getPath, extend, omit, pick, isEmpty } from 'lodash';
 import { update, concat } from 'utils/Collections';
 import { deepFreeze } from 'utils/Freeze';
-import * as logger from 'services/logger';
 import { USER_UI_CONFIG, getAlphaHeader } from 'alphaHeaders.js';
 
 const SHARED_VIEWS = 'shared';
@@ -168,7 +167,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
           return config;
         } else {
           const reject = () => Promise.reject(error);
-          logger.logServerWarn(`Could not save ${getEntityName(type)}`, { error });
           return load(type).then(reject, reject);
         }
       }
@@ -181,10 +179,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
   function getEndpointHeaders(type) {
     return type === PRIVATE_VIEWS ? ALPHA_HEADER : {};
-  }
-
-  function getEntityName(type) {
-    return `${type === PRIVATE_VIEWS ? 'User' : ''}UIConfig`;
   }
 
   function setUiConfig(type, data) {
