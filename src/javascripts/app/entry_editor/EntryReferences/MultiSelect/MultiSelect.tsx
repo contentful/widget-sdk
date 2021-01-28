@@ -56,7 +56,6 @@ export const MultiSelect = (props: MultiSelectProps) => {
       setIndeterminate(false);
       setSelectAllState(false);
     }
-
   }, [checkboxes, selectAllState]);
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +70,10 @@ export const MultiSelect = (props: MultiSelectProps) => {
 
     const checkedItems = changedCheckboxes.filter((item) => item.checked);
     setCheckboxes(changedCheckboxes);
-    onChange({ checkboxes: changedCheckboxes, allSelected: checkedItems.length === changedCheckboxes.length })
+    onChange({
+      checkboxes: changedCheckboxes,
+      allSelected: checkedItems.length === changedCheckboxes.length,
+    });
   };
 
   return (
