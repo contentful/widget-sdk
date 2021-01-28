@@ -1,22 +1,16 @@
 import { addUserOrgSpace } from './Decorators';
-import { getModule } from 'core/NgRegistry';
 
 export default addUserOrgSpace((eventName, data) => ({
   data: {
-    content_type_id: data.ctId,
     event_type: extractAction(eventName),
-    parent_entry_id: extractParentEntryId(),
+    parent_entry_id: data.parentEntryId,
+    parent_field_path: data.parentFieldPath.join(':'),
+    entity_type: data.entityType,
+    entity_id: data.entityId,
+    content_type_id: data.ctId || null,
   },
 }));
 
 function extractAction(eventName) {
   return eventName.split(':')[1];
-}
-
-function extractParentEntryId() {
-  const $state = getModule('$state');
-
-  return $state.params.previousEntries
-    ? $state.params.previousEntries.split(',').pop()
-    : $state.params.entryId;
 }

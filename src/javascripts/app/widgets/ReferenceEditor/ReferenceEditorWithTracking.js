@@ -5,7 +5,7 @@ import {
   SingleEntryReferenceEditor,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference';
-import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
@@ -20,14 +20,10 @@ const onEntryAction = (loadEvents, sdk) => {
   return (action) => {
     switch (action.type) {
       case 'select_and_link':
-        safeNonBlockingTrack('reference_editor_action:link', {
-          ctId: getCtId(action.entityData),
-        });
+        trackReferenceAction('reference_editor_action:link', action, sdk);
         break;
       case 'create_and_link':
-        safeNonBlockingTrack('reference_editor_action:create', {
-          ctId: getCtId(action.entityData),
-        });
+        trackReferenceAction('reference_editor_action:create', action, sdk);
         safeNonBlockingTrack('entry:create', {
           eventOrigin: 'reference-editor',
           contentType: sdk.contentType,
@@ -38,12 +34,10 @@ const onEntryAction = (loadEvents, sdk) => {
         }
         break;
       case 'delete':
-        safeNonBlockingTrack('reference_editor_action:delete', {
-          ctId: action.contentTypeId,
-        });
+        trackReferenceAction('reference_editor_action:delete', action, sdk);
         break;
       case 'edit':
-        safeNonBlockingTrack('reference_editor_action:edit', { ctId: action.contentTypeId });
+        trackReferenceAction('reference_editor_action:edit', action, sdk);
         if (action.slide) {
           safeNonBlockingTrack('slide_in_editor:open', action.slide);
         }

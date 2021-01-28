@@ -2,26 +2,26 @@ import React from 'react';
 import { get } from 'lodash';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
-import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const onMediaAction = (loadEvents, sdk) => (action) => {
   switch (action.type) {
     case 'select_and_link':
-      safeNonBlockingTrack('reference_editor_action:link');
+      trackReferenceAction('reference_editor_action:link', action, sdk);
       break;
     case 'create_and_link':
-      safeNonBlockingTrack('reference_editor_action:create');
+      trackReferenceAction('reference_editor_action:create', action, sdk);
       if (action.slide) {
         safeNonBlockingTrack('slide_in_editor:open_create', action.slide);
       }
       break;
     case 'delete':
-      safeNonBlockingTrack('reference_editor_action:delete');
+      trackReferenceAction('reference_editor_action:delete', action, sdk);
       break;
     case 'edit':
-      safeNonBlockingTrack('reference_editor_action:edit');
+      trackReferenceAction('reference_editor_action:edit', action, sdk);
       if (action.slide) {
         safeNonBlockingTrack('slide_in_editor:open', action.slide);
       }
