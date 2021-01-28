@@ -26,6 +26,7 @@ import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTag
 import * as stringUtils from 'utils/StringUtils';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
+import { useCanManageTags } from '../../core/hooks/useCanManageTags';
 
 const styles = {
   wrapper: css({
@@ -44,6 +45,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
   const [validTagName, setValidTagName] = useState(true);
+  const canManageTags = useCanManageTags();
 
   const totalSelected = selectedTags.length;
   const maxTagsReached = totalSelected >= TAGS_PER_ENTITY;
@@ -94,7 +96,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     setValidTagName(true);
   }, [search]);
 
-  if (shouldAddInlineCreationItem(search, localFilteredTags, selectedTags)) {
+  if (shouldAddInlineCreationItem(canManageTags, search, localFilteredTags, selectedTags)) {
     localFilteredTags.push({
       inlineCreation: true,
       label: search,

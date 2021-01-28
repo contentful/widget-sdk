@@ -3,6 +3,7 @@ import { screen, render, fireEvent } from '@testing-library/react';
 
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const createTag = jest.fn().mockResolvedValue({
   sys: {
@@ -136,6 +137,10 @@ describe('TagsSelection Component', () => {
 });
 
 async function renderTagsSelection() {
+  /*
+   * this test set up provides some tags and it has one selected by default
+   * It is also provides a space environment where the user is an Admin (so it can handle tags)
+   */
   const localTags = [
     {
       sys: {
@@ -240,14 +245,109 @@ async function renderTagsSelection() {
     onAdd: jest.fn(),
     onRemove: jest.fn(),
   };
+
+  const spaceEnvValues = {
+    currentSpace: {
+      data: {
+        name: 'Tags',
+        sys: {
+          type: 'Space',
+          id: 'm8xyo6sh8zj8',
+          organization: {
+            name: 'Developer Workflows Test Org',
+            isBillable: true,
+            sys: {
+              type: 'Organization',
+              id: '4haCJX5hLV4DKJhIJz4A6k',
+            },
+          },
+        },
+        spaceMembership: {
+          admin: true,
+          sys: {
+            type: 'SpaceMembership',
+            id: '1zfXldeGQ2qWjMylMZSj0K',
+            version: 1,
+            user: {
+              firstName: 'Napoleon',
+              lastName: 'Hill',
+              email: 'napoleon.hill@contentful.com',
+              activated: true,
+              canCreateOrganization: true,
+              features: { logAnalytics: true, showPreview: false },
+              sys: {
+                type: 'User',
+                id: 'mysuperID',
+              },
+              organizationMemberships: [
+                {
+                  role: 'owner',
+                  sys: {
+                    type: 'OrganizationMembership',
+                    id: '0DGwZZ2qnG6ZfPtQW0vs4C',
+                    version: 0,
+                    organization: {
+                      name: 'Contentful',
+                      subscriptionState: null,
+                      isBillable: false,
+                      trialPeriodEndsAt: null,
+                      cancellationActiveAt: null,
+                      hasSsoEnabled: false,
+                      sys: {
+                        type: 'Organization',
+                        id: '0DzC3fPm0Ll1kCsGmiUBJY',
+                        version: 0,
+                        createdAt: '2020-11-16T15:41:13Z',
+                        updatedAt: '2020-11-16T15:41:13Z',
+                      },
+                      disableAnalytics: false,
+                      pricingVersion: 'pricing_version_2',
+                    },
+                    status: 'active',
+                  },
+                },
+                {
+                  role: 'developer',
+                  sys: {
+                    type: 'OrganizationMembership',
+                    id: '1xmKAGbI3JXPFXvNNTmKbo',
+                    version: 1,
+                    createdBy: {
+                      sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' },
+                    },
+                    createdAt: '2020-11-17T08:38:31Z',
+                    updatedBy: {
+                      sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' },
+                    },
+                    updatedAt: '2020-11-17T08:40:17Z',
+                    status: 'active',
+                    lastActiveAt: '2021-01-28T08:35:22Z',
+                    sso: null,
+                  },
+                },
+              ],
+            },
+          },
+          roles: [],
+        },
+        spaceMember: {
+          admin: true,
+          roles: [],
+        },
+        shards: [null],
+      },
+    },
+  };
   render(
-    <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
-      <ReadTagsProvider>
-        <FilteredTagsProvider>
-          <TagsSelection {...tagsSelectionProps} />
-        </FilteredTagsProvider>
-      </ReadTagsProvider>
-    </TagsRepoContext.Provider>
+    <SpaceEnvContext.Provider value={{ ...spaceEnvValues }}>
+      <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
+        <ReadTagsProvider>
+          <FilteredTagsProvider>
+            <TagsSelection {...tagsSelectionProps} />
+          </FilteredTagsProvider>
+        </ReadTagsProvider>
+      </TagsRepoContext.Provider>
+    </SpaceEnvContext.Provider>
   );
 
   await screen.findByText('Tags');

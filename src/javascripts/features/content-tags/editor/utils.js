@@ -79,8 +79,14 @@ export const applyGroups = (tags, groups) => {
 export const groupByName = (tags, minGroupSize = 2) =>
   applyMinimumGroupSize(groupByField(tags, 'label', GROUP_DELIMITERS), minGroupSize);
 
-export const shouldAddInlineCreationItem = (search, localFilteredTags, selectedTags) => {
+export const shouldAddInlineCreationItem = (
+  canManageTags,
+  search,
+  localFilteredTags,
+  selectedTags
+) => {
   return (
+    canManageTags &&
     search &&
     !localFilteredTags.some(
       (tag) => tag.label === search || tag.value === stringUtils.toIdentifier(search)

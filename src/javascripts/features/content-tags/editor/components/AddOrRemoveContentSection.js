@@ -22,6 +22,7 @@ import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTag
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
+import { useCanManageTags } from '../../core/hooks/useCanManageTags';
 import * as stringUtils from 'utils/StringUtils';
 
 function useAddTag(addToBulkList) {
@@ -69,6 +70,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   const { isLoading, getTag } = useReadTags();
   const { setSearch, filteredTags, search } = useFilteredTags();
   const [validTagName, setValidTagName] = useState(true);
+  const canManageTags = useCanManageTags();
   const entityCount = entities.length;
   const {
     push,
@@ -126,6 +128,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   );
 
   const autocompleteItemTags = shouldAddInlineCreationItem(
+    canManageTags,
     search,
     localFilteredTags,
     entityTags.map((tagValue) => ({ value: tagValue }))
