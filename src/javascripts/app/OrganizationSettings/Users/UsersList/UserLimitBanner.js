@@ -129,7 +129,7 @@ export function UserLimitBanner({ orgId, spaces }) {
       {shouldShowSelfServiceBanner && (
         <>
           <Paragraph>
-            Your organization has {usersCount} users. 10 users are included free on the Team tear
+            Your organization has {usersCount} users. 10 users are included free on the Team tier
             with a maximum of 25 users.
           </Paragraph>
           <Paragraph>
