@@ -180,6 +180,11 @@ export const canCreateOrganization = wrapGKMethod('canCreateOrganization');
  * actions and entity types. Note that entity types should be
  * provided in camel case
  */
+
+export function getSpaceAuthContext() {
+  return spaceAuthContext;
+}
+
 export function can(action, entityType) {
   return getPermissions(action, entityType).can;
 }

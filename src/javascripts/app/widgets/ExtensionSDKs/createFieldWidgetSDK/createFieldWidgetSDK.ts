@@ -1,4 +1,4 @@
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
@@ -20,6 +20,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
+import { createAccessApi } from '../createAccessApi';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -175,5 +176,20 @@ export function createFieldWidgetSDK({
   return {
     ...sdkWithoutDialogs,
     dialogs: createDialogsApi(sdkWithoutDialogsAndIds),
+    access: createAccessApi(() => ({
+      sys: entryApi.getSys(),
+      fields: Object.keys(entryApi.fields).reduce((acc, fieldId) => {
+        const field = entryApi.fields[fieldId];
+        return {
+          ...acc,
+          [fieldId]: field.locales.reduce((acc, localeCode) => {
+            return {
+              ...acc,
+              [localeCode]: field.getValue(localeCode)
+            }
+          }, {})
+        }
+      }, {} as EntryFieldAPI)
+    }))
   };
 }
