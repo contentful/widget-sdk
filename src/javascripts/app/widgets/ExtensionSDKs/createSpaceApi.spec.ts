@@ -274,7 +274,7 @@ describe('createSpaceApi', () => {
     });
 
     describe('when the handler is called', () => {
-      it('the callback is called with the result of getEntity', async () => {
+      it('the callback is called with the result of getEntry', async () => {
         const initialContentTypes = [];
         const spaceApi = buildSpaceApi(initialContentTypes);
 

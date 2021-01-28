@@ -1,13 +1,13 @@
-import { createEntryApi } from './createEntryApi';
+import { createEntryApi, InternalEntryAPI } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
-import { EntryAPI } from 'contentful-ui-extensions-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';
 import { noop } from 'lodash';
 import * as Kefir from 'kefir';
 import jestKefir from 'jest-kefir';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import APIClient from 'data/APIClient';
 
 const kefirHelpers = jestKefir(Kefir);
 
@@ -29,6 +29,14 @@ jest.mock('core/utils/kefir', () => {
   };
 });
 
+const cma = ({
+  getTasks: jest.fn(),
+  getTask: jest.fn(),
+  createTask: jest.fn(),
+  updateTask: jest.fn(),
+  deleteTask: jest.fn(),
+} as any) as APIClient;
+
 const mockField = {
   disabled: false,
   localized: false,
@@ -39,7 +47,7 @@ const mockField = {
 };
 
 describe('createEntryApi', () => {
-  let entryApi: EntryAPI;
+  let entryApi: InternalEntryAPI;
   const internalContentType = {
     sys: {
       type: 'ContentType',
@@ -62,6 +70,7 @@ describe('createEntryApi', () => {
   const setInvalid = noop;
   beforeEach(() => {
     entryApi = createEntryApi({
+      cma,
       internalContentType,
       doc,
       setInvalid,
@@ -118,6 +127,30 @@ describe('createEntryApi', () => {
     });
   });
 
+  describe('tasksAPI', () => {
+    it('passes arguments through to CMA with added entry ID', () => {
+      ['getTasks', 'getTask', 'updateTask', 'deleteTask'].forEach((method) => {
+        entryApi[method]('arg-1', 'arg-2');
+        expect(cma[method]).toHaveBeenCalledWith('example', 'arg-1', 'arg-2');
+      });
+    });
+
+    it('transforms user link when creating a Task', () => {
+      const payload = { assignedToId: 'a-user' } as any;
+      entryApi.createTask(payload);
+
+      expect(cma.createTask).toHaveBeenCalledWith('example', {
+        assignedTo: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: 'a-user',
+          },
+        },
+      });
+    });
+  });
+
   describe('metaData', () => {
     const metadata = {
       example: 'metadata',
@@ -126,6 +159,7 @@ describe('createEntryApi', () => {
       (doc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
 
       entryApi = createEntryApi({
+        cma,
         internalContentType,
         doc,
         setInvalid,

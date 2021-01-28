@@ -104,6 +104,7 @@ export function createReadonlyFieldWidgetSDK({
   });
 
   const entryApi = createEntryApi({
+    cma,
     internalContentType: internalContentType,
     doc,
     setInvalid: noop,

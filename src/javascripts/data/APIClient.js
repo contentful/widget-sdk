@@ -69,6 +69,10 @@ APIClient.prototype.getEntrySnapshots = function (entryId, query) {
   return this._get(['entries', entryId, 'snapshots'], query);
 };
 
+APIClient.prototype.getTasks = function (entryId) {
+  return this._get(['entries', entryId, 'tasks']);
+};
+
 APIClient.prototype.getAssets = function (query) {
   return this._getResources('assets', query);
 };
@@ -120,6 +124,10 @@ APIClient.prototype.getEntrySnapshot = function (entryId, snapshotId) {
   return this._get(['entries', entryId, 'snapshots', snapshotId]);
 };
 
+APIClient.prototype.getTask = function (entryId, taskId) {
+  return this._get(['entries', entryId, 'tasks', taskId]);
+};
+
 APIClient.prototype.getAsset = function (id) {
   return this._getResource('assets', id);
 };
@@ -150,6 +158,10 @@ APIClient.prototype.createAsset = function (data) {
   return this._createResource('assets', data);
 };
 
+APIClient.prototype.createTask = function (entryId, data) {
+  return this._createResource(`entries/${entryId}/tasks`, data);
+};
+
 APIClient.prototype._updateResource = function (path, data) {
   return this._request({
     method: 'PUT',
@@ -178,6 +190,10 @@ APIClient.prototype.updateEditorInterface = function (data) {
 
 APIClient.prototype.updateEntry = function (data) {
   return this._updateResource('entries', data);
+};
+
+APIClient.prototype.updateTask = function (entryId, data) {
+  return this._updateResource(`entries/${entryId}/tasks`, data);
 };
 
 APIClient.prototype.updateAsset = function (data) {
@@ -499,6 +515,14 @@ APIClient.prototype.deleteContentType = async function (data) {
 
 APIClient.prototype.deleteEntry = function (data) {
   return this._deleteResource('entries', data);
+};
+
+APIClient.prototype.deleteTask = function (entryId, data) {
+  return this._request({
+    method: 'DELETE',
+    path: ['entries', entryId, 'tasks', getId(data)],
+    version: getVersion(data),
+  });
 };
 
 APIClient.prototype.deleteAsset = function (data) {

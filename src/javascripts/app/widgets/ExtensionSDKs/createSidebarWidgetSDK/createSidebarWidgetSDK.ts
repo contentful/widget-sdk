@@ -45,6 +45,7 @@ export const createSidebarWidgetSDK = ({
   fieldLocaleListeners,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
+  const cma = getBatchingApiClient(spaceContext.cma);
 
   const editorApi = createEditorApi({
     editorInterface: editorData.editorInterface,
@@ -53,6 +54,7 @@ export const createSidebarWidgetSDK = ({
   });
 
   const entryApi = createEntryApi({
+    cma,
     internalContentType,
     doc,
     fieldLocaleListeners: fieldLocaleListeners.lookup,
@@ -81,7 +83,7 @@ export const createSidebarWidgetSDK = ({
   };
 
   const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
+    cma,
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],

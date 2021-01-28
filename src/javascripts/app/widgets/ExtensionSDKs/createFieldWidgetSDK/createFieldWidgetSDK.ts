@@ -80,6 +80,7 @@ export function createFieldWidgetSDK({
   const contentTypeApi = createContentTypeApi(internalContentType);
 
   const entryApi = createEntryApi({
+    cma,
     internalContentType,
     doc,
     fieldLocaleListeners: fieldLocaleListeners.lookup,

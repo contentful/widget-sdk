@@ -75,6 +75,7 @@ export const createEditorExtensionSDK = ({
   const userApi = createUserApi(space.data.spaceMember as SpaceMember);
 
   const entryApi = createEntryApi({
+    cma,
     internalContentType,
     doc,
     fieldLocaleListeners: fieldLocaleListeners.lookup,
