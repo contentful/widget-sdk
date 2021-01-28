@@ -1,5 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+  FormLabel,
+  Paragraph,
+  Select,
+  Option,
+  TextInput,
+  TextLink,
+} from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 import { CONSTRAINT_TYPES, CONSTRAINT_NAMES, PATH_VALUES, PATHS } from './WebhookFiltersState';
 
@@ -13,6 +23,18 @@ const NO_FILTERS_MSG =
   'No filters defined. This webhook will trigger for any entity, based on your selection of triggering events.';
 const HAS_FILTERS_MSG =
   'This webhook will trigger only for entities matching the filters defined below.';
+
+const styles = {
+  addFilterLink: css({
+    textDecoration: 'underline',
+  }),
+  webhookLabel: css({
+    display: 'block',
+  }),
+  filtersParagraph: css({
+    marginBottom: tokens.spacingM,
+  }),
+};
 
 export class WebhookFilters extends React.Component {
   static propTypes = {
@@ -56,50 +78,51 @@ export class WebhookFilters extends React.Component {
     }
 
     return (
-      <option key={index} value={index}>
+      <Option key={index} value={index}>
         {caption}
-      </option>
+      </Option>
     );
   }
 
   renderFilter(filter, index) {
     return (
       <div key={index} data-test-id="filter-setting-row" className="webhook-editor__settings-row">
-        <select
-          onChange={(e) => this.updateByIndex(index, { path: e.target.value })}
-          className="cfnext-select-box"
-          data-test-id="filter-entity-type"
-          value={filter.path}>
+        <Select
+          width={'auto'}
+          className=""
+          testId="filter-entity-type"
+          value={filter.path}
+          onChange={(e) => this.updateByIndex(index, { path: e.target.value })}>
           {PATHS.map((p) => (
-            <option key={p} value={p}>
+            <Option key={p} value={p}>
               {PATH_TITLES[p]} ({p})
-            </option>
+            </Option>
           ))}
-        </select>
+        </Select>
 
-        <select
-          onChange={(e) => this.updateByIndex(index, { constraint: e.target.value })}
-          className="cfnext-select-box"
-          data-test-id="filter-operation"
-          value={filter.constraint}>
+        <Select
+          width={'auto'}
+          testId="filter-operation"
+          value={filter.constraint}
+          onChange={(e) => this.updateByIndex(index, { constraint: e.target.value })}>
           {CONSTRAINT_TYPES.map(this.renderConstraintOption)}
-        </select>
+        </Select>
 
-        <input
-          onChange={(e) => this.updateByIndex(index, { value: e.target.value })}
+        <TextInput
+          width={'medium'}
           placeholder={this.getPlaceholder(filter.constraint)}
-          className="cfnext-form__input"
-          type="text"
-          data-test-id="filter-value"
+          testId="filter-value"
           value={filter.value}
+          onChange={(e) => this.updateByIndex(index, { value: e.target.value })}
         />
 
-        <button
-          data-test-id="remove-webhook-filter"
-          className="btn-link"
+        <TextLink
+          testId="remove-webhook-filter"
+          className={styles.filterLink}
+          linkType={'negative'}
           onClick={() => this.removeByIndex(index)}>
           Remove
-        </button>
+        </TextLink>
       </div>
     );
   }
@@ -113,17 +136,19 @@ export class WebhookFilters extends React.Component {
         ref={(el) => {
           this.el = el;
         }}>
-        <label>Filters</label>
-        <p>{filters.length > 0 ? HAS_FILTERS_MSG : NO_FILTERS_MSG}</p>
+        <FormLabel className={styles.webhookLabel}>Filters</FormLabel>
+        <Paragraph className={styles.filtersParagraph}>
+          {filters.length > 0 ? HAS_FILTERS_MSG : NO_FILTERS_MSG}
+        </Paragraph>
 
         {filters.map((f, i) => this.renderFilter(f, i))}
 
-        <button
-          className="btn-link"
-          data-test-id="add-webhook-filter"
+        <TextLink
+          className={styles.filterLink}
+          testId="add-webhook-filter"
           onClick={() => this.addNew()}>
           + Add filter
-        </button>
+        </TextLink>
       </div>
     );
   }

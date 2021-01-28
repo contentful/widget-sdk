@@ -2,11 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { get } from 'lodash';
+import { FormLabel, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const DEFAULT_CM_HEIGHT = '400px';
+
+const styles = {
+  label: css({
+    marginTop: tokens.spacingM,
+  }),
+};
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -16,10 +25,10 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 
 const Label = ({ text, info }) => {
   return (
-    <label>
+    <FormLabel className={styles.label}>
       <span className="extension-form__label">{text}</span>
       {info && <span className="extension-form__label-info"> ({info})</span>}
-    </label>
+    </FormLabel>
   );
 };
 
@@ -59,18 +68,18 @@ const ExtensionParameters = ({ entity, onChange }) => {
 
       <div className="cfnext-form__field">
         <Label text="Parameter definitions" info="read only" />
-        <p>
+        <Paragraph>
           You can set parameter definitions using the{' '}
-          <a
+          <TextLink
             href={withInAppHelpUtmParams(
               'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters'
             )}
             target="_blank"
             rel="noopener noreferrer">
             Content Management API
-          </a>
+          </TextLink>
           .
-        </p>
+        </Paragraph>
         <Editor
           value={JSON.stringify(
             {

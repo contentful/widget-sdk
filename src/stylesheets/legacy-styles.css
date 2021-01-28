@@ -1317,10 +1317,6 @@ pre,
   .webhook-editor__settings .webhook-editor__settings-row > * {
     margin-right: 0.514285714285714em;
   }
-  .webhook-editor__settings #webhook-name,
-  .webhook-editor__settings #webhook-content-type {
-    width: 75%;
-  }
   .webhook-editor__settings .webhook-editor__settings_payload {
     width: 75%;
     margin-top: 1.285714285714286em;

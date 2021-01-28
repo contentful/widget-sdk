@@ -5,7 +5,7 @@ import 'jest-enzyme';
 import { ExtensionForm } from './ExtensionForm';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
-const ERR_SELECTOR = '.cfnext-form__field-error';
+const ERR_SELECTOR = { 'data-test-id': 'ext-url-error' };
 
 describe('ExtensionForm', () => {
   const mount = (entity, selfHosted) => {

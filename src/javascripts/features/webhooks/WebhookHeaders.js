@@ -1,7 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TextInput, TextLink } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { WebhookSecretHeaderDialog } from './dialogs/WebhookSecretHeaderDialog';
 import { WebhookHttpBasicDialog } from './dialogs/WebhookHttpBasicDialog';
+
+const styles = {
+  addHeaderBtn: css({
+    display: 'block',
+    marginBottom: tokens.spacingS,
+  }),
+};
 
 export class WebhookHeaders extends React.Component {
   static propTypes = {
@@ -54,67 +64,59 @@ export class WebhookHeaders extends React.Component {
         {headers.map((h, i) => {
           return (
             <div data-test-id="setting-row" className="webhook-editor__settings-row" key={`${i}`}>
-              <input
-                data-test-id={`${i}-key`}
-                type="text"
-                className="cfnext-form__input"
+              <TextInput
+                testId={`${i}-key`}
                 placeholder="Key"
                 value={h.key || ''}
                 disabled={h.secret}
                 onChange={(e) => this.update(i, { key: e.target.value })}
               />
               {!h.secret && (
-                <input
-                  data-test-id={`${i}-value`}
-                  type="text"
-                  className="cfnext-form__input"
+                <TextInput
+                  testId={`${i}-value`}
                   placeholder="Value"
                   value={h.value || ''}
                   onChange={(e) => this.update(i, { value: e.target.value })}
                 />
               )}
               {h.secret && (
-                <input
-                  data-test-id={`${i}-value`}
+                <TextInput
+                  testId={`${i}-value`}
                   type="password"
-                  className="cfnext-form__input"
                   placeholder="Value of this header is secret"
                   readOnly={true}
                 />
               )}
-              <button
-                className="btn-link"
-                data-test-id="remove-header"
-                onClick={() => this.remove(i)}>
+              <TextLink testId="remove-header" linkType={'negative'} onClick={() => this.remove(i)}>
                 Remove
-              </button>
+              </TextLink>
             </div>
           );
         })}
 
-        <button
-          className="btn-link webhook-header-action"
-          data-test-id="add-custom-header"
+        <TextLink
+          className={styles.addHeaderBtn}
+          testId="add-custom-header"
           onClick={() => {
             this.shouldFocus = true; // mark to be focused when the component updates next time
             this.add();
           }}>
           + Add custom header
-        </button>
+        </TextLink>
 
-        <button
-          className="btn-link webhook-header-action"
-          data-test-id="add-secret-header"
+        <TextLink
+          className={styles.addHeaderBtn}
+          testId="add-secret-header"
           onClick={() => this.setState({ isSecretHeaderModalShown: true })}>
           + Add secret header
-        </button>
+        </TextLink>
 
-        <button
-          className="btn-link webhook-header-action"
-          data-test-id="add-http-basic-url-header"
+        <TextLink
+          className={styles.addHeaderBtn}
+          testId="add-http-basic-url-header"
           onClick={() => this.setState({ isHTTPBasicModalShown: true })}>
           + Add HTTP Basic Auth header
-        </button>
+        </TextLink>
 
         <WebhookHttpBasicDialog
           isShown={this.state.isHTTPBasicModalShown}

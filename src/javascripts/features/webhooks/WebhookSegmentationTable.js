@@ -1,6 +1,15 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Paragraph, Checkbox } from '@contentful/forma-36-react-components';
+import {
+  Paragraph,
+  Checkbox,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  FormLabel,
+} from '@contentful/forma-36-react-components';
 import {
   ACTIONS,
   ENTITY_TYPES,
@@ -26,36 +35,36 @@ export class WebhookSegmentationTable extends React.Component {
       if (shouldHideAction(action)) return;
 
       return (
-        <td key={key} className="x--disabled-cell">
+        <TableCell key={key} className="x--disabled-cell">
           <Checkbox labelText="disabled-cell" disabled />
-        </td>
+        </TableCell>
       );
     }
 
     const { values, onChange } = this.props;
 
     return (
-      <td
-        data-test-id="checkbox-row"
+      <TableCell
+        testId="checkbox-row"
         key={key}
         className={entityType === '*' ? 'x--highlighted-cell' : ''}>
-        <label>
+        <FormLabel>
           <Checkbox
             labelText={action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
             checked={isActionChecked(values, entityType, action)}
             onChange={(e) => onChange(changeAction(values, entityType, action, e.target.checked))}
           />
           {action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
-        </label>
-      </td>
+        </FormLabel>
+      </TableCell>
     );
   }
 
   renderRow(entityType) {
     return (
-      <tr key={entityType}>
+      <TableRow key={entityType}>
         {['*'].concat(ACTIONS).map((action) => this.renderCheckbox(entityType, action))}
-      </tr>
+      </TableRow>
     );
   }
 
@@ -64,27 +73,27 @@ export class WebhookSegmentationTable extends React.Component {
       <Fragment>
         <br />
         <Paragraph>Content Events</Paragraph>
-        <table className="webhook-editor__segmentation-table">
-          <thead>
-            <tr>
+        <Table className="webhook-editor__segmentation-table">
+          <TableHead>
+            <TableRow>
               <th className="x--empty-cell" />
               {ACTIONS.map((a) => ACTION_LABELS[a]).map(
                 (a) => !shouldHideAction(a) && <th key={a}>{a}</th>
               )}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {ENTITY_TYPES.map(
               (entityType) => !shouldHideEntity(entityType) && this.renderRow(entityType)
             )}
-            <tr>
-              <td className="x--empty-cell" />
+            <TableRow>
+              <TableCell className="x--empty-cell" />
               {ACTIONS.map(
                 (action) => !shouldHideAction(action) && this.renderCheckbox('*', action)
               )}
-            </tr>
-          </tbody>
-        </table>
+            </TableRow>
+          </TableBody>
+        </Table>
       </Fragment>
     );
   }

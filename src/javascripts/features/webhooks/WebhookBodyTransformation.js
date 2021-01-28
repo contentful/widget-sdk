@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { throttle } from 'lodash';
+import { Paragraph, RadioButtonField, TextLink } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const TRANSFORMATION_EXAMPLE = {
@@ -32,6 +35,12 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
+const styles = {
+  checkbox: css({
+    marginTop: tokens.spacingXs,
+  }),
+};
+
 export class WebhookBodyTransformation extends React.Component {
   static propTypes = {
     body: PropTypes.string,
@@ -58,38 +67,38 @@ export class WebhookBodyTransformation extends React.Component {
 
     return (
       <div className="cfnext-form__field">
-        <p>
+        <Paragraph>
           You can customize the webhook payload to match the format expected by the service your
           webhook calls.{' '}
-          <a
+          <TextLink
             href={withInAppHelpUtmParams(
               'https://www.contentful.com/developers/docs/concepts/webhooks/'
             )}
             target="_blank"
             rel="noopener noreferrer">
             View documentation
-          </a>
-        </p>
+          </TextLink>
+        </Paragraph>
         <div className="webhook-editor__settings-option">
-          <label>
-            <input
-              type="radio"
-              checked={!hasBodyTransformation}
-              onChange={() => onChange(undefined)}
-            />{' '}
-            Use default payload
-          </label>
+          <RadioButtonField
+            id={'default'}
+            className={styles.checkbox}
+            labelIsLight={true}
+            checked={!hasBodyTransformation}
+            labelText={'Use default payload'}
+            onChange={() => onChange(undefined)}
+          />
         </div>
         <div className="webhook-editor__settings-option">
-          <label>
-            <input
-              type="radio"
-              data-test-id="customize-webhook-payload"
-              checked={hasBodyTransformation}
-              onChange={() => onChange(this.last)}
-            />{' '}
-            Customize the webhook payload
-          </label>
+          <RadioButtonField
+            id={'transformed'}
+            testId={'customize-webhook-payload'}
+            className={styles.checkbox}
+            labelIsLight={true}
+            checked={hasBodyTransformation}
+            labelText={'Customize the webhook payload'}
+            onChange={() => onChange(this.last)}
+          />
         </div>
         {hasBodyTransformation && (
           <div className="webhook-editor__settings_payload">
@@ -108,11 +117,11 @@ export class WebhookBodyTransformation extends React.Component {
         )}
         {hasBodyTransformation && (
           <div className="entity-editor__field-hint">
-            <p>
+            <Paragraph>
               Custom payload can be any valid JSON value. To resolve a value from the original
               webhook payload use a JSON pointer wrapped with curly braces.
-            </p>
-            <label>Example:</label>
+            </Paragraph>
+            <em>Example:</em>
             <pre>{JSON.stringify(TRANSFORMATION_EXAMPLE, null, 2)}</pre>
           </div>
         )}

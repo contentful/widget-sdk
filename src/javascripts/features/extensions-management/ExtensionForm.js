@@ -1,13 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+  Form,
+  CheckboxField,
+  TextField,
+  FormLabel,
+  Paragraph,
+  TextLink,
+  RadioButtonField,
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 
 import { EXTENSION_FIELD_TYPES } from 'widgets/FieldTypes';
-import { Label, Editor, ExtensionParameters } from './ExtensionFormLeaves';
+import { Editor, ExtensionParameters } from './ExtensionFormLeaves';
 
 const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 
+const styles = {
+  checkboxLabel: css({
+    display: 'inline-block',
+    fontWeight: tokens.fontWeightNormal,
+    marginRight: tokens.spacingS,
+  }),
+  checkbox: css({
+    verticalAlign: 'top',
+  }),
+  sectionHeader: css({
+    display: 'block',
+    fontSize: tokens.fontSizeM,
+    marginBottom: tokens.spacingXs,
+  }),
+  legacyExtension: css({
+    marginBottom: tokens.spacingM,
+  }),
+  legacySidebarText: css({
+    color: tokens.colorTextDark,
+  }),
+  extensionHosting: css({
+    marginBottom: tokens.spacingM,
+  }),
+  hostingOption: css({
+    display: 'block',
+    fontWeight: tokens.fontWeightNormal,
+  }),
+  invalidURL: css({
+    color: tokens.colorNegative,
+  }),
+};
+
 export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
-  const noName = (entity.extension.name || '').length < 1;
   const invalidUrl = !EXTENSION_URL_RE.test(entity.extension.src || '');
 
   const updateExtensionProp = (prop, value) => {
@@ -16,29 +58,29 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
 
   return (
     <React.Fragment>
-      <div className="cfnext-form__field">
-        <Label text="Name" info="required" />
-        <input
-          className="cfnext-form__input--full-size"
-          type="text"
+      <Form>
+        <TextField
+          required={true}
+          labelText="Name"
+          name="name"
+          id="name"
+          maxLength={255}
           value={entity.extension.name || ''}
-          maxLength="255"
+          validationMessage={!entity.extension.name && 'This value is required.'}
           onChange={(e) => {
             const value = e.target.value || '';
             updateExtensionProp('name', value.length > 0 ? value : undefined);
           }}
         />
-        {noName && <p className="cfnext-form__field-error">This value is required.</p>}
-      </div>
-
-      <div className="cfnext-form__field">
-        <Label text="Field types" />
-        <div className="extension-form__field-types">
+        <div>
+          <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
+            Field types
+          </FormLabel>
           {EXTENSION_FIELD_TYPES.map((type) => {
             return (
-              <label key={type}>
-                <input
-                  type="checkbox"
+              <FormLabel key={type} className={styles.checkboxLabel}>
+                <CheckboxField
+                  className={styles.checkbox}
                   checked={entity.extension.fieldTypes.includes(type)}
                   onChange={() => {
                     const cur = entity.extension.fieldTypes;
@@ -48,53 +90,56 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
                     updateExtensionProp('fieldTypes', next);
                   }}
                 />
-                {` ${type}`}
-              </label>
+                {type}
+              </FormLabel>
             );
           })}
         </div>
-      </div>
+      </Form>
 
-      <div className="cfnext-form__field">
-        <Label text="Legacy sidebar extension" />
-        <p>
+      <div className={styles.legacyExtension}>
+        <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
+          Legacy sidebar extension
+        </FormLabel>
+        <Paragraph className={styles.legacySidebarText}>
           Sidebar extension, if used with a field control, will remove itself from the entry editor
           and instead render itself the sidebar.
-        </p>
-        <label>
-          <input
-            type="checkbox"
+        </Paragraph>
+        <FormLabel className={styles.checkboxLabel}>
+          <CheckboxField
             checked={entity.extension.sidebar}
             onChange={() => updateExtensionProp('sidebar', !entity.extension.sidebar)}
-          />{' '}
+          />
           Yes, this is a legacy sidebar extension
-        </label>
+        </FormLabel>
       </div>
 
-      <div className="cfnext-form__field">
-        <Label text="Hosting" info="required" />
-        <label>
-          <input type="radio" checked={selfHosted} onChange={() => setSelfHosted(true)} />{' '}
+      <div className={styles.extensionHosting}>
+        <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
+          Hosting
+        </FormLabel>
+        <FormLabel className={styles.hostingOption}>
+          <RadioButtonField checked={selfHosted} onChange={() => setSelfHosted(true)} />
           Self-hosted (<code>src</code>)
-        </label>
-
-        <label>
-          <input type="radio" checked={!selfHosted} onChange={() => setSelfHosted(false)} /> Hosted
-          by Contentful (<code>srcdoc</code>)
-        </label>
+        </FormLabel>
+        <FormLabel className={styles.hostingOption}>
+          <RadioButtonField checked={!selfHosted} onChange={() => setSelfHosted(false)} />
+          Hosted by Contentful (<code>srcdoc</code>)
+        </FormLabel>
       </div>
 
       {selfHosted && (
-        <div className="cfnext-form__field">
-          <Label text="Self-hosted URL" info="required" />
-          <input
-            className="cfnext-form__input--full-size"
-            type="text"
+        <div className={styles.extensionHosting}>
+          <TextField
+            required={true}
+            labelText="Self-hosted URL"
+            name="self-hosted-url"
+            id="self-hosted-url"
             value={entity.extension.src || ''}
             onChange={(e) => updateExtensionProp('src', e.target.value)}
           />
           {invalidUrl && (
-            <p className="cfnext-form__field-error">
+            <Paragraph testId={'ext-url-error'} className={styles.invalidURL}>
               Valid URLs use{' '}
               <code>
                 https:
@@ -106,25 +151,28 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
                 {'//'}
               </code>
               .
-            </p>
+            </Paragraph>
           )}
         </div>
       )}
 
       {!selfHosted && (
-        <div className="cfnext-form__field">
-          <Label text="Code" info="required" />
-          <p>Maximum accepted code size is 200KB. For a larger size use the self-hosted option.</p>
-          <p>
+        <div className={styles.codeBlock}>
+          <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
+            Code
+          </FormLabel>
+          <Paragraph className>
+            Maximum accepted code size is 200KB. For a larger size use the self-hosted option.{' '}
+            <br />
             You can also develop your extensions locally. Learn about the{' '}
-            <a
+            <TextLink
               href="https://github.com/contentful/extensions#managing-extensions"
               target="_blank"
               rel="noopener noreferrer">
               CLI based development flow
-            </a>
+            </TextLink>
             .
-          </p>
+          </Paragraph>
           <Editor
             height="700px"
             value={entity.extension.srcdoc}

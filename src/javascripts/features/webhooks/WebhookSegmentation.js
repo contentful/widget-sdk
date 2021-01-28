@@ -1,7 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FormLabel, Paragraph, RadioButton } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { WebhookSegmentationTable } from './WebhookSegmentationTable';
 import { WILDCARD, createMap } from './WebhookSegmentationState';
+
+const styles = {
+  checkboxWrapper: css({
+    marginBottom: tokens.spacingM,
+  }),
+  note: css({
+    marginBottom: tokens.spacingS,
+  }),
+  formLabel: css({
+    fontWeight: tokens.fontWeightNormal,
+    color: tokens.colorTextMid,
+    display: 'block',
+  }),
+};
 
 export class WebhookSegmentation extends React.Component {
   static propTypes = {
@@ -11,17 +28,14 @@ export class WebhookSegmentation extends React.Component {
 
   renderOption(caption, checked, onChange) {
     return (
-      <div className="webhook-editor__settings-option">
-        <label>
-          <input
-            data-test-id="webhook-editor-setting-option"
-            type="radio"
-            checked={checked}
-            onChange={onChange}
-          />
-          {` ${caption}`}
-        </label>
-      </div>
+      <FormLabel className={styles.formLabel}>
+        <RadioButton
+          testId={'webhook-editor-setting-option'}
+          checked={checked}
+          onChange={onChange}
+        />
+        {` ${caption}`}
+      </FormLabel>
     );
   }
 
@@ -30,8 +44,10 @@ export class WebhookSegmentation extends React.Component {
     const isWildcarded = values === WILDCARD;
 
     return (
-      <div className="cfnext-form__field" id="webhook-segmentation">
-        <p>Specify for what kind of events this webhook should be triggered.</p>
+      <div className={styles.checkboxWrapper} id="webhook-segmentation">
+        <Paragraph className={styles.note}>
+          Specify for what kind of events this webhook should be triggered.
+        </Paragraph>
         {this.renderOption('Trigger for all events', isWildcarded, () => onChange(WILDCARD))}
         {this.renderOption('Select specific triggering events', !isWildcarded, () =>
           onChange(createMap(false))
