@@ -14,7 +14,7 @@
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "0.14.0",
     "@contentful/experience-cma-utils": "0.4.3",
-    "@contentful/entity-search": "0.7.1",
+    "@contentful/entity-search": "0.8.3",
     "@contentful/experience-components": "0.25.2",
     "@contentful/errors": "^1.20.2",
     "@contentful/field-editor-boolean": "0.10.0",

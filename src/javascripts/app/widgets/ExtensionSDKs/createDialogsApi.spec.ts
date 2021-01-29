@@ -54,7 +54,7 @@ describe('createDialogsApi', () => {
       });
     });
 
-    describe.skip('selectSingleEntry', () => {
+    describe('selectSingleEntry', () => {
       it('calls entitySelector.openFromWidget with opts and entity: entry', () => {
         const opts = { locale: 'en-US' };
         dialogsApi.selectSingleEntry(opts);
@@ -65,7 +65,7 @@ describe('createDialogsApi', () => {
       });
     });
 
-    describe.skip('selectMultipleEntries', () => {
+    describe('selectMultipleEntries', () => {
       it('calls entitySelector.openFromWidget with opts and entity: entry', () => {
         const opts = { locale: 'en-US' };
         dialogsApi.selectMultipleEntries(opts);
