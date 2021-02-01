@@ -1,5 +1,4 @@
 import * as utils from './spaceCreation';
-import client from 'services/client';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import { createApiKeyRepo } from 'features/api-keys-management';
@@ -15,13 +14,15 @@ const mockSpace = Fake.Space();
 const mockOrganization = Fake.Organization({ isBillable: true });
 const mockPlan = Fake.Plan();
 
-jest.mock('services/client', () => {
-  const client = {
-    createSpace: jest.fn(),
-  };
+const mockCreateSpace = jest.fn();
 
-  return client;
-});
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getCMAClient: () => ({
+    space: {
+      create: mockCreateSpace,
+    },
+  }),
+}));
 
 jest.mock('services/TokenStore', () => ({
   refresh: jest.fn(),
@@ -59,8 +60,9 @@ jest.mock('services/SpaceTemplateLoader', () => ({
 
 describe('utils', () => {
   beforeEach(() => {
+    mockCreateSpace.mockReset();
     TokenStore.getSpace.mockResolvedValue(mockSpace);
-    client.createSpace.mockResolvedValue(mockSpace);
+    mockCreateSpace.mockResolvedValue(mockSpace);
 
     const resetWithSpace = jest.fn();
     spaceContext.resetWithSpace = resetWithSpace;
@@ -74,13 +76,15 @@ describe('utils', () => {
     it('should attempt to create the space using the client and refresh the token', async () => {
       await call();
 
-      expect(client.createSpace).toBeCalledWith(
+      expect(mockCreateSpace).toBeCalledWith(
+        {
+          organizationId: mockOrganization.sys.id,
+        },
         {
           defaultLocale: 'en-US',
           name: 'My space',
           productRatePlanId: mockPlan.sys.id,
-        },
-        mockOrganization.sys.id
+        }
       );
       expect(TokenStore.refresh).toBeCalled();
     });
@@ -116,13 +120,15 @@ describe('utils', () => {
     it('should attempt to create the space using the client and refresh the token', async () => {
       await call();
 
-      expect(client.createSpace).toBeCalledWith(
+      expect(mockCreateSpace).toBeCalledWith(
+        {
+          organizationId: mockOrganization.sys.id,
+        },
         {
           defaultLocale: 'en-US',
           name: 'My space',
           productRatePlanId: mockPlan.sys.id,
-        },
-        mockOrganization.sys.id
+        }
       );
       expect(TokenStore.refresh).toBeCalled();
     });

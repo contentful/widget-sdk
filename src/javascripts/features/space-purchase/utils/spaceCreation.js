@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-import client from 'services/client';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createApiKeyRepo } from 'features/api-keys-management';
 import * as TokenStore from 'services/TokenStore';
@@ -16,7 +16,13 @@ export async function makeNewSpace(organizationId, productRatePlan, spaceName) {
     productRatePlanId: get(productRatePlan, 'sys.id'),
   };
 
-  const newSpace = await client.createSpace(spaceData, organizationId);
+  const client = getCMAClient();
+  const newSpace = await client.space.create(
+    {
+      organizationId,
+    },
+    spaceData
+  );
 
   await TokenStore.refresh();
 
