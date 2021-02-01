@@ -1,6 +1,6 @@
+import * as accessChecker from 'access_control/AccessChecker';
 import { useCallback, useMemo } from 'react';
 import { createBatchPerformer } from './batchPerformer';
-import * as accessChecker from 'access_control/AccessChecker';
 
 export const useBulkActions = ({ entityType, entities, updateEntities }) => {
   const performer = useMemo(() => createBatchPerformer({ entityType, entities }), [

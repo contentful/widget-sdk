@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useBulkActions } from 'core/hooks';
 import { LoadingOverlay } from 'features/loading-state';
 
-const useBulkSaveTags = (onClose, updateEntities) => {
+const useBulkSaveTags = (onClose, updateEntities, updateTags) => {
   const [isRunning, setIsRunning] = useState(false);
   const [entities, setEntities] = useState([]);
   const entityType = entities.length > 0 ? entities[0].getSys().type : 'UNKNOWN';
@@ -25,6 +25,7 @@ const useBulkSaveTags = (onClose, updateEntities) => {
         await actions.updateTagSelected();
         setIsRunning(false);
         updateEntities();
+        updateTags();
         onClose();
       })();
     }

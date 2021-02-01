@@ -8,7 +8,7 @@ import { canUserReadEntities } from 'access_control/AccessChecker';
 import { BulkActionsButton } from './BulkActionsButton';
 import { PluralizeEntityMessage } from '../PluralizeEntityMessage';
 import { BulkActionDeleteConfirm } from './BulkActionsDeleteConfirm';
-import { TagsBulkAction, useTagsFeatureEnabled } from 'features/content-tags';
+import { TagsBulkAction, useReadTags, useTagsFeatureEnabled } from 'features/content-tags';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
 import { useBulkActions } from 'core/hooks/useBulkActions';
@@ -52,6 +52,7 @@ export const BulkActionsRow = ({
     entities: selectedEntities,
     updateEntities,
   });
+  const { reset: updateTags } = useReadTags();
 
   const { addToReleaseEnabled: isReleaseFeatureEnabled } = useFeatureFlagAddToRelease();
 
@@ -146,7 +147,8 @@ export const BulkActionsRow = ({
         ) : null}
         <BulkActionsButton
           label="Add or remove tags"
-          onClick={() => TagsBulkAction(selectedEntities, updateEntities)}
+          linkType="secondary"
+          onClick={() => TagsBulkAction(selectedEntities, updateEntities, updateTags)}
           visible={tagsEnabled}
         />
       </Flex>

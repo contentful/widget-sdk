@@ -28,7 +28,7 @@ export const RuleTagsSelection: React.FC<Props> = ({
 }) => {
   const ruleTags = useMemo(() => rule.metadataTagIds || [], [rule]);
   const { setLimit, setExcludedTags } = useFilteredTags();
-  const tagValues = useTagsValuesForIdList(ruleTags);
+  const { tagValues, refreshTagValues } = useTagsValuesForIdList(ruleTags);
 
   // always only display up to 10 tags in dropdown
   useEffect(() => {
@@ -48,6 +48,7 @@ export const RuleTagsSelection: React.FC<Props> = ({
     });
     if (!result.canceled) {
       onChange({ target: { value: result.tags } });
+      refreshTagValues();
     }
   };
 
