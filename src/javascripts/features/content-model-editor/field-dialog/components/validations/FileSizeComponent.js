@@ -1,6 +1,6 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Option, TextInput } from '@contentful/forma-36-react-components';
+import { Select, Option, TextInput, Flex } from '@contentful/forma-36-react-components';
 import { toString, toNumber, map, findLast, isFinite, startCase, isEmpty } from 'lodash';
 import { styles } from './styles';
 
@@ -43,19 +43,22 @@ const FileSizeComponent = ({ type, value, onUpdate, onBlur }) => {
   };
 
   return (
-    <Fragment>
-      <TextInput
-        testId={`${type}-size-input`}
-        className={styles.textInputNumber}
-        placeholder={startCase(type)}
-        type="number"
-        min="0"
-        value={toString(displayValue)}
-        onChange={({ target: { value } }) => onValueUpdate(value)}
-        onBlur={onBlur}
-        width="small"
-      />
+    <Flex flexDirection="row" alignItems="center">
+      <Flex marginRight="spacingXs">
+        <TextInput
+          testId={`${type}-size-input`}
+          className={styles.textInputNumber}
+          placeholder={startCase(type)}
+          type="number"
+          min="0"
+          value={toString(displayValue)}
+          onChange={({ target: { value } }) => onValueUpdate(value)}
+          onBlur={onBlur}
+          width="small"
+        />
+      </Flex>
       <Select
+        className={styles.selectInline}
         name="Select size unit"
         testId={`select-${type}-size-unit`}
         onChange={({ target: { value } }) => onFactorUpdate(value)}
@@ -67,7 +70,7 @@ const FileSizeComponent = ({ type, value, onUpdate, onBlur }) => {
           </Option>
         ))}
       </Select>
-    </Fragment>
+    </Flex>
   );
 };
 

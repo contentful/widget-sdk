@@ -6,6 +6,7 @@ import {
   TextField,
   ValidationMessage,
   CheckboxField,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import { toString } from 'lodash';
@@ -42,21 +43,23 @@ const AssetFileSizeValidation = ({ validation, onChange, onBlur }) => {
         );
       case rangeTypes.MIN_MAX:
         return (
-          <Fragment>
-            <FileSizeComponent
-              type={rangeTypes.MIN}
-              value={settings?.min}
-              onUpdate={(min) => onSettingsChange({ ...settings, min })}
-              onBlur={() => onBlur(type)}
-            />
-            <div>and</div>
+          <Flex flexDirection="row" alignItems="center">
+            <Flex marginRight="spacingS">
+              <FileSizeComponent
+                type={rangeTypes.MIN}
+                value={settings?.min}
+                onUpdate={(min) => onSettingsChange({ ...settings, min })}
+                onBlur={() => onBlur(type)}
+              />
+            </Flex>
+            <Flex marginRight="spacingS">and</Flex>
             <FileSizeComponent
               type={rangeTypes.MAX}
               value={settings?.max}
               onUpdate={(max) => onSettingsChange({ ...settings, max })}
               onBlur={() => onBlur(type)}
             />
-          </Fragment>
+          </Flex>
         );
       default:
         break;
@@ -79,21 +82,23 @@ const AssetFileSizeValidation = ({ validation, onChange, onBlur }) => {
       />
       {enabled && (
         <Fragment>
-          <div className={styles.validationRow}>
-            <Select
-              name="Select condition"
-              testId="select-condition"
-              onChange={({ target: { value } }) => onChangeCurrentView(value)}
-              value={currentView}
-              width="medium">
-              {views.map(({ name, label }, index) => (
-                <Option key={index} value={name}>
-                  {label}
-                </Option>
-              ))}
-            </Select>
+          <Flex className={styles.validationRow} flexDirection="column">
+            <Flex marginBottom="spacingM">
+              <Select
+                name="Select condition"
+                testId="select-condition"
+                onChange={({ target: { value } }) => onChangeCurrentView(value)}
+                value={currentView}
+                width="medium">
+                {views.map(({ name, label }, index) => (
+                  <Option key={index} value={name}>
+                    {label}
+                  </Option>
+                ))}
+              </Select>
+            </Flex>
             {getControls(currentView)}
-          </div>
+          </Flex>
           {validation.error && (
             <ValidationMessage className={styles.validationMessage}>
               {validation.error}

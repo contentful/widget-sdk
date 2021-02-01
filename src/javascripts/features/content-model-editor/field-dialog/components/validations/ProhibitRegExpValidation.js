@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import {
   TextInput,
   TextField,
-  FormLabel,
   ValidationMessage,
   CheckboxField,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
 import { styles } from './styles';
@@ -36,20 +36,20 @@ const ProhibitRegExpValidation = ({ fieldName, validation, onChange, onBlur }) =
       />
       {enabled && (
         <Fragment>
-          <div className={styles.validationRow}>
-            <TextInput
-              name={`Regular expression pattern match`}
-              testId="regexp-pattern-match"
-              placeholder="foo|bar[baz]"
-              value={toString(settings.pattern)}
-              onChange={({ target: { value } }) => onChangePattern(value)}
-              onBlur={() => onBlur(fieldName)}
-              width="large"
-            />
-            <FormLabel className={styles.label} htmlFor="regexp-flags" testId="regexp-flags-label">
-              Flags
-            </FormLabel>
-            <TextInput
+          <Flex className={styles.validationRow} flexDirection="column">
+            <Flex marginBottom="spacingM">
+              <TextInput
+                name={`Regular expression pattern match`}
+                testId="regexp-pattern-match"
+                placeholder="foo|bar[baz]"
+                value={toString(settings.pattern)}
+                onChange={({ target: { value } }) => onChangePattern(value)}
+                onBlur={() => onBlur(fieldName)}
+                width="large"
+              />
+            </Flex>
+            <TextField
+              labelText="Flags"
               name={`Regular expression flags`}
               testId="regexp-flags"
               id="regexp-flags"
@@ -58,7 +58,7 @@ const ProhibitRegExpValidation = ({ fieldName, validation, onChange, onBlur }) =
               onBlur={() => onBlur(fieldName)}
               width="small"
             />
-          </div>
+          </Flex>
           {validation.error && (
             <ValidationMessage className={styles.validationMessage}>
               {validation.error}

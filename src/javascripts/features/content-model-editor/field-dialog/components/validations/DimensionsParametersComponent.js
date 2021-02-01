@@ -7,6 +7,7 @@ import {
   TextInput,
   CheckboxField,
   FormLabel,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import { toString, toNumber, isNumber, isNil, startCase, isEmpty } from 'lodash';
@@ -62,16 +63,20 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
       case 'min-max':
         return (
           <>
-            <PxInputField
-              id={`${type}-min-px-input`}
-              value={toString(settings?.min)}
-              onChange={(value) => {
-                setSettings({ ...settings, min: normalizeValue(value) });
-              }}
-              disabled={!isChecked}
-              onBlur={onBlur}
-            />
-            <div className={styles.union}>and</div>
+            <Flex marginRight="spacingS">
+              <PxInputField
+                id={`${type}-min-px-input`}
+                value={toString(settings?.min)}
+                onChange={(value) => {
+                  setSettings({ ...settings, min: normalizeValue(value) });
+                }}
+                disabled={!isChecked}
+                onBlur={onBlur}
+              />
+            </Flex>
+            <Flex marginRight="spacingS" className={styles.union}>
+              and
+            </Flex>
             <PxInputField
               id={`${type}-max-px-input`}
               value={toString(settings?.max)}
@@ -101,39 +106,45 @@ const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }
   };
 
   return (
-    <div
+    <Flex
       data-test-id={`field-validations--${type}`}
-      className={cx(styles.validationRow, className)}>
-      <CheckboxField
-        className={styles.checkbox}
-        labelText={startCase(type)}
-        name={`${type} dimension checkbox`}
-        checked={isChecked}
-        value={type}
-        onChange={() => {
-          setChecked(!isChecked);
-          setSettings({ min: null, max: null });
-        }}
-        labelIsLight={true}
-        id={`field-validations-checkbox--${type}`}
-      />
-      <Select
-        isDisabled={!isChecked}
-        name={`Select condition for ${type}`}
-        testId={`select-condition-${type}`}
-        onChange={({ target: { value } }) => {
-          setCurrentView(value);
-          setSettings({ min: null, max: null });
-        }}
-        value={currentView}
-        width="small">
-        <Option value="min">At least</Option>
-        <Option value="max">At most</Option>
-        <Option value="min-max">Between</Option>
-        <Option value="exact">Exactly</Option>
-      </Select>
+      className={className}
+      flexDirection="row"
+      alignItems="center">
+      <Flex marginRight="spacingS">
+        <CheckboxField
+          className={styles.checkbox}
+          labelText={startCase(type)}
+          name={`${type} dimension checkbox`}
+          checked={isChecked}
+          value={type}
+          onChange={() => {
+            setChecked(!isChecked);
+            setSettings({ min: null, max: null });
+          }}
+          labelIsLight={true}
+          id={`field-validations-checkbox--${type}`}
+        />
+      </Flex>
+      <Flex marginRight="spacingS">
+        <Select
+          isDisabled={!isChecked}
+          name={`Select condition for ${type}`}
+          testId={`select-condition-${type}`}
+          onChange={({ target: { value } }) => {
+            setCurrentView(value);
+            setSettings({ min: null, max: null });
+          }}
+          value={currentView}
+          width="small">
+          <Option value="min">At least</Option>
+          <Option value="max">At most</Option>
+          <Option value="min-max">Between</Option>
+          <Option value="exact">Exactly</Option>
+        </Select>
+      </Flex>
       {getControls()}
-    </div>
+    </Flex>
   );
 };
 

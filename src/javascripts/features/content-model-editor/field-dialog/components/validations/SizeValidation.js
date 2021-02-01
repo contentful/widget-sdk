@@ -7,6 +7,7 @@ import {
   TextField,
   ValidationMessage,
   CheckboxField,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { toString, isEmpty, toNumber } from 'lodash';
 import { styles } from './styles';
@@ -62,21 +63,25 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
         );
       case 'min-max':
         return (
-          <Fragment>
-            <TextInput
-              name={`Minimum ${nameKeyWord}`}
-              testId="min-size-input"
-              className={styles.textInputNumber}
-              placeholder="Min"
-              type="number"
-              value={toString(settings?.min)}
-              onChange={({ target: { value } }) => {
-                onChangeSettings({ ...settings, min: normalizeValue(value) });
-              }}
-              onBlur={() => onBlur(fieldName)}
-              width="small"
-            />{' '}
-            <div>and</div>
+          <Flex alignItems="center">
+            <Flex marginRight="spacingS">
+              <TextInput
+                name={`Minimum ${nameKeyWord}`}
+                testId="min-size-input"
+                className={styles.textInputNumber}
+                placeholder="Min"
+                type="number"
+                value={toString(settings?.min)}
+                onChange={({ target: { value } }) => {
+                  onChangeSettings({ ...settings, min: normalizeValue(value) });
+                }}
+                onBlur={() => onBlur(fieldName)}
+                width="small"
+              />{' '}
+            </Flex>
+            <Flex marginRight="spacingS">
+              <div>and</div>
+            </Flex>
             <TextInput
               name={`Maximum ${nameKeyWord}`}
               testId="max-size-input"
@@ -90,7 +95,7 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
               onBlur={() => onBlur(fieldName)}
               width="small"
             />
-          </Fragment>
+          </Flex>
         );
       default:
         break;
@@ -114,21 +119,23 @@ const SizeValidation = ({ fieldName, validation, onChange, onBlur }) => {
       />
       {enabled && (
         <Fragment>
-          <div className={styles.validationRow}>
-            <Select
-              name="Select condition"
-              testId="select-condition"
-              onChange={({ target: { value } }) => onChangeCurrentView(value)}
-              value={currentView}
-              width="medium">
-              {views.map(({ name, label }, index) => (
-                <Option key={index} value={name}>
-                  {label}
-                </Option>
-              ))}
-            </Select>
+          <Flex className={styles.validationRow} flexDirection="row" marginBottom="spacingS">
+            <Flex marginRight="spacingS">
+              <Select
+                name="Select condition"
+                testId="select-condition"
+                onChange={({ target: { value } }) => onChangeCurrentView(value)}
+                value={currentView}
+                width="medium">
+                {views.map(({ name, label }, index) => (
+                  <Option key={index} value={name}>
+                    {label}
+                  </Option>
+                ))}
+              </Select>
+            </Flex>
             {getControls()}
-          </div>
+          </Flex>
           {validation.error && (
             <ValidationMessage className={styles.validationMessage}>
               {validation.error}

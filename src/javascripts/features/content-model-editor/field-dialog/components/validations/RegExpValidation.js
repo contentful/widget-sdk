@@ -5,9 +5,9 @@ import {
   Option,
   TextInput,
   TextField,
-  FormLabel,
   ValidationMessage,
   CheckboxField,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
 import { styles } from './styles';
@@ -58,32 +58,34 @@ const RegExpValidation = ({ fieldName, validation, onChange, onBlur }) => {
       />
       {enabled && (
         <Fragment>
-          <div className={styles.validationRow}>
-            <Select
-              name="Select condition"
-              testId="select-condition"
-              onChange={({ target: { value } }) => updateCurrentView(value)}
-              value={currentView}
-              width="medium">
-              {views.map(({ name, label }, index) => (
-                <Option key={index} value={name}>
-                  {label}
-                </Option>
-              ))}
-            </Select>
-            <TextInput
-              name={`Regular expression pattern match`}
-              testId="regexp-pattern-match"
-              placeholder="foo|bar[baz]"
-              value={toString(settings.pattern)}
-              onChange={({ target: { value } }) => updatePattern(value)}
-              onBlur={() => onBlur(type)}
-              width="large"
-            />
-            <FormLabel className={styles.label} htmlFor="regexp-flags" testId="regexp-flags-label">
-              Flags
-            </FormLabel>
-            <TextInput
+          <Flex className={styles.validationRow} flexDirection="column">
+            <Flex marginBottom="spacingM">
+              <Flex marginRight="spacingS">
+                <Select
+                  name="Select condition"
+                  testId="select-condition"
+                  onChange={({ target: { value } }) => updateCurrentView(value)}
+                  value={currentView}
+                  width="medium">
+                  {views.map(({ name, label }, index) => (
+                    <Option key={index} value={name}>
+                      {label}
+                    </Option>
+                  ))}
+                </Select>
+              </Flex>
+              <TextInput
+                name={`Regular expression pattern match`}
+                testId="regexp-pattern-match"
+                placeholder="foo|bar[baz]"
+                value={toString(settings.pattern)}
+                onChange={({ target: { value } }) => updatePattern(value)}
+                onBlur={() => onBlur(type)}
+                width="large"
+              />
+            </Flex>
+            <TextField
+              labelText="Flags"
               name={`Regular expression flags`}
               testId="regexp-flags"
               id="regexp-flags"
@@ -92,7 +94,7 @@ const RegExpValidation = ({ fieldName, validation, onChange, onBlur }) => {
               onBlur={() => onBlur(type)}
               width="small"
             />
-          </div>
+          </Flex>
           {validation.error && (
             <ValidationMessage className={styles.validationMessage}>
               {validation.error}
