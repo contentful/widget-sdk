@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { when } from 'jest-when';
-import client from 'services/client';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import * as utils from '../shared/utils';
 import * as Fake from 'test/helpers/fakeFactory';
@@ -55,11 +54,15 @@ jest.mock('services/SpaceTemplateCreator', () => {
   };
 });
 
-jest.mock('services/client', () => {
-  return {
-    createSpace: jest.fn(),
-  };
-});
+const mockCreateSpace = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getCMAClient: () => ({
+    space: {
+      create: mockCreateSpace,
+    },
+  }),
+}));
 
 jest.mock('services/TokenStore', () => ({
   refresh: jest.fn().mockResolvedValue(),
@@ -82,7 +85,7 @@ describe('Enterprise Wizard', () => {
   beforeEach(() => {
     getTemplatesList.mockResolvedValue([mockTemplate]);
     getTemplate.mockResolvedValue(mockTemplate);
-    client.createSpace.mockResolvedValue(mockSpace);
+    mockCreateSpace.mockResolvedValue(mockSpace);
 
     window.open = jest.fn();
   });

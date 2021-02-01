@@ -5,7 +5,6 @@ import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import * as utils from '../shared/utils';
-import client from 'services/client';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import * as Analytics from 'analytics/Analytics';
 import CreateOnDemandWizard from './CreateOnDemandWizard';
@@ -53,11 +52,15 @@ jest.mock('services/SpaceTemplateCreator', () => {
   };
 });
 
-jest.mock('services/client', () => {
-  return {
-    createSpace: jest.fn(),
-  };
-});
+const mockCreateSpace = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getCMAClient: () => ({
+    space: {
+      create: mockCreateSpace,
+    },
+  }),
+}));
 
 jest.mock('services/TokenStore', () => ({
   refresh: jest.fn().mockResolvedValue(),
@@ -81,7 +84,7 @@ jest.useFakeTimers();
 
 describe('CreateOnDemandWizard', () => {
   beforeEach(() => {
-    client.createSpace.mockResolvedValue(mockSpace);
+    mockCreateSpace.mockResolvedValue(mockSpace);
     getTemplatesList.mockResolvedValue([mockTemplate]);
     getTemplate.mockResolvedValue(mockTemplate);
   });
@@ -314,7 +317,7 @@ describe('CreateOnDemandWizard', () => {
     });
 
     it('should show an error notification and not close if the space creation process fails', async () => {
-      client.createSpace.mockRejectedValueOnce();
+      mockCreateSpace.mockRejectedValueOnce();
 
       const onProcessing = jest.fn();
       const onClose = jest.fn();
@@ -445,7 +448,7 @@ describe('CreateOnDemandWizard', () => {
     });
 
     it('should show an error notification if the space creation process fails', async () => {
-      client.createSpace.mockRejectedValueOnce();
+      mockCreateSpace.mockRejectedValueOnce();
 
       const onProcessing = jest.fn();
       await beginCreatingSpace({ onProcessing });

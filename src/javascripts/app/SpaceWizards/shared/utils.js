@@ -1,9 +1,9 @@
 import { get } from 'lodash';
 
 import pluralize from 'pluralize';
-import client from 'services/client';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createApiKeyRepo } from 'features/api-keys-management';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
@@ -54,7 +54,14 @@ async function makeNewSpace(name, plan, organizationId, sessionId) {
     productRatePlanId: get(plan, 'sys.id'),
   };
 
-  const newSpace = await client.createSpace(spaceData, organizationId);
+  const client = getCMAClient();
+
+  const newSpace = await client.space.create(
+    {
+      organizationId,
+    },
+    spaceData
+  );
 
   await TokenStore.refresh();
 
