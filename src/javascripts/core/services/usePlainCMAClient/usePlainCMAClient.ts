@@ -1,4 +1,7 @@
-import { createOnErrorWithInterceptor } from '@contentful/experience-cma-utils';
+import {
+  createOnErrorWithInterceptor,
+  createDefaultBatchClient,
+} from '@contentful/experience-cma-utils';
 import { useMemo } from 'react';
 import { createClient } from 'contentful-management';
 import type { PlainClientDefaultParams } from 'contentful-management';
@@ -8,8 +11,10 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
 
+export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
+
 export function getCMAClient(defaults?: PlainClientDefaultParams) {
-  return createClient(
+  const client = createClient(
     {
       ...getHostParams(),
       accessToken: () => {
@@ -28,6 +33,17 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
     },
     { type: 'plain', defaults }
   );
+
+  const batchClient = createDefaultBatchClient(client, {
+    onError: (error, context) => {
+      logger.logException(error, context);
+    },
+  });
+
+  return {
+    ...client,
+    ...batchClient,
+  };
 }
 
 export function useCMAClient() {

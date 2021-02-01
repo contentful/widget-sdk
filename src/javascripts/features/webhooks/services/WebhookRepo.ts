@@ -1,8 +1,8 @@
 import { get as getAtPath, cloneDeep } from 'lodash';
-import type { PlainClientAPI } from 'contentful-management';
 import type { WebhookProps } from 'contentful-management/types';
+import type { BatchedPlainCmaClient } from 'core/services/usePlainCMAClient';
 
-export function createWebhookRepo({ client }: { client: PlainClientAPI }) {
+export function createWebhookRepo({ client }: { client: BatchedPlainCmaClient }) {
   const logs = { getCall, getCalls, getHealth };
   return { getAll, get, save, remove, logs, hasValidBodyTransformation };
 

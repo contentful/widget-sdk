@@ -14,6 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import EntityStateLink from 'app/common/EntityStateLink';
 import { useAsync } from 'core/hooks';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 import * as AssetUrlService from 'services/AssetUrlService';
 
@@ -55,16 +56,12 @@ const getReleaseDescription = (release) => {
   return entry || asset;
 };
 
-export default function WrappedEntityListItem({
-  entity,
-  internalLocaleCode,
-  onClick,
-  contentType,
-  renderDropdown,
-}) {
+export default function WrappedEntityListItem({ entity, onClick, contentType, renderDropdown }) {
+  const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
+
   const getEntityDataFn = useCallback(() => {
-    return getEntityData(entity, internalLocaleCode);
-  }, [entity, internalLocaleCode]);
+    return getEntityData(spaceEnvCMAClient, entity);
+  }, [entity, spaceEnvCMAClient]);
 
   const { isLoading, data } = useAsync(getEntityDataFn);
   const entityData =
@@ -105,7 +102,6 @@ export default function WrappedEntityListItem({
 WrappedEntityListItem.propTypes = {
   entity: PropTypes.object.isRequired,
   onClick: PropTypes.func,
-  internalLocaleCode: PropTypes.string,
   contentType: PropTypes.string,
   /**
    * Optional function to render a list of dropdown elements

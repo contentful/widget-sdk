@@ -17,7 +17,6 @@ const mockInternalLocale = {
 jest.mock('classes/EntityFieldValueSpaceContext', () => ({
   entityTitle: jest.fn(),
   entityDescription: jest.fn(),
-  entryImage: jest.fn(),
 }));
 
 jest.mock('services/AssetUrlService', () => {
@@ -43,7 +42,6 @@ describe('EntityHelpers', () => {
     helpers = newForLocale('en-US');
     EntityFieldValueSpaceContextMocked.entityTitle.mockClear();
     EntityFieldValueSpaceContextMocked.entityDescription.mockClear();
-    EntityFieldValueSpaceContextMocked.entryImage.mockClear();
     spaceContextMocked.publishedCTs.get.mockClear();
   });
 
@@ -60,8 +58,6 @@ describe('EntityHelpers', () => {
 
   itConvertsToEntryAndCallsMethod('entityTitle');
   itConvertsToEntryAndCallsMethod('entityDescription');
-  itConvertsToEntryAndCallsMethod('entityFile', 'entryImage');
-  itConvertsToEntryAndCallsMethod('entryImage');
 
   itConvertsToAssetAndCallsMethod('entityTitle');
   itConvertsToAssetAndCallsMethod('entityDescription');

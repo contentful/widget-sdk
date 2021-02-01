@@ -1,20 +1,68 @@
-import { stateName, getState } from 'data/CMA/EntityState';
-import * as EntityHelpers from 'app/entity_editor/entityHelpers';
+import { getModule } from 'core/NgRegistry';
+import { entityHelpers } from '@contentful/field-editor-shared';
+import TheLocaleStore from 'services/localeStore';
+import * as PublicContentType from 'widgets/PublicContentType';
 
-export async function getEntityData(entity, localeCode) {
-  const entityHelpers = EntityHelpers.newForLocale(localeCode);
+function getContentTypeById(contentTypeId) {
+  const spaceContext = getModule('spaceContext');
+  const internalContentType = spaceContext.publishedCTs
+    .getAllBare()
+    .find((ct) => ct.sys.id === contentTypeId);
+  return internalContentType ? PublicContentType.fromInternal(internalContentType) : undefined;
+}
 
-  const [title, description, file, status] = await Promise.all([
-    entityHelpers.entityTitle(entity),
-    entityHelpers.entityDescription(entity),
-    entityHelpers.entityFile(entity),
-    stateName(getState(entity.sys)),
-  ]);
+export async function getEntityData(cma, entity) {
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const status = entityHelpers.getEntryStatus(entity.sys);
+
+  let title = '';
+  let description = '';
+  let file;
+
+  if (entity.sys.type === 'Entry') {
+    const contentType = getContentTypeById(entity.sys.contentType.sys.id);
+    title = entityHelpers.getEntryTitle({
+      entry: entity,
+      contentType,
+      localeCode: defaultLocaleCode,
+      defaultLocaleCode,
+      defaultTitle: 'Untitled',
+    });
+    description = entityHelpers.getEntityDescription({
+      entity,
+      localeCode: defaultLocaleCode,
+      defaultLocaleCode,
+      contentType,
+    });
+    try {
+      file = await entityHelpers.getEntryImage(
+        { entry: entity, contentType, localeCode: defaultLocaleCode, defaultLocaleCode },
+        (assetId) => {
+          return cma.asset.get({ assetId });
+        }
+      );
+    } catch (e) {
+      file = null;
+    }
+  } else {
+    title = entityHelpers.getAssetTitle({
+      asset: entity,
+      localeCode: defaultLocaleCode,
+      defaultLocaleCode: defaultLocaleCode,
+      defaultTitle: 'Untitled',
+    });
+    file = entityHelpers.getFieldValue({
+      entity,
+      fieldId: 'file',
+      localeCode: defaultLocaleCode,
+      defaultLocaleCode,
+    });
+  }
 
   return {
     title,
     description,
-    file,
     status,
+    file,
   };
 }

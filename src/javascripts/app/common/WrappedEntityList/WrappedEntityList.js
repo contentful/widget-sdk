@@ -3,20 +3,13 @@ import PropTypes from 'prop-types';
 import { EntityList } from '@contentful/forma-36-react-components';
 import WrappedEntityListItem from './WrappedEntityListItem';
 
-const WrappedEntityList = ({
-  entities,
-  internalLocaleCode,
-  onEntityClick,
-  contentTypes,
-  renderDropdown,
-}) => (
+const WrappedEntityList = ({ entities, onEntityClick, contentTypes, renderDropdown }) => (
   <EntityList>
     {entities.map((entity, index) => {
       return (
         <WrappedEntityListItem
           key={`${entity.sys.id}-${index}`}
           entity={entity}
-          internalLocaleCode={internalLocaleCode}
           onClick={onEntityClick ? (e, entity) => onEntityClick(e, entity, index) : undefined}
           contentType={
             contentTypes &&
@@ -32,7 +25,6 @@ const WrappedEntityList = ({
 
 WrappedEntityList.propTypes = {
   entities: PropTypes.array.isRequired,
-  internalLocaleCode: PropTypes.string,
   onEntityClick: PropTypes.func,
   contentTypes: PropTypes.object,
   /**

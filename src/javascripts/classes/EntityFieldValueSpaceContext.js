@@ -96,36 +96,6 @@ export function assetTitle(asset, localeCode, modelValue) {
 }
 
 /**
- * @param {string?} localeCode
- * @return {Promise<Object|null>}
- * @description
- * Gets a promise resolving with a localized asset image field representing a
- * given entities file. The promise may resolve with null.
- */
-export function entryImage(entry, localeCode) {
-  const spaceContext = getModule('spaceContext');
-
-  const link = getValueForMatchedField(entry, localeCode, {
-    type: 'Link',
-    linkType: 'Asset',
-  });
-
-  const assetId = _.get(link, 'sys.id');
-  if (link && assetId) {
-    return spaceContext.space.getAsset(assetId).then(
-      (asset) => {
-        const file = getFieldValue(asset, 'file', localeCode);
-        const isImage = _.get(file, 'details.image');
-        return isImage ? file : null;
-      },
-      () => null
-    );
-  } else {
-    return Promise.resolve(null);
-  }
-}
-
-/**
  * @param {Client.Entity} entity
  * @param {string?} localeCode
  * @description
@@ -177,34 +147,6 @@ export function getFieldValue(entity, internalFieldId, internalLocaleCode) {
     internalLocaleCode,
     defaultInternalLocaleCode,
   });
-}
-
-/**
- * @description
- * Return the value of the first field that matches the field
- * definition.
- *
- * The field ID is obtained from the entity’s content type and the
- * field value for the given locale is obtained using
- * `getFieldValue()`.
- *
- * @param {SpaceContext} spaceContext
- * @param {Client.Entity} entity
- * @param {string?} localeCode  Uses default locale if falsy
- * @param {Object|function} fieldMatcher
- *   Field matcher that is passed to '_.find'
- * @returns {any}
- */
-function getValueForMatchedField(entity, localeCode, fieldDefinition) {
-  const contentTypeId = entity.getContentTypeId();
-  const contentType = getContentTypeById(contentTypeId);
-  if (!contentType) {
-    return;
-  }
-  const field = _.find(contentType.data.fields, fieldDefinition);
-  if (field) {
-    return getFieldValue(entity, field.id, localeCode);
-  }
 }
 
 /**

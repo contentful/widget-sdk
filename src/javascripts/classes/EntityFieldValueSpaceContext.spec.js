@@ -7,7 +7,6 @@ import {
   getFieldValue,
   displayFieldForType,
   entityDescription,
-  entryImage,
 } from './EntityFieldValueSpaceContext';
 
 jest.mock('services/localeStore', () => ({
@@ -293,62 +292,6 @@ describe('EntityFieldValueSpaceContext', () => {
           getContentTypeId: _.constant(),
         });
         expect(desc).toBeUndefined();
-      });
-    });
-    describe('#entryImage', () => {
-      let file;
-
-      beforeEach(function () {
-        file = { details: { image: {} } };
-        const asset = {};
-        _.set(asset, 'data.fields.file.xx', file);
-        spaceContextMocked.space.getAsset = jest.fn().mockImplementation((id) => {
-          if (id === ASSET_LINK_XX.sys.id) {
-            return Promise.resolve(asset);
-          } else if (id === ASSET_LINK_IT.sys.id) {
-            return Promise.reject();
-          }
-        });
-      });
-      it('resolves a promise with an image file', function (done) {
-        entryImage(entry).then((res) => {
-          expect(res).toBe(file);
-          done();
-        });
-      });
-      it('resolves a promise with an image file for given locale', function (done) {
-        entryImage(entry, 'xx').then((res) => {
-          expect(res).toBe(file);
-          done();
-        });
-      });
-      it('resolves a promise with default locale`s image if unknown locale', function (done) {
-        entryImage(entry, 'foo').then((res) => {
-          expect(res).toBe(file);
-          done();
-        });
-      });
-      it('resolves a promise with null if no linked asset field in CT', function (done) {
-        _.remove(fields, (field) => field.type === 'Link');
-        entryImage(entry).then((res) => {
-          expect(res).toBeNull();
-          done();
-        });
-      });
-      it('resolves a promise with null if linked asset is not an image', function (done) {
-        delete file.details.image;
-        entryImage(entry).then((res) => {
-          expect(res).toBeNull();
-          done();
-        });
-      });
-      it('resolves a promise with null if dead link for given locale', function (done) {
-        // TODO: We might want to refine this edge case's behavior and try to load
-        //       another locale's image then.
-        entryImage(entry, 'it').then((res) => {
-          expect(res).toBeNull();
-          done();
-        });
       });
     });
   });

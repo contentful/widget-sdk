@@ -104,7 +104,6 @@ class UnpublishedReferencesConfirm extends Component {
         </div>
         <WrappedEntityList
           entities={references}
-          internalLocaleCode={field.internalLocaleCode}
           onEntityClick={(e, entity) => this.onEntityListClick(e, entity)}
         />
       </div>

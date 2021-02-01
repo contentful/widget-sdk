@@ -51,21 +51,6 @@ export function newForLocale(localeCode) {
       const entity = await dataToEntity(data);
       return EntityFieldValueSpaceContext.entityDescription(entity, internalLocaleCode);
     },
-    /**
-     * Returns an object representing the main file associated with the entity.
-     * Asset: The asset's file if it has one or `null`.
-     * Entry: The image file of an asset of the first asset Link type field or
-     *        `null` if the asset has no file or if it's not an image.
-     *
-     * @param {object} entity
-     * @param {string} locale
-     * @return {object|null}
-     */
-    entityFile: (entity) => entityFile(entity, localeCode),
-    entryImage: async function (data) {
-      const entity = await dataToEntity(data);
-      return EntityFieldValueSpaceContext.entryImage(entity, internalLocaleCode);
-    },
     assetFile: (asset) => assetFile(asset, localeCode),
     assetFileUrl: assetFileUrl,
   };
@@ -114,15 +99,6 @@ function renameFieldLocales(fields) {
   return _.mapValues(fields, (field) =>
     _.mapKeys(field, (_, localeCode) => toInternalLocaleCode(localeCode))
   );
-}
-
-function entityFile(entity, localeCode) {
-  if (entity.sys.type === 'Entry') {
-    return newForLocale(localeCode).entryImage(entity);
-  } else if (entity.sys.type === 'Asset') {
-    return assetFile(entity, localeCode);
-  }
-  return Promise.resolve(null);
 }
 
 async function assetFile(data, localeCode) {
