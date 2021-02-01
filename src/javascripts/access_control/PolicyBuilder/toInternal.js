@@ -253,7 +253,12 @@ function pathSegment(segment, allValue) {
 
 export function findEntryIds(external) {
   return external
-    .filter((policy) => findEntryConstraint(extractConstraints(policy)).index !== -1)
+    .filter((policy) => {
+      const constraints = extractConstraints(policy);
+      if (constraints) {
+        return findEntryConstraint(constraints).index !== -1;
+      }
+    })
     .map(extractConstraints)
     .reduce((acc, val) => acc.concat(val), [])
     .filter((constraint) => constraint.equals && constraint.equals[0].doc === 'sys.id')
@@ -262,7 +267,12 @@ export function findEntryIds(external) {
 
 export function findAssetIds(external) {
   return external
-    .filter((policy) => findAssetConstraint(extractConstraints(policy)).index !== -1)
+    .filter((policy) => {
+      const constraints = extractConstraints(policy);
+      if (constraints) {
+        return findAssetConstraint(constraints).index !== -1;
+      }
+    })
     .map(extractConstraints)
     .reduce((acc, val) => acc.concat(val), [])
     .filter((constraint) => constraint.equals && constraint.equals[0].doc === 'sys.id')
