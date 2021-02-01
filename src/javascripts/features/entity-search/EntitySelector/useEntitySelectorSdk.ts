@@ -27,8 +27,6 @@ export function useEntitySelectorSdk(): EntitySelectorExtensionSDK {
     if (!cma) {
       throw new Error('APIClient should be initialized to use EntitySelectorSdk');
     }
-
-    const access = createAccessApi();
     const locales = createLocalesApi();
     const entityNavigator = createEntityNavigatorApi({ cma });
 
@@ -40,6 +38,17 @@ export function useEntitySelectorSdk(): EntitySelectorExtensionSDK {
       tagsRepo,
       usersRepo,
     });
+
+    const getEntity = (type: string, id: string) => {
+      if (type === 'Entry') {
+        return space.getEntry(id);
+      } else if (type === 'Asset') {
+        return space.getAsset(id);
+      } else {
+        throw new Error(`${type} is invalid`);
+      }
+    };
+    const access = createAccessApi(getEntity);
 
     return {
       space: {

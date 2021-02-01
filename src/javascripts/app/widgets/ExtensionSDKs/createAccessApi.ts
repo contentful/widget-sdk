@@ -1,5 +1,5 @@
 import { Action, getSpaceAuthContext } from 'access_control/AccessChecker';
-import { AccessAPI, EntryFieldAPI, EntrySys } from 'contentful-ui-extensions-sdk';
+import { AccessAPI } from 'contentful-ui-extensions-sdk';
 import { get, isObject } from 'lodash';
 import { createPatch } from 'rfc6902';
 
@@ -14,27 +14,18 @@ export const ALLOWED_ACTIONS = [
   Action.UNARCHIVE,
 ];
 
-type Entry = {
-  fields: EntryFieldAPI,
-  sys: EntrySys
-}
-
 export const ALLOWED_TYPES = ['ContentType', 'EditorInterface', 'Entry', 'Asset'];
-const spaceAuthContext = getSpaceAuthContext() as any;
 
-export function createAccessApi(getCurrentEntry?: () => Entry): AccessAPI {
+export function createAccessApi(
+  getEntity: (type: string, id: string) => Promise<Record<string, any>>
+): AccessAPI {
   return {
-    can: (action: string, entity: any) => {
+    can: async (action: string, entity: any) => {
       if (!ALLOWED_ACTIONS.includes(action)) {
         throw new Error('Action not supported');
       }
 
       let type = entity;
-      const isUpdatingEntry = Action.UPDATE === action && type === 'Entry' && isObject(entity);
-
-      if (!spaceAuthContext) {
-        return Promise.resolve(false);
-      }
 
       if (typeof type !== 'string') {
         type = get(entity, ['sys', 'type']);
@@ -44,19 +35,44 @@ export function createAccessApi(getCurrentEntry?: () => Entry): AccessAPI {
         throw new Error('Entity type not supported');
       }
 
-      if (isUpdatingEntry && getCurrentEntry) {
-        const currentEntry = getCurrentEntry();
-        const patches = createPatch(currentEntry, entity);
-
-        // spaceAuthContext.can only takes single elemtn in array [patch] while createPatch can result in multiple patches
-        // we only allow a change if all patches can be applied
-        return Promise.resolve(patches.every(patch => spaceAuthContext.can(action, currentEntry, [patch])));
+      const spaceAuthContext = getSpaceAuthContext() as any;
+      if (!spaceAuthContext) {
+        return false;
       }
 
-      return Promise.resolve(spaceAuthContext.can(action, entity));
+      const patchingTypes = ['Entry', 'Asset'];
+      const isPatching =
+        action === Action.UPDATE && patchingTypes.includes(type) && isObject(entity);
+      const hasValidId = typeof get(entity, ['sys', 'id']) === 'string';
+
+      if (isPatching && hasValidId) {
+        let currentEntity: any;
+        try {
+          currentEntity = await getEntity(type, entity.sys.id);
+        } catch (_) {
+          return false;
+        }
+
+        const patches = createPatch(currentEntity, entity);
+        const validPatches = patches.filter((patch) => !patch.path.startsWith('/sys/')); // ignore changes to `sys` object
+
+        // spaceAuthContext.can only takes single element in array [patch] while createPatch can result in multiple patches
+        // we only allow a change if all patches can be applied
+        return validPatches.every((patch) => spaceAuthContext.can(action, currentEntity, [patch]));
+      }
+
+      return spaceAuthContext.can(action, entity);
     },
-    canEditAppConfig: () => {
-      return Promise.resolve(spaceAuthContext.can(Action.UPDATE, 'settings'));
+    canEditAppConfig: async () => {
+      const spaceAuthContext = getSpaceAuthContext() as any;
+
+      if (!spaceAuthContext) {
+        return false;
+      }
+
+      return spaceAuthContext.can(Action.UPDATE, 'settings');
     },
   };
 }
+
+// Locations: *
