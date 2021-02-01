@@ -193,8 +193,15 @@ function ReferenceCards({
         circular_references_count: circularReferenceCount,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    initialized,
+    selectedStates,
+    allReferencesSelected,
+    root.sys.id,
+    depth,
+    entitiesPerLevel,
+    circularReferenceCount,
+  ]);
   return referenceCards;
 }
 
