@@ -1,6 +1,6 @@
 import React from 'react';
 import { refresh } from 'services/TokenStore';
-import client from 'services/client';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import OnboardingModal from './OnboardingModal';
 import { go } from 'states/Navigator';
@@ -44,12 +44,15 @@ export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
 };
 
 async function createSpace({ closeModal, org, markOnboarding, markSpace, userId }) {
-  const newSpace = await client.createSpace(
+  const client = getCMAClient();
+  const newSpace = await client.space.create(
+    {
+      organizationId: org.sys.id,
+    },
     {
       name: MODERN_STACK_ONBOARDING_SPACE_NAME,
       defaultLocale: DEFAULT_LOCALE,
-    },
-    org.sys.id
+    }
   );
 
   const newSpaceId = newSpace.sys.id;
