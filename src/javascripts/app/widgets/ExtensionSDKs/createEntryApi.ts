@@ -1,54 +1,11 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentType, InternalContentTypeField } from './createContentTypeApi';
 import * as K from 'core/utils/kefir';
-import {
-  CollectionResponse,
-  EntryAPI,
-  EntryFieldAPI,
-  EntrySys,
-  Link,
-} from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntryFieldAPI, EntrySys, TaskInputData } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { isEqual } from 'lodash';
 import APIClient from 'data/APIClient';
-
-type TaskState = 'active' | 'resolved';
-
-export interface TaskSys {
-  id: string;
-  type: 'Task';
-  parentEntity: { sys: Link };
-  space: Link;
-  environment: Link;
-  createdBy: Link;
-  createdAt: string;
-  updatedBy: Link;
-  updatedAt: string;
-  version: number;
-}
-
-export interface TaskInputData {
-  assignedToId: string;
-  body: string;
-  status: TaskState;
-}
-
-export interface Task {
-  assignedTo: Link;
-  body: string;
-  status: TaskState;
-  sys: TaskSys;
-}
-
-export interface InternalEntryAPI extends EntryAPI {
-  getTask(id: string): Promise<Task>;
-  getTasks(): Promise<CollectionResponse<Task>>;
-  createTask(data: TaskInputData): Promise<Task>;
-  updateTask(task: Task): Promise<Task>;
-  deleteTask(task: Task): Promise<void>;
-}
-
 interface CreateEntryApiOptions {
   cma: APIClient;
   internalContentType: InternalContentType;
@@ -69,7 +26,7 @@ export function createEntryApi({
   readOnly = false,
   widgetNamespace,
   widgetId,
-}: CreateEntryApiOptions): InternalEntryAPI {
+}: CreateEntryApiOptions): EntryAPI {
   const fields = internalContentType.fields.map((internalField: InternalContentTypeField) => {
     return createEntryFieldApi({
       internalField,
@@ -111,7 +68,7 @@ export function createEntryApi({
     metadata: doc.getValueAt(['metadata']),
 
     // Task API
-    getTasks: (...args) => cma.getTasks(K.getValue(doc.sysProperty).id, ...args),
+    getTasks: () => cma.getTasks(K.getValue(doc.sysProperty).id),
     getTask: (...args) => cma.getTask(K.getValue(doc.sysProperty).id, ...args),
     updateTask: (...args) => cma.updateTask(K.getValue(doc.sysProperty).id, ...args),
     deleteTask: (...args) => cma.deleteTask(K.getValue(doc.sysProperty).id, ...args),

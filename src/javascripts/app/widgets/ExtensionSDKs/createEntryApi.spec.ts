@@ -1,4 +1,4 @@
-import { createEntryApi, InternalEntryAPI } from './createEntryApi';
+import { createEntryApi } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { constant } from 'kefir';
@@ -8,6 +8,7 @@ import * as Kefir from 'kefir';
 import jestKefir from 'jest-kefir';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import APIClient from 'data/APIClient';
+import { EntryAPI } from 'contentful-ui-extensions-sdk';
 
 const kefirHelpers = jestKefir(Kefir);
 
@@ -47,7 +48,7 @@ const mockField = {
 };
 
 describe('createEntryApi', () => {
-  let entryApi: InternalEntryAPI;
+  let entryApi: EntryAPI;
   const internalContentType = {
     sys: {
       type: 'ContentType',
@@ -129,7 +130,9 @@ describe('createEntryApi', () => {
 
   describe('tasksAPI', () => {
     it('passes arguments through to CMA with added entry ID', () => {
-      ['getTasks', 'getTask', 'updateTask', 'deleteTask'].forEach((method) => {
+      entryApi.getTasks();
+      expect(cma.getTasks).toHaveBeenCalledWith('example');
+      ['getTask', 'updateTask', 'deleteTask'].forEach((method) => {
         entryApi[method]('arg-1', 'arg-2');
         expect(cma[method]).toHaveBeenCalledWith('example', 'arg-1', 'arg-2');
       });
