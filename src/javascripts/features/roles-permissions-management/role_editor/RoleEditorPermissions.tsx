@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CheckboxField, Subheading } from '@contentful/forma-36-react-components';
+import { CheckboxField, Subheading, Flex } from '@contentful/forma-36-react-components';
 import { Internal } from './RoleTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -64,9 +64,9 @@ const RoleEditorPermissions: React.FC<Props> = ({
           </div>
         </>
       )}
-      <>
+      <Flex flexDirection="column">
         <Subheading className={styles.subHeading}>API keys</Subheading>
-        <div className={styles.block}>
+        <Flex marginBottom="spacingL" flexDirection="column">
           <CheckboxField
             id="opt_api_keys_view"
             name="opt_api_keys_view"
@@ -87,8 +87,8 @@ const RoleEditorPermissions: React.FC<Props> = ({
             onChange={updateRoleFromCheckbox('contentDelivery.manage')}
             className={styles.checkbox}
           />
-        </div>
-      </>
+        </Flex>
+      </Flex>
       <Subheading className={styles.subHeading}>Environments settings</Subheading>
       <div className={styles.block}>
         <CheckboxField
