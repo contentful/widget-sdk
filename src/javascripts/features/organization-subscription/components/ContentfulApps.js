@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import _ from 'lodash';
 import {
   Heading,
   Card,
@@ -13,26 +12,15 @@ import {
 } from '@contentful/forma-36-react-components';
 import { DeleteAppsModal } from './DeleteAppsModal';
 
-const openDeleteAppsModal = async () => {
-  const result = await ModalLauncher.open(({ isShown, onClose }) => {
-    return (
-      <DeleteAppsModal
-        onConfirm={() => {
-          console.log('remove everything');
-          onClose(false);
-        }}
-        onCancel={() => onClose(false)}
-        isShown={isShown}
-      />
-    );
-  });
-  if (result === false) {
-    return;
-  }
+const openDeleteAppsModal = () => {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <DeleteAppsModal isShown={isShown} onClose={onClose} />
+  ));
 };
 
 export function ContentfulApps() {
   const [isOpen, setOpen] = useState(false);
+
   const openModal = () => {
     setOpen(false);
     openDeleteAppsModal();

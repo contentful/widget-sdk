@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
 import {
   Paragraph,
-  TextInput,
+  TextField,
   Typography,
   ModalConfirm,
   FieldGroup,
   CheckboxField,
 } from '@contentful/forma-36-react-components';
 
-export function DeleteAppsModal(props) {
-  const [repeat, setRepeat] = useState('');
+export function DeleteAppsModal({ isShown, onClose }) {
+  const [textFeedback, setTextFeedback] = useState('');
   const [optionOne, setOptionOne] = useState(false);
   const [optionTwo, setOptionTwo] = useState(false);
   const [optionThree, setOptionThree] = useState(false);
@@ -21,11 +21,16 @@ export function DeleteAppsModal(props) {
 
   return (
     <ModalConfirm
+      isShown={isShown}
       intent="negative"
-      isConfirmDisabled={disableConfirm}
       title="Remove apps from organization"
       confirmLabel="Remove apps from organization"
-      {...props}>
+      isConfirmDisabled={disableConfirm}
+      onConfirm={() => {
+        console.log('remove everything');
+        onClose();
+      }}
+      onCancel={() => onClose()}>
       <Typography>
         <Paragraph>You are about to remove Compose + Launch from your organization</Paragraph>
         <Paragraph>
@@ -73,11 +78,21 @@ export function DeleteAppsModal(props) {
           />
         </FieldGroup>
         <br />
-        <Paragraph>
-          <strong>What can we improve about the apps?</strong>
-        </Paragraph>
       </Typography>
-      <TextInput value={repeat} onChange={(e) => setRepeat(e.target.value)} />
+
+      <TextField
+        id="feedback"
+        name="feedback"
+        labelText="What can we improve about the apps?"
+        value={textFeedback}
+        onChange={(e) => setTextFeedback(e.target.value)}
+        textarea
+      />
     </ModalConfirm>
   );
 }
+
+DeleteAppsModal.propTypes = {
+  isShown: PropTypes.bool,
+  onClose: PropTypes.func.isRequired,
+};
