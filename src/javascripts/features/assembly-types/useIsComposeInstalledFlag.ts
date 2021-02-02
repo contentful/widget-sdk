@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
-import { fetchAssemblyTypesProductCatalogFlag } from './fetchAssemblyTypesProductCatalogFlag';
+import { checkComposeIsInstalled } from './checkComposeIsInstalled';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-export const useAssemblyTypesProductCatalogFlag = () => {
+export const useIsComposeInstalledFlag = () => {
   const [flag, setFlag] = useState(false);
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
@@ -14,9 +14,7 @@ export const useAssemblyTypesProductCatalogFlag = () => {
 
     // This fetch function takes care of caching the product catalog
     // flag internally, as it's used also in non-react modules
-    fetchAssemblyTypesProductCatalogFlag(spaceId).then((productCatalogFlag) =>
-      setFlag(productCatalogFlag)
-    );
+    checkComposeIsInstalled(spaceId).then((isComposeInstalled) => setFlag(isComposeInstalled));
   }, [spaceId]);
 
   return flag;

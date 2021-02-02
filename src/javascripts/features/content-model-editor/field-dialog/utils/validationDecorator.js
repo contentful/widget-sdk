@@ -71,7 +71,7 @@ const validationHelpText = {
   linkContentType: 'Make this field only accept entries from specified content type(s)',
   linkMimetypeGroup: 'Make this field only accept specified file types',
   relationshipType:
-    'The referenced entry or entries will share the same life cycle as this entry in Web Creator',
+    'The referenced entry or entries will share the same life cycle as this entry in Compose',
   assetFileSize: 'Specify a minimum and/or maximum allowed file size',
   assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension',
 };
@@ -111,7 +111,7 @@ const nodeValidationHelpText = {
   size: 'Specify a minimum and/or maximum allowed number of entries',
   linkContentType: 'Make this link type only accept entries from specified content type(s)',
   relationshipType:
-    'The referenced entry or entries will share the same life cycle as this entry in Web Creator',
+    'The referenced entry or entries will share the same life cycle as this entry in Compose',
 };
 
 const validationsOrder = [

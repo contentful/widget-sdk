@@ -11,7 +11,7 @@ import { LinkedEntitiesValidation } from './validations/LinkedEntitiesValidation
 import { AssetFileSizeValidation } from './validations/AssetFileSizeValidation';
 import { AssetDimmensionsValidation } from './validations/AssetDimmensionsValidation';
 import { FormFieldsType } from 'features/content-model-editor/field-dialog/utils/PropTypes';
-import { useAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
+import { useIsComposeInstalledFlag } from 'features/assembly-types';
 import { styles } from './styles';
 
 const ValidationTabComponent = ({
@@ -23,7 +23,7 @@ const ValidationTabComponent = ({
   widgetSettings,
   availableWidgets,
 }) => {
-  const isAssemblyProductCatalogFlagEnabled = useAssemblyTypesProductCatalogFlag();
+  const isComposeInstalled = useIsComposeInstalledFlag();
 
   return (
     <Fragment>
@@ -137,7 +137,7 @@ const ValidationTabComponent = ({
               onBlur={onBlur}
             />
           )}
-          {isAssemblyProductCatalogFlagEnabled && fields.relationshipType && (
+          {isComposeInstalled && fields.relationshipType && (
             <CheckboxField
               className={styles.marginBottomS}
               labelText={fields.relationshipType.value.name}

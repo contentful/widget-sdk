@@ -1,14 +1,7 @@
 import React, { useReducer, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import {
-  CheckboxField,
-  Modal,
-  Button,
-  TextField,
-  Form,
-} from '@contentful/forma-36-react-components';
-import { useAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
+import { Modal, Button, TextField, Form } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import { isValidResourceId } from 'data/utils';
 
@@ -53,15 +46,12 @@ const reducer = createImmerReducer({
 
 export default function ContentTypeForm(props) {
   const [state, dispatch] = useReducer(reducer, {
-    assembly: props.originalAssembly || false,
     name: '',
     contentTypeId: '',
     description: props.originalDescription || '',
     touched: false,
     busy: false,
   });
-
-  const isAssemblyProductCatalogFlagEnabled = useAssemblyTypesProductCatalogFlag();
 
   const onChangeHandler = (field) => (e) => {
     dispatch({
@@ -82,15 +72,6 @@ export default function ContentTypeForm(props) {
     });
   };
 
-  const toggleIsAssembly = () =>
-    dispatch({
-      type: 'SET_VALUE',
-      payload: {
-        field: 'assembly',
-        value: !state.assembly,
-      },
-    });
-
   const onConfirm = async () => {
     setBusy(true);
     try {
@@ -98,7 +79,6 @@ export default function ContentTypeForm(props) {
         name: state.name,
         contentTypeId: state.contentTypeId,
         description: state.description,
-        ...(isAssemblyProductCatalogFlagEnabled && { assembly: state.assembly }),
       });
     } catch (e) {
       setBusy(false);
@@ -156,16 +136,6 @@ export default function ContentTypeForm(props) {
             validationMessage={state.touched ? validationErrors.description : ''}
             onChange={onChangeHandler('description')}
           />
-          {isAssemblyProductCatalogFlagEnabled && (
-            <CheckboxField
-              checked={state.assembly}
-              onChange={toggleIsAssembly}
-              name="contentTypeIsAssembly"
-              id="contentTypeIsAssembly"
-              labelText="Top level content type"
-              helpText="This content type represents a top level domain object and is composed from other entries"
-            />
-          )}
           {props.children}
         </Form>
       </Modal.Content>
@@ -193,7 +163,6 @@ ContentTypeForm.propTypes = {
   title: PropTypes.string.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  originalAssembly: PropTypes.bool,
   originalDescription: PropTypes.string,
   existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired),
   confirmLabel: PropTypes.string.isRequired,

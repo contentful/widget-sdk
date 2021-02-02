@@ -1,5 +1,4 @@
 import React from 'react';
-import isNil from 'lodash/isNil';
 import { registerController, registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
 import validation from '@contentful/validation';
@@ -61,10 +60,6 @@ export default function register() {
                 $scope.contentType.data.name = result.name;
                 $scope.contentType.data.description = result.description;
                 $scope.contentType.data.sys.id = result.contentTypeId;
-                if (result.assembly) {
-                  // Add assembly to request only if value is present
-                  $scope.contentType.data.assembly = result.assembly;
-                }
               } else {
                 // X.detail.fields -> X.list
                 $state.go('^.^.list');
@@ -191,12 +186,9 @@ export default function register() {
         () => {
           openEditContentTypeDialog($scope.contentType).then((result) => {
             if (result) {
-              const { name, description, assembly } = result;
+              const { name, description } = result;
               $scope.contentType.data.name = name;
               $scope.contentType.data.description = description;
-              if (!isNil(assembly)) {
-                $scope.contentType.data.assembly = assembly;
-              }
               setDirty();
             }
           });

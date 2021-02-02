@@ -8,6 +8,9 @@ import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as Authentication from 'Authentication';
 import * as NgRegistry from 'core/NgRegistry';
 
+jest.mock('features/assembly-types', () => ({
+  useIsComposeInstalledFlag: jest.fn(() => true),
+}));
 jest.mock('@contentful/forma-36-react-components');
 jest.mock('core/services/window', () => ({
   window: {
@@ -26,7 +29,9 @@ describe('Gatekeeper Message Handler', () => {
   beforeEach(async function () {
     stubs = {
       window: {
-        location: '',
+        location: {
+          search: '',
+        },
       },
       beginSpaceCreation: jest.fn(),
       refresh: jest.fn(),

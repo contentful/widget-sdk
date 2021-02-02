@@ -1,4 +1,4 @@
-import { fetchAssemblyTypesProductCatalogFlag } from 'features/assembly-types';
+import { checkComposeIsInstalled } from 'features/assembly-types';
 import { getAlphaHeader, ASSEMBLY_TYPES } from 'alphaHeaders';
 import Entity from './entity';
 import mixinPublishable from './publishable';
@@ -47,7 +47,7 @@ ContentType.prototype.endpoint = function (...args) {
 };
 
 ContentType.prototype.save = async function (headers = {}, spaceId = '') {
-  const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+  const flag = await checkComposeIsInstalled(spaceId);
   const assemblyHeaders = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
   const combinedHeaders = {
     ...headers,
@@ -59,7 +59,7 @@ ContentType.prototype.save = async function (headers = {}, spaceId = '') {
 ContentType.prototype.publish = async function (version) {
   const self = this;
   const spaceId = _.get(this, ['data', 'sys', 'space', 'sys', 'id'], '');
-  const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+  const flag = await checkComposeIsInstalled(spaceId);
   const assemblyHeaders = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
   return this.endpoint('published')
     .headers({
@@ -131,7 +131,7 @@ const factoryMethods = createResourceFactoryMethods(ContentType, 'content_types'
 ContentType.factoryMethods = {
   getContentType: async function (id) {
     const spaceId = _.get(this, ['data', 'sys', 'id'], '');
-    const flag = await fetchAssemblyTypesProductCatalogFlag(spaceId);
+    const flag = await checkComposeIsInstalled(spaceId);
     const headers = flag ? getAlphaHeader(ASSEMBLY_TYPES) : {};
     return factoryMethods.getById.call(this, id, headers);
   },

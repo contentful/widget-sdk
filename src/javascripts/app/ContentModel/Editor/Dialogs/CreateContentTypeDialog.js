@@ -16,7 +16,6 @@ export function CreateContentTypeForm(props) {
           cancelLabel="Cancel"
           originalDescription=""
           originalName=""
-          originalAssembly={false}
           namePlaceholder="For example Product, Blog Post, Author"
         />
       </CurrentSpaceAPIClientProvider>

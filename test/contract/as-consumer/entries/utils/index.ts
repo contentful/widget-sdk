@@ -13,7 +13,7 @@ global.fetch = fetch;
 export const getServerAndClient = async () => {
   const server = await startMockServer({
     host: 'localhost',
-    port: 1234,
+    port: 12345,
     consumer: 'user_interface',
   });
 

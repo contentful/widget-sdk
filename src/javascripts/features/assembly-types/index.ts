@@ -1,2 +1,2 @@
-export { useAssemblyTypesProductCatalogFlag } from './useAssemblyTypesProductCatalogFlag';
-export { fetchAssemblyTypesProductCatalogFlag } from './fetchAssemblyTypesProductCatalogFlag';
+export { useIsComposeInstalledFlag } from './useIsComposeInstalledFlag';
+export { checkComposeIsInstalled } from './checkComposeIsInstalled';

@@ -1,5 +1,4 @@
 import React from 'react';
-import isNil from 'lodash/isNil';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { DuplicateContentTypeDialog } from './DuplicateContentTypeDialog';
 import { CreateContentTypeDialog } from './CreateContentTypeDialog';
@@ -16,12 +15,11 @@ export function openCreateContentTypeDialog(contentTypeIds) {
       onCancel={() => {
         props.onClose(false);
       }}
-      onConfirm={({ contentTypeId, name, description, assembly }) => {
+      onConfirm={({ contentTypeId, name, description }) => {
         props.onClose({
           contentTypeId,
           name,
           description,
-          ...(assembly && { assembly }),
         });
       }}
     />
@@ -37,13 +35,11 @@ export function openEditContentTypeDialog(contentType) {
       isShown={props.isShown}
       originalName={contentType.data.name}
       originalDescription={contentType.data.description}
-      originalAssembly={contentType.data.assembly}
       onClose={() => {
         props.onClose(false);
       }}
-      onConfirm={({ assembly, name, description }) => {
+      onConfirm={({ name, description }) => {
         props.onClose({
-          ...(!isNil(assembly) && { assembly }),
           name,
           description,
         });
