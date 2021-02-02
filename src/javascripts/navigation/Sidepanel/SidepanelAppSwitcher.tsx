@@ -4,7 +4,15 @@ import * as Navigator from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { NavigationSwitcherAppProps } from './useAppsList';
 
-export const SidepanelAppSwitcher = ({ isVisible, onClose, appsList }) => {
+export const SidepanelAppSwitcher = ({
+  isVisible,
+  onClose,
+  appsList,
+}: {
+  appsList: NavigationSwitcherAppProps[];
+  isVisible: boolean;
+  onClose: () => void;
+}) => {
   const spaceEnv = useSpaceEnvContext();
 
   const onAppSwitcherAction = (action: AppSwitcherAction) => {
@@ -15,9 +23,13 @@ export const SidepanelAppSwitcher = ({ isVisible, onClose, appsList }) => {
     onClose();
 
     if (action.type === 'open-app') {
-      if (!action.app.isInstalled) {
-        const app = action.app as NavigationSwitcherAppProps;
+      const app = appsList.find((item) => item.type === action.app);
 
+      if (!app) {
+        return;
+      }
+
+      if (!app.isInstalled) {
         Navigator.go(app.installRouteProps);
 
         action.event.preventDefault();
@@ -25,7 +37,7 @@ export const SidepanelAppSwitcher = ({ isVisible, onClose, appsList }) => {
       }
 
       // go to space home on click Web app
-      if (action.app.active) {
+      if (app.active) {
         Navigator.go({
           path: 'spaces.detail.home',
           params: { environmentId: spaceEnv.currentEnvironmentId },

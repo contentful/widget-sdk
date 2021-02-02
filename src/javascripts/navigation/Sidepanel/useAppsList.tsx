@@ -9,7 +9,7 @@ import {
   isCurrentEnvironmentMaster,
   isMasterEnvironment,
 } from 'core/services/SpaceEnvContext/utils';
-import ContentfulLogo from 'svg/logo-label.svg';
+import { AppsListProps } from '@contentful/experience-components';
 
 const getAppInstallRouteProps = ({
   app,
@@ -29,10 +29,8 @@ const getAppInstallRouteProps = ({
 export interface NavigationSwitcherAppProps {
   id?: string;
   definitionId?: string;
-  icon: React.ReactNode;
-  title: string;
+  type: 'web-app' | 'launch' | 'compose';
   tagLine?: string;
-  description: string;
   targetUrl?: string;
   featureFlagName?: string;
   href: string;
@@ -43,11 +41,9 @@ export interface NavigationSwitcherAppProps {
 }
 
 const webApp: NavigationSwitcherAppProps = {
-  icon: <ContentfulLogo width="32" />,
+  type: 'web-app' as const,
   href: '#',
   active: true,
-  title: 'Web app',
-  description: 'The classic Contentful experience',
   isInstalled: true,
 };
 
@@ -131,7 +127,7 @@ export const useAppsList = () => {
               return appFlagIsEnabled
                 ? {
                     ...app,
-                    description: app.tagLine || '',
+                    type: app.id as AppsListProps['type'],
                     installRouteProps,
                     href: isInstalled
                       ? `${app.targetUrl}/${spaceEnvPath}`
