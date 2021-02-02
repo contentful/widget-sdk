@@ -175,7 +175,7 @@ export function AppPermissions(props: AppPermissionProps) {
             By proceeding, you agree to the{' '}
             <TextLink
               {...linkProps}
-              href="https://www.contentful.com/legal/de/marketplace-terms-of-service-customers/">
+              href="https://www.contentful.com/legal/marketplace-terms/marketplace-terms-for-customers/">
               Contentful Marketplace Terms of Service
             </TextLink>
           </Paragraph>
