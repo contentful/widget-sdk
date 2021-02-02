@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-import { createTemplate } from '../utils/spaceCreation';
+import { applyTemplateToSpace } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useAsyncFn } from 'core/hooks/useAsync';
 
@@ -8,7 +8,7 @@ import { useSessionMetadata } from './useSessionMetadata';
 
 const addTemplate = (newSpace, selectedTemplate, sessionMetadata) => async () => {
   try {
-    await createTemplate(newSpace, selectedTemplate);
+    await applyTemplateToSpace(newSpace, selectedTemplate);
 
     trackEvent(EVENTS.SPACE_TEMPLATE_CREATED, sessionMetadata, {
       selectedTemplate,

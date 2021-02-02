@@ -11,7 +11,6 @@ interface SpacePurchaseContext<S = State> {
 const initialState: State = {
   spaceRatePlans: [],
   spaceName: 'New space',
-  selectedTemplate: null,
 };
 
 export const SpacePurchaseState = createContext<SpacePurchaseContext>(({

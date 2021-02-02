@@ -10,7 +10,7 @@ import { useSessionMetadata } from './useSessionMetadata';
 
 const createSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) => async () => {
   try {
-    const newSpace = await makeNewSpace(organizationId, selectedPlan, spaceName);
+    const newSpace = await makeNewSpace(organizationId, selectedPlan.sys.id, spaceName);
 
     trackEvent(EVENTS.SPACE_CREATED, sessionMetadata, {
       selectedPlan,

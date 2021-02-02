@@ -1,20 +1,22 @@
+import { Asset } from '@contentful/types';
+
 import type { Organization, SpaceData } from 'core/services/SpaceEnvContext/types';
-import type { BillingDetails, PaymentDetails } from '../types';
 import type { ProductRatePlan } from 'features/pricing-entities';
+import type { BillingDetails, PaymentDetails, SpaceProductRatePlan } from '../types';
 
 export interface State {
   organization?: Organization;
   currentSpace?: SpaceData;
-  currentSpaceRatePlan?: unknown;
-  spaceRatePlans?: unknown[];
+  currentSpaceRatePlan?: SpaceProductRatePlan;
+  spaceRatePlans?: SpaceProductRatePlan[];
   subscriptionPlans?: unknown;
-  selectedPlan?: unknown;
+  selectedPlan?: SpaceProductRatePlan;
   selectedPlatform?: SelectedPlatform;
   sessionId?: string;
   paymentDetails?: PaymentDetails;
   billingDetails?: BillingDetails;
   spaceName?: string;
-  selectedTemplate?: unknown;
+  selectedTemplate?: SelectedTemplate;
   purchasingApps?: boolean;
   composeProductRatePlan?: ProductRatePlan;
 }
@@ -24,4 +26,20 @@ export interface SelectedPlatform {
   title: string;
   description: string;
   price?: number;
+}
+
+export interface SelectedTemplate {
+  blank: boolean;
+  description: string;
+  descriptionV2: string;
+  icon: Asset;
+  image: Asset;
+  name: string;
+  order: number;
+  previewSpaceApiKey: string;
+  spaceApiKey: string;
+  spaceId: string;
+  svgName: string;
+  sys: unknown;
+  templateDeliveryApiKeys: string[];
 }

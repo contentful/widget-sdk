@@ -1,11 +1,11 @@
 export interface ProductRatePlan {
   committed: boolean;
-  contentfulProductId: string;
+  contentfulProductId?: string;
   customerType: 'Self-service' | 'Committed';
   internalName: string;
   name: string;
   price: number;
-  productPlanType: 'space' | 'add_on';
+  productPlanType: 'space' | 'add_on' | 'free_space';
   productRatePlanCharges: ProductRatePlanCharge[];
   productType: 'add_on' | 'on_demand';
   roleSet?: RoleSet;
@@ -34,11 +34,11 @@ interface Tier {
   priceFormat: 'FlatFee';
 }
 
-interface ProductRatePlanCharge {
+export interface ProductRatePlanCharge {
   chargeType: 'Recurring';
-  model: 'PerUnit' | 'FlatFee';
+  model: 'PerUnit' | 'FlatFee' | 'Tiered';
   name: string;
-  price: number;
+  price?: number;
   sys: {
     type: 'ProductRatePlanCharge';
     id: string;

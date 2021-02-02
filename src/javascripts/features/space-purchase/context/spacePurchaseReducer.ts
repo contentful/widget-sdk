@@ -1,6 +1,4 @@
-import { BillingDetails, PaymentDetails } from '../types';
-import type { State, SelectedPlatform } from './types';
-import type { SpaceData } from 'core/services/SpaceEnvContext/types';
+import type { State } from './types';
 
 export enum actions {
   SET_INITIAL_STATE = 'SET_INITIAL_STATE',
@@ -22,47 +20,47 @@ type SetInitialStateAction = {
 
 type SetPurchasingAppsAction = {
   type: actions.SET_PURCHASING_APPS;
-  payload: boolean;
+  payload: State['purchasingApps'];
 };
 
 type SetCurrentStateAction = {
   type: actions.SET_CURRENT_SPACE;
-  payload: SpaceData;
+  payload: State['currentSpace'];
 };
 
 type SetCurrentSpaceRatePlanAction = {
   type: actions.SET_CURRENT_SPACE_RATE_PLAN;
-  payload: unknown;
+  payload: State['currentSpaceRatePlan'];
 };
 
 type SetSelectedPlatformAction = {
   type: actions.SET_SELECTED_PLATFORM;
-  payload: SelectedPlatform;
+  payload: State['selectedPlatform'];
 };
 
 type SetSelectedPlanAction = {
   type: actions.SET_SELECTED_PLAN;
-  payload: unknown;
+  payload: State['selectedPlan'];
 };
 
 type SetBillingDetailsAction = {
   type: actions.SET_BILLING_DETAILS;
-  payload: BillingDetails;
+  payload: State['billingDetails'];
 };
 
 type SetPaymentDetailsAction = {
   type: actions.SET_PAYMENT_DETAILS;
-  payload: PaymentDetails;
+  payload: State['paymentDetails'];
 };
 
 type SetSpaceNameAction = {
   type: actions.SET_SPACE_NAME;
-  payload: string;
+  payload: State['spaceName'];
 };
 
 type SetSelectedTemplateAction = {
   type: actions.SET_SELECTED_TEMPLATE;
-  payload: unknown;
+  payload: State['selectedTemplate'];
 };
 
 export type Action =

@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import * as TokenStore from 'services/TokenStore';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
-import { createTemplate } from 'features/space-purchase';
+import { applyTemplateToSpace } from 'features/space-purchase';
 import { Notification } from '@contentful/forma-36-react-components';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 
@@ -41,7 +41,7 @@ export async function createSpaceWithTemplate({
 }) {
   const newSpace = await makeNewSpace(orgId, selectedPlan, spaceName);
   try {
-    await createTemplate(newSpace, selectedTemplate);
+    await applyTemplateToSpace(newSpace, selectedTemplate);
   } catch (error) {
     Notification.error(
       'We had a problem creating your template. You can still use your space, but some content from the template may be missing.',

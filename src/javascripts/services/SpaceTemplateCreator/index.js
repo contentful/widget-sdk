@@ -36,7 +36,7 @@ const TEA_SPACE_ID = Config.services.contentful.TEASpaceId;
  * @param {object} templateInfo
  * @param {string} selectedLocaleCode
  *
- * @return {function}
+ * @return {object}
  */
 export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
   const templateName = templateInfo.name;

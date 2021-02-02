@@ -1,2 +1,2 @@
 export { getAddOnProductRatePlans, addProductRatePlanToSubscription } from './requestors';
-export type { ProductRatePlan, BasePlan } from './types';
+export type { ProductRatePlan, BasePlan, ProductRatePlanCharge } from './types';
