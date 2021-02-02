@@ -14,6 +14,9 @@ jest.mock('core/services/window', () => {
       set location(path) {
         return locationMock(path);
       },
+      get location() {
+        return {};
+      },
       __locationMock: locationMock,
     },
   };

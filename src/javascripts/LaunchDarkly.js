@@ -53,6 +53,7 @@ export const FLAGS = {
   COMPOSE_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-compose-eap',
   LAUNCH_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-launch-eap',
   REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
+  APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__: 'test-flag',
@@ -84,6 +85,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PATCH_ENTRY_UPDATES]: false,
   [FLAGS.COMPOSE_APP_LISTING_EAP]: false,
   [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
+  [FLAGS.APP_TRIAL]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,

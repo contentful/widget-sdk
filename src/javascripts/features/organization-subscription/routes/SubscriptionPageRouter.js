@@ -10,7 +10,7 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
-import { isOrganizationOnTrial } from 'features/trials';
+import { isOrganizationOnTrial, canStartAppTrial } from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -84,6 +84,8 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
+  const appTrialEnabled = await canStartAppTrial(organization, basePlan);
+
   setSpacePlans(spacePlans);
   setGrandTotal(
     calculateTotalPrice({
@@ -99,6 +101,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organization,
     productRatePlans,
     newSpacePurchaseEnabled,
+    appTrialEnabled,
   };
 };
 
@@ -140,7 +143,8 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         initialLoad={isLoading}
         spacePlans={spacePlans}
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-        newSpacePurchaseEnabled
+        newSpacePurchaseEnabled={data.newSpacePurchaseEnabled}
+        appTrialEnabled={data.appTrialEnabled}
       />
     </>
   );

@@ -12,6 +12,7 @@ export const MFA_API = 'mfa-api'; // Oct 23, 2019
 export const ENTRY_REFERENCES_ENDPOINT = 'query-references';
 export const IMMEDIATE_RELEASE = 'immediate-release';
 export const ASSEMBLY_TYPES = 'assembly-types';
+export const COMPOSE_LAUNCH_TRIAL = 'compose-launch-trial';
 
 // Get an object with the alpha feature header with one or more features
 export const getAlphaHeader = (...features) => ({

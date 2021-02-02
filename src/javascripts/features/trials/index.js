@@ -9,3 +9,5 @@ export {
   isTrialSpaceType,
   isExpiredTrialSpace,
 } from './services/TrialService';
+
+export { canStartAppTrial, startAppTrial } from './services/AppTrialService';

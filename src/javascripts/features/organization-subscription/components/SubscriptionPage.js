@@ -34,7 +34,12 @@ import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
+import {
+  EnterpriseTrialInfo,
+  isOrganizationOnTrial,
+  SpacesListForMembers,
+  startAppTrial,
+} from 'features/trials';
 
 const styles = {
   sidebar: css({
@@ -105,9 +110,9 @@ export function SubscriptionPage({
   onSpacePlansChange,
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
+  appTrialEnabled,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
-
   useEffect(() => {
     let timer;
 
@@ -177,6 +182,17 @@ export function SubscriptionPage({
     };
   };
 
+  const handleStartAppTrial = async () => {
+    Notification.success('Preparing the trial...');
+    try {
+      await startAppTrial(organization.sys.id);
+      // TODO: trial comms
+      Notification.success('The App trial has started!');
+    } catch (err) {
+      Notification.error(`Could not start the trial: ${err.message}`);
+    }
+  };
+
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
@@ -209,6 +225,13 @@ export function SubscriptionPage({
           </div>
           <div className={styles.trialSection}>
             {organization && <EnterpriseTrialInfo organization={organization} />}
+            {appTrialEnabled && (
+              <div>
+                <TextLink icon="PlusCircle" onClick={handleStartAppTrial}>
+                  Start Contentful App trial
+                </TextLink>
+              </div>
+            )}
           </div>
           {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.leftSection}>
@@ -301,6 +324,7 @@ SubscriptionPage.propTypes = {
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
+  appTrialEnabled: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {

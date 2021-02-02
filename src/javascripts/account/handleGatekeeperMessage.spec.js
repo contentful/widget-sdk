@@ -9,7 +9,11 @@ import * as Authentication from 'Authentication';
 import * as NgRegistry from 'core/NgRegistry';
 
 jest.mock('@contentful/forma-36-react-components');
-jest.mock('core/services/window', () => ({ window: {} }));
+jest.mock('core/services/window', () => ({
+  window: {
+    location: {},
+  },
+}));
 jest.mock('services/CreateSpace');
 jest.mock('services/TokenStore');
 jest.mock('analytics/Analytics');
