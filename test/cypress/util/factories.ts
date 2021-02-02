@@ -3,7 +3,6 @@ import { getAllEnforcementsForDefaultSpace } from '../interactions/enforcements'
 import { getAllPublicContentTypesInDefaultSpace } from '../interactions/content_types';
 import { queryFirst101EnvironmentsInDefaultSpace } from '../interactions/environments';
 import { queryFirst100LocalesOfDefaultSpace } from '../interactions/locales';
-import { getPerformancePackageFeatureInDefaultSpace } from '../interactions/product_catalog_features';
 
 type DefaultHandlers = {
   tokenResponse: Function;

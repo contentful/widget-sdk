@@ -14,7 +14,8 @@ const productCatalogTeams = require('../fixtures/responses/product-catalog-teams
 const productCatalogSelfConfigureSso = require('../fixtures/responses/product-catalog-self-configure-sso.json');
 const productCatalogScim = require('../fixtures/responses/product-catalog-scim.json');
 const productCatalogLaunchApp = require('../fixtures/responses/product-catalog-launch-app.json');
-const productCatalogPerformancePackage = require('../fixtures/responses/product-catalog-performance-package.json');
+const productCatalogOrgLaunchApp = require('../fixtures/responses/product-catalog-org-launch-app.json');
+const productCatalogComposeApp = require('../fixtures/responses/product-catalog-compose-app.json');
 
 enum States {
   ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
@@ -370,24 +371,42 @@ export const queryForScimInDefaultOrg = {
   },
 };
 
-export const getPerformancePackageFeatureInDefaultSpace = {
+export const getComposeAppFeatureInDefaultOrg = {
   willFindFeatureDisabled() {
     cy.addInteraction({
       provider: PROVIDER,
-      state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for "performance_package" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=performance_package'
-      ),
+      state: States.ORG_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "compose_app" feature for org "${defaultOrgId}"`,
+      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=compose_app'),
       willRespondWith: {
         status: 200,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: productCatalogPerformancePackage,
+        body: productCatalogComposeApp,
       },
-    }).as('getPerformancePackageFeatureInDefaultSpace');
+    }).as('getComposeAppFeatureInDefaultOrg');
 
-    return '@getPerformancePackageFeatureInDefaultSpace';
+    return '@getComposeAppFeatureInDefaultOrg';
+  },
+};
+
+export const getLaunchAppFeatureInDefaultOrg = {
+  willFindFeatureDisabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.ORG_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "launch_app" feature for org "${defaultOrgId}"`,
+      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=launch_app'),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: productCatalogOrgLaunchApp,
+      },
+    }).as('getLaunchAppFeatureInDefaultOrg');
+
+    return '@getLaunchAppFeatureInDefaultOrg';
   },
 };

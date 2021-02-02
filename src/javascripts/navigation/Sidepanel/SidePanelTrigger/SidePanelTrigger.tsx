@@ -21,7 +21,7 @@ interface Props {
   testId?: string;
   showIcon?: boolean;
   // null meaning that the flag isn't yet loaded;
-  performancePackageIsEnabled: boolean | null;
+  hasContentfulApps: boolean | null;
 }
 
 type OrganizationProps = {
@@ -35,10 +35,10 @@ type environmentMetaProps = {
 };
 
 const TriggerIcon = ({
-  performancePackageIsEnabled,
+  hasContentfulApps,
   openAppSwitcher,
 }: {
-  performancePackageIsEnabled: boolean | null;
+  hasContentfulApps: boolean | null;
   openAppSwitcher?: () => void;
 }) => {
   const onClick: React.MouseEventHandler = (event) => {
@@ -47,14 +47,14 @@ const TriggerIcon = ({
   };
   const appSwitcherIconWidth = 40;
 
-  if (performancePackageIsEnabled === true) {
+  if (hasContentfulApps === true) {
     return (
       <button aria-label="Switch Contentful app" data-test-id="sidepanel-trigger-apps">
         <AppGridIcon onClick={onClick} width={appSwitcherIconWidth} height={appSwitcherIconWidth} />
       </button>
     );
   }
-  if (performancePackageIsEnabled === false) return <ContentfulLogo />;
+  if (hasContentfulApps === false) return <ContentfulLogo />;
 
   return (
     <SkeletonContainer
@@ -76,7 +76,7 @@ export const SidePanelTrigger = ({
   onClickOrganization,
   openAppSwitcher,
   testId = 'sidepanel-trigger',
-  performancePackageIsEnabled,
+  hasContentfulApps,
 }: Props) => {
   const [navState, setNavState] = useState<unknown>(null);
   const [showOrganization, setShowOrganization] = useState(false);
@@ -104,10 +104,7 @@ export const SidePanelTrigger = ({
       data-ui-tour-step="sidepanel-trigger"
       data-test-id={testId}>
       <div className={styles.noShrink}>
-        <TriggerIcon
-          openAppSwitcher={openAppSwitcher}
-          performancePackageIsEnabled={performancePackageIsEnabled}
-        />
+        <TriggerIcon openAppSwitcher={openAppSwitcher} hasContentfulApps={hasContentfulApps} />
       </div>
       <button
         className={styles.content}

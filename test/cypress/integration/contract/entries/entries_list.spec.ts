@@ -24,7 +24,6 @@ import {
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
   getLaunchAppFeatureInDefaultSpace,
-  getPerformancePackageFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { severalEntriesResponse } from '../../../fixtures/responses/entries-several';
 
@@ -75,7 +74,6 @@ describe('Entries list page', () => {
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -116,7 +114,6 @@ describe('Entries list page', () => {
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -180,7 +177,6 @@ describe('Entries list page', () => {
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -241,7 +237,6 @@ describe('Entries list page', () => {
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

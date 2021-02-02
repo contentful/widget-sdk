@@ -15,7 +15,6 @@ export const FEATURES = {
   PC_CONTENT_TAGS: 'content_tags',
   PC_SPACE_RELEASES: 'releases',
   PC_SPACE_REFERENCE_TREE: 'reference_tree',
-  PC_SPACE_PERFORMANCE_PACKAGE: 'performance_package',
   PC_ORG_PLANNER_APP: 'planner_app',
   CUSTOM_ROLES_FEATURE: 'custom_roles',
 };
@@ -127,19 +126,23 @@ export const getSpaceFeature = (
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };
 
-export const useSpaceFeature = (
-  spaceId: string | undefined,
+const createFeatureHook = (getFeature: typeof getSpaceFeature | typeof getOrgFeature) => (
+  scopeId: string | undefined,
   featureId: string,
   defaultValue: boolean
 ) => {
   const [isEnabled, setIsEnabled] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
-    if (!spaceId) return;
+    if (!scopeId) return;
 
-    getSpaceFeature(spaceId, featureId, defaultValue).then(setIsEnabled);
+    getFeature(scopeId, featureId, defaultValue).then(setIsEnabled);
+
     return () => setIsEnabled(null);
-  }, [defaultValue, featureId, spaceId]);
+  }, [defaultValue, featureId, scopeId]);
 
   return isEnabled;
 };
+
+export const useSpaceFeature = createFeatureHook(getSpaceFeature);
+export const useOrgFeature = createFeatureHook(getOrgFeature);

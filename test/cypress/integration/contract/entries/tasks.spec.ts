@@ -25,7 +25,6 @@ import {
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
   getLaunchAppFeatureInDefaultSpace,
-  getPerformancePackageFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -81,7 +80,6 @@ describe('Tasks entry editor sidebar', () => {
         getAllTasksForDefaultEntry.willFailWithAnInternalServerError(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       visitEntry();
@@ -103,7 +101,6 @@ describe('Tasks entry editor sidebar', () => {
         getAllTasksForDefaultEntry.willReturnNone(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       visitEntry();
@@ -126,7 +123,6 @@ describe('Tasks entry editor sidebar', () => {
         getAllTasksForDefaultEntry.willReturnSeveral(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
 
       visitEntry();
@@ -262,7 +258,6 @@ describe('Tasks entry editor sidebar', () => {
         getAllTasksForDefaultEntry.willReturnNone(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
-        getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled(),
       ];
     });
 

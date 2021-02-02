@@ -42,7 +42,6 @@ describe('Entry references', () => {
     ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled();
-    ProductCatalog.getPerformancePackageFeatureInDefaultSpace.willFindFeatureDisabled();
   };
 
   beforeEach(() => {
