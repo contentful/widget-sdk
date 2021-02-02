@@ -33,6 +33,7 @@ import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
 
 import { BasePlan } from './BasePlan';
+import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -106,6 +107,7 @@ const goToBillingPage = (organizationId) => {
 
 export function SubscriptionPage({
   basePlan,
+  addOn,
   usersMeta,
   organization,
   grandTotal,
@@ -227,6 +229,7 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
+  const showContentfulAppsCard = isOrgOwnerOrAdmin && !!addOn;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
@@ -305,6 +308,7 @@ export function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+                  {showContentfulAppsCard && <ContentfulApps />}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
                     <NonPayingOrgCopyLegacy organizationId={organizationId} />
                   )}
@@ -343,6 +347,7 @@ SubscriptionPage.propTypes = {
   initialLoad: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
   basePlan: PropTypes.object,
+  addOn: PropTypes.object,
   spacePlans: PropTypes.array,
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
