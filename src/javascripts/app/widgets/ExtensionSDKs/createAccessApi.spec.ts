@@ -3,7 +3,14 @@ import * as AccessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker');
 
-const mockSpaceApi = {getEntry(){return {}}, getAsset(){return {}}}
+const mockSpaceApi = {
+  getEntry() {
+    return {};
+  },
+  getAsset() {
+    return {};
+  },
+};
 
 describe('createAccessApi', () => {
   describe('can', () => {
@@ -56,7 +63,12 @@ describe('createAccessApi', () => {
         sys: { type: 'Entry', id: 'random-id' },
         fields: { title: 'my title', body: 'new body' },
       };
-      const mockSpaceApi = {getEntry: () => entity, getAsset(){return {}}};
+      const mockSpaceApi = {
+        getEntry: () => entity,
+        getAsset() {
+          return {};
+        },
+      };
       const accessApi = createAccessApi(mockSpaceApi);
 
       it('should resolve true when action is allowed', async () => {

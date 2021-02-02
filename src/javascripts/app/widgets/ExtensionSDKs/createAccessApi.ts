@@ -18,7 +18,7 @@ const PATCHABLE_TYPES = ['Entry', 'Asset'];
 
 export const ALLOWED_TYPES = ['ContentType', 'EditorInterface', 'Entry', 'Asset'];
 
-export function createAccessApi({getEntry, getAsset}): AccessAPI {
+export function createAccessApi({ getEntry, getAsset }): AccessAPI {
   return {
     can: async (action: string, entity: any) => {
       if (!ALLOWED_ACTIONS.includes(action)) {
@@ -50,7 +50,7 @@ export function createAccessApi({getEntry, getAsset}): AccessAPI {
         } else if (type === 'Asset') {
           return getAsset(id);
         } else {
-          throw new Error(`Entity type: "${type}" is invalid`)
+          throw new Error(`Entity type: "${type}" is invalid`);
         }
       };
 
