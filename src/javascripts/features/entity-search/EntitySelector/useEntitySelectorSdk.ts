@@ -39,16 +39,7 @@ export function useEntitySelectorSdk(): EntitySelectorExtensionSDK {
       usersRepo,
     });
 
-    const getEntity = (type: string, id: string) => {
-      if (type === 'Entry') {
-        return space.getEntry(id);
-      } else if (type === 'Asset') {
-        return space.getAsset(id);
-      } else {
-        throw new Error(`${type} is invalid`);
-      }
-    };
-    const access = createAccessApi(getEntity);
+    const access = createAccessApi(space);
 
     return {
       space: {

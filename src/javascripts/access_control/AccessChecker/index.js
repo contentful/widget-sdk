@@ -180,11 +180,6 @@ export const canCreateOrganization = wrapGKMethod('canCreateOrganization');
  * actions and entity types. Note that entity types should be
  * provided in camel case
  */
-
-export function getSpaceAuthContext() {
-  return spaceAuthContext;
-}
-
 export function can(action, entityType) {
   return getPermissions(action, entityType).can;
 }
@@ -200,6 +195,17 @@ export function can(action, entityType) {
  */
 export function setAuthContext(context) {
   setContext({ ...context, space, organization });
+}
+
+/**
+ * @name accessChecker#getSpaceAuthContext
+ * @description
+ * Get current auth context for accessApi check primarily in App SDK
+ *
+ * @param {object} authContext - authContext limited to current space
+ */
+export function getSpaceAuthContext() {
+  return spaceAuthContext;
 }
 
 /**

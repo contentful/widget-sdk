@@ -3,11 +3,11 @@ import * as AccessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker');
 
+const mockSpaceApi = {getEntry(){return {}}, getAsset(){return {}}}
+
 describe('createAccessApi', () => {
   describe('can', () => {
-    const accessApi = createAccessApi(async () => {
-      return {};
-    });
+    const accessApi = createAccessApi(mockSpaceApi);
     describe('when allowed', () => {
       it('resolves to true', async () => {
         (AccessChecker.getSpaceAuthContext as jest.Mock).mockReturnValue({ can: () => true });
@@ -56,7 +56,8 @@ describe('createAccessApi', () => {
         sys: { type: 'Entry', id: 'random-id' },
         fields: { title: 'my title', body: 'new body' },
       };
-      const accessApi = createAccessApi(async () => entity);
+      const mockSpaceApi = {getEntry: () => entity, getAsset(){return {}}};
+      const accessApi = createAccessApi(mockSpaceApi);
 
       it('should resolve true when action is allowed', async () => {
         (AccessChecker.getSpaceAuthContext as jest.Mock).mockReturnValueOnce({
@@ -90,7 +91,7 @@ describe('createAccessApi', () => {
   });
 
   describe('canEditAppConfig', () => {
-    const accessApi = createAccessApi(async () => ({}));
+    const accessApi = createAccessApi(mockSpaceApi);
     describe('when allowed', () => {
       it('returns true', async () => {
         (AccessChecker.getSpaceAuthContext as jest.Mock).mockReturnValue({

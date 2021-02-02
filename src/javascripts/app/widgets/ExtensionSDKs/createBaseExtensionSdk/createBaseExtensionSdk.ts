@@ -25,16 +25,8 @@ export const createBaseExtensionSdk = ({
   spaceApi,
   navigatorApi,
 }: SharedBasedWidgetSDK): Omit<BaseExtensionSDK, 'dialogs' | 'ids'> => {
-  const getEntity = (type: string, id: string) => {
-    if (type === 'Entry') {
-      return spaceApi.getEntry(id);
-    } else if (type === 'Asset') {
-      return spaceApi.getAsset(id);
-    } else {
-      throw new Error(`${type} is invalid`);
-    }
-  };
-  const accessApi = createAccessApi(getEntity);
+  
+  const accessApi = createAccessApi(spaceApi);
   const localesApi = createLocalesApi();
   const notifierApi = Notification;
   const userApi = createUserApi(spaceMember);
