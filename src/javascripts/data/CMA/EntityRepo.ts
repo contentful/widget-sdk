@@ -1,6 +1,4 @@
-import jsonPatch from 'fast-json-patch';
-import type { Observer, Operation } from 'fast-json-patch';
-import cloneDeep from 'lodash/cloneDeep';
+import { compare } from 'fast-json-patch';
 import {
   ASSET_PROCESSING_FINISHED_EVENT,
   CONTENT_ENTITY_UPDATED_EVENT,
@@ -54,13 +52,6 @@ function getCollection(entity: Entity): CollectionEndpoint {
   return collection;
 }
 
-function createJsonPatch(entity: Entity, updatedEntity: Entity): Operation[] {
-  const clonedEntity = cloneDeep(entity);
-  const observedEntity: Observer<Entity> = jsonPatch.observe(clonedEntity);
-  Object.assign(clonedEntity, updatedEntity);
-  return jsonPatch.generate(observedEntity);
-}
-
 export function create(
   spaceEndpoint: SpaceEndpoint,
   pubSubClient: PubSubClient,
@@ -99,7 +90,7 @@ export function create(
       method: 'PATCH',
       path: [collection, entity.sys.id],
       version: entity.sys.version,
-      data: createJsonPatch(lastSavedEntity, entity),
+      data: compare(lastSavedEntity, entity),
     };
     const updatedEntity = await spaceEndpoint(body, {
       ...endpointPutOptions,
