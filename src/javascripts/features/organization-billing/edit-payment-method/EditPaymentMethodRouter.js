@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 
 import { useAsync } from 'core/hooks/useAsync';
@@ -103,12 +104,14 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
         />
         <Workbench.Content>
           {showZuoraIframe && (
-            <ZuoraCreditCardIframe
-              organizationId={organizationId}
-              onSuccess={onSuccess}
-              onCancel={goToBillingDashboard}
-              onError={onError}
-            />
+            <div className={css({ maxWidth: '600px', margin: '0 auto' })}>
+              <ZuoraCreditCardIframe
+                organizationId={organizationId}
+                onSuccess={onSuccess}
+                onCancel={goToBillingDashboard}
+                onError={onError}
+              />
+            </div>
           )}
         </Workbench.Content>
       </Workbench>

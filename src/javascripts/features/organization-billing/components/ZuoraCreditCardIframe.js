@@ -32,7 +32,7 @@ const styles = {
   }),
   container: css({
     height: '385px',
-    maxWidth: '600px',
+    width: '100%',
     margin: '0 auto',
     position: 'relative',
   }),
