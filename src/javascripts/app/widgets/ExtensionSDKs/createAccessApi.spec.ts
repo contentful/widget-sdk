@@ -1,16 +1,13 @@
 import { createAccessApi } from './createAccessApi';
+import { SpaceAPI } from 'contentful-ui-extensions-sdk';
 import * as AccessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker');
 
-const mockSpaceApi = {
-  getEntry() {
-    return {};
-  },
-  getAsset() {
-    return {};
-  },
-};
+const mockSpaceApi = ({
+  getEntry: jest.fn().mockResolvedValue({}),
+  getAsset: jest.fn().mockResolvedValue({}),
+} as unknown) as SpaceAPI;
 
 describe('createAccessApi', () => {
   describe('can', () => {
@@ -63,12 +60,10 @@ describe('createAccessApi', () => {
         sys: { type: 'Entry', id: 'random-id' },
         fields: { title: 'my title', body: 'new body' },
       };
-      const mockSpaceApi = {
-        getEntry: () => entity,
-        getAsset() {
-          return {};
-        },
-      };
+      const mockSpaceApi = ({
+        getEntry: jest.fn().mockResolvedValue(entity),
+        getAsset: jest.fn().mockResolvedValue({}),
+      } as unknown) as SpaceAPI;
       const accessApi = createAccessApi(mockSpaceApi);
 
       it('should resolve true when action is allowed', async () => {

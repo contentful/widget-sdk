@@ -1,5 +1,5 @@
 import { Action, getSpaceAuthContext } from 'access_control/AccessChecker';
-import { AccessAPI } from 'contentful-ui-extensions-sdk';
+import { AccessAPI, SpaceAPI } from 'contentful-ui-extensions-sdk';
 import { get, isObject } from 'lodash';
 import { compare } from 'fast-json-patch';
 
@@ -18,7 +18,17 @@ const PATCHABLE_TYPES = ['Entry', 'Asset'];
 
 export const ALLOWED_TYPES = ['ContentType', 'EditorInterface', 'Entry', 'Asset'];
 
-export function createAccessApi({ getEntry, getAsset }): AccessAPI {
+export function createAccessApi({ getEntry, getAsset }: SpaceAPI): AccessAPI {
+  const getEntity = (type: string, id: string): Promise<Record<string, any>> => {
+    if (type === 'Entry') {
+      return getEntry(id);
+    } else if (type === 'Asset') {
+      return getAsset(id);
+    } else {
+      throw new Error(`Entity type: "${type}" is invalid`);
+    }
+  };
+
   return {
     can: async (action: string, entity: any) => {
       if (!ALLOWED_ACTIONS.includes(action)) {
@@ -26,7 +36,6 @@ export function createAccessApi({ getEntry, getAsset }): AccessAPI {
       }
 
       let type = entity;
-
       if (typeof type !== 'string') {
         type = get(entity, ['sys', 'type']);
       }
@@ -40,21 +49,14 @@ export function createAccessApi({ getEntry, getAsset }): AccessAPI {
         return false;
       }
 
-      const isPatching =
-        action === Action.UPDATE && PATCHABLE_TYPES.includes(type) && isObject(entity);
       const hasValidId = typeof get(entity, ['sys', 'id']) === 'string';
+      const isPatching =
+        action === Action.UPDATE &&
+        PATCHABLE_TYPES.includes(type) &&
+        isObject(entity) &&
+        hasValidId;
 
-      const getEntity = (type: string, id: string): Promise<Record<string, any>> => {
-        if (type === 'Entry') {
-          return getEntry(id);
-        } else if (type === 'Asset') {
-          return getAsset(id);
-        } else {
-          throw new Error(`Entity type: "${type}" is invalid`);
-        }
-      };
-
-      if (isPatching && hasValidId) {
+      if (isPatching) {
         let currentEntity: any;
         try {
           currentEntity = await getEntity(type, entity.sys.id);
