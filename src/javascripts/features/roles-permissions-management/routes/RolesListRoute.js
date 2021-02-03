@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
 import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
@@ -9,6 +8,9 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from '../components/RoleListHandler';
 import { RolesList } from '../roles_list/RolesList';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import * as ResourceUtils from 'utils/ResourceUtils';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) => {
   const listHandler = RoleListHandler.create(spaceId, environmentId);
@@ -33,11 +35,19 @@ const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) =
   };
 });
 
-export function RolesListRoute(props) {
+export function RolesListRoute() {
+  const {
+    currentOrganization,
+    currentSpaceId: spaceId,
+    currentEnvironmentId: environmentId,
+  } = useSpaceEnvContext();
+  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(currentOrganization);
+  const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
+
   return (
     <>
       <DocumentTitle title="Roles" />
-      <RolesFetcher spaceId={props.spaceId} environmentId={props.environmentId}>
+      <RolesFetcher spaceId={spaceId} environmentId={environmentId}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <RolesWorkbenchSkeleton title="Roles" />;
@@ -47,8 +57,8 @@ export function RolesListRoute(props) {
           }
           return (
             <RolesList
-              canUpgradeOrganization={props.canUpgradeOrganization}
-              isLegacyOrganization={props.isLegacyOrganization}
+              canUpgradeOrganization={canUpgradeOrganization}
+              isLegacyOrganization={isLegacyOrganization}
               refetch={fetch}
               {...data}
             />
@@ -58,10 +68,3 @@ export function RolesListRoute(props) {
     </>
   );
 }
-
-RolesListRoute.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  environmentId: PropTypes.string.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired,
-  canUpgradeOrganization: PropTypes.bool.isRequired,
-};
