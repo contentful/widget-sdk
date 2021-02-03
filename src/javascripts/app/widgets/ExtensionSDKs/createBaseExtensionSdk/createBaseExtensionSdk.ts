@@ -25,7 +25,7 @@ export const createBaseExtensionSdk = ({
   spaceApi,
   navigatorApi,
 }: SharedBasedWidgetSDK): Omit<BaseExtensionSDK, 'dialogs' | 'ids'> => {
-  const accessApi = createAccessApi();
+  const accessApi = createAccessApi(spaceApi);
   const localesApi = createLocalesApi();
   const notifierApi = Notification;
   const userApi = createUserApi(spaceMember);

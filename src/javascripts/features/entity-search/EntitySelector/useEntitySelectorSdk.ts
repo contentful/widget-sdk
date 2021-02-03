@@ -27,8 +27,6 @@ export function useEntitySelectorSdk(): EntitySelectorExtensionSDK {
     if (!cma) {
       throw new Error('APIClient should be initialized to use EntitySelectorSdk');
     }
-
-    const access = createAccessApi();
     const locales = createLocalesApi();
     const entityNavigator = createEntityNavigatorApi({ cma });
 
@@ -40,6 +38,8 @@ export function useEntitySelectorSdk(): EntitySelectorExtensionSDK {
       tagsRepo,
       usersRepo,
     });
+
+    const access = createAccessApi(space);
 
     return {
       space: {

@@ -198,6 +198,17 @@ export function setAuthContext(context) {
 }
 
 /**
+ * @name accessChecker#getSpaceAuthContext
+ * @description
+ * Get current auth context for accessApi check primarily in App SDK
+ *
+ * @returns {object} authContext - authContext limited to current space
+ */
+export function getSpaceAuthContext() {
+  return spaceAuthContext;
+}
+
+/**
  * @name accessChecker#setSpace
  * @description
  * Set new space data and forcibly recollect all permission data
