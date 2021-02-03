@@ -18,6 +18,8 @@ const mockSelectedPlatform = {
   price: 999,
 };
 
+const mockComposeLaunchPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+
 const mockProductRatePlans = [
   { name: 'Community', price: 0 },
   { name: 'Medium', price: 489 },
@@ -118,7 +120,7 @@ describe('PlatformSelectionStep', () => {
 
     beforeEach(async () => {
       await build(null, {
-        selectedPlatform: PlatformKind.SPACE_COMPOSE_LAUNCH,
+        selectedPlatform: mockComposeLaunchPlatform,
         spaceRatePlans: mockProductRatePlans,
         subscriptionPlans: mockProductRatePlans,
       });

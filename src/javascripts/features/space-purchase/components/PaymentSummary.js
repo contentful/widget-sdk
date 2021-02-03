@@ -59,12 +59,12 @@ export const PaymentSummary = ({ showButtons = false, onConfirm, onBack }) => {
     state: { selectedPlatform, selectedPlan },
   } = useContext(SpacePurchaseState);
 
-  let monthlyCost = 0;
+  let monthlyTotal = 0;
   if (selectedPlatform?.price) {
-    monthlyCost += selectedPlatform.price;
+    monthlyTotal += selectedPlatform.price;
   }
   if (selectedPlan?.price) {
-    monthlyCost += selectedPlan.price;
+    monthlyTotal += selectedPlan.price;
   }
 
   return (
@@ -95,9 +95,9 @@ export const PaymentSummary = ({ showButtons = false, onConfirm, onBack }) => {
             </ListItem>
           )}
           <ListItem
-            testId="order-summary.monthly-cost"
+            testId="order-summary.monthly-total"
             className={cx(styles.listItem, styles.total)}>
-            <span>Monthly cost</span> <Price value={monthlyCost} />
+            <span>Monthly total</span> <Price value={monthlyTotal} />
           </ListItem>
         </List>
         <Paragraph>This price does not include sales tax, if applicable.</Paragraph>

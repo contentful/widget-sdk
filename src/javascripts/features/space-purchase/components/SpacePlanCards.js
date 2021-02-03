@@ -50,7 +50,7 @@ export const SpacePlanCards = ({
 
 SpacePlanCards.propTypes = {
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
-  selectedPlatform: PropTypes.string,
+  selectedPlatform: PropTypes.object,
   selectedSpacePlanName: PropTypes.string,
   canCreateFreeSpace: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool,
@@ -81,7 +81,7 @@ function getTooltipText(
   // freeSpace is disabled when selectedPlatform is SPACE+COMPOSE and they don't have any paid spaces
   if (
     planType === SpacePlanKind.COMMUNITY &&
-    selectedPlatform === PlatformKind.SPACE_COMPOSE_LAUNCH &&
+    selectedPlatform.type === PlatformKind.SPACE_COMPOSE_LAUNCH &&
     !orgHasPaidSpaces
   ) {
     return 'You must have a paid space to purchase Compose + Launch';

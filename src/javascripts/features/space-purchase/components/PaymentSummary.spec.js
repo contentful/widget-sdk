@@ -11,18 +11,18 @@ const mockSelectedPlatform = { title: PLATFORM_CONTENT.composePlatform.title, pr
 const formatPrice = (value) => `$${parseInt(value, 10).toLocaleString('en-US')}`;
 
 describe('PaymentSummary', () => {
-  it('should show the plan name and monthly cost', () => {
+  it('should show the plan name and monthly total', () => {
     build();
 
     expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
       mockSelectedPlan.name
     );
-    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
+    expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(
       mockSelectedPlan.price
     );
   });
 
-  it('should show the platform and space plan names, prices and monthly cost', () => {
+  it('should show the platform and space plan names, prices and monthly total', () => {
     build(null, { selectedPlatform: mockSelectedPlatform });
 
     expect(screen.getByTestId('order-summary.selected-platform')).toHaveTextContent(
@@ -31,20 +31,20 @@ describe('PaymentSummary', () => {
     expect(screen.getByTestId('order-summary.selected-plan')).toHaveTextContent(
       `${mockSelectedPlan.name} space ${formatPrice(mockSelectedPlan.price)}`
     );
-    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
-      `Monthly cost ${formatPrice(mockSelectedPlatform.price + mockSelectedPlan.price)}`
+    expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(
+      `Monthly total ${formatPrice(mockSelectedPlatform.price + mockSelectedPlan.price)}`
     );
   });
 
-  it('should show the platform name, price and monthly cost when no space plan is selected', () => {
+  it('should show the platform name, price and monthly total when no space plan is selected', () => {
     build(null, { selectedPlatform: mockSelectedPlatform, selectedPlan: undefined });
 
     expect(screen.getByTestId('order-summary.selected-platform')).toHaveTextContent(
       `${mockSelectedPlatform.title} ${formatPrice(mockSelectedPlatform.price)}`
     );
     expect(screen.queryByTestId('order-summary.selected-plan')).toBeNull();
-    expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
-      `Monthly cost ${formatPrice(mockSelectedPlatform.price)}`
+    expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(
+      `Monthly total ${formatPrice(mockSelectedPlatform.price)}`
     );
   });
 

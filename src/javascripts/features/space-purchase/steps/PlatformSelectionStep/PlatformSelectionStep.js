@@ -154,11 +154,11 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
         </span>
 
         {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
-          // If they cannot create a paid space, then they cannot pay for compose+launch either.
-          const tooltipText =
-            platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH && !canCreatePaidSpace
-              ? `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`
-              : '';
+          let tooltipText = '';
+          // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
+          if (platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH && canCreatePaidSpace === false) {
+            tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`;
+          }
 
           return (
             <ProductCard
@@ -197,7 +197,7 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
         <SpacePlanCards
           spaceRatePlans={spaceRatePlans}
-          selectedPlatform={selectedPlatform?.title}
+          selectedPlatform={selectedPlatform}
           selectedSpacePlanName={selectedPlan?.name}
           canCreateFreeSpace={canCreateFreeSpace}
           canCreatePaidSpace={canCreatePaidSpace}

@@ -163,7 +163,7 @@ describe('SpacePurchaseContainer', () => {
       expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
         mockSpaceRatePlans[1].name
       );
-      expect(screen.getByTestId('order-summary.monthly-cost')).toHaveTextContent(
+      expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(
         mockSpaceRatePlans[1].price
       );
     });

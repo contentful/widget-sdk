@@ -3,23 +3,17 @@ import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 
 import { go } from 'states/Navigator';
-import { getSpace } from 'services/TokenStore';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 
 const mockOrganization = Fake.Organization();
-const mockLastUsedSpace = Fake.Space();
 const mockComposeProductRatePlan = Fake.Plan();
 const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
-}));
-
-jest.mock('services/TokenStore', () => ({
-  getSpace: jest.fn(),
 }));
 
 jest.mock('features/pricing-entities', () => ({
@@ -41,10 +35,6 @@ jest.mock('core/services/BrowserStorage', () => {
 });
 
 describe('ComposeAndLaunchReceiptStep', () => {
-  beforeEach(() => {
-    getSpace.mockResolvedValue(mockLastUsedSpace);
-  });
-
   it('should show message when Compose+Launch has been successfully ordered', async () => {
     build();
 
@@ -62,7 +52,9 @@ describe('ComposeAndLaunchReceiptStep', () => {
 
   it('should take the user to the last used space when "take me to" button is clicked', async () => {
     build();
-    await waitFor(expect(getSpace).toBeCalled);
+    await waitFor(() => {
+      expect(addProductRatePlanToSubscription).toBeCalled();
+    });
 
     const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
     userEvent.click(redirectToSpace);

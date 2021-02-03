@@ -112,7 +112,7 @@ export function ReceiptMessage({
               )}
               .
             </Paragraph>
-            <Paragraph>You can now enable Compose and Launch on any Space Home.</Paragraph>
+            <Paragraph>You can now install Compose and Launch on any Space Home.</Paragraph>
           </>
         )}
       </Typography>
