@@ -15,6 +15,8 @@ export const FEATURES = {
   PC_SPACE_RELEASES: 'releases',
   PC_SPACE_REFERENCE_TREE: 'reference_tree',
   PC_ORG_PLANNER_APP: 'planner_app',
+  PC_ORG_COMPOSE_APP: 'compose_app',
+  PC_ORG_LAUNCH_APP: 'launch_app',
   CUSTOM_ROLES_FEATURE: 'custom_roles',
 };
 

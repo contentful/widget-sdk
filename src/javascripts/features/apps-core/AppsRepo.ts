@@ -47,7 +47,6 @@ export interface MarketplaceApp {
   featureFlagName?: string | null;
   supportUrl?: string;
   isContentfulApp?: boolean;
-  targetUrl?: string;
 }
 
 export function createAppsRepo(cma, appDefinitionLoader) {

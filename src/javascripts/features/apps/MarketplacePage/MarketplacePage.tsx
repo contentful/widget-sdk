@@ -11,13 +11,12 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-
 import { AppDetailsModal } from '../AppDetailsModal';
 import * as AppLifecycleTracking from '../AppLifecycleTracking';
 import { isUsageExceeded } from '../utils';
 import { ADVANCED_APPS_LIMIT, BASIC_APPS_LIMIT } from '../limits';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-
+import { FEATURES, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { AppsListShell } from './AppListShell';
 import { MarketplacePageLoading } from './MarketplacePageLoading';
 import { styles } from './styles';
@@ -25,6 +24,7 @@ import { AppList } from './AppList';
 import { MarketplaceApp } from 'features/apps-core';
 import { ContentfulAppsList } from './ContentfulAppList';
 import { AppManager } from '../AppOperations';
+import { SpaceInformation } from '../AppDetailsModal/shared';
 
 const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
   source: 'webapp',
@@ -58,15 +58,7 @@ export interface MarketplacePageProps {
     getApps: () => Promise<MarketplaceApp[]>;
   };
   organizationId: string;
-  spaceInformation: {
-    spaceId: string;
-    spaceName: string;
-    envMeta: {
-      environmentId: string;
-      isMasterEnvironment: boolean;
-      aliasId?: string;
-    };
-  };
+  spaceInformation: SpaceInformation;
   userId: string;
   hasAppsFeature: boolean;
   hasAdvancedAppsFeature: boolean;
@@ -84,6 +76,7 @@ interface MarketplacePageState {
   contentfulApps: MarketplaceApp[];
   appManager: AppManager;
   appDetailsModalAppId: string | null;
+  isPurchased: boolean;
 }
 
 export class MarketplacePage extends React.Component<MarketplacePageProps, MarketplacePageState> {
@@ -104,6 +97,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
       contentfulApps: [],
       appManager,
       appDetailsModalAppId: props.detailsModalAppId,
+      isPurchased: false,
     } as MarketplacePageState;
   }
 
@@ -125,7 +119,13 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
   async componentDidMount() {
     try {
       const appState = await this.loadApps();
-      this.setState({ ready: true, ...appState });
+      const isPurchased = (
+        await Promise.all([
+          getOrgFeature(this.props.organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
+          getOrgFeature(this.props.organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
+        ])
+      ).some(Boolean);
+      this.setState({ ready: true, ...appState, isPurchased });
     } catch (err) {
       Notification.error('Failed to load apps.');
     }
@@ -204,21 +204,20 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
     if (this.state.ready) {
       const hasInstalledApps = installedApps.length > 0;
       const hasAvailableApps = availableApps.length > 0;
-      const hasCtflApps = contentfulApps.length > 0;
       const spaceInstallationLimit = hasAdvancedAppsFeature
         ? ADVANCED_APPS_LIMIT
         : BASIC_APPS_LIMIT;
       content = (
         <>
-          {hasCtflApps && (
-            <ContentfulAppsList
-              apps={contentfulApps}
-              appManager={this.state.appManager}
-              canManageApps={canManageApps}
-              openDetailModal={this.openDetailModal}
-              spaceInformation={spaceInformation}
-            />
-          )}
+          <ContentfulAppsList
+            apps={contentfulApps}
+            appManager={this.state.appManager}
+            canManageApps={canManageApps}
+            openDetailModal={this.openDetailModal}
+            spaceInformation={spaceInformation}
+            organizationId={organizationId}
+            isPurchased={this.state.isPurchased}
+          />
           {hasInstalledApps ? (
             <AppList
               apps={sortPrivateAppsFirst(installedApps, canManageApps)}

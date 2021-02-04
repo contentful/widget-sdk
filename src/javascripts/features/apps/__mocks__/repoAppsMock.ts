@@ -194,7 +194,6 @@ export const contentfulApps: MarketplaceApp[] = [
   {
     id: 'lYxeubuDDkM6jQfbOkLn2',
     title: 'Compose',
-    targetUrl: 'https://app.contentful.com',
     appDefinition: {
       sys: {
         id: 'lYxeubuDDkM6jQfbOkLn2',

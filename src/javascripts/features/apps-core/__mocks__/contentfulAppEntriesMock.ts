@@ -40,7 +40,6 @@ export const contentfulAppEntriesMock = {
         title: 'Compose',
         slug: 'compose',
         appDefinitionIDs: { production: '6TfQEqkcINtj1MS0TuQTWJ' },
-        targetUrl: 'https://compose.contentful.com',
         icon: {
           sys: {
             type: 'Link',

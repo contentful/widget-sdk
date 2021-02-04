@@ -1,9 +1,10 @@
 import { Notification as Notifier } from '@contentful/forma-36-react-components';
 import { get, omit, identity } from 'lodash';
+import qs from 'qs';
+
 import resolveResponse from 'contentful-resolve-response';
 import { window } from 'core/services/window';
-import { domain, marketplaceEnvironment } from '../../Config';
-import qs from 'qs';
+import { marketplaceEnvironment } from 'Config';
 
 const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 const MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
@@ -133,8 +134,6 @@ function createContentfulAppObject(entry) {
     get(entry, ['fields', 'appDefinitionIDs', marketplaceEnvironment]) ||
     get(entry, ['fields', 'appDefinitionIDs', 'production']);
 
-  const subdomain = get(entry, ['fields', 'subdomain'], 'app');
-  const targetUrl = `https://${subdomain}.${domain}`;
   return {
     definitionId,
     id: get(entry, ['fields', 'slug'], ''),
@@ -149,7 +148,6 @@ function createContentfulAppObject(entry) {
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
     featureFlagName: get(entry, ['fields', 'featureFlagName'], null),
-    targetUrl,
     isContentfulApp: true,
   };
 }

@@ -10,6 +10,7 @@ import {
   isMasterEnvironment,
 } from 'core/services/SpaceEnvContext/utils';
 import { AppsListProps } from '@contentful/experience-components';
+import { domain } from 'Config';
 
 const getAppInstallRouteProps = ({
   app,
@@ -25,13 +26,11 @@ const getAppInstallRouteProps = ({
     params: { environmentId, app: app.slug || app.id },
   };
 };
-
 export interface NavigationSwitcherAppProps {
   id?: string;
   definitionId?: string;
   type: 'web-app' | 'launch' | 'compose';
   tagLine?: string;
-  targetUrl?: string;
   featureFlagName?: string;
   href: string;
   installRouteProps?: ReturnType<typeof getAppInstallRouteProps>;
@@ -130,7 +129,7 @@ export const useAppsList = () => {
                     type: app.id as AppsListProps['type'],
                     installRouteProps,
                     href: isInstalled
-                      ? `${app.targetUrl}/${spaceEnvPath}`
+                      ? `https://${app.slug}.${domain}/${spaceEnvPath}`
                       : Navigator.href(installRouteProps),
                     active: false,
                     isInstalled,

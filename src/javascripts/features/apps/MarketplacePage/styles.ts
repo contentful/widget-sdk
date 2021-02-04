@@ -10,10 +10,6 @@ export const styles = {
   workbench: css({
     backgroundColor: tokens.colorElementLightest,
   }),
-  appListCard: css({
-    position: 'relative',
-    marginBottom: tokens.spacingM,
-  }),
   overlay: css({
     position: 'absolute',
     zIndex: 2,
@@ -55,26 +51,26 @@ export const styles = {
     height: '1px',
     backgroundColor: tokens.colorElementMid,
   }),
-  contentfulAppCard: css({
-    display: 'flex',
+  appListCard: css({
+    position: 'relative',
+    marginBottom: tokens.spacingM,
   }),
-  contentfulAppIcon: css({
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    margin: `auto ${tokens.spacingM}`,
-    '& img': css({
-      maxHeight: '120px',
+  contentfulAppIcon: (isScreenshot) =>
+    css({
+      maxWidth: '50%',
+      minWidth: tokens.spacing4Xl,
+      margin: !isScreenshot ? `${tokens.spacingXs}` : '0',
+      '& img, & svg': css({
+        width: '100%',
+        display: 'block',
+      }),
     }),
-    '& svg': css({
-      maxHeight: '120px',
+  contentfulAppTextWrapper: (withoutMargin) =>
+    css({
+      display: 'flex',
+      alignItems: 'center',
+      margin: withoutMargin ? '0' : `0 ${tokens.spacingL}`,
     }),
-  }),
-  contentfulAppTextWrapper: css({
-    flex: 4,
-    display: 'flex',
-    alignItems: 'center',
-  }),
   contentfulAppText: css({}),
   button: css({
     marginTop: tokens.spacingS,
