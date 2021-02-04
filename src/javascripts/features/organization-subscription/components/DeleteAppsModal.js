@@ -8,8 +8,15 @@ import {
   FieldGroup,
   CheckboxField,
 } from '@contentful/forma-36-react-components';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { removeAddOnPlan } from 'account/pricing/PricingDataProvider';
 
-export function DeleteAppsModal({ isShown, onClose }) {
+async function requestRemoveAddOn(organizationId, addOnId) {
+  const endpoint = createOrganizationEndpoint(organizationId);
+  await removeAddOnPlan(endpoint, addOnId);
+}
+
+export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
   const [textFeedback, setTextFeedback] = useState('');
   const [optionOne, setOptionOne] = useState(false);
   const [optionTwo, setOptionTwo] = useState(false);
@@ -27,7 +34,7 @@ export function DeleteAppsModal({ isShown, onClose }) {
       confirmLabel="Remove apps from organization"
       isConfirmDisabled={disableConfirm}
       onConfirm={() => {
-        console.log('remove everything');
+        requestRemoveAddOn(organizationId, addOn.productRatePlanId);
         onClose();
       }}
       onCancel={() => onClose()}>
@@ -95,4 +102,6 @@ export function DeleteAppsModal({ isShown, onClose }) {
 DeleteAppsModal.propTypes = {
   isShown: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
+  organizationId: PropTypes.string,
+  addOn: PropTypes.object,
 };

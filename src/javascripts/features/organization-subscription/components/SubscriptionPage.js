@@ -308,7 +308,9 @@ export function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-                  {showContentfulAppsCard && <ContentfulApps />}
+                  {showContentfulAppsCard && (
+                    <ContentfulApps organizationId={organizationId} addOn={addOn} />
+                  )}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
                     <NonPayingOrgCopyLegacy organizationId={organizationId} />
                   )}

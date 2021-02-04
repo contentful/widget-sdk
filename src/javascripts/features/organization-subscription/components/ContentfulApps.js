@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Heading,
   Card,
@@ -12,18 +13,23 @@ import {
 } from '@contentful/forma-36-react-components';
 import { DeleteAppsModal } from './DeleteAppsModal';
 
-const openDeleteAppsModal = () => {
+const openDeleteAppsModal = (organizationId, addOn) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
-    <DeleteAppsModal isShown={isShown} onClose={onClose} />
+    <DeleteAppsModal
+      isShown={isShown}
+      onClose={onClose}
+      organizationId={organizationId}
+      addOn={addOn}
+    />
   ));
 };
 
-export function ContentfulApps() {
+export function ContentfulApps({ organizationId, addOn }) {
   const [isOpen, setOpen] = useState(false);
 
   const openModal = () => {
     setOpen(false);
-    openDeleteAppsModal();
+    openDeleteAppsModal(organizationId, addOn);
   };
 
   return (
@@ -57,3 +63,8 @@ export function ContentfulApps() {
     </Card>
   );
 }
+
+ContentfulApps.propTypes = {
+  organizationId: PropTypes.string,
+  addOn: PropTypes.object,
+};
