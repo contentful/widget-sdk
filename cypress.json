@@ -18,5 +18,6 @@
     "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
   },
   "chromeWebSecurity": false,
-  "blacklistHosts": ["*.launchdarkly.com"]
+  "blacklistHosts": ["*.launchdarkly.com"],
+  "experimentalFetchPolyfill": true
 }

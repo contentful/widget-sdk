@@ -73,19 +73,3 @@ Cypress.Commands.add('disableDegradedAppPerformance', disableDegradedAppPerforma
 Cypress.Commands.add('enableFeatureFlags', enableFeatureFlags);
 Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 Cypress.Commands.add('verifyNotification', verifyNotification);
-
-Cypress.Commands.overwrite('visit', (visit, url) => {
-  cy.readFile('test/cypress/support/unfetch.js').then({ timeout: 20000 }, (polyfill) => {
-    return visit(url, {
-      onBeforeLoad(win: Window) {
-        // Cypress cannot capture fetch requests.
-        // See https://github.com/cypress-io/cypress/issues/95.
-        // What we do here is we unset the default fetch
-        // and polyfill with unfetch which uses XHR which
-        // can be captured.
-        delete win.fetch;
-        win.eval(polyfill);
-      },
-    });
-  });
-});
