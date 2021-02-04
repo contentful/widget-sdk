@@ -107,6 +107,7 @@ const styles = {
   checkboxCell: css({
     paddingRight: 0,
     zIndex: tokens.zIndexDefault,
+    width: '40px',
   }),
   checkboxColumn: css({
     width: '40px',
