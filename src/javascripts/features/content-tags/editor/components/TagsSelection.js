@@ -15,7 +15,7 @@ import {
   useCreateTag,
 } from 'features/content-tags/core/hooks';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
-import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
+import { orderByLabel, tagsPayloadToOptions } from 'features/content-tags/editor/utils';
 
 import { css } from 'emotion';
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
@@ -80,7 +80,7 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
 
   const localFilteredTags = useMemo(() => {
     const filtered = orderByLabel(
-      tagsPayloadToValues(
+      tagsPayloadToOptions(
         filteredTags.filter(
           (tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id)
         )

@@ -1,16 +1,18 @@
-import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { Button, Modal, Workbench } from '@contentful/forma-36-react-components';
-import React, { useCallback, useEffect } from 'react';
-import { css } from 'emotion';
+import { Button, Modal, ModalLauncher, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { AddOrRemoveTags } from './AddOrRemoveTags';
-import { BulkTaggingProvider, useBulkTaggingProvider } from '../state/BulkTaggingProvider';
-import { SlideIn } from 'features/content-tags/core/components/SlideIn';
-import { useBulkSaveTags } from '../hooks/useBulkSaveTags';
-import { useComputeTags } from '../hooks/useComputeTags';
-import PropTypes from 'prop-types';
 import { usePrevious } from 'core/hooks';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { css } from 'emotion';
+import { SlideIn } from 'features/content-tags/core/components/SlideIn';
+import { AddOrRemoveTags } from 'features/content-tags/editor/components/AddOrRemoveTags';
+import { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveTags';
+import { useComputeTags } from 'features/content-tags/editor/hooks/useComputeTags';
+import {
+  BulkTaggingProvider,
+  useBulkTaggingProvider,
+} from 'features/content-tags/editor/state/BulkTaggingProvider';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect } from 'react';
 
 const styles = {
   tagsContent: css({

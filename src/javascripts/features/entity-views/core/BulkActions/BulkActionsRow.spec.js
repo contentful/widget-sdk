@@ -1,11 +1,12 @@
-import React from 'react';
-import { render, wait, fireEvent, act } from '@testing-library/react';
-import { upperFirst } from 'lodash';
-import { BulkActionsRow } from './BulkActionsRow';
-import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
+import { act, fireEvent, render, wait } from '@testing-library/react';
 import * as accessChecker from 'access_control/AccessChecker';
 import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
+import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
+import { upperFirst } from 'lodash';
+import React from 'react';
+import { BulkActionsRow } from './BulkActionsRow';
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -97,14 +98,24 @@ const renderComponent = (props = {}) => {
   const entityType = props.entityType || 'entry';
   const selectedEntities = props.selectedEntities || [];
   const updateEntities = jest.fn().mockResolvedValue('updated');
+  const defaultTagsRepo = {
+    createTag: jest.fn().mockResolvedValue(true),
+    readTags: jest.fn().mockResolvedValue({ total: 0, items: [] }),
+    updateTag: jest.fn().mockResolvedValue(true),
+    deleteTag: jest.fn().mockResolvedValue(true),
+  };
   const result = render(
-    <BulkActionsRow
-      colSpan={1}
-      entityType={entityType}
-      onActionComplete={onActionComplete}
-      updateEntities={updateEntities}
-      selectedEntities={selectedEntities}
-    />
+    <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
+      <ReadTagsProvider>
+        <BulkActionsRow
+          colSpan={1}
+          entityType={entityType}
+          onActionComplete={onActionComplete}
+          updateEntities={updateEntities}
+          selectedEntities={selectedEntities}
+        />
+      </ReadTagsProvider>
+    </TagsRepoContext.Provider>
   );
 
   return { updateEntities, onActionComplete, ...result };

@@ -1,3 +1,4 @@
+import { SpaceEnvContextProvider } from '../../../core/services/SpaceEnvContext/SpaceEnvContext';
 import { handleSaveError } from './RoleEditor';
 import { Notification } from '@contentful/forma-36-react-components';
 import { fixtures } from './__mocks__/fixtures';
@@ -31,6 +32,8 @@ jest.mock('services/localeStore', () => {
     isLocaleActive: jest.fn().mockReturnValue(true),
   };
 });
+
+jest.mock('ng/spaceContext');
 
 describe('role_editor/RoleEditor', () => {
   describe('component', () => {
@@ -233,12 +236,14 @@ function renderRoleEditor(props = {}) {
   };
 
   render(
-    <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
-      <ReadTagsProvider>
-        <FilteredTagsProvider>
-          <RoleEditor {...RoleEditorDefaultProps} {...props} />
-        </FilteredTagsProvider>
-      </ReadTagsProvider>
-    </TagsRepoContext.Provider>
+    <SpaceEnvContextProvider>
+      <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
+        <ReadTagsProvider>
+          <FilteredTagsProvider>
+            <RoleEditor {...RoleEditorDefaultProps} {...props} />
+          </FilteredTagsProvider>
+        </ReadTagsProvider>
+      </TagsRepoContext.Provider>
+    </SpaceEnvContextProvider>
   );
 }

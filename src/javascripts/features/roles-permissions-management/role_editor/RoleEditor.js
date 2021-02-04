@@ -8,7 +8,7 @@ import { Route, RouteTab } from 'core/routing';
 import { RouteProvider } from 'core/routing/RouteProvider';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { css } from 'emotion';
-import { TagPropType, tagsPayloadToValues } from 'features/content-tags';
+import { TagPropType, tagsPayloadToOptions } from 'features/content-tags';
 import { RoleEditorDetails } from 'features/roles-permissions-management/role_editor/RoleEditorDetails';
 import { RoleEditorEntities } from 'features/roles-permissions-management/role_editor/RoleEditorEntities';
 import { RoleEditorPermissions } from 'features/roles-permissions-management/role_editor/RoleEditorPermissions';
@@ -168,7 +168,7 @@ export class RoleEditor extends React.Component {
 
   get tagIds() {
     return this.props.hasContentTagsFeature
-      ? tagsPayloadToValues(this.props.tags).map(({ value }) => value)
+      ? tagsPayloadToOptions(this.props.tags).map(({ value }) => value)
       : [];
   }
 

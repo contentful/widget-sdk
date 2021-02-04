@@ -8,7 +8,7 @@ import { useAsync } from 'core/hooks';
 import { useBulkTaggingProvider } from 'features/content-tags/editor/state/BulkTaggingProvider';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { AddOrRemoveContentSection } from 'features/content-tags/editor/components/AddOrRemoveContentSection';
-import { MetadataTags } from 'features/content-tags';
+import { MetadataTags } from 'features/content-tags/core/state/MetadataTags';
 import { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getSpaceFeature, FEATURES, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render as renderReact, wait, fireEvent, waitFor } from '@testing-library/react';
+import { SpaceEnvContextProvider } from '../../core/services/SpaceEnvContext/SpaceEnvContext';
 import { Search as View } from './View';
 import { contentTypes, brand } from 'core/services/ContentQuery/__tests__/helpers';
 import keycodes from 'utils/keycodes';
@@ -35,7 +36,11 @@ const render = (props = {}) => {
     ...props,
   };
 
-  const wrapper = renderReact(<View {...defaultProps} />);
+  const wrapper = renderReact(
+    <SpaceEnvContextProvider>
+      <View {...defaultProps} />
+    </SpaceEnvContextProvider>
+  );
 
   return { wrapper, onUpdate };
 };

@@ -2,9 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 import { useHistoryReducer } from 'features/content-tags/core/hooks/useHistoryReducer';
 import { orderByLabel } from 'features/content-tags/editor/utils';
+import { TagRecordState, TagRecordStateWithChangeType } from '../../types';
 
-type TagRecordState = { value: string; occurrence: number; label: string };
-type TagRecordStateWithChangeType = TagRecordState & { changeType: string };
 type State = Map<string, TagRecordState>;
 
 type RenderState = {

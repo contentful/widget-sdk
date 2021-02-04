@@ -15,7 +15,7 @@ function useDeleteTag() {
     { isLoading: deleteTagIsLoading, error: deleteTagError, data: deleteTagData },
     deleteTag,
     resetDeleteTag,
-  ] = useAsyncFn(deleteTagCallback);
+  ] = useAsyncFn<boolean, [string, number]>(deleteTagCallback);
 
   return {
     deleteTagIsLoading,

@@ -1,19 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
 import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { Tag } from '@contentful/types';
 
-function ReadTagsProvider({ children }) {
+type Props = PropsWithChildren<{}>;
+
+const ReadTagsProvider: React.FC<Props> = ({ children }) => {
   const tagsRepo = useTagsRepo();
-  const [isLoading, setIsLoading] = useState(true);
-  const [cachedData, setCachedData] = useState([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [cachedData, setCachedData] = useState<Tag[]>([]);
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
-      if (!(await getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false))) {
+      if (!(await getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false)) || !tagsRepo) {
         return [];
       }
       const getResult = async (skip = 0) => {
@@ -31,7 +34,7 @@ function ReadTagsProvider({ children }) {
   );
 
   useEffect(() => {
-    if (typeof tagsRepo.readTags === 'function') {
+    if (typeof tagsRepo?.readTags === 'function') {
       fetchAll();
     }
   }, [fetchAll, tagsRepo]);
@@ -86,6 +89,6 @@ function ReadTagsProvider({ children }) {
       {children}
     </ReadTagsContext.Provider>
   );
-}
+};
 
 export { ReadTagsProvider };

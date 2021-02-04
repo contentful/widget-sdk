@@ -1,18 +1,18 @@
+import { Note, SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { useAsync } from 'core/hooks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { DEFAULT_FEATURES_STATUS, FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { css } from 'emotion';
+import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
+import { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
+import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
+import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
+import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
+import { orderByLabel, tagsPayloadToOptions } from 'features/content-tags/editor/utils';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import { useAsync } from 'core/hooks';
-import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
-import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
-import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
-import { SkeletonBodyText, SkeletonContainer, Note } from '@contentful/forma-36-react-components';
-import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
-import { FilteredTagsProvider } from 'features/content-tags';
-import { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getSpaceFeature, FEATURES, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
 
 const styles = {
   note: css({
@@ -29,7 +29,7 @@ function useLocalTags(tags, setTags) {
 
   useEffect(() => {
     const tagsIds = tags.map(({ sys: { id } }) => id) || [];
-    const lTags = tagsPayloadToValues(data).filter((tag) => tagsIds.some((t) => t === tag.value));
+    const lTags = tagsPayloadToOptions(data).filter((tag) => tagsIds.some((t) => t === tag.value));
     setLocalTags(orderByLabel(lTags));
   }, [tags, setLocalTags, data]);
 

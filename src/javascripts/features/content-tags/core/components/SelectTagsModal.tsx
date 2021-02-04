@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { Button, Modal, Spinner } from '@contentful/forma-36-react-components';
+import { Button, Modal, ModalLauncher, Spinner } from '@contentful/forma-36-react-components';
 import { ModalProps } from '@contentful/forma-36-react-components/dist/components/Modal/Modal';
-import { useCanManageTags, useIsInitialLoadingOfTags, useReadTags } from '../hooks';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { FilteredTagsProvider, MetadataTags, orderByLabel } from 'features/content-tags';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { TagSelectionValue } from '../Types';
-import { NoTagsContainer } from './NoTagsContainer';
+import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { go } from 'states/Navigator';
+import { TagOption } from 'features/content-tags/types';
+import { useIsInitialLoadingOfTags } from 'features/content-tags/core/hooks/useIsInitialLoadingOfTags';
+import { useCanManageTags } from 'features/content-tags/core/hooks/useCanManageTags';
+import { useReadTags } from 'features/content-tags/core/hooks/useReadTags';
+import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
+import { orderByLabel } from 'features/content-tags/editor/utils';
+import { MetadataTags } from 'features/content-tags/core/state/MetadataTags';
 
 const styles = {
   button: css({
@@ -40,7 +43,7 @@ type ModalLabelProps = {
 };
 
 type Props = {
-  selectedTags: TagSelectionValue[];
+  selectedTags: TagOption[];
   modalProps?: ModalLabelProps;
 } & Pick<ModalProps, 'onClose' | 'isShown'>;
 
@@ -60,7 +63,7 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
   const { currentEnvironment } = useSpaceEnvContext();
 
   const onAdd = useCallback(
-    (selection: TagSelectionValue) => {
+    (selection: TagOption) => {
       setLocalTags((prevState) => orderByLabel([selection, ...prevState]));
     },
     [setLocalTags]
@@ -131,9 +134,9 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
 };
 
 const selectTags = async (
-  selectedTags: TagSelectionValue[],
+  selectedTags: TagOption[],
   modalProps: ModalLabelProps
-): Promise<{ canceled: boolean; tags: TagSelectionValue[] }> => {
+): Promise<{ canceled: boolean; tags: TagOption[] }> => {
   return await ModalLauncher.open(({ onClose, isShown }) => (
     <SpaceEnvContextProvider>
       <MetadataTags>

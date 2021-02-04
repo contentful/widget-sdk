@@ -10,7 +10,7 @@ describe('utils', () => {
       ['Hello_world', 5],
       ['Hello:world-x', 5],
       ['Hello: world-x', 5],
-      ['HelloWorld', undefined],
+      ['HelloWorld', -1],
     ])('for given input %p resulting index is %p', (input, result) => {
       expect(getFirstDelimiterIndex(input, delimiters)).toBe(result);
     });

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTagsRepo } from 'features/content-tags/core/hooks/useTagsRepo';
 import { useAsyncFn } from 'core/hooks';
+import { Tag } from '@contentful/types';
 
 function useUpdateTag() {
   const tagsRepo = useTagsRepo();
@@ -16,7 +17,7 @@ function useUpdateTag() {
     { isLoading: updateTagIsLoading, error: updateTagError, data: updateTagData },
     updateTag,
     resetUpdateTag,
-  ] = useAsyncFn(createTagCallback);
+  ] = useAsyncFn<Tag, [string, string, number]>(createTagCallback);
 
   return {
     updateTagIsLoading,

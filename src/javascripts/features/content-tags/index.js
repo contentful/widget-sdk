@@ -29,8 +29,8 @@ export { SlideIn } from 'features/content-tags/core/components/SlideIn';
 export { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 export { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 export {
-  tagPayloadToValue,
-  tagsPayloadToValues,
+  tagPayloadToOption,
+  tagsPayloadToOptions,
   orderByLabel,
 } from 'features/content-tags/editor/utils';
 export { TagsBulkAction } from 'features/content-tags/editor/components/TagsBulkAction';
@@ -39,4 +39,3 @@ export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveT
 export { useTagsValuesForIdList } from 'features/content-tags/core/hooks/useTagsValuesForIdList';
 export { useTagsValuesForTagsList } from 'features/content-tags/core/hooks/useTagsValuesForTagsList';
 export { SelectTagsModal, selectTags } from 'features/content-tags/core/components/SelectTagsModal';
-export { TagSelectionValue } from 'features/content-tags/core/Types';

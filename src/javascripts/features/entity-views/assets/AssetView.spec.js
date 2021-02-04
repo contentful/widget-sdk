@@ -32,11 +32,11 @@ describe('AssetView', () => {
   it('should fetch scheduled actions', async () => {
     const spy = jest.spyOn(ScheduledActionsService, 'getJobs').mockResolvedValue({ items: [] });
     render(
-      <TagsRepoProvider>
-        <SpaceEnvContextProvider>
+      <SpaceEnvContextProvider>
+        <TagsRepoProvider>
           <AssetView goTo={jest.fn()} />
-        </SpaceEnvContextProvider>
-      </TagsRepoProvider>
+        </TagsRepoProvider>
+      </SpaceEnvContextProvider>
     );
 
     await waitFor(() => expect(spy).toHaveBeenCalled());

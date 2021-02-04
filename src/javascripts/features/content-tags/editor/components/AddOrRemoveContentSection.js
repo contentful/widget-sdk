@@ -20,9 +20,9 @@ import {
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
-import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
+import { orderByLabel, tagsPayloadToOptions } from 'features/content-tags/editor/utils';
 import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
-import { useCanManageTags } from '../../core/hooks/useCanManageTags';
+import { useCanManageTags } from 'features/content-tags/core/hooks';
 import * as stringUtils from 'utils/StringUtils';
 
 function useAddTag(addToBulkList) {
@@ -84,7 +84,7 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   } = useBulkTaggingProvider();
 
   const localFilteredTags = useMemo(() => {
-    const orderedPayload = orderByLabel(tagsPayloadToValues(filteredTags));
+    const orderedPayload = orderByLabel(tagsPayloadToOptions(filteredTags));
     const filtered = orderedPayload.filter((tag) => currentState && !currentState.has(tag.value));
 
     return filtered.splice(0, Math.min(10, filtered.length));

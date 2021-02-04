@@ -6,7 +6,7 @@ import { Operator } from 'core/services/ContentQuery';
 import {
   useReadTags,
   TagsMultiSelectAutocomplete,
-  tagsPayloadToValues,
+  tagsPayloadToOptions,
   orderByLabel,
   useFilteredTags,
 } from 'features/content-tags';
@@ -109,9 +109,9 @@ export const MetadataTagWrapper = (props) => {
     // Normalize incoming tags and use them as initial state
     // missing tags are thrown out...
 
-    const selectedTags = tagsPayloadToValues(selectedTagIds.map(getTag).filter(Boolean));
+    const selectedTags = tagsPayloadToOptions(selectedTagIds.map(getTag).filter(Boolean));
     const orderedFilteredTags = orderByLabel(
-      tagsPayloadToValues(filteredTags.filter((tag) => !selectedTagIds.includes(tag.sys.id)))
+      tagsPayloadToOptions(filteredTags.filter((tag) => !selectedTagIds.includes(tag.sys.id)))
     );
     const tags = [...selectedTags, ...orderedFilteredTags];
     // we are making sure that the user will see all (tags > limit) the selected on top

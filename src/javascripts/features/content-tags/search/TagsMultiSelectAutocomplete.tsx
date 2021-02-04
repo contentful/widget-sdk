@@ -5,9 +5,10 @@ import { Autocomplete } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
-import { FilterOption } from '../core/Types';
 import { Keys } from 'features/entity-search';
-const summarizeTags = (tags: FilterOption[]) => {
+import { TagOption } from 'features/content-tags/types';
+
+const summarizeTags = (tags: TagOption[]) => {
   if (!Array.isArray(tags) || tags.length === 0) {
     return '';
   }
@@ -43,9 +44,9 @@ const defaultStyles = {
 };
 
 type TagsMultiSelectAutocompleteProps = {
-  tags: FilterOption[];
-  selectedTags: FilterOption[];
-  onChange: (tags: FilterOption[]) => void;
+  tags: TagOption[];
+  selectedTags: TagOption[];
+  onChange: (tags: TagOption[]) => void;
   onQueryChange: (query: string) => void;
   setIsRemovable: (removable: boolean) => void;
   maxHeight: number;
@@ -53,7 +54,7 @@ type TagsMultiSelectAutocompleteProps = {
   isFocused?: boolean;
 };
 
-function addOrRemoveTag(currentList: FilterOption[], addedOrRemovedTag: FilterOption) {
+function addOrRemoveTag(currentList: TagOption[], addedOrRemovedTag: TagOption) {
   if (currentList.some(({ value }) => value === addedOrRemovedTag.value)) {
     // remove
     return currentList.filter(({ value }) => value !== addedOrRemovedTag.value);
@@ -78,13 +79,13 @@ const TagsMultiSelectAutocomplete = ({
 
   setIsRemovable(!isSearching);
 
-  const onSelectedTagChange = (tag: FilterOption) => {
+  const onSelectedTagChange = (tag: TagOption) => {
     onChange(addOrRemoveTag(selectedTags, tag));
   };
 
   // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
   // and the event toggles tags, so two events == the opposite)
-  const tagSelectRow = (tag: FilterOption) => (
+  const tagSelectRow = (tag: TagOption) => (
     <li className={css(defaultStyles.DropdownCheckboxField)}>
       <Checkbox
         labelText={tag.label}
@@ -133,7 +134,7 @@ const TagsMultiSelectAutocomplete = ({
       </div>
       {isSearching && (
         <span onKeyDown={handleSearchKeyDown}>
-          <Autocomplete<FilterOption>
+          <Autocomplete<TagOption>
             items={sortedTags}
             width={'full'}
             onChange={onSelectedTagChange}

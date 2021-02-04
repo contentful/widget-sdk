@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
 import { Button, Spinner } from '@contentful/forma-36-react-components';
-import { selectTags, useFilteredTags, useTagsValuesForIdList } from 'features/content-tags';
+import {
+  selectTags,
+  useFilteredTags,
+  useReadTags,
+  useTagsValuesForIdList,
+} from 'features/content-tags';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { FakeSelect } from './FakeSelect';
@@ -27,8 +32,9 @@ export const RuleTagsSelection: React.FC<Props> = ({
   fieldIsIncomplete,
 }) => {
   const ruleTags = useMemo(() => rule.metadataTagIds || [], [rule]);
+  const { reset } = useReadTags();
   const { setLimit, setExcludedTags } = useFilteredTags();
-  const { tagValues, refreshTagValues } = useTagsValuesForIdList(ruleTags);
+  const tagValues = useTagsValuesForIdList(ruleTags);
 
   // always only display up to 10 tags in dropdown
   useEffect(() => {
@@ -48,7 +54,7 @@ export const RuleTagsSelection: React.FC<Props> = ({
     });
     if (!result.canceled) {
       onChange({ target: { value: result.tags } });
-      refreshTagValues();
+      reset();
     }
   };
 

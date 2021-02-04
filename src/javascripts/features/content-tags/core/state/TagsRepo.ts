@@ -1,5 +1,7 @@
-function create(spaceEndpoint, environmentId) {
-  async function createTag(id, name, version) {
+import { TagsRepoType } from './TagsRepoContext';
+
+function create(spaceEndpoint: any, environmentId: string): TagsRepoType {
+  async function createTag(id: string, name: string, version?: number) {
     const data = {
       name,
       sys: {
@@ -18,7 +20,7 @@ function create(spaceEndpoint, environmentId) {
     );
   }
 
-  async function readTags(skip, limit) {
+  async function readTags(skip: number, limit: number) {
     return await spaceEndpoint({
       method: 'GET',
       path: ['environments', environmentId, 'tags'],
@@ -26,11 +28,11 @@ function create(spaceEndpoint, environmentId) {
     });
   }
 
-  async function updateTag(id, name, version) {
+  async function updateTag(id: string, name: string, version: number) {
     return createTag(id, name, version);
   }
 
-  async function deleteTag(id, version) {
+  async function deleteTag(id: string, version: number) {
     return await spaceEndpoint(
       {
         method: 'DELETE',
