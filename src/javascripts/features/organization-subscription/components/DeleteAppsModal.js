@@ -34,7 +34,7 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
       confirmLabel="Remove apps from organization"
       isConfirmDisabled={disableConfirm}
       onConfirm={() => {
-        requestRemoveAddOn(organizationId, addOn.productRatePlanId);
+        requestRemoveAddOn(organizationId, addOn.sys.id);
         onClose();
       }}
       onCancel={() => onClose()}>

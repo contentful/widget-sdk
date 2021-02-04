@@ -229,7 +229,7 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
-  const showContentfulAppsCard = isOrgOwnerOrAdmin && !!addOn;
+  const showContentfulAppsCard = isOrgOwnerOrAdmin && !!addOn && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
