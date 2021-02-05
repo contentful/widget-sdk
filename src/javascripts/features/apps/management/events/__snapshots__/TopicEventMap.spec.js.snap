@@ -25,14 +25,11 @@ Array [
 exports[`Entity Types and Actions should have these disabled actions for the entity types 1`] = `
 Object {
   "AppInstallation": Array [
-    "create",
-    "save",
-    "auto_save",
     "archive",
     "unarchive",
+    "auto_save",
     "publish",
     "unpublish",
-    "delete",
   ],
   "ContentType": Array [
     "archive",
@@ -47,5 +44,6 @@ Array [
   "ContentType",
   "Entry",
   "Asset",
+  "AppInstallation",
 ]
 `;

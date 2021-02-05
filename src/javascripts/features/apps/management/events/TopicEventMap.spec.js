@@ -42,6 +42,16 @@ const defaultTopicMap = {
     unarchive: false,
     unpublish: false,
   },
+  AppInstallation: {
+    archive: false,
+    create: false,
+    delete: false,
+    publish: false,
+    save: false,
+    auto_save: false,
+    unarchive: false,
+    unpublish: false,
+  },
 };
 
 describe('Entity Types and Actions', () => {
