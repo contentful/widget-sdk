@@ -1,8 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid, Workbench } from '@contentful/forma-36-react-components';
+import {
+  Grid,
+  Workbench,
+  Flex,
+  Tooltip,
+  Button,
+  Heading,
+} from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
 
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getDefaultPaymentMethod, getBillingDetails } from 'features/organization-billing';
@@ -10,6 +19,7 @@ import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { EVENTS } from '../utils/analyticsTracking';
 import { PlatformKind } from '../utils/platformContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
+import { Price } from 'core/components/formatting';
 import { actions, SpacePurchaseState } from '../context';
 
 import { Breadcrumbs } from 'features/breadcrumbs';
@@ -24,6 +34,28 @@ import {
   SpaceUpgradeReceiptStep,
   ComposeAndLaunchReceiptStep,
 } from '../steps';
+
+const styles = {
+  workbenchContent: css({
+    padding: `${tokens.spacingL} 0 0`,
+  }),
+  grid: css({
+    maxWidth: '1280px',
+    margin: '0 auto',
+    paddingBottom: tokens.spacingL,
+  }),
+  stickyBar: css({
+    position: 'sticky',
+    bottom: 0,
+    left: 0,
+    backgroundColor: tokens.colorWhite,
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+    '& > div': { maxWidth: '1280px' },
+  }),
+  monthlyCost: css({
+    marginRight: tokens.spacingL,
+  }),
+};
 
 const STEPS = {
   PLATFORM_SELECTION: 'PLATFORM_SELECTION',
@@ -94,21 +126,28 @@ export const SpacePurchaseContainer = ({ track }) => {
     setCurrentStep(nextStep);
   };
 
+  const onPlatformSelect = () => {
+    if (selectedComposeLaunch) {
+      goToStep(organization.isBillable ? STEPS.CONFIRMATION : STEPS.BILLING_DETAILS);
+    } else {
+      goToStep(STEPS.SPACE_DETAILS);
+    }
+  };
+
+  let monthlyCost = 0;
+  if (selectedPlatform?.price) {
+    monthlyCost += selectedPlatform.price;
+  }
+  if (selectedPlan?.price) {
+    monthlyCost += selectedPlan.price;
+  }
+
+  const continueDisabled = !selectedPlatform || !selectedPlan;
+
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.PLATFORM_SELECTION:
-        return (
-          <PlatformSelectionStep
-            track={track}
-            onSubmit={() => {
-              if (selectedComposeLaunch) {
-                goToStep(organization.isBillable ? STEPS.CONFIRMATION : STEPS.BILLING_DETAILS);
-              } else {
-                goToStep(STEPS.SPACE_DETAILS);
-              }
-            }}
-          />
-        );
+        return <PlatformSelectionStep track={track} />;
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
@@ -214,11 +253,40 @@ export const SpacePurchaseContainer = ({ track }) => {
         title="Space purchase"
         icon={<ProductIcon icon="Purchase" size="large" />}
       />
-      <Workbench.Content>
-        <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingXl">
+      <Workbench.Content type="full" className={styles.workbenchContent}>
+        <Grid className={styles.grid} columns={1} rows="repeat(2, 'auto')" rowGap="spacingXl">
           <Breadcrumbs items={generateBreadcrumbItems(currentStep)} />
           {getComponentForStep(currentStep)}
         </Grid>
+
+        {currentStep === STEPS.PLATFORM_SELECTION && (
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            paddingTop="spacingL"
+            paddingBottom="spacingL"
+            fullWidth
+            className={styles.stickyBar}>
+            <Flex flexDirection="row" justifyContent="flex-end" alignItems="center" fullWidth>
+              <Heading className={styles.monthlyCost}>
+                Monthly {selectedPlan ? 'total: ' : 'subtotal: '}
+                <Price value={monthlyCost} />
+              </Heading>
+              <Tooltip
+                place="top-end"
+                content={
+                  continueDisabled ? 'Select an organization package and space to continue' : ''
+                }>
+                <Button
+                  testId="platform-select-continue-button"
+                  disabled={continueDisabled}
+                  onClick={onPlatformSelect}>
+                  Continue
+                </Button>
+              </Tooltip>
+            </Flex>
+          </Flex>
+        )}
       </Workbench.Content>
     </Workbench>
   );

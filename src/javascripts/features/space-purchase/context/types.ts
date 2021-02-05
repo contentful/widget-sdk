@@ -4,13 +4,15 @@ import type { Organization, SpaceData } from 'core/services/SpaceEnvContext/type
 import type { ProductRatePlan } from 'features/pricing-entities';
 import type { BillingDetails, PaymentDetails, SpaceProductRatePlan } from '../types';
 
+export const NONE = 'None';
+
 export interface State {
   organization?: Organization;
   currentSpace?: SpaceData;
   currentSpaceRatePlan?: SpaceProductRatePlan;
   spaceRatePlans?: SpaceProductRatePlan[];
   subscriptionPlans?: unknown;
-  selectedPlan?: SpaceProductRatePlan;
+  selectedPlan?: SpaceProductRatePlan | 'None';
   selectedPlatform?: SelectedPlatform;
   sessionId?: string;
   paymentDetails?: PaymentDetails;

@@ -1,14 +1,14 @@
-import React, { useContext, useState, useEffect, useCallback, createRef } from 'react';
+import React, { useContext, useEffect, useCallback, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Button, Card, Flex, Grid, Heading, Tooltip } from '@contentful/forma-36-react-components';
+import { Card, Flex, Grid, Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
-import { actions, SpacePurchaseState } from '../../context';
+import { actions, SpacePurchaseState, NONE } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
 import { ProductCard } from '../../components/ProductCard';
 import { SpacePlanCards } from '../../components/SpacePlanCards';
@@ -46,26 +46,12 @@ const styles = {
     transition: 'opacity 0.2s ease-in-out',
     '& p': { fontWeight: tokens.fontWeightMedium },
   }),
-  stickyBar: css({
-    // necessary css hack to position the bar sticky to the bottom without overlapping Worckbench’s scrollbar
-    // and to fix some visible pixels from the rendered elements below the bar
-    position: 'sticky',
-    bottom: `-${tokens.spacingL}`,
-    marginLeft: '-5%',
-    width: '110%',
-    backgroundColor: tokens.colorWhite,
-    padding: `${tokens.spacingL} 0`,
-    '& > div': {
-      maxWidth: '1280px',
-      margin: '0 auto',
-    },
-  }),
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
 export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ onSubmit, track }) => {
+export const PlatformSelectionStep = ({ track }) => {
   const {
     state: {
       organization,
@@ -82,8 +68,6 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
 
   const spaceSectionRef = createRef();
 
-  const [chooseSpaceLaterSelected, setChooseSpaceLaterSelected] = useState(false);
-
   const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
 
@@ -91,12 +75,10 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
     // we unselect any space plan when user changes platform
     if (selectedPlatform) {
       dispatch({ type: actions.SET_SELECTED_PLAN, payload: undefined });
-      setChooseSpaceLaterSelected(false);
     }
   }, [dispatch, selectedPlatform]);
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
-  const continueDisabled = !selectedPlatform || (!selectedPlan && !chooseSpaceLaterSelected);
 
   const scrollToSpaceSelection = useCallback(() => {
     spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -108,13 +90,6 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
     });
 
     dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
-
-    // select/unselect "Choose space later" card
-    if (!plan) {
-      setChooseSpaceLaterSelected(true);
-    } else {
-      setChooseSpaceLaterSelected(false);
-    }
   };
 
   const onSelectPlatform = (platform) => {
@@ -214,9 +189,9 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
               className={styles.chooseLaterCard}
               padding="large"
               testId="choose-space-later-button"
-              selected={chooseSpaceLaterSelected}
+              selected={selectedPlan === NONE}
               onClick={() => {
-                onSelectSpace(undefined);
+                onSelectSpace(NONE);
               }}>
               <Heading element="p">Choose space later</Heading>
             </Card>
@@ -227,25 +202,9 @@ export const PlatformSelectionStep = ({ onSubmit, track }) => {
           <FAQAccordion entries={faqEntries} track={track} />
         </div>
       </Grid>
-
-      <div className={styles.stickyBar}>
-        <Flex flexDirection="row" justifyContent="flex-end">
-          <Tooltip
-            place="top-end"
-            content={continueDisabled ? 'Select organization package and space to continue' : ''}>
-            <Button
-              testId="platform-select-continue-button"
-              disabled={continueDisabled}
-              onClick={onSubmit}>
-              Continue
-            </Button>
-          </Tooltip>
-        </Flex>
-      </div>
     </section>
   );
 };
 PlatformSelectionStep.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
   track: PropTypes.func.isRequired,
 };

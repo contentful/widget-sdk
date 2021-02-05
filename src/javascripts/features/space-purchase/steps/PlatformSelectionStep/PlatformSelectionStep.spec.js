@@ -9,7 +9,6 @@ import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
 import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 
 const mockTrack = jest.fn();
-const mockOnSubmit = jest.fn();
 const mockOrganization = FakeFactory.Organization();
 
 const mockSelectedPlatform = {
@@ -186,7 +185,6 @@ describe('PlatformSelectionStep', () => {
 
 async function build(customProps, customState) {
   const props = {
-    onSubmit: mockOnSubmit,
     track: mockTrack,
     ...customProps,
   };
