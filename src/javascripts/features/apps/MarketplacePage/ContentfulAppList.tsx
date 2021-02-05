@@ -6,6 +6,7 @@ import { MarketplaceApp } from 'features/apps-core';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { domain } from 'Config';
 import { beginSpaceCreation } from 'services/CreateSpace';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
 
@@ -56,6 +57,7 @@ export const ContentfulAppTile = ({
 }: ContentfulAppTileProps) => {
   const baseUrl = `https://${slug}.${domain}`;
   const { isMasterEnvironment, environmentId } = spaceInformation.envMeta;
+  const canBuy = isOwnerOrAdmin({ sys: { id: organizationId } });
   const spaceEnvPath = `/spaces/${spaceInformation.spaceId}${
     isMasterEnvironment ? '' : `/environments/${environmentId}`
   }`;
@@ -63,7 +65,7 @@ export const ContentfulAppTile = ({
   const showInstall = installAction && isPurchased && canManage && !isInstalled;
   const showUninstall = uninstallAction && isInstalled && canManage;
   const showLearnMore = !isInstalled && !(isPurchased && canManage);
-  const showBuyNow = !isPurchased && canManage && !isTrialAvailable;
+  const showBuyNow = !isPurchased && canBuy && !isTrialAvailable;
   const showTrial = isTrialAvailable && canManage && !isPurchased;
   const showOpen = isInstalled && isPurchased;
 
