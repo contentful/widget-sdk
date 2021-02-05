@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { noop } from 'lodash';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import {
   Checkbox,
   CheckboxField,
@@ -103,13 +103,11 @@ const styles = {
   }),
   statusTableHeader: css({
     zIndex: tokens.zIndexDefault,
+    width: '17%',
   }),
   checkboxCell: css({
     paddingRight: 0,
     zIndex: tokens.zIndexDefault,
-    width: '40px',
-  }),
-  checkboxColumn: css({
     width: '40px',
   }),
   statusColumn: css({
@@ -261,15 +259,6 @@ export const EntityList = ({
         testId={`${entityType}-list`}
         aria-label="Content Search Results"
         cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
-        <colgroup>
-          <col className={styles.checkboxColumn} />
-          {/* checkbox column */}
-          {displayedFields.map(({ colWidth = 'auto' }, i) => (
-            <col key={i} className={css({ width: colWidth })} />
-          ))}
-          <col className={styles.statusColumn} />
-          {/* status column */}
-        </colgroup>
         <TableHead offsetTop={isEdge() ? '0px' : '-24px'} isSticky className={styles.tableHead}>
           <TableRow testId="column-names">
             <TableCell className={styles.checkboxCell} onClick={toggleAllSelected}>
@@ -282,7 +271,16 @@ export const EntityList = ({
               />
             </TableCell>
             {displayedFields.map(
-              ({ id, className, name, onClick, isActiveSort, isSortable, direction }) => {
+              ({
+                id,
+                className,
+                name,
+                onClick,
+                isActiveSort,
+                isSortable,
+                direction,
+                colWidth: width = 'auto',
+              }) => {
                 return (
                   <SortableTableCell
                     key={id}
@@ -292,7 +290,7 @@ export const EntityList = ({
                     onClick={onClick}
                     direction={direction}
                     aria-label={name}
-                    className={cn(className) || styles.tableHeadCell}>
+                    className={cx(className, styles.tableHeadCell, css({ width }))}>
                     <span className={styles.fieldWrapper} title={name}>
                       {name}
                     </span>
@@ -351,12 +349,12 @@ export const EntityList = ({
                           onClick={() => toggleSelected(entity)}
                         />
                         {displayedFields.map((field) => {
-                          const { id, className } = field;
+                          const { id, className, colWidth: width = 'auto' } = field;
                           const uniqueId = `${entityId}_${id}`;
                           return (
                             <TableCell
                               key={uniqueId}
-                              className={className}
+                              className={cx(className, css({ width }))}
                               testId={id}
                               onClick={onClick}>
                               <SecretiveLink
@@ -367,7 +365,7 @@ export const EntityList = ({
                             </TableCell>
                           );
                         })}
-                        <TableCell testId="status">
+                        <TableCell testId="status" className={styles.statusColumn}>
                           <StatusCell href={href} jobs={jobs} entity={entity} />
                         </TableCell>
                       </TableRow>
