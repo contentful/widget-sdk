@@ -9,8 +9,8 @@ import {
   Icon,
   List,
   ListItem,
+  Flex,
   SkeletonContainer,
-  SkeletonImage,
   SkeletonBodyText,
   Tooltip,
 } from '@contentful/forma-36-react-components';
@@ -27,6 +27,8 @@ const pulse = keyframes({
   },
 });
 
+const illustrationHeight = '150px';
+
 const styles = {
   card: css({
     position: 'relative',
@@ -40,12 +42,11 @@ const styles = {
     transition: 'opacity 0.2s ease-in-out',
   }),
   platform: css({
-    gridTemplateRows: '70px auto 1fr auto',
+    gridTemplateRows: `${illustrationHeight} auto 1fr auto`,
   }),
   spacePlan: css({
     gridTemplateRows: 'auto 1fr auto 2fr',
   }),
-
   newTag: css({
     '&:before': {
       content: '"New!"',
@@ -62,6 +63,10 @@ const styles = {
     },
   }),
 
+  illustration: css({
+    width: '100%',
+    height: illustrationHeight,
+  }),
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
   }),
@@ -123,9 +128,9 @@ export const ProductCard = ({
         testId={testId}>
         {/** TODO: replace skeletons with final illustration */}
         {cardType === 'platform' && (
-          <SkeletonContainer svgWidth={70} svgHeight={70}>
-            <SkeletonImage />
-          </SkeletonContainer>
+          <Flex justifyContent="center" className={styles.illustration}>
+            {content.illustration}
+          </Flex>
         )}
 
         <Heading element="h3" className={styles.mediumWeight}>
@@ -187,6 +192,7 @@ ProductCard.propTypes = {
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,
+    illustration: PropTypes.node,
     description: PropTypes.string.isRequired,
     price: PropTypes.number,
     limits: PropTypes.arrayOf(PropTypes.string),

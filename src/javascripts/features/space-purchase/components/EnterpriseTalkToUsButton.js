@@ -38,6 +38,7 @@ function EnterpriseTalkToUsButton({
       href={CONTACT_SALES_HREF}
       target="_blank"
       rel="noopener noreferrer"
+      buttonType="muted"
       onClick={handleClick}
       testId={testId}
       disabled={disabled}>

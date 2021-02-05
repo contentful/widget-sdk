@@ -2,19 +2,15 @@ import React from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import {
-  Heading,
-  Paragraph,
-  Icon,
-  List,
-  ListItem,
-  SkeletonContainer,
-  SkeletonImage,
-} from '@contentful/forma-36-react-components';
+import { Heading, Paragraph, Icon, List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
+
+import EnterpriseIlustration from 'svg/illustrations/apps_purchase_3.svg';
+
+const illustrationHeight = '150px';
 
 const styles = {
   mediumWeight: css({
@@ -23,11 +19,14 @@ const styles = {
   centeredText: css({
     textAlign: 'center',
   }),
+  illustration: css({
+    height: illustrationHeight,
+  }),
   enterprise: css({
     backgroundColor: tokens.colorElementLightest,
     padding: tokens.spacingL,
     display: 'grid',
-    gridTemplateRows: '70px auto 1fr auto',
+    gridTemplateRows: `${illustrationHeight} auto 1fr auto`,
     rowGap: tokens.spacingXs,
     justifyItems: 'center',
     alignItems: 'center',
@@ -54,10 +53,7 @@ const styles = {
 export const EnterpriseCard = ({ organizationId, onSelect }) => {
   return (
     <div className={styles.enterprise} data-test-id="enterprise-card">
-      {/** TODO: replace skeletons with final illustration */}
-      <SkeletonContainer svgWidth={70} svgHeight={70}>
-        <SkeletonImage />
-      </SkeletonContainer>
+      <EnterpriseIlustration className={styles.illustration} />
 
       <Heading element="h3" className={cx(styles.centeredText, styles.mediumWeight)}>
         Enterprise
