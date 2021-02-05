@@ -4,7 +4,8 @@ import {
   open as openChangeSpaceWarningModal,
   MODAL_TYPES,
 } from 'app/SpaceWizards/ChangeSpaceWarning';
-import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getSpacePlanForSpace } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
@@ -46,7 +47,7 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
 
   const organization = await getOrganization(organizationId);
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
-  const spacePlan = await getSingleSpacePlan(orgEndpoint, space.sys.id);
+  const spacePlan = await getSpacePlanForSpace(orgEndpoint, space.sys.id);
 
   // if newSpacePurchase flag is on and org is OnDemand or Free, they should go to /new_space
   const spacePurchaseFlowAllowedForPlanChange = await isSpacePurchaseFlowAllowedForChange(

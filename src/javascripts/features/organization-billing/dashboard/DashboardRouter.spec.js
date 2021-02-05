@@ -25,7 +25,6 @@ jest.mock('utils/ResourceUtils', () => ({
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getBasePlan: jest.requireActual('account/pricing/PricingDataProvider').getBasePlan,
   isSelfServicePlan: jest.fn(),
   isEnterprisePlan: jest.fn(),
 }));

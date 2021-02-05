@@ -28,17 +28,14 @@ import {
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
   WIZARD_EVENTS,
-  transformSpaceRatePlans,
+  transformSpaceProductRatePlans,
   trackWizardEvent,
   goToBillingPage,
   sendParnershipEmail,
 } from '../shared/utils';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
+import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
+import { getAllPlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
@@ -61,17 +58,17 @@ const initialFetch = (organization) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
 
-  const [freeSpaceResource, rawSpaceRatePlans, templates, subscriptionPlans] = await Promise.all([
+  const [freeSpaceResource, rawSpaceProductRatePlans, templates, plans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSpaceRatePlans(endpoint),
+    getSpaceProductRatePlans(endpoint),
     getTemplatesList(),
-    getSubscriptionPlans(endpoint),
+    getAllPlans(endpoint),
   ]);
 
-  const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
-  const spaceRatePlans = transformSpaceRatePlans({
+  const currentSubscriptionPrice = calculateTotalPrice(plans);
+  const spaceRatePlans = transformSpaceProductRatePlans({
     organization,
-    spaceRatePlans: rawSpaceRatePlans,
+    spaceProductRatePlans: rawSpaceProductRatePlans,
     freeSpaceResource,
   });
 

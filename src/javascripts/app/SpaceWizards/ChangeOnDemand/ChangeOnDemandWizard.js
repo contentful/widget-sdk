@@ -14,18 +14,15 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
+import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
+import { getAllPlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
 import {
   changeSpacePlan,
-  transformSpaceRatePlans,
+  transformSpaceProductRatePlans,
   goToBillingPage,
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
@@ -58,27 +55,25 @@ const initialFetch = (organization, space) => async () => {
   const [
     spaceResources,
     freeSpaceResource,
-    subscriptionPlans,
-    rawSpaceRatePlans,
+    plans,
+    rawSpaceProductRatePlans,
     recommendedPlan,
   ] = await Promise.all([
     spaceResourceService.getAll(),
     orgResources.get(FREE_SPACE_IDENTIFIER),
-    getSubscriptionPlans(orgEndpoint),
-    getSpaceRatePlans(orgEndpoint, space.sys.id),
+    getAllPlans(orgEndpoint),
+    getSpaceProductRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
   ]);
 
-  const spaceRatePlans = transformSpaceRatePlans({
+  const spaceRatePlans = transformSpaceProductRatePlans({
     organization,
-    spaceRatePlans: rawSpaceRatePlans,
+    spaceProductRatePlans: rawSpaceProductRatePlans,
     freeSpaceResource,
   });
 
-  const currentSpaceSubscriptionPlan = subscriptionPlans.items.find(
-    (plan) => plan.gatekeeperKey === space.sys.id
-  );
-  const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
+  const currentSpaceSubscriptionPlan = plans.find((plan) => plan.gatekeeperKey === space.sys.id);
+  const currentSubscriptionPrice = calculateTotalPrice(plans);
 
   return {
     spaceResources,

@@ -5,7 +5,7 @@ import { SpacePlanSelection } from 'features/space-plan-assignment';
 import { LoadingCard } from './LoadingCard';
 import { actions, SpaceCreationState } from '../context';
 import { useAsync } from 'core/hooks/useAsync';
-import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 import createResourceService from 'services/ResourceService';
@@ -23,8 +23,8 @@ export const SpacePlanStep = ({ orgId, onNext }) => {
     const orgResources = createResourceService(orgId, 'organization');
 
     const [plans, ratePlans, freeSpaceResource] = await Promise.all([
-      getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
-      getProductPlans(orgEndpoint),
+      getSpacePlans(orgEndpoint),
+      getAllProductRatePlans(orgEndpoint),
       orgResources.get(FREE_SPACE_IDENTIFIER),
     ]);
 

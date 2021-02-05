@@ -1,6 +1,8 @@
 import { get, uniqueId, uniq } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
+import { getAllPlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
+
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
 export const SELF_SERVICE = 'Self-service';
@@ -55,41 +57,6 @@ export function isPOCSpacePlan(plan) {
 }
 
 /**
- * Load all subscription plans (space and base) from organization endpoint.
- * Note: this collection endpoint doesn't have pagination.
- *
- * @param {object}  endpoint - organization endpoint
- * @param {string?} params.plan_type - 'base' or 'space'
- * @returns {Promise<object>}
- *
- */
-export function getSubscriptionPlans(endpoint, params) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['plans'],
-      query: params,
-    },
-    alphaHeader
-  );
-}
-
-/**
- * Get platform base plan
- * @param {object} endpoint an organization endpoint
- * @returns {Promise<object>} base plan object
- */
-export function getBasePlan(endpoint) {
-  return (
-    getSubscriptionPlans(endpoint, { plan_type: 'base' })
-      // although you can only have 1 base plan, the endpoint
-      // still returns a list
-      .then((data) => data.items[0])
-      .catch((error) => error)
-  );
-}
-
-/**
  * Get all subscription plans (base and space) of the org with the associated
  * spaces for space plans, free spaces, and linked user data for each space's
  * `createdBy` field.
@@ -97,9 +64,9 @@ export function getBasePlan(endpoint) {
  * @returns {object} subscription plans w. spaces & users
  */
 export async function getPlansWithSpaces(endpoint) {
-  const [productPlans, subscriptionPlans, spaces] = await Promise.all([
-    getProductPlans(endpoint),
-    getSubscriptionPlans(endpoint),
+  const [productRatePlans, subscriptionPlans, spaces] = await Promise.all([
+    getAllProductRatePlans(endpoint),
+    getAllPlans(endpoint),
     getAllSpaces(endpoint),
   ]);
 
@@ -114,18 +81,18 @@ export async function getPlansWithSpaces(endpoint) {
     },
   });
 
-  const freeSpaceProductPlan = productPlans.find(
+  const freeSpaceProductPlan = productRatePlans.find(
     (productPlan) => productPlan.productPlanType === 'free_space'
   );
 
   const spacesWithoutSubscriptionPlan = spaces.filter(
-    (space) => !subscriptionPlans.items.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey)
+    (space) => !subscriptionPlans.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey)
   );
 
   return {
     plans: subscriptionPlans,
     items: [
-      ...subscriptionPlans.items.map((subscriptionPlan) => ({
+      ...subscriptionPlans.map((subscriptionPlan) => ({
         ...subscriptionPlan,
         ...(subscriptionPlan.gatekeeperKey && {
           space: linkUser(spaces.find(({ sys }) => sys.id === subscriptionPlan.gatekeeperKey)),
@@ -157,26 +124,6 @@ export function changeSpacePlan(endpoint, productRatePlanId) {
 }
 
 /**
- * Update a space plan with a new assigned space.
- * The only required attributes are the `sys.id` and `gatekeeperKey`, `gatekeeperKey` being the space id.
- * @param {object} orgEndpoint
- * @param {object} plan a space plan object containing a `gatekeeperKey` property with a space id as the value
- * @returns{Promise<object>} updated plan
- */
-export function updateSpacePlan(orgEndpoint, plan) {
-  const planId = plan?.sys?.id;
-
-  return orgEndpoint(
-    {
-      method: 'PUT',
-      path: ['plans', planId],
-      data: plan,
-    },
-    alphaHeader
-  );
-}
-
-/**
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of features in {name, internal_name}
@@ -190,70 +137,6 @@ export function getEnabledFeatures(endpoint) {
     },
     alphaHeader
   ).then((features) => (features && features.items) || []);
-}
-
-/* Gets the space plan for the space with corresponding space id
- * @param {object} endpoint an organization endpoint
- * @returns {Promise<object>} space plan object
- */
-export function getSingleSpacePlan(endpoint, spaceId) {
-  return getSubscriptionPlans(endpoint, {
-    plan_type: 'space',
-    gatekeeper_key: spaceId,
-  }).then((data) => data.items[0]);
-}
-
-export function getBaseSubscription(endpoint) {
-  const query = {
-    plan_type: 'base',
-  };
-
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['plans'],
-      query,
-    },
-    alphaHeader
-  ).then((data) => data.items[0]);
-}
-
-/**
- * Gets collection of space product rate plans.
- *
- * @param {object} endpoint an organization endpoint
- * @returns {Promise<object[]>} a Promise that resolves into an array of space rate plans
- */
-export function getSpaceRatePlans(endpoint, spaceId) {
-  const query = {
-    plan_type: 'space',
-  };
-
-  if (spaceId) {
-    query.space_id = spaceId;
-  }
-
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['product_rate_plans'],
-      query,
-    },
-    alphaHeader
-  ).then((data) => data.items);
-}
-
-/**
- * Get base and all space rate plans available for the organization
- */
-export function getProductPlans(endpoint) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['product_rate_plans'],
-    },
-    alphaHeader
-  ).then((data) => data.items);
 }
 
 /**

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid, Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -39,30 +39,31 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const spaceEndpoint = createSpaceEndpoint(spaceId);
       const resourceService = createResourceService(spaceId, 'space');
 
-      const [plans, ratePlans, space, spaceResources] = await Promise.all([
-        getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
-        getProductPlans(orgEndpoint),
+      const [plans, productRatePlans, space, spaceResources] = await Promise.all([
+        getSpacePlans(orgEndpoint),
+        getAllProductRatePlans(orgEndpoint),
         getSpace(spaceEndpoint),
         resourceService.getAll(),
       ]);
 
-      const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
-      const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
+      const freePlan = productRatePlans.find((plan) => plan.productPlanType === 'free_space');
+      const currentPlan = plans.find((plan) => plan.gatekeeperKey === spaceId);
 
       // filter plans that already have a space assigned (gatekeeperKey)
-      const availablePlans = filter(plans.items, (plan) => !plan.gatekeeperKey);
+      const availablePlans = filter(plans, (plan) => !plan.gatekeeperKey);
 
       // enhence plans with roleSet in order to display tooltip text for Roles
       const enhancedPlans = availablePlans.map((plan) => {
         return {
           ...plan,
           roleSet:
-            ratePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ?? DEFAULT_ROLE_SET,
+            productRatePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ??
+            DEFAULT_ROLE_SET,
         };
       });
 
       return {
-        ratePlans,
+        ratePlans: productRatePlans,
         plans: sortBy(enhancedPlans, 'price'),
         space,
         currentPlan,

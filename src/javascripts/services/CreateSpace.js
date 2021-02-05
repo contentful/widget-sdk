@@ -10,8 +10,9 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 

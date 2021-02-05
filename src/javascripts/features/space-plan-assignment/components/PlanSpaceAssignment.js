@@ -6,7 +6,7 @@ import { Grid, Workbench, Notification } from '@contentful/forma-36-react-compon
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans, getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SpaceSelection } from './SpaceSelection';
@@ -35,9 +35,9 @@ export function PlanSpaceAssignment({ orgId, planId }) {
     useCallback(async () => {
       const orgEndpoint = createOrganizationEndpoint(orgId);
 
-      const [plans, ratePlans, spaces] = await Promise.all([
-        getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
-        getProductPlans(orgEndpoint),
+      const [plans, productRatePlans, spaces] = await Promise.all([
+        getSpacePlans(orgEndpoint),
+        getAllProductRatePlans(orgEndpoint),
         getAllSpaces(orgEndpoint),
       ]);
 
@@ -52,7 +52,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         (space, idx) => (spaceResourcesBySpace[space.sys.id] = keyBy(allResources[idx], 'sys.id'))
       );
 
-      const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
+      const freePlan = productRatePlans.find((plan) => plan.productPlanType === 'free_space');
       // Assigned plans by space needed for filtering and confirmation screen
       const plansBySpace = {};
       spaces.forEach((space) => {

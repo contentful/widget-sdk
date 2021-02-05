@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { get, isUndefined } from 'lodash';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getPlansWithSpaces, getProductPlans } from 'account/pricing/PricingDataProvider';
+import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
+import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
@@ -69,7 +70,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
 
   const [plansWithSpaces, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
-    getProductPlans(endpoint),
+    getAllProductRatePlans(endpoint),
     fetchNumMemberships(organizationId),
   ]);
 

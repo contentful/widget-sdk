@@ -1,4 +1,5 @@
-import { getBasePlan, isFreePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
+import { isFreePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 
 import { isSpacePurchaseFlowAllowed } from './isSpacePurchaseFlowAllowed';
@@ -10,6 +11,9 @@ jest.mock('data/EndpointFactory', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreePlan: jest.fn(() => false),
   isSelfServicePlan: jest.fn(() => false),
+}));
+
+jest.mock('features/pricing-entities', () => ({
   getBasePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 

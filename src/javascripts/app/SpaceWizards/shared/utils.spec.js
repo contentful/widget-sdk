@@ -496,14 +496,14 @@ describe('utils', () => {
 
   describe('transformSpaceRatePlans', () => {
     it('should return an empty array if given no space rate plans', () => {
-      expect(utils.transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
+      expect(utils.transformSpaceProductRatePlans({ organization: mockOrganization })).toEqual([]);
     });
 
     it('should mark the transformed plan with isFree is the productPlanType is free_space', () => {
       expect(
-        utils.transformSpaceRatePlans({
+        utils.transformSpaceProductRatePlans({
           organization: mockOrganization,
-          spaceRatePlans: [freeSpace],
+          spaceProductRatePlans: [freeSpace],
           freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
         })
       ).toEqual([
@@ -515,9 +515,9 @@ describe('utils', () => {
 
     it('should mark a plan as disabled if there are any unavailabilityReasons', () => {
       expect(
-        utils.transformSpaceRatePlans({
+        utils.transformSpaceProductRatePlans({
           organization: mockOrganization,
-          spaceRatePlans: [unavailableFreeSpace],
+          spaceProductRatePlans: [unavailableFreeSpace],
           freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
         })
       ).toEqual([
@@ -529,9 +529,9 @@ describe('utils', () => {
 
     it('should mark a plan as disabled if the the plan is free and cannot create more free spaces', () => {
       expect(
-        utils.transformSpaceRatePlans({
+        utils.transformSpaceProductRatePlans({
           organization: mockOrganization,
-          spaceRatePlans: [freeSpace],
+          spaceProductRatePlans: [freeSpace],
           freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
         })
       ).toEqual([
@@ -546,9 +546,9 @@ describe('utils', () => {
       const organization = Fake.Organization({ isBillable: false });
 
       expect(
-        utils.transformSpaceRatePlans({
+        utils.transformSpaceProductRatePlans({
           organization,
-          spaceRatePlans: [mediumSpace],
+          spaceProductRatePlans: [mediumSpace],
           freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
         })
       ).toEqual([
@@ -590,7 +590,7 @@ describe('utils', () => {
         ];
       };
 
-      const spaceRatePlans = [
+      const spaceProductRatePlans = [
         Fake.Plan({
           productPlanType: 'free_space',
           productRatePlanCharges: createProductRatePlanCharges(),
@@ -611,9 +611,9 @@ describe('utils', () => {
       ];
 
       expect(
-        utils.transformSpaceRatePlans({
+        utils.transformSpaceProductRatePlans({
           organization: mockOrganization,
-          spaceRatePlans,
+          spaceProductRatePlans,
           freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
         })
       ).toEqual([
@@ -642,7 +642,7 @@ describe('utils', () => {
               number: 5,
             },
           ],
-          ...spaceRatePlans[0],
+          ...spaceProductRatePlans[0],
         },
         {
           isFree: false,
@@ -669,7 +669,7 @@ describe('utils', () => {
               number: 50,
             },
           ],
-          ...spaceRatePlans[1],
+          ...spaceProductRatePlans[1],
         },
         {
           isFree: false,
@@ -696,7 +696,7 @@ describe('utils', () => {
               number: 25,
             },
           ],
-          ...spaceRatePlans[2],
+          ...spaceProductRatePlans[2],
         },
         {
           isFree: false,
@@ -723,7 +723,7 @@ describe('utils', () => {
               number: 5,
             },
           ],
-          ...spaceRatePlans[3],
+          ...spaceProductRatePlans[3],
         },
       ]);
     });

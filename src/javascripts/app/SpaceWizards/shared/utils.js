@@ -148,12 +148,16 @@ export function goToBillingPage(organization, intent, sessionId, onClose) {
   onClose && onClose();
 }
 
-export function transformSpaceRatePlan({ organization, plan, freeSpaceResource }) {
-  const isFree = plan.productPlanType === 'free_space';
-  const includedResources = getIncludedResources(plan.productRatePlanCharges);
+export function transformSpaceProductRatePlan({
+  organization,
+  productRatePlan,
+  freeSpaceResource,
+}) {
+  const isFree = productRatePlan.productPlanType === 'free_space';
+  const includedResources = getIncludedResources(productRatePlan.productRatePlanCharges);
   let disabled = false;
 
-  if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+  if (productRatePlan.unavailabilityReasons && productRatePlan.unavailabilityReasons.length > 0) {
     disabled = true;
   } else if (isFree) {
     disabled = !canCreate(freeSpaceResource);
@@ -161,12 +165,16 @@ export function transformSpaceRatePlan({ organization, plan, freeSpaceResource }
     disabled = true;
   }
 
-  return { ...plan, isFree, includedResources, disabled };
+  return { ...productRatePlan, isFree, includedResources, disabled };
 }
 
-export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
-  return spaceRatePlans.map((plan) =>
-    transformSpaceRatePlan({ organization, plan, freeSpaceResource })
+export function transformSpaceProductRatePlans({
+  organization,
+  spaceProductRatePlans = [],
+  freeSpaceResource,
+}) {
+  return spaceProductRatePlans.map((productRatePlan) =>
+    transformSpaceProductRatePlan({ organization, productRatePlan, freeSpaceResource })
   );
 }
 

@@ -12,7 +12,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import { getOrganization } from 'services/TokenStore';
-import { getBasePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 import userEvent from '@testing-library/user-event';
 
@@ -49,12 +49,14 @@ jest.mock('services/TokenStore', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreePlan: jest.fn((org) => org.customerType === 'Free'),
   isSelfServicePlan: jest.fn((org) => org.customerType === 'Self-service'),
-  getBasePlan: jest.fn(),
 }));
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
   removeMembership: jest.fn(),
   reinvite: jest.fn(),
+}));
+jest.mock('features/pricing-entities', () => ({
+  getBasePlan: jest.fn(),
 }));
 
 jest.useFakeTimers();

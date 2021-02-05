@@ -1,3 +1,5 @@
+import { Tier } from './Shared';
+
 export interface ProductRatePlan {
   committed: boolean;
   contentfulProductId?: string;
@@ -16,6 +18,14 @@ export interface ProductRatePlan {
   unavailabilityReasons?: UnavailabilityReason[];
 }
 
+export interface SpaceProductRatePlan extends ProductRatePlan {
+  productPlanType: 'space';
+}
+
+export interface AddOnProductRatePlan extends ProductRatePlan {
+  productPlanType: 'add_on';
+}
+
 interface RoleSet {
   id: string;
   roles: string[];
@@ -24,14 +34,6 @@ interface RoleSet {
 interface UnavailabilityReason {
   type: string;
   additionalInfo: string;
-}
-
-interface Tier {
-  tier: number;
-  price: number;
-  startingUnit: number;
-  endingUnit: number;
-  priceFormat: 'FlatFee';
 }
 
 export interface ProductRatePlanCharge {
@@ -46,17 +48,4 @@ export interface ProductRatePlanCharge {
   tiers?: Tier[];
   unitType: string;
   uom: unknown;
-}
-
-export interface BasePlan {
-  committed: boolean;
-  contentfulProductId?: string;
-  customerType: 'Self-service';
-  gatekeeperKey?: string;
-  name: string;
-  planType: 'base';
-  price: number;
-  productName: string;
-  productRatePlanId: string;
-  ratePlanCharges: ProductRatePlanCharge[];
 }

@@ -2,13 +2,6 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import {
-  getBasePlan,
-  getProductPlans,
-  getSpaceRatePlans,
-  getSingleSpacePlan,
-  getSubscriptionPlans,
-} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {
   fetchSpacePurchaseContent,
@@ -24,7 +17,14 @@ import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
-import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import {
+  getAddOnProductRatePlans,
+  getSpaceProductRatePlans,
+  getSpacePlans,
+  getSpacePlanForSpace,
+  getBasePlan,
+  getAllProductRatePlans,
+} from 'features/pricing-entities';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -63,18 +63,13 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getProductPlans: jest.fn(),
-  getBasePlan: jest.fn(),
-  getSpaceRatePlans: jest.fn(),
-  getSingleSpacePlan: jest.fn(),
-  getSubscriptionPlans: jest.fn(),
-  isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
-  isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
-}));
-
 jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn(),
+  getSpaceProductRatePlans: jest.fn(),
+  getSpacePlans: jest.fn(),
+  getBasePlan: jest.fn(),
+  getSpacePlanForSpace: jest.fn(),
+  getAllProductRatePlans: jest.fn(),
 }));
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
@@ -111,23 +106,20 @@ describe('SpacePurchaseRoute', () => {
     createResourceService().get.mockResolvedValue(mockFreeSpaceResource);
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
     getTemplatesList.mockResolvedValue();
-    getProductPlans.mockResolvedValue();
-    getSpaceRatePlans.mockResolvedValue(mockSpaceRatePlans);
+    getAllProductRatePlans.mockResolvedValue();
+    getSpaceProductRatePlans.mockResolvedValue(mockSpaceRatePlans);
     fetchSpacePurchaseContent.mockResolvedValue();
     getOrganizationMembership.mockReturnValue({ role: mockUserRole });
     isOwner.mockReturnValue(true);
     getBasePlan.mockReturnValue({ customerType: mockOrganizationPlatform });
     transformSpaceRatePlans.mockReturnValue();
-    getSubscriptionPlans.mockReturnValue({ items: [] });
+    getSpacePlans.mockReturnValue([]);
     getVariation.mockResolvedValue(false);
     getSpaces.mockResolvedValue({
       total: 1,
       items: [],
     });
-    getAddOnProductRatePlans.mockResolvedValue({
-      total: 1,
-      items: [mockComposeProductRatePlan],
-    });
+    getAddOnProductRatePlans.mockResolvedValue([mockComposeProductRatePlan]);
   });
 
   it('should render the generic loading component until the apps purchase state is loaded', async () => {
@@ -284,7 +276,7 @@ describe('SpacePurchaseRoute', () => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
-    expect(getSpaceRatePlans).toBeCalled();
+    expect(getSpaceProductRatePlans).toBeCalled();
     expect(transformSpaceRatePlans).toBeCalledWith(mockSpaceRatePlans, mockFreeSpaceResource);
   });
 
@@ -295,7 +287,7 @@ describe('SpacePurchaseRoute', () => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
-    expect(getSubscriptionPlans).toBeCalledWith(mockEndpoint, { plan_type: 'space' });
+    expect(getSpacePlans).toBeCalledWith(mockEndpoint);
   });
 
   it('should fetch the space plan selection FAQs by default', async () => {
@@ -328,7 +320,7 @@ describe('SpacePurchaseRoute', () => {
       gatekeeperKey: 'abcd',
     };
 
-    getSingleSpacePlan.mockResolvedValue(mockSpaceRatePlan);
+    getSpacePlanForSpace.mockResolvedValue(mockSpaceRatePlan);
     TokenStore.getSpace.mockReturnValueOnce(mockSpace);
     transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 

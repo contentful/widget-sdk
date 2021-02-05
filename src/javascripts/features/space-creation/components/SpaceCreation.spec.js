@@ -4,7 +4,7 @@ import { SpaceCreation } from './SpaceCreation';
 import { SpaceCreationState } from '../context/SpaceCreationContext';
 import * as Fake from 'test/helpers/fakeFactory';
 import createResourceService from 'services/ResourceService';
-import { getProductPlans, getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
+import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { Notification } from '@contentful/forma-36-react-components';
 import userEvent from '@testing-library/user-event';
 
@@ -112,9 +112,12 @@ const mockTemplate = {
 };
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  getProductPlans: jest.fn(),
-  getSubscriptionPlans: jest.fn(),
   isFreeProductPlan: jest.fn((plan) => plan.name === mockFreePlan.name),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  getSpacePlans: jest.fn(),
+  getAllProductRatePlans: jest.fn(),
 }));
 
 jest.mock('services/ResourceService', () => {
@@ -150,8 +153,8 @@ describe('SpaceCreation', () => {
   };
 
   beforeEach(() => {
-    getSubscriptionPlans.mockResolvedValue({ total: mockPlans.length, items: mockPlans });
-    getProductPlans.mockResolvedValue(mockRatePlans);
+    getSpacePlans.mockResolvedValue({ total: mockPlans.length, items: mockPlans });
+    getAllProductRatePlans.mockResolvedValue(mockRatePlans);
     createResourceService().get.mockResolvedValue(mockFreeSpaceResources);
     mockCreateSpace.mockReset();
   });

@@ -8,14 +8,7 @@ import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import {
-  getBasePlan,
-  getSpaceRatePlans,
-  getSingleSpacePlan,
-  getSubscriptionPlans,
-  isSelfServicePlan,
-  isFreePlan,
-} from 'account/pricing/PricingDataProvider';
+import { isSelfServicePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { getSpaces } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -32,7 +25,13 @@ import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
-import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import {
+  getAddOnProductRatePlans,
+  getSpaceProductRatePlans,
+  getSpacePlans,
+  getBasePlan,
+  getSpacePlanForSpace,
+} from 'features/pricing-entities';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
@@ -67,10 +66,10 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
     spaceId ? TokenStore.getSpace(spaceId) : undefined,
-    spaceId ? getSingleSpacePlan(endpoint, spaceId) : undefined,
+    spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
-    getSpaceRatePlans(endpoint, spaceId),
-    getSubscriptionPlans(endpoint, { plan_type: 'space' }),
+    getSpaceProductRatePlans(endpoint, spaceId),
+    getSpacePlans(endpoint),
     createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
@@ -117,7 +116,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       sessionId,
       templatesList,
       spaceRatePlans,
-      subscriptionPlans: subscriptionPlans.items,
+      subscriptionPlans,
       freeSpaceResource,
       pageContent,
       selectedPlatform,
