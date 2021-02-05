@@ -2,7 +2,7 @@ import React from 'react';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { FEATURES, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { fetchContentfulApps, getAppsRepo } from 'features/apps-core';
 import {
@@ -59,8 +59,8 @@ const usePurchasedApps = (organizationId: string | undefined) => {
     }
 
     Promise.all<boolean>([
-      getOrgFeature(organizationId, 'compose_app', false),
-      getOrgFeature(organizationId, 'launch_app', false),
+      getOrgFeature(organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
+      getOrgFeature(organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
     ])
       .catch((error) => {
         logger.logError('Failed to fetch contentful apps product catalog flags.', { error });

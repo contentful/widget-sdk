@@ -31,7 +31,15 @@ export const DEFAULT_FEATURES_STATUS = {
 // Please remember these are sent as query string parameters, so
 // we may hit the URL length limit (~8k chars) some day.
 const COMMON_FOR_SPACE = ['basic_apps'];
-const COMMON_FOR_ORG = ['custom_sidebar', 'teams', 'self_configure_sso', 'scim', 'advanced_apps'];
+const COMMON_FOR_ORG = [
+  'custom_sidebar',
+  'teams',
+  'self_configure_sso',
+  'scim',
+  'advanced_apps',
+  FEATURES.PC_ORG_LAUNCH_APP,
+  FEATURES.PC_ORG_COMPOSE_APP,
+];
 
 // This module exposes two methods for getting feature statuses
 // from the Product Catalog API:
