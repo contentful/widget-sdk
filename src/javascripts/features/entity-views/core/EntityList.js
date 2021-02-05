@@ -271,7 +271,7 @@ export const EntityList = ({
               />
             </TableCell>
             {displayedFields.map(
-              ({ id, className, name, onClick, isActiveSort, isSortable, direction, colWidth }) => {
+              ({ id, className, name, onClick, isActiveSort, isSortable, direction, colWidth: width = 'auto' }) => {
                 return (
                   <SortableTableCell
                     key={id}
@@ -284,7 +284,7 @@ export const EntityList = ({
                     className={cx(
                       className,
                       styles.tableHeadCell,
-                      css({ width: colWidth ? colWidth : 'auto' })
+                      css({ width })
                     )}>
                     <span className={styles.fieldWrapper} title={name}>
                       {name}
@@ -344,14 +344,14 @@ export const EntityList = ({
                           onClick={() => toggleSelected(entity)}
                         />
                         {displayedFields.map((field) => {
-                          const { id, className, colWidth } = field;
+                          const { id, className, colWidth: width = 'auto' } = field;
                           const uniqueId = `${entityId}_${id}`;
                           return (
                             <TableCell
                               key={uniqueId}
                               className={cx(
                                 className,
-                                css({ width: colWidth ? colWidth : 'auto' })
+                                css({ width })
                               )}
                               testId={id}
                               onClick={onClick}>
