@@ -13,7 +13,7 @@
     "@babel/polyfill": "^7.8.7",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "0.14.0",
-    "@contentful/entity-search": "0.8.3",
+    "@contentful/entity-search": "^0.8.4",
     "@contentful/errors": "^1.20.2",
     "@contentful/experience-cma-utils": "0.4.3",
     "@contentful/experience-components": "0.28.0",
