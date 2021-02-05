@@ -12,3 +12,4 @@ export { ContentfulAppTile } from './MarketplacePage/ContentfulAppList';
 export type { ContentfulAppTileProps } from './MarketplacePage/ContentfulAppList';
 export type { SpaceInformation } from './AppDetailsModal/shared';
 export { canUserManageApps } from './routes';
+export { uninstalled } from './AppLifecycleTracking';

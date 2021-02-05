@@ -7,13 +7,17 @@ import {
   ModalConfirm,
   FieldGroup,
   CheckboxField,
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeAddOnPlan } from 'account/pricing/PricingDataProvider';
+import { uninstalled as trackUninstallationReason } from 'features/apps';
 
 async function requestRemoveAddOn(organizationId, addOnId) {
   const endpoint = createOrganizationEndpoint(organizationId);
   await removeAddOnPlan(endpoint, addOnId);
+  Notification.success('Compose + Launch app was uninstalled successfully.');
+  trackUninstallationReason('Compose + Launch', ['test']);
 }
 
 export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
@@ -23,7 +27,7 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
   const [optionThree, setOptionThree] = useState(false);
   const [optionFour, setOptionFour] = useState(false);
   const [optionFive, setOptionFive] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const disableConfirm = !optionOne && !optionTwo && !optionThree && !optionFour && !optionFive;
 
   return (
@@ -33,9 +37,12 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
       title="Remove apps from organization"
       confirmLabel="Remove apps from organization"
       isConfirmDisabled={disableConfirm}
-      onConfirm={() => {
-        requestRemoveAddOn(organizationId, addOn.sys.id);
+      isConfirmLoading={loading}
+      onConfirm={async () => {
+        setLoading(true);
+        await requestRemoveAddOn(organizationId, addOn.sys.id);
         onClose();
+        setLoading(false);
       }}
       onCancel={() => onClose()}>
       <Typography>
