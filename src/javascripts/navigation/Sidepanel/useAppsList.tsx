@@ -53,7 +53,10 @@ const usePurchasedApps = (organizationId: string | undefined) => {
   > | null>(null);
 
   React.useEffect(() => {
-    if (!organizationId) return;
+    if (!organizationId) {
+      setPurchasedApps({ compose: false, launch: false });
+      return;
+    }
 
     Promise.all<boolean>([
       getOrgFeature(organizationId, 'compose_app', false),
@@ -87,7 +90,10 @@ export const useAppsList = () => {
   const purchasedApps = usePurchasedApps(organizationId);
 
   React.useEffect(() => {
-    if (!spaceId || !organizationId || !environmentId) return;
+    if (!spaceId || !organizationId || !environmentId) {
+      setIsLoading(false);
+      return;
+    }
 
     const spaceEnvPath = `spaces/${spaceId}${
       isCurrentEnvironmentMaster(currentSpace) ? '' : `/environments/${environmentId}`
