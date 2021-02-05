@@ -271,7 +271,16 @@ export const EntityList = ({
               />
             </TableCell>
             {displayedFields.map(
-              ({ id, className, name, onClick, isActiveSort, isSortable, direction, colWidth: width = 'auto' }) => {
+              ({
+                id,
+                className,
+                name,
+                onClick,
+                isActiveSort,
+                isSortable,
+                direction,
+                colWidth: width = 'auto',
+              }) => {
                 return (
                   <SortableTableCell
                     key={id}
@@ -281,11 +290,7 @@ export const EntityList = ({
                     onClick={onClick}
                     direction={direction}
                     aria-label={name}
-                    className={cx(
-                      className,
-                      styles.tableHeadCell,
-                      css({ width })
-                    )}>
+                    className={cx(className, styles.tableHeadCell, css({ width }))}>
                     <span className={styles.fieldWrapper} title={name}>
                       {name}
                     </span>
@@ -349,10 +354,7 @@ export const EntityList = ({
                           return (
                             <TableCell
                               key={uniqueId}
-                              className={cx(
-                                className,
-                                css({ width })
-                              )}
+                              className={cx(className, css({ width }))}
                               testId={id}
                               onClick={onClick}>
                               <SecretiveLink
