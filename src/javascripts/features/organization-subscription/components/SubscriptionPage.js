@@ -118,6 +118,7 @@ export function SubscriptionPage({
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
   appTrialEnabled,
+  composeAndLaunchEnabled,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
   useEffect(() => {
@@ -229,7 +230,8 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
-  const showContentfulAppsCard = isOrgOwnerOrAdmin && !!addOn && !enterprisePlan;
+  const showContentfulAppsCard =
+    composeAndLaunchEnabled && isOrgOwnerOrAdmin && !!addOn && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
@@ -358,6 +360,7 @@ SubscriptionPage.propTypes = {
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
   appTrialEnabled: PropTypes.bool,
+  composeAndLaunchEnabled: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {

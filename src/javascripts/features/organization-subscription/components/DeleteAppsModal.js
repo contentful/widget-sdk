@@ -30,6 +30,7 @@ async function requestRemoveAddOn(organizationId, addOnId, parsedReasons) {
     await removeAddOnPlan(endpoint, addOnId);
     Notification.success('Compose + Launch app was uninstalled successfully.');
     trackUninstallationReason('Compose + Launch', parsedReasons);
+    document.location.reload();
   } catch (e) {
     Notification.error("Couldn't uninstall Compose + Launch. Contact support.");
     logError(`Failed to uninstall Compose + Launch`, {
@@ -64,8 +65,8 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
     setLoading(true);
     const parsedReasons = parseReasons(checkedReasons, textFeedback);
     await requestRemoveAddOn(organizationId, addOn.sys.id, parsedReasons);
-    onClose();
     setLoading(false);
+    onClose();
   };
 
   return (
