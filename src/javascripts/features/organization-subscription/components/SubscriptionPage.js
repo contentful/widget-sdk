@@ -22,12 +22,15 @@ import tokens from '@contentful/forma-36-tokens';
 import { links } from '../utils';
 import { go } from 'states/Navigator';
 
+import { getModule } from 'core/NgRegistry';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { getAppsRepo } from 'features/apps-core';
+import { AppManager } from 'features/apps';
 
 import { BasePlan } from './BasePlan';
 import { UsersForPlan } from './UsersForPlan';
@@ -187,7 +190,21 @@ export function SubscriptionPage({
   const handleStartAppTrial = async () => {
     Notification.success('Preparing the trial...');
     try {
-      await startAppTrial(organization.sys.id);
+      await startAppTrial(organization.sys.id, async (appNames) => {
+        try {
+          const apps = await Promise.all(appNames.map(getAppsRepo().getApp));
+          const spaceContext = getModule('spaceContext');
+          const appsManager = new AppManager(
+            spaceContext.cma,
+            spaceContext.getEnvironmentId(),
+            spaceContext.getId()
+          );
+          await Promise.allSettled(apps.map((app) => appsManager.installApp(app, true)));
+        } catch (e) {
+          console.log(e);
+          throw new Error('Failed to install Apps');
+        }
+      });
       // TODO: trial comms
       Notification.success('The App trial has started!');
     } catch (err) {
