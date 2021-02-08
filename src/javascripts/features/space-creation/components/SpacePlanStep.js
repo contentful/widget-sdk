@@ -32,7 +32,7 @@ export const SpacePlanStep = ({ orgId, onNext }) => {
       (plan) => plan.productPlanType === FREE_SPACE_IDENTIFIER
     );
     // filter plans that already have a space assigned (gatekeeperKey)
-    const availablePlans = plans.items.filter((plan) => !plan.gatekeeperKey);
+    const availablePlans = plans.filter((plan) => !plan.gatekeeperKey);
 
     // enhence plans with roleSet in order to display tooltip text for Roles
     const enhancedPlans = availablePlans.map((plan) => {
