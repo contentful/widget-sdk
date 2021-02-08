@@ -405,6 +405,18 @@ describe('SpacePurchaseContainer', () => {
     });
   });
 
+  it('should not allow a user without any paid spaces to select community space after selecting compose+launch', async () => {
+    await build(null, {
+      subscriptionPlans: [{ name: 'Community' }],
+      purchasingApps: true,
+    });
+
+    // select compose+launch
+    userEvent.click(screen.getAllByTestId('platform-card')[1]);
+
+    expect(screen.getAllByTestId('space-plan-card')[0]).toHaveAttribute('aria-disabled');
+  });
+
   describe('navigation', () => {
     beforeEach(() => {
       getDefaultPaymentMethod.mockResolvedValue({
@@ -417,9 +429,6 @@ describe('SpacePurchaseContainer', () => {
       await build(null, { purchasingApps: true });
 
       // 1. Platform selection
-      await waitFor(() => {
-        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
-      });
       // select a platform
       userEvent.click(screen.getAllByTestId('platform-card')[0]);
 
@@ -486,9 +495,6 @@ describe('SpacePurchaseContainer', () => {
       });
 
       // 1. Platform selection
-      await waitFor(() => {
-        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
-      });
       // select a platform
       userEvent.click(screen.getAllByTestId('platform-card')[0]);
 
@@ -530,9 +536,6 @@ describe('SpacePurchaseContainer', () => {
       });
 
       // 1. Platform selection
-      await waitFor(() => {
-        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
-      });
       // select a platform
       userEvent.click(screen.getAllByTestId('platform-card')[1]);
 
@@ -589,9 +592,6 @@ describe('SpacePurchaseContainer', () => {
       });
 
       // 1. Platform selection
-      await waitFor(() => {
-        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
-      });
       // select a platform
       userEvent.click(screen.getAllByTestId('platform-card')[1]);
 
