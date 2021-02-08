@@ -28,7 +28,7 @@ const initialFetch = (orgId, dispatch) => async () => {
     getTemplatesList(),
   ]);
 
-  const selectedPlan = spacePlans.items.find((plan) => plan.sys.id === planId);
+  const selectedPlan = spacePlans.find((plan) => plan.sys.id === planId);
   let enhancedPlan;
   if (selectedPlan) {
     // enhance selectedPlan with roleSet in order to display tooltip text for Roles
