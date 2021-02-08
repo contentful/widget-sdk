@@ -194,6 +194,7 @@ export const validEvents = {
     'fair_use_policy_clicked',
     'get_in_touch_clicked',
     'help_link_clicked',
+    'app_trial_start_clicked',
   ],
   space_purchase: [
     'begin',

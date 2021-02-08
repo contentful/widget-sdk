@@ -7,6 +7,7 @@ import {
   Workbench,
   Heading,
   DisplayText,
+  ModalLauncher,
   Note,
   Paragraph,
   Typography,
@@ -39,6 +40,7 @@ import {
   isOrganizationOnTrial,
   SpacesListForMembers,
   startAppTrial,
+  StartAppTrialModal,
 } from 'features/trials';
 
 const styles = {
@@ -193,6 +195,12 @@ export function SubscriptionPage({
     }
   };
 
+  const showModal = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <StartAppTrialModal isShown={isShown} onClose={onClose} onConfirm={handleStartAppTrial} />
+    ));
+  };
+
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
@@ -227,7 +235,7 @@ export function SubscriptionPage({
             {organization && <EnterpriseTrialInfo organization={organization} />}
             {appTrialEnabled && (
               <div>
-                <TextLink icon="PlusCircle" onClick={handleStartAppTrial}>
+                <TextLink icon="PlusCircle" onClick={showModal}>
                   Start Contentful App trial
                 </TextLink>
               </div>
