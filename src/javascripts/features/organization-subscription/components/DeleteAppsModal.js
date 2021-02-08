@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Paragraph,
   TextField,
@@ -8,27 +9,64 @@ import {
   FieldGroup,
   CheckboxField,
   Notification,
+  ListItem,
+  List,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeAddOnPlan } from 'account/pricing/PricingDataProvider';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
+import { logError } from 'services/logger';
 
-async function requestRemoveAddOn(organizationId, addOnId) {
-  const endpoint = createOrganizationEndpoint(organizationId);
-  await removeAddOnPlan(endpoint, addOnId);
-  Notification.success('Compose + Launch app was uninstalled successfully.');
-  trackUninstallationReason('Compose + Launch', ['test']);
+const styles = {
+  listItem: css({
+    listStyleType: 'none',
+  }),
+};
+
+async function requestRemoveAddOn(organizationId, addOnId, parsedReasons) {
+  try {
+    const endpoint = createOrganizationEndpoint(organizationId);
+    await removeAddOnPlan(endpoint, addOnId);
+    Notification.success('Compose + Launch app was uninstalled successfully.');
+    trackUninstallationReason('Compose + Launch', parsedReasons);
+  } catch (e) {
+    Notification.error("Couldn't uninstall Compose + Launch. Contact support.");
+    logError(`Failed to uninstall Compose + Launch`, {
+      error: e,
+    });
+  }
+}
+
+const reasons = [
+  'Does not do what I expected',
+  'Not needed anymore',
+  'Apps are not performing well',
+  'I have created my own solution',
+  'I was just testing it out',
+];
+
+function parseReasons(checkedReasons, customReason) {
+  return Object.keys(checkedReasons)
+    .filter((reasonId) => checkedReasons[reasonId])
+    .map((reason) => reasons[reason])
+    .concat(customReason ? [{ custom: customReason }] : []);
 }
 
 export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
   const [textFeedback, setTextFeedback] = useState('');
-  const [optionOne, setOptionOne] = useState(false);
-  const [optionTwo, setOptionTwo] = useState(false);
-  const [optionThree, setOptionThree] = useState(false);
-  const [optionFour, setOptionFour] = useState(false);
-  const [optionFive, setOptionFive] = useState(false);
+  const [checkedReasons, setCheckedReasons] = useState({});
   const [loading, setLoading] = useState(false);
-  const disableConfirm = !optionOne && !optionTwo && !optionThree && !optionFour && !optionFive;
+
+  const disableConfirm = !Object.values(checkedReasons).some((reason) => !!reason);
+
+  const onConfirm = async () => {
+    setLoading(true);
+    const parsedReasons = parseReasons(checkedReasons, textFeedback);
+    await requestRemoveAddOn(organizationId, addOn.sys.id, parsedReasons);
+    onClose();
+    setLoading(false);
+  };
 
   return (
     <ModalConfirm
@@ -36,63 +74,43 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
       intent="negative"
       title="Remove apps from organization"
       confirmLabel="Remove apps from organization"
-      isConfirmDisabled={disableConfirm}
+      isConfirmDisabled={disableConfirm || loading}
       isConfirmLoading={loading}
-      onConfirm={async () => {
-        setLoading(true);
-        await requestRemoveAddOn(organizationId, addOn.sys.id);
-        onClose();
-        setLoading(false);
-      }}
+      onConfirm={onConfirm}
       onCancel={() => onClose()}>
-      <Typography>
-        <Paragraph>You are about to remove Compose + Launch from your organization</Paragraph>
-        <Paragraph>
-          Removing apps will remove Compose + Launch from all spaces in your organization. You will
-          lose access to the platforms, none of your content will be lost.
-        </Paragraph>
-        <Paragraph>
-          <strong>Why are you removing the apps?</strong>
-        </Paragraph>
-        <FieldGroup>
-          <CheckboxField
-            id="reason1"
-            value="Does not do what I expected"
-            labelText="Does not do what I expected"
-            checked={optionOne}
-            onChange={(e) => setOptionOne(e.target.checked)}
-          />
-          <CheckboxField
-            id="reason2"
-            value="Not needed anymore"
-            labelText="Not needed anymore"
-            checked={optionTwo}
-            onChange={(e) => setOptionTwo(e.target.checked)}
-          />
-          <CheckboxField
-            id="reason3"
-            value="Apps are not performing well"
-            labelText="Apps are not performing well"
-            checked={optionThree}
-            onChange={(e) => setOptionThree(e.target.checked)}
-          />
-          <CheckboxField
-            id="reason4"
-            value="I have created my own solution"
-            labelText="I have created my own solution"
-            checked={optionFour}
-            onChange={(e) => setOptionFour(e.target.checked)}
-          />
-          <CheckboxField
-            id="reason5"
-            value="I was just testing it out"
-            labelText="I was just testing it out"
-            checked={optionFive}
-            onChange={(e) => setOptionFive(e.target.checked)}
-          />
-        </FieldGroup>
-        <br />
-      </Typography>
+      <Flex marginBottom="spacingM">
+        <Typography>
+          <Paragraph>You are about to remove Compose + Launch from your organization</Paragraph>
+          <Paragraph>
+            Removing apps will remove Compose + Launch from all spaces in your organization. You
+            will lose access to the platforms, none of your content will be lost.
+          </Paragraph>
+          <Paragraph>
+            <strong>Why are you removing the apps?</strong>
+          </Paragraph>
+          <FieldGroup>
+            <List>
+              {reasons.map((reason, i) => (
+                <ListItem key={reason} className={styles.listItem}>
+                  <CheckboxField
+                    labelText={reason}
+                    checked={checkedReasons[i]}
+                    onChange={(e) => {
+                      const val = e.target.checked;
+                      setCheckedReasons((prevState) => {
+                        return { ...prevState, [i]: val };
+                      });
+                    }}
+                    id={`reason-${i}`}
+                    name={`reason-${i}`}
+                    testId={`reason-${i}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </FieldGroup>
+        </Typography>
+      </Flex>
 
       <TextField
         id="feedback"
