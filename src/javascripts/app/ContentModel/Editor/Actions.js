@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { getModule } from 'core/NgRegistry';
-import { cloneDeep, map, get } from 'lodash';
+import _ from 'lodash';
 import validation from '@contentful/validation';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as notify from './Notifications';
-import * as Analytics from 'analytics/Analytics';
+import { trackAddedField, trackEnforcedButtonClick } from './Analytics';
+import { allFieldsInactive, goToDetails, getWidget } from './Utils';
 import * as accessChecker from 'access_control/AccessChecker';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField';
 import * as logger from 'services/logger';
@@ -16,41 +17,268 @@ import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
 import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
+import { go } from 'states/Navigator';
+import { getUpdatedField } from 'components/field_dialog/openFieldDialog';
+import { openFieldModalDialog } from 'features/content-model-editor';
+import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
+import { AddFieldDialogModal } from './Dialogs/AddField';
+import { openEditContentTypeDialog } from './Dialogs';
+import getContentTypePreview from './PreviewTab/getContentTypePreview';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
 
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
 
-/**
- * @description
- * Uses the following scope properties
- *
- * - `contentType` for persistence methods and data access
- * - `publishedContentType` is updated whenever the content type is published or
- *   unpublished. Corresponds to the server data.
- * - `editorInterface` is read and updated on `save`.
- * - `context` is read to check whether the user has made some changes.
- *
- * @param {object} $scope
- * @param {string[]} contentTypeIds
- *   A promise that resolves to all the used content type IDs. It is passed to
- *   the duplication dialog to verify new IDs.
- */
-export default function create($scope, contentTypeIds) {
+export default function useCreateActions(props) {
+  const [state, dispatch] = useReducer(
+    reducer,
+    {
+      isNew: props.isNew,
+      editorInterface: props.editorInterface,
+      contentTypeData: props.contentTypeData,
+    },
+    initActionsReducer
+  );
+  // TODO: remove 'spaceContext'
   const spaceContext = getModule('spaceContext');
-  const $q = getModule('$q');
-  const $state = getModule('$state');
 
-  const controller = {};
+  const { currentSpace, currentSpaceContentTypes, currentSpaceId: spaceId } = useSpaceEnvContext();
 
-  /**
-   * @ngdoc property
-   * @name ContentTypeActionsController#delete
-   * @type {Command}
-   */
-  controller.delete = createCommand(startDeleteFlow, {
+  const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
+
+  const setContentType = (contentType) => {
+    dispatch({ type: reducerActions.SET_CONTENT_TYPE, payload: { contentType } });
+  };
+
+  useEffect(() => {
+    // updates content type on scope so correct data can be saved from angular context
+    props.syncContentTypeWithScope(state.contentType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.contentType]);
+
+  useEffect(() => {
+    async function initContentType() {
+      const contentType = props.contentTypeId
+        ? await currentSpace.getContentType(props.contentTypeId)
+        : await currentSpace.newContentType({
+            sys: { type: 'ContentType' },
+            fields: [],
+          });
+      setContentType(contentType);
+    }
+    initContentType();
+    // We only need to get this information once - of content type ID is changed,
+    // it means the whole page is re-rendered anyway
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setEditorInterface = (editorInterface) => {
+    dispatch({ type: reducerActions.UPDATE_EDITOR_INTERFACE, payload: { editorInterface } });
+  };
+
+  const setContextDirty = (dirty) => {
+    // this is needed to keep $scope.context.dirty up-to-date
+    // TODO: remove after src/javascripts/navigation/stateChangeHandlers.js migration
+    props.updateAngularContext(dirty);
+    dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty } });
+  };
+
+  const setPristine = () => {
+    dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty: false } });
+  };
+
+  const updateFields = (fields) => {
+    dispatch({ type: reducerActions.UPDATE_FIELDS, payload: { fields } });
+  };
+
+  const openFieldDialog = (field) => {
+    const fieldId = field.apiName || field.id;
+    const widget =
+      (state.editorInterface.controls || []).find((control) => {
+        return control.fieldId === fieldId;
+      }) || getWidget(field, state.contentType, state.editorInterface.controls);
+
+    const updateWidgetSettings = (widget, field) => {
+      const controls = state.editorInterface.controls.map((control) => {
+        if (control.fieldId === field.apiName) {
+          return {
+            field,
+            fieldId: field.apiName,
+            settings: widget.params,
+            widgetId: widget.id,
+            widgetNamespace: widget.namespace,
+          };
+        }
+        return control;
+      });
+      dispatch({
+        type: reducerActions.UPDATE_EDITOR_INTERFACE,
+        payload: {
+          editorInterface: { ...state.editorInterface, controls },
+        },
+      });
+    };
+
+    const onFieldUpdate = (...updatedFieldOptions) => {
+      // use updated data to generate a new field object with `getUpdatedField`
+      const { updatedField, widgetSettings } = getUpdatedField(
+        updatedFieldOptions,
+        field,
+        state.contentType
+      );
+
+      const updatedCTfields = state.contentType.data.fields.find(
+        (field) => field.id === updatedField.id
+      )
+        ? state.contentType.data.fields.map((field) =>
+            field.id === updatedField.id ? updatedField : field
+          )
+        : state.contentType.data.fields.concat([updatedField]);
+
+      updateFields(updatedCTfields);
+
+      updateWidgetSettings(widgetSettings, updatedField);
+    };
+
+    return openFieldModalDialog(
+      field,
+      widget,
+      state.contentType,
+      onFieldUpdate,
+      state.editorInterface,
+      props.extensions
+    );
+  };
+
+  const updateField = (id, update) => {
+    const updatedFields = state.contentType.data.fields.map((field) => {
+      if (field.id === id) {
+        return {
+          ...field,
+          ...update,
+        };
+      }
+      return field;
+    });
+    updateFields(updatedFields);
+    setContextDirty(true);
+  };
+
+  const undeleteField = (field) => {
+    updateField(field.id, {
+      deleted: false,
+    });
+    setContextDirty(true);
+  };
+
+  const updateOrder = (fields) => {
+    updateFields(fields);
+    setContextDirty(true);
+  };
+
+  const setFieldAsTitle = (field) => {
+    dispatch({ type: reducerActions.SET_FIELD_AS_TITLE, payload: { field } });
+  };
+
+  const toggleFieldProperty = (field, property, isTitle) => {
+    const toggled = !field[property];
+
+    if (isTitle && toggled) {
+      openDisallowDialog({ field, action: 'disable' });
+    } else {
+      updateField(field.id, {
+        [property]: toggled,
+      });
+      setContextDirty(true);
+    }
+  };
+
+  const removeField = async (id) => {
+    dispatch({ type: reducerActions.REMOVE_FIELD, payload: { id } });
+    setContextDirty(true);
+  };
+
+  const addField = async (newField) => {
+    dispatch({ type: reducerActions.ADD_FIELD, payload: { field: newField } });
+    trackAddedField(state.contentType, newField);
+    setContextDirty(true);
+  };
+
+  const showNewFieldDialog = createCommand(
+    () => {
+      const existingApiNames = state.contentType.data.fields.map(({ apiName }) => apiName);
+      ModalLauncher.open(({ isShown, onClose }) => (
+        <AddFieldDialogModal
+          isShown={isShown}
+          onClose={onClose}
+          onConfirm={addField}
+          onConfirmAndConfigure={(field) => {
+            addField(field);
+            openFieldDialog(field);
+          }}
+          existingApiNames={existingApiNames}
+        />
+      ));
+    },
+    {
+      disabled: function () {
+        return (
+          accessChecker.shouldDisable('update', 'contentType') ||
+          accessChecker.shouldDisable('publish', 'contentType')
+        );
+      },
+    }
+  );
+
+  const checkRemovable = async () => {
+    const isPublished = state.contentType.isPublished();
+    const canRead = accessChecker.canPerformActionOnEntryOfType('read', state.contentType.getId());
+    try {
+      if (!isPublished) {
+        return Promise.resolve(createStatusObject(true));
+      }
+      const res = await currentSpace.getEntries({
+        content_type: state.contentType.getId(),
+        limit: 0,
+      });
+
+      const count = res.total;
+      return createStatusObject(canRead && count < 1, count);
+    } catch (err) {
+      if (err.statusCode === 404 && !canRead) {
+        return createStatusObject(false);
+      } else {
+        return Promise.reject(err);
+      }
+    }
+
+    function createStatusObject(isRemovable, entryCount) {
+      return {
+        isPublished,
+        isRemovable,
+        entryCount,
+      };
+    }
+  };
+
+  const startDeleteFlow = async () => {
+    try {
+      const status = await checkRemovable(state.contentType, currentSpace);
+      if (status.isRemovable) {
+        return confirmRemoval(status.isPublished);
+      } else {
+        forbidRemoval(status.entryCount);
+      }
+    } catch (error) {
+      ReloadNotification.basicErrorHandler(error);
+    }
+  };
+
+  const deleteContentType = createCommand(startDeleteFlow, {
     available: function () {
       const deletableState =
-        !$scope.context.isNew &&
-        ($scope.contentType.canUnpublish() || !$scope.contentType.isPublished());
+        !state.contextState.isNew &&
+        (state.contentType.canUnpublish() || !state.contentType.isPublished());
       const denied =
         accessChecker.shouldHide('delete', 'contentType') ||
         accessChecker.shouldHide('unpublish', 'contentType');
@@ -64,56 +292,29 @@ export default function create($scope, contentTypeIds) {
     },
   });
 
-  function startDeleteFlow() {
-    return checkRemovable().then((status) => {
-      if (status.isRemovable) {
-        return confirmRemoval(status.isPublished);
-      } else {
-        forbidRemoval(status.entryCount);
-      }
-    }, ReloadNotification.basicErrorHandler);
-  }
-
-  function checkRemovable() {
-    const isPublished = $scope.contentType.isPublished();
-    const canRead = accessChecker.canPerformActionOnEntryOfType('read', $scope.contentType.getId());
-
-    if (!isPublished) {
-      return $q.resolve(createStatusObject(true));
+  const unpublish = async () => {
+    try {
+      await spaceContext.publishedCTs.unpublish(state.contentType);
+    } catch (error) {
+      logger.logServerWarn('Error deactivating Content Type', { error });
     }
+  };
 
-    return spaceContext.space
-      .getEntries({
-        content_type: $scope.contentType.getId(),
-        limit: 0,
-      })
-      .then(
-        (res) => {
-          const count = res.total;
-          return createStatusObject(canRead && count < 1, count);
-        },
-        (res) => {
-          if (res.statusCode === 404 && !canRead) {
-            return createStatusObject(false);
-          } else {
-            return $q.reject(res);
-          }
-        }
-      );
-
-    function createStatusObject(isRemovable, entryCount) {
-      return {
-        isPublished,
-        isRemovable,
-        entryCount,
-      };
+  const sendDeleteRequest = async () => {
+    try {
+      await state.contentType.delete();
+      notify.deleteSuccess();
+      go({ path: '^.^.list' });
+    } catch (error) {
+      notify.deleteFail(error);
     }
-  }
+  };
 
-  function remove(isPublished) {
-    const unpub = isPublished ? unpublish() : $q.resolve();
-    return unpub.then(sendDeleteRequest);
-  }
+  const remove = async (isPublished) => {
+    const unpub = isPublished ? unpublish() : Promise.resolve();
+    const res = await unpub();
+    sendDeleteRequest(res);
+  };
 
   function forbidRemoval(count) {
     return ModalLauncher.open(({ isShown, onClose }) => (
@@ -121,7 +322,7 @@ export default function create($scope, contentTypeIds) {
         isShown={isShown}
         onClose={onClose}
         entriesCount={count}
-        contentTypeName={$scope.contentType.data.name}
+        contentTypeName={state.contentType.data.name}
       />
     ));
   }
@@ -131,7 +332,7 @@ export default function create($scope, contentTypeIds) {
     return ModalLauncher.open(({ isShown, onClose }) => (
       <DeleteContentTypeDialog
         key={key}
-        contentTypeName={$scope.contentType.data.name}
+        contentTypeName={state.contentType.data.name}
         isShown={isShown}
         onConfirm={() => {
           return remove(isPublished).finally(() => {
@@ -145,66 +346,98 @@ export default function create($scope, contentTypeIds) {
     ));
   }
 
-  function trackEnforcedButtonClick(err) {
-    // If we get reason(s), that means an enforcement is present
-    const reason = get(err, 'body.details.reasons', null);
-
-    Analytics.track('entity_button:click', {
-      entityType: 'contentType',
-      enforced: Boolean(reason),
-      reason,
-    });
-
-    return $q.reject(err);
-  }
-
-  function unpublish() {
-    return spaceContext.publishedCTs.unpublish($scope.contentType).then(
-      () => {
-        $scope.publishedContentType = null;
-      },
-      (err) => {
-        logger.logServerWarn('Error deactivating Content Type', { error: err });
-        return $q.reject(err);
+  const showMetadataDialog = createCommand(
+    async () => {
+      const result = await openEditContentTypeDialog(state.contentType);
+      if (result) {
+        dispatch({ type: reducerActions.UPDATE_CT_METADATA, payload: result });
       }
-    );
-  }
-
-  function sendDeleteRequest() {
-    return $scope.contentType.delete().then(() => {
-      notify.deleteSuccess();
-      $state.go('^.^.list');
-    }, notify.deleteFail);
-  }
-
-  /**
-   * @ngdoc property
-   * @name ContentTypeActionsController#scope#cancel
-   * @type {Command}
-   */
-  controller.cancel = createCommand(
-    () =>
-      // X.detail.fields -> X.list
-      $state.go('^.^.list'),
+    },
     {
-      available: function () {
-        return $scope.context.isNew;
+      disabled: function () {
+        return (
+          accessChecker.shouldDisable('update', 'contentType') ||
+          accessChecker.shouldDisable('publish', 'contentType')
+        );
       },
     }
   );
 
-  /**
-   * @ngdoc property
-   * @name ContentTypeActionsController#save
-   * @type {Command}
-   */
-  controller.save = createCommand(() => save(true), {
+  const cancel = createCommand(
+    () =>
+      // X.detail.fields -> X.list
+      go({ path: '^.^.list' }),
+    {
+      available: () => {
+        return state.contextState.isNew;
+      },
+    }
+  );
+
+  const saveContentType = async () => {
+    try {
+      assureDisplayField(state.contentType.data);
+
+      const buildMessage = errorMessageBuilder.forContentType;
+      const schema = validation.schemas.ContentType;
+
+      if (!schema.validate(state.contentType.data)) {
+        const fieldNames = _.map(state.contentType.data.fields, 'name');
+        const errors = schema.errors(state.contentType.data);
+        const errorsWithMessages = errors.map((error) => buildMessage(error));
+        notify.invalidAccordingToScope(errorsWithMessages, fieldNames);
+        return Promise.reject();
+      }
+
+      if ((state.contentType.data.fields || []).length < 1) {
+        notify.saveNoFields();
+        return Promise.reject();
+      }
+
+      const updatedContentType = await state.contentType.save({}, spaceId);
+      setContentType(updatedContentType);
+      const published = await spaceContext.publishedCTs.publish(state.contentType);
+      // When a Content Type is published the CMA automatically
+      // updates the Editor Interface. We need to fetch and update
+      // the sys of a local entity so we can override it.
+      const remoteEditorInterface = await spaceContext.cma.getEditorInterface(
+        published.data.sys.id
+      );
+      const localEditorInterface = _.cloneDeep(state.editorInterface);
+      localEditorInterface.sys = remoteEditorInterface.sys;
+      const updatedEditorInterface = await spaceContext.cma.updateEditorInterface(
+        EditorInterfaceTransformer.toAPI(published.data, localEditorInterface)
+      );
+      const editorInterfaceFromAPI = EditorInterfaceTransformer.fromAPI(
+        published.data,
+        updatedEditorInterface
+      );
+      dispatch({
+        type: reducerActions.UPDATE_EDITOR_INTERFACE,
+        payload: { editorInterface: editorInterfaceFromAPI },
+      });
+      setPristine();
+      getContentPreview().clearCache();
+      spaceContext.uiConfig.addOrEditCt(state.contentType.data).catch(() => {});
+      if (state.contextState.isNew) {
+        return goToDetails(state.contentType);
+      }
+      notify.saveSuccess();
+    } catch (error) {
+      trackEnforcedButtonClick(error);
+      triggerApiErrorNotification(error);
+    }
+  };
+
+  const save = createCommand(saveContentType, {
     disabled: function () {
       const dirty =
-        $scope.context.dirty ||
-        $scope.contentType.hasUnpublishedChanges() ||
-        !$scope.contentType.getPublishedVersion();
-      const valid = !allFieldsInactive($scope.contentType);
+        state.contextState.dirty ||
+        (_.isFunction(state.contentType.hasUnpublishedChanges) &&
+          state.contentType.hasUnpublishedChanges()) ||
+        (_.isFunction(state.contentType.getPublishedVersion) &&
+          !state.contentType.getPublishedVersion());
+      const valid = !allFieldsInactive(state.contentType);
       const denied =
         accessChecker.shouldDisable('update', 'contentType') ||
         accessChecker.shouldDisable('publish', 'contentType');
@@ -216,187 +449,64 @@ export default function create($scope, contentTypeIds) {
   // This is called by the state manager in case the user leaves the
   // Content Type editor without saving. We do not redirect in that
   // case.
-  controller.saveAndClose = () => save(false);
 
-  function save(redirect) {
-    assureDisplayField($scope.contentType.data);
-
-    const buildMessage = errorMessageBuilder.forContentType;
-    const schema = validation.schemas.ContentType;
-
-    if (!schema.validate($scope.contentType.data)) {
-      const fieldNames = map($scope.contentType.data.fields, 'name');
-      const errors = schema.errors($scope.contentType.data);
-      const errorsWithMessages = errors.map((error) => buildMessage(error));
-      notify.invalidAccordingToScope(errorsWithMessages, fieldNames);
-      return $q.reject();
-    }
-
-    if (($scope.contentType.data.fields || []).length < 1) {
-      notify.saveNoFields();
-      return $q.reject();
-    }
-
-    const spaceId = spaceContext.getId();
-
-    return (
-      $scope.contentType
-        .save({}, spaceId)
-        .then((contentType) => spaceContext.publishedCTs.publish(contentType))
-        .then((published) => {
-          $scope.publishedContentType = cloneDeep(published);
-
-          // When a Content Type is published the CMA automatically
-          // updates the Editor Interface. We need to fetch and update
-          // the sys of a local entity so we can override it.
-          return spaceContext.cma.getEditorInterface(published.data.sys.id);
-        })
-        .then((remoteEditorInterface) => {
-          const localEditorInterface = cloneDeep($scope.editorInterface);
-          localEditorInterface.sys = remoteEditorInterface.sys;
-
-          return spaceContext.cma.updateEditorInterface(
-            EditorInterfaceTransformer.toAPI($scope.publishedContentType.data, localEditorInterface)
-          );
-        })
-        .then((editorInterface) => {
-          $scope.editorInterface = EditorInterfaceTransformer.fromAPI(
-            $scope.publishedContentType.data,
-            editorInterface
-          );
-        })
-        .catch(trackEnforcedButtonClick)
-        .catch(triggerApiErrorNotification)
-        .then(setPristine)
-        .then(() => {
-          setPristine();
-          getContentPreview().clearCache();
-        })
-        .then(() => {
-          // Try to update UIConfig but proceed if it failed.
-          return spaceContext.uiConfig.addOrEditCt($scope.contentType.data).catch(() => {});
-        })
-        .then(() => {
-          if (redirect && $scope.context.isNew) {
-            return goToDetails($scope.contentType);
-          }
-        })
-        // Need to do this _after_ redirecting so it is not automatically
-        // dismissed.
-        .then(notify.saveSuccess)
-    );
-  }
-
-  function setPristine() {
-    if ($scope.context) {
-      $scope.context.dirty = false;
-    }
-  }
-
-  function goToDetails(contentType) {
-    // X.detail.fields -> X.detail.fields with altered contentTypeId param
-    return $state.go('^.^.detail.fields', {
-      contentTypeId: contentType.getId(),
-    });
-  }
+  const saveAndClose = () => saveContentType(false);
 
   function triggerApiErrorNotification(errOrErrContainer) {
-    const reasons = get(errOrErrContainer, 'data.details.errors', []);
+    const reasons = _.get(errOrErrContainer, 'data.details.errors', []);
     const sizeReason = reasons.find(({ name }) => name === 'size');
-
     if (sizeReason) {
       notify.tooManyEditorsError(sizeReason);
     } else {
-      notify.saveFailure(errOrErrContainer, $scope.contentType);
+      notify.saveFailure(errOrErrContainer, state.contentType);
     }
-
-    return $q.reject(errOrErrContainer);
   }
 
-  function allFieldsInactive(contentType) {
-    const fields = contentType.data.fields || [];
-    return fields.every((field) => field.disabled || field.omitted);
-  }
-
-  /**
-   * @ngdoc property
-   * @name ContentTypeActionsController#duplicate
-   * @type {Command}
-   */
-  controller.duplicate = createCommand(
-    async () => {
-      const duplicatedContentType = await openDuplicateContentTypeDialog(
-        $scope.contentType,
-        createDuplicate,
-        contentTypeIds
-      );
-
-      if (!duplicatedContentType) {
-        return;
-      }
-
-      await askAboutRedirection(duplicatedContentType);
-
-      notify.duplicateSuccess();
-    },
-    {
-      disabled: function () {
-        const isNew = $scope.context.isNew;
-        const isDenied =
-          accessChecker.shouldDisable('update', 'contentType') ||
-          accessChecker.shouldDisable('publish', 'contentType');
-        const isDirty = $scope.context.dirty || !$scope.contentType.getPublishedVersion();
-        const isPublished = $scope.contentType.isPublished();
-
-        return isNew || isDenied || isDirty || !isPublished;
-      },
+  const loadPreview = (isNew) => {
+    if (isNew) {
+      return getContentTypePreview.fromData(state.contentType.data);
+    } else {
+      return getContentTypePreview(state.contentType);
     }
-  );
+  };
 
-  function createDuplicate({ contentTypeId, name, description }) {
-    const data = $scope.contentType.data;
-    const duplicate = spaceContext.space.newContentType({
-      sys: { type: 'ContentType', id: contentTypeId },
-      name: name,
-      description: description || '',
-      fields: cloneDeep(data.fields),
-      displayField: data.displayField,
-    });
+  const getPublishedField = (id) => {
+    const publishedFields = _.get(state.contentType, 'data.fields', []);
+    return _.cloneDeep(_.find(publishedFields, { id: id }));
+  };
 
-    const editorInterfaceDuplicate = {
-      ...cloneDeep($scope.editorInterface),
-      sys: {
-        id: 'default',
-        type: 'EditorInterface',
-        version: 1,
-        contentType: { sys: { id: contentTypeId } },
-      },
-    };
+  const deleteField = async (field, isTitle) => {
+    const publishedField = getPublishedField(field.id);
+    const publishedOmitted = publishedField && publishedField.omitted;
 
-    return duplicate
-      .save()
-      .then((contentType) => spaceContext.publishedCTs.publish(contentType))
-      .then((published) => {
-        return spaceContext.cma.updateEditorInterface(
-          EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate)
-        );
-      })
-      .then(
-        () => duplicate,
-        (err) => {
-          notify.duplicateError();
-          return $q.reject(err);
-        }
-      );
-  }
+    const isOmittedInApiAndUi = publishedOmitted && field.omitted;
+    const isOmittedInUiOnly = !publishedOmitted && field.omitted;
 
-  function askAboutRedirection(duplicated) {
-    return ModalLauncher.open(({ isShown, onClose }) => (
+    if (isTitle) {
+      openDisallowDialog({ field, action: 'delete' });
+    } else if (!publishedField) {
+      removeField(field.id);
+    } else if (isOmittedInApiAndUi) {
+      updateField(field.id, {
+        deleted: true,
+      });
+      setContextDirty(true);
+    } else if (isOmittedInUiOnly) {
+      await openSaveDialog();
+      save.execute();
+    } else {
+      await openOmitDialog();
+      toggleFieldProperty(field, 'omitted', isTitle);
+    }
+  };
+
+  const askAboutRedirection = async (duplicated) => {
+    const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <ModalConfirm
         shouldCloseOnEscapePress={false}
         shouldCloseOnOverlayClick={false}
         isShown={isShown}
-        onConfirm={onClose}
+        onConfirm={() => onClose(true)}
         onCancel={onClose}
         title="Duplicated content type"
         confirmLabel="Go to the duplicated content type."
@@ -404,12 +514,98 @@ export default function create($scope, contentTypeIds) {
         cancelLabel={null}>
         <Paragraph>Content type was successfully duplicated.</Paragraph>
       </ModalConfirm>
-    )).then(() => {
+    ));
+    if (confirmed) {
       // mark the form as pristine so we can navigate without confirmation dialog
       setPristine();
       return goToDetails(duplicated);
-    });
-  }
+    }
+  };
 
-  return controller;
+  const createDuplicate = async ({ contentTypeId, name, description }) => {
+    try {
+      const data = state.contentType.data;
+      const duplicate = currentSpace.newContentType({
+        sys: { type: 'ContentType', id: contentTypeId },
+        name: name,
+        description: description || '',
+        fields: _.cloneDeep(data.fields),
+        displayField: data.displayField,
+      });
+
+      const editorInterfaceDuplicate = {
+        ..._.cloneDeep(state.editorInterface),
+        sys: {
+          id: 'default',
+          type: 'EditorInterface',
+          version: 1,
+          contentType: { sys: { id: contentTypeId } },
+        },
+      };
+
+      await duplicate.save();
+      const published = await spaceContext.publishedCTs.publish(duplicate);
+      spaceContext.cma.updateEditorInterface(
+        EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate)
+      );
+      return duplicate;
+    } catch (err) {
+      notify.duplicateError();
+    }
+  };
+
+  const duplicate = createCommand(
+    async () => {
+      const duplicatedContentType = await openDuplicateContentTypeDialog(
+        state.contentType,
+        createDuplicate,
+        contentTypeIds
+      );
+
+      if (!duplicatedContentType) {
+        return;
+      }
+      await askAboutRedirection(duplicatedContentType);
+
+      notify.duplicateSuccess();
+    },
+    {
+      disabled: function () {
+        const isNew = state.contextState.isNew;
+        const isDenied =
+          accessChecker.shouldDisable('update', 'contentType') ||
+          accessChecker.shouldDisable('publish', 'contentType');
+        const isDirty = state.contextState.dirty || !state.contentType.getPublishedVersion();
+        const isPublished = state.contentType.isPublished();
+
+        return isNew || isDenied || isDirty || !isPublished;
+      },
+    }
+  );
+
+  const actions = {
+    setContentType,
+    openFieldDialog,
+    updateField,
+    undeleteField,
+    updateOrder,
+    setFieldAsTitle,
+    toggleFieldProperty,
+    deleteField,
+    showNewFieldDialog,
+    delete: deleteContentType,
+    showMetadataDialog,
+    cancel,
+    save,
+    saveAndClose,
+    loadPreview,
+    duplicate,
+  };
+
+  return {
+    actions,
+    state,
+    setContextDirty,
+    setEditorInterface,
+  };
 }

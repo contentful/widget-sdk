@@ -62,7 +62,7 @@ export function ContentTypeIdSection(props) {
         </Paragraph>
       </Typography>
       <TextInput
-        value={props.contentTypeId}
+        value={props.contentTypeId || ''}
         name="contentTypeIdInput"
         id="contentTypeIdInput"
         testId="contentTypeIdInput"
@@ -74,7 +74,7 @@ export function ContentTypeIdSection(props) {
 }
 
 ContentTypeIdSection.propTypes = {
-  contentTypeId: PropTypes.string.isRequired,
+  contentTypeId: PropTypes.string,
 };
 
 export function DocumentationSection() {

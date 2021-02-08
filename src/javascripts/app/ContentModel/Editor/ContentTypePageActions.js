@@ -81,7 +81,8 @@ export default function ContentTypePageActions(props) {
             onClick={() => {
               props.save.execute();
             }}
-            loading={props.save.inProgress()}
+            // TODO: fix "inProgress" state in "utils/command/command.js"
+            // loading={props.save.inProgress()}
             disabled={props.save.isDisabled()}>
             Save
           </Button>

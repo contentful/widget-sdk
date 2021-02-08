@@ -11,9 +11,9 @@ import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { createCommand } from 'utils/command/command';
 
-import createActions from 'app/ContentModel/Editor/Actions';
+import createActions from 'app/ContentModel/Editor/Actions_deprecated';
 import * as accessChecker from 'access_control/AccessChecker';
-import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
+import ContentTypePageContainer from 'app/ContentModel/Editor/ContentTypePageContainer';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
@@ -21,7 +21,8 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
-      template: '<react-component component="component" props="componentProps"></react-component>',
+      template:
+        '<react-component style="height: 100%" component="component" props="componentProps"></react-component>',
       restrict: 'A',
       controller: 'ContentTypeEditorController',
       controllerAs: 'ctEditorController',
@@ -52,24 +53,25 @@ export default function register() {
 
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
-      if ($scope.context.isNew) {
-        const openCreateDialog = async () => {
-          openCreateContentTypeDialog($scope.contentTypeIds).then(
-            (result) => {
-              if (result) {
-                $scope.contentType.data.name = result.name;
-                $scope.contentType.data.description = result.description;
-                $scope.contentType.data.sys.id = result.contentTypeId;
-              } else {
-                // X.detail.fields -> X.list
-                $state.go('^.^.list');
+      const openCreateDialog = async () => {
+        openCreateContentTypeDialog($scope.contentTypeIds).then(
+          (result) => {
+            if (result) {
+              $scope.contentType.data.name = result.name;
+              $scope.contentType.data.description = result.description;
+              $scope.contentType.data.sys.id = result.contentTypeId;
+              if (result.assembly) {
+                // Add assembly to request only if value is present
+                $scope.contentType.data.assembly = result.assembly;
               }
-            },
-            () => {}
-          );
-        };
-        openCreateDialog();
-      }
+            } else {
+              // X.detail.fields -> X.list
+              $state.go('^.^.list');
+            }
+          },
+          () => {}
+        );
+      };
 
       /**
        * @ngdoc method
@@ -179,6 +181,16 @@ export default function register() {
 
       function setDirty() {
         $scope.context.dirty = true;
+        $scope.$applyAsync();
+      }
+
+      function updateContext(dirty) {
+        $scope.context.dirty = dirty;
+        $scope.$applyAsync();
+      }
+
+      function syncContentType(contentType) {
+        $scope.contentType = contentType;
         $scope.$applyAsync();
       }
 
@@ -336,14 +348,19 @@ export default function register() {
         }
       );
 
-      $scope.component = ContentTypesPage;
+      $scope.component = ContentTypePageContainer;
       $scope.componentProps = {
+        contentTypeIds: $scope.contentTypeIds,
+        openCreateDialog: openCreateDialog,
+        updateContext: updateContext,
+        syncContentType: syncContentType,
         isDirty: false,
         isNew: $scope.context.isNew,
         currentTab: getCurrentTab($state),
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
         editorConfiguration: $scope.editorInterface.editors,
+        editorInterface: $scope.editorInterface, // for new component
         extensions: $scope.customWidgets,
         spaceData: {
           organizationId: $scope.spaceContext.getData(['organization', 'sys', 'id']),

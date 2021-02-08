@@ -54,6 +54,8 @@ export const FLAGS = {
   LAUNCH_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-launch-eap',
   REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
+  REACT_MIGRATION_CT: 'react-migration-10-2020-content-type-editor',
+
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__: 'test-flag',
@@ -90,6 +92,7 @@ const FALLBACK_VALUES = {
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
+  [FLAGS.REACT_MIGRATION_CT]: false,
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
   [FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__]: 'fallback-value-2',
