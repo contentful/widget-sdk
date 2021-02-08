@@ -58,9 +58,11 @@ const SettingsTabComponent = ({
           id="content-type-field-name"
           textInputProps={{
             type: 'text',
+            maxLength: 50,
           }}
           required={fields.name.required}
           validationMessage={fields.name.error ? fields.name.error : ''}
+          countCharacters
         />
         <LockedField
           value={fields.apiName.value}
