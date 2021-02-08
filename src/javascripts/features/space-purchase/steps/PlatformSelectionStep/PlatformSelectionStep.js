@@ -8,7 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
-import { actions, SpacePurchaseState, NONE } from '../../context';
+import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
 import { ProductCard } from '../../components/ProductCard';
 import { SpacePlanCards } from '../../components/SpacePlanCards';
@@ -189,9 +189,9 @@ export const PlatformSelectionStep = ({ track }) => {
               className={styles.chooseLaterCard}
               padding="large"
               testId="choose-space-later-button"
-              selected={selectedPlan === NONE}
+              selected={selectedPlan === NO_SPACE_PLAN}
               onClick={() => {
-                onSelectSpace(NONE);
+                onSelectSpace(NO_SPACE_PLAN);
               }}>
               <Heading element="p">Choose space later</Heading>
             </Card>

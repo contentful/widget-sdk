@@ -5,5 +5,5 @@ export {
   SpacePurchaseTestContextProvider,
   useSpacePurchaseState,
 } from './SpacePurchaseContext';
-export { NONE } from './types';
+export { NO_SPACE_PLAN } from './types';
 export type { State } from './types';

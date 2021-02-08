@@ -19,6 +19,7 @@ const styles = {
   sectionHeading: css({
     fontWeight: tokens.fontWeightMedium,
     marginBottom: tokens.spacingXl,
+    textAlign: 'center',
   }),
   centered: css({
     textAlign: 'center',

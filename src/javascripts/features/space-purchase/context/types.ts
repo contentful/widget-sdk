@@ -4,7 +4,7 @@ import type { Organization, SpaceData } from 'core/services/SpaceEnvContext/type
 import type { ProductRatePlan } from 'features/pricing-entities';
 import type { BillingDetails, PaymentDetails, SpaceProductRatePlan } from '../types';
 
-export const NONE = 'None';
+export const NO_SPACE_PLAN = 'None';
 
 export interface State {
   organization?: Organization;

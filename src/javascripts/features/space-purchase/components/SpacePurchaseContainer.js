@@ -20,7 +20,7 @@ import { EVENTS } from '../utils/analyticsTracking';
 import { PlatformKind } from '../utils/platformContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { Price } from 'core/components/formatting';
-import { actions, SpacePurchaseState } from '../context';
+import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../context';
 
 import { Breadcrumbs } from 'features/breadcrumbs';
 import {
@@ -231,7 +231,7 @@ export const SpacePurchaseContainer = ({ track }) => {
               if (selectedComposeLaunch) {
                 // if the user selected compose+launch platform and a space plan
                 // we send them to the normal space creation receipt page
-                goToStep(selectedPlan ? STEPS.RECEIPT : STEPS.COMPOSE_RECEIPT);
+                goToStep(selectedPlan !== NO_SPACE_PLAN ? STEPS.RECEIPT : STEPS.COMPOSE_RECEIPT);
               } else {
                 goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
               }

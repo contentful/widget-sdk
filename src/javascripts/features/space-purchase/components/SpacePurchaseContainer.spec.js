@@ -484,7 +484,7 @@ describe('SpacePurchaseContainer', () => {
       });
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      // 6. Reciept Page
+      // 6. Receipt Page
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
 
@@ -526,7 +526,7 @@ describe('SpacePurchaseContainer', () => {
       expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      // 6. Reciept Page
+      // 6. Receipt Page
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
 
@@ -581,7 +581,7 @@ describe('SpacePurchaseContainer', () => {
       });
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      // 5. Reciept Page
+      // 5. Receipt Page
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
 
@@ -613,8 +613,43 @@ describe('SpacePurchaseContainer', () => {
       expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
       userEvent.click(screen.getByTestId('confirm-purchase-button'));
 
-      // 3. Reciept Page
+      // 3. Receipt Page
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
+    });
+
+    it('sucessful completion of organization with billing details - buying only compose+launch platform and no space', async () => {
+      await build(null, {
+        purchasingApps: true,
+        organization: { ...mockOrganization, isBillable: true },
+      });
+
+      // 1. Platform selection
+      await waitFor(() => {
+        expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      });
+      // select a platform
+      userEvent.click(screen.getAllByTestId('platform-card')[1]);
+
+      // select 'Choose space later'
+      userEvent.click(screen.getByTestId('choose-space-later-button'));
+
+      // continue
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // Test back navigation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('navigate-back'));
+      expect(screen.getByTestId('platform-selection-section')).toBeDefined();
+      // select a space as it becomes unselected (to be fixed)
+      userEvent.click(screen.getByTestId('choose-space-later-button'));
+      userEvent.click(screen.getByTestId('platform-select-continue-button'));
+
+      // 2. Confirmation
+      expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      // 3. Receipt Page
+      expect(screen.getByTestId('performance-receipt-section')).toBeVisible();
     });
   });
 
