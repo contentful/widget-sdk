@@ -5,12 +5,9 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { FEATURES, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { fetchContentfulApps, getAppsRepo } from 'features/apps-core';
-import {
-  isCurrentEnvironmentMaster,
-  isMasterEnvironment,
-} from 'core/services/SpaceEnvContext/utils';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { AppsListProps } from '@contentful/experience-components';
-import { domain } from 'Config';
+import { getContentfulAppUrl } from 'features/apps';
 
 const getAppInstallRouteProps = ({
   app,
@@ -83,7 +80,6 @@ export const useAppsList = () => {
     currentOrganizationId: organizationId,
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
-    currentSpace,
   } = spaceEnv;
 
   const envIsMaster = isMasterEnvironment(spaceEnv.currentEnvironment);
@@ -94,10 +90,6 @@ export const useAppsList = () => {
       setIsLoading(false);
       return;
     }
-
-    const spaceEnvPath = `spaces/${spaceId}${
-      isCurrentEnvironmentMaster(currentSpace) ? '' : `/environments/${environmentId}`
-    }`;
 
     (async () => {
       if (!purchasedApps) return;
@@ -129,14 +121,19 @@ export const useAppsList = () => {
                 isMasterEnvironment: envIsMaster,
               });
 
+              const spaceInformation = {
+                spaceId: spaceId!,
+                spaceName: '', // not necessary downstream
+                envMeta: { environmentId, isMasterEnvironment: envIsMaster },
+              };
+              const appUrl = getContentfulAppUrl(app.id!, spaceInformation);
+
               return appFlagIsEnabled
                 ? {
                     ...app,
                     type: app.id as AppsListProps['type'],
                     installRouteProps,
-                    href: isInstalled
-                      ? `https://${app.slug}.${domain}/${spaceEnvPath}`
-                      : Navigator.href(installRouteProps),
+                    href: isInstalled && appUrl ? appUrl : Navigator.href(installRouteProps),
                     active: false,
                     isInstalled,
                   }
@@ -154,7 +151,7 @@ export const useAppsList = () => {
       setEnabledApps([]);
       setIsLoading(true);
     };
-  }, [organizationId, spaceId, environmentId, currentSpace, envIsMaster, purchasedApps]);
+  }, [organizationId, spaceId, environmentId, envIsMaster, purchasedApps]);
 
   return { appsList: enabledApps, isLoading };
 };

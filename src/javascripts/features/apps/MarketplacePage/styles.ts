@@ -59,10 +59,12 @@ export const styles = {
     css({
       maxWidth: '50%',
       minWidth: tokens.spacing4Xl,
-      margin: !isScreenshot ? `${tokens.spacingXs}` : '0',
+      margin: !isScreenshot ? `${tokens.spacingXs} ${tokens.spacingM}` : '0',
       '& img, & svg': css({
-        width: '100%',
         display: 'block',
+      }),
+      '& img': css({
+        width: '100%',
       }),
     }),
   contentfulAppTextWrapper: (withoutMargin) =>

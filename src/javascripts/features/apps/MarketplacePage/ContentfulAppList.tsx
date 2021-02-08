@@ -4,10 +4,9 @@ import React, { ReactElement } from 'react';
 import { AppManager } from '../AppOperations';
 import { MarketplaceApp } from 'features/apps-core';
 import { SpaceInformation } from '../AppDetailsModal/shared';
-import { domain } from 'Config';
 import { beginSpaceCreation } from 'services/CreateSpace';
+import { getContentfulAppUrl } from '../utils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
 
 interface ListProps {
@@ -55,12 +54,8 @@ export const ContentfulAppTile = ({
   isFlipped = false,
   isScreenshot = false,
 }: ContentfulAppTileProps) => {
-  const baseUrl = `https://${slug}.${domain}`;
-  const { isMasterEnvironment, environmentId } = spaceInformation.envMeta;
+  const appUrl = getContentfulAppUrl(slug, spaceInformation);
   const canBuy = isOwnerOrAdmin({ sys: { id: organizationId } });
-  const spaceEnvPath = `/spaces/${spaceInformation.spaceId}${
-    isMasterEnvironment ? '' : `/environments/${environmentId}`
-  }`;
 
   const showInstall = installAction && isPurchased && canManage && !isInstalled;
   const showUninstall = uninstallAction && isInstalled && canManage;
@@ -91,7 +86,7 @@ export const ContentfulAppTile = ({
                   className={styles.button}
                   icon="ExternalLink"
                   onClick={() => {
-                    window.open(new URL(spaceEnvPath, baseUrl).toString(), '_blank');
+                    window.open(appUrl);
                   }}>
                   Open
                 </Button>

@@ -6,3 +6,4 @@ export { formatPastDate, base64ToHex } from './management/util';
 export { PageWidgetRenderer } from './PageWidgetRenderer';
 export type { PageWidgetParameters } from './PageWidgetRenderer';
 export { getCurrentState } from './AppState';
+export { getContentfulAppUrl } from './utils';

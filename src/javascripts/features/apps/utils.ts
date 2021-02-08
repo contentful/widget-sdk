@@ -1,6 +1,17 @@
 import { get } from 'lodash';
 import { BASIC_APPS_LIMIT, ADVANCED_APPS_LIMIT } from './limits';
 import { WidgetLocation } from '@contentful/widget-renderer';
+import { SpaceInformation } from './AppDetailsModal/shared';
+import { domain } from 'Config';
+
+export const getContentfulAppUrl = (slug: string, spaceInformation: SpaceInformation) => {
+  const baseUrl = `https://${slug}.${domain}`;
+  const { isMasterEnvironment, environmentId } = spaceInformation.envMeta;
+  const spaceEnvPath = `/spaces/${spaceInformation.spaceId}${
+    isMasterEnvironment ? '' : `/environments/${environmentId}`
+  }`;
+  return new URL(spaceEnvPath, baseUrl).toString();
+};
 
 export const getUsageExceededMessage = (hasAdvancedAppsFeature = false) => {
   const spaceInstallationLimit = hasAdvancedAppsFeature ? ADVANCED_APPS_LIMIT : BASIC_APPS_LIMIT;

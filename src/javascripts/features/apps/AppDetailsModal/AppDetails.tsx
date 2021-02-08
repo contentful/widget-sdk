@@ -17,7 +17,7 @@ import { MarketplaceApp } from 'features/apps-core';
 import moment from 'moment';
 import React from 'react';
 import { AppManager } from '../AppOperations';
-import { getUsageExceededMessage, hasConfigLocation } from '../utils';
+import { getContentfulAppUrl, getUsageExceededMessage, hasConfigLocation } from '../utils';
 import { AppHeader } from './AppHeader';
 import { AppPermissionScreen } from './AppPermissionsScreen';
 import { externalLinkProps, SpaceInformation } from './shared';
@@ -118,20 +118,35 @@ export function AppDetails(props: AppDetailsProps) {
     setShowPermissions = () => null,
   } = props;
 
-  const installed = !!app.appInstallation;
+  const isInstalled = app.appInstallation;
   const hasConfig = hasConfigLocation(app.appDefinition);
+  const hasOpenLink = isInstalled && app.isContentfulApp;
 
-  const determineOnClick = (onClick) =>
-    installed
-      ? async () => {
-          await onClose();
-          if (installed && !hasConfig) {
-            appManager.showUninstall(app);
-          } else {
-            onClick();
-          }
+  const configCTA = hasConfig ? 'Configure' : 'Remove';
+  const ctaWhenInstalled = app.isContentfulApp ? 'Open' : configCTA;
+  const cta = isInstalled ? ctaWhenInstalled : 'Install';
+
+  const determineOnClick = (onClick) => {
+    if (hasOpenLink) {
+      return () => {
+        const appUrl = getContentfulAppUrl(app.id, spaceInformation);
+        window.open(appUrl, '_blank');
+      };
+    }
+
+    if (isInstalled) {
+      return async () => {
+        await onClose();
+        if (isInstalled && !hasConfig) {
+          appManager.showUninstall(app);
+        } else {
+          onClick();
         }
-      : () => setShowPermissions(true);
+      };
+    }
+
+    return () => setShowPermissions(true);
+  };
 
   if (showPermissions) {
     return (
@@ -157,9 +172,6 @@ export function AppDetails(props: AppDetailsProps) {
     );
   }
 
-  const installCTA = 'Install';
-  const configCTA = hasConfig ? 'Configure' : 'Remove';
-
   return (
     <div className={cx(styles.root)}>
       <div className={styles.mainColumn}>
@@ -173,8 +185,9 @@ export function AppDetails(props: AppDetailsProps) {
               onClick={determineOnClick(onClick)}
               isFullWidth
               buttonType="primary"
-              disabled={usageExceeded || !canManageApps}>
-              {installed ? configCTA : installCTA}
+              disabled={usageExceeded || !canManageApps}
+              {...(hasOpenLink ? { icon: 'ExternalLink' } : {})}>
+              {cta}
             </Button>
           )}
         </StateLink>
@@ -201,7 +214,7 @@ export function AppDetails(props: AppDetailsProps) {
           </>
         )}
 
-        {!installed && usageExceeded && canManageApps && (
+        {!isInstalled && usageExceeded && canManageApps && (
           <>
             <div className={styles.sidebarSpacingM} />
             <HelpText>{getUsageExceededMessage(hasAdvancedAppsFeature)}</HelpText>
