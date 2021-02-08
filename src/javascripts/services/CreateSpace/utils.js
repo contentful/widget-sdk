@@ -1,5 +1,5 @@
 import createResourceService from 'services/ResourceService';
-import client from 'services/client';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import * as TokenStore from 'services/TokenStore';
 import _ from 'lodash';
 import * as Analytics from 'analytics/Analytics';
@@ -81,8 +81,9 @@ const createNewSpace = (
     defaultLocale: selectedLocale,
   });
 
-  client
-    .createSpace(dataWithUpdatedLocale, organization.sys.id)
+  const client = getCMAClient();
+  client.space
+    .create({ organizationId: organization.sys.id }, dataWithUpdatedLocale)
     .then((newSpace) => {
       // Create space
       TokenStore.refresh().then(
