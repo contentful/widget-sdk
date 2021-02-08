@@ -14,6 +14,11 @@ import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as trackCTA from 'analytics/trackCTA';
 import * as PricingService from 'services/PricingService';
+import { go } from 'states/Navigator';
+import { getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
 
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
@@ -33,6 +38,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn().mockReturnValue(true),
+  isLegacyOrganization: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
@@ -48,31 +54,40 @@ jest.mock('../DeleteDialog', () => ({
 
 const mockSpacePlan = Fake.Space();
 
-describe('EnvironmentsRoute', () => {
-  const defaultProps = {
-    endpoint: createPaginationEndpoint([]),
-    getSpaceData: () => {},
-    getAliasesIds: jest.fn().mockReturnValue([]),
-    goToSpaceDetail: jest.fn(),
-    isMasterEnvironment: () => {},
-    spaceId: 'space123',
-    organizationId: 'org123',
-    currentEnvironmentId: 'env123',
-    canUpgradeSpace: false,
-    isLegacyOrganization: false,
-    pubsubClient: {
-      on() {},
-      off() {},
-    },
-  };
+jest.mock('states/Navigator');
+jest.mock('core/services/SpaceEnvContext/utils');
+jest.mock('services/OrganizationRoles');
 
+const defaultSpaceId = 'space123';
+const defaultOrganizationId = 'org123';
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn().mockReturnValue({
+    currentSpaceId: defaultSpaceId,
+    currentEnvironmentAliasId: 'master',
+    currentEnvironment: {
+      sys: {
+        id: 'master',
+      },
+    },
+    currentOrganizationId: defaultOrganizationId,
+    currentOrganization: {},
+    currentSpaceData: {},
+  }),
+}));
+jest.mock('core/hooks/useSpaceEnvEndpoint');
+
+describe('EnvironmentsRoute', () => {
   beforeEach(() => {
+    getEnvironmentAliasesIds.mockReturnValue(['master']);
+
+    useSpaceEnvEndpoint.mockReturnValue(createPaginationEndpoint([]));
+
     jest.spyOn(PricingService, 'nextSpacePlanForResource').mockImplementation(async () => null);
+
+    go.mockClear();
   });
 
   afterEach(() => {
-    defaultProps.goToSpaceDetail.mockClear();
-
     PricingService.nextSpacePlanForResource.mockRestore();
   });
 
@@ -90,10 +105,10 @@ describe('EnvironmentsRoute', () => {
 
   const renderEnvironmentsComponent = async (...args) => {
     const envs = generateEnvironments(...args);
-    const rendered = render(
-      <EnvironmentsRoute {...defaultProps} endpoint={createPaginationEndpoint(envs)} />
-    );
-    expect(defaultProps.goToSpaceDetail).not.toHaveBeenCalled();
+    useSpaceEnvEndpoint.mockReturnValue(createPaginationEndpoint(envs));
+
+    const rendered = render(<EnvironmentsRoute />);
+    expect(go).not.toHaveBeenCalled();
 
     await waitForElement(() => rendered.getByTestId('environment-table'));
 
@@ -103,23 +118,23 @@ describe('EnvironmentsRoute', () => {
   describe('redirections based on permissions', () => {
     it("redirects if user can't manage environments", async () => {
       accessChecker.can.mockReturnValueOnce(false);
-      render(<EnvironmentsRoute {...defaultProps} />);
+      render(<EnvironmentsRoute />);
       await wait();
     });
 
     it('redirects if space has environments disabled', async () => {
       getVariation.mockResolvedValueOnce(false);
-      render(<EnvironmentsRoute {...defaultProps} />);
+      render(<EnvironmentsRoute />);
       await wait();
-      expect(defaultProps.goToSpaceDetail).toHaveBeenCalled();
+      expect(go).toHaveBeenCalled();
     });
   });
 
   it('lists all environments with status', async () => {
     const { getByTestId } = await renderEnvironmentsComponent(
-      { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
-      { id: 'e2', status: 'queued', spaceId: defaultProps.spaceId },
-      { id: 'e3', status: 'failed', spaceId: defaultProps.spaceId }
+      { id: 'e1', status: 'ready', spaceId: defaultSpaceId },
+      { id: 'e2', status: 'queued', spaceId: defaultSpaceId },
+      { id: 'e3', status: 'failed', spaceId: defaultSpaceId }
     );
 
     const env1 = getByTestId('environment.e1');
@@ -142,8 +157,8 @@ describe('EnvironmentsRoute', () => {
       getSpaceFeature.mockReturnValueOnce(false);
 
       const { queryByTestId } = await renderEnvironmentsComponent(
-        { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
-        { id: 'e2', status: 'ready', spaceId: defaultProps.spaceId }
+        { id: 'e1', status: 'ready', spaceId: defaultSpaceId },
+        { id: 'e2', status: 'ready', spaceId: defaultSpaceId }
       );
 
       expect(queryByTestId('environments.header')).toBeNull();
@@ -155,8 +170,8 @@ describe('EnvironmentsRoute', () => {
     describe('when user has the manage aliases permission', () => {
       it('shows the aliases opt-in', async () => {
         const { queryByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
-          { id: 'e2', status: 'ready', spaceId: defaultProps.spaceId }
+          { id: 'e1', status: 'ready', spaceId: defaultSpaceId },
+          { id: 'e2', status: 'ready', spaceId: defaultSpaceId }
         );
 
         expect(queryByTestId('environments.header')).toBeNull();
@@ -164,19 +179,18 @@ describe('EnvironmentsRoute', () => {
       });
 
       it('shows the aliases', async () => {
-        defaultProps.getAliasesIds.mockReturnValueOnce(['master']);
         const { getByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultProps.spaceId },
-          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultProps.spaceId },
+          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultSpaceId },
+          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultSpaceId },
           {
             id: 'master',
             status: 'ready',
-            spaceId: defaultProps.spaceId,
+            spaceId: defaultSpaceId,
             aliasedEnvironment: {
               sys: {
                 id: 'e1',
                 status: 'ready',
-                spaceId: defaultProps.spaceId,
+                spaceId: defaultSpaceId,
               },
             },
           }
@@ -187,13 +201,11 @@ describe('EnvironmentsRoute', () => {
       });
 
       it('cannot be deleted when environment has aliases', async () => {
-        defaultProps.getAliasesIds.mockReturnValueOnce(['master']);
-
         const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
           id: 'e1',
           status: 'ready',
           aliases: ['master'],
-          spaceId: defaultProps.spaceId,
+          spaceId: defaultSpaceId,
         });
 
         const env1 = getByTestId('environment.e1');
@@ -213,7 +225,7 @@ describe('EnvironmentsRoute', () => {
         const { queryByTestId } = await renderEnvironmentsComponent({
           id: 'e1',
           status: 'ready',
-          spaceId: defaultProps.spaceId,
+          spaceId: defaultSpaceId,
         });
 
         expect(queryByTestId('environments.header')).toBeNull();
@@ -225,7 +237,8 @@ describe('EnvironmentsRoute', () => {
   describe('shows usage info in the sidebar', () => {
     describe('on v2 pricing', () => {
       beforeEach(() => {
-        defaultProps.isLegacyOrganization = false;
+        isLegacyOrganization.mockReturnValueOnce(false);
+
         createResourceService.mockImplementation(() => ({
           get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
         }));
@@ -233,17 +246,17 @@ describe('EnvironmentsRoute', () => {
 
       it('shows usage and limits', async () => {
         const { getByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultProps.spaceId },
-          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultProps.spaceId },
+          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultSpaceId },
+          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultSpaceId },
           {
             id: 'master',
             status: 'ready',
-            spaceId: defaultProps.spaceId,
+            spaceId: defaultSpaceId,
             aliasedEnvironment: {
               sys: {
                 id: 'e1',
                 status: 'ready',
-                spaceId: defaultProps.spaceId,
+                spaceId: defaultSpaceId,
               },
             },
           }
@@ -261,7 +274,7 @@ describe('EnvironmentsRoute', () => {
         const { getByTestId } = await renderEnvironmentsComponent({
           id: 'e1',
           status: 'ready',
-          spaceId: defaultProps.spaceId,
+          spaceId: defaultSpaceId,
         });
         const envUsage = getByTestId('environmentsUsage');
         expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeVisible();
@@ -270,7 +283,7 @@ describe('EnvironmentsRoute', () => {
 
     describe('on v1 pricing', () => {
       beforeEach(() => {
-        defaultProps.isLegacyOrganization = true;
+        isLegacyOrganization.mockReturnValueOnce(true);
       });
 
       it('shows usage without limits', async () => {
@@ -282,17 +295,17 @@ describe('EnvironmentsRoute', () => {
             id: 'e1',
             status: 'ready',
             aliases: ['master'],
-            spaceId: defaultProps.spaceId,
+            spaceId: defaultSpaceId,
           },
           {
             id: 'master',
             status: 'ready',
-            spaceId: defaultProps.spaceId,
+            spaceId: defaultSpaceId,
             aliasedEnvironment: {
               sys: {
                 id: 'e1',
                 status: 'ready',
-                spaceId: defaultProps.spaceId,
+                spaceId: defaultSpaceId,
               },
             },
           }
@@ -312,7 +325,7 @@ describe('EnvironmentsRoute', () => {
         const { getByTestId } = await renderEnvironmentsComponent({
           id: 'e1',
           status: 'ready',
-          spaceId: defaultProps.spaceId,
+          spaceId: defaultSpaceId,
         });
         const envUsage = getByTestId('environmentsUsage');
         expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeNull();
@@ -322,7 +335,8 @@ describe('EnvironmentsRoute', () => {
 
   describe('when limit is reached on v2 pricing', () => {
     beforeEach(() => {
-      defaultProps.isLegacyOrganization = false;
+      isLegacyOrganization.mockReturnValueOnce(false);
+
       canCreate.mockReturnValueOnce(false);
       createResourceService.mockImplementation(() => ({
         get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
@@ -333,19 +347,19 @@ describe('EnvironmentsRoute', () => {
       const { queryByTestId } = await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
-        spaceId: defaultProps.spaceId,
+        spaceId: defaultSpaceId,
       });
       expect(queryByTestId('openCreateDialog')).toBeNull();
     });
 
     it('should render upgrade space button when user is admin and there is an available next space plan', async () => {
       PricingService.nextSpacePlanForResource.mockResolvedValueOnce(mockSpacePlan);
-      defaultProps.canUpgradeSpace = true;
+      isOwnerOrAdmin.mockReturnValueOnce(true);
 
       await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
-        spaceId: defaultProps.spaceId,
+        spaceId: defaultSpaceId,
       });
 
       expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
@@ -357,8 +371,8 @@ describe('EnvironmentsRoute', () => {
 
       userEvent.click(screen.getByTestId('openUpgradeDialog'));
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-        organizationId: defaultProps.organizationId,
-        spaceId: defaultProps.spaceId,
+        organizationId: defaultOrganizationId,
+        spaceId: defaultSpaceId,
       });
       expect(beginSpaceChange).toBeCalled();
 
@@ -368,12 +382,12 @@ describe('EnvironmentsRoute', () => {
     it('should render talk to us button when user is admin/owner and there is no available next space plan', async () => {
       PricingService.nextSpacePlanForResource.mockResolvedValueOnce(null);
 
-      defaultProps.canUpgradeSpace = true;
+      isOwnerOrAdmin.mockReturnValueOnce(true);
 
       await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
-        spaceId: defaultProps.spaceId,
+        spaceId: defaultSpaceId,
       });
 
       expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
@@ -385,20 +399,20 @@ describe('EnvironmentsRoute', () => {
       userEvent.click(screen.getByTestId('upgradeToEnterpriseButton'));
 
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-        organizationId: defaultProps.organizationId,
-        spaceId: defaultProps.spaceId,
+        organizationId: defaultOrganizationId,
+        spaceId: defaultSpaceId,
       });
 
       expect(screen.queryByTestId('subscriptionLink')).toBeNull();
     });
 
     it('should not show upgrade action when user is not admin', async () => {
-      defaultProps.canUpgradeSpace = false;
+      isOwnerOrAdmin.mockReturnValueOnce(false);
 
       const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
-        spaceId: defaultProps.spaceId,
+        spaceId: defaultSpaceId,
       });
 
       expect(queryByTestId('openUpgradeDialog')).toBeNull();

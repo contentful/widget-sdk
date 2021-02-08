@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import * as React from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -12,6 +12,8 @@ import { openCreateEnvDialog } from '../CreateEnvDialog';
 import { openCreateEnvAliasDialog } from '../CreateEnvAliasDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import * as PricingService from 'services/PricingService';
+import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
 
 /**
  * Actions
@@ -55,6 +57,8 @@ export const createEnvReducer = createImmerReducer({
 });
 
 export const useEnvironmentsRouteState = (props) => {
+  const { spaceId } = props;
+
   const initialState = {
     isLoading: true,
     canCreateEnv: false,
@@ -75,10 +79,9 @@ export const useEnvironmentsRouteState = (props) => {
     currentAliasId: props.currentAliasId,
   };
 
-  const [state, dispatch] = useReducer(createEnvReducer, initialState);
+  const [state, dispatch] = React.useReducer(createEnvReducer, initialState);
 
-  const { endpoint, spaceId } = props;
-
+  const endpoint = useSpaceEnvEndpoint();
   const resourceEndpoint = SpaceEnvironmentsRepo.create(endpoint);
   const aliasEndpoint = SpaceAliasesRepo.create(endpoint);
   const resourceService = createResourceService(spaceId, 'space');
@@ -114,12 +117,11 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const makeEnvironmentModel = (environment) => {
-    const { isMasterEnvironment, getAliasesIds } = props;
     const statusId = environment.sys.status.sys.id;
     return {
       id: environment.sys.id,
       isMaster: isMasterEnvironment(environment),
-      aliases: getAliasesIds(environment),
+      aliases: getEnvironmentAliasesIds(environment),
       status: statusId.match(/ready|failed/) ? statusId : 'inProgress',
       payload: environment,
     };
@@ -170,13 +172,13 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const OpenCreateDialog = async () => {
-    const { currentEnvironmentId } = props;
+    const { environmentId } = props;
     const { items, canSelectSource } = state;
 
     const created = await openCreateEnvDialog(
       resourceEndpoint.create,
       items,
-      currentEnvironmentId,
+      environmentId,
       // Do not show env picker if there is only a single source environment
       canSelectSource && items.length > 1
     );
@@ -187,14 +189,10 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const OpenCreateAliasDialog = async () => {
-    const { currentEnvironmentId } = props;
+    const { environmentId } = props;
     const { items } = state;
 
-    const created = await openCreateEnvAliasDialog(
-      aliasEndpoint.create,
-      items,
-      currentEnvironmentId
-    );
+    const created = await openCreateEnvAliasDialog(aliasEndpoint.create, items, environmentId);
 
     if (created) {
       await FetchEnvironments();
@@ -202,12 +200,12 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const OpenDeleteDialog = async (environment) => {
-    const { currentEnvironmentId } = props;
+    const { environmentId } = props;
 
     const deleted = await openDeleteEnvironmentDialog(
       resourceEndpoint.remove,
       environment.id,
-      currentEnvironmentId
+      environmentId
     );
 
     if (deleted) {

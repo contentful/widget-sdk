@@ -34,13 +34,36 @@ import EnvironmentsSidebar from '../EnvironmentsSidebar';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 import AliasIcon from 'svg/alias.svg';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { go } from 'states/Navigator';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { usePubSubClient } from 'core/hooks';
 
-export default function EnvironmentsRoute(props) {
+export default function EnvironmentsRoute() {
+  const {
+    currentSpaceId,
+    currentEnvironmentId,
+    currentEnvironmentAliasId,
+    currentOrganizationId,
+    currentOrganization,
+    currentSpaceData,
+  } = useSpaceEnvContext();
+  const spacePubSubClient = usePubSubClient();
   const [
     state,
     { FetchPermissions, FetchEnvironments, FetchNextSpacePlan, RefetchEnvironments, ...actions },
-  ] = useEnvironmentsRouteState(props);
-
+  ] = useEnvironmentsRouteState({
+    canUpgradeSpace: isOwnerOrAdmin(currentOrganization),
+    currentAliasId: currentEnvironmentAliasId,
+    environmentId: currentEnvironmentId,
+    getSpaceData: () => currentSpaceData,
+    goToSpaceDetail: () => go({ path: 'spaces.detail' }),
+    isLegacyOrganization: isLegacyOrganization(currentOrganization),
+    organizationId: currentOrganizationId,
+    pubsubClient: spacePubSubClient,
+    spaceId: currentSpaceId,
+  });
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
 
   useEffect(() => {
@@ -53,6 +76,8 @@ export default function EnvironmentsRoute(props) {
   // top: effect forced to happen only once
 
   useEffect(() => {
+    if (!pubsubClient) return;
+
     const handler = () => {
       RefetchEnvironments();
     };
@@ -98,21 +123,6 @@ export default function EnvironmentsRoute(props) {
     </>
   );
 }
-
-EnvironmentsRoute.propTypes = {
-  endpoint: PropTypes.func.isRequired,
-  getSpaceData: PropTypes.func.isRequired,
-  getAliasesIds: PropTypes.func.isRequired,
-  goToSpaceDetail: PropTypes.func.isRequired,
-  isMasterEnvironment: PropTypes.func.isRequired,
-  spaceId: PropTypes.string.isRequired,
-  organizationId: PropTypes.string.isRequired,
-  currentEnvironmentId: PropTypes.string.isRequired,
-  currentAliasId: PropTypes.string,
-  canUpgradeSpace: PropTypes.bool.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired,
-  pubsubClient: PropTypes.object.isRequired,
-};
 
 const environmentListStyles = {
   wrapper: css({
