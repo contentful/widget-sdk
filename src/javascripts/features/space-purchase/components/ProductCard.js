@@ -65,7 +65,9 @@ const styles = {
 
   illustration: css({
     width: '100%',
-    height: illustrationHeight,
+    '& > svg': {
+      height: illustrationHeight,
+    },
   }),
   mediumWeight: css({
     fontWeight: tokens.fontWeightMedium,
