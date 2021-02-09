@@ -61,6 +61,7 @@ export const PlatformSelectionStep = ({ track }) => {
       selectedPlatform,
       selectedPlan,
       freeSpaceResource,
+      composeProductRatePlan,
     },
     dispatch,
   } = useContext(SpacePurchaseState);
@@ -130,21 +131,37 @@ export const PlatformSelectionStep = ({ track }) => {
 
         {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
           let tooltipText = '';
+          const platformIsComposeLaunch = platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
+          const composeAndLaunchIsLoading = platformIsComposeLaunch && !composeProductRatePlan;
+
           // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
-          if (platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH && canCreatePaidSpace === false) {
+          if (
+            platformIsComposeLaunch &&
+            canCreatePaidSpace === false &&
+            !composeAndLaunchIsLoading
+          ) {
             tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`;
           }
+
+          const platformPlan = {
+            ...platform,
+            // in the Web app + Compose + Launch card we need to pass the price that we get from the backend
+            ...(platformIsComposeLaunch && {
+              price: composeProductRatePlan?.price,
+            }),
+          };
 
           return (
             <ProductCard
               key={idx}
               cardType="platform"
               selected={selectedPlatform?.title === platform.title}
-              onClick={() => onSelectPlatform(platform)}
+              onClick={() => onSelectPlatform(platformPlan)}
               tooltipText={tooltipText}
-              disabled={!!tooltipText}
-              content={platform}
-              isNew={platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH}
+              disabled={!!tooltipText || composeAndLaunchIsLoading}
+              loading={composeAndLaunchIsLoading}
+              content={platformPlan}
+              isNew={platformIsComposeLaunch}
               testId="platform-card"
             />
           );

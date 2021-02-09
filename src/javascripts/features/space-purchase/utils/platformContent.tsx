@@ -12,7 +12,6 @@ interface PlatformContent {
   illustration: React.ReactNode;
   title: string;
   description: string;
-  price?: number;
 }
 
 export const PLATFORM_CONTENT: { [key: string]: PlatformContent } = {
@@ -29,6 +28,5 @@ export const PLATFORM_CONTENT: { [key: string]: PlatformContent } = {
     title: 'Web app + Compose + Launch',
     description:
       'Content creators can easily manage web page content and coordinate content releases in our sleek new apps. Developers continue to manage content models in your spaces',
-    price: 999,
   },
 };

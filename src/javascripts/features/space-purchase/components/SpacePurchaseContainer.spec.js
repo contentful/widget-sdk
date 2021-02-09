@@ -49,6 +49,10 @@ const mockPlanCharges = [
   FakeFactory.RatePlanCharge('Records', 3),
 ];
 
+const mockComposeAndLaunch = {
+  price: 100,
+};
+
 // TODO: make these mocks available to everyone
 const mockSpaceRatePlans = [
   {
@@ -435,6 +439,11 @@ describe('SpacePurchaseContainer', () => {
       // select a space
       userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
 
+      // monthly total should be the sum of the platform price and the space price
+      expect(screen.getByTestId('monthly-total').textContent).toEqual(
+        `$${mockSpaceRatePlans[1].price}`
+      );
+
       // continue
       userEvent.click(screen.getByTestId('platform-select-continue-button'));
 
@@ -501,6 +510,11 @@ describe('SpacePurchaseContainer', () => {
       // select a space
       userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
 
+      // monthly total should be the sum of the platform price and the space price
+      expect(screen.getByTestId('monthly-total').textContent).toEqual(
+        `$${mockSpaceRatePlans[1].price}`
+      );
+
       // continue
       userEvent.click(screen.getByTestId('platform-select-continue-button'));
 
@@ -541,6 +555,11 @@ describe('SpacePurchaseContainer', () => {
 
       // select a space
       userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // monthly total should be the sum of the platform price and the space price
+      expect(screen.getByTestId('monthly-total').textContent).toEqual(
+        `$${mockComposeAndLaunch.price + mockSpaceRatePlans[1].price}`
+      );
 
       // continue
       userEvent.click(screen.getByTestId('platform-select-continue-button'));
@@ -597,6 +616,11 @@ describe('SpacePurchaseContainer', () => {
 
       // select a space
       userEvent.click(screen.getAllByTestId('space-plan-card')[1]);
+
+      // monthly total should be the sum of the platform price and the space price
+      expect(screen.getByTestId('monthly-total').textContent).toEqual(
+        `$${mockComposeAndLaunch.price + mockSpaceRatePlans[1].price}`
+      );
 
       // continue
       userEvent.click(screen.getByTestId('platform-select-continue-button'));
@@ -688,6 +712,7 @@ async function build(customProps, customState) {
         pageName: 'Space Purchase',
         content: [],
       },
+      composeProductRatePlan: mockComposeAndLaunch,
       purchasingApps: false,
       ...customState,
     },

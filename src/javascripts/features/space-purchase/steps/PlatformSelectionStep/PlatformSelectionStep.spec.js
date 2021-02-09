@@ -11,10 +11,10 @@ import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 const mockTrack = jest.fn();
 const mockOrganization = FakeFactory.Organization();
 
+const mockComposeProductRatePlan = { price: 100 };
 const mockSelectedPlatform = {
-  type: PlatformKind.SPACE_COMPOSE_LAUNCH,
-  title: PLATFORM_CONTENT.composePlatform.title,
-  price: 999,
+  ...PLATFORM_CONTENT.composePlatform,
+  price: mockComposeProductRatePlan.price,
 };
 
 const mockComposeLaunchPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
@@ -91,7 +91,7 @@ describe('PlatformSelectionStep', () => {
 
       userEvent.click(platformCards[1]);
       expect(mockTrack).toHaveBeenCalledWith(EVENTS.PLATFORM_SELECTED, {
-        selectedPlatform: PLATFORM_CONTENT.composePlatform,
+        selectedPlatform: mockSelectedPlatform,
       });
     });
   });
@@ -194,6 +194,7 @@ async function build(customProps, customState) {
     {
       organization: mockOrganization,
       sessionId: 'random_id',
+      composeProductRatePlan: mockComposeProductRatePlan,
       ...customState,
     },
     props

@@ -270,7 +270,7 @@ export const SpacePurchaseContainer = ({ track }) => {
             <Flex flexDirection="row" justifyContent="flex-end" alignItems="center" fullWidth>
               <Heading className={styles.monthlyCost}>
                 Monthly {selectedPlan ? 'total: ' : 'subtotal: '}
-                <Price value={monthlyCost} />
+                <Price value={monthlyCost} testId="monthly-total" />
               </Heading>
               <Tooltip
                 place="top-end"
