@@ -5,7 +5,6 @@ import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { go } from 'states/Navigator';
 import { getOrganization } from 'services/TokenStore';
-import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 
@@ -40,12 +39,10 @@ jest.mock('services/ResourceService', () => ({
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
-jest.mock('features/space-purchase/utils/isSpacePurchaseFlowAllowed', () => ({
-  isSpacePurchaseFlowAllowed: jest.fn(() => false),
-}));
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(() => false),
   isSelfServicePlan: jest.fn(() => false),
+  isFreePlan: jest.fn(() => false),
 }));
 
 jest.mock('features/pricing-entities', () => ({
@@ -94,12 +91,23 @@ describe('CreateSpace', () => {
       getOrganization.mockResolvedValueOnce(mockV2Org);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Self-service' });
       isSelfServicePlan.mockResolvedValueOnce(true);
-      isSpacePurchaseFlowAllowed.mockResolvedValueOnce(true);
       await beginSpaceCreation('v2');
 
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organizations', 'subscription_new', 'new_space'],
         params: { orgId: 'v2' },
+      });
+    });
+
+    it('sends user to the new_space page with a custom route param', async function () {
+      getOrganization.mockResolvedValueOnce(mockV2Org);
+      getBasePlan.mockResolvedValueOnce({ customerType: 'Self-service' });
+      isSelfServicePlan.mockResolvedValueOnce(true);
+      await beginSpaceCreation('v2', { customParam: 'foo' });
+
+      expect(go).toHaveBeenCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'new_space'],
+        params: { orgId: 'v2', customParam: 'foo' },
       });
     });
 

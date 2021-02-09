@@ -4,13 +4,16 @@ import {
   open as openChangeSpaceWarningModal,
   MODAL_TYPES,
 } from 'app/SpaceWizards/ChangeSpaceWarning';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import { getSpacePlanForSpace } from 'features/pricing-entities';
+import {
+  isEnterprisePlan,
+  isSelfServicePlan,
+  isFreePlan,
+} from 'account/pricing/PricingDataProvider';
+import { getSpacePlanForSpace, getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 import { go } from 'states/Navigator';
-import { isSpacePurchaseFlowAllowedForChange } from 'features/space-purchase';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
 /**
@@ -50,9 +53,9 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
   const spacePlan = await getSpacePlanForSpace(orgEndpoint, space.sys.id);
 
   // if newSpacePurchase flag is on and org is OnDemand or Free, they should go to /new_space
-  const spacePurchaseFlowAllowedForPlanChange = await isSpacePurchaseFlowAllowedForChange(
-    organizationId
-  );
+  const endpoint = createOrganizationEndpoint(organizationId);
+  const basePlan = await getBasePlan(endpoint);
+  const spacePurchaseFlowAllowedForPlanChange = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
 
   const isEnterpriseSpaceChangeAllowed = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, {
     organizationId,

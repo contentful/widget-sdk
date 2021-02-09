@@ -7,24 +7,51 @@ import { getModule } from 'core/NgRegistry';
 import { getOrganization } from 'services/TokenStore';
 import { go } from 'states/Navigator';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import {
+  isEnterprisePlan,
+  isSelfServicePlan,
+  isFreePlan,
+} from 'account/pricing/PricingDataProvider';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
+// TODO: refactor to TS
+export const APPS_PURCHASE_FROM = {
+  spaceHome: 'space-home',
+  subscriptionOverview: 'subscription-overview',
+};
+
 /**
- * Displays the space creation dialog. The dialog type will depend on the
- * organization that the new space should belong to.
+ * beginAppsPurchase is the function used to start the purchase flow of Contentful Apps
+ * it will call beginSpaceCreation with the correct tracking params
  *
- * Accepts one required parameter - `organizationId`;
- *
- * @param {string} organizationId
+ * @param {string} organizationId is the id of the current org (required);
+ * @param {string} from is essential to track where the flow started (required), use the enum APPS_PURCHASE_FROM as its value
  */
-export async function beginSpaceCreation(organizationId) {
+export async function beginAppsPurchase(organizationId, from) {
+  const params = { viaMarketingCta: true, from };
+  await beginSpaceCreation(organizationId, params);
+}
+
+/**
+ * Starts the space creation flow.
+ * The flow type will depend on the current organization.
+ *
+ * usage with customRouteParams:
+ *
+ * `beginAppsPurchase('my_org_id', { param: 'foo' })`
+ *
+ * this will result in the user going to
+ * `/account/organizations/my_org_id/new_space?param=foo`
+ *
+ * @param {string} organizationId is the id of the current org (required);
+ * @param {object?} customRouteParams are the params that will be passed to the purchase flow url;
+ */
+export async function beginSpaceCreation(organizationId, customRouteParams = {}) {
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
   }
@@ -58,21 +85,21 @@ export async function beginSpaceCreation(organizationId) {
     return;
   }
 
-  // if newSpacePurchase flag is on and org is OnDemand or Free, they should go to /new_space
-  const spacePurchaseFlowAllowed = await isSpacePurchaseFlowAllowed(organizationId);
+  // if org is OnDemand or Free, they should go to /new_space
+  const endpoint = createOrganizationEndpoint(organizationId);
+  const basePlan = await getBasePlan(endpoint);
+  const spacePurchaseFlowAllowed = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
 
   if (spacePurchaseFlowAllowed) {
     go({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: organizationId },
+      params: { orgId: organizationId, ...customRouteParams },
     });
     return;
   }
 
   // if newSpaceCreationFlow flag is on and org is Enterprise, they should go to /space_create
   const isSpaceCreateForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
-  const endpoint = createOrganizationEndpoint(organizationId);
-  const basePlan = await getBasePlan(endpoint);
   const hasEnterprisePlan = basePlan && isEnterprisePlan(basePlan);
 
   if (isSpaceCreateForSpacePlanEnabled && hasEnterprisePlan) {
