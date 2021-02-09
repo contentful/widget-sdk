@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { css } from 'emotion';
+import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import createResourceService from 'services/ResourceService';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
@@ -11,6 +11,10 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceEntitlementSet } from './services/EntitlementService';
+import { can } from 'access_control/AccessChecker';
+import { go } from 'states/Navigator';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
 
 const addMasterEnvironment = flow(
   update('limits', flow(update('included', add(1)), update('maximum', add(1)))),
@@ -23,95 +27,104 @@ const styles = {
   }),
 };
 
-class SpaceUsage extends React.Component {
-  static propTypes = {
-    spaceId: PropTypes.string.isRequired,
-    environmentMeta: PropTypes.shape({
-      aliasId: PropTypes.string,
-      environmentId: PropTypes.string.isRequired,
-      isMasterEnvironment: PropTypes.bool.isRequired,
-    }).isRequired,
-  };
+export default function SpaceUsage() {
+  const { currentSpaceId, currentSpace, currentOrganizationId } = useSpaceEnvContext();
+  const environmentMeta = getEnvironmentMeta(currentSpace);
+  const [spaceResources, setSpaceResources] = React.useState();
+  const [environmentResources, setEnvironmentResources] = React.useState();
+  const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = React.useState();
+  const [entitlementsSet, setEntitlementsSet] = React.useState();
 
-  state = {
-    spaceResources: undefined,
-    environmentResources: undefined,
-    entitlementsAPIEnabled: false,
-    entitlementsSet: undefined,
-  };
+  React.useEffect(() => {
+    if (!currentSpaceId) return;
 
-  async componentDidMount() {
-    const entitlementsAPIEnabled = await getVariation(FLAGS.ENTITLEMENTS_API);
+    getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
+      setEntitlementsAPIEnabled(isEnabled);
 
-    this.setState({
-      entitlementsAPIEnabled,
-    });
-    this.fetchPlan();
-  }
-
-  fetchPlan = async () => {
-    const { spaceId, environmentMeta } = this.props;
-    const spaceScopedService = createResourceService(spaceId);
-    const envScopedService = createResourceService(spaceId, 'space', environmentMeta.environmentId);
-    const isPermanent = (resource) => resource.kind === 'permanent';
-
-    if (this.state.entitlementsAPIEnabled) {
-      try {
-        const entitlementsSet = await getSpaceEntitlementSet(spaceId);
-        this.setState({
-          entitlementsSet,
-        });
-      } catch {
-        //
+      if (isEnabled) {
+        getSpaceEntitlementSet(currentSpaceId)
+          .then(setEntitlementsSet)
+          .catch(() => {});
       }
-    }
+    });
+  }, [currentSpaceId]);
 
-    try {
-      this.setState({
-        spaceResources: flow(
+  React.useEffect(() => {
+    if (!currentOrganizationId) return;
+
+    const hasAccess = can('update', 'settings');
+    if (!hasAccess) {
+      go({ path: 'spaces.detail' });
+
+      Notification.warning(`You don't have permission to view the space usage.`, {
+        cta: {
+          label: 'Update your role',
+          textLinkProps: {
+            onClick: () =>
+              go({
+                path: ['account', 'organizations', 'users', 'list'],
+                params: { orgId: currentOrganizationId },
+                options: { reload: true },
+              }),
+          },
+        },
+      });
+    }
+  }, [currentOrganizationId]);
+
+  React.useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const spaceScopedService = createResourceService(currentSpaceId);
+        const envScopedService = createResourceService(
+          currentSpaceId,
+          'space',
+          environmentMeta.environmentId
+        );
+        const [spaceServiceResult, envServiceResult] = await Promise.all([
+          spaceScopedService.getAll(),
+          envScopedService.getAll(),
+        ]);
+
+        const isPermanent = (resource) => resource.kind === 'permanent';
+        const spaceResources = flow(
           filter(isPermanent),
           keyBy('sys.id'),
           update('environment', addMasterEnvironment)
-        )(await spaceScopedService.getAll()),
-        environmentResources: flow(keyBy('sys.id'))(await envScopedService.getAll()),
-      });
-    } catch (e) {
-      ReloadNotification.apiErrorHandler(e);
+        )(spaceServiceResult);
+        setSpaceResources(spaceResources);
+
+        const environmentResources = flow(keyBy('sys.id'))(envServiceResult);
+        setEnvironmentResources(environmentResources);
+      } catch (e) {
+        ReloadNotification.apiErrorHandler(e);
+      }
     }
-  };
 
-  render() {
-    const {
-      spaceResources,
-      environmentResources,
-      entitlementsAPIEnabled,
-      entitlementsSet,
-    } = this.state;
-    const { environmentMeta } = this.props;
-    return (
-      <React.Fragment>
-        <DocumentTitle title="Usage" />
-        <Workbench>
-          <Workbench.Header icon={<ProductIcon icon="Usage" size="large" />} title="Space usage" />
-          <Workbench.Content>
-            <ResourceUsageList
-              spaceResources={spaceResources}
-              environmentResources={environmentResources}
-              environmentMeta={environmentMeta}
-              entitlementsSet={entitlementsAPIEnabled ? entitlementsSet : undefined}
-            />
-          </Workbench.Content>
-          <Workbench.Sidebar position="right" className={styles.sidebar}>
-            <SpaceUsageSidebar
-              spaceResources={spaceResources}
-              environmentResources={environmentResources}
-              environmentId={environmentMeta.environmentId}
-            />
-          </Workbench.Sidebar>
-        </Workbench>
-      </React.Fragment>
-    );
-  }
+    fetchPlan();
+  }, [currentSpaceId, environmentMeta.environmentId]);
+
+  return (
+    <React.Fragment>
+      <DocumentTitle title="Usage" />
+      <Workbench>
+        <Workbench.Header icon={<ProductIcon icon="Usage" size="large" />} title="Space usage" />
+        <Workbench.Content>
+          <ResourceUsageList
+            spaceResources={spaceResources}
+            environmentResources={environmentResources}
+            environmentMeta={environmentMeta}
+            entitlementsSet={entitlementsAPIEnabled ? entitlementsSet : undefined}
+          />
+        </Workbench.Content>
+        <Workbench.Sidebar position="right" className={styles.sidebar}>
+          <SpaceUsageSidebar
+            spaceResources={spaceResources}
+            environmentResources={environmentResources}
+            environmentId={environmentMeta.environmentId}
+          />
+        </Workbench.Sidebar>
+      </Workbench>
+    </React.Fragment>
+  );
 }
-
-export default SpaceUsage;

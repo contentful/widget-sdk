@@ -11,6 +11,16 @@ const environmentMetaMock = {
   environmentId: 'environmentId',
   isMasterEnvironment: true,
 };
+
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn().mockReturnValue({
+    currentSpaceId: spaceId,
+    currentSpace: {
+      environmentMeta: environmentMetaMock,
+    },
+  }),
+}));
+
 const mockedResponse = {
   features: {},
   quotas: {
@@ -180,7 +190,7 @@ jest.mock('./services/EntitlementService', () => ({
 
 describe('SpaceUsage', () => {
   const build = async () => {
-    render(<SpaceUsage spaceId={spaceId} environmentMeta={environmentMetaMock} />);
+    render(<SpaceUsage />);
     await screen.findByTestId('resource-list');
   };
 

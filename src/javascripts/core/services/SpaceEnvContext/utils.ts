@@ -6,6 +6,7 @@ import {
   Organization,
   SpaceMember,
   Role,
+  EnvironmentMeta,
 } from './types';
 
 export function getSpaceData(space?: SpaceEnv): SpaceData | undefined {
@@ -42,6 +43,10 @@ export function getOrganizationId(space?: SpaceEnv): string | undefined {
 
 export function getOrganizationName(space?: SpaceEnv): string | undefined {
   return getOrganization(space)?.name;
+}
+
+export function getEnvironmentMeta(space?: SpaceEnv): EnvironmentMeta | undefined {
+  return space?.environmentMeta;
 }
 
 export function isOrganizationBillable(space?: SpaceEnv): boolean {
