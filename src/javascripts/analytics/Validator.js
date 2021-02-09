@@ -11,6 +11,7 @@ const CTA_EVENTS = [
   'increase_team_user_limit_via_support',
   'enterprise_trial_tag',
   'trial_space_tag',
+  'app_trial_tag',
 ];
 
 export const validEvents = {

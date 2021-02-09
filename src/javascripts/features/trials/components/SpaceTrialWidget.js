@@ -50,20 +50,19 @@ const FairUsePolicyLink = () => (
   </TextLink>
 );
 
-export const SpaceTrialWidget = ({ spaceId }) => {
+export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
   const [isTrialSpace, setIsTrialSpace] = useState(false);
   const [trialExpiresAt, setTrialExpiresAt] = useState();
 
   const fetchSpace = useCallback(async () => {
-    getSpace(spaceId).then((space) => {
+    await getSpace(spaceId).then((space) => {
       setIsTrialSpace(isSpaceOnTrial(space));
       setTrialExpiresAt(space.trialPeriodEndsAt);
     });
   }, [spaceId]);
 
   const { isLoading } = useAsync(fetchSpace);
-
-  if (isLoading || !isTrialSpace) {
+  if (isLoading || !isTrialSpace || hasActiveAppTrial) {
     return null;
   }
 
@@ -143,4 +142,5 @@ export const SpaceTrialWidget = ({ spaceId }) => {
 
 SpaceTrialWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,
+  hasActiveAppTrial: PropTypes.bool,
 };

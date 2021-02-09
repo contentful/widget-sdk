@@ -11,8 +11,8 @@ global.open = () => {};
 
 const mockedSpace = fake.Space();
 
-const build = () => {
-  return render(<SpaceTrialWidget spaceId={mockedSpace.sys.id} />);
+const build = (props) => {
+  return render(<SpaceTrialWidget spaceId={mockedSpace.sys.id} {...props} />);
 };
 
 jest.mock('analytics/Analytics', () => ({
@@ -43,6 +43,14 @@ describe('SpaceTrialWidget', () => {
     isSpaceOnTrial.mockReturnValueOnce(false);
 
     build();
+
+    await waitFor(() => expect(screen.queryByTestId('space-trial-widget')).not.toBeInTheDocument());
+  });
+
+  it('does not render when the space is App Trial Space', async () => {
+    isSpaceOnTrial.mockReturnValueOnce(false);
+
+    build({ hasActiveAppTrial: true });
 
     await waitFor(() => expect(screen.queryByTestId('space-trial-widget')).not.toBeInTheDocument());
   });

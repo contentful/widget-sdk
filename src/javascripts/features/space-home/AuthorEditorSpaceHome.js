@@ -6,7 +6,13 @@ import { ConceptVideoWidget } from './widgets/ConceptVideoWidget';
 import { WalkthroughWidget } from './widgets/walkthrough/WalkthroughWidget';
 import { SpaceTrialWidget } from 'features/trials';
 
-export const AuthorEditorSpaceHome = ({ spaceName, orgName, spaceId, isTrialSpace }) => {
+export const AuthorEditorSpaceHome = ({
+  spaceName,
+  orgName,
+  spaceId,
+  isTrialSpace,
+  hasActiveAppTrial,
+}) => {
   const [walkthroughStarted, setWalkthroughState] = useState(false);
   return (
     <WidgetContainer>
@@ -32,7 +38,7 @@ export const AuthorEditorSpaceHome = ({ spaceName, orgName, spaceId, isTrialSpac
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
-        <SpaceTrialWidget spaceId={spaceId} />
+        <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
@@ -47,4 +53,5 @@ AuthorEditorSpaceHome.propTypes = {
   orgName: PropTypes.string,
   spaceId: PropTypes.string,
   isTrialSpace: PropTypes.bool,
+  hasActiveAppTrial: PropTypes.bool,
 };

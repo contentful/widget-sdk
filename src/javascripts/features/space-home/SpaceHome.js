@@ -30,6 +30,9 @@ import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { createAppTrialRepo, isActiveAppTrial } from 'features/trials';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -45,13 +48,26 @@ const fetchData = (
   isTEA,
   isModernStack,
   currentSpaceId,
-  currentSpace
+  currentSpace,
+  currentOrganizationId
 ) => async () => {
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
+  const hasActiveAppTrial = await getVariation(FLAGS.APP_TRIAL, {
+    organizationId: currentOrganizationId,
+  }).then(async (enabled) => {
+    if (enabled) {
+      const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
+      const appTrialFeature = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
+      return isActiveAppTrial(appTrialFeature);
+    }
+  });
 
   if (!currentSpaceId || !isSpaceAdmin) {
+    setState({
+      hasActiveAppTrial,
+    });
     setLoading(false);
     return;
   }
@@ -72,6 +88,7 @@ const fetchData = (
         hasTeamsEnabled,
         cdaToken: key.accessToken,
         cpaToken: keyWithPreview.preview_api_key.accessToken,
+        hasActiveAppTrial,
       });
     }
 
@@ -88,10 +105,12 @@ const fetchData = (
         hasTeamsEnabled,
         managementToken: credentials && credentials.managementToken,
         personEntry,
+        hasActiveAppTrial,
       });
     } else {
       setState({
         hasTeamsEnabled,
+        hasActiveAppTrial,
       });
     }
     setLoading(false);
@@ -109,7 +128,7 @@ export const SpaceHome = () => {
     currentOrganizationId,
   } = useSpaceEnvContext();
   const [
-    { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
+    { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled, hasActiveAppTrial },
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
@@ -123,7 +142,7 @@ export const SpaceHome = () => {
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
-  const isTrialSpace = isSpaceOnTrial(currentSpaceData);
+  const isTrialSpace = isSpaceOnTrial(currentSpaceData) && !hasActiveAppTrial;
 
   const spaceHomeProps = {
     orgId: currentOrganizationId,
@@ -150,7 +169,8 @@ export const SpaceHome = () => {
         isTEA,
         isModernStack,
         currentSpaceId,
-        currentSpace
+        currentSpace,
+        currentOrganizationId
       ),
       [spaceTemplateCreated, isSpaceAdmin, isTEA, isModernStack, currentSpaceId, currentSpace]
     )
@@ -168,6 +188,7 @@ export const SpaceHome = () => {
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isTrialSpace}
+          hasActiveAppTrial={hasActiveAppTrial}
         />
       );
     } else if (isModernStack) {
@@ -190,6 +211,7 @@ export const SpaceHome = () => {
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isTrialSpace}
+          hasActiveAppTrial={hasActiveAppTrial}
         />
       );
     }
@@ -209,6 +231,7 @@ export const SpaceHome = () => {
           orgName={spaceHomeProps.orgName}
           spaceId={spaceHomeProps.spaceId}
           isTrialSpace={isTrialSpace}
+          hasActiveAppTrial={hasActiveAppTrial}
         />
       )}
       {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}

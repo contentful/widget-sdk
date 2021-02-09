@@ -19,6 +19,7 @@ export const AdminSpaceHome = ({
   isSupportEnabled,
   hasTeamsEnabled,
   isTrialSpace,
+  hasActiveAppTrial,
 }) => {
   return (
     <WidgetContainer>
@@ -44,7 +45,7 @@ export const AdminSpaceHome = ({
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
-        <SpaceTrialWidget spaceId={spaceId} />
+        <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
@@ -95,4 +96,5 @@ AdminSpaceHome.propTypes = {
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
+  hasActiveAppTrial: PropTypes.bool,
 };

@@ -11,4 +11,6 @@ export {
   isExpiredTrialSpace,
 } from './services/TrialService';
 
-export { canStartAppTrial, startAppTrial } from './services/AppTrialService';
+export { canStartAppTrial, startAppTrial, isActiveAppTrial } from './services/AppTrialService';
+
+export { createAppTrialRepo } from './services/AppTrialRepo';

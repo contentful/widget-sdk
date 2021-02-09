@@ -8,6 +8,11 @@ export interface AppTrialFeature {
   sys: {
     feature_id: string;
     id: string;
+    organization: {
+      sys: {
+        id: string;
+      };
+    };
     trial?: {
       startedAt: string;
       endsAt: string;
@@ -17,7 +22,7 @@ export interface AppTrialFeature {
 
 export interface AppTrial {
   spaceKey: string;
-  trial?: {
+  trial: {
     startedAt: string;
     endsAt: string;
   };

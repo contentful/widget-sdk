@@ -16,6 +16,7 @@ export const CTA_EVENTS = {
   REQUEST_TEAM_USER_LIMIT: 'increase_team_user_limit_via_support',
   ENTERPRISE_TRIAL_TAG: 'enterprise_trial_tag',
   TRIAL_SPACE_TAG: 'trial_space_tag',
+  APP_TRIAL_TAG: 'app_trial_tag',
 };
 
 function ifValidThenTrack(action, intent, meta) {
