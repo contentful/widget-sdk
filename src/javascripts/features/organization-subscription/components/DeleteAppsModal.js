@@ -14,7 +14,7 @@ import {
   Flex,
 } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { removeAddOnPlan } from 'account/pricing/PricingDataProvider';
+import { removeAddOnPlan } from 'features/pricing-entities';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
 import { logError } from 'services/logger';
 

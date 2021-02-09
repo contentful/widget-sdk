@@ -54,7 +54,7 @@ export function ContentfulApps({ organizationId, addOn }) {
           }>
           <DropdownList>
             <DropdownListItem testId="userlist.row.actions.reinvite" onClick={openModal}>
-              Remove apps from organization
+              Cancel Compose + Launch subscription
             </DropdownListItem>
           </DropdownList>
         </Dropdown>
