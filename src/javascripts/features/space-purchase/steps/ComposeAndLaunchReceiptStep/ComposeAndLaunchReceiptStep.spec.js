@@ -7,6 +7,7 @@ import { renderWithProvider } from '../../__tests__/helpers';
 import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
+import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 const mockOrganization = Fake.Organization();
 const mockComposeProductRatePlan = Fake.Plan();
@@ -14,6 +15,10 @@ const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+}));
+
+jest.mock('data/CMA/ProductCatalog', () => ({
+  clearCachedProductCatalogFlags: jest.fn(),
 }));
 
 jest.mock('features/pricing-entities', () => ({
@@ -43,6 +48,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
         expect.any(Function),
         mockComposeProductRatePlan.sys.id
       );
+      expect(clearCachedProductCatalogFlags).toBeCalled();
     });
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(

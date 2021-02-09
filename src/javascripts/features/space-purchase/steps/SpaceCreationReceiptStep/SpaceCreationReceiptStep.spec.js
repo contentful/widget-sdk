@@ -10,6 +10,7 @@ import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
+import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 const spaceName = 'My Space';
@@ -30,6 +31,10 @@ jest.mock('../../utils/spaceCreation', () => ({
 
 jest.mock('features/pricing-entities', () => ({
   addProductRatePlanToSubscription: jest.fn(),
+}));
+
+jest.mock('data/CMA/ProductCatalog', () => ({
+  clearCachedProductCatalogFlags: jest.fn(),
 }));
 
 jest.mock('../../utils/analyticsTracking', () => ({
@@ -101,6 +106,7 @@ describe('SpaceCreationReceiptStep', () => {
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();
+      expect(clearCachedProductCatalogFlags).toBeCalled();
     });
   });
 

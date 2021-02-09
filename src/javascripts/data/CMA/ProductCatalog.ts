@@ -135,6 +135,13 @@ export const getSpaceFeature = (
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };
 
+// All product catalog flags are evicted from the cache. Only to be used after a product catalog flag(s) on
+// the backend got updated. Will result in the next call of get____Feature to return the new value of the flag.
+export const clearCachedProductCatalogFlags = () => {
+  getLoaderForOrg.cache.clear?.();
+  getLoaderForSpace.cache.clear?.();
+};
+
 const createFeatureHook = (getFeature: typeof getSpaceFeature | typeof getOrgFeature) => (
   scopeId: string | undefined,
   featureId: string,

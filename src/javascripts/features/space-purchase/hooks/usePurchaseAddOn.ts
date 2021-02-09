@@ -7,6 +7,7 @@ import type { Organization } from 'core/services/SpaceEnvContext/types';
 import type { SetRequired } from '../types';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useSessionMetadata } from './useSessionMetadata';
+import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 import { PlatformKind } from '../utils/platformContent';
 
@@ -26,6 +27,8 @@ const purchaseComposeLaunch = (
     trackEvent(EVENTS.PERFORMANCE_PACKAGE_PURCHASED, sessionMetadata, {
       selectedPlan,
     });
+
+    clearCachedProductCatalogFlags();
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       errorType: 'PurchasePerformancePackageError',
