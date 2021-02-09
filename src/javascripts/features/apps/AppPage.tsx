@@ -117,8 +117,8 @@ export class AppRoute extends Component<Props, State> {
   initialize = async () => {
     const { appHookBus, app, spaceData, cma } = this.props;
 
-    const { environmentId, spaceId } = spaceData;
-    const appManager = new AppManager(cma, environmentId, spaceId);
+    const { environmentId, spaceId, organizationId } = spaceData;
+    const appManager = new AppManager(cma, environmentId, spaceId, organizationId);
     this.setState({ appManager });
 
     const { appDefinition } = app;

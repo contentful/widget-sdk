@@ -26,12 +26,14 @@ export class AppManager {
   cma: any;
   environmentId: string;
   spaceId: string;
+  organizationId: string;
   afterEachCallback?: Function;
 
-  constructor(cma, environmentId, spaceId, afterEachCallback?) {
+  constructor(cma, environmentId, spaceId, organizationId, afterEachCallback?) {
     this.cma = cma;
     this.environmentId = environmentId;
     this.spaceId = spaceId;
+    this.organizationId = organizationId;
     this.afterEachCallback = afterEachCallback;
   }
 
@@ -59,7 +61,7 @@ export class AppManager {
   async installApp(app, hasAdvancedAppsFeature, callback: AppInstallCallback = () => null) {
     try {
       await installOrUpdate(app, this.cma, callback, this.checkAppStatus, undefined, {
-        organizationId: app.appDefinition.sys.organization.sys.id,
+        organizationId: this.organizationId,
         environmentId: this.environmentId,
         spaceId: this.spaceId,
       });
