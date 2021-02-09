@@ -55,11 +55,12 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
   }),
-  appLink: css({
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-  }),
+  appLink: (hasNoAction) =>
+    css({
+      display: 'flex',
+      alignItems: 'center',
+      cursor: hasNoAction ? 'default' : 'pointer',
+    }),
   earlyAccessTag: css({
     marginLeft: tokens.spacingXs,
   }),

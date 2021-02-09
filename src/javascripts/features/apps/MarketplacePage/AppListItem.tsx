@@ -27,60 +27,31 @@ interface AppListItemProps {
 export function AppListItem(props: AppListItemProps) {
   const { app, openDetailModal, canManageApps, orgId, appManager } = props;
 
-  const determineOnClick = (
-    navigateToAppPage,
-    openDetails,
-    showPermissionsErrorFunc,
-    canManageApps,
-    hasConfig
-  ) => {
-    const isInstalled = app.appInstallation;
-    const isPrivate = app.isPrivateApp;
-
-    // When clicking on a private app, we attempt to go straight to the install
-    // screen. In the case that the user cannot manage an app, we should instead
-    // show an error.
-    if (!canManageApps) {
-      if (isPrivate) {
-        return showPermissionsErrorFunc;
-      }
-      return openDetails;
-    }
-
-    if (hasConfig) {
-      if (isInstalled) {
-        return navigateToAppPage;
-      }
-      return openDetails;
-    }
-
-    if (isPrivate && isInstalled) {
-      return () => appManager.showUninstall(app);
-    }
-    return openDetails;
-  };
-
   const openDetailsFunc = () => openDetailModal(app);
-  const showPermissionsErrorFunc = () =>
-    Notification.error("You don't have permission to manage apps. Ask your admin for help.");
-
+  const isInstalled = app.appInstallation;
+  const isPrivate = app.isPrivateApp;
   const hasConfig = hasConfigLocation(app.appDefinition);
+
+  const shouldNavigateToConfig = canManageApps && hasConfig && isInstalled;
+  const shouldDoNothing = canManageApps && !hasConfig && isPrivate && isInstalled;
+
+  const clickAction = () => {
+    if (!canManageApps && isPrivate) {
+      Notification.error("You don't have permission to manage apps. Ask your admin for help.");
+    } else if (!shouldDoNothing) {
+      openDetailModal(app);
+    }
+  };
 
   return (
     <div className={styles.item}>
       <div className={styles.title} data-test-id="app-title">
         <Heading element="h3" className={styles.titleText}>
           <StateLink path="^.detail" params={{ appId: app.id }}>
-            {({ onClick }) => (
+            {({ onClick: navigate }) => (
               <div
-                onClick={determineOnClick(
-                  onClick,
-                  openDetailsFunc,
-                  showPermissionsErrorFunc,
-                  canManageApps,
-                  hasConfig
-                )}
-                className={styles.appLink}
+                onClick={shouldNavigateToConfig ? navigate : clickAction}
+                className={styles.appLink(shouldDoNothing)}
                 data-test-id="app-details">
                 <AppIcon icon={app.icon} />
                 <div>
