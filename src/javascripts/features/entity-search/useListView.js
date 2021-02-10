@@ -34,10 +34,10 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   );
 
   if (entityType === 'entry') {
-    const { displayedFieldIds, contentTypeId } = ref.current;
+    const { displayedFieldIds = [], contentTypeId } = ref.current;
     const fields = getAvailableDisplayFields(contentTypes, contentTypeId);
 
-    ref.current.displayedFieldIds = displayedFieldIds.reduce((acc, id) => {
+    ref.current.displayedFieldIds = displayedFieldIds?.reduce((acc, id) => {
       const displayField = fields.find((field) => field.id === id);
       if (displayField) return [...acc, id];
       return acc;
