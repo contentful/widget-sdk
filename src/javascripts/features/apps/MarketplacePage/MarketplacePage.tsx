@@ -85,10 +85,16 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
 
     const environmentId = this.props.spaceInformation.envMeta.environmentId;
     const spaceId = this.props.spaceInformation.spaceId;
-    const appManager = new AppManager(this.props.cma, environmentId, spaceId, async () => {
-      const appState = await this.loadApps();
-      this.setState(appState);
-    });
+    const appManager = new AppManager(
+      this.props.cma,
+      environmentId,
+      spaceId,
+      this.props.organizationId,
+      async () => {
+        const appState = await this.loadApps();
+        this.setState(appState);
+      }
+    );
 
     this.state = {
       ready: false,
