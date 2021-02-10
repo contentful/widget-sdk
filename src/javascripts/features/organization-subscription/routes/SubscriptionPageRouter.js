@@ -19,6 +19,7 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
+const getAddOn = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
 
 const getSpacePlans = (plans, accessibleSpaces) =>
   plans.items
@@ -55,6 +56,10 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organizationId: organization.sys.id,
   });
 
+  const composeAndLaunchEnabled = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, {
+    organizationId: organization.sys.id,
+  });
+
   if (!isOwnerOrAdmin(organization)) {
     if (isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
@@ -82,6 +87,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const accessibleSpaces = await getSpaces();
 
   const basePlan = getBasePlan(plansWithSpaces);
+  const addOn = getAddOn(plansWithSpaces);
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
@@ -97,12 +103,14 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
 
   return {
     basePlan,
+    addOn,
     usersMeta,
     numMemberships,
     organization,
     productRatePlans,
     newSpacePurchaseEnabled,
     appTrialEnabled,
+    composeAndLaunchEnabled,
   };
 };
 
@@ -136,6 +144,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
       <DocumentTitle title="Subscription" />
       <SubscriptionPage
         basePlan={data.basePlan}
+        addOn={data.addOn}
         usersMeta={data.usersMeta}
         organization={data.organization}
         memberAccessibleSpaces={data.memberAccessibleSpaces}
@@ -146,6 +155,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
         newSpacePurchaseEnabled={data.newSpacePurchaseEnabled}
         appTrialEnabled={data.appTrialEnabled}
+        composeAndLaunchEnabled={data.composeAndLaunchEnabled}
       />
     </>
   );

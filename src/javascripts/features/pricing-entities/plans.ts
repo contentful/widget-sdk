@@ -113,3 +113,15 @@ export async function getAllPlans(endpoint: OrganizationEndpoint) {
 
   return data.items;
 }
+
+/**
+ * Remove an add-on plan from the organization's subscription.
+ *
+ * @param {OrganizationEndpoint} endpoint
+ */
+export async function removeAddOnPlanFromSubscription(endpoint: OrganizationEndpoint, planId) {
+  return await withAlphaHeader<CollectionResponse<Plan>>(endpoint)({
+    method: 'DELETE',
+    path: ['plans', planId],
+  });
+}

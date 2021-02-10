@@ -33,6 +33,7 @@ import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
 
 import { BasePlan } from './BasePlan';
+import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -106,6 +107,7 @@ const goToBillingPage = (organizationId) => {
 
 export function SubscriptionPage({
   basePlan,
+  addOn,
   usersMeta,
   organization,
   grandTotal,
@@ -116,6 +118,7 @@ export function SubscriptionPage({
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
   appTrialEnabled,
+  composeAndLaunchEnabled,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
   useEffect(() => {
@@ -227,6 +230,8 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
+  const showContentfulAppsCard =
+    composeAndLaunchEnabled && isOrgOwnerOrAdmin && !!addOn && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
@@ -305,6 +310,9 @@ export function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+                  {showContentfulAppsCard && (
+                    <ContentfulApps organizationId={organizationId} addOn={addOn} />
+                  )}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
                     <NonPayingOrgCopyLegacy organizationId={organizationId} />
                   )}
@@ -343,6 +351,7 @@ SubscriptionPage.propTypes = {
   initialLoad: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
   basePlan: PropTypes.object,
+  addOn: PropTypes.object,
   spacePlans: PropTypes.array,
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
@@ -351,6 +360,7 @@ SubscriptionPage.propTypes = {
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
   appTrialEnabled: PropTypes.bool,
+  composeAndLaunchEnabled: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {
