@@ -9,7 +9,10 @@ describe('data/Request/Utils', () => {
       '/environments': ['https://api.contentful.com/spaces/space-id/environments'],
       '/environments/:id': ['https://api.contentful.com/spaces/space-id/environments/some-env-id'],
       '/organizations': ['https://api.contentful.com/organizations'],
-      '/organizations/:id': ['https://api.contentful.com/organizations/some-id'],
+      '/organizations/:id': [
+        'https://api.contentful.com/organizations/some-id',
+        'https://api.contentful.com/organizations/some-id/foo',
+      ],
       '/organization_memberships': ['https://api.contentful.com/organization_memberships'],
       '/organization_memberships/:id': [
         'https://api.contentful.com/organization_memberships/some-id',
@@ -60,6 +63,11 @@ describe('data/Request/Utils', () => {
         'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id?foo=bar',
       ],
       '/:entity/:id/references': ['http://foo.com/spaces/id/entries/entry-id/references'],
+      '/:orgOrSpace/:id/product_catalog_features': [
+        'https://api.contentful.com/organizations/7Ar55sWSKhrqTaY0EhdmRk/product_catalog_features',
+        'https://api.contentful.com/spaces/0gti8l47imxh/product_catalog_features?sys.id=foo',
+        'https://api.contentful.com/spaces/0gti8l47imxh/environments/foo/product_catalog_features',
+      ],
     };
 
     forEach(urlsByExpectedEndpoint, (urls, expectedEndpoint) => {
