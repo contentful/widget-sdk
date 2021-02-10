@@ -276,7 +276,7 @@
     "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
     "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts",
     "check-types": "tsc",
-    "wait-for-app": "wait-on http-get://localhost:3001/app/app.js"
+    "wait-for-app": "wait-on --verbose --interval 2000 --delay 60000 http://localhost:3001/app/app.js"
   },
   "lint-staged": {
     "*.js": [
