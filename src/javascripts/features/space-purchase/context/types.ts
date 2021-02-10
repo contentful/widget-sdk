@@ -1,6 +1,6 @@
 import { Asset } from '@contentful/types';
 
-import type { Organization, SpaceData } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'core/services/SpaceEnvContext/types';
 import type { ProductRatePlan } from 'features/pricing-entities';
 import type { BillingDetails, PaymentDetails, SpaceProductRatePlan } from '../types';
 
@@ -8,7 +8,7 @@ export const NO_SPACE_PLAN = 'None';
 
 export interface State {
   organization?: Organization;
-  currentSpace?: SpaceData;
+  currentSpace?: Space;
   currentSpaceRatePlan?: SpaceProductRatePlan;
   spaceRatePlans?: SpaceProductRatePlan[];
   subscriptionPlans?: unknown;
@@ -44,4 +44,32 @@ export interface SelectedTemplate {
   svgName: string;
   sys: unknown;
   templateDeliveryApiKeys: string[];
+}
+
+/*
+  TODO(jo-sm): Move these somewhere else -- but, where would they belong? The interface for Space
+  here (from `/spaces/:id`) is not the same as the interface for a TokenStore Space, and is not the
+  same as Space from `@contentful/types`.
+ */
+
+interface Link<T> {
+  sys: {
+    type: 'Link';
+    linkType: T;
+    id: string;
+  };
+}
+
+interface Space {
+  name: string;
+  sys: {
+    type: 'Space';
+    id: string;
+    version: number;
+    createdBy: Link<'User'>;
+    createdAt: string;
+    updatedBy: Link<'User'>;
+    updatedAt: string;
+    organization: Link<'Organization'>;
+  };
 }
