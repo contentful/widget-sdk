@@ -25,6 +25,7 @@ import { MarketplaceApp } from 'features/apps-core';
 import { ContentfulAppsList } from './ContentfulAppList';
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
+import { canStartAppTrial } from 'features/trials';
 
 const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
   source: 'webapp',
@@ -77,6 +78,7 @@ interface MarketplacePageState {
   appManager: AppManager;
   appDetailsModalAppId: string | null;
   isPurchased: boolean;
+  isTrialAvailable: boolean;
 }
 
 export class MarketplacePage extends React.Component<MarketplacePageProps, MarketplacePageState> {
@@ -104,6 +106,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
       appManager,
       appDetailsModalAppId: props.detailsModalAppId,
       isPurchased: false,
+      isTrialAvailable: false,
     } as MarketplacePageState;
   }
 
@@ -131,7 +134,10 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
           getOrgFeature(this.props.organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
         ])
       ).some(Boolean);
-      this.setState({ ready: true, ...appState, isPurchased });
+
+      const isTrialAvailable = await canStartAppTrial(this.props.organizationId);
+
+      this.setState({ ready: true, ...appState, isPurchased, isTrialAvailable });
     } catch (err) {
       Notification.error('Failed to load apps.');
     }
@@ -223,6 +229,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
             spaceInformation={spaceInformation}
             organizationId={organizationId}
             isPurchased={this.state.isPurchased}
+            isTrialAvailable={this.state.isTrialAvailable}
           />
           {hasInstalledApps ? (
             <AppList

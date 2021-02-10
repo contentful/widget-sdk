@@ -21,6 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { links } from '../utils';
 import { go } from 'states/Navigator';
+import * as TokenStore from 'services/TokenStore';
 
 import { getModule } from 'core/NgRegistry';
 import { beginSpaceCreation } from 'services/CreateSpace';
@@ -191,28 +192,41 @@ export function SubscriptionPage({
   };
 
   const handleStartAppTrial = async () => {
-    Notification.success('Preparing the trial...');
+    Notification.success('Preparing your trial');
     try {
-      await startAppTrial(organization.sys.id, async (appNames) => {
+      await startAppTrial(organizationId).then(async ({ apps, trial }) => {
         try {
-          const apps = await Promise.all(appNames.map(getAppsRepo().getApp));
           const spaceContext = getModule('spaceContext');
+
+          await TokenStore.refresh()
+            .then(() => TokenStore.getSpace(trial.spaceKey))
+            .then((space) => spaceContext.resetWithSpace(space));
+
+          // NOTE: getAppsRepo requires a spaceContext
+          const appRepos = await Promise.all(apps.map(getAppsRepo().getApp));
+
           const appsManager = new AppManager(
             spaceContext.cma,
             spaceContext.getEnvironmentId(),
             spaceContext.getId(),
             organization.sys.id
           );
-          await Promise.allSettled(apps.map((app) => appsManager.installApp(app, true)));
+
+          await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
+
+          go({
+            path: ['spaces', 'detail', 'apps', 'list'],
+            params: {
+              spaceId: trial.spaceKey,
+            },
+          });
         } catch (e) {
-          console.log(e);
-          throw new Error('Failed to install Apps');
+          throw new Error('Failed to start the App trial');
         }
       });
-      // TODO: trial comms
-      Notification.success('The App trial has started!');
+      Notification.success('Your App trial has started!');
     } catch (err) {
-      Notification.error(`Could not start the trial: ${err.message}`);
+      Notification.error('The App trial could not be started!');
     }
   };
 

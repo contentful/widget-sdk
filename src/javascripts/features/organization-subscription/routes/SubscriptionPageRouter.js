@@ -91,7 +91,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const appTrialEnabled = await canStartAppTrial(organization, basePlan);
+  const appTrialEnabled = await canStartAppTrial(organizationId);
 
   setSpacePlans(spacePlans);
   setGrandTotal(
