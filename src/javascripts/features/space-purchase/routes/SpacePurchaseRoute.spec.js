@@ -13,7 +13,7 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { getSpaces } from 'access_control/OrganizationMembershipRepository';
+import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
@@ -55,6 +55,7 @@ jest.mock('../utils/transformSpaceRatePlans', () => ({
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getSpaces: jest.fn(),
+  getSpace: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -120,6 +121,7 @@ describe('SpacePurchaseRoute', () => {
       items: [],
     });
     getAddOnProductRatePlans.mockResolvedValue([mockComposeProductRatePlan]);
+    getSpace.mockResolvedValue({ name: 'Space' });
   });
 
   it('should render the generic loading component until the apps purchase state is loaded', async () => {

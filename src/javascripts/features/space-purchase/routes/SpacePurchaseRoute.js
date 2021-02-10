@@ -9,8 +9,8 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { isSelfServicePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
-import { getSpaces } from 'access_control/OrganizationMembershipRepository';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import {
   fetchSpacePurchaseContent,
@@ -42,6 +42,7 @@ const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
 const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
 
   const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, { organizationId });
 
@@ -65,7 +66,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     // We don't care about the actual space data, just the total number of spaces in the org
     getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
-    spaceId ? TokenStore.getSpace(spaceId) : undefined,
+    spaceId ? getSpace(spaceEndpoint) : undefined,
     spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
     getSpaceProductRatePlans(endpoint, spaceId),
@@ -111,8 +112,8 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     type: actions.SET_INITIAL_STATE,
     payload: {
       organization,
-      currentSpace,
       currentSpaceRatePlan,
+      currentSpace,
       sessionId,
       templatesList,
       spaceRatePlans,
