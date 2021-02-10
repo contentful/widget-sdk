@@ -149,12 +149,14 @@ export function KeyEditor({
   const onRemove = async () => {
     try {
       await getApiKeyRepo().remove(apiKey.sys.id);
+      setDirty(false);
       await Navigator.go({
         path: '^.list',
       });
       notify.deleteSuccess(apiKey);
     } catch (err) {
       notify.deleteFail(err, apiKey);
+      throw err;
     }
   };
 

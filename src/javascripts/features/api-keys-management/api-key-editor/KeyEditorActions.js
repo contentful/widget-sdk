@@ -30,8 +30,8 @@ export function KeyEditorActions(props) {
     setDeleting(true);
     try {
       await props.onRemove();
+    } catch {
       setConfirmationOpened(false);
-    } finally {
       setDeleting(false);
     }
   };
