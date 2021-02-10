@@ -312,8 +312,8 @@ export default function useCreateActions(props) {
 
   const remove = async (isPublished) => {
     const unpub = isPublished ? unpublish() : Promise.resolve();
-    const res = await unpub();
-    sendDeleteRequest(res);
+    const res = await unpub;
+    return sendDeleteRequest(res);
   };
 
   function forbidRemoval(count) {
@@ -334,10 +334,12 @@ export default function useCreateActions(props) {
         key={key}
         contentTypeName={state.contentType.data.name}
         isShown={isShown}
-        onConfirm={() => {
-          return remove(isPublished).finally(() => {
+        onConfirm={async () => {
+          try {
+            await remove(isPublished);
+          } finally {
             onClose(true);
-          });
+          }
         }}
         onCancel={() => {
           onClose(false);
