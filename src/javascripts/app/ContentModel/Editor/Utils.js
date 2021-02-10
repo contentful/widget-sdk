@@ -37,7 +37,7 @@ export const openCreateDialog = async (contentTypeIds, contentType, setContentTy
         setContentType(clonedCT);
       } else {
         // X.detail.fields -> X.list
-        go({ path: '^.^.list' });
+        go({ path: 'spaces.detail.content_types.list' });
       }
     },
     () => {}

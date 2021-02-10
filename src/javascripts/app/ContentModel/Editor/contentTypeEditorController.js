@@ -66,7 +66,7 @@ export default function register() {
               }
             } else {
               // X.detail.fields -> X.list
-              $state.go('^.^.list');
+              $state.go('spaces.detail.content_types.list');
             }
           },
           () => {}
