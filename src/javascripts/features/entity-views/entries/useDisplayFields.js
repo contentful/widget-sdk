@@ -4,7 +4,7 @@ import * as SystemFields from 'data/SystemFields';
 import * as MetadataFields from 'data/MetadataFields';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const getAvailableFields = (contentTypes, contentTypeId) => {
+export const getAvailableDisplayFields = (contentTypes, contentTypeId) => {
   const filteredContentType = contentTypes.find((ct) => ct.sys.id === contentTypeId);
   let fields = [...SystemFields.getList(), ...MetadataFields.getList()];
 
@@ -24,11 +24,11 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
   const { currentSpaceContentTypes: contentTypes } = useSpaceEnvContext();
 
   const view = listViewContext.getView();
-  const { contentTypeId, displayedFieldIds } = view;
+  const { displayedFieldIds, contentTypeId } = view;
   const readViewKeys = () => pick(view, VIEW_KEYS);
 
   const refreshDisplayFields = ({ displayedFieldIds = [], contentTypeId }) => {
-    const fields = getAvailableFields(contentTypes, contentTypeId);
+    const fields = getAvailableDisplayFields(contentTypes, contentTypeId);
 
     const displayedFields = displayedFieldIds
       .map((id) => fields.find((field) => field.id === id))
@@ -37,7 +37,6 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
     setHiddenFields(sortBy(hiddenFields, 'name'));
     setDisplayedFields(displayedFields);
     listViewContext.assignView({ displayedFieldIds: displayedFields.map(({ id }) => id) });
-    updateEntities();
   };
 
   useEffect(() => {
@@ -49,6 +48,10 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
       ...readViewKeys(),
       displayedFieldIds: [...displayedFieldIds, field.id],
     });
+    if (field.type === 'Link') {
+      // Refresh entity caches to display referenced entities
+      updateEntities();
+    }
   };
 
   const removeDisplayField = (field) => {

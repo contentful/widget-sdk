@@ -58,11 +58,7 @@ export const EntryView = ({ goTo }) => {
     currentSpaceData,
     currentSpaceId,
   } = useSpaceEnvContext();
-  const listViewContext = useListView({
-    entityType,
-    isPersisted: true,
-    onUpdate,
-  });
+  const listViewContext = useListView({ entityType, onUpdate });
   const fetchEntries = useCallback((query) => currentSpace.getEntries(query), [currentSpace]);
   const [jobs, setJobs] = useState([]);
 

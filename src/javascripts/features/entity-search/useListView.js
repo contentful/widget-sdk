@@ -1,26 +1,26 @@
-import { useMemo, useEffect, useRef, useCallback } from 'react';
-import { createListViewPersistor, getEntityKey, getDefaults } from './ListViewPersistor';
-import { assign, isEmpty, noop } from 'lodash';
+import { useMemo, useRef, useCallback } from 'react';
+import { createListViewPersistor } from './ListViewPersistor';
+import { assign, noop } from 'lodash';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getAvailableDisplayFields } from 'features/entity-views';
 
-const createDummyViewPersistor = ({ entityType }) => {
-  const defaults = getDefaults(getEntityKey(entityType));
-  return {
-    read: (initialState = {}) => ({ ...defaults, ...initialState }),
-    saveKey: () => {},
-    save: () => {},
-  };
-};
-
-export const useListView = ({ entityType, initialState, isPersisted, onUpdate = noop }) => {
+export const useListView = ({ entityType, onUpdate = noop }) => {
+  const {
+    currentSpaceContentTypes: contentTypes,
+    currentEnvironmentId,
+    currentSpaceId,
+  } = useSpaceEnvContext();
   const viewPersistor = useMemo(
     () =>
-      isPersisted
-        ? createListViewPersistor({ entityType, isNative: true })
-        : createDummyViewPersistor({ entityType }),
-    [entityType, isPersisted]
+      createListViewPersistor({
+        entityType,
+        environmentId: currentEnvironmentId,
+        spaceId: currentSpaceId,
+      }),
+    [entityType, currentEnvironmentId, currentSpaceId]
   );
 
-  const initial = viewPersistor.read(initialState);
+  const initial = viewPersistor.read();
 
   const ref = useRef(initial);
 
@@ -33,12 +33,16 @@ export const useListView = ({ entityType, initialState, isPersisted, onUpdate = 
     [viewPersistor, onUpdate]
   );
 
-  useEffect(() => {
-    if (!isEmpty(initialState)) {
-      ref.current = initialState;
-      onUpdate?.(initialState);
-    }
-  }, [initialState, onUpdate]);
+  if (entityType === 'entry') {
+    const { displayedFieldIds, contentTypeId } = ref.current;
+    const fields = getAvailableDisplayFields(contentTypes, contentTypeId);
+
+    ref.current.displayedFieldIds = displayedFieldIds.reduce((acc, id) => {
+      const displayField = fields.find((field) => field.id === id);
+      if (displayField) return [...acc, id];
+      return acc;
+    }, []);
+  }
 
   const assignView = useCallback(
     (view, callback) => {

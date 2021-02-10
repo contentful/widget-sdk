@@ -4,7 +4,6 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { omit } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer';
 import { getQueryString } from 'utils/location';
-import { getModule } from 'core/NgRegistry';
 import { getBlankAssetView, getBlankEntryView } from 'data/UiConfig/Blanks';
 
 const getLegacyStoreKey = (entityKey, spaceId) => {
@@ -48,10 +47,7 @@ const pickLegacyValue = (entityKey, spaceId) => {
 
 let initialized = false;
 
-export function createListViewPersistor({ entityType, isNative }) {
-  const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.getEnvironmentId();
+export function createListViewPersistor({ entityType, spaceId, environmentId }) {
   const entityKey = getEntityKey(entityType);
   const storeKey = getStoreKey(entityKey, environmentId, spaceId);
   const store = getBrowserStorage().forKey(storeKey);
@@ -89,7 +85,7 @@ export function createListViewPersistor({ entityType, isNative }) {
   function save(view) {
     const viewData = serialize(omitUIConfigOnlyViewProperties(view));
     store.set(viewData);
-    setContextView(prepareQueryObject(viewData), isNative);
+    setContextView(prepareQueryObject(viewData));
   }
 
   function readKey(key) {
@@ -117,16 +113,8 @@ export function createListViewPersistor({ entityType, isNative }) {
   }
 }
 
-function setContextView(state, isNative) {
-  const queryString = prepareQueryString(state);
-  // this can be replaced by 'window.history.pushState(state, '', `?${queryString}`);' when angular is gone
-  const $location = getModule('$location');
-  if (isNative) {
-    window.history.pushState(state, '', `?${queryString}`);
-  } else {
-    $location.search(queryString);
-    $location.replace();
-  }
+function setContextView(state) {
+  window.history.pushState(state, '', prepareQueryString(state));
 }
 
 function omitUIConfigOnlyViewProperties(view) {
@@ -147,7 +135,7 @@ function prepareQueryString(viewData) {
   //
   // This format is used in entity list query strings
   // for historical reasons.
-  return qs.stringify(qsObject, { arrayFormat: 'repeat' });
+  return qs.stringify(qsObject, { arrayFormat: 'repeat', addQueryPrefix: true });
 }
 
 export const reset = () => (initialized = false);

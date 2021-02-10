@@ -82,7 +82,7 @@ export const AssetView = () => {
   } = useSpaceEnvContext();
 
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const listViewContext = useListView({ entityType, isPersisted: true });
+  const listViewContext = useListView({ entityType });
   const [scheduledActions, setScheduledActions] = useState([]);
   const fetchAssets = useCallback((query) => currentSpace.getAssets(query), [currentSpace]);
 

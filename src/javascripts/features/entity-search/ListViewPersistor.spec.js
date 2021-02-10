@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import { getQueryString } from 'utils/location';
 import { createListViewPersistor, reset } from './ListViewPersistor';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
@@ -6,22 +5,13 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/location', () => ({ getQueryString: jest.fn() }));
 
-const moduleMocks = {
-  $location: {
-    search: jest.fn(),
-    replace: jest.fn(),
-  },
-  spaceContext: {
-    getId: jest.fn().mockReturnValue('SPACE_ID'),
-    getEnvironmentId: jest.fn().mockReturnValue('ENV_ID'),
-  },
-};
-getModule.mockImplementation((type) => moduleMocks[type]);
+const pushStateSpy = jest.spyOn(global.window.history, 'pushState');
 
 describe('ListViewPersistor', () => {
   let store, viewPersistor;
   afterEach(() => {
     getQueryString.mockClear();
+    pushStateSpy.mockClear();
   });
 
   const LEGACY_STORE_KEY = 'lastFilterQueryString.entries.SPACE_ID';
@@ -29,7 +19,11 @@ describe('ListViewPersistor', () => {
 
   const initViewPersistor = () => {
     reset();
-    viewPersistor = createListViewPersistor({ entityType: 'Entry' });
+    viewPersistor = createListViewPersistor({
+      entityType: 'Entry',
+      spaceId: 'SPACE_ID',
+      environmentId: 'ENV_ID',
+    });
   };
 
   beforeEach(async () => {
@@ -105,17 +99,17 @@ describe('ListViewPersistor', () => {
     });
     it('updates query string', () => {
       viewPersistor.save({ test: true });
-      expect(moduleMocks.$location.search).toHaveBeenCalledWith('test=true');
+      expect(pushStateSpy).toHaveBeenCalledWith({ test: true }, '', '?test=true');
     });
 
     it('removes "title" field from view settings', () => {
       viewPersistor.save({ title: 'New Title', test: true });
-      expect(moduleMocks.$location.search).toHaveBeenCalledWith('test=true');
+      expect(pushStateSpy).toHaveBeenCalledWith({ test: true }, '', '?test=true');
     });
 
     it('removes empty/null/undefined fields from view settings', () => {
       viewPersistor.save({ empty: '', n: null, u: undefined, test: true });
-      expect(moduleMocks.$location.search).toHaveBeenCalledWith('test=true');
+      expect(pushStateSpy).toHaveBeenCalledWith({ test: true }, '', '?test=true');
     });
 
     it('use dot notation for nested fields', () => {
@@ -124,7 +118,7 @@ describe('ListViewPersistor', () => {
 
     it('it saves nested keys', () => {
       viewPersistor.saveKey('x.y', 3);
-      expect(moduleMocks.$location.replace).toHaveBeenCalled();
+      expect(pushStateSpy).toHaveBeenCalled();
       expect(viewPersistor.read().x.y).toBe(3);
     });
 

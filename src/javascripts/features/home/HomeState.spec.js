@@ -34,6 +34,7 @@ jest.mock('services/TokenStore', () => ({
 jest.mock('core/services/BrowserStorage', () => {
   const localStorage = {
     get: jest.fn(),
+    forKey: jest.fn(),
   };
 
   return {
