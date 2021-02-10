@@ -1,5 +1,12 @@
 import { styles } from './styles';
-import { Card, Heading, Paragraph, Button, Flex } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  Heading,
+  Paragraph,
+  Button,
+  Flex,
+  Typography,
+} from '@contentful/forma-36-react-components';
 import React, { ReactElement } from 'react';
 import { AppManager } from '../AppOperations';
 import { MarketplaceApp } from 'features/apps-core';
@@ -19,14 +26,14 @@ interface ListProps {
   isPurchased: boolean;
 }
 
-interface ContentfulAppTileProps {
+export interface ContentfulAppTileProps {
   slug: string;
   title: string;
   image?: string | ReactElement;
   text?: string;
-  organizationId: string;
-  isInstalled: boolean;
-  isPurchased: boolean;
+  organizationId?: string;
+  isInstalled?: boolean;
+  isPurchased?: boolean;
   canManage: boolean;
   isTrialAvailable?: boolean;
   spaceInformation: SpaceInformation;
@@ -77,8 +84,10 @@ export const ContentfulAppTile = ({
         </div>
         <div className={styles.contentfulAppTextWrapper(isSmallCard)}>
           <div className={styles.contentfulAppText}>
-            <Heading element="h3">{title}</Heading>
-            <Paragraph>{text}</Paragraph>
+            <Typography>
+              <Heading element="h3">{title}</Heading>
+              <Paragraph>{text}</Paragraph>
+            </Typography>
 
             <div>
               {showOpen && (
@@ -100,7 +109,9 @@ export const ContentfulAppTile = ({
                 <Button
                   className={styles.button}
                   onClick={() => {
-                    beginSpaceCreation(organizationId);
+                    if (organizationId) {
+                      beginSpaceCreation(organizationId);
+                    }
                   }}>
                   Buy now
                 </Button>

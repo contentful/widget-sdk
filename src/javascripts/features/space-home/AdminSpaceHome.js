@@ -11,6 +11,8 @@ import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
 import { AppsCTA } from './components/AppsCTA';
 import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { SpaceTrialWidget } from 'features/trials';
+import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
+import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
 
 export const AdminSpaceHome = ({
   spaceName,
@@ -48,6 +50,8 @@ export const AdminSpaceHome = ({
         <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
 
+      <ComposeAndLaunchCTA />
+
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <AccordionComponent
@@ -62,6 +66,8 @@ export const AdminSpaceHome = ({
           />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

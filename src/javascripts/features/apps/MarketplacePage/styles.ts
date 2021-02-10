@@ -58,9 +58,11 @@ export const styles = {
   contentfulAppIcon: (isScreenshot) =>
     css({
       maxWidth: '50%',
-      minWidth: tokens.spacing4Xl,
+      minWidth: isScreenshot ? '50%' : tokens.spacing4Xl,
       margin: !isScreenshot ? `${tokens.spacingXs} ${tokens.spacingM}` : '0',
       '& img, & svg': css({
+        width: '100%',
+        maxWidth: isScreenshot ? 'auto' : tokens.spacing4Xl,
         display: 'block',
       }),
       '& img': css({
@@ -75,7 +77,7 @@ export const styles = {
     }),
   contentfulAppText: css({}),
   button: css({
-    marginTop: tokens.spacingS,
+    marginTop: tokens.spacing2Xs,
     marginRight: tokens.spacingM,
     '& > span': css({
       flexDirection: 'row-reverse',

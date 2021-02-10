@@ -8,3 +8,7 @@ export type { PageWidgetParameters } from './PageWidgetRenderer';
 export { getCurrentState } from './AppState';
 export { getContentfulAppUrl } from './utils';
 export { AppManager } from './AppOperations';
+export { ContentfulAppTile } from './MarketplacePage/ContentfulAppList';
+export type { ContentfulAppTileProps } from './MarketplacePage/ContentfulAppList';
+export type { SpaceInformation } from './AppDetailsModal/shared';
+export { canUserManageApps } from './routes';

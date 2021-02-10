@@ -20,7 +20,7 @@ const DEFAULT_FEATURE_STATUS = true; // Fail open
 export const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
 export const DEFAULT_ADVANCED_APPS_STATUS = false;
 
-function canUserManageApps() {
+export function canUserManageApps() {
   return !shouldHide(Action.UPDATE, 'settings');
 }
 

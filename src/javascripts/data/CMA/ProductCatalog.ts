@@ -14,6 +14,7 @@ export const FEATURES = {
   PC_CONTENT_TAGS: 'content_tags',
   PC_SPACE_RELEASES: 'releases',
   PC_SPACE_REFERENCE_TREE: 'reference_tree',
+  // Todo: merge planner and launch into one
   PC_ORG_PLANNER_APP: 'planner_app',
   PC_ORG_COMPOSE_APP: 'compose_app',
   PC_ORG_LAUNCH_APP: 'launch_app',

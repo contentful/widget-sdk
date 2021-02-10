@@ -11,6 +11,8 @@ import { UpgradePricing } from './UpgradePricing';
 import { LearnAboutContentful } from './components/LearnAboutContentful';
 import { ExampleProjectOverview } from './components/ExampleProjectOverview';
 import { SpaceTrialWidget } from 'features/trials';
+import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
+import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
 
 export const TEAAdminSpaceHome = ({
   spaceName,
@@ -62,6 +64,10 @@ export const TEAAdminSpaceHome = ({
           />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      <ComposeAndLaunchCTA />
+
+      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

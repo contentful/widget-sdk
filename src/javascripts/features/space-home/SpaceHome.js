@@ -172,7 +172,15 @@ export const SpaceHome = () => {
         currentSpace,
         currentOrganizationId
       ),
-      [spaceTemplateCreated, isSpaceAdmin, isTEA, isModernStack, currentSpaceId, currentSpace]
+      [
+        spaceTemplateCreated,
+        isSpaceAdmin,
+        isTEA,
+        isModernStack,
+        currentSpaceId,
+        currentSpace,
+        currentOrganizationId,
+      ]
     )
   );
 

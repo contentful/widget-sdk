@@ -5,6 +5,8 @@ import { GreetingWidget } from './widgets/GreetingWidget';
 import { ConceptVideoWidget } from './widgets/ConceptVideoWidget';
 import { WalkthroughWidget } from './widgets/walkthrough/WalkthroughWidget';
 import { SpaceTrialWidget } from 'features/trials';
+import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
+import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 
 export const AuthorEditorSpaceHome = ({
   spaceName,
@@ -14,6 +16,7 @@ export const AuthorEditorSpaceHome = ({
   hasActiveAppTrial,
 }) => {
   const [walkthroughStarted, setWalkthroughState] = useState(false);
+
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
@@ -31,6 +34,8 @@ export const AuthorEditorSpaceHome = ({
         <WalkthroughWidget spaceName={spaceName} setWalkthroughState={setWalkthroughState} />
       </WidgetContainer.Row>
 
+      <ComposeAndLaunchCTA />
+
       {/* Placeholder to apply the top margin.
       TODO: update the WidgetContainer styles and remove this placeholder */}
       <WidgetContainer.Row>
@@ -40,6 +45,8 @@ export const AuthorEditorSpaceHome = ({
       <WidgetContainer.Row>
         <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
+
+      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <ConceptVideoWidget />
