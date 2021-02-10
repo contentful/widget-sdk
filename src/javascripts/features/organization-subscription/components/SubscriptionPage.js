@@ -198,7 +198,7 @@ export function SubscriptionPage({
             spaceContext.cma,
             spaceContext.getEnvironmentId(),
             spaceContext.getId(),
-            spaceContext.spaceContext.organization.sys.id
+           organization.sys.id
           );
           await Promise.allSettled(apps.map((app) => appsManager.installApp(app, true)));
         } catch (e) {
