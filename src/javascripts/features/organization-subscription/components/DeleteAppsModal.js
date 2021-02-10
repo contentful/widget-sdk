@@ -14,9 +14,10 @@ import {
   Flex,
 } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { removeAddOnPlan } from 'features/pricing-entities';
+import { removeAddOnPlanFromSubscription } from 'features/pricing-entities';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
 import { logError } from 'services/logger';
+import { reload } from 'states/Navigator';
 
 const styles = {
   listItem: css({
@@ -27,10 +28,10 @@ const styles = {
 async function requestRemoveAddOn(organizationId, addOnId, parsedReasons) {
   try {
     const endpoint = createOrganizationEndpoint(organizationId);
-    await removeAddOnPlan(endpoint, addOnId);
+    await removeAddOnPlanFromSubscription(endpoint, addOnId);
     Notification.success('Compose + Launch app was uninstalled successfully.');
     trackUninstallationReason('Compose + Launch', parsedReasons);
-    document.location.reload();
+    reload();
   } catch (e) {
     Notification.error("Couldn't uninstall Compose + Launch. Contact support.");
     logError(`Failed to uninstall Compose + Launch`, {
@@ -73,21 +74,21 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
     <ModalConfirm
       isShown={isShown}
       intent="negative"
-      title="Remove apps from organization"
-      confirmLabel="Remove apps from organization"
+      title="Cancel your Compose + Launch subscription"
+      confirmLabel="Cancel your Compose + Launch subscription"
       isConfirmDisabled={disableConfirm || loading}
       isConfirmLoading={loading}
       onConfirm={onConfirm}
       onCancel={() => onClose()}>
       <Flex marginBottom="spacingM">
         <Typography>
-          <Paragraph>You are about to remove Compose + Launch from your organization</Paragraph>
+          <Paragraph>You are about to cancel your Compose + Launch subscription.</Paragraph>
           <Paragraph>
-            Removing apps will remove Compose + Launch from all spaces in your organization. You
-            will lose access to the platforms, none of your content will be lost.
+            This will remove Compose + Launch from all spaces in your organization. You will lose
+            access to the apps, none of your content will be lost.
           </Paragraph>
           <Paragraph>
-            <strong>Why are you removing the apps?</strong>
+            <strong>Why are you canceling your subscription?</strong>
           </Paragraph>
           <FieldGroup>
             <List>

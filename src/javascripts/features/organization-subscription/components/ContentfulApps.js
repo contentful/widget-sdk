@@ -54,12 +54,14 @@ export function ContentfulApps({ organizationId, addOn }) {
           }>
           <DropdownList>
             <DropdownListItem testId="userlist.row.actions.reinvite" onClick={openModal}>
-              Cancel Compose + Launch subscription
+              Cancel your Compose + Launch subscription
             </DropdownListItem>
           </DropdownList>
         </Dropdown>
       </Flex>
-      <Paragraph>Install the apps on any Space Home.</Paragraph>
+      <Paragraph>
+        Install Compose + Launch on any Space by following the instructions on the Space Home.
+      </Paragraph>
     </Card>
   );
 }
