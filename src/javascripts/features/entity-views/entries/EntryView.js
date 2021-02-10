@@ -1,5 +1,4 @@
 import React, { useCallback, Fragment, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { EntryList } from './EntryList';
 import { useListView } from 'features/entity-search';
 import { ListQuery } from 'core/services/ContentQuery';
@@ -17,6 +16,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { go } from 'states/Navigator';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -49,7 +49,7 @@ const newEntry = (goTo, publishedCTs, showNoEntitiesAdvice) => async (contentTyp
   }
 };
 
-export const EntryView = ({ goTo }) => {
+export const EntryView = () => {
   const entityType = 'entry';
   const {
     currentEnvironmentId,
@@ -88,6 +88,10 @@ export const EntryView = ({ goTo }) => {
 
   function onUpdate({ contentTypeId }) {
     setSuggestedContentTypeId(contentTypeId);
+  }
+
+  function goTo(entryId) {
+    return go({ path: '^.detail', params: { entryId } });
   }
 
   const searchControllerProps = useMemo(
@@ -167,8 +171,4 @@ export const EntryView = ({ goTo }) => {
       )}
     />
   );
-};
-
-EntryView.propTypes = {
-  goTo: PropTypes.func.isRequired,
 };

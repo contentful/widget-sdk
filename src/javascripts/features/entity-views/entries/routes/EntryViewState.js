@@ -5,17 +5,6 @@ import { entryDetail } from 'app/entity_editor/cfSlideInEditor';
 const list = {
   name: 'list',
   url: '',
-  mapInjectedToProps: [
-    '$state',
-    ($state) => {
-      return {
-        goTo: (entryId) => {
-          // X.list -> X.detail
-          $state.go('^.detail', { entryId });
-        },
-      };
-    },
-  ],
   component: EntryView,
 };
 
