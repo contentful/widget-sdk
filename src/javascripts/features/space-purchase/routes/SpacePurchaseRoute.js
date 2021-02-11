@@ -44,7 +44,7 @@ import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) => async () => {
+const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
@@ -121,7 +121,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
   const numSpacesInOrg = orgSpaceMetadata.total;
   let selectedPlatform;
 
-  if (viaMarketingCTA && numSpacesInOrg === 0) {
+  if (from === 'marketing-cta' && numSpacesInOrg === 0) {
     selectedPlatform = PLATFORM_CONTENT.composePlatform;
   }
 
@@ -161,12 +161,12 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       currentSpacePlan: currentSpaceRatePlan,
       canPurchaseApps: isAppPurchasingEnabled ? !hasPurchasedComposeLaunch : undefined,
       from,
-      performancePackagePreselected: viaMarketingCTA,
+      performancePackagePreselected: from === 'marketing-cta',
     }
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId, from }) => {
   const {
     state: { sessionId, purchasingApps },
     dispatch,
@@ -175,9 +175,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) =>
   // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
-  const { error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, viaMarketingCTA, from, dispatch), [])
-  );
+  const { error } = useAsync(useCallback(initialFetch(orgId, spaceId, from, dispatch), []));
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (purchasingApps === undefined) {
@@ -217,6 +215,5 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) =>
 SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
-  viaMarketingCTA: PropTypes.bool,
   from: PropTypes.string,
 };

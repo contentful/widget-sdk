@@ -230,7 +230,7 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should track if the performance package is pre-selected', async () => {
-    await build({ viaMarketingCTA: true });
+    await build({ from: 'marketing-cta' });
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -467,7 +467,6 @@ describe('SpacePurchaseRoute', () => {
 async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
-    viaMarketingCTA: false,
     from: '',
     ...customProps,
   };

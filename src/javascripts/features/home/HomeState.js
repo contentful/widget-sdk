@@ -45,7 +45,7 @@ export function EmptyHomeRouter({ appsPurchase }) {
       if (organization) {
         go({
           path: ['account', 'organizations', 'subscription_new', 'new_space'],
-          params: { orgId: organization.sys.id, viaMarketingCTA: true },
+          params: { orgId: organization.sys.id, from: 'marketing-cta' },
           options: { location: 'replace' },
         });
       } else {

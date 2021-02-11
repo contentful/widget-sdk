@@ -82,7 +82,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg2.sys.id, viaMarketingCTA: true },
+      params: { orgId: mockOrg2.sys.id, from: 'marketing-cta' },
       options: { location: 'replace' },
     });
   });
@@ -95,7 +95,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, viaMarketingCTA: true },
+      params: { orgId: mockOrg.sys.id, from: 'marketing-cta' },
       options: { location: 'replace' },
     });
   });
@@ -108,7 +108,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, viaMarketingCTA: true },
+      params: { orgId: mockOrg.sys.id, from: 'marketing-cta' },
       options: { location: 'replace' },
     });
   });
