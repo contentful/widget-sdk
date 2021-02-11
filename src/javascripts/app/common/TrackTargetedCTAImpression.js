@@ -16,5 +16,5 @@ export default function TrackTargetedCTAImpression({ children, impressionType, m
 TrackTargetedCTAImpression.propTypes = {
   children: PropTypes.node.isRequired,
   impressionType: PropTypes.string.isRequired,
-  meta: PropTypes.object.isRequired,
+  meta: PropTypes.object,
 };

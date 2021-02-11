@@ -12,6 +12,8 @@ const CTA_EVENTS = [
   'enterprise_trial_tag',
   'trial_space_tag',
   'app_trial_tag',
+  'purchase_app_via_trial',
+  'delete_app_trial_space',
 ];
 
 export const validEvents = {

@@ -13,7 +13,7 @@ const styles = {
   }),
   column: css({ display: 'flex', flexDirection: 'column', alignItems: 'center' }),
   element: css({
-    maxWidth: '32rem',
+    maxWidth: '35rem',
     marginBottom: tokens.spacingM,
     textAlign: 'center',
   }),

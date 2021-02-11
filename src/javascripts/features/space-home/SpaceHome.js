@@ -244,7 +244,7 @@ export const SpaceHome = () => {
       )}
       {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}
       {!isLoading && readOnlySpace && <ReadOnlySpaceHome isAdmin={isSpaceAdmin} />}
-      {!isLoading && <ExpiredTrialSpaceHome spaceId={spaceHomeProps.spaceId} />}
+      {!isLoading && <ExpiredTrialSpaceHome />}
       {!isLoading && !isSpaceAdmin && !isAuthorOrEditor && isTrialSpace && !readOnlySpace && (
         <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
       )}

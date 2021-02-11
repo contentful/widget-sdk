@@ -33,7 +33,7 @@ exports[`ErrorPage should match the snapshot 1`] = `
 }
 
 .emotion-0 {
-  max-width: 32rem;
+  max-width: 35rem;
   margin-bottom: 1rem;
   text-align: center;
 }

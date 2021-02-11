@@ -168,9 +168,7 @@ export const TrialTag = () => {
   );
   return (
     <Tag className={styles.tag} tagType="primary-filled" testId={`${ctaType}`}>
-      <TrackTargetedCTAImpression
-        impressionType={ctaType}
-        meta={{ spaceId: space?.sys.id, organizationId: organization?.sys.id }}>
+      <TrackTargetedCTAImpression impressionType={ctaType}>
         {pathParamsObj ? (
           <StateLink
             className={styles.link}

@@ -17,6 +17,8 @@ export const CTA_EVENTS = {
   ENTERPRISE_TRIAL_TAG: 'enterprise_trial_tag',
   TRIAL_SPACE_TAG: 'trial_space_tag',
   APP_TRIAL_TAG: 'app_trial_tag',
+  PURCHASE_APP_VIA_TRIAL: 'purchase_app_via_trial',
+  DELETE_APP_TRIAL_SPACE: 'delete_app_trial_space',
 };
 
 function ifValidThenTrack(action, intent, meta) {

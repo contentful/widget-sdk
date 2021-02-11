@@ -208,6 +208,8 @@ registerGenericEvent('targeted_cta_clicked:create_space');
 registerGenericEvent('targeted_cta_clicked:purchase_micro_small_via_support');
 registerGenericEvent('targeted_cta_clicked:upgrade_to_team');
 registerGenericEvent('targeted_cta_clicked:increase_team_user_limit_via_support');
+registerGenericEvent('targeted_cta_clicked:delete_app_trial_space');
+registerGenericEvent('targeted_cta_clicked:purchase_app_via_trial');
 
 registerGenericEvent('targeted_cta_impression:upgrade_to_enterprise');
 registerGenericEvent('targeted_cta_impression:upgrade_space_plan');
@@ -218,6 +220,8 @@ registerGenericEvent('targeted_cta_impression:increase_team_user_limit_via_suppo
 registerGenericEvent('targeted_cta_impression:enterprise_trial_tag');
 registerGenericEvent('targeted_cta_impression:trial_space_tag');
 registerGenericEvent('targeted_cta_impression:app_trial_tag');
+registerGenericEvent('targeted_cta_impression:delete_app_trial_space');
+registerGenericEvent('targeted_cta_impression:purchase_app_via_trial');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');
