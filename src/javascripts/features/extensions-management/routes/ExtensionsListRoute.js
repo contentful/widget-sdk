@@ -11,6 +11,7 @@ import { toInternalFieldType } from 'widgets/FieldTypes';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 // Takes API Extension entity and prepares it for the view.
 const prepareExtension = ({ sys, extension, parameters }) => {
@@ -35,46 +36,45 @@ const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
   return extensions.map(prepareExtension);
 });
 
-export class ExtensionsListRoute extends React.Component {
-  static propTypes = {
-    extensionUrl: PropTypes.string,
-    extensionUrlReferrer: PropTypes.string,
-    cma: PropTypes.shape({
-      getExtensionsForListing: PropTypes.func.isRequired,
-    }).isRequired,
-  };
+export function ExtensionsListRoute(props) {
+  const cma = useCurrentSpaceAPIClient();
+  const extensionUrl = props.extensionUrl || '';
+  const extensionUrlReferrer = props.referrer || null;
 
-  render() {
-    if (!getSectionVisibility()['extensions']) {
-      if (this.props.extensionUrl) {
-        return <ExtensionsForbiddenPage extensionUrl={this.props.extensionUrl} />;
-      }
-      return <ForbiddenPage />;
+  if (!getSectionVisibility()['extensions']) {
+    if (extensionUrl) {
+      return <ExtensionsForbiddenPage extensionUrl={extensionUrl} />;
     }
-
-    return (
-      <ExtensionsFetcher cma={this.props.cma}>
-        {({ isLoading, isError, data, fetch }) => {
-          if (isLoading) {
-            return <ExtensionListSkeleton />;
-          }
-          if (isError) {
-            return <StateRedirect path="spaces.detail.entries.list" />;
-          }
-          return (
-            <React.Fragment>
-              <DocumentTitle title="Extensions" />
-              <ExtensionsList
-                extensionUrl={this.props.extensionUrl}
-                extensionUrlReferrer={this.props.extensionUrlReferrer}
-                extensions={data}
-                cma={this.props.cma}
-                refresh={fetch}
-              />
-            </React.Fragment>
-          );
-        }}
-      </ExtensionsFetcher>
-    );
+    return <ForbiddenPage data-test-id="extensions.forbidden" />;
   }
+
+  return (
+    <ExtensionsFetcher cma={cma}>
+      {({ isLoading, isError, data, fetch }) => {
+        if (isLoading) {
+          return <ExtensionListSkeleton />;
+        }
+        if (isError) {
+          return <StateRedirect path="spaces.detail.entries.list" />;
+        }
+        return (
+          <React.Fragment>
+            <DocumentTitle title="Extensions" />
+            <ExtensionsList
+              extensionUrl={extensionUrl}
+              extensionUrlReferrer={extensionUrlReferrer}
+              extensions={data}
+              cma={cma}
+              refresh={fetch}
+            />
+          </React.Fragment>
+        );
+      }}
+    </ExtensionsFetcher>
+  );
 }
+
+ExtensionsListRoute.propTypes = {
+  extensionUrl: PropTypes.string,
+  referrer: PropTypes.string,
+};

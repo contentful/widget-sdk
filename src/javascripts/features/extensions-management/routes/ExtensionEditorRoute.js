@@ -7,50 +7,80 @@ import StateRedirect from 'app/common/StateRedirect';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { getModule } from 'core/NgRegistry';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
+import { go } from 'states/Navigator';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
   return cma.getExtension(extensionId);
 });
 
-export class ExtensionEditorRoute extends React.Component {
-  static propTypes = {
-    extensionId: PropTypes.string.isRequired,
-    registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired,
-    goToList: PropTypes.func.isRequired,
-    cma: PropTypes.shape({
-      getExtension: PropTypes.func.isRequired,
-    }).isRequired,
-  };
+export function ExtensionEditorRoute(props) {
+  const cma = useCurrentSpaceAPIClient();
+  const requestLeaveConfirmation = React.useRef();
+  const isDirty = React.useRef(false);
 
-  render() {
-    if (!getSectionVisibility()['extensions']) {
-      return <ForbiddenPage />;
-    }
+  React.useEffect(() => {
+    const $rootScope = getModule('$rootScope');
 
-    return (
-      <ExtensionFetcher cma={this.props.cma} extensionId={this.props.extensionId}>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <ExtensionEditorSkeleton goToList={this.props.goToList} />;
-          }
-          if (isError) {
-            return <StateRedirect path="^.list" />;
-          }
-          return (
-            <React.Fragment>
-              <DocumentTitle title={[data.extension.name, 'Extensions']} />
-              <ExtensionEditor
-                entity={data}
-                registerSaveAction={this.props.registerSaveAction}
-                setDirty={this.props.setDirty}
-                goToList={this.props.goToList}
-                cma={this.props.cma}
-              />
-            </React.Fragment>
-          );
-        }}
-      </ExtensionFetcher>
-    );
+    const unsubscribe = $rootScope.$on('$stateChangeStart', (event, toState, toStateParams) => {
+      if (!isDirty.current || !requestLeaveConfirmation.current) return;
+
+      event.preventDefault();
+      requestLeaveConfirmation.current().then((confirmed) => {
+        if (!confirmed) return;
+
+        isDirty.current = false;
+        return go({ path: toState.name, params: toStateParams });
+      });
+    });
+
+    return unsubscribe;
+  }, []);
+
+  function registerSaveAction(save) {
+    requestLeaveConfirmation.current = createUnsavedChangesDialogOpener(save);
   }
+
+  function setDirty(value) {
+    isDirty.current = value;
+  }
+
+  function goToList() {
+    return go({ path: '^.list' });
+  }
+
+  if (!getSectionVisibility()['extensions']) {
+    return <ForbiddenPage />;
+  }
+
+  return (
+    <ExtensionFetcher cma={cma} extensionId={props.extensionId}>
+      {({ isLoading, isError, data }) => {
+        if (isLoading) {
+          return <ExtensionEditorSkeleton goToList={goToList} />;
+        }
+        if (isError) {
+          return <StateRedirect path="^.list" />;
+        }
+        return (
+          <React.Fragment>
+            <DocumentTitle title={[data.extension.name, 'Extensions']} />
+            <ExtensionEditor
+              entity={data}
+              registerSaveAction={registerSaveAction}
+              setDirty={setDirty}
+              goToList={goToList}
+              cma={cma}
+            />
+          </React.Fragment>
+        );
+      }}
+    </ExtensionFetcher>
+  );
 }
+
+ExtensionEditorRoute.propTypes = {
+  extensionId: PropTypes.string.isRequired,
+};
