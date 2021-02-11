@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  cypress: cypress-io/cypress@1.7.0
+  cypress: cypress-io/cypress@1.27.0
   samson: contentful/trigger-samson@1
   polaris-scan: contentful/polaris-scan@1
   copy-assets:
@@ -218,9 +218,9 @@ run_only_on_master_branch: &run_only_on_master_branch
       only: master
 
 executors:
-  cypress-base-10:
+  cypress-base:
     docker:
-      - image: 'cypress/base:10'
+      - image: 'cypress/base:12.18.0'
     resource_class: large
     environment:
       NODE_ENV: dev
@@ -396,7 +396,7 @@ workflows:
       - cypress/run:
           name: run-contract-tests
           no-workspace: true
-          executor: cypress-base-10
+          executor: cypress-base
           parallelism: 4
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
@@ -408,8 +408,8 @@ workflows:
                 paths:
                   - pacts/*
           start: npm start
+          wait-on: '--verbose --interval 2000 --delay 60000 --timeout 300000 http://localhost:3001/app/app.js'
           command: |
-            npm run wait-for-app
             TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
           store_artifacts: true
