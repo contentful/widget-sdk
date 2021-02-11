@@ -1,9 +1,10 @@
 import React from 'react';
 import DataLoader from 'dataloader';
-import { memoize, get, uniq, isUndefined } from 'lodash';
+import { get, isUndefined, memoize, uniq } from 'lodash';
 import * as Config from 'Config';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
+import { Endpoint } from 'data/CMA/types';
 
 // Gatekeeper Product Catalog features
 export const FEATURES = {
@@ -60,7 +61,7 @@ const COMMON_FOR_ORG = [
 // be used when Product Catalog is not available or returns
 // a malformed response.
 
-const getLoaderForEndpoint = (endpoint) => {
+const getLoaderForEndpoint = (endpoint: Endpoint) => {
   // disable batching in contract tests
   const enableBatchRequests = Config.env !== 'development';
   return new DataLoader(

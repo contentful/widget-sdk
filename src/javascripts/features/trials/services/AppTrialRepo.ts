@@ -1,4 +1,6 @@
 import { COMPOSE_LAUNCH_TRIAL, getAlphaHeader } from 'alphaHeaders';
+import { OrganizationEndpoint } from 'data/CMA/types';
+import { CollectionProp } from 'contentful-management/types';
 
 const headers = getAlphaHeader(COMPOSE_LAUNCH_TRIAL);
 
@@ -28,9 +30,9 @@ export interface AppTrial {
   };
 }
 
-export const createAppTrialRepo = (endpoint) => {
+export const createAppTrialRepo = (endpoint: OrganizationEndpoint) => {
   const getTrial = async (featureId): Promise<AppTrialFeature> => {
-    const data = await endpoint({
+    const data = await endpoint<CollectionProp<AppTrialFeature>>({
       method: 'GET',
       path: '/product_catalog_features',
       query: {
@@ -41,7 +43,7 @@ export const createAppTrialRepo = (endpoint) => {
   };
 
   const createTrial = async (): Promise<AppTrial> => {
-    const response: AppTrial = endpoint(
+    const response: Promise<AppTrial> = endpoint<AppTrial>(
       {
         method: 'POST',
         path: '/_compose_launch_trial',

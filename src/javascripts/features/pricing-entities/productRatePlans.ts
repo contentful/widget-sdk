@@ -1,11 +1,12 @@
 import {
+  AddOnProductRatePlan,
   ProductRatePlan,
   SpaceProductRatePlan,
-  AddOnProductRatePlan,
 } from './types/ProductRatePlan';
-import { OrganizationEndpoint, CollectionResponse } from './types/Generic';
+import { CollectionResponse } from './types/Generic';
 
 import { withAlphaHeader } from './utils';
+import { OrganizationEndpoint } from 'data/CMA/types';
 
 /**
  * Gets all the product rate plans available to the organization.

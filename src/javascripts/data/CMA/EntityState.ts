@@ -2,7 +2,7 @@ import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
 import { Action, EntityAction, makePerform } from './EntityActions';
 import { Entity, EntitySys } from 'app/entity_editor/Document/types';
-import { SpaceEndpoint } from './types';
+import { SpaceEndpoint } from 'data/CMA/types';
 
 export type EntityState =
   | '__DELETED__'

@@ -1,6 +1,7 @@
-import { OrganizationEndpoint, CollectionResponse } from './types/Generic';
-import { Plan, BasePlan, SpacePlan } from './types/Plan';
+import { CollectionResponse } from './types/Generic';
+import { BasePlan, Plan, SpacePlan } from './types/Plan';
 import { withAlphaHeader } from './utils';
+import { OrganizationEndpoint } from 'data/CMA/types';
 
 /**
  * Add product rate plan given by `productRatePlanId` to the organization's subscription.

@@ -1,8 +1,7 @@
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
-import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
-import { SpaceEndpoint } from 'data/CMA/types';
+import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import { PubSubClient } from 'services/PubSubService';
 import localeStore from 'services/localeStore';
@@ -16,13 +15,14 @@ import { createEntryApi } from '../createEntryApi';
 import { createSpaceApi } from '../createSpaceApi';
 import { createReadOnlyNavigatorApi } from '../createNavigatorApi';
 import { createReadOnlyDialogsApi } from '../createDialogsApi';
-import { SpaceMember, createUserApi } from '../createUserApi';
-import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
+import { createUserApi, SpaceMember } from '../createUserApi';
+import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { createIdsApi } from '../createIdsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { proxify } from 'core/services/proxy';
 import { EditorInterfaceProps } from 'contentful-management/types';
+import { SpaceEndpoint } from 'data/CMA/types';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;

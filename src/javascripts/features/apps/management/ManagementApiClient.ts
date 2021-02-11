@@ -4,6 +4,7 @@ import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
 import { WidgetLocation } from '@contentful/widget-renderer';
+import { AppDefinition } from 'contentful-management/types';
 
 const VALIDATION_MESSAGE =
   'Validation failed. Please check that you have provided valid configuration options.';
@@ -50,7 +51,7 @@ function save(definition) {
     widgetConfig.locations = [...widgetConfig.locations, { location: WidgetLocation.DIALOG }];
   }
 
-  return orgEndpoint({
+  return orgEndpoint<AppDefinition>({
     method,
     path: ['app_definitions'].concat(isPersisted ? [id] : []),
     data: {
@@ -92,7 +93,9 @@ function addKey({ orgId, definitionId, jwk }) {
 function generateKey({ orgId, definitionId }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
-  return orgEndpoint({
+  return orgEndpoint<{
+    generated: { privateKey: string };
+  }>({
     method: 'POST',
     data: { generate: true },
     path: ['app_definitions', definitionId, 'keys'],
@@ -108,9 +111,15 @@ function revokeKey({ orgId, definitionId, fingerprint }) {
   });
 }
 
+// TODO: whats the shape?
+type AppEvents = {
+  targetUrl: string;
+  topics: any[];
+};
+
 function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
-  return orgEndpoint({
+  return orgEndpoint<AppEvents>({
     method: 'PUT',
     data: { targetUrl, topics },
     path: ['app_definitions', definitionId, 'event_subscription'],

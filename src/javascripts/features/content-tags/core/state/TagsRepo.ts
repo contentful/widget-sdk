@@ -1,6 +1,9 @@
 import { TagsRepoType } from './TagsRepoContext';
+import { SpaceEndpoint } from 'data/CMA/types';
+import { CollectionProp } from 'contentful-management/types';
+import { Tag } from '@contentful/types';
 
-function create(spaceEndpoint: any, environmentId: string): TagsRepoType {
+function create(spaceEndpoint: SpaceEndpoint, environmentId: string): TagsRepoType {
   async function createTag(id: string, name: string, version?: number) {
     const data = {
       name,
@@ -8,20 +11,26 @@ function create(spaceEndpoint: any, environmentId: string): TagsRepoType {
         id,
       },
     };
-    return await spaceEndpoint(
+
+    let headers = {};
+    if (version !== undefined) {
+      headers = {
+        'X-Contentful-Version': version,
+      };
+    }
+
+    return await spaceEndpoint<Tag>(
       {
         method: 'PUT',
         path: ['environments', environmentId, 'tags', id],
         data,
       },
-      {
-        'X-Contentful-Version': version,
-      }
+      headers
     );
   }
 
   async function readTags(skip: number, limit: number) {
-    return await spaceEndpoint({
+    return await spaceEndpoint<CollectionProp<Tag>>({
       method: 'GET',
       path: ['environments', environmentId, 'tags'],
       query: { limit, skip },

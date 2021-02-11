@@ -8,7 +8,7 @@ import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
 import { EntityState } from 'data/CMA/EntityState';
-import { SpaceEndpoint } from './types';
+import { RequestConfig, SpaceEndpoint } from './types';
 import {
   AssetProcessingFinishedPayload,
   ContentEntityUpdatedPayload,
@@ -73,26 +73,26 @@ export function create(
 
   async function update(entity: Entity): Promise<Entity> {
     const collection = getCollection(entity);
-    const body = {
+    const body: RequestConfig = {
       method: 'PUT',
       path: [collection, entity.sys.id],
       version: entity.sys.version,
       data: entity,
     };
-    const updatedEntity = await spaceEndpoint(body, endpointPutOptions);
+    const updatedEntity = await spaceEndpoint<Entity>(body, endpointPutOptions);
     triggerCmaAutoSave();
     return updatedEntity;
   }
 
   async function patch(lastSavedEntity: Entity, entity: Entity): Promise<Entity> {
     const collection = getCollection(entity);
-    const body = {
+    const body: RequestConfig = {
       method: 'PATCH',
       path: [collection, entity.sys.id],
       version: entity.sys.version,
       data: compare(lastSavedEntity, entity),
     };
-    const updatedEntity = await spaceEndpoint(body, {
+    const updatedEntity = await spaceEndpoint<Entity>(body, {
       ...endpointPutOptions,
       'Content-Type': 'application/json-patch+json',
     });
@@ -102,11 +102,11 @@ export function create(
 
   function get(entityType: CollectionEndpoint, entityId: string) {
     const collection = CollectionEndpoint[entityType];
-    const body = {
+    const body: RequestConfig = {
       method: 'GET',
       path: [collection, entityId],
     };
-    return spaceEndpoint(body, endpointGetOptions);
+    return spaceEndpoint<Entity>(body, endpointGetOptions);
   }
 
   function onContentEntityChanged(entitySys, callback) {

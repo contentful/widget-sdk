@@ -1,5 +1,3 @@
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-
 // TODO(jo-sm): Move these to a more central location
 export interface CollectionResponse<T> {
   sys: {
@@ -10,5 +8,3 @@ export interface CollectionResponse<T> {
   total: number;
   items: T[];
 }
-
-export type OrganizationEndpoint = ReturnType<typeof createOrganizationEndpoint>;

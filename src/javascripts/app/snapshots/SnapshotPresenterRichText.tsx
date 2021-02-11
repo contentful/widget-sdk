@@ -14,7 +14,6 @@ import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpac
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createCache from 'data/userCache';
 import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
-import { SpaceEndpoint } from 'data/CMA/types';
 import { EditorInterfaceProps } from 'contentful-management/types';
 
 const SnapshotPresenterRichText = ({
@@ -42,7 +41,7 @@ const SnapshotPresenterRichText = ({
     const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
     const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
-    const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
+    const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
     const usersEndpoint = createCache(spaceEndpoint);
     const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 

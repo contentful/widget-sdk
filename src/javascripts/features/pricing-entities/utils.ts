@@ -1,6 +1,5 @@
-import { OrganizationEndpoint } from './types/Generic';
-
-import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
+import { getAlphaHeader, SUBSCRIPTIONS_API } from 'alphaHeaders.js';
+import { OrganizationEndpoint, RequestConfig } from 'data/CMA/types';
 
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
@@ -10,7 +9,7 @@ const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
  * Simplifies the boilerplate of importing and generating the alpha header.
  */
 export function withAlphaHeader<T = null>(endpoint: OrganizationEndpoint) {
-  return async function callWithAlphaHeader(config: unknown) {
-    return (endpoint(config, alphaHeader) as unknown) as T;
+  return async function callWithAlphaHeader(config: RequestConfig) {
+    return endpoint<T>(config, alphaHeader);
   };
 }

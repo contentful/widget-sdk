@@ -1,6 +1,17 @@
 import makeRequest from 'data/Request';
 import { extend, filter, get } from 'lodash';
 import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
+import {
+  AppDefinitionEndpoint,
+  AuthParamsType,
+  BaseEndpoint,
+  OrganizationEndpoint,
+  RequestConfig,
+  RequestHeaders,
+  ResponseEntity,
+  SpaceEndpoint,
+  UserEndpoint,
+} from 'data/CMA/types';
 
 /**
  * @module
@@ -13,6 +24,10 @@ import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
  * A mock implementation for a space endpoint is provided by
  * 'test/helpers/mocks/SpaceEndpoint'.
  */
+
+type BaseUrlFunc = (path: string) => string;
+
+type BaseUrlParam = string | BaseUrlFunc;
 
 /*
  * @ngdoc method
@@ -49,22 +64,26 @@ import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
  *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
-  const spaceEndpoint = create(withBaseUrl, auth);
+export function createSpaceEndpoint(
+  baseUrl: string,
+  spaceId: string,
+  auth: AuthParamsType,
+  envId: string
+): SpaceEndpoint {
+  const spaceEndpoint = create<'Space'>(withBaseUrl, auth) as SpaceEndpoint;
 
   // spaceEndpoint is a function. we assign additional
   // properties so we can detect in which environment we
   // make these requests using only this function
   spaceEndpoint.spaceId = spaceId;
   spaceEndpoint.envId = envId;
-
   return spaceEndpoint;
 
-  function withBaseUrl(path) {
+  function withBaseUrl(path): string {
     return joinPath([baseUrl, 'spaces', spaceId].concat(maybePrefixWithEnv(path)));
   }
 
-  function maybePrefixWithEnv(path) {
+  function maybePrefixWithEnv(path: string[]): string[] {
     if (envId && shouldUseEnvEndpoint(path)) {
       return ['environments', envId, ...path];
     } else {
@@ -98,19 +117,26 @@ export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
  * @param {function(): Promise<string>} auth.refreshToken
  * @returns {function(): Promise<Object>}
  */
-export function createOrganizationEndpoint(baseUrl, organizationId, auth) {
+export function createOrganizationEndpoint(
+  baseUrl: string,
+  organizationId: string,
+  auth: AuthParamsType
+): OrganizationEndpoint {
   const organizationBaseUrl = joinPath([baseUrl, 'organizations', organizationId]);
-  return create(organizationBaseUrl, auth);
+  return create<'Organization'>(organizationBaseUrl, auth);
 }
 
-export function createUsersEndpoint(baseUrl, auth) {
+export function createUsersEndpoint(baseUrl: string, auth: AuthParamsType): UserEndpoint {
   const usersBaseUrl = joinPath([baseUrl, 'users', 'me']);
-  return create(usersBaseUrl, auth);
+  return create<'User'>(usersBaseUrl, auth);
 }
 
-export function createAppDefinitionsEndpoint(baseUrl, auth) {
+export function createAppDefinitionsEndpoint(
+  baseUrl: string,
+  auth: AuthParamsType
+): AppDefinitionEndpoint {
   const appDefinitionsBaseUrl = joinPath([baseUrl, 'app_definitions']);
-  return create(appDefinitionsBaseUrl, auth);
+  return create<'AppDefinition'>(appDefinitionsBaseUrl, auth);
 }
 
 /*
@@ -160,17 +186,21 @@ export function createAppDefinitionsEndpoint(baseUrl, auth) {
  * @param {string|function} baseUrl  can be a string - will be used as is
  *                                   can be a function of path to full URL
  * @param {object} auth
- * @returns {function(): Promise<Object>}
+ * @returns {function<T>(): Promise<T>}
  */
-export function create(baseUrl, auth) {
+export function create<Scope>(baseUrl: BaseUrlParam, auth: AuthParamsType): BaseEndpoint<Scope> {
   const baseRequest = makeRequest(auth);
-  let withBaseUrl = baseUrl;
-
+  let withBaseUrl;
   if (typeof baseUrl === 'string') {
-    withBaseUrl = (path) => joinPath([baseUrl].concat(path));
+    withBaseUrl = (path: string) => joinPath([baseUrl].concat(path));
+  } else {
+    withBaseUrl = baseUrl;
   }
 
-  return async function request(config, headers) {
+  const endpoint: BaseEndpoint<Scope> = async <T extends ResponseEntity>(
+    config: RequestConfig,
+    headers?: RequestHeaders
+  ) => {
     const req = {
       query: config.query,
       method: config.method,
@@ -184,7 +214,7 @@ export function create(baseUrl, auth) {
 
     try {
       const response = await baseRequest(req);
-      return response.data;
+      return (response.data as unknown) as T;
     } catch (res) {
       const error = extend(asyncError, {
         status: res.status,
@@ -200,7 +230,9 @@ export function create(baseUrl, auth) {
     }
   };
 
-  function makeHeaders(version, incomingHeaders = {}) {
+  return endpoint as BaseEndpoint<Scope>;
+
+  function makeHeaders(version?: number, incomingHeaders = {}): RequestHeaders {
     const headers = { ...incomingHeaders };
 
     if (version) {
@@ -211,7 +243,7 @@ export function create(baseUrl, auth) {
   }
 }
 
-function joinPath(components) {
+function joinPath(components: string[]): string {
   const startSlashRegex = /^\//;
   const endSlashRegex = /\/$/;
   return filter(components)

@@ -12,7 +12,6 @@ import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnv
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
-import { SpaceEndpoint } from 'data/CMA/types';
 import createUsersCache from 'data/userCache';
 import { EditorInterfaceProps } from 'contentful-management/types';
 
@@ -59,7 +58,7 @@ const SnapshotPresenterCustomWidget = ({
     const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
     const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
-    const spaceEndpoint = (createSpaceEndpoint(spaceId, environmentId) as unknown) as SpaceEndpoint; // TODO: a better solution would be to transform EndpointFactory.js and Endpoint.js to TS
+    const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
     const usersEndpoint = createUsersCache(spaceEndpoint);
     const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 

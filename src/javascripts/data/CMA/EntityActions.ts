@@ -1,7 +1,7 @@
-import { constant, compact } from 'lodash';
+import { compact, constant } from 'lodash';
 import { caseof } from 'sum-types/caseof-eq';
 import { Entity } from 'app/entity_editor/Document/types';
-import { SpaceEndpoint } from './types';
+import { RequestMethod, SpaceEndpoint } from './types';
 
 export type EntityAction = 'publish' | 'unpublish' | 'archive' | 'unarchive' | 'delete';
 
@@ -72,7 +72,7 @@ export function makePerform(spaceEndpoint: SpaceEndpoint) {
  * Returns a [method, path] tuple that specify which endpoint to call
  * with which method.
  */
-function restArgs(action: EntityAction): [string, string] {
+function restArgs(action: EntityAction): [RequestMethod, string] {
   return caseof(action, [
     [Action.Publish(), constant(['PUT', 'published'])],
     [Action.Unpublish(), constant(['DELETE', 'published'])],

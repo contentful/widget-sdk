@@ -1,6 +1,7 @@
-import * as Endpoint from 'data/Endpoint';
+import * as EndpointImpl from 'data/Endpoint';
 import * as auth from 'Authentication';
 import { apiUrl } from 'Config';
+import { ApiEndpoint, OrganizationEndpoint, SpaceEndpoint, UserEndpoint } from 'data/CMA/types';
 
 /**
  * Wrapper for data/Endpoint to create space and organization endpoints with
@@ -12,7 +13,7 @@ import { apiUrl } from 'Config';
  * as well. We should refactor it when we agree upon an approach to global
  * application state.
  *
- * See data/Endpoint for documentatiom and usage examples.
+ * See data/Endpoint for documentation and usage examples.
  */
 
 /*
@@ -22,8 +23,8 @@ import { apiUrl } from 'Config';
  * @param {string} orgId
  * @returns {function(): Promise<Object>}
  */
-export function createOrganizationEndpoint(orgId) {
-  return Endpoint.createOrganizationEndpoint(apiUrl(), orgId, auth);
+export function createOrganizationEndpoint(orgId): OrganizationEndpoint {
+  return EndpointImpl.createOrganizationEndpoint(apiUrl(), orgId, auth);
 }
 
 /**
@@ -33,16 +34,17 @@ export function createOrganizationEndpoint(orgId) {
  * @param {string} spaceId
  * @param {string?} envId  if provided will call environment-scoped
  *                         endpoints for applicable entities
- * @returns {function(): Promise<Object>}
+ * @returns {function<T>(): Promise<T>}
  */
-export function createSpaceEndpoint(spaceId, envId) {
-  return Endpoint.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
+
+export function createSpaceEndpoint(spaceId, envId): SpaceEndpoint {
+  return EndpointImpl.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
 }
 
-export function createUsersEndpoint() {
-  return Endpoint.createUsersEndpoint(apiUrl(), auth);
+export function createUsersEndpoint(): UserEndpoint {
+  return EndpointImpl.createUsersEndpoint(apiUrl(), auth);
 }
 
-export function createEndpoint() {
-  return Endpoint.create(apiUrl(), auth);
+export function createEndpoint(): ApiEndpoint {
+  return EndpointImpl.create<'Api'>(apiUrl(), auth);
 }

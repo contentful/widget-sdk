@@ -1,15 +1,17 @@
 import * as Endpoint from './Endpoint';
+import { RequestConfig, RequestHeaders } from 'data/CMA/types';
 
 const mockRequest = jest.fn(async () => ({ data: '' }));
 jest.mock('data/Request', () => jest.fn(() => mockRequest));
 
-const auth = jest.fn();
+const auth = {
+  getToken: jest.fn(),
+  refreshToken: jest.fn(),
+};
 const baseUrl = '//test.io';
 
-const doRequest = function (...args) {
-  const request = Endpoint.create(baseUrl, auth);
-  const response = request(...args);
-  return response;
+const doRequest = function (config: RequestConfig, headers?: RequestHeaders) {
+  return Endpoint.create(baseUrl, auth)(config, headers);
 };
 
 describe('Endpoint', () => {

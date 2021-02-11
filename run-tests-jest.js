@@ -24,6 +24,7 @@ if (
 ) {
   argv.push('--watch');
 }
+argv.push('--silent');
 
 // @remove-on-eject-begin
 // This is not necessary after eject because we embed config into package.json.
@@ -37,7 +38,7 @@ argv.push(
       (relativePath) => path.resolve(__dirname, relativePath),
       paths.appPath,
       [paths.appSrcJavascripts, paths.appTools, paths.appContractTests],
-      paths.appCoverage,
+      paths.appCoverage
     )
   )
 );
