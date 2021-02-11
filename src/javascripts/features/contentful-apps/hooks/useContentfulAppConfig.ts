@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getOrgFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getAppsRepo } from 'features/apps-core';
+import { canStartAppTrial } from 'features/trials';
 
 /**
  * Add new app config here and use it like
@@ -31,6 +32,7 @@ export interface AppState {
   isInstalled?: boolean;
   isEnabled?: boolean;
   isPurchased?: boolean;
+  isTrialAvailable?: boolean;
 }
 
 export interface UseContentfulAppsConfig {
@@ -60,16 +62,18 @@ export const useContentfulAppsConfig = ({
     };
 
     const fetchData = async () => {
-      const [isPurchased, isEnabled, isInstalled] = await Promise.all([
+      const [isPurchased, isEnabled, isInstalled, isTrialAvailable] = await Promise.all([
         getOrgFeature(organizationId, APPS_CONFIG[appId].catalogFlag, false),
         getVariation(APPS_CONFIG[appId].featureFlag, featureFlagOptions as any),
         checkInstalledApp(appId),
+        canStartAppTrial(organizationId as string),
       ]);
       if (mounted) {
         setAppState({
           isPurchased,
           isEnabled,
           isInstalled,
+          isTrialAvailable,
         });
       }
     };

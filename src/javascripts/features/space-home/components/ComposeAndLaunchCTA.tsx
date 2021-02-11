@@ -81,6 +81,7 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
               spaceInformation={spaceInfo as SpaceInformation}
               isInstalled={false}
               isPurchased={false}
+              isTrialAvailable={compose.isTrialAvailable}
               isFlipped
               isScreenshot
             />
