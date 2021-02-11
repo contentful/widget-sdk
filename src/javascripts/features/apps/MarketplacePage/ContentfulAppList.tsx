@@ -6,12 +6,20 @@ import {
   Button,
   Flex,
   Typography,
+  ModalLauncher,
+  Notification,
 } from '@contentful/forma-36-react-components';
 import React, { ReactElement } from 'react';
-import { AppManager } from '../AppOperations';
-import { MarketplaceApp } from 'features/apps-core';
-import { SpaceInformation } from '../AppDetailsModal/shared';
+
+import { go } from 'states/Navigator';
+import { getModule } from 'core/NgRegistry';
+import { MarketplaceApp, getAppsRepo } from 'features/apps-core';
+import * as TokenStore from 'services/TokenStore';
 import { beginSpaceCreation } from 'services/CreateSpace';
+import { startAppTrial, StartAppTrialModal } from 'features/trials';
+
+import { AppManager } from '../AppOperations';
+import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
@@ -24,6 +32,7 @@ interface ListProps {
   spaceInformation: SpaceInformation;
   organizationId: string;
   isPurchased: boolean;
+  isTrialAvailable: boolean;
 }
 
 export interface ContentfulAppTileProps {
@@ -70,8 +79,50 @@ export const ContentfulAppTile = ({
   const showBuyNow = !isPurchased && canBuy && !isTrialAvailable;
   const showTrial = isTrialAvailable && canManage && !isPurchased;
   const showOpen = isInstalled && isPurchased;
-
   const isSmallCard = isFlipped && !isScreenshot;
+
+  const showModal = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <StartAppTrialModal isShown={isShown} onClose={onClose} onConfirm={handleStartAppTrial} />
+    ));
+  };
+
+  const handleStartAppTrial = async () => {
+    Notification.success('Preparing your trial');
+    try {
+      await startAppTrial(organizationId as string).then(async ({ apps, trial }) => {
+        try {
+          const appRepos = await Promise.all(apps.map(getAppsRepo().getApp));
+          const spaceContext = getModule('spaceContext');
+
+          await TokenStore.refresh()
+            .then(() => TokenStore.getSpace(trial.spaceKey))
+            .then((space) => spaceContext.resetWithSpace(space));
+
+          const appsManager = new AppManager(
+            spaceContext.cma,
+            spaceContext.getEnvironmentId(),
+            spaceContext.getId(),
+            organizationId
+          );
+
+          await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
+
+          go({
+            path: ['spaces', 'detail'],
+            params: {
+              spaceId: trial.spaceKey,
+            },
+          });
+        } catch (e) {
+          throw new Error('Failed to start the App trial');
+        }
+      });
+      Notification.success('Your App trial has started!');
+    } catch (err) {
+      Notification.error('The App trial could not be started!');
+    }
+  };
 
   return (
     <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appListCard}>
@@ -101,12 +152,13 @@ export const ContentfulAppTile = ({
                 </Button>
               )}
               {showInstall && (
-                <Button className={styles.button} onClick={installAction}>
+                <Button testId="install-button" className={styles.button} onClick={installAction}>
                   Install
                 </Button>
               )}
               {showBuyNow && (
                 <Button
+                  testId="buy-button"
                   className={styles.button}
                   onClick={() => {
                     if (organizationId) {
@@ -117,13 +169,7 @@ export const ContentfulAppTile = ({
                 </Button>
               )}
               {showTrial && (
-                <Button
-                  className={styles.button}
-                  onClick={() => {
-                    // TODO This should show a modal that calls the relevant APIs
-                    // TODO "isTrialAvailable" should be determined beforehand
-                    // Team MOI is working on it.
-                  }}>
+                <Button testId="start-trial-button" className={styles.button} onClick={showModal}>
                   Start 10 day trial
                 </Button>
               )}
@@ -134,6 +180,7 @@ export const ContentfulAppTile = ({
               )}
               {showLearnMore && (
                 <Button
+                  testId="learn-more-button"
                   className={styles.button}
                   buttonType="muted"
                   icon="ExternalLink"
@@ -158,6 +205,7 @@ export const ContentfulAppsList = ({
   appManager,
   spaceInformation,
   isPurchased,
+  isTrialAvailable,
   organizationId,
 }: ListProps) => {
   const anyInstalled = apps.some((app) => app.appInstallation);
@@ -183,6 +231,7 @@ export const ContentfulAppsList = ({
           spaceInformation={spaceInformation}
           isInstalled={anyInstalled}
           isPurchased={isPurchased}
+          isTrialAvailable={isTrialAvailable}
         />
       ) : (
         apps.map((app, key) => (

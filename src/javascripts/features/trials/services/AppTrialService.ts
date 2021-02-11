@@ -1,59 +1,41 @@
 import moment from 'moment';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { go } from 'states/Navigator';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AppTrialFeature, createAppTrialRepo } from './AppTrialRepo';
-import * as TokenStore from 'services/TokenStore';
 import { isTrialSpaceType } from './TrialService';
+import * as TokenStore from 'services/TokenStore';
 
-export const canStartAppTrial = async (organization, basePlan) => {
-  const featureFlag = await getVariation(FLAGS.APP_TRIAL, {
-    organizationId: organization.sys.id,
-    spaceId: undefined,
-    environmentId: undefined,
-  });
+export const canStartAppTrial = async (organizationId: string) => {
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
 
-  if (!featureFlag || !isOwnerOrAdmin(organization) || isEnterprisePlan(basePlan)) {
+  const [featureFlag, basePlan, productFeature] = await Promise.all([
+    getVariation(FLAGS.APP_TRIAL, {
+      organizationId,
+      spaceId: undefined,
+      environmentId: undefined,
+    }),
+    getBasePlan(orgEndpoint),
+    createAppTrialRepo(orgEndpoint).getTrial('compose_app'),
+  ]);
+
+  if (
+    !featureFlag ||
+    !isOwnerOrAdmin({ sys: { id: organizationId } }) ||
+    isEnterprisePlan(basePlan)
+  ) {
     return false;
   }
 
-  const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
-  const feature = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
-  return !feature.enabled && !feature.sys.trial;
+  return !productFeature.enabled && !productFeature.sys.trial;
 };
 
-export const startAppTrial = async (orgId: string, installAppsFn: Function) => {
-  const orgEndpoint = createOrganizationEndpoint(orgId);
-  try {
-    const trial = await createAppTrialRepo(orgEndpoint).createTrial();
-
-    await TokenStore.refresh();
-
-    await go({
-      path: ['spaces', 'detail'],
-      params: {
-        spaceId: trial.spaceKey,
-      },
-    });
-
-    await installAppsFn(['compose', 'launch']);
-
-    // TODO: bootstrap the space
-
-    // TODO: remove the AppsListing redirection
-    go({
-      path: ['spaces', 'detail', 'apps', 'list'],
-      params: {
-        spaceId: trial.spaceKey,
-      },
-    });
-
-    return trial;
-  } catch (e) {
-    console.log(e);
-  }
+export const startAppTrial = async (organizationId: string) => {
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
+  const trial = await createAppTrialRepo(orgEndpoint).createTrial();
+  return { apps: ['compose', 'launch'], trial };
 };
 
 export const isActiveAppTrial = (feature: AppTrialFeature) => {
