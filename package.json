@@ -279,7 +279,7 @@
     "wait-for-app": "wait-on --verbose --interval 2000 --delay 60000 http://localhost:3001/app/app.js"
   },
   "lint-staged": {
-    "*.js": [
+    "*.{t,j}s?(x)": [
       "prettier --write",
       "eslint --ext '.ts,.tsx,.js,.jsx' --fix "
     ],
