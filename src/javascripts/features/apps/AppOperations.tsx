@@ -10,7 +10,7 @@ import {
 } from './AppEditorInterfaces';
 import { validateState } from './AppState';
 import { UninstallModal } from './UninstallModal';
-import { MarketplaceApp } from 'features/apps-core';
+import { MarketplaceApp, getAppsRepo } from 'features/apps-core';
 
 export type AppStatusCheck = (
   app: MarketplaceApp
@@ -162,6 +162,7 @@ export async function installOrUpdate(
     spaceData
   );
 
+  getAppsRepo().clearCache(['appInstallations']);
   await callback(appInstallation);
 }
 
@@ -179,6 +180,9 @@ export async function uninstall(
     await removeAllEditorInterfaceReferences(cma, appInstallation.sys.appDefinition.sys.id);
     // Remove the AppInstallation itself.
     await cma.deleteAppInstallation(appDefinition.sys.id);
+
+    getAppsRepo().clearCache(['appInstallations']);
   }
+
   await callback(appInstallation);
 }

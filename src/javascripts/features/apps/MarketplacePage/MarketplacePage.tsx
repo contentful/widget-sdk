@@ -56,7 +56,7 @@ const getEnabledApps = async (apps, flagContext) => {
 export interface MarketplacePageProps {
   cma: any;
   repo: {
-    getApps: () => Promise<MarketplaceApp[]>;
+    getAllApps: () => Promise<MarketplaceApp[]>;
   };
   organizationId: string;
   spaceInformation: SpaceInformation;
@@ -113,7 +113,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
   async loadApps() {
     const environmentId = this.props.spaceInformation.envMeta.environmentId;
     const spaceId = this.props.spaceInformation.spaceId;
-    const apps = await this.props.repo.getApps();
+    const apps = await this.props.repo.getAllApps();
     const enabledApps = await getEnabledApps(apps, {
       spaceId,
       environmentId,
@@ -150,7 +150,7 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
   };
 
   closeDetailModal = async () => {
-    this.setState({ appDetailsModalAppId: null });
+    this.setState({ appDetailsModalAppId: null, ...(await this.loadApps()) });
     await this.props.closeAppDetails();
   };
 

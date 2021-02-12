@@ -15,6 +15,10 @@ jest.mock('access_control/AccessChecker', () => ({
   getSectionVisibility: () => ({ apps: true }),
 }));
 
+const getMockAppsRepo = (apps?) => ({
+  getAllApps: jest.fn(() => Promise.resolve(apps)),
+});
+
 describe('MarketplacePage', () => {
   const orgId = '123';
   const spaceId = '456';
@@ -33,7 +37,7 @@ describe('MarketplacePage', () => {
     const { container } = render(
       <MarketplacePage
         cma={{}}
-        repo={{ getApps: jest.fn() }}
+        repo={getMockAppsRepo()}
         organizationId={orgId}
         userId={userId}
         hasAppsFeature={true}
@@ -49,9 +53,7 @@ describe('MarketplacePage', () => {
   });
 
   it('should match snapshot of apps loaded state', async () => {
-    const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
-    };
+    const mockRepo = getMockAppsRepo(repoAppsMock);
 
     const { container } = render(
       <MarketplacePage
@@ -74,9 +76,7 @@ describe('MarketplacePage', () => {
   });
 
   it('should match snapshot of apps loaded with limited access', async () => {
-    const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
-    };
+    const mockRepo = getMockAppsRepo(repoAppsMock);
 
     const { container } = render(
       <MarketplacePage
@@ -100,9 +100,7 @@ describe('MarketplacePage', () => {
   });
 
   it('should match snapshot of apps and contentful apps', async () => {
-    const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoContentfulAppsMock)),
-    };
+    const mockRepo = getMockAppsRepo(repoContentfulAppsMock);
 
     const { container } = render(
       <MarketplacePage

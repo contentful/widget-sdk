@@ -4,9 +4,10 @@ import * as logger from 'services/logger';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FEATURES, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { fetchContentfulApps, getAppsRepo } from 'features/apps-core';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { AppsListProps } from '@contentful/experience-components';
+import { useContentfulApps, useInstalledApps } from 'features/apps-core';
+import { MarketplaceApp } from 'features/apps-core';
 import { getContentfulAppUrl } from 'features/apps';
 
 const getAppInstallRouteProps = ({
@@ -83,7 +84,13 @@ export const useAppsList = () => {
   } = spaceEnv;
 
   const envIsMaster = isMasterEnvironment(spaceEnv.currentEnvironment);
+  // TODO: handle errors
   const purchasedApps = usePurchasedApps(organizationId);
+  const [contentfulApps] = useContentfulApps() as [
+    (NavigationSwitcherAppProps & MarketplaceApp)[] | undefined,
+    unknown
+  ];
+  const [installedApps] = useInstalledApps();
 
   React.useEffect(() => {
     if (!spaceId || !organizationId || !environmentId) {
@@ -92,23 +99,18 @@ export const useAppsList = () => {
     }
 
     (async () => {
-      if (!purchasedApps) return;
+      if (!purchasedApps || !contentfulApps) return;
 
       const ldContext = { organizationId, spaceId, environmentId };
 
-      // get list of marketplace contentful apps
-      const [contentfulApps, installedApps] = await Promise.all([
-        fetchContentfulApps() as Promise<NavigationSwitcherAppProps[]>,
-        getAppsRepo().getOnlyInstalledApps(),
-      ]);
-      const installedAppIds = new Set(installedApps.map((app: { id: string }) => app.id));
+      const installedAppIds = new Set(installedApps?.map((app: { id: string }) => app.id));
 
       // filter based on both PD and LD feature flags
       const enabledApps = (
         await Promise.all(
           contentfulApps.map(
             async (app): Promise<NavigationSwitcherAppProps | null> => {
-              if (!purchasedApps[app.id!]) return null;
+              if (!purchasedApps[app.id]) return null;
 
               const featureFlagId = FLAGS[app.featureFlagName];
               const appFlagIsEnabled = featureFlagId
@@ -122,11 +124,11 @@ export const useAppsList = () => {
               });
 
               const spaceInformation = {
-                spaceId: spaceId!,
+                spaceId: spaceId,
                 spaceName: '', // not necessary downstream
                 envMeta: { environmentId, isMasterEnvironment: envIsMaster },
               };
-              const appUrl = getContentfulAppUrl(app.id!, spaceInformation);
+              const appUrl = getContentfulAppUrl(app.id, spaceInformation);
 
               return appFlagIsEnabled
                 ? {
@@ -151,7 +153,15 @@ export const useAppsList = () => {
       setEnabledApps([]);
       setIsLoading(true);
     };
-  }, [organizationId, spaceId, environmentId, envIsMaster, purchasedApps]);
+  }, [
+    organizationId,
+    spaceId,
+    environmentId,
+    envIsMaster,
+    purchasedApps,
+    contentfulApps,
+    installedApps,
+  ]);
 
   return { appsList: enabledApps, isLoading };
 };

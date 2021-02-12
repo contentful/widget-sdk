@@ -203,7 +203,7 @@ export function SubscriptionPage({
             .then((space) => spaceContext.resetWithSpace(space));
 
           // NOTE: getAppsRepo requires a spaceContext
-          const appRepos = await Promise.all(apps.map(getAppsRepo().getApp));
+          const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug));
 
           const appsManager = new AppManager(
             spaceContext.cma,

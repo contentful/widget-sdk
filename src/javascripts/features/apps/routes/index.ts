@@ -108,7 +108,7 @@ export const appRoute = {
       resolve: {
         // Define dependency on spaceContext so we load the app
         // only when the space is initialized.
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getAppByIdOrSlug(appId)],
         hasAppsFeature: appsFeatureResolver,
         hasAdvancedAppsFeature: advancedAppsFeatureResolver,
         canManageThisApp: [
@@ -214,7 +214,7 @@ export const appRoute = {
       url: '/app_installations/:appId{path:PathSuffix}',
       component: PageWidgetRenderer,
       resolve: {
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getAppByIdOrSlug(appId)],
         widget: [
           'app',
           async ({ appDefinition }) => {

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppsRepo getApps should return an array of apps when the marketplace endpoint returns good data 1`] = `
+exports[`AppsRepo getAllApps should return an array of apps when the marketplace endpoint returns good data 1`] = `
 Array [
   Object {
     "appDefinition": Object {

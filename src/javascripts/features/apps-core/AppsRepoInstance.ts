@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
-import { createAppsRepo } from './AppsRepo';
+import { AppsRepo } from './AppsRepo';
 import { getAppDefinitionLoader } from './AppDefinitionLoaderInstance';
 
 // AppInstallation is an environment-scoped entity:
@@ -12,10 +12,10 @@ export function getAppsRepo() {
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
 
-  let repo = get(perSpaceEnvCache, [spaceId, environmentId]);
+  let repo: AppsRepo = get(perSpaceEnvCache, [spaceId, environmentId]);
 
   if (!repo) {
-    repo = createAppsRepo(spaceContext.cma, getAppDefinitionLoader());
+    repo = new AppsRepo(spaceContext.cma, getAppDefinitionLoader());
     set(perSpaceEnvCache, [spaceId, environmentId], repo);
   }
 

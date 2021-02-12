@@ -92,7 +92,7 @@ export const ContentfulAppTile = ({
     try {
       await startAppTrial(organizationId as string).then(async ({ apps, trial }) => {
         try {
-          const appRepos = await Promise.all(apps.map(getAppsRepo().getApp));
+          const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug));
           const spaceContext = getModule('spaceContext');
 
           await TokenStore.refresh()
