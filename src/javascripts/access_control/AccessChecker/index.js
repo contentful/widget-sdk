@@ -282,6 +282,9 @@ export function canPerformActionOnEntryOfType(action, ctId) {
           },
         },
       },
+      metadata: {
+        tags: [],
+      },
     },
   };
 
