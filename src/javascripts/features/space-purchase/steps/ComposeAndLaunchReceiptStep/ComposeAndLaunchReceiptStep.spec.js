@@ -10,7 +10,7 @@ import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 const mockOrganization = Fake.Organization();
-const mockComposeProductRatePlan = Fake.Plan();
+const mockcomposeAndLaunchProductRatePlan = Fake.Plan();
 const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
@@ -46,7 +46,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
     await waitFor(() => {
       expect(addProductRatePlanToSubscription).toBeCalledWith(
         expect.any(Function),
-        mockComposeProductRatePlan.sys.id
+        mockcomposeAndLaunchProductRatePlan.sys.id
       );
       expect(clearCachedProductCatalogFlags).toBeCalled();
     });
@@ -76,6 +76,6 @@ function build() {
   renderWithProvider(ComposeAndLaunchReceiptStep, {
     organization: mockOrganization,
     selectedPlatform: mockSelectedPlatform,
-    composeProductRatePlan: mockComposeProductRatePlan,
+    composeAndLaunchProductRatePlan: mockcomposeAndLaunchProductRatePlan,
   });
 }

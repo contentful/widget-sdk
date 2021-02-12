@@ -20,7 +20,7 @@ export interface State {
   spaceName?: string;
   selectedTemplate?: SelectedTemplate;
   purchasingApps?: boolean;
-  composeProductRatePlan?: ProductRatePlan;
+  composeAndLaunchProductRatePlan?: ProductRatePlan;
 }
 
 export interface SelectedPlatform {

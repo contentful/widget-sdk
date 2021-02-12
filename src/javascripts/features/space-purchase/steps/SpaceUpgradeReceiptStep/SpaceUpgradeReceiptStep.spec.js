@@ -14,7 +14,7 @@ import { PlatformKind } from '../../utils/platformContent';
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
 const mockCurrentSpace = FakeFactory.Space();
-const mockComposeProductRatePlan = FakeFactory.Plan();
+const mockcomposeAndLaunchProductRatePlan = FakeFactory.Plan();
 
 const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 const mockSessionMetadata = {
@@ -132,7 +132,7 @@ describe('SpaceUpgradeReceiptStep', () => {
     await waitFor(() => {
       expect(addProductRatePlanToSubscription).toBeCalledWith(
         expect.any(Function),
-        mockComposeProductRatePlan.sys.id
+        mockcomposeAndLaunchProductRatePlan.sys.id
       );
     });
   });
@@ -180,7 +180,7 @@ function build(customState) {
     organization: mockOrganization,
     currentSpace: mockCurrentSpace,
     selectedPlan: mockSelectedPlan,
-    composeProductRatePlan: mockComposeProductRatePlan,
+    composeAndLaunchProductRatePlan: mockcomposeAndLaunchProductRatePlan,
     sessionId: mockSessionMetadata.sessionId,
     ...customState,
   });

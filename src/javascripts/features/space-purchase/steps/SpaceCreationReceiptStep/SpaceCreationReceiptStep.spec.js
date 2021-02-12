@@ -17,7 +17,7 @@ const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123, sys: { id: 'space_plan_id' } };
 const mockOrganization = FakeFactory.Organization();
 const mockCreatedSpace = FakeFactory.Space();
-const mockComposeProductRatePlan = FakeFactory.Plan();
+const mockcomposeAndLaunchProductRatePlan = FakeFactory.Plan();
 
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
@@ -132,7 +132,7 @@ describe('SpaceCreationReceiptStep', () => {
     await waitFor(() => {
       expect(addProductRatePlanToSubscription).toBeCalledWith(
         expect.any(Function),
-        mockComposeProductRatePlan.sys.id
+        mockcomposeAndLaunchProductRatePlan.sys.id
       );
     });
   });
@@ -324,7 +324,7 @@ function build(customProps, customState) {
     {
       organization: mockOrganization,
       selectedPlan: mockSelectedPlan,
-      composeProductRatePlan: mockComposeProductRatePlan,
+      composeAndLaunchProductRatePlan: mockcomposeAndLaunchProductRatePlan,
       sessionId: mockSessionMetadata.sessionId,
       ...customState,
     },

@@ -8,7 +8,11 @@ import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import { isSelfServicePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
+import {
+  isSelfServicePlan,
+  getPlansWithSpaces,
+  isFreePlan,
+} from 'account/pricing/PricingDataProvider';
 import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -44,7 +48,27 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
   const endpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
-  const purchasingApps = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, { organizationId });
+  const isAppPurchasingEnabled = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, {
+    organizationId,
+  });
+
+  let hasPurchasedComposeLaunch, composeAndLaunchProductRatePlan;
+  if (isAppPurchasingEnabled) {
+    const [addOnProductRatePlans, plans] = await Promise.all([
+      getAddOnProductRatePlans(endpoint),
+      getPlansWithSpaces(endpoint),
+    ]);
+
+    // TODO(jo-sm): We should be smarter about this, using `find`, once the `internalName` is finalized.
+    composeAndLaunchProductRatePlan = addOnProductRatePlans[0];
+
+    hasPurchasedComposeLaunch = !!plans.items.find((plan) => {
+      return plan.productRatePlanId === composeAndLaunchProductRatePlan.sys.id;
+    });
+  }
+
+  // Only should be purchasing apps if purchasing of apps is enabled and they haven't purchased compose+launch yet.
+  const purchasingApps = isAppPurchasingEnabled && !hasPurchasedComposeLaunch;
 
   dispatch({ type: actions.SET_PURCHASING_APPS, payload: purchasingApps });
 
@@ -75,15 +99,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
   ]);
-
-  let composeProductRatePlan;
-
-  if (purchasingApps) {
-    // TODO(jo-sm): We should be smarter about this, using `find`, once the `internalName` is finalized.
-    const addOnProductRatePlans = await getAddOnProductRatePlans(endpoint);
-
-    composeProductRatePlan = addOnProductRatePlans[0];
-  }
 
   const canAccess =
     isOwnerOrAdmin(organization) && (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
@@ -121,7 +136,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       freeSpaceResource,
       pageContent,
       selectedPlatform,
-      composeProductRatePlan,
+      composeAndLaunchProductRatePlan,
     },
   });
 
@@ -140,7 +155,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       canCreateFreeSpace: !resourceIncludedLimitReached(freeSpaceResource),
       sessionType: spaceId ? UPGRADE_SPACE_SESSION : CREATE_SPACE_SESSION,
       currentSpacePlan: currentSpaceRatePlan,
-      canPurchaseApps: purchasingApps,
+      canPurchaseApps: isAppPurchasingEnabled ? !hasPurchasedComposeLaunch : undefined,
       from,
       performancePackagePreselected: viaMarketingCTA,
     }

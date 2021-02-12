@@ -11,18 +11,18 @@ import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 import { PlatformKind } from '../utils/platformContent';
 
-type ContextState = SetRequired<State, 'organization' | 'composeProductRatePlan'>;
+type ContextState = SetRequired<State, 'organization' | 'composeAndLaunchProductRatePlan'>;
 
 const purchaseComposeLaunch = (
   organization: Organization,
-  composeProductRatePlan: ProductRatePlan,
+  composeAndLaunchProductRatePlan: ProductRatePlan,
   sessionMetadata,
   selectedPlan
 ) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   try {
-    await addProductRatePlanToSubscription(endpoint, composeProductRatePlan.sys.id);
+    await addProductRatePlanToSubscription(endpoint, composeAndLaunchProductRatePlan.sys.id);
 
     trackEvent(EVENTS.PERFORMANCE_PACKAGE_PURCHASED, sessionMetadata, {
       selectedPlan,
@@ -49,13 +49,18 @@ const purchaseComposeLaunch = (
  */
 export function usePurchaseAddOn(shouldBegin = true) {
   const {
-    state: { organization, selectedPlatform, composeProductRatePlan, selectedPlan },
+    state: { organization, selectedPlatform, composeAndLaunchProductRatePlan, selectedPlan },
   } = useSpacePurchaseState<ContextState>();
   const sessionMetadata = useSessionMetadata();
 
   const [{ isLoading, error }, callPurchase] = useAsyncFn(
     useCallback(
-      purchaseComposeLaunch(organization, composeProductRatePlan, sessionMetadata, selectedPlan),
+      purchaseComposeLaunch(
+        organization,
+        composeAndLaunchProductRatePlan,
+        sessionMetadata,
+        selectedPlan
+      ),
       []
     )
   );

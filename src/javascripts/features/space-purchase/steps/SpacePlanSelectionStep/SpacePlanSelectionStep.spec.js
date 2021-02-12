@@ -15,6 +15,7 @@ const mockOrgOwner = FakeFactory.User({
 });
 const mockProductRatePlan = FakeFactory.Plan();
 const mockProductRatePlan2 = FakeFactory.Plan();
+const mockFreeSpaceResource = FakeFactory.SpaceResource();
 
 jest.mock('../../utils/canCreateSpace', () => ({
   canUserCreatePaidSpace: jest.fn(),
@@ -171,6 +172,7 @@ async function build(customProps, customState) {
     {
       organization: mockOrganization,
       spaceRatePlans: [mockProductRatePlan, mockProductRatePlan2],
+      freeSpaceResource: mockFreeSpaceResource,
       sessionId: 'random_id',
       ...customState,
     },

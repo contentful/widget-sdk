@@ -88,8 +88,11 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
-  const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
-  const canCreatePaidSpace = canUserCreatePaidSpace(organization);
+  // At first organization is undefined, but since these functions only return true/false, need to check if organization exists before calling them.
+  const canCreateFreeSpace = freeSpaceResource
+    ? canOrgCreateFreeSpace(freeSpaceResource)
+    : undefined;
+  const canCreatePaidSpace = organization ? canUserCreatePaidSpace(organization) : undefined;
   const isFreeSpaceDisabled =
     spaceRatePlans && spaceRatePlans.find((plan) => plan.price === 0)?.disabled;
 
@@ -204,7 +207,7 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
 
                         selectPlan(freeProductRatePlan);
                       }}
-                      disabled={!canCreateFreeSpace || isFreeSpaceDisabled}>
+                      disabled={canCreateFreeSpace === false || isFreeSpaceDisabled}>
                       Select
                     </Button>
                   </Tooltip>
@@ -248,7 +251,7 @@ function CommunityLoadingState() {
 }
 
 function getCommunityTooltipContent(canCreateFreeSpace, isFreeSpaceDisabled) {
-  if (!canCreateFreeSpace) {
+  if (canCreateFreeSpace === false) {
     return 'You’ve already used your free Community space. To add a new Community space, delete your existing one.';
   }
 

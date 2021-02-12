@@ -87,13 +87,13 @@ function getTooltipText(
     return 'You must have a paid space to purchase Compose + Launch';
   }
 
-  // freeSpace is disabled when user cannot make another freeSpace
-  if (planType === SpacePlanKind.COMMUNITY && !canCreateFreeSpace) {
+  // freeSpace is disabled when user cannot make another freeSpace, needs to check false as it is undefined while loading.
+  if (planType === SpacePlanKind.COMMUNITY && canCreateFreeSpace === false) {
     return 'You have already used your free space';
   }
 
-  // paidSpaces are disabled when user can't create a paid space
-  if (planType !== SpacePlanKind.COMMUNITY && !canCreatePaidSpace) {
+  // paidSpaces are disabled when user can't create a paid space, needs to check false as it is undefined while loading.
+  if (planType !== SpacePlanKind.COMMUNITY && canCreatePaidSpace === false) {
     return 'Please contact your organization owner and have them add billing information for your organization so you can purchase spaces';
   }
 
