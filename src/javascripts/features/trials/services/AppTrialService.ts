@@ -9,8 +9,11 @@ import { isTrialSpaceType } from './TrialService';
 import * as TokenStore from 'services/TokenStore';
 
 export const canStartAppTrial = async (organizationId: string) => {
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
+  if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
+    return false;
+  }
 
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
   const [featureFlag, basePlan, productFeature] = await Promise.all([
     getVariation(FLAGS.APP_TRIAL, {
       organizationId,
@@ -21,11 +24,7 @@ export const canStartAppTrial = async (organizationId: string) => {
     createAppTrialRepo(orgEndpoint).getTrial('compose_app'),
   ]);
 
-  if (
-    !featureFlag ||
-    !isOwnerOrAdmin({ sys: { id: organizationId } }) ||
-    isEnterprisePlan(basePlan)
-  ) {
+  if (!featureFlag || isEnterprisePlan(basePlan)) {
     return false;
   }
 
