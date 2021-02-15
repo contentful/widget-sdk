@@ -8,7 +8,8 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
 
 const WebhookFetcher = createFetcherComponent((props) => {
   const { webhookId, spaceId } = props;
@@ -16,42 +17,38 @@ const WebhookFetcher = createFetcherComponent((props) => {
   return webhookRepo.get(webhookId);
 });
 
-export class WebhookEditRoute extends React.Component {
-  static propTypes = {
-    registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired,
-    webhookId: PropTypes.string.isRequired,
-  };
+export function WebhookEditRoute(props) {
+  const { currentSpaceId } = useSpaceEnvContext();
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
-  static contextType = SpaceEnvContext;
-
-  render() {
-    const { currentSpaceId } = this.context;
-
-    if (!getSectionVisibility()['webhooks']) {
-      return <ForbiddenPage />;
-    }
-    return (
-      <WebhookFetcher webhookId={this.props.webhookId} spaceId={currentSpaceId}>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <WebhookSkeletons.WebhookLoading />;
-          }
-          if (isError) {
-            return <StateRedirect path="^.list" />;
-          }
-          return (
-            <React.Fragment>
-              <DocumentTitle title={[data.name, 'Webhooks']} />
-              <WebhookEditor
-                initialWebhook={data}
-                registerSaveAction={this.props.registerSaveAction}
-                setDirty={this.props.setDirty}
-              />
-            </React.Fragment>
-          );
-        }}
-      </WebhookFetcher>
-    );
+  if (!getSectionVisibility()['webhooks']) {
+    return <ForbiddenPage />;
   }
+
+  return (
+    <WebhookFetcher webhookId={props.webhookId} spaceId={currentSpaceId}>
+      {({ isLoading, isError, data }) => {
+        if (isLoading) {
+          return <WebhookSkeletons.WebhookLoading />;
+        }
+        if (isError) {
+          return <StateRedirect path="^.list" />;
+        }
+        return (
+          <React.Fragment>
+            <DocumentTitle title={[data.name, 'Webhooks']} />
+            <WebhookEditor
+              initialWebhook={data}
+              registerSaveAction={registerSaveAction}
+              setDirty={setDirty}
+            />
+          </React.Fragment>
+        );
+      }}
+    </WebhookFetcher>
+  );
 }
+
+WebhookEditRoute.propTypes = {
+  webhookId: PropTypes.string.isRequired,
+};

@@ -7,7 +7,8 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { go } from 'states/Navigator';
 
 const WebhookCallFetcher = createFetcherComponent((props) => {
   const { webhookId, callId, spaceId } = props;
@@ -16,34 +17,34 @@ const WebhookCallFetcher = createFetcherComponent((props) => {
   return Promise.all([webhookRepo.get(webhookId), webhookRepo.logs.getCall(webhookId, callId)]);
 });
 
-export class WebhookCallRoute extends React.Component {
-  static propTypes = {
-    webhookId: PropTypes.string.isRequired,
-    callId: PropTypes.string.isRequired,
-    onGoBack: PropTypes.func.isRequired,
-  };
+export function WebhookCallRoute(props) {
+  const { currentSpaceId } = useSpaceEnvContext();
 
-  static contextType = SpaceEnvContext;
-
-  render() {
-    const { currentSpaceId } = this.context;
-
-    if (!getSectionVisibility()['webhooks']) {
-      return <ForbiddenPage />;
-    }
-    return (
-      <WebhookCallFetcher {...this.props} spaceId={currentSpaceId}>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <WebhookSkeletons.WebhookLoading />;
-          }
-          if (isError) {
-            return <StateRedirect path="^.^.detail" />;
-          }
-          const [webhook, call] = data;
-          return <WebhookCall webhook={webhook} call={call} onGoBack={this.props.onGoBack} />;
-        }}
-      </WebhookCallFetcher>
-    );
+  function onGoBack() {
+    return go({ path: '^' });
   }
+
+  if (!getSectionVisibility()['webhooks']) {
+    return <ForbiddenPage />;
+  }
+
+  return (
+    <WebhookCallFetcher {...props} spaceId={currentSpaceId}>
+      {({ isLoading, isError, data }) => {
+        if (isLoading) {
+          return <WebhookSkeletons.WebhookLoading />;
+        }
+        if (isError) {
+          return <StateRedirect path="^.^.detail" />;
+        }
+        const [webhook, call] = data;
+        return <WebhookCall webhook={webhook} call={call} onGoBack={onGoBack} />;
+      }}
+    </WebhookCallFetcher>
+  );
 }
+
+WebhookCallRoute.propTypes = {
+  webhookId: PropTypes.string.isRequired,
+  callId: PropTypes.string.isRequired,
+};

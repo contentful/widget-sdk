@@ -30,6 +30,8 @@ const WebhooksFetcher = createFetcherComponent(({ spaceId, organizationId, userE
 });
 
 export function WebhookListRoute(props) {
+  const templateId = props.templateId ?? null;
+  const templateIdReferrer = props.referrer ?? null;
   const { email: userEmail } = TokenStore.getUserSync();
   const { currentSpaceId, currentOrganizationId, currentSpaceContentTypes } = useSpaceEnvContext();
 
@@ -46,8 +48,8 @@ export function WebhookListRoute(props) {
   }
 
   if (!getSectionVisibility()['webhooks']) {
-    if (props.templateId) {
-      return <WebhookForbiddenPage templateId={props.templateId} />;
+    if (templateId) {
+      return <WebhookForbiddenPage templateId={templateId} />;
     }
 
     return <StateRedirect path="spaces.detail.entries.list" />;
@@ -70,8 +72,8 @@ export function WebhookListRoute(props) {
           <React.Fragment>
             <DocumentTitle title="Webhooks" />
             <WebhookList
-              templateId={props.templateId}
-              templateIdReferrer={props.templateIdReferrer}
+              templateId={templateId}
+              templateIdReferrer={templateIdReferrer}
               webhooks={webhooks}
               openTemplateDialog={setupTemplateOpener(hasAwsProxy)}
             />
@@ -84,5 +86,5 @@ export function WebhookListRoute(props) {
 
 WebhookListRoute.propTypes = {
   templateId: PropTypes.string,
-  templateIdReferrer: PropTypes.string,
+  referrer: PropTypes.string,
 };

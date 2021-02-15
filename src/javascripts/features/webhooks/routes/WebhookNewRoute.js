@@ -1,34 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { WebhookEditor } from '../WebhookEditor';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSectionVisibility } from 'access_control/AccessChecker';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
 
-export class WebhookNewRoute extends React.Component {
-  static propTypes = {
-    registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired,
-  };
+export function WebhookNewRoute() {
+  const initialWebhook = { headers: [], topics: ['*.*'] };
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
-  state = {
-    webhook: { headers: [], topics: ['*.*'] },
-  };
-
-  render() {
-    if (!getSectionVisibility()['webhooks']) {
-      return <ForbiddenPage />;
-    }
-
-    return (
-      <React.Fragment>
-        <DocumentTitle title={['New Webhook', 'Webhooks']} />
-        <WebhookEditor
-          initialWebhook={this.state.webhook}
-          registerSaveAction={this.props.registerSaveAction}
-          setDirty={this.props.setDirty}
-        />
-      </React.Fragment>
-    );
+  if (!getSectionVisibility()['webhooks']) {
+    return <ForbiddenPage />;
   }
+
+  return (
+    <React.Fragment>
+      <DocumentTitle title={['New Webhook', 'Webhooks']} />
+      <WebhookEditor
+        initialWebhook={initialWebhook}
+        registerSaveAction={registerSaveAction}
+        setDirty={setDirty}
+      />
+    </React.Fragment>
+  );
 }
