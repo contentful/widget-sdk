@@ -5,6 +5,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { setUser } from 'services/OrganizationRoles';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { SpacePlanSelectionStep, FEATURE_OVERVIEW_HREF } from './SpacePlanSelectionStep';
+import { SpacePlanKind } from '../../utils/spacePurchaseContent';
 import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 import { renderWithProvider } from '../../__tests__/helpers';
 
@@ -62,6 +63,19 @@ describe('SpacePlanSelectionStep', () => {
     });
 
     expect(screen.getByTestId('legacy-space-plan-warning')).toBeVisible();
+  });
+
+  it('should NOT show the legacy space plan warning if the current space rate plan is a community plan', async () => {
+    await build(null, {
+      currentSpace: mockSpace,
+      currentSpaceRatePlan: {
+        name: SpacePlanKind.COMMUNITY,
+        productRatePlanId: 'something-else',
+        ratePlanCharges: [],
+      },
+    });
+
+    expect(screen.queryByTestId('legacy-space-plan-warning')).toBeNull();
   });
 
   it('should disable the paid space cards if the user cannot create paid spaces', async () => {

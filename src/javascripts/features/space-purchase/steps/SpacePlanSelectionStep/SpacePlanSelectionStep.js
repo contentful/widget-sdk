@@ -106,9 +106,10 @@ export const SpacePlanSelectionStep = ({ onSubmit, track }) => {
     onSubmit();
   };
 
-  // If the plan is not in the product rate plans, it's legacy.
+  // If the plan is not in the product rate plans, and it's not a community plan, it's legacy.
   const showLegacyPlanWarning =
     currentSpaceRatePlan &&
+    currentSpaceRatePlan.name !== SpacePlanKind.COMMUNITY &&
     !spaceRatePlans.find((plan) => plan.sys.id === currentSpaceRatePlan.productRatePlanId);
 
   return (
