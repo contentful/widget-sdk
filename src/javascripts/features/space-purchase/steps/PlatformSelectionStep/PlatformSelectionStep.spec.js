@@ -11,10 +11,10 @@ import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 const mockTrack = jest.fn();
 const mockOrganization = FakeFactory.Organization();
 
-const mockComposeProductRatePlan = { price: 100 };
+const mockComposeAndLaunchProductRatePlan = { price: 100 };
 const mockSelectedPlatform = {
   ...PLATFORM_CONTENT.composePlatform,
-  price: mockComposeProductRatePlan.price,
+  price: mockComposeAndLaunchProductRatePlan.price,
 };
 
 const mockComposeLaunchPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
@@ -194,7 +194,7 @@ async function build(customProps, customState) {
     {
       organization: mockOrganization,
       sessionId: 'random_id',
-      composeProductRatePlan: mockComposeProductRatePlan,
+      composeAndLaunchProductRatePlan: mockComposeAndLaunchProductRatePlan,
       ...customState,
     },
     props

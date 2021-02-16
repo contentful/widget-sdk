@@ -61,7 +61,7 @@ export const PlatformSelectionStep = ({ track }) => {
       selectedPlatform,
       selectedPlan,
       freeSpaceResource,
-      composeProductRatePlan,
+      composeAndLaunchProductRatePlan,
     },
     dispatch,
   } = useContext(SpacePurchaseState);
@@ -132,7 +132,8 @@ export const PlatformSelectionStep = ({ track }) => {
         {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
           let tooltipText = '';
           const platformIsComposeLaunch = platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
-          const composeAndLaunchIsLoading = platformIsComposeLaunch && !composeProductRatePlan;
+          const composeAndLaunchIsLoading =
+            platformIsComposeLaunch && !composeAndLaunchProductRatePlan;
 
           // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
           if (
@@ -147,7 +148,7 @@ export const PlatformSelectionStep = ({ track }) => {
             ...platform,
             // in the Web app + Compose + Launch card we need to pass the price that we get from the backend
             ...(platformIsComposeLaunch && {
-              price: composeProductRatePlan?.price,
+              price: composeAndLaunchProductRatePlan?.price,
             }),
           };
 

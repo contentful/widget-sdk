@@ -712,7 +712,7 @@ async function build(customProps, customState) {
         pageName: 'Space Purchase',
         content: [],
       },
-      composeProductRatePlan: mockComposeAndLaunch,
+      composeAndLaunchProductRatePlan: mockComposeAndLaunch,
       purchasingApps: false,
       ...customState,
     },
