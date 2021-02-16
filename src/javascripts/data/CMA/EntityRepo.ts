@@ -1,4 +1,3 @@
-import { compare } from 'fast-json-patch';
 import {
   ASSET_PROCESSING_FINISHED_EVENT,
   CONTENT_ENTITY_UPDATED_EVENT,
@@ -7,6 +6,7 @@ import {
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
+import { createJsonPatch } from 'data/CMA/createJsonPatch';
 import { EntityState } from 'data/CMA/EntityState';
 import { RequestConfig, SpaceEndpoint } from './types';
 import {
@@ -90,7 +90,7 @@ export function create(
       method: 'PATCH',
       path: [collection, entity.sys.id],
       version: entity.sys.version,
-      data: compare(lastSavedEntity, entity),
+      data: createJsonPatch(lastSavedEntity, entity),
     };
     const updatedEntity = await spaceEndpoint<Entity>(body, {
       ...endpointPutOptions,

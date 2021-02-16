@@ -1,5 +1,11 @@
 import { create } from './EntityRepo';
 
+jest.mock('data/CMA/createJsonPatch', () => ({
+  createJsonPatch: jest.fn(() => [
+    { op: 'add', path: '/fields', value: { title: { 'en-US': 'foo' } } },
+  ]),
+}));
+
 describe('EntityRepo', () => {
   const entityFromSpaceEndpoint = { foo: 'bar' };
   const spaceEndpoint = jest.fn().mockReturnValue(entityFromSpaceEndpoint);
@@ -132,7 +138,7 @@ describe('EntityRepo', () => {
       expect(result).toBe(entityFromSpaceEndpoint);
       expect(spaceEndpoint).toHaveBeenCalledTimes(1);
       expect(spaceEndpoint.mock.calls[0][0].data).toEqual([
-        { op: 'add', path: '/sys/fields', value: { title: { 'en-US': 'foo' } } },
+        { op: 'add', path: '/fields', value: { title: { 'en-US': 'foo' } } },
       ]);
     });
 
