@@ -57,8 +57,6 @@ export class AppsRepo {
   onCacheInvalidated(listener: () => unknown) {
     const uniqueListener = () => listener();
 
-    // this is needed for hooks to compare invalidate memos when they render
-    this._cacheKey = {};
     // this allows hooks to add a listener to trigger a rerendewr
     this.cacheInvalidatedListeners.add(uniqueListener);
     return () => this.cacheInvalidatedListeners.delete(uniqueListener);
@@ -66,6 +64,8 @@ export class AppsRepo {
 
   clearCache(fields = Object.keys(this.cache) as (keyof AppsRepoCache)[]) {
     fields.forEach((field) => delete this.cache[field]);
+    // this is needed for hooks to compare invalidate memos when they render
+    this._cacheKey = {};
     this.cacheInvalidatedListeners.forEach((callback) => callback());
   }
 

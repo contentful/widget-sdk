@@ -267,4 +267,19 @@ describe('AppsRepo', () => {
       }
     });
   });
+
+  describe('caching and hooks', () => {
+    it('clears cache and updates cache key for hooks', async () => {
+      const repo = new AppsRepo(cma, loader);
+
+      await repo.getAllApps();
+      expect(repo.cache.marketplaceAppDefinitions).toBeDefined();
+
+      const prevKey = repo._cacheKey;
+
+      repo.clearCache(['marketplaceAppDefinitions']);
+      expect(repo.cache.marketplaceAppDefinitions).toBeUndefined();
+      expect(repo._cacheKey).not.toBe(prevKey);
+    });
+  });
 });
