@@ -75,7 +75,7 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
       isShown={isShown}
       intent="negative"
       title="Cancel your Compose + Launch subscription"
-      confirmLabel="Cancel your Compose + Launch subscription"
+      confirmLabel="Cancel your subscription"
       isConfirmDisabled={disableConfirm || loading}
       isConfirmLoading={loading}
       onConfirm={onConfirm}
