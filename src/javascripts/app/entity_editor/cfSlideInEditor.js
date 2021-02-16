@@ -7,7 +7,7 @@ export const getIsNewSlideInEditorEnabled = () => {
   const spaceContext = getModule('spaceContext');
   return getVariation(FLAGS.NEW_SLIDE_IN_EDITOR, {
     organizationId: spaceContext.organization.sys.id,
-    spaceId: spaceContext.space.data.sys.id,
+    spaceId: spaceContext.getId(),
     environmentId: spaceContext.space.environment?.sys.id,
   });
 };

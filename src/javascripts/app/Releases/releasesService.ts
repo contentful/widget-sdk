@@ -21,7 +21,7 @@ function getContextIds() {
   const spaceContext = getModule('spaceContext');
 
   return {
-    spaceId: spaceContext.space.data.sys.id,
+    spaceId: spaceContext.getId(),
     environmentId: spaceContext.space.environment.sys.id,
   };
 }

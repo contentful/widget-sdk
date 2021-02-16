@@ -99,7 +99,7 @@ export default function register() {
             space = space.makeEnvironment(uriEnvOrAliasId, shouldUseEnvEndpoint);
           }
 
-          const spaceId = space.getId();
+          const spaceId = spaceData.sys.id;
 
           self.endpoint = createSpaceEndpoint(Config.apiUrl(), spaceId, Auth, uriEnvOrAliasId);
 

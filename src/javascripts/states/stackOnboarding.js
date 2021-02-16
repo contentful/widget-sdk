@@ -36,7 +36,7 @@ export default {
     '$state',
     'spaceContext',
     function ($state, spaceContext) {
-      const spaceId = spaceContext.space && spaceContext.space.getId();
+      const spaceId = spaceContext.getId();
 
       // The onboarding steps are accessible only when
       // the user is in the context of the onboarding space

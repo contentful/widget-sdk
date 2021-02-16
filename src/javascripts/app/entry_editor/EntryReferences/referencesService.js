@@ -8,7 +8,7 @@ import TheLocaleStore from 'services/localeStore';
 function createEndpoint() {
   const spaceContext = getModule('spaceContext');
   return EndpointFactory.createSpaceEndpoint(
-    spaceContext.space.data.sys.id,
+    spaceContext.getId(),
     spaceContext.getAliasId() || spaceContext.getEnvironmentId()
   );
 }

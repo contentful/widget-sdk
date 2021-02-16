@@ -425,7 +425,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
    * where he can see the content (change in the webapp -> see the changes in the TEA preview)
    */
   async function createTEAContentPreview(contentTypes) {
-    const spaceId = spaceContext.space.getId();
+    const spaceId = spaceContext.getId();
 
     // Mapping for specific content types. Some CTs has no "preview",
     // so we don't set up preview them, thus no confusion created
@@ -500,7 +500,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   // Create the discovery app content preview if there is an API key
   function createContentPreview(contentTypes) {
     const baseUrl = DISCOVERY_APP_BASE_URL;
-    const spaceId = spaceContext.space.getId();
+    const spaceId = spaceContext.getId();
 
     return Promise.all([getApiKeyRepo().getAll(), getContentPreview().getAll()]).then(
       ([keys, contentPreviews]) => {

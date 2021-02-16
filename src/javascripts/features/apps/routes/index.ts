@@ -84,7 +84,7 @@ export const appRoute = {
             hasAdvancedAppsFeature,
             organizationId: spaceContext.organization.sys.id,
             spaceInformation: {
-              spaceId: spaceContext.space.data.sys.id,
+              spaceId: spaceContext.getId(),
               spaceName: spaceContext.space.data.name,
               envMeta: spaceContext.space.environmentMeta,
             },
