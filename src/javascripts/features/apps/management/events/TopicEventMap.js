@@ -36,6 +36,10 @@ export const TYPE_LABELS = {
   AppInstallation: 'App Installation',
 };
 
+export const TYPE_INFO = {
+  AppInstallation: "Get notified of this app's installation events",
+};
+
 export function createMap(defaultValue) {
   const map = {};
 

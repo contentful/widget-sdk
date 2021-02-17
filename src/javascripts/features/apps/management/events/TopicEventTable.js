@@ -1,15 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from '@contentful/forma-36-react-components';
+import { Checkbox, Icon, Tooltip } from '@contentful/forma-36-react-components';
 import {
   ACTIONS,
   ENTITY_TYPES,
   ACTION_LABELS,
   TYPE_LABELS,
+  TYPE_INFO,
   isActionDisabled,
   isActionChecked,
   changeAction,
 } from './TopicEventMap';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  infoIcon: css({
+    verticalAlign: 'text-top',
+    marginLeft: tokens.spacingXs,
+  }),
+};
 
 export function TopicEventTable({ values, onChange, id, disabled }) {
   const renderCheckbox = (entityType, action) => {
@@ -35,6 +45,11 @@ export function TopicEventTable({ values, onChange, id, disabled }) {
             disabled={disabled}
           />
           {action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
+          {action === '*' && TYPE_INFO[entityType] && (
+            <Tooltip place="bottom" content={TYPE_INFO[entityType]}>
+              <Icon color="muted" icon="InfoCircle" className={styles.infoIcon} />
+            </Tooltip>
+          )}
         </label>
       </td>
     );
