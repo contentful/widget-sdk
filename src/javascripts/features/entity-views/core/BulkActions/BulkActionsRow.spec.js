@@ -23,6 +23,13 @@ jest.mock('access_control/AccessChecker', () => {
   };
 });
 
+jest.mock('core/hooks/useBulkActions/messages', () => ({
+  compileResultMessages: jest.fn().mockImplementation(() => ({
+    errors: [],
+    success: [],
+  })),
+}));
+
 jest.mock('core/hooks/useBulkActions/batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
 }));
