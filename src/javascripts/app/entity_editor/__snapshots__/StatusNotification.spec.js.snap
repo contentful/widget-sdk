@@ -11,7 +11,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -103,7 +103,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -149,7 +149,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -241,7 +241,7 @@ exports[`StatusNotification archived when the entity label is "asset" matches sn
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -288,7 +288,7 @@ exports[`StatusNotification archived when the entity label is "entry" matches sn
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -335,7 +335,7 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -380,7 +380,7 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -425,7 +425,7 @@ exports[`StatusNotification deleted when the entity label is "asset" matches sna
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -472,7 +472,7 @@ exports[`StatusNotification deleted when the entity label is "entry" matches sna
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -519,7 +519,7 @@ exports[`StatusNotification edit-conflict when the entity label is "asset" match
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -586,7 +586,7 @@ exports[`StatusNotification edit-conflict when the entity label is "entry" match
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -653,7 +653,7 @@ exports[`StatusNotification editing-not-allowed when the entity label is "asset"
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -700,7 +700,7 @@ exports[`StatusNotification editing-not-allowed when the entity label is "entry"
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--warning___39Bnz"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -747,7 +747,7 @@ exports[`StatusNotification internal-server-error when the entity label is "asse
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -794,7 +794,7 @@ exports[`StatusNotification internal-server-error when the entity label is "entr
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -841,7 +841,7 @@ exports[`StatusNotification ot-connection-error when the entity label is "asset"
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"
@@ -886,7 +886,7 @@ exports[`StatusNotification ot-connection-error when the entity label is "entry"
         class="Note__Note__icon___20RqC"
       >
         <svg
-          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--negative___1dled"
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
           data-test-id="cf-ui-icon"
           height="1em"
           viewBox="0 0 24 24"

@@ -136,7 +136,7 @@ Object {
             </p>
           </div>
           <ul
-            class="List__List___1YcFy emotion-8"
+            class="List__List___1YcFy List__List--unordered___3MCEx emotion-8"
             data-test-id="cf-ui-list"
           >
             <li
@@ -624,7 +624,7 @@ Object {
             </p>
           </div>
           <ul
-            class="List__List___1YcFy emotion-11"
+            class="List__List___1YcFy List__List--unordered___3MCEx emotion-11"
             data-test-id="cf-ui-list"
           >
             <li

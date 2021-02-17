@@ -180,7 +180,7 @@ Object {
                   data-test-id="cf-ui-table-head"
                 >
                   <tr
-                    class="TableRow__TableRow___3kcNC"
+                    class=""
                     data-test-id="cf-ui-table-row"
                   >
                     <th
@@ -219,7 +219,7 @@ Object {
                   data-test-id="cf-ui-table-body"
                 >
                   <tr
-                    class="TableRow__TableRow___3kcNC"
+                    class=""
                     data-test-id="cf-ui-table-row"
                   >
                     <td
@@ -281,7 +281,9 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span>
+                          <span
+                            class="Tooltip__TooltipContainer___3YlPf"
+                          >
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -383,7 +385,7 @@ Object {
                     </td>
                   </tr>
                   <tr
-                    class="TableRow__TableRow___3kcNC"
+                    class=""
                     data-test-id="cf-ui-table-row"
                   >
                     <td
@@ -445,7 +447,9 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span>
+                          <span
+                            class="Tooltip__TooltipContainer___3YlPf"
+                          >
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -547,7 +551,7 @@ Object {
                     </td>
                   </tr>
                   <tr
-                    class="TableRow__TableRow___3kcNC"
+                    class=""
                     data-test-id="cf-ui-table-row"
                   >
                     <td
@@ -609,7 +613,9 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span>
+                          <span
+                            class="Tooltip__TooltipContainer___3YlPf"
+                          >
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -951,7 +957,7 @@ Object {
                 data-test-id="cf-ui-table-head"
               >
                 <tr
-                  class="TableRow__TableRow___3kcNC"
+                  class=""
                   data-test-id="cf-ui-table-row"
                 >
                   <th
@@ -990,7 +996,7 @@ Object {
                 data-test-id="cf-ui-table-body"
               >
                 <tr
-                  class="TableRow__TableRow___3kcNC"
+                  class=""
                   data-test-id="cf-ui-table-row"
                 >
                   <td
@@ -1052,7 +1058,9 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span>
+                        <span
+                          class="Tooltip__TooltipContainer___3YlPf"
+                        >
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
@@ -1154,7 +1162,7 @@ Object {
                   </td>
                 </tr>
                 <tr
-                  class="TableRow__TableRow___3kcNC"
+                  class=""
                   data-test-id="cf-ui-table-row"
                 >
                   <td
@@ -1216,7 +1224,9 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span>
+                        <span
+                          class="Tooltip__TooltipContainer___3YlPf"
+                        >
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
@@ -1318,7 +1328,7 @@ Object {
                   </td>
                 </tr>
                 <tr
-                  class="TableRow__TableRow___3kcNC"
+                  class=""
                   data-test-id="cf-ui-table-row"
                 >
                   <td
@@ -1380,7 +1390,9 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span>
+                        <span
+                          class="Tooltip__TooltipContainer___3YlPf"
+                        >
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
