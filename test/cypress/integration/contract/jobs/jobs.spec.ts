@@ -62,8 +62,8 @@ describe('Jobs page', () => {
         queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureDisabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureDisabled(),
+        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
 
@@ -126,8 +126,8 @@ describe('Jobs page', () => {
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureDisabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureDisabled(),
+        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
@@ -182,8 +182,8 @@ describe('Jobs page', () => {
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureDisabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureDisabled(),
+        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);

@@ -176,7 +176,7 @@ function basicServerSetUp(): string[] {
     queryForScimInDefaultOrg.willFindFeatureEnabled(),
     queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
     getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
-    getComposeAppFeatureInDefaultOrg.willFindFeatureDisabled(),
-    getLaunchAppFeatureInDefaultOrg.willFindFeatureDisabled(),
+    getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+    getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
   ];
 }

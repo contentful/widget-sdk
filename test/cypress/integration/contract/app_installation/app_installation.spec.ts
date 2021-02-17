@@ -6,13 +6,31 @@ import {
   publicAppDefinitions,
 } from '../../../interactions/apps';
 import { getAllContentTypesInDefaultSpace } from '../../../interactions/content_types';
+import {
+  getLaunchAppFeatureInDefaultOrg,
+  getComposeAppFeatureInDefaultOrg,
+  queryForAdvancedAppsInDefaultOrg,
+  queryForCustomSidebarInDefaultOrg,
+  queryForSelfConfigureSsoInDefaultOrg,
+  queryForScimInDefaultOrg,
+  queryForTeamsInDefaultOrg,
+} from '../../../interactions/product_catalog_features';
 import { queryForEditorInterfaces } from '../../../interactions/editor_interfaces';
+import { getBasePlan } from '../../../interactions/plans';
 
 describe('App Installation', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['users', 'apps', 'content_types', 'editor_interfaces', 'entries'],
+      providers: [
+        'users',
+        'apps',
+        'content_types',
+        'editor_interfaces',
+        'entries',
+        'plans',
+        'product_catalog_features',
+      ],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -25,18 +43,30 @@ describe('App Installation', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
 
-      interactions = [...defaultRequestsMock(), organizationAppDefinitions.willListOnePrivate()];
+      interactions = [
+        ...defaultRequestsMock(),
+        organizationAppDefinitions.willListOnePrivate(),
+        getBasePlan.willReturnEnterprise(),
+        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+        queryForScimInDefaultOrg.willFindFeatureEnabled(),
+        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+      ];
+      // There are multiple requests to /app_definitions with different query strings
+      // We always want to return the same, independent of query string, so we don't wait for the interaction
       publicAppDefinitions.willListAll();
     });
 
     context('with no app installed', () => {
       beforeEach(() => {
         interactions.push(appInstallation.willListNone());
-
         cy.server();
         cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
-        cy.wait(interactions);
+        cy.wait(interactions, { timeout: 20000 });
       });
 
       describe('should install apps', () => {
@@ -66,10 +96,9 @@ describe('App Installation', () => {
           cy.get('span').contains('Install').click();
           cy.get('button').contains('Authorize access').click();
 
-          cy.wait(loadAppConfigurationScreenInteraction);
+          cy.wait(loadAppConfigurationScreenInteraction, { timeout: 20000 });
 
           cy.resetFakeServer('apps');
-
           const installInteractions = [
             appInstallation.willReturnPublicApp(),
             appInstallation.willSavePublic(),
@@ -78,7 +107,7 @@ describe('App Installation', () => {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(500); // wait for the loading animation to finish
           cy.get('span').contains('Install').click();
-          cy.wait(installInteractions);
+          cy.wait(installInteractions, { timeout: 20000 });
         });
 
         it('private app without config location', () => {
@@ -110,7 +139,7 @@ describe('App Installation', () => {
 
           // Actually do the install
           cy.get('button').contains('Authorize access').click();
-          cy.wait(installationInteractions);
+          cy.wait(installationInteractions, { timeout: 5000 });
 
           // Check if the install list is now displayed and contains the private app
           cy.findByTestId('installed-list').should('exist');
@@ -128,7 +157,7 @@ describe('App Installation', () => {
         cy.server();
         cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
-        cy.wait(interactions);
+        cy.wait(interactions, { timeout: 8000 });
       });
 
       describe('should uninstall', () => {
@@ -158,13 +187,13 @@ describe('App Installation', () => {
             getAllContentTypesInDefaultSpace.willReturnOne(),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
-          cy.wait(loadAppConfigurationScreenInteraction);
+          cy.wait(loadAppConfigurationScreenInteraction, { timeout: 4000 });
 
           // Uninstall on the config screen
           cy.findAllByTestId('app-uninstall-button').should('contain', 'Uninstall');
           cy.findByTestId('app-uninstall-button').click();
           cy.findByTestId('uninstall-button').click();
-          cy.wait(appInstallation.willDeletePublic());
+          cy.wait(appInstallation.willDeletePublic(), { timeout: 4000 });
 
           /* Block commented out because I couldn't get it to pass in CI
           // Reset after routing back and check if apps are gone

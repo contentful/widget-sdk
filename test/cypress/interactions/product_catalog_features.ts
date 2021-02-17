@@ -372,7 +372,7 @@ export const queryForScimInDefaultOrg = {
 };
 
 export const getComposeAppFeatureInDefaultOrg = {
-  willFindFeatureDisabled() {
+  willFindFeatureEnabled() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
@@ -383,6 +383,7 @@ export const getComposeAppFeatureInDefaultOrg = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
+        // Note: The payload in productCatalogComposeApp says it is enabled
         body: productCatalogComposeApp,
       },
     }).as('getComposeAppFeatureInDefaultOrg');
@@ -392,7 +393,7 @@ export const getComposeAppFeatureInDefaultOrg = {
 };
 
 export const getLaunchAppFeatureInDefaultOrg = {
-  willFindFeatureDisabled() {
+  willFindFeatureEnabled() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
@@ -403,6 +404,7 @@ export const getLaunchAppFeatureInDefaultOrg = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
+        // Note: the payload in productCatalogOrgLaunchApp says launch is enabled
         body: productCatalogOrgLaunchApp,
       },
     }).as('getLaunchAppFeatureInDefaultOrg');
