@@ -43,11 +43,19 @@ type ModalLabelProps = {
 };
 
 type Props = {
+  hasInlineTagCreation?: boolean;
   selectedTags: TagOption[];
   modalProps?: ModalLabelProps;
 } & Pick<ModalProps, 'onClose' | 'isShown'>;
 
-const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, modalProps }) => {
+// make inline creation configurable
+const SelectTagsModal: React.FC<Props> = ({
+  isShown,
+  onClose,
+  selectedTags,
+  hasInlineTagCreation,
+  modalProps,
+}) => {
   const mProps = {
     title: 'Select tags',
     selectLabel: 'Tags',
@@ -93,7 +101,7 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
 
   return (
     <Modal isShown={isShown} onClose={() => onPopupClose(true)} title={mProps.title}>
-      <div>
+      <div data-test-id={'select-tags-modal'}>
         {isInitialLoad ? (
           <div>
             <Spinner className={styles.loading} />
@@ -106,6 +114,7 @@ const SelectTagsModal: React.FC<Props> = ({ isShown, onClose, selectedTags, moda
                 selectedTags={localTags}
                 onAdd={onAdd}
                 onRemove={onRemove}
+                hasInlineTagCreation={hasInlineTagCreation}
               />
             </FilteredTagsProvider>
             <Button
@@ -141,6 +150,7 @@ const selectTags = async (
     <SpaceEnvContextProvider>
       <MetadataTags>
         <SelectTagsModal
+          hasInlineTagCreation={true}
           isShown={isShown}
           onClose={onClose}
           selectedTags={selectedTags}

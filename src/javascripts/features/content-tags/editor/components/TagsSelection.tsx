@@ -1,32 +1,37 @@
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Notification,
   Paragraph,
+  Spinner,
   Tooltip,
   ValidationMessage,
-  Notification,
-  Spinner,
 } from '@contentful/forma-36-react-components';
-import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
-import {
-  useIsInitialLoadingOfTags,
-  useReadTags,
-  useCreateTag,
-} from 'features/content-tags/core/hooks';
-import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
-import { orderByLabel, tagsPayloadToOptions } from 'features/content-tags/editor/utils';
 
 import { css } from 'emotion';
-import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
-import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
-import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
-import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
-import * as stringUtils from 'utils/StringUtils';
+import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
-import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
-import { useCanManageTags } from '../../core/hooks/useCanManageTags';
+import {
+  useCanManageTags,
+  useCreateTag,
+  useIsInitialLoadingOfTags,
+  useReadTags,
+} from 'features/content-tags/core/hooks';
+import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
+import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
+import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
+import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
+import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
+import {
+  orderByLabel,
+  shouldAddInlineCreationItem,
+  tagsPayloadToOptions,
+} from 'features/content-tags/editor/utils';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import * as stringUtils from 'utils/StringUtils';
+import { TagOption } from 'features/content-tags/types';
+import { Conditional } from 'features/content-tags/core/components/Conditional';
+import { Tag } from 'contentful-management/types';
 
 const styles = {
   wrapper: css({
@@ -38,7 +43,23 @@ const styles = {
   }),
 };
 
-const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = 'Tags' }) => {
+type Props = {
+  onAdd: (value: TagOption) => void;
+  onRemove: (tagId: string) => void;
+  selectedTags: TagOption[];
+  disabled?: boolean;
+  label: string;
+  hasInlineTagCreation?: boolean;
+};
+
+const TagsSelection: React.FC<Props> = ({
+  onAdd,
+  onRemove,
+  selectedTags = [],
+  disabled = false,
+  label = 'Tags',
+  hasInlineTagCreation = false,
+}) => {
   const { isLoading, hasTags, addTag, reset } = useReadTags();
   const { createTag, createTagData, createTagIsLoading } = useCreateTag();
   const { setSearch, filteredTags, search } = useFilteredTags();
@@ -79,10 +100,10 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
   );
 
   const localFilteredTags = useMemo(() => {
-    const filtered = orderByLabel(
+    const filtered = orderByLabel<TagOption & { inlineCreation?: boolean }>(
       tagsPayloadToOptions(
         filteredTags.filter(
-          (tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id)
+          (tag: Tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id)
         )
       )
     );
@@ -96,7 +117,10 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
     setValidTagName(true);
   }, [search]);
 
-  if (shouldAddInlineCreationItem(canManageTags, search, localFilteredTags, selectedTags)) {
+  if (
+    hasInlineTagCreation &&
+    shouldAddInlineCreationItem(canManageTags, search, localFilteredTags, selectedTags)
+  ) {
     localFilteredTags.push({
       inlineCreation: true,
       label: search,
@@ -110,11 +134,13 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
         <div className={styles.wrapper}>
           <Paragraph>{label}</Paragraph>
         </div>
-        {!validTagName && (
+        <Conditional condition={!validTagName}>
           <ValidationMessage>
-            {` Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.`}
+            {
+              'Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.'
+            }
           </ValidationMessage>
-        )}
+        </Conditional>
         <ConditionalWrapper
           condition={maxTagsReached || disabled}
           wrapper={(children) => (
@@ -139,15 +165,17 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
             onQueryChange={setSearch}
           />
         </ConditionalWrapper>
-        {createTagIsLoading && <Spinner size="large" />}
-        {!createTagIsLoading && (
+        <Conditional condition={createTagIsLoading}>
+          <Spinner size="large" />
+        </Conditional>
+        <Conditional condition={!createTagIsLoading}>
           <EntityTags
             disabled={disabled}
             tags={selectedTags}
             onRemove={onRemove}
             tagGroups={tagGroups}
           />
-        )}
+        </Conditional>
       </FieldFocus>
     );
   }, [
@@ -178,15 +206,6 @@ const TagsSelection = ({ onAdd, onRemove, selectedTags = [], disabled, label = '
   } else {
     return null;
   }
-};
-
-TagsSelection.propTypes = {
-  showEmpty: PropTypes.bool,
-  entry: PropTypes.object,
-  onAdd: PropTypes.func,
-  onRemove: PropTypes.func,
-  label: PropTypes.string,
-  disabled: PropTypes.bool,
 };
 
 export { TagsSelection };

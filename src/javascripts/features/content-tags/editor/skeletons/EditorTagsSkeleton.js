@@ -107,6 +107,7 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) =
           onRemove={removeTag}
           selectedTags={localTags}
           label={'Tags'}
+          hasInlineTagCreation={true}
         />
       </FilteredTagsProvider>
     </React.Fragment>

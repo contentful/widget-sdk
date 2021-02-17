@@ -1,18 +1,16 @@
-import React from 'react';
-import { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import { Spinner } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { Operator } from 'core/services/ContentQuery';
+import { css } from 'emotion';
 import {
-  useReadTags,
   TagsMultiSelectAutocomplete,
   tagsPayloadToOptions,
-  orderByLabel,
   useFilteredTags,
+  useReadTags,
 } from 'features/content-tags';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import { Spinner } from '@contentful/forma-36-react-components';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useCallback, useMemo } from 'react';
 
 /**
  * Renders text input in filter pill
@@ -72,7 +70,6 @@ class MetadataTag extends React.Component {
           onQueryChange={onSearch}
           setIsRemovable={setIsRemovable}
           selectedTags={this.state.selectedTags}
-          maxHeight={280}
           isFocused={isFocused}
           styles={{
             TagSummary: css({ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
@@ -93,8 +90,8 @@ class MetadataTag extends React.Component {
 // Functional component to match old style search state
 // with new style hook state
 export const MetadataTagWrapper = (props) => {
-  const { isLoading, error, getTag } = useReadTags();
-  const { setSearch, filteredTags } = useFilteredTags();
+  const { isLoading, error, getTag, data } = useReadTags();
+  const { setSearch } = useFilteredTags();
   const { value } = props;
   const onSearch = useCallback(
     (tagId) => {
@@ -105,17 +102,22 @@ export const MetadataTagWrapper = (props) => {
 
   const selectedTagIds = value.split(',').map((id) => id.trim());
 
+  const selectedTags = useMemo(() => {
+    return tagsPayloadToOptions(selectedTagIds.map(getTag).filter(Boolean));
+  }, [selectedTagIds, getTag]);
+
+  const allTags = useMemo(() => {
+    return tagsPayloadToOptions(data);
+  }, [data]);
+
   if (isLoading === false && !error) {
     // Normalize incoming tags and use them as initial state
     // missing tags are thrown out...
 
-    const selectedTags = tagsPayloadToOptions(selectedTagIds.map(getTag).filter(Boolean));
-    const orderedFilteredTags = orderByLabel(
-      tagsPayloadToOptions(filteredTags.filter((tag) => !selectedTagIds.includes(tag.sys.id)))
-    );
-    const tags = [...selectedTags, ...orderedFilteredTags];
     // we are making sure that the user will see all (tags > limit) the selected on top
-    return <MetadataTag tags={tags} selectedTags={selectedTags} onSearch={onSearch} {...props} />;
+    return (
+      <MetadataTag tags={allTags} selectedTags={selectedTags} onSearch={onSearch} {...props} />
+    );
   }
   return (
     <fieldset className="search__input-text">

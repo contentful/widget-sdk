@@ -71,6 +71,26 @@ describe('TagsSelection Component', () => {
     expect(screen.queryByText(/(create new)/i)).not.toBeInTheDocument();
   });
 
+  it(' doesn\'t show "(create new)" tag item when hasCreateInlineCreation set to false', async () => {
+    await renderTagsSelection(false);
+    const searchInput = screen.getByTestId('autocomplete.input');
+    fireEvent.change(searchInput, {
+      target: {
+        value: 'Team: Berli',
+      },
+    });
+
+    expect(await screen.queryByText(/(create new)/i)).not.toBeInTheDocument();
+
+    fireEvent.change(searchInput, {
+      target: {
+        value: 'Team: Berlin',
+      },
+    });
+
+    expect(screen.queryByText(/(create new)/i)).not.toBeInTheDocument();
+  });
+
   it(" doesn't show any suggestion when user tries to add an already assigned tag to an entry", async () => {
     await renderTagsSelection();
     const searchInput = screen.getByTestId('autocomplete.input');
@@ -136,7 +156,7 @@ describe('TagsSelection Component', () => {
   });
 });
 
-async function renderTagsSelection() {
+async function renderTagsSelection(hasInlineTagCreation = true) {
   /*
    * this test set up provides some tags and it has one selected by default
    * It is also provides a space environment where the user is an Admin (so it can handle tags)
@@ -244,6 +264,7 @@ async function renderTagsSelection() {
     label: 'Tags',
     onAdd: jest.fn(),
     onRemove: jest.fn(),
+    hasInlineTagCreation: hasInlineTagCreation,
   };
 
   const spaceEnvValues = {

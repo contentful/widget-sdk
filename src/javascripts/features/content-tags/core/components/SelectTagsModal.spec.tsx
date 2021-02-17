@@ -3,6 +3,7 @@ import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvi
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 import React from 'react';
 import { SelectTagsModal } from './SelectTagsModal';
+import { TagOption } from 'features/content-tags/types';
 
 const defaultTagsRepo = {
   createTag: jest.fn().mockResolvedValue(true),
@@ -79,6 +80,6 @@ async function renderModal(props, tagsRepo = {}) {
   return queries;
 }
 
-async function renderWithTags(selectedTags = []) {
+async function renderWithTags(selectedTags: TagOption[] = []) {
   return renderModal({ isShown: true, selectedTags });
 }

@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
-
-import Checkbox from '@contentful/forma-36-react-components/dist/components/Checkbox';
-import { Autocomplete } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
+import { TagOption } from '../types';
 import { Keys } from 'features/entity-search';
-import { TagOption } from 'features/content-tags/types';
+import { SelectTagsModal } from 'features/content-tags/core/components/SelectTagsModal';
+import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
+import { Conditional } from 'features/content-tags/core/components/Conditional';
 
 const summarizeTags = (tags: TagOption[]) => {
   if (!Array.isArray(tags) || tags.length === 0) {
@@ -49,20 +49,9 @@ type TagsMultiSelectAutocompleteProps = {
   onChange: (tags: TagOption[]) => void;
   onQueryChange: (query: string) => void;
   setIsRemovable: (removable: boolean) => void;
-  maxHeight: number;
   styles?: Partial<typeof defaultStyles>;
   isFocused?: boolean;
 };
-
-function addOrRemoveTag(currentList: TagOption[], addedOrRemovedTag: TagOption) {
-  if (currentList.some(({ value }) => value === addedOrRemovedTag.value)) {
-    // remove
-    return currentList.filter(({ value }) => value !== addedOrRemovedTag.value);
-  }
-
-  // add
-  return [...currentList, addedOrRemovedTag];
-}
 
 const TagsMultiSelectAutocomplete = ({
   tags,
@@ -70,40 +59,18 @@ const TagsMultiSelectAutocomplete = ({
   onQueryChange,
   selectedTags,
   setIsRemovable,
-  maxHeight,
   styles = {},
   isFocused,
 }: TagsMultiSelectAutocompleteProps) => {
   const [isSearching, setIsSearching] = useState<boolean>(isFocused ?? false);
-  const tagsRef = useRef<HTMLDivElement>(null);
+  const tagsRef = useRef<HTMLDivElement | null>(null);
 
   setIsRemovable(!isSearching);
 
-  const onSelectedTagChange = (tag: TagOption) => {
-    onChange(addOrRemoveTag(selectedTags, tag));
-  };
-
-  // Like a checkbox, but don't actually bother reporting events! The whole area triggers the event on click
-  // and the event toggles tags, so two events == the opposite)
-  const tagSelectRow = (tag: TagOption) => (
-    <li className={css(defaultStyles.DropdownCheckboxField)}>
-      <Checkbox
-        labelText={tag.label}
-        checked={selectedTags.some((selectedTag) => selectedTag.value === tag.value)}
-      />
-      <span>{tag.label}</span>
-    </li>
-  );
-
-  // Previously checked tags are displayed first. Tags checked in this session
-  // remain in place until blur and onChange()
-  // NB The order of items={} must match the order of {(options)=>{}}
-  const sortedTags = [
-    ...tags.filter((tag) => selectedTags.some((selectedTag) => selectedTag.value === tag.value)),
-    ...tags.filter((tag) => !selectedTags.some((selectedTag) => selectedTag.value === tag.value)),
-  ];
-
-  const onClose = () => {
+  const onClose = ({ canceled, tags: newTagsSelection }) => {
+    if (!canceled) {
+      onChange(tags.filter((tag) => newTagsSelection.includes(tag.value)));
+    }
     onQueryChange('');
     setIsSearching(false);
     setIsRemovable(true);
@@ -112,12 +79,6 @@ const TagsMultiSelectAutocomplete = ({
   const handleSummaryKeyDown = (event: React.KeyboardEvent) => {
     if (shouldOpenSelector(event)) {
       setIsSearching(true);
-    }
-  };
-
-  const handleSearchKeyDown = (event: React.KeyboardEvent) => {
-    if (Keys.tab(event)) {
-      onClose();
     }
   };
 
@@ -132,35 +93,20 @@ const TagsMultiSelectAutocomplete = ({
         onClick={() => setIsSearching(true)}>
         {summarizeTags(selectedTags)}
       </div>
-      {isSearching && (
-        <span onKeyDown={handleSearchKeyDown}>
-          <Autocomplete<TagOption>
-            items={sortedTags}
-            width={'full'}
-            onChange={onSelectedTagChange}
-            willClearQueryOnClose={true}
-            onQueryChange={onQueryChange}
-            maxHeight={maxHeight}
-            placeholder={'Search for tags'}
-            emptyListMessage={'No tags found'}
-            noMatchesMessage={'No tags found'}
-            dropdownProps={{
-              // input of autocomplete disappears if we use portal
-              usePortal: false,
-              nonClosingRefs: [tagsRef],
-              isFullWidth: true,
-              isOpen: true,
-              isAutoalignmentEnabled: false,
-              position: 'bottom-left',
-              dropdownContainerClassName: 'tag-search-container',
-              onClose,
-              children: null,
+      <Conditional condition={isSearching}>
+        <FilteredTagsProvider>
+          <SelectTagsModal
+            hasInlineTagCreation={false}
+            selectedTags={selectedTags}
+            isShown={true}
+            onClose={onClose}
+            modalProps={{
+              title: 'Filter by tags',
+              submitLabel: 'Apply',
             }}
-            className={css(defaultStyles.Autocomplete, styles.Autocomplete)}>
-            {(options) => options.map(tagSelectRow)}
-          </Autocomplete>
-        </span>
-      )}
+          />
+        </FilteredTagsProvider>
+      </Conditional>
     </>
   );
 };
