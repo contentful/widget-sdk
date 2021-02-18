@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Heading,
   Card,
@@ -12,6 +13,12 @@ import {
 import { StartAppTrialModal, isOrganizationOnTrial } from 'features/trials';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { beginSpaceCreation } from 'services/CreateSpace';
+
+const styles = {
+  link: css({
+    alignSelf: 'flex-start',
+  }),
+};
 
 export function ContentfulAppsTrial({
   organization,
@@ -61,6 +68,7 @@ export function ContentfulAppsTrial({
         )}
         {!isTrialActive && (
           <TextLink
+            className={styles.link}
             href="https://www.contentful.com/contentful-apps"
             target="_blank"
             rel="noopener noreferrer">
