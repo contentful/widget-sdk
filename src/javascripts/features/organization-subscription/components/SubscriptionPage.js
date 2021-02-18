@@ -7,7 +7,6 @@ import {
   Workbench,
   Heading,
   DisplayText,
-  ModalLauncher,
   Note,
   Paragraph,
   Typography,
@@ -35,6 +34,7 @@ import { AppManager } from 'features/apps';
 
 import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
+import { ContentfulAppsTrial } from './ContentfulAppsTrial';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -45,7 +45,6 @@ import {
   isOrganizationOnTrial,
   SpacesListForMembers,
   startAppTrial,
-  StartAppTrialModal,
 } from 'features/trials';
 
 const styles = {
@@ -118,8 +117,10 @@ export function SubscriptionPage({
   onSpacePlansChange,
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
-  appTrialEnabled,
   composeAndLaunchEnabled,
+  isTrialAvailable,
+  isTrialActive,
+  isTrialExpired,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
   useEffect(() => {
@@ -230,12 +231,6 @@ export function SubscriptionPage({
     }
   };
 
-  const showModal = () => {
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <StartAppTrialModal isShown={isShown} onClose={onClose} onConfirm={handleStartAppTrial} />
-    ));
-  };
-
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
@@ -270,13 +265,6 @@ export function SubscriptionPage({
           </div>
           <div className={styles.trialSection}>
             {organization && <EnterpriseTrialInfo organization={organization} />}
-            {appTrialEnabled && (
-              <div>
-                <TextLink icon="PlusCircle" onClick={showModal}>
-                  Start Contentful App trial
-                </TextLink>
-              </div>
-            )}
           </div>
           {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.leftSection}>
@@ -324,6 +312,16 @@ export function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+                  {!!organization && (
+                    <ContentfulAppsTrial
+                      organization={organization}
+                      isPurchased={!!addOn}
+                      startAppTrial={handleStartAppTrial}
+                      isTrialAvailable={isTrialAvailable}
+                      isTrialActive={isTrialActive}
+                      isTrialExpired={isTrialExpired}
+                    />
+                  )}
                   {showContentfulAppsCard && (
                     <ContentfulApps organizationId={organizationId} addOn={addOn} />
                   )}
@@ -373,8 +371,10 @@ SubscriptionPage.propTypes = {
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
-  appTrialEnabled: PropTypes.bool,
   composeAndLaunchEnabled: PropTypes.bool,
+  isTrialAvailable: PropTypes.bool,
+  isTrialActive: PropTypes.bool,
+  isTrialExpired: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {

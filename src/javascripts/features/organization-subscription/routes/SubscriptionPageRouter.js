@@ -11,7 +11,13 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
-import { isOrganizationOnTrial, canStartAppTrial } from 'features/trials';
+import {
+  isOrganizationOnTrial,
+  canStartAppTrial,
+  createAppTrialRepo,
+  isActiveAppTrial,
+  isExpiredAppTrial,
+} from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -91,7 +97,11 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const appTrialEnabled = await canStartAppTrial(organizationId);
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
+  const [appCatalogFeature, isTrialAvailable] = await Promise.all([
+    createAppTrialRepo(orgEndpoint).getTrial('compose_app'),
+    canStartAppTrial(organizationId),
+  ]);
 
   setSpacePlans(spacePlans);
   setGrandTotal(
@@ -109,8 +119,10 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organization,
     productRatePlans,
     newSpacePurchaseEnabled,
-    appTrialEnabled,
     composeAndLaunchEnabled,
+    isTrialAvailable,
+    isTrialActive: isActiveAppTrial(appCatalogFeature),
+    isTrialExpired: isExpiredAppTrial(appCatalogFeature),
   };
 };
 
@@ -154,8 +166,10 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         spacePlans={spacePlans}
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
         newSpacePurchaseEnabled={data.newSpacePurchaseEnabled}
-        appTrialEnabled={data.appTrialEnabled}
         composeAndLaunchEnabled={data.composeAndLaunchEnabled}
+        isTrialAvailable={data.isTrialAvailable}
+        isTrialActive={data.isTrialActive}
+        isTrialExpired={data.isTrialExpired}
       />
     </>
   );
