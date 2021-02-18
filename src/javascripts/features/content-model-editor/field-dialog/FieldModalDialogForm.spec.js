@@ -6,7 +6,7 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 describe('Field Modal Dialog Form', () => {
-  it('updated field title succesfully', () => {
+  it('updated field title successfully', () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScope = jest.fn();
     const { getByTestId } = render(

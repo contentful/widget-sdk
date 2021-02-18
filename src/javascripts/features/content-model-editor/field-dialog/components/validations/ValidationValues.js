@@ -155,7 +155,7 @@ function ValidationValues({
   const [textValue, setTextValue] = useState('');
   const [error, setError] = useState('');
 
-  const showPrefferedValueHint = useMemo(
+  const showPreferredValueHint = useMemo(
     () =>
       shouldShowPrefferedValueHint(widgetSettings.namespace, widgetSettings.id, availableWidgets),
     [widgetSettings, availableWidgets]
@@ -234,7 +234,7 @@ function ValidationValues({
       {enabled && (
         <div>
           <div className={styles.validationValuesRow}>
-            {showPrefferedValueHint && <ValidationHint fieldType={ctFieldType} />}
+            {showPreferredValueHint && <ValidationHint fieldType={ctFieldType} />}
             <TextInput
               name="addPredefinedValue"
               id="addPredefinedValue"

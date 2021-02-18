@@ -6,10 +6,6 @@ import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import { getErrorMessage } from 'services/validationDialogErrorMessages';
 import validationViews from 'services/validationViews';
 
-/**
- * @ngdoc service
- * @name validationDecorator
- */
 const validationName = createSchema.Validation.getName;
 const nodeValidationName = createSchema.Validation.getNodeValidationName;
 const validationTypesForField = createSchema.Validation.forField;
@@ -128,7 +124,7 @@ const validationsOrder = [
   'relationshipType',
 ];
 
-const richTextOptionsLabels = {
+export const richTextOptionsLabels = {
   [BLOCKS.HEADING_1]: 'heading 1',
   [BLOCKS.HEADING_2]: 'heading 2',
   [BLOCKS.HEADING_3]: 'heading 3',
@@ -153,25 +149,11 @@ const richTextOptionsLabels = {
 
 const schema = createSchema({ type: 'Validation' });
 
-export {
-  decorateFieldValidations,
-  decorateNodeValidations,
-  extractFieldValidations,
-  getExtractedNodesValidation,
-  validate,
-  validateAll,
-  updateField,
-  addEnabledRichTextOptions,
-  richTextOptionsLabels,
-};
-
 /**
- * @ngdoc method
- * @name validationDecorator#decorateFieldValidations
  * @param {Field} field
  * @returns {DecoratedValidation[]}
  */
-function decorateFieldValidations(field) {
+export function decorateFieldValidations(field) {
   const validationTypes = _.filter(validationTypesForField(field), (t) => t in validationSettings);
 
   let fieldValidations = _.map(validationTypes, validationDecorator(field));
@@ -189,12 +171,10 @@ function decorateFieldValidations(field) {
 }
 
 /**
- * @ngdoc method
- * @name validationDecorator#decorateNodeValidations
  * @param {Node} nodeTypesWithValidations
  * @returns {DecoratedNodeValidation[]}
  */
-function decorateNodeValidations(nodeTypesWithValidations) {
+export function decorateNodeValidations(nodeTypesWithValidations) {
   const decoratedNodeValidations = [];
 
   for (const [nodeType, { description, validations }] of _.entries(validatedNodeTypes)) {
@@ -220,8 +200,8 @@ function validationDecorator(field) {
     let settings, enabled, message;
 
     if (fieldValidation) {
-      enabled = true;
       settings = fieldValidation[type];
+      enabled = settings !== false; // ensure `{ unique: false }` set via CMA results in `false`
       message = fieldValidation.message;
     } else {
       enabled = false;
@@ -236,15 +216,15 @@ function validationDecorator(field) {
     const helpText = getValidationHelpText(field, type);
 
     return {
-      name: name,
-      helpText: helpText,
-      type: type,
+      name,
+      helpText,
+      type,
       onItems: false,
-      enabled: enabled,
-      message: message,
+      enabled,
+      message,
       settings: _.cloneDeep(settings),
-      views: views,
-      currentView: currentView,
+      views,
+      currentView,
     };
   };
 }
@@ -286,12 +266,10 @@ function nodeValidationDecorator(node) {
 }
 
 /**
- * @ngdoc method
- * @name validationDecorator#extractFieldValidations
  * @param {DecoratedValidation[]} decorated
  * @returns {Validation[]}
  */
-function extractFieldValidations(decorated) {
+export function extractFieldValidations(decorated) {
   const enabled = _.filter(
     decorated,
     (validation) => validation.enabled && validation.type !== 'nodes'
@@ -306,7 +284,7 @@ function extractFieldValidations(decorated) {
  * @param {DecoratedNodeValidation[]} decorated
  * @returns {NodeValidation[]}
  */
-function getExtractedNodesValidation(decorated) {
+export function getExtractedNodesValidation(decorated) {
   return {
     nodes: _.chain(decorated)
       .flatMap('validations')
@@ -327,12 +305,10 @@ function extractOne(decorated) {
 }
 
 /**
- * @ngdoc method
- * @name validationDecorator#validate
  * @param {DecoratedValidation} validation
  * @return {Error[]}
  */
-function validate(validation) {
+export function validate(validation) {
   const { enabled, type } = validation;
   const errors = enabled ? schema.errors(extractOne(validation)) : [];
 
@@ -344,8 +320,6 @@ function validate(validation) {
 }
 
 /**
- * @ngdoc method
- * @name validationDecorator#updateField
  * @description
  * Set the fields validations by extracting all enabled decorated
  * validations.
@@ -356,7 +330,7 @@ function validate(validation) {
  * @param {DecoratedValdiation[]} validations
  */
 // $scope.field, $scope.validations, $scope.nodeValidations
-function updateField(field, validations, nodeValidations) {
+export function updateField(field, validations, nodeValidations) {
   const { true: itemValidations, false: baseValidations } = _.groupBy(validations, 'onItems');
 
   if (nodeValidations) {
@@ -374,7 +348,7 @@ function updateField(field, validations, nodeValidations) {
   return field;
 }
 
-function addEnabledRichTextOptions(field, options) {
+export function addEnabledRichTextOptions(field, options) {
   const { enabledNodeTypes, enabledMarks } = options;
 
   const validationsCopy = field.validations.filter(
@@ -403,7 +377,7 @@ function addEnabledRichTextOptions(field, options) {
   }
 }
 
-function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
+export function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
   const decoratedValidations = decoratedNodeValidations
     ? [...decoratedFieldValidations, getExtractedNodesValidation(decoratedNodeValidations)]
     : decoratedFieldValidations;
