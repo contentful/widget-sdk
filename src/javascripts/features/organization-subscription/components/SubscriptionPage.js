@@ -118,6 +118,7 @@ export function SubscriptionPage({
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
   composeAndLaunchEnabled,
+  appTrialEnabled,
   isTrialAvailable,
   isTrialActive,
   isTrialExpired,
@@ -312,7 +313,7 @@ export function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-                  {!!organization && (
+                  {!!organization && appTrialEnabled && (
                     <ContentfulAppsTrial
                       organization={organization}
                       isPurchased={!!addOn}
@@ -372,6 +373,7 @@ SubscriptionPage.propTypes = {
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
   composeAndLaunchEnabled: PropTypes.bool,
+  appTrialEnabled: PropTypes.bool,
   isTrialAvailable: PropTypes.bool,
   isTrialActive: PropTypes.bool,
   isTrialExpired: PropTypes.bool,

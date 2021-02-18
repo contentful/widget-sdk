@@ -66,6 +66,10 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organizationId: organization.sys.id,
   });
 
+  const appTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
+    organizationId: organization.sys.id,
+  });
+
   if (!isOwnerOrAdmin(organization)) {
     if (isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
@@ -120,6 +124,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     productRatePlans,
     newSpacePurchaseEnabled,
     composeAndLaunchEnabled,
+    appTrialEnabled,
     isTrialAvailable,
     isTrialActive: isActiveAppTrial(appCatalogFeature),
     isTrialExpired: isExpiredAppTrial(appCatalogFeature),
@@ -167,6 +172,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
         newSpacePurchaseEnabled={data.newSpacePurchaseEnabled}
         composeAndLaunchEnabled={data.composeAndLaunchEnabled}
+        appTrialEnabled={data.appTrialEnabled}
         isTrialAvailable={data.isTrialAvailable}
         isTrialActive={data.isTrialActive}
         isTrialExpired={data.isTrialExpired}
