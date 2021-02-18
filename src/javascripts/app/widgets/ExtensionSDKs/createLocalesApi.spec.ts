@@ -1,6 +1,6 @@
 import localeStore from 'services/localeStore';
 jest.mock('services/localeStore');
-import { LocalesAPI } from 'contentful-ui-extensions-sdk';
+import { LocalesAPI } from '@contentful/app-sdk';
 import { createLocalesApi } from './createLocalesApi';
 
 describe('createLocalesApi', () => {

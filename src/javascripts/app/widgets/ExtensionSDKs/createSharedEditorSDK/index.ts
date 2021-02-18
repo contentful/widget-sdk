@@ -1,4 +1,4 @@
-import { SharedEditorSDK, ContentType, EntryAPI } from 'contentful-ui-extensions-sdk';
+import { SharedEditorSDK, ContentType, EntryAPI } from '@contentful/app-sdk';
 
 interface SharedBasedWidgetSDK {
   entryApi: EntryAPI;

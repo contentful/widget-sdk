@@ -1,5 +1,5 @@
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { NavigatorAPI, NavigatorPageResponse } from 'contentful-ui-extensions-sdk';
+import { NavigatorAPI, NavigatorPageResponse } from '@contentful/app-sdk';
 import { noop } from 'lodash';
 import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import * as Navigator from 'states/Navigator';
@@ -9,7 +9,7 @@ import * as entityCreator from 'components/app_container/entityCreator';
 import localeStore from 'services/localeStore';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
-import { NavigatorOpenResponse } from 'contentful-ui-extensions-sdk';
+import { NavigatorOpenResponse } from '@contentful/app-sdk';
 
 function isAnotherBulkEditorOpen() {
   return !!find(SlideInNavigator.getSlideInEntities(), { type: 'BulkEditor' });

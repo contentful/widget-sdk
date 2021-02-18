@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { PageExtensionSDK } from '@contentful/app-sdk';
 import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-renderer';
 import { css } from 'emotion';
 import trackExtensionRender from 'widgets/TrackExtensionRender';

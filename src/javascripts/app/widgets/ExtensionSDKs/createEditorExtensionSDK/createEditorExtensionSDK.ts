@@ -1,4 +1,4 @@
-import { EditorExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { EditorExtensionSDK } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';

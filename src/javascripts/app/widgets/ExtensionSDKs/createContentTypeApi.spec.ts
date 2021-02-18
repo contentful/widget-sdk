@@ -1,5 +1,5 @@
 import { createContentTypeApi } from './createContentTypeApi';
-import { ContentType } from 'contentful-ui-extensions-sdk';
+import { ContentType } from '@contentful/app-sdk';
 
 describe('createContentTypeApi', () => {
   describe('when passed an internal content type', () => {

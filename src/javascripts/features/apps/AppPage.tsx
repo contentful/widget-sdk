@@ -34,7 +34,7 @@ import {
   buildAppDefinitionWidget,
   Widget,
 } from '@contentful/widget-renderer';
-import { AppExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { AppExtensionSDK } from '@contentful/app-sdk';
 import { MarketplaceApp } from 'features/apps-core';
 
 enum InstallationState {

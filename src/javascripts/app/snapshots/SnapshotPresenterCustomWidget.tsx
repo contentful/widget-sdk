@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { FieldExtensionSDK, KnownSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, KnownSDK } from '@contentful/app-sdk';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-renderer';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';

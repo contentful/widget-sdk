@@ -4,7 +4,7 @@ import * as PathUtils from 'utils/Path';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import * as Analytics from 'analytics/Analytics';
 import localeStore from 'services/localeStore';
-import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
+import { EntryFieldAPI } from '@contentful/app-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentTypeField } from './createContentTypeApi';

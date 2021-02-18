@@ -1,5 +1,5 @@
 import { Action, getSpaceAuthContext } from 'access_control/AccessChecker';
-import { AccessAPI, SpaceAPI } from 'contentful-ui-extensions-sdk';
+import { AccessAPI, SpaceAPI } from '@contentful/app-sdk';
 import { get, isObject } from 'lodash';
 import { compare } from 'fast-json-patch';
 

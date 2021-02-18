@@ -11,7 +11,7 @@ import { noop, omit } from 'lodash';
 import { createSpaceApi } from '../createSpaceApi';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { SidebarExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { SidebarExtensionSDK } from '@contentful/app-sdk';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';

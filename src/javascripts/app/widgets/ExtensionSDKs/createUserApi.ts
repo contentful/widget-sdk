@@ -1,4 +1,4 @@
-import { User } from 'contentful-ui-extensions-sdk';
+import { User } from '@contentful/app-sdk';
 
 export interface SpaceMember {
   admin: boolean;

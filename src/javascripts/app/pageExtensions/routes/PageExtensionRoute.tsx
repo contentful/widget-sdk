@@ -12,7 +12,7 @@ import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
-import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { PageExtensionSDK } from '@contentful/app-sdk';
 import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {

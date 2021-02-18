@@ -1,5 +1,5 @@
 import { createAccessApi } from './createAccessApi';
-import { SpaceAPI } from 'contentful-ui-extensions-sdk';
+import { SpaceAPI } from '@contentful/app-sdk';
 import * as AccessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker');

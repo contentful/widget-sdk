@@ -2,7 +2,7 @@ import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledA
 import { CONTENT_ENTITY_UPDATED_EVENT, PubSubClient } from 'services/PubSubService';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
-import { SpaceAPI, User } from 'contentful-ui-extensions-sdk';
+import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';

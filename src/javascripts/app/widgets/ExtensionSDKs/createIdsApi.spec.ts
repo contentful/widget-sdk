@@ -1,6 +1,6 @@
 import { createIdsApi } from './createIdsApi';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { EntryAPI, FieldAPI, User } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, FieldAPI, User } from '@contentful/app-sdk';
 
 describe('createIdsApi', () => {
   const spaceId = 'space_id';

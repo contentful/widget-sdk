@@ -1,4 +1,4 @@
-import { AppConfigAPI } from 'contentful-ui-extensions-sdk';
+import { AppConfigAPI } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { createAppApi } from './createAppApi';
 import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus, makeAppHookBus } from 'features/apps-core';

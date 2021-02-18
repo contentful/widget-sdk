@@ -1,5 +1,5 @@
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
-import { EntityType } from 'contentful-ui-extensions-sdk';
+import { EntityType } from '@contentful/app-sdk';
 import { EditorData } from '../EntityField/types';
 
 export interface BulkEditorParams {

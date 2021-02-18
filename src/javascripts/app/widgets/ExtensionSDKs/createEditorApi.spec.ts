@@ -1,5 +1,5 @@
 import { createEditorApi } from './createEditorApi';
-import { EditorInterface } from 'contentful-ui-extensions-sdk';
+import { EditorInterface } from '@contentful/app-sdk';
 
 describe('createEditorApi', () => {
   const editorInterface: EditorInterface = {

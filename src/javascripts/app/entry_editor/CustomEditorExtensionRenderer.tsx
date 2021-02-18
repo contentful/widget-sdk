@@ -2,7 +2,7 @@ import { Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { WidgetLocation, WidgetNamespace, WidgetRenderer } from '@contentful/widget-renderer';
 import { createEditorExtensionSDK } from 'app/widgets/ExtensionSDKs';
-import { EditorExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { EditorExtensionSDK } from '@contentful/app-sdk';
 import { usePubSubClient } from 'core/hooks';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { css } from 'emotion';

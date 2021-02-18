@@ -1,6 +1,7 @@
 import { createEntryApi } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { EntryAPI } from '@contentful/app-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';
 import { noop } from 'lodash';
@@ -8,7 +9,6 @@ import * as Kefir from 'kefir';
 import jestKefir from 'jest-kefir';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import APIClient from 'data/APIClient';
-import { EntryAPI } from 'contentful-ui-extensions-sdk';
 
 const kefirHelpers = jestKefir(Kefir);
 

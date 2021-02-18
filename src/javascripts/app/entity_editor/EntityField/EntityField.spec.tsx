@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { EntityField } from './EntityField';
-import { EntityType } from 'contentful-ui-extensions-sdk';
+import { EntityType } from '@contentful/app-sdk';
 import ShareJsDocMock from '../Document/__mocks__/ShareJsDocMock';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 

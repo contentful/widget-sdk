@@ -1,4 +1,4 @@
-import { EntityType } from 'contentful-ui-extensions-sdk';
+import { EntityType } from '@contentful/app-sdk';
 
 export type Doc = {};
 

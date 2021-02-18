@@ -6,7 +6,7 @@ import {
   OpenCustomWidgetOptions,
   BaseExtensionSDK,
   IdsAPI,
-} from 'contentful-ui-extensions-sdk';
+} from '@contentful/app-sdk';
 import { omit, noop } from 'lodash';
 
 import { entitySelector } from 'features/entity-search';

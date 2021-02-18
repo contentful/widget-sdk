@@ -15,7 +15,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { getModule } from 'core/NgRegistry';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
-const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
+const SDK_URL = 'https://unpkg.com/@contentful/app-sdk@3';
 
 async function install({ extension, type, url }) {
   const spaceContext = getModule('spaceContext');

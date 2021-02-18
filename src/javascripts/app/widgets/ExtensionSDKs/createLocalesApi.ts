@@ -1,6 +1,6 @@
 import localeStore from 'services/localeStore';
 import { isRtlLocale } from 'utils/locales';
-import { LocalesAPI } from 'contentful-ui-extensions-sdk';
+import { LocalesAPI } from '@contentful/app-sdk';
 
 export interface Locale {
   name: string;

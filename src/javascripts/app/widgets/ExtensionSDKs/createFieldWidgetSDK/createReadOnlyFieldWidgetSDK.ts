@@ -1,4 +1,4 @@
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK } from '@contentful/app-sdk';
 import { noop } from 'lodash';
 
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';

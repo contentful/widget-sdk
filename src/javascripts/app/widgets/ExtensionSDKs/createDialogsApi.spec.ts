@@ -1,10 +1,10 @@
 import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
-import { FieldExtensionSDK, IdsAPI } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, IdsAPI } from '@contentful/app-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import { entitySelector } from 'features/entity-search';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { DialogsAPI } from 'contentful-ui-extensions-sdk';
+import { DialogsAPI } from '@contentful/app-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('@contentful/forma-36-react-components');

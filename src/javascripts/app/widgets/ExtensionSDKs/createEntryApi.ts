@@ -1,7 +1,7 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentType, InternalContentTypeField } from './createContentTypeApi';
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntryFieldAPI, EntrySys, TaskInputData } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntryFieldAPI, EntrySys, TaskInputData } from '@contentful/app-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { isEqual } from 'lodash';

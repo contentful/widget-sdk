@@ -1,4 +1,4 @@
-import { EditorInterface, SharedEditorSDK } from 'contentful-ui-extensions-sdk';
+import { EditorInterface, SharedEditorSDK } from '@contentful/app-sdk';
 import { Proxy, WatchFunction, ObjectOrArrayKey } from 'core/services/proxy';
 import { Locale } from './createLocalesApi';
 

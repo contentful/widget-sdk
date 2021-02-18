@@ -4,7 +4,7 @@ import {
   ParametersAPI,
   LocationAPI,
   NavigatorAPI,
-} from 'contentful-ui-extensions-sdk';
+} from '@contentful/app-sdk';
 import { createAccessApi } from '../createAccessApi';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createLocalesApi } from '../createLocalesApi';

@@ -16,7 +16,7 @@ import { EntityRepo, EntityRepoChangeInfo } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntitytagsPaths } from './changedPaths';
 import { Document } from './typesDocument';
 import { getState, State } from 'data/CMA/EntityState';
-import type { ContentType } from 'contentful-ui-extensions-sdk';
+import type { ContentType } from '@contentful/app-sdk';
 
 export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');

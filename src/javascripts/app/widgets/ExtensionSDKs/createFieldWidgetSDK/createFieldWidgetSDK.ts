@@ -1,4 +1,4 @@
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK } from '@contentful/app-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';

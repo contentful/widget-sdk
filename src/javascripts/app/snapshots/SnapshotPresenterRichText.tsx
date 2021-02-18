@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK } from '@contentful/app-sdk';
 
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';

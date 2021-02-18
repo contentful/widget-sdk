@@ -1,4 +1,4 @@
-import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { PageExtensionSDK } from '@contentful/app-sdk';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { SpaceMember, createUserApi } from '../createUserApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';

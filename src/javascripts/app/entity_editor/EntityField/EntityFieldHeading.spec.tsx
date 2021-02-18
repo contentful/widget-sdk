@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { EntityFieldHeading } from './EntityFieldHeading';
-import { EntityType } from 'contentful-ui-extensions-sdk';
+import { EntityType } from '@contentful/app-sdk';
 import { FieldAccess } from './EntityFieldAccess';
 
 const renderComponent = (override = (props) => props) => {

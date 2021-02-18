@@ -1,4 +1,4 @@
-import { IdsAPI, User } from 'contentful-ui-extensions-sdk';
+import { IdsAPI, User } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 interface CreateIdsOptions {
