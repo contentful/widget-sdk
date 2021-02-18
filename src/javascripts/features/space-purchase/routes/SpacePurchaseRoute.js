@@ -13,7 +13,7 @@ import {
   getPlansWithSpaces,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
-import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
+import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import {
@@ -41,6 +41,17 @@ import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
+// NOTE(jo-sm): in the future we may want to have both a global list of `from` keys, as well
+//              as a list of keys specific to preselecting the apps pkg, but since there is no
+//              distinction at the moment it's a future problem(tm).
+// TODO(jo-sm): Expose these when we refactor this to be "the" route for all space creation
+export const PRESELECT_APPS_PKG_FROM_KEYS = [
+  'marketing_cta',
+  'compose_app',
+  'launch_app',
+  'space_home',
+];
+
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
@@ -52,7 +63,9 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
     organizationId,
   });
 
-  let hasPurchasedComposeLaunch, composeAndLaunchProductRatePlan;
+  let hasPurchasedComposeLaunch;
+  let composeAndLaunchProductRatePlan;
+
   if (isAppPurchasingEnabled) {
     const [addOnProductRatePlans, plans] = await Promise.all([
       getAddOnProductRatePlans(endpoint),
@@ -81,7 +94,6 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
 
   const [
     organization,
-    orgSpaceMetadata,
     organizationMembership,
     basePlan,
     currentSpaceRatePlan,
@@ -92,8 +104,6 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
     pageContent,
   ] = await Promise.all([
     TokenStore.getOrganization(organizationId),
-    // We don't care about the actual space data, just the total number of spaces in the org
-    getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
     getBasePlan(endpoint),
     spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
@@ -118,10 +128,9 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
 
-  const numSpacesInOrg = orgSpaceMetadata.total;
   let selectedPlatform;
 
-  if (from === 'marketing-cta' && numSpacesInOrg === 0) {
+  if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
     selectedPlatform = PLATFORM_CONTENT.composePlatform;
   }
 
@@ -161,7 +170,7 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
       currentSpacePlan: currentSpaceRatePlan,
       canPurchaseApps: isAppPurchasingEnabled ? !hasPurchasedComposeLaunch : undefined,
       from,
-      performancePackagePreselected: from === 'marketing-cta',
+      performancePackagePreselected: !!selectedPlatform,
     }
   );
 };

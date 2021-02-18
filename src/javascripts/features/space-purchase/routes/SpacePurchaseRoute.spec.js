@@ -1,6 +1,6 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
-import { SpacePurchaseRoute } from './SpacePurchaseRoute';
+import { screen, waitFor, cleanup } from '@testing-library/react';
+import { SpacePurchaseRoute, PRESELECT_APPS_PKG_FROM_KEYS } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import createResourceService from 'services/ResourceService';
 import {
@@ -13,7 +13,7 @@ import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
-import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
+import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
@@ -59,7 +59,6 @@ jest.mock('../utils/transformSpaceRatePlans', () => ({
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  getSpaces: jest.fn(),
   getSpace: jest.fn(),
 }));
 
@@ -99,7 +98,6 @@ jest.mock('services/ResourceService', () => {
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
-  getSpace: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -128,10 +126,6 @@ describe('SpacePurchaseRoute', () => {
     transformSpaceRatePlans.mockReturnValue();
     getSpacePlans.mockReturnValue([]);
     getVariation.mockResolvedValue(false);
-    getSpaces.mockResolvedValue({
-      total: 1,
-      items: [],
-    });
     getAddOnProductRatePlans.mockResolvedValue([mockComposeAndLaunchProductRatePlan]);
     getSpace.mockResolvedValue({ name: 'Space' });
   });
@@ -229,29 +223,35 @@ describe('SpacePurchaseRoute', () => {
     );
   });
 
-  it('should track if the performance package is pre-selected', async () => {
-    await build({ from: 'marketing-cta' });
+  it('should track if the performance package is pre-selected using a from param', async () => {
+    for (const key of PRESELECT_APPS_PKG_FROM_KEYS) {
+      await build({ from: key });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
-    });
+      await waitFor(() => {
+        expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+      });
 
-    expect(trackEvent).toBeCalledWith(
-      EVENTS.BEGIN,
-      {
-        organizationId: mockOrganization.sys.id,
-        spaceId: undefined,
-        sessionId: expect.any(String),
-      },
-      {
-        canCreateFreeSpace: true,
-        userOrganizationRole: mockUserRole,
-        organizationPlatform: mockOrganizationPlatform,
-        sessionType: 'create_space',
-        performancePackagePreselected: true,
-        from: '',
-      }
-    );
+      expect(trackEvent).toBeCalledWith(
+        EVENTS.BEGIN,
+        {
+          organizationId: mockOrganization.sys.id,
+          spaceId: undefined,
+          sessionId: expect.any(String),
+        },
+        {
+          canCreateFreeSpace: true,
+          userOrganizationRole: mockUserRole,
+          organizationPlatform: mockOrganizationPlatform,
+          sessionType: 'create_space',
+          performancePackagePreselected: true,
+          from: key,
+        }
+      );
+
+      // Since we don't attempt to rerender the component with the new prop, we need
+      // to cleanup before the next iteration
+      await cleanup();
+    }
   });
 
   it('should track if user cannot purchase apps - feature flag is false', async () => {
@@ -425,7 +425,6 @@ describe('SpacePurchaseRoute', () => {
     };
 
     getSpacePlanForSpace.mockResolvedValue(mockSpaceRatePlan);
-    TokenStore.getSpace.mockReturnValueOnce(mockSpace);
     transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 
     await build({ spaceId: mockSpace.sys.id });
