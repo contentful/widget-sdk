@@ -43,9 +43,11 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 import {
   EnterpriseTrialInfo,
   isOrganizationOnTrial,
+  spaceSetUp,
   SpacesListForMembers,
   startAppTrial,
 } from 'features/trials';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 const styles = {
   sidebar: css({
@@ -207,17 +209,23 @@ export function SubscriptionPage({
           // NOTE: getAppsRepo requires a spaceContext
           const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug));
 
+          const environmentId = spaceContext.getEnvironmentId();
+          const spaceId = spaceContext.getId();
+
           const appsManager = new AppManager(
             spaceContext.cma,
-            spaceContext.getEnvironmentId(),
-            spaceContext.getId(),
+            environmentId,
+            spaceId,
             organization.sys.id
           );
 
           await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
 
+          Notification.success('Setting up your trial space');
+          await spaceSetUp(getCMAClient({ spaceId, environmentId }));
+
           go({
-            path: ['spaces', 'detail', 'apps', 'list'],
+            path: ['spaces', 'detail'],
             params: {
               spaceId: trial.spaceKey,
             },

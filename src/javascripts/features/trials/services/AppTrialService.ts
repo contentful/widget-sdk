@@ -7,6 +7,9 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AppTrialFeature, createAppTrialRepo } from './AppTrialRepo';
 import { isTrialSpaceType } from './TrialService';
 import * as TokenStore from 'services/TokenStore';
+import TheLocaleStore from 'services/localeStore';
+import importer from '../utils/importer';
+import type { PlainClientAPI } from 'contentful-management';
 
 export const canStartAppTrial = async (organizationId: string) => {
   if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
@@ -71,4 +74,10 @@ export const getAppTrialSpaceKey = async (feature: AppTrialFeature): Promise<str
   }
 
   return appTrialSpace.sys.id;
+};
+
+export const spaceSetUp = async (client: PlainClientAPI) => {
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const { provisionHelpCenter } = await importer();
+  await provisionHelpCenter(client, defaultLocaleCode);
 };

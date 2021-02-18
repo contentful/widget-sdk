@@ -16,6 +16,7 @@ export {
   startAppTrial,
   isActiveAppTrial,
   isExpiredAppTrial,
+  spaceSetUp,
 } from './services/AppTrialService';
 
 export { createAppTrialRepo } from './services/AppTrialRepo';
