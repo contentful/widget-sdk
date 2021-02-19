@@ -13,7 +13,7 @@ import {
   getPlansWithSpaces,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
-import { getSpaces, getSpace } from 'access_control/OrganizationMembershipRepository';
+import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import {
@@ -41,10 +41,21 @@ import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
+// NOTE(jo-sm): in the future we may want to have both a global list of `from` keys, as well
+//              as a list of keys specific to preselecting the apps pkg, but since there is no
+//              distinction at the moment it's a future problem(tm).
+// TODO(jo-sm): Expose these when we refactor this to be "the" route for all space creation
+export const PRESELECT_APPS_PKG_FROM_KEYS = [
+  'marketing_cta',
+  'compose_app',
+  'launch_app',
+  'space_home',
+];
+
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) => async () => {
+const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
@@ -52,7 +63,9 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     organizationId,
   });
 
-  let hasPurchasedComposeLaunch, composeAndLaunchProductRatePlan;
+  let hasPurchasedComposeLaunch;
+  let composeAndLaunchProductRatePlan;
+
   if (isAppPurchasingEnabled) {
     const [addOnProductRatePlans, plans] = await Promise.all([
       getAddOnProductRatePlans(endpoint),
@@ -81,7 +94,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
 
   const [
     organization,
-    orgSpaceMetadata,
     organizationMembership,
     basePlan,
     currentSpaceRatePlan,
@@ -92,8 +104,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     pageContent,
   ] = await Promise.all([
     TokenStore.getOrganization(organizationId),
-    // We don't care about the actual space data, just the total number of spaces in the org
-    getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
     getBasePlan(endpoint),
     spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
@@ -118,10 +128,9 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
 
-  const numSpacesInOrg = orgSpaceMetadata.total;
   let selectedPlatform;
 
-  if (viaMarketingCTA && numSpacesInOrg === 0) {
+  if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
     selectedPlatform = PLATFORM_CONTENT.composePlatform;
   }
 
@@ -161,12 +170,12 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       currentSpacePlan: currentSpaceRatePlan,
       canPurchaseApps: isAppPurchasingEnabled ? !hasPurchasedComposeLaunch : undefined,
       from,
-      performancePackagePreselected: viaMarketingCTA,
+      performancePackagePreselected: !!selectedPlatform,
     }
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId, from }) => {
   const {
     state: { sessionId, purchasingApps },
     dispatch,
@@ -175,9 +184,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) =>
   // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
-  const { error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, viaMarketingCTA, from, dispatch), [])
-  );
+  const { error } = useAsync(useCallback(initialFetch(orgId, spaceId, from, dispatch), []));
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (purchasingApps === undefined) {
@@ -217,6 +224,5 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) =>
 SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
-  viaMarketingCTA: PropTypes.bool,
   from: PropTypes.string,
 };

@@ -6,9 +6,8 @@ import { SpacePurchaseContextProvider } from '../context';
 
 export const newSpaceState = {
   name: 'new_space',
-  url: '/new_space?{from:string}{viaMarketingCTA:bool}',
+  url: '/new_space?{from:string}',
   params: {
-    viaMarketingCTA: false,
     from: '',
   },
   component: withOrganizationRoute((props) => (
