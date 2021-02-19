@@ -207,32 +207,16 @@ describe('utils/SubscriptionUtils', () => {
     });
   });
 
-  describe('#calculateTotalPrice', () => {
+  describe('#calculateSubscriptionTotal', () => {
     it('should be able to calculate the price based on just the base tier with given users', function () {
-      const plansWithMemberships = {
-        allPlans: [basePlan],
-      };
-
-      plansWithMemberships.numMemberships = 3;
-      expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(0);
-
-      plansWithMemberships.numMemberships = 7;
-      expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(0);
-
-      plansWithMemberships.numMemberships = 12;
-      expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(20);
+      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 3)).toBe(0);
+      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 7)).toBe(0);
+      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 12)).toBe(20);
     });
 
     it('should calculate the cost of all spaces and users together', function () {
-      const plansWithMemberships = {
-        allPlans: allPlans,
-      };
-
-      plansWithMemberships.numMemberships = 3;
-      expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(113);
-
-      plansWithMemberships.numMemberships = 12;
-      expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(133);
+      expect(SubscriptionUtils.calculateSubscriptionTotal(allPlans, 3)).toBe(113);
+      expect(SubscriptionUtils.calculateSubscriptionTotal(allPlans, 12)).toBe(133);
     });
   });
 

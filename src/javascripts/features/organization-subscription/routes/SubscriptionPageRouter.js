@@ -10,7 +10,7 @@ import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
-import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
+import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import {
   isOrganizationOnTrial,
   canStartAppTrial,
@@ -25,6 +25,7 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
+
 const getAddOn = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
 
 const getSpacePlans = (plans, accessibleSpaces) =>
@@ -53,7 +54,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => {
+const fetch = (organizationId, { setSpacePlans }) => async () => {
   const organization = await getOrganization(organizationId);
 
   const endpoint = createOrganizationEndpoint(organizationId);
@@ -96,9 +97,11 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   // spaces that current user has access to
   const accessibleSpaces = await getSpaces();
 
+  // separating all the different types of plans
   const basePlan = getBasePlan(plansWithSpaces);
   const addOn = getAddOn(plansWithSpaces);
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
+
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
   const orgEndpoint = createOrganizationEndpoint(organizationId);
@@ -108,12 +111,6 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   ]);
 
   setSpacePlans(spacePlans);
-  setGrandTotal(
-    calculateTotalPrice({
-      allPlans: plansWithSpaces.items,
-      numMemberships,
-    })
-  );
 
   return {
     basePlan,
@@ -136,21 +133,19 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
   const [grandTotal, setGrandTotal] = useState(0);
 
   const { isLoading, error, data = {} } = useAsync(
-    useCallback(fetch(organizationId, { setSpacePlans, setGrandTotal }), [])
+    useCallback(fetch(organizationId, { setSpacePlans }), [])
   );
 
   useEffect(() => {
-    if (spacePlans.length === 0 || !data.basePlan || !data.numMemberships) {
-      return;
-    }
+    if (spacePlans.length > 0 && data.addOn && data.basePlan && data.numMemberships) {
+      // spacePlans gets updated after the user deletes a space
+      // we need to add the basePlan and the addons to it so we can correctly calculate the GrandTotal
+      const allPlans = spacePlans.concat([data.basePlan, data.addOn]);
+      const totalPrice = calculateSubscriptionTotal(allPlans, data.numMemberships);
 
-    setGrandTotal(
-      calculateTotalPrice({
-        allPlans: spacePlans.concat([data.basePlan]),
-        numMemberships: data.numMemberships,
-      })
-    );
-  }, [spacePlans, data.basePlan, data.numMemberships]);
+      setGrandTotal(totalPrice);
+    }
+  }, [spacePlans, data.addOn, data.basePlan, data.numMemberships]);
 
   if (error) {
     return <ForbiddenPage />;

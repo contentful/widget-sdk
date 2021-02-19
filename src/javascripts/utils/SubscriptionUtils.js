@@ -1,3 +1,5 @@
+import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
+
 /**
  * Calculates the cost for the given numMemberships for a given basePlan.
  * @param  {Object} options.basePlan       The base plan object
@@ -59,14 +61,14 @@ export function calcUsersMeta({ basePlan, numMemberships }) {
 
 /**
  * Calculates the total price for all plans and users
- * @param  {Array} options.allPlans       All plan objects
- * @param  {Number} options.numMemberships Number of memberships
- * @return {Number}                        Total cost
+ * @param  {Array} allPlans Array with all subscription plan objects
+ * @param  {Number} numMemberships Number of memberships
+ * @return {Number} Total cost
  */
-export function calculateTotalPrice({ allPlans, numMemberships }) {
+export function calculateSubscriptionTotal(allPlans, numMemberships) {
   const basePlan = getBasePlan(allPlans);
 
-  const plansCost = calculatePlansCost({ plans: allPlans });
+  const plansCost = calculateTotalPrice(allPlans);
   const usersCost = calculateUsersCost({ basePlan, numMemberships });
 
   return plansCost + usersCost;
