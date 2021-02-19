@@ -14,7 +14,7 @@ import { PlatformKind } from '../../utils/platformContent';
 const mockSelectedPlan = FakeFactory.Plan();
 const mockOrganization = FakeFactory.Organization();
 const mockCurrentSpace = FakeFactory.Space();
-const mockcomposeAndLaunchProductRatePlan = FakeFactory.Plan();
+const mockComposeAndLaunchProductRatePlan = FakeFactory.Plan();
 
 const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
 const mockSessionMetadata = {
@@ -44,8 +44,13 @@ jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
 }));
 
+jest.mock('data/CMA/ProductCatalog', () => ({
+  clearCachedProductCatalogFlags: jest.fn(),
+}));
+
 describe('SpaceUpgradeReceiptStep', () => {
   beforeEach(() => {
+    addProductRatePlanToSubscription.mockResolvedValue(null);
     changeSpacePlan.mockResolvedValue(mockCurrentSpace);
   });
 
@@ -132,32 +137,31 @@ describe('SpaceUpgradeReceiptStep', () => {
     await waitFor(() => {
       expect(addProductRatePlanToSubscription).toBeCalledWith(
         expect.any(Function),
-        mockcomposeAndLaunchProductRatePlan.sys.id
+        mockComposeAndLaunchProductRatePlan.sys.id
       );
     });
   });
 
   it('should change the space plan and purchase the addon serially and show a loading state the entire time', async () => {
-    let resolveChangeSpacePlan;
+    let resolveAddProductRatePlan;
 
-    changeSpacePlan.mockImplementationOnce(
-      () =>
-        new Promise((resolve) => (resolveChangeSpacePlan = resolve.bind(null, mockCurrentSpace)))
+    addProductRatePlanToSubscription.mockImplementationOnce(
+      () => new Promise((resolve) => (resolveAddProductRatePlan = resolve))
     );
 
     build({ selectedPlatform: mockSelectedPlatform });
 
     expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
 
-    await waitFor(() => expect(changeSpacePlan).toBeCalled());
-    expect(addProductRatePlanToSubscription).not.toBeCalled();
+    await waitFor(() => expect(addProductRatePlanToSubscription).toBeCalled());
+    expect(changeSpacePlan).not.toBeCalled();
 
     expect(screen.getByTestId('receipt.loading-envelope')).toBeVisible();
 
-    resolveChangeSpacePlan();
+    resolveAddProductRatePlan();
 
     await waitFor(() => {
-      expect(addProductRatePlanToSubscription).toBeCalled();
+      expect(changeSpacePlan).toBeCalled();
     });
 
     expect(screen.queryByTestId('receipt.loading-envelope')).toBeNull();
@@ -180,7 +184,7 @@ function build(customState) {
     organization: mockOrganization,
     currentSpace: mockCurrentSpace,
     selectedPlan: mockSelectedPlan,
-    composeAndLaunchProductRatePlan: mockcomposeAndLaunchProductRatePlan,
+    composeAndLaunchProductRatePlan: mockComposeAndLaunchProductRatePlan,
     sessionId: mockSessionMetadata.sessionId,
     ...customState,
   });

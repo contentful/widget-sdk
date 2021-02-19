@@ -13,9 +13,13 @@ export const SpaceUpgradeReceiptStep = () => {
 
   const selectedCompose = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
 
-  const { isUpgradingSpace, upgradeError, buttonAction, upgradedSpace } = useSpaceUpgrade();
-  const { isLoading: isPurchasingAddOn, error: addOnPurchaseError } = usePurchaseAddOn(
-    !!upgradedSpace
+  const {
+    isLoading: isPurchasingAddOn,
+    error: addOnPurchaseError,
+    data: shouldActivateSpaceUpgrade,
+  } = usePurchaseAddOn();
+  const { isUpgradingSpace, upgradeError, buttonAction } = useSpaceUpgrade(
+    shouldActivateSpaceUpgrade
   );
 
   const pending = isUpgradingSpace || isPurchasingAddOn;

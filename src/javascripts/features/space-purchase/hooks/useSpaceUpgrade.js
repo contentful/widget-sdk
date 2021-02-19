@@ -28,7 +28,7 @@ const upgradePlan = (space, plan, sessionMetadata) => async () => {
   return result;
 };
 
-export function useSpaceUpgrade() {
+export function useSpaceUpgrade(shouldActivate) {
   const {
     state: { currentSpace, selectedPlan },
   } = useContext(SpacePurchaseState);
@@ -43,9 +43,11 @@ export function useSpaceUpgrade() {
   );
 
   useEffect(() => {
-    runSpaceUpgrade();
+    if (shouldActivate) {
+      runSpaceUpgrade();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [shouldActivate]);
 
   const goToCreatedSpace = async () => {
     await go({

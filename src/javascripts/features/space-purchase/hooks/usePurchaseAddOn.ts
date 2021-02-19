@@ -29,6 +29,7 @@ const purchaseComposeLaunch = (
     });
 
     clearCachedProductCatalogFlags();
+    return true;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       errorType: 'PurchasePerformancePackageError',
@@ -53,7 +54,7 @@ export function usePurchaseAddOn(shouldBegin = true) {
   } = useSpacePurchaseState<ContextState>();
   const sessionMetadata = useSessionMetadata();
 
-  const [{ isLoading, error }, callPurchase] = useAsyncFn(
+  const [{ isLoading, error, data }, callPurchase] = useAsyncFn(
     useCallback(
       purchaseComposeLaunch(
         organization,
@@ -72,6 +73,10 @@ export function usePurchaseAddOn(shouldBegin = true) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldBegin]);
-
-  return { isLoading, error };
+  if (selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH) {
+    return { isLoading, error, data };
+  } else {
+    // we pass isLoading: false because we expect false value not undefined
+    return { isLoading: false, data: true };
+  }
 }
