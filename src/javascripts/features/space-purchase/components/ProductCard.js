@@ -30,14 +30,12 @@ const illustrationHeight = '150px';
 
 const styles = {
   container: css({
-    display: 'flex',
-    flexDirection: 'column',
     position: 'relative',
-    alignItems: 'center',
   }),
   currentTag: css({
     position: 'absolute',
     top: '-10px',
+    left: 'calc(50% - 64px)',
     zIndex: 1,
   }),
   card: css({
