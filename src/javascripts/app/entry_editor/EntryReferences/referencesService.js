@@ -40,21 +40,12 @@ function getUserInfo() {
   };
 }
 
+/**
+ * @deprecated use bulk actions
+ */
 function validateEntities({ entities, action }) {
   const apiClient = new APIClient(createEndpoint());
   return apiClient.validateRelease(action, entities);
 }
 
-async function publishEntities({ entities, action }) {
-  const apiClient = new APIClient(createEndpoint());
-  return apiClient.executeRelease(action, entities);
-}
-
-export {
-  getReferencesForEntryId,
-  getDefaultLocale,
-  getEntityTitle,
-  getUserInfo,
-  validateEntities,
-  publishEntities,
-};
+export { getReferencesForEntryId, getDefaultLocale, getEntityTitle, getUserInfo, validateEntities };

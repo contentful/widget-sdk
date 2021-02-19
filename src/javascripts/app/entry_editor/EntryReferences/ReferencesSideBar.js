@@ -29,7 +29,7 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_PROCESSING_ACTION,
 } from './state/actions';
-import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
+import { validateEntities, getReferencesForEntryId } from './referencesService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { publishBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
@@ -128,22 +128,13 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   };
 
   const handleError = (error) => {
-    if (isBulkActionSupportEnabled) {
-      if (error.statusCode && error.statusCode === 429) {
-        return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
-      }
+    if (error.statusCode && error.statusCode === 429) {
+      return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
+    }
 
-      if (error.statusCode && error.data && error.data.details) {
-        const errored = convertBulkActionErrors(error.data.details.errors);
-        return displayValidation({ errored });
-      }
-    } else {
-      if (error.statusCode && error.statusCode === 422) {
-        const errored = error.data.details.errors;
-        if (errored.length && errored[0].sys) {
-          return displayValidation({ errored });
-        }
-      }
+    if (error.statusCode && error.data && error.data.details) {
+      const errored = convertBulkActionErrors(error.data.details.errors);
+      return displayValidation({ errored });
     }
 
     Notification.error(
@@ -165,18 +156,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     });
 
     try {
-      /**
-       * BULK-ACTIONS: If this Feature Flag is enabled, the publish action will
-       * be placed into a queue and processed asynchronously in the new bulk-actions-api.
-       *
-       * Otherwise, fallback to the original release/immediate/execute logic
-       **/
-      if (isBulkActionSupportEnabled) {
-        await publishBulkAction(selectedEntities);
-      } else {
-        const entitiesToPublish = mapEntities(selectedEntities);
-        await publishEntities({ entities: entitiesToPublish, action: 'publish' });
-      }
+      await publishBulkAction(selectedEntities);
 
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
       getReferencesForEntry();

@@ -374,6 +374,9 @@ export const getEntryReferences = {
   },
 };
 
+/**
+ * @deprecated use Bulk Actions API
+ */
 export const validateEntryReferencesResponse = {
   willReturnNoErrors() {
     cy.addInteraction({
@@ -427,116 +430,6 @@ export const validateEntryReferencesResponse = {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
         body: validateEntryReferencesSeveralErrorsResponse,
-      },
-    }).as('validateEntryReferencesResponse');
-
-    return '@validateEntryReferencesResponse';
-  },
-};
-
-export const publishEntryReferencesResponse = {
-  willReturnNoErrors() {
-    cy.addInteraction({
-      provider: 'releases',
-      state: States.NO_ERRORS,
-      uponReceiving: `publish references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'POST',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
-        body: publishEntryReferencesSeveralRequest,
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: publishEntryReferencesSeveralSuccessResponse,
-      },
-    }).as('publishEntryReferencesResponse');
-
-    return '@publishEntryReferencesResponse';
-  },
-
-  willReturnErrors() {
-    cy.addInteraction({
-      provider: 'releases',
-      state: States.VALIDATION_ERRORS,
-      uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}" with validation error`,
-      withRequest: {
-        method: 'POST',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
-        body: publishEntryReferencesSeveralRequest,
-      },
-      willRespondWith: {
-        status: 422,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: publishEntryReferencesSeveralErrorsResponse,
-      },
-    }).as('publishEntryReferencesResponse');
-
-    return '@publishEntryReferencesResponse';
-  },
-
-  willFail() {
-    cy.addInteraction({
-      provider: 'releases',
-      state: States.ERRORS,
-      uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'POST',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
-        body: null,
-      },
-      willRespondWith: {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: {
-          sys: {
-            id: 'immediate',
-            type: 'ReleaseValidation',
-          },
-          errored: [
-            {
-              sys: {
-                type: 'Link',
-                linkType: 'Entry',
-                id: defaultEntryId,
-              },
-              error: {
-                sys: {
-                  type: 'Error',
-                  id: 'InvalidEntry',
-                },
-                message: 'Validation error',
-                details: {
-                  errors: [
-                    {
-                      name: 'required',
-                      path: ['fields', 'requiredText'],
-                      details: 'The property "requiredText" is required here',
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
       },
     }).as('validateEntryReferencesResponse');
 

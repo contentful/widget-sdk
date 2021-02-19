@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { ReferencesContext } from './ReferencesContext';
 import ReferencesSideBar from './ReferencesSideBar';
 
-import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
+import { validateEntities, getReferencesForEntryId } from './referencesService';
 import { getReleases } from '../../Releases/releasesService';
 
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
@@ -133,7 +133,7 @@ describe('ReferencesSideBar component', () => {
   });
 
   it('should render the success notification after publication', async () => {
-    publishEntities.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
+    publishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
 
     const response = cfResolveResponse(simpleReferences);
     const selectedEntities = cfResolveResponse(arrayOfReferences);
@@ -155,7 +155,7 @@ describe('ReferencesSideBar component', () => {
   });
 
   it('should render the failed notification after failed publication', async () => {
-    publishEntities.mockRejectedValue({ statusCode: 400 });
+    publishBulkAction.mockRejectedValue({ statusCode: 400 });
 
     const response = cfResolveResponse(simpleReferences);
     const selectedEntities = cfResolveResponse(arrayOfReferences);
@@ -177,8 +177,8 @@ describe('ReferencesSideBar component', () => {
   });
 
   it('should render the validation toast after publishing invalid state', async () => {
-    publishEntities.mockRejectedValue({
-      statusCode: 422,
+    publishBulkAction.mockRejectedValue({
+      statusCode: 400,
       data: simpleReferencesPublicationInvalidErrorResponse,
     });
 

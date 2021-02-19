@@ -2745,62 +2745,94 @@ export const simpleReferencesPublicationSuccessResponse = {
   },
 };
 
-export const simpleReferencesPublicationInvalidErrorResponse = {
+const failedBulkAction = {
   sys: {
-    type: 'ReleaseValidation',
-    id: 'immediate',
+    type: 'BulkAction',
+    id: '68YwgXMUWKnuslEvcZrgge',
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'klatj34il0s7',
+      },
+    },
+    environment: {
+      sys: {
+        type: 'Link',
+        linkType: 'Environment',
+        id: 'master',
+      },
+    },
+    createdAt: '2021-02-19T12:25:06.533Z',
+    updatedAt: '2021-02-19T12:25:06.774Z',
+    startedAt: '2021-02-19T12:25:06.673Z',
+    completedAt: '2021-02-19T12:25:06.774Z',
+    createdBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '30G3P0ovxt02h4fj85LyEs',
+      },
+    },
+    status: 'failed',
   },
-  details: {
-    errors: [
-      {
-        sys: {
-          type: 'Link',
-          linkType: 'Entry',
-          id: '3ADrOROW1jot5jExFOjt4i',
-        },
-        error: {
-          sys: {
-            type: 'Error',
-            id: 'InvalidEntry',
-          },
-          message: 'Validation error message',
-          details: {
-            errors: [
-              {
-                name: 'required',
-                path: ['fields', 'requiredText'],
-                details: 'The property "requiredText" is required here',
-              },
-            ],
-          },
-        },
+  action: 'publish',
+  payload: {
+    entities: {
+      sys: {
+        type: 'Array',
       },
-      {
-        sys: {
-          type: 'Link',
-          linkType: 'Asset',
-          id: '1RuPXX12mNeIzKQIcuOWQW',
-        },
-        error: {
+      items: [
+        {
           sys: {
-            type: 'Error',
-            id: 'InvalidEntry',
-          },
-          message: 'Validation error message',
-          details: {
-            errors: [
-              {
-                name: 'required',
-                path: ['fields', 'requiredText'],
-                details: 'The property "requiredText" is required here',
-              },
-            ],
+            type: 'Link',
+            linkType: 'Entry',
+            id: '1u8xSIQR4UaoQOc4m6KiiU',
+            version: 193,
           },
         },
-      },
-    ],
+      ],
+    },
+  },
+  error: {
+    sys: {
+      type: 'Error',
+      id: 'BulkActionFailed',
+    },
+    message: 'Failed to publish content',
+    details: {
+      errors: [
+        {
+          entity: {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: '1u8xSIQR4UaoQOc4m6KiiU',
+            },
+          },
+          error: {
+            sys: {
+              type: 'Error',
+              id: 'InvalidEntry',
+            },
+            message: 'Validation error',
+            details: {
+              errors: [
+                {
+                  name: 'required',
+                  path: ['fields', 'title'],
+                  details: 'The property "title" is required here',
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
   },
 };
+
+export const simpleReferencesPublicationInvalidErrorResponse = failedBulkAction.error;
 
 export const mixedLocalizedReferencesToEntities = {
   sys: {
