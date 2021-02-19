@@ -9,6 +9,7 @@ import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { EnterpriseTalkToUsButton } from './EnterpriseTalkToUsButton';
 
 import EnterpriseIlustration from 'svg/illustrations/apps_purchase_3.svg';
+import ExternalTextLink from 'app/common/ExternalTextLink';
 
 const illustrationHeight = '150px';
 
@@ -40,6 +41,9 @@ const styles = {
   listItem: css({
     display: 'flex',
   }),
+  hidden: css({
+    opacity: 0,
+  }),
   check: css({
     flex: '0 0 18px', // necessary or the check will shrink
     marginTop: '2px', // necessary to center the check with the line height of the text
@@ -48,11 +52,17 @@ const styles = {
   textLeft: css({
     textAlign: 'left',
   }),
+  disabled: css({
+    opacity: 0.3,
+    pointerEvents: 'none',
+  }),
 };
 
-export const EnterpriseCard = ({ organizationId, onSelect }) => {
+export const EnterpriseCard = ({ organizationId, onSelect, disabled = false }) => {
   return (
-    <div className={styles.enterprise} data-test-id="enterprise-card">
+    <div
+      className={cx(styles.enterprise, { [styles.disabled]: disabled })}
+      data-test-id="enterprise-card">
       <EnterpriseIlustration className={styles.illustration} />
 
       <Heading element="h3" className={cx(styles.centeredText, styles.mediumWeight)}>
@@ -66,17 +76,21 @@ export const EnterpriseCard = ({ organizationId, onSelect }) => {
         <List className={styles.enterpriseFeatures} testId="platform-limits">
           <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
-            <Paragraph>Customization of roles &amp; tasks </Paragraph>
+            <Paragraph>Larger spaces and no user limits</Paragraph>
           </ListItem>
           <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
-            <Paragraph>
-              Access to Professional Services, Solution Architects &amp; Customer Success Managers
-            </Paragraph>
+            <Paragraph>Customization of roles &amp; tasks</Paragraph>
           </ListItem>
           <ListItem className={cx(styles.listItem, styles.textLeft)}>
             <Icon icon="CheckCircle" color="positive" className={styles.check} />
-            <Paragraph>SSO, Teams, and User Management API</Paragraph>
+            <Paragraph>SSO, teams, and user management API</Paragraph>
+          </ListItem>
+          <ListItem className={cx(styles.listItem, styles.textLeft, styles.spaceLeft)}>
+            <Icon icon="CheckCircle" color="positive" className={cx(styles.check, styles.hidden)} />
+            <ExternalTextLink href="https://www.contentful.com/pricing/">
+              and more!
+            </ExternalTextLink>
           </ListItem>
         </List>
       </span>
@@ -88,4 +102,5 @@ export const EnterpriseCard = ({ organizationId, onSelect }) => {
 EnterpriseCard.propTypes = {
   organizationId: PropTypes.string,
   onSelect: PropTypes.func,
+  disabled: PropTypes.bool,
 };

@@ -16,8 +16,8 @@ type ContextState = SetRequired<State, 'organization' | 'composeAndLaunchProduct
 const purchaseComposeLaunch = (
   organization: Organization,
   composeAndLaunchProductRatePlan: ProductRatePlan,
-  sessionMetadata,
-  selectedPlan
+  sessionMetadata: unknown,
+  selectedPlan: State['selectedPlan']
 ) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 

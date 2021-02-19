@@ -13,10 +13,9 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Tooltip,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-
-import { PinLabel } from './PinLabel';
 
 const pulse = keyframes({
   from: {
@@ -30,9 +29,21 @@ const pulse = keyframes({
 const illustrationHeight = '150px';
 
 const styles = {
+  container: css({
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    alignItems: 'center',
+  }),
+  currentTag: css({
+    position: 'absolute',
+    top: '-10px',
+    zIndex: 1,
+  }),
   card: css({
     position: 'relative',
     display: 'grid',
+    width: '100%',
     height: '100%',
     rowGap: tokens.spacingXs,
     justifyItems: 'center',
@@ -42,14 +53,14 @@ const styles = {
     transition: 'opacity 0.2s ease-in-out',
   }),
   platform: css({
-    gridTemplateRows: `${illustrationHeight} auto 1fr auto`,
+    gridTemplateRows: `${illustrationHeight} auto 1fr 60px`,
   }),
   spacePlan: css({
     gridTemplateRows: 'auto 1fr auto 2fr',
   }),
   newTag: css({
     '&:before': {
-      content: '"New!"',
+      content: '"New"',
       backgroundColor: tokens.colorBlueMid,
       position: 'absolute',
       top: '-13px',
@@ -90,6 +101,7 @@ const styles = {
   }),
   listItem: css({
     display: 'flex',
+    marginTop: tokens.spacingS,
   }),
   check: css({
     flex: '0 0 18px', // necessary or the check will shrink
@@ -108,18 +120,31 @@ export const ProductCard = ({
   loading = false,
   disabled = false,
   selected = false,
+  current = false,
   content,
   tooltipText = '',
   isNew = false,
   cardType = 'space',
   testId = 'product-card',
 }) => {
+  const isPlatformCard = cardType === 'platform';
+  const isSpaceCard = cardType === 'space';
+
   return (
-    <Tooltip testId="plan-card-tooltip" place="top" content={tooltipText}>
+    <Tooltip
+      targetWrapperClassName={styles.container}
+      testId="plan-card-tooltip"
+      place="top"
+      content={tooltipText}>
+      {!loading && current && isSpaceCard && (
+        <Tag className={styles.currentTag} tagType="positive">
+          Current space
+        </Tag>
+      )}
       <Card
         className={cx(styles.card, {
-          [styles.spacePlan]: cardType === 'space',
-          [styles.platform]: cardType === 'platform',
+          [styles.spacePlan]: isSpaceCard,
+          [styles.platform]: isPlatformCard,
           [styles.newTag]: isNew,
           [styles.disabled]: disabled,
         })}
@@ -128,8 +153,7 @@ export const ProductCard = ({
         selected={selected}
         onClick={onClick}
         testId={testId}>
-        {/** TODO: replace skeletons with final illustration */}
-        {cardType === 'platform' && (
+        {content.illustration && (
           <Flex justifyContent="center" className={styles.illustration}>
             {content.illustration}
           </Flex>
@@ -146,10 +170,8 @@ export const ProductCard = ({
             <SkeletonBodyText lineHeight={16} numberOfLines={2} />
           </SkeletonContainer>
         )}
-        {!loading && !content.price && cardType === 'platform' && (
-          <PinLabel labelText="Your current package" />
-        )}
-        {!loading && content.price != undefined && (
+        {!loading && current && isPlatformCard && <Tag tagType="positive">Current package</Tag>}
+        {!loading && content.price !== undefined && (
           <Paragraph className={styles.price} testId="product-price">
             {content.price === 0 ? (
               <>
@@ -191,6 +213,7 @@ ProductCard.propTypes = {
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
   selected: PropTypes.bool,
+  current: PropTypes.bool,
   isNew: PropTypes.bool,
   content: PropTypes.shape({
     title: PropTypes.string.isRequired,

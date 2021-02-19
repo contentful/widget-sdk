@@ -7,14 +7,19 @@ export enum PlatformKind {
   SPACE_COMPOSE_LAUNCH = 'SPACE_COMPOSE_LAUNCH',
 }
 
-interface PlatformContent {
+interface Platform {
   type: PlatformKind;
   illustration: React.ReactNode;
   title: string;
   description: string;
 }
 
-export const PLATFORM_CONTENT: { [key: string]: PlatformContent } = {
+interface PlatformContents {
+  spacePlatform: Platform;
+  composePlatform: Platform;
+}
+
+export const PLATFORM_CONTENT: PlatformContents = {
   spacePlatform: {
     type: PlatformKind.SPACE,
     illustration: <WebappIlustration />,

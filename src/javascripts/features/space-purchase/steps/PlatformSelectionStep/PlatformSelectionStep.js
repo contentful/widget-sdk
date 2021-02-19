@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useCallback, createRef } from 'react';
+import React, { useContext, useCallback, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Card, Flex, Grid, Heading } from '@contentful/forma-36-react-components';
+import { Card, Flex, Grid, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
@@ -10,13 +10,11 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 
 import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
-import { ProductCard } from '../../components/ProductCard';
+import { PlatformCards } from '../../components/PlatformCards';
 import { SpacePlanCards } from '../../components/SpacePlanCards';
-import { EnterpriseCard } from '../../components/EnterpriseCard';
-import { CONTACT_SALES_HREF } from '../../components/EnterpriseTalkToUsButton';
 import { FAQAccordion } from '../../components/FAQAccordion';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
+import { PlatformKind } from '../../utils/platformContent';
 import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
 
 const styles = {
@@ -62,22 +60,17 @@ export const PlatformSelectionStep = ({ track }) => {
       selectedPlan,
       freeSpaceResource,
       composeAndLaunchProductRatePlan,
+      currentSpace,
     },
     dispatch,
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
 
+  const platformSectionRef = createRef();
   const spaceSectionRef = createRef();
 
   const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
-
-  useEffect(() => {
-    // we unselect any space plan when user changes platform
-    if (selectedPlatform) {
-      dispatch({ type: actions.SET_SELECTED_PLAN, payload: undefined });
-    }
-  }, [dispatch, selectedPlatform]);
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
 
@@ -85,12 +78,19 @@ export const PlatformSelectionStep = ({ track }) => {
     spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [spaceSectionRef]);
 
+  const scrollToPlatformSelection = useCallback(() => {
+    platformSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [platformSectionRef]);
+
   const onSelectSpace = (plan) => {
     track(EVENTS.SPACE_PLAN_SELECTED, {
       selectedPlan: plan,
     });
 
     dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
+
+    // we only scroll the user to platform selection when user is changing a space plan
+    if (currentSpace) scrollToPlatformSelection();
   };
 
   const onSelectPlatform = (platform) => {
@@ -102,124 +102,111 @@ export const PlatformSelectionStep = ({ track }) => {
       type: actions.SET_SELECTED_PLATFORM,
       payload: platform, // TODO: replace this with backend data
     });
-    scrollToSpaceSelection();
+
+    // we only scroll the user to space selection when user is creating a space plan
+    if (!currentSpace) scrollToSpaceSelection();
   };
 
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
-      <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
-        <span className={cx(styles.headingContainer, styles.fullRow)}>
-          <Heading
-            id="platform-selection-heading"
-            element="h2"
-            className={cx(styles.mediumWeight, styles.heading)}>
-            Choose the package that fits your organization needs
-          </Heading>
+      <Flex flexDirection={currentSpace ? 'column-reverse' : 'column'}>
+        <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
+          <span
+            ref={platformSectionRef}
+            className={cx(styles.headingContainer, styles.fullRow, {
+              [styles.disabled]: currentSpace && !selectedPlan,
+              [styles.bigMarginTop]: currentSpace,
+            })}>
+            <Heading
+              id="platform-selection-heading"
+              element="h2"
+              className={cx(styles.mediumWeight, styles.heading)}>
+              {currentSpace ? 'Next, choose ' : 'Choose '}the package that fits your organization
+              needs
+            </Heading>
 
-          <ExternalTextLink
-            testId="package-comparison-link"
-            href={PACKAGES_COMPARISON_HREF}
-            onClick={() => {
-              track(EVENTS.EXTERNAL_LINK_CLICKED, {
-                href: PACKAGES_COMPARISON_HREF,
-                intent: 'packages_comparison',
-              });
-            }}>
-            See comparison packages
-          </ExternalTextLink>
-        </span>
-
-        {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
-          let tooltipText = '';
-          const platformIsComposeLaunch = platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
-          const composeAndLaunchIsLoading =
-            platformIsComposeLaunch && !composeAndLaunchProductRatePlan;
-
-          // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
-          if (
-            platformIsComposeLaunch &&
-            canCreatePaidSpace === false &&
-            !composeAndLaunchIsLoading
-          ) {
-            tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`;
-          }
-
-          const platformPlan = {
-            ...platform,
-            // in the Web app + Compose + Launch card we need to pass the price that we get from the backend
-            ...(platformIsComposeLaunch && {
-              price: composeAndLaunchProductRatePlan?.price,
-            }),
-          };
-
-          return (
-            <ProductCard
-              key={idx}
-              cardType="platform"
-              selected={selectedPlatform?.title === platform.title}
-              onClick={() => onSelectPlatform(platformPlan)}
-              tooltipText={tooltipText}
-              disabled={!!tooltipText || composeAndLaunchIsLoading}
-              loading={composeAndLaunchIsLoading}
-              content={platformPlan}
-              isNew={platformIsComposeLaunch}
-              testId="platform-card"
-            />
-          );
-        })}
-
-        <EnterpriseCard
-          organizationId={organization?.sys.id}
-          handleSelect={() =>
-            track(EVENTS.EXTERNAL_LINK_CLICKED, {
-              href: CONTACT_SALES_HREF,
-              intent: 'upgrade_to_enterprise',
-            })
-          }
-        />
-
-        <span
-          ref={spaceSectionRef}
-          className={cx(styles.headingContainer, styles.fullRow, styles.bigMarginTop, {
-            [styles.disabled]: !selectedPlatform,
-          })}>
-          <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
-            Choose the space size that right for your project
-          </Heading>
-        </span>
-
-        <SpacePlanCards
-          spaceRatePlans={spaceRatePlans}
-          selectedPlatform={selectedPlatform}
-          selectedSpacePlanName={selectedPlan?.name}
-          canCreateFreeSpace={canCreateFreeSpace}
-          canCreatePaidSpace={canCreatePaidSpace}
-          orgHasPaidSpaces={orgHasPaidSpaces}
-          onSelect={onSelectSpace}
-          track={track}
-        />
-
-        {/* The option to "choose space later" should only be shown when an org has paid spaces and
-      selects compose+launch, so they can buy compose+launch without having to buy a new space */}
-        {orgHasPaidSpaces && selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
-          <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
-            <Card
-              className={styles.chooseLaterCard}
-              padding="large"
-              testId="choose-space-later-button"
-              selected={selectedPlan === NO_SPACE_PLAN}
+            <ExternalTextLink
+              testId="package-comparison-link"
+              href={PACKAGES_COMPARISON_HREF}
               onClick={() => {
-                onSelectSpace(NO_SPACE_PLAN);
+                track(EVENTS.EXTERNAL_LINK_CLICKED, {
+                  href: PACKAGES_COMPARISON_HREF,
+                  intent: 'packages_comparison',
+                });
               }}>
-              <Heading element="p">Choose space later</Heading>
-            </Card>
-          </Flex>
-        )}
+              See comparison of packages
+            </ExternalTextLink>
+          </span>
 
-        <div className={cx(styles.fullRow, styles.bigMarginTop)}>
-          <FAQAccordion entries={faqEntries} track={track} />
-        </div>
-      </Grid>
+          <PlatformCards
+            disabled={currentSpace && !selectedPlan}
+            organizationId={organization?.sys.id}
+            composeAndLaunchProductRatePlan={composeAndLaunchProductRatePlan}
+            canCreatePaidSpace={canCreatePaidSpace}
+            selectedPlatform={selectedPlatform}
+            onSelectPlatform={onSelectPlatform}
+            track={track}
+          />
+        </Grid>
+
+        <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
+          <span
+            ref={spaceSectionRef}
+            className={cx(styles.headingContainer, styles.fullRow, {
+              [styles.disabled]: !currentSpace && !selectedPlatform,
+              [styles.bigMarginTop]: !currentSpace,
+            })}>
+            <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
+              {currentSpace
+                ? 'Upgrade your space to'
+                : 'Choose the space size that’s right for your project'}
+            </Heading>
+            {!currentSpace &&
+              !orgHasPaidSpaces &&
+              selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
+                <Paragraph>Purchase a Medium or Large space to get Compose + Launch</Paragraph>
+              )}
+          </span>
+
+          <SpacePlanCards
+            disabled={!currentSpace && !selectedPlatform}
+            spaceRatePlans={spaceRatePlans}
+            selectedPlatform={selectedPlatform}
+            selectedSpacePlanName={selectedPlan?.name}
+            canCreateFreeSpace={canCreateFreeSpace}
+            canCreatePaidSpace={canCreatePaidSpace}
+            orgHasPaidSpaces={orgHasPaidSpaces}
+            onSelect={onSelectSpace}
+          />
+
+          {/**
+           * The option to "Use your existing spaces" should only be shown when:
+           * - the user is buying a space
+           * - the organization has paid spaces
+           * - the user selected compose+launch, so they can buy compose+launch without having to buy a new space
+           */}
+          {!currentSpace &&
+            orgHasPaidSpaces &&
+            selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
+              <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
+                <Card
+                  className={styles.chooseLaterCard}
+                  padding="large"
+                  testId="choose-space-later-button"
+                  selected={selectedPlan === NO_SPACE_PLAN}
+                  onClick={() => {
+                    onSelectSpace(NO_SPACE_PLAN);
+                  }}>
+                  <Heading element="p">Use your existing spaces</Heading>
+                </Card>
+              </Flex>
+            )}
+        </Grid>
+      </Flex>
+
+      <Flex flexDirection="column" marginTop="spacing4Xl">
+        <FAQAccordion entries={faqEntries} track={track} />
+      </Flex>
     </section>
   );
 };

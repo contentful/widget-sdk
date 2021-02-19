@@ -37,7 +37,7 @@ describe('PlatformSelectionStep', () => {
     const comparisonLink = screen.getByTestId('package-comparison-link');
 
     expect(comparisonLink).toBeVisible();
-    expect(comparisonLink.textContent).toBe('See comparison packages');
+    expect(comparisonLink.textContent).toBe('See comparison of packages');
     expect(comparisonLink.getAttribute('href')).toBe(PACKAGES_COMPARISON_HREF);
 
     userEvent.click(comparisonLink);

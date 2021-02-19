@@ -102,7 +102,8 @@ export function ReceiptMessage({
           <>
             <Paragraph>
               You successfully purchased the {PLATFORM_CONTENT.composePlatform.title} package
-              {selectedSpacePlan && (
+              {isSpaceUpgrade && <> and changed your space to a {planName} space</>}
+              {!isSpaceUpgrade && selectedSpacePlan && (
                 <>
                   {' '}
                   and a new {planName} space. Update the new space name anytime on the{' '}

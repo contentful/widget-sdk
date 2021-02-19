@@ -126,8 +126,9 @@ export const SpacePurchaseContainer = ({ track }) => {
     setCurrentStep(nextStep);
   };
 
-  const onPlatformSelect = () => {
-    if (selectedComposeLaunch) {
+  const onContinue = () => {
+    // We skip space details step if user selected C+L or they are changing a space’s plan
+    if (selectedComposeLaunch || currentSpace) {
       goToStep(organization.isBillable ? STEPS.CONFIRMATION : STEPS.BILLING_DETAILS);
     } else {
       goToStep(STEPS.SPACE_DETAILS);
@@ -217,23 +218,30 @@ export const SpacePurchaseContainer = ({ track }) => {
           <ConfirmationStep
             track={track}
             onBack={() => {
-              if (!organization.isBillable) {
-                goToStep(STEPS.CREDIT_CARD_DETAILS);
-              } else if (!currentSpace) {
-                goToStep(selectedComposeLaunch ? STEPS.PLATFORM_SELECTION : STEPS.SPACE_DETAILS);
+              if (organization.isBillable) {
+                // user does not have C+L yet || user selected C+L
+                if (selectedComposeLaunch) {
+                  goToStep(STEPS.PLATFORM_SELECTION);
+                } else {
+                  // if user is changing a space plan send them back to selection step because there is no space to be renamed
+                  goToStep(currentSpace ? STEPS.SPACE_PLAN_SELECTION : STEPS.SPACE_DETAILS);
+                }
               } else {
-                goToStep(STEPS.SPACE_PLAN_SELECTION);
+                // organization has NO billing details
+                goToStep(STEPS.CREDIT_CARD_DETAILS);
               }
             }}
             onSubmit={() => {
               track(EVENTS.CONFIRM_PURCHASE);
 
-              if (selectedComposeLaunch) {
-                // if the user selected compose+launch platform and a space plan
-                // we send them to the normal space creation receipt page
-                goToStep(selectedPlan !== NO_SPACE_PLAN ? STEPS.RECEIPT : STEPS.COMPOSE_RECEIPT);
+              if (currentSpace) {
+                goToStep(STEPS.UPGRADE_RECEIPT);
               } else {
-                goToStep(currentSpace ? STEPS.UPGRADE_RECEIPT : STEPS.RECEIPT);
+                if (selectedPlan === NO_SPACE_PLAN) {
+                  goToStep(STEPS.COMPOSE_RECEIPT);
+                } else {
+                  goToStep(STEPS.RECEIPT);
+                }
               }
             }}
           />
@@ -280,7 +288,7 @@ export const SpacePurchaseContainer = ({ track }) => {
                 <Button
                   testId="platform-select-continue-button"
                   disabled={continueDisabled}
-                  onClick={onPlatformSelect}>
+                  onClick={onContinue}>
                   Continue
                 </Button>
               </Tooltip>

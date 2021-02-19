@@ -23,8 +23,8 @@ jest.mock('features/space-purchase/utils/canCreateSpace', () => ({
 describe('SpacePlanCards', () => {
   let spacePlanCards;
 
-  it('should render three cards for the space plans initially disabled', () => {
-    build({ selectedPlatform: undefined });
+  it('should render three cards for the space plans as disabled if the disabled prop is given', () => {
+    build({ disabled: true });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards).toHaveLength(3);

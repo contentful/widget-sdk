@@ -4,11 +4,14 @@ import { useSpaceUpgrade } from 'features/space-purchase/hooks/useSpaceUpgrade';
 import { usePurchaseAddOn } from '../../hooks/usePurchaseAddOn';
 import { SpacePurchaseState } from 'features/space-purchase/context';
 import { ReceiptView } from '../../components/ReceiptView';
+import { PlatformKind } from '../../utils/platformContent';
 
 export const SpaceUpgradeReceiptStep = () => {
   const {
-    state: { currentSpace },
+    state: { currentSpace, selectedPlatform },
   } = useContext(SpacePurchaseState);
+
+  const selectedCompose = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
 
   const { isUpgradingSpace, upgradeError, buttonAction, upgradedSpace } = useSpaceUpgrade();
   const { isLoading: isPurchasingAddOn, error: addOnPurchaseError } = usePurchaseAddOn(
@@ -27,6 +30,7 @@ export const SpaceUpgradeReceiptStep = () => {
         buttonAction={buttonAction}
         buttonLabel={upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
         hasErrors={hasErrors}
+        selectedCompose={selectedCompose}
         isSpaceUpgrade
       />
     </section>

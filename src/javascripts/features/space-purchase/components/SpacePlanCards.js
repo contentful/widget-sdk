@@ -6,6 +6,7 @@ import { SPACE_PLANS_CONTENT, SpacePlanKind } from '../utils/spacePurchaseConten
 import { ProductCard } from './ProductCard';
 
 export const SpacePlanCards = ({
+  disabled,
   spaceRatePlans,
   selectedPlatform,
   selectedSpacePlanName,
@@ -33,10 +34,11 @@ export const SpacePlanCards = ({
             <ProductCard
               key={idx}
               cardType="space"
-              loading={!spaceRatePlans}
-              disabled={!selectedPlatform || !!tooltipText}
-              tooltipText={tooltipText}
+              loading={!spaceRatePlans || spaceRatePlans.length === 0}
+              disabled={disabled || plan.currentPlan || !!tooltipText}
               selected={!!plan.name && plan.name === selectedSpacePlanName}
+              current={plan.currentPlan}
+              tooltipText={tooltipText}
               onClick={() => onSelect(plan)}
               content={content}
               testId="space-plan-card"
@@ -49,6 +51,7 @@ export const SpacePlanCards = ({
 };
 
 SpacePlanCards.propTypes = {
+  disabled: PropTypes.bool,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   selectedPlatform: PropTypes.object,
   selectedSpacePlanName: PropTypes.string,
@@ -74,17 +77,13 @@ function getTooltipText(
   canCreateFreeSpace,
   canCreatePaidSpace
 ) {
-  if (!selectedPlatform) {
-    return '';
-  }
-
   // freeSpace is disabled when selectedPlatform is SPACE+COMPOSE and they don't have any paid spaces
   if (
     planType === SpacePlanKind.COMMUNITY &&
-    selectedPlatform.type === PlatformKind.SPACE_COMPOSE_LAUNCH &&
+    selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH &&
     !orgHasPaidSpaces
   ) {
-    return 'You must have a paid space to purchase Compose + Launch';
+    return 'Purchase a space to get Compose + Launch';
   }
 
   // freeSpace is disabled when user cannot make another freeSpace, needs to check false as it is undefined while loading.

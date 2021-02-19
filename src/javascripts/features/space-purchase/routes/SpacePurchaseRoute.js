@@ -20,8 +20,8 @@ import {
   fetchSpacePurchaseContent,
   fetchPlatformPurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
-import { PlatformKind } from 'features/space-purchase/utils/platformContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
 import { getOrganizationMembership } from 'services/OrganizationRoles';
@@ -70,15 +70,21 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
   // Only should be purchasing apps if purchasing of apps is enabled and they haven't purchased compose+launch yet.
   const purchasingApps = isAppPurchasingEnabled && !hasPurchasedComposeLaunch;
 
+  // Dispatch currentSpace early so we can define if the user is creating or changing a space
+  if (spaceId) {
+    const currentSpace = await getSpace(spaceEndpoint);
+
+    dispatch({ type: actions.SET_CURRENT_SPACE, payload: currentSpace });
+  }
+
   dispatch({ type: actions.SET_PURCHASING_APPS, payload: purchasingApps });
 
   const [
     organization,
     orgSpaceMetadata,
     organizationMembership,
-    currentSpace,
-    currentSpaceRatePlan,
     basePlan,
+    currentSpaceRatePlan,
     rawSpaceRatePlans,
     subscriptionPlans,
     freeSpaceResource,
@@ -86,13 +92,11 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     pageContent,
   ] = await Promise.all([
     TokenStore.getOrganization(organizationId),
-
     // We don't care about the actual space data, just the total number of spaces in the org
     getSpaces(endpoint, { limit: 0 }),
     getOrganizationMembership(organizationId),
-    spaceId ? getSpace(spaceEndpoint) : undefined,
-    spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
     getBasePlan(endpoint),
+    spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
     getSpaceProductRatePlans(endpoint, spaceId),
     getSpacePlans(endpoint),
     createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
@@ -118,7 +122,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
   let selectedPlatform;
 
   if (viaMarketingCTA && numSpacesInOrg === 0) {
-    selectedPlatform = PlatformKind.SPACE_COMPOSE_LAUNCH;
+    selectedPlatform = PLATFORM_CONTENT.composePlatform;
   }
 
   const sessionId = alnum(16);
@@ -128,7 +132,6 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
     payload: {
       organization,
       currentSpaceRatePlan,
-      currentSpace,
       sessionId,
       templatesList,
       spaceRatePlans,
@@ -137,6 +140,7 @@ const initialFetch = (organizationId, spaceId, viaMarketingCTA, from, dispatch) 
       pageContent,
       selectedPlatform,
       composeAndLaunchProductRatePlan,
+      purchasingApps,
     },
   });
 
@@ -213,6 +217,6 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, viaMarketingCTA, from }) =>
 SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
-  viaMarketingCTA: PropTypes.bool.isRequired,
+  viaMarketingCTA: PropTypes.bool,
   from: PropTypes.string,
 };

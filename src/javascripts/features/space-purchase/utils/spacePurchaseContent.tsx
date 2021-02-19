@@ -46,7 +46,7 @@ export const SPACE_PLANS_CONTENT: SpacePurchaseContent[] = [
     type: SpacePlanKind.LARGE,
     title: 'Large space',
     description:
-      'Stand-alone experiences like a blog, or suite of pages that need more discrete publishing permissions or serve up to 10 markets',
+      'Stand-alone experiences like a suite of pages that need more discrete publishing permissions or serve up to 10 markets',
     limits: [
       '10 locales',
       '4 role types (Admin, Editor, Author & Translators)',
