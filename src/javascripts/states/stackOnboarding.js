@@ -1,49 +1,54 @@
-import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import React from 'react';
 import GetStartedScreen from 'components/shared/stack-onboarding/screens/GetStartedScreen';
 import CopyScreen from 'components/shared/stack-onboarding/screens/CopyScreen';
 import ExploreScreen from 'components/shared/stack-onboarding/screens/ExploreScreen';
 import DeployScreen from 'components/shared/stack-onboarding/screens/DeployScreen';
+import OnboardingRoute from 'components/shared/stack-onboarding/OnboardingRoute';
 
 const getStarted = {
   name: 'getStarted',
   url: '/get-started',
-  component: GetStartedScreen,
+  component: () => (
+    <OnboardingRoute>
+      <GetStartedScreen />
+    </OnboardingRoute>
+  ),
 };
 
 const copyRepo = {
   name: 'copy',
   url: '/copy',
-  component: CopyScreen,
+  component: () => (
+    <OnboardingRoute>
+      <CopyScreen />
+    </OnboardingRoute>
+  ),
 };
 
 const explore = {
   name: 'explore',
   url: '/explore',
-  component: ExploreScreen,
+  component: () => (
+    <OnboardingRoute>
+      <ExploreScreen />
+    </OnboardingRoute>
+  ),
 };
 
 const deploy = {
   name: 'deploy',
   url: '/deploy',
-  component: DeployScreen,
+  component: () => (
+    <OnboardingRoute>
+      <DeployScreen />
+    </OnboardingRoute>
+  ),
 };
 
 export default {
   name: 'onboarding',
   url: '/onboarding',
   abstract: true,
-  onEnter: [
-    '$state',
-    'spaceContext',
-    function ($state, spaceContext) {
-      const spaceId = spaceContext.getId();
-
-      // The onboarding steps are accessible only when
-      // the user is in the context of the onboarding space
-      if (!checkSpace(spaceId)) {
-        $state.go('spaces.detail.home', { spaceId });
-      }
-    },
-  ],
+  component: OnboardingRoute,
   children: [getStarted, copyRepo, explore, deploy],
 };

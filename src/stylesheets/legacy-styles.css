@@ -9079,6 +9079,7 @@ pre,
     background: var(--color-element-lightest);
   }
   .modern-stack-onboarding--wrapper {
+    height: 100%;
     margin: 0 auto;
     max-width: 1500px;
   }

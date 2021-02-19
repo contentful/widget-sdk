@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@contentful/forma-36-react-components';
 
-class Button extends React.Component {
+class CustomButton extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -10,20 +11,14 @@ class Button extends React.Component {
   };
 
   render() {
-    const { children, className, isLoading, disabled, ...props } = this.props;
-
-    const classNames = `
-    button btn-action
-    ${isLoading ? 'is-loading' : ''}
-    ${className || ''}
-  `;
+    const { children, isLoading, disabled, ...props } = this.props;
 
     return (
-      <button className={classNames} disabled={Boolean(disabled)} {...props}>
+      <Button loading={isLoading} disabled={Boolean(disabled)} {...props}>
         {children}
-      </button>
+      </Button>
     );
   }
 }
 
-export default Button;
+export default CustomButton;
