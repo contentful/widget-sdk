@@ -4,14 +4,15 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 import { go } from 'states/Navigator';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
+import { PLATFORM_CONTENT } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
+import { NO_SPACE_PLAN } from '../../context';
 
 const mockOrganization = Fake.Organization();
 const mockcomposeAndLaunchProductRatePlan = Fake.Plan();
-const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { ...PLATFORM_CONTENT.composePlatform, price: 999 };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -76,6 +77,7 @@ function build() {
   renderWithProvider(ComposeAndLaunchReceiptStep, {
     organization: mockOrganization,
     selectedPlatform: mockSelectedPlatform,
+    selectedPlan: NO_SPACE_PLAN,
     composeAndLaunchProductRatePlan: mockcomposeAndLaunchProductRatePlan,
   });
 }

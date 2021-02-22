@@ -164,7 +164,7 @@ describe('SpacePurchaseContainer', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
-      expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
+      expect(screen.getByTestId('order-summary.selected-plan')).toHaveTextContent(
         mockSpaceRatePlans[1].name
       );
       expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(

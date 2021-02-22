@@ -14,6 +14,7 @@ import {
 import { Flex } from '@contentful/forma-36-react-components';
 import { Price } from 'core/components/formatting';
 import tokens from '@contentful/forma-36-tokens';
+import { NO_SPACE_PLAN } from '../context';
 
 import { SpacePurchaseState } from '../context';
 
@@ -79,19 +80,16 @@ export const PaymentSummary = ({ showButtons = false, onConfirm, onBack }) => {
         </Paragraph>
 
         <List className={styles.list}>
-          {selectedPlatform && (
+          {/* Only show the platform as a line item if compose+launch is selected */}
+          {selectedPlatform?.price > 0 && (
             <ListItem testId="order-summary.selected-platform" className={styles.listItem}>
               <span>{selectedPlatform.title}</span> <Price value={selectedPlatform.price} />
             </ListItem>
           )}
-          {selectedPlatform && selectedPlan && (
+          {/* Only show space as a line item if a space is actually selected*/}
+          {selectedPlan !== NO_SPACE_PLAN && (
             <ListItem testId="order-summary.selected-plan" className={styles.listItem}>
               <span>{selectedPlan.name} space</span> <Price value={selectedPlan.price} />
-            </ListItem>
-          )}
-          {!selectedPlatform && selectedPlan && (
-            <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
-              <span>Space</span> <span>{selectedPlan.name}</span>
             </ListItem>
           )}
           <ListItem

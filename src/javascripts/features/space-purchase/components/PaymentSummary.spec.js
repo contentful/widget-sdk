@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { PLATFORM_CONTENT } from '../utils/platformContent';
-import { SpacePurchaseState } from '../context';
+import { SpacePurchaseState, NO_SPACE_PLAN } from '../context';
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
-const mockSelectedPlatform = { title: PLATFORM_CONTENT.composePlatform.title, price: 999 };
+const mockSelectedPlatform = { ...PLATFORM_CONTENT.composePlatform, price: 999 };
 
 const formatPrice = (value) => `$${parseInt(value, 10).toLocaleString('en-US')}`;
 
@@ -14,7 +14,7 @@ describe('PaymentSummary', () => {
   it('should show the plan name and monthly total', () => {
     build();
 
-    expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
+    expect(screen.getByTestId('order-summary.selected-plan')).toHaveTextContent(
       mockSelectedPlan.name
     );
     expect(screen.getByTestId('order-summary.monthly-total')).toHaveTextContent(
@@ -37,7 +37,7 @@ describe('PaymentSummary', () => {
   });
 
   it('should show the platform name, price and monthly total when no space plan is selected', () => {
-    build(null, { selectedPlatform: mockSelectedPlatform, selectedPlan: undefined });
+    build(null, { selectedPlatform: mockSelectedPlatform, selectedPlan: NO_SPACE_PLAN });
 
     expect(screen.getByTestId('order-summary.selected-platform')).toHaveTextContent(
       `${mockSelectedPlatform.title} ${formatPrice(mockSelectedPlatform.price)}`
@@ -75,10 +75,8 @@ describe('PaymentSummary', () => {
 
 function build(customProps, customState) {
   const props = {
-    selectedPlan: mockSelectedPlan,
     ...customProps,
   };
-
   const contextValue = {
     state: { selectedPlan: mockSelectedPlan, ...customState },
     dispatch: jest.fn(),
