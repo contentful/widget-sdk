@@ -19,5 +19,5 @@ export {
 } from './services/AppTrialService';
 
 export { createAppTrialRepo } from './services/AppTrialRepo';
-
+export { trialState } from './trialState';
 export type { AppTrialFeature } from './services/AppTrialRepo';
