@@ -14,10 +14,11 @@ import { noop } from 'lodash';
 import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
 import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
-import { Search, usePaginator, useSearchController } from 'features/entity-search';
+import { EntitySearch, usePaginator, useSearchController } from 'features/entity-search';
 import { getCreatableContentTypes, getReadableContentTypes } from 'data/ContentTypeRepo/filter';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { LoadingEmptyState } from 'features/loading-state';
+import { useTagsFeatureEnabled } from 'features/content-tags';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -95,9 +96,10 @@ export const EntitiesView = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const { contentTypeId } = listViewContext.getView();
   const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { tagsEnabled, isTagsEnabledLoading } = useTagsFeatureEnabled();
 
   const [
-    { isLoading, entities, hasEntities, hasNoSearchResults, showNoEntitiesAdvice },
+    { isLoading: searchLoading, entities, hasEntities, hasNoSearchResults, showNoEntitiesAdvice },
     { updateEntities },
   ] = useSearchController({
     listViewContext,
@@ -107,7 +109,7 @@ export const EntitiesView = ({
     getListQuery: searchControllerProps.getListQuery,
     keys: searchControllerProps.keys,
   });
-
+  const isLoading = isTagsEnabledLoading || searchLoading;
   const pageCount = paginator.getPageCount();
   const isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
 
@@ -158,13 +160,14 @@ export const EntitiesView = ({
             icon={<ProductIcon icon={title} size="large" />}
             actions={
               <div className={styles.header}>
-                <Search
+                <EntitySearch
                   className={styles.search}
                   entityType={entityType}
                   isLoading={isLoading}
                   listViewContext={listViewContext}
                   onUpdate={onUpdateSearch}
-                  readableContentTypes={readableContentTypes}
+                  contentTypes={readableContentTypes}
+                  withMetadata={tagsEnabled}
                 />
                 <div id="saved-views-link-portal-entry" />
                 {!showNoEntitiesAdvice && renderAddEntityActions(renderPropArgs, styles.addButton)}

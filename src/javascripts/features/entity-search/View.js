@@ -6,7 +6,7 @@ import { css } from 'emotion';
 import { Icon, Spinner, TextInput } from '@contentful/forma-36-react-components';
 import { Keys } from './Keys';
 import tokens from '@contentful/forma-36-tokens';
-import { MetadataTags, useTagsFeatureEnabled } from 'features/content-tags';
+import { MetadataTags } from 'features/content-tags';
 import createUserCache from 'data/userCache';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { FilterPill } from './FilterPill';
@@ -154,10 +154,9 @@ const styles = {
 };
 
 export function Search(props) {
-  const { tagsEnabled: withMetadata } = useTagsFeatureEnabled();
   return (
     <MetadataTags>
-      <View withMetadata={withMetadata} {...props} />
+      <View {...props} />
     </MetadataTags>
   );
 }

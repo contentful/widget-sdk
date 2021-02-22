@@ -23,9 +23,11 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   const initial = viewPersistor.read();
 
   const ref = useRef(initial);
+  const lastAction = useRef();
 
   const updateRef = useCallback(
-    (callback) => {
+    (callback, action) => {
+      lastAction.current = action;
       viewPersistor.save(ref.current);
       callback?.(ref.current);
       onUpdate?.(ref.current);
@@ -47,7 +49,7 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   const assignView = useCallback(
     (view, callback) => {
       assign(ref.current, view);
-      updateRef(callback);
+      updateRef(callback, 'assignView');
     },
     [updateRef]
   );
@@ -55,12 +57,19 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   const setView = useCallback(
     (view, callback) => {
       ref.current = view;
-      updateRef(callback);
+      updateRef(callback, 'setView');
     },
     [updateRef]
   );
 
   const getView = () => ref.current;
 
-  return { setView, assignView, getView };
+  return {
+    setView,
+    assignView,
+    getView,
+    get lastAction() {
+      return lastAction.current;
+    },
+  };
 };

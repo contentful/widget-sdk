@@ -7,8 +7,8 @@ import * as fake from 'test/helpers/fakeFactory';
 const space = fake.Space();
 const organization = fake.Organization();
 
-jest.mock('features/entity-search/View', () => ({
-  Search: (props) => <div data-test-id="search">{JSON.stringify(props)}</div>,
+jest.mock('features/entity-search/SearchProxy', () => ({
+  SearchProxy: (props) => <div data-test-id="search">{JSON.stringify(props)}</div>,
 }));
 
 jest.mock('features/entity-views/core/SavedViews/Sidebar', () => ({
@@ -76,6 +76,7 @@ describe('EntitiesView', () => {
     expect(queryByTestId('workbench-sidebar')).not.toBeInTheDocument();
     expect(queryByTestId('search')).toBeInTheDocument();
   });
+
   it('should render the entity list', async () => {
     const entities = [{ sys: { id: 'entry-id' }, isDeleted: () => false }];
     entities.total = 1;
