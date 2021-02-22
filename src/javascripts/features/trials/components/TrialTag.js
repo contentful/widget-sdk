@@ -110,13 +110,11 @@ export const TrialTag = () => {
     return null;
   }
 
-  let title;
   let daysLeft;
   let ctaType;
   let pathParamsObj;
 
   if (isEnterpriseTrial) {
-    title = 'TRIAL';
     daysLeft = calcTrialDaysLeft(organization.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.ENTERPRISE_TRIAL_TAG;
     pathParamsObj = {
@@ -129,7 +127,6 @@ export const TrialTag = () => {
       return null;
     }
     daysLeft = calcTrialDaysLeft(data.appFeature.sys.trial.endsAt);
-    title = 'APPS TRIAL';
     ctaType = CTA_EVENTS.APP_TRIAL_TAG;
     pathParamsObj = data.appTrialSpaceId
       ? {
@@ -138,7 +135,6 @@ export const TrialTag = () => {
         }
       : undefined;
   } else if (isTrialSpace || isTrialSpaceExpired) {
-    title = 'TRIAL';
     daysLeft = calcTrialDaysLeft(space.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.TRIAL_SPACE_TAG;
     pathParamsObj = {
@@ -158,7 +154,7 @@ export const TrialTag = () => {
 
   const renderContent = () => (
     <div>
-      {title} -{' '}
+      TRIAL -{' '}
       {isAppTrialExpired || isTrialSpaceExpired ? (
         'EXPIRED'
       ) : (

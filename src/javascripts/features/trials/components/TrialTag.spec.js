@@ -322,9 +322,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(
-          `APPS TRIAL - ${daysLeft} DAYS`
-        )
+        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
       );
     });
 
@@ -351,9 +349,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(
-          `APPS TRIAL - ${daysLeft} DAYS`
-        )
+        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
       );
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
     });
@@ -362,9 +358,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(
-          `APPS TRIAL - ${daysLeft} DAYS`
-        )
+        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
       );
     });
 
@@ -376,7 +370,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`APPS TRIAL - EXPIRED`)
+        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - EXPIRED`)
       );
     });
 
@@ -411,9 +405,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(
-          `APPS TRIAL - ${daysLeft} DAYS`
-        )
+        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
       );
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
 
