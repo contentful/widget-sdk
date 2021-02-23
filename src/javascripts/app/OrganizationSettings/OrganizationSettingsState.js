@@ -23,7 +23,7 @@ import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
-import { isOrganizationOnTrial } from 'features/trials';
+import { trialState, isOrganizationOnTrial } from 'features/trials';
 import AccountView from 'account/AccountView';
 
 const resolveOrganizationData = [
@@ -108,5 +108,6 @@ export const organization = {
     subscription,
     subscriptionBilling,
     userGatekeeper,
+    trialState,
   ],
 };
