@@ -6,6 +6,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { changeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
+import * as TokenStore from 'services/TokenStore';
 
 import { renderWithProvider } from '../../__tests__/helpers';
 import { SpaceUpgradeReceiptStep } from './SpaceUpgradeReceiptStep';
@@ -42,6 +43,7 @@ jest.mock('states/Navigator', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
+  refresh: jest.fn(),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
@@ -59,6 +61,7 @@ describe('SpaceUpgradeReceiptStep', () => {
 
     await waitFor(() => {
       expect(changeSpacePlan).toHaveBeenCalled();
+      expect(TokenStore.refresh).toBeCalled();
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_TYPE_CHANGE, mockSessionMetadata, {

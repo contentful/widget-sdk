@@ -5,6 +5,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useAsyncFn } from 'core/hooks/useAsync';
+import * as TokenStore from 'services/TokenStore';
 
 import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
@@ -28,6 +29,7 @@ const upgradePlan = (space, plan, sessionMetadata) => async () => {
     result = await changeSpacePlan(endpoint, plan.sys.id);
 
     trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata, { selectedPlan: plan });
+    await TokenStore.refresh();
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
       errorType: SPACE_CHANGE_ERROR,

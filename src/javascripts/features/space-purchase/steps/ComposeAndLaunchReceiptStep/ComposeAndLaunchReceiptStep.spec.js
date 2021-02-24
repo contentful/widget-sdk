@@ -8,6 +8,7 @@ import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
+import * as TokenStore from 'services/TokenStore';
 import { NO_SPACE_PLAN } from '../../context';
 
 const mockOrganization = Fake.Organization();
@@ -20,6 +21,10 @@ jest.mock('states/Navigator', () => ({
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   clearCachedProductCatalogFlags: jest.fn(),
+}));
+
+jest.mock('services/TokenStore', () => ({
+  refresh: jest.fn(),
 }));
 
 jest.mock('features/pricing-entities', () => ({
@@ -50,6 +55,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
         mockcomposeAndLaunchProductRatePlan.sys.id
       );
       expect(clearCachedProductCatalogFlags).toBeCalled();
+      expect(TokenStore.refresh).toBeCalled();
     });
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(

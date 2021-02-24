@@ -8,6 +8,7 @@ import type { SetRequired } from '../types';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useSessionMetadata } from './useSessionMetadata';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
+import * as TokenStore from 'services/TokenStore';
 
 import { PlatformKind } from '../utils/platformContent';
 
@@ -40,6 +41,7 @@ const purchaseComposeLaunch = (
     });
 
     clearCachedProductCatalogFlags();
+    await TokenStore.refresh();
     return true;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {

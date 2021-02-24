@@ -11,6 +11,7 @@ import * as $rootScope from 'ng/$rootScope';
 import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
+import * as TokenStore from 'services/TokenStore';
 
 const mockSelectedPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 const spaceName = 'My Space';
@@ -48,6 +49,7 @@ jest.mock('states/Navigator', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
+  refresh: jest.fn(),
 }));
 
 describe('SpaceCreationReceiptStep', () => {
@@ -107,6 +109,7 @@ describe('SpaceCreationReceiptStep', () => {
     await waitFor(() => {
       expect(redirectToNewSpace.hasAttribute('disabled')).toBeFalsy();
       expect(clearCachedProductCatalogFlags).toBeCalled();
+      expect(TokenStore.refresh).toBeCalled();
     });
   });
 

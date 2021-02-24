@@ -7,6 +7,7 @@ import { useAsyncFn } from 'core/hooks/useAsync';
 
 import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
+import * as TokenStore from 'services/TokenStore';
 
 export const SPACE_CREATION_ERROR = 'CreateSpaceError';
 
@@ -26,6 +27,8 @@ const createSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) =
     trackEvent(EVENTS.SPACE_CREATED, sessionMetadata, {
       selectedPlan,
     });
+
+    await TokenStore.refresh();
 
     return newSpace;
   } catch (error) {
