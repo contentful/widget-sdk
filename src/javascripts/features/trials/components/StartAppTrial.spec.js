@@ -1,12 +1,13 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
+
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
-import { StartAppTrial } from './StartAppTrial';
 import { startAppTrial } from 'features/trials';
 import * as TokenStore from 'services/TokenStore';
-import { getModule } from 'core/NgRegistry';
+
+import { StartAppTrial } from './StartAppTrial';
 
 const mockedOrg = fake.Organization();
 const mockedTrialSpace = fake.Space();
@@ -33,6 +34,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('features/trials', () => ({
   startAppTrial: jest.fn(),
+  spaceSetUp: jest.fn(),
 }));
 
 const mockResetWithSpace = jest.fn().mockResolvedValue({});
@@ -86,12 +88,6 @@ describe('StartAppTrial', () => {
     build();
 
     await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
-    expect(getModule).toHaveBeenCalledTimes(1);
-    expect(TokenStore.refresh).toHaveBeenCalledTimes(1);
-    expect(TokenStore.getSpace).toHaveBeenCalledTimes(1);
-    expect(mockResetWithSpace).toHaveBeenCalledTimes(1);
-    expect(mockGetAppByIdOrSlug).toHaveBeenCalledTimes(2);
-    expect(mockInstallApp).toHaveBeenCalledTimes(2);
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {

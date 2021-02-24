@@ -20,17 +20,13 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { links } from '../utils';
 import { go } from 'states/Navigator';
-import * as TokenStore from 'services/TokenStore';
 
-import { getModule } from 'core/NgRegistry';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { getAppsRepo } from 'features/apps-core';
-import { AppManager } from 'features/apps';
 
 import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
@@ -40,14 +36,7 @@ import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import {
-  EnterpriseTrialInfo,
-  isOrganizationOnTrial,
-  spaceSetUp,
-  SpacesListForMembers,
-  startAppTrial,
-} from 'features/trials';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
   sidebar: css({
@@ -196,48 +185,9 @@ export function SubscriptionPage({
   };
 
   const handleStartAppTrial = async () => {
-    Notification.success('Preparing your trial');
-    try {
-      await startAppTrial(organizationId).then(async ({ apps, trial }) => {
-        try {
-          const spaceContext = getModule('spaceContext');
-
-          await TokenStore.refresh()
-            .then(() => TokenStore.getSpace(trial.spaceKey))
-            .then((space) => spaceContext.resetWithSpace(space));
-
-          // NOTE: getAppsRepo requires a spaceContext
-          const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug));
-
-          const environmentId = spaceContext.getEnvironmentId();
-          const spaceId = spaceContext.getId();
-
-          const appsManager = new AppManager(
-            spaceContext.cma,
-            environmentId,
-            spaceId,
-            organization.sys.id
-          );
-
-          await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
-
-          Notification.success('Setting up your trial space');
-          await spaceSetUp(getCMAClient({ spaceId, environmentId }));
-
-          go({
-            path: ['spaces', 'detail'],
-            params: {
-              spaceId: trial.spaceKey,
-            },
-          });
-        } catch (e) {
-          throw new Error('Failed to start the App trial');
-        }
-      });
-      Notification.success('Your App trial has started!');
-    } catch (err) {
-      Notification.error('The App trial could not be started!');
-    }
+    go({
+      path: ['account', 'organizations', 'start_trial'],
+    });
   };
 
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
