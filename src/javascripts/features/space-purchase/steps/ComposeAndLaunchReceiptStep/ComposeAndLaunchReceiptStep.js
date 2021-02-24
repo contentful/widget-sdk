@@ -10,10 +10,18 @@ const store = getBrowserStorage();
 const lastUsedSpaceId = store.get('lastUsedSpace');
 
 export const ComposeAndLaunchReceiptStep = () => {
-  const { isLoading: isPurchasingAddOn, error: addOnPurchaseError } = usePurchaseAddOn();
+  const {
+    isLoading: isPurchasingAddOn,
+    addOnPurchaseError,
+    retry: retryAddOnPurchase,
+  } = usePurchaseAddOn();
 
   const pending = isPurchasingAddOn;
-  const hasErrors = !!addOnPurchaseError;
+  const goToLastUsedSpace = () =>
+    go({
+      path: ['spaces', 'detail'],
+      params: { spaceId: lastUsedSpaceId },
+    });
 
   return (
     <section
@@ -21,14 +29,9 @@ export const ComposeAndLaunchReceiptStep = () => {
       data-test-id="performance-receipt-section">
       <ReceiptView
         pending={pending}
-        buttonAction={() =>
-          go({
-            path: ['spaces', 'detail'],
-            params: { spaceId: lastUsedSpaceId },
-          })
-        }
-        hasErrors={hasErrors}
-        buttonLabel={'Take me to space home'}
+        buttonAction={addOnPurchaseError ? retryAddOnPurchase : goToLastUsedSpace}
+        error={addOnPurchaseError}
+        buttonLabel={addOnPurchaseError ? 'Retry request' : 'Take me to space'}
         selectedCompose
       />
     </section>

@@ -76,7 +76,7 @@ describe('SpaceUpgradeReceiptStep', () => {
     });
 
     expect(trackEvent).toHaveBeenCalledWith(EVENTS.ERROR, mockSessionMetadata, {
-      errorType: 'UpgradeError',
+      errorType: 'SpaceChangeError',
       error: err,
     });
   });

@@ -13,15 +13,18 @@ export const SpaceCreationReceiptStep = () => {
     state: { spaceName, selectedTemplate, selectedPlan, selectedPlatform },
   } = useContext(SpacePurchaseState);
 
-  const { isCreatingSpace, spaceCreationError, buttonAction, newSpace } = useSpaceCreation();
-  const { isCreatingTemplate, templateCreationError } = useTemplateCreation(
+  const { isCreatingSpace, error: spaceCreationError, buttonAction, newSpace } = useSpaceCreation();
+  const { isCreatingTemplate, error: templateCreationError } = useTemplateCreation(
     newSpace,
     selectedTemplate
   );
-  const { isLoading: isPurchasingAddOn, error: addOnPurchaseError } = usePurchaseAddOn(!!newSpace);
+  const {
+    isLoading: isPurchasingAddOn,
+    error: addOnPurchaseError,
+    retry: retryAddOnPurchase,
+  } = usePurchaseAddOn(!!newSpace);
 
   const pending = isCreatingSpace || isCreatingTemplate || isPurchasingAddOn;
-  const hasErrors = !!(spaceCreationError || addOnPurchaseError);
 
   const selectedCompose = selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
 
@@ -36,9 +39,11 @@ export const SpaceCreationReceiptStep = () => {
         planName={selectedPlan.name}
         spaceName={spaceName}
         spaceId={newSpace?.sys.id}
-        buttonAction={buttonAction}
-        buttonLabel={hasErrors ? 'Retrigger space creation' : 'Take me to my new space'}
-        hasErrors={hasErrors}
+        buttonAction={(addOnPurchaseError && retryAddOnPurchase) || buttonAction}
+        buttonLabel={
+          spaceCreationError || addOnPurchaseError ? 'Retry request' : 'Take me to my new space'
+        }
+        error={spaceCreationError || addOnPurchaseError || templateCreationError}
         templateCreationError={templateCreationError}
         selectedCompose={selectedCompose}
       />

@@ -5,6 +5,7 @@ import { css } from 'emotion';
 import { Button, Note } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { TEMPLATE_CREATION_ERROR } from '../hooks/useTemplateCreation';
 
 import { PaymentSummary } from './PaymentSummary';
 import { ReceiptMessage } from './ReceiptMessage';
@@ -30,8 +31,7 @@ export function ReceiptView({
   spaceId,
   buttonAction,
   buttonLabel,
-  hasErrors,
-  templateCreationError,
+  error,
   isSpaceUpgrade,
   selectedCompose,
 }) {
@@ -42,7 +42,7 @@ export function ReceiptView({
         planName={planName}
         spaceName={spaceName}
         spaceId={spaceId}
-        hasErrors={hasErrors}
+        error={error}
         isSpaceUpgrade={isSpaceUpgrade}
         selectedCompose={selectedCompose}
       />
@@ -56,7 +56,7 @@ export function ReceiptView({
         {buttonLabel}
       </Button>
 
-      {templateCreationError && (
+      {error && error.name === TEMPLATE_CREATION_ERROR && (
         <Note
           noteType="warning"
           title="We had a problem creating your template"
@@ -79,8 +79,7 @@ ReceiptView.propTypes = {
   spaceId: PropTypes.string,
   buttonAction: PropTypes.func,
   buttonLabel: PropTypes.string,
-  hasErrors: PropTypes.bool,
-  templateCreationError: PropTypes.object,
+  error: PropTypes.object,
   isSpaceUpgrade: PropTypes.bool,
   selectedCompose: PropTypes.bool,
 };

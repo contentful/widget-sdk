@@ -8,6 +8,17 @@ import { useAsyncFn } from 'core/hooks/useAsync';
 import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
 
+export const SPACE_CREATION_ERROR = 'CreateSpaceError';
+
+class SpaceCreationError extends Error {
+  constructor(...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params);
+
+    this.name = SPACE_CREATION_ERROR;
+  }
+}
+
 const createSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) => async () => {
   try {
     const newSpace = await makeNewSpace(organizationId, selectedPlan.sys.id, spaceName);
@@ -23,7 +34,7 @@ const createSpace = (organizationId, selectedPlan, spaceName, sessionMetadata) =
       error,
     });
 
-    throw error;
+    throw new SpaceCreationError(error);
   }
 };
 
@@ -34,10 +45,7 @@ export function useSpaceCreation() {
 
   const sessionMetadata = useSessionMetadata();
 
-  const [
-    { isLoading: isCreatingSpace, data: newSpace, error: spaceCreationError },
-    runSpaceCreation,
-  ] = useAsyncFn(
+  const [{ isLoading: isCreatingSpace, data: newSpace, error }, runSpaceCreation] = useAsyncFn(
     useCallback(createSpace(organization.sys.id, selectedPlan, spaceName, sessionMetadata), [])
   );
 
@@ -53,11 +61,11 @@ export function useSpaceCreation() {
     });
   };
 
-  const buttonAction = spaceCreationError ? runSpaceCreation : goToCreatedSpace;
+  const buttonAction = error ? runSpaceCreation : goToCreatedSpace;
 
   return {
     isCreatingSpace,
-    spaceCreationError,
+    error,
     buttonAction,
     newSpace,
   };

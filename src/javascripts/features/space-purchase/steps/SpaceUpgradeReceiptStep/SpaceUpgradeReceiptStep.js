@@ -17,13 +17,13 @@ export const SpaceUpgradeReceiptStep = () => {
     isLoading: isPurchasingAddOn,
     error: addOnPurchaseError,
     data: shouldActivateSpaceUpgrade,
+    retry: retryAddOnPurchase,
   } = usePurchaseAddOn();
-  const { isUpgradingSpace, upgradeError, buttonAction } = useSpaceUpgrade(
+  const { isUpgradingSpace, error: upgradeError, buttonAction } = useSpaceUpgrade(
     shouldActivateSpaceUpgrade
   );
 
   const pending = isUpgradingSpace || isPurchasingAddOn;
-  const hasErrors = !!(upgradeError || addOnPurchaseError);
 
   return (
     <section
@@ -31,9 +31,11 @@ export const SpaceUpgradeReceiptStep = () => {
       data-test-id="upgrade-receipt-section">
       <ReceiptView
         pending={pending}
-        buttonAction={buttonAction}
-        buttonLabel={upgradeError ? 'Retrigger space change' : `Take me to ${currentSpace.name}`}
-        hasErrors={hasErrors}
+        buttonAction={(addOnPurchaseError && retryAddOnPurchase) || buttonAction}
+        buttonLabel={
+          upgradeError || addOnPurchaseError ? 'Retry request' : `Take me to ${currentSpace.name}`
+        }
+        error={upgradeError || addOnPurchaseError}
         selectedCompose={selectedCompose}
         isSpaceUpgrade
       />

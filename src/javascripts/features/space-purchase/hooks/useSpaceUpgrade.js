@@ -9,6 +9,17 @@ import { useAsyncFn } from 'core/hooks/useAsync';
 import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
 
+export const SPACE_CHANGE_ERROR = 'SpaceChangeError';
+
+class SpaceChangeError extends Error {
+  constructor(...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params);
+
+    this.name = SPACE_CHANGE_ERROR;
+  }
+}
+
 const upgradePlan = (space, plan, sessionMetadata) => async () => {
   const endpoint = createSpaceEndpoint(space.sys.id);
   let result;
@@ -19,10 +30,10 @@ const upgradePlan = (space, plan, sessionMetadata) => async () => {
     trackEvent(EVENTS.SPACE_TYPE_CHANGE, sessionMetadata, { selectedPlan: plan });
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
-      errorType: 'UpgradeError',
+      errorType: SPACE_CHANGE_ERROR,
       error,
     });
-    throw error;
+    throw new SpaceChangeError(error);
   }
 
   return result;
@@ -35,10 +46,7 @@ export function useSpaceUpgrade(shouldActivate) {
 
   const sessionMetadata = useSessionMetadata();
 
-  const [
-    { isLoading: isUpgradingSpace, data: upgradedSpace, error: upgradeError },
-    runSpaceUpgrade,
-  ] = useAsyncFn(
+  const [{ isLoading: isUpgradingSpace, data: upgradedSpace, error }, runSpaceUpgrade] = useAsyncFn(
     useCallback(upgradePlan(currentSpace, selectedPlan, sessionMetadata), [currentSpace])
   );
 
@@ -49,18 +57,18 @@ export function useSpaceUpgrade(shouldActivate) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldActivate]);
 
-  const goToCreatedSpace = async () => {
+  const goToUpdatedSpace = async () => {
     await go({
       path: ['spaces', 'detail'],
       params: { spaceId: currentSpace.sys.id },
     });
   };
 
-  const buttonAction = upgradeError ? runSpaceUpgrade : goToCreatedSpace;
+  const buttonAction = error ? runSpaceUpgrade : goToUpdatedSpace;
 
   return {
     isUpgradingSpace,
-    upgradeError,
+    error,
     buttonAction,
     upgradedSpace,
   };

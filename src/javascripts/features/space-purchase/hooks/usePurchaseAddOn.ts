@@ -11,6 +11,17 @@ import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
 import { PlatformKind } from '../utils/platformContent';
 
+export const ADD_ON_PURCHASE_ERROR = 'addOnPurchaseError';
+
+class AddOnPurchaseError extends Error {
+  constructor(...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params);
+
+    this.name = ADD_ON_PURCHASE_ERROR;
+  }
+}
+
 type ContextState = SetRequired<State, 'organization' | 'composeAndLaunchProductRatePlan'>;
 
 const purchaseComposeLaunch = (
@@ -32,11 +43,11 @@ const purchaseComposeLaunch = (
     return true;
   } catch (error) {
     trackEvent(EVENTS.ERROR, sessionMetadata, {
-      errorType: 'PurchasePerformancePackageError',
+      errorType: 'PurchaseComposeAndLaunchError',
       error,
     });
 
-    throw error;
+    throw new AddOnPurchaseError(error);
   }
 };
 
@@ -74,7 +85,7 @@ export function usePurchaseAddOn(shouldBegin = true) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldBegin]);
   if (selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH) {
-    return { isLoading, error, data };
+    return { isLoading, error, data, retry: callPurchase };
   } else {
     // we pass isLoading: false because we expect false value not undefined
     return { isLoading: false, data: true };
