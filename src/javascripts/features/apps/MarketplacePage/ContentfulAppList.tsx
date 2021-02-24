@@ -7,24 +7,18 @@ import {
   Flex,
   Typography,
   ModalLauncher,
-  Notification,
 } from '@contentful/forma-36-react-components';
 import React, { ReactElement } from 'react';
-
+import { MarketplaceApp } from 'features/apps-core';
 import { go } from 'states/Navigator';
-import { getModule } from 'core/NgRegistry';
-import { MarketplaceApp, getAppsRepo } from 'features/apps-core';
-import * as TokenStore from 'services/TokenStore';
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { spaceSetUp, startAppTrial, StartAppTrialModal } from 'features/trials';
+import { StartAppTrialModal } from 'features/trials';
 
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
-import { PlainClientAPI } from 'contentful-management';
 
 interface ListProps {
   apps: MarketplaceApp[];
@@ -89,48 +83,11 @@ export const ContentfulAppTile = ({
     ));
   };
 
-  const handleStartAppTrial = async () => {
-    Notification.success('Preparing your trial');
-    try {
-      await startAppTrial(organizationId as string).then(async ({ apps, trial }) => {
-        try {
-          const spaceContext = getModule('spaceContext');
-
-          await TokenStore.refresh()
-            .then(() => TokenStore.getSpace(trial.spaceKey))
-            .then((space) => spaceContext.resetWithSpace(space));
-
-          const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug));
-
-          const environmentId = spaceContext.getEnvironmentId();
-          const spaceId = spaceContext.getId();
-
-          const appsManager = new AppManager(
-            spaceContext.cma,
-            environmentId,
-            spaceId,
-            organizationId
-          );
-
-          await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
-
-          Notification.success('Setting up your trial space');
-          await spaceSetUp(getCMAClient({ spaceId, environmentId }) as PlainClientAPI);
-
-          go({
-            path: ['spaces', 'detail'],
-            params: {
-              spaceId: trial.spaceKey,
-            },
-          });
-        } catch (e) {
-          throw new Error('Failed to start the App trial');
-        }
-      });
-      Notification.success('Your App trial has started!');
-    } catch (err) {
-      Notification.error('The App trial could not be started!');
-    }
+  const handleStartAppTrial = () => {
+    go({
+      path: ['account', 'organizations', 'start_trial'],
+      params: { orgId: organizationId },
+    });
   };
 
   return (
