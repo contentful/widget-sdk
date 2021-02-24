@@ -131,7 +131,7 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   let selectedPlatform;
 
   if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
-    selectedPlatform = PLATFORM_CONTENT.composePlatform;
+    selectedPlatform = PLATFORM_CONTENT.COMPOSE_AND_LAUNCH;
   }
 
   const sessionId = alnum(16);

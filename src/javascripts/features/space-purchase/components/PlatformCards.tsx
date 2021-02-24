@@ -31,13 +31,13 @@ export function PlatformCards({
     <>
       {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
         let tooltipText = '';
-        const platformIsComposeLaunch = platform.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
+        const platformIsComposeLaunch = platform.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
         const composeAndLaunchIsLoading =
           platformIsComposeLaunch && !composeAndLaunchProductRatePlan;
 
         // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
         if (platformIsComposeLaunch && canCreatePaidSpace === false && !composeAndLaunchIsLoading) {
-          tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.composePlatform.title}`;
+          tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title}`;
         }
 
         const platformPlan = {

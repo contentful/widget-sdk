@@ -4,7 +4,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 import { go } from 'states/Navigator';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_CONTENT } from '../../utils/platformContent';
+import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
@@ -12,7 +12,7 @@ import { NO_SPACE_PLAN } from '../../context';
 
 const mockOrganization = Fake.Organization();
 const mockcomposeAndLaunchProductRatePlan = Fake.Plan();
-const mockSelectedPlatform = { ...PLATFORM_CONTENT.composePlatform, price: 999 };
+const mockSelectedPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -53,7 +53,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
     });
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(
-      `You successfully purchased the ${PLATFORM_CONTENT.composePlatform.title} package`
+      `You successfully purchased the ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package`
     );
   });
 

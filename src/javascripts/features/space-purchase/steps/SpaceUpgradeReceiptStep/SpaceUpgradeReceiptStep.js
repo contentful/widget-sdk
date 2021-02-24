@@ -11,7 +11,7 @@ export const SpaceUpgradeReceiptStep = () => {
     state: { currentSpace, selectedPlatform },
   } = useContext(SpacePurchaseState);
 
-  const selectedCompose = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
+  const selectedCompose = selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
 
   const {
     isLoading: isPurchasingAddOn,

@@ -101,7 +101,7 @@ export function ReceiptMessage({
         {!pending && !hasErrors && selectedCompose && (
           <>
             <Paragraph>
-              You successfully purchased the {PLATFORM_CONTENT.composePlatform.title} package
+              You successfully purchased the {PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package
               {isSpaceUpgrade && <> and changed your space to a {planName} space</>}
               {!isSpaceUpgrade && selectedSpacePlan && (
                 <>

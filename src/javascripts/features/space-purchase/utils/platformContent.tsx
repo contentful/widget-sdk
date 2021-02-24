@@ -3,8 +3,8 @@ import WebappIlustration from 'svg/illustrations/apps_purchase_1.svg';
 import WebappAndAppsIlustration from 'svg/illustrations/apps_purchase_2.svg';
 
 export enum PlatformKind {
-  SPACE = 'SPACE',
-  SPACE_COMPOSE_LAUNCH = 'SPACE_COMPOSE_LAUNCH',
+  WEB_APP = 'WEB_APP',
+  WEB_APP_COMPOSE_LAUNCH = 'WEB_APP_COMPOSE_LAUNCH',
 }
 
 interface Platform {
@@ -15,20 +15,20 @@ interface Platform {
 }
 
 interface PlatformContents {
-  spacePlatform: Platform;
-  composePlatform: Platform;
+  WEB_APP: Platform;
+  COMPOSE_AND_LAUNCH: Platform;
 }
 
 export const PLATFORM_CONTENT: PlatformContents = {
-  spacePlatform: {
-    type: PlatformKind.SPACE,
+  WEB_APP: {
+    type: PlatformKind.WEB_APP,
     illustration: <WebappIlustration />,
     title: 'Web app',
     description:
       'Your content platform, optimized for Developers. Includes access to our market-leading CMS, App Framework and intuitive APIs',
   },
-  composePlatform: {
-    type: PlatformKind.SPACE_COMPOSE_LAUNCH,
+  COMPOSE_AND_LAUNCH: {
+    type: PlatformKind.WEB_APP_COMPOSE_LAUNCH,
     illustration: <WebappAndAppsIlustration />,
     title: 'Web app + Compose + Launch',
     description:

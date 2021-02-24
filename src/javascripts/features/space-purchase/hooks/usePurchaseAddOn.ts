@@ -67,13 +67,13 @@ export function usePurchaseAddOn(shouldBegin = true) {
   );
 
   useEffect(() => {
-    if (shouldBegin && selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH) {
+    if (shouldBegin && selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH) {
       callPurchase();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldBegin]);
-  if (selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH) {
+  if (selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH) {
     return { isLoading, error, data };
   } else {
     // we pass isLoading: false because we expect false value not undefined

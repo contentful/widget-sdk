@@ -23,7 +23,7 @@ export const SpaceCreationReceiptStep = () => {
   const pending = isCreatingSpace || isCreatingTemplate || isPurchasingAddOn;
   const hasErrors = !!(spaceCreationError || addOnPurchaseError);
 
-  const selectedCompose = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
+  const selectedCompose = selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
 
   useNavigationWarn(selectedPlan, pending);
 

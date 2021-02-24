@@ -12,7 +12,7 @@ import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 
-const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 const spaceName = 'My Space';
 const mockSelectedPlan = { name: 'Medium', price: 123, sys: { id: 'space_plan_id' } };
 const mockOrganization = FakeFactory.Organization();
@@ -99,7 +99,7 @@ describe('SpaceCreationReceiptStep', () => {
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(mockSelectedPlan.name);
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(
-      PLATFORM_CONTENT.composePlatform.title
+      PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title
     );
 
     // Need to wait for promise to resolve to catch act()

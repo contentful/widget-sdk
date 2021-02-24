@@ -13,11 +13,11 @@ const mockOrganization = FakeFactory.Organization();
 
 const mockComposeAndLaunchProductRatePlan = { price: 100 };
 const mockSelectedPlatform = {
-  ...PLATFORM_CONTENT.composePlatform,
+  ...PLATFORM_CONTENT.COMPOSE_AND_LAUNCH,
   price: mockComposeAndLaunchProductRatePlan.price,
 };
 
-const mockComposeLaunchPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+const mockComposeLaunchPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 
 const mockProductRatePlans = [
   { name: 'Community', price: 0 },
@@ -86,7 +86,7 @@ describe('PlatformSelectionStep', () => {
 
       userEvent.click(platformCards[0]);
       expect(mockTrack).toHaveBeenCalledWith(EVENTS.PLATFORM_SELECTED, {
-        selectedPlatform: PLATFORM_CONTENT.spacePlatform,
+        selectedPlatform: PLATFORM_CONTENT.WEB_APP,
       });
 
       userEvent.click(platformCards[1]);

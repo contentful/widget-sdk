@@ -71,7 +71,7 @@ export const EnterpriseCard = ({ organizationId, onSelect, disabled = false }) =
 
       <span>
         <Paragraph className={styles.textLeft}>
-          {PLATFORM_CONTENT.composePlatform.title} plus:
+          {PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} plus:
         </Paragraph>
         <List className={styles.enterpriseFeatures} testId="platform-limits">
           <ListItem className={cx(styles.listItem, styles.textLeft)}>

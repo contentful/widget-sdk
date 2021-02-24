@@ -12,8 +12,8 @@ const mockSpaceRatePlans = [
   { name: 'Large', price: 889 },
 ];
 
-const mockWebAppPlatform = { type: PlatformKind.SPACE };
-const mockComposeLaunchPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+const mockWebAppPlatform = { type: PlatformKind.WEB_APP };
+const mockComposeLaunchPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 
 jest.mock('features/space-purchase/utils/canCreateSpace', () => ({
   canUserCreatePaidSpace: jest.fn(),

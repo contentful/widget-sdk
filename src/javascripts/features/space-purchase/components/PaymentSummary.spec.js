@@ -6,7 +6,7 @@ import { SpacePurchaseState, NO_SPACE_PLAN } from '../context';
 import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
-const mockSelectedPlatform = { ...PLATFORM_CONTENT.composePlatform, price: 999 };
+const mockSelectedPlatform = { title: PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title, price: 999 };
 
 const formatPrice = (value) => `$${parseInt(value, 10).toLocaleString('en-US')}`;
 

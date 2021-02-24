@@ -16,7 +16,7 @@ const mockOrganization = FakeFactory.Organization();
 const mockCurrentSpace = FakeFactory.Space();
 const mockComposeAndLaunchProductRatePlan = FakeFactory.Plan();
 
-const mockSelectedPlatform = { type: PlatformKind.SPACE_COMPOSE_LAUNCH };
+const mockSelectedPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 const mockSessionMetadata = {
   organizationId: mockOrganization.sys.id,
   sessionId: 'some_random_id',

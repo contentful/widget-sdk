@@ -115,7 +115,7 @@ export const SpacePurchaseContainer = ({ track }) => {
     }
   }, [organization, dispatch]);
 
-  const selectedComposeLaunch = selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH;
+  const selectedComposeLaunch = selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
 
   const goToStep = (nextStep) => {
     track(EVENTS.NAVIGATE, {

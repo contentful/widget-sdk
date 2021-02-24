@@ -163,7 +163,7 @@ export const PlatformSelectionStep = ({ track }) => {
             </Heading>
             {!currentSpace &&
               !orgHasPaidSpaces &&
-              selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
+              selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH && (
                 <Paragraph>Purchase a Medium or Large space to get Compose + Launch</Paragraph>
               )}
           </span>
@@ -187,7 +187,7 @@ export const PlatformSelectionStep = ({ track }) => {
            */}
           {!currentSpace &&
             orgHasPaidSpaces &&
-            selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH && (
+            selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH && (
               <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
                 <Card
                   className={styles.chooseLaterCard}

@@ -80,7 +80,7 @@ function getTooltipText(
   // freeSpace is disabled when selectedPlatform is SPACE+COMPOSE and they don't have any paid spaces
   if (
     planType === SpacePlanKind.COMMUNITY &&
-    selectedPlatform?.type === PlatformKind.SPACE_COMPOSE_LAUNCH &&
+    selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH &&
     !orgHasPaidSpaces
   ) {
     return 'Purchase a space to get Compose + Launch';
