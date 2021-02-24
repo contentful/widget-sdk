@@ -37,6 +37,7 @@ export enum LinkType {
   OnboardingDeploy = 'onboarding-deploy',
   Users = 'users',
   InvitationAccepted = 'invitation-accepted',
+  StartAppTrial = 'start-trial',
 }
 
 interface ResolvedLink {
@@ -128,6 +129,9 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   }),
   [LinkType.Subscription]: resolveSubscriptions,
   [LinkType.InvitationAccepted]: resolveSpaceHome,
+  [LinkType.StartAppTrial]: makeOrgScopedPathResolver({
+    orgScopedPath: ['account', 'organizations', 'start_trial'],
+  }),
 };
 
 /**
