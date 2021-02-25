@@ -44,7 +44,7 @@ exports[`StartAppTrialModal should render 1`] = `
             <h1
               class="ModalHeader__ModalHeader__title___3IuOy"
             >
-              Start your free Contentful Apps Trial
+              Compose + Launch free trial
             </h1>
           </div>
           <div
@@ -55,28 +55,7 @@ exports[`StartAppTrialModal should render 1`] = `
               class="Paragraph__Paragraph___2aO-9 emotion-0"
               data-test-id="cf-ui-paragraph"
             >
-              This trial will give you free access to Compose and Launch for 10 days. You can experience both apps hassle-free in a new trial space. Starting a trial will have no impact on your existing spaces.
-            </p>
-            <p
-              class="Paragraph__Paragraph___2aO-9"
-              data-test-id="cf-ui-paragraph"
-            >
-              <a
-                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/help/contentful-apps-trial/"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <span
-                  class="TabFocusTrap__TabFocusTrap___39Vty"
-                  tabindex="-1"
-                >
-                  Learn more
-                </span>
-              </a>
-               
-              about Contentful Apps Trial.
+              This trial will give you free access to Compose + Launch for 10 days. You can test both apps in a new trial space with example content, or you can add some of your own. No payment is required, and the trial wonʼt affect your exisiting spaces or content in any way.
             </p>
           </div>
           <div
@@ -95,7 +74,7 @@ exports[`StartAppTrialModal should render 1`] = `
                 <span
                   class="Button__Button__label___3tcOj"
                 >
-                  Start trial now
+                  Start your free trial
                 </span>
               </span>
             </button>

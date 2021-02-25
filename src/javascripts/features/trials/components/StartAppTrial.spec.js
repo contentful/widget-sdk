@@ -34,7 +34,6 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('features/trials', () => ({
   startAppTrial: jest.fn(),
-  spaceSetUp: jest.fn(),
 }));
 
 const mockResetWithSpace = jest.fn().mockResolvedValue({});
