@@ -21,7 +21,7 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
     <Modal
       position="center"
       isShown={isShown}
-      title={`Compose + Launch free trial`}
+      title="Compose + Launch free trial"
       onClose={onClose}>
       {({ title }) => (
         <>
@@ -30,8 +30,8 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
             <Paragraph element="p" className={styles.paragraph}>
               This trial will give you free access to Compose + Launch for 10 days. You can test
               both apps in a new trial space with example content, or you can add some of your own.
-              No payment is required, and the trial won&apos;t affect your exisiting spaces or
-              content in any way.
+              No payment is required, and the trial wonʼt affect your exisiting spaces or content in
+              any way.
             </Paragraph>
           </Modal.Content>
           <Modal.Controls>
