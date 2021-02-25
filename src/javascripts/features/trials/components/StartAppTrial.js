@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { startAppTrial, spaceSetUp } from 'features/trials';
+import { startAppTrial } from 'features/trials';
 import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
 import { getModule } from 'core/NgRegistry';
 import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { go } from 'states/Navigator';
 import {
   Heading,
@@ -48,10 +47,6 @@ export function StartAppTrial({ orgId }) {
       const appsManager = new AppManager(spaceContext.cma, environmentId, spaceId, orgId);
 
       await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
-
-      Notification.success('Setting up your trial space');
-
-      await spaceSetUp(getCMAClient({ spaceId, environmentId }));
 
       clearCachedProductCatalogFlags();
 
