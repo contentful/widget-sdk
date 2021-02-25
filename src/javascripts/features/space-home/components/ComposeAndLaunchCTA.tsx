@@ -14,6 +14,22 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
     currentOrganizationId,
   } = useSpaceEnvContext();
 
+  const canManage = canUserManageApps();
+
+  const PROMO_TEXT = {
+    trial: {
+      title: 'Compose + Launch free trial',
+      text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start. 
+        ${!canManage ? 'To try Compose + Launch, contact your Contentful administrator.' : ''}
+      `,
+    },
+    install: {
+      title: 'Install Compose + Launch: powerful tools to deliver content faster',
+      text:
+        'Compose + Launch are included with your plan. Give your content teams powerful new tools that allow them to work faster and collaborate more effectively.',
+    },
+  };
+
   const config = {
     organizationId: currentOrganizationId,
     spaceId: currentSpaceId,
@@ -38,43 +54,48 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
       isMasterEnvironment: currentEnvironmentId === 'master',
     },
   };
+
+  const showInstallAction =
+    compose.isEnabled &&
+    launch.isEnabled &&
+    compose.isPurchased &&
+    launch.isPurchased &&
+    !compose.isInstalled &&
+    !launch.isInstalled;
+
+  const showBuyOrTrialAction =
+    compose.isEnabled && launch.isEnabled && !compose.isPurchased && !launch.isPurchased;
+
   return (
     <>
-      {compose.isEnabled &&
-        launch.isEnabled &&
-        compose.isPurchased &&
-        launch.isPurchased &&
-        !compose.isInstalled &&
-        !launch.isInstalled && (
-          <WidgetContainer.Row order>
-            <WidgetContainer.Col>
-              <ContentfulAppTile
-                slug="app"
-                title="Install Compose + Launch to enhance your content creation and release"
-                text="Compose + Launch are available to your organization. Install them to grant content teams more power and independence."
-                image={<LaunchAndComposeIcon />}
-                canManage={canUserManageApps()}
-                organizationId={currentOrganizationId}
-                spaceInformation={spaceInfo as SpaceInformation}
-                installAction={() => {
-                  go({ path: ['spaces', 'detail', 'apps', 'list'] });
-                }}
-                isInstalled={false}
-                isPurchased
-                isFlipped
-                isScreenshot
-              />
-            </WidgetContainer.Col>
-          </WidgetContainer.Row>
-        )}
-
-      {compose.isEnabled && launch.isEnabled && !compose.isPurchased && !launch.isPurchased && (
+      {showInstallAction && (
         <WidgetContainer.Row order>
           <WidgetContainer.Col>
             <ContentfulAppTile
               slug="app"
-              title="Compose + Launch will give editors more power and independence"
-              text="Compose + Launch, our new Contentful Apps, grant content teams more control over the way you create and publish."
+              {...PROMO_TEXT.install}
+              image={<LaunchAndComposeIcon />}
+              canManage={canManage}
+              organizationId={currentOrganizationId}
+              spaceInformation={spaceInfo as SpaceInformation}
+              installAction={() => {
+                go({ path: ['spaces', 'detail', 'apps', 'list'] });
+              }}
+              isInstalled={false}
+              isPurchased
+              isFlipped
+              isScreenshot
+            />
+          </WidgetContainer.Col>
+        </WidgetContainer.Row>
+      )}
+
+      {showBuyOrTrialAction && (
+        <WidgetContainer.Row order>
+          <WidgetContainer.Col>
+            <ContentfulAppTile
+              slug="app"
+              {...PROMO_TEXT.trial}
               image={<LaunchAndComposeIcon />}
               canManage={canUserManageApps()}
               organizationId={currentOrganizationId}

@@ -17,6 +17,7 @@ import { StartAppTrialModal } from 'features/trials';
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
+import { appsMarketingUrl } from 'Config';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
 
@@ -71,7 +72,6 @@ export const ContentfulAppTile = ({
 
   const showInstall = installAction && isPurchased && canManage && !isInstalled;
   const showUninstall = uninstallAction && isInstalled && canManage;
-  const showLearnMore = !isInstalled && !(isPurchased && canManage);
   const showBuyNow = !isPurchased && canBuy && !isTrialAvailable;
   const showTrial = isTrialAvailable && canManage && !isPurchased;
   const showOpen = isInstalled && isPurchased;
@@ -119,7 +119,7 @@ export const ContentfulAppTile = ({
               )}
               {showInstall && (
                 <Button testId="install-button" className={styles.button} onClick={installAction}>
-                  Install
+                  Start installation
                 </Button>
               )}
               {showBuyNow && (
@@ -136,7 +136,7 @@ export const ContentfulAppTile = ({
               )}
               {showTrial && (
                 <Button testId="start-trial-button" className={styles.button} onClick={showModal}>
-                  Start 10 day trial
+                  Start your free trial
                 </Button>
               )}
               {showUninstall && (
@@ -144,18 +144,17 @@ export const ContentfulAppTile = ({
                   Uninstall
                 </Button>
               )}
-              {showLearnMore && (
-                <Button
-                  testId="learn-more-button"
-                  className={styles.button}
-                  buttonType="muted"
-                  icon="ExternalLink"
-                  onClick={() => {
-                    window.open('https://www.contentful.com/contentful-apps/', '_blank');
-                  }}>
-                  Learn more
-                </Button>
-              )}
+
+              <Button
+                testId="learn-more-button"
+                className={styles.button}
+                buttonType="muted"
+                icon="ExternalLink"
+                onClick={() => {
+                  window.open(appsMarketingUrl, '_blank');
+                }}>
+                Learn more
+              </Button>
             </div>
           </div>
         </div>
@@ -189,10 +188,12 @@ export const ContentfulAppsList = ({
       {isCombinedTile ? (
         <ContentfulAppTile
           slug="app"
-          title="Compose + Launch"
+          title={
+            isTrialAvailable || !isPurchased ? 'Compose + Launch free trial' : 'Compose + Launch'
+          }
           organizationId={organizationId}
           image={<CombinedIcon />}
-          text="Compose and Launch will elevate the experience of your content team, while creating and publishing all your best content."
+          text="Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start."
           canManage={canManageApps}
           spaceInformation={spaceInformation}
           isInstalled={anyInstalled}

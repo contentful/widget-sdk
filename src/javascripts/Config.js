@@ -111,6 +111,13 @@ export const supportUrl = websiteUrl('support');
 export const salesUrl = websiteUrl('contact/sales');
 
 /**
+ * URL which navigates the user to learn about apps
+ *
+ * In production this is `//www.contentful.com/contentful-apps`.
+ */
+export const appsMarketingUrl = websiteUrl('contentful-apps');
+
+/**
  * URL which allows the user to get to the Help Center in the website.
  *
  * In production this is `//www.contentful.com/help`.

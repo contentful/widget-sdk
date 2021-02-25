@@ -5,6 +5,19 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { AppLogos } from '@contentful/experience-components';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 
+const PROMO_TEXT = {
+  compose: {
+    title: 'Compose',
+    text:
+      'Enables editors to easily create and manage web content in pages, built with structured content.',
+  },
+  launch: {
+    title: 'Launch',
+    text:
+      'Brings the visibility and confidence to build and deliver major content releases faster.',
+  },
+};
+
 export const ContentfulAppsCTA = (): ReactElement => {
   const {
     currentSpaceId,
@@ -44,8 +57,7 @@ export const ContentfulAppsCTA = (): ReactElement => {
         <WidgetContainer.Col>
           <ContentfulAppTile
             slug="compose"
-            title="Compose"
-            text="Easily create and edit content at scale in a completely new way"
+            {...PROMO_TEXT.compose}
             image={<AppLogos.ComposeLogo />}
             canManage={canUserManageApps()}
             organizationId={currentOrganizationId}
@@ -60,8 +72,7 @@ export const ContentfulAppsCTA = (): ReactElement => {
         <WidgetContainer.Col>
           <ContentfulAppTile
             slug="launch"
-            title="Launch"
-            text="Plan, release and measure content at scale"
+            {...PROMO_TEXT.launch}
             image={<AppLogos.LaunchLogo />}
             canManage={canUserManageApps()}
             organizationId={currentOrganizationId}
