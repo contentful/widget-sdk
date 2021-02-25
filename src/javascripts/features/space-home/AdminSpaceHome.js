@@ -24,7 +24,7 @@ export const AdminSpaceHome = ({
   hasActiveAppTrial,
 }) => {
   return (
-    <WidgetContainer>
+    <WidgetContainer testId="admin-space-home">
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <Heading className={styles.header}>
