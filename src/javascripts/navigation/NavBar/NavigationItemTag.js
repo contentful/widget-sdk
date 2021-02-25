@@ -1,8 +1,8 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { Tag } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
-import { NewTag } from 'components/shared/NewTag';
 
 const styles = {
   tag: css({
@@ -13,7 +13,11 @@ const styles = {
 };
 
 export default function NavigationItemTag({ label }) {
-  return <NewTag label={label} className={styles.tag} />;
+  return (
+    <Tag tagType="primary-filled" size="small" className={styles.tag}>
+      {label}
+    </Tag>
+  );
 }
 
 NavigationItemTag.propTypes = {

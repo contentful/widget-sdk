@@ -118,7 +118,9 @@ export const buildChildren = (
 const AppPromotion = ({ canManageSpace }: { canManageSpace: boolean }) => {
   return (
     <div className={styles.promotion}>
-      <Tag className={styles.promotionTag}>new</Tag>
+      <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
+        new
+      </Tag>
       Apps can now add pages to
       <br />
       the web app. After installation, they

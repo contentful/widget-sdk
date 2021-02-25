@@ -15,9 +15,9 @@ import {
   TableRow,
   TextLink,
   Tooltip,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import c from 'classnames';
-import { NewTag } from 'components/shared/NewTag';
 import { noop } from 'lodash';
 import React, { useState } from 'react';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
@@ -67,7 +67,10 @@ export function InstanceParameterEditor({
     <>
       <div className={styles.instanceParameters.container}>
         <FormLabel htmlFor="">
-          Instance parameter definitions <NewTag />
+          Instance parameter definitions{' '}
+          <Tag tagType="primary-filled" size="small">
+            new
+          </Tag>
         </FormLabel>
         <HelpText className={c([styles.helpParagraph, styles.instanceParameters.help])}>
           Instance parameters are helpful when configuring an app for fields, sidebars and editors.

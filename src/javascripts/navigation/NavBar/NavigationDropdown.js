@@ -10,6 +10,7 @@ import {
   DropdownList,
   DropdownListItem,
   Tooltip,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
@@ -17,7 +18,6 @@ import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { noop } from 'lodash';
-import { NewTag } from 'components/shared/NewTag';
 
 const styles = {
   dropdown: css({
@@ -107,8 +107,7 @@ const styles = {
     marginRight: tokens.spacingM,
   }),
   tag: css({
-    top: tokens.spacingXs,
-    marginLeft: tokens.spacingS,
+    marginLeft: tokens.spacingXs,
   }),
 };
 
@@ -215,7 +214,11 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
                   onClose();
                 }}>
                 {subitem.render ? subitem.render(subitem) : subitem.title}
-                {subitem.tagLabel && <NewTag className={styles.tag} label={subitem.tagLabel} />}
+                {subitem.tagLabel && (
+                  <Tag tagType="primary-filled" size="small" className={styles.tag}>
+                    {subitem.tagLabel}
+                  </Tag>
+                )}
               </DropdownListItem>
             );
           })}

@@ -149,7 +149,9 @@ const AssetEditorWorkbench = ({
                 onSelect={navigateToTab}>
                 <Icon icon={'Tags'} color="muted" className={editorStyles.tabIcon} />
                 {AssetTabs.Tags}
-                <Tag className={editorStyles.promotionTag}>new</Tag>
+                <Tag tagType="primary-filled" size="small" className={editorStyles.promotionTag}>
+                  new
+                </Tag>
               </Tab>
             )}
           </Tabs>

@@ -77,19 +77,10 @@ export const styles = {
   }),
   promotion: css({
     marginTop: `-${tokens.spacingM}`,
-    lineHeight: tokens.lineHeightDefault,
+    lineHeight: tokens.lineHeightL,
   }),
   promotionTag: css({
-    padding: '3px 5px',
-    fontSize: '10px',
-    lineHeight: '10px',
-    letterSpacing: '0.5px',
-    fontWeight: tokens.fontWeightMedium,
-    borderRadius: '3px',
-    backgroundColor: tokens.colorBlueDark,
     marginRight: tokens.spacingXs,
-    color: `${tokens.colorWhite} !important`,
-    textTransform: 'uppercase',
   }),
   listItemDropdown: css({
     width: '160px',

@@ -10,16 +10,7 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   promotionTag: css({
-    padding: '3px 5px',
-    fontSize: '10px',
-    lineHeight: '10px',
-    letterSpacing: '0.5px',
-    fontWeight: tokens.fontWeightMedium,
-    borderRadius: '3px',
-    backgroundColor: tokens.colorBlueDark,
     marginLeft: tokens.spacingXs,
-    color: `${tokens.colorWhite} !important`,
-    textTransform: 'uppercase',
   }),
   tabWithTag: css({
     alignItems: 'center',
@@ -70,7 +61,9 @@ export default function EditorFieldTabs(props) {
             className={styles.tabWithTag}
             testId="entry-editor-config-tab">
             Entry editors
-            <Tag className={styles.promotionTag}>new</Tag>
+            <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
+              new
+            </Tag>
           </Tab>
         )}
       </Tabs>

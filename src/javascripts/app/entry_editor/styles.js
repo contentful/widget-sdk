@@ -88,15 +88,6 @@ export const styles = {
     display: 'block',
   }),
   promotionTag: css({
-    padding: '3px 5px',
-    fontSize: '10px',
-    lineHeight: '10px',
-    letterSpacing: '0.5px',
-    fontWeight: tokens.fontWeightMedium,
-    borderRadius: '3px',
-    backgroundColor: tokens.colorBlueDark,
     marginLeft: tokens.spacingXs,
-    color: `${tokens.colorWhite} !important`,
-    textTransform: 'uppercase',
   }),
 };

@@ -313,7 +313,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                 {tab.title}
                 {tab.key ===
                   `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
-                  <Tag className={styles.promotionTag}>new</Tag>
+                  <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
+                    new
+                  </Tag>
                 )}
               </Tab>
             ))}
