@@ -22,7 +22,7 @@ const styles = {
     },
   }),
   breadcrumbTitle: css({
-    fontWeight: '600',
+    fontWeight: tokens.fontWeightDemiBold,
   }),
   isActive: css({
     color: tokens.colorGreenMid,

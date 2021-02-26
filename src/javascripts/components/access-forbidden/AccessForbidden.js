@@ -21,7 +21,7 @@ const styles = {
   title: css({
     marginBottom: tokens.spacingL,
     fontSize: tokens.fontSize2Xl,
-    fontWeight: '500',
+    fontWeight: tokens.fontWeightMedium,
   }),
   message: css({
     '&:not(:last-child)': {

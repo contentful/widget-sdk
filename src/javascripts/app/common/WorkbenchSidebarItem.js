@@ -16,7 +16,7 @@ const styles = {
   }),
   title: css({
     fontSize: tokens.fontSizeS,
-    fontWeight: '500',
+    fontWeight: tokens.fontWeightMedium,
     lineHeight: 2,
     letterSpacing: '1px',
     borderBottom: `1px solid ${tokens.colorElementDark}`,
