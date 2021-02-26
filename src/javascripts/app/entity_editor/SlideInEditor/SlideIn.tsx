@@ -27,7 +27,7 @@ const styles = {
   wrapper: css({
     position: 'relative',
     width: '100%',
-    minHeight: '100vh',
+    minHeight: '100%',
   }),
   slide: css({
     position: 'absolute',

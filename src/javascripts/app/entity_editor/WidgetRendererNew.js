@@ -40,47 +40,66 @@ function getTrackingEvents({ loadEvents, widget, locale, widgetApi }) {
   };
 }
 
-function WidgetRendererInternal(props) {
-  const { widget, locale, entityType, loadEvents, onFocus, onBlur, widgetApi } = props;
+const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
+  const { problem: hasProblem, widgetNamespace } = widget;
+  const isCustom = isCustomWidget(widgetNamespace);
+  const isBuiltIn = widgetNamespace === WidgetNamespace.BUILTIN;
 
-  // NOTE The widget renderer need to be memoized, as they suffer of race conditions when rendered multiple times
-  return React.useMemo(() => {
-    const { problem, renderFieldEditor } = widget;
-    const { trackLinksRendered, handleWidgetLinkRenderEvents } = getTrackingEvents({
-      loadEvents,
-      widget,
-      locale,
-      widgetApi,
-    });
+  const { trackLinksRendered, handleWidgetLinkRenderEvents } = getTrackingEvents({
+    loadEvents,
+    widget,
+    locale,
+    widgetApi,
+  });
 
-    if (problem) {
+  // The rendering needs only to be tracked once
+  React.useEffect(() => {
+    if (hasProblem || isCustom) {
       trackLinksRendered();
-      return <WidgetRenderWarning message={problem} />;
-    }
-
-    if (isCustomWidget(widget.widgetNamespace)) {
-      trackLinksRendered();
-      return (
-        <WidgetRendererExternal
-          location={WidgetLocation.ENTRY_FIELD}
-          widget={toRendererWidget(widget.descriptor)}
-          sdk={widgetApi}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
-      );
-    }
-
-    if (widget.widgetNamespace === WidgetNamespace.BUILTIN) {
+    } else if (isBuiltIn) {
       handleWidgetLinkRenderEvents();
-      return renderFieldEditor({
-        loadEvents: loadEvents || newNoopLoadEvents(),
-        widgetApi,
-        entityType,
-      });
     }
-    return null;
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { hasProblem, isCustom, isBuiltIn };
+};
+
+function WidgetRendererInternal(props) {
+  const { widget, entityType, locale, loadEvents, onFocus, onBlur, widgetApi } = props;
+
+  const { hasProblem, isBuiltIn, isCustom } = useTrackedRenderingType({
+    locale,
+    loadEvents,
+    widgetApi,
+    widget,
+  });
+
+  if (hasProblem) {
+    return <WidgetRenderWarning message={widget.problem} />;
+  }
+
+  if (isCustom) {
+    return (
+      <WidgetRendererExternal
+        location={WidgetLocation.ENTRY_FIELD}
+        widget={toRendererWidget(widget.descriptor)}
+        sdk={widgetApi}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+    );
+  }
+
+  if (isBuiltIn) {
+    return widget.renderFieldEditor({
+      loadEvents: loadEvents || newNoopLoadEvents(),
+      widgetApi,
+      entityType,
+    });
+  }
+
+  return null;
 }
 
 WidgetRendererInternal.propTypes = {
@@ -92,6 +111,14 @@ WidgetRendererInternal.propTypes = {
   widgetApi: PropTypes.object.isRequired,
   entityType: PropTypes.string.isRequired,
 };
+
+// NOTE The fileEditor widget renderer needs to be memoized due to
+// some weird rerendering glitch that is related to the Angular/React mix
+const MemoizedWidgetRendererInternal = React.memo(WidgetRendererInternal, (_, nextProps) => {
+  const memoizedWidgetIds = ['fileEditor'];
+  const shouldNotRerender = memoizedWidgetIds.includes(nextProps.widget.widgetId);
+  return shouldNotRerender;
+});
 
 export function WidgetRenderer({ hasInitialFocus, isRtl, ...props }) {
   const ref = React.useRef(null);
@@ -109,7 +136,7 @@ export function WidgetRenderer({ hasInitialFocus, isRtl, ...props }) {
       className={isRtl ? 'x--dir-rtl' : ''}
       onFocus={props.onFocus}
       onBlur={props.onBlur}>
-      <WidgetRendererInternal {...props} />
+      <MemoizedWidgetRendererInternal {...props} />
     </div>
   );
 }
