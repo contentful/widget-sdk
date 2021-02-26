@@ -8,8 +8,8 @@ exports[`OrganisationUsageInfo should render 1`] = `
 
 .emotion-1 {
   color: #253545;
-  font-size: 2.1875rem;
-  font-weight: 600;
+  font-size: 2.25rem;
+  font-weight: 500;
 }
 
 <div>
