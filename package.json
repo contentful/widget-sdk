@@ -23,7 +23,7 @@
     "@contentful/field-editor-checkbox": "0.12.0",
     "@contentful/field-editor-date": "0.10.0",
     "@contentful/field-editor-dropdown": "0.12.0",
-    "@contentful/field-editor-file": "0.10.6",
+    "@contentful/field-editor-file": "0.10.7",
     "@contentful/field-editor-json": "0.10.1",
     "@contentful/field-editor-list": "0.13.0",
     "@contentful/field-editor-location": "0.10.1",
