@@ -188,9 +188,7 @@ export const ContentfulAppsList = ({
       {isCombinedTile ? (
         <ContentfulAppTile
           slug="app"
-          title={
-            isTrialAvailable || !isPurchased ? 'Compose + Launch free trial' : 'Compose + Launch'
-          }
+          title={isTrialAvailable ? 'Compose + Launch free trial' : 'Compose + Launch'}
           organizationId={organizationId}
           image={<CombinedIcon />}
           text="Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start."

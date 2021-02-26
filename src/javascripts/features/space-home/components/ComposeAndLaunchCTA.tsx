@@ -14,22 +14,6 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
     currentOrganizationId,
   } = useSpaceEnvContext();
 
-  const canManage = canUserManageApps();
-
-  const PROMO_TEXT = {
-    trial: {
-      title: 'Compose + Launch free trial',
-      text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start. 
-        ${!canManage ? 'To try Compose + Launch, contact your Contentful administrator.' : ''}
-      `,
-    },
-    install: {
-      title: 'Install Compose + Launch: powerful tools to deliver content faster',
-      text:
-        'Compose + Launch are included with your plan. Give your content teams powerful new tools that allow them to work faster and collaborate more effectively.',
-    },
-  };
-
   const config = {
     organizationId: currentOrganizationId,
     spaceId: currentSpaceId,
@@ -55,16 +39,30 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
     },
   };
 
-  const showInstallAction =
-    compose.isEnabled &&
-    launch.isEnabled &&
-    compose.isPurchased &&
-    launch.isPurchased &&
-    !compose.isInstalled &&
-    !launch.isInstalled;
+  const canManage = canUserManageApps();
 
-  const showBuyOrTrialAction =
-    compose.isEnabled && launch.isEnabled && !compose.isPurchased && !launch.isPurchased;
+  const appsEnabled = compose.isEnabled && launch.isEnabled;
+  const appsPurchased = compose.isPurchased && launch.isPurchased;
+  const appsInstalled = compose.isInstalled && launch.isInstalled;
+
+  const showInstallAction = appsEnabled && appsPurchased && !appsInstalled;
+  const showBuyOrTrialAction = appsEnabled && !appsPurchased;
+
+  const PROMO_TEXT = {
+    trial: {
+      title: compose.isTrialAvailable
+        ? 'Compose + Launch free trial'
+        : 'Compose + Launch: powerful tools to deliver content faster',
+      text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start. 
+        ${!canManage ? 'To try Compose + Launch, contact your Contentful administrator.' : ''}
+      `,
+    },
+    install: {
+      title: 'Install Compose + Launch: powerful tools to deliver content faster',
+      text:
+        'Compose + Launch are included with your plan. Give your content teams powerful new tools that allow them to work faster and collaborate more effectively.',
+    },
+  };
 
   return (
     <>
