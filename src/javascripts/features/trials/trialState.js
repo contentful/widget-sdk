@@ -7,7 +7,10 @@ async function importer() {
 
 export const trialState = {
   name: 'start_trial',
-  url: '/start_trial',
+  url: '/start_trial?{existingUsers:bool}',
+  params: {
+    existingUsers: false,
+  },
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ StartAppTrial }) => {

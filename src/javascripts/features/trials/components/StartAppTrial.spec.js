@@ -4,7 +4,7 @@ import { render, waitFor } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
-import { startAppTrial } from 'features/trials';
+import { startAppTrial, spaceSetUp } from '../services/AppTrialService';
 import * as TokenStore from 'services/TokenStore';
 
 import { StartAppTrial } from './StartAppTrial';
@@ -20,8 +20,8 @@ const mockedAppsTrial = {
   },
 };
 
-const build = () => {
-  return render(<StartAppTrial orgId={mockedOrg.sys.id} />);
+const build = ({ existingUsers = true } = {}) => {
+  return render(<StartAppTrial orgId={mockedOrg.sys.id} existingUsers={existingUsers} />);
 };
 
 jest.mock('states/Navigator', () => ({
@@ -32,8 +32,9 @@ jest.mock('data/CMA/ProductCatalog', () => ({
   clearCachedProductCatalogFlags: jest.fn(),
 }));
 
-jest.mock('features/trials', () => ({
+jest.mock('../services/AppTrialService', () => ({
   startAppTrial: jest.fn(),
+  spaceSetUp: jest.fn(),
 }));
 
 const mockResetWithSpace = jest.fn().mockResolvedValue({});
@@ -81,12 +82,29 @@ describe('StartAppTrial', () => {
     });
   });
 
-  it('when trials feature flag is on', async () => {
+  it('when trials feature flag is on and for existing users', async () => {
     getVariation.mockResolvedValueOnce(true);
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build();
 
     await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+    expect(spaceSetUp).toHaveBeenCalledTimes(0);
+    expect(go).toHaveBeenCalledWith({
+      path: ['spaces', 'detail'],
+      params: {
+        spaceId: mockedAppsTrial.trial.spaceKey,
+      },
+      options: { location: 'replace' },
+    });
+  });
+
+  it('bootstrap the space for new users', async () => {
+    getVariation.mockResolvedValueOnce(true);
+    startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
+    build({ existingUsers: false });
+
+    await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+    expect(spaceSetUp).toHaveBeenCalledTimes(1);
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {
