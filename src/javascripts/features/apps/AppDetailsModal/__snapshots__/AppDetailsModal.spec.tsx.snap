@@ -194,7 +194,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 
 .emotion-8 {
   color: #192532;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .emotion-15 {
@@ -212,7 +212,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 .emotion-1 {
   line-height: 1.25;
   font-size: 1.75rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 <div>
