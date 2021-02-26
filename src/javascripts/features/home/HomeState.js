@@ -15,13 +15,13 @@ export function EmptyHomeRouter({ appsPurchase }) {
   const [loading, setLoading] = useState(appsPurchase);
 
   useEffect(() => {
-    if (!appsPurchase) {
-      initAutoCreateNewSpace();
-      setLoading(false);
-      return;
-    }
-
     async function init() {
+      if (!appsPurchase) {
+        await initAutoCreateNewSpace();
+        setLoading(false);
+        return;
+      }
+
       const organizations = await TokenStore.getOrganizations();
 
       const lastUsedOrgId = localStorage.get('lastUsedOrg');
@@ -49,7 +49,7 @@ export function EmptyHomeRouter({ appsPurchase }) {
           options: { location: 'replace' },
         });
       } else {
-        initAutoCreateNewSpace();
+        await initAutoCreateNewSpace();
         setLoading(false);
       }
     }

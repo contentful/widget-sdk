@@ -187,6 +187,7 @@ export function SubscriptionPage({
   const handleStartAppTrial = async () => {
     go({
       path: ['account', 'organizations', 'start_trial'],
+      params: { orgId: organizationId, existingUsers: true },
     });
   };
 

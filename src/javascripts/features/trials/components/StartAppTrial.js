@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { startAppTrial } from 'features/trials';
+import { spaceSetUp, startAppTrial } from '../services/AppTrialService';
 import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
 import { getModule } from 'core/NgRegistry';
@@ -19,8 +19,9 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import StartAppTrialIllustration from 'svg/illustrations/start-app-trial-illustration.svg';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 
-export function StartAppTrial({ orgId }) {
+export function StartAppTrial({ orgId, existingUsers }) {
   const trialBootstrap = useCallback(async () => {
     try {
       const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
@@ -48,6 +49,10 @@ export function StartAppTrial({ orgId }) {
 
       await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
 
+      if (!existingUsers) {
+        await spaceSetUp(getCMAClient({ spaceId, environmentId }));
+      }
+
       clearCachedProductCatalogFlags();
 
       go({
@@ -67,7 +72,7 @@ export function StartAppTrial({ orgId }) {
         options: { location: 'replace' },
       });
     }
-  }, [orgId]);
+  }, [orgId, existingUsers]);
 
   useAsync(trialBootstrap);
 
@@ -86,4 +91,5 @@ export function StartAppTrial({ orgId }) {
 
 StartAppTrial.propTypes = {
   orgId: PropTypes.string.isRequired,
+  existingUsers: PropTypes.bool,
 };

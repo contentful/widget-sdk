@@ -16,6 +16,8 @@ import {
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { go } from 'states/Navigator';
 
 let creatingSampleSpace = false;
 
@@ -40,7 +42,7 @@ export function resetCreatingSampleSpace() {
  * for a qualified user.
  * It's called on EmptyHomeRouter when the first route is loaded after a user is logged in.
  */
-export function init() {
+export async function init() {
   const store = getBrowserStorage();
   combine([user$, spacesByOrg$, enabled$])
     .filter(([user, spacesByOrg, enabled]) => {
@@ -55,12 +57,16 @@ export function init() {
     .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
-      creatingSampleSpace = true;
+      const isAppsTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
+        organizationId: org.sys.id,
+      });
+
+      creatingSampleSpace = !isAppsTrialEnabled;
 
       create({
         markOnboarding,
         onDefaultChoice: () => {
-          defaultChoice({ org, user, store });
+          isAppsTrialEnabled ? startAppsTrial(org.sys.id) : defaultChoice({ org, user, store });
         },
         org,
         user,
@@ -122,4 +128,14 @@ function attemptedSpaceAutoCreation(user, store) {
     store.get(getSpaceAutoCreatedKey(user, 'success')) ||
     store.get(getSpaceAutoCreatedKey(user, 'failure'))
   );
+}
+
+function startAppsTrial(orgId) {
+  go({
+    path: ['account', 'organizations', 'start_trial'],
+    params: { orgId, existingUsers: false },
+    options: {
+      location: 'replace',
+    },
+  });
 }
