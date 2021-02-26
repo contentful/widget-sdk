@@ -46,7 +46,7 @@ export function AppListItem(props: AppListItemProps) {
   return (
     <div className={styles.item}>
       <div className={styles.title} data-test-id="app-title">
-        <Heading element="h3" className={styles.titleText}>
+        <div className={styles.titleText}>
           <StateLink path="^.detail" params={{ appId: app.id }}>
             {({ onClick: navigate }) => (
               <div
@@ -55,19 +55,21 @@ export function AppListItem(props: AppListItemProps) {
                 data-test-id="app-details">
                 <AppIcon icon={app.icon} />
                 <div>
-                  {app.title}
-                  {app.isEarlyAccess && (
-                    <Tag tagType="warning" className={styles.earlyAccessTag}>
-                      EARLY ACCESS
-                    </Tag>
-                  )}
+                  <Heading element="h3" className={styles.appLinkTitle}>
+                    {app.title}
+                    {app.isEarlyAccess && (
+                      <Tag tagType="warning" className={styles.earlyAccessTag}>
+                        EARLY ACCESS
+                      </Tag>
+                    )}
+                    {app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
+                  </Heading>
                   {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}
                 </div>
-                {app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
               </div>
             )}
           </StateLink>
-        </Heading>
+        </div>
       </div>
       <div className={styles.actions}>
         {!canManageApps ? (

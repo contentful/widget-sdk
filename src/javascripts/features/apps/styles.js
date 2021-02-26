@@ -61,6 +61,10 @@ export const styles = {
       alignItems: 'center',
       cursor: hasNoAction ? 'default' : 'pointer',
     }),
+  appLinkTitle: css({
+    fontSize: '1rem',
+    fontWeight: tokens.fontWeightMedium,
+  }),
   earlyAccessTag: css({
     marginLeft: tokens.spacingXs,
   }),
