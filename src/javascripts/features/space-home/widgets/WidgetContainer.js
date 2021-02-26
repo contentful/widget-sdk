@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -33,7 +34,15 @@ export class WidgetContainer extends React.Component {
   static Col = ({ children }) => <div className={styles.col}>{children}</div>;
 
   render() {
-    const { children } = this.props;
-    return <div className={styles.container}>{children}</div>;
+    const { children, testId = 'cf-space-home-widget-container' } = this.props;
+    return (
+      <div data-test-id={testId} className={styles.container}>
+        {children}
+      </div>
+    );
   }
 }
+
+WidgetContainer.propTypes = {
+  testId: PropTypes.string,
+};
