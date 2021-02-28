@@ -16,7 +16,7 @@ const headerClassName = css({
 
 const titleClassName = css({
   fontSize: tokens.fontSizeS,
-  fontWeight: 500,
+  fontWeight: tokens.fontWeightMedium,
   textTransform: 'uppercase',
   color: tokens.colorTextLight,
   borderBottom: 0,

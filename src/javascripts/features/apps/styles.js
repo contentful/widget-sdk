@@ -27,7 +27,7 @@ export const styles = {
   }),
   titleText: css({
     fontSize: tokens.fontSizeL,
-    fontWeight: '500',
+    fontWeight: tokens.fontWeightMedium,
   }),
   actions: css({
     display: 'block',
