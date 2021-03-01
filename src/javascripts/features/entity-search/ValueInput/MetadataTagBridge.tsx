@@ -1,6 +1,6 @@
 import React from 'react';
 import type { CustomInputRenderers } from '@contentful/entity-search';
-import { MetadataTag } from './ValueInput';
+import { MetadataTagWrapper } from './MetadataTag';
 import { MetadataTags } from 'features/content-tags';
 
 type BridgeProps = Parameters<NonNullable<CustomInputRenderers['metadataTagRenderer']>>[0];
@@ -20,7 +20,7 @@ export function MetadataTagBridge(bridgeProps: BridgeProps) {
 
   return (
     <MetadataTags>
-      <MetadataTag {...props} />
+      <MetadataTagWrapper {...props} />
     </MetadataTags>
   );
 }

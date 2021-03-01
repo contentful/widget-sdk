@@ -4,7 +4,16 @@ import { assign, noop } from 'lodash';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getAvailableDisplayFields } from 'features/entity-views';
 
-export const useListView = ({ entityType, onUpdate = noop }) => {
+export type View = Record<string, any>;
+export type ViewCallback = (view: View) => void;
+
+export const useListView = ({
+  entityType,
+  onUpdate = noop,
+}: {
+  entityType: 'asset' | 'entry';
+  onUpdate: ViewCallback;
+}) => {
   const {
     currentSpaceContentTypes: contentTypes,
     currentEnvironmentId,
@@ -20,13 +29,13 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
     [entityType, currentEnvironmentId, currentSpaceId]
   );
 
-  const initial = viewPersistor.read();
+  const initial: View = viewPersistor.read();
 
   const ref = useRef(initial);
-  const lastAction = useRef();
+  const lastAction = useRef<string | undefined>();
 
   const updateRef = useCallback(
-    (callback, action) => {
+    (callback: ViewCallback, action: string) => {
       lastAction.current = action;
       viewPersistor.save(ref.current);
       callback?.(ref.current);
@@ -47,7 +56,7 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   }
 
   const assignView = useCallback(
-    (view, callback) => {
+    (view: View, callback: ViewCallback) => {
       assign(ref.current, view);
       updateRef(callback, 'assignView');
     },
@@ -55,7 +64,7 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
   );
 
   const setView = useCallback(
-    (view, callback) => {
+    (view: View, callback: ViewCallback) => {
       ref.current = view;
       updateRef(callback, 'setView');
     },
@@ -73,3 +82,5 @@ export const useListView = ({ entityType, onUpdate = noop }) => {
     },
   };
 };
+
+export type ListViewContext = ReturnType<typeof useListView>;

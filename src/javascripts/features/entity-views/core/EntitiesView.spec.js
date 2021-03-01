@@ -7,8 +7,8 @@ import * as fake from 'test/helpers/fakeFactory';
 const space = fake.Space();
 const organization = fake.Organization();
 
-jest.mock('features/entity-search/SearchProxy', () => ({
-  SearchProxy: (props) => <div data-test-id="search">{JSON.stringify(props)}</div>,
+jest.mock('features/entity-search/EntitySearch', () => ({
+  EntitySearch: (props) => <div data-test-id="search">{JSON.stringify(props)}</div>,
 }));
 
 jest.mock('features/entity-views/core/SavedViews/Sidebar', () => ({

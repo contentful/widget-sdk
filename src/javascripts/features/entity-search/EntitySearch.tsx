@@ -3,13 +3,8 @@ import type { EntityType, ExternalSearchState } from '@contentful/entity-search/
 import { upperFirst } from 'lodash';
 import { CustomInputRenderers, Search, SearchFeatures } from '@contentful/entity-search';
 import { useSearchSdk } from './useSearchSdk';
-import { MetadataTagBridge } from './MetadataTagBridge';
-
-type ListViewContext = {
-  getView: () => any;
-  assignView: (data: Record<string, any>, done: Function) => any;
-  lastAction: string;
-};
+import { MetadataTagBridge } from './ValueInput/MetadataTagBridge';
+import type { ListViewContext, ViewCallback } from './useListView';
 
 type EntitySearchProps = {
   className: string;
@@ -17,19 +12,19 @@ type EntitySearchProps = {
   entityType: EntityType;
   isLoading?: boolean;
   withMetadata: boolean;
-  onUpdate: Function;
+  onUpdate: ViewCallback;
   listViewContext: ListViewContext;
 };
 
 type EntitySearchContextProps = {
-  onUpdate: Function;
+  onUpdate: ViewCallback;
   listViewContext: ListViewContext;
   features: SearchFeatures;
   customInputRenderers?: CustomInputRenderers;
 };
 
 // we want to re-render complete search on external changes
-function useEntitySearchKey({ lastAction, view }: { lastAction: string; view: any }) {
+function useEntitySearchKey({ lastAction, view }: { lastAction?: string; view: any }) {
   const externalUpdateKey = useRef(0);
   const key = useMemo(() => {
     const action = lastAction;

@@ -38,20 +38,6 @@ export async function getForAssets(opts) {
   const assetContentType = { data: EditorialConstants.assetContentType };
   return prepareEntityListQuery(assetContentType, opts);
 }
-/**
- * @description
- * Prepares an API query for the user list.
- *
- * @param {Paginator} opts.paginator
- * @returns {object}
- */
-export async function getForUsers(opts) {
-  const userContentType = {
-    data: {},
-    getId: _.constant(undefined),
-  };
-  return prepareEntityListQuery(userContentType, opts);
-}
 
 function prepareEntityListQuery(contentType, opts) {
   const queryObject = {

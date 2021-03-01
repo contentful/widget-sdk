@@ -56,8 +56,6 @@ export const FLAGS = {
   APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
   REACT_MIGRATION_CT: 'react-migration-10-2020-content-type-editor',
 
-  ENTITY_SEARCH: 'migration-02-2021-entity-search',
-
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__: 'test-flag',
@@ -95,7 +93,6 @@ const FALLBACK_VALUES = {
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
   [FLAGS.REACT_MIGRATION_CT]: false,
-  [FLAGS.ENTITY_SEARCH]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

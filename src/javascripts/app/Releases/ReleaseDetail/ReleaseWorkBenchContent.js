@@ -4,7 +4,6 @@ import { cx } from 'emotion';
 import pluralize from 'pluralize';
 import { Workbench, Subheading } from '@contentful/forma-36-react-components';
 import { FilterPill } from 'features/entity-search';
-import { FilterValueInputs as ValueInput } from 'core/services/ContentQuery';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import { VIEW_LABELS } from './utils';
@@ -58,11 +57,11 @@ const ReleaseWorkBenchContent = ({
               className={styles.layoutPills}
               filter={{
                 label: 'View',
-                valueInput: ValueInput.Select(
-                  Object.keys(VIEW_LABELS).map((key) => [key, VIEW_LABELS[key]])
-                ),
+                queryKey: 'view',
+                value: entitiesLayout,
+                filterType: 'select',
+                options: Object.entries(VIEW_LABELS).map(([value, label]) => ({ value, label })),
               }}
-              value={entitiesLayout}
               onChange={setEntitiesLayout}
             />
           </div>

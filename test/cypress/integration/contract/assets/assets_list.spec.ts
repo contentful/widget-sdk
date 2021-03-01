@@ -1,5 +1,4 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import { defaultSpaceId } from '../../../util/requests';
 import {
   queryAllNonArchivedAssetsInTheDefaultSpace,
@@ -22,7 +21,7 @@ describe('Assets List Page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    interactions = [...defaultRequestsMock(), queryFirst100UsersInDefaultSpace.willFindSeveral()];
+    interactions = [...defaultRequestsMock()];
   });
   context('no assets in the space', () => {
     beforeEach(() => {

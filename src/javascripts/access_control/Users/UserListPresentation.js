@@ -11,7 +11,6 @@ import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { FilterPill } from 'features/entity-search';
-import { FilterValueInputs as ValueInput } from 'core/services/ContentQuery';
 import UserListRow from './UserListRow';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote';
@@ -27,7 +26,6 @@ const styles = {
   groupSelect: css({
     marginLeft: '67px',
     marginTop: tokens.spacingXl,
-    display: 'inline-flex',
   }),
   sidebar: {
     heading: css({
@@ -106,11 +104,11 @@ const UserListPresentation = ({
             className={styles.groupSelect}
             filter={{
               label: 'Group by',
-              valueInput: ValueInput.Select(
-                Object.keys(VIEW_LABELS).map((key) => [key, VIEW_LABELS[key]])
-              ),
+              queryKey: 'users',
+              value: selectedView,
+              filterType: 'select',
+              options: Object.entries(VIEW_LABELS).map(([value, label]) => ({ value, label })),
             }}
-            value={selectedView}
             onChange={onChangeSelectedView}
           />
           {map(userGroups, (members, label) => (

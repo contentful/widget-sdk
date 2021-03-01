@@ -67,7 +67,6 @@ describe('Entries list page', () => {
 
       const interactions = [
         ...defaultRequestsMock({}),
-        queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         '@queryNonArchivedEntries',
@@ -108,7 +107,6 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
         }),
-        queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),

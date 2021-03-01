@@ -1,14 +1,32 @@
 import { useMemo, useState, useEffect } from 'react';
 import { createSearchController } from './Controller';
+import type { ListViewContext } from './useListView';
+import type { Paginator } from './usePaginator';
+import type { Entity } from 'core/typings';
 
-export const useSearchController = ({
-  fetchEntities,
-  cache,
-  listViewContext,
-  getListQuery,
-  paginator,
-  keys,
-}) => {
+type EntityCache = Record<string, (...args: any[]) => any>;
+
+type SearchControllerKeys = {
+  search: string[];
+  query: string[];
+};
+
+type SearchControllerCache = {
+  entry: EntityCache;
+  asset: EntityCache;
+};
+
+type SearchControllerParams = {
+  listViewContext: ListViewContext;
+  paginator: Paginator;
+  keys: SearchControllerKeys;
+  cache: SearchControllerCache;
+  getListQuery: (opts: Record<string, any>) => Record<string, any>;
+  fetchEntities: (query: Record<string, any>) => Entity;
+};
+
+export const useSearchController = (params: SearchControllerParams) => {
+  const { listViewContext, paginator, fetchEntities, cache, getListQuery, keys } = params;
   const [entities, setEntities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,7 +46,7 @@ export const useSearchController = ({
   );
 
   useEffect(() => {
-    controller.updateEntities();
+    void controller.updateEntities();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const hasEntities = paginator.getTotal() > 0;

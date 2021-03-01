@@ -1,5 +1,5 @@
-import { cloneDeep, find, get, has, map, memoize } from 'lodash';
-import { assign, concat, push } from 'utils/Collections';
+import { find, get, has, map } from 'lodash';
+import { assign } from 'utils/Collections';
 import { equality as equalityOperator, getOperatorsByType } from './Operators';
 import mimetype from '@contentful/mimetype';
 
@@ -8,20 +8,8 @@ import { METADATA_TAGS_ID } from 'data/MetadataFields';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
-const SUPPORTED_CT_FIELD_TYPES = [
-  'Symbol',
-  'Text',
-  'Integer',
-  'Number',
-  'Date',
-  'Boolean',
-  'Array',
-  'Link',
-  'RichText',
-];
-
-export const statusQueryKey = '__status';
-export const Status = {
+const statusQueryKey = '__status';
+const Status = {
   Any: '',
   Published: 'published',
   Changed: 'changed',
@@ -134,79 +122,6 @@ const assetsFieldFilters = [
 }));
 
 /**
- * Create the filter for the contentType field of an entry.
- *
- * Takes a list of available content types as an argument. This is used
- * to contstruct the available options to select from.
- */
-export function contentTypeFilter(contentTypes) {
-  let valueInputSelect = [...contentTypes.map((ct) => [ct.sys.id, ct.name])];
-
-  if (contentTypes.length !== 1) {
-    valueInputSelect = [['', 'Any'], ...valueInputSelect];
-  }
-
-  return {
-    name: 'Content type',
-    queryKey: 'content_type',
-    operators: [equalityOperator],
-    valueInput: ValueInput.Select(valueInputSelect),
-  };
-}
-
-/**
- *
- * @param {API.ContentType[]} contentTypes List of content types
- * @param {string} contentTypeId ContentType id
- *
- * @returns {API.ContentType?}
- */
-export function getContentTypeById(contentTypes, contentTypeId) {
-  return find(contentTypes, (ct) => ct.sys.id === contentTypeId);
-}
-
-export function getFiltersFromQueryKey({
-  contentTypes,
-  searchFilters,
-  contentTypeId,
-  users,
-  withAssets = false,
-  withMetadata = false,
-}) {
-  const contentType = getContentTypeById(contentTypes, contentTypeId);
-  const filters = searchFilters
-    .map(([queryKey, op, value]) => [
-      buildFilterFieldByQueryKey(contentType, queryKey, withAssets, withMetadata),
-      op,
-      value,
-    ])
-    .filter(([queryKey]) => queryKey !== undefined);
-
-  return setUserFieldsFilters(users, filters);
-}
-
-export function sanitizeSearchFilters(
-  filters = [],
-  contentTypes,
-  contentTypeId,
-  withAssets = false,
-  withMetadata = false
-) {
-  const contentType = getContentTypeById(contentTypes, contentTypeId);
-
-  return filters.filter(([queryKey]) => {
-    if (contentType && isContentTypeField(queryKey)) {
-      return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
-    } else {
-      return (
-        find(getFilters(withAssets, withMetadata), (filter) => filter.queryKey === queryKey) !==
-        undefined
-      );
-    }
-  });
-}
-
-/**
  * Returns a field filter for given queryKey from
  * the fields of provided Content Type or sys field filters.
  *
@@ -236,131 +151,6 @@ export function buildFilterFieldByQueryKey(
   }
 
   return filterField;
-}
-
-/**
- * Checks if provided queryKey is applicable to the ContentType.
- *
- * @param {API.ContentType} contentType
- * @param {string} queryKey
- *
- * @returns {boolean}
- */
-export function isFieldFilterApplicableToContentType(contentType, queryKey) {
-  if (isContentTypeField(queryKey)) {
-    if (!contentType) {
-      return false;
-    }
-
-    const field = getFieldByApiName(contentType, getApiName(queryKey));
-
-    return field !== undefined;
-  } else {
-    return true;
-  }
-}
-
-/**
- * Returns a list of all filters.
- *
- * This list consists of
- * - The contentType filter
- * - Filters for sys fields common to each content type
- * - A filter for each field of the given content types
- */
-// Memoized to improve performance on huge lists (>1500 elements).
-const allFilters = memoize(
-  (contentTypes, withAssets = false, withMetadata = false) => {
-    const ctFieldFilters = contentTypes.reduce((filters, ct) => {
-      return ct.fields.reduce((filters, ctField) => {
-        return push(filters, buildFilterField(ct, ctField));
-      }, filters);
-    }, []);
-
-    const fields = concat(getFilters(withAssets, withMetadata), withAssets ? [] : ctFieldFilters);
-    return fields;
-  },
-  (contentTypes, withAssets, withMetadata) =>
-    contentTypes.concat([{ withAssets: withAssets, withMetadata: withMetadata }])
-);
-
-/**
- * Returns a list of filters that begin with the search string and
- * match the selected content type ID or
- * a list of all filters if there was no match by name.
- *
- * @param {string} searchString
- *   Only return filters whose name starts with this string
- * @param {string?} contentTypeID
- *   If given return only filters for fields on this content type.
- * @param {API.ContentType[]} availableContentTypes
- * @returns {Filter[]}
- */
-// Memoized to improve performance on huge lists (>1500 elements).
-export const getMatchingFilters = (
-  searchString,
-  contentTypeId,
-  availableContentTypes,
-  withAssets,
-  withMetadata
-) => {
-  let filters = allFilters(availableContentTypes, withAssets, withMetadata);
-  filters = filterByName(filters, searchString);
-  filters = filterByContentType(filters, contentTypeId);
-
-  return withAssets ? filters : filterBySupportedTypes(filters);
-};
-
-function filterBySupportedTypes(filters) {
-  return filters.filter(({ queryKey, type }) => {
-    if (isContentTypeField(queryKey)) {
-      return SUPPORTED_CT_FIELD_TYPES.indexOf(type) > -1;
-    }
-    return true;
-  });
-}
-
-function filterByName(filters, searchString = '') {
-  searchString = searchString.trim().toLowerCase();
-  return filters.filter((filter) => {
-    return filter.name.toLowerCase().includes(searchString);
-  });
-}
-
-function filterByContentType(filters, contentTypeId) {
-  if (contentTypeId) {
-    // Remove all filters that do not apply to the given Content Type
-    return filters.filter((field) => {
-      if (field.contentType) {
-        return field.contentType.id === contentTypeId;
-      } else {
-        return true;
-      }
-    });
-  } else {
-    return filters;
-  }
-}
-
-function setUserFieldsFilters(users, filters) {
-  const getName = (user) => (user.firstName ? user.firstName : user.email);
-  const byName = (curr, prev) => getName(curr).localeCompare(getName(prev));
-  const usersOptions = users.sort(byName).map((user) => {
-    const label = user.firstName ? `${user.firstName} ${user.lastName}` : user.email;
-    const value = user.sys.id;
-
-    return [value, label];
-  });
-
-  return filters.map(([filter, op, value]) => {
-    const filterClone = cloneDeep(filter);
-
-    if (filterClone && filterClone.type === 'User') {
-      filterClone.valueInput = ValueInput.Select([['', 'Any'], ...usersOptions]);
-    }
-
-    return [filterClone, op, value];
-  });
 }
 
 function isContentTypeField(queryKey) {
