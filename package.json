@@ -263,6 +263,8 @@
     "dev-preview": "NODE_ENV=dev UI_CONFIG=dev-on-preview node ./server.js",
     "dev-production": "NODE_ENV=dev UI_CONFIG=dev-on-production node ./server.js",
     "cypress": "npm run clean-logs-pacts && npx cypress open",
+    "smoke-staging": "SMOKE_TEST_DOMAIN='flinkly.com' npm run smoke",
+    "smoke": "npx cypress open --config-file ./cypress-smoke.json",
     "lint": "eslint src test tools micro-backends --ext '.ts,.tsx,.js,.jsx' --quiet",
     "test": "npm run jest",
     "jest": "TZ=UTC node run-tests-jest.js",

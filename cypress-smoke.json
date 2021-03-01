@@ -1,0 +1,14 @@
+{
+  "pluginsFile": "./test/smoke/setup.js",
+  "fixturesFolder": "./test/smoke/fixtures",
+  "integrationFolder": "./test/smoke",
+  "testFiles": "**/*.spec.ts",
+  "requestTimeout": 7500,
+  "defaultCommandTimeout": 6000,
+  "reporter": "junit",
+  "reporterOptions": {
+    "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
+  },
+  "viewportWidth": 1300,
+  "viewportHeight": 700
+}
