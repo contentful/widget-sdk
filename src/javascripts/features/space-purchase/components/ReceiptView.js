@@ -30,11 +30,15 @@ export function ReceiptView({
   spaceName,
   spaceId,
   buttonAction,
-  buttonLabel,
   error,
   isSpaceUpgrade,
   selectedCompose,
 }) {
+  let buttonLabel = 'Go to my space home';
+  if (error && error.name !== TEMPLATE_CREATION_ERROR) {
+    buttonLabel = 'Retry';
+  }
+
   return (
     <Flex className={styles.grid} flexDirection="column" alignItems="center">
       <ReceiptMessage
@@ -78,7 +82,6 @@ ReceiptView.propTypes = {
   spaceName: PropTypes.string,
   spaceId: PropTypes.string,
   buttonAction: PropTypes.func,
-  buttonLabel: PropTypes.string,
   error: PropTypes.object,
   isSpaceUpgrade: PropTypes.bool,
   selectedCompose: PropTypes.bool,

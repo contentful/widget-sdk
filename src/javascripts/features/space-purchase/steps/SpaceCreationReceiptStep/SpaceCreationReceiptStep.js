@@ -40,11 +40,7 @@ export const SpaceCreationReceiptStep = () => {
         spaceName={spaceName}
         spaceId={newSpace?.sys.id}
         buttonAction={(addOnPurchaseError && retryAddOnPurchase) || buttonAction}
-        buttonLabel={
-          spaceCreationError || addOnPurchaseError ? 'Retry request' : 'Take me to my new space'
-        }
         error={spaceCreationError || addOnPurchaseError || templateCreationError}
-        templateCreationError={templateCreationError}
         selectedCompose={selectedCompose}
       />
     </section>

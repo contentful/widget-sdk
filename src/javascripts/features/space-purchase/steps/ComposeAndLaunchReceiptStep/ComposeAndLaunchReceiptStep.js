@@ -31,7 +31,6 @@ export const ComposeAndLaunchReceiptStep = () => {
         pending={pending}
         buttonAction={addOnPurchaseError ? retryAddOnPurchase : goToLastUsedSpace}
         error={addOnPurchaseError}
-        buttonLabel={addOnPurchaseError ? 'Retry request' : 'Take me to space'}
         selectedCompose
       />
     </section>

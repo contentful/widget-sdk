@@ -93,18 +93,17 @@ export function ReceiptMessage({
             <Paragraph>
               You successfully purchased the {PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package
               {isSpaceUpgrade && <> and changed your space to a {planName} space</>}
-              {!isSpaceUpgrade && selectedSpacePlan && (
-                <>
-                  {' '}
-                  and a new {planName} space. Update the new space name anytime on the{' '}
-                  <TextLink testId="rename-space-button" onClick={onClickRenameSpaceLink}>
-                    Space Settings
-                  </TextLink>
-                </>
-              )}
-              .
+              {!isSpaceUpgrade && selectedSpacePlan && <> and a new {planName} space</>}. You can
+              now install Compose and Launch on any Space Home.
             </Paragraph>
-            <Paragraph>You can now install Compose and Launch on any Space Home.</Paragraph>
+            {!isSpaceUpgrade && selectedSpacePlan && (
+              <Paragraph>
+                Update the new space name anytime on the{' '}
+                <TextLink testId="rename-space-button" onClick={onClickRenameSpaceLink}>
+                  Space Settings
+                </TextLink>
+              </Paragraph>
+            )}
           </>
         )}
       </Typography>
