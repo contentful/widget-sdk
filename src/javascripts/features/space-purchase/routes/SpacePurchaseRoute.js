@@ -183,7 +183,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) =>
   // We do this to allow the use of a URL like /new_space?from= from an external place
   // like the marketing website, while also allowing it to be used internally
   // via `go(...)`. This should become unnecessary or changed when moving from ui-router.
-  const from = fromRouterParam ?? queryParams.from;
+  const from = fromRouterParam ? fromRouterParam : queryParams.from;
 
   const {
     state: { sessionId, purchasingApps },
