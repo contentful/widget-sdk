@@ -26,6 +26,11 @@ import { ContentfulAppsList } from './ContentfulAppList';
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { canStartAppTrial } from 'features/trials';
+import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { EnvironmentMeta } from 'core/services/SpaceEnvContext/types';
+import { go } from 'states/Navigator';
+import { getModule } from 'core/NgRegistry';
 
 const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
   source: 'webapp',
@@ -54,122 +59,97 @@ const getEnabledApps = async (apps, flagContext) => {
 };
 
 export interface MarketplacePageProps {
-  cma: any;
+  app?: string;
+  canManageApps?: boolean;
+  hasAdvancedAppsFeature: boolean;
+  hasAppsFeature: boolean;
   repo: {
     getAllApps: () => Promise<MarketplaceApp[]>;
   };
-  organizationId: string;
-  spaceInformation: SpaceInformation;
-  userId: string;
-  hasAppsFeature: boolean;
-  hasAdvancedAppsFeature: boolean;
-  canManageApps?: boolean;
-
-  detailsModalAppId?: string;
-  openAppDetails: (app: MarketplaceApp) => Promise<void> | void;
-  closeAppDetails: () => Promise<void> | void;
 }
 
-interface MarketplacePageState {
-  ready: boolean;
-  installedApps: MarketplaceApp[];
-  availableApps: MarketplaceApp[];
-  contentfulApps: MarketplaceApp[];
-  appManager: AppManager;
-  appDetailsModalAppId: string | null;
-  isPurchased: boolean;
-  isTrialAvailable: boolean;
-}
+export function MarketplacePage(props: MarketplacePageProps) {
+  const {
+    currentEnvironmentId: environmentId,
+    currentSpaceId: spaceId,
+    currentOrganizationId: organizationId,
+    currentSpaceName: spaceName,
+    currentSpace,
+  } = useSpaceEnvContext();
+  const { cma } = React.useMemo(() => getModule('spaceContext'), []); // TODO: Temporary solution for contract tests
+  const [ready, setReady] = React.useState(false);
+  const [installedApps, setInstalledApps] = React.useState<MarketplaceApp[]>([]);
+  const [availableApps, setAvailableApps] = React.useState<MarketplaceApp[]>([]);
+  const [contentfulApps, setContentfulApps] = React.useState<MarketplaceApp[]>([]);
+  const [appManager, setAppManager] = React.useState<AppManager | null>(null);
+  const [appDetailsModalAppId, setAppDetailsModalAppId] = React.useState<string | null>(
+    props.app ?? null
+  );
+  const [isPurchased, setIsPurchased] = React.useState(false);
+  const [isTrialAvailable, setIsTrialAvailable] = React.useState(false);
+  const spaceInformation: SpaceInformation = {
+    envMeta: getEnvironmentMeta(currentSpace) as EnvironmentMeta,
+    spaceId: spaceId as string,
+    spaceName: spaceName as string,
+  };
+  const canManageApps = props.canManageApps ?? false;
 
-export class MarketplacePage extends React.Component<MarketplacePageProps, MarketplacePageState> {
-  constructor(props: MarketplacePageProps) {
-    super(props);
+  React.useEffect(() => {
+    async function init() {
+      try {
+        const [launchApp, composeApp, isTrialAvailable, appManager] = await Promise.all([
+          getOrgFeature(organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
+          getOrgFeature(organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
+          canStartAppTrial(organizationId as string),
+          new AppManager(cma, environmentId, spaceId, organizationId, async () => await loadApps()),
+          loadApps(),
+        ]);
+        const isPurchased = [launchApp, composeApp].some(Boolean);
 
-    const environmentId = this.props.spaceInformation.envMeta.environmentId;
-    const spaceId = this.props.spaceInformation.spaceId;
-    const appManager = new AppManager(
-      this.props.cma,
-      environmentId,
-      spaceId,
-      this.props.organizationId,
-      async () => {
-        const appState = await this.loadApps();
-        this.setState(appState);
+        setAppManager(appManager);
+        setIsPurchased(isPurchased);
+        setIsTrialAvailable(isTrialAvailable);
+
+        setReady(true);
+      } catch (err) {
+        Notification.error('Failed to load apps.');
       }
-    );
+    }
+    init();
 
-    this.state = {
-      ready: false,
-      installedApps: [],
-      availableApps: [],
-      contentfulApps: [],
-      appManager,
-      appDetailsModalAppId: props.detailsModalAppId,
-      isPurchased: false,
-      isTrialAvailable: false,
-    } as MarketplacePageState;
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  async loadApps() {
-    const environmentId = this.props.spaceInformation.envMeta.environmentId;
-    const spaceId = this.props.spaceInformation.spaceId;
-    const apps = await this.props.repo.getAllApps();
+  async function loadApps() {
+    const apps = await props.repo.getAllApps();
     const enabledApps = await getEnabledApps(apps, {
       spaceId,
       environmentId,
-      organizationId: this.props.organizationId,
+      organizationId,
     });
 
     const [contentfulApps, marketplaceApps] = partition(enabledApps, (app) => app.isContentfulApp);
     const [installedApps, availableApps] = partition(marketplaceApps, (app) => app.appInstallation);
-    return { availableApps, installedApps, contentfulApps };
+
+    setAvailableApps(availableApps);
+    setInstalledApps(installedApps);
+    setContentfulApps(contentfulApps);
   }
 
-  async componentDidMount() {
-    try {
-      const appState = await this.loadApps();
-      const isPurchased = (
-        await Promise.all([
-          getOrgFeature(this.props.organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
-          getOrgFeature(this.props.organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
-        ])
-      ).some(Boolean);
-
-      const isTrialAvailable = await canStartAppTrial(this.props.organizationId);
-
-      this.setState({ ready: true, ...appState, isPurchased, isTrialAvailable });
-    } catch (err) {
-      Notification.error('Failed to load apps.');
-    }
-  }
-
-  openDetailModal = async (app: MarketplaceApp) => {
+  async function openDetailModal(app: MarketplaceApp) {
     AppLifecycleTracking.detailsOpened(app.id);
-    this.setState({ appDetailsModalAppId: app.id });
-    await this.props.openAppDetails(app);
-  };
+    setAppDetailsModalAppId(app.id);
+    return await go({ path: '.', params: { app: app.id }, options: { notify: false } });
+  }
 
-  closeDetailModal = async () => {
-    this.setState({ appDetailsModalAppId: null, ...(await this.loadApps()) });
-    await this.props.closeAppDetails();
-  };
+  async function closeDetailModal() {
+    loadApps();
+    setAppDetailsModalAppId(null);
+    return await go({ path: '.', params: { app: null }, options: { notify: false } });
+  }
 
-  renderModal() {
-    const {
-      spaceInformation,
-      hasAppsFeature,
-      hasAdvancedAppsFeature,
-      canManageApps = false,
-    } = this.props;
-    const {
-      appManager,
-      appDetailsModalAppId,
-      installedApps,
-      availableApps,
-      contentfulApps,
-    } = this.state;
-
-    if (!hasAppsFeature || !appDetailsModalAppId) {
+  function renderModal() {
+    if (!props.hasAppsFeature || !appDetailsModalAppId || !appManager) {
       return null;
     }
 
@@ -190,109 +170,102 @@ export class MarketplacePage extends React.Component<MarketplacePageProps, Marke
     return (
       <AppDetailsModal
         isShown={true}
-        onClose={this.closeDetailModal}
+        onClose={closeDetailModal}
         app={modalApp}
         appManager={appManager}
         spaceInformation={spaceInformation}
-        usageExceeded={isUsageExceeded(installedApps, hasAdvancedAppsFeature)}
-        hasAdvancedAppsFeature={hasAdvancedAppsFeature}
+        usageExceeded={isUsageExceeded(installedApps, props.hasAdvancedAppsFeature)}
+        hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
         canManageApps={canManageApps}
       />
     );
   }
 
-  render() {
-    const {
-      organizationId,
-      hasAppsFeature,
-      hasAdvancedAppsFeature,
-      canManageApps = false,
-      spaceInformation,
-    } = this.props;
-    const { installedApps, availableApps, contentfulApps, appManager } = this.state;
+  let content = <MarketplacePageLoading />;
 
-    let content = <MarketplacePageLoading />;
+  if (ready) {
+    if (!appManager) return null;
 
-    if (this.state.ready) {
-      const hasInstalledApps = installedApps.length > 0;
-      const hasAvailableApps = availableApps.length > 0;
-      const spaceInstallationLimit = hasAdvancedAppsFeature
-        ? ADVANCED_APPS_LIMIT
-        : BASIC_APPS_LIMIT;
-      content = (
-        <>
-          <ContentfulAppsList
-            apps={contentfulApps}
-            appManager={this.state.appManager}
-            canManageApps={canManageApps}
-            openDetailModal={this.openDetailModal}
-            spaceInformation={spaceInformation}
-            organizationId={organizationId}
-            isPurchased={this.state.isPurchased}
-            isTrialAvailable={this.state.isTrialAvailable}
-          />
-          {hasInstalledApps ? (
-            <AppList
-              apps={sortPrivateAppsFirst(installedApps, canManageApps)}
-              appManager={appManager}
-              openDetailModal={this.openDetailModal}
-              hasAdvancedAppsFeature={hasAdvancedAppsFeature}
-              canManageApps={canManageApps}
-              organizationId={organizationId}
-              title="Installed"
-              info={`Usage: ${installedApps.length} / ${spaceInstallationLimit} apps installed`}
-              testId="installed-list"
-            />
-          ) : (
-            <AppsFrameworkIntroBanner canManageApps={canManageApps} />
-          )}
-          {hasInstalledApps && (
-            <Note className={styles.feedbackNote}>
-              <TextLink
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://ctfl.io/apps-feedback">
-                Give us feedback!
-              </TextLink>{' '}
-              Help us improve your experience with our apps and the App Framework.
-            </Note>
-          )}
-          {hasAvailableApps && (
-            <AppList
-              apps={sortPrivateAppsFirst(availableApps, canManageApps)}
-              appManager={appManager}
-              openDetailModal={this.openDetailModal}
-              hasAdvancedAppsFeature={hasAdvancedAppsFeature}
-              canManageApps={!!canManageApps}
-              organizationId={organizationId}
-              title="Available"
-            />
-          )}
-          <Paragraph className={styles.footer}>
-            Can&rsquo;t find what you&rsquo;re looking for?{' '}
-            <TextLink
-              href={withInAppHelpUtmBuildApps(
-                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/'
-              )}
-              target="_blank"
-              className={styles.externalLink}
-              rel="noopener noreferrer">
-              Build your own app
-              <Icon icon="ExternalLink" />
-            </TextLink>
-          </Paragraph>
-        </>
-      );
-    }
-
-    return (
+    const hasInstalledApps = installedApps.length > 0;
+    const hasAvailableApps = availableApps.length > 0;
+    const spaceInstallationLimit = props.hasAdvancedAppsFeature
+      ? ADVANCED_APPS_LIMIT
+      : BASIC_APPS_LIMIT;
+    content = (
       <>
-        <DocumentTitle title="Apps" />
-        <AppsListShell organizationId={organizationId} appsFeatureDisabled={!hasAppsFeature}>
-          {content}
-        </AppsListShell>
-        {this.renderModal()}
+        <ContentfulAppsList
+          apps={contentfulApps}
+          appManager={appManager}
+          canManageApps={canManageApps}
+          openDetailModal={openDetailModal}
+          spaceInformation={spaceInformation}
+          organizationId={organizationId as string}
+          isPurchased={isPurchased}
+          isTrialAvailable={isTrialAvailable}
+        />
+        {hasInstalledApps ? (
+          <AppList
+            apps={sortPrivateAppsFirst(installedApps, canManageApps)}
+            appManager={appManager}
+            openDetailModal={openDetailModal}
+            hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
+            canManageApps={canManageApps}
+            organizationId={organizationId as string}
+            title="Installed"
+            info={`Usage: ${installedApps.length} / ${spaceInstallationLimit} apps installed`}
+            testId="installed-list"
+          />
+        ) : (
+          <AppsFrameworkIntroBanner canManageApps={canManageApps} />
+        )}
+        {hasInstalledApps && (
+          <Note className={styles.feedbackNote}>
+            <TextLink
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://ctfl.io/apps-feedback">
+              Give us feedback!
+            </TextLink>{' '}
+            Help us improve your experience with our apps and the App Framework.
+          </Note>
+        )}
+        {hasAvailableApps && (
+          <AppList
+            apps={sortPrivateAppsFirst(availableApps, canManageApps)}
+            appManager={appManager}
+            openDetailModal={openDetailModal}
+            hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
+            canManageApps={!!canManageApps}
+            organizationId={organizationId as string}
+            title="Available"
+          />
+        )}
+        <Paragraph className={styles.footer}>
+          Can&rsquo;t find what you&rsquo;re looking for?{' '}
+          <TextLink
+            href={withInAppHelpUtmBuildApps(
+              'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/'
+            )}
+            target="_blank"
+            className={styles.externalLink}
+            rel="noopener noreferrer">
+            Build your own app
+            <Icon icon="ExternalLink" />
+          </TextLink>
+        </Paragraph>
       </>
     );
   }
+
+  return (
+    <>
+      <DocumentTitle title="Apps" />
+      <AppsListShell
+        organizationId={organizationId as string}
+        appsFeatureDisabled={!props.hasAppsFeature}>
+        {content}
+      </AppsListShell>
+      {renderModal()}
+    </>
+  );
 }

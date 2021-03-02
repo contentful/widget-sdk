@@ -1,8 +1,9 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
-import { get, memoize } from 'lodash';
+import * as React from 'react';
+import { get, memoize, noop } from 'lodash';
 import { MarketplacePage } from '../MarketplacePage';
 import { AppRoute } from '../AppPage';
-import { makeAppHookBus, getAppsRepo, MarketplaceApp } from 'features/apps-core';
+import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
@@ -12,7 +13,7 @@ import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
-import { MarketplacePageProps } from '../MarketplacePage/MarketplacePage';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -51,6 +52,39 @@ const advancedAppsFeatureResolver = [
   },
 ];
 
+function withAppsResolver(Component) {
+  function WithAppsResolver(props) {
+    const { currentSpaceId, currentOrganizationId } = useSpaceEnvContext();
+    const [appsFeature, setAppsFeature] = React.useState(DEFAULT_FEATURE_STATUS);
+    const [advancedAppsFeature, setAdvancedAppsFeature] = React.useState(
+      DEFAULT_ADVANCED_APPS_STATUS
+    );
+
+    React.useEffect(() => {
+      getSpaceFeature(currentSpaceId, BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS)
+        .then(setAppsFeature)
+        .catch(noop);
+    }, [currentSpaceId]);
+
+    React.useEffect(() => {
+      getOrgFeature(currentOrganizationId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS)
+        .then(setAdvancedAppsFeature)
+        .catch(noop);
+    }, [currentOrganizationId]);
+
+    return (
+      <Component
+        {...props}
+        canManageApps={canUserManageApps()}
+        hasAppsFeature={appsFeature}
+        hasAdvancedAppsFeature={advancedAppsFeature}
+      />
+    );
+  }
+
+  return WithAppsResolver;
+}
+
 export const appRoute = {
   name: 'apps',
   url: '/apps',
@@ -59,44 +93,7 @@ export const appRoute = {
     {
       name: 'list',
       url: '?app',
-      resolve: {
-        hasAppsFeature: appsFeatureResolver,
-        hasAdvancedAppsFeature: advancedAppsFeatureResolver,
-      },
-      component: MarketplacePage,
-      mapInjectedToProps: [
-        'spaceContext',
-        '$state',
-        '$stateParams',
-        'hasAppsFeature',
-        'hasAdvancedAppsFeature',
-        (
-          spaceContext,
-          $state,
-          $stateParams,
-          hasAppsFeature: boolean,
-          hasAdvancedAppsFeature: boolean
-        ): MarketplacePageProps => {
-          return {
-            repo: getAppsRepo(),
-            cma: spaceContext.cma,
-            hasAppsFeature,
-            hasAdvancedAppsFeature,
-            organizationId: spaceContext.organization.sys.id,
-            spaceInformation: {
-              spaceId: spaceContext.getId(),
-              spaceName: spaceContext.space.data.name,
-              envMeta: spaceContext.space.environmentMeta,
-            },
-            userId: spaceContext.user.sys.id,
-            canManageApps: canUserManageApps(),
-            detailsModalAppId: $stateParams.app || null,
-            openAppDetails: (app: MarketplaceApp) =>
-              $state.go('.', { app: app.id }, { notify: false }),
-            closeAppDetails: () => $state.go('.', { app: null }, { notify: false }),
-          };
-        },
-      ],
+      component: withAppsResolver((props) => <MarketplacePage {...props} repo={getAppsRepo()} />),
     },
     {
       name: 'detail',

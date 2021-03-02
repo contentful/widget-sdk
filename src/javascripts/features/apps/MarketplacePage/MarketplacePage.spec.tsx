@@ -5,7 +5,6 @@ import {
   apps as repoAppsMock,
   contentfulApps as repoContentfulAppsMock,
 } from '../__mocks__/repoAppsMock';
-import { noop } from 'lodash';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 
@@ -19,33 +18,34 @@ const getMockAppsRepo = (apps?) => ({
   getAllApps: jest.fn(() => Promise.resolve(apps)),
 });
 
-describe('MarketplacePage', () => {
-  const orgId = '123';
-  const spaceId = '456';
-  const userId = '000';
-  const spaceInformation = {
-    spaceId: spaceId,
-    spaceName: 'my-test-space',
-    envMeta: {
-      environmentId: 'master',
-      isMasterEnvironment: true,
-      aliasId: undefined,
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: () => ({
+    currentOrganizationId: '123',
+    currentSpaceId: '456',
+    currentSpaceName: 'my-test-space',
+    currentEnvironmentId: 'master',
+    currentSpace: {
+      environmentMeta: {
+        environmentId: 'master',
+        isMasterEnvironment: true,
+        aliasId: undefined,
+      },
     },
-  };
+  }),
+}));
 
+jest.mock('core/services/APIClient/useCurrentSpaceAPIClient', () => ({
+  useCurrentSpaceAPIClient: () => ({}),
+}));
+
+describe('MarketplacePage', () => {
   it('should match snapshot for loading state', async () => {
     const { container } = render(
       <MarketplacePage
-        cma={{}}
         repo={getMockAppsRepo()}
-        organizationId={orgId}
-        userId={userId}
         hasAppsFeature={true}
-        spaceInformation={spaceInformation}
         canManageApps={true}
         hasAdvancedAppsFeature={false}
-        openAppDetails={noop}
-        closeAppDetails={noop}
       />
     );
 
@@ -57,16 +57,10 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
-        cma={{}}
         repo={mockRepo}
-        organizationId={orgId}
-        userId={userId}
         hasAppsFeature={true}
-        spaceInformation={spaceInformation}
         canManageApps={true}
         hasAdvancedAppsFeature={false}
-        openAppDetails={noop}
-        closeAppDetails={noop}
       />
     );
 
@@ -80,17 +74,11 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
-        cma={{}}
         repo={mockRepo}
-        organizationId={orgId}
-        userId={userId}
         hasAppsFeature={true}
         hasAdvancedAppsFeature={false}
-        spaceInformation={spaceInformation}
         // limit the access
         canManageApps={false}
-        openAppDetails={noop}
-        closeAppDetails={noop}
       />
     );
 
@@ -104,16 +92,10 @@ describe('MarketplacePage', () => {
 
     const { container } = render(
       <MarketplacePage
-        cma={{}}
         repo={mockRepo}
-        organizationId={orgId}
-        userId={userId}
         hasAppsFeature={true}
         hasAdvancedAppsFeature={false}
-        spaceInformation={spaceInformation}
         canManageApps={true}
-        openAppDetails={noop}
-        closeAppDetails={noop}
       />
     );
 
