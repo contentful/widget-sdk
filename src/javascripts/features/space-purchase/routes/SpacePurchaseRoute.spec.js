@@ -26,6 +26,7 @@ import {
   getAllProductRatePlans,
 } from 'features/pricing-entities';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
+import * as qs from 'qs';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -130,6 +131,10 @@ describe('SpacePurchaseRoute', () => {
     getSpace.mockResolvedValue({ name: 'Space' });
   });
 
+  afterEach(() => {
+    setQueryParameters({});
+  });
+
   it('should render the generic loading component until the apps purchase state is loaded', async () => {
     build(null, false);
 
@@ -192,14 +197,14 @@ describe('SpacePurchaseRoute', () => {
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'create_space',
         performancePackagePreselected: false,
-        from: '',
+        from: undefined,
       }
     );
   });
 
   it('should track if the user got to the flow through a CTA', async () => {
-    const otherPlaceInApp = 'other_place';
-    await build({ from: otherPlaceInApp });
+    setQueryParameters({ from: 'other_place' });
+    await build();
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -218,14 +223,43 @@ describe('SpacePurchaseRoute', () => {
         organizationPlatform: mockOrganizationPlatform,
         sessionType: 'create_space',
         performancePackagePreselected: false,
-        from: otherPlaceInApp,
+        from: 'other_place',
+      }
+    );
+  });
+
+  it('should preferentially use from if provided via UI router', async () => {
+    setQueryParameters({ from: 'a_query_param_place' });
+
+    await build({ from: 'a_ui_router_place' });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
+
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
+        sessionId: expect.any(String),
+      },
+      {
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
+        performancePackagePreselected: false,
+        from: 'a_ui_router_place',
       }
     );
   });
 
   it('should track if the performance package is pre-selected using a from param', async () => {
     for (const key of PRESELECT_APPS_PKG_FROM_KEYS) {
-      await build({ from: key });
+      setQueryParameters({ from: key });
+
+      await build();
 
       await waitFor(() => {
         expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -275,7 +309,7 @@ describe('SpacePurchaseRoute', () => {
         sessionType: 'create_space',
         canPurchaseApps: undefined,
         performancePackagePreselected: false,
-        from: '',
+        from: undefined,
       }
     );
   });
@@ -304,7 +338,7 @@ describe('SpacePurchaseRoute', () => {
         sessionType: 'create_space',
         canPurchaseApps: false,
         performancePackagePreselected: false,
-        from: '',
+        from: undefined,
       }
     );
   });
@@ -332,7 +366,7 @@ describe('SpacePurchaseRoute', () => {
         sessionType: 'create_space',
         canPurchaseApps: true,
         performancePackagePreselected: false,
-        from: '',
+        from: undefined,
       }
     );
   });
@@ -447,7 +481,7 @@ describe('SpacePurchaseRoute', () => {
         sessionType: 'upgrade_space',
         currentSpacePlan: mockSpaceRatePlan,
         performancePackagePreselected: false,
-        from: '',
+        from: undefined,
       }
     );
   });
@@ -463,10 +497,17 @@ describe('SpacePurchaseRoute', () => {
   });
 });
 
+function setQueryParameters(queryParams) {
+  const serializedParams = qs.stringify(queryParams);
+
+  // The path name doesn't matter here, but the serialzied query params appearing after
+  // does
+  window.history.replaceState({}, 'Space Purchase', `/?${serializedParams}`);
+}
+
 async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
-    from: '',
     ...customProps,
   };
 

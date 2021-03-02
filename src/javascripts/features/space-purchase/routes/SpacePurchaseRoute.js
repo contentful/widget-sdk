@@ -1,6 +1,7 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 
+import { getQueryString } from 'utils/location';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
@@ -175,7 +176,15 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId, from }) => {
+export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) => {
+  // TODO(jo-sm): This should become a hook at some point
+  const queryParams = useMemo(() => getQueryString(), []);
+
+  // We do this to allow the use of a URL like /new_space?from= from an external place
+  // like the marketing website, while also allowing it to be used internally
+  // via `go(...)`. This should become unnecessary or changed when moving from ui-router.
+  const from = fromRouterParam ? fromRouterParam : queryParams.from;
+
   const {
     state: { sessionId, purchasingApps },
     dispatch,

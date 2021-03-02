@@ -6,7 +6,7 @@ import { SpacePurchaseContextProvider } from '../context';
 
 export const newSpaceState = {
   name: 'new_space',
-  url: '/new_space?{from:string}',
+  url: '/new_space',
   params: {
     from: '',
   },

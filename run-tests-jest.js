@@ -24,7 +24,6 @@ if (
 ) {
   argv.push('--watch');
 }
-argv.push('--silent');
 
 // @remove-on-eject-begin
 // This is not necessary after eject because we embed config into package.json.
