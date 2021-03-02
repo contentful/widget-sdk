@@ -14,7 +14,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import EntityStateLink from 'app/common/EntityStateLink';
 import { useAsync } from 'core/hooks';
-import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 import * as AssetUrlService from 'services/AssetUrlService';
 
@@ -57,11 +56,9 @@ const getReleaseDescription = (release) => {
 };
 
 export default function WrappedEntityListItem({ entity, onClick, contentType, renderDropdown }) {
-  const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
-
   const getEntityDataFn = useCallback(() => {
-    return getEntityData(spaceEnvCMAClient, entity);
-  }, [entity, spaceEnvCMAClient]);
+    return getEntityData(entity);
+  }, [entity]);
 
   const { isLoading, data } = useAsync(getEntityDataFn);
   const entityData =

@@ -2,6 +2,7 @@ import { getModule } from 'core/NgRegistry';
 import { entityHelpers } from '@contentful/field-editor-shared';
 import TheLocaleStore from 'services/localeStore';
 import * as PublicContentType from 'widgets/PublicContentType';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 function getContentTypeById(contentTypeId) {
   const spaceContext = getModule('spaceContext');
@@ -11,7 +12,14 @@ function getContentTypeById(contentTypeId) {
   return internalContentType ? PublicContentType.fromInternal(internalContentType) : undefined;
 }
 
-export async function getEntityData(cma, entity) {
+export async function getEntityData(entity) {
+  const spaceContext = getModule('spaceContext');
+
+  const cma = getCMAClient({
+    spaceId: spaceContext.getId(),
+    environmentId: spaceContext.getEnvironmentId(),
+  });
+
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const status = entityHelpers.getEntryStatus(entity.sys);
 
