@@ -15,13 +15,13 @@ export function EmptyHomeRouter({ appsPurchase }) {
   const [loading, setLoading] = useState(appsPurchase);
 
   useEffect(() => {
-    async function init() {
-      if (!appsPurchase) {
-        await initAutoCreateNewSpace();
-        setLoading(false);
-        return;
-      }
+    if (!appsPurchase) {
+      initAutoCreateNewSpace();
+      setLoading(false);
+      return;
+    }
 
+    async function init() {
       const organizations = await TokenStore.getOrganizations();
 
       const lastUsedOrgId = localStorage.get('lastUsedOrg');

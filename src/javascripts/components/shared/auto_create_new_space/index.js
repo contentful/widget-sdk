@@ -42,7 +42,7 @@ export function resetCreatingSampleSpace() {
  * for a qualified user.
  * It's called on EmptyHomeRouter when the first route is loaded after a user is logged in.
  */
-export async function init() {
+export function init() {
   const store = getBrowserStorage();
   combine([user$, spacesByOrg$, enabled$])
     .filter(([user, spacesByOrg, enabled]) => {
@@ -57,11 +57,11 @@ export async function init() {
     .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
+      creatingSampleSpace = true;
+
       const isAppsTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
         organizationId: org.sys.id,
       });
-
-      creatingSampleSpace = !isAppsTrialEnabled;
 
       create({
         markOnboarding,

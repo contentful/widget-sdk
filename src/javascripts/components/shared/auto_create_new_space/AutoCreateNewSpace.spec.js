@@ -5,6 +5,7 @@ import * as CreateModernOnboarding from 'components/shared/auto_create_new_space
 import * as BrowserStorage from 'core/services/BrowserStorage';
 
 import { init, resetCreatingSampleSpace } from './index';
+import { waitFor } from '@testing-library/dom';
 import { getVariation } from 'LaunchDarkly';
 
 jest.mock('services/TokenStore');
@@ -74,30 +75,30 @@ describe('AutoCreateNewSpace', () => {
   });
 
   describe('#init', () => {
-    it('should be a noop when user is falsy', async function () {
+    it('should be a noop when user is falsy', function () {
       tokenStore.organizations$.set([{ sys: { id: 'org' } }]);
       tokenStore.spacesByOrganization$.set({
         org: ['space'],
       });
       tokenStore.user$.set(null);
-      await init();
+      init();
       expect(createModernStackOnboarding).not.toHaveBeenCalled();
     });
 
-    it('should be a noop when spacesByOrg is falsy', async function () {
+    it('should be a noop when spacesByOrg is falsy', function () {
       tokenStore.user$.set({});
       tokenStore.spacesByOrganization$.set(null);
-      await init();
+      init();
       expect(createModernStackOnboarding).not.toHaveBeenCalled();
     });
 
-    it('should be a noop and not fail when user has no org', async function () {
+    it('should be a noop and not fail when user has no org', function () {
       tokenStore.organizations$.set([]);
       tokenStore.spacesByOrganization$.set({
         org: ['space'],
       });
       tokenStore.user$.set({ sys: { id: 'user' } });
-      await init();
+      init();
       expect(createModernStackOnboarding).not.toHaveBeenCalled();
     });
 
@@ -121,8 +122,8 @@ describe('AutoCreateNewSpace', () => {
       function testQualification([fn, msg]) {
         it(`should be a noop if ${msg}`, async function () {
           fn();
-          await init();
-          expect(createModernStackOnboarding).not.toHaveBeenCalled();
+          init();
+          await waitFor(() => expect(createModernStackOnboarding).not.toHaveBeenCalled());
         });
       }
     });
@@ -131,8 +132,8 @@ describe('AutoCreateNewSpace', () => {
       tokenStore.spacesByOrganization$.set(spacesByOrg);
       tokenStore.user$.set(user);
       store.get.mockReturnValue(false);
-      await init();
-      expect(createModernStackOnboarding).toHaveBeenCalledTimes(1);
+      init();
+      await waitFor(() => expect(createModernStackOnboarding).toHaveBeenCalledTimes(1));
       expect(createModernStackOnboarding).toHaveBeenCalledWith({
         markOnboarding: expect.any(Function),
         onDefaultChoice: expect.any(Function),
@@ -144,12 +145,17 @@ describe('AutoCreateNewSpace', () => {
     });
 
     it('should only call create sample space function once even if invoked multiple times', async function () {
-      await init();
+      // to prevent createModernStackOnboarding from resolving before
+      // the next user$ and spacesByOrganization$ values are emitted
+      const delayedPromise = new Promise((resolve) => setTimeout(resolve, 5000));
+      createModernStackOnboarding.mockResolvedValue(delayedPromise);
+
+      init();
       user.sys = { id: '123', createdAt: new Date(2017, 8, 24).toISOString() };
       tokenStore.user$.set(user);
-      await init();
+      init();
 
-      expect(createModernStackOnboarding).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(createModernStackOnboarding).toHaveBeenCalledTimes(1));
     });
   });
 });
