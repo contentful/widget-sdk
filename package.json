@@ -100,6 +100,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.28",
     "nib": "^1.1.2",
+    "p-queue": "^6.6.2",
     "path-parser": "^4.2.0",
     "pikaday": "^1.8.2",
     "pluralize": "^7.0.0",

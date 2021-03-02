@@ -28,6 +28,7 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/mode/javascript/javascript';
 // CodeMirror: mixed HTML mode for UI Extension editor
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -276,6 +277,10 @@ angular
       // It can be used by E2E or Puppeteer scripts.
       window.cfTelemetry = Telemetry;
       Telemetry.init();
+
+      // We want to request this flag as early as possible,
+      // to later access the cached value in src/javascripts/data/Request
+      getVariation(FLAGS.REQUEST_RETRY_EXPERIMENT);
 
       moment.updateLocale('en', {
         calendar: {

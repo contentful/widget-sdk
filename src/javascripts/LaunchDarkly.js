@@ -1,22 +1,21 @@
-import _ from 'lodash';
-import * as LDClient from 'ldclient-js';
+import * as config from 'Config';
+import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import {
   getOrgRole,
-  isUserOrgCreator,
   getUserAgeInDays,
-  ownsAtleastOneOrg,
+  getUserSpaceRoles,
   hasAnOrgWithSpaces,
   isAutomationTestUser,
-  getUserSpaceRoles,
+  isUserOrgCreator,
+  ownsAtleastOneOrg,
 } from 'data/User';
-import { isEqual } from 'lodash';
-import * as config from 'Config';
+import { getFlagOverride, isFlagOverridden } from 'debug/EnforceFlags';
+import * as LDClient from 'ldclient-js';
+import _, { isEqual } from 'lodash';
 import * as logger from 'services/logger';
-import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
-import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'services/TokenStore';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
-import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
+import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'services/TokenStore';
 
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
@@ -24,6 +23,7 @@ const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
 let cachedIdentifiedUser = null;
 let client = null;
 let variationCache = {};
+let variationCacheResolved = {};
 
 let initializationPromise = null;
 let initialized = false;
@@ -55,6 +55,8 @@ export const FLAGS = {
   REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
   REACT_MIGRATION_CT: 'react-migration-10-2020-content-type-editor',
+
+  REQUEST_RETRY_EXPERIMENT: 'dev-workflows-02-2021-request-retry-experiment',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -94,6 +96,8 @@ const FALLBACK_VALUES = {
 
   [FLAGS.REACT_MIGRATION_CT]: false,
 
+  [FLAGS.REQUEST_RETRY_EXPERIMENT]: false,
+
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
   [FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__]: 'fallback-value-2',
@@ -112,6 +116,7 @@ export function reset() {
     client = null;
     cachedIdentifiedUser = {};
     variationCache = {};
+    variationCacheResolved = {};
     initializationPromise = null;
     initialized = false;
   } else {
@@ -217,6 +222,12 @@ async function ldUser({ user, org, space, environmentId }) {
   };
 }
 
+function getCacheKey(flagName, organizationId = null, spaceId = null, environmentId = null) {
+  return `${flagName}:${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}:${
+    environmentId ? environmentId : ''
+  }`;
+}
+
 /**
  * @usage[js]
  * import { getVariation } from 'LaunchDarkly'
@@ -318,10 +329,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
   //
   // No IDs:
   // `<flagName>:::`
-  const key = `${flagName}:${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}:${
-    environmentId ? environmentId : ''
-  }`;
-
+  const key = getCacheKey(flagName, organizationId, spaceId, environmentId);
   let variationPromise = _.get(variationCache, key, null);
 
   if (!variationPromise) {
@@ -357,6 +365,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
 
           return FALLBACK_VALUES[flagName];
         }
+        _.set(variationCacheResolved, key, value);
 
         return value;
       });
@@ -367,6 +376,27 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
   const flagValue = await variationPromise;
 
   return flagValue;
+}
+
+/**
+ * @description
+ * returns the currently cached value for for the
+ * provided feature flag for the given organizationId or spaceId. If the flag name
+ * is overridden using `ui_enable_flags`, then overridden value is returned.
+ *
+ * import { getVariationSync } from 'LaunchDarkly'
+ * const variation = getVariationSync('my-test-or-feature-flag', { organizationId: '1234' })
+ *
+ * @return boolean
+ */
+export function getVariationSync(flagName, { organizationId, spaceId, environmentId } = {}) {
+  if (isFlagOverridden(flagName)) {
+    return getFlagOverride(flagName);
+  }
+  return (
+    variationCacheResolved?.[getCacheKey(flagName, organizationId, spaceId, environmentId)] ??
+    FALLBACK_VALUES[flagName]
+  );
 }
 
 /*
