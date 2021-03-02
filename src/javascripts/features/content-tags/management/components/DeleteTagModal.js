@@ -16,6 +16,10 @@ import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import { useDeleteTag, useReadTags } from 'features/content-tags/core/hooks';
+import { getSpaceFeature, FEATURES, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
+import { useAsync } from 'core/hooks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { Conditional } from 'features/content-tags/core/components/Conditional';
 
 const styles = {
   controlsPanel: css({ display: 'flex', marginTop: tokens.spacingL }),
@@ -45,6 +49,18 @@ const reducer = (state, action) => {
 function DeleteTagModal({ tag, isShown, onClose }) {
   const [{ firstConfirm, firstConfirmTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
   const { reset } = useReadTags();
+
+  const { currentSpaceId: spaceId } = useSpaceEnvContext();
+
+  const hasCustomRolesFeatureCheck = useCallback(async () => {
+    return await getSpaceFeature(
+      spaceId,
+      FEATURES.CUSTOM_ROLES_FEATURE,
+      DEFAULT_FEATURES_STATUS.CUSTOM_ROLES_FEATURE
+    );
+  }, [spaceId]);
+
+  const { data: hasCustomRolesFeature } = useAsync(hasCustomRolesFeatureCheck);
 
   const {
     deleteTag,
@@ -105,47 +121,78 @@ function DeleteTagModal({ tag, isShown, onClose }) {
   }
 
   return (
-    <Modal title={`Delete tag "${tag.name}"`} isShown={isShown} onClose={close}>
-      <Note noteType="negative" title="This may have big implications for permissions">
-        Tag &quot;{tag.name}&quot; may be used to define access for a custom role in this space.
-      </Note>
-      <Paragraph className={styles.marginM}>Check to confirm:</Paragraph>
-      <Form spacing={'condensed'} testId={'delete-tag-modal-form'}>
-        <FieldGroup>
-          <CheckboxField
-            testId="delete-tag-modal-first-confirm-field"
-            type="checkbox"
-            inputProps={{ testId: 'delete-tag-modal-first-confirm-input' }}
-            labelText={`Make "${tag.name}" unavailable for all roles`}
-            helpText={`Users with roles that are defined using "${tag.name}" could gain or lose access to content tagged with this tag`}
-            validationMessage={
-              firstConfirmTouched && !firstConfirm ? 'Check to confirm deletion' : null
-            }
-            checked={firstConfirm}
-            value="yes"
-            onChange={onChangeFirst}
-            id="optInFirst"
-          />
-        </FieldGroup>
-        <div className={styles.controlsPanel}>
-          <Button
-            testId="delete-tag-modal-submit"
-            onClick={onSubmit}
-            type="submit"
-            buttonType="negative"
-            loading={deleteTagIsLoading}
-            disabled={!firstConfirm || deleteTagIsLoading}>
-            Delete and remove
-          </Button>
-          <Button
-            className={styles.marginLeftM}
-            testId="cancel"
-            onClick={onCancel}
-            buttonType="muted">
-            Cancel
-          </Button>
-        </div>
-      </Form>
+    <Modal
+      testId={'delete-tag-modal'}
+      title={`Delete tag "${tag.name}"`}
+      isShown={isShown}
+      onClose={close}>
+      <Conditional condition={hasCustomRolesFeature}>
+        <>
+          <Note noteType="negative" title="This may have big implications for permissions">
+            Tag &quot;{tag.name}&quot; may be used to define access for a custom role in this space.
+          </Note>
+          <Paragraph className={styles.marginM}>Check to confirm:</Paragraph>
+          <Form spacing={'condensed'} testId={'delete-tag-modal-form'}>
+            <FieldGroup>
+              <CheckboxField
+                testId="delete-tag-modal-first-confirm-field"
+                type="checkbox"
+                inputProps={{ testId: 'delete-tag-modal-first-confirm-input' }}
+                labelText={`Make "${tag.name}" unavailable for all roles`}
+                helpText={`Users with roles that are defined using "${tag.name}" could gain or lose access to content tagged with this tag`}
+                validationMessage={
+                  firstConfirmTouched && !firstConfirm ? 'Check to confirm deletion' : null
+                }
+                checked={firstConfirm}
+                value="yes"
+                onChange={onChangeFirst}
+                id="optInFirst"
+              />
+            </FieldGroup>
+            <div className={styles.controlsPanel}>
+              <Button
+                testId="delete-tag-modal-submit"
+                onClick={onSubmit}
+                type="submit"
+                buttonType="negative"
+                loading={deleteTagIsLoading}
+                disabled={!firstConfirm || deleteTagIsLoading}>
+                Delete and remove
+              </Button>
+              <Button
+                className={styles.marginLeftM}
+                testId="cancel"
+                onClick={onCancel}
+                buttonType="muted">
+                Cancel
+              </Button>
+            </div>
+          </Form>
+        </>
+      </Conditional>
+      <Conditional condition={!hasCustomRolesFeature}>
+        <>
+          <Paragraph>Are you sure you want to delete this tag?</Paragraph>
+          <div className={styles.controlsPanel}>
+            <Button
+              testId="delete-tag-modal-submit"
+              onClick={onSubmit}
+              type="submit"
+              buttonType="negative"
+              loading={deleteTagIsLoading}
+              disabled={deleteTagIsLoading}>
+              Delete and remove
+            </Button>
+            <Button
+              className={styles.marginLeftM}
+              testId="cancel"
+              onClick={onCancel}
+              buttonType="muted">
+              Cancel
+            </Button>
+          </div>
+        </>
+      </Conditional>
     </Modal>
   );
 }
