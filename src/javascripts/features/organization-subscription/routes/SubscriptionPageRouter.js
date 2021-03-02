@@ -26,7 +26,7 @@ import { SubscriptionPage } from '../components/SubscriptionPage';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
 
-const getAddOn = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
+const getAddOnPlan = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
 
 const getSpacePlans = (plans, accessibleSpaces) =>
   plans.items
@@ -99,7 +99,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   // separating all the different types of plans
   const basePlan = getBasePlan(plansWithSpaces);
-  const addOn = getAddOn(plansWithSpaces);
+  const addOnPlan = getAddOnPlan(plansWithSpaces);
   const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
@@ -114,7 +114,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   return {
     basePlan,
-    addOn,
+    addOnPlan,
     usersMeta,
     numMemberships,
     organization,
@@ -160,7 +160,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
       <DocumentTitle title="Subscription" />
       <SubscriptionPage
         basePlan={data.basePlan}
-        addOn={data.addOn}
+        addOnPlan={data.addOnPlan}
         usersMeta={data.usersMeta}
         organization={data.organization}
         memberAccessibleSpaces={data.memberAccessibleSpaces}

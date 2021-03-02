@@ -121,7 +121,7 @@ export async function getAllPlans(endpoint: OrganizationEndpoint) {
  * @param {OrganizationEndpoint} endpoint
  */
 export async function removeAddOnPlanFromSubscription(endpoint: OrganizationEndpoint, planId) {
-  return await withAlphaHeader<CollectionResponse<Plan>>(endpoint)({
+  return await withAlphaHeader(endpoint)({
     method: 'DELETE',
     path: ['plans', planId],
   });

@@ -16,6 +16,7 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeAddOnPlanFromSubscription } from 'features/pricing-entities';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
+import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { logError } from 'services/logger';
 import { reload } from 'states/Navigator';
 
@@ -25,19 +26,19 @@ const styles = {
   }),
 };
 
-async function requestRemoveAddOn(organizationId, addOnId, parsedReasons) {
+async function handleConfirm(organizationId, addOnPlanId, parsedReasons) {
+  const endpoint = createOrganizationEndpoint(organizationId);
+
   try {
-    const endpoint = createOrganizationEndpoint(organizationId);
-    await removeAddOnPlanFromSubscription(endpoint, addOnId);
-    Notification.success('Compose + Launch app was uninstalled successfully.');
-    trackUninstallationReason('Compose + Launch', parsedReasons);
-    reload();
+    await removeAddOnPlanFromSubscription(endpoint, addOnPlanId);
   } catch (e) {
-    Notification.error("Couldn't uninstall Compose + Launch. Contact support.");
-    logError(`Failed to uninstall Compose + Launch`, {
-      error: e,
-    });
+    logError(e);
+    throw e;
   }
+
+  trackUninstallationReason('Compose + Launch', parsedReasons);
+  clearCachedProductCatalogFlags();
+  reload();
 }
 
 const reasons = [
@@ -55,20 +56,12 @@ function parseReasons(checkedReasons, customReason) {
     .concat(customReason ? [{ custom: customReason }] : []);
 }
 
-export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
+export function DeleteAppsModal({ isShown, onClose, organizationId, addOnPlan }) {
   const [textFeedback, setTextFeedback] = useState('');
   const [checkedReasons, setCheckedReasons] = useState({});
   const [loading, setLoading] = useState(false);
 
   const disableConfirm = !Object.values(checkedReasons).some((reason) => !!reason);
-
-  const onConfirm = async () => {
-    setLoading(true);
-    const parsedReasons = parseReasons(checkedReasons, textFeedback);
-    await requestRemoveAddOn(organizationId, addOn.sys.id, parsedReasons);
-    setLoading(false);
-    onClose();
-  };
 
   return (
     <ModalConfirm
@@ -78,7 +71,24 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
       confirmLabel="Cancel your subscription"
       isConfirmDisabled={disableConfirm || loading}
       isConfirmLoading={loading}
-      onConfirm={onConfirm}
+      onConfirm={async () => {
+        setLoading(true);
+        const parsedReasons = parseReasons(checkedReasons, textFeedback);
+        try {
+          await handleConfirm(organizationId, addOnPlan.sys.id, parsedReasons);
+        } catch {
+          Notification.error(
+            "Couldn't cancel your Compose + Launch subscription. Contact support."
+          );
+          setLoading(false);
+          return;
+        }
+        Notification.success(
+          'Compose + Launch app was successfully removed from your subscription.'
+        );
+        setLoading(false);
+        onClose();
+      }}
       onCancel={() => onClose()}>
       <Flex marginBottom="spacingM">
         <Typography>
@@ -127,8 +137,8 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOn }) {
 }
 
 DeleteAppsModal.propTypes = {
-  isShown: PropTypes.bool,
+  isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  organizationId: PropTypes.string,
-  addOn: PropTypes.object,
+  organizationId: PropTypes.string.isRequired,
+  addOnPlan: PropTypes.object.isRequired,
 };

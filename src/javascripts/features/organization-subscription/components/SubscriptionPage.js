@@ -98,7 +98,7 @@ const goToBillingPage = (organizationId) => {
 
 export function SubscriptionPage({
   basePlan,
-  addOn,
+  addOnPlan,
   usersMeta,
   organization,
   grandTotal,
@@ -200,7 +200,7 @@ export function SubscriptionPage({
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
   const showContentfulAppsCard =
-    composeAndLaunchEnabled && isOrgOwnerOrAdmin && !!addOn && !enterprisePlan;
+    composeAndLaunchEnabled && isOrgOwnerOrAdmin && !!addOnPlan && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
@@ -275,7 +275,7 @@ export function SubscriptionPage({
                   {!!organization && appTrialEnabled && (
                     <ContentfulAppsTrial
                       organization={organization}
-                      isPurchased={!!addOn}
+                      isPurchased={!!addOnPlan}
                       startAppTrial={handleStartAppTrial}
                       isTrialAvailable={isTrialAvailable}
                       isTrialActive={isTrialActive}
@@ -283,7 +283,7 @@ export function SubscriptionPage({
                     />
                   )}
                   {showContentfulAppsCard && (
-                    <ContentfulApps organizationId={organizationId} addOn={addOn} />
+                    <ContentfulApps organizationId={organizationId} addOnPlan={addOnPlan} />
                   )}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
                     <NonPayingOrgCopyLegacy organizationId={organizationId} />
@@ -323,7 +323,7 @@ SubscriptionPage.propTypes = {
   initialLoad: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
   basePlan: PropTypes.object,
-  addOn: PropTypes.object,
+  addOnPlan: PropTypes.object,
   spacePlans: PropTypes.array,
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,

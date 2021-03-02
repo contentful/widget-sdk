@@ -13,23 +13,23 @@ import {
 } from '@contentful/forma-36-react-components';
 import { DeleteAppsModal } from './DeleteAppsModal';
 
-const openDeleteAppsModal = (organizationId, addOn) => {
+const openDeleteAppsModal = (organizationId, addOnPlan) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
     <DeleteAppsModal
       isShown={isShown}
       onClose={onClose}
       organizationId={organizationId}
-      addOn={addOn}
+      addOnPlan={addOnPlan}
     />
   ));
 };
 
-export function ContentfulApps({ organizationId, addOn }) {
+export function ContentfulApps({ organizationId, addOnPlan }) {
   const [isOpen, setOpen] = useState(false);
 
   const openModal = () => {
     setOpen(false);
-    openDeleteAppsModal(organizationId, addOn);
+    openDeleteAppsModal(organizationId, addOnPlan);
   };
 
   return (
@@ -60,13 +60,13 @@ export function ContentfulApps({ organizationId, addOn }) {
         </Dropdown>
       </Flex>
       <Paragraph>
-        Install Compose + Launch on any Space by following the instructions on the Space Home.
+        Install Compose + Launch on any space by following the instructions on your Space Home.
       </Paragraph>
     </Card>
   );
 }
 
 ContentfulApps.propTypes = {
-  organizationId: PropTypes.string,
-  addOn: PropTypes.object,
+  organizationId: PropTypes.string.isRequired,
+  addOnPlan: PropTypes.object.isRequired,
 };
