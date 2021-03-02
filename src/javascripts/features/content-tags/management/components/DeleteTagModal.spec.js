@@ -1,6 +1,6 @@
 import React from 'react';
 import { DeleteTagModal } from './DeleteTagModal';
-import { render, act, fireEvent, screen } from '@testing-library/react';
+import { render, act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
@@ -9,12 +9,16 @@ import { Notification, HelpText, FormLabel } from '@contentful/forma-36-react-co
 describe('DeleteTagModal', () => {
   describe('has disabled button state', () => {
     it('by default', async () => {
-      const { submitButton } = await setup();
+      await setup();
+      const submitButton = await screen.findByTestId('delete-tag-modal-submit');
       expect(submitButton).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
     });
     it('when only first checkbox is checked', async () => {
-      const { submitButton, firstConfirmInput } = await setup();
+      await setup();
+      const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+      const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
       expect(firstConfirmInput).not.toBeChecked();
 
       userEvent.click(firstConfirmInput);
@@ -27,7 +31,8 @@ describe('DeleteTagModal', () => {
   describe('toggles the validation messages correctly', () => {
     const validationText = /Check to confirm deletion/i;
     it('for the first checkbox', async () => {
-      const { firstConfirmInput } = await setup();
+      await setup();
+      const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
 
       expect(firstConfirmInput).not.toBeChecked();
       expect(screen.queryByText(validationText)).not.toBeInTheDocument();
@@ -47,7 +52,9 @@ describe('DeleteTagModal', () => {
   });
 
   it('has enabled button state when both checkboxes are checked', async () => {
-    const { submitButton, firstConfirmInput } = await setup();
+    await setup();
+    const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+    const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
     expect(submitButton).toBeDisabled();
     expect(firstConfirmInput).not.toBeChecked();
 
@@ -60,7 +67,7 @@ describe('DeleteTagModal', () => {
   it('calls deleteTag endpoint', async () => {
     const promise = Promise.resolve();
     const deleteTag = jest.fn(() => promise);
-    const { submitButton, firstConfirmInput } = await setup(
+    await setup(
       {
         isShown: true,
         onClose: jest.fn(),
@@ -71,6 +78,10 @@ describe('DeleteTagModal', () => {
       },
       { deleteTag }
     );
+
+    const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+    const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
     userEvent.click(firstConfirmInput);
 
     expect(submitButton).toBeEnabled();
@@ -85,7 +96,8 @@ describe('DeleteTagModal', () => {
     const deleteTag = jest.fn().mockRejectedValue('RandomError');
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
-    const { submitButton, firstConfirmInput } = await setup(
+
+    await setup(
       {
         isShown: true,
         onClose: jest.fn(),
@@ -96,6 +108,10 @@ describe('DeleteTagModal', () => {
       },
       { deleteTag }
     );
+
+    const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+    const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
     userEvent.click(firstConfirmInput);
 
     expect(submitButton).toBeEnabled();
@@ -116,7 +132,7 @@ describe('DeleteTagModal', () => {
     });
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
-    const { submitButton, firstConfirmInput } = await setup(
+    await setup(
       {
         isShown: true,
         onClose: jest.fn(),
@@ -127,6 +143,10 @@ describe('DeleteTagModal', () => {
       },
       { deleteTag }
     );
+
+    const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+    const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
     userEvent.click(firstConfirmInput);
 
     expect(submitButton).toBeEnabled();
@@ -161,18 +181,11 @@ async function setup(
     deleteTag: jest.fn().mockResolvedValue(true),
   };
 
-  const queries = render(
+  render(
     <TagsRepoContext.Provider value={{ ...defaultTagsRepo, ...tagsRepo }}>
       <ReadTagsProvider>
         <DeleteTagModal {...props} />
       </ReadTagsProvider>
     </TagsRepoContext.Provider>
   );
-
-  return {
-    events: { ...userEvent, ...fireEvent },
-    queries,
-    submitButton: await queries.findByTestId('delete-tag-modal-submit'),
-    firstConfirmInput: await queries.findByTestId('delete-tag-modal-first-confirm-input'),
-  };
 }
