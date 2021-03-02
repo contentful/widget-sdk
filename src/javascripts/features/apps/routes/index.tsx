@@ -10,8 +10,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
+import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
@@ -209,77 +208,9 @@ export const appRoute = {
     {
       name: 'page',
       url: '/app_installations/:appId{path:PathSuffix}',
-      component: PageWidgetRenderer,
-      resolve: {
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getAppByIdOrSlug(appId)],
-        widget: [
-          'app',
-          async ({ appDefinition }) => {
-            const loader = await getCustomWidgetLoader();
-
-            return loader.getOne({
-              widgetNamespace: WidgetNamespace.APP,
-              widgetId: appDefinition.sys.id,
-            });
-          },
-        ],
-      },
-      onEnter: [
-        '$stateParams',
-        '$state',
-        'app',
-        'widget',
-        ($stateParams, $state, app, widget) => {
-          const pageLocation =
-            widget && widget.locations.find((l) => l.location === WidgetLocation.PAGE);
-
-          if (!pageLocation) {
-            throw new Error('This app has not defined a page location!');
-          }
-
-          // If the url includes the definition, we try to
-          // use the human readable slug (which is the app.id)
-          // for non private apps
-          const hasNicerSlug = !app.isPrivateApp && $stateParams.appId === app.appDefinition.sys.id;
-
-          if (hasNicerSlug) {
-            // If it has a nicer slug, that is the app.id
-            const slug = app.id;
-            // Add environment path portion if we're not on master
-            const path = $stateParams.environmentId
-              ? 'spaces.detail.environment.apps.page'
-              : 'spaces.detail.apps.page';
-
-            return $state.go(path, { ...$stateParams, appId: slug }, { replace: true });
-          }
-        },
-      ],
-      mapInjectedToProps: [
-        '$stateParams',
-        'spaceContext',
-        'widget',
-        ({ path = '' }, spaceContext, widget) => {
-          return {
-            widget,
-            createPageExtensionSDK: memoize((widget, parameters) =>
-              createPageWidgetSDK({
-                widgetNamespace: widget.namespace,
-                widgetId: widget.id,
-                parameters,
-                spaceId: spaceContext.getId(),
-                contentTypes: spaceContext.publishedCTs.getAllBare(),
-                environmentId: spaceContext.getEnvironmentId(),
-                aliasesIds: spaceContext.getAliasesIds(),
-                space: spaceContext.space,
-                pubSubClient: spaceContext.pubsubClient,
-                environmentAliasId: spaceContext.getAliasId(),
-              })
-            ),
-            path: path.startsWith('/') ? path : `/${path}`,
-            environmentId: spaceContext.getEnvironmentId(),
-          };
-        },
-      ],
+      component: withAppsResolver((props) => (
+        <PageWidgetRenderer {...props} repo={getAppsRepo()} />
+      )),
     },
   ],
 };

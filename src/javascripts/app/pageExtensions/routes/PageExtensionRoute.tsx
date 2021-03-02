@@ -11,9 +11,10 @@ import {
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
-import { PageExtensionSDK } from '@contentful/app-sdk';
-import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps';
+import { WidgetNamespace } from '@contentful/widget-renderer';
+import { PageWidgetRenderer } from 'features/apps';
+import { getAppsRepo } from 'features/apps-core';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -56,15 +57,14 @@ function ErrorMessage() {
 
 interface PageExtensionRouteProps {
   extensionId: string;
-  orgId: string;
   path: string;
-  createPageExtensionSDK: (widget: Widget, parameters: PageWidgetParameters) => PageExtensionSDK;
-  environmentId: string;
 }
 
 export default function PageExtensionRoute(props: PageExtensionRouteProps) {
+  const { currentOrganizationId } = useSpaceEnvContext();
+
   return (
-    <PageExtensionFetcher extensionId={props.extensionId} orgId={props.orgId}>
+    <PageExtensionFetcher extensionId={props.extensionId} orgId={currentOrganizationId}>
       {({ isLoading, isError, data: widget }) => {
         if (isLoading) {
           return (
@@ -81,14 +81,7 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
           return <ErrorMessage />;
         }
 
-        return (
-          <PageWidgetRenderer
-            createPageExtensionSDK={props.createPageExtensionSDK}
-            widget={widget}
-            path={props.path}
-            environmentId={props.environmentId}
-          />
-        );
+        return <PageWidgetRenderer widget={widget} path={props.path} repo={getAppsRepo()} />;
       }}
     </PageExtensionFetcher>
   );
