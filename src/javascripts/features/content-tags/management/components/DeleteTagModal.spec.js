@@ -5,20 +5,93 @@ import userEvent from '@testing-library/user-event';
 import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 import { Notification, HelpText, FormLabel } from '@contentful/forma-36-react-components';
+import { SpaceEnvContext } from '../../../../core/services/SpaceEnvContext/SpaceEnvContext';
+
+const enterpriseSpaceId = 'm8xyo6sh8zj8';
+
+jest.mock('data/CMA/ProductCatalog', () => {
+  const FEATURES = {
+    CUSTOM_ROLES_FEATURE: 'custom_roles',
+  };
+
+  const DEFAULT_FEATURES_STATUS = {
+    CUSTOM_ROLES_FEATURE: false,
+  };
+
+  const getSpaceFeature = async (spaceId) => {
+    return spaceId === enterpriseSpaceId;
+  };
+  return {
+    FEATURES,
+    DEFAULT_FEATURES_STATUS,
+    getSpaceFeature: jest.fn(getSpaceFeature),
+  };
+});
 
 describe('DeleteTagModal', () => {
-  describe('has disabled button state', () => {
-    it('by default', async () => {
-      await setup();
+  describe('Custom roles disable', () => {
+    it('delete button is enable', async () => {
+      await setup(undefined, undefined, 'non-enterprise');
       const submitButton = await screen.findByTestId('delete-tag-modal-submit');
       expect(submitButton).toBeInTheDocument();
-      expect(submitButton).toBeDisabled();
+      expect(submitButton).toBeEnabled();
     });
-    it('when only first checkbox is checked', async () => {
+    it('displays a warning message for non-enterprise customers ', async () => {
+      await setup(undefined, undefined, 'non-enterprise');
+      await screen.findByText(/Are you sure you want to delete this tag?/);
+    });
+  });
+  describe('Custom roles enable', () => {
+    describe('has disabled button state', () => {
+      it('by default', async () => {
+        await setup();
+        const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+
+        expect(submitButton).toBeInTheDocument();
+        expect(submitButton).toBeDisabled();
+      });
+      it('when only first checkbox is checked', async () => {
+        await setup();
+        const submitButton = await screen.findByTestId('delete-tag-modal-submit');
+        const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
+        expect(firstConfirmInput).not.toBeChecked();
+
+        userEvent.click(firstConfirmInput);
+
+        expect(firstConfirmInput).toBeChecked();
+        expect(submitButton).toBeEnabled();
+      });
+    });
+
+    describe('toggles the validation messages correctly', () => {
+      const validationText = /Check to confirm deletion/i;
+      it('for the first checkbox', async () => {
+        await setup();
+        const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
+
+        expect(firstConfirmInput).not.toBeChecked();
+        expect(screen.queryByText(validationText)).not.toBeInTheDocument();
+
+        userEvent.click(firstConfirmInput);
+        expect(firstConfirmInput).toBeChecked();
+        expect(screen.queryByText(validationText)).not.toBeInTheDocument();
+
+        userEvent.click(firstConfirmInput);
+        expect(firstConfirmInput).not.toBeChecked();
+        expect(screen.getByText(validationText)).toBeInTheDocument();
+
+        userEvent.click(firstConfirmInput);
+        expect(firstConfirmInput).toBeChecked();
+        expect(screen.queryByText(validationText)).not.toBeInTheDocument();
+      });
+    });
+
+    it('has enabled button state when both checkboxes are checked', async () => {
       await setup();
       const submitButton = await screen.findByTestId('delete-tag-modal-submit');
       const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
-
+      expect(submitButton).toBeDisabled();
       expect(firstConfirmInput).not.toBeChecked();
 
       userEvent.click(firstConfirmInput);
@@ -27,43 +100,6 @@ describe('DeleteTagModal', () => {
       expect(submitButton).toBeEnabled();
     });
   });
-
-  describe('toggles the validation messages correctly', () => {
-    const validationText = /Check to confirm deletion/i;
-    it('for the first checkbox', async () => {
-      await setup();
-      const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
-
-      expect(firstConfirmInput).not.toBeChecked();
-      expect(screen.queryByText(validationText)).not.toBeInTheDocument();
-
-      userEvent.click(firstConfirmInput);
-      expect(firstConfirmInput).toBeChecked();
-      expect(screen.queryByText(validationText)).not.toBeInTheDocument();
-
-      userEvent.click(firstConfirmInput);
-      expect(firstConfirmInput).not.toBeChecked();
-      expect(screen.getByText(validationText)).toBeInTheDocument();
-
-      userEvent.click(firstConfirmInput);
-      expect(firstConfirmInput).toBeChecked();
-      expect(screen.queryByText(validationText)).not.toBeInTheDocument();
-    });
-  });
-
-  it('has enabled button state when both checkboxes are checked', async () => {
-    await setup();
-    const submitButton = await screen.findByTestId('delete-tag-modal-submit');
-    const firstConfirmInput = await screen.findByTestId('delete-tag-modal-first-confirm-input');
-    expect(submitButton).toBeDisabled();
-    expect(firstConfirmInput).not.toBeChecked();
-
-    userEvent.click(firstConfirmInput);
-
-    expect(firstConfirmInput).toBeChecked();
-    expect(submitButton).toBeEnabled();
-  });
-
   it('calls deleteTag endpoint', async () => {
     const promise = Promise.resolve();
     const deleteTag = jest.fn(() => promise);
@@ -172,7 +208,8 @@ async function setup(
     onClose: jest.fn(),
     tag: { name: 'test', sys: { id: 'test', type: 'Tag', createdAt: 'asöfjasödfj', version: 3 } },
   },
-  tagsRepo = {}
+  tagsRepo = {},
+  spaceId
 ) {
   const defaultTagsRepo = {
     createTag: jest.fn().mockResolvedValue(true),
@@ -182,10 +219,14 @@ async function setup(
   };
 
   render(
-    <TagsRepoContext.Provider value={{ ...defaultTagsRepo, ...tagsRepo }}>
-      <ReadTagsProvider>
-        <DeleteTagModal {...props} />
-      </ReadTagsProvider>
-    </TagsRepoContext.Provider>
+    <SpaceEnvContext.Provider value={{ currentSpaceId: spaceId || enterpriseSpaceId }}>
+      <TagsRepoContext.Provider value={{ ...defaultTagsRepo, ...tagsRepo }}>
+        <ReadTagsProvider>
+          <DeleteTagModal {...props} />
+        </ReadTagsProvider>
+      </TagsRepoContext.Provider>
+    </SpaceEnvContext.Provider>
   );
+
+  await screen.findByTestId('delete-tag-modal');
 }
