@@ -5,6 +5,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { applyGroups, DEFAULT_GROUP } from 'features/content-tags/editor/utils';
+import { TagVisibility } from 'features/content-tags/core/components/TagVisibility';
 
 const styles = {
   tag: css({ marginRight: tokens.spacing2Xs, marginBottom: '0px' }),
@@ -29,13 +30,14 @@ const EntityTags = ({ tags, onRemove, disabled, style = {}, tagGroups = [] }) =>
 
   const renderTags = (tags) => {
     return tags.sort().map((tag) => (
-      <li key={tag.value}>
+      <li key={tag.value} data-test-id="selected-tags-list-item">
         <Pill
           className={css(styles.tag, style)}
           key={tag.value}
           label={tag.label}
           onClose={disabled ? null : () => onTagPillClose(tag.value)}
         />
+        <TagVisibility visibility={tag.visibility} showTooltip={true} />
       </li>
     ));
   };

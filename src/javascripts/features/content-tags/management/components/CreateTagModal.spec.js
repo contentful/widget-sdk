@@ -6,7 +6,7 @@ import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvi
 import { Notification } from '@contentful/forma-36-react-components';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 
-import { wait } from '@testing-library/dom';
+import { waitFor } from '@testing-library/dom';
 
 describe('A CreateTagModal', () => {
   beforeEach(() => {
@@ -19,10 +19,12 @@ describe('A CreateTagModal', () => {
     expect(modal).toBeInTheDocument();
   });
 
-  it('does have a name and id input', async () => {
-    const { nameTextField, idTextField } = setup();
+  it('does have a name input, id input and visibility radio buttons', async () => {
+    const { nameTextField, idTextField, publicVisibilityInput, privateVisibilityInput } = setup();
     expect(nameTextField).toBeInTheDocument();
     expect(idTextField).toBeInTheDocument();
+    expect(publicVisibilityInput).toBeInTheDocument();
+    expect(privateVisibilityInput).toBeInTheDocument();
   });
 
   it('has disabled submit buttons by default', async () => {
@@ -33,11 +35,11 @@ describe('A CreateTagModal', () => {
     expect(submit).toBeInTheDocument();
   });
 
-  it('has default name and id input values', async () => {
+  it('has default name, id and visibility input values', async () => {
     const { nameTextField, idTextField, form } = setup();
     expect(nameTextField).toBeInTheDocument();
     expect(idTextField).toBeInTheDocument();
-    expect(form).toHaveFormValues({ name: '', id: '' });
+    expect(form).toHaveFormValues({ name: '', id: '', visibility: 'private' });
   });
 
   it('receives name input and sets untouched id', async () => {
@@ -49,7 +51,7 @@ describe('A CreateTagModal', () => {
       });
     });
 
-    expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld' });
+    expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld', visibility: 'private' });
   });
 
   it('receives id input', async () => {
@@ -61,7 +63,7 @@ describe('A CreateTagModal', () => {
       });
     });
 
-    expect(form).toHaveFormValues({ name: '', id: 'hello-world' });
+    expect(form).toHaveFormValues({ name: '', id: 'hello-world', visibility: 'private' });
   });
 
   it('receives name input and keeps touched id', async () => {
@@ -75,7 +77,26 @@ describe('A CreateTagModal', () => {
       events.change(nameInput, { target: { value: 'Hello World' } });
     });
 
-    expect(form).toHaveFormValues({ name: 'Hello World', id: 'hello-world' });
+    expect(form).toHaveFormValues({
+      name: 'Hello World',
+      id: 'hello-world',
+      visibility: 'private',
+    });
+  });
+
+  it('lets visibility public or private be selected', () => {
+    const { form, publicVisibilityInput, privateVisibilityInput } = setup();
+    expect(form).toHaveFormValues({ visibility: 'private' });
+
+    userEvent.click(publicVisibilityInput);
+    expect(publicVisibilityInput).toBeChecked();
+    expect(privateVisibilityInput).not.toBeChecked();
+    expect(form).toHaveFormValues({ visibility: 'public' });
+
+    userEvent.click(privateVisibilityInput);
+    expect(privateVisibilityInput).toBeChecked();
+    expect(publicVisibilityInput).not.toBeChecked();
+    expect(form).toHaveFormValues({ visibility: 'private' });
   });
 
   it('enables submit on valid form', async () => {
@@ -92,7 +113,7 @@ describe('A CreateTagModal', () => {
     expect(continuesSubmit).toBeEnabled();
   });
 
-  it('calls onClose after submit', async () => {
+  it('calls onClose and resets the form after submit', async () => {
     const onClose = jest.fn();
     const { form, events, nameInput, submit } = setup({ onClose, isShown: true });
 
@@ -104,37 +125,60 @@ describe('A CreateTagModal', () => {
 
     await act(async () => {
       submit.click();
-      await wait(() => expect(form).toHaveFormValues({ name: '', id: '' }));
+      await waitFor(() =>
+        expect(form).toHaveFormValues({ name: '', id: '', visibility: 'private' })
+      );
     });
 
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('calls reset after successfully create a new tag', async () => {
-    const { form, events, nameInput, continuesSubmit } = setup({
+  it('calls onClose and resets the form after cancelling', async () => {
+    const onClose = jest.fn();
+    const { form, events, nameInput, cancel } = setup({ onClose, isShown: true });
+
+    act(() => {
+      events.change(nameInput, { target: { value: 'Hello World' } });
+    });
+    await act(async () => {
+      cancel.click();
+      await waitFor(() =>
+        expect(form).toHaveFormValues({ name: '', id: '', visibility: 'private' })
+      );
+    });
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('calls reset after successfully creating a new tag', async () => {
+    const { form, events, nameInput, publicVisibilityInput, continuesSubmit } = setup({
       isShown: true,
       onClose: jest.fn(),
     });
 
-    expect(form).toHaveFormValues({ name: '', id: '' });
+    expect(form).toHaveFormValues({ name: '', id: '', visibility: 'private' });
 
     act(() => {
       events.change(nameInput, { target: { value: 'Hello World' } });
     });
 
+    userEvent.click(publicVisibilityInput);
+
     expect(continuesSubmit).toBeEnabled();
-    expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld' });
+    expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld', visibility: 'public' });
 
     await act(async () => {
       await continuesSubmit.click();
     });
 
     await act(async () => {
-      await wait(() => expect(form).toHaveFormValues({ name: '', id: '' }));
+      await waitFor(() =>
+        expect(form).toHaveFormValues({ name: '', id: '', visibility: 'private' })
+      );
     });
 
     await act(async () => {
-      await wait(() =>
+      await waitFor(() =>
         expect(Notification.success).toHaveBeenCalledWith('Successfully created tag "Hello World".')
       );
     });
@@ -157,7 +201,7 @@ describe('A CreateTagModal', () => {
     });
 
     await act(async () => {
-      await wait(() => expect(form).toHaveFormValues({ name: '', id: givenIdInput }));
+      await waitFor(() => expect(form).toHaveFormValues({ name: '', id: givenIdInput }));
     });
 
     expect(
@@ -184,7 +228,7 @@ describe('A CreateTagModal', () => {
 
     await act(async () => {
       expect(Notification.error).toHaveBeenCalledWith('An error occurred creating tag.');
-      await wait(() => expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld' }));
+      await waitFor(() => expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld' }));
     });
   });
 
@@ -196,7 +240,7 @@ describe('A CreateTagModal', () => {
     });
 
     await act(async () => {
-      await wait(() => expect(form).toHaveFormValues({ name: '', id: 'contentful.test-id' }));
+      await waitFor(() => expect(form).toHaveFormValues({ name: '', id: 'contentful.test-id' }));
     });
 
     expect(
@@ -205,9 +249,41 @@ describe('A CreateTagModal', () => {
       )
     ).toBeInTheDocument();
   });
+
+  it('shows two create buttons when it is opened without inline creation', async () => {
+    const { submit, continuesSubmit, inlineSubmit } = setup();
+    expect(submit).toBeInTheDocument();
+    expect(continuesSubmit).toBeInTheDocument();
+    expect(inlineSubmit).not.toBeInTheDocument();
+  });
+
+  it('shows one create button text when it is opened via inline creation', async () => {
+    const { submit, continuesSubmit, inlineSubmit } = setup({
+      isInline: true,
+      inlineData: { name: 'hello world', id: 'helloWorld' },
+    });
+    expect(inlineSubmit).toBeInTheDocument();
+    expect(submit).not.toBeInTheDocument();
+    expect(continuesSubmit).not.toBeInTheDocument();
+  });
+
+  it('prefills the form with data from inline creation', async () => {
+    const { form } = setup({
+      isInline: true,
+      inlineData: { name: 'hello world', id: 'helloWorld' },
+    });
+    await waitFor(() =>
+      expect(form).toHaveFormValues({
+        name: 'hello world',
+        id: 'helloWorld',
+        visibility: 'private',
+      })
+    );
+  });
 });
 
-function setup(props = { isShown: true, onClose: jest.fn() }, tagsRepo = {}) {
+function setup(props = {}, tagsRepo = {}) {
+  props = { isShown: true, isInline: false, onClose: jest.fn(), ...props };
   const defaultTagsRepo = {
     createTag: jest.fn().mockResolvedValue(true),
     readTags: jest.fn().mockResolvedValue({ total: 0, items: [] }),
@@ -229,10 +305,18 @@ function setup(props = { isShown: true, onClose: jest.fn() }, tagsRepo = {}) {
     form: queries.getByTestId('create-content-tags-form'),
     nameTextField: queries.getByTestId('create-content-tag-name-field'),
     nameInput: queries.getByTestId('create-content-tag-name-input'),
+    publicVisibilityInput: queries
+      .getByTestId('public-visibility-checkbox')
+      .querySelector('input[type="radio"]'),
+    privateVisibilityInput: queries
+      .getByTestId('private-visibility-checkbox')
+      .querySelector('input[type="radio"]'),
     idTextField: queries.getByTestId('create-content-tag-id-field'),
     idInput: queries.getByTestId('create-content-tag-id-input'),
-    continuesSubmit: queries.getByTestId('create-content-tag-continues-submit-button'),
-    submit: queries.getByTestId('create-content-tag-submit-button'),
+    continuesSubmit: queries.queryByTestId('create-content-tag-continues-submit-button'),
+    submit: queries.queryByTestId('create-content-tag-submit-button'),
+    inlineSubmit: queries.queryByTestId('create-content-tag-inline-submit-button'),
+    cancel: queries.queryByTestId('create-content-tag-cancel-button'),
     queries,
   };
 }

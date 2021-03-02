@@ -3,6 +3,7 @@ import Autocomplete from '@contentful/forma-36-react-components/dist/components/
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
+import { TagVisibility } from 'features/content-tags/core/components/TagVisibility';
 
 const styles = {
   Autocomplete: css({
@@ -34,7 +35,12 @@ const TagsAutocomplete = ({ tags, isLoading, onSelect, onQueryChange, disabled, 
               </span>
             );
           }
-          return <span key={option.value}>{option.label}</span>;
+          return (
+            <span key={option.value}>
+              {option.label}
+              <TagVisibility visibility={option.visibility} />
+            </span>
+          );
         })
       }
     </Autocomplete>

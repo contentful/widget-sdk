@@ -25,6 +25,9 @@ const styles = {
   wideCell: css({
     width: '35%',
   }),
+  narrowCell: css({
+    width: '10%',
+  }),
   tableHead: css({
     th: {
       zIndex: tokens.zIndexDefault,
@@ -86,6 +89,7 @@ function TagsList({ tags, isLoading }) {
           isSticky>
           <TableRow>
             <TableCell className={styles.wideCell}>Tag name</TableCell>
+            <TableCell className={styles.narrowCell} />
             <TableCell className={styles.wideCell}>Tag ID</TableCell>
             <TableCell>Date added</TableCell>
             <TableCell />

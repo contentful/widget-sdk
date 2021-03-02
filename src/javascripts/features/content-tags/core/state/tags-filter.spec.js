@@ -1,13 +1,16 @@
 import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
 
 describe('A createTagsFilter function', () => {
-  const createTag = (id, name) => ({ name, sys: { id, type: 'Tag' } });
+  const createTag = (id, name, visibility = 'private') => ({
+    name,
+    sys: { id, visibility, type: 'Tag' },
+  });
 
   const tags = [
     createTag('one', 'One'),
     createTag('two', 'Two'),
     createTag('three', 'Three'),
-    createTag('four', 'Four'),
+    createTag('four', 'Four', 'public'),
     createTag('five', 'Five'),
   ];
 
@@ -35,5 +38,13 @@ describe('A createTagsFilter function', () => {
 
   it('can exclude tags', () => {
     expect(tagsFilter({ exclude: ['two', 'five'] })).toHaveLength(3);
+  });
+
+  it('can filter by private visibility', () => {
+    expect(tagsFilter({ visibility: 'private' })).toHaveLength(4);
+  });
+
+  it('can filter by public visibility', () => {
+    expect(tagsFilter({ visibility: 'public' })).toHaveLength(1);
   });
 });

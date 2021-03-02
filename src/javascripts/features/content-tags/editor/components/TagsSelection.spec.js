@@ -1,24 +1,56 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
-
+import { screen, render, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
-const createTag = jest.fn().mockResolvedValue({
-  sys: {
-    space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-    id: 'pepper',
-    type: 'Tag',
-    createdAt: '2021-01-14T09:59:01.027Z',
-    updatedAt: '2021-01-14T09:59:01.027Z',
-    version: 1,
+const spaceEnvValues = {
+  currentSpace: {
+    data: {
+      spaceMember: {
+        admin: true,
+      },
+    },
   },
-  name: 'pepper',
+};
+
+const makeTag = ({ id, name, visibility }) => ({ name, sys: { id, visibility } });
+const generateTags = (amount, group) =>
+  new Array(amount).fill(group).map((val, idx) =>
+    makeTag({
+      id: `${val.toLowerCase()}${idx}${idx}`,
+      name: `${val}: ${idx}${idx}`,
+      visibility: 'private',
+    })
+  );
+
+const localTags = [...generateTags(4, 'Team'), ...generateTags(2, 'Year')];
+
+const newTag = makeTag({
+  id: 'newTag',
+  name: 'new tag',
+  visibility: 'private',
 });
 
-describe('TagsSelection Component', () => {
-  it('filters the tags base on the input search', async () => {
+const readTags = jest
+  .fn()
+  .mockResolvedValue({ items: localTags }) // default
+  .mockResolvedValueOnce({ items: localTags }) // first call
+  .mockResolvedValueOnce({ items: [...localTags, newTag] }); // second call
+
+const createTag = jest.fn().mockImplementation((id, name, visibility) =>
+  makeTag({
+    id,
+    visibility,
+    name,
+  })
+);
+
+const onAdd = jest.fn();
+
+describe('The TagsSelection Component', () => {
+  it('filters the tags based on the input search', async () => {
     await renderTagsSelection();
     const searchInput = screen.getByTestId('autocomplete.input');
     fireEvent.change(searchInput, {
@@ -26,17 +58,16 @@ describe('TagsSelection Component', () => {
         value: 'Team:',
       },
     });
-
     // 4 teams + inline creation item
     expect(await screen.findAllByTestId('autocomplete.dropdown-list-item')).toHaveLength(5);
 
     fireEvent.change(searchInput, {
       target: {
-        value: 'Team: Lisbo',
+        value: 'Team: 1',
       },
     });
-    // 2 teams + inline creation item
-    expect(await screen.findAllByTestId('autocomplete.dropdown-list-item')).toHaveLength(3);
+    // 1 team + inline creation item
+    expect(await screen.findAllByTestId('autocomplete.dropdown-list-item')).toHaveLength(2);
   });
 
   it('shows "(create new)" tag item when the search input doesn\'t match an existing tag', async () => {
@@ -51,12 +82,12 @@ describe('TagsSelection Component', () => {
     expect(inlineCreationItem).toBeInTheDocument();
   });
 
-  it(' doesn\'t show "(create new)" tag item when the search input match an existing tag', async () => {
+  it('doesn\'t show "(create new)" tag item when the search input match an existing tag', async () => {
     await renderTagsSelection();
     const searchInput = screen.getByTestId('autocomplete.input');
     fireEvent.change(searchInput, {
       target: {
-        value: 'Team: Berli',
+        value: 'Team: 2',
       },
     });
 
@@ -64,15 +95,15 @@ describe('TagsSelection Component', () => {
 
     fireEvent.change(searchInput, {
       target: {
-        value: 'Team: Berlin',
+        value: 'Team: 22',
       },
     });
 
     expect(screen.queryByText(/(create new)/i)).not.toBeInTheDocument();
   });
 
-  it(' doesn\'t show "(create new)" tag item when hasCreateInlineCreation set to false', async () => {
-    await renderTagsSelection(false);
+  it('doesn\'t show "(create new)" tag item when hasCreateInlineCreation set to false', async () => {
+    await renderTagsSelection({ hasInlineTagCreation: false });
     const searchInput = screen.getByTestId('autocomplete.input');
     fireEvent.change(searchInput, {
       target: {
@@ -91,12 +122,12 @@ describe('TagsSelection Component', () => {
     expect(screen.queryByText(/(create new)/i)).not.toBeInTheDocument();
   });
 
-  it(" doesn't show any suggestion when user tries to add an already assigned tag to an entry", async () => {
+  it("doesn't show any suggestion when user tries to add an already assigned tag to an entry", async () => {
     await renderTagsSelection();
     const searchInput = screen.getByTestId('autocomplete.input');
     fireEvent.change(searchInput, {
       target: {
-        value: 'Market: Tai',
+        value: 'Year: 1',
       },
     });
 
@@ -104,27 +135,124 @@ describe('TagsSelection Component', () => {
 
     fireEvent.change(searchInput, {
       target: {
-        value: 'Market: Taiwan',
+        value: 'Year: 11',
       },
     });
 
     expect(await screen.queryByText(/no matches/i)).toBeInTheDocument();
   });
 
-  it('calls createTag function with the correct arguments when the create item is click', async () => {
-    await renderTagsSelection();
-    fireEvent.change(screen.getByTestId('autocomplete.input'), {
-      target: {
-        value: 'pepper',
-      },
+  describe('Tag selection during inline creation', () => {
+    const newTagName = 'new tag';
+    const newTagId = 'newTag';
+    const changedTagName = 'changed tag';
+    const changedTagId = 'changedTag';
+    const newTagData = {
+      id: newTagId,
+      name: newTagName,
+      visibility: 'private',
+    };
+
+    beforeEach(async () => {
+      await renderTagsSelection();
+      fireEvent.change(screen.getByTestId('autocomplete.input'), {
+        target: {
+          value: newTagName,
+        },
+      });
+      fireEvent.click(screen.getByText(/(create new)/i));
     });
 
-    await screen.findByText(/(create new)/i);
+    it('does not immediately create a new tag when "create item" is clicked', async () => {
+      expect(createTag).not.toHaveBeenCalled();
+    });
 
-    fireEvent.click(screen.getByRole('button', { name: /(create new)/i }));
-    await screen.findByText(/tags/i);
+    it('opens the tag selection modal when "create item" is clicked', async () => {
+      expect(await screen.queryByText(/create and add tag/i)).toBeInTheDocument();
+    });
 
-    expect(createTag).toHaveBeenCalledWith('pepper', 'pepper');
+    it('adds the new tag to the selection after successful creation', async () => {
+      const createButton = await screen.queryByText(/create and add tag/i);
+      const data = await screen.queryByTestId('create-content-tags-form');
+      expect(data).toHaveFormValues(newTagData);
+      userEvent.click(createButton);
+      expect(createTag).toHaveBeenCalledWith(newTagId, newTagName, 'private');
+      await waitFor(() => expect(readTags).toHaveBeenCalledTimes(2));
+      expect(onAdd).toHaveBeenCalledWith({
+        label: newTagName,
+        value: newTagId,
+        visibility: 'private',
+      });
+    });
+
+    it('can add a tag with visibility "public"', async () => {
+      const data = await screen.queryByTestId('create-content-tags-form');
+      const createButton = await screen.queryByText(/create and add tag/i);
+      const publicRadioButton = screen
+        .queryByTestId('public-visibility-checkbox')
+        .querySelector('input[type="radio"]');
+
+      expect(data).toHaveFormValues(newTagData);
+
+      expect(publicRadioButton).not.toBeChecked();
+      userEvent.click(publicRadioButton);
+      expect(publicRadioButton).toBeChecked();
+      expect(data).toHaveFormValues({
+        visibility: 'public',
+      });
+
+      userEvent.click(createButton);
+
+      expect(createTag).toHaveBeenCalledWith(newTagId, newTagName, 'public');
+      await waitFor(() => expect(readTags).toHaveBeenCalledTimes(2));
+      expect(onAdd).toHaveBeenCalledWith({
+        label: newTagName,
+        value: newTagId,
+        visibility: 'public',
+      });
+    });
+
+    it('it creates and adds the correct tag data if it is changed within the modal', async () => {
+      const idInput = screen.getByTestId('create-content-tag-id-input');
+      const nameInput = screen.getByTestId('create-content-tag-name-input');
+      const data = screen.getByTestId('create-content-tags-form');
+      const createButton = await screen.queryByText(/create and add tag/i);
+
+      await waitFor(() =>
+        expect(screen.getByTestId('create-content-tags-form')).toHaveFormValues(newTagData)
+      );
+
+      fireEvent.change(idInput, { target: { value: changedTagId } });
+      fireEvent.change(nameInput, { target: { value: changedTagName } });
+
+      expect(data).toHaveFormValues({
+        name: changedTagName,
+        id: changedTagId,
+      });
+
+      userEvent.click(createButton);
+
+      expect(createTag).toHaveBeenCalledWith(changedTagId, changedTagName, 'private');
+      await waitFor(() => expect(readTags).toHaveBeenCalledTimes(2));
+      expect(onAdd).toHaveBeenCalledWith({
+        label: changedTagName,
+        value: changedTagId,
+        visibility: 'private',
+      });
+    });
+    it('does not add a new tag when the modal is closed via clicking "cancel"', async () => {
+      const cancelButton = screen.queryByTestId('create-content-tag-cancel-button');
+      await waitFor(() =>
+        expect(screen.getByTestId('create-content-tags-form')).toHaveFormValues(newTagData)
+      );
+      userEvent.click(cancelButton);
+      expect(createTag).not.toHaveBeenCalled();
+      expect(readTags).toHaveBeenCalledTimes(1);
+      expect(onAdd).not.toHaveBeenCalled();
+    });
+    it('the modal has name and id preinserted', async () => {
+      expect(await screen.queryByTestId('create-content-tags-form')).toHaveFormValues(newTagData);
+    });
   });
 
   it("shows a validation message when the search input includes the name space 'contentful.'", async () => {
@@ -150,218 +278,38 @@ describe('TagsSelection Component', () => {
     });
 
     await screen.findByText(/(create new)/i);
-    fireEvent.click(screen.getByRole('button', { name: /(create new)/i }));
+    fireEvent.click(screen.getByText(/(create new)/i));
 
     await screen.findByText(/Tag wasn’t created/i);
   });
 });
 
-async function renderTagsSelection(hasInlineTagCreation = true) {
+async function renderTagsSelection(props = {}) {
   /*
    * this test set up provides some tags and it has one selected by default
    * It is also provides a space environment where the user is an Admin (so it can handle tags)
    */
-  const localTags = [
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'teamDenver',
-        type: 'Tag',
-        createdAt: '2021-01-18T12:16:25.341Z',
-        updatedAt: '2021-01-18T12:16:25.341Z',
-        environment: { sys: { id: 'no-tags-at-all', type: 'Link', linkType: 'Environment' } },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        version: 1,
-      },
-      name: 'Team: Denver',
-    },
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'teamBerlin',
-        type: 'Tag',
-        createdAt: '2021-01-18T12:16:32.922Z',
-        updatedAt: '2021-01-18T12:16:32.922Z',
-        environment: { sys: { id: 'no-tags-at-all', type: 'Link', linkType: 'Environment' } },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        version: 1,
-      },
-      name: 'Team: Berlin',
-    },
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'teamLisboa',
-        type: 'Tag',
-        createdAt: '2021-01-18T12:17:32.752Z',
-        updatedAt: '2021-01-18T12:17:32.752Z',
-        environment: { sys: { id: 'no-tags-at-all', type: 'Link', linkType: 'Environment' } },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        version: 1,
-      },
-      name: 'Team: Lisboa',
-    },
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'teamLisboa2',
-        type: 'Tag',
-        createdAt: '2021-01-18T12:18:12.542Z',
-        updatedAt: '2021-01-18T12:18:12.542Z',
-        environment: { sys: { id: 'no-tags-at-all', type: 'Link', linkType: 'Environment' } },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        version: 1,
-      },
-      name: 'Team: Lisboa-2',
-    },
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'boom',
-        type: 'Tag',
-        createdAt: '2021-01-14T09:59:01.027Z',
-        updatedAt: '2021-01-14T09:59:01.027Z',
-        environment: { sys: { id: 'no-tags-at-all', type: 'Link', linkType: 'Environment' } },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0DxkEpRWNGmuSrDf704wJM' } },
-        version: 1,
-      },
-      name: 'boom',
-    },
-    {
-      sys: {
-        space: { sys: { type: 'Link', linkType: 'Space', id: 'm8xyo6sh8zj8' } },
-        id: 'marketTaiwan',
-        type: 'Tag',
-        createdAt: '2020-06-23T10:47:01.333Z',
-        updatedAt: '2020-06-23T10:47:01.333Z',
-        environment: {
-          sys: { id: 'exploratory-environment', type: 'Link', linkType: 'Environment' },
-        },
-        createdBy: { sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' } },
-        updatedBy: { sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' } },
-        version: 1,
-      },
-      name: 'Market: Taiwan',
-    },
-  ];
 
   const defaultTagsRepo = {
     createTag,
-    readTags: jest.fn().mockResolvedValue({ total: localTags.length, items: localTags }),
+    readTags,
     updateTag: jest.fn().mockResolvedValue(true),
     deleteTag: jest.fn().mockResolvedValue(true),
   };
 
   const tagsSelectionProps = {
     disabled: false,
-    showEmpty: true,
-    selectedTags: [{ value: 'marketTaiwan', label: 'Market: Taiwan' }],
+    selectedTags: [{ value: 'year11', label: 'Year: 11' }],
     label: 'Tags',
-    onAdd: jest.fn(),
+    onAdd,
     onRemove: jest.fn(),
-    hasInlineTagCreation: hasInlineTagCreation,
+    hasInlineTagCreation: true,
+    ...props,
   };
 
-  const spaceEnvValues = {
-    currentSpace: {
-      data: {
-        name: 'Tags',
-        sys: {
-          type: 'Space',
-          id: 'm8xyo6sh8zj8',
-          organization: {
-            name: 'Developer Workflows Test Org',
-            isBillable: true,
-            sys: {
-              type: 'Organization',
-              id: '4haCJX5hLV4DKJhIJz4A6k',
-            },
-          },
-        },
-        spaceMembership: {
-          admin: true,
-          sys: {
-            type: 'SpaceMembership',
-            id: '1zfXldeGQ2qWjMylMZSj0K',
-            version: 1,
-            user: {
-              firstName: 'Napoleon',
-              lastName: 'Hill',
-              email: 'napoleon.hill@contentful.com',
-              activated: true,
-              canCreateOrganization: true,
-              features: { logAnalytics: true, showPreview: false },
-              sys: {
-                type: 'User',
-                id: 'mysuperID',
-              },
-              organizationMemberships: [
-                {
-                  role: 'owner',
-                  sys: {
-                    type: 'OrganizationMembership',
-                    id: '0DGwZZ2qnG6ZfPtQW0vs4C',
-                    version: 0,
-                    organization: {
-                      name: 'Contentful',
-                      subscriptionState: null,
-                      isBillable: false,
-                      trialPeriodEndsAt: null,
-                      cancellationActiveAt: null,
-                      hasSsoEnabled: false,
-                      sys: {
-                        type: 'Organization',
-                        id: '0DzC3fPm0Ll1kCsGmiUBJY',
-                        version: 0,
-                        createdAt: '2020-11-16T15:41:13Z',
-                        updatedAt: '2020-11-16T15:41:13Z',
-                      },
-                      disableAnalytics: false,
-                      pricingVersion: 'pricing_version_2',
-                    },
-                    status: 'active',
-                  },
-                },
-                {
-                  role: 'developer',
-                  sys: {
-                    type: 'OrganizationMembership',
-                    id: '1xmKAGbI3JXPFXvNNTmKbo',
-                    version: 1,
-                    createdBy: {
-                      sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' },
-                    },
-                    createdAt: '2020-11-17T08:38:31Z',
-                    updatedBy: {
-                      sys: { type: 'Link', linkType: 'User', id: '0Wqpu0iURWIzkfkG7a4pKb' },
-                    },
-                    updatedAt: '2020-11-17T08:40:17Z',
-                    status: 'active',
-                    lastActiveAt: '2021-01-28T08:35:22Z',
-                    sso: null,
-                  },
-                },
-              ],
-            },
-          },
-          roles: [],
-        },
-        spaceMember: {
-          admin: true,
-          roles: [],
-        },
-        shards: [null],
-      },
-    },
-  };
   render(
-    <SpaceEnvContext.Provider value={{ ...spaceEnvValues }}>
-      <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
+    <SpaceEnvContext.Provider value={spaceEnvValues}>
+      <TagsRepoContext.Provider value={defaultTagsRepo}>
         <ReadTagsProvider>
           <FilteredTagsProvider>
             <TagsSelection {...tagsSelectionProps} />

@@ -64,7 +64,7 @@ const SelectTagsModal: React.FC<Props> = ({
   };
 
   const isInitialLoad = useIsInitialLoadingOfTags();
-  const [localTags, setLocalTags] = useState<{ value: string; label: string }[]>(selectedTags);
+  const [localTags, setLocalTags] = useState<TagOption[]>(selectedTags);
 
   const { hasTags } = useReadTags();
   const canManageTags = useCanManageTags();

@@ -14,6 +14,10 @@ import * as stringUtils from 'utils/StringUtils';
 import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
+import {
+  TagVisibilitySelection,
+  VISIBILITY,
+} from 'features/content-tags/management/components/TagVisibilitySelection';
 import { GroupingHint } from 'features/content-tags/management/components/GroupingHint';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 
@@ -26,9 +30,15 @@ const styles = {
 const FORM_NAME_CHANGED = 'FORM_NAME_CHANGED';
 const FORM_ID_CHANGED = 'FORM_ID_CHANGED';
 const FORM_ID_TOUCHED = 'FORM_ID_TOUCHED';
+const FORM_VISIBILITY_CHANGED = 'FORM_VISIBILITY_CHANGED';
 const FORM_RESET = 'FORM_RESET';
 
-const FORM_INITIAL_STATE = { name: '', id: '', idTouched: false };
+const FORM_INITIAL_STATE = {
+  name: '',
+  id: '',
+  idTouched: false,
+  visibility: VISIBILITY.PRIVATE,
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,6 +48,8 @@ const reducer = (state, action) => {
       return { ...state, id: action.payload.trim() };
     case FORM_ID_TOUCHED:
       return { ...state, idTouched: action.payload };
+    case FORM_VISIBILITY_CHANGED:
+      return { ...state, visibility: action.payload };
     case FORM_RESET:
       return FORM_INITIAL_STATE;
   }
@@ -65,8 +77,8 @@ function validate(state, nameExistsValidator, idExistsValidator) {
   return errors;
 }
 
-function CreateTagModal({ isShown, onClose }) {
-  const [{ name, id, idTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
+function CreateTagModal({ isShown, onClose, isInline, inlineData }) {
+  const [{ name, id, idTouched, visibility }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
   const [continueCreation, setContinueCreation] = useState(false);
   const { reset, nameExists, idExists, total } = useReadTags();
   const errors = validate({ name, id }, nameExists, idExists);
@@ -87,10 +99,20 @@ function CreateTagModal({ isShown, onClose }) {
     dispatch({ type: FORM_RESET });
   }, [resetCreateTag, dispatch]);
 
-  const close = useCallback(() => {
-    resetForm();
-    onClose();
-  }, [resetForm, onClose]);
+  const close = useCallback(
+    (createdTag) => {
+      resetForm();
+      onClose(createdTag);
+    },
+    [resetForm, onClose]
+  );
+
+  useEffect(() => {
+    if (isInline && Object.keys(inlineData).length) {
+      dispatch({ type: FORM_NAME_CHANGED, payload: inlineData.name });
+      dispatch({ type: FORM_ID_CHANGED, payload: inlineData.id });
+    }
+  }, [isInline, inlineData]);
 
   useEffect(() => {
     if (createTagError) {
@@ -105,18 +127,18 @@ function CreateTagModal({ isShown, onClose }) {
       if (continueCreation) {
         resetForm();
       } else {
-        close();
+        close(createTagData);
       }
     }
   }, [resetForm, reset, createTagData, name, close, continueCreation]);
 
   const onSubmit = async (doContinue) => {
     setContinueCreation(doContinue);
-    await createTag(id, name);
+    await createTag(id, name, visibility);
   };
 
   const onCancel = () => {
-    close();
+    close(undefined);
   };
 
   const onNameChange = (event) => {
@@ -131,6 +153,62 @@ function CreateTagModal({ isShown, onClose }) {
     dispatch({ type: FORM_ID_CHANGED, payload: event.target.value });
     dispatch({ type: FORM_ID_TOUCHED, payload: event.target.value.length > 0 });
   };
+
+  const onVisibilityChange = (event) => {
+    dispatch({ type: FORM_VISIBILITY_CHANGED, payload: event.target.value });
+  };
+
+  const renderCreateButtons = (buttons) =>
+    buttons.map((button) => {
+      const { className, testId, onClick, label } = button;
+      return (
+        <Button
+          key={testId}
+          testId={testId}
+          className={className}
+          onClick={onClick}
+          type="submit"
+          buttonType="positive"
+          loading={createTagIsLoading}
+          disabled={limitsReached || createTagIsLoading || !isConfirmEnabled}>
+          {label}
+        </Button>
+      );
+    });
+
+  const renderButtons = () => (
+    <div className={styles.controlsPanel}>
+      {isInline
+        ? renderCreateButtons([
+            {
+              testId: 'create-content-tag-inline-submit-button',
+              onClick: () => onSubmit(false),
+              label: 'Create and add tag',
+            },
+          ])
+        : renderCreateButtons([
+            {
+              testId: 'create-content-tag-continues-submit-button',
+              onClick: () => onSubmit(true),
+              label: 'Save and create another',
+            },
+            {
+              testId: 'create-content-tag-submit-button',
+              className: styles.marginLeftM,
+              onClick: () => onSubmit(false),
+              label: 'Save tag',
+            },
+          ])}
+      <Button
+        testId={'create-content-tag-cancel-button'}
+        className={styles.marginLeftM}
+        onClick={onCancel}
+        disabled={createTagIsLoading}
+        buttonType="muted">
+        Cancel
+      </Button>
+    </div>
+  );
 
   return (
     <Modal
@@ -149,7 +227,7 @@ function CreateTagModal({ isShown, onClose }) {
           id={'name'}
           name="name"
           labelText={'Tag name'}
-          helpText={'Tip: Press ↵ on your keyboard to save and create another'}
+          helpText={!isInline && 'Tip: Press ↵ on your keyboard to save and create another'}
           value={name}
           validationMessage={errors.name || null}
           textInputProps={{
@@ -162,6 +240,7 @@ function CreateTagModal({ isShown, onClose }) {
           onChange={onNameChange}
         />
         <GroupingHint tagName={name} />
+        <TagVisibilitySelection visibility={visibility} onChange={onVisibilityChange} />
         <TextField
           required
           id={'id'}
@@ -177,35 +256,7 @@ function CreateTagModal({ isShown, onClose }) {
           }}
           onChange={onIdChange}
         />
-        <div className={styles.controlsPanel}>
-          <Button
-            onClick={() => onSubmit(true)}
-            type="submit"
-            buttonType="positive"
-            loading={createTagIsLoading}
-            testId={'create-content-tag-continues-submit-button'}
-            disabled={limitsReached || createTagIsLoading || !isConfirmEnabled}>
-            Save and create another
-          </Button>
-          <Button
-            className={styles.marginLeftM}
-            testId={'create-content-tag-submit-button'}
-            onClick={() => onSubmit(false)}
-            type="submit"
-            buttonType="positive"
-            loading={createTagIsLoading}
-            disabled={limitsReached || createTagIsLoading || !isConfirmEnabled}>
-            Save tag
-          </Button>
-          <Button
-            testId={'create-content-tag-cancel-button'}
-            className={styles.marginLeftM}
-            onClick={onCancel}
-            disabled={createTagIsLoading}
-            buttonType="muted">
-            Cancel
-          </Button>
-        </div>
+        {renderButtons()}
       </Form>
     </Modal>
   );
@@ -214,6 +265,14 @@ function CreateTagModal({ isShown, onClose }) {
 CreateTagModal.propTypes = {
   isShown: PropTypes.bool,
   onClose: PropTypes.func,
+  isInline: PropTypes.bool,
+  inlineData: PropTypes.oneOfType([
+    PropTypes.exact({
+      id: PropTypes.string,
+      name: PropTypes.string,
+    }),
+    PropTypes.exact({}),
+  ]),
 };
 
 export { CreateTagModal };

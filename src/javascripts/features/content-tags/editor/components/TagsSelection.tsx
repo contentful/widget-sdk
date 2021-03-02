@@ -1,26 +1,23 @@
 import {
   Notification,
   Paragraph,
-  Spinner,
   Tooltip,
   ValidationMessage,
 } from '@contentful/forma-36-react-components';
-
 import { css } from 'emotion';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 import {
   useCanManageTags,
-  useCreateTag,
   useIsInitialLoadingOfTags,
   useReadTags,
 } from 'features/content-tags/core/hooks';
+import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
+import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
 import { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
-import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
-import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import {
   orderByLabel,
   shouldAddInlineCreationItem,
@@ -29,9 +26,10 @@ import {
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as stringUtils from 'utils/StringUtils';
-import { TagOption } from 'features/content-tags/types';
+import { TagOption, TagSearchOption } from 'features/content-tags/types';
 import { Conditional } from 'features/content-tags/core/components/Conditional';
 import { Tag } from 'contentful-management/types';
+import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
 
 const styles = {
   wrapper: css({
@@ -60,25 +58,23 @@ const TagsSelection: React.FC<Props> = ({
   label = 'Tags',
   hasInlineTagCreation = false,
 }) => {
-  const { isLoading, hasTags, addTag, reset } = useReadTags();
-  const { createTag, createTagData, createTagIsLoading } = useCreateTag();
+  const { isLoading, hasTags } = useReadTags();
   const { setSearch, filteredTags, search } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
   const [validTagName, setValidTagName] = useState(true);
+  const [newTagData, setNewTagData] = useState({});
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
   const canManageTags = useCanManageTags();
 
   const totalSelected = selectedTags.length;
   const maxTagsReached = totalSelected >= TAGS_PER_ENTITY;
 
   useEffect(() => {
-    if (createTagData) {
-      addTag(createTagData);
-      onAdd({ label: createTagData.name, value: createTagData.sys.id });
-      Notification.success(`Successfully created tag "${createTagData.name}".`);
-      reset();
+    if (!isCreatingTag && Object.keys(newTagData).length) {
+      setIsCreatingTag(true);
     }
-  }, [createTagData, addTag, onAdd, reset]);
+  }, [newTagData, isCreatingTag]);
 
   const onSelect = useCallback(
     (item) => {
@@ -92,15 +88,34 @@ const TagsSelection: React.FC<Props> = ({
         return;
       }
       if (item.inlineCreation) {
-        return createTag(item.value, item.label);
+        return setNewTagData({ id: item.value, name: item.label });
       }
       onAdd(item);
     },
-    [createTag, onAdd, validTagName]
+    [onAdd, validTagName]
+  );
+
+  const resetInlineCreation = useCallback(() => {
+    setIsCreatingTag(false);
+    setNewTagData({});
+  }, [setIsCreatingTag, setNewTagData]);
+
+  const onModalClose = useCallback(
+    (createdTag) => {
+      if (createdTag) {
+        onAdd({
+          label: createdTag.name,
+          value: createdTag.sys.id,
+          visibility: createdTag.sys.visibility,
+        });
+      }
+      resetInlineCreation();
+    },
+    [onAdd, resetInlineCreation]
   );
 
   const localFilteredTags = useMemo(() => {
-    const filtered = orderByLabel<TagOption & { inlineCreation?: boolean }>(
+    const filtered = orderByLabel<TagSearchOption & { inlineCreation?: boolean }>(
       tagsPayloadToOptions(
         filteredTags.filter(
           (tag: Tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id)
@@ -165,17 +180,18 @@ const TagsSelection: React.FC<Props> = ({
             onQueryChange={setSearch}
           />
         </ConditionalWrapper>
-        <Conditional condition={createTagIsLoading}>
-          <Spinner size="large" />
-        </Conditional>
-        <Conditional condition={!createTagIsLoading}>
-          <EntityTags
-            disabled={disabled}
-            tags={selectedTags}
-            onRemove={onRemove}
-            tagGroups={tagGroups}
-          />
-        </Conditional>
+        <EntityTags
+          disabled={disabled}
+          tags={selectedTags}
+          onRemove={onRemove}
+          tagGroups={tagGroups}
+        />
+        <CreateTagModal
+          isInline
+          inlineData={newTagData}
+          isShown={isCreatingTag}
+          onClose={onModalClose}
+        />
       </FieldFocus>
     );
   }, [
@@ -190,7 +206,9 @@ const TagsSelection: React.FC<Props> = ({
     disabled,
     label,
     validTagName,
-    createTagIsLoading,
+    isCreatingTag,
+    newTagData,
+    onModalClose,
   ]);
 
   if (isInitialLoad) {

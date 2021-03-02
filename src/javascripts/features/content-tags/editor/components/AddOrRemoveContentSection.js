@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TagsAutocomplete } from './TagsAutocomplete';
-import { useReadTags, useCreateTag } from 'features/content-tags/core/hooks';
+import { useReadTags } from 'features/content-tags/core/hooks';
 import {
   FormLabel,
   Notification,
@@ -13,6 +13,7 @@ import {
 import {
   AddOrRemoveRow,
   BULK_ACTION,
+  ACTION_LABELS,
 } from 'features/content-tags/editor/components/AddOrRemoveRow';
 import {
   CHANGE_TYPE,
@@ -23,39 +24,48 @@ import { CONTENTFUL_NAMESPACE } from 'features/content-tags/core/constants';
 import { orderByLabel, tagsPayloadToOptions } from 'features/content-tags/editor/utils';
 import { shouldAddInlineCreationItem } from 'features/content-tags/editor/utils';
 import { useCanManageTags } from 'features/content-tags/core/hooks';
+import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
 import * as stringUtils from 'utils/StringUtils';
 
-function useAddTag(addToBulkList) {
-  // is adding is needed to get an updated version of addToBulkList
-  const [isAdding, setIsAdding] = useState(false);
-  const { createTag, createTagData, resetCreateTag, createTagError } = useCreateTag();
-  const { reset, addTag: addTagInCacheData } = useReadTags();
-  function addTag({ value, label }) {
-    createTag(value, label);
-  }
-  useEffect(() => {
-    if (createTagData) {
-      addTagInCacheData(createTagData);
-      reset();
-      setIsAdding(true);
-    }
-  }, [resetCreateTag, reset, addTagInCacheData, createTagData]);
+function useAddNewTag(addToBulkList) {
+  // addedTagId is needed to get an updated version of addToBulkList
+  const [addedTagId, setAddedTagId] = useState(null);
+  const [newTagData, setNewTagData] = useState({});
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
+  const { addTag: addTagInCacheData } = useReadTags();
+
+  const resetInlineCreation = useCallback(() => {
+    setIsCreatingTag(false);
+    setNewTagData({});
+    setAddedTagId(null);
+  }, []);
+
+  const onModalClose = useCallback(
+    (createdTag) => {
+      if (createdTag) {
+        addTagInCacheData(createdTag);
+        setAddedTagId(createdTag.sys.id);
+      } else {
+        resetInlineCreation();
+      }
+    },
+    [addTagInCacheData, resetInlineCreation]
+  );
 
   useEffect(() => {
-    if (isAdding && createTagError) {
-      setIsAdding(false);
-      reset();
+    if (!isCreatingTag && Object.keys(newTagData).length) {
+      setIsCreatingTag(true);
     }
-  }, [reset, isAdding, setIsAdding, createTagError]);
+  }, [isCreatingTag, newTagData]);
 
   useEffect(() => {
-    if (isAdding && createTagData) {
-      addToBulkList(createTagData.sys.id);
-      setIsAdding(false);
-      resetCreateTag();
+    if (addedTagId) {
+      addToBulkList(addedTagId);
+      resetInlineCreation();
     }
-  }, [resetCreateTag, setIsAdding, addToBulkList, isAdding, createTagData]);
-  return { addTag, createTagData };
+  }, [addedTagId, newTagData, addToBulkList, resetInlineCreation]);
+
+  return { isCreatingTag, newTagData, setNewTagData, onModalClose };
 }
 
 // fetch unique tags with info on how entities they are attached to
@@ -98,11 +108,13 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
   }, [search]);
 
   const tagEntry = useCallback(
-    (tag, occurrence) => {
+    (tagId, occurrence) => {
+      const tag = getTag(tagId);
       return {
-        value: tag,
+        value: tagId,
         occurrence,
-        label: getTag(tag).name,
+        label: tag.name,
+        visibility: tag.sys.visibility,
       };
     },
     [getTag]
@@ -165,15 +177,9 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
     [tagEntry, entities.length, entityCount, tagReset, tagAdd, tagApplyToAll, tagRemove]
   );
 
-  const { addTag, createTagData } = useAddTag(
+  const { newTagData, setNewTagData, isCreatingTag, onModalClose } = useAddNewTag(
     useCallback((tagId) => onAction(tagId, BULK_ACTION.ADD_TAG), [onAction])
   );
-
-  useEffect(() => {
-    if (createTagData) {
-      Notification.success(`Successfully created tag "${createTagData.name}".`);
-    }
-  }, [createTagData]);
 
   const onSelect = useCallback(
     (tagItem) => {
@@ -187,12 +193,12 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
         return;
       }
       if (tagItem.inlineCreation) {
-        addTag(tagItem);
+        setNewTagData({ id: tagItem.value, name: tagItem.label });
       } else {
         onAction(tagItem.value, BULK_ACTION.ADD_TAG);
       }
     },
-    [validTagName, onAction, addTag]
+    [validTagName, onAction, setNewTagData]
   );
 
   const renderRow = useCallback(
@@ -201,10 +207,10 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
         const appliedToAll = tag.occurrence === entityCount;
         switch (tag.changeType) {
           case CHANGE_TYPE.NONE:
-            return appliedToAll ? '' : 'Apply to all';
+            return appliedToAll ? ACTION_LABELS.NONE : ACTION_LABELS.APPLY_TO_ALL;
           case CHANGE_TYPE.REMOVED:
           case CHANGE_TYPE.ALL:
-            return 'Undo';
+            return ACTION_LABELS.UNDO;
           case CHANGE_TYPE.NEW:
             return '';
         }
@@ -250,6 +256,12 @@ const AddOrRemoveContentSection = ({ entityTags, entities, entityType }) => {
           )}
         </TableBody>
       </Table>
+      <CreateTagModal
+        isInline
+        inlineData={newTagData}
+        isShown={isCreatingTag}
+        onClose={onModalClose}
+      />
     </div>
   );
 };

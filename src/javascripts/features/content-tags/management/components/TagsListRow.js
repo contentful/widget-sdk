@@ -12,6 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
+import { TagVisibility } from 'features/content-tags/core/components/TagVisibility';
 
 const styles = {
   delete: css({
@@ -21,6 +22,7 @@ const styles = {
     wordBreak: 'break-word',
     overflowWrap: 'break-word',
   }),
+
   copy: css({
     wordBreak: 'normal',
     margin: '0',
@@ -64,7 +66,7 @@ TagActions.propTypes = {
 function TagsListRow({ tag, onEdit, onDelete }) {
   const {
     name,
-    sys: { id, createdAt },
+    sys: { id, createdAt, visibility },
   } = tag;
 
   const editTag = useCallback(async () => {
@@ -82,6 +84,9 @@ function TagsListRow({ tag, onEdit, onDelete }) {
   return (
     <TableRow>
       <TableCell className={styles.longText}>{name}</TableCell>
+      <TableCell>
+        <TagVisibility visibility={visibility} showTooltip={true} />
+      </TableCell>
       <TableCell className={styles.longText}>
         <code>{id}</code>
         <CopyButton className={styles.copy} copyValue={id} testId="id.copy" />

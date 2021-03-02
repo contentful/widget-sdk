@@ -8,8 +8,10 @@ import {
   Pill,
   TableCell,
   TableRow,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { CHANGE_TYPE } from 'features/content-tags/editor/state/BulkTaggingProvider';
+import { TagVisibility } from 'features/content-tags/core/components/TagVisibility';
 import classNames from 'classnames';
 
 const styles = {
@@ -19,30 +21,34 @@ const styles = {
   pillCell: css({
     textAlign: 'left',
     div: css({
-      margin: '0px 0px',
+      marginBottom: '0px',
+      marginTop: '0px',
     }),
   }),
-  orangePill: css({
-    background: tokens.colorOrangeMid,
+  greyPill: css({
+    background: tokens.colorElementMid,
     span: {
-      color: tokens.colorTextDark,
+      color: tokens.colorTextBase,
     },
   }),
-  appliedOrangePill: css({
+  appliedGreyPill: css({
+    background: tokens.colorElementDark,
     button: css({
       '&:hover': {
-        background: tokens.colorOrangeMid,
-        opacity: 0.5,
+        background: tokens.colorElementDarkest,
       },
-      borderColor: tokens.colorTextMid,
+      background: tokens.colorElementDark,
+      borderColor: tokens.colorTextLightest,
       span: css({
         svg: css({
-          fill: tokens.colorTextDark,
+          fill: tokens.colorTextLightest,
         }),
       }),
     }),
   }),
-  removedOrangePill: css({
+  removedGreyPill: css({
+    background: tokens.colorElementLight,
+    textDecoration: 'line-through',
     opacity: 0.5,
   }),
   row1: css({
@@ -61,6 +67,12 @@ export const BULK_ACTION = {
   ALL_TAG: 'ALL_TAG',
   RESET_TAG: 'RESET_TAG',
   ADD_TAG: 'ADD_TAG',
+};
+
+export const ACTION_LABELS = {
+  APPLY_TO_ALL: 'Apply to all',
+  UNDO: 'Undo',
+  NONE: '',
 };
 
 const AddOrRemoveRow = ({ tag, label, meta, onAction, changeType, style }) => {
@@ -87,15 +99,15 @@ const AddOrRemoveRow = ({ tag, label, meta, onAction, changeType, style }) => {
 
     switch (changeType) {
       case CHANGE_TYPE.NEW:
-        className.push(styles.orangePill, styles.appliedOrangePill);
+        className.push(styles.greyPill, styles.appliedGreyPill);
         onClose = () => onPerformAction(tag.value, BULK_ACTION.REMOVE_TAG);
         break;
       case CHANGE_TYPE.REMOVED:
-        className.push(styles.orangePill, styles.removedOrangePill);
+        className.push(styles.greyPill, styles.removedGreyPill);
         break;
       case CHANGE_TYPE.ALL:
         onClose = () => onPerformAction(tag.value, BULK_ACTION.REMOVE_TAG);
-        className.push(styles.orangePill, styles.appliedOrangePill);
+        className.push(styles.greyPill, styles.appliedGreyPill);
         break;
       default:
         onClose = () => onPerformAction(tag.value, BULK_ACTION.REMOVE_TAG);
@@ -108,18 +120,32 @@ const AddOrRemoveRow = ({ tag, label, meta, onAction, changeType, style }) => {
     };
   };
 
+  const renderButton = (label) => {
+    switch (label) {
+      case ACTION_LABELS.APPLY_TO_ALL:
+        return <TextLink onClick={onClick}>{label}</TextLink>;
+      case ACTION_LABELS.UNDO:
+        return (
+          <Button buttonType="muted" onClick={onClick} size="small">
+            {label}
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <TableRow>
       <TableCell className={classNames(styles.tCell, styles.pillCell, styles.row1)}>
         <Pill key={tag.value} label={tag.label} {...pillProps()} />
+        <TagVisibility
+          visibility={tag.visibility}
+          disabled={changeType === CHANGE_TYPE.REMOVED}
+          showTooltip={true}
+        />
       </TableCell>
-      <TableCell className={classNames(styles.tCell, styles.row2)}>
-        {label && (
-          <Button buttonType="naked" onClick={onClick} size="small">
-            {label}
-          </Button>
-        )}
-      </TableCell>
+      <TableCell className={classNames(styles.tCell, styles.row2)}>{renderButton(label)}</TableCell>
       <TableCell className={classNames(styles.tCell, styles.row3)}>
         <div>
           <div>
@@ -135,12 +161,13 @@ AddOrRemoveRow.propTypes = {
   tag: PropTypes.shape({
     label: PropTypes.string,
     value: PropTypes.string,
+    visibility: PropTypes.string,
   }),
   label: PropTypes.string,
   meta: PropTypes.string,
   onAction: PropTypes.func,
-  changeType: PropTypes.string,
   style: PropTypes.object,
+  changeType: PropTypes.string,
 };
 
 export { AddOrRemoveRow };

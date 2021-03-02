@@ -1,16 +1,17 @@
 import { camelCase, groupBy, min, sortBy, upperFirst } from 'lodash';
 import { Tag } from '@contentful/types';
-import { TagOption } from '../types';
+import { TagOption, TagSearchOption } from '../types';
 import { LinkSys } from 'core/services/SpaceEnvContext/types';
 import * as stringUtils from 'utils/StringUtils';
 
 export const tagPayloadToOption = (tag: Tag): TagOption => ({
   value: tag.sys.id,
   label: tag.name,
+  visibility: tag.sys.visibility,
 });
 export const tagsPayloadToOptions = (tags: Tag[]): TagOption[] => tags.map(tagPayloadToOption);
 
-export const orderByLabel = <T extends TagOption>(tags: T[]): T[] => {
+export const orderByLabel = <T extends TagSearchOption>(tags: T[]): T[] => {
   return sortBy(tags, [(tag) => tag.label.toLowerCase()]);
 };
 

@@ -8,6 +8,7 @@ const FilteredTagsContext = React.createContext({
   setSkip: (value) => console.warn('called too early', value),
   setExcludedTags: (value) => console.warn('called too early', value),
   setSorting: (value) => console.warn('called too early', value),
+  setVisibility: (value) => console.warn('called too early', value),
 });
 
 export { FilteredTagsContext };

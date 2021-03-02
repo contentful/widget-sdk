@@ -1,4 +1,5 @@
 import { TagSorting } from 'features/content-tags/management/components/TagSorting';
+import { TagVisibilityFilter } from 'features/content-tags/management/components/TagVisibilityFilter';
 import React, { useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -17,7 +18,7 @@ const styles = {
 
 const TagListHeader = () => {
   const { total } = useReadTags();
-  const { setSorting } = useFilteredTags();
+  const { setSorting, setVisibility } = useFilteredTags();
 
   const limitNote = useMemo(() => {
     if (total >= TAGS_PER_SPACE) {
@@ -31,6 +32,7 @@ const TagListHeader = () => {
       <div className={styles.flexContainer}>{limitNote}</div>
       <div className={styles.flexContainer}>
         <TagSorting onChange={setSorting} />
+        <TagVisibilityFilter onChange={setVisibility} />
       </div>
     </>
   );

@@ -1,32 +1,24 @@
 import { TagsRepoType } from './TagsRepoContext';
 import { SpaceEndpoint } from 'data/CMA/types';
 import { CollectionProp } from 'contentful-management/types';
+import { TagVisibilityType } from 'features/content-tags/types';
 import { Tag } from '@contentful/types';
 
 function create(spaceEndpoint: SpaceEndpoint, environmentId: string): TagsRepoType {
-  async function createTag(id: string, name: string, version?: number) {
+  async function createTag(id: string, name: string, visibility: TagVisibilityType) {
     const data = {
       name,
       sys: {
         id,
+        visibility,
       },
     };
 
-    let headers = {};
-    if (version !== undefined) {
-      headers = {
-        'X-Contentful-Version': version,
-      };
-    }
-
-    return await spaceEndpoint<Tag>(
-      {
-        method: 'PUT',
-        path: ['environments', environmentId, 'tags', id],
-        data,
-      },
-      headers
-    );
+    return await spaceEndpoint<Tag>({
+      method: 'PUT',
+      path: ['environments', environmentId, 'tags', id],
+      data,
+    });
   }
 
   async function readTags(skip: number, limit: number) {
@@ -38,7 +30,19 @@ function create(spaceEndpoint: SpaceEndpoint, environmentId: string): TagsRepoTy
   }
 
   async function updateTag(id: string, name: string, version: number) {
-    return createTag(id, name, version);
+    const data = {
+      name,
+    };
+    return await spaceEndpoint<Tag>(
+      {
+        method: 'PUT',
+        path: ['environments', environmentId, 'tags', id],
+        data,
+      },
+      {
+        'X-Contentful-Version': version,
+      }
+    );
   }
 
   async function deleteTag(id: string, version: number) {

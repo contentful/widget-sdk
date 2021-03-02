@@ -12,7 +12,11 @@ const defaultTagsRepo = {
     items: [
       {
         name: 'tagName',
-        sys: { id: 'tagId' },
+        sys: { id: 'tagId', visibility: 'private' },
+      },
+      {
+        name: 'otherTagName',
+        sys: { id: 'otherTagId', visibility: 'public' },
       },
     ],
   }),
@@ -56,7 +60,9 @@ describe('A SelectTagsModal', () => {
       );
     });
     it('renders selected tags', async () => {
-      const selectedTags = [{ value: 'tagId', label: 'tagName' }];
+      const selectedTags: TagOption[] = [
+        { value: 'tagId', label: 'tagName', visibility: 'private' },
+      ];
       await renderWithTags(selectedTags);
       await waitFor(() =>
         expect(screen.getByRole('searchbox', { name: /search/i })).toBeInTheDocument()
@@ -64,6 +70,20 @@ describe('A SelectTagsModal', () => {
       const tagsList = screen.getByTestId('selected-tags-list');
       expect(tagsList).toBeInTheDocument();
       expect(within(tagsList).getByText(/tagName/)).toBeInTheDocument();
+    });
+    it('indicates if selected tags are public', async () => {
+      const selectedTags: TagOption[] = [
+        { value: 'tagId', label: 'tagName', visibility: 'private' },
+        { value: 'otherTagId', label: 'otherTagName', visibility: 'public' },
+      ];
+      await renderWithTags(selectedTags);
+      await waitFor(() =>
+        expect(screen.getByRole('searchbox', { name: /search/i })).toBeInTheDocument()
+      );
+      expect(screen.getByTestId('selected-tags-list')).toBeInTheDocument();
+      expect(await screen.findAllByTestId('selected-tags-list-item')).toHaveLength(2);
+      expect(await screen.queryByTestId('visibility-indicator')).toBeInTheDocument();
+      expect(screen.getAllByText('public')).toHaveLength(1);
     });
   });
 });

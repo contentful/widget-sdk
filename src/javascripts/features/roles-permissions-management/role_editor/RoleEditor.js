@@ -26,7 +26,7 @@ import { createRoleRemover } from '../components/RoleRemover';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { getLocales } from '../utils/getLocales';
 import { RoleEditorActions } from './RoleEditorActions';
-import { equalArrays } from '../utils/equalArrays';
+import { equalArrayContent } from '../utils/equalArrays';
 
 const styles = {
   tabs: css({
@@ -459,7 +459,7 @@ export class RoleEditor extends React.Component {
           (field !== 'metadataTagIds' &&
             editedRules[entity][editRuleId][field].initialValue !== newValue) ||
           (field === 'metadataTagIds' &&
-            !equalArrays(editedRules[entity][editRuleId][field].initialValue, newValue))
+            !equalArrayContent(editedRules[entity][editRuleId][field].initialValue, newValue))
         ) {
           editedRules[entity][editRuleId][field].newValue = newValue;
           return editedRules;
