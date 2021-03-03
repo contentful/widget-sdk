@@ -13,6 +13,7 @@ import {
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing/index';
+import { PRESELECT_APPS_PKG_FROM_KEYS } from '../routes/SpacePurchaseRoute';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -138,10 +139,31 @@ describe('SpacePurchaseContainer', () => {
     expect(screen.getByTestId('space-selection-section')).toBeVisible();
   });
 
-  it('should render PLATFORM_SELECTION page when user has never purchased apps', async () => {
-    await build(null, { purchasingApps: true });
+  describe('rendering PLATFORM_SELECTION component', () => {
+    it('should render with spaces above platforms when `from` is not passed as a prop', async () => {
+      await build(null, { purchasingApps: true });
 
-    expect(screen.getByTestId('platform-selection-section')).toBeVisible();
+      expect(screen.getByTestId('platform-selection-section')).toBeVisible();
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
+        'column-reverse'
+      );
+    });
+
+    it('should render with spaces above platforms when a non-preselected from is passed', async () => {
+      await build({ from: 'random_string' }, { purchasingApps: true });
+
+      expect(screen.getByTestId('platform-selection-section')).toBeVisible();
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
+        'column-reverse'
+      );
+    });
+
+    it('should render with platforms above spaces when a preselected from is passed', async () => {
+      await build({ from: PRESELECT_APPS_PKG_FROM_KEYS[0] }, { purchasingApps: true });
+
+      expect(screen.getByTestId('platform-selection-section')).toBeVisible();
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual('column');
+    });
   });
 
   it('should render SPACE_DETAILS when a plan has been selected', async () => {

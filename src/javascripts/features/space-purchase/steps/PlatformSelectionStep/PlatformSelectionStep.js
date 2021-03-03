@@ -49,7 +49,7 @@ const styles = {
 // TODO: this is a placeholder url, update with link to packages comparison
 export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ track }) => {
+export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const {
     state: {
       organization,
@@ -71,6 +71,8 @@ export const PlatformSelectionStep = ({ track }) => {
 
   const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
+  const spaceCardsDisabled = showPlatformsAboveSpaces && !selectedPlatform;
+  const platformCardsDisabled = !showPlatformsAboveSpaces && !selectedPlan;
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
 
@@ -90,7 +92,7 @@ export const PlatformSelectionStep = ({ track }) => {
     dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
 
     // we only scroll the user to platform selection when user is changing a space plan
-    if (currentSpace) scrollToPlatformSelection();
+    if (!showPlatformsAboveSpaces) scrollToPlatformSelection();
   };
 
   const onSelectPlatform = (platform) => {
@@ -104,18 +106,21 @@ export const PlatformSelectionStep = ({ track }) => {
     });
 
     // we only scroll the user to space selection when user is creating a space plan
-    if (!currentSpace) scrollToSpaceSelection();
+    if (showPlatformsAboveSpaces) scrollToSpaceSelection();
   };
 
   return (
     <section aria-labelledby="platform-selection-section" data-test-id="platform-selection-section">
-      <Flex flexDirection={currentSpace ? 'column-reverse' : 'column'}>
+      <Flex
+        testId="platform-space-order"
+        flexDirection={!showPlatformsAboveSpaces ? 'column-reverse' : 'column'}>
         <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
           <span
+            data-test-id="platform-container-span"
             ref={platformSectionRef}
             className={cx(styles.headingContainer, styles.fullRow, {
-              [styles.disabled]: currentSpace && !selectedPlan,
-              [styles.bigMarginTop]: currentSpace,
+              [styles.disabled]: platformCardsDisabled,
+              [styles.bigMarginTop]: !showPlatformsAboveSpaces,
             })}>
             <Heading
               id="platform-selection-heading"
@@ -139,7 +144,7 @@ export const PlatformSelectionStep = ({ track }) => {
           </span>
 
           <PlatformCards
-            disabled={currentSpace && !selectedPlan}
+            disabled={platformCardsDisabled}
             organizationId={organization?.sys.id}
             composeAndLaunchProductRatePlan={composeAndLaunchProductRatePlan}
             canCreatePaidSpace={canCreatePaidSpace}
@@ -152,9 +157,10 @@ export const PlatformSelectionStep = ({ track }) => {
         <Grid columns={3} rows="repeat(4, 'auto')" columnGap="spacingL">
           <span
             ref={spaceSectionRef}
+            data-test-id="space-container-span"
             className={cx(styles.headingContainer, styles.fullRow, {
-              [styles.disabled]: !currentSpace && !selectedPlatform,
-              [styles.bigMarginTop]: !currentSpace,
+              [styles.disabled]: spaceCardsDisabled,
+              [styles.bigMarginTop]: showPlatformsAboveSpaces,
             })}>
             <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
               {currentSpace
@@ -169,7 +175,7 @@ export const PlatformSelectionStep = ({ track }) => {
           </span>
 
           <SpacePlanCards
-            disabled={!currentSpace && !selectedPlatform}
+            disabled={spaceCardsDisabled}
             spaceRatePlans={spaceRatePlans}
             selectedPlatform={selectedPlatform}
             selectedSpacePlanName={selectedPlan?.name}
@@ -212,4 +218,5 @@ export const PlatformSelectionStep = ({ track }) => {
 };
 PlatformSelectionStep.propTypes = {
   track: PropTypes.func.isRequired,
+  showPlatformsAboveSpaces: PropTypes.bool,
 };

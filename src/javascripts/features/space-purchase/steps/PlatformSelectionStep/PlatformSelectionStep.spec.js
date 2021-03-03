@@ -47,6 +47,45 @@ describe('PlatformSelectionStep', () => {
     });
   });
 
+  describe('Render order of Platform and Space cards', () => {
+    it('should render the platform cards above the space cards when showPlatformsAboveSpaces is true', async () => {
+      await build({ showPlatformsAboveSpaces: true });
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual('column');
+      expect(screen.getByTestId('platform-container-span').getAttribute('class')).not.toContain(
+        'disabled'
+      );
+      expect(screen.getByTestId('space-container-span').getAttribute('class')).toContain(
+        'disabled'
+      );
+    });
+
+    it('should render the space cards above the platform cards when showPlatformsAboveSpaces is false', async () => {
+      await build({ showPlatformsAboveSpaces: false });
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
+        'column-reverse'
+      );
+      expect(screen.getByTestId('platform-container-span').getAttribute('class')).toContain(
+        'disabled'
+      );
+      expect(screen.getByTestId('space-container-span').getAttribute('class')).not.toContain(
+        'disabled'
+      );
+    });
+
+    it('should render the space cards above the platform cards when showPlatformsAboveSpaces is not passed', async () => {
+      await build();
+      expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
+        'column-reverse'
+      );
+      expect(screen.getByTestId('platform-container-span').getAttribute('class')).toContain(
+        'disabled'
+      );
+      expect(screen.getByTestId('space-container-span').getAttribute('class')).not.toContain(
+        'disabled'
+      );
+    });
+  });
+
   describe('Platform cards', () => {
     beforeEach(() => {
       canUserCreatePaidSpace.mockReturnValue(true);
@@ -68,7 +107,7 @@ describe('PlatformSelectionStep', () => {
     });
 
     it('should select the card when clicked', async () => {
-      await build();
+      await build({ showPlatformsAboveSpaces: true });
       const platformCards = screen.getAllByTestId('platform-card');
       // eslint-disable-next-line no-undef
       const scrollIntoViewMock = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');

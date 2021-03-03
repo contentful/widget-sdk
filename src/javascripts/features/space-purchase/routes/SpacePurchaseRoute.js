@@ -81,6 +81,15 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
     });
   }
 
+  let selectedPlatform;
+
+  if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
+    selectedPlatform = {
+      ...PLATFORM_CONTENT.COMPOSE_AND_LAUNCH,
+      price: composeAndLaunchProductRatePlan?.price,
+    };
+  }
+
   // Only should be purchasing apps if purchasing of apps is enabled and they haven't purchased compose+launch yet.
   const purchasingApps = isAppPurchasingEnabled && !hasPurchasedComposeLaunch;
 
@@ -128,12 +137,6 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   }
 
   const spaceRatePlans = transformSpaceRatePlans(rawSpaceRatePlans, freeSpaceResource);
-
-  let selectedPlatform;
-
-  if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
-    selectedPlatform = PLATFORM_CONTENT.COMPOSE_AND_LAUNCH;
-  }
 
   const sessionId = alnum(16);
 
@@ -214,6 +217,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) =>
     <>
       <DocumentTitle title={documentTitle} />
       <SpacePurchaseContainer
+        from={from}
         track={(eventName, metadata) => {
           trackEvent(
             eventName,

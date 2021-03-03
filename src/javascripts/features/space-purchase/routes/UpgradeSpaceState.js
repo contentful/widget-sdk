@@ -9,6 +9,7 @@ export const upgradeSpaceState = {
   url: '/upgrade_space/:spaceId',
   params: {
     spaceId: '',
+    from: '',
   },
   component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>
