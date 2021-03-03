@@ -142,14 +142,14 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
       // we need to add the basePlan and the addons to it so we can correctly calculate the GrandTotal
       const allPlans = [data.basePlan, ...spacePlans];
 
-      if (data.addOn) {
-        allPlans.push(data.addOn);
+      if (data.addOnPlan) {
+        allPlans.push(data.addOnPlan);
       }
 
       const totalPrice = calculateSubscriptionTotal(allPlans, data.numMemberships);
       setGrandTotal(totalPrice);
     }
-  }, [spacePlans, data.addOn, data.basePlan, data.numMemberships]);
+  }, [spacePlans, data.addOnPlan, data.basePlan, data.numMemberships]);
 
   if (error) {
     return <ForbiddenPage />;
