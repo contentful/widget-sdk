@@ -156,6 +156,7 @@ describe('Retry', () => {
       expect(Telemetry.count).toHaveBeenLastCalledWith('cma-rate-limit-exceeded', {
         endpoint: 'foo/bar',
         state: 'STATE',
+        version: 2,
       });
     });
 

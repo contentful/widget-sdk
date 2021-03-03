@@ -86,6 +86,7 @@ export default function withRetry(requestFn) {
         Telemetry.count('cma-rate-limit-exceeded', {
           endpoint: getEndpoint(url),
           state: getCurrentState(),
+          version: CLIENT_VERSION,
         });
       } catch {
         // no op
