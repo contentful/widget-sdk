@@ -47,6 +47,12 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       ]);
 
       const freePlan = productRatePlans.find((plan) => plan.productPlanType === 'free_space');
+
+      // TODO(mire): remove the temporary solution when a new plan is mapped
+      if (freePlan.name === 'Unassigned') {
+        freePlan.name = 'Trial Space';
+      }
+
       const currentPlan = plans.find((plan) => plan.gatekeeperKey === spaceId);
 
       // filter plans that already have a space assigned (gatekeeperKey)
