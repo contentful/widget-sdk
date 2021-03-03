@@ -198,6 +198,7 @@ export const validEvents = {
     'get_in_touch_clicked',
     'help_link_clicked',
     'app_trial_start_clicked',
+    'app_trial_created',
   ],
   space_purchase: [
     'begin',
