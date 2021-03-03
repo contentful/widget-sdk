@@ -25,7 +25,7 @@ const fadeIn = keyframes({
 
 const styles = {
   wrapper: css({
-    position: 'relative',
+    // position: 'relative',
     width: '100%',
     minHeight: '100%',
   }),
