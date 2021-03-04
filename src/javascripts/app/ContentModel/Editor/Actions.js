@@ -52,9 +52,15 @@ export default function useCreateActions(props) {
 
   useEffect(() => {
     // updates content type on scope so correct data can be saved from angular context
-    props.syncContentTypeWithScope(state.contentType);
+    props.syncContentTypeWithScope(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.contentType]);
+  }, [state.contentType, state.editorInterface]);
+
+  useEffect(() => {
+    // this is needed to keep $scope.context.dirty up-to-date
+    // TODO: remove after src/javascripts/navigation/stateChangeHandlers.js migration
+    props.updateAngularContext(state.contextState.dirty);
+  }, [state.contextState.dirty, props]);
 
   useEffect(() => {
     async function initContentType() {
@@ -77,9 +83,6 @@ export default function useCreateActions(props) {
   };
 
   const setContextDirty = (dirty) => {
-    // this is needed to keep $scope.context.dirty up-to-date
-    // TODO: remove after src/javascripts/navigation/stateChangeHandlers.js migration
-    props.updateAngularContext(dirty);
     dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty } });
   };
 
@@ -424,6 +427,7 @@ export default function useCreateActions(props) {
       if (state.contextState.isNew) {
         return goToDetails(state.contentType);
       }
+      setContextDirty(false);
       notify.saveSuccess();
     } catch (error) {
       trackEnforcedButtonClick(error);

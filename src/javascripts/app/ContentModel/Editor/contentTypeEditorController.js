@@ -189,8 +189,9 @@ export default function register() {
         $scope.$applyAsync();
       }
 
-      function syncContentType(contentType) {
+      function syncContentType({ contentType, editorInterface }) {
         $scope.contentType = contentType;
+        $scope.editorInterface = editorInterface;
         $scope.$applyAsync();
       }
 

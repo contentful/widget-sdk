@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Workbench } from '@contentful/forma-36-react-components';
 import ContentTypePageActions from './ContentTypePageActions';
 import {
@@ -46,8 +46,10 @@ export default function ContentTypesPage(props) {
 
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
   const onUpdateConfiguration = (sidebar) => {
-    setEditorInterface({ ...state.editorInterface, sidebar });
-    setContextDirty(true);
+    if (!isEqual(sidebar, state.editorInterface.sidebar)) {
+      setEditorInterface({ ...state.editorInterface, sidebar });
+      setContextDirty(true);
+    }
   };
   const onEntryEditorUpdateConfiguration = (editors) => {
     setEditorInterface({ ...state.editorInterface, editors });
