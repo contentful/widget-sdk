@@ -1,6 +1,6 @@
 const { promisify } = require('util');
 const webpack = require('webpack');
-const createWebpackConfig = require('./webpack.config');
+const createWebpackConfig = require('../webpack.config');
 
 function watch(done, callbacks) {
   // we don't wait until JS is bundles to not to block

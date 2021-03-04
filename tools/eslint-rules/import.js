@@ -12,7 +12,7 @@ module.exports = {
     },
     'import/resolver': {
       webpack: {
-        config: 'tools/webpack.config.js',
+        config: 'webpack.config.js',
       },
       node: {
         extensions: allExtensions,

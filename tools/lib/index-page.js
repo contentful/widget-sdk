@@ -27,18 +27,21 @@ const { minify } = require('html-minifier');
  * @param {function} manifest
  */
 module.exports.render = function render(uiVersion, config, manifest) {
-  const templatePath = path.resolve(__dirname, '..', '..', 'index.html');
-  const template = fs.readFileSync(templatePath).toString();
+  const rootDir = path.resolve(__dirname, '..', '..');
+  const template = fs.readFileSync(path.resolve(rootDir, 'index.html')).toString();
+  const bodyHtml = fs.readFileSync(path.resolve(rootDir, 'index-body.html')).toString();
 
-  const compiled = _.template(template)({
+  const htmlOutput = _.template(template)({
     manifest,
     externalConfig: {
       uiVersion,
       config,
     },
+    bodyHtml,
   });
 
-  return minify(compiled, {
+  return minify(htmlOutput, {
     collapseWhitespace: true,
+    minifyCSS: true,
   });
 };

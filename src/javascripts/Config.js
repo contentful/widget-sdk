@@ -1,11 +1,17 @@
+/* global ENV_CONFIG */
 import qs from 'qs';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { sample } from 'lodash';
 
-const injected = readInjectedConfig();
-const settings = injected.config;
+// Config object for the current UI_VERSION injected through webpack.DefinePlugin
+// or injected into index.html by tools/lib/index-page.js during build
+const injected = (() => {
+  const fromDefinePlugin = ENV_CONFIG;
 
-export function readInjectedConfig() {
+  if (fromDefinePlugin) {
+    return fromDefinePlugin;
+  }
+
   // TODO Should throw when config is not injected, but currently required for tests
   const defaultValue = { config: { environment: 'development' } };
   const el = document.querySelector('meta[name="external-config"]');
@@ -15,7 +21,9 @@ export function readInjectedConfig() {
   } catch (e) {
     return defaultValue;
   }
-}
+})();
+
+export const settings = injected.config;
 
 export const MOCK_APIS = {
   gatekeeper: {

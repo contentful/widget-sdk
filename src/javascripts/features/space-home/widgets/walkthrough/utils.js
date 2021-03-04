@@ -4,11 +4,4 @@
  *
  * @return {Promise<ReactComponent>}
  */
-export const getReactJoyride = () =>
-  new Promise((res) => {
-    require.ensure(
-      ['react-joyride'],
-      (require) => res(require('react-joyride').default),
-      'react-joyride'
-    );
-  });
+export const getReactJoyride = () => import('react-joyride').then((m) => m.default);

@@ -15,7 +15,7 @@ More about the tool [here](https://docs.cypress.io/guides/overview/why-cypress.h
 
 ## Running tests
 
-Make sure that your local app is running with localhost ui config, example: `UI_CONFIG=localhost npm start`
+Make sure that your local app is running with localhost ui config, example: `npm run dev-localhost` or `UI_CONFIG=localhost npm start`
 
 ```bash
 # Run the tests in a headless mode

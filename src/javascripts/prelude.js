@@ -1,9 +1,8 @@
-'use strict';
-
 import text from '@contentful/sharejs/lib/types/text';
 import '@contentful/sharejs/lib/types/text-api';
 import json from '@contentful/sharejs/lib/types/json';
 import '@contentful/sharejs/lib/types/json-api';
+import { settings } from 'Config';
 
 window.sharejs = {
   types: {
@@ -36,23 +35,7 @@ import qs from 'qs';
 
 import { awaitInitReady } from 'core/NgRegistry';
 
-const injectedConfig = readInjectedConfig();
-const env = injectedConfig.config.environment;
-
-// define global method for code splitting with static subdomain
-window.WebpackRequireFrom_getChunkURL = () => injectedConfig.config.assetUrl + '/app/';
-
-function readInjectedConfig() {
-  // TODO Should throw when config is not injected, but currently required for tests
-  const defaultValue = { config: { environment: 'development' } };
-  const el = document.querySelector('meta[name="external-config"]');
-
-  try {
-    return JSON.parse(el.getAttribute('content')) || defaultValue;
-  } catch (e) {
-    return defaultValue;
-  }
-}
+window.WebpackRequireFrom_getChunkURL = () => settings.assetUrl + '/app/';
 
 angular
   .module(`contentful/app-config`, [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
@@ -207,7 +190,7 @@ angular
   .config([
     '$compileProvider',
     ($compileProvider) => {
-      if (env !== 'development') {
+      if (process.env.NODE_ENV !== 'development') {
         $compileProvider.debugInfoEnabled(false);
       }
     },
@@ -295,9 +278,7 @@ angular
 
       // Listen to postMessage events and check if they are coming from
       // GK iframes. If so, handle messages accordingly
-      const {
-        config: { authUrl },
-      } = Config.readInjectedConfig();
+      const { authUrl } = settings;
 
       const cb = (evt) => {
         if (evt.origin === authUrl) {

@@ -1,0 +1,10 @@
+@import './font-awesome/font-awesome.css';
+/* Not sure if we need this */
+@import './html5reset-1.6.1.css';
+@import '~codemirror/lib/codemirror.css';
+/* Add angular styles since we are disabling inline-styles in ngCsp */
+@import '~angular/angular-csp.css';
+@import '~@contentful/forma-36-react-components/dist/styles.css';
+@import '~@contentful/forma-36-fcss/dist/styles.css';
+@import './legacy-styles.css';
+@import './cookie-consent.css';

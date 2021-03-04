@@ -58,7 +58,7 @@ const ToolTipContent = ({ version }) =>
   );
 
 ToolTipContent.propTypes = {
-  version: PropTypes.shape({}),
+  version: PropTypes.object,
 };
 
 export default class VersionsWidget extends Component {

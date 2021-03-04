@@ -161,7 +161,7 @@ orbs:
               command: npm start
               background: true
           - run:
-              name: Wait http://localhost:3001/app/app.js to be ready
+              name: Wait http://localhost:3001 to be ready
               command: npm run wait-for-app
               working_directory: /home/circleci/components/user_interface
           - run:
@@ -204,7 +204,7 @@ executors:
       - image: 'cypress/base:12.18.0'
     resource_class: large
     environment:
-      NODE_ENV: dev
+      NODE_ENV: test
       UI_CONFIG: localhost
   node-base:
     docker:
@@ -351,7 +351,7 @@ jobs:
       # Jest tests
       - run:
           name: Run Jest tests
-          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          command: NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
 
   publish-pact-contracts:
     docker:
@@ -423,7 +423,7 @@ workflows:
                 paths:
                   - pacts/*
           start: npm start
-          wait-on: '--verbose --interval 2000 --delay 60000 --timeout 300000 http://localhost:3001/app/app.js'
+          wait-on: '--verbose --interval 2000 --delay 60000 --timeout 300000 http://localhost:3001'
           command: |
             TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
