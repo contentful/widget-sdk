@@ -81,7 +81,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
     const stopTimeTracker = window.performance.now();
     const trialDuration = stopTimeTracker - startTimeTracker;
-    trackEvent(EVENTS.APP_TRIAL_CREATED, {
+    trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
       duration: trialDuration,
       isBootstrapped: isBootstrapped,
       isSuccessful: isSuccessful,

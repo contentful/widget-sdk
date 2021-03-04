@@ -131,7 +131,7 @@ registerGenericEvent('trial:fair_use_policy_clicked');
 registerGenericEvent('trial:get_in_touch_clicked');
 registerGenericEvent('trial:help_link_clicked');
 registerGenericEvent('trial:app_trial_start_clicked');
-registerGenericEvent('trial:app_trial_created');
+registerGenericEvent('trial:app_trial_start_performance');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');

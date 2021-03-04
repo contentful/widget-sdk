@@ -10,7 +10,7 @@ export const EVENTS = {
   TRIAL_TAG: 'trial_tag_clicked',
   APP_TRIAL_START: 'app_trial_start_clicked',
   // App Trial's performance event
-  APP_TRIAL_CREATED: 'app_trial_created',
+  APP_TRIAL_PERFORMANCE: 'app_trial_start_performance',
 };
 
 export const trackEvent = (eventName, data = {}) => () => {
