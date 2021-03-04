@@ -64,16 +64,15 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
       const appsManager = new AppManager(spaceContext.cma, environmentId, spaceId, orgId);
 
-      await Promise.all(appRepos.map((app) => appsManager.installApp(app, true)));
+      await Promise.all(appRepos.map((app) => appsManager.installApp(app, true, false)));
 
       if (!existingUsers) {
         await spaceSetUp(getCMAClient({ spaceId, environmentId }));
         isBootstrapped = true;
       }
 
-      clearCachedProductCatalogFlags();
-
       isSuccessful = true;
+      Notification.success('Congratulations, we started your trial!');
       go({
         path: ['spaces', 'detail'],
         params: {
@@ -82,7 +81,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
         options: { location: 'replace' },
       });
     } catch (exception) {
-      Notification.error('Contentful Apps trial could not be started!');
+      Notification.error('Oh snap! Something went wrong!');
       go({
         path: ['account', 'organizations', 'subscription_new'],
         params: {
@@ -91,6 +90,8 @@ export function StartAppTrial({ orgId, existingUsers }) {
         options: { location: 'replace' },
       });
     }
+
+    clearCachedProductCatalogFlags();
 
     const stopTimeTracker = window.performance.now();
     const trialDuration = stopTimeTracker - startTimeTracker;
