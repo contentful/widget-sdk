@@ -8,6 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { TEMPLATE_CREATION_ERROR } from '../hooks/useTemplateCreation';
 
 import { PaymentSummary } from './PaymentSummary';
+import { ReceiptTitle } from './ReceiptTitle';
 import { ReceiptMessage } from './ReceiptMessage';
 
 const styles = {
@@ -28,7 +29,7 @@ export function ReceiptView({
   pending,
   planName,
   spaceName,
-  spaceId,
+  newSpaceId,
   buttonAction,
   error,
   isSpaceUpgrade,
@@ -41,11 +42,13 @@ export function ReceiptView({
 
   return (
     <Flex className={styles.grid} flexDirection="column" alignItems="center">
+      <ReceiptTitle pending={pending} isSpaceUpgrade={isSpaceUpgrade} error={error} />
+
       <ReceiptMessage
         pending={pending}
         planName={planName}
         spaceName={spaceName}
-        spaceId={spaceId}
+        newSpaceId={newSpaceId}
         error={error}
         isSpaceUpgrade={isSpaceUpgrade}
         selectedCompose={selectedCompose}
@@ -80,7 +83,7 @@ ReceiptView.propTypes = {
   pending: PropTypes.bool,
   planName: PropTypes.string,
   spaceName: PropTypes.string,
-  spaceId: PropTypes.string,
+  newSpaceId: PropTypes.string,
   buttonAction: PropTypes.func,
   error: PropTypes.object,
   isSpaceUpgrade: PropTypes.bool,

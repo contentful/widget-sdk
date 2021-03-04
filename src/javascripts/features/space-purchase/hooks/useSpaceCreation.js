@@ -11,7 +11,7 @@ import * as TokenStore from 'services/TokenStore';
 
 export const SPACE_CREATION_ERROR = 'CreateSpaceError';
 
-class SpaceCreationError extends Error {
+export class SpaceCreationError extends Error {
   constructor(...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);

@@ -12,7 +12,7 @@ import { useSessionMetadata } from './useSessionMetadata';
 
 export const SPACE_CHANGE_ERROR = 'SpaceChangeError';
 
-class SpaceChangeError extends Error {
+export class SpaceChangeError extends Error {
   constructor(...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);

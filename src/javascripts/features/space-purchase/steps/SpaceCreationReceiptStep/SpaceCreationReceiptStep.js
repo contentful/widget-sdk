@@ -38,7 +38,7 @@ export const SpaceCreationReceiptStep = () => {
         pending={pending}
         planName={selectedPlan.name}
         spaceName={spaceName}
-        spaceId={newSpace?.sys.id}
+        newSpaceId={newSpace?.sys.id}
         buttonAction={(addOnPurchaseError && retryAddOnPurchase) || buttonAction}
         error={spaceCreationError || addOnPurchaseError || templateCreationError}
         selectedCompose={selectedCompose}

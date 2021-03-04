@@ -8,7 +8,7 @@ import { useSessionMetadata } from './useSessionMetadata';
 
 export const TEMPLATE_CREATION_ERROR = 'TemplateCreationError';
 
-class TemplateCreationError extends Error {
+export class TemplateCreationError extends Error {
   constructor(...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);

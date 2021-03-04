@@ -14,7 +14,7 @@ import { PlatformKind } from '../utils/platformContent';
 
 export const ADD_ON_PURCHASE_ERROR = 'addOnPurchaseError';
 
-class AddOnPurchaseError extends Error {
+export class AddOnPurchaseError extends Error {
   constructor(...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);

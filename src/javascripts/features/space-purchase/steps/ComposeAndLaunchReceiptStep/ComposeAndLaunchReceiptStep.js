@@ -12,7 +12,7 @@ const lastUsedSpaceId = store.get('lastUsedSpace');
 export const ComposeAndLaunchReceiptStep = () => {
   const {
     isLoading: isPurchasingAddOn,
-    addOnPurchaseError,
+    error: addOnPurchaseError,
     retry: retryAddOnPurchase,
   } = usePurchaseAddOn();
 
