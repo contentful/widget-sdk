@@ -16,7 +16,7 @@ import { create } from 'access_control/EntityPermissions';
 import { track } from 'analytics/Analytics';
 import { ReferencesContext } from 'app/entry_editor/EntryReferences/ReferencesContext';
 import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { IfAppInstalled } from 'features/contentful-apps';
 import {
   createSuccessMessage,
   createErrorMessage,
@@ -75,17 +75,14 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
 
   const [isReleaseDialogShown, setReleaseDialogShown] = useState(false);
-  const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
   const [isBulkActionSupportEnabled, setIsBulkActionSupportEnabled] = useState(false);
 
   const spaceContext = useSpaceEnvContext();
 
   useEffect(() => {
     (async function () {
-      const addToReleaseEnabled = await releasesPCFeatureVariation(spaceContext.currentSpaceId);
       const bulkActionEnabled = await getBulkActionSupportFeatureFlag(spaceContext);
 
-      setisAddToReleaseEnabled(addToReleaseEnabled);
       setIsBulkActionSupportEnabled(bulkActionEnabled);
     })();
   }, [spaceContext]);
@@ -226,7 +223,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         onClick={handleValidation}>
         {selectedEntities.length !== initialReferencesAmount ? 'Validate selected' : 'Validate all'}
       </Button>
-      {isAddToReleaseEnabled && (
+      <IfAppInstalled appId="launch">
         <Button
           testId="addReferencesToReleaseBtn"
           buttonType="muted"
@@ -236,7 +233,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           onClick={handleAddToRelease}>
           Add to a release
         </Button>
-      )}
+      </IfAppInstalled>
       <Note className={styles.spacingTop} testId="cf-ui-note-reference-docs">
         The reference view is a new feature that gathers every linked entry and asset for a
         particular entry in a single view allowing you to apply mass actions.

@@ -1,12 +1,21 @@
 import { act, fireEvent, render, wait } from '@testing-library/react';
 import * as accessChecker from 'access_control/AccessChecker';
-import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
 import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 import { upperFirst } from 'lodash';
 import React from 'react';
 import { BulkActionsRow } from './BulkActionsRow';
+import { useContentfulAppsConfig } from 'features/contentful-apps';
+
+jest.mock('features/contentful-apps', () => ({
+  useContentfulAppsConfig: jest.fn().mockReturnValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -59,10 +68,6 @@ jest.mock('app/Releases/releasesService', () => ({
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
-}));
-
-jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
-  useFeatureFlagAddToRelease: jest.fn().mockReturnValue({ addToReleaseEnabled: true }),
 }));
 
 jest.mock('features/trials', () => ({
@@ -134,7 +139,12 @@ describe('BulkActionsRow', () => {
     accessChecker.shouldDisable.mockReturnValue(false);
     accessChecker.shouldHide.mockReturnValue(false);
     accessChecker.canUserReadEntities.mockReturnValue(true);
-    useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: true });
+    useContentfulAppsConfig.mockReturnValue({
+      isPurchased: true,
+      isEnabled: true,
+      isInstalled: true,
+      isTrialAvailable: true,
+    });
   });
 
   it('should hide the component when nothing is selected', () => {
@@ -234,7 +244,12 @@ describe('BulkActionsRow', () => {
     });
 
     it('should not display the Add to release action when feature flag is disabled', async () => {
-      useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: false });
+      useContentfulAppsConfig.mockReturnValue({
+        isPurchased: false,
+        isEnabled: false,
+        isInstalled: false,
+        isTrialAvailable: false,
+      });
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
@@ -346,8 +361,6 @@ describe('BulkActionsRow', () => {
     });
 
     it('should display the release modal when clicked on "Add to release" action', async () => {
-      useFeatureFlagAddToRelease.mockReturnValue({ addToReleaseEnabled: true });
-
       const { getByTestId } = renderComponent({
         selectedEntities: generateEntities(5, false),
       });

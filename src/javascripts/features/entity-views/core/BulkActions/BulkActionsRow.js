@@ -10,7 +10,8 @@ import { PluralizeEntityMessage } from '../PluralizeEntityMessage';
 import { BulkActionDeleteConfirm } from './BulkActionsDeleteConfirm';
 import { TagsBulkAction, useReadTags, useTagsFeatureEnabled } from 'features/content-tags';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
+import { useContentfulAppsConfig } from 'features/contentful-apps';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useBulkActions } from 'core/hooks/useBulkActions';
 
 const styles = {
@@ -54,7 +55,20 @@ export const BulkActionsRow = ({
   });
   const { reset: updateTags } = useReadTags();
 
-  const { addToReleaseEnabled: isReleaseFeatureEnabled } = useFeatureFlagAddToRelease();
+  const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
+
+  const config = {
+    organizationId: currentOrganizationId,
+    spaceId: currentSpaceId,
+    environmentId: currentEnvironmentId,
+  };
+
+  const launch = useContentfulAppsConfig({
+    appId: 'launch',
+    ...config,
+  });
+
+  const isReleaseFeatureEnabled = launch.isPurchased && launch.isInstalled;
 
   const fireAction = async (actionLabel) => {
     let message;

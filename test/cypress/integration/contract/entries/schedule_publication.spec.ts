@@ -28,7 +28,6 @@ import {
   queryForSelfConfigureSsoInDefaultOrg,
   queryForScimInDefaultOrg,
   queryForReleasesInDefaultSpace,
-  getLaunchAppFeatureInDefaultSpace,
   getComposeAppFeatureInDefaultOrg,
   getLaunchAppFeatureInDefaultOrg,
 } from '../../../interactions/product_catalog_features';
@@ -175,7 +174,6 @@ function basicServerSetUp(): string[] {
     queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
     queryForScimInDefaultOrg.willFindFeatureEnabled(),
     queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-    getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
     getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
     getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
   ];

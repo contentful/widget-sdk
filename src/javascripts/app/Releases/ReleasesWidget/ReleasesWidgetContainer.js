@@ -9,10 +9,6 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import EntrySidebarWidget from 'app/EntrySidebar/EntrySidebarWidget';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesWidgetDialog from './ReleasesWidgetDialog';
-import {
-  getReleasesFeatureVariation,
-  useFeatureFlagAccessToLaunchApp,
-} from '../ReleasesFeatureFlag';
 import { updateRelease } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
@@ -21,6 +17,7 @@ import * as Entries from 'data/entries';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { track } from 'analytics/Analytics';
 import { LaunchAppDeepLink } from './LaunchAppDeepLink';
+import { IfAppInstalled } from 'features/contentful-apps';
 
 const styles = {
   textLink: css({
@@ -71,7 +68,6 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
   };
 
   const selectedEntities = useMemo(() => [entity], [entity]);
-  const { launchAppAccessEnabled, islaunchAppAccessLoading } = useFeatureFlagAccessToLaunchApp();
 
   return (
     <EntrySidebarWidget title="Releases" testId="sidebar-releases-section">
@@ -86,11 +82,11 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
         <Icon icon="Plus" color="primary" />
         <TextLink onClick={() => setIsRelaseDialogShown(true)}>Add to Release</TextLink>
       </div>
-      {!islaunchAppAccessLoading && launchAppAccessEnabled ? (
+      <IfAppInstalled appId="launch">
         <Card className={styles.launchAppNote}>
           <LaunchAppDeepLink className={styles.linkCard} eventOrigin="releases-widget" />
         </Card>
-      ) : null}
+      </IfAppInstalled>
       {isRelaseDialogShown && (
         <ReleasesWidgetDialog
           selectedEntities={selectedEntities}
@@ -124,19 +120,14 @@ export default class ReleasesWidgetContainer extends Component {
   };
 
   state = {
-    featureEnabled: false,
     entityInfo: undefined,
     entity: undefined,
     entityTitle: undefined,
   };
 
   async componentDidMount() {
-    const { currentSpaceId: spaceId } = this.context;
     this.props.emitter.on(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.RELEASES);
-
-    const featureEnabled = await getReleasesFeatureVariation(spaceId);
-    this.setState({ featureEnabled });
   }
 
   componentWillUnmount() {
@@ -150,16 +141,18 @@ export default class ReleasesWidgetContainer extends Component {
   }
 
   render() {
-    const { featureEnabled, entityInfo, entity, entityTitle } = this.state;
+    const { entityInfo, entity, entityTitle } = this.state;
 
-    if (!featureEnabled || !entityInfo) {
+    if (!entityInfo) {
       return null;
     }
 
     return (
-      <ReleasesProvider>
-        <ReleasesWidget entityInfo={entityInfo} entity={entity} entityTitle={entityTitle} />
-      </ReleasesProvider>
+      <IfAppInstalled appId="launch">
+        <ReleasesProvider>
+          <ReleasesWidget entityInfo={entityInfo} entity={entity} entityTitle={entityTitle} />
+        </ReleasesProvider>
+      </IfAppInstalled>
     );
   }
 }

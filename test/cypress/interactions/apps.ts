@@ -13,6 +13,7 @@ import { privateAppInstallation } from '../fixtures/responses/app_installations/
 // AppDefinition Lists
 import { appDefinitionsPublic } from '../fixtures/responses/app_definitions/app-definitions-public';
 import { orgAppDefinitions } from '../fixtures/responses/app_definitions/app-definitions-private';
+import { composeLaunchAppDefinitions } from '../fixtures/responses/app_definitions/app-definitions-launch-compose';
 
 const emptyOrgAppDefinitions = require('../fixtures/responses/empty');
 
@@ -222,6 +223,22 @@ export const publicAppDefinitions = {
       status: 200,
       headers: { 'Content-Type': contentfulJson },
       body: appDefinitionsPublic,
+    }
+  ),
+  willQueryByIds: interaction(
+    'query compose and launch app definitions',
+    {
+      method: 'GET',
+      path: '/app_definitions',
+      headers: defaultHeader,
+      query: {
+        'sys.id[in]': '6RKxbgPghdY4llDpwCFvgR,6TfQEqkcINtj1MS0TuQTWJ',
+      },
+    },
+    {
+      status: 200,
+      headers: { 'Content-Type': contentfulJson },
+      body: composeLaunchAppDefinitions,
     }
   ),
 };

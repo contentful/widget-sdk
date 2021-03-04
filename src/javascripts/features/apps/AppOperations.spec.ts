@@ -2,6 +2,15 @@ import * as AppOperations from './AppOperations';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 
+jest.mock('features/contentful-apps', () => ({
+  fetchContentfulAppsConfig: jest.fn().mockResolvedValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
+
 const APP_ID = 'some-app';
 
 const status = {

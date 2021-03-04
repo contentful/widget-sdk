@@ -12,6 +12,15 @@ import { AppInstallationProps } from 'contentful-management/types';
 
 const APP_ID = 'appid';
 
+jest.mock('features/contentful-apps', () => ({
+  fetchContentfulAppsConfig: jest.fn().mockResolvedValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
+
 const installation = {
   sys: {
     type: 'AppInstallation',

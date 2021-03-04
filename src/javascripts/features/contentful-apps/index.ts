@@ -1,1 +1,2 @@
-export { useContentfulAppsConfig } from './hooks/useContentfulAppConfig';
+export { useContentfulAppsConfig, fetchContentfulAppsConfig } from './hooks/useContentfulAppConfig';
+export { IfAppInstalled } from './wrappers/ContentfulAppWrapper';

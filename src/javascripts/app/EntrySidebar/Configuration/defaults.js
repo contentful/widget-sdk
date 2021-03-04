@@ -1,7 +1,7 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { fetchContentfulAppsConfig } from 'features/contentful-apps';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceEntitlementSet } from 'app/SpaceSettings/Usage/services/EntitlementService';
 
@@ -87,9 +87,12 @@ export const EntryConfiguration = [
 
 export const AssetConfiguration = [Publication, Releases, Links, Translation, Users];
 
-const getAvailabilityMap = (spaceId) => ({
+const getAvailabilityMap = (spaceId, environmentId, organizationId) => ({
   [Publication.widgetId]: true,
-  [Releases.widgetId]: () => getReleasesFeatureVariation(spaceId),
+  [Releases.widgetId]: async () =>
+    fetchContentfulAppsConfig({ spaceId, environmentId, organizationId, appId: 'launch' }).then(
+      (app) => app.isPurchased && app.isInstalled
+    ),
   [Tasks.widgetId]: () => getSpaceFeature(spaceId, FEATURES.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,
@@ -98,7 +101,7 @@ const getAvailabilityMap = (spaceId) => ({
   [Users.widgetId]: true,
 });
 
-export const getEntryConfiguration = async ({ spaceId }) => {
+export const getEntryConfiguration = async ({ spaceId, environmentId, organizationId }) => {
   // Note: this is a call to test the new entitlements service under production load
   // it will be removed shortly and we do not care about the response
   // in the future this service will be used to check space features and quotas
@@ -108,7 +111,7 @@ export const getEntryConfiguration = async ({ spaceId }) => {
     }
   });
 
-  const availabilityMap = getAvailabilityMap(spaceId);
+  const availabilityMap = getAvailabilityMap(spaceId, environmentId, organizationId);
   const availability = await Promise.all(
     EntryConfiguration.map((widget) => {
       const value = availabilityMap[widget.widgetId];

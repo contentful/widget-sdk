@@ -21,7 +21,7 @@ import { getReleaseActions, getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesListdialog from './ReleasesListDialog';
 import { LaunchAppDeepLink } from '../ReleasesWidget/LaunchAppDeepLink';
-import { useFeatureFlagAccessToLaunchApp } from '../ReleasesFeatureFlag';
+import { IfAppInstalled } from 'features/contentful-apps';
 
 const styles = {
   workbenchContent: css({
@@ -83,33 +83,31 @@ const TabsData = {
 };
 
 const PageShell = ({ children, setIsRelaseDialogShown }) => {
-  const { launchAppAccessEnabled, islaunchAppAccessLoading } = useFeatureFlagAccessToLaunchApp();
-
   return (
-    <Workbench>
-      <Workbench.Header
-        icon={<Icon icon="Release" color="positive" size="large" />}
-        title="Content releases"
-        onBack={() => window.history.back()}
-        actions={
-          <Button
-            buttonType="primary"
-            testId="create-new-release"
-            onClick={() => setIsRelaseDialogShown(true)}>
-            Create new Release
-          </Button>
-        }
-      />
-      {!islaunchAppAccessLoading && launchAppAccessEnabled ? (
+    <IfAppInstalled appId="launch">
+      <Workbench>
+        <Workbench.Header
+          icon={<Icon icon="Release" color="positive" size="large" />}
+          title="Content releases"
+          onBack={() => window.history.back()}
+          actions={
+            <Button
+              buttonType="primary"
+              testId="create-new-release"
+              onClick={() => setIsRelaseDialogShown(true)}>
+              Create new Release
+            </Button>
+          }
+        />
         <Workbench.Header
           className={styles.deepLinkHeader}
           title={<LaunchAppDeepLink eventOrigin="release-list-page" />}
         />
-      ) : null}
-      <Workbench.Content type="text" className={styles.workbenchContent}>
-        <div>{children}</div>
-      </Workbench.Content>
-    </Workbench>
+        <Workbench.Content type="text" className={styles.workbenchContent}>
+          <div>{children}</div>
+        </Workbench.Content>
+      </Workbench>
+    </IfAppInstalled>
   );
 };
 

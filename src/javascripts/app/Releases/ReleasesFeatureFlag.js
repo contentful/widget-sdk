@@ -38,20 +38,6 @@ export function useFeatureFlagAddToRelease() {
   return { addToReleaseEnabled: orgFeatureEnabled, isAddToReleaseLoading: isOrgFeatureLoading };
 }
 
-export function useFeatureFlagAccessToLaunchApp() {
-  const { currentSpaceId: spaceId } = useSpaceEnvContext();
-  const { orgFeatureEnabled, isOrgFeatureLoading } = useProductCatalogFeatureVariation(
-    FEATURES.PC_ORG_PLANNER_APP,
-    false,
-    spaceId
-  );
-
-  return {
-    launchAppAccessEnabled: orgFeatureEnabled,
-    islaunchAppAccessLoading: isOrgFeatureLoading,
-  };
-}
-
 export async function getReleasesFeatureVariation(spaceId) {
   try {
     const flag = await getSpaceFeature(spaceId, FEATURES.PC_SPACE_RELEASES, false);

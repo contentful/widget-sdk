@@ -28,6 +28,34 @@ const checkInstalledApp = async (appId?: string) => {
   return isAppInstalled;
 };
 
+const fallBackClose = (promise: Promise<any>) => promise.catch(() => false);
+
+export const fetchContentfulAppsConfig = async ({
+  organizationId,
+  appId,
+  spaceId,
+  environmentId,
+}: UseContentfulAppsConfig): Promise<AppState> => {
+  const [isPurchased, isEnabled, isInstalled, isTrialAvailable] = await Promise.all(
+    [
+      getOrgFeature(organizationId, APPS_CONFIG[appId].catalogFlag, false),
+      getVariation(APPS_CONFIG[appId].featureFlag, {
+        organizationId,
+        spaceId,
+        environmentId,
+      } as any),
+      checkInstalledApp(appId),
+      canStartAppTrial(organizationId as string),
+    ].map(fallBackClose)
+  );
+
+  return {
+    isPurchased,
+    isEnabled,
+    isInstalled,
+    isTrialAvailable,
+  };
+};
 export interface AppState {
   isInstalled?: boolean;
   isEnabled?: boolean;
@@ -55,26 +83,15 @@ export const useContentfulAppsConfig = ({
 
   useEffect(() => {
     let mounted = true;
-    const featureFlagOptions = {
-      organizationId,
-      spaceId,
-      environmentId,
-    };
-
     const fetchData = async () => {
-      const [isPurchased, isEnabled, isInstalled, isTrialAvailable] = await Promise.all([
-        getOrgFeature(organizationId, APPS_CONFIG[appId].catalogFlag, false),
-        getVariation(APPS_CONFIG[appId].featureFlag, featureFlagOptions as any),
-        checkInstalledApp(appId),
-        canStartAppTrial(organizationId as string),
-      ]);
+      const appsConfig = await fetchContentfulAppsConfig({
+        appId,
+        organizationId,
+        spaceId,
+        environmentId,
+      });
       if (mounted) {
-        setAppState({
-          isPurchased,
-          isEnabled,
-          isInstalled,
-          isTrialAvailable,
-        });
+        setAppState({ ...appsConfig });
       }
     };
     fetchData();

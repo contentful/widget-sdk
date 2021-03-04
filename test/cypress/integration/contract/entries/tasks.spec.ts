@@ -24,7 +24,6 @@ import {
   queryForBasicAppsInDefaultSpace,
   queryForContentTagsInDefaultSpace,
   queryForReleasesInDefaultSpace,
-  getLaunchAppFeatureInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -70,7 +69,6 @@ describe('Tasks entry editor sidebar', () => {
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
     ];
   }
-
   context('tasks service error', () => {
     beforeEach(() => {
       const interactions = [
@@ -79,7 +77,6 @@ describe('Tasks entry editor sidebar', () => {
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willFailWithAnInternalServerError(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -100,7 +97,6 @@ describe('Tasks entry editor sidebar', () => {
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -122,7 +118,6 @@ describe('Tasks entry editor sidebar', () => {
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnSeveral(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -257,7 +252,6 @@ describe('Tasks entry editor sidebar', () => {
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
         queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultSpace.willFindFeatureEnabled(),
       ];
     });
 

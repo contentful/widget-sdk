@@ -25,6 +25,8 @@ export async function getDefaultSidebar(
 ): Promise<{ widgetId: string; widgetNamespace: WidgetNamespace }[]> {
   const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration({
     spaceId: spaceData.spaceId,
+    organizationId: spaceData.organizationId,
+    environmentId: spaceData.environmentId,
   });
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }

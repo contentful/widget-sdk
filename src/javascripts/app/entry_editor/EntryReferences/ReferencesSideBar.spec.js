@@ -30,6 +30,15 @@ import {
   versionMismatchError as bulkActionVersionMismatchError,
 } from './BulkAction/__fixtures__';
 
+jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
+  useContentfulAppsConfig: jest.fn().mockReturnValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
+
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
     can: jest.fn().mockReturnValue(true),

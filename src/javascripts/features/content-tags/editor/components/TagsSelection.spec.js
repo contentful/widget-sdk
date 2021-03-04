@@ -5,6 +5,15 @@ import { TagsSelection } from 'features/content-tags/editor/components/TagsSelec
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
+jest.mock('features/contentful-apps', () => ({
+  fetchContentfulAppsConfig: jest.fn().mockResolvedValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
+
 const spaceEnvValues = {
   currentSpace: {
     data: {

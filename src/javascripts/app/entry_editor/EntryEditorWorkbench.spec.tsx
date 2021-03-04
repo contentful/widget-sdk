@@ -7,6 +7,15 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { createDocumentMock } from 'app/entity_editor/Document/__mocks__/createDocumentMock';
 
+jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
+  useContentfulAppsConfig: jest.fn().mockReturnValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
+
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
   getSpaceFeature: jest.fn(),

@@ -4,15 +4,21 @@ import '@testing-library/jest-dom/extend-expect';
 import { LaunchAppDeepLink } from './LaunchAppDeepLink';
 import * as Analytics from 'analytics/Analytics';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { useFeatureFlagAccessToLaunchApp } from 'app/Releases/ReleasesFeatureFlag';
+import { useContentfulAppsConfig } from 'features/contentful-apps';
+
+jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
+  ...jest.requireActual('features/contentful-apps/hooks/useContentfulAppConfig'),
+  useContentfulAppsConfig: jest.fn().mockReturnValue({
+    isPurchased: true,
+    isEnabled: true,
+    isInstalled: true,
+    isTrialAvailable: true,
+  }),
+}));
 
 jest.mock('analytics/Analytics', () => ({ track: jest.fn() }));
 jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn(),
-}));
-
-jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
-  useFeatureFlagAccessToLaunchApp: jest.fn(),
 }));
 
 const defaultSpaceContextValues = {
@@ -25,9 +31,11 @@ describe('components/ui/Loader', () => {
   beforeEach(() => {
     useSpaceEnvContext.mockReturnValue(defaultSpaceContextValues);
 
-    useFeatureFlagAccessToLaunchApp.mockReturnValue({
-      launchAppAccessEnabled: true,
-      islaunchAppAccessLoading: false,
+    useContentfulAppsConfig.mockReturnValue({
+      isPurchased: true,
+      isEnabled: true,
+      isInstalled: true,
+      isTrialAvailable: true,
     });
   });
 
@@ -83,7 +91,12 @@ describe('components/ui/Loader', () => {
   });
 
   it('should not display component when feature flag is disabled', () => {
-    useFeatureFlagAccessToLaunchApp.mockReturnValue({ launchAppAccessEnabled: false });
+    useContentfulAppsConfig.mockReturnValue({
+      isPurchased: false,
+      isEnabled: false,
+      isInstalled: false,
+      isTrialAvailable: false,
+    });
     const { queryByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
     expect(queryByTestId('launch-app-deep-link')).toBeNull();
   });

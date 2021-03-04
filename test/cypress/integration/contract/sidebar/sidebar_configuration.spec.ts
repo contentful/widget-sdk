@@ -22,7 +22,7 @@ describe('Sidebar configuration', () => {
     // TODO: move this to a before block
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['jobs', 'entries', 'users', 'product_catalog_features'],
+      providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'apps'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
