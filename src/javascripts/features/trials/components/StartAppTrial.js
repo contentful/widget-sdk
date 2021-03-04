@@ -9,6 +9,7 @@ import { getModule } from 'core/NgRegistry';
 import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { go } from 'states/Navigator';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import {
   Heading,
   Typography,
@@ -23,6 +24,9 @@ import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 export function StartAppTrial({ orgId, existingUsers }) {
   const trialBootstrap = useCallback(async () => {
+    const startTimeTracker = window.performance.now();
+    let isBootstrapped = false;
+    let isSuccessful = false;
     try {
       const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
         organizationId: orgId,
@@ -51,10 +55,12 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
       if (!existingUsers) {
         await spaceSetUp(getCMAClient({ spaceId, environmentId }));
+        isBootstrapped = true;
       }
 
       clearCachedProductCatalogFlags();
 
+      isSuccessful = true;
       go({
         path: ['spaces', 'detail'],
         params: {
@@ -72,8 +78,15 @@ export function StartAppTrial({ orgId, existingUsers }) {
         options: { location: 'replace' },
       });
     }
-  }, [orgId, existingUsers]);
 
+    const stopTimeTracker = window.performance.now();
+    const trialDuration = stopTimeTracker - startTimeTracker;
+    trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
+      duration: trialDuration,
+      isBootstrapped: isBootstrapped,
+      isSuccessful: isSuccessful,
+    })();
+  }, [orgId, existingUsers]);
   useAsync(trialBootstrap);
 
   return (
