@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
@@ -10,23 +11,35 @@ import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import {
-  Heading,
-  Typography,
-  Paragraph,
-  Notification,
-} from '@contentful/forma-36-react-components';
+import { Heading, Typography, Notification } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import StartAppTrialIllustration from 'svg/illustrations/start-app-trial-illustration.svg';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
+const styles = css({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+  width: '100%',
+  div: {
+    maxWidth: 'unset',
+  },
+  h1: {
+    marginBottom: tokens.spacingXs,
+  },
+});
+
 export function StartAppTrial({ orgId, existingUsers }) {
   const trialBootstrap = useCallback(async () => {
     const startTimeTracker = window.performance.now();
+
     let isBootstrapped = false;
     let isSuccessful = false;
+
     try {
       const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
         organizationId: orgId,
@@ -81,21 +94,23 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
     const stopTimeTracker = window.performance.now();
     const trialDuration = stopTimeTracker - startTimeTracker;
+
     trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
       duration: trialDuration,
       isBootstrapped: isBootstrapped,
       isSuccessful: isSuccessful,
     })();
   }, [orgId, existingUsers]);
+
   useAsync(trialBootstrap);
 
   return (
     <div data-testid="start-app-trial" className="home home-section">
-      <EmptyStateContainer>
+      <EmptyStateContainer className={styles}>
         <StartAppTrialIllustration className={defaultSVGStyle} />
         <Typography>
-          <Heading>Putting the cherry on top...</Heading>
-          <Paragraph>Weʼre setting up your trial space to try out Compose + Launch</Paragraph>
+          <Heading>Weʼre setting up your trial space to try out Compose + Launch</Heading>
+          <Heading>This might take up to 1 minute</Heading>
         </Typography>
       </EmptyStateContainer>
     </div>
