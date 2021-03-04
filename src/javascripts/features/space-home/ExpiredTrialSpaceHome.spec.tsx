@@ -7,7 +7,8 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { getVariation } from 'LaunchDarkly';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { beginSpaceCreation } from 'services/CreateSpace';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
+import { getAddOnProductRatePlans } from 'features/pricing-entities';
 
 const mockedSpace = fake.Space();
 const readOnlySpace = {
@@ -56,12 +57,16 @@ jest.mock('states/Navigator', () => ({
   getCurrentStateName: jest.fn(),
 }));
 
-jest.mock('services/CreateSpace', () => ({
-  beginSpaceCreation: jest.fn(),
+jest.mock('services/ChangeSpaceService', () => ({
+  beginSpaceChange: jest.fn(),
 }));
 
 jest.mock('features/space-settings', () => ({
   openDeleteSpaceDialog: jest.fn(),
+}));
+
+jest.mock('features/pricing-entities', () => ({
+  getAddOnProductRatePlans: jest.fn().mockResolvedValue([{ price: 100 }]),
 }));
 
 describe('ExpiredTrialSpaceHome', () => {
@@ -79,6 +84,7 @@ describe('ExpiredTrialSpaceHome', () => {
       await waitFor(() =>
         expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('trial space')
       );
+      expect(getAddOnProductRatePlans).toBeCalledTimes(0);
       expect(screen.getByTestId('expired-trial-space-home')).not.toHaveTextContent(
         'Contentful Apps'
       );
@@ -152,18 +158,19 @@ describe('ExpiredTrialSpaceHome', () => {
       await waitFor(() =>
         expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('Contentful Apps')
       );
+      expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('$100/month');
       expect(screen.getByTestId('expired-trial-space-home')).not.toHaveTextContent('trial space');
       expect(screen.queryByTestId('expired-trial-space-home.delete-space')).toBeInTheDocument();
       expect(screen.queryByTestId('expired-trial-space-home.buy-now')).toBeInTheDocument();
     });
 
-    it('navigates to the purchase flow when clicked', async () => {
+    it('navigates to the upgrade flow when clicked', async () => {
       (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
       build();
 
       await waitFor(() => fireEvent.click(screen.getByTestId('expired-trial-space-home.buy-now')));
 
-      expect(beginSpaceCreation).toHaveBeenCalled();
+      expect(beginSpaceChange).toHaveBeenCalled();
     });
 
     it('opens a delete space modal when clicked', async () => {
@@ -189,6 +196,13 @@ describe('ExpiredTrialSpaceHome', () => {
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
+    it('does not fetch the add-on price when the user is not an org admin or owner', async () => {
+      (isOwnerOrAdmin as jest.Mock).mockReturnValue(false);
+      build();
+
+      await waitFor(() => expect(getAddOnProductRatePlans).toBeCalledTimes(0));
+    });
+
     it('does not render when the App Trial is expired but the Trial Space is purchased', async () => {
       (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
       (isExpiredTrialSpace as jest.Mock).mockReturnValue(false);
@@ -197,6 +211,7 @@ describe('ExpiredTrialSpaceHome', () => {
 
       await waitFor(() => screen.queryByTestId('expired-trial-space-home'));
       expect(screen.queryByTestId('expired-trial-space-home')).not.toBeInTheDocument();
+      expect(getAddOnProductRatePlans).toBeCalledTimes(0);
     });
   });
 });

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -7,71 +7,81 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/expired-trial-space-home-ill.svg';
-import { useAsync } from 'core/hooks';
 import {
   createAppTrialRepo,
   isExpiredTrialSpace,
   AppTrialFeature,
   isExpiredAppTrial,
 } from 'features/trials';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { beginSpaceChange } from 'services/ChangeSpaceService';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { beginSpaceCreation } from 'services/CreateSpace';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { go } from 'states/Navigator';
+import { getAddOnProductRatePlans } from 'features/pricing-entities';
 
 const styles = {
-  deleteButton: css({
+  buyButton: css({
     marginRight: tokens.spacingM,
   }),
 };
 
 export const ExpiredTrialSpaceHome = () => {
-  const initialValue = { sys: {} } as AppTrialFeature;
-  const [appTrialFeature, setAppTrialFeature] = useState<AppTrialFeature>(initialValue);
+  const [appTrialFeature, setAppTrialFeature] = useState<AppTrialFeature>();
+  const [composeAndLaunchProductPrice, setComposeAndLaunchProductPrice] = useState<number>(0);
 
   const { currentSpaceData, currentOrganizationId, currentOrganization } = useSpaceEnvContext();
 
-  const fetchData = useCallback(async () => {
-    const isAppTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
-      organizationId: currentOrganizationId,
-      spaceId: undefined,
-      environmentId: undefined,
-    });
-    if (isAppTrialEnabled) {
-      const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
-      const appTrial = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
-      setAppTrialFeature(appTrial);
+  const isOrgOwnerOrAdmin = isOwnerOrAdmin(currentOrganization);
+  const isExpiredSpace = isExpiredTrialSpace(currentSpaceData);
+
+  useEffect(() => {
+    if (!isExpiredSpace) {
+      return;
     }
-  }, [currentOrganizationId]);
 
-  useAsync(fetchData);
+    const fetchData = async () => {
+      const isAppTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
+        organizationId: currentOrganizationId,
+        spaceId: undefined,
+        environmentId: undefined,
+      });
 
-  if (
-    !currentOrganizationId ||
-    !currentSpaceData ||
-    currentSpaceData.readOnlyAt ||
-    !isExpiredTrialSpace(currentSpaceData)
-  ) {
+      if (isAppTrialEnabled) {
+        const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
+
+        const appTrial = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
+        setAppTrialFeature(appTrial);
+
+        if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {
+          const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
+          setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
+        }
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (currentSpaceData?.readOnlyAt || !isExpiredSpace) {
     return null;
   }
 
   const isAppTrialSpace = isExpiredAppTrial(appTrialFeature);
-  const isTrialSpace = isExpiredTrialSpace(currentSpaceData) && !isAppTrialSpace;
-
-  if (!isAppTrialSpace && !isTrialSpace) {
-    return null;
-  }
-
-  const isOrgOwnerOrAdmin = isOwnerOrAdmin(currentOrganization);
+  const isTrialSpace = isExpiredSpace && !isAppTrialSpace;
 
   const handlePurchase = () => {
     trackTargetedCTAClick(CTA_EVENTS.PURCHASE_APP_VIA_TRIAL);
-    beginSpaceCreation(currentOrganizationId);
+    beginSpaceChange({
+      organizationId: currentOrganizationId,
+      space: currentSpaceData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   };
 
   const handleDelete = () => {
@@ -95,21 +105,21 @@ export const ExpiredTrialSpaceHome = () => {
       <Typography>
         <Heading>
           {isTrialSpace &&
-            `Your trial space expired on ${moment(currentSpaceData.trialPeriodEndsAt).format(
+            `Your trial space expired on ${moment(currentSpaceData?.trialPeriodEndsAt).format(
               'D MMMM YYYY'
             )}`}
           {isAppTrialSpace &&
             `Your Contentful Apps trial expired on ${moment(
-              appTrialFeature.sys.trial?.endsAt
+              appTrialFeature?.sys.trial?.endsAt
             ).format('D MMMM YYYY')}`}
         </Heading>
         <Paragraph>
-          All of your content is saved, but you can’t create or edit anything.
+          All of your content is saved, but you can’t create or edit anymore.
           <br />
           {isTrialSpace && 'Contact us to upgrade and unlock this space again.'}
           {isAppTrialSpace &&
             isOrgOwnerOrAdmin &&
-            'Buy the Contentful Apps now and unlock this space again.'}
+            `Buy Compose + Launch for $${composeAndLaunchProductPrice}/month to continue using them across your spaces.`}
           {isAppTrialSpace &&
             !isOrgOwnerOrAdmin &&
             'Talk to your admin to buy the Contentful Apps now and unlock this space again.'}
@@ -117,18 +127,20 @@ export const ExpiredTrialSpaceHome = () => {
       </Typography>
       {isAppTrialSpace && isOrgOwnerOrAdmin && (
         <div>
+          <TrackTargetedCTAImpression impressionType={CTA_EVENTS.DELETE_APP_TRIAL_SPACE}>
+            <Button
+              onClick={handlePurchase}
+              testId="expired-trial-space-home.buy-now"
+              className={styles.buyButton}>
+              Buy now
+            </Button>
+          </TrackTargetedCTAImpression>
           <TrackTargetedCTAImpression impressionType={CTA_EVENTS.PURCHASE_APP_VIA_TRIAL}>
             <Button
               onClick={handleDelete}
-              className={styles.deleteButton}
               buttonType="muted"
               testId="expired-trial-space-home.delete-space">
               Delete space
-            </Button>
-          </TrackTargetedCTAImpression>
-          <TrackTargetedCTAImpression impressionType={CTA_EVENTS.DELETE_APP_TRIAL_SPACE}>
-            <Button onClick={handlePurchase} testId="expired-trial-space-home.buy-now">
-              Buy now
             </Button>
           </TrackTargetedCTAImpression>
         </div>

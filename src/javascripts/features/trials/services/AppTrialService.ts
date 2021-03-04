@@ -48,7 +48,7 @@ export const isActiveAppTrial = (feature: AppTrialFeature) => {
   return moment().isSameOrBefore(moment(feature.sys.trial.endsAt), 'date');
 };
 
-export const isExpiredAppTrial = (feature: AppTrialFeature) => {
+export const isExpiredAppTrial = (feature?: AppTrialFeature) => {
   if (!feature || !feature.sys.trial || feature.enabled) {
     return false;
   }
