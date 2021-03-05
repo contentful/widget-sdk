@@ -12,6 +12,8 @@ import { LearnAboutContentful } from './components/LearnAboutContentful';
 import ModernStackOverview from 'components/shared/stack-onboarding/next_steps/ModernStackOverview';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
+import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
 
 const store = getBrowserStorage();
 
@@ -66,6 +68,10 @@ export const ModernStackAdminSpaceHome = ({
           />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      <ComposeAndLaunchCTA />
+
+      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
