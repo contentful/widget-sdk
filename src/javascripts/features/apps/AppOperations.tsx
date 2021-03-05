@@ -58,7 +58,12 @@ export class AppManager {
     }
   }
 
-  async installApp(app, hasAdvancedAppsFeature, callback: AppInstallCallback = () => null) {
+  async installApp(
+    app,
+    hasAdvancedAppsFeature,
+    userNotifications = true,
+    callback: AppInstallCallback = () => null
+  ) {
     try {
       await installOrUpdate(app, this.cma, callback, this.checkAppStatus, undefined, {
         organizationId: this.organizationId,
@@ -72,7 +77,7 @@ export class AppManager {
         // For whatever reason AppInstallation entity wasn't created.
         throw new Error('AppInstallation does not exist.');
       }
-      Notification.success('The app was successfully installed.');
+      userNotifications && Notification.success('The app was successfully installed.');
       AppLifecycleTracking.installed(app.id);
 
       if (this.afterEachCallback) {
@@ -80,10 +85,10 @@ export class AppManager {
       }
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
-        Notification.error(getUsageExceededMessage(hasAdvancedAppsFeature));
+        userNotifications && Notification.error(getUsageExceededMessage(hasAdvancedAppsFeature));
         AppLifecycleTracking.installationFailed(app.id);
       } else {
-        Notification.error('Failed to install the app.');
+        userNotifications && Notification.error('Failed to install the app.');
         AppLifecycleTracking.installationFailed(app.id);
       }
     }
