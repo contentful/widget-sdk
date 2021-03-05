@@ -18,6 +18,8 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import StartAppTrialIllustration from 'svg/illustrations/start-app-trial-illustration.svg';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 const styles = {
   emptyContainer: css({
@@ -49,6 +51,7 @@ const styles = {
 
 export function StartAppTrial({ orgId, existingUsers }) {
   const trialBootstrap = useCallback(async () => {
+    const store = getBrowserStorage();
     const startTimeTracker = window.performance.now();
 
     let isBootstrapped = false;
@@ -65,8 +68,10 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
       const { trial, apps } = await startAppTrial(orgId);
 
-      const spaceContext = getModule('spaceContext');
+      const user = await TokenStore.getUser();
+      store.set(getSpaceAutoCreatedKey(user, 'success'), true);
 
+      const spaceContext = getModule('spaceContext');
       await TokenStore.refresh()
         .then(() => TokenStore.getSpace(trial.spaceKey))
         .then((space) => spaceContext.resetWithSpace(space));
