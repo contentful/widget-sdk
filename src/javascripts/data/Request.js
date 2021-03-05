@@ -133,6 +133,7 @@ function wrapWithCounter(request) {
     Telemetry.count('cma-req', {
       endpoint: getEndpoint(args.url),
       state: getCurrentState(),
+      version: withRetryVersion,
     });
 
     return request(args);

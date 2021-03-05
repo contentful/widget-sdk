@@ -1,5 +1,7 @@
 /* global Headers */
 
+import * as Telemetry from 'i13n/Telemetry';
+import { getVariationSync } from 'LaunchDarkly';
 import makeRequest from './Request';
 import wrapWithAuth from 'data/Request/Auth';
 import { tracingHeaders } from 'i13n/BackendTracing';
@@ -268,5 +270,25 @@ describe('Request', () => {
     });
     expect(arrayBufferFn).not.toBeCalled();
     expect(jsonFn).not.toBeCalled();
+  });
+
+  it('tracks cma-req with default version', async () => {
+    await request({ url: 'http://foo.com/spaces/hello-world/entries' });
+    expect(Telemetry.count).toHaveBeenCalledTimes(1);
+    expect(Telemetry.count).toHaveBeenCalledWith(
+      'cma-req',
+      expect.objectContaining({ version: 1 })
+    );
+  });
+
+  it('tracks cma-req with version explicitly set to 2', async () => {
+    getVariationSync.mockReturnValue(2);
+    request = makeRequest(mockAuth);
+    await request({ url: 'http://foo.com/spaces/hello-world/entries' });
+    expect(Telemetry.count).toHaveBeenCalledTimes(1);
+    expect(Telemetry.count).toHaveBeenCalledWith(
+      'cma-req',
+      expect.objectContaining({ version: 2 })
+    );
   });
 });
