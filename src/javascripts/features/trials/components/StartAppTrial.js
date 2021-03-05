@@ -11,7 +11,7 @@ import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { Heading, Typography, Notification } from '@contentful/forma-36-react-components';
+import { Heading, Typography, Notification, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
   defaultSVGStyle,
@@ -19,19 +19,33 @@ import EmptyStateContainer, {
 import StartAppTrialIllustration from 'svg/illustrations/start-app-trial-illustration.svg';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
-const styles = css({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100%',
-  width: '100%',
-  div: {
-    maxWidth: 'unset',
-  },
-  h1: {
-    marginBottom: tokens.spacingXs,
-  },
-});
+const styles = {
+  emptyContainer: css({
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    width: '100%',
+    div: {
+      maxWidth: 'unset',
+    },
+    h1: {
+      marginBottom: tokens.spacingXs,
+    },
+  }),
+  fullScreen: css({
+    background: "url('/assets/practitioner-home-bg.png') no-repeat",
+    backgroundColor: tokens.colorWhite,
+    backgroundSize: 'cover',
+    zIndex: tokens.zIndexModal,
+    position: 'fixed',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
+  }),
+};
 
 export function StartAppTrial({ orgId, existingUsers }) {
   const trialBootstrap = useCallback(async () => {
@@ -106,15 +120,15 @@ export function StartAppTrial({ orgId, existingUsers }) {
   useAsync(trialBootstrap);
 
   return (
-    <div data-testid="start-app-trial" className="home home-section">
-      <EmptyStateContainer className={styles}>
+    <Flex className={styles.fullScreen} data-testid="start-app-trial">
+      <EmptyStateContainer className={styles.emptyContainer}>
         <StartAppTrialIllustration className={defaultSVGStyle} />
         <Typography>
-          <Heading>Weʼre setting up your trial space to try out Compose + Launch</Heading>
-          <Heading>This might take up to 1 minute</Heading>
+          <Heading>Weʼre setting up your trial space to try out Compose + Launch.</Heading>
+          <Heading>This might take up to 1 minute.</Heading>
         </Typography>
       </EmptyStateContainer>
-    </div>
+    </Flex>
   );
 }
 

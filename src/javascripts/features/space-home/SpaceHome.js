@@ -226,7 +226,7 @@ export const SpaceHome = () => {
   }
 
   return (
-    <div className="home home-section" data-test-id="space-home-page-container">
+    <div className="home" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
       {isLoading && (
         <EmptyStateContainer>

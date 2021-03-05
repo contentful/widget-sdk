@@ -119,7 +119,7 @@ export const EmptyHome = ({ orgId }) => {
   }, [error]);
 
   return (
-    <div className="home home-section" data-test-id="empty-space-home.container">
+    <div className="home" data-test-id="empty-space-home.container">
       <DocumentTitle title="Space home" />
       {(isLoading || !data) && (
         <EmptyStateContainer>
