@@ -342,6 +342,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: userCreationDate.getTime(),
+          currentUserIsFromContentful: false,
         },
       });
     });
@@ -365,6 +366,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: userCreationDate.getTime(),
+          currentUserIsFromContentful: false,
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
           currentOrgPricingVersion: 'pricing_version_2',
@@ -399,6 +401,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: userCreationDate.getTime(),
+          currentUserIsFromContentful: false,
 
           currentSpaceId: 'abcd_space',
           currentUserSpaceRole: ['editor', 'translator3'],
@@ -424,6 +427,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: userCreationDate.getTime(),
+          currentUserIsFromContentful: false,
 
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
@@ -458,6 +462,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: userCreationDate.getTime(),
+          currentUserIsFromContentful: false,
         },
       });
     });
