@@ -48,6 +48,18 @@ export function isFreeSpacePlan(plan) {
   return plan.planType === 'free_space';
 }
 
+export function isTrialSpacePlan(plan) {
+  // See above about 'free_space' being hardcoded
+
+  // TODO: replace this code with a call to the new Trials API once it is released.
+  // Estimated release date March 16, 2021
+  if (plan.planType === 'free_space' && plan.productName.toLowerCase().includes('trial')) {
+    return true;
+  }
+
+  return false;
+}
+
 export function isFreeProductPlan(plan) {
   return plan.productPlanType === 'free_space';
 }

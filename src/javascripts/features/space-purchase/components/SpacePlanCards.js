@@ -10,6 +10,7 @@ export const SpacePlanCards = ({
   spaceRatePlans,
   selectedPlatform,
   selectedSpacePlanName,
+  spacePlanIsTrial,
   canCreateFreeSpace,
   canCreatePaidSpace,
   orgHasPaidSpaces,
@@ -26,6 +27,7 @@ export const SpacePlanCards = ({
             selectedPlatform,
             plan.name,
             orgHasPaidSpaces,
+            spacePlanIsTrial,
             canCreateFreeSpace,
             canCreatePaidSpace
           );
@@ -55,6 +57,7 @@ SpacePlanCards.propTypes = {
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   selectedPlatform: PropTypes.object,
   selectedSpacePlanName: PropTypes.string,
+  spacePlanIsTrial: PropTypes.bool,
   canCreateFreeSpace: PropTypes.bool,
   canCreatePaidSpace: PropTypes.bool,
   orgHasPaidSpaces: PropTypes.bool,
@@ -74,6 +77,7 @@ function getTooltipText(
   selectedPlatform,
   planType,
   orgHasPaidSpaces,
+  spacePlanIsTrial,
   canCreateFreeSpace,
   canCreatePaidSpace
 ) {
@@ -84,6 +88,11 @@ function getTooltipText(
     !orgHasPaidSpaces
   ) {
     return 'Purchase a space to get Compose + Launch';
+  }
+
+  // freeSpace is disabled when user cannot make another freeSpace, needs to check false as it is undefined while loading.
+  if (planType === SpacePlanKind.COMMUNITY && spacePlanIsTrial) {
+    return 'You must upgrade your trial space to a paid space';
   }
 
   // freeSpace is disabled when user cannot make another freeSpace, needs to check false as it is undefined while loading.

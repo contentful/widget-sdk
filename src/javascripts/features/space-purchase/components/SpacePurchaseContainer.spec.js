@@ -113,6 +113,7 @@ jest.mock('features/organization-billing/index', () => ({
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreeProductPlan: jest.fn(),
+  isTrialSpacePlan: jest.fn(),
 }));
 
 jest.mock('services/ResourceService', () => {

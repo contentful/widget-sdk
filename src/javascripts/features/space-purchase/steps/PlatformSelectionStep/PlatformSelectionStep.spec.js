@@ -7,6 +7,8 @@ import { renderWithProvider } from '../../__tests__/helpers';
 import { PlatformSelectionStep, PACKAGES_COMPARISON_HREF } from './PlatformSelectionStep';
 import { canUserCreatePaidSpace } from '../../utils/canCreateSpace';
 import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
+import { isTrialSpacePlan } from 'account/pricing/PricingDataProvider';
+import { SpacePlanKind } from '../../utils/spacePurchaseContent';
 
 const mockTrack = jest.fn();
 const mockOrganization = FakeFactory.Organization();
@@ -18,12 +20,17 @@ const mockSelectedPlatform = {
 };
 
 const mockComposeLaunchPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
+const mockCurrentSpaceRatePlan = { planType: SpacePlanKind.COMMUNITY, name: 'Community', price: 0 };
 
 const mockProductRatePlans = [
   { name: 'Community', price: 0 },
   { name: 'Medium', price: 489 },
   { name: 'Large', price: 889 },
 ];
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  isTrialSpacePlan: jest.fn(),
+}));
 
 jest.mock('../../utils/canCreateSpace', () => ({
   canUserCreatePaidSpace: jest.fn(),
@@ -150,6 +157,24 @@ describe('PlatformSelectionStep', () => {
     it('should have a "Talk to us" button', () => {
       const talkToUs = screen.getByTestId('enterprise-talk-to-us');
       expect(talkToUs).toBeVisible();
+    });
+  });
+
+  describe('upgrading trial', () => {
+    it('should disable the community plan when a trial space is being upgraded', () => {
+      isTrialSpacePlan.mockReturnValue(true);
+
+      build(null, {
+        selectedPlatform: mockComposeLaunchPlatform,
+        spaceRatePlans: mockProductRatePlans,
+        subscriptionPlans: mockProductRatePlans,
+        currentSpaceRatePlan: mockCurrentSpaceRatePlan,
+      });
+
+      const spacePlanCards = screen.getAllByTestId('space-plan-card');
+      expect(spacePlanCards[0].getAttribute('class')).toContain('disabled');
+      expect(spacePlanCards[1].getAttribute('class')).not.toContain('disabled');
+      expect(spacePlanCards[2].getAttribute('class')).not.toContain('disabled');
     });
   });
 

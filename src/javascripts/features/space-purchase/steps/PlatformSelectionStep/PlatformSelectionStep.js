@@ -16,6 +16,7 @@ import { FAQAccordion } from '../../components/FAQAccordion';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { PlatformKind } from '../../utils/platformContent';
 import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
+import { isTrialSpacePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   fullRow: css({
@@ -61,6 +62,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
       freeSpaceResource,
       composeAndLaunchProductRatePlan,
       currentSpace,
+      currentSpaceRatePlan,
     },
     dispatch,
   } = useContext(SpacePurchaseState);
@@ -69,6 +71,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const platformSectionRef = createRef();
   const spaceSectionRef = createRef();
 
+  const spacePlanIsTrial = currentSpaceRatePlan && isTrialSpacePlan(currentSpaceRatePlan);
   const canCreateFreeSpace = canOrgCreateFreeSpace(freeSpaceResource);
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
   const spaceCardsDisabled = showPlatformsAboveSpaces && !selectedPlatform;
@@ -178,6 +181,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
             disabled={spaceCardsDisabled}
             spaceRatePlans={spaceRatePlans}
             selectedPlatform={selectedPlatform}
+            spacePlanIsTrial={spacePlanIsTrial}
             selectedSpacePlanName={selectedPlan?.name}
             canCreateFreeSpace={canCreateFreeSpace}
             canCreatePaidSpace={canCreatePaidSpace}
