@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import PropTypes from 'prop-types';
 import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
@@ -11,7 +11,7 @@ import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { Heading, Typography, Notification, Flex } from '@contentful/forma-36-react-components';
+import { Heading, Typography, Notification } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
   defaultSVGStyle,
@@ -36,15 +36,9 @@ const styles = {
     },
   }),
   fullScreen: css({
-    background: "url('/assets/practitioner-home-bg.png') no-repeat",
     backgroundColor: tokens.colorWhite,
-    backgroundSize: 'cover',
     zIndex: tokens.zIndexModal,
     position: 'fixed',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
     height: '100%',
   }),
 };
@@ -125,7 +119,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
   useAsync(trialBootstrap);
 
   return (
-    <Flex className={styles.fullScreen} data-testid="start-app-trial">
+    <div className={cx('home', styles.fullScreen)} data-testid="start-app-trial">
       <EmptyStateContainer className={styles.emptyContainer}>
         <StartAppTrialIllustration className={defaultSVGStyle} />
         <Typography>
@@ -133,7 +127,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
           <Heading>This might take up to 1 minute.</Heading>
         </Typography>
       </EmptyStateContainer>
-    </Flex>
+    </div>
   );
 }
 
