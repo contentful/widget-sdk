@@ -90,9 +90,9 @@ export const queryForScheduledPublishingInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "scheduled_publishing" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=scheduled_publishing'
-      ),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'scheduled_publishing',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -112,7 +112,9 @@ export const queryForReleasesInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "releases" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=releases'),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'releases',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -132,9 +134,9 @@ export const queryForScheduledPublishingOnEntryPage = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "scheduled_publishing" on the entry page`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=scheduled_publishing'
-      ),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'scheduled_publishing',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -154,9 +156,9 @@ export const queryForEnvironmentAliasingInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "environment_aliasing" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=environment_aliasing'
-      ),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'environment_aliasing',
+      }),
       willRespondWith: {
         status: 404,
         headers: {
@@ -175,9 +177,9 @@ export const queryForEnvironmentUsageInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "environment_usage_enforcements" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=environment_usage_enforcements'
-      ),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'environment_usage_enforcements',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -196,7 +198,9 @@ export const queryForBasicAppsInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "basic_apps" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=basic_apps'),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'basic_apps',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -216,7 +220,9 @@ export const queryForAdvancedAppsInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "advanced_apps" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=advanced_apps'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'advanced_apps',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -236,7 +242,9 @@ export const queryForTasksInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "tasks" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=tasks'),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'tasks',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -256,7 +264,9 @@ export const queryForContentTagsInDefaultSpace = {
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "content tags" feature for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=content_tags'),
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest({
+        'sys.featureId[]': 'content_tags',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -276,7 +286,9 @@ export const queryForCustomSidebarInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "custom sidebar" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=custom_sidebar'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'custom_sidebar',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -296,7 +308,9 @@ export const queryForTeamsInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "teams" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=teams'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'teams',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -316,7 +330,9 @@ export const queryForSelfConfigureSsoInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "self_configure_sso" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=self_configure_sso'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'self_configure_sso',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -336,7 +352,9 @@ export const queryForScimInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "scim" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=scim'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'scim',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -356,7 +374,9 @@ export const getComposeAppFeatureInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "compose_app" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=compose_app'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'compose_app',
+      }),
       willRespondWith: {
         status: 200,
         headers: {
@@ -377,7 +397,9 @@ export const getLaunchAppFeatureInDefaultOrg = {
       provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "launch_app" feature for org "${defaultOrgId}"`,
-      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=launch_app'),
+      withRequest: productCatalogFeaturesForDefaultOrgRequest({
+        'sys.featureId[]': 'launch_app',
+      }),
       willRespondWith: {
         status: 200,
         headers: {

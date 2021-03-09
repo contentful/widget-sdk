@@ -66,7 +66,7 @@ describe('App Installation', () => {
         cy.server();
         cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
-        cy.wait(interactions, { timeout: 20000 });
+        cy.wait(interactions, { timeout: 30000 });
       });
 
       describe('should install apps', () => {

@@ -93,10 +93,11 @@ describe('Editor tabs configuration', () => {
         .eq(0)
         .click();
 
-      cy.findAllByTestId('selected-widget-name')
-        .should('have.length', widgetNames.length - 2)
-        .should('not.contain', 'Publish & Status');
-
+      if (widgetNames.length > 2) {
+        cy.findAllByTestId('selected-widget-name')
+          .should('have.length', widgetNames.length - 2)
+          .should('not.contain', 'Publish & Status');
+      }
       cy.findAllByTestId('available-widget').should('have.length', 2);
 
       cy.findByTestId('reset-widget-configuration').click();
