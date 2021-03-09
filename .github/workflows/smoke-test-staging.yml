@@ -27,8 +27,9 @@ jobs:
           install: false
           browser: chrome
           config-file: cypress-smoke.json
-      - name: Save artifacts
+      - name: Save Cypress artifacts
         uses: actions/upload-artifact@v2
+        if: always()
         with:
-          name: test-videos
-          path: cypress/videos/*.mp4
+          name: cypress
+          path: cypress/**/*
