@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DeleteAppsModal } from './DeleteAppsModal';
+
+import { CancelAppsSubscriptionModal } from './CancelAppsSubscriptionModal';
 import { removeAddOnPlanFromSubscription } from 'features/pricing-entities';
-// eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { reload } from 'states/Navigator';
 import { uninstalled } from 'features/apps';
@@ -12,6 +12,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 const mockOrganization = Fake.Organization();
 const mockAddOnPlan = Fake.Plan();
+const mockEndpoint = createOrganizationEndpoint(mockOrganization.sys.id);
 
 jest.mock('features/pricing-entities', () => ({
   removeAddOnPlanFromSubscription: jest.fn(),
@@ -29,7 +30,7 @@ jest.mock('states/Navigator', () => ({
   reload: jest.fn(),
 }));
 
-describe('DeleteAppsModal', () => {
+describe('CancelAppsSubscriptionModal', () => {
   it('should initially render with the confirm button disabled', () => {
     build();
     const confirmButton = screen.getByTestId('cf-ui-modal-confirm-confirm-button');
@@ -85,7 +86,7 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<DeleteAppsModal {...props} />);
+  render(<CancelAppsSubscriptionModal {...props} />);
 }
 
 function getRandomInt(max) {

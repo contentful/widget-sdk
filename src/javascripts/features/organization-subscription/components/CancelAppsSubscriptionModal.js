@@ -56,7 +56,7 @@ function parseReasons(checkedReasons, customReason) {
     .concat(customReason ? [{ custom: customReason }] : []);
 }
 
-export function DeleteAppsModal({ isShown, onClose, organizationId, addOnPlan }) {
+export function CancelAppsSubscriptionModal({ isShown, onClose, organizationId, addOnPlan }) {
   const [textFeedback, setTextFeedback] = useState('');
   const [checkedReasons, setCheckedReasons] = useState({});
   const [loading, setLoading] = useState(false);
@@ -67,8 +67,8 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOnPlan })
     <ModalConfirm
       isShown={isShown}
       intent="negative"
-      title="Cancel your Compose + Launch subscription"
-      confirmLabel="Cancel your subscription"
+      title="Cancel Compose + Launch"
+      confirmLabel="Cancel Compose + Launch"
       isConfirmDisabled={disableConfirm || loading}
       isConfirmLoading={loading}
       onConfirm={async () => {
@@ -92,10 +92,13 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOnPlan })
       onCancel={() => onClose()}>
       <Flex marginBottom="spacingM">
         <Typography>
-          <Paragraph>You are about to cancel your Compose + Launch subscription.</Paragraph>
           <Paragraph>
-            This will remove Compose + Launch from all spaces in your organization. You will lose
-            access to the apps, none of your content will be lost.
+            You’re about to cancel your Compose + Launch subscription for your whole organization.
+            You will not be able to access the apps, but none of your content will be deleted.
+          </Paragraph>
+          <Paragraph>
+            If you’re just trying to uninstall the apps from a space, you can do this from the
+            “Apps” tab.
           </Paragraph>
           <Paragraph>
             <strong>Why are you canceling your subscription?</strong>
@@ -136,7 +139,7 @@ export function DeleteAppsModal({ isShown, onClose, organizationId, addOnPlan })
   );
 }
 
-DeleteAppsModal.propTypes = {
+CancelAppsSubscriptionModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   organizationId: PropTypes.string.isRequired,

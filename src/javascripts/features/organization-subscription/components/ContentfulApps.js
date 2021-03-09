@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Button,
   Heading,
   Card,
   Paragraph,
-  IconButton,
-  Dropdown,
-  DropdownList,
-  DropdownListItem,
   ModalLauncher,
   Flex,
 } from '@contentful/forma-36-react-components';
-import { DeleteAppsModal } from './DeleteAppsModal';
 
-const openDeleteAppsModal = (organizationId, addOnPlan) => {
+import { websiteUrl } from 'Config';
+import ExternalTextLink from 'app/common/ExternalTextLink';
+import { CancelAppsSubscriptionModal } from './CancelAppsSubscriptionModal';
+
+const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
-    <DeleteAppsModal
+    <CancelAppsSubscriptionModal
       isShown={isShown}
       onClose={onClose}
       organizationId={organizationId}
@@ -25,43 +25,24 @@ const openDeleteAppsModal = (organizationId, addOnPlan) => {
 };
 
 export function ContentfulApps({ organizationId, addOnPlan }) {
-  const [isOpen, setOpen] = useState(false);
-
-  const openModal = () => {
-    setOpen(false);
-    openDeleteAppsModal(organizationId, addOnPlan);
-  };
-
   return (
     <Card>
-      <Flex justifyContent="space-between" marginBottom="spacingM">
-        <Heading>Compose + Launch</Heading>
-        <Dropdown
-          isOpen={isOpen}
-          onClose={() => setOpen(false)}
-          toggleElement={
-            <IconButton
-              testId="subscription-page.delete-apps"
-              onClick={() => {
-                setOpen(true);
-              }}
-              label="Actions"
-              iconProps={{
-                icon: 'MoreHorizontal',
-              }}
-              buttonType="muted"
-            />
-          }>
-          <DropdownList>
-            <DropdownListItem testId="userlist.row.actions.reinvite" onClick={openModal}>
-              Cancel your Compose + Launch subscription
-            </DropdownListItem>
-          </DropdownList>
-        </Dropdown>
+      <Heading>Compose + Launch</Heading>
+      <Flex marginTop="spacingM" marginBottom="spacingM">
+        <Paragraph>
+          Content teams work faster and collaborate more effectively with these powerful new tools.
+          Compose + Launch can be installed on any space home.
+        </Paragraph>
       </Flex>
-      <Paragraph>
-        Install Compose + Launch on any space by following the instructions on your Space Home.
-      </Paragraph>
+      <Flex justifyContent="space-between">
+        <ExternalTextLink href={websiteUrl('contentfulapps')}>Learn more</ExternalTextLink>
+        <Button
+          testId="subscription-page.delete-apps"
+          buttonType="muted"
+          onClick={() => openCancelAppsSubscriptionModal(organizationId, addOnPlan)}>
+          Cancel subscription
+        </Button>
+      </Flex>
     </Card>
   );
 }
