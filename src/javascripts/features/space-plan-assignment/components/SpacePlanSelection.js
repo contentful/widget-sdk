@@ -15,8 +15,8 @@ import {
   Subheading,
   TextLink,
   Note,
+  Flex,
 } from '@contentful/forma-36-react-components';
-import { Flex } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { Pluralized } from 'core/components/formatting';
 import { groupPlans, buildPlanKey, orderPlanKeys, ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
@@ -88,11 +88,7 @@ export function SpacePlanSelection({
         )}
       </Typography>
       <List>
-        {!hasOnlyFreePlan && (
-          <Subheading className={styles.subheading}>
-            Select from the ones you’re not using yet.
-          </Subheading>
-        )}
+        {!hasOnlyFreePlan && <Subheading className={styles.subheading}>Unused spaces</Subheading>}
         {orderedPlanKeys.map((key, index) => {
           // We use the first in the group plan to display the limits
           // Plans with the same name *should* be identical.
@@ -154,7 +150,7 @@ export function SpacePlanSelection({
               space_id: space?.sys.id,
               flow: isCreationFlow ? 'space_creation' : 'assing_plan_to_space',
             }}>
-            Back
+            Cancel
           </StateLink>
           <Flex marginLeft="spacingM">
             <Button

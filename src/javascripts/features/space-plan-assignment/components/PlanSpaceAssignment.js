@@ -20,8 +20,8 @@ import { LoadingCard } from 'features/space-creation';
 import { EmptyState } from './EmptyState';
 
 const ASSIGNMENT_STEPS = [
-  { text: '1.Choose space', isActive: true },
-  { text: '2.Confirm', isActive: false },
+  { text: '1.Space', isActive: true },
+  { text: '2.Confirmation', isActive: false },
 ];
 
 export function PlanSpaceAssignment({ orgId, planId }) {

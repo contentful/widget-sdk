@@ -111,15 +111,10 @@ export const SpacePlansTable = ({
         <colgroup>
           <col className={styles.nameCol} />
           <col className={styles.typeCol} />
-          <col className={styles.iconCol} />
           <col className={styles.environmentsCol} />
-          <col className={styles.iconCol} />
           <col className={styles.rolesCol} />
-          <col className={styles.iconCol} />
           <col className={styles.localesCol} />
-          <col className={styles.iconCol} />
           <col className={styles.contentTypesCol} />
-          <col className={styles.iconCol} />
           <col className={styles.recordsCol} />
           <col className={styles.actionsCol} />
         </colgroup>
@@ -137,35 +132,30 @@ export const SpacePlansTable = ({
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell />
             <SortableHeaderCell
               id="environments"
               displayName="Environments"
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell />
             <SortableHeaderCell
               id="roles"
               displayName="Roles"
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell />
             <SortableHeaderCell
               id="locales"
               displayName="Locales"
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell />
             <SortableHeaderCell
               id="contentTypes"
               displayName="Content types"
               onSort={handleSort}
               sortOrder={sortState}
             />
-            <TableCell />
             <SortableHeaderCell
               id="records"
               displayName="Records"

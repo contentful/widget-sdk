@@ -11,7 +11,6 @@ import { shorten } from 'utils/NumberUtils';
 const styles = {
   flexItem: css({ marginRight: '2.25rem' }),
   tooltipPointer: css({ cursor: 'help' }),
-  wrapper: css({ marginLeft: '2.4rem' }),
 };
 
 export function SpacePlanEntitlements({ plan }) {

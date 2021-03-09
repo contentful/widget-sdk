@@ -9,7 +9,6 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { getIncludedResources, resourcesToDisplay, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
-import { shorten } from 'utils/NumberUtils';
 
 const styles = {
   listItem: css({
@@ -41,7 +40,7 @@ export function SpacePlanResourceList({ plan, spaceResources }) {
         <ListItem key={id} className={styles.listItem}>
           <Icon icon="CheckCircle" color="muted" />
           <span>
-            Using {shorten(usage)} of {shorten(resources[id])} {name}
+            Using {usage} of {resources[id]} {name}
           </span>
         </ListItem>
       );
@@ -58,7 +57,7 @@ export function SpacePlanResourceList({ plan, spaceResources }) {
         <Icon icon="CheckCircle" color="positive" className={styles.icon} />{' '}
         <Tooltip place="top" content={tooltipText}>
           <span className={tooltipText && styles.tooltipPointer}>
-            {shorten(resources[id])} {name}
+            {resources[id]} {name}
           </span>
         </Tooltip>
       </ListItem>

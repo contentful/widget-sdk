@@ -22,14 +22,17 @@ import { Flex } from '@contentful/forma-36-react-components';
 
 const styles = {
   warning: css({ color: tokens.colorWarning }),
+  warningText: css({ color: tokens.colorWarning, fontWeight: tokens.fontWeightDemiBold }),
   tooltipPointer: css({ cursor: 'help' }),
+  table: css({ backgroundColor: tokens.colorWhite }),
 };
 
 export function SpacePlanComparison({ plan, spaceResources }) {
   // what's defined in the new plan
   const planResources = getIncludedResources(plan.ratePlanCharges);
+
   return (
-    <Table>
+    <Table className={styles.table}>
       <TableHead>
         <TableRow>
           <TableCell />
@@ -55,14 +58,16 @@ export function SpacePlanComparison({ plan, spaceResources }) {
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
                 {isOverLimit ? (
                   <Flex justifyContent="left" alignItems="center">
-                    <Flex marginRight="spacing2Xs">{usage}</Flex>
                     <Tooltip
-                      place="right"
+                      place="left"
                       content="Your current usage exceeds this space type's limit">
                       <Flex>
                         <Icon icon="Warning" color="warning" />
                       </Flex>
                     </Tooltip>
+                    <Flex marginLeft="spacing2Xs" className={styles.warningText}>
+                      {usage}
+                    </Flex>
                   </Flex>
                 ) : (
                   <Flex justifyContent="left" alignItems="center">

@@ -20,8 +20,8 @@ import { LoadingCard } from 'features/space-creation';
 import { ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 
 const ASSIGNMENT_STEPS = [
-  { text: '1.Choose space type', isActive: true },
-  { text: '2.Confirm', isActive: false },
+  { text: '1.Space type', isActive: true },
+  { text: '2.Confirmation', isActive: false },
 ];
 
 const DEFAULT_ROLE_SET = { roles: ['Editor'] };

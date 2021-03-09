@@ -14,8 +14,9 @@ import {
   SectionHeading,
   Button,
   Icon,
+  Flex,
+  Grid,
 } from '@contentful/forma-36-react-components';
-import { Flex, Grid } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';

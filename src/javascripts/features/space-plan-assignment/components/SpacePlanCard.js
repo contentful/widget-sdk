@@ -7,14 +7,7 @@ import {
 import cn from 'classnames';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  Card,
-  RadioButton,
-  Tag,
-  Heading,
-  Tooltip,
-  Icon,
-} from '@contentful/forma-36-react-components';
+import { Card, Tag, Heading, Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components';
 import { ASSIGNMENT_FLOW_TYPE, canPlanBeAssigned } from '../utils/utils';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
@@ -76,7 +69,10 @@ export function SpacePlanCard({
       width: '18px', // basic size of icon
       height: '18px', // basic size of icon
     }),
-    disabled: css({ opacity: 0.5 }),
+    disabled: css({
+      opacity: 0.5,
+      pointerEvents: 'none',
+    }),
     custom: css({
       fontWeight: `${tokens.fontWeightNormal}`,
       color: `${tokens.colorTextLightest}`,
@@ -94,28 +90,20 @@ export function SpacePlanCard({
       padding="large"
       className={cn(styles.cardItem, {
         [styles.cardItemActive]: plan.sys.id === selectedPlan?.sys.id,
-      })}>
+        [styles.disabled]: isDisabled,
+      })}
+      aria-disabled={isDisabled}
+      disabled={isDisabled}
+      selected={plan.sys.id === selectedPlan?.sys.id}
+      data-selected={plan.sys.id === selectedPlan?.sys.id}>
       <Flex
         htmlTag="label"
         justifyContent="start"
         alignItems="center"
         marginBottom="spacingM"
-        className={cn({
-          [styles.disabled]: isDisabled,
-        })}>
-        <RadioButton
-          disabled={isDisabled}
-          checked={plan.sys.id === selectedPlan?.sys.id}
-          onChange={() => onPlanSelected(plan)}
-          labelText={plan.name}
-          className={styles.radioButtonLarge}
-        />
-        <Flex
-          marginLeft={'spacingS'}
-          fullWidth={true}
-          justifyContent="space-between"
-          alignItems="center">
-          <Heading element="h3">
+        onClick={() => onPlanSelected(plan)}>
+        <Flex fullWidth={true} justifyContent="space-between" alignItems="center">
+          <Heading element="h3" testId={`space-card-heading-${plan.name}`}>
             {plan.name}{' '}
             {isCustomPlan ? (
               <span className={styles.custom}> (Customized)</span>

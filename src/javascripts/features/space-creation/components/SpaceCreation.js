@@ -18,9 +18,9 @@ export const SpaceCreation = ({ orgId }) => {
   } = useContext(SpaceCreationState);
 
   const CREATE_SPACE_STEPS = [
-    { text: '1.Choose space type', isActive: selectedPlan ? false : true },
-    { text: '2.Enter space details', isActive: selectedPlan ? true : false },
-    { text: '3.Confirm', isActive: false },
+    { text: '1.Space type', isActive: selectedPlan ? false : true },
+    { text: '2.Space details', isActive: selectedPlan ? true : false },
+    { text: '3.Confirmation', isActive: false },
   ];
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
   const [inProgress, setInProgress] = useState(false);

@@ -98,14 +98,19 @@ describe('SpacePlanSelection', () => {
     it('should render available plans list grouped', async () => {
       build();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(3);
-      expect(screen.getAllByLabelText(mockLargePlan.name)).toHaveLength(2);
-      expect(screen.getAllByLabelText(mockPerformance1xPlan.name)).toHaveLength(1);
+      expect(screen.getAllByTestId(`space-plan-card-${mockLargePlan.name}`)).toHaveLength(2);
+      expect(screen.getAllByTestId(`space-plan-card-${mockPerformance1xPlan.name}`)).toHaveLength(
+        1
+      );
     });
 
     it('should be able to select a new plan', async () => {
       build();
-      expect(screen.getAllByLabelText(mockLargePlan.name)[0]).toBeChecked();
-      fireEvent.click(screen.getByLabelText(mockPerformance1xPlan.name));
+      expect(screen.getAllByTestId(`space-plan-card-${mockLargePlan.name}`)[0]).toHaveAttribute(
+        'data-selected',
+        'true'
+      );
+      fireEvent.click(screen.getByTestId(`space-card-heading-${mockPerformance1xPlan.name}`));
       expect(mockOnPlanSelected).toHaveBeenCalled();
     });
 
@@ -162,9 +167,11 @@ describe('SpacePlanSelection', () => {
       build({ freeSpaceResource: mockFreeSpaceResource });
       expect(screen.getByText('Choose a space type for your new space')).toBeVisible();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
-      expect(screen.getAllByLabelText(mockLargePlan.name)).toHaveLength(2);
-      expect(screen.getAllByLabelText(mockPerformance1xPlan.name)).toHaveLength(1);
-      expect(screen.getAllByLabelText(mockFreePlan.name)).toHaveLength(1);
+      expect(screen.getAllByTestId(`space-plan-card-${mockLargePlan.name}`)).toHaveLength(2);
+      expect(screen.getAllByTestId(`space-plan-card-${mockPerformance1xPlan.name}`)).toHaveLength(
+        1
+      );
+      expect(screen.getAllByTestId(`space-plan-card-${mockFreePlan.name}`)).toHaveLength(1);
     });
   });
 });

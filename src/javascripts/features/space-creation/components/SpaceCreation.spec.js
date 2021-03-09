@@ -194,7 +194,10 @@ describe('SpaceCreation', () => {
       build();
       await waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
-      expect(screen.getByLabelText(mockFreePlan.name)).toBeDisabled();
+      expect(screen.getByTestId(`space-plan-card-${mockFreePlan.name}`)).toHaveAttribute(
+        'aria-disabled',
+        'true'
+      );
     });
   });
 

@@ -17,13 +17,11 @@ import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { go } from 'states/Navigator';
 
-import { SpaceUsageIconCell } from './SpaceUsageIconCell';
 import { SpaceUsageTableCell } from './SpaceUsageTableCell';
 import { track } from 'analytics/Analytics';
 
 const styles = {
   hasUpgraded: css({ backgroundColor: tokens.colorMintMid }),
-  moreButton: css({ verticalAlign: 'middle' }),
   helpIcon: css({
     star: css({
       color: tokens.colorOrangeMid,
@@ -31,6 +29,9 @@ const styles = {
       cursor: 'default',
     }),
     marginTop: `-${tokens.spacing2Xs}`,
+    verticalAlign: 'middle',
+  }),
+  tableCellAlignedMiddle: css({
     verticalAlign: 'middle',
   }),
 };
@@ -67,7 +68,9 @@ export const SpacePlanRow = ({
     <TableRow
       testId="subscription-page.spaces-list.table-row"
       className={cx({ [styles.hasUpgraded]: hasUpgraded })}>
-      <TableCell testId="subscription-page.spaces-list.space-name">
+      <TableCell
+        testId="subscription-page.spaces-list.space-name"
+        className={styles.tableCellAlignedMiddle}>
         {isAccessible ? (
           <StateLink
             testId="subscription-page.spaces-list.space-link"
@@ -83,7 +86,9 @@ export const SpacePlanRow = ({
           space.name || '-'
         )}
       </TableCell>
-      <TableCell testId="subscription-page.spaces-list.space-type">
+      <TableCell
+        testId="subscription-page.spaces-list.space-type"
+        className={styles.tableCellAlignedMiddle}>
         <strong>{plan.name}</strong>&nbsp;
         {spaceTrialPeriodEndsAt && (
           <Tooltip
@@ -117,63 +122,47 @@ export const SpacePlanRow = ({
             </StateLink>
           </>
         )}
-        <br />
         {!enterprisePlan && (
           <>
-            <Price
-              testId="subscription-page.spaces-list.plan-price"
-              value={plan.price}
-              unit="month"
-            />{' '}
             -{' '}
             <TextLink
               testId="subscription-page.spaces-list.upgrade-plan-link"
               onClick={onChangeSpace(space)}>
               upgrade
             </TextLink>
+            <br />
+            <Price
+              testId="subscription-page.spaces-list.plan-price"
+              value={plan.price}
+              unit="month"
+            />
           </>
         )}{' '}
       </TableCell>
-
-      <SpaceUsageIconCell
-        testId="subscription-page.spaces-list.icon.environments"
-        {...spaceUsage.environments}
-      />
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.environments"
         {...spaceUsage.environments}
       />
-      <SpaceUsageIconCell testId="subscription-page.spaces-list.icon.roles" {...spaceUsage.roles} />
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.roles"
         {...spaceUsage.roles}
-      />
-      <SpaceUsageIconCell
-        testId="subscription-page.spaces-list.icon.locales"
-        {...spaceUsage.locales}
       />
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.locales"
         {...spaceUsage.locales}
       />
-      <SpaceUsageIconCell
-        testId="subscription-page.spaces-list.icon.content-types"
-        {...spaceUsage.contentTypes}
-      />
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.content-types"
         {...spaceUsage.contentTypes}
-      />
-      <SpaceUsageIconCell
-        testId="subscription-page.spaces-list.icon.records"
-        {...spaceUsage.records}
       />
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.records"
         {...spaceUsage.records}
       />
 
-      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
+      <TableCell
+        testId="subscription-page.spaces-list.option-dots"
+        className={styles.tableCellAlignedMiddle}>
         <CardActions
           iconButtonProps={{
             testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
