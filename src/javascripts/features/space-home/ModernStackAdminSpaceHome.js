@@ -69,9 +69,8 @@ export const ModernStackAdminSpaceHome = ({
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
-      <ComposeAndLaunchCTA />
-
       <ContentfulAppsCTA />
+      <ComposeAndLaunchCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
