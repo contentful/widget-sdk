@@ -1,4 +1,4 @@
-name: Run the smoke tests on staging
+name: Run the smoke tests
 on:
   workflow_dispatch:
   schedule:
@@ -7,6 +7,14 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - domain: 'flinkly.com'
+            password: ${{ secrets.SMOKE_TEST_USER_PASSWORD_STAGING }}
+          - domain: 'contentful.com'
+            password: ${{ secrets.SMOKE_TEST_USER_PASSWORD_PRODUCTION }}
 
     steps:
       - uses: actions/checkout@v2
@@ -21,8 +29,8 @@ jobs:
         # we use the official Cypress action with the right environment variables.
         uses: cypress-io/github-action@v2
         env:
-          SMOKE_TEST_DOMAIN: flinkly.com
-          SMOKE_TEST_USER_PASSWORD: ${{ secrets.SMOKE_TEST_USER_PASSWORD_STAGING }}
+          SMOKE_TEST_DOMAIN: ${{ matrix.domain }}
+          SMOKE_TEST_USER_PASSWORD: ${{ matrix.password }}
         with:
           install: false
           browser: chrome
