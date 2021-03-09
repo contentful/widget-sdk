@@ -38,6 +38,7 @@ export enum LinkType {
   Users = 'users',
   InvitationAccepted = 'invitation-accepted',
   StartAppTrial = 'start-trial',
+  Tags = 'tags',
 }
 
 interface ResolvedLink {
@@ -131,6 +132,9 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.InvitationAccepted]: resolveSpaceHome,
   [LinkType.StartAppTrial]: makeOrgScopedPathResolver({
     orgScopedPath: ['account', 'organizations', 'start_trial'],
+  }),
+  [LinkType.Tags]: makeSpaceScopedPathResolver({
+    spaceScopedPath: ['spaces', 'detail', 'settings', 'tags'],
   }),
 };
 

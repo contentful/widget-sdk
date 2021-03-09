@@ -551,4 +551,10 @@ describe('states/deeplink/resolver', () => {
       });
     });
   });
+
+  describe('#tags', () => {
+    it('should redirect the user to space tags settings', async function () {
+      await testSpaceScopedPathDeeplinks('tags', ['spaces', 'detail', 'settings', 'tags']);
+    });
+  });
 });
