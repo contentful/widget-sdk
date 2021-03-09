@@ -59,7 +59,7 @@ export function createJsonPatch(
     updatedToDiff.metadata = updatedData.metadata;
   }
 
-  const pathOverrides: { [path: string]: unknown } = {};
+  const pathOverrides: Map<string, unknown> = new Map();
 
   const allFields = new Set([...Object.keys(originalFields), ...Object.keys(updatedFields)]);
 
@@ -118,7 +118,7 @@ export function createJsonPatch(
         // so we need to put a placeholder value in place that always fails diffing
         // which we can then replace with the full object again later
         const path = `/fields/${fieldName}/${locale}`;
-        set(pathOverrides, [path], updatedValue);
+        pathOverrides.set(path, updatedValue);
 
         set(originalToDiff, ['fields', fieldName, locale], false);
         set(updatedToDiff, ['fields', fieldName, locale], true);
@@ -135,9 +135,8 @@ export function createJsonPatch(
   const diff: Operation[] = compare(originalToDiff, updatedToDiff);
 
   for (const patch of diff) {
-    const override = pathOverrides[patch.path];
-    if (override && canAppendOverride(patch)) {
-      patch.value = override;
+    if (pathOverrides.has(patch.path) && canAppendOverride(patch)) {
+      patch.value = pathOverrides.get(patch.path);
     }
   }
 

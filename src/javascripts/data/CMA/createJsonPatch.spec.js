@@ -81,6 +81,36 @@ describe('jsonPatch', () => {
         { op: 'add', path: '/fields/field1/en-US/value3', value: 'value3' },
       ]);
     });
+
+    it('handles falsey value diffs properly', () => {
+      const originalData = {
+        fields: {
+          field1: { 'en-US': { value: 'foo' } },
+          field2: { 'en-US': { value: 'bar' } },
+          field3: { 'en-US': { value: 'baz' } },
+          field4: { 'en-US': { value: 'quux' } },
+          field5: { 'en-US': { value: 'doge' } },
+        },
+      };
+
+      const updatedData = {
+        fields: {
+          field1: { 'en-US': null },
+          field2: { 'en-US': 0 },
+          field3: { 'en-US': false },
+          field4: { 'en-US': '' },
+          field5: { 'en-US': undefined },
+        },
+      };
+
+      expect(createJsonPatch(originalData, updatedData).reverse()).toEqual([
+        { op: 'replace', path: '/fields/field1/en-US', value: null },
+        { op: 'replace', path: '/fields/field2/en-US', value: 0 },
+        { op: 'replace', path: '/fields/field3/en-US', value: false },
+        { op: 'replace', path: '/fields/field4/en-US', value: '' },
+        { op: 'remove', path: '/fields/field5/en-US' },
+      ]);
+    });
   });
 
   describe('when diffing object metadata tags', () => {
