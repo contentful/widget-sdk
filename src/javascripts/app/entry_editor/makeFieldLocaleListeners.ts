@@ -31,9 +31,12 @@ export const makeFieldLocaleListeners = (
   if (!defaultLocale) return { lookup, flat };
 
   controls.forEach((widget) => {
-    const locales = widget.field.localized ? privateLocales : [defaultLocale];
-
-    locales.forEach((locale) => {
+    // Ideally we would be selecting for just the relevant locales, but we
+    // should nevertheless set up controllers for each locale because there
+    // are circumstances in which validation failures in otherwise
+    // inaccessible locales would not be editable. For context, see e.g.
+    // https://contentful.atlassian.net/browse/PEN-1574
+    privateLocales.forEach((locale) => {
       const fieldId = widget.fieldId;
       const localeCode = locale.code;
 

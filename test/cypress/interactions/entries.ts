@@ -23,6 +23,7 @@ import {
 } from '../fixtures/responses/entry-several-references';
 import { Matchers } from '@pact-foundation/pact-web';
 import { ENTRY_REFERENCES_ENDPOINT } from '../../../src/javascripts/alphaHeaders';
+import { cloneDeep, set } from 'lodash';
 
 export enum States {
   NONE = 'entries/none',
@@ -30,6 +31,7 @@ export enum States {
   NO_ERRORS = 'releases/no-errors',
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
+  ONE_WITH_INACCESSIBLE_FIELD_LOCALE = 'entries/one-with-inaccessible-field-locale',
   SEVERAL_REFERENCES_FOR_ENTRY = 'entries/several-references',
   SEVERAL_REFERENCES_FOR_ENTRY_WITH_VERSION = 'entries/several-references-with-version',
   SEVERAL_REFERENCES_WITH_UNRESOLVED_FOR_ENTRY = 'entries/several-references-with-unresolved',
@@ -59,6 +61,34 @@ export const getDefaultEntry = {
     }).as('getDefaultEntry');
 
     return '@getDefaultEntry';
+  },
+};
+
+export const getEntryWithInaccessibleFieldLocale = {
+  willReturnIt() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.ONE_WITH_INACCESSIBLE_FIELD_LOCALE,
+      uponReceiving: `a request for the entry "${defaultEntryId}" in space "${defaultSpaceId}" with an inaccessible field locale`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: set(
+          cloneDeep(severalEntriesResponse()).items[2],
+          ['fields', 'fieldID', 'fr'],
+          'invalid'
+        ),
+      },
+    }).as('getEntryWithInaccessibleFieldLocale');
+
+    return '@getEntryWithInaccessibleFieldLocale';
   },
 };
 
