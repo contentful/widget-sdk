@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Heading,
   List,
@@ -10,13 +9,11 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
-import { isOrganizationOnTrial } from '../services/TrialService';
 import { developerDocsUrl, helpCenterUrl, websiteUrl } from 'Config';
 import { EVENTS, trackEvent, withInAppHelpUtmParamsSubscription } from '../utils/analyticsTracking';
 
 const styles = {
   list: css({
-    marginBottom: tokens.spacingM,
     color: tokens.colorTextMid,
   }),
   listItem: css({
@@ -25,11 +22,7 @@ const styles = {
   }),
 };
 
-export const EnterpriseTrialInfo = ({ organization }) => {
-  if (!isOrganizationOnTrial(organization)) {
-    return null;
-  }
-
+export const EnterpriseTrialInfo = () => {
   const learningCenterLink = withInAppHelpUtmParamsSubscription(
     'https://public.learningcenter.contentful.com/index/'
   );
@@ -84,8 +77,4 @@ export const EnterpriseTrialInfo = ({ organization }) => {
       </List>
     </Typography>
   );
-};
-
-EnterpriseTrialInfo.propTypes = {
-  organization: PropTypes.object.isRequired,
 };

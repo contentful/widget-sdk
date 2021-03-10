@@ -10,8 +10,7 @@ import {
   Flex,
   Button,
 } from '@contentful/forma-36-react-components';
-import { StartAppTrialModal, isOrganizationOnTrial } from 'features/trials';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { StartAppTrialModal } from 'features/trials';
 import { beginSpaceCreation } from 'services/CreateSpace';
 
 const styles = {
@@ -23,18 +22,10 @@ const styles = {
 export function ContentfulAppsTrial({
   organization,
   startAppTrial,
-  isPurchased,
   isTrialAvailable,
   isTrialActive,
   isTrialExpired,
 }) {
-  const orgIsOnTrialAndRoleIsMember =
-    !isOwnerOrAdmin(organization) && isOrganizationOnTrial(organization);
-
-  if (isPurchased || orgIsOnTrialAndRoleIsMember) {
-    return null;
-  }
-
   const showStartTrialButton = isTrialAvailable;
   const showBuyButton = isTrialActive || isTrialExpired;
 
@@ -49,7 +40,7 @@ export function ContentfulAppsTrial({
   };
 
   return (
-    <Card data-test-id="contentful-apps-trial">
+    <Card testId="contentful-apps-trial">
       <Flex justifyContent="space-between" marginBottom="spacingM">
         {!isTrialActive && <Heading>Compose + Launch</Heading>}
         {isTrialActive && <Heading>Contentful Apps trial</Heading>}
@@ -105,8 +96,6 @@ ContentfulAppsTrial.propTypes = {
   organization: PropTypes.object.isRequired,
   // Function that handles what happens after we confirm the Start of a Trial inside the Modal
   startAppTrial: PropTypes.func.isRequired,
-  // Check for whether Apps were already purchased
-  isPurchased: PropTypes.bool.isRequired,
   // Check for if Trial is available
   isTrialAvailable: PropTypes.bool,
   // Check for active Trial

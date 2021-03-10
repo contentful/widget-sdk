@@ -278,6 +278,28 @@ describe('SubscriptionPage', () => {
       ).toBeVisible();
     });
   });
+
+  describe('contentful apps card', () => {
+    it('shows Contentful Apps trial card for users who have not purchased apps', () => {
+      isOwnerOrAdmin.mockReturnValueOnce(true);
+      build({ organization: mockOrganization, appTrialEnabled: true });
+
+      expect(screen.getByTestId('contentful-apps-trial')).toBeVisible();
+      expect(screen.queryByTestId('contentful-apps-card')).toBeNull();
+    });
+
+    it('shows Contentful Apps card for users who have purchased apps', () => {
+      isOwnerOrAdmin.mockReturnValueOnce(true);
+      build({
+        organization: mockOrganization,
+        addOnPlan: { sys: { id: 'addon_id' } },
+        composeAndLaunchEnabled: true,
+      });
+
+      expect(screen.getByTestId('contentful-apps-card')).toBeVisible();
+      expect(screen.queryByTestId('contentful-apps-trial')).toBeNull();
+    });
+  });
 });
 
 function build(custom) {

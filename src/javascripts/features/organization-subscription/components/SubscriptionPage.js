@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { css, cx } from 'emotion';
+import { css } from 'emotion';
 import {
-  Notification,
-  Workbench,
-  Heading,
   DisplayText,
+  Flex,
+  Grid,
+  Heading,
   Note,
+  Notification,
   Paragraph,
-  Typography,
-  TextLink,
   SkeletonBodyText,
   SkeletonContainer,
   SkeletonDisplayText,
+  TextLink,
+  Typography,
+  Workbench,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 
 import { links } from '../utils';
 import { go } from 'states/Navigator';
@@ -39,56 +39,9 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
-  sidebar: css({
-    position: 'relative',
-  }),
-  header: css({
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gridGap: '45px',
-    '& > div': {
-      margin: '1em 0 3em',
-    },
-  }),
-  marginTop: css({
-    marginTop: tokens.spacingXl,
-  }),
-  talkToUsSection: css({
-    gridColumnEnd: 3,
-    textAlign: 'right',
-    marginBottom: tokens.spacingM,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    '& > svg': {
-      maxWidth: '150px',
-    },
-  }),
-  leftSection: css({
-    '& > div:not(:first-child)': {
-      marginTop: tokens.spacingXl,
-    },
-
-    gridRowStart: 3,
-  }),
-  rightSection: css({
-    '& > div:not(:first-child)': {
-      marginTop: tokens.spacingXl,
-    },
-
-    gridColumnStart: 2,
-    gridRowStart: 3,
-  }),
-  spacesSection: css({
-    gridColumnEnd: 3,
+  fullRow: css({
     gridColumnStart: 1,
-    gridRowStart: 4,
-  }),
-  trialSection: css({
-    '& > div': {
-      marginBottom: tokens.spacingXl,
-    },
-
-    gridRowStart: 2,
+    gridColumnEnd: 3,
   }),
 };
 
@@ -115,6 +68,7 @@ export function SubscriptionPage({
   isTrialExpired,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
+
   useEffect(() => {
     let timer;
 
@@ -199,12 +153,21 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
-  const showContentfulAppsCard =
-    composeAndLaunchEnabled && isOrgOwnerOrAdmin && !!addOnPlan && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
+
+  // Contentful Apps card should not show to Enterprise orgs and user is not Admin/Owner
+  const showContentfulAppsCard =
+    composeAndLaunchEnabled && !enterprisePlan && isOrgOwnerOrAdmin && !!addOnPlan;
+  const showContentfulAppsTrial =
+    appTrialEnabled && !enterprisePlan && isOrgOwnerOrAdmin && !addOnPlan;
+
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
-  const rightColumnHasContent = showPayingOnDemandCopy || showNonPayingOrgCopy;
+  const rightColumnHasContent =
+    showPayingOnDemandCopy ||
+    showNonPayingOrgCopy ||
+    showContentfulAppsCard ||
+    showContentfulAppsTrial;
 
   return (
     <Workbench testId="subscription-page">
@@ -212,22 +175,21 @@ export function SubscriptionPage({
         icon={<ProductIcon icon="Subscription" size="large" />}
         title="Subscription"
       />
-      <Workbench.Content className={styles.content}>
-        <Grid columns={2} rows="auto auto auto" columnGap="spacingXl">
-          <div className={styles.talkToUsSection}>
-            {initialLoad ? (
-              <SkeletonContainer svgHeight={25}>
-                <SkeletonBodyText numberOfLines={1} />
-              </SkeletonContainer>
-            ) : (
-              <ContactUsButton isLink />
-            )}
-          </div>
-          <div className={styles.trialSection}>
-            {organization && <EnterpriseTrialInfo organization={organization} />}
-          </div>
+      {/* the workbench needs this 'position relative' here or it will render double scrollbars when its children have 'flex-direction: column' */}
+      <Workbench.Content className={css({ position: 'relative' })}>
+        <Flex className={styles.fullRow} justifyContent="flex-end" marginBottom="spacingM">
+          <ContactUsButton disabled={initialLoad} isLink />
+        </Flex>
+
+        <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+          {organization && isOrgOnTrial && (
+            <Flex className={styles.fullRow} flexDirection="column">
+              <EnterpriseTrialInfo organization={organization} />
+            </Flex>
+          )}
+
           {!isNotAdminOrOwnerOfTrialOrg && (
-            <div className={styles.leftSection}>
+            <Flex flexDirection="column">
               {initialLoad ? (
                 <SkeletonContainer svgHeight={117}>
                   <SkeletonDisplayText />
@@ -237,21 +199,23 @@ export function SubscriptionPage({
                 <BasePlan basePlan={basePlan} organizationId={organizationId} />
               )}
               {rightColumnHasContent && (
-                <UsersForPlan
-                  organizationId={organizationId}
-                  numberFreeUsers={usersMeta && usersMeta.numFree}
-                  numberPaidUsers={usersMeta && usersMeta.numPaid}
-                  costOfUsers={usersMeta && usersMeta.cost}
-                  unitPrice={usersMeta && usersMeta.unitPrice}
-                  hardLimit={usersMeta && usersMeta.hardLimit}
-                  isFreePlan={isFreePlan(basePlan)}
-                  isOnEnterpriseTrial={isOrgOnTrial}
-                />
+                <Flex flexDirection="column" marginTop="spacingXl">
+                  <UsersForPlan
+                    organizationId={organizationId}
+                    numberFreeUsers={usersMeta && usersMeta.numFree}
+                    numberPaidUsers={usersMeta && usersMeta.numPaid}
+                    costOfUsers={usersMeta && usersMeta.cost}
+                    unitPrice={usersMeta && usersMeta.unitPrice}
+                    hardLimit={usersMeta && usersMeta.hardLimit}
+                    isFreePlan={isFreePlan(basePlan)}
+                    isOnEnterpriseTrial={isOrgOnTrial}
+                  />
+                </Flex>
               )}
-            </div>
+            </Flex>
           )}
           {!isNotAdminOrOwnerOfTrialOrg && (
-            <div className={styles.rightSection}>
+            <Flex flexDirection="column">
               {initialLoad ? (
                 <SkeletonContainer svgHeight={117}>
                   <SkeletonDisplayText />
@@ -260,42 +224,56 @@ export function SubscriptionPage({
               ) : (
                 <>
                   {!rightColumnHasContent && (
-                    <UsersForPlan
-                      organizationId={organizationId}
-                      numberFreeUsers={usersMeta && usersMeta.numFree}
-                      numberPaidUsers={usersMeta && usersMeta.numPaid}
-                      costOfUsers={usersMeta && usersMeta.cost}
-                      unitPrice={usersMeta && usersMeta.unitPrice}
-                      hardLimit={usersMeta && usersMeta.hardLimit}
-                      isFreePlan={isFreePlan(basePlan)}
-                      isOnEnterpriseTrial={isOrgOnTrial}
-                    />
+                    <Flex flexDirection="column" marginBottom="spacingXl">
+                      <UsersForPlan
+                        organizationId={organizationId}
+                        numberFreeUsers={usersMeta && usersMeta.numFree}
+                        numberPaidUsers={usersMeta && usersMeta.numPaid}
+                        costOfUsers={usersMeta && usersMeta.cost}
+                        unitPrice={usersMeta && usersMeta.unitPrice}
+                        hardLimit={usersMeta && usersMeta.hardLimit}
+                        isFreePlan={isFreePlan(basePlan)}
+                        isOnEnterpriseTrial={isOrgOnTrial}
+                      />
+                    </Flex>
                   )}
-                  {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-                  {!!organization && appTrialEnabled && (
-                    <ContentfulAppsTrial
-                      organization={organization}
-                      isPurchased={!!addOnPlan}
-                      startAppTrial={handleStartAppTrial}
-                      isTrialAvailable={isTrialAvailable}
-                      isTrialActive={isTrialActive}
-                      isTrialExpired={isTrialExpired}
-                    />
+                  {showPayingOnDemandCopy && (
+                    <Flex flexDirection="column" marginBottom="spacingXl">
+                      <PayingOnDemandOrgCopy grandTotal={grandTotal} />
+                    </Flex>
+                  )}
+                  {showContentfulAppsTrial && (
+                    <Flex flexDirection="column">
+                      <ContentfulAppsTrial
+                        organization={organization}
+                        startAppTrial={handleStartAppTrial}
+                        isTrialAvailable={isTrialAvailable}
+                        isTrialActive={isTrialActive}
+                        isTrialExpired={isTrialExpired}
+                      />
+                    </Flex>
                   )}
                   {showContentfulAppsCard && (
-                    <ContentfulApps organizationId={organizationId} addOnPlan={addOnPlan} />
+                    <Flex flexDirection="column">
+                      <ContentfulApps organizationId={organizationId} addOnPlan={addOnPlan} />
+                    </Flex>
                   )}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
-                    <NonPayingOrgCopyLegacy organizationId={organizationId} />
+                    <Flex flexDirection="column" marginTop="spacingXl">
+                      <NonPayingOrgCopyLegacy organizationId={organizationId} />
+                    </Flex>
                   )}
                   {showNonPayingOrgCopy && newSpacePurchaseEnabled && (
-                    <NonPayingOrgCopy createSpace={createSpace} />
+                    <Flex flexDirection="column" marginTop="spacingXl">
+                      <NonPayingOrgCopy createSpace={createSpace} />
+                    </Flex>
                   )}
                 </>
               )}
-            </div>
+            </Flex>
           )}
-          <div className={cx(styles.spacesSection, styles.marginTop)}>
+
+          <Flex className={styles.fullRow} flexDirection="column">
             {isNotAdminOrOwnerOfTrialOrg ? (
               <SpacesListForMembers spaces={memberAccessibleSpaces} />
             ) : (
@@ -312,7 +290,7 @@ export function SubscriptionPage({
                 isOwnerOrAdmin={isOrgOwnerOrAdmin}
               />
             )}
-          </div>
+          </Flex>
         </Grid>
       </Workbench.Content>
     </Workbench>

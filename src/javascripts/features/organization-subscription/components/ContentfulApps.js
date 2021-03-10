@@ -26,7 +26,7 @@ const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
 
 export function ContentfulApps({ organizationId, addOnPlan }) {
   return (
-    <Card>
+    <Card testId="contentful-apps-card">
       <Heading>Compose + Launch</Heading>
       <Flex marginTop="spacingM" marginBottom="spacingM">
         <Paragraph>
