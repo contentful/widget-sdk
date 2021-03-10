@@ -94,7 +94,10 @@ export function StartAppTrial({ orgId, existingUsers }) {
       });
     } catch (exception) {
       Notification.error('Oh snap! Something went wrong!');
-      logger.logException(exception);
+      // logger.logException(exception, {
+      //   groupingHash: 'Failed during App Trial creation',
+      // });
+      logger.logError('AppTrialError', { error: exception });
       go({
         path: ['account', 'organizations', 'subscription_new'],
         params: {
