@@ -109,7 +109,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
     trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
       duration: trialDuration,
-      isBootstrapped: !existingUsers,
+      withContentModel: !existingUsers,
       isSuccessful: isSuccessful,
     })();
   }, [orgId, existingUsers]);
