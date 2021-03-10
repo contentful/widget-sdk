@@ -10,6 +10,7 @@ import {
   Flex,
   Button,
 } from '@contentful/forma-36-react-components';
+import { appsMarketingUrl } from 'Config';
 import { StartAppTrialModal } from 'features/trials';
 import { beginSpaceCreation } from 'services/CreateSpace';
 
@@ -60,7 +61,7 @@ export function ContentfulAppsTrial({
         {!isTrialActive && (
           <TextLink
             className={styles.link}
-            href="https://www.contentful.com/contentful-apps"
+            href={appsMarketingUrl}
             target="_blank"
             rel="noopener noreferrer">
             Learn more
