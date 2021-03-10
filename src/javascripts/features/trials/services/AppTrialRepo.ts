@@ -1,60 +1,32 @@
+import { memoize } from 'lodash';
+
 import { COMPOSE_LAUNCH_TRIAL, getAlphaHeader } from 'alphaHeaders';
-import { OrganizationEndpoint } from 'data/CMA/types';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { CollectionProp } from 'contentful-management/types';
+import { AppTrial, AppTrialFeature } from '../types/AppTrial';
 
 const headers = getAlphaHeader(COMPOSE_LAUNCH_TRIAL);
 
-export interface AppTrialFeature {
-  name: string;
-  enabled: boolean;
-  sys: {
-    feature_id: string;
-    id: string;
-    organization: {
-      sys: {
-        id: string;
-      };
-    };
-    trial?: {
-      startedAt: string;
-      endsAt: string;
-    };
-  };
-}
+export const getTrial = memoize(async (orgId, featureId) => {
+  const endpoint = createOrganizationEndpoint(orgId);
+  const data = await endpoint<CollectionProp<AppTrialFeature>>({
+    method: 'GET',
+    path: '/product_catalog_features',
+    query: {
+      'sys.featureId[]': featureId,
+    },
+  });
+  return data.items[0];
+});
 
-export interface AppTrial {
-  spaceKey: string;
-  trial: {
-    startedAt: string;
-    endsAt: string;
-  };
-}
-
-export const createAppTrialRepo = (endpoint: OrganizationEndpoint) => {
-  const getTrial = async (featureId): Promise<AppTrialFeature> => {
-    const data = await endpoint<CollectionProp<AppTrialFeature>>({
-      method: 'GET',
-      path: '/product_catalog_features',
-      query: {
-        'sys.featureId[]': featureId,
-      },
-    });
-    return data.items[0];
-  };
-
-  const createTrial = async (): Promise<AppTrial> => {
-    const response: Promise<AppTrial> = endpoint<AppTrial>(
-      {
-        method: 'POST',
-        path: '/_compose_launch_trial',
-      },
-      headers
-    );
-    return response;
-  };
-
-  return {
-    getTrial,
-    createTrial,
-  };
+export const createTrial = (orgId) => {
+  const endpoint = createOrganizationEndpoint(orgId);
+  const response = endpoint<AppTrial>(
+    {
+      method: 'POST',
+      path: '/_compose_launch_trial',
+    },
+    headers
+  );
+  return response;
 };

@@ -14,7 +14,7 @@ import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUti
 import {
   isOrganizationOnTrial,
   canStartAppTrial,
-  createAppTrialRepo,
+  AppTrialRepo,
   isActiveAppTrial,
   isExpiredAppTrial,
 } from 'features/trials';
@@ -104,9 +104,8 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
   const [appCatalogFeature, isTrialAvailable] = await Promise.all([
-    createAppTrialRepo(orgEndpoint).getTrial('compose_app'),
+    AppTrialRepo.getTrial(organizationId, 'compose_app'),
     canStartAppTrial(organizationId),
   ]);
 

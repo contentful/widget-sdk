@@ -1,6 +1,6 @@
 import * as fake from 'test/helpers/fakeFactory';
 import { getAppTrialSpaceKey, isActiveAppTrial, isExpiredAppTrial } from './AppTrialService';
-import { AppTrialFeature } from './AppTrialRepo';
+import { AppTrialFeature } from '../types/AppTrial';
 import { getSpaces } from 'services/TokenStore';
 
 const today = '2019-10-01T03:00:00.000Z';

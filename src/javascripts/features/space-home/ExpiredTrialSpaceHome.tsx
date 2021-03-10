@@ -8,7 +8,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/expired-trial-space-home-ill.svg';
 import {
-  createAppTrialRepo,
+  AppTrialRepo,
   isExpiredTrialSpace,
   AppTrialFeature,
   isExpiredAppTrial,
@@ -52,12 +52,11 @@ export const ExpiredTrialSpaceHome = () => {
       });
 
       if (isAppTrialEnabled) {
-        const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
-
-        const appTrial = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
+        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId, 'compose_app');
         setAppTrialFeature(appTrial);
 
         if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {
+          const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
           const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
           setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
         }

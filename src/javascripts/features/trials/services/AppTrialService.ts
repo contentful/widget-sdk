@@ -4,12 +4,13 @@ import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { AppTrialFeature, createAppTrialRepo } from './AppTrialRepo';
+import * as Repo from './AppTrialRepo';
 import { isTrialSpaceType } from './TrialService';
 import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
 import importer from '../utils/importer';
 import type { PlainClientAPI } from 'contentful-management';
+import { AppTrialFeature } from '../types/AppTrial';
 
 export const canStartAppTrial = async (organizationId: string) => {
   if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
@@ -24,7 +25,7 @@ export const canStartAppTrial = async (organizationId: string) => {
       environmentId: undefined,
     }),
     getBasePlan(orgEndpoint),
-    createAppTrialRepo(orgEndpoint).getTrial('compose_app'),
+    Repo.getTrial(organizationId, 'compose_app'),
   ]);
 
   if (!featureFlag || isEnterprisePlan(basePlan)) {
@@ -35,8 +36,9 @@ export const canStartAppTrial = async (organizationId: string) => {
 };
 
 export const startAppTrial = async (organizationId: string) => {
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
-  const trial = await createAppTrialRepo(orgEndpoint).createTrial();
+  const trial = await Repo.createTrial(organizationId);
+  Repo.getTrial.cache.clear?.();
+
   return { apps: ['compose', 'launch'], trial };
 };
 

@@ -1,3 +1,5 @@
+import * as AppTrialRepo from './services/AppTrialRepo';
+
 export { TrialTag } from './components/TrialTag';
 export { EnterpriseTrialInfo } from './components/EnterpriseTrialInfo';
 export { SpacesListForMembers } from './components/SpacesListForMembers';
@@ -13,6 +15,6 @@ export {
 
 export { canStartAppTrial, isActiveAppTrial, isExpiredAppTrial } from './services/AppTrialService';
 
-export { createAppTrialRepo } from './services/AppTrialRepo';
+export { AppTrialRepo };
 export { trialState } from './trialState';
-export type { AppTrialFeature } from './services/AppTrialRepo';
+export type { AppTrialFeature } from './types/AppTrial';
