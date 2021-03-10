@@ -48,7 +48,6 @@ export function StartAppTrial({ orgId, existingUsers }) {
     const store = getBrowserStorage();
     const startTimeTracker = window.performance.now();
 
-    let isBootstrapped = false;
     let isSuccessful = false;
 
     try {
@@ -81,7 +80,6 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
       if (!existingUsers) {
         await spaceSetUp(getCMAClient({ spaceId, environmentId }));
-        isBootstrapped = true;
       }
 
       isSuccessful = true;
@@ -111,7 +109,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
 
     trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
       duration: trialDuration,
-      isBootstrapped: isBootstrapped,
+      withContentModel: !existingUsers,
       isSuccessful: isSuccessful,
     })();
   }, [orgId, existingUsers]);
