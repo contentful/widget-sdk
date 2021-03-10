@@ -7,23 +7,28 @@ jest.mock('access_control/AccessChecker', () => ({
   },
 }));
 
+jest.mock('access_control/AccessChecker/PolicyChecker', () => ({
+  probableContentTypeAccess: (_, contentTypes) =>
+    contentTypes.filter((ct) => [1, 2, 3].includes(ct.sys.id)),
+}));
+
 describe('filter', () => {
   it('returns list of CTs that the user has READ access to or selected', () => {
     const testData = [
       {
         selectedCtId: 5,
-        bareCTs: [ctMock({ id: 1 }), ctMock({ id: 2 })],
+        bareCTs: [ctMock({ id: 2 }), ctMock({ id: 1 })],
         expected: [ctMock({ id: 1 }), ctMock({ id: 2 })],
       },
       {
         selectedCtId: 1,
-        bareCTs: [ctMock({ id: 1 }), ctMock({ id: 2 })],
+        bareCTs: [ctMock({ id: 2 }), ctMock({ id: 1 })],
         expected: [ctMock({ id: 1 }), ctMock({ id: 2 })],
       },
       {
         selectedCtId: 5,
         bareCTs: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })],
-        expected: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })],
+        expected: [ctMock({ id: 1 }), ctMock({ id: 2 }), ctMock({ id: 5 })],
       },
       {
         selectedCtId: null,
@@ -44,7 +49,7 @@ describe('filter', () => {
       sys: { id: ct.id },
       displayField: ct.displayField,
       fields: ct.fields || [],
-      name: ct.name,
+      name: ct.name || `${ct.id}`,
     };
   }
 });

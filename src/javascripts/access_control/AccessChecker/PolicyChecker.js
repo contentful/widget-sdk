@@ -88,6 +88,58 @@ export function canUpdateOwnEntries() {
   );
 }
 
+// we can't precompute the list of allowed content types because instead of a full list
+// we have the constant '__cf_internal_all_cts__', so instead we take a list of content types
+// from the caller
+export function probableContentTypeAccess(action, contentTypes) {
+  if (isAdmin) {
+    return contentTypes;
+  }
+
+  // ignore deny rules with tag conditions (the rule might only deny a subset of CTs)
+  const deniedContentTypeIds = Object.entries(policies.entry.denied.byContentType)
+    .filter(([_, rules]) =>
+      rules.some(
+        (rule) => rule.action === 'all' || (rule.action === action && !rule.metadataTagIds)
+      )
+    )
+    .map(([ctId, _]) => ctId);
+
+  if (deniedContentTypeIds.includes('__cf_internal_all_cts__')) {
+    return [];
+  }
+
+  // ignore conditions for allow rules (the rule might allow access for CTs)
+  const allowedContentTypeIds = Object.entries(policies.entry.allowed.byContentType)
+    .filter(([_, rules]) => rules.some((rule) => rule.action === 'all' || rule.action === action))
+    .filter(([ctId, _]) => !deniedContentTypeIds.includes(ctId))
+    .map(([ctId, _]) => ctId);
+
+  // all allowed, some denied...
+  if (allowedContentTypeIds.includes('__cf_internal_all_cts__')) {
+    if (deniedContentTypeIds.length > 0) {
+      return contentTypes.filter((ct) => !deniedContentTypeIds.includes(ct.sys.id));
+    }
+    return contentTypes;
+  }
+
+  // filter the end result with Boolean in case the current list
+  // of content types does not contain values in the policies
+
+  // some allowed, none denied...
+  if (deniedContentTypeIds.length === 0) {
+    return allowedContentTypeIds
+      .map((ctId) => contentTypes.find((ct) => ct.sys.id === ctId))
+      .filter(Boolean);
+  }
+
+  // some allowed, some denied
+  return allowedContentTypeIds
+    .filter((ctId) => !deniedContentTypeIds.includes(ctId))
+    .map((ctId) => contentTypes.find((ct) => ct.sys.id === ctId))
+    .filter(Boolean);
+}
+
 export function canUpdateAssets() {
   return performCheck(policies.asset.allowed, policies.asset.denied, anyUserUpdatePoliciesOnly);
 }

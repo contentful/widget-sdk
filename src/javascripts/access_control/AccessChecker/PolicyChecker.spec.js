@@ -283,6 +283,135 @@ describe('Policy Access Checker', () => {
     });
   });
 
+  describe('#probableContentTypeAccess', () => {
+    const contentTypes = [1, 2, 3].map((ct) => ({
+      sys: { id: `${ct}` },
+      fields: [],
+      name: `${ct}`,
+    }));
+
+    it('allow some content types', () => {
+      setRole({
+        policies: [
+          {
+            effect: 'allow',
+            actions: ['create'],
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { equals: [{ doc: 'sys.contentType.sys.id' }, '1'] },
+              ],
+            },
+          },
+        ],
+      });
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual(
+        contentTypes.filter((ct) => ct.sys.id === '1')
+      );
+    });
+
+    it('allow all content types', () => {
+      setRole({
+        policies: [
+          {
+            effect: 'allow',
+            actions: ['create'],
+            constraint: {
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
+      });
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual(contentTypes);
+    });
+
+    it('deny some content types', () => {
+      setRole({
+        policies: [
+          {
+            effect: 'allow',
+            actions: 'all',
+            constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+          },
+          {
+            effect: 'deny',
+            actions: ['create'],
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { equals: [{ doc: 'sys.contentType.sys.id' }, '1'] },
+              ],
+            },
+          },
+        ],
+      });
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual(
+        contentTypes.filter((ct) => ct.sys.id !== '1')
+      );
+    });
+
+    it('deny all content types', () => {
+      setRole({
+        policies: [
+          {
+            effect: 'allow',
+            actions: 'all',
+            constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+          },
+          {
+            effect: 'deny',
+            actions: ['create'],
+            constraint: {
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
+      });
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual([]);
+    });
+
+    it('allow some content types, deny some content types', () => {
+      setRole({
+        policies: [
+          {
+            effect: 'allow',
+            actions: 'all',
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { equals: [{ doc: 'sys.contentType.sys.id' }, '1'] },
+              ],
+            },
+          },
+          {
+            effect: 'allow',
+            actions: 'all',
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { equals: [{ doc: 'sys.contentType.sys.id' }, '2'] },
+              ],
+            },
+          },
+          {
+            effect: 'deny',
+            actions: ['create'],
+            constraint: {
+              and: [
+                { equals: [{ doc: 'sys.type' }, 'Entry'] },
+                { equals: [{ doc: 'sys.contentType.sys.id' }, '1'] },
+              ],
+            },
+          },
+        ],
+      });
+
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual([
+        { fields: [], name: '2', sys: { id: '2' } },
+      ]);
+    });
+  });
+
   describe('#canUpdateOwnEntries', () => {
     const userCurrent = { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] };
 

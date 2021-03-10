@@ -1,27 +1,21 @@
-import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
+import { Action } from 'access_control/AccessChecker';
+import { probableContentTypeAccess } from 'access_control/AccessChecker/PolicyChecker';
 
 export function getReadableContentTypes(contentTypes, selectedCtId) {
-  return contentTypes.filter((ct) => isReadableOrSelected(selectedCtId, ct));
+  const readAbleContentTypes = probableContentTypeAccess(Action.READ, contentTypes);
+  const selectedContentType = contentTypes.find((ct) => selectedCtId === ct.sys.id);
+  if (selectedContentType) {
+    // to prevent duplication remove selectedContentType if it is in the list, and then add it
+    return readAbleContentTypes
+      .filter((ct) => selectedCtId !== ct.sys.id)
+      .concat(selectedContentType)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return readAbleContentTypes.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function getCreatableContentTypes(publishedContentTypes) {
-  return publishedContentTypes.filter(isCreatable);
-}
-
-function isReadableOrSelected(selectedCtId, ct) {
-  // Get only accessible content types or one
-  // in the query parameter. (e.g from saved search views)
-  return isReadable(ct) || isSelected(selectedCtId, ct);
-}
-
-function isReadable(ct) {
-  return canPerformActionOnEntryOfType(Action.READ, ct.sys.id);
-}
-
-function isCreatable(ct) {
-  return canPerformActionOnEntryOfType(Action.CREATE, ct.sys.id);
-}
-
-function isSelected(selectedCtId, ct) {
-  return selectedCtId === ct.sys.id;
+  return probableContentTypeAccess(Action.CREATE, publishedContentTypes).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 }
