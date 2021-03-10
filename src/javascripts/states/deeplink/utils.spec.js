@@ -43,6 +43,14 @@ describe('states/deeplink/utils', () => {
       expect(orgId).toBe(returnedOrg.sys.id);
       expect(org).toBe(returnedOrg);
     });
+    it('returns the first organization', async function () {
+      const returnedOrg = { sys: { id: 'only-org-id' } };
+      TokenStore.getOrganizations.mockResolvedValue([returnedOrg]);
+
+      const { orgId, org } = await getOrg();
+      expect(orgId).toBe('only-org-id');
+      expect(org).toBe(returnedOrg);
+    });
     it('returns org from the selected space', async function () {
       const spaceOrg = { sys: { id: 'some_new_org_id' } };
 

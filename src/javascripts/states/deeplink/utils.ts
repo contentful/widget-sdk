@@ -112,10 +112,16 @@ export async function getMarketplaceApps() {
  * or organization of the first space
  */
 export async function getOrg() {
-  const store = getBrowserStorage();
-
-  const lastUsedOrgId = store.get('lastUsedOrg');
   const orgs = await getOrganizations();
+
+  // Only one place to look for an organization
+  if (orgs.length === 1) {
+    const onlyOrg = orgs[0];
+    return { orgId: onlyOrg.sys.id, org: onlyOrg };
+  }
+
+  const store = getBrowserStorage();
+  const lastUsedOrgId = store.get('lastUsedOrg');
 
   const usedOrg = lastUsedOrgId && orgs.find((org) => org.sys.id === lastUsedOrgId);
 
