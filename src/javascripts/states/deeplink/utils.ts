@@ -121,6 +121,9 @@ export async function getOrg() {
 
   if (usedOrg) {
     return { orgId: lastUsedOrgId, org: usedOrg };
+  } else if (orgs.length === 1) {
+    const onlyOrg = orgs[0];
+    return { orgId: onlyOrg.sys.id, org: onlyOrg };
   } else {
     const { space } = await getSpaceInfo();
     return { orgId: space.organization.sys.id, org: space.organization };
