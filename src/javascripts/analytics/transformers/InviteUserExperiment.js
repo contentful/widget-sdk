@@ -1,5 +1,5 @@
 import { first, last, merge } from 'lodash';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 export default function (eventName, data) {
   const experiment = {
@@ -11,7 +11,7 @@ export default function (eventName, data) {
       },
       getUserOrgSpace(data)
     ),
-    schema: getSchema('experiment').path,
+    schema: getSnowplowSchema('experiment').path,
   };
 
   return {

@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { addUserOrgSpace } from './Decorators';
 
 export default addUserOrgSpace((_, segmentData) => {
@@ -10,7 +10,7 @@ export default addUserOrgSpace((_, segmentData) => {
     },
     contexts: [
       {
-        schema: getSchema('extension_render').path,
+        schema: getSnowplowSchema('extension_render').path,
         // Remove properties automatically added by Segment client.
         data: pick(segmentData, [
           'location',

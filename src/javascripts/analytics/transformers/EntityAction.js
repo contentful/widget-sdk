@@ -1,5 +1,5 @@
 import { get, extend, snakeCase } from 'lodash';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 /**
  * @ngdoc service
@@ -23,7 +23,7 @@ export default function (_eventName, eventData) {
   // to the context as well
   if (eventData.entityAutomationScope) {
     contexts.push({
-      schema: getSchema('entity_automation_scope').path,
+      schema: getSnowplowSchema('entity_automation_scope').path,
       data: extend({ scope: eventData.entityAutomationScope.scope }, getBaseData(eventData)),
     });
   }
@@ -35,13 +35,13 @@ export default function (_eventName, eventData) {
 
 function getSpaceTemplateContext(eventData) {
   return {
-    schema: getSchema('space_template').path,
+    schema: getSnowplowSchema('space_template').path,
     data: Object.assign({ name: eventData.template }, getBaseData(eventData)),
   };
 }
 
 function getEntityContext(eventData) {
-  const schema = getSchema(snakeCase(eventData.actionData.entity));
+  const schema = getSnowplowSchema(snakeCase(eventData.actionData.entity));
   return {
     schema: schema.path,
     data: Object.assign(

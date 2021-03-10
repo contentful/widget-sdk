@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { addUserOrgSpace } from './Decorators';
 
 /**
@@ -8,7 +8,7 @@ import { addUserOrgSpace } from './Decorators';
  */
 export default addUserOrgSpace((_eventName, data) => {
   return {
-    schema: getSchema('feature_text_editor').path,
+    schema: getSnowplowSchema('feature_text_editor').path,
     data: {
       action: data.action,
       action_origin: data.actionOrigin || null,

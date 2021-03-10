@@ -6,7 +6,7 @@ import _ from 'lodash';
 import segment from 'analytics/segment';
 import { eventExists, transformEvent } from 'analytics/transform';
 import * as logger from 'services/logger';
-import * as analyticsConsole from 'analytics/analyticsConsole';
+import * as analyticsConsole from 'analytics/analyticsConsoleController';
 import * as random from '../utils/Random';
 import { clearSequenceContext, initSequenceContext } from './sequenceContext';
 

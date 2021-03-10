@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { addUserOrgSpace } from './Decorators';
 
 export default addUserOrgSpace((_, data) => ({
@@ -19,7 +19,7 @@ export default addUserOrgSpace((_, data) => ({
 
 function getReferenceContext(refMetadata, parentEntryId) {
   return {
-    schema: getSchema('feature_reference_metadata').path,
+    schema: getSnowplowSchema('feature_reference_metadata').path,
     data: {
       content_type_id: refMetadata.id,
       content_type_name: refMetadata.name,

@@ -5,9 +5,9 @@ import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
 import * as logger from 'services/logger';
 
-import { getSchemaForEvent } from 'analytics/transform';
+import { getSegmentSchemaForEvent, getSnowplowSchemaForEvent } from 'analytics/transform';
 import * as Snowplow from 'analytics/snowplow';
-import { render } from 'analytics/AnalyticsConsole.tsx';
+import { render } from 'analytics/AnalyticsConsole';
 
 /**
  * @description
@@ -80,7 +80,7 @@ export function add(name, data) {
   };
 
   if (snowplowEvent) {
-    const snowplowSchema = getSchemaForEvent(name);
+    const snowplowSchema = getSnowplowSchemaForEvent(name);
 
     event.snowplow = {
       name: snowplowSchema.name,
@@ -89,6 +89,13 @@ export function add(name, data) {
       context: snowplowEvent[2],
     };
   }
+
+  const segmentSchema = getSegmentSchemaForEvent(name);
+  event.segment = {
+    name: segmentSchema.name,
+    version: segmentSchema.version,
+    data,
+  };
 
   eventsBus.emit(event);
   throwOrLogInvalidEvent(event);

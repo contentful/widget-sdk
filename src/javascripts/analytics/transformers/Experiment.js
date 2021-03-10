@@ -1,12 +1,12 @@
 import { omitBy } from 'lodash';
 import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 export default function (action) {
   return (_, data) => {
     const experiment = addUserOrgSpace((_, data) => {
       return {
-        schema: getSchema('experiment').path,
+        schema: getSnowplowSchema('experiment').path,
         data: omitBy(
           {
             experiment_id: data.experiment.id,

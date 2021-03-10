@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { get as getAtPath, snakeCase } from 'lodash';
-import { getSchema } from './Schemas';
+import { getSnowplowSchema } from './SchemasSnowplow';
 
 import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
@@ -8,7 +9,7 @@ import SpaceCreate from './transformers/SpaceCreate';
 import SpaceWizardTransformer from './transformers/SpaceWizard';
 import createExperimentTransformer from './transformers/Experiment';
 import PageViewTransform from './transformers/PageView';
-import { ClipboardCopyTransform, BoilerplateTransform } from './transformers/ApiKey';
+import { BoilerplateTransform, ClipboardCopyTransform } from './transformers/ApiKey';
 import AppOpen from './transformers/AppOpen';
 import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
@@ -40,34 +41,45 @@ import EnvironmentAliases from './transformers/EnvironmentAliases';
 import SpacePurchaseTransformer from './transformers/SpacePurchase';
 import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
+import { getSegmentSchema } from './SchemasSegment';
+
+type Payload = Record<string, unknown>;
+type EventPayload = {
+  schema?: string;
+  data: Record<string, unknown>;
+  contexts?: Record<string, unknown>;
+};
+type Transformer = Function | { (event: string, data: Payload): EventPayload };
+
+type EventMeta = {
+  transformer: Transformer;
+  segmentSchema: string;
+  snowplowSchema?: string;
+};
 
 /**
- * @ngdoc module
- * @name analytics/transform
- * @description
- * Registers each analytics event which should be sent to Snowplow with a
+ * Registers each analytics event which should be sent to Snowplow/Segment with a
  * corresponding schema and transformer name. Exports functions to obtain the
  * schema and transformer for a given event.
  *
  * See the documentation of `registerEvent()` on how to register an event.
  */
+const _events: Record<string, EventMeta> = {};
 
-const _events = {};
-
-registerEvent('element:click', 'element_click', ElementClickTransform);
-registerEvent('global:state_changed', 'page_view', PageViewTransform);
+registerSnowplowEvent('element:click', 'element_click', ElementClickTransform);
+registerSnowplowEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerGenericEvent('global:space_changed');
 registerGenericEvent('global:space_left');
 
-registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
-registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
-registerEvent('extension:render', 'generic', ExtensionRenderTransformer);
-registerEvent('extension:activate', 'extension_activate', ExtensionActivationTransformer);
-registerEvent('extension:set_value', 'extension_set_value', ExtensionSetValueTransformer);
+registerSnowplowEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
+registerSnowplowEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
+registerSnowplowEvent('extension:render', 'generic', ExtensionRenderTransformer);
+registerSnowplowEvent('extension:activate', 'extension_activate', ExtensionActivationTransformer);
+registerSnowplowEvent('extension:set_value', 'extension_set_value', ExtensionSetValueTransformer);
 
-registerEvent('apps:lifecycle_event', 'app_lifecycle_event', AppLifecycleEventTransformer);
-registerEvent(
+registerSnowplowEvent('apps:lifecycle_event', 'app_lifecycle_event', AppLifecycleEventTransformer);
+registerSnowplowEvent(
   'apps:uninstallation_reason',
   'app_uninstallation_reason',
   AppUninstallationReasonTransformer
@@ -169,8 +181,8 @@ registerSnapshotEvent('versioning:snapshot_closed');
 registerSnapshotEvent('versioning:snapshot_restored');
 registerSnapshotEvent('versioning:published_restored');
 
-registerEvent('api_key:clipboard_copy', 'api_key', ClipboardCopyTransform);
-registerEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform);
+registerSnowplowEvent('api_key:clipboard_copy', 'api_key', ClipboardCopyTransform);
+registerSnowplowEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform);
 
 registerActionEvent('experiment:start', createExperimentTransformer('start'));
 registerActionEvent('experiment:interaction', createExperimentTransformer('interaction'));
@@ -224,11 +236,11 @@ registerGenericEvent('targeted_cta_impression:app_trial_tag');
 registerGenericEvent('targeted_cta_impression:delete_app_trial_space');
 registerGenericEvent('targeted_cta_impression:purchase_app_via_trial');
 
-registerEvent('global:app_loaded', 'app_open', AppOpen);
+registerSnowplowEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');
 
-registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
-registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
+registerSnowplowEvent('invite_user:learn', 'generic', InviteUserExperiment);
+registerSnowplowEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
 registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');
@@ -254,43 +266,55 @@ registerGenericEvent('content_preview:deleted');
 
 registerGenericEvent('launch_app:link_clicked');
 
-registerEvent(
+registerSnowplowEvent(
   'release:dialog_box_open',
   'release_dialog_box',
   ReleasesTransformer.releaseDialogOpen
 );
-registerEvent(
+registerSnowplowEvent(
   'release:dialog_box_close',
   'release_dialog_box',
   ReleasesTransformer.releaseDialogClose
 );
-registerEvent(
+registerSnowplowEvent(
   'release:entity_added',
   'release_entity_added',
   ReleasesTransformer.releaseEntityAdded
 );
-registerEvent(
+registerSnowplowEvent(
   'release:entity_removed',
   'release_entity_removed',
   ReleasesTransformer.releaseEntityRemoved
 );
-registerEvent('release:created', 'release_created', ReleasesTransformer.releaseCreated);
-registerEvent('release:trashed', 'release_trashed', ReleasesTransformer.releaseTrashed);
-registerEvent('release:validated', 'release_validated', ReleasesTransformer.releaseValidated);
-registerEvent('release:published', 'release_published', ReleasesTransformer.releasePublished);
-registerEvent('release:unpublished', 'release_unpublished', ReleasesTransformer.releaseUnpublished);
-registerEvent(
+registerSnowplowEvent('release:created', 'release_created', ReleasesTransformer.releaseCreated);
+registerSnowplowEvent('release:trashed', 'release_trashed', ReleasesTransformer.releaseTrashed);
+registerSnowplowEvent(
+  'release:validated',
+  'release_validated',
+  ReleasesTransformer.releaseValidated
+);
+registerSnowplowEvent(
+  'release:published',
+  'release_published',
+  ReleasesTransformer.releasePublished
+);
+registerSnowplowEvent(
+  'release:unpublished',
+  'release_unpublished',
+  ReleasesTransformer.releaseUnpublished
+);
+registerSnowplowEvent(
   'release:schedule_created',
   'release_schedule_created',
   ReleasesTransformer.releaseScheduleCreated
 );
-registerEvent(
+registerSnowplowEvent(
   'release:schedule_canceled',
   'release_schedule_canceled',
   ReleasesTransformer.releaseScheduleCanceled
 );
 
-registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
+registerSnowplowEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {
     data: {
       personal_access_token_id: data.patId,
@@ -300,7 +324,7 @@ registerEvent('personal_access_token:action', 'personal_access_token', (_, data)
   };
 });
 
-registerEvent('feedback:give', 'generic', (_, data) => {
+registerSnowplowEvent('feedback:give', 'generic', (_, data) => {
   return {
     data: {
       scope: 'feedback',
@@ -316,48 +340,56 @@ registerEvent('feedback:give', 'generic', (_, data) => {
 const SearchAndViewsWithSequence = (event, data) =>
   SearchAndViews(event, withSequenceContext(data));
 
-registerEvent('search:search_performed', 'search_perform', SearchAndViewsWithSequence);
-registerEvent('search:view_created', 'view_create', SearchAndViews);
-registerEvent('search:view_edited', 'view_edit', SearchAndViews);
-registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
-registerEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
-registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
+registerSnowplowEvent('search:search_performed', 'search_perform', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:view_created', 'view_create', SearchAndViews);
+registerSnowplowEvent('search:view_edited', 'view_edit', SearchAndViews);
+registerSnowplowEvent('search:view_deleted', 'view_delete', SearchAndViews);
+registerSnowplowEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
-registerEvent('search:entry_clicked', 'ui_click', SearchAndViewsWithSequence);
-registerEvent('search:filter_added', 'ui_click', SearchAndViewsWithSequence);
-registerEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
-registerEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:entry_clicked', 'ui_click', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:filter_added', 'ui_click', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
+registerSnowplowEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
 
-registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
+registerSnowplowEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 registerGenericEvent('entry_editor:disabled_fields_visibility_toggled');
 registerGenericEvent('entry_editor:created_with_same_ct');
 
-registerEvent(
+registerSnowplowEvent(
   'entity_editor:edit_conflict',
   'entity_editor_edit_conflict',
   EntityEditorConflictTransform
 );
 
-registerEvent(
+registerSegmentEvent(
   'reference_editor_action:create',
   'feature_reference_action',
   ReferenceEditorTransform
 );
-registerEvent('reference_editor_action:edit', 'feature_reference_action', ReferenceEditorTransform);
-registerEvent(
+registerSegmentEvent(
+  'reference_editor_action:edit',
+  'feature_reference_action',
+  ReferenceEditorTransform
+);
+registerSegmentEvent(
   'reference_editor_action:delete',
   'feature_reference_action',
   ReferenceEditorTransform
 );
-registerEvent('reference_editor_action:link', 'feature_reference_action', ReferenceEditorTransform);
+registerSegmentEvent(
+  'reference_editor_action:link',
+  'feature_reference_action',
+  ReferenceEditorTransform
+);
 
-registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
+registerSnowplowEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
 
-registerEvent('text_editor:action', 'feature_text_editor', FeatureTextEditorTransform);
+registerSnowplowEvent('text_editor:action', 'feature_text_editor', FeatureTextEditorTransform);
 
-registerEvent('global:dialog', 'dialog', DialogTransformer);
-registerEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
-registerEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
+registerSnowplowEvent('global:dialog', 'dialog', DialogTransformer);
+registerSnowplowEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
+registerSnowplowEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
 
 registerGenericEvent('telemetry:measurement');
 
@@ -403,13 +435,24 @@ registerGenericEvent('space_usage_summary:help_link_clicked');
 registerGenericEvent('space_usage_summary:export');
 
 /**
+ * @deprecated We're migrating away from Snowplow to Segment
+ */
+function registerSnowplowEvent(event: string, schema: string, transformer: Transformer) {
+  registerEvent(event, { snowplow: schema, segment: event }, transformer);
+}
+
+function registerSegmentEvent(event: string, schema: string, transformer: Transformer) {
+  registerEvent(event, { segment: schema }, transformer);
+}
+
+/**
  * Registers an event to be tracked by snowplow.
- * @param {string} event
+ * @param event
  *   Name passed to `analytics.track()`
- * @param {string} schema
- *   Name of the schema to put the data into. Must be registered in
- *   `analytics/snowplow/Schemas`.
- * @param {function} transformer
+ * @param schema
+ *   Name of the schemas to put the data into. Snowplow schema must be registered in `analytics/snowplow/Schemas`.
+ *   Omitting the `snowplow` param stops the event tracking to Snowplow.
+ * @param transformer
  *   A function to transform the parameters passed to `analytics.track()` to the
  *   data send to snowplow.
  *   Accepts two arguments, the event name and the tracking data. The tracking
@@ -417,56 +460,61 @@ registerGenericEvent('space_usage_summary:export');
  *   payload defined in `analytics/Analytics`.
  *   Returns an object with a `data` and optional `context` property.
  */
-function registerEvent(event, schema, transformer) {
+function registerEvent(
+  event: string,
+  schema: { segment: string; snowplow?: string },
+  transformer: Transformer
+) {
   _events[event] = {
-    schema,
+    segmentSchema: schema.segment,
+    snowplowSchema: schema.snowplow,
     transformer,
   };
 }
 
 // Common register patterns
 function registerGenericEvent(event) {
-  registerEvent(event, 'generic', Generic);
+  registerSnowplowEvent(event, 'generic', Generic);
 }
 
 function registerActionEvent(event, transformer) {
-  registerEvent(event, snakeCase(event), transformer);
+  registerSnowplowEvent(event, snakeCase(event), transformer);
 }
 
 function registerBulkEditorEvent(event) {
-  registerEvent(event, 'feature_bulk_editor', BulkEditor);
+  registerSnowplowEvent(event, 'feature_bulk_editor', BulkEditor);
 }
 
 function registerSlideInEditorEvent(event) {
-  registerEvent(event, 'slide_in_editor', SlideInEditor);
+  registerSnowplowEvent(event, 'slide_in_editor', SlideInEditor);
 }
 
 function registerEditorLoadEvent(event) {
-  registerEvent(event, 'editor_load', EditorLoad);
+  registerSnowplowEvent(event, 'editor_load', EditorLoad);
 }
 
 function registerTranslationSidebarEvent(event) {
-  registerEvent(event, 'translation_sidebar', TranslationSidebar);
+  registerSnowplowEvent(event, 'translation_sidebar', TranslationSidebar);
 }
 
 function registerSnapshotEvent(event) {
-  registerEvent(event, 'feature_snapshot', Snapshot);
+  registerSnowplowEvent(event, 'feature_snapshot', Snapshot);
 }
 
 function registerSpaceWizardEvent(event) {
-  registerEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
+  registerSnowplowEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
 }
 
 function registerSpacePurchaseEvent(event) {
-  registerEvent(event, 'space_purchase', SpacePurchaseTransformer);
+  registerSnowplowEvent(event, 'space_purchase', SpacePurchaseTransformer);
 }
 
 function registerSSOSelfConfigurationEvent(event) {
-  registerEvent(event, 'feature_sso_self_configuration', SSOSelfConfigurationTransformer);
+  registerSnowplowEvent(event, 'feature_sso_self_configuration', SSOSelfConfigurationTransformer);
 }
 
 function registerEnvironmentAliasesEvent(event) {
-  registerEvent(event, 'environment_aliases', EnvironmentAliases);
+  registerSnowplowEvent(event, 'environment_aliases', EnvironmentAliases);
 }
 
 export function eventExists(eventName) {
@@ -474,28 +522,19 @@ export function eventExists(eventName) {
 }
 
 /**
- * @ngdoc method
- * @name analytics/transform#transformEvent
- * @param {string} eventName
- * @param {object} data
- * @returns {object} transformedData
- * @description
- * Returns data transformed for Snowplow
+ * Returns data transformed for Snowplow/Segment
  */
-export function transformEvent(event, data) {
-  const transformer = getAtPath(_events, [event, 'transformer']);
+export function transformEvent(event: string, data: Payload) {
+  const transformer = _events[event].transformer;
   return transformer(event, data);
 }
 
-/**
- * @ngdoc method
- * @name analytics/transform#getSchemaForEvent
- * @param {string} eventName
- * @returns {object} schema
- * @description
- * Returns schema for provided event
- */
-export function getSchemaForEvent(eventName) {
-  const schemaName = getAtPath(_events, [eventName, 'schema']);
-  return getSchema(schemaName);
+export function getSnowplowSchemaForEvent(event: string) {
+  const schemaName = _events[event].snowplowSchema;
+  return schemaName && getSnowplowSchema(schemaName);
+}
+
+export function getSegmentSchemaForEvent(event: string) {
+  const schemaName = _events[event].segmentSchema;
+  return getSegmentSchema(schemaName) || { name: schemaName, version: '1' };
 }

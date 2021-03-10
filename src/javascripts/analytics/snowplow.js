@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config';
-import { getSchemaForEvent } from 'analytics/transform';
+import { getSnowplowSchemaForEvent } from 'analytics/transform';
 import * as LazyLoader from 'utils/LazyLoader';
 import { window } from 'core/services/window';
 
@@ -102,7 +102,7 @@ export function track(eventName, rawData) {
  */
 
 export function buildUnstructEventData(eventName, data) {
-  const schema = getSchemaForEvent(eventName);
+  const schema = getSnowplowSchemaForEvent(eventName);
 
   if (schema) {
     return [

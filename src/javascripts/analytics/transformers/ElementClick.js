@@ -1,6 +1,6 @@
 import { flow, mapKeys, snakeCase, isEmpty, omit, omitBy, find } from 'lodash';
 import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 const toSnakeCase = (data) => mapKeys(data, (_v, k) => snakeCase(k));
 
@@ -23,7 +23,7 @@ export default function (_, eventData) {
   const rtEventData = toSnakeCase(omit(eventData.richTextEditor, ['fields', 'locales']));
   const createRichTextContextEvent = (field, locales) =>
     addUserOrgSpace(() => ({
-      schema: getSchema('feature_text_editor').path,
+      schema: getSnowplowSchema('feature_text_editor').path,
       data: {
         editor_name: 'RichText',
         field_locale: null,
@@ -56,7 +56,7 @@ export default function (_, eventData) {
         } = data;
 
         return {
-          schema: getSchema('content_preview').path,
+          schema: getSnowplowSchema('content_preview').path,
           data: toDataObject({ previewName, previewId, contentTypeName, contentTypeId }),
         };
       })(_, eventData)

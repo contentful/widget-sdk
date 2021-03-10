@@ -1,5 +1,5 @@
 import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 /**
  * @ngdoc service
@@ -11,7 +11,7 @@ export default addUserOrgSpace(getJobsCancelData);
 
 function getJobsCancelData(_eventName, data) {
   return {
-    schema: getSchema('jobs_cancel').path,
+    schema: getSnowplowSchema('jobs_cancel').path,
     data: {
       job_id: data.job_id,
       action: data.action,

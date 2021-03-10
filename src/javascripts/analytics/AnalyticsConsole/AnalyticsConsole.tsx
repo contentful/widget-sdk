@@ -1,96 +1,23 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { css } from 'emotion';
 import {
   Button,
+  Card,
   CheckboxField,
   EditorToolbar,
   EditorToolbarButton,
-  Card,
-  TextLink,
+  Option,
+  Select,
   TextField,
+  TextLink,
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 import type { Observable } from 'kefir';
 import pluralize from 'pluralize';
-
-const styles = {
-  card: css({
-    position: 'fixed',
-    width: '600px',
-    right: tokens.spacingM,
-    bottom: tokens.spacingM,
-  }),
-  toolbar: css({
-    justifyContent: 'space-between',
-    '& > div': {
-      display: 'flex',
-      alignItems: 'center',
-      '& > div+div': {
-        padding: `0 ${tokens.spacingS}`,
-      },
-    },
-  }),
-  content: css({
-    height: '450px',
-    overflowY: 'scroll',
-    padding: '0 15px',
-    margin: '5px 0',
-  }),
-  info: css({
-    borderTop: '1px dotted gray',
-    marginTop: '-1px',
-    padding: '15px 5px',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    '& > button': {
-      fontStyle: 'normal',
-    },
-  }),
-  filter: css({
-    display: 'flex',
-    alignItems: 'baseline',
-    padding: '5px',
-    borderTop: '1px solid black',
-  }),
-  event: css({
-    borderTop: '1px dotted gray',
-    marginTop: '-1px',
-    padding: '15px 5px',
-    '& span': {
-      color: 'red',
-    },
-  }),
-  data: css({
-    fontSize: '0.9em',
-    whiteSpace: 'pre-wrap',
-    wordWrap: 'break-word',
-  }),
-  search: css({
-    '& button': {
-      pointerEvents: 'none',
-    },
-  }),
-};
-
-interface Event {
-  time: string;
-  name: string;
-  isValid: boolean;
-  data?: object;
-  snowplow: {
-    name: string;
-    context?: object;
-    data?: object;
-    version: string;
-  };
-}
-
-interface FilteredEvent extends Event {
-  index: number;
-}
-
-type SessionData = {};
+import { styles } from './styles';
+import { Event, Service, SessionData } from './types';
+import { getFilteredEvents } from './utils';
+import { useScroll } from './useScroll';
+import { useCachedState } from './useCachedState';
 
 interface AnalyticsConsoleProps {
   isVisible: boolean;
@@ -99,78 +26,12 @@ interface AnalyticsConsoleProps {
   events$: Observable<Event[], unknown>;
 }
 
-const getFilteredEvents = (
-  clearedEventsIndex: number,
-  showSnowplowDebugInfo: boolean,
-  filterText: string,
-  events: Event[]
-): { hiddenEvents: number; filteredEvents: FilteredEvent[] } => {
-  const isRelevantEvent = (event, index) => {
-    if (index <= clearedEventsIndex) return false;
-    if (showSnowplowDebugInfo && !event.snowplow) return false;
-    return true;
-  };
-
-  const isSearchResultEvent = (event) => {
-    if (!filterText) return true;
-    const isMatch = (text: string) => text.includes(filterText);
-    return isMatch(event.name) || (event.snowplow && isMatch(event.snowplow.name));
-  };
-
-  const relevantEvents = events
-    .map((event, index) => ({ ...event, index }))
-    .filter(isRelevantEvent);
-  const filteredEvents: FilteredEvent[] = relevantEvents.filter(isSearchResultEvent);
-  const relevantEventsCount = relevantEvents.length;
-  const hiddenEvents = relevantEventsCount - filteredEvents.length;
-  return { hiddenEvents, filteredEvents };
-};
-
-const useScroll = <T extends HTMLElement>(): [
-  React.MutableRefObject<T | null>,
-  { scrollUp: Function; scrollDown: Function }
-] => {
-  const ref = React.useRef<T | null>(null);
-
-  const actions = React.useMemo(() => {
-    const scroll = (top = 0) => {
-      ref.current?.scroll({
-        top,
-        left: 0,
-        behavior: 'smooth',
-      });
-    };
-    const scrollUp = () => scroll();
-    const scrollDown = () => scroll(ref.current?.scrollHeight);
-    return { scrollUp, scrollDown };
-  }, []);
-
-  return [ref, actions];
-};
-
 const PrettyData = ({ data }: { data?: object }) => {
   const prettyData = (data?: object): string => (data ? JSON.stringify(data, null, 2) : 'no data');
   return <pre className={styles.data}>{prettyData(data)}</pre>;
 };
 
-// Persist state between recreation of dom element
-const cache = {};
-const useCachedState = <T extends unknown>(
-  key: string,
-  defaultValue: T
-): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const [state, setState] = React.useState<T>(cache[key] ?? defaultValue);
-  const setCachedState = React.useCallback(
-    (newValue: React.SetStateAction<T>) => {
-      cache[key] = newValue;
-      setState(newValue);
-    },
-    [key]
-  );
-  return [state, setCachedState];
-};
-
-export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
+const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
   isVisible,
   setIsVisible,
   sessionData$,
@@ -182,9 +43,9 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
 
   const [isCollapsed, setIsCollapsed] = useCachedState('isCollapsed', false);
   const [showSessionData, setShowSessionData] = useCachedState('showSessionData', false);
-  const [showSnowplowDebugInfo, setShowSnowplowDebugInfo] = useCachedState(
-    'showSnowplowDebugInfo',
-    false
+  const [showServiceDebugInfo, setShowServiceDebugInfo] = useCachedState<Service | ''>(
+    'showServiceDebugInfo',
+    ''
   );
   const [showData, setShowData] = useCachedState('showData', false);
   const [events, setEvents] = useCachedState<Event[]>('events', []);
@@ -220,17 +81,17 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
   if (!isVisible) return null;
 
   const toggleSessionData = () => {
-    setShowSnowplowDebugInfo(false);
+    setShowServiceDebugInfo('');
     const newShowSessionData = !showSessionData;
     setShowSessionData(newShowSessionData);
     showSessionData ? scrollUp() : scrollDown();
   };
 
-  const toggleSnowplowDebugInfo = () => {
+  const toggleServiceDebugInfo = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const service = e.target.value as Service | '';
     setShowSessionData(false);
-    const newShowingSnowplowDebugInfo = !showSnowplowDebugInfo;
-    setShowSnowplowDebugInfo(newShowingSnowplowDebugInfo);
-    if (newShowingSnowplowDebugInfo) {
+    setShowServiceDebugInfo(service);
+    if (service) {
       scrollDown();
     }
   };
@@ -240,7 +101,7 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
 
   const { hiddenEvents, filteredEvents } = getFilteredEvents(
     clearedEventsIndex,
-    showSnowplowDebugInfo,
+    showServiceDebugInfo,
     filterText,
     events
   );
@@ -259,22 +120,15 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
           <TextLink onClick={clearSearch}>[clear search]</TextLink>
         </div>
       )}
-      {showSnowplowDebugInfo
-        ? filteredEvents.map(({ index, time, snowplow }) => (
-            <div key={index} className={styles.event}>
-              <div>
-                #{index + 1} - {time}{' '}
-                <strong>
-                  {snowplow.name}, v{snowplow.version}
-                </strong>
-              </div>
-              {showData && (
-                <React.Fragment>
-                  <PrettyData data={snowplow.data} />
-                  {snowplow.context && <PrettyData data={snowplow.context} />}
-                </React.Fragment>
-              )}
-            </div>
+      {showServiceDebugInfo
+        ? filteredEvents.map(({ index, time, ...serviceEvents }) => (
+            <ServiceEvent
+              key={index}
+              index={index}
+              time={time}
+              serviceEvent={serviceEvents[showServiceDebugInfo]}
+              showData={showData}
+            />
           ))
         : filteredEvents.map(({ index, time, name, isValid, data }) => (
             <div key={index} className={styles.event}>
@@ -302,18 +156,20 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
             onClick={toggleCollapsed}
           />
         </div>
-        <Button disabled={isCollapsed} buttonType="muted" size="small" onClick={toggleSessionData}>
+        <Button disabled={isCollapsed} buttonType="muted" size="medium" onClick={toggleSessionData}>
           Mode: {showSessionData ? 'Session data' : 'Events'}
         </Button>
         <div>
-          <CheckboxField
-            disabled={extrasDisabled}
+          <Select
             id="show-transformed"
-            labelText="Show transformed"
             name="showTransformed"
-            checked={showSnowplowDebugInfo}
-            onChange={toggleSnowplowDebugInfo}
-          />
+            width="auto"
+            onChange={toggleServiceDebugInfo}>
+            <Option value="">Untransformed</Option>
+            <Option value="snowplow">Snowplow</Option>
+            <Option value="segment">Segment</Option>
+          </Select>
+
           <CheckboxField
             disabled={extrasDisabled}
             id="show-data"
@@ -361,6 +217,35 @@ export const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = 
     </Card>
   );
 };
+
+function ServiceEvent({
+  index,
+  time,
+  serviceEvent,
+  showData,
+}: {
+  index: number;
+  time: string;
+  serviceEvent: Event['snowplow'] | Event['segment'];
+  showData: boolean;
+}) {
+  return (
+    <div className={styles.event}>
+      <div>
+        #{index + 1} - {time}{' '}
+        <strong>
+          {serviceEvent.name}, v{serviceEvent.version}
+        </strong>
+      </div>
+      {showData && (
+        <React.Fragment>
+          <PrettyData data={serviceEvent.data} />
+          {serviceEvent.context && <PrettyData data={serviceEvent.context} />}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
 
 const WRAPPER_CLASS_NAME = 'analytics-console-wrapper';
 const replaceOrAppend = (element: HTMLElement) => {

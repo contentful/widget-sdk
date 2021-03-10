@@ -5,6 +5,7 @@ import * as logger from 'services/logger';
 import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
+import { getSegmentSchemaForEvent } from './transform';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -174,7 +175,9 @@ export default {
     // https://developers.intercom.com/docs/working-with-events
     sendOnboardingDeploymentEvent(event, data);
 
-    bufferedTrack(event, data, { integrations: TRACK_INTEGRATIONS });
+    const schema = getSegmentSchemaForEvent(event);
+
+    bufferedTrack(schema.name, data, { integrations: TRACK_INTEGRATIONS });
   },
   /**
    * Sets current page.

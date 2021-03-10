@@ -1,13 +1,14 @@
 import { get as getAtPath } from 'lodash';
 
+type Schema = {
+  name: string;
+  version: string;
+  path: string;
+};
 /**
- * @ngdoc service
- * @name analytics/snowplow/Schemas
- * @description
  * Maps analytics event names and schema names to Snowplow schema paths
  */
-
-const _schemas = {};
+const _schemas: Record<string, Schema> = {};
 
 registerSchema({
   name: 'generic',
@@ -345,23 +346,20 @@ registerSchema({
   version: '2-0-0',
 });
 
-function registerSchema(schema) {
-  _schemas[schema.name] = schema;
-  _schemas[schema.name].path = buildPath(schema);
+function registerSchema(schema: Pick<Schema, 'name' | 'version'>) {
+  _schemas[schema.name] = {
+    ...schema,
+    path: buildPath(schema),
+  };
 }
 
-function buildPath(schema) {
+function buildPath(schema: Pick<Schema, 'name' | 'version'>) {
   return `iglu:com.contentful/${schema.name}/jsonschema/${schema.version}`;
 }
 
 /**
- * @ngdoc method
- * @name analytics/snowplow/Schemas#getSchema
- * @param {string} schemaName
- * @returns {object} schema
- * @description
  * Returns schema for the provided schema name
  */
-export function getSchema(schemaName) {
+export function getSnowplowSchema(schemaName: string) {
   return getAtPath(_schemas, schemaName);
 }

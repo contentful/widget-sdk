@@ -1,5 +1,5 @@
 import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 /**
  * @ngdoc service
@@ -11,7 +11,7 @@ export default addUserOrgSpace(getDialogData);
 
 function getDialogData(_eventName, data) {
   return {
-    schema: getSchema('dialog').path,
+    schema: getSnowplowSchema('dialog').path,
     data: {
       name: data.name,
       purpose: data.purpose,

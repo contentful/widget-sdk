@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { isUndefined, omitBy } from 'lodash';
 
 /**
@@ -12,7 +12,7 @@ export default function (_eventName, data) {
     data: {},
     contexts: [
       {
-        schema: getSchema('app').path,
+        schema: getSnowplowSchema('app').path,
         data: omitBy(
           {
             action: 'open',

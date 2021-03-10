@@ -1,4 +1,4 @@
-import { transformEvent, getSchemaForEvent } from './transform';
+import { transformEvent, getSnowplowSchemaForEvent } from './transform';
 
 jest.mock('./transformers/Generic', () => () => ({ foo: 'bar' }));
 
@@ -8,7 +8,7 @@ describe('Events transformation', () => {
     expect(transformed).toEqual({ foo: 'bar' });
   });
 
-  it('#getSchemaForEvent()', function () {
-    expect(getSchemaForEvent('learn:language_selected').name).toBe('generic');
+  it('#getSnowplowSchemaForEvent()', function () {
+    expect(getSnowplowSchemaForEvent('learn:language_selected').name).toBe('generic');
   });
 });

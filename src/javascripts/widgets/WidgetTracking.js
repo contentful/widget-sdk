@@ -1,5 +1,5 @@
 import { get, identity } from 'lodash';
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { makeEventFromWidget } from './TrackExtensionRender';
 import { WidgetLocation, isCustomWidget } from '@contentful/widget-renderer';
 
@@ -42,13 +42,13 @@ function getExtensionTrackingContexts(
 
 function makeExtensionEvent(location, widget, environmentId) {
   return {
-    schema: getSchema('extension_render').path,
+    schema: getSnowplowSchema('extension_render').path,
     data: makeEventFromWidget(location, widget, environmentId),
   };
 }
 
 function getSidebarTrackingContext({ fieldControls, sidebar }) {
-  const schema = getSchema('sidebar_render').path;
+  const schema = getSnowplowSchema('sidebar_render').path;
 
   const legacySidebarExtensions = getExtensions(fieldControls, ['sidebar']);
   const has_legacy_extensions = legacySidebarExtensions.length > 0;

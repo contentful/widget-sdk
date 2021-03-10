@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/Schemas';
+import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { addUserOrgSpace, omitMetadata, snakeCaseKeys } from './Decorators';
 
 const MAX_CSV_LENGTH = 8192; // As "maxLength" defined in the Snowplow schema.
@@ -11,7 +11,7 @@ const MAX_CSV_LENGTH = 8192; // As "maxLength" defined in the Snowplow schema.
 export default addUserOrgSpace(function (_eventName, data) {
   const { localChangesPaths, remoteChangesPaths, precomputed, ...otherData } = omitMetadata(data);
   return {
-    schema: getSchema('entity_editor_edit_conflict').path,
+    schema: getSnowplowSchema('entity_editor_edit_conflict').path,
     data: {
       ...snakeCaseKeys(otherData),
       local_changes_paths: csvOrNull(localChangesPaths),

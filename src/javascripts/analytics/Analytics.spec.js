@@ -21,7 +21,7 @@ jest.mock('analytics/snowplow', () => {
   );
 });
 
-jest.mock('analytics/analyticsConsole', () => {
+jest.mock('analytics/analyticsConsoleController', () => {
   return {
     add: jest.fn(),
     setSessionData: jest.fn(),
