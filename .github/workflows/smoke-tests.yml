@@ -12,15 +12,19 @@ jobs:
       matrix:
         include:
           - domain: 'flinkly.com'
-            password: ${{ secrets.SMOKE_TEST_USER_PASSWORD_STAGING }}
+            # You may expect ${{ secrets.SMOKE_TEST_USER_PASSWORD_STAGING }} to work here,
+            # but it seems not to. I guess the secrets (and other variable) setup doesn't
+            # happen when setting up the test strategy, so it can't be used here and instead
+            # we need to more or less indirectly reference the secret name.
+            passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_STAGING'
           - domain: 'contentful.com'
-            password: ${{ secrets.SMOKE_TEST_USER_PASSWORD_PRODUCTION }}
+            passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_PRODUCTION'
 
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         # We do this, rather than simply `npm ci`, to prevent needing to install all app
-        # dependencies when we only need two.
+        # dependencies when we only need a handful.
         run: |
           rm package.json package-lock.json
           npm install cypress typescript
@@ -30,7 +34,7 @@ jobs:
         uses: cypress-io/github-action@v2
         env:
           SMOKE_TEST_DOMAIN: ${{ matrix.domain }}
-          SMOKE_TEST_USER_PASSWORD: ${{ matrix.password }}
+          SMOKE_TEST_USER_PASSWORD: ${{ secrets[matrix.passwordSecretName] }}
         with:
           install: false
           browser: chrome
