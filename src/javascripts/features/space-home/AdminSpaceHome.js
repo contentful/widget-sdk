@@ -46,12 +46,11 @@ export const AdminSpaceHome = ({
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
-      <ContentfulAppsCTA />
-      <ComposeAndLaunchCTA />
-
       <WidgetContainer.Row>
         <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
+
+      <ComposeAndLaunchCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
@@ -67,6 +66,8 @@ export const AdminSpaceHome = ({
           />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

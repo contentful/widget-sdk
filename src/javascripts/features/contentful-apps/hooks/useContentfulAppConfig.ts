@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { getOrgFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getAppsRepo } from 'features/apps-core';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { canStartAppTrial, createAppTrialRepo, isActiveAppTrial } from 'features/trials';
+import { canStartAppTrial } from 'features/trials';
 
 /**
  * Add new app config here and use it like
@@ -37,7 +36,7 @@ export const fetchContentfulAppsConfig = async ({
   spaceId,
   environmentId,
 }: UseContentfulAppsConfig): Promise<AppState> => {
-  const [isPurchased, isEnabled, isInstalled, isTrialAvailable, isTrialActive] = await Promise.all(
+  const [isPurchased, isEnabled, isInstalled, isTrialAvailable] = await Promise.all(
     [
       getOrgFeature(organizationId, APPS_CONFIG[appId].catalogFlag, false),
       getVariation(APPS_CONFIG[appId].featureFlag, {
@@ -46,11 +45,7 @@ export const fetchContentfulAppsConfig = async ({
         environmentId,
       } as any),
       checkInstalledApp(appId),
-      // FIXME: Drop this once Trial info moves away from product_catalog_features
       canStartAppTrial(organizationId as string),
-      createAppTrialRepo(createOrganizationEndpoint(organizationId)).getTrial(
-        APPS_CONFIG[appId].catalogFlag
-      ),
     ].map(fallBackClose)
   );
 
@@ -59,16 +54,13 @@ export const fetchContentfulAppsConfig = async ({
     isEnabled,
     isInstalled,
     isTrialAvailable,
-    isTrialActive: isActiveAppTrial(isTrialActive),
   };
 };
-
 export interface AppState {
   isInstalled?: boolean;
   isEnabled?: boolean;
   isPurchased?: boolean;
   isTrialAvailable?: boolean;
-  isTrialActive?: boolean;
 }
 
 export interface UseContentfulAppsConfig {
