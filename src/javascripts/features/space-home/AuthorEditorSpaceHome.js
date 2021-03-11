@@ -34,6 +34,7 @@ export const AuthorEditorSpaceHome = ({
         <WalkthroughWidget spaceName={spaceName} setWalkthroughState={setWalkthroughState} />
       </WidgetContainer.Row>
 
+      <ContentfulAppsCTA />
       <ComposeAndLaunchCTA />
 
       {/* Placeholder to apply the top margin.
@@ -45,8 +46,6 @@ export const AuthorEditorSpaceHome = ({
       <WidgetContainer.Row>
         <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
       </WidgetContainer.Row>
-
-      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <ConceptVideoWidget />

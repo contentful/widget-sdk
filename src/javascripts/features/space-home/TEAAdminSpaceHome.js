@@ -42,6 +42,9 @@ export const TEAAdminSpaceHome = ({
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
+      <ComposeAndLaunchCTA />
+      <ContentfulAppsCTA />
+
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <UpgradePricing />
@@ -64,10 +67,6 @@ export const TEAAdminSpaceHome = ({
           />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
-
-      <ComposeAndLaunchCTA />
-
-      <ContentfulAppsCTA />
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

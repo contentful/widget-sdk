@@ -25,7 +25,7 @@ export const canStartAppTrial = async (organizationId: string) => {
       environmentId: undefined,
     }),
     getBasePlan(orgEndpoint),
-    Repo.getTrial(organizationId, 'compose_app'),
+    Repo.getTrial(organizationId),
   ]);
 
   if (!featureFlag || isEnterprisePlan(basePlan)) {

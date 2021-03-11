@@ -7,17 +7,20 @@ import { AppTrial, AppTrialFeature } from '../types/AppTrial';
 
 const headers = getAlphaHeader(COMPOSE_LAUNCH_TRIAL);
 
-export const getTrial = memoize(async (orgId, featureId) => {
-  const endpoint = createOrganizationEndpoint(orgId);
-  const data = await endpoint<CollectionProp<AppTrialFeature>>({
-    method: 'GET',
-    path: '/product_catalog_features',
-    query: {
-      'sys.featureId[]': featureId,
-    },
+const getFeatureTrial = (featureId) =>
+  memoize(async (orgId) => {
+    const endpoint = createOrganizationEndpoint(orgId);
+    const data = await endpoint<CollectionProp<AppTrialFeature>>({
+      method: 'GET',
+      path: '/product_catalog_features',
+      query: {
+        'sys.featureId[]': featureId,
+      },
+    });
+    return data.items[0];
   });
-  return data.items[0];
-});
+
+export const getTrial = getFeatureTrial('compose_app');
 
 export const createTrial = (orgId) => {
   const endpoint = createOrganizationEndpoint(orgId);

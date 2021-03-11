@@ -52,7 +52,7 @@ export const ExpiredTrialSpaceHome = () => {
       });
 
       if (isAppTrialEnabled) {
-        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId, 'compose_app');
+        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
         setAppTrialFeature(appTrial);
 
         if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {

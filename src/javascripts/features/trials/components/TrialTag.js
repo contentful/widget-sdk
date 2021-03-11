@@ -69,7 +69,7 @@ export const TrialTag = () => {
     });
 
     if (showAppTag) {
-      const appFeature = await Repo.getTrial(org.sys.id, 'compose_app');
+      const appFeature = await Repo.getTrial(org.sys.id);
       const appTrialSpaceId = await getAppTrialSpaceKey(appFeature);
       return {
         appFeature,

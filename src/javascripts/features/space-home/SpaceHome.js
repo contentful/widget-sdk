@@ -57,7 +57,7 @@ const fetchData = (
     organizationId: currentOrganizationId,
   }).then(async (enabled) => {
     if (enabled) {
-      const appTrialFeature = await AppTrialRepo.getTrial(currentOrganizationId, 'compose_app');
+      const appTrialFeature = await AppTrialRepo.getTrial(currentOrganizationId);
       return isActiveAppTrial(appTrialFeature);
     }
   });
