@@ -13,6 +13,7 @@ import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { Heading, Typography, Notification } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import * as logger from 'services/logger';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -93,6 +94,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
       });
     } catch (exception) {
       Notification.error('Oh snap! Something went wrong!');
+      logger.logError('AppTrialError', { error: exception });
       go({
         path: ['account', 'organizations', 'subscription_new'],
         params: {
