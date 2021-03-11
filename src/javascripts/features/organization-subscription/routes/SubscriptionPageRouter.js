@@ -105,7 +105,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
   const [appCatalogFeature, isTrialAvailable] = await Promise.all([
-    AppTrialRepo.getTrial(organizationId, 'compose_app'),
+    AppTrialRepo.getTrial(organizationId),
     canStartAppTrial(organizationId),
   ]);
 
