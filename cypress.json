@@ -3,7 +3,8 @@
   "integrationFolder": "./test/cypress/integration",
   "pluginsFile": "./test/cypress/plugins/index.js",
   "supportFile": "./test/cypress/support/index.js",
-  "ignoreTestFiles": "./test/**/example*.js",
+  "testFiles": "**/*.spec.ts",
+  "ignoreTestFiles": "**/example*.js",
   "baseUrl": "http://localhost:3001",
   "requestTimeout": 7500,
   "defaultCommandTimeout": 6000,
@@ -17,6 +18,6 @@
     "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
   },
   "chromeWebSecurity": false,
-  "blockHosts": ["*.launchdarkly.com"],
-  "nodeVersion": "system"
+  "blacklistHosts": ["*.launchdarkly.com"],
+  "experimentalFetchPolyfill": true
 }

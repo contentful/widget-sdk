@@ -203,7 +203,7 @@ angular
       const { default: handleGKMessage } = await import(
         /* webpackMode: "eager" */ 'account/handleGatekeeperMessage'
       );
-      const { init: initDebug } = await import(/* webpackMode: "eager" */ './InitDebug');
+      const { init: initDebug } = await import(/* webpackMode: "eager" */ './Debug');
       const { init: initAuthentication } = await import(
         /* webpackMode: "eager" */ 'Authentication'
       );

@@ -201,17 +201,17 @@ run_only_on_master_branch: &run_only_on_master_branch
 executors:
   cypress-base:
     docker:
-      - image: 'cypress/base:12.18.4'
+      - image: 'cypress/base:12.18.0'
     resource_class: large
     environment:
       NODE_ENV: test
       UI_CONFIG: localhost
   node-base:
     docker:
-      - image: cimg/node:12.18.4
+      - image: circleci/node:12.18.2
   node-browsers:
     docker:
-      - image: cimg/node:12.18.4-browsers
+      - image: circleci/node:12.18.2-browsers
 
 commands:
   with-npm-token:
