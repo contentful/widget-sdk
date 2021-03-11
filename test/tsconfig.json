@@ -24,5 +24,10 @@
     "resolveJsonModule": true
   },
   "compileOnSave": false,
-  "include": ["./**/*.ts", "../node_modules/cypress", "../node_modules/@contentful/cypress-pact"]
+  "include": [
+    "./**/*.ts",
+    "./**/*.d.ts",
+    "../node_modules/cypress",
+    "../node_modules/@contentful/cypress-pact"
+  ]
 }
