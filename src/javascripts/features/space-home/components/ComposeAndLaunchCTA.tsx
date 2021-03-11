@@ -46,14 +46,15 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
   const appsInstalled = compose.isInstalled && launch.isInstalled;
 
   const showInstallAction = appsEnabled && appsPurchased && !appsInstalled;
-  const showBuyOrTrialAction = appsEnabled && !appsPurchased;
+  const showBuyOrTrialAction =
+    !showInstallAction && (compose.isTrialActive || (appsEnabled && !appsPurchased));
 
   const PROMO_TEXT = {
     trial: {
       title: compose.isTrialAvailable
         ? 'Compose + Launch free trial'
         : 'Compose + Launch: powerful tools to deliver content faster',
-      text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start. 
+      text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start.
         ${!canManage ? 'To try Compose + Launch, contact your Contentful administrator.' : ''}
       `,
     },
