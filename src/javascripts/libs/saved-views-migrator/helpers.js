@@ -1,4 +1,4 @@
-const RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
+export const RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
 const OP_MAP = {
   '<=': '[lte]',
@@ -8,7 +8,4 @@ const OP_MAP = {
   '!=': '[ne]',
 };
 
-module.exports = {
-  RELATIVE_DATE_REGEX,
-  queryOperator: (op) => OP_MAP[op] || '',
-};
+export const queryOperator = (op) => OP_MAP[op] || '';

@@ -1,3 +1,4 @@
+import 'react-app-polyfill/stable';
 import text from '@contentful/sharejs/lib/types/text';
 import '@contentful/sharejs/lib/types/text-api';
 import json from '@contentful/sharejs/lib/types/json';
@@ -10,9 +11,6 @@ window.sharejs = {
     json,
   },
 };
-
-import '@babel/polyfill';
-import 'core-js/features/promise/finally';
 
 import angular from 'angular';
 import AngularInit from 'AngularInit';

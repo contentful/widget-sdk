@@ -140,7 +140,7 @@ peg$SyntaxError.buildMessage = function (expected, found) {
   return 'Expected ' + describeExpected(expected) + ' but ' + describeFound(found) + ' found.';
 };
 
-module.exports = function peg$parse(input, options) {
+export default function peg$parse(input, options) {
   options = options !== void 0 ? options : {};
 
   const peg$FAILED = {};
@@ -976,4 +976,4 @@ module.exports = function peg$parse(input, options) {
         : peg$computeLocation(peg$maxFailPos, peg$maxFailPos)
     );
   }
-};
+}

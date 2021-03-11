@@ -64,6 +64,31 @@ module.exports = () => {
           ],
         },
         {
+          // Transpile contentful deps which might have esnext syntax
+          test: /\.m?js$/,
+          include: /node_modules[\\/].*contentful/,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    require.resolve('@babel/preset-env'),
+                    {
+                      // Allow importing core-js in entrypoint and use browserlist to select polyfills
+                      useBuiltIns: 'entry',
+                      // Set the corejs version we are using to avoid warnings in console
+                      corejs: 3,
+                      // Exclude transforms that make all code slower
+                      exclude: ['transform-typeof-symbol'],
+                    },
+                  ],
+                ],
+              },
+            },
+          ],
+        },
+        {
           // All HTML files
           test: /\.html$/,
           issuer: [

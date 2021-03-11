@@ -1,5 +1,7 @@
-const { cloneDeep, omit, pick } = require('lodash');
-const textQueryConverter = require('./text-query-converter');
+import cloneDeep from 'lodash/cloneDeep';
+import omit from 'lodash/omit';
+import pick from 'lodash/pick';
+import { textQueryToUISearch } from './text-query-converter';
 
 const EMPTY_SEARCH = { searchText: '', searchFilters: [] };
 
@@ -12,10 +14,8 @@ const ASSET_CONTENT_TYPE = {
   ],
 };
 
-module.exports = { create };
-
 // contentTypeMap is a map of ID to bare API ContentType entities.
-function create(contentTypeMap) {
+export function create(contentTypeMap) {
   return {
     migrateUIConfigViews,
     migrateViewsFolder,
@@ -67,7 +67,7 @@ function create(contentTypeMap) {
     const contentType = getViewContentTypeOrNull(view.contentTypeId);
 
     try {
-      const search = textQueryConverter.textQueryToUISearch(contentType, searchTerm);
+      const search = textQueryToUISearch(contentType, searchTerm);
       return updateViewWithSearch(viewClone, search);
     } catch (error) {
       return handleTextQueryConverterError(error);

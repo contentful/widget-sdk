@@ -1,14 +1,9 @@
-const { get } = require('lodash');
-const { queryOperator } = require('./helpers');
-const parse = require('./legacy-search-parser');
-const converters = require('./converters');
+import get from 'lodash/get';
+import { queryOperator } from './helpers';
+import parse from './legacy-search-parser';
+import * as converters from './converters';
 
 const apiNameOrId = (field) => field.apiName || field.id;
-
-module.exports = {
-  cmaQueryBuilderForField,
-  parseTextQuery,
-};
 
 function parseTokens(textQuery) {
   try {
@@ -19,7 +14,7 @@ function parseTokens(textQuery) {
   }
 }
 
-function parseTextQuery(textQuery) {
+export function parseTextQuery(textQuery) {
   const tokens = parseTokens(textQuery);
   const filters = getFilters(tokens);
   const queryText = getQueryText(tokens);
@@ -45,7 +40,7 @@ function getQueryText(tokens) {
     .join(' ');
 }
 
-function cmaQueryBuilderForField(key, contentType) {
+export function cmaQueryBuilderForField(key, contentType) {
   const convertFn = getConverters(contentType)[key];
   if (convertFn) {
     return {

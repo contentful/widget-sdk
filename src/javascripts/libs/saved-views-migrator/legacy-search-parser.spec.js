@@ -1,4 +1,4 @@
-const parse = require('./legacy-search-parser');
+import parse from './legacy-search-parser';
 
 describe('legacySearchParser', () => {
   it('should detect a simple search', () => {

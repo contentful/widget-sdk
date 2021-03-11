@@ -1,5 +1,5 @@
-const { parseTextQuery, cmaQueryBuilderForField } = require('./query-builder');
-const { RELATIVE_DATE_REGEX } = require('./helpers');
+import { parseTextQuery, cmaQueryBuilderForField } from './query-builder';
+import { RELATIVE_DATE_REGEX } from './helpers';
 const DATE_SYS_FIELDS = ['updatedAt', 'createdAt', 'publishedAt', 'firstPublishedAt'];
 
 // Matches an API key and an optional operator, e.g. `fields.title[match]`.
@@ -14,12 +14,10 @@ const DATE_OPERATORS = {
   // '==', '=' and ':' default to ''
 };
 
-module.exports = { textQueryToUISearch };
-
 /**
  * Creates a search UI state object from a legacy text query (`searchTerm`).
  */
-function textQueryToUISearch(contentType, textQuery) {
+export function textQueryToUISearch(contentType, textQuery) {
   const { filters, queryText = '' } = parseTextQuery(textQuery);
   const result = { searchText: queryText };
 

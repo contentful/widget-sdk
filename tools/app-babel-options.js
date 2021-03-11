@@ -13,31 +13,12 @@ const isTest = process.env.NODE_ENV === 'test';
  * @returns {object}
  */
 module.exports.createBabelOptions = function createBabelOptions(options = {}) {
-  const { modules = false, ...opts } = options;
+  const { ...opts } = options;
 
   return {
     babelrc: false,
-    presets: [
-      [
-        require.resolve('@babel/preset-typescript'),
-        {
-          allExtensions: true,
-          isTSX: true,
-        },
-      ],
-      !isProd && [
-        require.resolve('@babel/preset-env'),
-        {
-          loose: false,
-          modules: modules,
-          useBuiltIns: false,
-        },
-      ],
-      require.resolve('@babel/preset-react'),
-    ].filter(Boolean),
+    presets: [[require.resolve('babel-preset-react-app'), { flow: false, typescript: true }]],
     plugins: [
-      require.resolve('@babel/plugin-proposal-class-properties'),
-      isProd && require.resolve('@babel/plugin-proposal-object-rest-spread'),
       [
         require.resolve('babel-plugin-emotion'),
         {

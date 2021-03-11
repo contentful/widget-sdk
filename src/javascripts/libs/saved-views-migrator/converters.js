@@ -1,5 +1,5 @@
-const moment = require('moment');
-const { queryOperator, RELATIVE_DATE_REGEX } = require('./helpers');
+import moment from 'moment';
+import { queryOperator, RELATIVE_DATE_REGEX } from './helpers';
 
 const DAY = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
 const EQUALITY = /^(==|=|:)$/;
@@ -20,11 +20,6 @@ const assetSpecificConverters = {
   width: (op, val) => ({ [`fields.file.details.image.width${queryOperator(op)}`]: val }),
   height: (op, val) => ({ [`fields.file.details.image.height${queryOperator(op)}`]: val }),
   size: (op, val) => ({ [`fields.file.details.size${queryOperator(op)}`]: sizeParser(val) }),
-};
-
-module.exports = {
-  Entry: { ...sharedConverters },
-  Asset: { ...sharedConverters, ...assetSpecificConverters },
 };
 
 function statusConverter(_op, val) {
@@ -87,3 +82,9 @@ function sizeParser(value) {
     return value;
   }
 }
+
+export const Entry = { ...sharedConverters };
+export const Asset = {
+  ...sharedConverters,
+  ...assetSpecificConverters,
+};

@@ -1,7 +1,7 @@
 const Enzyme = require('enzyme');
 const EnzymeAdapter = require('enzyme-adapter-react-16');
 const ReactTestingLibrary = require('@testing-library/react');
-require('@babel/polyfill');
+require('react-app-polyfill/stable');
 require('jest-extended');
 require('@testing-library/jest-dom/extend-expect');
 
