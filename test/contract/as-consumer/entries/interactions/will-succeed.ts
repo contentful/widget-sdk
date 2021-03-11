@@ -1,4 +1,4 @@
-import { InteractionObject } from '@pact-foundation/pact-web';
+import { InteractionObject } from '@pact-foundation/pact';
 import { defaultEntryId, defaultHeader, defaultSpaceId } from '../../../../cypress/util/requests';
 import { severalEntriesResponse } from '../../../../cypress/fixtures/responses/entries-several';
 import { States } from '../../../../cypress/interactions/entries';
