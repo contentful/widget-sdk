@@ -18,8 +18,7 @@ import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
 import { EVENTS } from '../utils/analyticsTracking';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { createAppTrialRepo } from '../services/AppTrialRepo';
+import * as Repo from '../services/AppTrialRepo';
 import {
   isExpiredAppTrial,
   isActiveAppTrial,
@@ -70,8 +69,7 @@ export const TrialTag = () => {
     });
 
     if (showAppTag) {
-      const orgEndpoint = createOrganizationEndpoint(org.sys.id);
-      const appFeature = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
+      const appFeature = await Repo.getTrial(org.sys.id, 'compose_app');
       const appTrialSpaceId = await getAppTrialSpaceKey(appFeature);
       return {
         appFeature,

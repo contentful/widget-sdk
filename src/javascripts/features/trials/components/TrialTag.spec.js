@@ -8,7 +8,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
 import { getAppTrialSpaceKey } from '../services/AppTrialService';
-import { createAppTrialRepo } from '../services/AppTrialRepo';
+import { getTrial } from '../services/AppTrialRepo';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -111,14 +111,9 @@ jest.mock('../services/AppTrialService', () => ({
   getAppTrialSpaceKey: jest.fn(),
 }));
 
-jest.mock('../services/AppTrialRepo', () => {
-  const repo = {
-    getTrial: jest.fn(),
-  };
-  return {
-    createAppTrialRepo: () => repo,
-  };
-});
+jest.mock('../services/AppTrialRepo', () => ({
+  getTrial: jest.fn(),
+}));
 
 describe('TrialTag', () => {
   beforeEach(() => {
@@ -284,7 +279,7 @@ describe('TrialTag', () => {
 
     it('renders when only the Trial App is purchased and the Trial Space becomes expired', async () => {
       getSpace.mockResolvedValue(trialExpiredSpace);
-      createAppTrialRepo().getTrial.mockResolvedValue(purchasedAppTrial);
+      getTrial.mockResolvedValue(purchasedAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
 
       build();
@@ -302,7 +297,7 @@ describe('TrialTag', () => {
       getSpace.mockResolvedValue(trialSpace);
       isSpaceRoute.mockReturnValue(true);
       isOrgRoute.mockReturnValue(false);
-      createAppTrialRepo().getTrial.mockResolvedValue(activeAppTrial);
+      getTrial.mockResolvedValue(activeAppTrial);
       getOrganization.mockResolvedValue(organizationNotOnTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialSpace.sys.id);
     });
@@ -312,7 +307,7 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() => expect(createAppTrialRepo().getTrial).toHaveBeenCalledTimes(0));
+      await waitFor(() => expect(getTrial).toHaveBeenCalledTimes(0));
       expect(getAppTrialSpaceKey).toHaveBeenCalledTimes(0);
     });
 
@@ -363,7 +358,7 @@ describe('TrialTag', () => {
     });
 
     it('renders when the App Trial is expired and the navbar is SpaceNavbar', async () => {
-      createAppTrialRepo().getTrial.mockResolvedValue(expiredAppTrial);
+      getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
       getSpace.mockResolvedValue(trialExpiredSpace);
 
@@ -377,7 +372,7 @@ describe('TrialTag', () => {
     it('does not render when the App Trial is expired and the navbar is OrgSettingsNavbar', async () => {
       isSpaceRoute.mockReturnValue(false);
       isOrgRoute.mockReturnValue(true);
-      createAppTrialRepo().getTrial.mockResolvedValue(expiredAppTrial);
+      getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
 
       build();
@@ -388,7 +383,7 @@ describe('TrialTag', () => {
 
     it('does not render when both the App Trial and Trial Space are purchased', async () => {
       getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
-      createAppTrialRepo().getTrial.mockResolvedValue(purchasedAppTrial);
+      getTrial.mockResolvedValue(purchasedAppTrial);
 
       build();
 
@@ -399,7 +394,7 @@ describe('TrialTag', () => {
 
     it('renders when the Trial Space is purchased during the active App Trial', async () => {
       getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
-      createAppTrialRepo().getTrial.mockResolvedValue(activeAppTrial);
+      getTrial.mockResolvedValue(activeAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(null);
 
       build();
@@ -414,7 +409,7 @@ describe('TrialTag', () => {
 
     it('does not render when the Trial Space is purchased after the App Trial expired', async () => {
       getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
-      createAppTrialRepo().getTrial.mockResolvedValue(expiredAppTrial);
+      getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(null);
 
       build();

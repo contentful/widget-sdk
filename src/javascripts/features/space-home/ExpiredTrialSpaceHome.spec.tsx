@@ -35,9 +35,9 @@ jest.mock('services/TokenStore', () => ({
 jest.mock('features/trials', () => ({
   isExpiredTrialSpace: jest.fn(),
   isExpiredAppTrial: jest.fn(),
-  createAppTrialRepo: () => ({
+  AppTrialRepo: {
     getTrial: jest.fn().mockResolvedValue({ sys: {} }),
-  }),
+  },
 }));
 
 jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({

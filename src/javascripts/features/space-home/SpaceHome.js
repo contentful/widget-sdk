@@ -31,8 +31,7 @@ import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { createAppTrialRepo, isActiveAppTrial } from 'features/trials';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -58,8 +57,7 @@ const fetchData = (
     organizationId: currentOrganizationId,
   }).then(async (enabled) => {
     if (enabled) {
-      const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
-      const appTrialFeature = await createAppTrialRepo(orgEndpoint).getTrial('compose_app');
+      const appTrialFeature = await AppTrialRepo.getTrial(currentOrganizationId, 'compose_app');
       return isActiveAppTrial(appTrialFeature);
     }
   });
