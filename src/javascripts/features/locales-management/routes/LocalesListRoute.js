@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import { LocalesListPricingOne } from '../LocalesListPricingOne';
@@ -21,6 +21,8 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
 import { generateMessage } from 'utils/ResourceUtils';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getSpaceEntitlementSet } from 'features/space-usage';
 
 const fetch = async ({
   organization,
@@ -91,6 +93,9 @@ export const LocalesListRoute = () => {
     currentSpaceData,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
+  const [entitlementsSet, setEntitlementsSet] = useState();
+
   const { isLoading, error, data = {} } = useAsync(
     useCallback(
       () =>
@@ -122,6 +127,19 @@ export const LocalesListRoute = () => {
     hasNextSpacePlan,
   } = data;
 
+  useEffect(() => {
+    if (!currentSpaceId) return;
+
+    getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
+      setEntitlementsAPIEnabled(isEnabled);
+      if (isEnabled) {
+        getSpaceEntitlementSet(currentSpaceId)
+          .then(setEntitlementsSet)
+          .catch(() => {});
+      }
+    });
+  }, [currentSpaceId]);
+
   function handleShowUpgradeSpaceDialog() {
     ChangeSpaceService.beginSpaceChange({
       organizationId: currentOrganizationId,
@@ -150,6 +168,11 @@ export const LocalesListRoute = () => {
     return <StateRedirect path="spaces.detail.entries.list" />;
   }
 
+  // get entitlementsSet from new API behind feature flag
+  const newApiLocalesLimit = entitlementsAPIEnabled
+    ? entitlementsSet?.quotas?.locales.value
+    : undefined;
+
   return (
     <>
       <DocumentTitle title="Locales" />
@@ -177,6 +200,7 @@ export const LocalesListRoute = () => {
           insideMasterEnv={insideMasterEnv}
           upgradeSpace={handleShowUpgradeSpaceDialog}
           hasNextSpacePlan={hasNextSpacePlan}
+          newApiLocalesLimit={newApiLocalesLimit}
         />
       )}
     </>

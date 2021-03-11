@@ -6,51 +6,61 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { LocalesListSidebar } from './LocalesListSidebar';
 import { LocalesTable } from './LocalesTable';
 
-export class LocalesListPricingTwo extends React.Component {
-  static propTypes = {
-    locales: PropTypes.arrayOf(PropTypes.object).isRequired,
-    allowedToEnforceLimits: PropTypes.bool.isRequired,
-    isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
-    localeResource: PropTypes.object.isRequired,
-    insideMasterEnv: PropTypes.bool.isRequired,
-    subscriptionState: PropTypes.object.isRequired,
-    upgradeSpace: PropTypes.func.isRequired,
-    hasNextSpacePlan: PropTypes.bool,
-  };
-
-  renderTitle() {
-    return (
-      <>
-        <Heading>Locales</Heading>
-        <span className="workbench-header__kb-link">
-          <KnowledgeBase target="locale" />
-        </span>
-      </>
-    );
-  }
-
-  render() {
-    return (
-      <Workbench testId="locale-list-workbench">
-        <Workbench.Header
-          icon={<ProductIcon icon="Settings" size="large" />}
-          title={this.renderTitle()}
-        />
-        <Workbench.Content type="full">
-          <LocalesTable locales={this.props.locales} />
-        </Workbench.Content>
-        <Workbench.Sidebar position="right">
-          <LocalesListSidebar
-            insideMasterEnv={this.props.insideMasterEnv}
-            localeResource={this.props.localeResource}
-            allowedToEnforceLimits={this.props.allowedToEnforceLimits}
-            isOrgOwnerOrAdmin={this.props.isOrgOwnerOrAdmin}
-            subscriptionState={this.props.subscriptionState}
-            upgradeSpace={this.props.upgradeSpace}
-            hasNextSpacePlan={this.props.hasNextSpacePlan}
-          />
-        </Workbench.Sidebar>
-      </Workbench>
-    );
-  }
+function LocalesTitle() {
+  return (
+    <>
+      <Heading>Locales</Heading>
+      <span className="workbench-header__kb-link">
+        <KnowledgeBase target="locale" />
+      </span>
+    </>
+  );
 }
+
+export const LocalesListPricingTwo = ({
+  locales,
+  insideMasterEnv,
+  localeResource,
+  allowedToEnforceLimits,
+  isOrgOwnerOrAdmin,
+  subscriptionState,
+  upgradeSpace,
+  hasNextSpacePlan,
+  newApiLocalesLimit,
+}) => {
+  return (
+    <Workbench testId="locale-list-workbench">
+      <Workbench.Header
+        icon={<ProductIcon icon="Settings" size="large" />}
+        title={<LocalesTitle />}
+      />
+      <Workbench.Content type="full">
+        <LocalesTable locales={locales} />
+      </Workbench.Content>
+      <Workbench.Sidebar position="right">
+        <LocalesListSidebar
+          insideMasterEnv={insideMasterEnv}
+          localeResource={localeResource}
+          allowedToEnforceLimits={allowedToEnforceLimits}
+          isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
+          subscriptionState={subscriptionState}
+          upgradeSpace={upgradeSpace}
+          hasNextSpacePlan={hasNextSpacePlan}
+          newApiLocalesLimit={newApiLocalesLimit}
+        />
+      </Workbench.Sidebar>
+    </Workbench>
+  );
+};
+
+LocalesListPricingTwo.propTypes = {
+  locales: PropTypes.object,
+  insideMasterEnv: PropTypes.object,
+  localeResource: PropTypes.object,
+  allowedToEnforceLimits: PropTypes.bool,
+  isOrgOwnerOrAdmin: PropTypes.bool,
+  subscriptionState: PropTypes.object,
+  upgradeSpace: PropTypes.func.isRequired,
+  hasNextSpacePlan: PropTypes.bool,
+  newApiLocalesLimit: PropTypes.number,
+};

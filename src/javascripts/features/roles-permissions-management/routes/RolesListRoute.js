@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { sortBy } from 'lodash';
 import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
@@ -11,6 +11,8 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getSpaceEntitlementSet } from 'features/space-usage';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) => {
   const listHandler = RoleListHandler.create(spaceId, environmentId);
@@ -43,6 +45,26 @@ export function RolesListRoute() {
   } = useSpaceEnvContext();
   const isLegacyOrganization = ResourceUtils.isLegacyOrganization(currentOrganization);
   const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
+  const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
+  const [entitlementsSet, setEntitlementsSet] = useState();
+
+  useEffect(() => {
+    if (!spaceId) return;
+
+    getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
+      setEntitlementsAPIEnabled(isEnabled);
+      if (isEnabled) {
+        getSpaceEntitlementSet(spaceId)
+          .then(setEntitlementsSet)
+          .catch(() => {});
+      }
+    });
+  }, [spaceId]);
+
+  // get entitlementsSet from new API behind feature flag
+  const newApiRolesLimit = entitlementsAPIEnabled
+    ? entitlementsSet?.quotas?.roles?.value
+    : undefined;
 
   return (
     <>
@@ -60,6 +82,7 @@ export function RolesListRoute() {
               canUpgradeOrganization={canUpgradeOrganization}
               isLegacyOrganization={isLegacyOrganization}
               refetch={fetch}
+              newApiRolesLimit={newApiRolesLimit}
               {...data}
             />
           );

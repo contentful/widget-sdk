@@ -52,6 +52,7 @@ export class LocalesListSidebar extends React.Component {
     isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
     hasNextSpacePlan: PropTypes.bool,
+    newAPIlocalesResourceAvailable: PropTypes.number,
   };
 
   constructor(props) {
@@ -95,7 +96,12 @@ export class LocalesListSidebar extends React.Component {
   }
 
   render() {
-    const { insideMasterEnv, allowedToEnforceLimits, localeResource } = this.props;
+    const {
+      insideMasterEnv,
+      allowedToEnforceLimits,
+      localeResource,
+      newAPIlocalesResourceAvailable,
+    } = this.props;
     const isReachedLimit = localeResource.usage >= localeResource.limits.maximum;
 
     return (
@@ -105,8 +111,15 @@ export class LocalesListSidebar extends React.Component {
             <Typography>
               <Paragraph>
                 You are using {localeResource.usage} out of{' '}
-                <Pluralized text="locale" count={localeResource.limits.maximum} /> available in this
-                space.
+                <Pluralized
+                  text="locale"
+                  count={
+                    newAPIlocalesResourceAvailable
+                      ? newAPIlocalesResourceAvailable
+                      : localeResource.limits.maximum
+                  }
+                />{' '}
+                available in this space.
               </Paragraph>
             </Typography>
             {isReachedLimit ? this.renderChangeSpace() : <AddLocaleButton />}

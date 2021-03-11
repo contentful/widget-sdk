@@ -41,7 +41,7 @@ function RoleListActions(props) {
         <>
           <Paragraph>
             Your {props.isLegacyOrganization ? 'organization' : 'space'} is using {usage} out of{' '}
-            {props.limit} available roles.
+            {props.newApiRolesLimit ? props.newApiRolesLimit : props.limit} available roles.
           </Paragraph>
           <Button
             className={styles.addRoleButton}
@@ -65,6 +65,7 @@ RoleListActions.propTypes = {
   hasCustomRolesFeature: PropTypes.bool.isRequired,
   rolesResource: PropTypes.object.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
+  newApiRolesLimit: PropTypes.number,
 };
 
 export function RolesList(props) {
@@ -89,6 +90,7 @@ export function RolesList(props) {
           isLegacyOrganization={props.isLegacyOrganization}
           hasCustomRolesFeature={props.hasCustomRolesFeature}
           rolesResource={props.rolesResource}
+          newApiRolesLimit={props.newApiRolesLimit}
         />
       }>
       <div className={styles.container}>
@@ -142,4 +144,5 @@ RolesList.propTypes = {
   rolesResource: PropTypes.object.isRequired,
   listHandler: PropTypes.object.isRequired,
   refetch: PropTypes.func.isRequired,
+  newApiRolesLimit: PropTypes.number,
 };
