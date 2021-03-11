@@ -1,21 +1,19 @@
-import * as Telemetry from 'i13n/Telemetry';
-import { getEndpoint, getCurrentState, delay } from './Utils';
+import {
+  BAD_GATEWAY,
+  CALLS_IN_PERIOD,
+  DEFAULT_TTL,
+  GATEWAY_TIMEOUT,
+  RATE_LIMIT_EXCEEDED,
+  SERVICE_UNAVAILABLE,
+} from 'data/Request/RetryConstants';
+import {
+  recordQueueTime,
+  recordRateLimitExceeded,
+  recordResponseTime,
+} from 'data/Request/RetryTelemetry';
+import { delay } from './Utils';
 
-const RATE_LIMIT_EXCEEDED = 429;
-const BAD_GATEWAY = 502;
-const SERVICE_UNAVAILABLE = 503;
-const GATEWAY_TIMEOUT = 504;
-
-const CALLS_IN_PERIOD = 7;
 const PERIOD = 1000;
-const DEFAULT_TTL = 5;
-
-const REPORTING_TIMEOUT = 60 * 1000;
-
-/*
-  To better differentiate clients sending events we can manually
-  increment this version number if needed.
-*/
 const CLIENT_VERSION = 1;
 
 export default function withRetry(requestFn) {
@@ -61,12 +59,12 @@ export default function withRetry(requestFn) {
 
     try {
       const response = await requestFn(...call.args);
-      recordResponseTime({ status: 200 }, startTime + call.wait, ...call.args);
-      recordQueueTime({ status: 200 }, call.queuedAt, ...call.args);
+      recordResponseTime({ status: 200 }, startTime + call.wait, CLIENT_VERSION, ...call.args);
+      recordQueueTime({ status: 200 }, call.queuedAt, CLIENT_VERSION, call.ttl, ...call.args);
       call.resolve(response);
     } catch (e) {
       handleError(call, e);
-      recordResponseTime(e, startTime + call.wait, ...call.args);
+      recordResponseTime(e, startTime + call.wait, CLIENT_VERSION, ...call.args);
     } finally {
       inFlight--;
     }
@@ -81,16 +79,7 @@ export default function withRetry(requestFn) {
 
   function handleError(call, err) {
     if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
-      try {
-        const [{ url } = {}] = call.args;
-        Telemetry.count('cma-rate-limit-exceeded', {
-          endpoint: getEndpoint(url),
-          state: getCurrentState(),
-          version: CLIENT_VERSION,
-        });
-      } catch {
-        // no op
-      }
+      recordRateLimitExceeded(CLIENT_VERSION, call.args[0]?.url, call.ttl);
       queue.unshift(backOff(call));
       attemptImmediate();
     } else if (
@@ -101,7 +90,13 @@ export default function withRetry(requestFn) {
       queue.unshift(call);
       attemptImmediate();
     } else {
-      recordQueueTime({ status: err.status }, call.queuedAt, ...call.args);
+      recordQueueTime(
+        { status: err.status },
+        call.queuedAt,
+        CLIENT_VERSION,
+        call.ttl,
+        ...call.args
+      );
       call.reject(err);
     }
   }
@@ -112,41 +107,4 @@ function backOff(call) {
   const attempt = DEFAULT_TTL - call.ttl;
   call.wait = Math.random() * Math.pow(2, attempt) * PERIOD;
   return call;
-}
-
-// the time sent here includes time needed to run the requestFn
-// and the time it takes the JS runtime to have the resolve/reject
-// handlers execute. Therefore, it is off from the times reported
-// by the Network tab in your dev tools by a few milliseconds to
-// tens of millisecond at worst (as per my limited testing).
-function recordResponseTime({ status }, startTime, { url, method } = {}) {
-  const duration = Date.now() - startTime;
-  try {
-    if (duration < REPORTING_TIMEOUT) {
-      Telemetry.record('cma-response-time', duration, {
-        endpoint: getEndpoint(url),
-        status,
-        method,
-        version: CLIENT_VERSION,
-      });
-    }
-  } catch {
-    // no-op
-  }
-}
-
-function recordQueueTime({ status }, queuedAt, { url, method } = {}) {
-  const duration = Date.now() - queuedAt;
-  try {
-    if (duration < REPORTING_TIMEOUT) {
-      Telemetry.record('cma-queue-time', duration, {
-        endpoint: getEndpoint(url),
-        status,
-        method,
-        version: CLIENT_VERSION,
-      });
-    }
-  } catch {
-    // no-op
-  }
 }

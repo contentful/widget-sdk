@@ -1,0 +1,13 @@
+export const RATE_LIMIT_EXCEEDED = 429;
+export const BAD_GATEWAY = 502;
+export const SERVICE_UNAVAILABLE = 503;
+export const GATEWAY_TIMEOUT = 504;
+export const DEFAULT_TTL = 5;
+export const CALLS_IN_PERIOD = 7;
+
+export const ACCEPTED_STATUS = [
+  RATE_LIMIT_EXCEEDED,
+  BAD_GATEWAY,
+  SERVICE_UNAVAILABLE,
+  GATEWAY_TIMEOUT,
+];

@@ -1,4 +1,6 @@
 import withRetry from './Retry';
+import withRetryQueue from './RetryWithQueue';
+
 import { delay } from './Utils';
 import * as Telemetry from 'i13n/Telemetry';
 
@@ -19,11 +21,14 @@ async function flush() {
   return Promise.resolve();
 }
 
-describe('Retry', () => {
+describe.each([
+  { retryFn: withRetry, version: 1 },
+  { retryFn: withRetryQueue, version: 2 },
+])('Retry %j', ({ retryFn, version }) => {
   beforeEach(() => {
     requestFn.mockReset();
     jest.useFakeTimers();
-    wrappedFn = withRetry(requestFn);
+    wrappedFn = retryFn(requestFn);
   });
 
   afterEach(() => {
@@ -98,6 +103,87 @@ describe('Retry', () => {
     expect(result).toEqual('success');
   });
 
+  describe('telemetry', () => {
+    it('tracks 429s', async () => {
+      requestFn.mockRejectedValue({ status: 429 });
+
+      await wrappedFn({ url: 'foo/bar' }).catch(() => {});
+
+      expect(Telemetry.count).toHaveBeenCalledTimes(5);
+      expect(Telemetry.count).toHaveBeenLastCalledWith('cma-rate-limit-exceeded', {
+        endpoint: 'foo/bar',
+        state: 'STATE',
+        retries: 4,
+        version: version,
+      });
+    });
+
+    it('tracks response time os successful calls', async () => {
+      await wrappedFn({ url: 'bar/foo', method: 'POST' });
+
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
+        endpoint: 'bar/foo',
+        status: 200,
+        method: 'POST',
+        version: version,
+      });
+    });
+
+    it('tracks response time of rejected calls', async () => {
+      requestFn.mockRejectedValue({ status: 404 });
+
+      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
+
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
+        endpoint: 'foo/foo',
+        status: 404,
+        method: 'DELETE',
+        version: version,
+      });
+    });
+
+    it('tracks queue time of successful calls', async () => {
+      await wrappedFn({ url: 'bar/foo', method: 'POST' });
+
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
+        endpoint: 'bar/foo',
+        status: 200,
+        method: 'POST',
+        version: version,
+        retries: 0,
+      });
+    });
+
+    it('tracks queue time of rejected calls', async () => {
+      requestFn.mockRejectedValue({ status: 404 });
+
+      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
+
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
+        endpoint: 'foo/foo',
+        status: 404,
+        method: 'DELETE',
+        version: version,
+        retries: 0,
+      });
+    });
+  });
+});
+
+describe('Retry', () => {
+  beforeEach(() => {
+    requestFn.mockReset();
+    jest.useFakeTimers();
+    wrappedFn = withRetry(requestFn);
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
   it('retries 429s after a delay', async () => {
     const error = { status: 429 };
     requestFn.mockRejectedValue(error);
@@ -137,71 +223,5 @@ describe('Retry', () => {
     expect(delay).toHaveBeenNthCalledWith(4, 8000);
     expect(delay).toHaveBeenNthCalledWith(5, 16000);
     expect(delay).toHaveBeenNthCalledWith(6, 32000);
-  });
-
-  describe('telemetry', () => {
-    it('tracks 429s', async () => {
-      requestFn.mockRejectedValue({ status: 429 });
-
-      await wrappedFn({ url: 'foo/bar' }).catch(() => {});
-
-      expect(Telemetry.count).toHaveBeenCalledTimes(5);
-      expect(Telemetry.count).toHaveBeenLastCalledWith('cma-rate-limit-exceeded', {
-        endpoint: 'foo/bar',
-        state: 'STATE',
-        version: 1,
-      });
-    });
-
-    it('tracks response time os successful calls', async () => {
-      await wrappedFn({ url: 'bar/foo', method: 'POST' });
-
-      expect(Telemetry.record).toHaveBeenCalledTimes(2);
-      expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
-        endpoint: 'bar/foo',
-        status: 200,
-        method: 'POST',
-        version: 1,
-      });
-    });
-
-    it('tracks response time of rejected calls', async () => {
-      requestFn.mockRejectedValue({ status: 404 });
-
-      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
-
-      expect(Telemetry.record).toHaveBeenCalledTimes(2);
-      expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
-        endpoint: 'foo/foo',
-        status: 404,
-        method: 'DELETE',
-        version: 1,
-      });
-    });
-
-    it('tracks queue time of successful calls', async () => {
-      await wrappedFn({ url: 'bar/foo', method: 'POST' });
-
-      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
-        endpoint: 'bar/foo',
-        status: 200,
-        method: 'POST',
-        version: 1,
-      });
-    });
-
-    it('tracks queue time of rejected calls', async () => {
-      requestFn.mockRejectedValue({ status: 404 });
-
-      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
-
-      expect(Telemetry.record).toHaveBeenCalledTimes(2);
-      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
-        endpoint: 'foo/foo',
-        status: 404,
-        method: 'DELETE',
-        version: 1,
-      });
-    });
   });
 });
