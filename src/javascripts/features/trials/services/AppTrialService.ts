@@ -37,7 +37,6 @@ export const canStartAppTrial = async (organizationId: string) => {
 
 export const startAppTrial = async (organizationId: string) => {
   const trial = await Repo.createTrial(organizationId);
-  Repo.getTrial.cache.clear?.();
 
   return { apps: ['compose', 'launch'], trial };
 };
