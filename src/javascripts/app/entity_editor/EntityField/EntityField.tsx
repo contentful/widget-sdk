@@ -7,7 +7,7 @@ import { Widget, Doc, EditorContext, LocaleData, LoadEvents, EditorData } from '
 import { EntityFieldLocale } from './EntityFieldLocale';
 import { FieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
-
+import { WidgetNamespace } from '@contentful/widget-renderer';
 function updateErrorStatus(field, localeData, validator, invalidControls) {
   const hasSchemaErrors = localeData.isSingleLocaleModeOn
     ? validator.hasFieldLocaleError(field.id, localeData.focusedLocale.internal_code)
@@ -60,7 +60,7 @@ export function EntityField(props: EntityFieldProps) {
     widget,
   } = props;
   const { validator } = editorContext;
-  const { field, isFocusable, isVisible } = widget;
+  const { field, isFocusable, isVisible, widgetId, widgetNamespace } = widget;
 
   const [invalidControls, setInvalidControls] = React.useState({});
   const [fieldHasFocus, setFieldHasFocus] = React.useState(false);
@@ -83,8 +83,10 @@ export function EntityField(props: EntityFieldProps) {
     : getActiveLocales({ field, localeData, validator });
 
   const fieldHasErrors = updateErrorStatus(field, localeData, validator, invalidControls);
+  const isBuiltInSlugWidget =
+    widgetId === 'slugEditor' && widgetNamespace === WidgetNamespace.BUILTIN;
 
-  if (!isVisible) {
+  if (!isVisible && !isBuiltInSlugWidget) {
     return null;
   }
 
@@ -93,6 +95,8 @@ export function EntityField(props: EntityFieldProps) {
   return (
     <div
       className="entity-editor__field-group"
+      // eslint-disable-next-line rulesdir/restrict-inline-styles
+      style={{ display: isVisible ? 'block' : 'none' }}
       data-test-id="entity-field-controls"
       data-field-id={field.id}
       data-field-api-name={field.apiName}

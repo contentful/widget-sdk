@@ -1,4 +1,5 @@
 import { EntityType } from '@contentful/app-sdk';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export type Doc = {};
 
@@ -10,6 +11,8 @@ export type Widget = {
   fieldId: string;
   isVisible: boolean;
   isFocusable: boolean;
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
   field: Field;
   settings?: {
     helpText?: string;
