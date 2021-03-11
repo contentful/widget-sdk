@@ -204,7 +204,7 @@ describe('SlideInNavigator', () => {
           assetId: 'asset-id',
           previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5',
         },
-        { notify: true },
+        { notify: false },
       ]
     );
 
@@ -226,7 +226,7 @@ describe('SlideInNavigator', () => {
           previousEntries: 'entry-id-1',
           bulkEditor: null,
         },
-        { notify: true },
+        { notify: false },
       ]
     );
   });

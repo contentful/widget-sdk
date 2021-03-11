@@ -6,8 +6,6 @@ import mitt from 'mitt';
 
 const SLIDES_BELOW_QS = 'previousEntries';
 
-let notify = true;
-
 export const slideInStackEmitter = mitt();
 
 export const SlideEventTypes = {
@@ -74,10 +72,7 @@ export function goToSlideInEntity(slide) {
   const slidesBelowQS = reducedSlides.map(slideHelper.toString).join(',');
 
   const [path, params] = slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS });
-  if ($state.notify === false) {
-    notify = $state.notify;
-  }
-  $state.go(path, params, { notify });
+  $state.go(path, params, { notify: false });
 
   const result = {
     newSlideLevel: firstTargetSlideIndex,
