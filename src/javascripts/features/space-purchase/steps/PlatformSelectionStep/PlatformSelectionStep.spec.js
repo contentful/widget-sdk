@@ -113,6 +113,14 @@ describe('PlatformSelectionStep', () => {
       expect(platformCards[1].getAttribute('class')).toContain('disabled');
     });
 
+    it('should disable the Compose+Launch platform card when the user selects a free space', async () => {
+      canUserCreatePaidSpace.mockReturnValue(false);
+
+      await build(null, { selectedPlan: { productPlanType: 'free_space' } });
+      const platformCards = screen.getAllByTestId('platform-card');
+      expect(platformCards[1].getAttribute('class')).toContain('disabled');
+    });
+
     it('should select the card when clicked', async () => {
       await build({ showPlatformsAboveSpaces: true });
       const platformCards = screen.getAllByTestId('platform-card');

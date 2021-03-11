@@ -7,11 +7,13 @@ import { EnterpriseCard } from './EnterpriseCard';
 import { CONTACT_SALES_HREF } from './EnterpriseTalkToUsButton';
 
 import type { State } from '../context';
+import type { SpaceProductRatePlan } from '../types';
 
 interface PlatformCardsProps {
   organizationId?: string;
   composeAndLaunchProductRatePlan?: State['composeAndLaunchProductRatePlan'];
   canCreatePaidSpace?: boolean;
+  selectedPlan?: State['selectedPlan'];
   selectedPlatform?: State['selectedPlatform'];
   disabled?: boolean;
   onSelectPlatform: (platform?: State['selectedPlatform']) => void;
@@ -22,6 +24,7 @@ export function PlatformCards({
   organizationId,
   composeAndLaunchProductRatePlan,
   canCreatePaidSpace,
+  selectedPlan,
   selectedPlatform,
   disabled = false,
   onSelectPlatform,
@@ -30,15 +33,16 @@ export function PlatformCards({
   return (
     <>
       {Object.values(PLATFORM_CONTENT).map((platform, idx) => {
-        let tooltipText = '';
+        const selectedPlanIsFree =
+          (selectedPlan as SpaceProductRatePlan)?.productPlanType === 'free_space';
         const platformIsComposeLaunch = platform.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
         const composeAndLaunchIsLoading =
           platformIsComposeLaunch && !composeAndLaunchProductRatePlan;
 
-        // If they cannot create a paid space, then they cannot pay for compose+launch either. Check for false as it's undefined while the page is loading.
-        if (platformIsComposeLaunch && canCreatePaidSpace === false && !composeAndLaunchIsLoading) {
-          tooltipText = `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title}`;
-        }
+        const tooltipText =
+          platformIsComposeLaunch && !composeAndLaunchIsLoading
+            ? getTooltipText(canCreatePaidSpace, selectedPlanIsFree)
+            : '';
 
         const platformPlan = {
           ...platform,
@@ -77,4 +81,17 @@ export function PlatformCards({
       />
     </>
   );
+}
+
+function getTooltipText(canCreatePaidSpace, selectedPlanIsFree) {
+  // If they cannot create a paid space, then they cannot pay for compose+launch either
+  if (!canCreatePaidSpace) {
+    return `Please contact your organization owner and have them add billing information for your organization so you can purchase ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title}`;
+  }
+
+  if (selectedPlanIsFree) {
+    return 'You need a paid space to use Compose + Launch';
+  }
+
+  return '';
 }

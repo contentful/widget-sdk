@@ -151,6 +151,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
             organizationId={organization?.sys.id}
             composeAndLaunchProductRatePlan={composeAndLaunchProductRatePlan}
             canCreatePaidSpace={canCreatePaidSpace}
+            selectedPlan={selectedPlan}
             selectedPlatform={selectedPlatform}
             onSelectPlatform={onSelectPlatform}
             track={track}
