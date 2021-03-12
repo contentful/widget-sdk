@@ -5,7 +5,7 @@ import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/Sc
 import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
 import { getScheduledActionsFeatureVariation } from '../ScheduledActionsFeatureFlag';
 
-// We expire the ScheduledActions cache every 10s
+// We expire the ScheduledActions cache every 5s
 // Right now it's being used to display "scheduled icons" for all references of an Entity.
 const DEFAULT_CACHE_TIMEOUT_MS = 5000;
 
