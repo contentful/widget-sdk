@@ -147,9 +147,11 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('enterprise_trial_tag')).toHaveTextContent(
-          `TRIAL - ${daysLeft} DAYS`
-        )
+        expect(screen.getByTestId('enterprise_trial_tag')).toHaveTextContent(`TRIAL`)
+      );
+      fireEvent.mouseOver(screen.getByTestId('enterprise_trial_tag-link'));
+      await waitFor(() =>
+        expect(screen.getByTestId('trial_tag-tooltip')).toHaveTextContent(`${daysLeft} DAYS`)
       );
     });
 
@@ -207,9 +209,7 @@ describe('TrialTag', () => {
     it('renders when the space is on trial and the navbar is SpaceNavbar', async () => {
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-      );
+      await waitFor(() => expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL`));
     });
 
     it('renders when the trial has ended', async () => {
@@ -218,7 +218,11 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.queryByTestId('trial_space_tag')).toHaveTextContent('TRIAL - EXPIRED')
+        expect(screen.queryByTestId('trial_space_tag')).toHaveTextContent('TRIAL')
+      );
+      fireEvent.mouseOver(screen.getByTestId('trial_space_tag-link'));
+      await waitFor(() =>
+        expect(screen.getByTestId('trial_tag-tooltip')).toHaveTextContent('EXPIRED')
       );
     });
 
@@ -285,7 +289,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() => screen.getByTestId('trial_space_tag'));
-      expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL - EXPIRED`);
+      expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL`);
       expect(screen.queryByTestId('app_trial_tag')).not.toBeInTheDocument();
     });
   });
@@ -316,9 +320,7 @@ describe('TrialTag', () => {
       isOrgRoute.mockReturnValue(true);
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-      );
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
     });
 
     it('navigates to the App Trial Space Home when clicked', async () => {
@@ -343,18 +345,14 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-      );
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
     });
 
     it('renders when the App Trial is active and the navbar is SpaceNavbar', async () => {
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-      );
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
     });
 
     it('renders when the App Trial is expired and the navbar is SpaceNavbar', async () => {
@@ -364,9 +362,7 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - EXPIRED`)
-      );
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
     });
 
     it('does not render when the App Trial is expired and the navbar is OrgSettingsNavbar', async () => {
@@ -399,9 +395,7 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() =>
-        expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-      );
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
 
       expect(screen.queryByTestId('trial_space_tag')).not.toBeInTheDocument();

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { css } from 'emotion';
-import { Tag, TextLink } from '@contentful/forma-36-react-components';
+import { Tag, TextLink, Tooltip } from '@contentful/forma-36-react-components';
 import { Pluralized } from 'core/components/formatting';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
@@ -150,32 +150,33 @@ export const TrialTag = () => {
     },
   };
 
-  const renderContent = () => (
-    <div>
-      TRIAL -{' '}
-      {isAppTrialExpired || isTrialSpaceExpired ? (
-        'EXPIRED'
-      ) : (
-        <Pluralized text="DAY" count={daysLeft} />
-      )}
-    </div>
-  );
   return (
     <Tag className={styles.tag} tagType="primary-filled" testId={`${ctaType}`}>
       <TrackTargetedCTAImpression impressionType={ctaType}>
-        {pathParamsObj ? (
-          <StateLink
-            className={styles.link}
-            testId={`${ctaType}-link`}
-            {...pathParamsObj}
-            {...tracking}
-            component={TextLink}
-            linkType="white">
-            {renderContent()}
-          </StateLink>
-        ) : (
-          renderContent()
-        )}
+        <Tooltip
+          testId="trial_tag-tooltip"
+          place="bottom"
+          content={
+            isAppTrialExpired || isTrialSpaceExpired ? (
+              'EXPIRED'
+            ) : (
+              <Pluralized text="DAY" count={daysLeft} />
+            )
+          }>
+          {pathParamsObj ? (
+            <StateLink
+              className={styles.link}
+              testId={`${ctaType}-link`}
+              {...pathParamsObj}
+              {...tracking}
+              component={TextLink}
+              linkType="white">
+              TRIAL
+            </StateLink>
+          ) : (
+            <>TRIAL</>
+          )}
+        </Tooltip>
       </TrackTargetedCTAImpression>
     </Tag>
   );
