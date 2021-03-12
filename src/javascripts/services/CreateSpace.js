@@ -19,24 +19,6 @@ import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
-// TODO: refactor to TS
-export const APPS_PURCHASE_FROM = {
-  spaceHome: 'space-home',
-  subscriptionOverview: 'subscription-overview',
-};
-
-/**
- * beginAppsPurchase is the function used to start the purchase flow of Contentful Apps
- * it will call beginSpaceCreation with the correct tracking params
- *
- * @param {string} organizationId is the id of the current org (required);
- * @param {string} from is essential to track where the flow started (required), use the enum APPS_PURCHASE_FROM as its value
- */
-export async function beginAppsPurchase(organizationId, from) {
-  const params = { viaMarketingCta: true, from };
-  await beginSpaceCreation(organizationId, params);
-}
-
 /**
  * Starts the space creation flow.
  * The flow type will depend on the current organization.

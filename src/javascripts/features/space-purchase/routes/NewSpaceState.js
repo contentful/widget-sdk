@@ -9,6 +9,7 @@ export const newSpaceState = {
   url: '/new_space',
   params: {
     from: '',
+    preselect: '',
   },
   component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>

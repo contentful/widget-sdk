@@ -13,7 +13,6 @@ import {
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing/index';
-import { PRESELECT_APPS_PKG_FROM_KEYS } from '../routes/SpacePurchaseRoute';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -159,8 +158,8 @@ describe('SpacePurchaseContainer', () => {
       );
     });
 
-    it('should render with platforms above spaces when a preselected from is passed', async () => {
-      await build({ from: PRESELECT_APPS_PKG_FROM_KEYS[0] }, { purchasingApps: true });
+    it('should render with platforms above spaces when preselect param is passed', async () => {
+      await build({ from: 'marketing_cta', preselectApps: true }, { purchasingApps: true });
 
       expect(screen.getByTestId('platform-selection-section')).toBeVisible();
       expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual('column');

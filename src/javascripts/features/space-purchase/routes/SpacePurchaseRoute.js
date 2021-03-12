@@ -42,21 +42,17 @@ import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 
-// NOTE(jo-sm): in the future we may want to have both a global list of `from` keys, as well
-//              as a list of keys specific to preselecting the apps pkg, but since there is no
-//              distinction at the moment it's a future problem(tm).
-// TODO(jo-sm): Expose these when we refactor this to be "the" route for all space creation
-export const PRESELECT_APPS_PKG_FROM_KEYS = [
-  'marketing_cta',
-  'compose_app',
-  'launch_app',
-  'space_home',
-];
-
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
+/**
+ * List of possible values for the "preselect" param in this route
+ */
+export const PRESELECT_VALUES = {
+  APPS: 'apps',
+};
+
+const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
@@ -83,7 +79,7 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
 
   let selectedPlatform;
 
-  if (PRESELECT_APPS_PKG_FROM_KEYS.includes(from) && !hasPurchasedComposeLaunch) {
+  if (preselectApps && !hasPurchasedComposeLaunch) {
     selectedPlatform = {
       ...PLATFORM_CONTENT.COMPOSE_AND_LAUNCH,
       price: composeAndLaunchProductRatePlan?.price,
@@ -179,7 +175,12 @@ const initialFetch = (organizationId, spaceId, from, dispatch) => async () => {
   );
 };
 
-export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) => {
+export const SpacePurchaseRoute = ({
+  orgId,
+  spaceId,
+  from: fromRouterParam,
+  preselect: preselectRouterParam,
+}) => {
   // TODO(jo-sm): This should become a hook at some point
   const queryParams = useMemo(() => getQueryString(), []);
 
@@ -187,6 +188,9 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) =>
   // like the marketing website, while also allowing it to be used internally
   // via `go(...)`. This should become unnecessary or changed when moving from ui-router.
   const from = fromRouterParam ? fromRouterParam : queryParams.from;
+  const preselect = preselectRouterParam ? preselectRouterParam : queryParams.preselect;
+
+  const preselectApps = preselect === PRESELECT_VALUES.APPS;
 
   const {
     state: { sessionId, purchasingApps },
@@ -196,7 +200,9 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) =>
   // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
-  const { error } = useAsync(useCallback(initialFetch(orgId, spaceId, from, dispatch), []));
+  const { error } = useAsync(
+    useCallback(initialFetch(orgId, spaceId, from, preselectApps, dispatch), [])
+  );
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (purchasingApps === undefined) {
@@ -217,7 +223,7 @@ export const SpacePurchaseRoute = ({ orgId, spaceId, from: fromRouterParam }) =>
     <>
       <DocumentTitle title={documentTitle} />
       <SpacePurchaseContainer
-        from={from}
+        preselectApps={preselectApps}
         track={(eventName, metadata) => {
           trackEvent(
             eventName,
@@ -238,4 +244,5 @@ SpacePurchaseRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaceId: PropTypes.string,
   from: PropTypes.string,
+  preselect: PropTypes.string,
 };

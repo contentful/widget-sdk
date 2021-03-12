@@ -10,6 +10,7 @@ export const upgradeSpaceState = {
   params: {
     spaceId: '',
     from: '',
+    preselect: '',
   },
   component: withOrganizationRoute((props) => (
     <LazyLoadedComponent importer={importer}>

@@ -6,6 +6,7 @@ import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { init as initAutoCreateNewSpace } from 'components/shared/auto_create_new_space';
+import { PRESELECT_VALUES } from 'features/space-purchase';
 
 import { EmptyHome } from './EmptyHome';
 
@@ -45,7 +46,11 @@ export function EmptyHomeRouter({ appsPurchase }) {
       if (organization) {
         go({
           path: ['account', 'organizations', 'subscription_new', 'new_space'],
-          params: { orgId: organization.sys.id, from: 'marketing_cta' },
+          params: {
+            orgId: organization.sys.id,
+            from: 'marketing_cta',
+            preselect: PRESELECT_VALUES.APPS,
+          },
           options: { location: 'replace' },
         });
       } else {

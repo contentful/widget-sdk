@@ -5,6 +5,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { render, screen, waitFor } from '@testing-library/react';
+import { PRESELECT_VALUES } from 'features/space-purchase';
 
 import { EmptyHomeRouter } from './HomeState';
 
@@ -82,7 +83,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg2.sys.id, from: 'marketing_cta' },
+      params: { orgId: mockOrg2.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
       options: { location: 'replace' },
     });
   });
@@ -95,7 +96,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, from: 'marketing_cta' },
+      params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
       options: { location: 'replace' },
     });
   });
@@ -108,7 +109,7 @@ describe('EmptyHomeRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, from: 'marketing_cta' },
+      params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
       options: { location: 'replace' },
     });
   });

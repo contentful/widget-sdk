@@ -1,6 +1,6 @@
 import React from 'react';
-import { screen, waitFor, cleanup } from '@testing-library/react';
-import { SpacePurchaseRoute, PRESELECT_APPS_PKG_FROM_KEYS } from './SpacePurchaseRoute';
+import { screen, waitFor } from '@testing-library/react';
+import { SpacePurchaseRoute, PRESELECT_VALUES } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import createResourceService from 'services/ResourceService';
 import {
@@ -255,37 +255,33 @@ describe('SpacePurchaseRoute', () => {
     );
   });
 
-  it('should track if the performance package is pre-selected using a from param', async () => {
-    for (const key of PRESELECT_APPS_PKG_FROM_KEYS) {
-      setQueryParameters({ from: key });
+  it('should track if the performance package is pre-selected using "preselect" param and the origin of the purchase by using "from" param', async () => {
+    setQueryParameters({ from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS });
 
-      await build();
+    await build();
 
-      await waitFor(() => {
-        expect(screen.getByTestId('space-purchase-container')).toBeVisible();
-      });
+    await waitFor(() => {
+      expect(screen.getByTestId('space-purchase-container')).toBeVisible();
+    });
 
-      expect(trackEvent).toBeCalledWith(
-        EVENTS.BEGIN,
-        {
-          organizationId: mockOrganization.sys.id,
-          spaceId: undefined,
-          sessionId: expect.any(String),
-        },
-        {
-          canCreateFreeSpace: true,
-          userOrganizationRole: mockUserRole,
-          organizationPlatform: mockOrganizationPlatform,
-          sessionType: 'create_space',
-          performancePackagePreselected: true,
-          from: key,
-        }
-      );
-
-      // Since we don't attempt to rerender the component with the new prop, we need
-      // to cleanup before the next iteration
-      await cleanup();
-    }
+    expect(trackEvent).toBeCalledWith(
+      EVENTS.BEGIN,
+      {
+        organizationId: mockOrganization.sys.id,
+        spaceId: undefined,
+        sessionId: expect.any(String),
+      },
+      {
+        canPurchaseApps: undefined,
+        currentSpacePlan: undefined,
+        canCreateFreeSpace: true,
+        userOrganizationRole: mockUserRole,
+        organizationPlatform: mockOrganizationPlatform,
+        sessionType: 'create_space',
+        performancePackagePreselected: true,
+        from: 'marketing_cta',
+      }
+    );
   });
 
   it('should track if user cannot purchase apps - feature flag is false', async () => {

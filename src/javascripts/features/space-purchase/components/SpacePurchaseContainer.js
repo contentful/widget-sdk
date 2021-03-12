@@ -21,7 +21,6 @@ import { PlatformKind } from '../utils/platformContent';
 import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { Price } from 'core/components/formatting';
 import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../context';
-import { PRESELECT_APPS_PKG_FROM_KEYS } from '../routes/SpacePurchaseRoute';
 
 import { Breadcrumbs } from 'features/breadcrumbs';
 import {
@@ -95,13 +94,11 @@ const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
 };
 
-export const SpacePurchaseContainer = ({ track, from }) => {
+export const SpacePurchaseContainer = ({ track, preselectApps }) => {
   const {
     state: { organization, selectedPlatform, selectedPlan, currentSpace, purchasingApps },
     dispatch,
   } = useContext(SpacePurchaseState);
-
-  const showPlatformsAboveSpaces = PRESELECT_APPS_PKG_FROM_KEYS.includes(from);
 
   // if the user has already purchased apps, we want them to start at the space selection step
   // otherwise, they should start in the platfform and space selection step
@@ -149,12 +146,7 @@ export const SpacePurchaseContainer = ({ track, from }) => {
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.PLATFORM_SELECTION:
-        return (
-          <PlatformSelectionStep
-            track={track}
-            showPlatformsAboveSpaces={showPlatformsAboveSpaces}
-          />
-        );
+        return <PlatformSelectionStep track={track} showPlatformsAboveSpaces={preselectApps} />;
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
@@ -308,5 +300,5 @@ export const SpacePurchaseContainer = ({ track, from }) => {
 
 SpacePurchaseContainer.propTypes = {
   track: PropTypes.func.isRequired,
-  from: PropTypes.string,
+  preselectApps: PropTypes.bool,
 };
