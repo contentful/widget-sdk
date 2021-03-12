@@ -1,4 +1,8 @@
 import * as React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Note } from '@contentful/forma-36-react-components';
+import * as logger from 'services/logger';
+
 import { EntityFieldHeading } from './EntityFieldHeading';
 import { EntityFieldControl } from './EntityFieldControlNew';
 import { Locale, Widget, Doc, EditorContext, LocaleData } from './types';
@@ -19,6 +23,18 @@ interface EntityFieldLocaleProps {
   setFieldHasFocus: Function;
   widget: Widget;
   withLocaleName: boolean;
+}
+
+function ErrorFallback({ error }) {
+  React.useEffect(() => {
+    logger.logException(error, {});
+  }, [error]);
+
+  return (
+    <Note noteType="warning">
+      Something went wrong. This field editor is broken. Reach out to support.
+    </Note>
+  );
 }
 
 export function EntityFieldLocale({
@@ -68,21 +84,23 @@ export function EntityFieldLocale({
         entityType={editorContext.entityInfo.type}
         withLocaleName={withLocaleName}
       />
-      <EntityFieldControl
-        onFocus={onFocus}
-        onBlur={onBlur}
-        widget={widget}
-        locale={locale}
-        editorData={editorData}
-        hasInitialFocus={hasInitialFocus}
-        doc={doc}
-        fieldLocale={fieldLocale}
-        loadEvents={loadEvents}
-        setInvalid={setInvalid}
-        localeData={localeData}
-        preferences={preferences}
-        fieldLocaleListeners={fieldLocaleListeners}
-      />
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <EntityFieldControl
+          onFocus={onFocus}
+          onBlur={onBlur}
+          widget={widget}
+          locale={locale}
+          editorData={editorData}
+          hasInitialFocus={hasInitialFocus}
+          doc={doc}
+          fieldLocale={fieldLocale}
+          loadEvents={loadEvents}
+          setInvalid={setInvalid}
+          localeData={localeData}
+          preferences={preferences}
+          fieldLocaleListeners={fieldLocaleListeners}
+        />
+      </ErrorBoundary>
     </div>
   );
 }
