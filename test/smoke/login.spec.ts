@@ -1,22 +1,24 @@
+import { LoginPage } from './pages';
+
 describe('Contentful login', () => {
   it('successfully attempts to log into the web app and goes to the account settings', () => {
-    // TODO(jo-sm): ensure that this is working on the CI (not blocked by Imperva)
-    cy.visit(`https://be.${Cypress.env('domain')}/login`);
+    const loginPage = LoginPage.visit();
 
     // TODO(jo-sm): report how long it takes to go from here to loading the space home (maybe
     // wrapping in some helper/command)
-    cy.get('#user_email').type(Cypress.env('email'));
-    cy.get('#user_password').type(Cypress.env('password'));
+    loginPage.emailField.type(Cypress.env('email'));
+    loginPage.passwordField.type(Cypress.env('password'));
 
-    cy.get('input[type="submit"]').click();
+    const spaceHome = loginPage.submitForm();
 
     // The test account will always have at least one space, and should always be the space admin
     // of that space, so we will see the space home on loading.
-    cy.get('[data-test-id="admin-space-home"]', { timeout: 20000 });
+    spaceHome.container.should('be.visible');
 
-    cy.get('[data-test-id="account-menu-trigger"]').click();
-    cy.get('[data-test-id="nav.account.userProfile"]').click();
+    spaceHome.navBar.accountMenu.open();
 
-    cy.get('[data-test-id="account-details-section-card"]').should('be.visible');
+    const accountSettings = spaceHome.navBar.accountMenu.goToAccountSettings();
+
+    accountSettings.accountDetailsSection.should('be.visible');
   });
 });

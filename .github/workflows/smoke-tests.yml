@@ -28,7 +28,7 @@ jobs:
         # dependencies when we only need a handful.
         run: |
           rm package.json package-lock.json
-          npm install cypress typescript
+          npm install cypress@4 typescript@3 @testing-library/cypress@6
       - name: Run smoke tests
         # Because we remove `package.json` above, we can't use the npm task, so instead
         # we use the official Cypress action with the right environment variables.
