@@ -71,8 +71,6 @@ const STEPS = {
 };
 
 const generateBreadcrumbItems = (step) => {
-  const stepIsPlatform = step === STEPS.PLATFORM_SELECTION;
-
   const spaceSteps = [STEPS.PLATFORM_SELECTION, STEPS.SPACE_PLAN_SELECTION, STEPS.SPACE_DETAILS];
 
   const paymentSteps = [STEPS.BILLING_DETAILS, STEPS.CREDIT_CARD_DETAILS, STEPS.CONFIRMATION];
@@ -80,7 +78,7 @@ const generateBreadcrumbItems = (step) => {
   const confirmationSteps = [STEPS.RECEIPT, STEPS.UPGRADE_RECEIPT, STEPS.COMPOSE_RECEIPT];
 
   return [
-    { text: stepIsPlatform ? '1.Subscription' : '1.Spaces', isActive: spaceSteps.includes(step) },
+    { text: '1.Subscription', isActive: spaceSteps.includes(step) },
     { text: '2.Payment', isActive: paymentSteps.includes(step) },
     { text: '3.Confirmation', isActive: confirmationSteps.includes(step) },
   ];
