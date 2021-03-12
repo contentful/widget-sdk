@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Notification, TextLink } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { Notification } from '@contentful/forma-36-react-components';
 import { createRelease } from '../releasesService';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleasesProvider } from '../ReleasesWidget/ReleasesContext';
+import { LaunchAppDeepLinkRaw, getLaunchAppDeepLink } from 'features/contentful-apps';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   contentStyle: css({
@@ -23,33 +23,29 @@ const styles = {
   }),
 };
 
-export function ReleaseDetailStateLink({ releaseId }) {
-  const { currentSpace } = useSpaceEnvContext();
-  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}releases.detail`;
-  return (
-    <StateLink path={path} params={{ releaseId }}>
-      {({ onClick, getHref }) => (
-        <TextLink href={getHref()} onClick={onClick} testId="view-release">
-          View Release
-        </TextLink>
-      )}
-    </StateLink>
-  );
-}
-
-ReleaseDetailStateLink.propTypes = {
-  releaseId: PropTypes.string.isRequired,
-};
-
 const ReleasesListDialog = ({ onCancel, onCreateRelease }) => {
+  const { currentSpaceId, currentEnvironmentId, currentEnvironmentAliasId } = useSpaceEnvContext();
+
   const onSubmit = (releaseName) => {
     return createRelease(releaseName)
       .then((release) => {
+        const href = getLaunchAppDeepLink(
+          currentSpaceId,
+          currentEnvironmentAliasId || currentEnvironmentId,
+          release.sys.id
+        );
         Notification.success(
           <div className={styles.notification}>
-            <div>{releaseName} was sucessfully created</div>
-            <ReleaseDetailStateLink releaseId={release.sys.id} />
+            <div>{releaseName} was successfully created</div>
+            <LaunchAppDeepLinkRaw
+              href={href}
+              eventOrigin="release-list-page"
+              iconSize={16}
+              withIcon
+              withExternalIcon
+              iconPosition="left">
+              View Release
+            </LaunchAppDeepLinkRaw>
           </div>
         );
         onCancel();
@@ -66,9 +62,15 @@ const ReleasesListDialog = ({ onCancel, onCreateRelease }) => {
       title: 'Create new',
       render: () => {
         return (
-          <ReleasesProvider>
-            <CreateReleaseForm onClose={onCancel} onSubmit={onSubmit} buttonText="Create Release" />
-          </ReleasesProvider>
+          <SpaceEnvContextProvider>
+            <ReleasesProvider>
+              <CreateReleaseForm
+                onClose={onCancel}
+                onSubmit={onSubmit}
+                buttonText="Create Release"
+              />
+            </ReleasesProvider>
+          </SpaceEnvContextProvider>
         );
       },
     },

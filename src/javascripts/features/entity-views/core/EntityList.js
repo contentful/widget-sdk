@@ -26,6 +26,7 @@ import StateLink from 'app/common/StateLink';
 import { useSelectedEntities } from 'core/hooks';
 import { BulkActionsRow } from './BulkActions/BulkActionsRow';
 import { MetadataTags, useTagsFeatureEnabled } from 'features/content-tags';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const noWrapEllipsis = {
   overflow: 'hidden',
@@ -254,129 +255,131 @@ export const EntityList = ({
 
   const renderContent = () => {
     return (
-      <Table
-        className={cn(className, styles.table)}
-        testId={`${entityType}-list`}
-        aria-label="Content Search Results"
-        cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
-        <TableHead offsetTop={isEdge() ? '0px' : '-24px'} isSticky className={styles.tableHead}>
-          <TableRow testId="column-names">
-            <TableCell className={styles.checkboxCell} onClick={toggleAllSelected}>
-              <Checkbox
-                id="select-all"
-                testId="select-all"
-                name="select-all"
-                checked={allSelected}
-                className={css({ marginTop: '2px' })}
-              />
-            </TableCell>
-            {displayedFields.map(
-              ({
-                id,
-                className,
-                name,
-                onClick,
-                isActiveSort,
-                isSortable,
-                direction,
-                colWidth: width = 'auto',
-              }) => {
+      <SpaceEnvContextProvider>
+        <Table
+          className={cn(className, styles.table)}
+          testId={`${entityType}-list`}
+          aria-label="Content Search Results"
+          cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
+          <TableHead offsetTop={isEdge() ? '0px' : '-24px'} isSticky className={styles.tableHead}>
+            <TableRow testId="column-names">
+              <TableCell className={styles.checkboxCell} onClick={toggleAllSelected}>
+                <Checkbox
+                  id="select-all"
+                  testId="select-all"
+                  name="select-all"
+                  checked={allSelected}
+                  className={css({ marginTop: '2px' })}
+                />
+              </TableCell>
+              {displayedFields.map(
+                ({
+                  id,
+                  className,
+                  name,
+                  onClick,
+                  isActiveSort,
+                  isSortable,
+                  direction,
+                  colWidth: width = 'auto',
+                }) => {
+                  return (
+                    <SortableTableCell
+                      key={id}
+                      testId={id}
+                      isSortable={isSortable}
+                      isActiveSort={isActiveSort}
+                      onClick={onClick}
+                      direction={direction}
+                      aria-label={name}
+                      className={cx(className, styles.tableHeadCell, css({ width }))}>
+                      <span className={styles.fieldWrapper} title={name}>
+                        {name}
+                      </span>
+                    </SortableTableCell>
+                  );
+                }
+              )}
+              <TableCell testId="status" className={styles.statusTableHeader}>
+                <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
+                  Status
+                  {renderViewCustomizer()}
+                </span>
+              </TableCell>
+            </TableRow>
+            <BulkActionsRow
+              colSpan={columnCount}
+              entityType={entityType}
+              selectedEntities={selected}
+              updateEntities={updateEntities}
+              onActionComplete={(...args) => {
+                clearSelected();
+                onBulkActionComplete(...args);
+              }}
+            />
+          </TableHead>
+          <TableBody>
+            {isLoading ? (
+              <SkeletonRow rowCount={entities.length || 10} columnCount={columnCount} />
+            ) : (
+              entities.map((entity, index) => {
+                const entityId = entity.getId();
+                const type = entity.getType().toLowerCase();
+                const entityIsSelected = isSelected(entity);
                 return (
-                  <SortableTableCell
-                    key={id}
-                    testId={id}
-                    isSortable={isSortable}
-                    isActiveSort={isActiveSort}
-                    onClick={onClick}
-                    direction={direction}
-                    aria-label={name}
-                    className={cx(className, styles.tableHeadCell, css({ width }))}>
-                    <span className={styles.fieldWrapper} title={name}>
-                      {name}
-                    </span>
-                  </SortableTableCell>
+                  <StateLink
+                    path="^.detail"
+                    params={{ [`${type}Id`]: entityId }}
+                    trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
+                    trackParams={{ entry_index: index, page_index: pageIndex }}
+                    key={entityId}>
+                    {({ onClick, getHref }) => {
+                      const href = getHref();
+                      return (
+                        <TableRow
+                          tabIndex="0"
+                          selected={entityIsSelected}
+                          onKeyDown={onKeyDownEvent(onClick, false)}
+                          className={cn(styles.cursorPointer, {
+                            [styles.highlight]: entityIsSelected,
+                            [styles.visibilityHidden]: isLoading,
+                          })}
+                          testId={`${entityType}-row`}>
+                          <CheckboxCell
+                            name={`select-${entityId}`}
+                            checked={entityIsSelected}
+                            onClick={() => toggleSelected(entity)}
+                          />
+                          {displayedFields.map((field) => {
+                            const { id, className, colWidth: width = 'auto' } = field;
+                            const uniqueId = `${entityId}_${id}`;
+                            return (
+                              <TableCell
+                                key={uniqueId}
+                                className={cx(className, css({ width }))}
+                                testId={id}
+                                onClick={onClick}>
+                                <SecretiveLink
+                                  href={href}
+                                  className={cn(styles.flexCenter, styles.fieldWrapper)}>
+                                  {renderDisplayField({ field, entity, tagsEnabled })}
+                                </SecretiveLink>
+                              </TableCell>
+                            );
+                          })}
+                          <TableCell testId="status" className={styles.statusColumn}>
+                            <StatusCell href={href} jobs={jobs} entity={entity} />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }}
+                  </StateLink>
                 );
-              }
+              })
             )}
-            <TableCell testId="status" className={styles.statusTableHeader}>
-              <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
-                Status
-                {renderViewCustomizer()}
-              </span>
-            </TableCell>
-          </TableRow>
-          <BulkActionsRow
-            colSpan={columnCount}
-            entityType={entityType}
-            selectedEntities={selected}
-            updateEntities={updateEntities}
-            onActionComplete={(...args) => {
-              clearSelected();
-              onBulkActionComplete(...args);
-            }}
-          />
-        </TableHead>
-        <TableBody>
-          {isLoading ? (
-            <SkeletonRow rowCount={entities.length || 10} columnCount={columnCount} />
-          ) : (
-            entities.map((entity, index) => {
-              const entityId = entity.getId();
-              const type = entity.getType().toLowerCase();
-              const entityIsSelected = isSelected(entity);
-              return (
-                <StateLink
-                  path="^.detail"
-                  params={{ [`${type}Id`]: entityId }}
-                  trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
-                  trackParams={{ entry_index: index, page_index: pageIndex }}
-                  key={entityId}>
-                  {({ onClick, getHref }) => {
-                    const href = getHref();
-                    return (
-                      <TableRow
-                        tabIndex="0"
-                        selected={entityIsSelected}
-                        onKeyDown={onKeyDownEvent(onClick, false)}
-                        className={cn(styles.cursorPointer, {
-                          [styles.highlight]: entityIsSelected,
-                          [styles.visibilityHidden]: isLoading,
-                        })}
-                        testId={`${entityType}-row`}>
-                        <CheckboxCell
-                          name={`select-${entityId}`}
-                          checked={entityIsSelected}
-                          onClick={() => toggleSelected(entity)}
-                        />
-                        {displayedFields.map((field) => {
-                          const { id, className, colWidth: width = 'auto' } = field;
-                          const uniqueId = `${entityId}_${id}`;
-                          return (
-                            <TableCell
-                              key={uniqueId}
-                              className={cx(className, css({ width }))}
-                              testId={id}
-                              onClick={onClick}>
-                              <SecretiveLink
-                                href={href}
-                                className={cn(styles.flexCenter, styles.fieldWrapper)}>
-                                {renderDisplayField({ field, entity, tagsEnabled })}
-                              </SecretiveLink>
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell testId="status" className={styles.statusColumn}>
-                          <StatusCell href={href} jobs={jobs} entity={entity} />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  }}
-                </StateLink>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </SpaceEnvContextProvider>
     );
   };
 
