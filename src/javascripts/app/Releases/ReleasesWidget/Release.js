@@ -15,6 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { Pluralized } from 'core/components/formatting/Pluralized/Pluralized';
+import { LaunchAppDeepLink } from 'features/contentful-apps';
 
 const styles = {
   card: css({
@@ -52,6 +53,12 @@ const styles = {
     textTransform: 'none',
     color: tokens.colorTextMid,
   }),
+  launchDeepLinkDropdownItem: css({
+    color: tokens.colorTextLight,
+    '&:hover, &:active, &:visited, &:link': {
+      color: tokens.colorTextLight,
+    },
+  }),
 };
 
 export default class Release extends Component {
@@ -61,6 +68,7 @@ export default class Release extends Component {
       assets: PropTypes.array,
       entries: PropTypes.array,
       sys: PropTypes.shape({
+        id: PropTypes.string,
         createdAt: PropTypes.string,
         createdBy: PropTypes.shape({
           type: PropTypes.string,
@@ -119,6 +127,9 @@ export default class Release extends Component {
           <DropdownList
             className={styles.dropdownList}
             onClick={(event) => event.stopPropagation()}>
+            <DropdownListItem>
+              <LaunchAppDeepLink releaseId={release.sys.id} />
+            </DropdownListItem>
             {this.props.deleteEntityFromRelease ? (
               <DropdownListItem onClick={() => this.handleEntityDeleteFromRelease(release)}>
                 Remove from Release

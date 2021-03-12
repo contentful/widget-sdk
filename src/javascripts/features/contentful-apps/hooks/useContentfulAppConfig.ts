@@ -82,22 +82,35 @@ export const useContentfulAppsConfig = ({
   organizationId,
   spaceId,
   environmentId,
-}: UseContentfulAppsConfig): AppState => {
+}: UseContentfulAppsConfig): AppState & { isFetching: boolean } => {
+  const [isFetching, setFetching] = useState(true);
   const [appState, setAppState] = useState<AppState>({});
 
   useEffect(() => {
     let mounted = true;
     const fetchData = async () => {
-      const appsConfig = await fetchContentfulAppsConfig({
-        appId,
-        organizationId,
-        spaceId,
-        environmentId,
-      });
-      if (mounted) {
-        setAppState({ ...appsConfig });
+      try {
+        const appsConfig = await fetchContentfulAppsConfig({
+          appId,
+          organizationId,
+          spaceId,
+          environmentId,
+        });
+        if (mounted) {
+          setAppState({ ...appsConfig });
+        }
+      } catch (e) {
+        if (mounted) {
+          setAppState({});
+        }
+      } finally {
+        if (mounted) {
+          setFetching(false);
+        }
       }
     };
+
+    setFetching(true);
     fetchData();
 
     return () => {
@@ -105,5 +118,5 @@ export const useContentfulAppsConfig = ({
     };
   }, [appId, organizationId, spaceId, environmentId]);
 
-  return appState;
+  return { ...appState, isFetching };
 };

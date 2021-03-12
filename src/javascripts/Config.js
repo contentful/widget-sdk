@@ -194,7 +194,7 @@ export const marketplaceEnvironment = settings.marketplaceEnvironment;
 /**
  * Contentful Launch
  */
-export const launchAppUrl = 'https://launch.contentful.com';
+export const launchAppUrl = `https://launch.${domain}`;
 
 /**
  * Builds tools API URL. This is the service for creating

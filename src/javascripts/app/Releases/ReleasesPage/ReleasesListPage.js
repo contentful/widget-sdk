@@ -20,8 +20,7 @@ import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
 import { getReleaseActions, getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesListdialog from './ReleasesListDialog';
-import { LaunchAppDeepLink } from '../ReleasesWidget/LaunchAppDeepLink';
-import { IfAppInstalled } from 'features/contentful-apps';
+import { IfAppInstalled, LaunchAppDeepLinkCard } from 'features/contentful-apps';
 
 const styles = {
   workbenchContent: css({
@@ -101,7 +100,7 @@ const PageShell = ({ children, setIsRelaseDialogShown }) => {
         />
         <Workbench.Header
           className={styles.deepLinkHeader}
-          title={<LaunchAppDeepLink eventOrigin="release-list-page" />}
+          title={<LaunchAppDeepLinkCard eventOrigin="release-list-page" />}
         />
         <Workbench.Content type="text" className={styles.workbenchContent}>
           <div>{children}</div>

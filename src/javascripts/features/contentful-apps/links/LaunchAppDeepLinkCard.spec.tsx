@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { LaunchAppDeepLink } from './LaunchAppDeepLink';
+import { LaunchAppDeepLinkCard } from './LaunchAppDeepLinkCard';
 import * as Analytics from 'analytics/Analytics';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 
 jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
-  ...jest.requireActual('features/contentful-apps/hooks/useContentfulAppConfig'),
+  ...(jest.requireActual('features/contentful-apps/hooks/useContentfulAppConfig') as any),
   useContentfulAppsConfig: jest.fn().mockReturnValue({
     isPurchased: true,
     isEnabled: true,
@@ -29,9 +29,9 @@ const defaultSpaceContextValues = {
 
 describe('components/ui/Loader', () => {
   beforeEach(() => {
-    useSpaceEnvContext.mockReturnValue(defaultSpaceContextValues);
+    (useSpaceEnvContext as jest.Mock).mockReturnValue(defaultSpaceContextValues);
 
-    useContentfulAppsConfig.mockReturnValue({
+    (useContentfulAppsConfig as jest.Mock).mockReturnValue({
       isPurchased: true,
       isEnabled: true,
       isInstalled: true,
@@ -40,7 +40,7 @@ describe('components/ui/Loader', () => {
   });
 
   it('render the component', () => {
-    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const { getByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     const textLink = getByTestId('cf-ui-text-link');
     expect(textLink).toHaveAttribute(
       'href',
@@ -49,7 +49,7 @@ describe('components/ui/Loader', () => {
   });
 
   it('should track when link is clicked', () => {
-    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const { getByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     const textLink = getByTestId('cf-ui-text-link');
     fireEvent.click(textLink);
     expect(Analytics.track).toHaveBeenCalledWith('launch_app:link_clicked', {
@@ -63,9 +63,9 @@ describe('components/ui/Loader', () => {
       currentEnvironmentId: 'development',
     };
 
-    useSpaceEnvContext.mockReturnValue(expectedValues);
+    (useSpaceEnvContext as jest.Mock).mockReturnValue(expectedValues);
 
-    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const { getByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     const textLink = getByTestId('cf-ui-text-link');
     expect(textLink).toHaveAttribute(
       'href',
@@ -80,9 +80,9 @@ describe('components/ui/Loader', () => {
       currentEnvironmentAliasId: 'development',
     };
 
-    useSpaceEnvContext.mockReturnValue(expectedValues);
+    (useSpaceEnvContext as jest.Mock).mockReturnValue(expectedValues);
 
-    const { getByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const { getByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     const textLink = getByTestId('cf-ui-text-link');
     expect(textLink).toHaveAttribute(
       'href',
@@ -91,13 +91,13 @@ describe('components/ui/Loader', () => {
   });
 
   it('should not display component when feature flag is disabled', () => {
-    useContentfulAppsConfig.mockReturnValue({
+    (useContentfulAppsConfig as jest.Mock).mockReturnValue({
       isPurchased: false,
       isEnabled: false,
       isInstalled: false,
       isTrialAvailable: false,
     });
-    const { queryByTestId } = render(<LaunchAppDeepLink eventOrigin="test-page" />);
+    const { queryByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     expect(queryByTestId('launch-app-deep-link')).toBeNull();
   });
 });

@@ -16,8 +16,7 @@ import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
 import * as Entries from 'data/entries';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { track } from 'analytics/Analytics';
-import { LaunchAppDeepLink } from './LaunchAppDeepLink';
-import { IfAppInstalled } from 'features/contentful-apps';
+import { IfAppInstalled, LaunchAppDeepLinkCard } from 'features/contentful-apps';
 
 const styles = {
   textLink: css({
@@ -84,7 +83,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       </div>
       <IfAppInstalled appId="launch">
         <Card className={styles.launchAppNote}>
-          <LaunchAppDeepLink className={styles.linkCard} eventOrigin="releases-widget" />
+          <LaunchAppDeepLinkCard className={styles.linkCard} eventOrigin="releases-widget" />
         </Card>
       </IfAppInstalled>
       {isRelaseDialogShown && (
