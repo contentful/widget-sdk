@@ -12,7 +12,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import { appsMarketingUrl } from 'Config';
 import { StartAppTrialModal } from 'features/trials';
-import { beginSpaceCreation } from 'services/CreateSpace';
+import { go } from 'states/Navigator';
+import { PRESELECT_VALUES } from 'features/space-purchase';
 
 const styles = {
   link: css({
@@ -31,7 +32,14 @@ export function ContentfulAppsTrial({
   const showBuyButton = isTrialActive || isTrialExpired;
 
   const showPurchase = () => {
-    beginSpaceCreation(organization.sys.id);
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: {
+        orgId: organization.sys.id,
+        preselect: PRESELECT_VALUES.APPS,
+        from: 'subscription',
+      },
+    });
   };
 
   const showModal = () => {

@@ -93,6 +93,7 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
         <WidgetContainer.Row order>
           <WidgetContainer.Col>
             <ContentfulAppTile
+              from="space-home-combined"
               slug="app"
               {...PROMO_TEXT.trial}
               image={<LaunchAndComposeIcon />}

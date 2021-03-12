@@ -56,6 +56,7 @@ export const ContentfulAppsCTA = (): ReactElement => {
       {compose.isEnabled && compose.isInstalled && (
         <WidgetContainer.Col>
           <ContentfulAppTile
+            from="space-home-compose"
             slug="compose"
             {...PROMO_TEXT.compose}
             image={<AppLogos.ComposeLogo />}
@@ -71,6 +72,7 @@ export const ContentfulAppsCTA = (): ReactElement => {
       {launch.isEnabled && launch.isInstalled && (
         <WidgetContainer.Col>
           <ContentfulAppTile
+            from="space-home-launch"
             slug="launch"
             {...PROMO_TEXT.launch}
             image={<AppLogos.LaunchLogo />}
