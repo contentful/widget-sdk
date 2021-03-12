@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { range } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as Config from 'Config';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { RenderRichTextEditor } from 'app/widgets/RichText';
@@ -32,43 +32,12 @@ import { SlugEditor } from '@contentful/field-editor-slug';
 import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { CombinedLinkActions } from '@contentful/field-editor-reference';
-import { FLAGS, getVariation } from 'LaunchDarkly';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
   name: 'Help text',
   type: 'Symbol',
   description: 'This help text will show up below the field',
-};
-
-const BooleanVariation = ({ featureFlag, children }) => {
-  const [isEnabled, setIsEnabled] = useState(undefined);
-  const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
-
-  useEffect(() => {
-    if (isEnabled === undefined) {
-      getVariation(featureFlag, {
-        organizationId: currentOrganizationId,
-        spaceId: currentSpaceId,
-      }).then(setIsEnabled);
-    }
-  }, [featureFlag, currentOrganizationId, currentSpaceId, isEnabled]);
-
-  return isEnabled === undefined ? null : children(isEnabled);
-};
-
-const CombinedActionsBooleanVariation = ({ children }) => {
-  return (
-    <BooleanVariation featureFlag={FLAGS.COMBINED_REFERENCE_ACTIONS}>
-      {(isEnabled) => {
-        const renderCustomActions = isEnabled
-          ? (props) => <CombinedLinkActions {...props} />
-          : null;
-        return children(renderCustomActions);
-      }}
-    </BooleanVariation>
-  );
 };
 
 // Returns a list of all builtin widgets.
@@ -364,16 +333,12 @@ export function create() {
     icon: 'reference',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <SingleEntryReferenceEditorWithTracking
-              viewType="link"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <SingleEntryReferenceEditorWithTracking
+          viewType="link"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
 
@@ -386,16 +351,12 @@ export function create() {
     icon: 'reference-card',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <SingleEntryReferenceEditorWithTracking
-              viewType="card"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <SingleEntryReferenceEditorWithTracking
+          viewType="card"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [getShowCreateEntityActionParam('Entry'), getShowLinkEntityActionParam('Entry')],
@@ -409,16 +370,12 @@ export function create() {
     icon: 'media-preview',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <SingleMediaEditorWithTracking
-              viewType="card"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <SingleMediaEditorWithTracking
+          viewType="card"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],
@@ -438,16 +395,12 @@ export function create() {
     icon: 'references',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <MultipleEntryReferenceEditorWithTracking
-              viewType="link"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <MultipleEntryReferenceEditorWithTracking
+          viewType="link"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [
@@ -463,16 +416,12 @@ export function create() {
     icon: 'references-card',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <MultipleEntryReferenceEditorWithTracking
-              viewType="card"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <MultipleEntryReferenceEditorWithTracking
+          viewType="card"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [
@@ -488,16 +437,12 @@ export function create() {
     icon: 'media-references',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <MultipleMediaEditorWithTracking
-              viewType="link"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <MultipleMediaEditorWithTracking
+          viewType="link"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],
@@ -509,16 +454,12 @@ export function create() {
     icon: 'media-previews',
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return (
-        <CombinedActionsBooleanVariation>
-          {(renderCustomActions) => (
-            <MultipleMediaEditorWithTracking
-              viewType="card"
-              sdk={widgetApi}
-              loadEvents={loadEvents}
-              renderCustomActions={renderCustomActions}
-            />
-          )}
-        </CombinedActionsBooleanVariation>
+        <MultipleMediaEditorWithTracking
+          viewType="card"
+          sdk={widgetApi}
+          loadEvents={loadEvents}
+          renderCustomActions={CombinedLinkActions}
+        />
       );
     },
     parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],

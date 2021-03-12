@@ -46,7 +46,6 @@ export const FLAGS = {
   CREATE_SPACE_FOR_SPACE_PLAN: 'feature-hejo-12-2020-create-space-for-space-plan',
   CONTENT_LEVEL_PERMISSIONS: 'feature-dev-workflows-09-2020-content-level-permissions',
   WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
-  COMBINED_REFERENCE_ACTIONS: 'feature-pen-11-2020-combined-reference-actions',
   COMPOSE_LAUNCH_PURCHASE: 'feature-ahoy-11-2020-compose-launch-purchase',
   PATCH_ENTRY_UPDATES: 'feature-penguin-12-2020-patch-entry-updates',
   COMPOSE_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-compose-eap',

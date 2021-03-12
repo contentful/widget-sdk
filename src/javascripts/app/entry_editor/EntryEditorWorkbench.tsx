@@ -18,7 +18,7 @@ import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
-import renderDefaultEditor from './DefaultEntryEditor';
+import { DefaultEntryEditorTab, DefaultReferenceTab, DefaultTagsTab } from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { EditorContext, LocaleData } from 'app/entity_editor/EntityField/types';
 import { hasLinks } from './EntryReferences';
@@ -120,8 +120,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const { processingAction, references, selectedEntities } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
-  const availableTabs = editorData.editorsExtensions.filter(
-    (editor) => !editor.disabled && !editor.problem
+  const availableTabs = React.useMemo(
+    () => editorData.editorsExtensions.filter((editor) => !editor.disabled && !editor.problem),
+    [editorData.editorsExtensions]
   );
 
   const [selectedTab, setSelectedTab] = useState(() => validateTab(preferences.tab, availableTabs));
@@ -129,29 +130,39 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   // kill this with fire when react migration allows it
   const $state = getModule('$state');
-  const setTabInUrl = (tab) =>
-    $state.transitionTo(
-      $state.current,
-      { tab: tabIsDefault(tab, availableTabs) ? null : tab },
-      {
-        location: true, // This makes it update URL
-        inherit: true,
-        relative: $state.$current,
-        notify: false, // This controls reload
-      }
-    );
 
-  const navigateToTab = (tab) => {
-    setTabInUrl(tab);
-    setSelectedTab(tab);
-  };
-
-  const widgets = filterWidgets(
-    localeData,
-    editorContext,
-    editorData.fieldControls.form,
-    preferences.showDisabledFields
+  const setTabInUrl = React.useCallback(
+    (tab) =>
+      $state.transitionTo(
+        $state.current,
+        { tab: tabIsDefault(tab, availableTabs) ? null : tab },
+        {
+          location: true, // This makes it update URL
+          inherit: true,
+          relative: $state.$current,
+          notify: false, // This controls reload
+        }
+      ),
+    [availableTabs, $state]
   );
+
+  const navigateToTab = React.useCallback(
+    (tab) => {
+      setTabInUrl(tab);
+      setSelectedTab(tab);
+    },
+    [setTabInUrl]
+  );
+
+  const widgets = React.useMemo(() => {
+    return filterWidgets(
+      localeData,
+      editorContext,
+      editorData.fieldControls.form,
+      preferences.showDisabledFields
+    );
+  }, [localeData, editorContext, editorData.fieldControls.form, preferences.showDisabledFields]);
+
   const noLocalizedFieldsAdviceProps = getNoLocalizedFieldsAdviceProps(widgets, localeData);
 
   useEffect(() => {
@@ -166,8 +177,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
     getFeatureFlagVariation();
   }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible]);
-
-  const onRootReferenceCardClick = () => navigateToTab(validateTab(null, availableTabs));
 
   const fieldLocaleListeners = useFieldLocaleListeners(
     editorData.fieldControls.all,
@@ -215,16 +224,52 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       isEnabled: () => isTabEnabled,
       render() {
         if (currentTab.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN) {
-          return renderDefaultEditor(currentTab.widgetId, {
-            selectedTab,
-            onRootReferenceCardClick,
-            widgets,
-            noLocalizedFieldsAdviceProps,
-            fieldLocaleListeners,
-            entityInfo,
-            migratedEntityFieldEnabled,
-            ...props,
-          });
+          if (currentTab.widgetId === EntryEditorWidgetTypes.DEFAULT_EDITOR.id) {
+            return (
+              <DefaultEntryEditorTab
+                {...{
+                  widgets,
+                  noLocalizedFieldsAdviceProps,
+                  fieldLocaleListeners,
+                  entityInfo,
+                  migratedEntityFieldEnabled,
+                  localeData,
+                  loadEvents: props.loadEvents,
+                  fields: props.fields,
+                  otDoc: props.otDoc,
+                  editorData: props.editorData,
+                  editorContext: props.editorContext,
+                  preferences,
+                }}
+              />
+            );
+          }
+          if (currentTab.widgetId === EntryEditorWidgetTypes.TAGS_EDITOR.id) {
+            return (
+              <DefaultTagsTab
+                {...{
+                  widgetId: currentTab.widgetId,
+                  selectedTab,
+                  otDoc,
+                }}
+              />
+            );
+          }
+          if (currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id) {
+            return (
+              <DefaultReferenceTab
+                {...{
+                  widgetId: currentTab.widgetId,
+                  selectedTab,
+                  editorData: props.editorData,
+                  onRootReferenceCardClick: () => {
+                    navigateToTab(validateTab(null, availableTabs));
+                  },
+                }}
+              />
+            );
+          }
+          return null;
         } else {
           const scope = {
             editorData,
