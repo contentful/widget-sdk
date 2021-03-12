@@ -92,7 +92,7 @@ export function canUpdateOwnEntries() {
 // we have the constant '__cf_internal_all_cts__', so instead we take a list of content types
 // from the caller
 export function probableContentTypeAccess(action, contentTypes) {
-  if (isAdmin) {
+  if (isAdmin || isEnvironmentManager) {
     return contentTypes;
   }
 

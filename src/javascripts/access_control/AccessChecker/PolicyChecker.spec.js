@@ -168,14 +168,14 @@ describe('Policy Access Checker', () => {
     },
   };
 
-  function setRole(role, isAdmin) {
+  function setRole(role, isAdmin, isMaster = true) {
     pac.setMembership(
       {
         admin: isAdmin,
         roles: [role],
       },
       {
-        environment: { sys: { isMaster: true } },
+        environment: { sys: { isMaster } },
       }
     );
   }
@@ -368,6 +368,53 @@ describe('Policy Access Checker', () => {
         ],
       });
       expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual([]);
+    });
+
+    it('allow all content types for admin', () => {
+      setRole(
+        {
+          policies: [
+            {
+              effect: 'allow',
+              actions: 'all',
+              constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+            },
+            {
+              effect: 'deny',
+              actions: ['create'],
+              constraint: {
+                and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+              },
+            },
+          ],
+        },
+        true
+      );
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual(contentTypes);
+    });
+
+    it('allow all content types for non-master', () => {
+      setRole(
+        {
+          policies: [
+            {
+              effect: 'allow',
+              actions: 'all',
+              constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+            },
+            {
+              effect: 'deny',
+              actions: ['create'],
+              constraint: {
+                and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+              },
+            },
+          ],
+        },
+        false,
+        false
+      );
+      expect(pac.probableContentTypeAccess('create', contentTypes)).toEqual(contentTypes);
     });
 
     it('allow some content types, deny some content types', () => {
