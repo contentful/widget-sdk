@@ -1,4 +1,4 @@
-import { styles } from './styles';
+import React, { ReactElement } from 'react';
 import {
   Card,
   Heading,
@@ -8,18 +8,18 @@ import {
   Typography,
   ModalLauncher,
 } from '@contentful/forma-36-react-components';
-import React, { ReactElement } from 'react';
 import { MarketplaceApp } from 'features/apps-core';
-import { go } from 'states/Navigator';
-import { beginSpaceCreation } from 'services/CreateSpace';
 import { StartAppTrialModal } from 'features/trials';
+import { PRESELECT_VALUES } from 'features/space-purchase';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
+import { appsMarketingUrl } from 'Config';
+import { go } from 'states/Navigator';
 
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
-import { appsMarketingUrl } from 'Config';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
+import { styles } from './styles';
 
 interface ListProps {
   apps: MarketplaceApp[];
@@ -49,9 +49,11 @@ export interface ContentfulAppTileProps {
   // Not passing these will prevent the relevant buttons from being shown
   installAction?: () => void;
   uninstallAction?: () => void;
+  from?: string;
 }
 
 export const ContentfulAppTile = ({
+  from,
   slug,
   image,
   title,
@@ -83,12 +85,21 @@ export const ContentfulAppTile = ({
     ));
   };
 
-  const handleStartAppTrial = () => {
+  const handleStartAppTrial = () =>
     go({
       path: ['account', 'organizations', 'start_trial'],
       params: { orgId: organizationId, existingUsers: true },
     });
-  };
+
+  const handleBuy = () =>
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: {
+        orgId: organizationId,
+        preselect: PRESELECT_VALUES.APPS,
+        from,
+      },
+    });
 
   return (
     <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appListCard}>
@@ -123,14 +134,7 @@ export const ContentfulAppTile = ({
                 </Button>
               )}
               {showBuyNow && (
-                <Button
-                  testId="buy-button"
-                  className={styles.button}
-                  onClick={() => {
-                    if (organizationId) {
-                      beginSpaceCreation(organizationId);
-                    }
-                  }}>
+                <Button testId="buy-button" className={styles.button} onClick={handleBuy}>
                   Buy now
                 </Button>
               )}
@@ -187,6 +191,7 @@ export const ContentfulAppsList = ({
       </div>
       {isCombinedTile ? (
         <ContentfulAppTile
+          from="apps-combined"
           slug="app"
           title={isTrialAvailable ? 'Compose + Launch free trial' : 'Compose + Launch'}
           organizationId={organizationId}
@@ -201,6 +206,7 @@ export const ContentfulAppsList = ({
       ) : (
         apps.map((app, key) => (
           <ContentfulAppTile
+            from={`apps-individual-${app.id}`}
             image={app.icon}
             title={app.title}
             text={app.tagLine}
