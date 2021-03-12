@@ -5,6 +5,10 @@ import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/Sc
 import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
 import { getScheduledActionsFeatureVariation } from '../ScheduledActionsFeatureFlag';
 
+// We expire the ScheduledActions cache every 10s
+// Right now it's being used to display "scheduled icons" for all references of an Entity.
+const DEFAULT_CACHE_TIMEOUT_MS = 5000;
+
 /**
  * A function that memoizes the result for 400ms and then clears the cache
  */
@@ -13,7 +17,7 @@ const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
 
   setTimeout(() => {
     batchedScheduleActionsLoader.cache.clear();
-  }, 400);
+  }, DEFAULT_CACHE_TIMEOUT_MS);
 
   return ScheduledActionsService.getJobs(spaceEndpoint, {
     order: 'scheduledFor.datetime',
