@@ -71,6 +71,11 @@ This is a list of all the guides for developing the Contentful web application.
 - Code hotspots that need constant improvement
 - Deprecated programming patterns
 
+## [Smoke tests](./smoke-tests.md)
+
+- General overview of the smoke tests
+- Best practices
+
 ## [Testing with Jest](./testing-jest.md)
 
 - How to run tests
