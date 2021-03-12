@@ -10,7 +10,7 @@ import { getScheduledActionsFeatureVariation } from '../ScheduledActionsFeatureF
 const DEFAULT_CACHE_TIMEOUT_MS = 5000;
 
 /**
- * A function that memoizes the result for 400ms and then clears the cache
+ * A function that memoizes the result for 5000ms and then clears the cache
  */
 const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
