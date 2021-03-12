@@ -4,6 +4,7 @@ orbs:
   cypress: cypress-io/cypress@1.27.0
   samson: contentful/trigger-samson@1
   polaris-scan: contentful/polaris-scan@1
+  dast-scan: contentful/dast-scan@1.0.0
   copy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.15
@@ -445,6 +446,12 @@ workflows:
           samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
           requires:
             - copy-assets-to-s3
+      - dast-scan/detectify:
+          scanProfile_id: d98a988be780be6cfa561ed310647053
+          context:
+            - dast-scan
+          requires:
+            - samson/trigger-samson
       # - saucelabs/run:
       #     name: run-win10-edge-tests
       #     browser: 'MicrosoftEdge'
