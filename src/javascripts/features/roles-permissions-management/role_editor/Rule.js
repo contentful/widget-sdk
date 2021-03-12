@@ -31,21 +31,21 @@ const contentTypeFieldsToOptions = (contentTypes) =>
   [
     {
       id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
-      name: 'All fields and tags (metadata)',
+      name: 'All fields and tags',
     },
     {
       id: PolicyBuilderConfig.ALL_FIELDS,
       name: 'All fields',
     },
+    {
+      id: PolicyBuilderConfig.TAGS,
+      name: 'Tags',
+    },
   ].concat(
     get(contentTypes, ['fields'], []).map(({ id, name, apiName }) => ({
       id: apiName || id,
-      name,
-    })),
-    {
-      id: PolicyBuilderConfig.TAGS,
-      name: 'Tags (metadata)',
-    }
+      name: `${name} (field)`,
+    }))
   );
 
 const entityScopeToOptions = (entityName) => [
@@ -57,7 +57,7 @@ const entityScopeToOptions = (entityName) => [
 const assetOptions = [
   {
     id: PolicyBuilderConfig.NO_PATH_CONSTRAINT,
-    name: 'All fields and tags (metadata)',
+    name: 'All fields and tags',
   },
   {
     id: PolicyBuilderConfig.ALL_FIELDS,
@@ -65,7 +65,7 @@ const assetOptions = [
   },
   {
     id: PolicyBuilderConfig.TAGS,
-    name: 'Tags (metadata)',
+    name: 'Tags',
   },
 ];
 
