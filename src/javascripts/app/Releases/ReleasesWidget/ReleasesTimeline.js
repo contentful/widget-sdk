@@ -33,12 +33,11 @@ export default class ReleasesTimeline extends Component {
         {this.props.releases.map((release, index) => (
           <li
             key={`release-${index}`}
-            onClick={this.props.onReleaseSelect ? () => this.handleClick(release) : null}
+            onClick={() => this.handleClick(release)}
             className={this.props.onReleaseSelect && styles.cursorPointer}>
             <Release
               release={release}
               deleteEntityFromRelease={this.props.deleteEntityFromRelease}
-              shouldCardHandleClick={!this.props.onReleaseSelect}
             />
           </li>
         ))}

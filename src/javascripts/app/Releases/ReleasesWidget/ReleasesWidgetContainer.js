@@ -11,6 +11,7 @@ import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesWidgetDialog from './ReleasesWidgetDialog';
 import { updateRelease } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
+import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
 import * as Entries from 'data/entries';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -38,6 +39,10 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
   useEffect(() => {
     fetchReleases(entityInfo, dispatch);
   }, [entityInfo, dispatch]);
+
+  const onReleaseSelect = (release) => {
+    releaseDetailNavigation(release);
+  };
 
   const handleReleaseRefresh = async () => {
     fetchReleases(entityInfo, dispatch);
@@ -68,6 +73,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
       {state.releasesIncludingEntity.length ? (
         <ReleasesTimeline
           releases={state.releasesIncludingEntity}
+          onReleaseSelect={onReleaseSelect}
           deleteEntityFromRelease={deleteEntityFromRelease}
         />
       ) : null}

@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { css } from 'emotion';
 
 import {
@@ -62,12 +62,6 @@ const styles = {
 };
 
 export default class Release extends Component {
-  constructor(props) {
-    super(props);
-
-    this.launchAppDeepLinkRef = createRef();
-  }
-
   static propTypes = {
     release: PropTypes.shape({
       title: PropTypes.string,
@@ -84,7 +78,6 @@ export default class Release extends Component {
       }),
     }),
     deleteEntityFromRelease: PropTypes.func,
-    shouldCardHandleClick: PropTypes.bool,
   };
 
   state = {
@@ -112,13 +105,7 @@ export default class Release extends Component {
     const hasAssets = !!assetsCount;
 
     return (
-      <Card
-        className={styles.card}
-        onClick={
-          this.props.shouldCardHandleClick
-            ? () => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })
-            : undefined
-        }>
+      <Card className={styles.card}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
         <strong testId="release-item" title={release.title} className={styles.textTag}>
           {release.title}
@@ -140,22 +127,8 @@ export default class Release extends Component {
           <DropdownList
             className={styles.dropdownList}
             onClick={(event) => event.stopPropagation()}>
-            <DropdownListItem
-              onClick={(e) => {
-                this.launchAppDeepLinkRef.current?.click(e);
-              }}>
-              <LaunchAppDeepLink
-                className={styles.launchDeepLinkDropdownItem}
-                ref={this.launchAppDeepLinkRef}
-                withIcon
-                iconPosition="left"
-                iconSize={16}
-                withExternalIcon
-                externalIconColor="muted"
-                releaseId={release.sys.id}
-                eventOrigin="releases-widget">
-                View in Launch
-              </LaunchAppDeepLink>
+            <DropdownListItem>
+              <LaunchAppDeepLink releaseId={release.sys.id} />
             </DropdownListItem>
             {this.props.deleteEntityFromRelease ? (
               <DropdownListItem onClick={() => this.handleEntityDeleteFromRelease(release)}>
