@@ -1,8 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import StateLink from 'app/common/StateLink';
 
 import tokens from '@contentful/forma-36-tokens';
-import { LaunchAppDeepLink, IfAppInstalled } from 'features/contentful-apps';
+import { IfAppInstalled } from 'features/contentful-apps';
 
 const styles = {
   linkContainer: css({
@@ -13,14 +16,32 @@ const styles = {
   }),
 };
 
-export default function ReleasesPageLink() {
+export function ReleasesStateLink({ isMasterEnvironment, children }) {
+  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}releases.list`;
+  return <StateLink path={path}>{children}</StateLink>;
+}
+
+ReleasesStateLink.propTypes = {
+  isMasterEnvironment: PropTypes.bool,
+  children: PropTypes.func.isRequired,
+};
+
+export default function ReleasesPageLink({ isMasterEnvironment }) {
   return (
     <IfAppInstalled appId="launch">
       <div className={styles.linkContainer}>
-        <LaunchAppDeepLink withIcon iconSize={20} withExternalIcon eventOrigin="entry-editor">
-          Releases
-        </LaunchAppDeepLink>
+        <ReleasesStateLink isMasterEnvironment={isMasterEnvironment}>
+          {({ getHref, onClick }) => (
+            <TextLink href={getHref()} onClick={onClick} icon="Release">
+              Releases
+            </TextLink>
+          )}
+        </ReleasesStateLink>
       </div>
     </IfAppInstalled>
   );
 }
+
+ReleasesPageLink.propTypes = {
+  isMasterEnvironment: PropTypes.bool,
+};

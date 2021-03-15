@@ -1,7 +1,6 @@
 import { AppLogos } from '@contentful/experience-components';
 import { Button, Flex, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { track } from 'analytics/Analytics';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { css } from 'emotion';
 import React from 'react';
@@ -9,7 +8,6 @@ import { getLaunchAppDeepLink } from '../utils/getLaunchAppDeepLink';
 
 type LaunchAppDeepLinkSplashProps = {
   releaseId: string;
-  eventOrigin: string;
 };
 
 const styles = {
@@ -27,13 +25,10 @@ const styles = {
   }),
 };
 
-const LaunchAppDeepLinkSplash = ({ releaseId, eventOrigin }: LaunchAppDeepLinkSplashProps) => {
+const LaunchAppDeepLinkSplash = ({ releaseId }: LaunchAppDeepLinkSplashProps) => {
   const { currentEnvironmentId, currentEnvironmentAliasId, currentSpaceId } = useSpaceEnvContext();
 
   const deepLinkToLaunch = () => {
-    track('launch_app:link_clicked', {
-      eventOrigin,
-    });
     window.open(
       getLaunchAppDeepLink(
         currentSpaceId as string,

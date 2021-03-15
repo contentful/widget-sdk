@@ -13,11 +13,10 @@ import ReleasesTimeline from './ReleasesTimeline';
 import { createRelease, getReleases, updateRelease } from '../releasesService';
 import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
+import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
 import { css } from 'emotion';
 import { fetchReleases } from '../common/utils';
 import { track } from 'analytics/Analytics';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { getLaunchAppDeepLink, LaunchAppDeepLinkRaw } from 'features/contentful-apps';
 
 const styles = {
   notification: css({
@@ -53,8 +52,6 @@ export default class ReleasesWidgetDialog extends Component {
     this.handleCreateRelease = this.handleCreateRelease.bind(this);
     track(TrackingEvents.DIALOG_OPEN, { purpose: 'create' });
   }
-
-  static contextType = SpaceEnvContext;
 
   static propTypes = {
     selectedEntities: PropTypes.array,
@@ -133,27 +130,12 @@ export default class ReleasesWidgetDialog extends Component {
       releaseId: release.sys.id,
     });
 
-    const { currentSpaceId, currentEnvironmentId, currentEnvironmentAliasId } = this.context;
-    const href = getLaunchAppDeepLink(
-      currentSpaceId,
-      currentEnvironmentAliasId || currentEnvironmentId,
-      release.sys.id
-    );
-
     Notification.success(
       <div className={styles.notification}>
         <span>
-          {releaseContentTitle} {predicate} successfully added to {release.title}
+          {releaseContentTitle} {predicate} sucessfully added to {release.title}
         </span>
-        <LaunchAppDeepLinkRaw
-          href={href}
-          eventOrigin="releases-widget"
-          withIcon
-          iconSize={16}
-          withExternalIcon
-          iconPosition="left">
-          View Release
-        </LaunchAppDeepLinkRaw>
+        <ReleaseDetailStateLink releaseId={release.sys.id} />
       </div>
     );
   }
