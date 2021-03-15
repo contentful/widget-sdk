@@ -92,14 +92,10 @@ export function createEntryFieldApi({
 
     if (args.length === 2) {
       const publicLocaleCode = args[0];
-      const locale = localeByPublicCode[publicLocaleCode];
-      if (!locale) {
-        throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
-      }
 
       return {
         cb: args[1],
-        locale,
+        locale: localeByPublicCode[publicLocaleCode] || localeStore.getDefaultLocale(),
       };
     }
 
