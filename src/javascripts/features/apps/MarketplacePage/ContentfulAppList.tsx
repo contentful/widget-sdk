@@ -186,7 +186,7 @@ export const ContentfulAppsList = ({
     <>
       <div className={styles.headingWrapper}>
         <Heading element="h2" className={styles.heading}>
-          Contentful apps
+          Contentful Apps
         </Heading>
       </div>
       {isCombinedTile ? (
