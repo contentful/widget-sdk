@@ -131,7 +131,7 @@ export function SpaceSelection({
           trackingEvent={'space_assignment:back'}
           trackParams={{
             plan_id: plan.sys.id,
-            flow: 'assing_space_to_plan',
+            flow: 'assign_space_to_plan',
           }}>
           Go back
         </StateLink>

@@ -82,7 +82,7 @@ describe('SpacePlanSelection', () => {
       return render(
         <SpacePlanSelection
           plans={mockPlans}
-          ratePlans={mockRatePlans}
+          productRatePlans={mockRatePlans}
           space={mockSpace}
           spaceResources={mockSpaceResources}
           selectedPlan={mockLargePlan}
@@ -150,7 +150,7 @@ describe('SpacePlanSelection', () => {
       return render(
         <SpacePlanSelection
           plans={[...mockPlans, mockFreePlan]}
-          ratePlans={mockRatePlans}
+          productRatePlans={mockRatePlans}
           space={mockSpace}
           spaceResources={mockSpaceResources}
           selectedPlan={mockLargePlan}

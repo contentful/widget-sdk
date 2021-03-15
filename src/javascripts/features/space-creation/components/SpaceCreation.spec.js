@@ -145,11 +145,12 @@ const initialState = {
 
 describe('SpaceCreation', () => {
   const build = (state = initialState, props) => {
-    return render(
+    render(
       <SpaceCreationState.Provider value={{ state, dispatch: () => {} }}>
         <SpaceCreation orgId={mockOrg.sys.id} {...props} />
       </SpaceCreationState.Provider>
     );
+    return waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
   };
 
   beforeEach(() => {
@@ -162,8 +163,7 @@ describe('SpaceCreation', () => {
   afterEach(Notification.closeAll);
   describe('Space Selection', () => {
     it('should render list of available plans grouped by type', async () => {
-      build();
-      await waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
+      await build();
       expect(screen.getByText('Choose a space type for your new space')).toBeVisible();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
       expect(screen.getByText('Get in touch if you need something more')).toBeVisible();
@@ -173,8 +173,7 @@ describe('SpaceCreation', () => {
     });
 
     it('should render list of available plans with entitlements information and correct limits', async () => {
-      build();
-      await waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
+      await build();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
       expect(screen.getAllByTestId('space-plan-entitlements')).toHaveLength(4);
       const mediumPlanItem = screen.getAllByTestId('space-plan-item')[0];
@@ -191,8 +190,7 @@ describe('SpaceCreation', () => {
         sys: { type: 'OrganizationResource', id: 'free_space' },
       };
       createResourceService().get.mockResolvedValue(mockFreeSpaceResources);
-      build();
-      await waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
+      await build();
       expect(screen.getAllByTestId('space-plan-item')).toHaveLength(4);
       expect(screen.getByTestId(`space-plan-card-${mockFreePlan.name}`)).toHaveAttribute(
         'aria-disabled',
@@ -203,7 +201,7 @@ describe('SpaceCreation', () => {
 
   describe('SpaceDetailsSetup', () => {
     it('should render with name field and templates toggle', async () => {
-      build({ ...initialState, selectedPlan: mockMediumPlan });
+      await build({ ...initialState, selectedPlan: mockMediumPlan });
       expect(screen.getByText('Set up your new Medium space')).toBeVisible();
       expect(screen.getByTestId('space-name')).toBeVisible();
       expect(screen.getByText('Empty space')).toBeVisible();
@@ -214,7 +212,7 @@ describe('SpaceCreation', () => {
     });
 
     it('should show available templates if Example space option chosen', async () => {
-      build({ ...initialState, selectedPlan: mockMediumPlan });
+      await build({ ...initialState, selectedPlan: mockMediumPlan });
       userEvent.click(screen.getByText('Example space'));
       expect(screen.getByTestId('template-list-wrapper')).toBeVisible();
       expect(screen.getByText(mockTemplate.name)).toBeVisible();
@@ -223,7 +221,7 @@ describe('SpaceCreation', () => {
 
   describe('SpaceCreationConfirm', () => {
     it('should render with correct name and space plan', async () => {
-      build({ ...initialState, selectedPlan: mockMediumPlan, spaceName: 'Test' });
+      await build({ ...initialState, selectedPlan: mockMediumPlan, spaceName: 'Test' });
       expect(screen.getByText('Set up your new Medium space')).toBeVisible();
       userEvent.click(screen.getByTestId('continue-btn'));
       expect(screen.getByTestId('cf-ui-subheading')).toBeVisible();
@@ -233,7 +231,7 @@ describe('SpaceCreation', () => {
     });
 
     it('should call createSpace function with correct spacePlanId for Medium plan', async () => {
-      build({ ...initialState, selectedPlan: mockMediumPlan, spaceName: 'Test' });
+      await build({ ...initialState, selectedPlan: mockMediumPlan, spaceName: 'Test' });
       userEvent.click(screen.getByTestId('continue-btn'));
       userEvent.click(screen.getByText('Confirm and create'));
 
@@ -250,7 +248,7 @@ describe('SpaceCreation', () => {
     });
 
     it('should call createSpace function with correct payload for Trial Space', async () => {
-      build({ ...initialState, selectedPlan: mockFreePlan, spaceName: 'Test' });
+      await build({ ...initialState, selectedPlan: mockFreePlan, spaceName: 'Test' });
       userEvent.click(screen.getByTestId('continue-btn'));
       userEvent.click(screen.getByText('Confirm and create'));
 

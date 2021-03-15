@@ -18,6 +18,9 @@ import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmati
 import { EmptyState } from './EmptyState';
 import { LoadingCard } from 'features/space-creation';
 import { ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
+import { WizardFixedFooter } from 'features/space-management';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Space type', isActive: true },
@@ -25,6 +28,26 @@ const ASSIGNMENT_STEPS = [
 ];
 
 const DEFAULT_ROLE_SET = { roles: ['Editor'] };
+
+const styles = {
+  workbenchContent: css({
+    padding: `${tokens.spacingL} 0 5rem 0`,
+  }),
+  // hack for workbench component to be able to display full width footer
+  grid: css({
+    maxWidth: '1280px',
+    margin: '0 auto',
+    paddingBottom: tokens.spacingL,
+  }),
+  stickyBar: css({
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    backgroundColor: tokens.colorWhite,
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+    '& > div': { maxWidth: '1280px' },
+  }),
+};
 
 export function SpacePlanAssignment({ orgId, spaceId }) {
   const [selectedPlan, setSelectedPlan] = useState();
@@ -102,7 +125,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         current_plan_name: data.currentPlan ? data.currentPlan.name : data.freePlan.name,
         new_plan_id: selectedPlan.sys.id,
         new_plan_name: selectedPlan.name,
-        flow: 'assing_plan_to_space',
+        flow: 'assign_plan_to_space',
       });
     }
   };
@@ -144,11 +167,16 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         title="Subscription"
         icon={<ProductIcon icon="Subscription" size="large" />}
       />
-      <Workbench.Content>
+      <Workbench.Content type="full" className={styles.workbenchContent}>
         {isLoading && <LoadingCard />}
         {!isLoading && data?.plans.length === 0 && <EmptyState />}
         {!isLoading && data?.plans.length > 0 && (
-          <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid
+            columns={1}
+            rows="repeat(3, 'auto')"
+            columnGap="none"
+            rowGap="spacingM"
+            className={styles.grid}>
             <Breadcrumbs items={steps} isActive={steps} />
             {steps.indexOf(currentStep) === 0 && (
               <SpacePlanSelection
@@ -156,11 +184,10 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 space={data.space}
                 spaceResources={data.spaceResources}
                 plans={data.plans}
-                ratePlans={data.ratePlans}
+                productRatePlans={data.ratePlans}
                 selectedPlan={selectedPlan}
                 currentPlan={data.currentPlan ? data.currentPlan : data.freePlan}
                 onPlanSelected={setSelectedPlan}
-                onNext={navigateToNextStep}
               />
             )}
             {steps.indexOf(currentStep) === 1 && (
@@ -175,6 +202,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
               />
             )}
           </Grid>
+        )}
+        {steps.indexOf(currentStep) === 0 && data && (
+          <WizardFixedFooter
+            continueBtnDisabled={!selectedPlan}
+            onNext={navigateToNextStep}
+            flowType={ASSIGNMENT_FLOW_TYPE}
+            spaceId={data.space?.sys.id}
+          />
         )}
       </Workbench.Content>
     </Workbench>

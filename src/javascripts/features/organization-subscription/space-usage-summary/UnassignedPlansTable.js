@@ -56,7 +56,7 @@ export function UnassignedPlansTable({
                         trackingEvent={'space_assignment:change'}
                         trackParams={{
                           plan_id: plan.sys.id,
-                          flow: 'assing_space_to_plan',
+                          flow: 'assign_space_to_plan',
                         }}>
                         use space
                       </StateLink>

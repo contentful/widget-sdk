@@ -305,7 +305,7 @@ describe('SpacePlanAssignment', () => {
       current_plan_name: mockPerformance2xPlan1.name,
       new_plan_id: mockPerformance1xPlan.sys.id,
       new_plan_name: mockPerformance1xPlan.name,
-      flow: 'assing_plan_to_space',
+      flow: 'assign_plan_to_space',
     });
   });
 
@@ -314,7 +314,7 @@ describe('SpacePlanAssignment', () => {
     userEvent.click(screen.getByTestId('go-back-btn'));
     expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:back', {
       space_id: mockSpace.sys.id,
-      flow: 'assing_plan_to_space',
+      flow: 'assign_plan_to_space',
     });
   });
 
@@ -374,7 +374,7 @@ describe('SpacePlanAssignment', () => {
         current_plan_name: mockPerformance2xPlan1.name,
         new_plan_id: mockPerformance1xPlan.sys.id,
         new_plan_name: mockPerformance1xPlan.name,
-        flow: 'assing_plan_to_space',
+        flow: 'assign_plan_to_space',
       })
     );
   });

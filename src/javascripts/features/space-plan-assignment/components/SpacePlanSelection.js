@@ -5,19 +5,14 @@ import {
   Plan as PlanPropType,
   Resource as ResourcePropType,
 } from 'app/OrganizationSettings/PropTypes';
-import { salesUrl } from 'Config';
 import {
   Typography,
   Heading,
-  Button,
   List,
   ListItem,
   Subheading,
-  TextLink,
   Note,
-  Flex,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
 import { Pluralized } from 'core/components/formatting';
 import { groupPlans, buildPlanKey, orderPlanKeys, ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
@@ -25,18 +20,15 @@ import { SpacePlanCard } from './SpacePlanCard';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import * as Intercom from 'services/intercom';
-import { track } from 'analytics/Analytics';
 
 export function SpacePlanSelection({
   plans,
-  ratePlans,
+  productRatePlans,
   space,
   spaceResources,
   currentPlan,
   selectedPlan,
   onPlanSelected,
-  onNext,
   flowType,
   freeSpaceResource,
 }) {
@@ -45,25 +37,12 @@ export function SpacePlanSelection({
   const currentRatePlanKey = currentPlan?.ratePlanCharges
     ? buildPlanKey(currentPlan.name, currentPlan.ratePlanCharges)
     : null;
-  const defaultRatePlanKeys = ratePlans.map((plan) =>
+  const defaultRatePlanKeys = productRatePlans.map((plan) =>
     buildPlanKey(plan.name, plan.productRatePlanCharges)
   );
   const orderedPlanKeys = orderPlanKeys(groupedPlans, defaultRatePlanKeys);
   const freePlanCount = freeSpaceResource?.limits?.maximum - freeSpaceResource?.usage;
   const hasOnlyFreePlan = isCreationFlow && plans.length === 1;
-  const isContinueBtnDisabled = !selectedPlan || (hasOnlyFreePlan && freePlanCount === 0);
-
-  const handleGetInTouchClick = () => {
-    track('space_creation:get_in_touch', {
-      flow: 'space_creation',
-    });
-
-    if (Intercom.isEnabled()) {
-      Intercom.open();
-    } else {
-      window.open(salesUrl);
-    }
-  };
 
   const styles = {
     subheading: css({
@@ -133,49 +112,18 @@ export function SpacePlanSelection({
           );
         })}
       </List>
-      <Flex justifyContent="space-between" alignItems="center">
-        {isCreationFlow && (
-          <TextLink onClick={handleGetInTouchClick}>
-            Get in touch if you need something more
-          </TextLink>
-        )}
-        <Flex justifyContent="flex-end" alignItems="center" flexGrow="1">
-          <StateLink
-            testId="go-back-btn"
-            component={Button}
-            buttonType="muted"
-            path={'^'}
-            trackingEvent={isCreationFlow ? 'space_creation:back' : 'space_assignment:back'}
-            trackParams={{
-              space_id: space?.sys.id,
-              flow: isCreationFlow ? 'space_creation' : 'assing_plan_to_space',
-            }}>
-            Cancel
-          </StateLink>
-          <Flex marginLeft="spacingM">
-            <Button
-              buttonType="primary"
-              onClick={onNext}
-              testId="continue-btn"
-              disabled={isContinueBtnDisabled}>
-              Continue
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
     </div>
   );
 }
 
 SpacePlanSelection.propTypes = {
   plans: PropTypes.arrayOf(PlanPropType).isRequired,
-  ratePlans: PropTypes.arrayOf(PlanPropType).isRequired,
+  productRatePlans: PropTypes.arrayOf(PlanPropType).isRequired,
   space: SpacePropType,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
   currentPlan: PlanPropType,
   onPlanSelected: PropTypes.func.isRequired,
-  onNext: PropTypes.func,
   flowType: PropTypes.oneOf([CREATION_FLOW_TYPE, ASSIGNMENT_FLOW_TYPE]),
   freeSpaceResource: ResourcePropType,
 };

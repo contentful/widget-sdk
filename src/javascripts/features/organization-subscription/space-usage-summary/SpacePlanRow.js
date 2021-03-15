@@ -116,7 +116,7 @@ export const SpacePlanRow = ({
                 space_id: space.sys.id,
                 current_plan_id: plan.sys.id,
                 current_plan_name: plan.name,
-                flow: 'assing_plan_to_space',
+                flow: 'assign_plan_to_space',
               }}>
               change
             </StateLink>

@@ -94,7 +94,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         current_plan_id: data.plansBySpace[selectedSpace.sys.id].sys.id,
         current_plan_name: data.plansBySpace[selectedSpace.sys.id].name,
         selected_space_id: selectedSpace.sys.id,
-        flow: 'assing_space_to_plan',
+        flow: 'assign_space_to_plan',
       });
       window.history.pushState('', null);
     }
@@ -143,7 +143,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         {isLoading && <LoadingCard />}
         {!isLoading && data?.spaces.length === 0 && <EmptyState />}
         {!isLoading && data && (
-          <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid columns={1} rowGap="spacingM">
             <Breadcrumbs items={steps} isActive={steps} />
             {steps.indexOf(currentStep) === 0 && (
               <SpaceSelection

@@ -7,10 +7,18 @@ import {
   Card,
   SkeletonImage,
 } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+
+const styles = {
+  loadingContainer: css({
+    maxWidth: '1280px',
+    margin: '0 auto',
+  }),
+};
 
 export function LoadingCard() {
   return (
-    <>
+    <div className={styles.loadingContainer}>
       <SkeletonContainer svgHeight={40}>
         <SkeletonText width={300} offsetTop={10} />
       </SkeletonContainer>
@@ -28,6 +36,6 @@ export function LoadingCard() {
           <SkeletonBodyText offsetTop={70} offsetLeft={40} lineHeight={12} numberOfLines={1} />
         </SkeletonContainer>
       </Card>
-    </>
+    </div>
   );
 }

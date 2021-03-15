@@ -60,7 +60,7 @@ interface Link<T> {
   };
 }
 
-interface Space {
+export interface Space {
   name: string;
   sys: {
     type: 'Space';
