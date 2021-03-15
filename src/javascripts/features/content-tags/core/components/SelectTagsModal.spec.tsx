@@ -30,7 +30,7 @@ describe('A SelectTagsModal', () => {
     expect(screen.getByText(/Select tags/)).toBeInTheDocument();
   });
   describe('with no tags given', () => {
-    it('renders the NoTagsContainer', async () => {
+    it('renders the tags search box', async () => {
       await renderModal(
         { isShown: true },
         {
@@ -40,9 +40,7 @@ describe('A SelectTagsModal', () => {
           }),
         }
       );
-      expect(
-        screen.getByRole('heading', { name: /organize your content with tags/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('searchbox', { name: /search/i })).toBeInTheDocument();
     });
   });
   describe('with at least 1 tag given', () => {

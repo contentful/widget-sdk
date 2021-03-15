@@ -6,14 +6,8 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
-import { go } from 'states/Navigator';
 import { TagOption } from 'features/content-tags/types';
 import { useIsInitialLoadingOfTags } from 'features/content-tags/core/hooks/useIsInitialLoadingOfTags';
-import { useCanManageTags } from 'features/content-tags/core/hooks/useCanManageTags';
-import { useReadTags } from 'features/content-tags/core/hooks/useReadTags';
 import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
 import { orderByLabel } from 'features/content-tags/editor/utils';
 import { MetadataTags } from 'features/content-tags/core/state/MetadataTags';
@@ -66,10 +60,6 @@ const SelectTagsModal: React.FC<Props> = ({
   const isInitialLoad = useIsInitialLoadingOfTags();
   const [localTags, setLocalTags] = useState<TagOption[]>(selectedTags);
 
-  const { hasTags } = useReadTags();
-  const canManageTags = useCanManageTags();
-  const { currentEnvironment } = useSpaceEnvContext();
-
   const onAdd = useCallback(
     (selection: TagOption) => {
       setLocalTags((prevState) => orderByLabel([selection, ...prevState]));
@@ -91,14 +81,6 @@ const SelectTagsModal: React.FC<Props> = ({
     [localTags, onClose]
   );
 
-  const onCreate = useCallback(() => {
-    if (canManageTags) {
-      const isMaster = isMasterEnvironment(currentEnvironment);
-      go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
-      onPopupClose(true);
-    }
-  }, [canManageTags, currentEnvironment, onPopupClose]);
-
   return (
     <Modal isShown={isShown} onClose={() => onPopupClose(true)} title={mProps.title}>
       <div data-test-id={'select-tags-modal'}>
@@ -106,7 +88,7 @@ const SelectTagsModal: React.FC<Props> = ({
           <div>
             <Spinner className={styles.loading} />
           </div>
-        ) : hasTags ? (
+        ) : (
           <>
             <FilteredTagsProvider>
               <TagsSelection
@@ -134,8 +116,6 @@ const SelectTagsModal: React.FC<Props> = ({
               Cancel
             </Button>
           </>
-        ) : (
-          <NoTagsContainer buttonLabel="Add tags" onCreate={onCreate} />
         )}
       </div>
     </Modal>

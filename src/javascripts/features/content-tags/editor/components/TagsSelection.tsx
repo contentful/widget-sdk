@@ -58,7 +58,7 @@ const TagsSelection: React.FC<Props> = ({
   label = 'Tags',
   hasInlineTagCreation = false,
 }) => {
-  const { isLoading, hasTags } = useReadTags();
+  const { isLoading } = useReadTags();
   const { setSearch, filteredTags, search } = useFilteredTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const tagGroups = useAllTagsGroups();
@@ -212,10 +212,6 @@ const TagsSelection: React.FC<Props> = ({
   ]);
 
   if (isInitialLoad) {
-    return null;
-  }
-
-  if (!hasTags && !isLoading) {
     return null;
   }
 
