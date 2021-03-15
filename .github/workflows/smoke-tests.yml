@@ -26,11 +26,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup npm auth token
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v2
@@ -42,8 +37,12 @@ jobs:
           restore-keys: |
             npm-${{ hashFiles('./package-lock.json') }}
       - name: Install dependencies
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm install
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm install
       - name: Run smoke tests
         # Because we remove `package.json` above, we can't use the npm task, so instead
         # we use the official Cypress action with the right environment variables.

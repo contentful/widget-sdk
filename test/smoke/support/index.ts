@@ -14,6 +14,11 @@ declare global {
        * ```
        */
       login: () => void;
+
+      /**
+       * Measure a specific value using Librato.
+       */
+      measure: () => void;
     }
   }
 }
@@ -30,4 +35,8 @@ Cypress.Commands.add('login', () => {
   loginPage.emailField.type(Cypress.env('email'));
   loginPage.passwordField.type(Cypress.env('password'));
   loginPage.submitFormQuick();
+});
+
+Cypress.Commands.add('measure', ({ name, value }) => {
+  cy.task('measure', { name, value });
 });
