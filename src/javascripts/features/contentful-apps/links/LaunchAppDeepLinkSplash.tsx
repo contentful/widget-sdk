@@ -8,8 +8,10 @@ import React from 'react';
 import { getLaunchAppDeepLink } from '../utils/getLaunchAppDeepLink';
 
 type LaunchAppDeepLinkSplashProps = {
-  releaseId: string;
+  releaseId?: string;
   eventOrigin: string;
+  text: string;
+  buttonText: string;
 };
 
 const styles = {
@@ -27,7 +29,12 @@ const styles = {
   }),
 };
 
-const LaunchAppDeepLinkSplash = ({ releaseId, eventOrigin }: LaunchAppDeepLinkSplashProps) => {
+const LaunchAppDeepLinkSplash = ({
+  releaseId,
+  eventOrigin,
+  text,
+  buttonText,
+}: LaunchAppDeepLinkSplashProps) => {
   const { currentEnvironmentId, currentEnvironmentAliasId, currentSpaceId } = useSpaceEnvContext();
 
   const deepLinkToLaunch = () => {
@@ -54,15 +61,13 @@ const LaunchAppDeepLinkSplash = ({ releaseId, eventOrigin }: LaunchAppDeepLinkSp
         fullHeight={true}>
         <AppLogos.LaunchLogo width={210} height={175} />
         <Heading className={styles.doubleMargined}>Contentful Launch</Heading>
-        <Paragraph className={styles.halfMargined}>
-          You can now create and schedule releases from Launch.
-        </Paragraph>
+        <Paragraph className={styles.halfMargined}>{text}</Paragraph>
         <Button
           className={styles.doubleMargined}
           buttonType="primary"
           onClick={deepLinkToLaunch}
           icon="ExternalLinkTrimmed">
-          View this release in Launch
+          {buttonText}
         </Button>
       </Flex>
     </Flex>

@@ -1,17 +1,17 @@
-import ReleasesListRoute from './ReleasesListRoute';
-import ReleaseDetailRoute from './ReleaseDetailRoute';
+import { ReleasesListRoute } from '../releases-list';
+import { ReleaseDetailsRoute } from '../release-details';
 
-const detail = {
+const releaseDetails = {
   name: 'detail',
   url: '/:releaseId',
-  component: ReleaseDetailRoute,
+  component: ReleaseDetailsRoute,
   params: {
     addToContext: true,
     releaseId: '',
   },
 };
 
-export default {
+const routes = {
   name: 'releases',
   url: '/releases',
   abstract: true,
@@ -21,6 +21,8 @@ export default {
       url: '',
       component: ReleasesListRoute,
     },
-    detail,
+    releaseDetails,
   ],
 };
+
+export { routes };

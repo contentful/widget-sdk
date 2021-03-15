@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LaunchAppDeepLinkSplash } from 'features/contentful-apps';
-import { ReleasesProvider } from '../ReleasesWidget/ReleasesContext';
-import { getReleaseById } from '../releasesService';
-import { ReleasesLoadingOverlay } from '../ReleasesLoadingOverlay';
+import { ReleasesProvider } from 'app/Releases/ReleasesWidget/ReleasesContext';
+import { getReleaseById } from 'app/Releases/releasesService';
+import { ReleasesLoadingOverlay } from 'app/Releases/ReleasesLoadingOverlay';
 import StateRedirect from 'app/common/StateRedirect';
 
-const ReleaseDetailPage = ({ releaseId }) => {
+type ReleaseDetailsPageProps = {
+  releaseId: string;
+};
+
+const ReleaseDetailsPage = ({ releaseId }: ReleaseDetailsPageProps) => {
   const [idValidation, setIdValidation] = useState({
     isValid: false,
     isValidating: true,
@@ -56,19 +59,20 @@ const ReleaseDetailPage = ({ releaseId }) => {
   return (
     <Workbench>
       <DocumentTitle title="Release" />
-      <LaunchAppDeepLinkSplash releaseId={releaseId} eventOrigin="release-details-page" />
+      <LaunchAppDeepLinkSplash
+        releaseId={releaseId}
+        eventOrigin="release-details-page"
+        text="You can now create and schedule releases from Launch"
+        buttonText="View this release in Launch"
+      />
     </Workbench>
   );
 };
 
-ReleaseDetailPage.propTypes = {
-  releaseId: PropTypes.string.isRequired,
-};
-
-const ReleaseDetailPageContainer = (props) => (
+const ReleaseDetailPageContainer = (props: ReleaseDetailsPageProps) => (
   <ReleasesProvider>
-    <ReleaseDetailPage {...props} />
+    <ReleaseDetailsPage {...props} />
   </ReleasesProvider>
 );
 
-export default ReleaseDetailPageContainer;
+export { ReleaseDetailPageContainer as ReleaseDetailsPage };

@@ -1,10 +1,12 @@
 import React from 'react';
+import { Notification } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
-import ReleaseDetailPageContainer from '../ReleaseDetail/ReleaseDetailPageContainer';
+import { ReleaseDetailsPage } from './ReleaseDetailsPage';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { appsMarketingUrl } from 'Config';
 
-const ReleaseDetailRoute = () => {
+const ReleaseDetailsRoute = () => {
   const pathname = window.location.pathname.split('/');
   const releasesPathnameIndex = pathname.findIndex((path) => path === 'releases');
   const releaseId = pathname[releasesPathnameIndex + 1];
@@ -23,10 +25,23 @@ const ReleaseDetailRoute = () => {
   }
 
   if (appConfig.isPurchased && appConfig.isInstalled) {
-    return <ReleaseDetailPageContainer releaseId={releaseId} />;
+    return <ReleaseDetailsPage releaseId={releaseId} />;
   } else {
+    Notification.warning(
+      "The releases EAP has ended, but don't worry because you can now use releases in Launch",
+      {
+        cta: {
+          label: 'Learn more',
+          textLinkProps: {
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            href: appsMarketingUrl,
+          },
+        },
+      }
+    );
     return <StateRedirect path="spaces.detail.entries.list" />;
   }
 };
 
-export default ReleaseDetailRoute;
+export { ReleaseDetailsRoute };
