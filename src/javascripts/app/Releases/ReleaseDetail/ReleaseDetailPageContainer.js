@@ -56,7 +56,7 @@ const ReleaseDetailPage = ({ releaseId }) => {
   return (
     <Workbench>
       <DocumentTitle title="Release" />
-      <LaunchAppDeepLinkSplash releaseId={releaseId} />
+      <LaunchAppDeepLinkSplash releaseId={releaseId} eventOrigin="release-details-page" />
     </Workbench>
   );
 };

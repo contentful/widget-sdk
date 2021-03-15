@@ -143,7 +143,7 @@ export const EntryView = () => {
       renderSavedViewsActions={() => (
         <Fragment>
           <ScheduledActionsPageLink isMasterEnvironment={isMasterEnvironment} />
-          <ReleasesPageLink isMasterEnvironment={isMasterEnvironment} />
+          <ReleasesPageLink />
         </Fragment>
       )}
       renderEmptyState={(

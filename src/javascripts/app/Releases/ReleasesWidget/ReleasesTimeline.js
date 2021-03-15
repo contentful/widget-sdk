@@ -15,6 +15,12 @@ const styles = {
 };
 
 export default class ReleasesTimeline extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
   static propTypes = {
     releases: PropTypes.array,
     onReleaseSelect: PropTypes.func,
@@ -33,11 +39,12 @@ export default class ReleasesTimeline extends Component {
         {this.props.releases.map((release, index) => (
           <li
             key={`release-${index}`}
-            onClick={() => this.handleClick(release)}
+            onClick={this.props.onReleaseSelect ? () => this.handleClick(release) : undefined}
             className={this.props.onReleaseSelect && styles.cursorPointer}>
             <Release
               release={release}
               deleteEntityFromRelease={this.props.deleteEntityFromRelease}
+              shouldCardHandleClick={!this.props.onReleaseSelect}
             />
           </li>
         ))}
