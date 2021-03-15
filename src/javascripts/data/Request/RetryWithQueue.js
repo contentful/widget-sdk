@@ -14,8 +14,8 @@ import PQueue from 'p-queue';
 const PERIOD = 1010;
 const CLIENT_VERSION = 2;
 
-export default function withRetry(requestFn, callsInPeriod = CALLS_IN_PERIOD) {
-  const queue = new PQueue({ intervalCap: callsInPeriod, interval: PERIOD });
+export default function withRetry(requestFn) {
+  const queue = new PQueue({ intervalCap: CALLS_IN_PERIOD, interval: PERIOD });
 
   return async function addToQueue(...args) {
     return doRequest({ args, ttl: DEFAULT_TTL, queuedAt: Date.now() });

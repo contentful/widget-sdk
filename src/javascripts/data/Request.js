@@ -3,7 +3,7 @@ import wrapWithRetryWithQueue from 'data/Request/RetryWithQueue';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
-import { FLAGS, getVariationSync } from 'LaunchDarkly';
+import { FLAGS, getVariationSync, hasCachedVariation } from 'LaunchDarkly';
 import queryString from 'query-string';
 import { fromPairs } from 'lodash';
 import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
@@ -22,11 +22,15 @@ let withRetry;
 let withRetryVersion = 1;
 
 const RETRY_VERSION = {
+  0: wrapWithRetry,
   1: wrapWithRetry,
   2: wrapWithRetryWithQueue,
 };
 
 function getRetryVersion() {
+  if (!hasCachedVariation(FLAGS.REQUEST_RETRY_EXPERIMENT)) {
+    return 0;
+  }
   const variation = getVariationSync(FLAGS.REQUEST_RETRY_EXPERIMENT);
   return variation ? 2 : 1;
 }
@@ -34,7 +38,7 @@ function getRetryVersion() {
 export default function makeRequest(auth) {
   const version = getRetryVersion();
   if (version !== withRetryVersion || !withRetry) {
-    withRetry = RETRY_VERSION[version](fetchFn);
+    withRetry = RETRY_VERSION[version](fetchFn, version);
     withRetryVersion = version;
   }
   return wrapWithCounter(wrapWithAuth(auth, withRetry));

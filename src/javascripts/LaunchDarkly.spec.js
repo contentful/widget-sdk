@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ldClient from 'ldclient-js';
-import { getVariation, reset, FLAGS } from './LaunchDarkly';
+import { getVariation, reset, FLAGS, getVariationSync, hasCachedVariation } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
 import { logError } from 'services/logger';
@@ -465,6 +465,26 @@ describe('LaunchDarkly', () => {
           currentUserIsFromContentful: false,
         },
       });
+    });
+  });
+
+  describe('#getVariationSync', () => {
+    it('fills up cache when calling getVariation', async () => {
+      const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+      expect(variation).toBe('fallback-value');
+      expect(getVariationSync(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('fallback-value');
+    });
+  });
+
+  describe('#hasCachedVariation', () => {
+    it('returns false for not cached key', () => {
+      const isCached = hasCachedVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+      expect(isCached).toBeFalsy();
+    });
+    it('returns true for cached key', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+      const isCached = hasCachedVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+      expect(isCached).toBeFalsy();
     });
   });
 });

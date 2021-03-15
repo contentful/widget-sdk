@@ -398,6 +398,11 @@ export function getVariationSync(flagName, { organizationId, spaceId, environmen
   );
 }
 
+export function hasCachedVariation(flagName, organizationId, spaceId, environmentId) {
+  const key = getCacheKey(flagName, organizationId, spaceId, environmentId);
+  return variationCacheResolved?.[key] !== undefined;
+}
+
 /*
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
