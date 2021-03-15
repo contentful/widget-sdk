@@ -8258,7 +8258,7 @@ pre,
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
             flex-direction: column;
-    max-height: 100%;
+    max-height: 80%;
     overflow: hidden;
   }
   .nav-sidepanel__spaces-header {
