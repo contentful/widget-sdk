@@ -27,6 +27,7 @@ Array [
     "icon": "",
     "id": "compose",
     "isContentfulApp": true,
+    "links": Array [],
     "supportUrl": null,
     "tagLine": "Easily create and edit content at scale in a completely new way.",
     "title": "Compose",

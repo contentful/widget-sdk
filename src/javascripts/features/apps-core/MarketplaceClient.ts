@@ -144,6 +144,7 @@ function createContentfulAppObject(entry) {
       icon: get(entry, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
     },
     description: get(entry, ['fields', 'description'], ''),
+    links: get(entry, ['fields', 'links'], []).map((link) => link.fields),
     supportUrl: get(entry, ['fields', 'supportUrl'], null),
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
