@@ -2,7 +2,7 @@
  * Although some of this could be put into the configuration (like env.email), I chose to put
  * this all here so that there's one single place to find it.
  */
-module.exports = function plugins(_, config) {
+export default function plugins(_, config: Cypress.PluginConfigOptions) {
   const { SMOKE_TEST_USER_EMAIL, SMOKE_TEST_USER_PASSWORD, SMOKE_TEST_DOMAIN } = process.env;
 
   if (!SMOKE_TEST_USER_PASSWORD) {
@@ -18,4 +18,4 @@ module.exports = function plugins(_, config) {
   config.env.domain = domain;
 
   return config;
-};
+}
