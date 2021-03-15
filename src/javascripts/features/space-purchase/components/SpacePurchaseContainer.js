@@ -141,7 +141,13 @@ export const SpacePurchaseContainer = ({ track, preselectApps }) => {
     monthlyCost += selectedPlan.price;
   }
 
-  const continueDisabled = !selectedPlatform || !selectedPlan;
+  let continueBtnTooltip = '';
+
+  if (!selectedPlatform || !selectedPlan) {
+    continueBtnTooltip = 'Select an organization package and space to continue';
+  } else if (selectedPlan === NO_SPACE_PLAN && !selectedComposeLaunch) {
+    continueBtnTooltip = 'You haven’t selected any new items. Make a purchase to continue';
+  }
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
@@ -278,14 +284,10 @@ export const SpacePurchaseContainer = ({ track, preselectApps }) => {
                 Monthly {selectedPlan ? 'total: ' : 'subtotal: '}
                 <Price value={monthlyCost} testId="monthly-total" />
               </Heading>
-              <Tooltip
-                place="top-end"
-                content={
-                  continueDisabled ? 'Select an organization package and space to continue' : ''
-                }>
+              <Tooltip place="top-end" content={continueBtnTooltip}>
                 <Button
                   testId="platform-select-continue-button"
-                  disabled={continueDisabled}
+                  disabled={!!continueBtnTooltip}
                   onClick={onContinue}>
                   Continue
                 </Button>

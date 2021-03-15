@@ -78,6 +78,12 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const platformCardsDisabled = !showPlatformsAboveSpaces && !selectedPlan;
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
+  /**
+   * The option to "Use your existing spaces" should only be shown when:
+   * - the user is buying a space
+   * - the organization has paid spaces already
+   */
+  const canUseExistingSpace = !currentSpace && orgHasPaidSpaces;
 
   const scrollToSpaceSelection = useCallback(() => {
     spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -190,28 +196,20 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
             onSelect={onSelectSpace}
           />
 
-          {/**
-           * The option to "Use your existing spaces" should only be shown when:
-           * - the user is buying a space
-           * - the organization has paid spaces
-           * - the user selected compose+launch, so they can buy compose+launch without having to buy a new space
-           */}
-          {!currentSpace &&
-            orgHasPaidSpaces &&
-            selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH && (
-              <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
-                <Card
-                  className={styles.chooseLaterCard}
-                  padding="large"
-                  testId="choose-space-later-button"
-                  selected={selectedPlan === NO_SPACE_PLAN}
-                  onClick={() => {
-                    onSelectSpace(NO_SPACE_PLAN);
-                  }}>
-                  <Heading element="p">Use your existing spaces</Heading>
-                </Card>
-              </Flex>
-            )}
+          {canUseExistingSpace && (
+            <Flex className={styles.fullRow} flexDirection="row" marginTop="spacingL">
+              <Card
+                className={styles.chooseLaterCard}
+                padding="large"
+                testId="choose-space-later-button"
+                selected={selectedPlan === NO_SPACE_PLAN}
+                onClick={() => {
+                  onSelectSpace(NO_SPACE_PLAN);
+                }}>
+                <Heading element="p">Use your existing spaces</Heading>
+              </Card>
+            </Flex>
+          )}
         </Grid>
       </Flex>
 
