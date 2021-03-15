@@ -23,15 +23,15 @@ export const PLATFORM_CONTENT: PlatformContents = {
   WEB_APP: {
     type: PlatformKind.WEB_APP,
     illustration: <WebappIlustration />,
-    title: 'Web app',
+    title: 'Web app only',
     description:
-      'Your content platform, optimized for Developers. Includes access to our market-leading CMS, App Framework and intuitive APIs',
+      'Your content platform, optimized for Developers. Includes access to our market-leading CMS, App Framework and intuitive APIs.',
   },
   COMPOSE_AND_LAUNCH: {
     type: PlatformKind.WEB_APP_COMPOSE_LAUNCH,
     illustration: <WebappAndAppsIlustration />,
     title: 'Web app + Compose + Launch',
     description:
-      'Content creators can easily manage web page content and coordinate content releases in our sleek new apps. Developers continue to manage content models in your spaces',
+      'Content creators can easily manage web page content and coordinate content releases in our sleek new apps. Developers spend less time helping others and more time building.',
   },
 };

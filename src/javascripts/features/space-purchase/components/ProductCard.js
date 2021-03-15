@@ -168,7 +168,7 @@ export const ProductCard = ({
             <SkeletonBodyText lineHeight={16} numberOfLines={2} />
           </SkeletonContainer>
         )}
-        {!loading && current && isPlatformCard && <Tag tagType="positive">Current package</Tag>}
+        {!loading && current && isPlatformCard && <Tag tagType="positive">Current</Tag>}
         {!loading && content.price !== undefined && (
           <Paragraph className={styles.price} testId="product-price">
             {content.price === 0 ? (
@@ -189,7 +189,7 @@ export const ProductCard = ({
 
         {content.limits && (
           <div className={styles.limitsSection}>
-            <Paragraph>What are the space limits:</Paragraph>
+            <Paragraph>Limits:</Paragraph>
             <List className={styles.limitsList} testId="space-limits">
               {content.limits.map((limit, idx) => (
                 <ListItem key={idx} className={cx(styles.listItem, styles.textLeft)}>
