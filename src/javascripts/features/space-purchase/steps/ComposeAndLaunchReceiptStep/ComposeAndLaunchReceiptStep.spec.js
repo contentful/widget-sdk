@@ -4,7 +4,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 import { go } from 'states/Navigator';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PLATFORM_CONTENT, PlatformKind } from '../../utils/platformContent';
+import { PlatformKind } from '../../utils/platformContent';
 import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
@@ -59,7 +59,7 @@ describe('ComposeAndLaunchReceiptStep', () => {
     });
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(
-      `You successfully purchased the ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package`
+      'You successfully added Compose + Launch to your organization. Install Compose + Launch on any space home.'
     );
   });
 

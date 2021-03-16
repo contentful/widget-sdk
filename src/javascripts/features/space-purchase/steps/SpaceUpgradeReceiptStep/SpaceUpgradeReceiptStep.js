@@ -8,7 +8,7 @@ import { PlatformKind } from '../../utils/platformContent';
 
 export const SpaceUpgradeReceiptStep = () => {
   const {
-    state: { selectedPlatform, selectedPlan },
+    state: { selectedPlatform, selectedPlan, currentSpace },
   } = useContext(SpacePurchaseState);
 
   const selectedCompose = selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH;
@@ -32,6 +32,7 @@ export const SpaceUpgradeReceiptStep = () => {
       <ReceiptView
         pending={pending}
         planName={selectedPlan.name}
+        spaceName={currentSpace.name}
         buttonAction={(addOnPurchaseError && retryAddOnPurchase) || buttonAction}
         error={upgradeError || addOnPurchaseError}
         selectedCompose={selectedCompose}

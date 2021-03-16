@@ -6,7 +6,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { useSessionMetadata } from '../hooks/useSessionMetadata';
 import { ADD_ON_PURCHASE_ERROR } from '../hooks/usePurchaseAddOn';
 import { SPACE_CHANGE_ERROR } from '../hooks/useSpaceUpgrade';
@@ -64,13 +63,24 @@ export function ReceiptMessage({
           </Paragraph>
         )}
 
+        {!pending && !errorMessageText && isSpaceUpgrade && !selectedCompose && (
+          <Paragraph>
+            You successfully changed {spaceName} to a {planName} space.
+          </Paragraph>
+        )}
+
         {!pending && !errorMessageText && selectedCompose && (
           <>
             <Paragraph>
-              You successfully purchased the {PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package
-              {isSpaceUpgrade && <> and changed your space to a {planName} space</>}
-              {!isSpaceUpgrade && selectedSpacePlan && <> and a new {planName} space</>}. You can
-              now install Compose and Launch on any Space Home.
+              You successfully{' '}
+              {isSpaceUpgrade && (
+                <>
+                  changed {spaceName} to a {planName} space and{' '}
+                </>
+              )}
+              added Compose + Launch
+              {!isSpaceUpgrade && selectedSpacePlan && <> and a new {planName} space</>} to your
+              organization. Install Compose + Launch on any space home.
             </Paragraph>
             {!isSpaceUpgrade && selectedSpacePlan && (
               <Paragraph>

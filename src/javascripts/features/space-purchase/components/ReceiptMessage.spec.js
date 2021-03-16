@@ -5,12 +5,14 @@ import userEvent from '@testing-library/user-event';
 import { go } from 'states/Navigator';
 
 import { trackEvent } from '../utils/analyticsTracking';
-import { PLATFORM_CONTENT } from '../utils/platformContent';
 import { AddOnPurchaseError } from '../hooks/usePurchaseAddOn';
 import { SpaceCreationError } from '../hooks/useSpaceCreation';
 import { SpaceChangeError } from '../hooks/useSpaceUpgrade';
 import { TemplateCreationError } from '../hooks/useTemplateCreation';
 import { ReceiptMessage } from './ReceiptMessage';
+import * as Fake from 'test/helpers/fakeFactory';
+
+const mockSpace = Fake.Space();
 
 const mockSpacePlans = {
   community: { name: 'Community', price: 0 },
@@ -54,7 +56,7 @@ describe('ReceiptMessage', () => {
 
       expect(receiptTextParagraphs).toHaveLength(1);
       expect(receiptTextParagraphs[0].textContent).toContain(
-        `You successfully purchased the ${mockSpacePlans.community.name} space New space.`
+        `You successfully purchased the ${mockSpacePlans.community.name} space ${mockSpace.name}.`
       );
     });
 
@@ -66,7 +68,7 @@ describe('ReceiptMessage', () => {
 
       expect(receiptTextParagraphs).toHaveLength(1);
       expect(receiptTextParagraphs[0].textContent).toContain(
-        `You successfully purchased the ${mockSpacePlans.community.name} space New space.`
+        `You successfully purchased the ${mockSpacePlans.community.name} space ${mockSpace.name}.`
       );
     });
 
@@ -78,7 +80,7 @@ describe('ReceiptMessage', () => {
 
       expect(receiptTextParagraphs).toHaveLength(2);
       expect(receiptTextParagraphs[0].textContent).toContain(
-        `You successfully purchased the ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package and a new ${mockSpacePlans.medium.name} space. You can now install Compose and Launch on any Space Home.`
+        `You successfully added Compose + Launch and a new ${mockSpacePlans.medium.name} space to your organization. Install Compose + Launch on any space home.`
       );
       expect(receiptTextParagraphs[1].textContent).toContain(
         'Update the new space name anytime on the Space Settings'
@@ -86,18 +88,18 @@ describe('ReceiptMessage', () => {
     });
 
     it('renders message for when user changes a space plan', () => {
-      build({ isSpaceUpgrade: true, spaceName: undefined, newSpaceId: undefined });
+      build({ isSpaceUpgrade: true, spaceName: mockSpace.name, newSpaceId: undefined });
 
       const receiptText = screen.getByTestId('receipt.subtext');
       const receiptTextParagraphs = within(receiptText).queryAllByTestId('cf-ui-paragraph');
 
-      expect(receiptTextParagraphs).toHaveLength(0);
+      expect(receiptTextParagraphs).toHaveLength(1);
     });
 
     it('renders message for when user changes a space plan and purchases add on', () => {
       build({
         isSpaceUpgrade: true,
-        spaceName: undefined,
+        spaceName: mockSpace.name,
         newSpaceId: undefined,
         selectedCompose: true,
       });
@@ -107,19 +109,19 @@ describe('ReceiptMessage', () => {
 
       expect(receiptTextParagraphs).toHaveLength(1);
       expect(receiptTextParagraphs[0].textContent).toContain(
-        `You successfully purchased the ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package and changed your space to a ${mockSpacePlans.community.name} space. You can now install Compose and Launch on any Space Home.`
+        `You successfully changed ${mockSpace.name} to a ${mockSpacePlans.community.name} space and added Compose + Launch to your organization. Install Compose + Launch on any space home.`
       );
     });
 
     it('renders message for when user purchases add on', () => {
-      build({ spaceName: undefined, newSpaceId: undefined, selectedCompose: true });
+      build({ spaceName: mockSpace.name, newSpaceId: undefined, selectedCompose: true });
 
       const receiptText = screen.getByTestId('receipt.subtext');
       const receiptTextParagraphs = within(receiptText).getAllByTestId('cf-ui-paragraph');
 
       expect(receiptTextParagraphs).toHaveLength(1);
       expect(receiptTextParagraphs[0].textContent).toContain(
-        `You successfully purchased the ${PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title} package. You can now install Compose and Launch on any Space Home.`
+        'You successfully added Compose + Launch to your organization. Install Compose + Launch on any space home.'
       );
     });
   });
@@ -197,7 +199,7 @@ function build(customProps) {
   const props = {
     pending: false,
     planName: mockSpacePlans.community.name,
-    spaceName: 'New space',
+    spaceName: mockSpace.name,
     newSpaceId: '123',
     ...customProps,
   };

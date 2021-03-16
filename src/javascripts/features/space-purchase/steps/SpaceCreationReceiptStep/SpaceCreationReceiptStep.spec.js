@@ -9,7 +9,7 @@ import { makeNewSpace, applyTemplateToSpace } from '../../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../../utils/analyticsTracking';
 import * as $rootScope from 'ng/$rootScope';
 import { renderWithProvider } from '../../__tests__/helpers';
-import { PlatformKind, PLATFORM_CONTENT } from '../../utils/platformContent';
+import { PlatformKind } from '../../utils/platformContent';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import * as TokenStore from 'services/TokenStore';
 
@@ -100,9 +100,7 @@ describe('SpaceCreationReceiptStep', () => {
     await waitFor(expect(makeNewSpace).toBeCalled);
 
     expect(screen.getByTestId('receipt.subtext').textContent).toContain(mockSelectedPlan.name);
-    expect(screen.getByTestId('receipt.subtext').textContent).toContain(
-      PLATFORM_CONTENT.COMPOSE_AND_LAUNCH.title
-    );
+    expect(screen.getByTestId('receipt.subtext').textContent).toContain('Compose + Launch');
 
     // Need to wait for promise to resolve to catch act()
     const redirectToNewSpace = screen.getByTestId('receipt-page.redirect-to-space');
