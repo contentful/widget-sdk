@@ -52,7 +52,7 @@ const fetchData = (
 ) => async () => {
   setLoading(true);
 
-  const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
+  const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
   const hasActiveAppTrial = await getVariation(FLAGS.APP_TRIAL, {
     organizationId: currentOrganizationId,
   }).then(async (enabled) => {
