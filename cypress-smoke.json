@@ -1,8 +1,8 @@
 {
   "fixturesFolder": "./test/smoke/fixtures",
   "integrationFolder": "./test/smoke",
-  "pluginsFile": "./test/smoke/plugins/index.js",
-  "supportFile": "./test/smoke/support/index.js",
+  "pluginsFile": "./test/smoke/plugins/index.ts",
+  "supportFile": "./test/smoke/support/index.ts",
   "testFiles": "**/*.spec.ts",
   "requestTimeout": 7500,
   "defaultCommandTimeout": 6000,
