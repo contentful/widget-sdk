@@ -24,7 +24,7 @@ const styles = {
 };
 
 function useLocalTags(tags, setTags) {
-  const { data } = useReadTags();
+  const { data, hasTags } = useReadTags();
   const [localTags, setLocalTags] = useState([]);
 
   useEffect(() => {
@@ -55,11 +55,11 @@ function useLocalTags(tags, setTags) {
     [setLocalTags, setTags]
   );
 
-  return { localTags, removeTag, addTag };
+  return { hasTags, localTags, removeTag, addTag };
 }
 
 const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) => {
-  const { localTags, addTag, removeTag } = useLocalTags(tags, setTags);
+  const { hasTags, localTags, addTag, removeTag } = useLocalTags(tags, setTags);
   const isInitialLoad = useIsInitialLoadingOfTags();
   const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
@@ -99,17 +99,19 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) =
       )}
 
       <TagSelectionHeader totalSelected={localTags.length} />
-      <FilteredTagsProvider>
-        <TagsSelection
-          disabled={disable}
-          showEmpty={showEmpty}
-          onAdd={addTag}
-          onRemove={removeTag}
-          selectedTags={localTags}
-          label={'Tags'}
-          hasInlineTagCreation={true}
-        />
-      </FilteredTagsProvider>
+      {hasTags && (
+        <FilteredTagsProvider>
+          <TagsSelection
+            disabled={disable}
+            showEmpty={showEmpty}
+            onAdd={addTag}
+            onRemove={removeTag}
+            selectedTags={localTags}
+            label={'Tags'}
+            hasInlineTagCreation={true}
+          />
+        </FilteredTagsProvider>
+      )}
     </React.Fragment>
   );
 };
