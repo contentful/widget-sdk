@@ -72,6 +72,15 @@ interface SpaceInfo {
   spaces: SpaceData[];
   spaceId: string;
 }
+
+class NoSpaceError extends Error {
+  public readonly isNoSpaceError = true;
+
+  constructor() {
+    super('user has no spaces');
+  }
+}
+
 export async function getSpaceInfo(): Promise<SpaceInfo> {
   const store = getBrowserStorage();
 
@@ -79,7 +88,7 @@ export async function getSpaceInfo(): Promise<SpaceInfo> {
   const spaces: SpaceData[] = await getSpaces();
 
   if (spaces.length === 0) {
-    throw new Error('user has no spaces');
+    throw new NoSpaceError();
   }
 
   const defaultSpace = spaces[0];

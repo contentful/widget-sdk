@@ -109,7 +109,7 @@ describe('states/deeplink/resolver', () => {
 
   it('should give generic error in case no link', async function () {
     const result = await resolveLink(('' as unknown) as LinkType, {});
-    expect(result).toEqual({ onboarding: false });
+    expect(result).toEqual({ error: expect.any(Error) });
     expect(logger.logException).toHaveBeenCalledWith(expect.any(Error), {
       data: { link: '' },
       groupingHash: 'Error during deeplink redirect',
@@ -151,7 +151,8 @@ describe('states/deeplink/resolver', () => {
       });
       canReadApiKeys.mockReturnValue(false);
       const result = await resolveLink(LinkType.API, {});
-      expect(result).toEqual({ onboarding: false });
+
+      expect(result).toEqual({ error: expect.any(Error) });
     });
 
     it('should redirect to the last used space', async function () {
@@ -465,9 +466,8 @@ describe('states/deeplink/resolver', () => {
       checkOrgAccess.mockResolvedValue(false);
 
       const result = await resolveLink(LinkType.Invite, {});
-      expect(result).toEqual({
-        onboarding: false,
-      });
+
+      expect(result).toEqual({ error: expect.any(Error) });
     });
   });
 
@@ -505,17 +505,11 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(false);
 
-      expect(await resolveLink(LinkType.Invite, {})).toEqual({
-        onboarding: false,
-      });
+      expect(await resolveLink(LinkType.Invite, {})).toEqual({ error: expect.any(Error) });
 
-      expect(await resolveLink(LinkType.Subscription, {})).toEqual({
-        onboarding: false,
-      });
+      expect(await resolveLink(LinkType.Subscription, {})).toEqual({ error: expect.any(Error) });
 
-      expect(await resolveLink(LinkType.Org, {})).toEqual({
-        onboarding: false,
-      });
+      expect(await resolveLink(LinkType.Org, {})).toEqual({ error: expect.any(Error) });
     });
   });
 

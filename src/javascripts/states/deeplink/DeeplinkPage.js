@@ -58,6 +58,18 @@ const PageStatuses = {
   notExistError: 'not_exist_error',
   selectSpaceEnv: 'select_space_env',
   selectApp: 'select_app',
+  noSpaceError: 'no_space_error',
+};
+
+const getStatusFromError = (error) => {
+  switch (true) {
+    case error.isOnboardingError:
+      return PageStatuses.onboardingError;
+    case error.isNoSpaceError:
+      return PageStatuses.noSpaceError;
+  }
+
+  return PageStatuses.notExistError;
 };
 
 export function useDeeplinkPage({ searchParams }) {
@@ -68,8 +80,9 @@ export function useDeeplinkPage({ searchParams }) {
   const resolveDeeplink = useCallback(async () => {
     const { link, ...otherParams } = searchParams;
     const result = await resolveLink(link, otherParams);
-    if (!result.path) {
-      setStatus(result.onboarding ? PageStatuses.onboardingError : PageStatuses.notExistError);
+
+    if (result.error) {
+      setStatus(getStatusFromError(result.error));
     } else {
       if (result.deeplinkOptions?.selectSpace || result.deeplinkOptions?.selectEnvironment) {
         setDeeplinkOptions(result.deeplinkOptions);
@@ -131,6 +144,9 @@ export default function DeeplinkPage({ searchParams, href, marketplaceApps }) {
         {status === PageStatuses.redirecting && redirect ? (
           <StateRedirect path={redirect.path} params={redirect.params} options={redirect.options} />
         ) : null}
+        {status === PageStatuses.noSpaceError && (
+          <StateRedirect path={['home']} options={{ location: 'replace' }} />
+        )}
         {status === PageStatuses.notExistError && (
           <DeeplinkPageMessage
             title="The link you provided is broken or does not exist"

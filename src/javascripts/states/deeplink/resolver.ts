@@ -8,8 +8,6 @@ import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'features/api-keys-management';
 
-const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
-
 export enum LinkType {
   API = 'api',
   Invite = 'invite',
@@ -54,17 +52,15 @@ interface ResolvedLink {
 export function resolveLink(
   link: LinkType,
   params: Record<string, any>
-): Promise<ResolvedLink | { onboarding: boolean }> {
-  return resolveParams(link, params).catch((e) => {
-    logger.logException(e, {
+): Promise<ResolvedLink | { error: Error }> {
+  return resolveParams(link, params).catch((error) => {
+    logger.logException(error, {
       data: {
         link,
       },
       groupingHash: 'Error during deeplink redirect',
     });
-    return {
-      onboarding: e.message === ONBOARDING_ERROR,
-    };
+    return { error };
   });
 }
 
@@ -196,7 +192,7 @@ function createOnboardingScreenResolver(screen) {
         params: { spaceId },
       };
     } else {
-      throw new Error(ONBOARDING_ERROR);
+      throw new OnboardingError();
     }
   };
 }
@@ -436,4 +432,12 @@ async function applyOrgAccess(orgId: string, successResult) {
   }
 
   return successResult;
+}
+
+class OnboardingError extends Error {
+  public readonly isOnboardingError = true;
+
+  constructor() {
+    super('modern onboarding space id does not exist');
+  }
 }
