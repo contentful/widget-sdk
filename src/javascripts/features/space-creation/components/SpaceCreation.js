@@ -136,7 +136,7 @@ export const SpaceCreation = ({ orgId }) => {
       />
       <Workbench.Content className={styles.workbenchContent}>
         {isLoading && <LoadingCard />}
-        {!isLoading && data?.plans?.length > 0 && (
+        {!isLoading && data && (
           <Grid columns={1} rowGap="spacingM">
             <Breadcrumbs items={steps} isActive={steps} />
             {steps.indexOf(currentStep) === 0 && (
