@@ -140,7 +140,7 @@ export function AppPermissions(props: AppPermissionProps) {
       <div className={styles.permissions}>
         <Card>
           <Paragraph>
-            <b>View and update</b> content and content types
+            <b>View and update</b> content, tags and content types
           </Paragraph>
         </Card>
         <Card>
