@@ -115,15 +115,6 @@ function batchApiClient(): APIClient {
   return apiClientMemo;
 }
 
-async function getUpdatedEntities(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
-  return Promise.all(
-    entities.map(({ sys }) => {
-      if (sys.type === 'Asset') return batchApiClient().getAsset(sys.id);
-      if (sys.type === 'Entry') return batchApiClient().getEntry(sys.id);
-    })
-  );
-}
-
 async function createPublishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
   const items = entitiesToLinks({ entities, includeVersion: true });
 
