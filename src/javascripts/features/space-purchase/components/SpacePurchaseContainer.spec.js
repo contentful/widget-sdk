@@ -141,7 +141,7 @@ describe('SpacePurchaseContainer', () => {
 
   describe('rendering PLATFORM_SELECTION component', () => {
     it('should render with spaces above platforms when `from` is not passed as a prop', async () => {
-      await build(null, { purchasingApps: true });
+      await build({ purchasingApps: true });
 
       expect(screen.getByTestId('platform-selection-section')).toBeVisible();
       expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
@@ -150,7 +150,7 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('should render with spaces above platforms when a non-preselected from is passed', async () => {
-      await build({ from: 'random_string' }, { purchasingApps: true });
+      await build({ from: 'random_string', purchasingApps: true });
 
       expect(screen.getByTestId('platform-selection-section')).toBeVisible();
       expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual(
@@ -159,7 +159,7 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('should render with platforms above spaces when preselect param is passed', async () => {
-      await build({ from: 'marketing_cta', preselectApps: true }, { purchasingApps: true });
+      await build({ from: 'marketing_cta', preselectApps: true, purchasingApps: true });
 
       expect(screen.getByTestId('platform-selection-section')).toBeVisible();
       expect(screen.getByTestId('platform-space-order').style.flexDirection).toEqual('column');
@@ -432,10 +432,12 @@ describe('SpacePurchaseContainer', () => {
   });
 
   it('should not allow a user without any paid spaces to select community space after selecting compose+launch', async () => {
-    await build(null, {
-      subscriptionPlans: [{ name: 'Community' }],
-      purchasingApps: true,
-    });
+    await build(
+      { purchasingApps: true },
+      {
+        subscriptionPlans: [{ name: 'Community' }],
+      }
+    );
 
     // select compose+launch
     userEvent.click(screen.getAllByTestId('platform-card')[1]);
@@ -452,7 +454,7 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('sucessful completion of organization without billing details - contentful platform', async () => {
-      await build(null, { purchasingApps: true });
+      await build({ purchasingApps: true });
 
       // 1. Platform selection
       // select a platform
@@ -519,11 +521,13 @@ describe('SpacePurchaseContainer', () => {
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
 
-    it('sucessful completion of organization with billing details - contentful platform', async () => {
-      await build(null, {
-        purchasingApps: true,
-        organization: { ...mockOrganization, isBillable: true },
-      });
+    it('successful completion of organization with billing details - contentful platform', async () => {
+      await build(
+        { purchasingApps: true },
+        {
+          organization: { ...mockOrganization, isBillable: true },
+        }
+      );
 
       // 1. Platform selection
       // select a platform
@@ -567,9 +571,7 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('sucessful completion of organization without billing details - compose+launch platform', async () => {
-      await build(null, {
-        purchasingApps: true,
-      });
+      await build({ purchasingApps: true, preselectApps: true });
 
       // 1. Platform selection
       // select a platform
@@ -626,11 +628,13 @@ describe('SpacePurchaseContainer', () => {
       expect(screen.getByTestId('new-space-receipt-section')).toBeVisible();
     });
 
-    it('sucessful completion of organization with billing details - compose+launch platform', async () => {
-      await build(null, {
-        purchasingApps: true,
-        organization: { ...mockOrganization, isBillable: true },
-      });
+    it('successful completion of organization with billing details - compose+launch platform', async () => {
+      await build(
+        { purchasingApps: true },
+        {
+          organization: { ...mockOrganization, isBillable: true },
+        }
+      );
 
       // 1. Platform selection
       // select a platform
@@ -664,10 +668,12 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('sucessful completion of organization with billing details - buying only compose+launch platform and no space', async () => {
-      await build(null, {
-        purchasingApps: true,
-        organization: { ...mockOrganization, isBillable: true },
-      });
+      await build(
+        { purchasingApps: true },
+        {
+          organization: { ...mockOrganization, isBillable: true },
+        }
+      );
 
       // 1. Platform selection
       await waitFor(() => {
@@ -735,7 +741,6 @@ async function build(customProps, customState) {
         content: [],
       },
       composeAndLaunchProductRatePlan: mockComposeAndLaunch,
-      purchasingApps: false,
       ...customState,
     },
     props

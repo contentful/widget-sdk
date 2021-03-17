@@ -2,11 +2,12 @@ import React, { useContext, useCallback, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Card, Flex, Grid, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import { Card, Flex, Grid, Heading, Paragraph, Icon } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { isTrialSpacePlan } from 'account/pricing/PricingDataProvider';
 
 import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
@@ -16,7 +17,6 @@ import { FAQAccordion } from '../../components/FAQAccordion';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { PlatformKind } from '../../utils/platformContent';
 import { canUserCreatePaidSpace, canOrgCreateFreeSpace } from '../../utils/canCreateSpace';
-import { isTrialSpacePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   fullRow: css({
@@ -43,14 +43,19 @@ const styles = {
     width: '100%',
     opacity: 1,
     transition: 'opacity 0.2s ease-in-out',
-    '& p': { fontWeight: tokens.fontWeightMedium },
+  }),
+  trialSpacesWarning: css({
+    '& > p': {
+      color: tokens.colorYellowDark,
+      marginLeft: tokens.spacingXs,
+    },
   }),
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
 export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
+export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces, activeAppTrial }) => {
   const {
     state: {
       organization,
@@ -79,11 +84,10 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
   /**
-   * The option to "Use your existing spaces" should only be shown when:
-   * - the user is buying a space
-   * - the organization has paid spaces already
+   * The option to "Use your existing spaces" shows when
+   * the organization has paid spaces already
    */
-  const canUseExistingSpace = !currentSpace && orgHasPaidSpaces;
+  const canUseExistingSpace = orgHasPaidSpaces;
 
   const scrollToSpaceSelection = useCallback(() => {
     spaceSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -174,14 +178,28 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
             })}>
             <Heading element="h2" className={cx(styles.mediumWeight, styles.heading)}>
               {currentSpace
-                ? 'Upgrade your space to'
+                ? `Upgrade your ${spacePlanIsTrial ? 'trial' : ''} space to`
                 : 'Choose the space size that’s right for your project'}
             </Heading>
-            {!currentSpace &&
-              !orgHasPaidSpaces &&
-              selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH && (
-                <Paragraph>Purchase a Medium or Large space to get Compose + Launch</Paragraph>
+
+            {orgHasPaidSpaces &&
+              selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH &&
+              currentSpace && (
+                <Paragraph>Choose the space size that’s right for your project</Paragraph>
               )}
+            {!orgHasPaidSpaces && selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH && (
+              <>
+                {!currentSpace && (
+                  <Paragraph>Purchase a Medium or Large space to get Compose + Launch</Paragraph>
+                )}
+                {currentSpace && (
+                  <Paragraph>
+                    Choose the size that suits your project, you must upgrade your trial space to
+                    enable Compose + Launch
+                  </Paragraph>
+                )}
+              </>
+            )}
           </span>
 
           <SpacePlanCards
@@ -207,6 +225,15 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
                   onSelectSpace(NO_SPACE_PLAN);
                 }}>
                 <Heading element="p">Use your existing spaces</Heading>
+                {activeAppTrial && (
+                  <Flex className={styles.trialSpacesWarning} flexDirection="row">
+                    <Icon color="warning" icon="Warning" />
+                    <Paragraph>
+                      The trial space will be converted read-only and you will no longer able to use
+                      it
+                    </Paragraph>
+                  </Flex>
+                )}
               </Card>
             </Flex>
           )}
@@ -222,4 +249,5 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
 PlatformSelectionStep.propTypes = {
   track: PropTypes.func.isRequired,
   showPlatformsAboveSpaces: PropTypes.bool,
+  activeAppTrial: PropTypes.bool,
 };

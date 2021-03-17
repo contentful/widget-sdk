@@ -19,7 +19,6 @@ export interface State {
   billingDetails?: BillingDetails;
   spaceName?: string;
   selectedTemplate?: SelectedTemplate;
-  purchasingApps?: boolean;
   composeAndLaunchProductRatePlan?: ProductRatePlan;
 }
 

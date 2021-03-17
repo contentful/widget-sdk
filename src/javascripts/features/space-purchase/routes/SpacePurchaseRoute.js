@@ -37,6 +37,7 @@ import {
   getBasePlan,
   getSpacePlanForSpace,
 } from 'features/pricing-entities';
+import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
@@ -136,6 +137,9 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
 
   const sessionId = alnum(16);
 
+  const appCatalogFeature = await AppTrialRepo.getTrial(organizationId);
+  const activeAppTrial = isActiveAppTrial(appCatalogFeature);
+
   dispatch({
     type: actions.SET_INITIAL_STATE,
     payload: {
@@ -149,7 +153,6 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
       pageContent,
       selectedPlatform,
       composeAndLaunchProductRatePlan,
-      purchasingApps,
     },
   });
 
@@ -173,6 +176,12 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
       performancePackagePreselected: !!selectedPlatform,
     }
   );
+
+  // TODO: move the requests related to activeAppTrial and purchasings to the step that is using them
+  return {
+    activeAppTrial,
+    purchasingApps,
+  };
 };
 
 export const SpacePurchaseRoute = ({
@@ -193,19 +202,19 @@ export const SpacePurchaseRoute = ({
   const preselectApps = preselect === PRESELECT_VALUES.APPS;
 
   const {
-    state: { sessionId, purchasingApps },
+    state: { sessionId },
     dispatch,
   } = useContext(SpacePurchaseState);
 
   // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
   // knows which specific first step component to display (with its loading state). Not separating them
   // will cause an empty screen while all the data loads, which is undesireable.
-  const { error } = useAsync(
+  const { data, isLoading, error } = useAsync(
     useCallback(initialFetch(orgId, spaceId, from, preselectApps, dispatch), [])
   );
 
   // Show the generic loading state until we know if we're purchasing apps or not
-  if (purchasingApps === undefined) {
+  if (isLoading) {
     return (
       <EmptyStateContainer>
         <FetcherLoading />
@@ -217,12 +226,14 @@ export const SpacePurchaseRoute = ({
     return <ErrorState />;
   }
 
-  const documentTitle = purchasingApps ? 'Subscription purchase' : 'Space purchase';
+  const documentTitle = data.purchasingApps ? 'Subscription purchase' : 'Space purchase';
 
   return (
     <>
       <DocumentTitle title={documentTitle} />
       <SpacePurchaseContainer
+        activeAppTrial={data.activeAppTrial}
+        purchasingApps={data.purchasingApps}
         preselectApps={preselectApps}
         track={(eventName, metadata) => {
           trackEvent(

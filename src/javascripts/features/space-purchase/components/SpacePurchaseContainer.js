@@ -94,9 +94,14 @@ const fetchBillingDetails = async (organization, dispatch) => {
   dispatch({ type: actions.SET_BILLING_DETAILS, payload: billingDetails });
 };
 
-export const SpacePurchaseContainer = ({ track, preselectApps }) => {
+export const SpacePurchaseContainer = ({
+  track,
+  preselectApps = false,
+  activeAppTrial = false,
+  purchasingApps = false,
+}) => {
   const {
-    state: { organization, selectedPlatform, selectedPlan, currentSpace, purchasingApps },
+    state: { organization, selectedPlatform, selectedPlan, currentSpace },
     dispatch,
   } = useContext(SpacePurchaseState);
 
@@ -146,13 +151,19 @@ export const SpacePurchaseContainer = ({ track, preselectApps }) => {
   if (!selectedPlatform || !selectedPlan) {
     continueBtnTooltip = 'Select an organization package and space to continue';
   } else if (selectedPlan === NO_SPACE_PLAN && !selectedComposeLaunch) {
-    continueBtnTooltip = 'You haven’t selected any new items. Make a purchase to continue';
+    continueBtnTooltip = 'You haven’t selected any new items. Make a purchase to continue.';
   }
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.PLATFORM_SELECTION:
-        return <PlatformSelectionStep track={track} showPlatformsAboveSpaces={preselectApps} />;
+        return (
+          <PlatformSelectionStep
+            track={track}
+            showPlatformsAboveSpaces={preselectApps}
+            activeAppTrial={activeAppTrial}
+          />
+        );
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
@@ -301,6 +312,12 @@ export const SpacePurchaseContainer = ({ track, preselectApps }) => {
 };
 
 SpacePurchaseContainer.propTypes = {
+  /** It’s the function containing all the track info common to every event inside the Space Purchase flow */
   track: PropTypes.func.isRequired,
+  /** When true, it renders the apps card preselected in PlatformSelectionStep */
   preselectApps: PropTypes.bool,
+  /** When true, Space Purchase will present the user with the option to buy apps (first step will be PlatformSelectionStep) */
+  purchasingApps: PropTypes.bool,
+  /** It tells the Space Purchase flow if the user as an App Trail active */
+  activeAppTrial: PropTypes.bool,
 };

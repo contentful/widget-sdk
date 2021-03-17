@@ -2,7 +2,6 @@ import type { State } from './types';
 
 export enum actions {
   SET_INITIAL_STATE = 'SET_INITIAL_STATE',
-  SET_PURCHASING_APPS = 'SET_PURCHASING_APPS',
   SET_CURRENT_SPACE = 'SET_CURRENT_SPACE',
   SET_CURRENT_SPACE_RATE_PLAN = 'SET_CURRENT_SPACE_RATE_PLAN',
   SET_SELECTED_PLAN = 'SET_SELECTED_PLAN',
@@ -16,11 +15,6 @@ export enum actions {
 type SetInitialStateAction = {
   type: actions.SET_INITIAL_STATE;
   payload: State;
-};
-
-type SetPurchasingAppsAction = {
-  type: actions.SET_PURCHASING_APPS;
-  payload: State['purchasingApps'];
 };
 
 type SetCurrentStateAction = {
@@ -65,7 +59,6 @@ type SetSelectedTemplateAction = {
 
 export type Action =
   | SetInitialStateAction
-  | SetPurchasingAppsAction
   | SetCurrentStateAction
   | SetCurrentSpaceRatePlanAction
   | SetSelectedPlatformAction
@@ -79,8 +72,6 @@ export const spacePurchaseReducer = (state: State, action: Action) => {
   switch (action.type) {
     case actions.SET_INITIAL_STATE:
       return { ...state, ...action.payload };
-    case actions.SET_PURCHASING_APPS:
-      return { ...state, purchasingApps: action.payload };
     case actions.SET_SELECTED_PLATFORM:
       return { ...state, selectedPlatform: action.payload };
     case actions.SET_SELECTED_PLAN:

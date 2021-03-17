@@ -75,6 +75,11 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
 
+jest.mock('features/trials', () => ({
+  AppTrialRepo: { getTrial: jest.fn() },
+  isActiveAppTrial: jest.fn().mockReturnValue(false),
+}));
+
 jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn(),
   getSpaceProductRatePlans: jest.fn(),
