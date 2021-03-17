@@ -1,5 +1,4 @@
 import { BulkAction, makeLink, VersionedLink } from '@contentful/types';
-import { BulkActionErrorMessage } from '../BulkActionError';
 
 const testEntryId = 'testEntryId';
 const testAssetId = 'testAssetId';
@@ -118,8 +117,6 @@ type ResponseOptions = {
   action: 'publish' | 'validate';
   payload?: typeof bulkValidateResponsePayload | typeof bulkPublishResponsePayload;
   status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-  error?: { details?: Record<string, any> };
-  statusCode?: number;
 };
 
 const bulkActionResponse = ({

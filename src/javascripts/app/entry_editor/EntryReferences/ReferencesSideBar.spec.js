@@ -21,8 +21,6 @@ import {
   arrayOfReferences,
   simpleReferencesValidationErrorResponse,
   simpleReferencesValidationSuccessResponse,
-  simpleReferencesPublicationSuccessResponse,
-  simpleReferencesPublicationInvalidErrorResponse,
 } from './__fixtures__';
 
 import { releases } from '../../Releases/__fixtures__';
@@ -257,7 +255,7 @@ describe('ReferencesSideBar component', () => {
     });
 
     it('should still use the bulk api for publication', async () => {
-      createPublishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
+      createPublishBulkAction.mockResolvedValue(publishBulkActionSuccessResponse);
       const response = cfResolveResponse(simpleReferences);
       const selectedEntities = cfResolveResponse(arrayOfReferences);
       const { getByTestId } = render(
@@ -365,7 +363,7 @@ describe('ReferencesSideBar component', () => {
     });
 
     it('should use the bulk api for publication', async () => {
-      createPublishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
+      createPublishBulkAction.mockResolvedValue(publishBulkActionSuccessResponse);
       const response = cfResolveResponse(simpleReferences);
       const selectedEntities = cfResolveResponse(arrayOfReferences);
       const { getByTestId } = render(
@@ -445,10 +443,7 @@ describe('ReferencesSideBar component', () => {
     });
 
     it('should render the failed notification for publishing invalid state', async () => {
-      createPublishBulkAction.mockRejectedValue({
-        statusCode: 400,
-        data: simpleReferencesPublicationInvalidErrorResponse,
-      });
+      createPublishBulkAction.mockRejectedValue(bulkActionEntryErrorResponse);
       const dispatchFn = jest.fn();
       const response = cfResolveResponse(simpleReferences);
       const selectedEntities = cfResolveResponse(arrayOfReferences);
@@ -468,7 +463,12 @@ describe('ReferencesSideBar component', () => {
       });
 
       await waitFor(() => {
-        expect(dispatchFn).toHaveBeenCalledWith({ type: 'SET_VALIDATIONS', value: null });
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: {
+            errored: convertBulkActionErrors(bulkActionEntryErrorResponse.data.details.errors),
+          },
+        });
         expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
       });
     });
