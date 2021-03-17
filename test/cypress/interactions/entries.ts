@@ -416,10 +416,7 @@ export const validateEntryReferencesResponse = {
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/validations`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
         body: validateEntryReferencesSeveralRequest,
       },
       willRespondWith: {
@@ -448,10 +445,7 @@ export const validateEntryReferencesResponse = {
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/validations`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
         body: validateEntryReferencesSeveralRequest,
       },
       willRespondWith: {

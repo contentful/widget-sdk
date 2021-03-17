@@ -1,10 +1,5 @@
 import { get } from 'lodash';
-import {
-  ENTRY_VALIDATION,
-  ENTRY_REFERENCES_ENDPOINT,
-  IMMEDIATE_RELEASE,
-  getAlphaHeader,
-} from 'alphaHeaders.js';
+import { ENTRY_VALIDATION, ENTRY_REFERENCES_ENDPOINT, getAlphaHeader } from 'alphaHeaders.js';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -283,59 +278,39 @@ APIClient.prototype.validateEntry = function (data, version) {
 };
 
 APIClient.prototype.getReleases = function (query) {
-  return this._request(
-    {
-      method: 'GET',
-      path: ['releases'],
-      query,
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'GET',
+    path: ['releases'],
+    query,
+  });
 };
 
 APIClient.prototype.createRelease = function (title, items = []) {
-  return this._request(
-    {
-      method: 'POST',
-      path: ['releases'],
-      data: {
-        title,
-        entities: {
-          sys: { type: 'Array' },
-          items,
-        },
+  return this._request({
+    method: 'POST',
+    path: ['releases'],
+    data: {
+      title,
+      entities: {
+        sys: { type: 'Array' },
+        items,
       },
     },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  });
 };
 
 APIClient.prototype.deleteRelease = function (id) {
-  return this._request(
-    {
-      method: 'DELETE',
-      path: ['releases', id],
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'DELETE',
+    path: ['releases', id],
+  });
 };
 
 APIClient.prototype.getReleaseById = function (id) {
-  return this._request(
-    {
-      method: 'GET',
-      path: ['releases', id],
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'GET',
+    path: ['releases', id],
+  });
 };
 
 /**
@@ -345,17 +320,12 @@ APIClient.prototype.updateRelease = function (release) {
   // FIXIT API rejects if we send a sys, instead should be allowed but ignored
   const { sys: _sys, ...data } = release;
 
-  return this._request(
-    {
-      method: 'PUT',
-      path: ['releases', getId(release)],
-      data,
-      version: getVersion(release),
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'PUT',
+    path: ['releases', getId(release)],
+    data,
+    version: getVersion(release),
+  });
 };
 
 APIClient.prototype.publishRelease = function (id, version) {
@@ -365,67 +335,46 @@ APIClient.prototype.publishRelease = function (id, version) {
       path: ['releases', id, 'published'],
     },
     {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
       'X-Contentful-Version': version,
     }
   );
 };
 
 APIClient.prototype.getReleaseAction = function (releaseId, actionId) {
-  return this._request(
-    {
-      method: 'GET',
-      path: ['releases', releaseId, 'actions', actionId],
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'GET',
+    path: ['releases', releaseId, 'actions', actionId],
+  });
 };
 
 APIClient.prototype.validateReleaseAction = function (releaseId, action) {
-  return this._request(
-    {
-      method: 'PUT',
-      path: ['releases', releaseId, 'validated'],
-      action,
-    },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  return this._request({
+    method: 'PUT',
+    path: ['releases', releaseId, 'validated'],
+    action,
+  });
 };
 
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
-  return this._request(
-    {
-      method: 'POST',
-      path: ['releases', type, 'validations'],
-      data: {
-        action,
-        entities,
-      },
+  return this._request({
+    method: 'POST',
+    path: ['releases', type, 'validations'],
+    data: {
+      action,
+      entities,
     },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  });
 };
 
 APIClient.prototype.executeRelease = function (action, entities, id = 'immediate') {
-  return this._request(
-    {
-      method: 'POST',
-      path: ['releases', id, 'execute'],
-      data: {
-        action,
-        entities,
-      },
+  return this._request({
+    method: 'POST',
+    path: ['releases', id, 'execute'],
+    data: {
+      action,
+      entities,
     },
-    {
-      ...getAlphaHeader(IMMEDIATE_RELEASE),
-    }
-  );
+  });
 };
 
 /**

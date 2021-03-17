@@ -45,10 +45,7 @@ export const getReleasesList = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -70,10 +67,7 @@ export const getReleasesList = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -95,10 +89,7 @@ export const getReleasesList = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -122,10 +113,7 @@ export const createEmptyRelease = {
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
         body: createReleaseRequest(),
       },
       willRespondWith: {
@@ -150,10 +138,7 @@ export const getReleaseEntities = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -175,10 +160,7 @@ export const getReleaseEntities = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -205,7 +187,6 @@ export const deleteEntityFromRelease = {
         headers: {
           ...defaultHeader,
           'x-contentful-version': '1',
-          'x-contentful-enable-alpha-feature': 'immediate-release',
         },
         body: deleteEntityBodyRequest(),
       },
@@ -231,10 +212,7 @@ export const deleteRelease = {
       withRequest: {
         method: 'DELETE',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 204,
@@ -254,10 +232,7 @@ export const validateRelease = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/validated`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -279,10 +254,7 @@ export const validateRelease = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/validated`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -306,10 +278,7 @@ export const publishRelease = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/published`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 202,
@@ -331,10 +300,7 @@ export const publishRelease = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/${defaultReleaseActionId}`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -356,10 +322,7 @@ export const publishRelease = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/${defaultReleaseActionId}`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -381,10 +344,7 @@ export const publishRelease = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/published`,
-        headers: {
-          ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release',
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 422,
