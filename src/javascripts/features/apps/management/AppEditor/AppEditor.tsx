@@ -24,6 +24,7 @@ import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
 import { ValidationError } from './types';
 import { AppDefinition, AppLocation, FieldType } from 'contentful-management/types';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -130,6 +131,12 @@ export function AppEditor({
   if (!hasLocations(definition)) {
     throw new Error('App Definition had no locations in App Editor');
   }
+
+  const [hostingEnabled, setHostingEnabled] = React.useState(false);
+
+  React.useEffect(() => {
+    getVariation(FLAGS.APP_HOSTING_UI).then((value) => setHostingEnabled(value));
+  }, []);
 
   const clearErrorForField = (path) => {
     onErrorsChange(errors.filter((error) => !isEqual(error.path, path)));
@@ -257,6 +264,7 @@ export function AppEditor({
           }
           textInputProps={{ disabled }}
         />
+        {hostingEnabled && <div>HELLo</div>}
         <TextField
           className={styles.input()}
           name="app-src"
