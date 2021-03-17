@@ -24,7 +24,7 @@ import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
 import { ValidationError } from './types';
 import { AppDefinition, AppLocation, FieldType } from 'contentful-management/types';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { AppHosting } from './AppHosting';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -132,13 +132,7 @@ export function AppEditor({
     throw new Error('App Definition had no locations in App Editor');
   }
 
-  const [hostingEnabled, setHostingEnabled] = React.useState(false);
-
-  React.useEffect(() => {
-    getVariation(FLAGS.APP_HOSTING_UI).then((value) => setHostingEnabled(value));
-  }, []);
-
-  const clearErrorForField = (path) => {
+  const clearErrorForField = (path: string) => {
     onErrorsChange(errors.filter((error) => !isEqual(error.path, path)));
   };
 
@@ -264,23 +258,13 @@ export function AppEditor({
           }
           textInputProps={{ disabled }}
         />
-        {hostingEnabled && <div>HELLo</div>}
-        <TextField
-          className={styles.input()}
-          name="app-src"
-          id="app-src"
-          labelText="App URL"
-          testId="app-src-input"
-          value={definition.src || ''}
-          helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            clearErrorForField([...errorPath, 'src']);
-            onChange({ ...definition, src: e.target.value.trim() });
-          }}
-          validationMessage={
-            errors.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details
-          }
-          textInputProps={{ disabled }}
+        <AppHosting
+          definition={definition}
+          disabled={disabled}
+          onChange={onChange}
+          errorPath={errorPath}
+          errors={errors}
+          clearErrorForField={clearErrorForField}
         />
 
         {definition.src && (
