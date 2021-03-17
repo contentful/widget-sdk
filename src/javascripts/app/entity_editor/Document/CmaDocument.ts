@@ -452,6 +452,10 @@ export function create(
    */
   async function handleIncomingChange({ newVersion }: EntityRepoChangeInfo = {}) {
     // Wait for current ongoing update, then do the next one.
+    if (K.getValue(isSaving$)) {
+      await afterSave$.changes().take(1).toPromise();
+      return handleIncomingChange({ newVersion });
+    }
     if (K.getValue(isUpdating$)) {
       await afterUpdate$.changes().take(1).toPromise();
       return handleIncomingChange({ newVersion });
