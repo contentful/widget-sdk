@@ -12,7 +12,8 @@ import { validateEntities, getReferencesForEntryId } from './referencesService';
 import { getReleases } from '../../Releases/releasesService';
 
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
-import { publishBulkAction } from './BulkAction/BulkActionService';
+import { createPublishBulkAction, createValidateBulkAction } from './BulkAction/BulkActionService';
+import { convertBulkActionErrors } from './BulkAction/BulkActionError';
 
 import {
   entity,
@@ -27,7 +28,9 @@ import {
 import { releases } from '../../Releases/__fixtures__';
 import {
   publishBulkActionSuccessResponse,
-  versionMismatchError as bulkActionVersionMismatchError,
+  validateBulkActionSuccessResponse,
+  bulkActionEntryErrorResponse,
+  bulkActionVersionMismatchErrorResponse,
 } from './BulkAction/__fixtures__';
 
 jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
@@ -68,7 +71,8 @@ jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
 }));
 
 jest.mock('./BulkAction/BulkActionService', () => ({
-  publishBulkAction: jest.fn(),
+  createPublishBulkAction: jest.fn(),
+  createValidateBulkAction: jest.fn(),
 }));
 
 jest.mock('./BulkAction/BulkActionFeatureFlag', () => ({
@@ -96,117 +100,6 @@ describe('ReferencesSideBar component', () => {
     getReferencesForEntryId.mockResolvedValue({
       resolved: cfResolveResponse(simpleReferences),
       response: simpleReferences,
-    });
-  });
-
-  it('should render the error notification with validation error', async () => {
-    validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
-    const response = cfResolveResponse(simpleReferences);
-    const selectedEntities = cfResolveResponse(arrayOfReferences);
-    const { getByTestId } = render(
-      <MockPovider references={response} selectedEntities={selectedEntities}>
-        <ReferencesSideBar entityTitle="Title" entity={entity} />
-      </MockPovider>
-    );
-
-    await waitFor(() => getByTestId);
-
-    act(() => {
-      fireEvent.click(getByTestId('validateReferencesBtn'));
-    });
-
-    await waitFor(() => {
-      expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
-    });
-  });
-
-  it('should render the success notification without validation error', async () => {
-    validateEntities.mockResolvedValue(simpleReferencesValidationSuccessResponse);
-    const response = cfResolveResponse(simpleReferences);
-    const selectedEntities = cfResolveResponse(arrayOfReferences);
-    const { getByTestId } = render(
-      <MockPovider references={response} selectedEntities={selectedEntities}>
-        <ReferencesSideBar entityTitle="Title" entity={entity} />
-      </MockPovider>
-    );
-
-    await waitFor(() => getByTestId);
-
-    act(() => {
-      fireEvent.click(getByTestId('validateReferencesBtn'));
-    });
-
-    await waitFor(() => {
-      expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
-    });
-  });
-
-  it('should render the success notification after publication', async () => {
-    publishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
-
-    const response = cfResolveResponse(simpleReferences);
-    const selectedEntities = cfResolveResponse(arrayOfReferences);
-    const { getByTestId } = render(
-      <MockPovider references={response} selectedEntities={selectedEntities}>
-        <ReferencesSideBar entityTitle="Title" entity={entity} />
-      </MockPovider>
-    );
-
-    await waitFor(() => getByTestId);
-
-    act(() => {
-      fireEvent.click(getByTestId('publishReferencesBtn'));
-    });
-
-    await waitFor(() => {
-      expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
-    });
-  });
-
-  it('should render the failed notification after failed publication', async () => {
-    publishBulkAction.mockRejectedValue({ statusCode: 400 });
-
-    const response = cfResolveResponse(simpleReferences);
-    const selectedEntities = cfResolveResponse(arrayOfReferences);
-    const { getByTestId } = render(
-      <MockPovider references={response} selectedEntities={selectedEntities}>
-        <ReferencesSideBar entityTitle="Title" entity={entity} />
-      </MockPovider>
-    );
-
-    await waitFor(() => getByTestId);
-
-    act(() => {
-      fireEvent.click(getByTestId('publishReferencesBtn'));
-    });
-
-    await waitFor(() => {
-      expect(Notification.error).toHaveBeenCalledWith('We were unable to publish Title');
-    });
-  });
-
-  it('should render the validation toast after publishing invalid state', async () => {
-    publishBulkAction.mockRejectedValue({
-      statusCode: 400,
-      data: simpleReferencesPublicationInvalidErrorResponse,
-    });
-
-    const response = cfResolveResponse(simpleReferences);
-    const selectedEntities = cfResolveResponse(arrayOfReferences);
-    const { getByTestId } = render(
-      <MockPovider references={response} selectedEntities={selectedEntities}>
-        <ReferencesSideBar entityTitle="Title" entity={entity} />
-      </MockPovider>
-    );
-
-    await waitFor(() => getByTestId);
-
-    act(() => {
-      fireEvent.click(getByTestId('publishReferencesBtn'));
-    });
-
-    await waitFor(() => {
-      expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
     });
   });
 
@@ -283,11 +176,88 @@ describe('ReferencesSideBar component', () => {
     });
   });
 
-  describe('FeatureFlag: BulkActions', () => {
-    it('should render the success notification after publication when using BulkActions', async () => {
-      publishBulkAction.mockResolvedValue(publishBulkActionSuccessResponse);
-      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
+  describe('when flag for bulk actions is disabled', () => {
+    it('should not use the bulk api for validation', async () => {
+      validateEntities.mockResolvedValue(simpleReferencesValidationSuccessResponse);
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider references={response} selectedEntities={selectedEntities}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
 
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(validateEntities).toHaveBeenCalledWith(expect.any(Object));
+      });
+    });
+
+    it('should render the success notification without validation error', async () => {
+      validateEntities.mockResolvedValue(simpleReferencesValidationSuccessResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: simpleReferencesValidationSuccessResponse,
+        });
+        expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
+      });
+    });
+
+    it('should render the failed notification with validation error', async () => {
+      validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: simpleReferencesValidationErrorResponse,
+        });
+        expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+      });
+    });
+
+    it('should still use the bulk api for publication', async () => {
+      createPublishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
       const response = cfResolveResponse(simpleReferences);
       const selectedEntities = cfResolveResponse(arrayOfReferences);
       const { getByTestId } = render(
@@ -303,17 +273,182 @@ describe('ReferencesSideBar component', () => {
       });
 
       await waitFor(() => {
+        expect(createPublishBulkAction).toHaveBeenCalledWith(selectedEntities);
+      });
+    });
+  });
+
+  describe('when flag for bulk actions is enabled', () => {
+    beforeEach(() => {
+      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
+    });
+
+    it('should use the bulk api for validation', async () => {
+      createValidateBulkAction.mockResolvedValue(simpleReferencesValidationSuccessResponse);
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider references={response} selectedEntities={selectedEntities}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(createValidateBulkAction).toHaveBeenCalledWith(selectedEntities);
+      });
+    });
+
+    it('should render the success notification without validation error', async () => {
+      createValidateBulkAction.mockResolvedValue(validateBulkActionSuccessResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: { errored: [] },
+        });
+        expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
+      });
+    });
+
+    it('should render the failed notification with validation error', async () => {
+      createValidateBulkAction.mockRejectedValue(bulkActionEntryErrorResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('validateReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: {
+            errored: convertBulkActionErrors(bulkActionEntryErrorResponse.data.details.errors),
+          },
+        });
+        expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+      });
+    });
+
+    it('should use the bulk api for publication', async () => {
+      createPublishBulkAction.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider references={response} selectedEntities={selectedEntities}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('publishReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(createPublishBulkAction).toHaveBeenCalledWith(selectedEntities);
+      });
+    });
+
+    it('should render the success notification without publication error', async () => {
+      createPublishBulkAction.mockResolvedValue(publishBulkActionSuccessResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('publishReferencesBtn'));
+      });
+
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({ type: 'SET_VALIDATIONS', value: null });
         expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
       });
     });
 
-    it('should render the failed notification after failed BulkAction', async () => {
-      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
-      publishBulkAction.mockRejectedValue({
-        statusCode: 400,
-        data: bulkActionVersionMismatchError,
+    it('should render the failed notification for publishing mismatching version', async () => {
+      createPublishBulkAction.mockRejectedValue(bulkActionVersionMismatchErrorResponse);
+      const dispatchFn = jest.fn();
+      const response = cfResolveResponse(simpleReferences);
+      const selectedEntities = cfResolveResponse(arrayOfReferences);
+      const { getByTestId } = render(
+        <MockPovider
+          references={response}
+          selectedEntities={selectedEntities}
+          dispatch={dispatchFn}>
+          <ReferencesSideBar entityTitle="Title" entity={entity} />
+        </MockPovider>
+      );
+
+      await waitFor(() => getByTestId);
+
+      act(() => {
+        fireEvent.click(getByTestId('publishReferencesBtn'));
       });
 
+      await waitFor(() => {
+        expect(dispatchFn).toHaveBeenCalledWith({
+          type: 'SET_VALIDATIONS',
+          value: {
+            errored: convertBulkActionErrors(
+              bulkActionVersionMismatchErrorResponse.data.details.errors
+            ),
+          },
+        });
+        expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+      });
+    });
+
+    it('should render the failed notification for publishing invalid state', async () => {
+      createPublishBulkAction.mockRejectedValue({
+        statusCode: 400,
+        data: simpleReferencesPublicationInvalidErrorResponse,
+      });
       const dispatchFn = jest.fn();
       const response = cfResolveResponse(simpleReferences);
       const selectedEntities = cfResolveResponse(arrayOfReferences);

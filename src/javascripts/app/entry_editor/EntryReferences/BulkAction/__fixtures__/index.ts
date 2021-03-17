@@ -1,4 +1,5 @@
 import { BulkAction, makeLink, VersionedLink } from '@contentful/types';
+import { BulkActionErrorMessage } from '../BulkActionError';
 
 const testEntryId = 'testEntryId';
 const testAssetId = 'testAssetId';
@@ -19,6 +20,25 @@ const versionedEntries = [
   versionedLink({ type: 'Entry', id: 'testEntryId1', version: 1 }),
   versionedLink({ type: 'Asset', id: 'testAssetId1', version: 1 }),
 ];
+
+const bulkPublishResponsePayload = {
+  entities: {
+    items: versionedEntries,
+    sys: {
+      type: 'Array',
+    },
+  },
+};
+
+const bulkValidateResponsePayload = {
+  action: 'publish',
+  entities: {
+    items: versionedEntries,
+    sys: {
+      type: 'Array',
+    },
+  },
+};
 
 const versionMismatchError = {
   sys: {
@@ -91,20 +111,21 @@ const serverError = {
     type: 'Error',
     id: 'ServerError',
   },
+  details: {},
 };
 
 type ResponseOptions = {
-  action: 'publish';
-  payload?: object;
+  action: 'publish' | 'validate';
+  payload?: typeof bulkValidateResponsePayload | typeof bulkPublishResponsePayload;
   status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-  error?: object;
+  error?: { details?: Record<string, any> };
+  statusCode?: number;
 };
 
 const bulkActionResponse = ({
   action = 'publish',
   status = 'created',
-  payload = versionedEntries,
-  error,
+  payload = bulkPublishResponsePayload,
 }: ResponseOptions): BulkAction => {
   const response = {
     sys: {
@@ -120,18 +141,25 @@ const bulkActionResponse = ({
       status,
     },
     action,
-    payload: {
-      entities: {
-        items: payload,
-      },
-    },
+    payload,
   };
-
-  if (error) {
-    response['error'] = error;
-  }
-
   return response as BulkAction;
+};
+
+type BulkActionError = { details?: Record<string, any> };
+type BulkActionErrorResponse = {
+  statusCode: number;
+  data: { details?: BulkActionError['details'] };
+};
+
+const bulkActionResponseError = (
+  error: BulkActionError,
+  statusCode = 400
+): BulkActionErrorResponse => {
+  return {
+    statusCode,
+    data: { details: error?.details },
+  };
 };
 
 const publishBulkActionSuccessResponse = bulkActionResponse({
@@ -139,29 +167,23 @@ const publishBulkActionSuccessResponse = bulkActionResponse({
   action: 'publish',
 });
 
-const publishBulkActionErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: versionMismatchError,
+const validateBulkActionSuccessResponse = bulkActionResponse({
+  status: 'succeeded',
+  action: 'validate',
+  payload: bulkValidateResponsePayload,
 });
 
-const publishBulkActionEntryErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: validationFailedError,
-});
+const bulkActionVersionMismatchErrorResponse = bulkActionResponseError(versionMismatchError);
 
-const publishBulkActionServerErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: serverError,
-});
+const bulkActionEntryErrorResponse = bulkActionResponseError(validationFailedError);
+
+const bulkActionServerErrorResponse = bulkActionResponseError(serverError);
 
 export {
   publishBulkActionSuccessResponse,
-  publishBulkActionErrorResponse,
-  publishBulkActionServerErrorResponse,
-  publishBulkActionEntryErrorResponse,
-  versionMismatchError,
+  validateBulkActionSuccessResponse,
+  bulkActionVersionMismatchErrorResponse,
+  bulkActionEntryErrorResponse,
+  bulkActionServerErrorResponse,
   serverError,
 };
