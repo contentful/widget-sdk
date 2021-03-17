@@ -75,6 +75,12 @@ export function getSpaceNavigationItems({
       label: 'new',
       title: 'Teams',
     },
+    embargoedAssets: {
+      if: canNavigateTo('embargoedAssets'),
+      sref: makeRef('settings.embargoedAssets', isUnscopedRoute),
+      dataViewType: 'spaces-settings-embargoedAssets',
+      title: 'Embargoed Assets',
+    },
     roles: {
       if: canNavigateTo('roles'),
       sref: roles.path,
@@ -148,6 +154,7 @@ export function getSpaceNavigationItems({
     dropdownItems.roles,
     dropdownItems.environments,
     dropdownItems.keys,
+    dropdownItems.embargoedAssets,
     dropdownItems.webhooks,
     dropdownItems.previews,
     dropdownItems.usage,
