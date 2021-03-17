@@ -24,7 +24,6 @@ import {
   queryForBasicAppsInDefaultSpace,
   queryForAdvancedAppsInDefaultOrg,
   queryForContentTagsInDefaultSpace,
-  queryForReleasesInDefaultSpace,
   getComposeAppFeatureInDefaultOrg,
   getLaunchAppFeatureInDefaultOrg,
 } from '../../../interactions/product_catalog_features';
@@ -61,7 +60,6 @@ describe('Jobs page', () => {
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
@@ -125,7 +123,6 @@ describe('Jobs page', () => {
         queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
@@ -181,7 +178,6 @@ describe('Jobs page', () => {
         queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
         queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
         queryForScimInDefaultOrg.willFindFeatureEnabled(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
         getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
         getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];

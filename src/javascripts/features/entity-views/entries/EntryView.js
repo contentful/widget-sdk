@@ -8,7 +8,7 @@ import { get } from 'lodash';
 import { EntitiesView } from '../core/EntitiesView';
 import CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import { ScheduledActionsPageLink } from 'app/ScheduledActions';
-import ReleasesPageLink from 'app/Releases/ReleasesPage/ReleasesPageLink';
+import { ReleasesPageLink } from 'features/releases';
 import { EmptyStates } from './EmptyStates';
 
 import EntityListCache from 'classes/entityListCache';

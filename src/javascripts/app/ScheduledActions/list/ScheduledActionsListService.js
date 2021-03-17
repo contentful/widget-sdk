@@ -1,7 +1,6 @@
 import { uniq } from 'lodash';
-import * as JobsService from '../DataManagement/ScheduledActionsService';
+import * as ScheduledActionsService from '../DataManagement/ScheduledActionsService';
 import _ from 'lodash';
-import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { getReleases } from 'app/Releases/releasesService';
 
@@ -32,15 +31,15 @@ function getEntities(entityType, ids) {
   });
 }
 
-export async function getJobsData(spaceId, spaceEndpoint, query) {
-  const releasesFlagEnabled = await getReleasesFeatureVariation(spaceId);
-  const jobsCollection = await JobsService.getJobs(spaceEndpoint, query);
+export async function getJobsData({ environmentId }, spaceEndpoint, query) {
+  const envScopedQuery = { ...query, 'environment.sys.id': environmentId };
+  const jobsCollection = await ScheduledActionsService.getJobs(spaceEndpoint, envScopedQuery);
 
-  const jobs = jobsCollection.items;
+  const scheduledActions = jobsCollection.items;
 
-  if (jobs.length === 0) {
+  if (scheduledActions.length === 0) {
     return {
-      jobs,
+      jobs: scheduledActions,
       entries: [],
       users: [],
       assets: [],
@@ -48,11 +47,7 @@ export async function getJobsData(spaceId, spaceEndpoint, query) {
     };
   }
 
-  const filteredScheduledActions = releasesFlagEnabled
-    ? jobs
-    : jobs.filter((j) => defaultEntityTypes.includes(j.entity.sys.linkType));
-
-  const idsByEntityType = filteredScheduledActions.reduce(
+  const idsByEntityType = scheduledActions.reduce(
     (acc, scheduledAction) => {
       const entityType = scheduledAction.entity.sys.linkType;
       const entityId = scheduledAction.entity.sys.id;
@@ -68,7 +63,7 @@ export async function getJobsData(spaceId, spaceEndpoint, query) {
     }
   );
 
-  const userIds = jobs.map((j) => j.sys.createdBy.sys.id);
+  const userIds = scheduledActions.map((j) => j.sys.createdBy.sys.id);
 
   const [
     entriesCollection,
@@ -78,12 +73,12 @@ export async function getJobsData(spaceId, spaceEndpoint, query) {
   ] = await Promise.all([
     getEntities('Entry', idsByEntityType.Entry),
     getEntities('Asset', idsByEntityType.Asset),
-    releasesFlagEnabled ? getEntities('Release', idsByEntityType.Release) : Promise.resolve([]),
+    getEntities('Release', idsByEntityType.Release),
     getUsers(spaceEndpoint, userIds),
   ]);
 
   return {
-    jobs,
+    jobs: scheduledActions,
     entries: entriesCollection,
     assets: assetCollection,
     releases: releasesCollection.items,

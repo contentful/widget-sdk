@@ -13,7 +13,7 @@ const styles = {
   }),
 };
 
-export default function ReleasesPageLink() {
+const ReleasesPageLink = () => {
   return (
     <IfAppInstalled appId="launch">
       <div className={styles.linkContainer}>
@@ -23,4 +23,6 @@ export default function ReleasesPageLink() {
       </div>
     </IfAppInstalled>
   );
-}
+};
+
+export { ReleasesPageLink };

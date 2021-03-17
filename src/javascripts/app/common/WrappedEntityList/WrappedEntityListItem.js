@@ -12,7 +12,6 @@ import {
   SkeletonImage,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import EntityStateLink from 'app/common/EntityStateLink';
 import { useAsync } from 'core/hooks';
 
 import * as AssetUrlService from 'services/AssetUrlService';
@@ -55,44 +54,47 @@ const getReleaseDescription = (release) => {
   return entry || asset;
 };
 
-export default function WrappedEntityListItem({ entity, onClick, contentType, renderDropdown }) {
+export default function WrappedEntityListItem({
+  entity,
+  onClick,
+  contentType,
+  renderDropdown,
+  href,
+}) {
   const getEntityDataFn = useCallback(() => {
     return getEntityData(entity);
   }, [entity]);
 
   const { isLoading, data } = useAsync(getEntityDataFn);
+  const entityType = entity.sys.type;
   const entityData =
-    entity.sys.type === 'Release'
+    entityType === 'Release'
       ? { ...entity, description: getReleaseDescription(entity) || 'No content' }
       : data;
 
-  return isLoading ? (
-    <EntityListItemSkeleton />
-  ) : (
-    <EntityStateLink key={entity.sys.id} entity={entity}>
-      {({ onClick: onClickGoToEntity, getHref }) => {
-        return (
-          <EntityListItem
-            className={styles.entryListItem}
-            onClick={(e) => (onClick ? onClick(e, entity) : onClickGoToEntity(e, entity))}
-            key={entity.sys.id}
-            title={entityData.title || 'Untitled'}
-            contentType={entity.sys.type === 'Release' ? 'Release' : contentType}
-            dropdownListElements={renderDropdown && renderDropdown({ entity })}
-            entityType={entity.sys.type}
-            thumbnailUrl={
-              entityData.file && entityData.status !== 'archived'
-                ? `${AssetUrlService.transformHostname(entityData.file.url)}?w=46&h=46&fit=thumb`
-                : ''
-            }
-            thumbnailAltText={entityData.title}
-            description={entityData.description}
-            status={entityData.status}
-            href={onClick && getHref()}
-          />
-        );
-      }}
-    </EntityStateLink>
+  if (isLoading) {
+    return <EntityListItemSkeleton />;
+  }
+
+  return (
+    <EntityListItem
+      className={styles.entryListItem}
+      onClick={(e) => onClick(e, entity)}
+      key={entity.sys.id}
+      title={entityData.title || 'Untitled'}
+      contentType={entityType === 'Release' ? 'Release' : contentType}
+      dropdownListElements={renderDropdown && renderDropdown({ entity })}
+      entityType={entityType}
+      thumbnailUrl={
+        entityData.file && entityData.status !== 'archived'
+          ? `${AssetUrlService.transformHostname(entityData.file.url)}?w=46&h=46&fit=thumb`
+          : ''
+      }
+      thumbnailAltText={entityData.title}
+      description={entityData.description}
+      status={entityData.status}
+      href={href}
+    />
   );
 }
 
@@ -100,6 +102,7 @@ WrappedEntityListItem.propTypes = {
   entity: PropTypes.object.isRequired,
   onClick: PropTypes.func,
   contentType: PropTypes.string,
+  href: PropTypes.string,
   /**
    * Optional function to render a list of dropdown elements
    *

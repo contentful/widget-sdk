@@ -91,6 +91,7 @@ const DateGroup = ({ jobs, entitiesById, contentTypesData }) => {
     .groupBy((job) => `${moment(job.scheduledFor.datetime).format('HH:mm')}-${job.action}`)
     .map((job) => job)
     .value();
+
   return (
     <div className={styles.dateGroup} data-test-id="scheduled-jobs-date-group">
       <SectionHeading className={styles.dateGroupHeader}>

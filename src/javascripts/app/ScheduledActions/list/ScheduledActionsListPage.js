@@ -173,10 +173,27 @@ class ScheduledActionsListPage extends Component {
     const { spaceId, environmentId, contentTypes } = this.props;
     const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 
-    const jobsData = await getJobsData(spaceId, spaceEndpoint, {
-      ...query,
-      'environment.sys.id': environmentId,
-    }).catch((error) => {
+    try {
+      const jobsData = await getJobsData({ spaceId, environmentId }, spaceEndpoint, query);
+
+      const { jobs, entries, assets, releases, users, nextQuery } = jobsData;
+      const { scheduleData } = this.state;
+
+      const newJobs = _.uniqBy(scheduleData.jobs.concat(jobs), 'sys.id');
+      this.setState({
+        isLoading: false,
+        isInitialLoad: false,
+        scheduleData: {
+          jobs: newJobs,
+          entries: { ...scheduleData.entries, ...(entries && normalizeCollection(entries)) },
+          assets: { ...scheduleData.assets, ...(assets && normalizeCollection(assets)) },
+          releases: { ...scheduleData.releases, ...(releases && normalizeCollection(releases)) },
+          users: { ...scheduleData.users, ...normalizeCollection(users) },
+          contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
+        },
+        pageNext: getQueryStringParams(nextQuery).pageNext,
+      });
+    } catch (error) {
       logger.logError('Unexpected error loading scheduled actions', {
         error,
         message: error.message,
@@ -185,29 +202,7 @@ class ScheduledActionsListPage extends Component {
         isError: true,
         isLoading: false,
       });
-    });
-
-    if (!jobsData) {
-      return;
     }
-
-    const { jobs, entries, assets, releases, users, nextQuery } = jobsData;
-    const { scheduleData } = this.state;
-
-    const newJobs = _.uniqBy(scheduleData.jobs.concat(jobs), 'sys.id');
-    this.setState({
-      isLoading: false,
-      isInitialLoad: false,
-      scheduleData: {
-        jobs: newJobs,
-        entries: { ...scheduleData.entries, ...(entries && normalizeCollection(entries)) },
-        assets: { ...scheduleData.assets, ...(assets && normalizeCollection(assets)) },
-        releases: { ...scheduleData.releases, ...(releases && normalizeCollection(releases)) },
-        users: { ...scheduleData.users, ...normalizeCollection(users) },
-        contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
-      },
-      pageNext: getQueryStringParams(nextQuery).pageNext,
-    });
   };
 
   renderJobs = () => {
