@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from './styles';
-import { Heading, Subheading } from '@contentful/forma-36-react-components';
+import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
 import { AccordionComponent } from './components/AccordionComponent';
 import { WidgetContainer } from './widgets/WidgetContainer';
 import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
@@ -80,18 +80,12 @@ export const TEAAdminSpaceHome = ({
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
-        <WidgetContainer.Col>
-          <AccordionComponent
-            drawersContent={[
-              {
-                headerText: (
-                  <span className={styles.demiBold}>Learn what’s possible with Contentful</span>
-                ),
-                content: <LearnAboutContentful />,
-              },
-            ]}
-          />
-        </WidgetContainer.Col>
+        <Card padding="large" className={styles.card}>
+          <Subheading className={styles.subheading}>
+            Learn what’s possible with Contentful
+          </Subheading>
+          <LearnAboutContentful />
+        </Card>
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>

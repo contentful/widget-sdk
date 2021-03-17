@@ -24,4 +24,6 @@ export const styles = {
     textAlign: 'center',
   }),
   demiBold: css({ fontWeight: tokens.fontWeightDemiBold }),
+  subheading: css({ marginBottom: tokens.spacing2Xl }),
+  card: css({ width: '100%' }),
 };

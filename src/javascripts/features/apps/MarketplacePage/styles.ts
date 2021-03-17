@@ -55,6 +55,9 @@ export const styles = {
     position: 'relative',
     marginBottom: tokens.spacingM,
   }),
+  appList: css({
+    position: 'relative',
+  }),
   contentfulAppIcon: (isScreenshot) =>
     css({
       maxWidth: '50%',
@@ -64,6 +67,8 @@ export const styles = {
         width: '100%',
         maxWidth: isScreenshot ? 'auto' : tokens.spacing4Xl,
         display: 'block',
+        borderTopRightRadius: '6px',
+        borderBottomRightRadius: '6px',
       }),
       '& img': css({
         width: '100%',

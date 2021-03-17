@@ -102,7 +102,7 @@ export const ContentfulAppTile = ({
     });
 
   return (
-    <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appListCard}>
+    <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appList}>
       <Flex
         alignItems="center"
         flexDirection={isFlipped ? 'row-reverse' : 'row'}
