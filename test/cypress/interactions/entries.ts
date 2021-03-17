@@ -15,14 +15,10 @@ import {
   severalEntryReferencesResponse,
   severalEntryReferencesWithUnresolvedResponse,
   validateEntryReferencesSeveralRequest,
-  publishEntryReferencesSeveralRequest,
   validateEntryReferencesSeveralErrorsResponse,
-  publishEntryReferencesSeveralErrorsResponse,
-  publishEntryReferencesSeveralSuccessResponse,
   severalEntryReferencesWithVersionResponse,
 } from '../fixtures/responses/entry-several-references';
 import { Matchers } from '@pact-foundation/pact-web';
-import { ENTRY_REFERENCES_ENDPOINT } from '../../../src/javascripts/alphaHeaders';
 import { cloneDeep, set } from 'lodash';
 
 export enum States {
@@ -338,10 +334,7 @@ export const getEntryReferences = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
-        headers: {
-          ...defaultHeader,
-          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -362,10 +355,7 @@ export const getEntryReferences = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
-        headers: {
-          ...defaultHeader,
-          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
@@ -386,10 +376,7 @@ export const getEntryReferences = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
-        headers: {
-          ...defaultHeader,
-          'X-Contentful-Enable-Alpha-Feature': ENTRY_REFERENCES_ENDPOINT,
-        },
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,

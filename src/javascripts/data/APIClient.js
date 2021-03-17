@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { ENTRY_VALIDATION, ENTRY_REFERENCES_ENDPOINT, getAlphaHeader } from 'alphaHeaders.js';
+import { ENTRY_VALIDATION, getAlphaHeader } from 'alphaHeaders.js';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -249,15 +249,10 @@ APIClient.prototype.publishEntry = function (data, version) {
 };
 
 APIClient.prototype.getEntryReferences = function (id) {
-  return this._request(
-    {
-      method: 'GET',
-      path: ['entries', id, 'references'],
-    },
-    {
-      ...getAlphaHeader(ENTRY_REFERENCES_ENDPOINT),
-    }
-  );
+  return this._request({
+    method: 'GET',
+    path: ['entries', id, 'references'],
+  });
 };
 
 APIClient.prototype.validateEntry = function (data, version) {

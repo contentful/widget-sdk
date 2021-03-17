@@ -9,7 +9,6 @@ export const PENDING_ORG_MEMBERSHIP = 'pending-org-membership'; // Sep 12, 2019
 export const ENTRY_VALIDATION = 'entry-validation'; // Sep 17, 2019
 export const TASKS_DASHBOARD = 'tasks-dashboard'; // Oct 23, 2019
 export const MFA_API = 'mfa-api'; // Oct 23, 2019
-export const ENTRY_REFERENCES_ENDPOINT = 'query-references';
 export const ASSEMBLY_TYPES = 'assembly-types';
 export const COMPOSE_LAUNCH_TRIAL = 'compose-launch-trial';
 
