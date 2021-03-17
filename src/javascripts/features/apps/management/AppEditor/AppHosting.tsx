@@ -20,7 +20,7 @@ interface AppHostingProps {
   errorPath?: string[];
   errors?: ValidationError[];
   disabled: boolean;
-  clearErrorForField: (error: string) => void;
+  clearErrorForField: (error: string[]) => void;
 }
 
 export function AppHosting({
@@ -60,15 +60,11 @@ export function AppHosting({
               id="app-src"
               testId="app-src-input"
               value={definition.src || ''}
-              helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                clearErrorForField([...errorPath, 'src']);
+                clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
                 onChange({ ...definition, src: e.target.value.trim() });
               }}
-              validationMessage={
-                errors.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details
-              }
-              textInputProps={{ disabled }}
+              disabled={disabled}
             />
           )}
         </>
@@ -82,11 +78,13 @@ export function AppHosting({
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            clearErrorForField([...errorPath, 'src']);
+            clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
             onChange({ ...definition, src: e.target.value.trim() });
           }}
           validationMessage={
-            errors.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details
+            errors?.find((error) =>
+              isEqual(error.path, errorPath ? [...errorPath, 'src'] : ['src'])
+            )?.details
           }
           textInputProps={{ disabled }}
         />

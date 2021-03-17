@@ -132,7 +132,7 @@ export function AppEditor({
     throw new Error('App Definition had no locations in App Editor');
   }
 
-  const clearErrorForField = (path: string) => {
+  const clearErrorForField = (path: string[]) => {
     onErrorsChange(errors.filter((error) => !isEqual(error.path, path)));
   };
 
