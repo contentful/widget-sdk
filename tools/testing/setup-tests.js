@@ -20,12 +20,15 @@ const warning = console.warn;
 
 console.warn = (message, ...args) => {
   // will deal with all deprecated methods once we upgrade to React 17
-  // right now it creates a noice rather than helps
+  // right now it creates a noice rather than helps.
+  // Monkey patch node-uuid security warning for testing.
+  // -> Can be solved by moving from contentful-uuid to uuid.
   if (
     typeof message === 'string' &&
     (message.includes('componentWillMount has been renamed') ||
       message.includes('componentWillReceiveProps has been renamed') ||
-      message.includes('componentWillUpdate has been renamed'))
+      message.includes('componentWillUpdate has been renamed') ||
+      message.includes('node-uuid: crypto not usable'))
   ) {
     return;
   }
