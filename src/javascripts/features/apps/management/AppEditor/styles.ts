@@ -21,6 +21,9 @@ export const styles = {
   locationToggle: css({
     width: '100%',
     padding: `${tokens.spacing2Xs} 0`,
+    '& button': css({
+      width: '100%',
+    }),
     '& label ~ p': css({
       display: 'inline',
       marginLeft: tokens.spacingXs,

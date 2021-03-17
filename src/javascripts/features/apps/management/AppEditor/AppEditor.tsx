@@ -1,7 +1,7 @@
 import {
   Card,
-  Checkbox,
   CheckboxField,
+  Checkbox,
   FormLabel,
   Icon,
   Paragraph,
@@ -15,7 +15,6 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import c from 'classnames';
 import { cloneDeep, isEmpty, isEqual, noop } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { toApiFieldType, toInternalFieldType } from 'widgets/FieldTypes';
@@ -23,6 +22,8 @@ import { ConditionalValidationMessage } from './ConditionalValidationMessage';
 import { FIELD_TYPES_ORDER, LOCATION_ORDER, SRC_REG_EXP } from './constants';
 import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
+import { ValidationError } from './types';
+import { AppDefinition, AppLocation, FieldType } from 'contentful-management/types';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -30,8 +31,8 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function validate(definition, errorPath = []) {
-  const errors = [];
+export function validate(definition, errorPath: string[] = []) {
+  const errors: ValidationError[] = [];
 
   if (isEmpty(definition.name)) {
     errors.push({
@@ -77,6 +78,46 @@ export function validate(definition, errorPath = []) {
   return errors;
 }
 
+interface AppEditorProps {
+  definition: AppDefinition;
+  onChange: (appDefinition: AppDefinition) => void;
+  errorPath?: string[];
+  errors?: ValidationError[];
+  onErrorsChange?: (errors: ValidationError[]) => void;
+  disabled: boolean;
+}
+
+type DefinitionWithLocations = Exclude<AppDefinition, 'locations'> & { locations: AppLocation[] };
+
+const hasLocations = (definition: AppDefinition): definition is DefinitionWithLocations =>
+  !!definition.locations && typeof definition.locations === 'object';
+
+// TODO export from management types
+interface EntryFieldLocation {
+  location: 'entry-field';
+  fieldTypes: FieldType[];
+}
+interface NavigationItem {
+  name: string;
+  path: string;
+}
+interface PageLocation {
+  location: 'page';
+  navigationItem?: NavigationItem;
+}
+
+const isEntryFieldLocation = (location: AppLocation): location is EntryFieldLocation =>
+  location && location.location === 'entry-field' && Array.isArray(location.fieldTypes);
+
+const isPageLocation = (location: AppLocation): location is PageLocation =>
+  location && location.location === 'page' && 'navigationItem' in location;
+
+type PageLocationWithNavigation = Exclude<PageLocation, 'navigationItem'> & {
+  navigationItem: NavigationItem;
+};
+const hasNavigation = (pageLocation: PageLocation): pageLocation is PageLocationWithNavigation =>
+  pageLocation && !!pageLocation.navigationItem && typeof pageLocation.navigationItem === 'object';
+
 export function AppEditor({
   definition,
   onChange,
@@ -84,8 +125,11 @@ export function AppEditor({
   errors = [],
   onErrorsChange = noop,
   disabled,
-}) {
+}: AppEditorProps) {
   definition.locations = definition.locations || [];
+  if (!hasLocations(definition)) {
+    throw new Error('App Definition had no locations in App Editor');
+  }
 
   const clearErrorForField = (path) => {
     onErrorsChange(errors.filter((error) => !isEqual(error.path, path)));
@@ -114,73 +158,84 @@ export function AppEditor({
     onChange(updated);
   };
 
-  const getFieldTypeIndex = (internalFieldType) => {
+  const getFieldTypeIndex = (internalFieldType: string): number => {
     const entryFieldLocation = getLocation(WidgetLocation.ENTRY_FIELD);
-    if (entryFieldLocation && Array.isArray(entryFieldLocation.fieldTypes)) {
+    if (isEntryFieldLocation(entryFieldLocation)) {
       return entryFieldLocation.fieldTypes.map(toInternalFieldType).indexOf(internalFieldType);
     } else {
       return -1;
     }
   };
 
-  const hasFieldType = (internalFieldType) => getFieldTypeIndex(internalFieldType) > -1;
+  const hasFieldType = (internalFieldType: string): boolean =>
+    getFieldTypeIndex(internalFieldType) > -1;
 
-  const toggleFieldType = (internalFieldType) => {
+  const toggleFieldType = (internalFieldType: string): void => {
     const updated = cloneDeep(definition);
     const locationIndex = getLocationIndex(WidgetLocation.ENTRY_FIELD);
     const entryFieldLocation = updated.locations[locationIndex];
     const fieldTypeIndex = getFieldTypeIndex(internalFieldType);
 
     if (fieldTypeIndex > -1) {
-      entryFieldLocation.fieldTypes = (entryFieldLocation.fieldTypes || []).filter(
-        (_, i) => i !== fieldTypeIndex
-      );
+      (entryFieldLocation as EntryFieldLocation).fieldTypes = ('fieldTypes' in entryFieldLocation
+        ? entryFieldLocation.fieldTypes
+        : []
+      ).filter((_, i) => i !== fieldTypeIndex);
     } else {
-      entryFieldLocation.fieldTypes = (entryFieldLocation.fieldTypes || []).concat([
-        toApiFieldType(internalFieldType),
-      ]);
+      (entryFieldLocation as EntryFieldLocation).fieldTypes = ('fieldTypes' in entryFieldLocation
+        ? entryFieldLocation.fieldTypes
+        : []
+      ).concat([toApiFieldType(internalFieldType)]);
     }
 
     onChange(updated);
   };
 
-  const getNavigationItemValue = (field) => {
+  const getNavigationItemValue = (field: 'name' | 'path'): string => {
     const pageLocation = getLocation(WidgetLocation.PAGE);
 
-    if (!pageLocation || !pageLocation.navigationItem) {
+    if (!pageLocation || !isPageLocation(pageLocation) || !pageLocation.navigationItem) {
       return '';
     }
 
     return pageLocation.navigationItem[field];
   };
 
-  const togglePageLocationData = () => {
+  const togglePageLocationData = (): void => {
     const updated = cloneDeep(definition);
     const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
-    if (pageLocation.navigationItem) {
+    if (isPageLocation(pageLocation) && hasNavigation(pageLocation)) {
       delete pageLocation.navigationItem;
     } else {
-      pageLocation.navigationItem = { path: '/', name: definition.name };
+      (pageLocation as PageLocation).navigationItem = { path: '/', name: definition.name };
     }
 
     onChange(updated);
   };
 
-  const updatePageLocation = ({ field, value }) => {
+  const updatePageLocation = ({
+    field,
+    value,
+  }: {
+    field: 'name' | 'path';
+    value: string;
+  }): void => {
     const updated = cloneDeep(definition);
     const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
+    if (isPageLocation(pageLocation) && hasNavigation(pageLocation)) {
+      if (field === 'path' && !value.startsWith('/')) {
+        value = `/${value}`;
+      }
 
-    if (field === 'path' && !value.startsWith('/')) {
-      value = `/${value}`;
+      pageLocation.navigationItem[field] = value.trim();
+
+      onChange(updated);
     }
-
-    pageLocation.navigationItem[field] = value.trim();
-
-    onChange(updated);
   };
 
-  const hasPageLocationNavigation = !!getLocation(WidgetLocation.PAGE)?.navigationItem;
+  const pageLocation = getLocation(WidgetLocation.PAGE);
+  const hasPageLocationNavigation = isPageLocation(pageLocation) && hasNavigation(pageLocation);
 
   return (
     <>
@@ -193,7 +248,7 @@ export function AppEditor({
           labelText="Name"
           testId="app-name-input"
           value={definition.name || ''}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             clearErrorForField([...errorPath, 'name']);
             onChange({ ...definition, name: e.target.value.trim() });
           }}
@@ -210,7 +265,7 @@ export function AppEditor({
           testId="app-src-input"
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             clearErrorForField([...errorPath, 'src']);
             onChange({ ...definition, src: e.target.value.trim() });
           }}
@@ -246,14 +301,15 @@ export function AppEditor({
                         testId={`app-location-${locationValue}`}
                         className={styles.locationToggle}
                         isActive={hasLocation(locationValue)}
-                        onClick={() => toggleLocation(locationValue)}
+                        onToggle={() => toggleLocation(locationValue)}
                         isDisabled={disabled}>
                         <div className={styles.checkbox}>
                           <div className={styles.checkboxInput}>
                             <Checkbox
-                              onChange={() => {}}
+                              onChange={noop}
                               name={`location-check-${name}`}
                               checked={hasLocation(locationValue)}
+                              labelText={name}
                             />
                           </div>
                           <div>
@@ -350,7 +406,7 @@ export function AppEditor({
                                 testId="page-link-name"
                                 value={getNavigationItemValue('name')}
                                 helpText="Maximum 40 characters."
-                                onChange={(e) => {
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                   clearErrorForField([
                                     ...errorPath,
                                     'locations',
@@ -373,7 +429,7 @@ export function AppEditor({
                                 }
                               />
                               <TextField
-                                className={[styles.input(false), styles.linkPath].join(' ')}
+                                className={styles.input(false)}
                                 required
                                 textInputProps={{
                                   maxLength: 512,
@@ -386,7 +442,7 @@ export function AppEditor({
                                 testId="page-link-path"
                                 helpText="Maximum 512 characters."
                                 value={getNavigationItemValue('path')}
-                                onChange={(e) => {
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                   clearErrorForField([
                                     ...errorPath,
                                     'locations',
@@ -454,7 +510,7 @@ export function AppEditor({
                     WidgetLocation.ENTRY_EDITOR,
                     WidgetLocation.ENTRY_FIELD,
                     WidgetLocation.ENTRY_SIDEBAR,
-                  ].includes(location)
+                  ].includes(location as WidgetLocation)
                 )
               }
               disabled={
@@ -464,7 +520,7 @@ export function AppEditor({
                     WidgetLocation.ENTRY_EDITOR,
                     WidgetLocation.ENTRY_FIELD,
                     WidgetLocation.ENTRY_SIDEBAR,
-                  ].includes(location)
+                  ].includes(location as WidgetLocation)
                 )
               }
             />
@@ -474,12 +530,3 @@ export function AppEditor({
     </>
   );
 }
-
-AppEditor.propTypes = {
-  definition: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-  errorPath: PropTypes.array,
-  errors: PropTypes.array,
-  onErrorsChange: PropTypes.func,
-  disabled: PropTypes.bool.isRequired,
-};
