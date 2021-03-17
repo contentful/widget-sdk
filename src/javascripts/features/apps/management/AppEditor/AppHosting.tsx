@@ -41,7 +41,7 @@ export function AppHosting({
 
   return (
     <>
-      {!hostingEnabled ? (
+      {hostingEnabled ? (
         <>
           <FormLabel htmlFor="app-hosting">Frontend</FormLabel>
           <Switch

@@ -53,7 +53,7 @@ export const FLAGS = {
   REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
   REACT_MIGRATION_CT: 'react-migration-10-2020-content-type-editor',
-  APP_HOSTING_UI: 'todo',
+  APP_HOSTING_UI: 'feature-extensibility-03-2021-app-hosting-ui',
 
   REQUEST_RETRY_EXPERIMENT: 'dev-workflows-02-2021-request-retry-experiment',
 
