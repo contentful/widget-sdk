@@ -34,7 +34,7 @@ export const CTACardComponent = ({
             {ctaLabel}
           </TextLink>
         ) : (
-          <Button onClick={onClick} href={href}>
+          <Button buttonType="muted" onClick={onClick} href={href}>
             {ctaLabel}
           </Button>
         )}

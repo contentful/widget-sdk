@@ -11,6 +11,7 @@ export const styles = {
     width: '145px',
     marginRight: '-24px',
     marginBottom: '-29px',
+    borderBottomRightRadius: '6px',
   }),
   svgContainerExtension: css({ width: '171px', marginTop: '-20px' }),
   header: css({
