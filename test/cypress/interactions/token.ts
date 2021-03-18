@@ -4,13 +4,12 @@ enum States {
   VALID = 'token/valid',
 }
 
-// test interaction between web app and token
 export const getTokenForUser = {
   willReturnAValidToken() {
     cy.addInteraction({
       provider: 'token',
       state: States.VALID,
-      uponReceiving: 'a request to get a token for the user',
+      uponReceiving: 'a request to get a token from gatekeeper for the user',
       withRequest: {
         method: 'GET',
         path: '/token',
