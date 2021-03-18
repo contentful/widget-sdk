@@ -584,8 +584,11 @@ APIClient.prototype.setEmbargoedAssetsSettingLevel = function (level) {
   //   },
   // });
 
-  return Promise.resolve({
-    level,
+  return new Promise((_resolve, reject) => {
+    setTimeout(() => {
+      // resolve({ level });
+      reject({ level });
+    }, 1000);
   });
 };
 

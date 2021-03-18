@@ -18,7 +18,7 @@ import { LevelHelpTable } from './LevelHelpTable';
 
 interface EnabledFeatureParams {
   currentLevel: LEVEL;
-  setCurrentLevel: (level: LEVEL) => void;
+  setCurrentLevel: (level: LEVEL) => Promise<any>;
 }
 
 export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeatureParams) {
@@ -26,21 +26,28 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
   const [displaySelectionDialog, setDisplaySelectionDialog] = useState(false);
 
   const handleLevelSelection = (newLevel: LEVEL) => {
-    setCurrentLevel(newLevel);
     setDisplaySelectionDialog(false);
-    Notification.success(LevelDescription[newLevel]);
+
+    setCurrentLevel(newLevel)
+      .then(() => {
+        Notification.success(LevelDescription[newLevel]);
+      })
+      .catch(() => Notification.error('Error saving settings, please reload'));
   };
 
   const handleDisableFeature = () => {
-    setCurrentLevel(LEVEL.DISABLED);
-    Notification.success(
-      ((
-        <>
-          <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
-          <Paragraph>All assets are now publicly accessible.</Paragraph>
-        </>
-      ) as unknown) as string
-    );
+    setCurrentLevel(LEVEL.DISABLED)
+      .then(() => {
+        Notification.success(
+          ((
+            <>
+              <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
+              <Paragraph>All assets are now publicly accessible.</Paragraph>
+            </>
+          ) as unknown) as string
+        );
+      })
+      .catch(() => Notification.error('Error saving settings, please reload'));
   };
 
   return (

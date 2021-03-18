@@ -14,7 +14,7 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { LEVEL } from '../constants';
 
 interface DisabledFeatureParams {
-  setCurrentLevel?: (level: LEVEL) => void;
+  setCurrentLevel?: (level: LEVEL) => Promise<any>;
 }
 
 export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
@@ -34,15 +34,18 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
           <Button
             buttonType="primary"
             onClick={() => {
-              setCurrentLevel(LEVEL.MIGRATING);
-              Notification.success(
-                ((
-                  <>
-                    <Paragraph className={styles.bolder}>Preparation mode activated</Paragraph>
-                    <Paragraph>Use this mode to set up your assets to be protected.</Paragraph>
-                  </>
-                ) as unknown) as string
-              );
+              setCurrentLevel(LEVEL.MIGRATING)
+                .then(() =>
+                  Notification.success(
+                    ((
+                      <>
+                        <Paragraph className={styles.bolder}>Preparation mode activated</Paragraph>
+                        <Paragraph>Use this mode to set up your assets to be protected.</Paragraph>
+                      </>
+                    ) as unknown) as string
+                  )
+                )
+                .catch(() => Notification.error('Error saving settings, please reload'));
             }}
             testId="turn-off">
             Get started
