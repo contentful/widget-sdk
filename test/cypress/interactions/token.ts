@@ -4,6 +4,7 @@ enum States {
   VALID = 'token/valid',
 }
 
+// test interaction between web app and token
 export const getTokenForUser = {
   willReturnAValidToken() {
     cy.addInteraction({
