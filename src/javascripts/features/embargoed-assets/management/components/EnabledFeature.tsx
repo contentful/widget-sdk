@@ -31,6 +31,18 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
     Notification.success(LevelDescription[newLevel]);
   };
 
+  const handleDisableFeature = () => {
+    setCurrentLevel(LEVEL.DISABLED);
+    Notification.success(
+      ((
+        <>
+          <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
+          <Paragraph>All assets are now publicly accessible.</Paragraph>
+        </>
+      ) as unknown) as string
+    );
+  };
+
   return (
     <>
       <Card testId="settings-section-card" className={styles.section}>
@@ -73,7 +85,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
       {displayTurnOffDialog ? (
         <TurnOffDialog
           onClose={() => setDisplayTurnOffDialog(false)}
-          onSubmit={() => setCurrentLevel(LEVEL.DISABLED)}
+          onSubmit={handleDisableFeature}
         />
       ) : null}
       {displaySelectionDialog ? (

@@ -27,4 +27,7 @@ export const styles = {
   strike: css({
     textDecoration: 'line-through',
   }),
+  bolder: css({
+    fontWeight: 'bolder',
+  }),
 };

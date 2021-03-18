@@ -11,7 +11,7 @@ function EmbargoedAssetsRoute() {
   const [currentLevel, setCurrentLevel] = useState<LEVEL>(LEVEL.DISABLED);
 
   // @todo check PC space feature flag "embargoed assets":
-  // <DisabledFeature primaryText="Get in touch" onClick={} />
+  // <DisabledFeature />
 
   return (
     <>
@@ -24,10 +24,7 @@ function EmbargoedAssetsRoute() {
         {currentLevel ? (
           <EnabledFeature currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
         ) : (
-          <DisabledFeature
-            primaryText="Get started"
-            onClick={() => setCurrentLevel(LEVEL.MIGRATING)}
-          />
+          <DisabledFeature setCurrentLevel={setCurrentLevel} />
         )}
       </Workbench.Content>
     </>
