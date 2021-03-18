@@ -15,13 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - domain: 'flinkly.com'
+          - environment: 'staging'
             # You may expect ${{ secrets.SMOKE_TEST_USER_PASSWORD_STAGING }} to work here,
             # but it seems not to. I guess the secrets (and other variable) setup doesn't
             # happen when setting up the test strategy, so it can't be used here and instead
             # we need to more or less indirectly reference the secret name.
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_STAGING'
-          - domain: 'contentful.com'
+          - environment: 'production'
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_PRODUCTION'
 
     steps:
@@ -37,29 +37,29 @@ jobs:
           restore-keys: |
             npm-${{ hashFiles('./package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           npm install
       - name: Run smoke tests
-        # Because we remove `package.json` above, we can't use the npm task, so instead
-        # we use the official Cypress action with the right environment variables.
         uses: cypress-io/github-action@v2
         env:
-          SMOKE_TEST_DOMAIN: ${{ matrix.domain }}
+          SMOKE_TEST_ENVIRONMENT: ${{ matrix.environment }}
           SMOKE_TEST_USER_PASSWORD: ${{ secrets[matrix.passwordSecretName] }}
+          LIBRATO_AUTH_TOKEN: ${{ secrets.LIBRATO_AUTH_TOKEN }}
         with:
+          # We installed above, so skip it here
           install: false
           browser: chrome
           config-file: cypress-smoke.json
       - name: Report Cypress test results to Librato
         if: always()
         env:
+          SMOKE_TEST_ENVIRONMENT: ${{ matrix.environment }}
           LIBRATO_AUTH_TOKEN: ${{ secrets.LIBRATO_AUTH_TOKEN }}
         run: |
-          npm install ts-node
           npx ts-node --transpile-only ./tools/bin/report-smoke-test-telemetry.ts
       - name: Save Cypress artifacts
         uses: actions/upload-artifact@v2

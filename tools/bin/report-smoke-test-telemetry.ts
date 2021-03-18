@@ -8,6 +8,7 @@ const reportFile = path.join(rootDir, 'cypress/reports/smoke-test-results.xml');
 const reportXMLString = fs.readFileSync(reportFile).toString();
 
 const libratoAuthToken = process.env.LIBRATO_AUTH_TOKEN;
+const environment = process.env.SMOKE_TEST_ENVIRONMENT as telemetry.SmokeTestEnvironment;
 
 // Get all <testcase ...> nodes, and transform the resulting Cheerio instance into
 // an array of nodes
@@ -33,7 +34,7 @@ const measurements = caseNodes.map((caseNode) => {
 });
 
 telemetry
-  .measure(libratoAuthToken, measurements)
+  .measure(libratoAuthToken, environment, measurements)
   .then(() => {
     console.log('Report measurements successfully sent to Librato');
   })

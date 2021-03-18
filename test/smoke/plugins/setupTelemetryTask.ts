@@ -2,10 +2,13 @@ import * as telemetry from '../telemetry';
 
 export function setupTelemetryTask(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
   on('task', {
-    async measure({ name, value }) {
-      const libratoAuthToken = config.env.LIBRATO_AUTH_TOKEN;
+    async measure({ name: rawName, value }) {
+      const libratoAuthToken = config.env.libratoAuthToken;
+      const environment = config.env.environment;
 
-      return telemetry.measure(libratoAuthToken, [{ name, value }]);
+      const name = `testcase.${rawName}`;
+
+      return telemetry.measure(libratoAuthToken, environment, [{ name, value }]);
     },
   });
 }

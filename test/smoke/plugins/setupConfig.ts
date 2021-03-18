@@ -1,3 +1,5 @@
+import type { SmokeTestEnvironment } from '../telemetry';
+
 /**
  * Although some of this could be put into the configuration (like env.email), I chose to put
  * this all here so that there's one single place to find it.
@@ -6,7 +8,7 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
   const {
     SMOKE_TEST_USER_EMAIL,
     SMOKE_TEST_USER_PASSWORD,
-    SMOKE_TEST_DOMAIN,
+    SMOKE_TEST_ENVIRONMENT,
     LIBRATO_AUTH_TOKEN,
   } = process.env;
 
@@ -19,12 +21,23 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
   }
 
   const email = SMOKE_TEST_USER_EMAIL ? SMOKE_TEST_USER_EMAIL : 'test@contentful.com';
-  const domain = SMOKE_TEST_DOMAIN ? SMOKE_TEST_DOMAIN : 'contentful.com';
 
-  config.baseUrl = `https://app.${SMOKE_TEST_DOMAIN}`;
+  let domain = 'contentful.com';
+  let environment: SmokeTestEnvironment = 'production';
+
+  if (SMOKE_TEST_ENVIRONMENT === 'staging') {
+    domain = 'flinkly.com';
+    environment = 'staging';
+  } else if (typeof SMOKE_TEST_ENVIRONMENT === 'string') {
+    domain = SMOKE_TEST_ENVIRONMENT;
+    environment = 'other';
+  }
+
+  config.baseUrl = `https://app.${domain}`;
   config.env.email = email;
   config.env.password = SMOKE_TEST_USER_PASSWORD;
   config.env.domain = domain;
+  config.env.environment = environment;
   config.env.libratoAuthToken = LIBRATO_AUTH_TOKEN;
 
   return config;

@@ -1,8 +1,11 @@
 import fetch from 'node-fetch';
 
+export type SmokeTestEnvironment = 'production' | 'staging' | 'other';
+
 interface RawMeasurement {
   name: string;
   value: number;
+  tags?: { [key: string]: string };
 }
 
 // TODO(jo-sm): Once we're in TS v4+, we should use a template literal type here
@@ -10,6 +13,7 @@ interface RawMeasurement {
 interface Measurement {
   name: string;
   value: number;
+  tags: { [key: string]: string };
 }
 
 /**
@@ -17,17 +21,36 @@ interface Measurement {
  * @param {string}           authToken
  * @param {RawMeasurement[]} rawMeasurements
  */
-export function measure(authToken: string, rawMeasurements: RawMeasurement[]) {
-  const measurements = prepareMeasurements(rawMeasurements);
+export async function measure(
+  authToken: string,
+  environment: SmokeTestEnvironment,
+  rawMeasurements: RawMeasurement[]
+) {
+  const measurements = prepareMeasurements(environment, rawMeasurements);
 
-  return fetch('https://metrics-api.librato.com/v1/measurements', {
+  const response = await fetch('https://metrics-api.librato.com/v1/measurements', {
     method: 'POST',
-    body: JSON.stringify(measurements),
+    // Expected shape is:
+    // { measurements: Measurement[] }
+    //
+    // See https://www.librato.com/docs/api/#create-a-measurement
+    body: JSON.stringify({ measurements }),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Basic ${authToken}`,
     },
   });
+
+  if (!response.ok) {
+    const respJson = await response.json();
+
+    console.log(respJson);
+
+    throw new Error('Librato measurement failed, check the logged error');
+  }
+
+  // Must return a value for the Cypress task
+  return true;
 }
 
 /**
@@ -72,9 +95,16 @@ export function wrapWithDuration<T>(testName: string, metricName: string, cb: ()
  * @param  {RawMeasurement[]} rawMeasurements
  * @return {Measurement[]}
  */
-function prepareMeasurements(rawMeasurements: RawMeasurement[]): Measurement[] {
-  return rawMeasurements.map(({ name, value }) => ({
+function prepareMeasurements(
+  environment: SmokeTestEnvironment,
+  rawMeasurements: RawMeasurement[]
+): Measurement[] {
+  return rawMeasurements.map(({ name, value, tags }) => ({
     name: `web-app-smoke-tests.${name}`,
     value,
+    tags: {
+      ...tags,
+      environment,
+    },
   }));
 }
