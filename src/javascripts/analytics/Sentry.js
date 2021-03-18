@@ -15,7 +15,7 @@ export function enable(user) {
     dsn: Config.services.sentry.dsn,
     release: Config.gitRevision,
     environment: Config.env,
-
+    normalizeDepth: 10,
     // We can revisit later as necessary
     requestBodies: 'never',
   });
