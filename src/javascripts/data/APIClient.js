@@ -561,6 +561,34 @@ APIClient.prototype.signRequest = function (appDefinitionId, data) {
   return this._createResource(`app_installations/${appDefinitionId}/signed_requests`, data);
 };
 
+APIClient.prototype.getEmbargoedAssetsSettingLevel = function () {
+  // return this._request({
+  //   method: 'GET',
+  //   path: ['embargoed_assets'],
+  // });
+
+  return new Promise((resolve, _reject) => {
+    setTimeout(() => {
+      resolve({ level: '' });
+      // reject({ level: 'all' });
+    }, 1000);
+  });
+};
+
+APIClient.prototype.setEmbargoedAssetsSettingLevel = function (level) {
+  // return this._request({
+  //   method: 'POST',
+  //   path: ['embargoed_assets'],
+  //   data: {
+  //     level
+  //   },
+  // });
+
+  return Promise.resolve({
+    level,
+  });
+};
+
 APIClient.prototype._request = function (req, headers) {
   return this._endpoint(req, headers);
 };

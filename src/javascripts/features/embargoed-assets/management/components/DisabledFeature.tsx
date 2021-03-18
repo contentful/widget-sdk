@@ -48,7 +48,10 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
             Get started
           </Button>
         ) : (
-          <Button href="https://www.contentful.com/support/?upgrade-teams=true">
+          <Button
+            href="https://www.contentful.com/support/?upgrade-teams=true"
+            target="_blank"
+            rel="noopener noreferrer">
             Get in touch
           </Button>
         )}

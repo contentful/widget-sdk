@@ -1,31 +1,20 @@
 import DocumentTitle from 'components/shared/DocumentTitle';
-import React, { useState } from 'react';
+import React from 'react';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-
-import { EnabledFeature } from '../components/EnabledFeature';
-import { DisabledFeature } from '../components/DisabledFeature';
-import { LEVEL } from '../constants';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { EmbargoedAssets } from '../components/EmbargoedAssets';
 
 function EmbargoedAssetsRoute() {
-  const [currentLevel, setCurrentLevel] = useState<LEVEL>(LEVEL.DISABLED);
-
-  // @todo check PC space feature flag "embargoed assets":
-  // <DisabledFeature />
-
   return (
     <>
-      <DocumentTitle title="Embargoed Assets" />
+      <DocumentTitle title="Embargoed assets" />
       <Workbench.Header
         title={'Embargoed assets'}
         icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
       />
       <Workbench.Content type="text" className={'embargoed-assets-workbench-content'}>
-        {currentLevel ? (
-          <EnabledFeature currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-        ) : (
-          <DisabledFeature setCurrentLevel={setCurrentLevel} />
-        )}
+        <EmbargoedAssets />
       </Workbench.Content>
     </>
   );
@@ -34,7 +23,11 @@ function EmbargoedAssetsRoute() {
 const embargoedAssetsState = {
   name: 'embargoedAssets',
   url: '/embargoed-assets',
-  component: (props) => <EmbargoedAssetsRoute {...props} />,
+  component: (props) => (
+    <SpaceEnvContextProvider>
+      <EmbargoedAssetsRoute {...props} />
+    </SpaceEnvContextProvider>
+  ),
 };
 
 export { EmbargoedAssetsRoute, embargoedAssetsState };
