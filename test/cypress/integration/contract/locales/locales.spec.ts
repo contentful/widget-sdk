@@ -70,7 +70,7 @@ describe('Locales Management', () => {
       cy.wait(interactions, { timeout: 10000 });
     });
 
-    it('add new Locale', () => {
+    it.only('add new Locale', () => {
       const creation = postLocaleForSpace.willCreate(
         LOCALES.French.code,
         LOCALES.French.name,

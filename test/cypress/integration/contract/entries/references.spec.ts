@@ -103,9 +103,9 @@ describe('Entry references', () => {
         .should('contain', 'one and 2 references were published successfully');
     });
 
-    it('should publish Entities successfully', () => {
+    it.only('should publish Entities successfully', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
-      Entry.queryForDefaultEntries.willFindMultiple();
+      // Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getBulkAction.willReturnStatusSucceeded();
