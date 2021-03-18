@@ -9,7 +9,7 @@ export const getTokenForUser = {
     cy.addInteraction({
       provider: 'token',
       state: States.VALID,
-      uponReceiving: 'a request to get a token for the user',
+      uponReceiving: 'a request to get a token from gatekeeper for the user',
       withRequest: {
         method: 'GET',
         path: '/token',
