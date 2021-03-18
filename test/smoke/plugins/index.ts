@@ -6,10 +6,10 @@ export default function setupPlugins(
   initialConfig: Cypress.PluginConfigOptions
 ) {
   // This should always come first so that if we ever need the fully augmented
-  // config in a later plugin, it will be available.
+  // config in a later plugin (like in the telemetry task setup), it will be available.
   const config = setupConfig(on, initialConfig);
 
-  setupTelemetryTask(on);
+  setupTelemetryTask(on, config);
 
   return config;
 }

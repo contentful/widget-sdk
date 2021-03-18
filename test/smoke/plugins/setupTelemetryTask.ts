@@ -1,18 +1,11 @@
-import fetch from 'node-fetch';
+import * as telemetry from '../telemetry';
 
-export function setupTelemetryTask(on: Cypress.PluginEvents) {
+export function setupTelemetryTask(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
   on('task', {
     async measure({ name, value }) {
-      return fetch('https://metrics-api.librato.com/v1/measurements', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: `web-app-smoke-tests.${name}`,
-          value,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const libratoAuthToken = config.env.LIBRATO_AUTH_TOKEN;
+
+      return telemetry.measure(libratoAuthToken, [{ name, value }]);
     },
   });
 }

@@ -54,6 +54,13 @@ jobs:
           install: false
           browser: chrome
           config-file: cypress-smoke.json
+      - name: Report Cypress test results to Librato
+        if: always()
+        env:
+          LIBRATO_AUTH_TOKEN: ${{ secrets.LIBRATO_AUTH_TOKEN }}
+        run: |
+          npm install ts-node
+          npx ts-node --transpile-only ./tools/bin/report-smoke-test-telemetry.ts
       - name: Save Cypress artifacts
         uses: actions/upload-artifact@v2
         if: always()

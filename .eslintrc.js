@@ -46,6 +46,10 @@ module.exports = {
       files: ['test/**/*.{ts,tsx}'],
       extends: [require.resolve('./tools/eslint-rules/cypress.js')],
     },
+    {
+      files: ['tools/**/*.ts'],
+      extends: [require.resolve('./tools/eslint-rules/typescript.js')],
+    },
     /**
      * Specific for core and features folders
      */

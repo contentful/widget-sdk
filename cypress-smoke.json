@@ -8,7 +8,7 @@
   "defaultCommandTimeout": 6000,
   "reporter": "junit",
   "reporterOptions": {
-    "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
+    "mochaFile": "cypress/reports/smoke-test-results.xml"
   },
   "viewportWidth": 1300,
   "viewportHeight": 700
