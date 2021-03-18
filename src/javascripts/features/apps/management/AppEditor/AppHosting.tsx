@@ -5,7 +5,6 @@ import {
   FormLabel,
   TextField,
   Switch,
-  ValidationMessage,
   HelpText,
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
@@ -14,8 +13,9 @@ import { AppDefinition } from 'contentful-management/types';
 import { ValidationError } from './types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { ConditionalValidationMessage } from './ConditionalValidationMessage';
 
-export const appHostingStyles = {
+const appHostingStyles = {
   hostingSwitch: css({
     marginBottom: tokens.spacingS,
   }),
@@ -35,10 +35,10 @@ interface AppHostingProps {
 
 export function AppHosting({
   definition,
-  errorPath,
+  errorPath = [],
   onChange,
   disabled,
-  errors,
+  errors = [],
   clearErrorForField,
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
@@ -50,14 +50,12 @@ export function AppHosting({
   const [isAppHosting, setIsAppHosting] = React.useState(!definition.src);
 
   const validationMessage = React.useMemo(
-    () =>
-      errors?.find((error) => isEqual(error.path, errorPath ? [...errorPath, 'src'] : ['src']))
-        ?.details,
+    () => errors?.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details,
     [errorPath, errors]
   );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
+    clearErrorForField([...errorPath, 'src']);
     onChange({ ...definition, src: e.target.value.trim() });
   };
 
@@ -90,11 +88,11 @@ export function AppHosting({
                 Only required if your app renders into locations within the Contentful web app.
                 Public URLs must use HTTPS.
               </HelpText>
-              {validationMessage && (
-                <ValidationMessage className={appHostingStyles.additionalInformation}>
-                  {validationMessage}
-                </ValidationMessage>
-              )}
+              <ConditionalValidationMessage
+                className={appHostingStyles.additionalInformation}
+                errors={errors}
+                path={[...errorPath, 'src']}
+              />
             </div>
           )}
         </>
