@@ -10,7 +10,7 @@ import {
   Option,
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
-import { LEVEL } from '../constants';
+import { LEVEL, LevelDescription } from '../constants';
 import { LevelHelpText } from './LevelHelpText';
 import { LevelHelpTable } from './LevelHelpTable';
 
@@ -19,7 +19,6 @@ function labelBasedOnLevel(level: LEVEL) {
     case LEVEL.MIGRATING:
       return 'I understand that all of my assets will become immediately publicly accessible.';
     case LEVEL.UNPUBLISHED:
-      return 'I understand that existing unpublished asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
     case LEVEL.ALL:
       return 'I understand that existing unpublished asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
     default:
@@ -29,7 +28,7 @@ function labelBasedOnLevel(level: LEVEL) {
 
 interface TurnOffDialogParams {
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (level: LEVEL) => void;
   currentLevel: LEVEL;
 }
 
@@ -64,9 +63,11 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                   name="optionSelect"
                   onChange={selectionChanged}
                   value={currentLevel}>
-                  <Option value={LEVEL.MIGRATING}>Preparation mode</Option>
-                  <Option value={LEVEL.UNPUBLISHED}>Unpublished assets protected</Option>
-                  <Option value={LEVEL.ALL}>Unpublished assets protected</Option>
+                  {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
+                    <Option key={level} value={level}>
+                      {LevelDescription[level]}
+                    </Option>
+                  ))}
                 </Select>
               </Paragraph>
 
@@ -85,7 +86,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                 <Button
                   buttonType="positive"
                   disabled={!checkboxChecked}
-                  onClick={onSubmit}
+                  onClick={() => onSubmit(selectedLevel)}
                   className={styles.marginRight}>
                   Save changes
                 </Button>

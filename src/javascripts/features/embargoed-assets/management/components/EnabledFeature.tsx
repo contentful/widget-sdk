@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Heading,
+  Notification,
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
@@ -12,7 +13,7 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { TurnOffDialog } from './TurnOffDialog';
 import { LevelSelectionDialog } from './LevelSelectionDialog';
 import { LevelHelpText } from './LevelHelpText';
-import { LEVEL } from '../constants';
+import { LEVEL, LevelDescription } from '../constants';
 import { LevelHelpTable } from './LevelHelpTable';
 
 interface EnabledFeatureParams {
@@ -24,12 +25,18 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
   const [displayTurnOffDialog, setDisplayTurnOffDialog] = useState(false);
   const [displaySelectionDialog, setDisplaySelectionDialog] = useState(false);
 
+  const handleLevelSelection = (newLevel: LEVEL) => {
+    setCurrentLevel(newLevel);
+    setDisplaySelectionDialog(false);
+    Notification.success(LevelDescription[newLevel]);
+  };
+
   return (
     <>
       <Card testId="settings-section-card" className={styles.section}>
         <Typography>
           <Paragraph>Asset protection level</Paragraph>
-          <Heading>Preparation mode</Heading>
+          <Heading>{LevelDescription[currentLevel]}</Heading>
           <LevelHelpText level={LEVEL.MIGRATING} />
           <LevelHelpTable currentLevel={currentLevel} />
           <Button
@@ -73,7 +80,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
         <LevelSelectionDialog
           onClose={() => setDisplaySelectionDialog(false)}
           currentLevel={currentLevel}
-          onSubmit={() => ({})}
+          onSubmit={handleLevelSelection}
         />
       ) : null}
     </>
