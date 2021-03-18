@@ -8,6 +8,8 @@ import {
   Typography,
   Select,
   Option,
+  SelectField,
+  FieldGroup,
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
 import { LEVEL, LevelDescription } from '../constants';
@@ -55,12 +57,11 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content>
             <Typography>
-              <Paragraph element="h6">Asset protection level</Paragraph>
-
-              <Paragraph>
-                <Select
+              <FieldGroup>
+                <SelectField
                   id="optionSelect"
                   name="optionSelect"
+                  labelText="Asset protection level"
                   onChange={selectionChanged}
                   value={currentLevel}>
                   {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
@@ -68,8 +69,8 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                       {LevelDescription[level]}
                     </Option>
                   ))}
-                </Select>
-              </Paragraph>
+                </SelectField>
+              </FieldGroup>
 
               <LevelHelpText level={selectedLevel} />
               <LevelHelpTable currentLevel={currentLevel} selectedLevel={selectedLevel} />

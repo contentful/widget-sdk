@@ -12,8 +12,15 @@ export const styles = {
     margin: `${tokens.spacingL} auto`,
     padding: tokens.spacingXl,
   }),
+  lockIcon: css({
+    verticalAlign: 'middle',
+  }),
   table: css({
     marginBottom: tokens.spacingL,
+    tableLayout: 'fixed',
+  }),
+  tableFirstCol: css({
+    width: '33%',
   }),
   centered: css({
     textAlign: 'center',

@@ -157,7 +157,11 @@ Process:
    variables to launch as an HTTPS (rather than HTTP) server. For example:
 
    ```sh
-   # env HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem HTTPS_CERT_FILE=_wildcard.joistio.com.pem npm run dev-staging
+   # env \
+       HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem \
+       HTTPS_CERT_FILE=_wildcard.joistio.com.pem \
+       npm run dev-staging \
+       -- --public app.joistio.com:3001
    ```
 
 5. Visit `https://app.joistio.com:3001/#access_token=<your access token>`. This

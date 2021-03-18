@@ -9,13 +9,15 @@ function EmbargoedAssetsRoute() {
   return (
     <>
       <DocumentTitle title="Embargoed assets" />
-      <Workbench.Header
-        title={'Embargoed assets'}
-        icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
-      />
-      <Workbench.Content type="text" className={'embargoed-assets-workbench-content'}>
-        <EmbargoedAssets />
-      </Workbench.Content>
+      <Workbench>
+        <Workbench.Header
+          title={'Embargoed assets'}
+          icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
+        />
+        <Workbench.Content type="text" className={'embargoed-assets-workbench-content'}>
+          <EmbargoedAssets />
+        </Workbench.Content>
+      </Workbench>
     </>
   );
 }

@@ -36,32 +36,27 @@ function SecurityTag({ security, strike }: SecurityTagParams) {
       return null;
   }
 }
-
-function LockIcon({ level }: { level: Security }) {
-  if (level === 'secure') {
-    return <Icon icon="Lock" color="positive" />;
-  }
-  return null;
-}
-
 interface AssetUrlCellParams {
-  to: Security;
-  from: Security;
+  current: Security;
+  selected: Security;
 }
 
-function AssetUrlCell({ to, from }: AssetUrlCellParams) {
-  if (to === from) {
-    return (
-      <>
-        <SecurityTag security={to} />
-        <LockIcon level={to} />
-      </>
-    );
-  }
+function AssetUrlCell({ current, selected }: AssetUrlCellParams) {
   return (
     <>
-      <SecurityTag security={from} strike /> &rarr; <SecurityTag security={to} />
-      <LockIcon level={to} />
+      {current !== selected ? (
+        <>
+          {' '}
+          <SecurityTag security={current} strike /> &rarr;{' '}
+        </>
+      ) : null}
+      <SecurityTag security={selected} />
+      {selected === 'secure' ? (
+        <>
+          {' '}
+          <Icon icon="Lock" color="positive" className={styles.lockIcon} />
+        </>
+      ) : null}
     </>
   );
 }
@@ -97,7 +92,9 @@ export function LevelHelpTable({ currentLevel, selectedLevel }: LevelHelpTablePa
     <Table className={styles.table}>
       <TableHead>
         <TableRow>
-          <TableCell testId="embargoed-assets.api">Name</TableCell>
+          <TableCell testId="embargoed-assets.api" className={styles.tableFirstCol}>
+            Name
+          </TableCell>
           <TableCell testId="embargoed-assets.urls">Asset URLs</TableCell>
         </TableRow>
       </TableHead>
@@ -105,19 +102,19 @@ export function LevelHelpTable({ currentLevel, selectedLevel }: LevelHelpTablePa
         <TableRow testId="embargoed-assets.1">
           <TableCell>Management (CMA)</TableCell>
           <TableCell>
-            <AssetUrlCell from={fromLevelSecurity.cma} to={toLevelSecurity.cma} />
+            <AssetUrlCell current={fromLevelSecurity.cma} selected={toLevelSecurity.cma} />
           </TableCell>
         </TableRow>
         <TableRow testId="embargoed-assets.1">
           <TableCell>Preview (CPA)</TableCell>
           <TableCell>
-            <AssetUrlCell from={fromLevelSecurity.cpa} to={toLevelSecurity.cpa} />
+            <AssetUrlCell current={fromLevelSecurity.cpa} selected={toLevelSecurity.cpa} />
           </TableCell>
         </TableRow>
         <TableRow testId="embargoed-assets.1">
           <TableCell>Delivery (CDA)</TableCell>
           <TableCell>
-            <AssetUrlCell from={fromLevelSecurity.cda} to={toLevelSecurity.cda} />
+            <AssetUrlCell current={fromLevelSecurity.cda} selected={toLevelSecurity.cda} />
           </TableCell>
         </TableRow>
       </TableBody>

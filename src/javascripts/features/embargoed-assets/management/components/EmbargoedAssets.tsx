@@ -4,6 +4,7 @@ import { LEVEL } from '../constants';
 import { embargoedAssets } from '../services/embargoedAssetsService';
 import { DisabledFeature } from './DisabledFeature';
 import { EnabledFeature } from './EnabledFeature';
+import { LoadingFeature } from './LoadingFeature';
 
 export function EmbargoedAssets() {
   const { currentSpaceId } = useSpaceEnvContext();
@@ -38,8 +39,7 @@ export function EmbargoedAssets() {
   }, [currentSpaceId]);
 
   if (isFetching) {
-    // @todo replace with skeleton
-    return <>loading</>;
+    return <LoadingFeature />;
   }
 
   if (isDenied) {
@@ -49,7 +49,7 @@ export function EmbargoedAssets() {
   const handleLevelChange = (newLevel: LEVEL) => {
     return embargoedAssets(currentSpaceId)
       .setCurrentLevel(newLevel)
-      .then(() => setCurrentLevel(newLevel));
+      .then(({ level }) => setCurrentLevel(level));
   };
 
   if (!currentLevel) {
