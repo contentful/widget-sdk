@@ -55,7 +55,7 @@ export const styles = {
     position: 'relative',
     marginBottom: tokens.spacingM,
   }),
-  appList: css({
+  appListItem: css({
     position: 'relative',
   }),
   contentfulAppIcon: (isScreenshot) =>

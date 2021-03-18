@@ -102,7 +102,7 @@ export const ContentfulAppTile = ({
     });
 
   return (
-    <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appList}>
+    <Card padding={isScreenshot ? 'none' : 'large'} className={styles.appListItem}>
       <Flex
         alignItems="center"
         flexDirection={isFlipped ? 'row-reverse' : 'row'}
@@ -205,25 +205,26 @@ export const ContentfulAppsList = ({
         />
       ) : (
         apps.map((app, key) => (
-          <ContentfulAppTile
-            from={`apps-individual-${app.id}`}
-            image={app.icon}
-            title={app.title}
-            text={app.tagLine}
-            organizationId={organizationId}
-            slug={app.id}
-            canManage={canManageApps}
-            key={key}
-            spaceInformation={spaceInformation}
-            isInstalled={Boolean(app.appInstallation)}
-            isPurchased={isPurchased}
-            installAction={() => {
-              openDetailModal(app);
-            }}
-            uninstallAction={() => {
-              appManager.showUninstall(app);
-            }}
-          />
+          <div key={key} className={styles.appListCard}>
+            <ContentfulAppTile
+              from={`apps-individual-${app.id}`}
+              image={app.icon}
+              title={app.title}
+              text={app.tagLine}
+              organizationId={organizationId}
+              slug={app.id}
+              canManage={canManageApps}
+              spaceInformation={spaceInformation}
+              isInstalled={Boolean(app.appInstallation)}
+              isPurchased={isPurchased}
+              installAction={() => {
+                openDetailModal(app);
+              }}
+              uninstallAction={() => {
+                appManager.showUninstall(app);
+              }}
+            />
+          </div>
         ))
       )}
       <hr className={styles.splitter} />
