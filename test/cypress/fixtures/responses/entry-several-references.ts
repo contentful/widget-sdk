@@ -52,7 +52,7 @@ export const severalEntryReferencesWithVersionResponse = {
     entry({
       sys: {
         id: defaultEntryId,
-        version: 2,
+        version: 1,
       },
       fields: {
         entryRef1: {

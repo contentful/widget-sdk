@@ -38,7 +38,7 @@ export const publishPayload = {
           id: defaultEntryTestIds.testEntryId2,
           linkType: 'Entry',
           type: 'Link',
-          version: 3,
+          version: 2,
         },
       },
       {
@@ -46,7 +46,7 @@ export const publishPayload = {
           id: defaultEntryTestIds.testEntryId3,
           linkType: 'Entry',
           type: 'Link',
-          version: 3,
+          version: 2,
         },
       },
     ],
