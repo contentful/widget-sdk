@@ -28,19 +28,7 @@ export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
-  const [space, setSpace] = useState<SpaceEnv>(getSpace());
   const [contentTypes, setContentTypes] = useState<ContentType[]>(getContentTypes());
-
-  // TODO: This might be removed or improved when we find a refactoring solution for the `resetWithSpace` method
-  useEffect(() => {
-    const $rootScope = getModule('$rootScope');
-    const deregister = $rootScope.$on('spaceContextUpdated', () => {
-      setSpace(getSpace());
-      setContentTypes(getContentTypes());
-    });
-
-    return deregister;
-  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (!angularSpaceContext?.publishedCTs?.items$) return;
@@ -70,6 +58,8 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   function getUsers(): SpaceEnvUsers {
     return angularSpaceContext?.users;
   }
+
+  const space = getSpace();
 
   // Most common values are exported as property values
   const value: SpaceEnvContextValue = {
