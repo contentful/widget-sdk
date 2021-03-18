@@ -1,6 +1,13 @@
 import React from 'react';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { TextInput, FormLabel, TextField, Switch } from '@contentful/forma-36-react-components';
+import {
+  TextInput,
+  FormLabel,
+  TextField,
+  Switch,
+  ValidationMessage,
+  HelpText,
+} from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import { isEqual } from 'lodash';
 import { AppDefinition } from 'contentful-management/types';
@@ -11,6 +18,9 @@ import tokens from '@contentful/forma-36-tokens';
 export const appHostingStyles = {
   hostingSwitch: css({
     marginBottom: tokens.spacingS,
+  }),
+  additionalInformation: css({
+    marginTop: tokens.spacingXs,
   }),
 };
 
@@ -39,6 +49,18 @@ export function AppHosting({
 
   const [isAppHosting, setIsAppHosting] = React.useState(!definition.src);
 
+  const validationMessage = React.useMemo(
+    () =>
+      errors?.find((error) => isEqual(error.path, errorPath ? [...errorPath, 'src'] : ['src']))
+        ?.details,
+    [errorPath, errors]
+  );
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
+    onChange({ ...definition, src: e.target.value.trim() });
+  };
+
   return (
     <>
       {hostingEnabled ? (
@@ -54,18 +76,26 @@ export function AppHosting({
           {isAppHosting ? (
             <div>DROPZONE</div>
           ) : (
-            <TextInput
-              className={styles.input()}
-              name="app-src"
-              id="app-src"
-              testId="app-src-input"
-              value={definition.src || ''}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
-                onChange({ ...definition, src: e.target.value.trim() });
-              }}
-              disabled={disabled}
-            />
+            <div className={styles.input()}>
+              <TextInput
+                name="app-src"
+                id="app-src"
+                testId="app-src-input"
+                error={!!validationMessage}
+                value={definition.src || ''}
+                onChange={onInputChange}
+                disabled={disabled}
+              />
+              <HelpText className={appHostingStyles.additionalInformation}>
+                Only required if your app renders into locations within the Contentful web app.
+                Public URLs must use HTTPS.
+              </HelpText>
+              {validationMessage && (
+                <ValidationMessage className={appHostingStyles.additionalInformation}>
+                  {validationMessage}
+                </ValidationMessage>
+              )}
+            </div>
           )}
         </>
       ) : (
@@ -77,15 +107,8 @@ export function AppHosting({
           testId="app-src-input"
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            clearErrorForField(errorPath ? [...errorPath, 'src'] : ['src']);
-            onChange({ ...definition, src: e.target.value.trim() });
-          }}
-          validationMessage={
-            errors?.find((error) =>
-              isEqual(error.path, errorPath ? [...errorPath, 'src'] : ['src'])
-            )?.details
-          }
+          onChange={onInputChange}
+          validationMessage={validationMessage}
           textInputProps={{ disabled }}
         />
       )}
