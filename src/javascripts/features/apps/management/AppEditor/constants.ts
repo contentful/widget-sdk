@@ -33,6 +33,7 @@ export const LOCATION_ORDER: [string, string][] = [
 
 export const SRC_REG_EXP = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 export const PARAMETER_ID_REG_EXP = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+export const EMPTY_SPACE_REG_EXP = /\s/;
 
 export const PARAMETER_TYPE_LABEL = {
   Symbol: 'Short text',

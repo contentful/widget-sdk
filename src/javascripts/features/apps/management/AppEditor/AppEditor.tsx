@@ -19,7 +19,7 @@ import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { toApiFieldType, toInternalFieldType } from 'widgets/FieldTypes';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { FIELD_TYPES_ORDER, LOCATION_ORDER, SRC_REG_EXP } from './constants';
+import { FIELD_TYPES_ORDER, LOCATION_ORDER, SRC_REG_EXP, EMPTY_SPACE_REG_EXP } from './constants';
 import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
 import { ValidationError } from './types';
@@ -67,10 +67,13 @@ export function validate(definition, errorPath: string[] = []) {
       });
     }
 
-    if (!pageLocation?.navigationItem.path.startsWith('/')) {
+    if (
+      !pageLocation?.navigationItem.path.startsWith('/') ||
+      EMPTY_SPACE_REG_EXP.test(pageLocation?.navigationItem.path)
+    ) {
       errors.push({
         path: [...errorPath, 'locations', 'page', 'navigationItem', 'path'],
-        details: 'Please enter a path starting with /',
+        details: 'Please enter a path starting with / and does not contain empty space',
       });
     }
   }
@@ -362,7 +365,7 @@ export function AppEditor({
 
                           <ConditionalValidationMessage
                             errors={errors}
-                            path={['locations', 'entry-field', 'fieldTypes']}
+                            path={[...errorPath, 'locations', 'entry-field', 'fieldTypes']}
                           />
                         </div>
                       )}
