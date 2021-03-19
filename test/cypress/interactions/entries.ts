@@ -15,10 +15,7 @@ import {
   severalEntryReferencesResponse,
   severalEntryReferencesWithUnresolvedResponse,
   validateEntryReferencesSeveralRequest,
-  publishEntryReferencesSeveralRequest,
   validateEntryReferencesSeveralErrorsResponse,
-  publishEntryReferencesSeveralErrorsResponse,
-  publishEntryReferencesSeveralSuccessResponse,
   severalEntryReferencesWithVersionResponse,
 } from '../fixtures/responses/entry-several-references';
 import { Matchers } from '@pact-foundation/pact-web';
