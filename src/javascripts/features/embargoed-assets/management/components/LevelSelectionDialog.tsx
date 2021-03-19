@@ -6,7 +6,6 @@ import {
   CheckboxField,
   Paragraph,
   Typography,
-  Select,
   Option,
   SelectField,
   FieldGroup,
@@ -36,7 +35,6 @@ interface TurnOffDialogParams {
 
 const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialogParams) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
-  const onCheckboxChange = () => setCheckboxChecked(!checkboxChecked);
   const [selectedLevel, setSelectedLevel] = useState<LEVEL>(currentLevel);
 
   return (
@@ -47,7 +45,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
       shouldCloseOnEscapePress
       shouldCloseOnOverlayClick
       isShown
-      testId="content-release-modal"
+      testId="change-protection-modal"
       onClose={onClose}>
       {({ title, onClose }) => (
         <>
@@ -56,8 +54,9 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
             <Typography>
               <FieldGroup>
                 <SelectField
-                  id="optionSelect"
-                  name="optionSelect"
+                  id="asset-protection-level"
+                  name="asset-protection-level"
+                  testId="asset-protection-level"
                   labelText="Asset protection level"
                   onChange={(e) => {
                     setCheckboxChecked(false);
@@ -80,7 +79,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                   id="understand-change"
                   checked={checkboxChecked}
                   labelText={labelBasedOnLevel(selectedLevel)}
-                  onChange={onCheckboxChange}
+                  onChange={() => setCheckboxChecked(!checkboxChecked)}
                 />
               </Paragraph>
               <Paragraph>
