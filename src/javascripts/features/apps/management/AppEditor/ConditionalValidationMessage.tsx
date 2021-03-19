@@ -2,6 +2,7 @@ import { ValidationMessage } from '@contentful/forma-36-react-components';
 import { isEqual } from 'lodash';
 import React from 'react';
 import { ValidationError } from './types';
+import { styles } from './styles';
 
 interface Props
   extends Partial<Omit<React.ComponentPropsWithoutRef<typeof ValidationMessage>, 'children'>> {
@@ -16,5 +17,9 @@ export function ConditionalValidationMessage({ errors, path, ...messageProps }: 
     return null;
   }
 
-  return <ValidationMessage {...messageProps}>{error.details}</ValidationMessage>;
+  return (
+    <ValidationMessage className={styles.fieldTypesValidationMessage} {...messageProps}>
+      {error.details}
+    </ValidationMessage>
+  );
 }
