@@ -10,11 +10,12 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { css } from 'emotion';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { AppEditor, validate } from './AppEditor';
 import { ManagementApiClient } from './ManagementApiClient';
+import { AppDefinition } from 'contentful-management/types';
+import { ValidationError } from './AppEditor';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -31,13 +32,25 @@ const styles = {
 const BUILDING_APPS_URL =
   'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/';
 
-export class NewApp extends React.Component {
+interface NewAppProps {
+  goToDefinition: (appId: string) => void;
+  goToListView: () => void;
+  orgId: string;
+}
+
+interface NewAppState {
+  busy: boolean;
+  definition: AppDefinition;
+  errors: ValidationError[];
+}
+
+export class NewApp extends React.Component<NewAppProps, NewAppState> {
   constructor(props) {
     super(props);
 
     this.state = {
       busy: false,
-      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId),
+      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId) as AppDefinition,
       errors: [],
     };
   }
@@ -59,7 +72,11 @@ export class NewApp extends React.Component {
       if (err.status === 422) {
         this.setState({
           errors: err.data.details.errors.map((error) => {
-            if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
+            if (
+              error.path[0] === 'locations' &&
+              typeof error.path[1] === 'number' &&
+              this.state.definition.locations
+            ) {
               error.path[1] = this.state.definition.locations[error.path[1]].location;
             }
             return error;
@@ -124,9 +141,3 @@ export class NewApp extends React.Component {
     );
   }
 }
-
-NewApp.propTypes = {
-  goToDefinition: PropTypes.func.isRequired,
-  goToListView: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired,
-};
