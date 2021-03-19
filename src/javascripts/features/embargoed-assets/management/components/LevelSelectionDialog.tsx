@@ -20,8 +20,9 @@ function labelBasedOnLevel(level: LEVEL) {
     case LEVEL.MIGRATING:
       return 'I understand that all of my assets will become immediately publicly accessible.';
     case LEVEL.UNPUBLISHED:
+      return 'I understand that all publicly accessible unpublished asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
     case LEVEL.ALL:
-      return 'I understand that existing unpublished asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
+      return 'I understand that all publicly accessible asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
     default:
       return '';
   }
