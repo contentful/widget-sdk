@@ -114,10 +114,17 @@ const serverError = {
 };
 
 type ResponseOptions = {
-  action: 'publish' | 'validate';
-  payload?: typeof bulkValidateResponsePayload | typeof bulkPublishResponsePayload;
   status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-};
+} & (
+  | {
+      action: 'publish';
+      payload?: typeof bulkPublishResponsePayload;
+    }
+  | {
+      action: 'validate';
+      payload?: typeof bulkValidateResponsePayload;
+    }
+);
 
 const bulkActionResponse = ({
   action = 'publish',
