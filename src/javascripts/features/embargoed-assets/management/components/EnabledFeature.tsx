@@ -12,7 +12,7 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { TurnOffDialog } from './TurnOffDialog';
 import { LevelSelectionDialog } from './LevelSelectionDialog';
 import { LevelHelpText } from './LevelHelpText';
-import { LEVEL, LevelDescription } from '../constants';
+import { LEVEL, levelDescription } from '../constants';
 import { LevelHelpTable } from './LevelHelpTable';
 
 interface EnabledFeatureParams {
@@ -41,7 +41,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
       <Card testId="settings-section-card" className={styles.section}>
         <Typography>
           <Paragraph>Asset protection level</Paragraph>
-          <Heading>{LevelDescription[currentLevel]}</Heading>
+          <Heading>{levelDescription[currentLevel]}</Heading>
           <LevelHelpText level={currentLevel} />
           <LevelHelpTable currentLevel={currentLevel} />
           <Button

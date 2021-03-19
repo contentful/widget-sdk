@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
+import { confirmLabelByLevel, LEVEL } from '../constants';
 
 interface TurnOffDialogParams {
   onClose: () => void;
@@ -42,7 +43,7 @@ const TurnOffDialog = ({ onClose, onSubmit }: TurnOffDialogParams) => {
                 <CheckboxField
                   id="understand-change"
                   checked={checkboxChecked}
-                  labelText="I understand that all of my assets will become immediately publicly accessible."
+                  labelText={confirmLabelByLevel[LEVEL.DISABLED]}
                   onChange={onCheckboxChange}
                 />
               </Paragraph>

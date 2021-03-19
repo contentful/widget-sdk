@@ -11,22 +11,9 @@ import {
   FieldGroup,
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
-import { LEVEL, LevelDescription } from '../constants';
+import { confirmLabelByLevel, LEVEL, levelDescription } from '../constants';
 import { LevelHelpText } from './LevelHelpText';
 import { LevelHelpTable } from './LevelHelpTable';
-
-function labelBasedOnLevel(level: LEVEL) {
-  switch (level) {
-    case LEVEL.MIGRATING:
-      return 'I understand that all of my assets will become immediately publicly accessible.';
-    case LEVEL.UNPUBLISHED:
-      return 'I understand that all publicly accessible unpublished asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
-    case LEVEL.ALL:
-      return 'I understand that all publicly accessible asset URLs will cease to function within 48 hours, and my site and tooling is configured to sign secure asset URLs before use.';
-    default:
-      return '';
-  }
-}
 
 interface TurnOffDialogParams {
   onClose: () => void;
@@ -66,7 +53,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                   value={currentLevel}>
                   {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
                     <Option key={level} value={level}>
-                      {LevelDescription[level]}
+                      {levelDescription[level]}
                       {level === currentLevel ? ' (active)' : null}
                     </Option>
                   ))}
@@ -80,7 +67,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                 <CheckboxField
                   id="understand-change"
                   checked={checkboxChecked}
-                  labelText={labelBasedOnLevel(selectedLevel)}
+                  labelText={confirmLabelByLevel[selectedLevel]}
                   onChange={() => setCheckboxChecked(!checkboxChecked)}
                 />
               </Paragraph>
