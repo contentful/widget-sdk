@@ -14,12 +14,53 @@ import {
 
 enum BulkActionStates {
   NO_BULK_ACTIONS = 'bulk-actions/no-bulk-actions-for-default-space',
-  ONE_COMPLETED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
-  ONE_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
+  BULK_PUBLISH_IN_PROGRESS = 'bulk-actions/one-in-progress-bulk-action-for-default-entry',
+  BULK_PUBLISH_SUCCEEDED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
+  BULK_PUBLISH_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
   MAX_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs-for-default-space',
+  VALIDATE_SUCCEEDED = 'bulk-actions/validate-publishing-for-default-space',
+  BULK_VALIDATE_IN_PROGRESS = 'bulk-actions/validate-one-in-progress-bulk-action-for-default-entry',
+  BULK_VALIDATE_SUCCEEDED = 'bulk-actions/validate-one-completed-bulk-action-for-default-entry',
+  BULK_VALIDATE_FAILED = 'bulk-actions/validate-one-failed-bulk-action-default-entry',
+  VALIDATE_MAX_NUMBER_OF_JOBS = 'bulk-actions/validate-maximum-number-of-jobs-for-default-space',
 }
 
 export const publishPayload = {
+  entities: {
+    sys: {
+      type: 'Array',
+    },
+    items: [
+      {
+        sys: {
+          id: defaultEntryTestIds.defaultId,
+          type: 'Link',
+          linkType: 'Entry',
+          version: 1,
+        },
+      },
+      {
+        sys: {
+          id: defaultEntryTestIds.testEntryId2,
+          linkType: 'Entry',
+          type: 'Link',
+          version: 2,
+        },
+      },
+      {
+        sys: {
+          id: defaultEntryTestIds.testEntryId3,
+          linkType: 'Entry',
+          type: 'Link',
+          version: 2,
+        },
+      },
+    ],
+  },
+};
+
+export const validatePayload = {
+  action: 'publish',
   entities: {
     sys: {
       type: 'Array',
@@ -181,11 +222,25 @@ const publishBulkActionRequest: any = {
   },
 };
 
-export const getBulkAction = {
+const validateBulkActionRequest: any = {
+  provider: 'bulk-actions',
+  uponReceiving: `a request to validate a publish BulkAction on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+  withRequest: {
+    method: 'POST',
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/validate`,
+    headers: {
+      ...defaultContentTypeHeader,
+      ...defaultHeader,
+    },
+    body: validatePayload,
+  },
+};
+
+export const getPublishBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.ONE_COMPLETED,
+      state: BulkActionStates.BULK_PUBLISH_IN_PROGRESS,
       willRespondWith: {
         status: 200,
         headers: {
@@ -199,14 +254,14 @@ export const getBulkAction = {
           action: 'publish',
         }),
       },
-    }).as('getSucceededBulkAction');
+    }).as('getSucceededPublishBulkAction');
 
-    return '@getSucceededBulkAction';
+    return '@getSucceededPublishBulkAction';
   },
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.ONE_COMPLETED,
+      state: BulkActionStates.BULK_PUBLISH_SUCCEEDED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -221,15 +276,14 @@ export const getBulkAction = {
           action: 'publish',
         }),
       },
-    }).as('getSucceededBulkAction');
+    }).as('getSucceededPublishBulkAction');
 
-    return '@getSucceededBulkAction';
+    return '@getSucceededPublishBulkAction';
   },
-
   willReturnStatusFailed(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.ONE_FAILED,
+      state: BulkActionStates.BULK_PUBLISH_FAILED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -245,9 +299,9 @@ export const getBulkAction = {
           error: versionMismatchError,
         }),
       },
-    }).as('getFailedBulkAction');
+    }).as('getFailedPublishBulkAction');
 
-    return '@getFailedBulkAction';
+    return '@getFailedPublishBulkAction';
   },
 };
 
@@ -286,5 +340,116 @@ export const publishBulkAction = {
     }).as('publishBulkActionFailure');
 
     return '@publishBulkActionFailure';
+  },
+};
+
+export const getValidateBulkAction = {
+  willReturnStatusInProgress(): string {
+    cy.addInteraction({
+      ...getBulkActionRequest,
+      state: BulkActionStates.BULK_VALIDATE_IN_PROGRESS,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'inProgress',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+        }),
+      },
+    }).as('getSucceededValidateBulkAction');
+
+    return '@getSucceededValidateBulkAction';
+  },
+  willReturnStatusSucceeded(): string {
+    cy.addInteraction({
+      ...getBulkActionRequest,
+      state: BulkActionStates.BULK_VALIDATE_SUCCEEDED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'succeeded',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+        }),
+      },
+    }).as('getSucceededValidateBulkAction');
+
+    return '@getSucceededValidateBulkAction';
+  },
+  willReturnStatusFailed(): string {
+    cy.addInteraction({
+      ...getBulkActionRequest,
+      state: BulkActionStates.BULK_VALIDATE_FAILED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'failed',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+          error: versionMismatchError,
+        }),
+      },
+    }).as('getFailedValidateBulkAction');
+
+    return '@getFailedValidateBulkAction';
+  },
+};
+
+export const validateBulkAction = {
+  willSucceed(): string {
+    cy.addInteraction({
+      ...validateBulkActionRequest,
+      state: BulkActionStates.VALIDATE_SUCCEEDED,
+      willRespondWith: {
+        status: 201,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          action: 'validate',
+          sys: { status: 'created' },
+          payload: { action: 'publish' },
+        }),
+      },
+    }).as('validateBulkAction');
+
+    return '@validateBulkAction';
+  },
+  willFailWithTooManyRequests(): string {
+    cy.addInteraction({
+      ...validateBulkActionRequest,
+      state: BulkActionStates.VALIDATE_MAX_NUMBER_OF_JOBS,
+      willRespondWith: {
+        status: 429,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: {
+          sys: {
+            id: 'RateLimitExceeded',
+            type: 'Error',
+          },
+        },
+      },
+    }).as('validateBulkActionFailure');
+
+    return '@validateBulkActionFailure';
   },
 };
