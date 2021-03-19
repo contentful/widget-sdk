@@ -69,9 +69,8 @@ export const validatePayload = {
       {
         sys: {
           id: defaultEntryTestIds.defaultId,
-          type: 'Link',
           linkType: 'Entry',
-          version: 1,
+          type: 'Link',
         },
       },
       {
@@ -79,7 +78,6 @@ export const validatePayload = {
           id: defaultEntryTestIds.testEntryId2,
           linkType: 'Entry',
           type: 'Link',
-          version: 2,
         },
       },
       {
@@ -87,7 +85,6 @@ export const validatePayload = {
           id: defaultEntryTestIds.testEntryId3,
           linkType: 'Entry',
           type: 'Link',
-          version: 2,
         },
       },
     ],
