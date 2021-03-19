@@ -126,11 +126,11 @@ describe('Entry references', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
 
-    // TODO: Remove skip
-    it.only('publishes release skipping unresolved entities', () => {
+    it.skip('publishes release skipping unresolved entities', () => {
       Entry.getEntryReferences.willReturnSeveralWithUnresolved();
 
       BulkAction.publishBulkAction.willSucceed();
+      BulkAction.getPublishBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -145,7 +145,6 @@ describe('Entry references', () => {
 
     it('should publish entities successfully', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
-      // Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getPublishBulkAction.willReturnStatusSucceeded();
@@ -162,7 +161,6 @@ describe('Entry references', () => {
 
     it('should display an error message when a BulkAction fails', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
-      // Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getPublishBulkAction.willReturnStatusFailed();
