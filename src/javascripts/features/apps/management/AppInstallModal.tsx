@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Button, Modal, SelectField, Option } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import { getOrgSpacesFor, getEnvsFor } from './util';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { AppDefinition, Space, Environment } from 'contentful-management/types';
 
 function goToInstallation(spaceId, environmentId, appId, onClose) {
   Navigator.go({
@@ -51,10 +51,19 @@ const formatEnvName = (env) => {
   return env.name;
 };
 
-export function AppInstallModal({ isShown, definition, onClose }) {
+interface AppInstallModalProps {
+  definition: AppDefinition;
+  onClose: () => void;
+  isShown: boolean;
+}
+export const AppInstallModal: React.FC<AppInstallModalProps> = ({
+  isShown,
+  definition,
+  onClose,
+}) => {
   const [redirecting, setRedirecting] = useState(false);
-  const [spaces, setSpaces] = useState([]);
-  const [spaceEnvs, setSpaceEnvs] = useState([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [spaceEnvs, setSpaceEnvs] = useState<Environment[]>([]);
   const [selectedSpace, setSelectedSpace] = useState('');
   const [selectedEnv, setSelectedEnv] = useState('');
 
@@ -114,7 +123,9 @@ export function AppInstallModal({ isShown, definition, onClose }) {
                 name="spaceSelection"
                 required
                 value={selectedSpace}
-                onChange={(e) => setSelectedSpace(e.target.value)}>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSelectedSpace(e.target.value)
+                }>
                 {spaces.map((space) => (
                   <Option key={space.sys.id} value={space.sys.id}>
                     {space.name}
@@ -126,7 +137,9 @@ export function AppInstallModal({ isShown, definition, onClose }) {
                 id="envSelection"
                 name="envSelection"
                 required
-                onChange={(e) => setSelectedEnv(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSelectedEnv(e.target.value)
+                }
                 value={selectedEnv}>
                 {spaceEnvs.map((env) => (
                   <Option key={env.sys.id} value={env.sys.id}>
@@ -153,10 +166,4 @@ export function AppInstallModal({ isShown, definition, onClose }) {
       )}
     </Modal>
   );
-}
-
-AppInstallModal.propTypes = {
-  definition: PropTypes.object,
-  onClose: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired,
 };
