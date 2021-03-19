@@ -102,18 +102,21 @@ export default function useCreateActions(props) {
       }) || getWidget(field, state.contentType, state.editorInterface.controls);
 
     const updateWidgetSettings = (widget, field) => {
-      const controls = state.editorInterface.controls.map((control) => {
-        if (control.fieldId === field.apiName) {
-          return {
-            field,
-            fieldId: field.apiName,
-            settings: widget.params,
-            widgetId: widget.id,
-            widgetNamespace: widget.namespace,
-          };
-        }
-        return control;
-      });
+      const controls = state.contextState.isNew
+        ? [widget]
+        : state.editorInterface.controls.map((control) => {
+            if (control.fieldId === field.apiName) {
+              return {
+                field,
+                fieldId: field.apiName,
+                settings: widget.params,
+                widgetId: widget.id,
+                widgetNamespace: widget.namespace,
+              };
+            }
+            return control;
+          });
+
       dispatch({
         type: reducerActions.UPDATE_EDITOR_INTERFACE,
         payload: {
