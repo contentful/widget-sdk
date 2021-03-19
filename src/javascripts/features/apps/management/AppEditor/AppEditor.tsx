@@ -73,7 +73,7 @@ export function validate(definition, errorPath: string[] = []) {
     ) {
       errors.push({
         path: [...errorPath, 'locations', 'page', 'navigationItem', 'path'],
-        details: 'Please enter a path starting with / and does not contain empty space',
+        details: 'Please enter a path which starts with / and does not contain empty space',
       });
     }
   }
