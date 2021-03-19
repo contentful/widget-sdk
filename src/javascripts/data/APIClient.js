@@ -569,7 +569,7 @@ APIClient.prototype.getEmbargoedAssetsSettingLevel = function () {
 
   return new Promise((_resolve, _reject) => {
     setTimeout(() => {
-      _resolve({ level: '' });
+      _resolve({ level: 'disabled' });
       // reject({ level: 'all' });
     }, 1000);
   });
@@ -592,7 +592,7 @@ APIClient.prototype.setEmbargoedAssetsSettingLevel = function (level) {
     setTimeout(() => {
       // resolve({ level });
       _resolve({ level });
-    }, 1000);
+    }, 3000);
   });
 };
 

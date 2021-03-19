@@ -32,6 +32,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
   };
 
   const handleDisableFeature = () => {
+    setDisplayTurnOffDialog(false);
     setIsChanging(true);
     setCurrentLevel(LEVEL.DISABLED).finally(() => setIsChanging(false));
   };

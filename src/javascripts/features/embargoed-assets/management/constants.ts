@@ -1,6 +1,6 @@
 export enum LEVEL {
   ALL = 'all',
-  DISABLED = '',
+  DISABLED = 'disabled',
   MIGRATING = 'migrating',
   UNPUBLISHED = 'unpublished',
 }

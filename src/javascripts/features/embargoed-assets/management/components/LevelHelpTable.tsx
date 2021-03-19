@@ -17,7 +17,7 @@ interface SecurityTagParams {
 }
 
 function SecurityTag({ isSecure, strike }: SecurityTagParams) {
-  const tagType = isSecure ? 'positive' : 'muted';
+  const tagType = isSecure ? 'positive' : 'secondary';
   const text = isSecure ? 'SECURE' : 'PUBLIC';
 
   return (

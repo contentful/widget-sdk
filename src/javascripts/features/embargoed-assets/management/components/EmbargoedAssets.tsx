@@ -95,11 +95,13 @@ export function EmbargoedAssets() {
           setCurrentLevel(level);
           Notification.success(notificationForLevel(level) as string);
         },
-        () => Notification.error('Error saving settings')
+        () => {
+          Notification.error('Error saving settings');
+        }
       );
   };
 
-  if (!currentLevel) {
+  if (currentLevel === LEVEL.DISABLED) {
     return <DisabledFeature setCurrentLevel={handleLevelChange} />;
   }
 

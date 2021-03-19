@@ -25,6 +25,8 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<LEVEL>(currentLevel);
 
+  const levelIsDifferent = currentLevel !== selectedLevel;
+
   return (
     <Modal
       className={styles.dialogSmall}
@@ -39,52 +41,50 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
         <>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content>
-            <Typography>
-              <FieldGroup>
-                <SelectField
-                  id="asset-protection-level"
-                  name="asset-protection-level"
-                  testId="asset-protection-level"
-                  labelText="Asset protection level"
-                  onChange={(e) => {
-                    setCheckboxChecked(false);
-                    setSelectedLevel((e.target as HTMLSelectElement).value as LEVEL);
-                  }}
-                  value={currentLevel}>
-                  {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
-                    <Option key={level} value={level}>
-                      {levelDescription[level]}
-                      {level === currentLevel ? ' (active)' : null}
-                    </Option>
-                  ))}
-                </SelectField>
-              </FieldGroup>
+            <FieldGroup>
+              <SelectField
+                id="asset-protection-level"
+                name="asset-protection-level"
+                testId="asset-protection-level"
+                labelText="Asset protection level"
+                onChange={(e) => {
+                  setCheckboxChecked(false);
+                  setSelectedLevel((e.target as HTMLSelectElement).value as LEVEL);
+                }}
+                value={currentLevel}>
+                {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
+                  <Option key={level} value={level}>
+                    {levelDescription[level]}
+                    {level === currentLevel ? ' (active)' : null}
+                  </Option>
+                ))}
+              </SelectField>
+            </FieldGroup>
 
-              <LevelHelpText level={selectedLevel} />
-              <LevelHelpTable currentLevel={currentLevel} selectedLevel={selectedLevel} />
+            <LevelHelpText level={selectedLevel} />
+            <LevelHelpTable currentLevel={currentLevel} selectedLevel={selectedLevel} />
 
-              <Paragraph>
-                <CheckboxField
-                  id="understand-change"
-                  checked={checkboxChecked}
-                  labelText={confirmLabelByLevel[selectedLevel]}
-                  onChange={() => setCheckboxChecked(!checkboxChecked)}
-                />
-              </Paragraph>
-              <Paragraph>
-                <Button
-                  buttonType="positive"
-                  disabled={!checkboxChecked}
-                  onClick={() => onSubmit(selectedLevel)}
-                  className={styles.marginRight}>
-                  Save changes
-                </Button>
-                <Button buttonType="muted" onClick={onClose}>
-                  Cancel
-                </Button>
-              </Paragraph>
-            </Typography>
+            {levelIsDifferent ? (
+              <CheckboxField
+                id="understand-change"
+                checked={checkboxChecked}
+                labelText={confirmLabelByLevel[selectedLevel]}
+                onChange={() => setCheckboxChecked(!checkboxChecked)}
+              />
+            ) : null}
           </Modal.Content>
+          <Modal.Controls>
+            <Button
+              buttonType="positive"
+              disabled={!checkboxChecked}
+              onClick={() => onSubmit(selectedLevel)}
+              className={styles.marginRight}>
+              Save changes
+            </Button>
+            <Button buttonType="muted" onClick={onClose}>
+              Cancel
+            </Button>
+          </Modal.Controls>
         </>
       )}
     </Modal>
