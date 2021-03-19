@@ -26,12 +26,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        # We do this, rather than simply `npm ci`, to prevent needing to install all app
-        # dependencies when we only need a handful.
+      - name: Setup npm auth token
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          rm package.json package-lock.json
-          npm install cypress@4 typescript@3 @testing-library/cypress@6
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./node_modules
+            ~/.cache
+          key: npm-${{ hashFiles('./package-lock.json') }}
+          restore-keys: |
+            npm-${{ hashFiles('./package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm install
       - name: Run smoke tests
         # Because we remove `package.json` above, we can't use the npm task, so instead
         # we use the official Cypress action with the right environment variables.
