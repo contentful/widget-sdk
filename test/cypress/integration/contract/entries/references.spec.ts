@@ -49,12 +49,12 @@ describe('Entry references', () => {
     cy.enableFeatureFlags([FeatureFlag.RELEASES]);
   });
 
-  describe.only('Validation', () => {
+  describe('Validation', () => {
     beforeEach(() => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
 
-    it.skip('validates release without errors', () => {
+    it('validates release without errors', () => {
       Entry.getEntryReferences.willReturnSeveral();
       Entry.validateEntryReferencesResponse.willReturnNoErrors();
 
@@ -68,7 +68,7 @@ describe('Entry references', () => {
         .should('contain', 'All references passed validation');
     });
 
-    it.skip('validates release with errors', () => {
+    it('validates release with errors', () => {
       Entry.getEntryReferences.willReturnSeveral();
       Entry.validateEntryReferencesResponse.willReturnErrors();
 
@@ -82,12 +82,12 @@ describe('Entry references', () => {
         .should('contain', 'Some references did not pass validation');
     });
 
-    describe.only('when using BulkApi', () => {
+    describe('when using BulkApi', () => {
       beforeEach(() => {
         cy.enableFeatureFlags([FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]);
       });
 
-      it.only('validates release without errors', () => {
+      it('should validate publishing entities successfully', () => {
         Entry.getEntryReferences.willReturnSeveralWithVersion();
 
         BulkAction.validateBulkAction.willSucceed();
@@ -103,7 +103,21 @@ describe('Entry references', () => {
           .should('contain', 'All references passed validation');
       });
 
-      it('validates release with errors', () => {});
+      it('should display an error message when a validate BulkAction fails', () => {
+        Entry.getEntryReferences.willReturnSeveralWithVersion();
+
+        BulkAction.validateBulkAction.willSucceed();
+        BulkAction.getValidateBulkAction.willReturnStatusFailed();
+
+        cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+        cy.findByTestId('selectAllReferences').check();
+        cy.findByTestId('validateReferencesBtn').click();
+
+        cy.findByTestId('cf-ui-notification')
+          .click({ timeout: 5000 })
+          .should('be.visible')
+          .should('contain', 'Some references did not pass validation');
+      });
     });
   });
 
@@ -113,8 +127,9 @@ describe('Entry references', () => {
     });
 
     // TODO: Remove skip
-    it.skip('publishes release skipping unresolved entities', () => {
+    it.only('publishes release skipping unresolved entities', () => {
       Entry.getEntryReferences.willReturnSeveralWithUnresolved();
+
       BulkAction.publishBulkAction.willSucceed();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
@@ -128,7 +143,7 @@ describe('Entry references', () => {
         .should('contain', 'one and 2 references were published successfully');
     });
 
-    it('should publish Entities successfully', () => {
+    it('should publish entities successfully', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
       // Entry.queryForDefaultEntries.willFindMultiple();
 
