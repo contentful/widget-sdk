@@ -213,6 +213,14 @@ application. Note that it requires Chrome to be available on your computer.
 > npm run cypress
 ```
 
+If you see an error that looks like "No version of Cypress is installed in: ..."
+then you need to actually install the Cypress runner (which is not installed
+when you `npm install`). To do this, run:
+
+```sh
+> npx cypress install
+```
+
 #### Additional documentation
 
 - [Running tests with Jest](./docs/guides/testing-jest.md)
