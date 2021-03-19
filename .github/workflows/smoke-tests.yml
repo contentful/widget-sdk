@@ -10,6 +10,9 @@ jobs:
     container: cypress/browsers:node12.18.3-chrome87-ff82
 
     strategy:
+      # Even if the staging run fails, we still want the results of production, and
+      # vice versa
+      fail-fast: false
       matrix:
         include:
           - domain: 'flinkly.com'
