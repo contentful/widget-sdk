@@ -11,34 +11,24 @@ import {
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
 
-type Security = 'public' | 'secure';
-
 interface SecurityTagParams {
-  security: Security;
+  isSecure: boolean;
   strike?: boolean;
 }
 
-function SecurityTag({ security, strike }: SecurityTagParams) {
-  switch (security) {
-    case 'public':
-      return (
-        <Tag tagType="muted" className={strike ? styles.strike : undefined}>
-          PUBLIC
-        </Tag>
-      );
-    case 'secure':
-      return (
-        <Tag tagType="positive" className={strike ? styles.strike : undefined}>
-          SECURE
-        </Tag>
-      );
-    default:
-      return null;
-  }
+function SecurityTag({ isSecure, strike }: SecurityTagParams) {
+  const tagType = isSecure ? 'positive' : 'muted';
+  const text = isSecure ? 'SECURE' : 'PUBLIC';
+
+  return (
+    <Tag tagType={tagType} className={strike ? styles.strike : undefined}>
+      {text}
+    </Tag>
+  );
 }
 interface AssetUrlCellParams {
-  current: Security;
-  selected: Security;
+  current: boolean;
+  selected: boolean;
 }
 
 function AssetUrlCell({ current, selected }: AssetUrlCellParams) {
@@ -47,14 +37,13 @@ function AssetUrlCell({ current, selected }: AssetUrlCellParams) {
       {current !== selected ? (
         <>
           {' '}
-          <SecurityTag security={current} strike /> &rarr;{' '}
+          <SecurityTag isSecure={current} strike /> &rarr;{' '}
         </>
       ) : null}
-      <SecurityTag security={selected} />
-      {selected === 'secure' ? (
+      <SecurityTag isSecure={selected} />
+      {selected === true ? (
         <>
-          {' '}
-          <Icon icon="Lock" color="positive" className={styles.lockIcon} />
+          &nbsp; <Icon icon="Lock" color="positive" className={styles.lockIcon} />
         </>
       ) : null}
     </>
@@ -63,19 +52,19 @@ function AssetUrlCell({ current, selected }: AssetUrlCellParams) {
 
 const levelToUrlSecurity = {
   [LEVEL.MIGRATING]: {
-    cma: 'public',
-    cpa: 'public',
-    cda: 'public',
+    cma: false,
+    cpa: false,
+    cda: false,
   },
   [LEVEL.UNPUBLISHED]: {
-    cma: 'secure',
-    cpa: 'secure',
-    cda: 'public',
+    cma: true,
+    cpa: true,
+    cda: false,
   },
   [LEVEL.ALL]: {
-    cma: 'secure',
-    cpa: 'secure',
-    cda: 'secure',
+    cma: true,
+    cpa: true,
+    cda: true,
   },
 };
 

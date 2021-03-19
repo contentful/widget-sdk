@@ -33,7 +33,11 @@ const TurnOffDialog = ({ onClose, onSubmit }: TurnOffDialogParams) => {
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content>
             <Typography>
-              <Paragraph>All assets will become unprotected and accessible.</Paragraph>
+              <Paragraph>
+                All assets will become unprotected and accessible. You will no longer be able to
+                create new asset signing keys, and existing signed URLs may cease functioning before
+                their expiry.
+              </Paragraph>
               <Paragraph>
                 <CheckboxField
                   id="understand-change"

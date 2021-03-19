@@ -37,10 +37,7 @@ interface TurnOffDialogParams {
 const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialogParams) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const onCheckboxChange = () => setCheckboxChecked(!checkboxChecked);
-  const [selectedLevel, setSelectedLevel] = useState<LEVEL>(LEVEL.MIGRATING);
-  const selectionChanged = (value) => {
-    setSelectedLevel(value.target.value);
-  };
+  const [selectedLevel, setSelectedLevel] = useState<LEVEL>(currentLevel);
 
   return (
     <Modal
@@ -62,7 +59,10 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                   id="optionSelect"
                   name="optionSelect"
                   labelText="Asset protection level"
-                  onChange={selectionChanged}
+                  onChange={(e) => {
+                    setCheckboxChecked(false);
+                    setSelectedLevel((e.target as HTMLSelectElement).value as LEVEL);
+                  }}
                   value={currentLevel}>
                   {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
                     <Option key={level} value={level}>
