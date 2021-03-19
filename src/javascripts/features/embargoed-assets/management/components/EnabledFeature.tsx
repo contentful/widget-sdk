@@ -24,18 +24,22 @@ interface EnabledFeatureParams {
 export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeatureParams) {
   const [displayTurnOffDialog, setDisplayTurnOffDialog] = useState(false);
   const [displaySelectionDialog, setDisplaySelectionDialog] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
 
   const handleLevelSelection = (newLevel: LEVEL) => {
     setDisplaySelectionDialog(false);
 
+    setIsChanging(true);
     setCurrentLevel(newLevel)
       .then(() => {
         Notification.success(LevelDescription[newLevel]);
       })
-      .catch(() => Notification.error('Error saving settings, please reload'));
+      .catch(() => Notification.error('Error saving settings, please reload'))
+      .finally(() => setIsChanging(false));
   };
 
   const handleDisableFeature = () => {
+    setIsChanging(true);
     setCurrentLevel(LEVEL.DISABLED)
       .then(() => {
         Notification.success(
@@ -47,7 +51,8 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
           ) as unknown) as string
         );
       })
-      .catch(() => Notification.error('Error saving settings, please reload'));
+      .catch(() => Notification.error('Error saving settings, please reload'))
+      .finally(() => setIsChanging(false));
   };
 
   return (
@@ -60,6 +65,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
           <LevelHelpTable currentLevel={currentLevel} />
           <Button
             buttonType="primary"
+            disabled={isChanging}
             onClick={() => setDisplaySelectionDialog(true)}
             testId="turn-on">
             Change protection level
@@ -83,6 +89,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
           <Paragraph>All assets will become unprotected and accessible.</Paragraph>
           <Button
             buttonType="muted"
+            disabled={isChanging}
             onClick={() => setDisplayTurnOffDialog(true)}
             testId="turn-off">
             Turn off

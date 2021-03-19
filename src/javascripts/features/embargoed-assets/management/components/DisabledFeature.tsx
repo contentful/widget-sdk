@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Card,
@@ -14,10 +14,12 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { LEVEL } from '../constants';
 
 interface DisabledFeatureParams {
-  setCurrentLevel?: (level: LEVEL) => Promise<any>;
+  setCurrentLevel?: (level: LEVEL | 'enabled') => Promise<any>;
 }
 
 export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
+  const [isChanging, setIsChanging] = useState(false);
+
   return (
     <Card testId="danger-zone-section-card" className={styles.sectionWide}>
       <Typography className={styles.centered}>
@@ -33,8 +35,10 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
         {setCurrentLevel ? (
           <Button
             buttonType="primary"
+            disabled={isChanging}
             onClick={() => {
-              setCurrentLevel(LEVEL.MIGRATING)
+              setIsChanging(true);
+              setCurrentLevel('enabled')
                 .then(() =>
                   Notification.success(
                     ((
@@ -45,7 +49,8 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
                     ) as unknown) as string
                   )
                 )
-                .catch(() => Notification.error('Error saving settings, please reload'));
+                .catch(() => Notification.error('Error saving settings'))
+                .finally(() => setIsChanging(true));
             }}
             testId="turn-off">
             Get started

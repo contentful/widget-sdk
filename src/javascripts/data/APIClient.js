@@ -567,9 +567,9 @@ APIClient.prototype.getEmbargoedAssetsSettingLevel = function () {
   //   path: ['embargoed_assets'],
   // });
 
-  return new Promise((resolve, _reject) => {
+  return new Promise((_resolve, _reject) => {
     setTimeout(() => {
-      resolve({ level: '' });
+      _resolve({ level: '' });
       // reject({ level: 'all' });
     }, 1000);
   });
@@ -584,10 +584,14 @@ APIClient.prototype.setEmbargoedAssetsSettingLevel = function (level) {
   //   },
   // });
 
-  return new Promise((_resolve, reject) => {
+  if (level === 'enabled') {
+    level = 'migrating';
+  }
+
+  return new Promise((_resolve, _reject) => {
     setTimeout(() => {
       // resolve({ level });
-      reject({ level });
+      _resolve({ level });
     }, 1000);
   });
 };

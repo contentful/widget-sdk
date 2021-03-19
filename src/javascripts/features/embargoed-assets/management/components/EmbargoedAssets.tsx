@@ -46,7 +46,7 @@ export function EmbargoedAssets() {
     return <DisabledFeature />;
   }
 
-  const handleLevelChange = (newLevel: LEVEL) => {
+  const handleLevelChange = (newLevel: LEVEL | 'enabled') => {
     return embargoedAssets(currentSpaceId)
       .setCurrentLevel(newLevel)
       .then(({ level }) => setCurrentLevel(level));

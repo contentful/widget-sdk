@@ -14,7 +14,7 @@ export function embargoedAssets(spaceId: string | undefined) {
     getCurrentLevel() {
       return apiClient.getEmbargoedAssetsSettingLevel() as Promise<EmbargoedAsset>;
     },
-    setCurrentLevel(level) {
+    setCurrentLevel(level: LEVEL | 'enabled') {
       return apiClient.setEmbargoedAssetsSettingLevel(level) as Promise<EmbargoedAsset>;
     },
   };
