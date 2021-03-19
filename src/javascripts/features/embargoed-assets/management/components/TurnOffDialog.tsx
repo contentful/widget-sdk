@@ -26,7 +26,7 @@ const TurnOffDialog = ({ onClose, onSubmit }: TurnOffDialogParams) => {
       shouldCloseOnEscapePress
       shouldCloseOnOverlayClick
       isShown
-      testId="content-release-modal"
+      testId="turn-off-modal"
       onClose={onClose}>
       {({ title, onClose }) => (
         <>

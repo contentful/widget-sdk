@@ -1,10 +1,51 @@
+import { Notification, Paragraph } from '@contentful/forma-36-react-components';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import React, { useEffect, useState } from 'react';
 import { LEVEL } from '../constants';
+import { styles } from '../EmbargoedAssets.styles';
 import { embargoedAssets } from '../services/embargoedAssetsService';
 import { DisabledFeature } from './DisabledFeature';
 import { EnabledFeature } from './EnabledFeature';
 import { LoadingFeature } from './LoadingFeature';
+
+function notificationForLevel(level: LEVEL) {
+  switch (level) {
+    case LEVEL.MIGRATING:
+      return (
+        <>
+          <Paragraph className={styles.bolder}>Preparation mode activated</Paragraph>
+          <Paragraph>Use this mode to set up your assets to be protected.</Paragraph>
+        </>
+      );
+    case LEVEL.UNPUBLISHED:
+      return (
+        <>
+          <Paragraph className={styles.bolder}>Unpublished assets protected</Paragraph>
+          <Paragraph>
+            Unpublished assets are protected within 48 hours, and published assets are publicly
+            accessible.
+          </Paragraph>
+        </>
+      );
+    case LEVEL.ALL:
+      return (
+        <>
+          <Paragraph className={styles.bolder}>All assets protected</Paragraph>
+          <Paragraph>All assets will be protected within 48 hours.</Paragraph>
+        </>
+      );
+
+    case LEVEL.DISABLED:
+      return (
+        <>
+          <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
+          <Paragraph>All assets are now publicly accessible.</Paragraph>
+        </>
+      );
+    default:
+      return '';
+  }
+}
 
 export function EmbargoedAssets() {
   const { currentSpaceId } = useSpaceEnvContext();
@@ -49,7 +90,13 @@ export function EmbargoedAssets() {
   const handleLevelChange = (newLevel: LEVEL | 'enabled') => {
     return embargoedAssets(currentSpaceId)
       .setCurrentLevel(newLevel)
-      .then(({ level }) => setCurrentLevel(level));
+      .then(
+        ({ level }) => {
+          setCurrentLevel(level);
+          Notification.success(notificationForLevel(level) as string);
+        },
+        () => Notification.error('Error saving settings')
+      );
   };
 
   if (!currentLevel) {

@@ -66,6 +66,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                   {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
                     <Option key={level} value={level}>
                       {LevelDescription[level]}
+                      {level === currentLevel ? ' (active)' : null}
                     </Option>
                   ))}
                 </SelectField>

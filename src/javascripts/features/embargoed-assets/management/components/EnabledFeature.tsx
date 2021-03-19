@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Heading,
-  Notification,
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
@@ -28,31 +27,13 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
 
   const handleLevelSelection = (newLevel: LEVEL) => {
     setDisplaySelectionDialog(false);
-
     setIsChanging(true);
-    setCurrentLevel(newLevel)
-      .then(() => {
-        Notification.success(LevelDescription[newLevel]);
-      })
-      .catch(() => Notification.error('Error saving settings, please reload'))
-      .finally(() => setIsChanging(false));
+    setCurrentLevel(newLevel).finally(() => setIsChanging(false));
   };
 
   const handleDisableFeature = () => {
     setIsChanging(true);
-    setCurrentLevel(LEVEL.DISABLED)
-      .then(() => {
-        Notification.success(
-          ((
-            <>
-              <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
-              <Paragraph>All assets are now publicly accessible.</Paragraph>
-            </>
-          ) as unknown) as string
-        );
-      })
-      .catch(() => Notification.error('Error saving settings, please reload'))
-      .finally(() => setIsChanging(false));
+    setCurrentLevel(LEVEL.DISABLED).finally(() => setIsChanging(false));
   };
 
   return (
@@ -61,7 +42,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
         <Typography>
           <Paragraph>Asset protection level</Paragraph>
           <Heading>{LevelDescription[currentLevel]}</Heading>
-          <LevelHelpText level={LEVEL.MIGRATING} />
+          <LevelHelpText level={currentLevel} />
           <LevelHelpTable currentLevel={currentLevel} />
           <Button
             buttonType="primary"

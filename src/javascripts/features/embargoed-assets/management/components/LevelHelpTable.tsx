@@ -88,19 +88,19 @@ export function LevelHelpTable({ currentLevel, selectedLevel }: LevelHelpTablePa
         </TableRow>
       </TableHead>
       <TableBody>
-        <TableRow testId="embargoed-assets.1">
+        <TableRow testId="embargoed-assets.cma">
           <TableCell>Management (CMA)</TableCell>
           <TableCell>
             <AssetUrlCell current={fromLevelSecurity.cma} selected={toLevelSecurity.cma} />
           </TableCell>
         </TableRow>
-        <TableRow testId="embargoed-assets.1">
+        <TableRow testId="embargoed-assets.cpa">
           <TableCell>Preview (CPA)</TableCell>
           <TableCell>
             <AssetUrlCell current={fromLevelSecurity.cpa} selected={toLevelSecurity.cpa} />
           </TableCell>
         </TableRow>
-        <TableRow testId="embargoed-assets.1">
+        <TableRow testId="embargoed-assets.cda">
           <TableCell>Delivery (CDA)</TableCell>
           <TableCell>
             <AssetUrlCell current={fromLevelSecurity.cda} selected={toLevelSecurity.cda} />

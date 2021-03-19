@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Heading,
-  Notification,
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
@@ -38,19 +37,7 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
             disabled={isChanging}
             onClick={() => {
               setIsChanging(true);
-              setCurrentLevel('enabled')
-                .then(() =>
-                  Notification.success(
-                    ((
-                      <>
-                        <Paragraph className={styles.bolder}>Preparation mode activated</Paragraph>
-                        <Paragraph>Use this mode to set up your assets to be protected.</Paragraph>
-                      </>
-                    ) as unknown) as string
-                  )
-                )
-                .catch(() => Notification.error('Error saving settings'))
-                .finally(() => setIsChanging(true));
+              setCurrentLevel('enabled').finally(() => setIsChanging(false));
             }}
             testId="turn-off">
             Get started
