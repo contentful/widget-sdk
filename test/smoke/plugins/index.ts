@@ -1,21 +1,15 @@
-/**
- * Although some of this could be put into the configuration (like env.email), I chose to put
- * this all here so that there's one single place to find it.
- */
-export default function plugins(_, config: Cypress.PluginConfigOptions) {
-  const { SMOKE_TEST_USER_EMAIL, SMOKE_TEST_USER_PASSWORD, SMOKE_TEST_DOMAIN } = process.env;
+import { setupConfig } from './setupConfig';
+import { setupTelemetryTask } from './setupTelemetryTask';
 
-  if (!SMOKE_TEST_USER_PASSWORD) {
-    throw new Error('Environment variable SMOKE_TEST_USER_PASSWORD expected but not given');
-  }
+export default function setupPlugins(
+  on: Cypress.PluginEvents,
+  initialConfig: Cypress.PluginConfigOptions
+) {
+  // This should always come first so that if we ever need the fully augmented
+  // config in a later plugin (like in the telemetry task setup), it will be available.
+  const config = setupConfig(on, initialConfig);
 
-  const email = SMOKE_TEST_USER_EMAIL ? SMOKE_TEST_USER_EMAIL : 'test@contentful.com';
-  const domain = SMOKE_TEST_DOMAIN ? SMOKE_TEST_DOMAIN : 'contentful.com';
-
-  config.baseUrl = `https://app.${SMOKE_TEST_DOMAIN}`;
-  config.env.email = email;
-  config.env.password = SMOKE_TEST_USER_PASSWORD;
-  config.env.domain = domain;
+  setupTelemetryTask(on, config);
 
   return config;
 }
