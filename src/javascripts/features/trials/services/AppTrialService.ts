@@ -11,6 +11,8 @@ import TheLocaleStore from 'services/localeStore';
 import importer from '../utils/importer';
 import type { PlainClientAPI } from 'contentful-management';
 import { AppTrialFeature } from '../types/AppTrial';
+import * as logger from 'services/logger';
+import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 
 export const canStartAppTrial = async (organizationId: string) => {
   if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
@@ -36,9 +38,20 @@ export const canStartAppTrial = async (organizationId: string) => {
 };
 
 export const startAppTrial = async (organizationId: string) => {
-  const trial = await Repo.createTrial(organizationId);
+  try {
+    const trial = await Repo.createTrial(organizationId);
 
-  return { apps: ['compose', 'launch'], trial };
+    return { apps: ['compose', 'launch'], trial };
+  } catch (e) {
+    if (e.status >= 500) {
+      logger.logError('Could not create apps trial space', {
+        error: e,
+        groupingHash: 'AppTrialError',
+      });
+      throw new TrialSpaceServerError();
+    }
+    throw e;
+  }
 };
 
 export const isActiveAppTrial = (feature: AppTrialFeature) => {
@@ -77,8 +90,16 @@ export const getAppTrialSpaceKey = async (feature: AppTrialFeature): Promise<str
   return appTrialSpace.sys.id;
 };
 
-export const spaceSetUp = async (client: PlainClientAPI) => {
+export const contentImport = async (client: PlainClientAPI) => {
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const { provisionHelpCenter } = await importer();
-  await provisionHelpCenter(client, defaultLocaleCode);
+  try {
+    await provisionHelpCenter(client, defaultLocaleCode);
+  } catch (e) {
+    logger.logError('Content import failed during apps trial', {
+      error: e,
+      groupingHash: 'AppTrialError',
+    });
+    throw new ContentImportError();
+  }
 };

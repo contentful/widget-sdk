@@ -91,6 +91,9 @@ export class AppManager {
         userNotifications && Notification.error('Failed to install the app.');
         AppLifecycleTracking.installationFailed(app.id);
       }
+      if (!userNotifications) {
+        throw err;
+      }
     }
   }
 

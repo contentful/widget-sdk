@@ -1,14 +1,16 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
-import { startAppTrial, spaceSetUp } from '../services/AppTrialService';
+import { startAppTrial, contentImport } from '../services/AppTrialService';
 import * as TokenStore from 'services/TokenStore';
 
 import { StartAppTrial } from './StartAppTrial';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
+import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
+import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 const mockedOrg = fake.Organization();
 const mockedTrialSpace = fake.Space();
@@ -51,7 +53,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('../services/AppTrialService', () => ({
   startAppTrial: jest.fn(),
-  spaceSetUp: jest.fn(),
+  contentImport: jest.fn(),
 }));
 
 const mockedResetWithSpace = jest.fn().mockResolvedValue({});
@@ -61,7 +63,7 @@ jest.mock('core/NgRegistry', () => ({
     resetWithSpace: mockedResetWithSpace,
     cma: jest.fn(),
     getEnvironmentId: jest.fn(),
-    getId: jest.fn(),
+    getId: jest.fn().mockReturnValue(mockedTrialSpace.sys.id),
   })),
 }));
 
@@ -85,7 +87,12 @@ jest.spyOn(TokenStore, 'getSpace').mockResolvedValue(mockedTrialSpace);
 jest.spyOn(TokenStore, 'refresh').mockResolvedValue({});
 jest.spyOn(TokenStore, 'getUser').mockResolvedValue({});
 
+// required for cleanupNotifications
+jest.useFakeTimers();
+
 describe('StartAppTrial', () => {
+  afterEach(cleanupNotifications);
+
   it('when trials feature flag is off', async () => {
     getVariation.mockResolvedValueOnce(false);
     build();
@@ -108,7 +115,8 @@ describe('StartAppTrial', () => {
     await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
     expect(mockedStorageSet).toHaveBeenCalledTimes(1);
     expect(getSpaceAutoCreatedKey).toHaveBeenCalledTimes(1);
-    expect(spaceSetUp).toHaveBeenCalledTimes(0);
+    expect(mockedInstallApp).toHaveBeenCalledTimes(2);
+    expect(contentImport).toHaveBeenCalledTimes(0);
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {
@@ -125,7 +133,7 @@ describe('StartAppTrial', () => {
 
     await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
 
-    expect(spaceSetUp).toHaveBeenCalledTimes(1);
+    expect(contentImport).toHaveBeenCalledTimes(1);
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {
@@ -135,18 +143,103 @@ describe('StartAppTrial', () => {
     });
   });
 
-  it('should redirect to the subscription page when start app trial fails', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    startAppTrial.mockRejectedValue({});
-    build();
+  describe('when start app trial fails', () => {
+    it('should redirect to the subscription page', async () => {
+      startAppTrial.mockRejectedValueOnce(new TrialSpaceServerError());
+      build();
 
-    await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
-    expect(go).toHaveBeenCalledWith({
-      path: ['account', 'organizations', 'subscription_new'],
-      params: {
-        orgId: mockedOrg.sys.id,
-      },
-      options: { location: 'replace' },
+      await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+      expect(go).toHaveBeenCalledWith({
+        path: ['account', 'organizations', 'subscription_new'],
+        params: {
+          orgId: mockedOrg.sys.id,
+        },
+        options: { location: 'replace' },
+      });
+    });
+
+    it('should show a notification if failed with 5XX errors', async () => {
+      startAppTrial.mockRejectedValueOnce(new TrialSpaceServerError());
+      build();
+
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+      expect(screen.getByTestId('cf-ui-notification')).toHaveTextContent('start your trial');
+    });
+
+    it('should not show a notification if failed with other errors', async () => {
+      startAppTrial.mockRejectedValueOnce(new Error());
+      build();
+
+      await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+      expect(screen.queryByTestId('cf-ui-notification')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when app installation fails', () => {
+    beforeEach(() => {
+      startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
+      mockedInstallApp.mockRejectedValue(new Error());
+    });
+
+    it('should redirect to the trial space home', async () => {
+      build();
+
+      await waitFor(() => expect(mockedInstallApp).toHaveBeenCalledTimes(2));
+      expect(go).toHaveBeenCalledWith({
+        path: ['spaces', 'detail'],
+        params: {
+          spaceId: mockedAppsTrial.trial.spaceKey,
+        },
+        options: { location: 'replace' },
+      });
+    });
+
+    it('should show a correct notification when all installations fail', async () => {
+      build();
+
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+      expect(screen.getByTestId('cf-ui-notification')).toHaveTextContent('Compose + Launch');
+    });
+
+    it('should show a correct notification when one installation fails', async () => {
+      mockedInstallApp.mockRejectedValueOnce(new Error()).mockResolvedValueOnce();
+
+      build();
+
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+      expect(screen.getByTestId('cf-ui-notification')).toHaveTextContent('Compose.');
+    });
+  });
+
+  describe('when content import fails', () => {
+    beforeEach(() => {
+      startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
+      mockedInstallApp.mockResolvedValue();
+      contentImport.mockRejectedValue(new ContentImportError());
+    });
+
+    it('should redirect to the trial space home', async () => {
+      build({ existingUsers: false });
+
+      await waitFor(() => expect(contentImport).toHaveBeenCalledTimes(1));
+
+      expect(go).toHaveBeenCalledWith({
+        path: ['spaces', 'detail'],
+        params: {
+          spaceId: mockedAppsTrial.trial.spaceKey,
+        },
+        options: { location: 'replace' },
+      });
+    });
+
+    it('should not show a notification', async () => {
+      build({ existingUsers: false });
+
+      await waitFor(() => expect(contentImport).toHaveBeenCalledTimes(1));
+      expect(screen.queryByTestId('cf-ui-notification')).not.toBeInTheDocument();
     });
   });
 
