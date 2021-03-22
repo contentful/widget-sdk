@@ -20,6 +20,13 @@ const versionedEntries = [
   versionedLink({ type: 'Asset', id: 'testAssetId1', version: 1 }),
 ];
 
+const notVersionedEntries = [
+  makeLink('Entry', testEntryId),
+  makeLink('Asset', testAssetId),
+  makeLink('Entry', 'testEntryId1'),
+  makeLink('Asset', 'testAssetId1'),
+];
+
 const bulkPublishResponsePayload = {
   entities: {
     items: versionedEntries,
@@ -32,7 +39,7 @@ const bulkPublishResponsePayload = {
 const bulkValidateResponsePayload = {
   action: 'publish',
   entities: {
-    items: versionedEntries,
+    items: notVersionedEntries,
     sys: {
       type: 'Array',
     },
@@ -115,16 +122,9 @@ const serverError = {
 
 type ResponseOptions = {
   status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-} & (
-  | {
-      action: 'publish';
-      payload?: typeof bulkPublishResponsePayload;
-    }
-  | {
-      action: 'validate';
-      payload?: typeof bulkValidateResponsePayload;
-    }
-);
+  action: 'publish' | 'validate';
+  payload: typeof bulkPublishResponsePayload | typeof bulkValidateResponsePayload;
+};
 
 const bulkActionResponse = ({
   action = 'publish',
