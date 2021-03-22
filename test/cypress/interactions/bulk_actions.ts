@@ -14,15 +14,10 @@ import {
 
 enum BulkActionStates {
   NO_BULK_ACTIONS = 'bulk-actions/no-bulk-actions-for-default-space',
-  BULK_PUBLISH_IN_PROGRESS = 'bulk-actions/one-in-progress-bulk-action-for-default-entry',
-  BULK_PUBLISH_SUCCEEDED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
-  BULK_PUBLISH_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
+  ONE_COMPLETED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
+  ONE_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
+  ONE_IN_PROGRESS = 'bulk-actions/one-bulk-action-in-progress',
   MAX_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs-for-default-space',
-  VALIDATE_SUCCEEDED = 'bulk-actions/validate-publishing-for-default-space',
-  BULK_VALIDATE_IN_PROGRESS = 'bulk-actions/validate-one-in-progress-bulk-action-for-default-entry',
-  BULK_VALIDATE_SUCCEEDED = 'bulk-actions/validate-one-completed-bulk-action-for-default-entry',
-  BULK_VALIDATE_FAILED = 'bulk-actions/validate-one-failed-bulk-action-default-entry',
-  VALIDATE_MAX_NUMBER_OF_JOBS = 'bulk-actions/validate-maximum-number-of-jobs-for-default-space',
 }
 
 export const publishPayload = {
@@ -237,7 +232,7 @@ export const getPublishBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_PUBLISH_IN_PROGRESS,
+      state: BulkActionStates.ONE_IN_PROGRESS,
       willRespondWith: {
         status: 200,
         headers: {
@@ -258,7 +253,7 @@ export const getPublishBulkAction = {
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_PUBLISH_SUCCEEDED,
+      state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -280,7 +275,7 @@ export const getPublishBulkAction = {
   willReturnStatusFailed(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_PUBLISH_FAILED,
+      state: BulkActionStates.ONE_FAILED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -344,7 +339,7 @@ export const getValidateBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_VALIDATE_IN_PROGRESS,
+      state: BulkActionStates.ONE_IN_PROGRESS,
       willRespondWith: {
         status: 200,
         headers: {
@@ -365,7 +360,7 @@ export const getValidateBulkAction = {
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_VALIDATE_SUCCEEDED,
+      state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -387,7 +382,7 @@ export const getValidateBulkAction = {
   willReturnStatusFailed(): string {
     cy.addInteraction({
       ...getBulkActionRequest,
-      state: BulkActionStates.BULK_VALIDATE_FAILED,
+      state: BulkActionStates.ONE_FAILED,
       willRespondWith: {
         status: 200,
         headers: {
@@ -413,7 +408,7 @@ export const validateBulkAction = {
   willSucceed(): string {
     cy.addInteraction({
       ...validateBulkActionRequest,
-      state: BulkActionStates.VALIDATE_SUCCEEDED,
+      state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 201,
         headers: {
@@ -432,7 +427,7 @@ export const validateBulkAction = {
   willFailWithTooManyRequests(): string {
     cy.addInteraction({
       ...validateBulkActionRequest,
-      state: BulkActionStates.VALIDATE_MAX_NUMBER_OF_JOBS,
+      state: BulkActionStates.MAX_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
         headers: {
