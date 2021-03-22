@@ -145,6 +145,7 @@ describe('Entry references', () => {
 
     it('should publish entities successfully', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
+      Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getPublishBulkAction.willReturnStatusSucceeded();
@@ -161,6 +162,7 @@ describe('Entry references', () => {
 
     it('should display an error message when a BulkAction fails', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
+      Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getPublishBulkAction.willReturnStatusFailed();

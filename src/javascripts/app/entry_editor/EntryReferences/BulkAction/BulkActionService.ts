@@ -115,7 +115,17 @@ function batchApiClient(): APIClient {
   return apiClientMemo;
 }
 
-async function createPublishBulkAction(entities: PublishableEntity[]): Promise<BulkAction> {
+async function getUpdatedEntities(entities: PublishableEntity[]): Promise<PublishableEntity[]> {
+  return Promise.all(
+    entities.map(({ sys }) => {
+      if (sys.type === 'Asset') return batchApiClient().getAsset(sys.id);
+      if (sys.type === 'Entry') return batchApiClient().getEntry(sys.id);
+    })
+  );
+}
+
+async function createPublishBulkAction(selectedEntities: PublishableEntity[]): Promise<BulkAction> {
+  const entities = await getUpdatedEntities(selectedEntities);
   const items = entitiesToLinks({ entities, includeVersion: true });
 
   const bulkAction = await batchApiClient().createPublishBulkAction({
