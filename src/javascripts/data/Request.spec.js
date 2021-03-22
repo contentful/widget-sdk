@@ -27,7 +27,7 @@ describe('Request', () => {
       ok: true,
       status: 200,
       statusText: 'OK',
-      json: jest.fn(async () => ({ foo: 'bar' })),
+      text: jest.fn(async () => JSON.stringify({ foo: 'bar' })),
       headers: new Headers({
         'X-Contentful-Request-ID': 'reqid',
         'Content-Type': 'application/vnd.contentful.management.v1+json',
@@ -113,12 +113,12 @@ describe('Request', () => {
     });
   });
 
-  it('rejects if the call to response.json throws', async () => {
+  it('rejects if the call to response.text throws', async () => {
     window.fetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
       statusText: 'OK',
-      json: () => {
+      text: () => {
         throw new Error('Whoa');
       },
       headers: new Headers({
@@ -151,12 +151,74 @@ describe('Request', () => {
     });
   });
 
+  it('rejects if the data is not valid JSON', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      text: () => '{',
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
+    });
+
+    let response;
+
+    try {
+      response = await request({ url: 'http://foo.com' });
+    } catch (err) {
+      response = err;
+    }
+
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('Unexpected end of JSON input');
+
+    expect({ ...response }).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
+      status: 200,
+      statusText: 'OK',
+      rawResponse: expect.any(Object),
+    });
+  });
+
+  it('resolves if the body text is empty', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      text: () => '',
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
+      status: 200,
+      statusText: 'OK',
+      rawResponse: expect.any(Object),
+    });
+  });
+
   it('rejects with relevant data', async () => {
     window.fetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       statusText: 'NOT FOUND',
-      json: () => ({ message: 'Not found' }),
+      text: () => JSON.stringify({ message: 'Not found' }),
       headers: new Headers({
         'X-Contentful-Request-ID': 'reqid',
         'Content-Type': 'application/vnd.contentful.management.v1+json',
