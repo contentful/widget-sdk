@@ -61,27 +61,9 @@ export const validatePayload = {
       type: 'Array',
     },
     items: [
-      {
-        sys: {
-          id: defaultEntryTestIds.defaultId,
-          linkType: 'Entry',
-          type: 'Link',
-        },
-      },
-      {
-        sys: {
-          id: defaultEntryTestIds.testEntryId2,
-          linkType: 'Entry',
-          type: 'Link',
-        },
-      },
-      {
-        sys: {
-          id: defaultEntryTestIds.testEntryId3,
-          linkType: 'Entry',
-          type: 'Link',
-        },
-      },
+      makeLink('Entry', defaultEntryTestIds.defaultId),
+      makeLink('Entry', defaultEntryTestIds.testEntryId2),
+      makeLink('Entry', defaultEntryTestIds.testEntryId3),
     ],
   },
 };
