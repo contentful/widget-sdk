@@ -28,7 +28,10 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
   if (SMOKE_TEST_ENVIRONMENT === 'staging') {
     domain = 'flinkly.com';
     environment = 'staging';
-  } else if (typeof SMOKE_TEST_ENVIRONMENT === 'string') {
+  } else if (
+    SMOKE_TEST_ENVIRONMENT !== 'production' &&
+    typeof SMOKE_TEST_ENVIRONMENT === 'string'
+  ) {
     domain = SMOKE_TEST_ENVIRONMENT;
     environment = 'other';
   }
