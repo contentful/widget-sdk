@@ -55,22 +55,30 @@ async function fetchFn(config) {
     throw Object.assign(new Error('API request failed'), { status: -1, config });
   }
 
-  let data = null;
-
-  // 204 statuses are empty, so don't attempt to get the response body
-  if (rawResponse.status !== 204) {
-    data = await safelyGetResponseBody(rawResponse);
-  }
-
-  // matching AngularJS's $http response object
-  // https://docs.angularjs.org/api/ng/service/$http#$http-returns
   const response = {
+    // matching AngularJS's $http response object
+    // https://docs.angularjs.org/api/ng/service/$http#$http-returns
     config,
-    data,
+    data: null,
     headers: fromPairs([...rawResponse.headers.entries()]),
     status: rawResponse.status,
     statusText: rawResponse.statusText,
+
+    // Non-AngularJS
+    rawResponse,
   };
+
+  // 204 statuses are empty, so don't attempt to get the response body
+  if (rawResponse.status !== 204) {
+    try {
+      response.data = await getResponseBody(rawResponse);
+    } catch (err) {
+      // Make sure we capture both the original error and the response information
+      Object.assign(err, response);
+
+      throw err;
+    }
+  }
 
   if (rawResponse.ok) {
     return response;
@@ -80,15 +88,17 @@ async function fetchFn(config) {
 }
 
 /**
- * Safely get the response data.
+ * Get the response data.
  *
  * If the response content type is JSON-like (e.g. application/vnd.contentful.management.v1+json),
- * the body will be parsed as JSON. Otherwise, it will be parsed as an array buffer. In both cases,
- * if parsing fails, `null` will be returned.
+ * the body will be parsed as JSON. Otherwise, it will be parsed as an array buffer.
+ *
+ * If the response cannot be parsed (such as, if it's not valid JSON), the error will be thrown,
+ * rather than gracefully handled.
  *
  * @param  {Response} response       window.fetch response
  */
-async function safelyGetResponseBody(response) {
+async function getResponseBody(response) {
   const contentType = response.headers.get('Content-Type');
 
   let responseFn = 'json';
@@ -97,11 +107,7 @@ async function safelyGetResponseBody(response) {
     responseFn = 'arrayBuffer';
   }
 
-  try {
-    return await response[responseFn]();
-  } catch {
-    return null;
-  }
+  return await response[responseFn]();
 }
 
 // fetch requires the url as the first argument.

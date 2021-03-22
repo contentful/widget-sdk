@@ -109,24 +109,36 @@ describe('Request', () => {
       },
       status: 200,
       statusText: 'OK',
+      rawResponse: expect.any(Object),
     });
   });
 
-  it('handles if the call to response.json throws', async () => {
+  it('rejects if the call to response.json throws', async () => {
     window.fetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
       statusText: 'OK',
       json: () => {
-        throw {};
+        throw new Error('Whoa');
       },
       headers: new Headers({
         'X-Contentful-Request-ID': 'reqid',
         'Content-Type': 'application/vnd.contentful.management.v1+json',
       }),
     });
-    const response = await request({ url: 'http://foo.com' });
-    expect(response).toEqual({
+
+    let response;
+
+    try {
+      response = await request({ url: 'http://foo.com' });
+    } catch (err) {
+      response = err;
+    }
+
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('Whoa');
+
+    expect({ ...response }).toEqual({
       config: { url: 'http://foo.com' },
       data: null,
       headers: {
@@ -135,6 +147,7 @@ describe('Request', () => {
       },
       status: 200,
       statusText: 'OK',
+      rawResponse: expect.any(Object),
     });
   });
 
@@ -156,6 +169,7 @@ describe('Request', () => {
     } catch (e) {
       response = e;
     }
+
     expect(response).toBeInstanceOf(Error);
     expect(response.message).toBe('API request failed');
     expect({ ...response }).toEqual({
@@ -167,6 +181,7 @@ describe('Request', () => {
       },
       status: 404,
       statusText: 'NOT FOUND',
+      rawResponse: expect.any(Object),
     });
   });
 
@@ -192,16 +207,17 @@ describe('Request', () => {
       headers: { 'x-contentful-request-id': 'reqid', 'content-type': 'application/pdf' },
       status: 200,
       statusText: 'OK',
+      rawResponse: expect.any(Object),
     });
   });
 
-  it('handles if the call to response.arrayBuffer throws', async () => {
+  it('rejects if the call to response.arrayBuffer throws', async () => {
     window.fetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
       statusText: 'OK',
       arrayBuffer: () => {
-        throw {};
+        throw new Error('ArrayBuffer whoa');
       },
       headers: new Headers({
         'X-Contentful-Request-ID': 'reqid',
@@ -209,9 +225,17 @@ describe('Request', () => {
       }),
     });
 
-    const response = await request({ url: 'http://foo.com' });
+    let response;
 
-    expect(response).toEqual({
+    try {
+      response = await request({ url: 'http://foo.com' });
+    } catch (err) {
+      response = err;
+    }
+
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('ArrayBuffer whoa');
+    expect({ ...response }).toEqual({
       config: { url: 'http://foo.com' },
       data: null,
       headers: {
@@ -220,6 +244,7 @@ describe('Request', () => {
       },
       status: 200,
       statusText: 'OK',
+      rawResponse: expect.any(Object),
     });
   });
 
@@ -267,6 +292,7 @@ describe('Request', () => {
       },
       status: 204,
       statusText: 'OK',
+      rawResponse: expect.any(Object),
     });
     expect(arrayBufferFn).not.toBeCalled();
     expect(jsonFn).not.toBeCalled();
