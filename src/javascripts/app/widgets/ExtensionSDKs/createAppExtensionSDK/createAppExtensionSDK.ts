@@ -12,7 +12,6 @@ import { AppHookBus } from 'features/apps-core';
 
 interface CreateAppExtensionSDKOptions {
   spaceContext: any;
-  $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   appHookBus: AppHookBus;

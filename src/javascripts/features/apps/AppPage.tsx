@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import cx from 'classnames';
 import { css } from 'emotion';
 import {
@@ -21,21 +21,29 @@ import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { AppInstallCallback, AppManager, installOrUpdate } from './AppOperations';
+import { AppManager, installOrUpdate } from './AppOperations';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, getUsageExceededMessage, hasConfigLocation } from './utils';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
-import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
+import {
+  getMarketplaceDataProvider,
+  getCustomWidgetLoader,
+} from 'widgets/CustomWidgetLoaderInstance';
 import {
   WidgetRenderer,
   WidgetLocation,
   buildAppDefinitionWidget,
-  Widget,
+  WidgetNamespace,
 } from '@contentful/widget-renderer';
-import { AppExtensionSDK } from '@contentful/app-sdk';
 import { MarketplaceApp } from 'features/apps-core';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getModule } from 'core/NgRegistry';
+import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 
 enum InstallationState {
   Installation = 'installation',
@@ -57,124 +65,224 @@ const APP_STILL_LOADING_TIMEOUT = 3000;
 const APP_HAS_ERROR_TIMEOUT = 15000;
 
 interface Props {
-  goBackToList: () => void;
-  app: MarketplaceApp;
+  appId: string;
+  repo: {
+    getAppByIdOrSlug: (appId: string) => Promise<MarketplaceApp>;
+  };
   appHookBus: AppHookBus;
-  cma: any;
-  evictWidget: AppInstallCallback;
-  canManageThisApp: boolean;
-  spaceData: {
-    spaceId: string;
-    environmentId: string;
-    organizationId: string;
-  };
-  createSdk: (widget: Widget) => { sdk: AppExtensionSDK; onAppHook: any };
   hasAdvancedAppsFeature: boolean;
+  hasAppsFeature: boolean;
+  canManageApps: boolean;
+  acceptedPermissions: string | null;
 }
 
-interface State {
-  ready: boolean;
-  appLoaded: boolean;
-  showStillLoadingText: boolean;
-  loadingError: boolean;
-  title: string;
-  appIcon: string;
-  appDefinition: MarketplaceApp['appDefinition'] | null;
-  isInstalled: boolean;
-  installationState: InstallationState;
-  appManager: AppManager | null;
-}
+export function AppRoute(props: Props) {
+  const [app, setApp] = React.useState<MarketplaceApp | null>(null);
+  const [ready, setReady] = React.useState(false);
+  const [appLoaded, setAppLoaded] = React.useState(false);
+  const [showStillLoadingText, setShowStillLoadingText] = React.useState(false);
+  const [loadingError, setLoadingError] = React.useState(false);
+  const [isInstalled, setIsInstalled] = React.useState(false);
+  const [installationState, setInstallationState] = React.useState<InstallationState>(
+    InstallationState.NotBusy
+  );
+  const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
+  const spaceContext = React.useMemo(() => getModule('spaceContext'), []); // TODO: Temporary solution for contract tests
+  const { cma } = spaceContext;
+  const {
+    currentSpaceId: spaceId,
+    currentOrganizationId: organizationId,
+    currentEnvironmentId: environmentId,
+    currentOrganization: organization,
+    currentSpace,
+  } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const appManager = React.useMemo<AppManager>(
+    () => new AppManager(cma, environmentId, spaceId, organizationId),
+    [cma, environmentId, spaceId, organizationId]
+  );
+  const canManageThisApp = React.useMemo(() => {
+    if (!app || !organizationId || !organization) return false;
 
-export class AppRoute extends Component<Props, State> {
-  state: State = {
-    ready: false,
-    appLoaded: false,
-    showStillLoadingText: false,
-    loadingError: false,
-    title: get(this.props.app, ['title'], get(this.props.app, ['appDefinition', 'name'])),
-    appIcon: get(this.props.app, ['icon'], ''),
-    appDefinition: null,
-    isInstalled: false,
-    installationState: InstallationState.NotBusy,
-    appManager: null,
-  };
+    const sameOrg = organizationId === app.appDefinition.sys.organization.sys.id;
+    const isDeveloperOrHigher = isOwnerOrAdmin(organization) || isDeveloper(organization);
+    return sameOrg && isDeveloperOrHigher;
+  }, [app, organizationId, organization]);
 
-  // There are no parameters in the app location
-  parameters = {
-    installation: {},
-    instance: {},
-  };
+  const widget = React.useMemo(() => {
+    if (!app) return null;
 
-  async componentDidMount() {
-    try {
-      await this.initialize();
-    } catch (err) {
-      Notification.error('Failed to load the app.');
-      this.props.goBackToList();
-    }
-  }
-
-  initialize = async () => {
-    const { appHookBus, app, spaceData, cma } = this.props;
-
-    const { environmentId, spaceId, organizationId } = spaceData;
-    const appManager = new AppManager(cma, environmentId, spaceId, organizationId);
-    this.setState({ appManager });
-
-    const { appDefinition } = app;
-
-    const [{ appInstallation }] = await Promise.all([
-      appManager.checkAppStatus(app),
-      getMarketplaceDataProvider().prefetch(),
-    ]);
-
-    appHookBus.setInstallation(appInstallation);
-    appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
-    appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
-    appHookBus.on(APP_EVENTS_IN.MARKED_AS_READY, this.onAppMarkedAsReady);
-
-    AppLifecycleTracking.configurationOpened(app.id);
-
-    this.setState(
-      {
-        ready: true,
-        isInstalled: !!appInstallation,
-        appDefinition,
-        appLoaded: !hasConfigLocation(appDefinition),
-      },
-      this.afterInitialize
+    return buildAppDefinitionWidget(
+      // This should never be null, as we check - as this function is only
+      // called once an appDefinition exists
+      app.appDefinition as any,
+      getMarketplaceDataProvider()
     );
-  };
+  }, [app]);
 
-  afterInitialize = () => {
-    setTimeout(() => {
-      if (!this.state.appLoaded) {
-        this.setState({ showStillLoadingText: true });
+  const sdkInstance = React.useMemo(() => {
+    if (!widget || !app) return null;
+
+    const spaceContext = getModule('spaceContext');
+
+    return createAppExtensionSDK({
+      spaceContext,
+      widgetNamespace: WidgetNamespace.APP,
+      widgetId: app.appDefinition.sys.id,
+      appHookBus: props.appHookBus,
+      currentAppWidget: widget,
+    });
+  }, [widget, app, props.appHookBus]);
+
+  const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
+  const appIcon: string = get(app, ['icon'], '');
+
+  React.useEffect(() => {
+    installationStateRef.current = installationState;
+  }, [installationState]);
+
+  React.useEffect(() => {
+    if (!props.repo || !props.appId) return;
+
+    props.repo
+      .getAppByIdOrSlug(props.appId)
+      .then(setApp)
+      .catch(() => {
+        Notification.error('Failed to load the app.');
+        goBackToList();
+      });
+  }, [props.repo, props.appId]);
+
+  React.useEffect(() => {
+    if (!app) return;
+
+    setAppLoaded(!hasConfigLocation(app.appDefinition));
+    AppLifecycleTracking.configurationOpened(app.id);
+  }, [app]);
+
+  React.useEffect(() => {
+    async function initialize() {
+      if (!app || !appManager) return;
+
+      try {
+        const [{ appInstallation }] = await Promise.all([
+          appManager.checkAppStatus(app),
+          getMarketplaceDataProvider().prefetch(),
+        ]);
+
+        props.appHookBus.setInstallation(appInstallation);
+        props.appHookBus.on(APP_EVENTS_IN.CONFIGURED, onAppConfigured);
+        props.appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, onAppMisconfigured);
+        props.appHookBus.on(APP_EVENTS_IN.MARKED_AS_READY, onAppMarkedAsReady);
+
+        setIsInstalled(!!appInstallation);
+        setReady(true);
+      } catch (err) {
+        Notification.error('Failed to load the app.');
+        goBackToList();
       }
+    }
+
+    initialize();
+  }, [app, appManager]); // eslint-disable-line
+
+  React.useEffect(() => {
+    if (appLoaded) return;
+
+    const loadingTextTimeout = setTimeout(() => {
+      setShowStillLoadingText(true);
     }, APP_STILL_LOADING_TIMEOUT);
 
-    setTimeout(() => {
-      if (!this.state.appLoaded) {
-        this.setState({ loadingError: true });
-      }
+    const loadingErrorTimeout = setTimeout(() => {
+      setLoadingError(true);
     }, APP_HAS_ERROR_TIMEOUT);
-  };
 
-  onAppConfigured = async ({ config }: { config: any }) => {
-    const { cma, evictWidget, appHookBus, app, spaceData, hasAdvancedAppsFeature } = this.props;
-    const { appManager } = this.state;
+    return () => {
+      clearTimeout(loadingTextTimeout);
+      clearTimeout(loadingErrorTimeout);
+    };
+  }, [appLoaded]);
+
+  React.useEffect(() => {
+    if (!spaceId || !app) return;
+
+    // When entering the route after a page refresh
+    // the current state won't be initialized. For this reason
+    // we need to compute params and an absolute path manually.
+    const params: { spaceId: string; app?: string; environmentId?: string } = {
+      spaceId: spaceId,
+    };
+    let absoluteListPath = 'spaces.detail.apps.list';
+    if (!isMasterEnvironment) {
+      params.environmentId = environmentId;
+      absoluteListPath = 'spaces.detail.environment.apps.list';
+    }
+
+    // No need to consent for private apps.
+    if (app.isPrivateApp) {
+      if (!props.canManageApps) {
+        // redirect users without management permissions to the app list
+        go({ path: absoluteListPath, params });
+        return;
+      }
+      // Otherwise allow to continue page rendering.
+      return;
+    }
+
+    // If an app is not installed and permissions were not accepted
+    // we display the app dialog so consent can be given.
+    const installingWithoutConsent = !app.appInstallation && !props.acceptedPermissions;
+
+    if (!props.canManageApps || !props.hasAppsFeature || installingWithoutConsent) {
+      if (props.hasAppsFeature) {
+        // Passing this param will open the app dialog.
+        params.app = app.id;
+      }
+
+      go({ path: absoluteListPath, params });
+    }
+  }, [
+    spaceId,
+    isMasterEnvironment,
+    app,
+    environmentId,
+    props.hasAppsFeature,
+    props.acceptedPermissions,
+    props.canManageApps,
+  ]);
+
+  function goBackToList() {
+    return go({ path: '^.list' });
+  }
+
+  async function evictWidget(appInstallation) {
+    const loader = await getCustomWidgetLoader();
+
+    loader.evict({
+      widgetNamespace: WidgetNamespace.APP,
+      widgetId: get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']),
+    });
+  }
+
+  async function onAppConfigured({ config }: { config: any }) {
+    if (!appManager || !app) return;
 
     try {
-      await installOrUpdate(app, cma, evictWidget, appManager!.checkAppStatus, config, spaceData);
+      const spaceData = {
+        spaceId,
+        environmentId,
+        organizationId,
+      };
+      await installOrUpdate(app, cma, evictWidget, appManager.checkAppStatus, config, spaceData);
 
       // Verify if installation was completed.
-      const { appInstallation } = await appManager!.checkAppStatus(app);
+      const { appInstallation } = await appManager.checkAppStatus(app);
       if (!appInstallation) {
         // For whatever reason AppInstallation entity wasn't created.
         throw new Error('AppInstallation does not exist.');
       }
 
-      if (this.state.installationState === InstallationState.Update) {
+      if (installationStateRef.current === InstallationState.Update) {
         Notification.success('App configuration was updated successfully.');
         AppLifecycleTracking.configurationUpdated(app.id);
       } else {
@@ -182,15 +290,16 @@ export class AppRoute extends Component<Props, State> {
         AppLifecycleTracking.installed(app.id);
       }
 
-      this.setState({ isInstalled: true, installationState: InstallationState.NotBusy });
+      setIsInstalled(true);
+      setInstallationState(InstallationState.NotBusy);
 
-      appHookBus.setInstallation(appInstallation);
-      appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
+      props.appHookBus.setInstallation(appInstallation);
+      props.appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
-        Notification.error(getUsageExceededMessage(hasAdvancedAppsFeature));
+        Notification.error(getUsageExceededMessage(props.hasAdvancedAppsFeature));
         AppLifecycleTracking.installationFailed(app.id);
-      } else if (this.state.installationState === InstallationState.Update) {
+      } else if (installationStateRef.current === InstallationState.Update) {
         Notification.error('Failed to update app configuration.');
         AppLifecycleTracking.configurationUpdateFailed(app.id);
       } else {
@@ -198,56 +307,59 @@ export class AppRoute extends Component<Props, State> {
         AppLifecycleTracking.installationFailed(app.id);
       }
 
-      const { appInstallation } = await appManager!.checkAppStatus(app);
-      this.setState({
-        isInstalled: !!appInstallation,
-        installationState: InstallationState.NotBusy,
-      });
+      const { appInstallation } = await appManager.checkAppStatus(app);
+      setIsInstalled(!!appInstallation);
+      setInstallationState(InstallationState.NotBusy);
 
-      appHookBus.setInstallation(appInstallation);
-      appHookBus.emit(APP_EVENTS_OUT.FAILED);
+      props.appHookBus.setInstallation(appInstallation);
+      props.appHookBus.emit(APP_EVENTS_OUT.FAILED);
     }
-  };
+  }
 
-  onAppMisconfigured = async () => {
-    const { appManager } = this.state;
-    const { appInstallation } = await appManager!.checkAppStatus(this.props.app);
-    this.setState({ isInstalled: !!appInstallation, installationState: InstallationState.NotBusy });
-  };
+  async function onAppMisconfigured() {
+    if (!appManager || !app) return;
 
-  onAppMarkedAsReady = () => {
-    const { loadingError } = this.state;
+    const { appInstallation } = await appManager.checkAppStatus(app);
+    setIsInstalled(!!appInstallation);
+    setInstallationState(InstallationState.NotBusy);
+  }
+
+  async function onAppMarkedAsReady() {
     if (!loadingError) {
-      this.setState({ appLoaded: true });
+      setAppLoaded(true);
     }
-  };
+  }
 
-  update = (installationState: InstallationState) => {
-    this.setState({ installationState });
+  function update(installationState: InstallationState) {
+    if (!app || !appManager) return;
 
-    if (hasConfigLocation(this.state.appDefinition)) {
+    setInstallationState(installationState);
+
+    if (hasConfigLocation(app.appDefinition)) {
       // The app implements config - hand over control.
-      this.props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
+      props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
     } else {
       // No config location - just use an empty config right away.
-      this.onAppConfigured({ config: {} });
+      onAppConfigured({ config: {} });
     }
-  };
+  }
 
-  uninstall = async (app, evictWidget) => {
-    return this.state.appManager!.showUninstallModal(app, async (onClose, reasons: string[]) => {
+  async function uninstall(app, evictWidget) {
+    if (!app || !appManager) return;
+
+    return appManager.showUninstallModal(app, async (onClose, reasons: string[]) => {
       onClose(true);
-      this.setState({ installationState: InstallationState.Uninstallation });
+      setInstallationState(InstallationState.Uninstallation);
       // Unset installation immediately so its parameters are not exposed
       // via the SDK as soon as the process was initiated.
-      this.props.appHookBus.setInstallation(null);
-      await this.state.appManager!.uninstallApp(app, reasons, evictWidget);
-      this.props.goBackToList();
+      props.appHookBus.setInstallation(null);
+      await appManager.uninstallApp(app, reasons, evictWidget);
+      goBackToList();
     });
-  };
+  }
 
-  renderBusyOverlay() {
-    if (!isBusy(this.state.installationState)) {
+  function renderBusyOverlay() {
+    if (!isBusy(installationState)) {
       return null;
     }
 
@@ -256,37 +368,35 @@ export class AppRoute extends Component<Props, State> {
         <div className={styles.overlayPill}>
           <Paragraph className={styles.busyText}>
             <Spinner size="large" className={styles.spinner} />{' '}
-            {InstallationStateToText[this.state.installationState]}
+            {InstallationStateToText[installationState]}
           </Paragraph>
         </div>
       </div>
     );
   }
 
-  renderTitle(Component = Heading) {
+  function renderTitle(Component = Heading) {
     return (
       <Component className={styles.heading}>
-        <AppIcon icon={this.state.appIcon} />
-        {this.state.title}
-        {this.props.app.isEarlyAccess && (
+        <AppIcon icon={appIcon} />
+        {title}
+        {app?.isEarlyAccess && (
           <Tag tagType="warning" className={styles.earlyAccessTag}>
             EARLY ACCESS
           </Tag>
         )}
-        {this.props.app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
+        {app?.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
       </Component>
     );
   }
 
-  renderActions() {
-    const { isInstalled, installationState, appLoaded, loadingError } = this.state;
-    const { app, evictWidget } = this.props;
+  function renderActions() {
     return (
       <>
-        {!app.isPrivateApp && app.documentationLink && (
+        {!app?.isPrivateApp && app?.documentationLink && (
           <TextLink
             className={styles.documentationLink}
-            href={app.documentationLink.url}
+            href={app?.documentationLink.url}
             target="_blank"
             rel="noopener noreferrer">
             View this app’s documentation
@@ -295,7 +405,7 @@ export class AppRoute extends Component<Props, State> {
         {appLoaded && !isInstalled && (
           <Button
             buttonType="primary"
-            onClick={() => this.update(InstallationState.Installation)}
+            onClick={() => update(InstallationState.Installation)}
             loading={installationState === InstallationState.Installation}
             className={styles.actionButton}
             disabled={isBusy(installationState)}>
@@ -306,17 +416,17 @@ export class AppRoute extends Component<Props, State> {
           <Button
             testId={'app-uninstall-button'}
             buttonType="muted"
-            onClick={() => this.uninstall(app, evictWidget)}
+            onClick={() => uninstall(app, evictWidget)}
             loading={installationState === InstallationState.Uninstallation}
             className={styles.actionButton}
             disabled={isBusy(installationState)}>
             Uninstall
           </Button>
         )}
-        {appLoaded && isInstalled && hasConfigLocation(this.state.appDefinition) && (
+        {appLoaded && isInstalled && hasConfigLocation(app?.appDefinition) && (
           <Button
             buttonType="primary"
-            onClick={() => this.update(InstallationState.Update)}
+            onClick={() => update(InstallationState.Update)}
             loading={installationState === InstallationState.Update}
             className={styles.actionButton}
             disabled={isBusy(installationState)}>
@@ -327,17 +437,10 @@ export class AppRoute extends Component<Props, State> {
     );
   }
 
-  renderContent() {
-    const { appDefinition, appLoaded } = this.state;
+  function renderContent() {
+    if (!sdkInstance || !widget) return null;
 
-    const widget = buildAppDefinitionWidget(
-      // This should never be null, as we check - as this function is only
-      // called once an appDefinition exists
-      appDefinition as any,
-      getMarketplaceDataProvider()
-    );
-
-    const { sdk, onAppHook } = this.props.createSdk(widget);
+    const { sdk, onAppHook } = sdkInstance;
 
     return (
       <Workbench.Content
@@ -357,13 +460,13 @@ export class AppRoute extends Component<Props, State> {
     );
   }
 
-  renderLoading(withoutWorkbench?: boolean) {
+  function renderLoading(withoutWorkbench?: boolean) {
     const loadingContent = (
       <Workbench.Content type="text">
         <SkeletonContainer ariaLabel="Loading app..." svgWidth="100%" svgHeight="300px">
           <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
         </SkeletonContainer>
-        {this.state.showStillLoadingText && (
+        {showStillLoadingText && (
           <Paragraph className={styles.stillLoadingText}>Still loading...</Paragraph>
         )}
       </Workbench.Content>
@@ -375,47 +478,43 @@ export class AppRoute extends Component<Props, State> {
 
     return (
       <Workbench>
-        <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
+        <Workbench.Header title={renderTitle()} onBack={goBackToList} />
         {loadingContent}
       </Workbench>
     );
   }
 
-  renderLoadingError = () => {
-    const { title } = this.state;
-
+  function renderLoadingError() {
     return (
       <UnknownErrorMessage
         buttonText="View all apps"
         description={`The ${title} app cannot be reached or is not responding.`}
         heading="App failed to load"
-        onButtonClick={this.props.goBackToList}
+        onButtonClick={goBackToList}
       />
     );
-  };
+  }
 
-  renderConfigLocation() {
-    const { appLoaded, loadingError } = this.state;
-
+  function renderConfigLocation() {
     return (
       <>
-        {loadingError && this.renderLoadingError()}
-        {!appLoaded && !loadingError && this.renderLoading(true)}
-        {!loadingError && this.renderContent()}
+        {loadingError && renderLoadingError()}
+        {!appLoaded && !loadingError && renderLoading(true)}
+        {!loadingError && renderContent()}
       </>
     );
   }
 
-  renderNoConfigLocation() {
+  function renderNoConfigLocation() {
     return (
       <div className={styles.noConfigContainer}>
         <div className={styles.noConfigSection}>
-          {this.renderTitle(Subheading)}
+          {renderTitle(Subheading)}
           <HelpText className={styles.noConfigHelpText}>
             This app does not require additional configuration.
           </HelpText>
         </div>
-        {this.props.canManageThisApp && (
+        {canManageThisApp && (
           <>
             <div className={styles.divider} />
             <div className={styles.noConfigSection}>
@@ -438,7 +537,7 @@ export class AppRoute extends Component<Props, State> {
     );
   }
 
-  renderFeedbackButton() {
+  function renderFeedbackButton() {
     // Partial because Button's defaultProps are not optional
     // ButtonProps is missing target and rel prop
     const LinkButton = Button as React.ComponentType<
@@ -450,7 +549,7 @@ export class AppRoute extends Component<Props, State> {
         buttonType="naked"
         icon="ChatBubble"
         className={styles.feedbackButton}
-        href={`http://ctfl.io/marketplace-app-feedback#appid=${this.props.app.appDefinition.sys.id}`}
+        href={`http://ctfl.io/marketplace-app-feedback#appid=${app?.appDefinition.sys.id}`}
         target="_blank"
         rel="noopener noreferrer">
         Give feedback
@@ -458,39 +557,31 @@ export class AppRoute extends Component<Props, State> {
     );
   }
 
-  render() {
-    if (!this.state.ready) {
-      return this.renderLoading();
-    }
-
-    return (
-      <>
-        <DocumentTitle title={this.state.title} />
-        {this.renderBusyOverlay()}
-        <Workbench>
-          <Workbench.Header
-            onBack={() => {
-              this.props.goBackToList();
-            }}
-            title={this.renderTitle()}
-            actions={this.renderActions()}
-          />
-
-          <div className={css({ display: 'flex', flexDirection: 'column', width: '100%' })}>
-            <ExtensionLocalDevelopmentWarning
-              developmentMode={this.props.app.appDefinition.src?.startsWith('http://localhost')}>
-              {hasConfigLocation(this.state.appDefinition)
-                ? this.renderConfigLocation()
-                : this.renderNoConfigLocation()}
-            </ExtensionLocalDevelopmentWarning>
-          </div>
-
-          {this.state.appLoaded &&
-            // "public" property is deprecated
-            (this.props.app.appDefinition as any).public &&
-            this.renderFeedbackButton()}
-        </Workbench>
-      </>
-    );
+  if (!ready) {
+    return renderLoading();
   }
+
+  return (
+    <>
+      <DocumentTitle title={title} />
+      {renderBusyOverlay()}
+      <Workbench>
+        <Workbench.Header onBack={goBackToList} title={renderTitle()} actions={renderActions()} />
+
+        <div className={css({ display: 'flex', flexDirection: 'column', width: '100%' })}>
+          <ExtensionLocalDevelopmentWarning
+            developmentMode={app?.appDefinition.src?.startsWith('http://localhost')}>
+            {hasConfigLocation(app?.appDefinition)
+              ? renderConfigLocation()
+              : renderNoConfigLocation()}
+          </ExtensionLocalDevelopmentWarning>
+        </div>
+
+        {appLoaded &&
+          // "public" property is deprecated
+          (app?.appDefinition as any).public &&
+          renderFeedbackButton()}
+      </Workbench>
+    </>
+  );
 }
