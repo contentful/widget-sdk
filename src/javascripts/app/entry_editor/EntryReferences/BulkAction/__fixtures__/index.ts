@@ -117,13 +117,12 @@ const serverError = {
     type: 'Error',
     id: 'ServerError',
   },
-  details: {},
-};
+} as BulkActionError;
 
 type ResponseOptions = {
-  status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-  action: 'publish' | 'validate';
-  payload: typeof bulkPublishResponsePayload | typeof bulkValidateResponsePayload;
+  status?: 'created' | 'inProgress' | 'succeeded' | 'failed';
+  action?: 'publish' | 'validate';
+  payload?: typeof bulkPublishResponsePayload | typeof bulkValidateResponsePayload;
 };
 
 const bulkActionResponse = ({
