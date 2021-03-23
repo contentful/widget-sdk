@@ -24,29 +24,40 @@ export default function makeFetchWithAuth(auth) {
   };
 
   return async () => {
+    let response;
+
     try {
-      const response = await doFetch(request);
+      response = await doFetch(request);
+    } catch (err) {
+      Object.assign(err, { request });
+      logger.logException(err);
 
-      if (response.data) {
-        // Locales are always fetched from the `/locales` endpoint.
-        // Do not resolve links to locales.
-        delete response.data.includes.Locale;
+      throw new Error('Could not fetch token data');
+    }
 
+    if (response.data) {
+      // Locales are always fetched from the `/locales` endpoint.
+      // Do not resolve links to locales.
+      delete response.data.includes.Locale;
+
+      try {
         // TODO freeze returned object
         return resolveTokenLinks(response.data);
-      } else {
-        logError('Obtained /token info without `data`', response);
-        throw new Error();
+      } catch (err) {
+        const resolveLinksError = new Error('Resolving token links threw');
+        Object.assign(resolveLinksError, { request, response });
+
+        logger.logException(resolveLinksError);
+
+        throw new Error('Could not fetch token data');
       }
-    } catch {
-      // Throw a consistent error, rather than the possible error from `doFetch`
-      throw new Error('Could not obtain token info');
+    } else {
+      const noDataError = new Error('Obtained /token info without `data`');
+      Object.assign(noDataError, { request, response });
+
+      logger.logException(noDataError);
+
+      throw new Error('Could not fetch token data');
     }
   };
-
-  function logError(message, { data, status, statusText }) {
-    // We don't want e.g. `config` in here which contains secrets.
-    const error = { request, data, status, statusText };
-    logger.logServerError(message, { error });
-  }
 }
