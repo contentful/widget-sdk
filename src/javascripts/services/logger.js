@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import stringifySafe from 'json-stringify-safe';
 import { env } from 'Config';
-import * as Bugsnag from 'analytics/Bugsnag';
 import * as Sentry from 'analytics/Sentry';
 import { getCurrentStateName } from 'states/Navigator';
 
@@ -51,10 +50,21 @@ import { getCurrentStateName } from 'states/Navigator';
  * logged to the console and to Bugsnag if bugsnag is enabled.
  */
 
-function augmentMetadata(metaData) {
-  metaData = metaData || {};
-  metaData.params = {};
-  return _.mapValues(metaData, serializeObject);
+function augmentMetadata(metadata) {
+  metadata = _.cloneDeep(metadata || {});
+
+  const { error } = metadata;
+
+  if (error) {
+    const headers = error?.request?.headers;
+
+    // Always mask the authorization token
+    if (headers?.Authorization) {
+      headers.Authorization = '[SECRET]';
+    }
+  }
+
+  return _.mapValues(metadata, serializeObject);
 }
 
 /**
@@ -74,43 +84,6 @@ function filterInternalProperties(key, value) {
 }
 
 /**
- * Bugsnag doesn't serialize objects past a certain level and it's better to
- * flatten these errors than running a fork of their JS reporter that serializes
- * objects deeper.
- */
-function flattenServerErrors(metaData) {
-  // Don't ever affect outside references as they travel through the whole app!
-  metaData = _.cloneDeep(metaData || {});
-  const errOrResponse = metaData.error;
-
-  if (errOrResponse) {
-    const err = findActualServerError(errOrResponse);
-
-    // Never send auth token.
-    const headers = _.get(errOrResponse, 'request.headers');
-    if (headers && headers.Authorization) {
-      headers.Authorization = '[SECRET]';
-    }
-
-    // “ERROR DETAILS” tab
-    if (err && err.details) {
-      metaData.errorDetails = err.details;
-      // Indicate this info can be found in another tab.
-      err.details = '[@ERROR_DETAILS tab]';
-    }
-
-    if (err !== errOrResponse) {
-      // SERVER RESPONSE tab (with `body` or `data` containing actual error)
-      // Also contains additional info (e.g. `request` and `statusCode`)
-      metaData.serverResponse = errOrResponse;
-      delete metaData.error;
-      // TODO: Also have ERROR tab and replace `body` or `data` with [@ERROR tab]
-    }
-  }
-  return metaData;
-}
-
-/**
  * Takes an Object which is expected to be or to contain a server (CMA) error
  * and returns the error. Null if no error is found.
  *
@@ -126,18 +99,7 @@ export function findActualServerError(errOrErrContainer) {
  * Load bugsnag and set the user data.
  */
 export function enable(user) {
-  Bugsnag.enable(user);
   Sentry.enable(user);
-}
-
-/**
- * Disables the logger service because of customers who wish to not have
- * any 3rd party services running
- */
-export function disable() {
-  if (env === 'production' || env === 'jest') {
-    Bugsnag.disable();
-  }
 }
 
 /**
@@ -149,11 +111,12 @@ export function disable() {
  */
 export function logException(exception, metaData) {
   const augmentedMetadata = augmentMetadata(metaData);
+
   if (env !== 'production' && env !== 'jest') {
     /* eslint no-console: off */
     console.error(exception, augmentedMetadata);
   }
-  Bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
+
   Sentry.logException(exception, augmentedMetadata);
 }
 
@@ -208,7 +171,7 @@ export function logServerError(message, metaData) {
   if (_.get(metaData, 'error.statusCode') === 0) {
     _logCorsWarn(message, metaData);
   } else {
-    _log('Logged Server Error', 'error', message, flattenServerErrors(metaData));
+    _log('Logged Server Error', 'error', message, augmentMetadata(metaData));
   }
 }
 
@@ -229,7 +192,7 @@ export function logServerWarn(message, metaData) {
   if (_.get(metaData, 'error.statusCode') === 0) {
     _logCorsWarn(message, metaData);
   } else {
-    _log('Logged Server Warning', 'warning', message, flattenServerErrors(metaData));
+    _log('Logged Server Warning', 'warning', message, augmentMetadata(metaData));
   }
 }
 
@@ -270,12 +233,11 @@ function _logCorsWarn(message, metaData) {
 }
 
 /**
- * Log a message to the bugsnag wrapper.
+ * Log a message to Sentry.
  * @param {String} type
  * @param {String} severity
  * @param {String} message
- * @param {Object?} metadata
- * Additional info to show in bugsnag. Each key creates a tab that
+ * @param {Object?} metadata Additional info to show in Sentry. Each key creates a tab that
  * displays the corresponding value.
  */
 function _log(type, severity, message, metadata) {
@@ -291,15 +253,13 @@ function _log(type, severity, message, metadata) {
     message = message.message;
   }
 
-  // Items without a message logged to Bugsnag are essentially noise (it's really hard to act on them)
+  // Items without a message are essentially noise (it's really hard to act on them)
   // and therefore useless, so we ignore those
   //
   // This happens here rather than at the top so that errors are still logged locally
   if (!message) {
     return;
   }
-
-  Bugsnag.notify(type, message, augmentedMetadata, severity);
 
   // We don't care about the groupingHash, Sentry is smart enough in its filtering
   const { groupingHash: _, ...otherMetadata } = metadata;
@@ -314,23 +274,6 @@ function _log(type, severity, message, metadata) {
       type,
     },
   });
-}
-
-/**
- * Records an event.
- *
- * The event trail is shown on bugsnag when an error occured.
- *
- * Note that the data object should only be one level deep and the
- * object’s values are limited to 140 characters each.
- *
- * https://docs.bugsnag.com/platforms/browsers/#leaving-breadcrumbs
- *
- * @param {string} name
- * @param {object} data
- */
-export function leaveBreadcrumb(name, data) {
-  Bugsnag.leaveBreadcrumb(name, data);
 }
 
 function logToConsole(type, severity, message, metadata) {

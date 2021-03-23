@@ -36,15 +36,8 @@ export function setupStateChangeHandlers() {
 
 function stateChangeSuccessHandler(_event, toState, toStateParams, fromState, fromStateParams) {
   const spaceContext = getModule('spaceContext');
-  const $location = getModule('$location');
 
   updateNavState(toState, toStateParams, spaceContext);
-
-  logger.leaveBreadcrumb('Enter state', {
-    state: toState && toState.name,
-    // This is the limit for breadcrumb values
-    location: $location.path().substr(0, 140),
-  });
 
   // we do it here instead of "onExit" hook in "spaces" state
   // using the latter caused problems when redirecting with

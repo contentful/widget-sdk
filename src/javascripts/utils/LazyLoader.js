@@ -35,10 +35,6 @@ const RESOURCES = {
       return embedly;
     },
   },
-  bugsnag: {
-    url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
-    globalObject: ['Bugsnag'],
-  },
   segment: {
     url:
       'https://cdn.segment.com/analytics.js/v1/' + Config.services.segment_io + '/analytics.min.js',
