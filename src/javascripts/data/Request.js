@@ -48,11 +48,17 @@ async function fetchFn(config) {
   const args = buildRequestArguments(config);
   let rawResponse;
 
+  const asyncError = new Error('API request failed');
+
   try {
     rawResponse = await window.fetch(...args);
   } catch {
     // Network problem
-    throw Object.assign(new Error('API request failed'), { status: -1, config });
+    throw Object.assign(asyncError, {
+      message: 'API request failed in preflight',
+      status: -1,
+      config,
+    });
   }
 
   const response = {
@@ -83,7 +89,10 @@ async function fetchFn(config) {
   if (rawResponse.ok) {
     return response;
   } else {
-    throw Object.assign(new Error('API request failed'), response);
+    throw Object.assign(asyncError, {
+      message: 'API request failed',
+      ...response,
+    });
   }
 }
 
