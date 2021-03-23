@@ -13,6 +13,7 @@ const output = {
   path: path.resolve(__dirname, '..', 'public', 'app'),
   filename: '[name]-[contenthash].js',
   chunkFilename: '[name]-[contenthash].js',
+  devtoolModuleFilenameTemplate: '[resource-path]',
 };
 
 const rules = [
