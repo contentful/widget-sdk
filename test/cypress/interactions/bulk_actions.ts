@@ -134,7 +134,7 @@ const bulkActionResponse = (overrides = {}) => {
     {
       sys: {
         type: 'BulkAction',
-        id: Matchers.somethingLike(defaultBulkActionTestId),
+        id: Matchers.somethingLike(defaultPublishBulkActionTestId),
         space: makeLink('Space', defaultSpaceId),
         environment: makeLink('Environment', defaultEnvironmentId),
         createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
@@ -170,21 +170,21 @@ const defaultContentTypeHeader = {
   'content-type': 'application/vnd.contentful.management.v1+json',
 };
 
-const defaultBulkActionTestId = 'testBulkActionId';
+// Needs to be the same as in bulk-actions-api.
+// Currently used for both publish and validate bulk actions.
+const defaultPublishBulkActionTestId = 'testBulkActionId';
 
-const getBulkActionRequest: any = {
+const getPublishBulkActionRequest: any = {
   provider: 'bulk-actions',
-  uponReceiving: `a request for BulkAction ${defaultBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'GET',
-    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/actions/${defaultBulkActionTestId}`,
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/actions/${defaultPublishBulkActionTestId}`,
     headers: defaultHeader,
   },
 };
 
-const publishBulkActionRequest: any = {
+const postPublishBulkActionRequest: any = {
   provider: 'bulk-actions',
-  uponReceiving: `a request to publish a BulkAction on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
@@ -196,9 +196,8 @@ const publishBulkActionRequest: any = {
   },
 };
 
-const validateBulkActionRequest: any = {
+const postValidateBulkActionRequest: any = {
   provider: 'bulk-actions',
-  uponReceiving: `a request to validate a publish BulkAction on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/validate`,
@@ -213,7 +212,8 @@ const validateBulkActionRequest: any = {
 export const getPublishBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a publish bulk action in progress ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_IN_PROGRESS,
       willRespondWith: {
         status: 200,
@@ -234,7 +234,8 @@ export const getPublishBulkAction = {
   },
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a completed publish bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 200,
@@ -256,7 +257,8 @@ export const getPublishBulkAction = {
   },
   willReturnStatusFailed(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a failed publish bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_FAILED,
       willRespondWith: {
         status: 200,
@@ -282,7 +284,8 @@ export const getPublishBulkAction = {
 export const publishBulkAction = {
   willSucceed(): string {
     cy.addInteraction({
-      ...publishBulkActionRequest,
+      ...postPublishBulkActionRequest,
+      uponReceiving: `a request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.NO_BULK_ACTIONS,
       willRespondWith: {
         status: 201,
@@ -297,7 +300,8 @@ export const publishBulkAction = {
   },
   willFailWithTooManyRequests(): string {
     cy.addInteraction({
-      ...publishBulkActionRequest,
+      ...postPublishBulkActionRequest,
+      uponReceiving: `a failing request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.MAX_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
@@ -320,7 +324,8 @@ export const publishBulkAction = {
 export const getValidateBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a validate bulk action in progress ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_IN_PROGRESS,
       willRespondWith: {
         status: 200,
@@ -341,7 +346,8 @@ export const getValidateBulkAction = {
   },
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a completed validate bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 200,
@@ -363,7 +369,8 @@ export const getValidateBulkAction = {
   },
   willReturnStatusFailed(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a failed validate bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_FAILED,
       willRespondWith: {
         status: 200,
@@ -389,7 +396,8 @@ export const getValidateBulkAction = {
 export const validateBulkAction = {
   willSucceed(): string {
     cy.addInteraction({
-      ...validateBulkActionRequest,
+      ...postValidateBulkActionRequest,
+      uponReceiving: `a request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 201,
@@ -408,7 +416,8 @@ export const validateBulkAction = {
   },
   willFailWithTooManyRequests(): string {
     cy.addInteraction({
-      ...validateBulkActionRequest,
+      ...postValidateBulkActionRequest,
+      uponReceiving: `a failing request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.MAX_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
