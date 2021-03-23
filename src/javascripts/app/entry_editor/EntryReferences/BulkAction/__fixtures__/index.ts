@@ -1,8 +1,10 @@
-import { BulkAction, makeLink, VersionedLink } from '@contentful/types';
+import { BulkAction as BasicBulkAction, makeLink, VersionedLink } from '@contentful/types';
 
 const testEntryId = 'testEntryId';
 const testAssetId = 'testAssetId';
 const testBulkActionId = 'testBulkActionId';
+
+type BulkAction = BasicBulkAction | { error: any };
 
 const versionedLink = ({ type, id, version = 0 }): VersionedLink => ({
   sys: {
@@ -46,7 +48,16 @@ const bulkValidateResponsePayload = {
   },
 };
 
-const versionMismatchError = {
+export type BulkActionError = {
+  details?: Record<string, any>;
+  message: string;
+  sys: {
+    type: 'Error';
+    id: 'BulkActionFailed';
+  };
+};
+
+export const versionMismatchError: BulkActionError = {
   sys: {
     type: 'Error',
     id: 'BulkActionFailed',
@@ -74,7 +85,7 @@ const versionMismatchError = {
   },
 };
 
-const validationFailedError = {
+export const validationFailedError: BulkActionError = {
   sys: {
     type: 'Error',
     id: 'BulkActionFailed',
@@ -112,25 +123,36 @@ const validationFailedError = {
   },
 };
 
-const serverError = {
-  sys: {
-    type: 'Error',
-    id: 'ServerError',
-  },
-} as BulkActionError;
+export type TransformedBulkActionError = {
+  statusCode: number;
+  data: { details?: BulkActionError['details'] };
+};
+
+// Same as `toErrorDataFormat` - all bulk actions related errors are transformed into this format
+export const toBulkActionErrorResponse = (
+  error: BulkActionError,
+  statusCode = 400
+): TransformedBulkActionError => {
+  return {
+    statusCode,
+    data: { details: error?.details },
+  };
+};
 
 type ResponseOptions = {
   status?: 'created' | 'inProgress' | 'succeeded' | 'failed';
   action?: 'publish' | 'validate';
   payload?: typeof bulkPublishResponsePayload | typeof bulkValidateResponsePayload;
+  error?: BulkActionError;
 };
 
 const bulkActionResponse = ({
   action = 'publish',
   status = 'created',
   payload = bulkPublishResponsePayload,
+  error,
 }: ResponseOptions): BulkAction => {
-  const response = {
+  const response: BulkAction = {
     sys: {
       type: 'BulkAction',
       id: testBulkActionId,
@@ -146,23 +168,10 @@ const bulkActionResponse = ({
     action,
     payload,
   };
-  return response as BulkAction;
-};
-
-type BulkActionError = { details?: Record<string, any> };
-type BulkActionErrorResponse = {
-  statusCode: number;
-  data: { details?: BulkActionError['details'] };
-};
-
-const bulkActionResponseError = (
-  error: BulkActionError,
-  statusCode = 400
-): BulkActionErrorResponse => {
-  return {
-    statusCode,
-    data: { details: error?.details },
-  };
+  if (error) {
+    response.error = error;
+  }
+  return response;
 };
 
 const publishBulkActionSuccessResponse = bulkActionResponse({
@@ -176,17 +185,26 @@ const validateBulkActionSuccessResponse = bulkActionResponse({
   payload: bulkValidateResponsePayload,
 });
 
-const bulkActionVersionMismatchErrorResponse = bulkActionResponseError(versionMismatchError);
+const bulkActionVersionMismatchErrorResponse = toBulkActionErrorResponse(
+  bulkActionResponse({
+    action: 'publish',
+    status: 'failed',
+    payload: bulkPublishResponsePayload,
+    error: versionMismatchError,
+  }).error
+);
 
-const bulkActionEntryErrorResponse = bulkActionResponseError(validationFailedError);
-
-const bulkActionServerErrorResponse = bulkActionResponseError(serverError);
+const bulkActionEntryErrorResponse = toBulkActionErrorResponse(
+  bulkActionResponse({
+    status: 'failed',
+    action: 'publish',
+    error: validationFailedError,
+  }).error
+);
 
 export {
   publishBulkActionSuccessResponse,
   validateBulkActionSuccessResponse,
   bulkActionVersionMismatchErrorResponse,
   bulkActionEntryErrorResponse,
-  bulkActionServerErrorResponse,
-  serverError,
 };
