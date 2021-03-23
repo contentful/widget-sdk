@@ -941,6 +941,24 @@ describe('fieldsAreEqual', () => {
     const newFields = { fieldOne: { 'en-US': undefined } };
     expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
   });
+
+  it('can still make other fields null', () => {
+    const fields = { fieldOne: { 'en-US': 'string value' } };
+    const newFields = { fieldOne: { 'en-US': null } };
+    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
+  });
+
+  it('returns false when a locale contains different arrays', () => {
+    const fields = { fieldOne: { 'en-US': [1, 2, 3] } };
+    const newFields = { fieldOne: { 'en-US': [1, 2, 4] } };
+    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
+  });
+
+  it('retuns true when a locale contains similar arrays', () => {
+    const fields = { fieldOne: { 'en-US': [1, 2, 3] } };
+    const newFields = { fieldOne: { 'en-US': [1, 2, 3] } };
+    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(true);
+  });
 });
 
 function mockGetUpdatedEntity(entity, path, value) {

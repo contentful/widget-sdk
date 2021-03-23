@@ -1,4 +1,4 @@
-import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset } from 'lodash';
+import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset, isNil } from 'lodash';
 import { Normalizer } from '@contentful/editorial-primitives';
 import type { Property, PropertyBus, Stream, StreamBus } from 'core/utils/kefir';
 import * as K from 'core/utils/kefir';
@@ -578,7 +578,9 @@ function cleanObject(fields: { [fieldName: string]: any }) {
   const allValues = Object.values(fields).map((locale: { [localeName: string]: any }) => {
     const localeValues = Object.values(locale);
     return localeValues.map((localeValue) => {
-      return typeof localeValue === 'object' ? removeUndefinedValues(localeValue) : localeValue;
+      return typeof localeValue === 'object' && !isNil(localeValue)
+        ? removeUndefinedValues(localeValue)
+        : localeValue;
     });
   });
   return allValues;
@@ -587,8 +589,11 @@ function cleanObject(fields: { [fieldName: string]: any }) {
 function removeUndefinedValues(obj) {
   const newObj = {};
   Object.keys(obj).forEach((key) => {
-    if (obj[key] === Object(obj[key])) newObj[key] = removeUndefinedValues(obj[key]);
-    else if (obj[key] !== undefined) newObj[key] = obj[key];
+    if (obj[key] === Object(obj[key])) {
+      newObj[key] = removeUndefinedValues(obj[key]);
+    } else if (!isNil(obj[key])) {
+      newObj[key] = obj[key];
+    }
   });
   return newObj;
 }
