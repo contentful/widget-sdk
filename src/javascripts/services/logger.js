@@ -125,24 +125,6 @@ export function captureWarning(error, metadata) {
 }
 
 /**
- * Mostly used by the $uncaughtException service
- * @param {Error} exception  Exception Error object
- * @param {Object?} metaData  Metadata object. Can take any of the expected bugsnag metadata parameters.
- * @param {Object?} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
- */
-export function logException(exception, metaData) {
-  const augmentedMetadata = augmentMetadata(metaData);
-
-  if (env !== 'production' && env !== 'jest') {
-    /* eslint no-console: off */
-    console.error(exception, augmentedMetadata);
-  }
-
-  Sentry.logException(exception, augmentedMetadata);
-}
-
-/**
  * Log with error level
  * @param {string} message
  * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
@@ -152,20 +134,6 @@ export function logException(exception, metaData) {
  */
 export function logError(message, metaData) {
   _log('Logged Error', 'error', message, metaData);
-}
-
-/**
- * Log a warning to Bugsnag with the 'Logged Warning' title and the
- * given message.
- *
- * @param {string} message
- * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object?} metaData.data  Shows up on the bugsnag data tab.
- * @param {object?} metaData.error Shows up on the bugsnag error tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
- */
-export function logWarn(message, metaData) {
-  _log('Logged Warning', 'warning', message, metaData);
 }
 
 /**

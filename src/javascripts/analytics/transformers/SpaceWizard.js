@@ -10,7 +10,7 @@ const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
     validateSpaceWizardData(wizardData);
   } catch (e) {
     // Always send error to Bugsnag
-    logger.logException(e);
+    logger.captureError(e);
 
     // If not in prod or unittest environment, also throw
     if (env !== 'production' && env !== 'unittest') {

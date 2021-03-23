@@ -155,8 +155,9 @@ export function RoleEditorRoute(props) {
       if (err.code !== 'NotFound') {
         throw err;
       }
-      logger.logWarn(`Could not find ${type} ${id} for rule`, {
-        groupingHash: 'missingRolesAndPermissionsRuleEntity',
+      logger.captureWarning(new Error(`Could not find entity for given rule`), {
+        type,
+        id,
       });
     }
   }

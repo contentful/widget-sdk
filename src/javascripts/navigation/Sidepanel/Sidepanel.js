@@ -131,7 +131,7 @@ export default class Sidepanel extends React.Component {
       // Collapse environment list if navigation failed
       // e.g. when environment was deleted
       this.setState({ openedSpaceId: null });
-      logger.logException(err);
+      logger.captureError(err);
     });
   };
 

@@ -53,7 +53,7 @@ function getReactComponent(name, logger) {
   try {
     reactComponent = requireComponent(name);
   } catch (e) {
-    logger.logException(e);
+    logger.captureError(e);
   }
 
   if (!reactComponent) {

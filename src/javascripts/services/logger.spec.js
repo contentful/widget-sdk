@@ -14,13 +14,6 @@ describe('logger service', () => {
     expect(Sentry.enable).toHaveBeenCalledWith('USER');
   });
 
-  it('logs exceptions', function () {
-    const exception = new Error();
-    logger.logException(exception, { meta: 'Data' });
-
-    expect(Sentry.logException).toHaveBeenCalledWith(exception, { meta: 'Data' });
-  });
-
   it('logs errors', function () {
     logger.logError('test', { meta: 'Data' });
 
@@ -75,21 +68,6 @@ describe('logger service', () => {
       },
       extra: {
         type: 'Logged Error',
-      },
-    });
-  });
-
-  it('logs warnings', function () {
-    logger.logWarn('test', { meta: 'Data' });
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith('test', {
-      level: 'warning',
-      tags: {
-        route: expect.any(String),
-      },
-      extra: {
-        type: 'Logged Warning',
-        meta: 'Data',
       },
     });
   });
