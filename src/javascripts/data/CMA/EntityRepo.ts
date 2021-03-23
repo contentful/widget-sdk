@@ -3,6 +3,7 @@ import {
   CONTENT_ENTITY_UPDATED_EVENT,
   PubSubClient,
 } from 'services/PubSubService';
+import * as logger from 'services/logger';
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
@@ -42,6 +43,7 @@ interface EntityRepoOptions {
   skipDraftValidation?: boolean;
   skipTransformation?: boolean;
   indicateAutoSave?: boolean;
+  createSpaceEndpoint?: (entity: Entity) => SpaceEndpoint;
 }
 
 function getCollection(entity: Entity): CollectionEndpoint {
@@ -65,11 +67,39 @@ export function create(
   const endpointGetOptions = getSpaceEndpointOptions({
     skipTransformation: options.skipTransformation,
   });
-  const endpointPutOptions = getSpaceEndpointOptions(options);
+  const endpointUpdateOptions = getSpaceEndpointOptions(options);
   const onAssetFileProcessed = createAssetFileProcessedHandler(spaceEndpoint, pubSubClient);
   const applyAction = makeApply(spaceEndpoint);
 
   return { onAssetFileProcessed, onContentEntityChanged, get, update, patch, applyAction };
+
+  function isEndpointUpToDate(entity: Entity, spaceEndpoint: SpaceEndpoint): boolean {
+    return (
+      entity.sys.space.sys.id === spaceEndpoint.spaceId &&
+      entity.sys.environment.sys.id === spaceEndpoint.envId
+    );
+  }
+
+  function getEndpoint(entity: Entity, options: EntityRepoOptions): SpaceEndpoint {
+    // TODO: This is a hack to ensure the entity endpoint is always aligned with
+    // the space ID specific to the entry.
+    // Relates to:
+    // - https://contentful.atlassian.net/browse/PEN-1542
+    // - https://contentful.atlassian.net/browse/ZEND-572
+    // Ideally we would be consistently making use of the spaceEndpoint
+    // provided in the parameters. While we don't know what can sometimes cause
+    // updates with mismatched space ID, this is the next best thing.
+    if (options.createSpaceEndpoint && !isEndpointUpToDate(entity, spaceEndpoint)) {
+      logger.logWarn('Endpoint was out of date from EntityRepo', {
+        spaceId: entity.sys.space.sys.id,
+        envId: entity.sys.environment.sys.id,
+        entryId: entity.sys.id,
+      });
+      return options.createSpaceEndpoint(entity);
+    } else {
+      return spaceEndpoint;
+    }
+  }
 
   async function update(entity: Entity): Promise<Entity> {
     const collection = getCollection(entity);
@@ -79,7 +109,8 @@ export function create(
       version: entity.sys.version,
       data: entity,
     };
-    const updatedEntity = await spaceEndpoint<Entity>(body, endpointPutOptions);
+    const endpoint = getEndpoint(entity, options);
+    const updatedEntity = await endpoint<Entity>(body, endpointUpdateOptions);
     triggerCmaAutoSave();
     return updatedEntity;
   }
@@ -92,8 +123,9 @@ export function create(
       version: entity.sys.version,
       data: createJsonPatch(lastSavedEntity, entity),
     };
-    const updatedEntity = await spaceEndpoint<Entity>(body, {
-      ...endpointPutOptions,
+    const endpoint = getEndpoint(entity, options);
+    const updatedEntity = await endpoint<Entity>(body, {
+      ...endpointUpdateOptions,
       'Content-Type': 'application/json-patch+json',
     });
     triggerCmaAutoSave();

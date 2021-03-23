@@ -3,6 +3,9 @@ import { noop, isObject, find, includes, isString, get as getAtPath, times } fro
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import * as logger from 'services/logger';
+import { createSpaceEndpoint } from 'data/Endpoint';
+import * as Config from 'Config';
+import * as Auth from 'Authentication';
 
 /**
  * Creates a store for Document instances. Given an entity it always returns the
@@ -59,6 +62,19 @@ export async function create(
     } else {
       let cleanup;
 
+      const entityRepoOptions = {
+        skipDraftValidation: true,
+        skipTransformation: true,
+        indicateAutoSave: true,
+        createSpaceEndpoint: (entity) =>
+          createSpaceEndpoint(
+            Config.apiUrl(),
+            entity.sys.space.sys.id,
+            Auth,
+            entity.sys.environment.sys.id
+          ),
+      };
+
       // This flag is an object, but check for `true` to use with `?ui_enable_flags=`
       if (
         isCmaDocumentEnabled === true ||
@@ -85,19 +101,16 @@ export async function create(
           }
         );
         const triggerCmaAutoSave = () => shout();
-        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, triggerCmaAutoSave, {
-          skipDraftValidation: true,
-          skipTransformation: true,
-          indicateAutoSave: true,
-        });
+        const entityRepo = createEntityRepo(
+          spaceEndpoint,
+          pubSubClient,
+          triggerCmaAutoSave,
+          entityRepoOptions
+        );
         doc = createCmaDoc(entity, contentTypeData, entityRepo, { patchEntryUpdates });
         cleanup = () => doc.destroy().finally(destroyConnection);
       } else {
-        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, {
-          skipDraftValidation: true,
-          skipTransformation: true,
-          indicateAutoSave: true,
-        });
+        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, entityRepoOptions);
         doc = createOtDoc(docConnection, entity, contentTypeData, user, entityRepo);
         cleanup = () => doc.destroy();
       }
