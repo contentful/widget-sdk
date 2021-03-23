@@ -111,7 +111,7 @@ export const severalEntryReferencesWithUnresolvedResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: defaultEntryTestIds.testEntryId2,
+              id: 'EntryId_01',
             },
           },
         },
@@ -129,7 +129,7 @@ export const severalEntryReferencesWithUnresolvedResponse = {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: defaultEntryTestIds.testEntryId3,
+              id: 'EntryId_02',
             },
           },
         },
@@ -139,11 +139,11 @@ export const severalEntryReferencesWithUnresolvedResponse = {
   includes: {
     Entry: [
       entry({
-        sys: { id: Matchers.somethingLike(defaultEntryTestIds.testEntryId2), version: 2 },
+        sys: { id: Matchers.somethingLike('EntryId_01'), version: 2 },
         fields: {},
       }),
       entry({
-        sys: { id: Matchers.somethingLike(defaultEntryTestIds.testEntryId3), version: 2 },
+        sys: { id: Matchers.somethingLike('EntryId_02'), version: 2 },
         fields: {},
       }),
     ],

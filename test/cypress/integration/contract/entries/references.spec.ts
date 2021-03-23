@@ -82,7 +82,7 @@ describe('Entry references', () => {
         .should('contain', 'Some references did not pass validation');
     });
 
-    describe('when using BulkApi', () => {
+    describe('with BulkActions API feature flag enabled', () => {
       beforeEach(() => {
         cy.enableFeatureFlags([FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]);
       });
