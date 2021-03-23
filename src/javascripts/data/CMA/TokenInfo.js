@@ -29,6 +29,7 @@ export default function makeFetchWithAuth(auth) {
     try {
       response = await doFetch(request);
     } catch (err) {
+      Object.assign(err, { request });
       logger.logException(err);
 
       throw new Error('Could not fetch token data');
@@ -39,15 +40,24 @@ export default function makeFetchWithAuth(auth) {
       // Do not resolve links to locales.
       delete response.data.includes.Locale;
 
-      // TODO freeze returned object
-      return resolveTokenLinks(response.data);
+      try {
+        // TODO freeze returned object
+        return resolveTokenLinks(response.data);
+      } catch (err) {
+        const resolveLinksError = new Error('Resolving token links threw');
+        Object.assign(resolveLinksError, { request, response });
+
+        logger.logException(resolveLinksError);
+
+        throw new Error('Could not fetch token data');
+      }
     } else {
       const noDataError = new Error('Obtained /token info without `data`');
-      Object.assign(noDataError, { response });
+      Object.assign(noDataError, { request, response });
 
       logger.logException(noDataError);
 
-      throw noDataError;
+      throw new Error('Could not fetch token data');
     }
   };
 }
