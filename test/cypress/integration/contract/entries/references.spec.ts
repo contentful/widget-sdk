@@ -46,7 +46,7 @@ describe('Entry references', () => {
   beforeEach(() => {
     setupTestServers();
     setupInteractions();
-    cy.enableFeatureFlags([FeatureFlag.RELEASES]);
+    cy.enableFeatureFlags([FeatureFlag.REFERENCES]);
   });
 
   describe('Validation', () => {
