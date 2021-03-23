@@ -30,7 +30,6 @@ import { useFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
-import { useMigratedEntityField } from 'app/entity_editor/EntityField/useEntityFieldFeatureFlag';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
 
 const trackTabOpen = (tab) =>
@@ -188,8 +187,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const { tagsEnabled } = useTagsFeatureEnabled();
 
-  const migratedEntityFieldEnabled = useMigratedEntityField();
-
   const tabs = availableTabs.map((currentTab) => {
     let isTabVisible = true;
     let isTabEnabled = true;
@@ -231,8 +228,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                   widgets,
                   noLocalizedFieldsAdviceProps,
                   fieldLocaleListeners,
-                  entityInfo,
-                  migratedEntityFieldEnabled,
                   localeData,
                   loadEvents: props.loadEvents,
                   fields: props.fields,

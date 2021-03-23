@@ -4,7 +4,7 @@ import { Note } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger';
 
 import { EntityFieldHeading } from './EntityFieldHeading';
-import { EntityFieldControl } from './EntityFieldControlNew';
+import { EntityFieldControl } from './EntityFieldControl';
 import { Locale, Widget, Doc, EditorContext, LocaleData } from './types';
 import { createFieldLocaleController } from '../fieldLocaleController';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';

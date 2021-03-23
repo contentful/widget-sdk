@@ -15,7 +15,7 @@ jest.mock('app/widgets/ExtensionSDKs', () => ({
   createFieldWidgetSDK: jest.fn().mockReturnValue({}),
 }));
 
-jest.mock('app/entity_editor/WidgetRendererNew', () => ({
+jest.mock('app/entity_editor/WidgetRenderer', () => ({
   WidgetRenderer: jest.fn(({ onBlur, onFocus }) => (
     <div onBlur={onBlur} onFocus={onFocus} tabIndex={1} data-test-id="widget-renderer" />
   )),

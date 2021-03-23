@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import AngularComponent from 'ui/Framework/AngularComponent';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 
 import ReferencesTab from './EntryReferences';
@@ -48,7 +47,6 @@ export const DefaultEntryEditorTab = React.memo(function DefaultEntryEditorTab({
   localeData,
   loadEvents,
   fields,
-  entityInfo,
   otDoc,
   editorData,
   preferences,
@@ -56,44 +54,24 @@ export const DefaultEntryEditorTab = React.memo(function DefaultEntryEditorTab({
   editorContext,
   fieldLocaleListeners,
   noLocalizedFieldsAdviceProps,
-  migratedEntityFieldEnabled,
 }) {
   return (
     <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
-      {migratedEntityFieldEnabled ? (
-        widgets.map((widget, index) => (
-          <EntityField
-            editorContext={editorContext}
-            editorData={editorData}
-            fieldLocaleListeners={fieldLocaleListeners}
-            fields={fields}
-            index={index}
-            key={widget.fieldId}
-            loadEvents={loadEvents}
-            localeData={localeData}
-            doc={otDoc}
-            preferences={preferences}
-            widget={widget}
-          />
-        ))
-      ) : (
-        <AngularComponent
-          with$Apply
-          template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
-          scope={{
-            widgets,
-            editorContext,
-            localeData,
-            fields,
-            loadEvents,
-            editorData,
-            fieldLocaleListeners,
-            otDoc,
-            preferences,
-            entityInfo,
-          }}
+      {widgets.map((widget, index) => (
+        <EntityField
+          editorContext={editorContext}
+          editorData={editorData}
+          fieldLocaleListeners={fieldLocaleListeners}
+          fields={fields}
+          index={index}
+          key={widget.fieldId}
+          loadEvents={loadEvents}
+          localeData={localeData}
+          doc={otDoc}
+          preferences={preferences}
+          widget={widget}
         />
-      )}
+      ))}
       {noLocalizedFieldsAdviceProps && (
         <NoLocalizedFieldsAdvice {...noLocalizedFieldsAdviceProps} />
       )}

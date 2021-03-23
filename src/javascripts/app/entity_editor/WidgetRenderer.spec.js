@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { WidgetRenderer } from './WidgetRendererNew';
+import { WidgetRenderer } from './WidgetRenderer';
 import * as WidgetRendererExternal from '@contentful/widget-renderer';
-import * as LoadEventTracker from 'app/entity_editor/LoadEventTrackerNew';
+import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 
 jest.mock('widgets/WidgetRenderWarning', () => () => (
   <div data-test-id="widget-renderer-warning" />
@@ -12,7 +12,7 @@ jest.mock('widgets/WidgetCompat', () => ({
   toRendererWidget: jest.fn(),
 }));
 
-jest.mock('app/entity_editor/LoadEventTrackerNew');
+jest.mock('app/entity_editor/LoadEventTracker');
 const trackLinksRendered = jest.fn();
 LoadEventTracker.createLinksRenderedEvent = jest.fn().mockReturnValue(trackLinksRendered);
 const handleWidgetLinkRenderEvents = jest.fn();

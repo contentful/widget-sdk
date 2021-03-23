@@ -1,14 +1,18 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import * as K from 'core/utils/kefir';
 import { noop, defer } from 'lodash';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
-import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
+import {
+  createLinksRenderedEvent,
+  createWidgetLinkRenderEventsHandler,
+} from 'app/entity_editor/LoadEventTracker';
+import {
+  WidgetNamespace,
+  isCustomWidget,
+  WidgetLocation,
+  WidgetRenderer as WidgetRendererExternal,
+} from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as WidgetRendererExternal } from '@contentful/widget-renderer';
-
-const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
 function newNoopLoadEvents() {
   return {
@@ -16,10 +20,7 @@ function newNoopLoadEvents() {
   };
 }
 
-function WidgetRendererInternal(props) {
-  const { widget, locale, editorData, loadEvents } = props;
-  const { problem, renderFieldEditor } = widget;
-
+function getTrackingEvents({ loadEvents, widget, locale, widgetApi }) {
   let trackLinksRendered = noop;
   let handleWidgetLinkRenderEvents = noop;
 
@@ -29,99 +30,125 @@ function WidgetRendererInternal(props) {
       widget,
       locale,
       loadEvents,
-      editorData,
+      getValue: () => widgetApi.field.getValue(),
       trackLinksRendered,
     });
   }
+  return {
+    handleWidgetLinkRenderEvents,
+    trackLinksRendered,
+  };
+}
 
-  if (problem) {
-    trackLinksRendered();
-    return <WidgetRenderWarning message={problem} />;
-  } else if (isCustomWidget(widget.widgetNamespace)) {
-    trackLinksRendered();
+const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
+  const { problem: hasProblem, widgetNamespace } = widget;
+  const isCustom = isCustomWidget(widgetNamespace);
+  const isBuiltIn = widgetNamespace === WidgetNamespace.BUILTIN;
+
+  const { trackLinksRendered, handleWidgetLinkRenderEvents } = getTrackingEvents({
+    loadEvents,
+    widget,
+    locale,
+    widgetApi,
+  });
+
+  // The rendering needs only to be tracked once
+  React.useEffect(() => {
+    if (hasProblem || isCustom) {
+      trackLinksRendered();
+    } else if (isBuiltIn) {
+      handleWidgetLinkRenderEvents();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { hasProblem, isCustom, isBuiltIn };
+};
+
+function WidgetRendererInternal(props) {
+  const { widget, entityType, locale, loadEvents, onFocus, onBlur, widgetApi } = props;
+
+  const { hasProblem, isBuiltIn, isCustom } = useTrackedRenderingType({
+    locale,
+    loadEvents,
+    widgetApi,
+    widget,
+  });
+
+  if (hasProblem) {
+    return <WidgetRenderWarning message={widget.problem} />;
+  }
+
+  if (isCustom) {
     return (
       <WidgetRendererExternal
         location={WidgetLocation.ENTRY_FIELD}
         widget={toRendererWidget(widget.descriptor)}
-        sdk={props.widgetApi}
-        onFocus={() => props.scope.fieldLocale.setActive(true)}
-        onBlur={() => props.scope.fieldLocale.setActive(false)}
+        sdk={widgetApi}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
     );
-  } else if (widget.widgetNamespace === WidgetNamespace.BUILTIN) {
-    const content = renderFieldEditor({
-      $scope: props.scope,
+  }
+
+  if (isBuiltIn) {
+    return widget.renderFieldEditor({
       loadEvents: loadEvents || newNoopLoadEvents(),
-      widgetApi: props.widgetApi,
-      entityType: editorData.entityInfo.type,
+      widgetApi,
+      entityType,
     });
-
-    handleWidgetLinkRenderEvents();
-
-    return content;
   }
 
   return null;
 }
 
 WidgetRendererInternal.propTypes = {
-  scope: PropTypes.object.isRequired,
   locale: PropTypes.object.isRequired,
   widget: PropTypes.object.isRequired,
-  editorData: PropTypes.object.isRequired,
-  loadEvents: PropTypes.object.isRequired,
+  loadEvents: PropTypes.object,
+  onBlur: PropTypes.func.isRequired,
+  onFocus: PropTypes.func.isRequired,
   widgetApi: PropTypes.object.isRequired,
+  entityType: PropTypes.string.isRequired,
 };
 
-export function WidgetRenderer(props) {
-  const { widget, locale, editorData, loadEvents } = props.scope;
-  const ref = React.createRef();
+// NOTE The fileEditor widget renderer needs to be memoized due to
+// some weird rerendering glitch that is related to the Angular/React mix
+const MemoizedWidgetRendererInternal = React.memo(WidgetRendererInternal, (_, nextProps) => {
+  const memoizedWidgetIds = ['fileEditor'];
+  const shouldNotRerender = memoizedWidgetIds.includes(nextProps.widget.widgetId);
+  return shouldNotRerender;
+});
+
+export function WidgetRenderer({ hasInitialFocus, isRtl, ...props }) {
+  const ref = React.useRef(null);
 
   React.useEffect(() => {
-    if (props.hasInitialFocus) {
-      K.onValueScope(props.scope, props.scope.otDoc.state.loaded$, (loaded) => {
-        if (loaded) {
-          const input = ref.current.querySelector('input');
-          if (input && typeof input.focus === 'function') {
-            defer(() => {
-              input.focus();
-            });
-          }
-        }
-      });
+    if (hasInitialFocus) {
+      const input = ref.current?.querySelector('input');
+      defer(() => input?.focus?.());
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasInitialFocus, ref]);
 
   return (
     <div
       ref={ref}
-      className={props.isRtl ? 'x--dir-rtl' : ''}
-      onFocus={() => {
-        props.scope.$applyAsync(() => {
-          props.scope.fieldLocale.setActive(true);
-        });
-      }}
-      onBlur={() => {
-        props.scope.$applyAsync(() => {
-          props.scope.fieldLocale.setActive(false);
-          props.scope.fieldLocale.revalidate();
-        });
-      }}>
-      <WidgetRendererInternal
-        widget={widget}
-        locale={locale}
-        editorData={editorData}
-        loadEvents={loadEvents}
-        widgetApi={props.widgetApi}
-        scope={props.scope}
-      />
+      className={isRtl ? 'x--dir-rtl' : ''}
+      onFocus={props.onFocus}
+      onBlur={props.onBlur}>
+      <MemoizedWidgetRendererInternal {...props} />
     </div>
   );
 }
 
 WidgetRenderer.propTypes = {
-  hasInitialFocus: PropTypes.bool.isRequired,
   isRtl: PropTypes.bool.isRequired,
-  scope: PropTypes.object.isRequired,
+  hasInitialFocus: PropTypes.bool,
+  locale: PropTypes.object.isRequired,
+  widget: PropTypes.object.isRequired,
+  onFocus: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  loadEvents: PropTypes.object,
   widgetApi: PropTypes.object.isRequired,
+  entityType: PropTypes.string.isRequired,
 };
