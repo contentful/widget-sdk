@@ -94,9 +94,13 @@ export async function create(
             times(queuedShouts, shout);
           },
           (error) => {
-            logger.logError(
-              "Failed to open ShareJS connection to shout(['cma-auto-save']) required to trigger `auto_save` webhook",
-              error
+            logger.captureError(
+              new Error(
+                "Failed to open ShareJS connection to shout(['cma-auto-save']) required to trigger `auto_save` webhook"
+              ),
+              {
+                originalMessage: error.message,
+              }
             );
           }
         );

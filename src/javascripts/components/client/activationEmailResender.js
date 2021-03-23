@@ -22,16 +22,15 @@ export async function resendActivationEmail(email) {
   } catch (error) {
     const errorJson = await error.json();
 
-    logger.logError('Failed activation email resend attempt', {
-      data: {
-        email: email,
-        response: {
-          status: error.status,
-          statusText: error.statusText,
-          data: errorJson,
-        },
+    logger.captureError(new Error('Failed activation email resend attempt'), {
+      email: email,
+      response: {
+        status: error.status,
+        statusText: error.statusText,
+        data: errorJson,
       },
     });
-    new Error('The email could not be sent');
+
+    throw new Error('The email could not be sent');
   }
 }

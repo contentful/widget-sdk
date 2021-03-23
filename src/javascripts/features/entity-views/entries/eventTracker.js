@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import { track } from 'analytics/Analytics';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 
 export function onEntryEvent(actionName, { succeeded }) {
   switch (actionName) {
@@ -28,10 +28,7 @@ function entryEventTracker(action, origin) {
         response: data,
       });
     } catch (error) {
-      logError('Unexpected error during entryEventTracker call', {
-        err: error,
-        msg: error.message,
-      });
+      captureError(error);
     }
   };
 }

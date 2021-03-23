@@ -9,7 +9,7 @@ import {
   Notification,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 
 const BATCH_LIMIT = 100;
@@ -236,6 +236,6 @@ export async function reinvite(orgMembership) {
       `There was a problem sending an invitation to ${getFullNameOrEmail(orgMembership.sys.user)}`
     );
 
-    logError(`Failed to re-invite user`, { email: orgMembership.sys.user.email, error: e });
+    captureError(e, { email: orgMembership.sys.user.email });
   }
 }

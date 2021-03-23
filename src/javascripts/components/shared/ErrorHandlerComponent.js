@@ -10,7 +10,7 @@ export default class ErrorHandler extends React.Component {
 
   componentDidCatch(error, info) {
     this.setState({ hasError: true });
-    logger.logError(error, info);
+    logger.captureError(error, info);
   }
 
   render() {

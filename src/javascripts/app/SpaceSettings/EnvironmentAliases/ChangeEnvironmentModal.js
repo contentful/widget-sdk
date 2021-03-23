@@ -111,7 +111,7 @@ export default function ChangeEnvironmentModal({
       changeEnvironmentConfirm();
       setModalOpen(false);
     } catch (err) {
-      logger.logError('Aliases - changeEnvironment exception', err);
+      logger.captureError(err);
     } finally {
       setLoading(false);
     }

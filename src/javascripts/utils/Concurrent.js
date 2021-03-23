@@ -25,7 +25,7 @@ export function sleep(t) {
  *     const maybeValue = match(result, {
  *       [Success]: (value) => value
  *       [Failure]: (error) => {
- *         logError(error);
+ *         captureError(error);
  *         return null;
  *       }
  *     })
@@ -36,7 +36,7 @@ export function sleep(t) {
  *     try {
  *       maybeResult = yield foo();
  *     } catch (e) {
- *       logError(error);
+ *       captureError(error);
  *     }
  */
 export function tryP(promise) {

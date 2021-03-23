@@ -44,10 +44,10 @@ export const startAppTrial = async (organizationId: string) => {
     return { apps: ['compose', 'launch'], trial };
   } catch (e) {
     if (e.status >= 500) {
-      logger.logError('Could not create apps trial space', {
-        error: e,
-        groupingHash: 'AppTrialError',
+      logger.captureError(new Error('Could not create apps trial space'), {
+        originalError: e,
       });
+
       throw new TrialSpaceServerError();
     }
     throw e;
@@ -96,9 +96,8 @@ export const contentImport = async (client: PlainClientAPI) => {
   try {
     await provisionHelpCenter(client, defaultLocaleCode);
   } catch (e) {
-    logger.logError('Content import failed during apps trial', {
-      error: e,
-      groupingHash: 'AppTrialError',
+    logger.captureError(new Error('Content import failed during apps trial'), {
+      originalError: e,
     });
     throw new ContentImportError();
   }

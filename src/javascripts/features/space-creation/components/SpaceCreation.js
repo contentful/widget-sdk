@@ -9,7 +9,7 @@ import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
 import { spaceCreation, createSpaceWithTemplate } from '../services/SpaceCreationService';
 import { actions, SpaceCreationState } from '../context';
 import * as Navigator from 'states/Navigator';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import { track } from 'analytics/Analytics';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -123,7 +123,7 @@ export const SpaceCreation = ({ orgId }) => {
     } catch (error) {
       setStatus(StepStatus.FAILED);
       Notification.error(`${spaceName} could not be created`);
-      logError('Could not create space', { error });
+      captureError(error);
     }
 
     //  show the loading state for a minimum amount of time

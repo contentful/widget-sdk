@@ -289,7 +289,7 @@ export const initStateController = ({
         notify(Notification.ValidationError());
       }
     } catch (error) {
-      logger.logError(error);
+      logger.captureError(error);
     }
   }
 

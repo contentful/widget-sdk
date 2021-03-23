@@ -194,10 +194,7 @@ class ScheduledActionsListPage extends Component {
         pageNext: getQueryStringParams(nextQuery).pageNext,
       });
     } catch (error) {
-      logger.logError('Unexpected error loading scheduled actions', {
-        error,
-        message: error.message,
-      });
+      logger.captureError(error);
       this.setState({
         isError: true,
         isLoading: false,

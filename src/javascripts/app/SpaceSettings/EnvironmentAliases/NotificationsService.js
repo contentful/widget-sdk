@@ -120,7 +120,7 @@ export const triggerAliasChangedToast = async (handleChangeEnvironment, update) 
     );
     Navigator.reload();
   } catch (err) {
-    logger.logError('Aliases - changeEnvironment exception', err);
+    logger.captureError(err);
     Notification.error(
       <FromTo
         message={`There was an error changing the ${aliasId} alias target from `}
@@ -207,7 +207,7 @@ export const triggerAliasDeletedToast = async (handleDeleteEnvironment, context)
     Notification.success(<Message message={`Environment alias "${aliasId}" deleted`} />);
     Navigator.reload();
   } catch (err) {
-    logger.logError('Aliases - deleteEnvironment exception', err);
+    logger.captureError(err);
     Notification.error(<Message message={`There was an error deleting the ${aliasId} alias`} />);
   }
 };

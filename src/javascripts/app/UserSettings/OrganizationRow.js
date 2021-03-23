@@ -64,7 +64,7 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
     await removeMembership(createOrganizationEndpoint(organization.sys.id), userOrgMembershipId);
   } catch (err) {
     // should we have a more actionable error?
-    logger.logError('Cannot Remove membership', err);
+    logger.captureError(err);
     Notification.error(`Could not leave organization ${organization.name}`);
     return;
   }

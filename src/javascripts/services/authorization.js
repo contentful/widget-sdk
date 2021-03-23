@@ -38,11 +38,8 @@ class Authorization {
     try {
       this.authContext = worf(this._tokenLookup, environment);
     } catch (exp) {
-      logger.logError('Worf initialization exception', {
-        data: {
-          exception: exp,
-          tokenLookup: tokenLookup,
-        },
+      logger.captureError(exp, {
+        tokenLookup,
       });
       return;
     }

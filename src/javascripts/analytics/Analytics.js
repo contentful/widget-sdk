@@ -119,9 +119,7 @@ export function track(event, data) {
     logEventPayloadSize(event, transformedData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
-    logger.logError('Unexpected error during event tracking', {
-      error,
-      message: error.message,
+    logger.captureError(error, {
       event,
       data,
     });

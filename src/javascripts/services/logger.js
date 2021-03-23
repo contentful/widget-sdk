@@ -102,6 +102,28 @@ export function enable(user) {
   Sentry.enable(user);
 }
 
+function captureSentryException(error, level, metadata) {
+  const augmentedMetadata = augmentMetadata(metadata);
+
+  if (env !== 'production' && env !== 'jest') {
+    /* eslint no-console: off */
+    console.error(error, augmentedMetadata);
+  }
+
+  Sentry.logException(error, {
+    level,
+    extra: augmentedMetadata,
+  });
+}
+
+export function captureError(error, metadata) {
+  captureSentryException(error, 'error', metadata);
+}
+
+export function captureWarning(error, metadata) {
+  captureSentryException(error, 'warning', metadata);
+}
+
 /**
  * Mostly used by the $uncaughtException service
  * @param {Error} exception  Exception Error object
