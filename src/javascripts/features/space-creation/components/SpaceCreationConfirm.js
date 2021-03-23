@@ -29,7 +29,7 @@ const styles = {
   }),
 };
 
-export function SpaceCreationConfirm({ onPrev, onNext, inProgress }) {
+export function SpaceCreationConfirm({ onPrev, onNext }) {
   const {
     state: { spaceName, selectedPlan },
   } = useContext(SpaceCreationState);
@@ -51,15 +51,11 @@ export function SpaceCreationConfirm({ onPrev, onNext, inProgress }) {
           </header>
           <SpacePlanResourceList plan={selectedPlan} />
           <Flex justifyContent="flex-end" alignItems="center" marginTop="spacingL">
-            <Button buttonType="muted" onClick={onPrev} disabled={inProgress} testId="go-back-btn">
+            <Button buttonType="muted" onClick={onPrev} testId="go-back-btn">
               Back
             </Button>
             <Flex marginLeft="spacingM">
-              <Button
-                buttonType="positive"
-                onClick={onNext}
-                loading={inProgress}
-                testId="confirm-btn">
+              <Button buttonType="positive" onClick={onNext} testId="confirm-btn">
                 Confirm and create
               </Button>
             </Flex>
@@ -73,5 +69,4 @@ export function SpaceCreationConfirm({ onPrev, onNext, inProgress }) {
 SpaceCreationConfirm.propTypes = {
   onPrev: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
-  inProgress: PropTypes.bool,
 };

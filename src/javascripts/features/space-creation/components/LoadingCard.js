@@ -19,8 +19,12 @@ const styles = {
 export function LoadingCard() {
   return (
     <div className={styles.loadingContainer}>
+      <SkeletonContainer svgHeight={100}>
+        <SkeletonDisplayText offsetTop={10} width={500} offsetBottom={10} />
+        <SkeletonText lineHeight={20} width={400} offsetTop={50} />
+      </SkeletonContainer>
       <SkeletonContainer svgHeight={40}>
-        <SkeletonText width={300} offsetTop={10} />
+        <SkeletonText width={150} offsetTop={5} offsetBottom={5} />
       </SkeletonContainer>
       <Card>
         <SkeletonContainer svgHeight={100}>

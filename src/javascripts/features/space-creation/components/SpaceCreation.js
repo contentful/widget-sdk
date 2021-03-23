@@ -16,9 +16,15 @@ import { css } from 'emotion';
 import { useAsync } from 'core/hooks/useAsync';
 import { SpacePlanSelection } from 'features/space-plan-assignment';
 import { CREATION_FLOW_TYPE, getPlansData } from '../utils/utils';
+import {
+  wait,
+  LOADING_SCREEN_COMPLETED_TIME,
+  LOADING_SCREEN_MINIMUM_TIME,
+} from 'features/space-management';
 import { WizardFixedFooter } from 'features/space-management';
 import * as Intercom from 'services/intercom';
 import { salesUrl } from 'Config';
+import { StepStatus, LoadingStateIllustrated } from 'features/space-management';
 
 const styles = {
   workbenchContent: css({
@@ -45,7 +51,7 @@ export const SpaceCreation = ({ orgId }) => {
   ];
 
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
-  const [inProgress, setInProgress] = useState(false);
+  const [status, setStatus] = useState(null);
   const currentStep = steps.find((item) => item.isActive);
 
   const { isLoading, data } = useAsync(useCallback(getPlansData(orgId), []));
@@ -88,7 +94,8 @@ export const SpaceCreation = ({ orgId }) => {
   };
 
   const submit = async () => {
-    setInProgress(true);
+    const startTime = Date.now();
+    setStatus(StepStatus.RUNNING);
     try {
       if (selectedTemplate !== null) {
         await createSpaceWithTemplate({ orgId, spaceName, selectedPlan, selectedTemplate });
@@ -107,13 +114,22 @@ export const SpaceCreation = ({ orgId }) => {
           flow: 'space_creation',
         });
       }
+      setStatus(StepStatus.COMPLETED);
+      // to avoid ui flashes for the second step in the LoadingStateIllustrated we expect
+      // the loading screen to remain for a minimum amount of time
+      await wait(LOADING_SCREEN_COMPLETED_TIME);
       Navigator.go({ path: ['account', 'organizations', 'subscription_new', 'overview'] });
       Notification.success(`${spaceName} was created successfully`);
     } catch (error) {
+      setStatus(StepStatus.FAILED);
       Notification.error(`${spaceName} could not be created`);
       logError('Could not create space', { error });
     }
-    setInProgress(false);
+
+    //  show the loading state for a minimum amount of time
+    if (Date.now() - startTime <= LOADING_SCREEN_MINIMUM_TIME) {
+      await wait(LOADING_SCREEN_MINIMUM_TIME - (Date.now() - startTime));
+    }
   };
 
   const handleGetInTouchClick = () => {
@@ -128,15 +144,33 @@ export const SpaceCreation = ({ orgId }) => {
     }
   };
 
-  return (
-    <Workbench>
-      <Workbench.Header
-        title="Subscription"
-        icon={<ProductIcon icon="Subscription" size="large" />}
-      />
-      <Workbench.Content className={styles.workbenchContent}>
-        {isLoading && <LoadingCard />}
-        {!isLoading && data && (
+  if (isLoading) {
+    return (
+      <Workbench>
+        <Workbench.Header
+          title="Subscription"
+          icon={<ProductIcon icon="Subscription" size="large" />}
+        />
+        <Workbench.Content className={styles.workbenchContent}>
+          <LoadingCard />
+        </Workbench.Content>
+      </Workbench>
+    );
+  }
+
+  // Animated loading state for space creation progress
+  if (!isLoading && data && status && status !== StepStatus.FAILED) {
+    return <LoadingStateIllustrated status={status} />;
+  }
+
+  if (!isLoading && data) {
+    return (
+      <Workbench>
+        <Workbench.Header
+          title="Subscription"
+          icon={<ProductIcon icon="Subscription" size="large" />}
+        />
+        <Workbench.Content className={styles.workbenchContent}>
           <Grid columns={1} rowGap="spacingM">
             <Breadcrumbs items={steps} isActive={steps} />
             {steps.indexOf(currentStep) === 0 && (
@@ -158,31 +192,27 @@ export const SpaceCreation = ({ orgId }) => {
               />
             )}
             {steps.indexOf(currentStep) === 2 && (
-              <SpaceCreationConfirm
-                onPrev={navigateToPreviousStep}
-                onNext={submit}
-                inProgress={inProgress}
-              />
+              <SpaceCreationConfirm onPrev={navigateToPreviousStep} onNext={submit} />
             )}
           </Grid>
-        )}
 
-        {steps.indexOf(currentStep) === 0 && data && (
-          <WizardFixedFooter
-            continueBtnDisabled={
-              !selectedPlan ||
-              ([...data.plans, data.freePlan].length === 1 &&
-                data?.freeSpaceResource?.limits?.maximum - data.freeSpaceResource?.usage === 0)
-            }
-            onNext={navigateToNextStep}
-            flowType={CREATION_FLOW_TYPE}
-            handleGetInTouchClick={handleGetInTouchClick}
-            spaceId={data.space?.sys?.id}
-          />
-        )}
-      </Workbench.Content>
-    </Workbench>
-  );
+          {steps.indexOf(currentStep) === 0 && data && (
+            <WizardFixedFooter
+              continueBtnDisabled={
+                !selectedPlan ||
+                ([...data.plans, data.freePlan].length === 1 &&
+                  data?.freeSpaceResource?.limits?.maximum - data.freeSpaceResource?.usage === 0)
+              }
+              onNext={navigateToNextStep}
+              flowType={CREATION_FLOW_TYPE}
+              handleGetInTouchClick={handleGetInTouchClick}
+              spaceId={data.space?.sys?.id}
+            />
+          )}
+        </Workbench.Content>
+      </Workbench>
+    );
+  }
 };
 
 SpaceCreation.propTypes = {
