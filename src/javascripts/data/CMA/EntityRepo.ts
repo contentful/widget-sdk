@@ -3,7 +3,6 @@ import {
   CONTENT_ENTITY_UPDATED_EVENT,
   PubSubClient,
 } from 'services/PubSubService';
-import * as logger from 'services/logger';
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
@@ -90,11 +89,6 @@ export function create(
     // provided in the parameters. While we don't know what can sometimes cause
     // updates with mismatched space ID, this is the next best thing.
     if (options.createSpaceEndpoint && !isEndpointUpToDate(entity, spaceEndpoint)) {
-      logger.logWarn('Endpoint was out of date from EntityRepo', {
-        spaceId: entity.sys.space.sys.id,
-        envId: entity.sys.environment.sys.id,
-        entryId: entity.sys.id,
-      });
       return options.createSpaceEndpoint(entity);
     } else {
       return spaceEndpoint;
