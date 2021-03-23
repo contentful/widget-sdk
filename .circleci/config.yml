@@ -451,7 +451,7 @@ workflows:
           context:
             - dast-scan
           requires:
-            - samson/trigger-samson
+            - deploy-comment
       # - saucelabs/run:
       #     name: run-win10-edge-tests
       #     browser: 'MicrosoftEdge'
