@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, fireEvent, within, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
-import UserEditModal from './UserEditModal';
-import { updateUserData } from './AccountRepository';
 
-jest.mock('./AccountRepository', () => ({
+import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { UserEditModal } from './UserEditModal';
+
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   updateUserData: jest.fn(),
 }));
 

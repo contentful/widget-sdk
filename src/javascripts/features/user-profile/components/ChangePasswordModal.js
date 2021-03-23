@@ -1,5 +1,7 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import { get } from 'lodash';
 import {
   Modal,
   Form,
@@ -8,11 +10,10 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
+
+import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import { updateUserData } from './AccountRepository';
-import { getValidationMessageFor } from './utils';
-import { get } from 'lodash';
+import { getValidationMessageFor } from '../utils/getValidationMessageFor';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -116,7 +117,7 @@ function handleCurrentPasswordError(dispatch) {
   });
 }
 
-export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
+export function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
   const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
   const submit = async () => {

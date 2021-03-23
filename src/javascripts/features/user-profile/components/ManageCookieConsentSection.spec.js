@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, wait } from '@testing-library/react';
-import ManageCookieConsentSection from './ManageCookieConsentSection';
 import { openConsentManagementPanel } from 'services/OsanoService';
+
+import { ManageCookieConsentSection } from './ManageCookieConsentSection';
 
 jest.mock('services/OsanoService', () => ({
   openConsentManagementPanel: jest.fn(),

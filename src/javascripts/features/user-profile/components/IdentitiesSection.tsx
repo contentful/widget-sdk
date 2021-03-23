@@ -1,31 +1,26 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import {
-  Heading,
+  Subheading,
   IconButton,
   Tooltip,
   ModalConfirm,
   Paragraph,
   Notification,
+  Flex,
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { oauthUrl } from 'Config';
+import { deleteUserIdentityData } from 'app/UserProfile/Settings/AccountRepository';
+
 import GithubIcon from 'svg/github-icon.svg';
 import GoogleIcon from 'svg/google-icon.svg';
 import TwitterIcon from 'svg/twitter-icon.svg';
-import { deleteUserIdentityData } from './AccountRepository';
+
+import type { Identity } from '../types';
 
 const styles = {
-  heading: css({
-    fontSize: tokens.fontSizeL,
-    fontWeight: tokens.fontWeightMedium,
-    marginTop: tokens.spacingL,
-  }),
-  identitiesRow: css({
-    display: 'flex',
-    marginTop: tokens.spacingS,
-  }),
   identityItem: css({
     width: '135px',
     height: '42px',
@@ -62,6 +57,7 @@ const styles = {
       color: tokens.colorTextDark,
     },
   }),
+  // eslint-disable-next-line @typescript-eslint/camelcase
   google_oauth2: css({
     border: `1px solid #E5ADA3`,
     color: tokens.colorRedDark,
@@ -79,68 +75,89 @@ const styles = {
   tooltipTargetWrapper: css({ display: 'flex' }),
 };
 
-const idpMap = {
+type ProviderHumanNamesMap = { [key in Identity['provider']]: string };
+const providerHumanNames: ProviderHumanNamesMap = {
+  // eslint-disable-next-line @typescript-eslint/camelcase
   google_oauth2: 'Google',
   github: 'Github',
   twitter: 'Twitter',
 };
 
-const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) => {
-  const availableProviders = Object.keys(idpMap).filter(
-    (providerName) =>
-      !identities.find(({ provider: usedProvider }) => providerName === usedProvider)
+interface IdentitiesSectionProps {
+  identities?: Identity[];
+  userHasPassword?: boolean;
+  onRemoveIdentity: (identityId: Identity['sys']['id']) => void;
+}
+
+export function IdentitiesSection({
+  identities = [],
+  userHasPassword = false,
+  onRemoveIdentity,
+}: IdentitiesSectionProps) {
+  const availableProviders = Object.keys(providerHumanNames).filter(
+    (providerName) => !identities?.find((identity) => providerName === identity.provider)
   );
 
   return (
-    <div data-test-id="identities-section">
-      {identities.length ? (
-        <>
-          <Heading className={styles.heading}>Connected open identities:</Heading>
-          {identities.map(({ provider, sys: { id: identityId } }) => {
-            return (
-              <RemoveIdentityProvider
-                onRemove={onRemoveIdentity}
-                key={provider}
-                identityId={identityId}
-                provider={provider}
-                disallowRemoval={!userHasPassword && identities.length === 1}
-              />
-            );
-          })}
-        </>
-      ) : null}
-      {availableProviders.length ? (
-        <>
-          <Heading className={styles.heading}>Available open identities:</Heading>
-          <div className={styles.identitiesRow}>
-            {availableProviders.map((provider) => {
-              return <AddIdentityProvider key={provider} provider={provider} />;
+    <section data-test-id="identities-section">
+      {identities.length > 0 && (
+        <Flex flexDirection="column" marginBottom="spacingL">
+          <Subheading>Connected open identities:</Subheading>
+
+          <Flex marginTop="spacingS">
+            {identities.map((identity) => {
+              return (
+                <ConnectedIdentity
+                  key={identity.provider}
+                  provider={identity.provider}
+                  identityId={identity.sys.id}
+                  disallowRemoval={!userHasPassword && identities.length === 1}
+                  onRemove={onRemoveIdentity}
+                />
+              );
             })}
-          </div>
-        </>
-      ) : null}
-    </div>
+          </Flex>
+        </Flex>
+      )}
+      {availableProviders.length > 0 && (
+        <Flex flexDirection="column">
+          <Subheading>Available open identities:</Subheading>
+
+          <Flex marginTop="spacingS">
+            {availableProviders.map((provider) => {
+              return (
+                <AvailableIdentity key={provider} provider={provider as Identity['provider']} />
+              );
+            })}
+          </Flex>
+        </Flex>
+      )}
+    </section>
   );
-};
-IdentitiesSection.propTypes = {
-  identities: PropTypes.array,
-  onRemoveIdentity: PropTypes.func.isRequired,
-  userHasPassword: PropTypes.bool.isRequired,
-};
+}
 
-export default IdentitiesSection;
+interface ConnectedIdentityProps {
+  identityId: Identity['sys']['id'];
+  provider: Identity['provider'];
+  onRemove: (id: Identity['sys']['id']) => void;
+  disallowRemoval?: boolean;
+}
 
-function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemoval }) {
-  const humanName = idpMap[provider];
-
+function ConnectedIdentity({
+  identityId,
+  provider,
+  onRemove,
+  disallowRemoval = false,
+}: ConnectedIdentityProps) {
   const [isModalShown, setModalShown] = useState(false);
 
-  const removeIdentity = async (identityId) => {
-    // identityIds are, weirdly, numbers, so they must be cast to string before making
-    // the API call
+  const humanName = providerHumanNames[provider];
+
+  const removeIdentity = async (identityId: Identity['sys']['id']) => {
+    // identityIds are, weirdly, numbers, so they must be cast to string before making the API call
     try {
       await deleteUserIdentityData(identityId.toString());
-    } catch (_) {
+    } catch {
       Notification.error(`An error occurred while removing ${humanName} from your profile.`);
 
       return;
@@ -152,11 +169,12 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
   };
 
   return (
-    <div className={styles.identitiesRow}>
+    <>
       <div className={cx(styles[provider], styles.identityItem)}>
-        <IdentityIcon provider={provider} />
+        {getProviderIcon(provider)}
         <div className={styles.providerName}>{humanName}</div>
       </div>
+
       {!disallowRemoval && (
         <>
           <Tooltip
@@ -197,19 +215,16 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
           </ModalConfirm>
         </>
       )}
-    </div>
+    </>
   );
 }
 
-RemoveIdentityProvider.propTypes = {
-  identityId: PropTypes.number.isRequired,
-  provider: PropTypes.string.isRequired,
-  onRemove: PropTypes.func.isRequired,
-  disallowRemoval: PropTypes.bool.isRequired,
-};
+interface AvailableIdentityProps {
+  provider: Identity['provider'];
+}
 
-function AddIdentityProvider({ provider }) {
-  const humanName = idpMap[provider];
+function AvailableIdentity({ provider }: AvailableIdentityProps) {
+  const humanName = providerHumanNames[provider];
 
   return (
     <form
@@ -217,7 +232,7 @@ function AddIdentityProvider({ provider }) {
       action={oauthUrl(provider, '/account/user/profile')}
       method="post">
       <div className={cx(styles[provider], styles.identityItem)}>
-        <IdentityIcon provider={provider} />
+        {getProviderIcon(provider)}
         <input
           className={cx(styles.identityInput, styles.cursorPointer)}
           type="submit"
@@ -229,11 +244,7 @@ function AddIdentityProvider({ provider }) {
   );
 }
 
-AddIdentityProvider.propTypes = {
-  provider: PropTypes.string.isRequired,
-};
-
-function IdentityIcon({ provider }) {
+function getProviderIcon(provider: Identity['provider']) {
   switch (provider) {
     case 'github':
       return <GithubIcon />;
@@ -245,7 +256,3 @@ function IdentityIcon({ provider }) {
       return null;
   }
 }
-
-IdentityIcon.propTypes = {
-  provider: PropTypes.oneOf(['github', 'google_oauth2', 'twitter']).isRequired,
-};

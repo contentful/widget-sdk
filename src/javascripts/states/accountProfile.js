@@ -1,16 +1,11 @@
 import React from 'react';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
-import Settings from 'app/UserProfile/Settings';
+
 import SpaceMembershipsRouter from 'app/UserSettings/SpaceMembershipsRouter';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 import { UserCMATokensRoute } from 'features/api-keys-management';
 import AccountView from 'account/AccountView';
-
-const user = {
-  name: 'user',
-  url: '/user',
-  component: Settings,
-};
+import { userProfileState } from 'features/user-profile';
 
 const spaceMemberships = {
   name: 'space_memberships',
@@ -64,7 +59,7 @@ export default {
   navComponent: ProfileNavigationBar,
   children: [
     userCancellation,
-    user,
+    userProfileState,
     cmaTokens,
     spaceMemberships,
     organizationMemberships,

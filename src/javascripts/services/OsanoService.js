@@ -237,7 +237,6 @@ export async function persistConsent(user) {
 /**
  * Wait for Osano's cm (consent manager) instance to load. Will wait 1 second before throwing.
  * @param  {Number} tries Current number of tries
- * @return {void}
  */
 export async function waitForCMInstance(tries = 0) {
   // Wait for Osano to load for 1 second or throw

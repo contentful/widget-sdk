@@ -36,11 +36,11 @@ It injects loading in the full page size, recomended for loading page content.
 Example of usage:
 
 ```jsx
-// UserProfile/Settings/index.js
+// features/user-profile/components/UserProfilePage.tsx
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingEmptyState } from 'features/loading-state';
 import { Workbench } from '@contentful/forma-36-react-components';
-import {ProductIcon} from '@contentful/forma-36-react-components/dist/alpha';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 <DocumentTitle title="User profile" />
 <Workbench>

@@ -1,13 +1,27 @@
-import { create as createQrCode } from 'qrcode';
-import { renderToDataURL } from 'qrcode/lib/renderer/canvas';
+interface Field {
+  value: string;
+}
+
+interface Fields {
+  firstName?: Field;
+  lastName?: Field;
+  email?: Field;
+  currentPassword?: Field;
+  newPassword?: Field;
+  newPasswordConfirm?: Field;
+}
+
+type Validators = Record<keyof Fields, (field: Field, fields?: Fields) => string | undefined>;
 
 const validations = {
-  presence: (value) => (value.trim() ? true : false),
-  minLength: (length, value) => (value && value.trim().length >= length ? true : false),
-  maxLength: (length, value) => (value && value.trim().length < length ? true : false),
+  presence: (value: string) => (value.trim() ? true : false),
+  minLength: (length: number, value: string) =>
+    value && value.trim().length >= length ? true : false,
+  maxLength: (length: number, value: string) =>
+    value && value.trim().length < length ? true : false,
 };
 
-const validators = {
+const validators: Validators = {
   firstName: (field) => {
     const { value } = field;
 
@@ -61,13 +75,13 @@ const validators = {
       return 'New password confirmation must be at least 8 characters';
     }
 
-    if (value !== fields.newPassword.value) {
+    if (value !== fields?.newPassword?.value) {
       return 'New password and its confirmation do not match';
     }
   },
 };
 
-export function getValidationMessageFor(fields, fieldName) {
+export function getValidationMessageFor(fields: Fields, fieldName: string) {
   const fieldData = fields[fieldName];
 
   if (!fieldData) {
@@ -86,12 +100,4 @@ export function getValidationMessageFor(fields, fieldName) {
   }
 
   return validator(fieldData, fields);
-}
-
-export function createQRCodeDataURI(data) {
-  if (!data || typeof data !== 'string') {
-    return null;
-  }
-
-  return renderToDataURL(createQrCode(data));
 }

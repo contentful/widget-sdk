@@ -1,10 +1,11 @@
 import React from 'react';
-import { fireEvent, render, wait } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
-import IdentitiesSection from './IdentitiesSection';
-import { deleteUserIdentityData } from './AccountRepository';
 
-jest.mock('./AccountRepository', () => ({
+import { deleteUserIdentityData } from 'app/UserProfile/Settings/AccountRepository';
+import { IdentitiesSection } from './IdentitiesSection';
+
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   deleteUserIdentityData: jest.fn(),
 }));
 
@@ -14,7 +15,7 @@ describe('IdentitiesSection', () => {
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
   });
 
-  it('should Google, Github, and Twitter as available if no identities are passed in', () => {
+  it('should show Google, Github, and Twitter as available if no identities are passed in', () => {
     const { getByTestId } = render(
       <IdentitiesSection userHasPassword={true} identities={[]} onRemoveIdentity={() => {}} />
     );
@@ -104,9 +105,11 @@ describe('IdentitiesSection', () => {
     expect(getByTestId('dialog-remove-google_oauth2-identity')).toBeVisible();
     fireEvent.click(getByTestId('confirm-remove-google_oauth2-identity'));
     expect(deleteUserIdentityData).toBeCalled();
-    await wait();
-    expect(Notification.error).toHaveBeenCalledWith(
-      'An error occurred while removing Google from your profile.'
+
+    await waitFor(() =>
+      expect(Notification.error).toHaveBeenCalledWith(
+        'An error occurred while removing Google from your profile.'
+      )
     );
   });
 
@@ -124,10 +127,12 @@ describe('IdentitiesSection', () => {
     expect(getByTestId('dialog-remove-google_oauth2-identity')).toBeVisible();
     fireEvent.click(getByTestId('confirm-remove-google_oauth2-identity'));
     expect(deleteUserIdentityData).toBeCalled();
-    await wait();
-    expect(onRemoveIdentity).toBeCalled();
-    expect(Notification.success).toHaveBeenCalledWith(
-      'Google successfully removed from your profile.'
-    );
+
+    await waitFor(() => {
+      expect(onRemoveIdentity).toBeCalled();
+      expect(Notification.success).toHaveBeenCalledWith(
+        'Google successfully removed from your profile.'
+      );
+    });
   });
 });

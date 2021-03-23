@@ -1,49 +1,29 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import { css } from 'emotion';
 import {
   Heading,
   IconButton,
-  Typography,
   Tooltip,
   TextLink,
+  ModalLauncher,
+  Card,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { css, cx } from 'emotion';
 import { websiteUrl } from 'Config';
-import { User as UserPropType } from './propTypes';
-import IdentitiesSection from './IdentitiesSection';
-import UserEditModal from './UserEditModal';
-import ChangePasswordModal from './ChangePasswordModal';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+
+import { IdentitiesSection } from './IdentitiesSection';
+import { UserEditModal } from './UserEditModal';
+import { ChangePasswordModal } from './ChangePasswordModal';
+
+import type { UserData, Identity } from '../types';
 
 const styles = {
-  spaceLeft: css({
-    marginLeft: tokens.spacingXs,
-    cursor: 'pointer',
-  }),
   accountImage: css({
     height: '75px',
     width: '75px',
-    marginTop: tokens.spacing2Xs,
+    marginRight: tokens.spacingM,
     borderRadius: '50%',
-  }),
-  flexContainer: css({
-    display: 'flex',
-    flexWrap: 'nowrap',
-  }),
-  column: css({
-    display: 'flex',
-    flexDirection: 'column',
-  }),
-  flexGrow1: css({
-    flexGrow: 1,
-  }),
-  typographyContainer: css({
-    paddingLeft: tokens.spacingL,
-    width: '620px',
-  }),
-  paddingTopS: css({
-    paddingTop: tokens.spacingS,
   }),
   name: css({
     fontWeight: tokens.fontWeightMedium,
@@ -52,7 +32,6 @@ const styles = {
     wordWrap: 'break-word',
   }),
   email: css({
-    marginTop: tokens.spacingXs,
     marginBottom: tokens.spacingM,
     color: tokens.colorTextMid,
   }),
@@ -62,7 +41,7 @@ const styles = {
   }),
 };
 
-const openEditModal = async (user, onEdit) => {
+const openEditModal = async (user: UserData, onEdit) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <UserEditModal
@@ -100,26 +79,35 @@ const openChangePasswordModal = async (user, onChangePassword) => {
   onChangePassword(result);
 };
 
-export default function AccountDetails({ user, onEdit, onChangePassword }) {
-  const [identities, setIdentities] = useState(user.identities);
-  const removeIdentity = (identityId) => {
+interface AccountDetailsProps {
+  user: UserData;
+  onEdit: Dispatch<SetStateAction<UserData | undefined>>;
+  onChangePassword: Dispatch<SetStateAction<UserData | undefined>>;
+}
+
+export function AccountDetails({ user, onEdit, onChangePassword }: AccountDetailsProps) {
+  const [identities, setIdentities] = useState<Identity[]>(user.identities);
+
+  const removeIdentity = (identityId: Identity['sys']['id']) => {
     const updatedIdentities = identities.filter((identity) => identity.sys.id !== identityId);
 
     setIdentities(updatedIdentities);
   };
 
   return (
-    <div data-test-id="user-account-data">
-      <section className={styles.flexContainer}>
-        <div className={cx(styles.column, styles.flexGrow1)}>
+    <Card testId="account-details-section-card" padding="large">
+      <Flex justifyContent="space-between" alignItems="flex-start" marginBottom="spacingL">
+        <Flex flexDirection="column">
           <Heading>Account</Heading>
-          <div className={cx(styles.flexContainer, styles.paddingTopS)}>
+
+          <Flex marginTop="spacingM">
             <img
               className={styles.accountImage}
               alt={`Profile image for ${user.firstName} ${user.lastName}`}
               src={user.avatarUrl}
             />
-            <Typography className={cx(styles.column, styles.typographyContainer)}>
+
+            <Flex flexDirection="column">
               <span data-test-id="user-full-name" className={styles.name}>
                 {user.firstName} {user.lastName}
               </span>
@@ -149,21 +137,20 @@ export default function AccountDetails({ user, onEdit, onChangePassword }) {
                   Single sign-on is active for your account.
                 </TextLink>
               )}
-            </Typography>
-          </div>
-        </div>
-        <div className={styles.column}>
-          <Tooltip place="bottom" content="Edit account">
-            <IconButton
-              label="Edit user account details"
-              iconProps={{ icon: 'Edit' }}
-              buttonType="muted"
-              onClick={() => openEditModal(user, onEdit)}
-              testId="edit-user-account-details"
-            />
-          </Tooltip>
-        </div>
-      </section>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        <Tooltip place="bottom" content="Edit account">
+          <IconButton
+            label="Edit user account details"
+            iconProps={{ icon: 'Edit' }}
+            buttonType="muted"
+            onClick={() => openEditModal(user, onEdit)}
+            testId="edit-user-account-details"
+          />
+        </Tooltip>
+      </Flex>
       {!user.ssoLoginOnly && (
         <IdentitiesSection
           userHasPassword={user.passwordSet}
@@ -171,12 +158,6 @@ export default function AccountDetails({ user, onEdit, onChangePassword }) {
           identities={identities}
         />
       )}
-    </div>
+    </Card>
   );
 }
-
-AccountDetails.propTypes = {
-  user: UserPropType.isRequired,
-  onEdit: PropTypes.func.isRequired,
-  onChangePassword: PropTypes.func.isRequired,
-};

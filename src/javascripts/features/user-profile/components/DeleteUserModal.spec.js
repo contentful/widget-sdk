@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
-import DeleteUserModal from './DeleteUserModal';
-import { deleteUserAccount } from './AccountRepository';
 
-jest.mock('./AccountRepository', () => ({
+import { deleteUserAccount } from 'app/UserProfile/Settings/AccountRepository';
+import { DeleteUserModal } from './DeleteUserModal';
+
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   deleteUserAccount: jest.fn(),
 }));
 

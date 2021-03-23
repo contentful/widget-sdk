@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Button,
   Modal,
@@ -12,11 +13,11 @@ import {
   FormLabel,
   Notification,
 } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ContactUsButton from 'ui/Components/ContactUsButton';
-import { deleteUserAccount } from './AccountRepository';
+
+import { deleteUserAccount } from 'app/UserProfile/Settings/AccountRepository';
 import { logError } from 'services/logger';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {
   warningNote: css({ marginBottom: tokens.spacingL }),
@@ -34,7 +35,7 @@ const styles = {
   }),
 };
 
-const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShown }) => {
+export function DeleteUserModal({ singleOwnerOrganizations, onConfirm, onCancel, isShown }) {
   const reasons = {
     otherSolution: { name: "I've found another solution", key: 'other_solution' },
     notUseful: { name: "I don't find it useful", key: 'not_useful' },
@@ -155,7 +156,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
       </div>
     </Modal>
   );
-};
+}
 
 DeleteUserModal.propTypes = {
   singleOwnerOrganizations: PropTypes.array.isRequired,
@@ -163,5 +164,3 @@ DeleteUserModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
 };
-
-export default DeleteUserModal;

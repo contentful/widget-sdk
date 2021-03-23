@@ -1,15 +1,16 @@
 import React from 'react';
 import { render, fireEvent, within, wait, screen } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
-import Enable2FAModal from './Enable2FAModal';
-import { enableTotp } from './AccountRepository';
-import { createQRCodeDataURI } from './utils';
 
-jest.mock('./utils', () => ({
+import { enableTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { Enable2FAModal } from './Enable2FAModal';
+import { createQRCodeDataURI } from '../utils/createQRCodeDataURI';
+
+jest.mock('../utils/createQRCodeDataURI', () => ({
   createQRCodeDataURI: jest.fn(),
 }));
 
-jest.mock('./AccountRepository', () => ({
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   enableTotp: jest.fn(),
 }));
 

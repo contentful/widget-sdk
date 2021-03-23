@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, wait, screen } from '@testing-library/react';
-import IndexPage from '.';
-import { fetchUserData } from './AccountRepository';
 
-jest.mock('./AccountRepository', () => ({
+import { fetchUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { UserProfilePage } from './UserProfilePage';
+
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   fetchUserData: jest.fn(),
 }));
 
-describe('IndexPage', () => {
+describe('UserProfilePage', () => {
   const build = (custom) => {
     const props = Object.assign(
       {
@@ -16,7 +17,7 @@ describe('IndexPage', () => {
       custom
     );
 
-    return render(<IndexPage {...props} />);
+    return render(<UserProfilePage {...props} />);
   };
 
   const createProfile = (custom) => {

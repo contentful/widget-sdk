@@ -1,5 +1,7 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import _ from 'lodash';
 import {
   Modal,
   Button,
@@ -9,13 +11,11 @@ import {
   Subheading,
   Notification,
 } from '@contentful/forma-36-react-components';
-import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
+
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import { updateUserData } from './AccountRepository';
-import { User as UserPropType } from './propTypes';
-import { getValidationMessageFor } from './utils';
-import { css } from 'emotion';
+import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { getValidationMessageFor } from '../utils/getValidationMessageFor';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -175,7 +175,7 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
   onConfirm(response);
 };
 
-export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
+export function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
   const fields = formData.fields;
@@ -365,9 +365,22 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   );
 }
 
+const User = PropTypes.shape({
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  avatarUrl: PropTypes.string,
+  email: PropTypes.string,
+  identities: PropTypes.array,
+  passwordSet: PropTypes.bool,
+  confirmed: PropTypes.bool,
+  mfaEligible: PropTypes.bool,
+  mfaEnabled: PropTypes.bool,
+  sys: PropTypes.shape({ version: PropTypes.number }),
+});
+
 UserEditModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  user: UserPropType.isRequired,
+  user: User.isRequired,
 };

@@ -44,14 +44,14 @@ describe('User profile page', () => {
     it('remove twitter identity', () => {
       const deleteIdentityInteraction = [deleteIdentity.willReturnIt()];
 
-      cy.findByTestId('user-account-data').should('be.visible');
+      cy.findByTestId('account-details-section-card').should('be.visible');
       cy.findByTestId('remove-twitter-button').should('be.visible').click();
       cy.findByTestId('dialog-remove-twitter-identity').should('be.visible');
       cy.findByTestId('confirm-remove-twitter-identity').should('be.visible').click();
 
       cy.wait(deleteIdentityInteraction);
 
-      cy.findByTestId('user-account-data')
+      cy.findByTestId('account-details-section-card')
         .should('be.visible')
         .find('[data-test-id="remove-twitter-button"]')
         .should('not.exist');
@@ -89,7 +89,7 @@ describe('User profile page', () => {
       it('with correct password', () => {
         const updateUserProfileInteraction = [updateDefaultUserProfileData.willReturnSuccess()];
 
-        cy.findByTestId('user-account-data').should('be.visible');
+        cy.findByTestId('account-details-section-card').should('be.visible');
         cy.findByTestId('edit-user-account-details').should('be.visible').click();
         cy.findByTestId('edit-account-data-modal').should('be.visible');
 
@@ -110,7 +110,7 @@ describe('User profile page', () => {
       it('with incorrect password', () => {
         const updateUserProfileInteraction = [updateDefaultUserProfileData.willReturnError()];
 
-        cy.findByTestId('user-account-data').should('be.visible');
+        cy.findByTestId('account-details-section-card').should('be.visible');
         cy.findByTestId('edit-user-account-details').should('be.visible').click();
         cy.findByTestId('edit-account-data-modal').should('be.visible');
 
@@ -133,7 +133,7 @@ describe('User profile page', () => {
     describe('update user profile password', () => {
       it('with valid new password', () => {
         const changePasswordInteraction = [changePassword.willReturnSuccess()];
-        cy.findByTestId('user-account-data').should('be.visible');
+        cy.findByTestId('account-details-section-card').should('be.visible');
         cy.findByTestId('link-change-password').should('be.visible').click();
         cy.findByTestId('change-password-modal').should('be.visible');
 
@@ -144,7 +144,7 @@ describe('User profile page', () => {
         cy.findByTestId('confirm-change-password').click();
         cy.wait(changePasswordInteraction);
 
-        cy.findByTestId('user-account-data')
+        cy.findByTestId('account-details-section-card')
           .should('be.visible')
           .find('[data-test-id="change-password-modal"]')
           .should('not.exist');
@@ -152,7 +152,7 @@ describe('User profile page', () => {
 
       it('with invalid new password', () => {
         const changePasswordInteraction = [changePassword.willReturnError()];
-        cy.findByTestId('user-account-data').should('be.visible');
+        cy.findByTestId('account-details-section-card').should('be.visible');
         cy.findByTestId('link-change-password').should('be.visible').click();
         cy.findByTestId('change-password-modal').should('be.visible');
 
@@ -202,7 +202,7 @@ describe('User profile page', () => {
 
     it('add valid password', () => {
       const addPasswordInteraction = [addPassword.willReturnSuccess()];
-      cy.findByTestId('user-account-data').should('be.visible');
+      cy.findByTestId('account-details-section-card').should('be.visible');
       cy.findByTestId('link-change-password').should('be.visible').click();
       cy.findByTestId('change-password-modal').should('be.visible');
 
@@ -212,7 +212,7 @@ describe('User profile page', () => {
       cy.findByTestId('confirm-change-password').click();
       cy.wait(addPasswordInteraction);
 
-      cy.findByTestId('user-account-data')
+      cy.findByTestId('account-details-section-card')
         .should('be.visible')
         .find('[data-test-id="change-password-modal"]')
         .should('not.exist');
@@ -221,7 +221,7 @@ describe('User profile page', () => {
 
     it('add invalid password', () => {
       const addPasswordInteraction = [addPassword.willReturnError()];
-      cy.findByTestId('user-account-data').should('be.visible');
+      cy.findByTestId('account-details-section-card').should('be.visible');
       cy.findByTestId('link-change-password').should('be.visible').click();
       cy.findByTestId('change-password-modal').should('be.visible');
 

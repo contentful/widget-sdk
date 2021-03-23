@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import {
   Form,
@@ -10,9 +11,9 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
-import { enableTotp } from './AccountRepository';
-import { createQRCodeDataURI } from './utils';
+
+import { enableTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { createQRCodeDataURI } from '../utils/createQRCodeDataURI';
 
 const styles = {
   qrcode: css({
@@ -31,7 +32,7 @@ const styles = {
   }),
 };
 
-export default function Enable2FAModal({ totp, onCancel, onConfirm, isShown }) {
+export function Enable2FAModal({ totp, onCancel, onConfirm, isShown }) {
   const [code, setCode] = useState('');
   const [isCodeInvalid, setInvalidCode] = useState(false);
   const [pending, setPending] = useState(false);

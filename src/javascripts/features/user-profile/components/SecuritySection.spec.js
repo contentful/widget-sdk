@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent, wait } from '@testing-library/react';
-import { Notification } from '@contentful/forma-36-react-components';
-import SecuritySection from './SecuritySection';
+import { Notification, ModalLauncher } from '@contentful/forma-36-react-components';
 import { window } from 'core/services/window';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { getUserTotp } from './AccountRepository';
+
+import { getUserTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { SecuritySection } from './SecuritySection';
 
 jest.mock('core/services/window', () => {
   const locationMock = jest.fn();
@@ -22,7 +22,7 @@ jest.mock('core/services/window', () => {
   };
 });
 
-jest.mock('./AccountRepository', () => ({
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   getUserTotp: jest.fn(),
   deleteUserTotp: jest.fn(),
 }));

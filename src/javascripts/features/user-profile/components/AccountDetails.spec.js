@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import AccountDetails from './AccountDetails';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
+
+import { AccountDetails } from './AccountDetails';
 
 describe('AccountDetails', () => {
   const makeUser = (custom) => {

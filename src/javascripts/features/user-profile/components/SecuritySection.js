@@ -1,26 +1,27 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Heading,
-  Subheading,
-  Paragraph,
   Button,
+  Card,
+  Heading,
+  ModalConfirm,
+  ModalLauncher,
+  Notification,
+  Paragraph,
+  Subheading,
   TextLink,
   Typography,
-  Notification,
-  ModalConfirm,
 } from '@contentful/forma-36-react-components';
-import { authUrl } from 'Config';
+
+import { authUrl, websiteUrl } from 'Config';
+import { getUserTotp, deleteUserTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { useAsyncFn } from 'core/hooks';
 import { window } from 'core/services/window';
 import { joinWithAnd } from 'utils/StringUtils';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { useAsyncFn } from 'core/hooks';
-import { websiteUrl } from 'Config';
-import { getUserTotp, deleteUserTotp } from './AccountRepository';
-import ChangePasswordModal from './ChangePasswordModal';
-import Enable2FAModal from './Enable2FAModal';
-import { User as UserPropType } from './propTypes';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+import { ChangePasswordModal } from './ChangePasswordModal';
+import { Enable2FAModal } from './Enable2FAModal';
 
 const goToResendEmailPage = () => {
   window.location = authUrl('/confirmation/new/resend');
@@ -128,7 +129,7 @@ const TwoFactorAuthenticationFaqLink = () => (
   </TextLink>
 );
 
-export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDisable2FA }) {
+export function SecuritySection({ user, onAddPassword, onEnable2FA, onDisable2FA }) {
   const [{ isLoading: loadingTotp }, getTotp] = useAsyncFn(
     useCallback(() => openEnable2FAModal(onEnable2FA), [onEnable2FA])
   );
@@ -153,63 +154,65 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDi
   const eligibilityCopy = joinWithAnd(reasons);
 
   return (
-    <Typography testId="security-section">
-      <Heading>Security</Heading>
-      <Subheading>Two-factor authentication (2FA) </Subheading>
-      {!enabled && (
-        <>
-          <Paragraph>
-            Add an extra layer of security to your account by using a one-time security code. Each
-            time you sign into your Contentful account, you’ll need your password and your security
-            code.
-          </Paragraph>
-          <Paragraph>
-            <TwoFactorAuthenticationFaqLink />
-          </Paragraph>
-        </>
-      )}
-      {!enabled && !eligible && (
-        <>
-          <Paragraph>To enable two-factor authentication please {eligibilityCopy}.</Paragraph>
-          {!confirmedEmail ? (
-            <Button testId="resend-email-cta" onClick={goToResendEmailPage}>
-              Resend confirmation email
-            </Button>
-          ) : (
-            <Button
-              testId="add-password-cta"
-              onClick={() => openAddPasswordModal(user, onAddPassword)}>
-              Add a password
-            </Button>
-          )}
-        </>
-      )}
-      {!enabled && eligible && (
-        <Button testId="enable-2fa-cta" loading={loadingTotp} onClick={getTotp}>
-          Enable 2FA
-        </Button>
-      )}
-      {enabled && (
-        <>
-          <Paragraph>Enabled with authenticator app</Paragraph>
-          <Paragraph>
-            <TwoFactorAuthenticationFaqLink />
-          </Paragraph>
-          <Button
-            testId="delete-2fa-cta"
-            buttonType="negative"
-            onClick={() => openDisable2FAModal(onDisable2FA)}>
-            Disable
+    <Card testId="security-section-card" padding="large">
+      <Typography testId="security-section">
+        <Heading>Security</Heading>
+        <Subheading>Two-factor authentication (2FA)</Subheading>
+        {!enabled && (
+          <>
+            <Paragraph>
+              Add an extra layer of security to your account by using a one-time security code. Each
+              time you sign into your Contentful account, you’ll need your password and this
+              security code.
+            </Paragraph>
+            <Paragraph>
+              <TwoFactorAuthenticationFaqLink />
+            </Paragraph>
+          </>
+        )}
+        {!enabled && !eligible && (
+          <>
+            <Paragraph>To enable two-factor authentication please {eligibilityCopy}.</Paragraph>
+            {!confirmedEmail ? (
+              <Button testId="resend-email-cta" onClick={goToResendEmailPage}>
+                Resend confirmation email
+              </Button>
+            ) : (
+              <Button
+                testId="add-password-cta"
+                onClick={() => openAddPasswordModal(user, onAddPassword)}>
+                Add a password
+              </Button>
+            )}
+          </>
+        )}
+        {!enabled && eligible && (
+          <Button testId="enable-2fa-cta" loading={loadingTotp} onClick={getTotp}>
+            Enable 2FA
           </Button>
-        </>
-      )}
-    </Typography>
+        )}
+        {enabled && (
+          <>
+            <Paragraph>Enabled with authenticator app</Paragraph>
+            <Paragraph>
+              <TwoFactorAuthenticationFaqLink />
+            </Paragraph>
+            <Button
+              testId="delete-2fa-cta"
+              buttonType="negative"
+              onClick={() => openDisable2FAModal(onDisable2FA)}>
+              Disable
+            </Button>
+          </>
+        )}
+      </Typography>
+    </Card>
   );
 }
 
 SecuritySection.propTypes = {
   onAddPassword: PropTypes.func.isRequired,
   onEnable2FA: PropTypes.func.isRequired,
-  user: UserPropType.isRequired,
+  user: PropTypes.object.isRequired,
   onDisable2FA: PropTypes.func.isRequired,
 };
