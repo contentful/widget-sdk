@@ -377,7 +377,7 @@ export function create(
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
     if (
-      isEqual(entity.fields, lastSavedEntity.fields) &&
+      fieldsAreEqual(entity.fields, lastSavedEntity.fields) &&
       // TODO: Ensure that changed `metadata.tags` order won't trigger a save.
       isEqual(entity.metadata, lastSavedEntity.metadata)
     ) {
@@ -568,6 +568,29 @@ export function create(
       // do nothing
     }
   }
+}
+
+export function fieldsAreEqual(fields, savedFields) {
+  return isEqual(cleanObject(fields), cleanObject(savedFields));
+}
+
+function cleanObject(fields: { [fieldName: string]: any }) {
+  const allValues = Object.values(fields).map((locale: { [localeName: string]: any }) => {
+    const localeValues = Object.values(locale);
+    return localeValues.map((localeValue) => {
+      return typeof localeValue === 'object' ? removeUndefinedValues(localeValue) : localeValue;
+    });
+  });
+  return allValues;
+}
+
+function removeUndefinedValues(obj) {
+  const newObj = {};
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === Object(obj[key])) newObj[key] = removeUndefinedValues(obj[key]);
+    else if (obj[key] !== undefined) newObj[key] = obj[key];
+  });
+  return newObj;
 }
 
 function stateBus(
