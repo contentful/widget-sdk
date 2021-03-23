@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
-import { Icon, Modal, Tooltip } from '@contentful/forma-36-react-components';
+import { Icon, Modal } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
@@ -83,24 +83,17 @@ export class QuickNavigation extends React.Component {
             this.openModal();
           },
         }}>
-        <Tooltip
-          content={
-            <React.Fragment>
-              Quick search <code className={styles.shortcut}>q</code>
-            </React.Fragment>
-          }>
-          {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
-          <button
-            className={styles.searchButton}
-            onClick={() => {
-              trackOpenButtonClick();
-              this.openModal();
-            }}
-            role="search"
-            data-test-id="quick-nav-search-button">
-            <Icon size="small" icon="Search" color="white" />
-          </button>
-        </Tooltip>
+        {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
+        <button
+          className={styles.searchButton}
+          onClick={() => {
+            trackOpenButtonClick();
+            this.openModal();
+          }}
+          role="search"
+          data-test-id="quick-nav-search-button">
+          <Icon size="small" icon="Search" color="white" />
+        </button>
       </GlobalHotKeys>
     );
   }
