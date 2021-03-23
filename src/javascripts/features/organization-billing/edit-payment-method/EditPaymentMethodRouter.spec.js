@@ -141,8 +141,8 @@ describe('EditPaymentMethodRouter', () => {
 
       await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
-      expect(logger.logError).toBeCalledWith('ZuoraIframeError', {
-        ...response,
+      expect(logger.captureError).toBeCalledWith(expect.any(Error), {
+        error: response,
         location: 'account.organizations.billing.edit-payment-method',
       });
       expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');

@@ -25,10 +25,6 @@ jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn(),
 }));
 
-jest.mock('services/logger', () => ({
-  logException: jest.fn(),
-}));
-
 const mockPlans = [
   {
     productPlanType: 'free_space',
@@ -171,7 +167,7 @@ describe('<CreateSampleSpaceModal />', () => {
     await waitFor(() => screen.queryByTestId('create-sample-space-modal'));
 
     expect(onFail).toHaveBeenCalled();
-    expect(logger.logException).toHaveBeenCalled();
+    expect(logger.captureError).toHaveBeenCalled();
     expect(screen.queryByTestId('get-started-button')).not.toBeDisabled();
   });
 

@@ -146,8 +146,8 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
     it('logs server error to `logger.logServerError()`', async () => {
       const validIds = ['ID', 'ANOTHER_ID'];
       await entityBatchLoaderFn([...validIds, INVALID_LONG_ID]);
-      expect(logger.logServerError).toHaveBeenCalledTimes(1);
-      expect(logger.logServerError).toHaveBeenCalledWith(expect.any(String), {
+      expect(logger.captureError).toHaveBeenCalledTimes(1);
+      expect(logger.captureError).toHaveBeenCalledWith(expect.any(Error), {
         error: CLIENT_ERROR,
         data: {
           requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.

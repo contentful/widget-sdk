@@ -111,7 +111,8 @@ export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
               onSubmit();
             }}
             onError={(error) => {
-              logger.captureError(error, {
+              logger.captureError(new Error('Zuora credit card iframe error'), {
+                error,
                 location: 'account.organizations.subscription_new.new_space',
               });
 

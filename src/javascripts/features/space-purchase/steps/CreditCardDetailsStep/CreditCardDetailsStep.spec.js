@@ -105,9 +105,10 @@ describe('steps/CreditCardDetailsStep', () => {
   });
 
   it('should log and notify the user, and not call onSubmit if something went wrong during submission', async () => {
+    const error = new Error('oops');
     when(mockEndpoint)
       .calledWith(expect.objectContaining({ method: 'POST', path: ['billing_details'] }))
-      .mockRejectedValueOnce(new Error('oops'));
+      .mockRejectedValueOnce(error);
 
     const onSubmit = jest.fn();
 
@@ -119,11 +120,8 @@ describe('steps/CreditCardDetailsStep', () => {
 
     await waitFor(() => expect(mockEndpoint).toBeCalled());
 
-    expect(logger.logError).toBeCalledWith('SpacePurchaseError', {
-      data: {
-        error: expect.any(Error),
-        organizationId: mockOrganization.sys.id,
-      },
+    expect(logger.captureError).toBeCalledWith(error, {
+      organizationId: mockOrganization.sys.id,
     });
 
     expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
@@ -136,8 +134,8 @@ describe('steps/CreditCardDetailsStep', () => {
 
     await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
-    expect(logger.logError).toBeCalledWith('ZuoraIframeError', {
-      ...response,
+    expect(logger.captureError).toBeCalledWith(expect.any(Error), {
+      error: response,
       location: 'account.organizations.subscription_new.new_space',
     });
 

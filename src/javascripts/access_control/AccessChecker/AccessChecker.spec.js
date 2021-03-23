@@ -5,7 +5,7 @@ import * as ac from './index';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as ProductCatalog from 'data/CMA/ProductCatalog';
 import * as LegacyFeatureService from 'services/LegacyFeatureService';
-import * as Logger from 'services/logger';
+import * as logger from 'services/logger';
 import * as Service from 'components/shared/persistent-notification/service';
 import * as Enforcements from 'access_control/Enforcements';
 import * as ResponseCache from 'access_control/AccessChecker/ResponseCache';
@@ -17,7 +17,6 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 jest.mock('data/EndpointFactory');
 jest.mock('data/CMA/ProductCatalog');
 jest.mock('services/LegacyFeatureService');
-jest.mock('services/logger');
 jest.mock('components/shared/persistent-notification/service');
 jest.mock('access_control/Enforcements');
 jest.mock('access_control/AccessChecker/ResponseCache');
@@ -91,7 +90,6 @@ describe('Access Checker', () => {
 
   beforeEach(async function () {
     stubs = {
-      logError: jest.fn(),
       canAccessEntries: jest.fn().mockReturnValue(false),
       canAccessAssets: jest.fn().mockReturnValue(false),
       canUpdateEntriesOfType: jest.fn().mockReturnValue(false),
@@ -112,7 +110,6 @@ describe('Access Checker', () => {
     LegacyFeatureService.default = jest.fn().mockReturnValue({
       get: async () => _.get(feature, 'enabled', false),
     });
-    Logger.logError = stubs.logError;
     Service.hidePersistentNotification = hidePersistentNotification;
     Service.showPersistentNotification = jest.fn();
     Enforcements.determineEnforcement = jest.fn().mockReturnValue(undefined);
@@ -766,17 +763,19 @@ describe('Access Checker', () => {
       });
 
       it('returns false and logs if organization authContext throws', function () {
+        const error = new Error();
+
         changeAuthContext(
           makeAuthContext({
             orgid: jest.fn().mockImplementation(() => {
-              throw new Error();
+              throw error;
             }),
           })
         );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
-        expect(stubs.logError).toHaveBeenCalledTimes(1);
-        expect(stubs.logError.mock.calls[0][0].indexOf('Worf exception')).toBe(0);
+        expect(logger.captureError).toHaveBeenCalledTimes(1);
+        expect(logger.captureError).toBeCalledWith(error);
       });
     });
 

@@ -3,7 +3,7 @@ import * as K from '__mocks__/kefirMock';
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { create as createPool } from 'data/sharejs/DocumentPool';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import { times } from 'lodash';
 
 // Mock Angular getModule for PresenceHub in OtDocument
@@ -14,10 +14,6 @@ jest.mock('core/NgRegistry', () => ({
       leave: () => jest.fn(),
     }),
   }),
-}));
-
-jest.mock('services/logger', () => ({
-  logError: jest.fn(),
 }));
 
 const mockEntityRepo = { entityRepo: true };
@@ -186,13 +182,15 @@ describe('DocumentPool', () => {
 
         describe('on failed shareJS connection', () => {
           it('logs the error to bugsnag', async () => {
-            connection.open.mockRejectedValue('boom');
+            connection.open.mockRejectedValue(new Error('boom'));
             cmaDocumentPool = await createPool(connection, spaceEndpoint);
             get('id', 'Entry', cmaDocumentPool);
             try {
               await connection.open();
-            } catch (error) {
-              expect(logError).toBeCalledWith(expect.any(String), error);
+            } catch {
+              expect(captureError).toBeCalledWith(expect.any(Error), {
+                originalMessage: 'boom',
+              });
             }
 
             // also, the callback supplied to triggerCmaAutoSave shouldn't break anything
