@@ -1,10 +1,10 @@
-import { BulkAction as BasicBulkAction, makeLink, VersionedLink } from '@contentful/types';
+import { BulkAction, makeLink, VersionedLink } from '@contentful/types';
 
 const testEntryId = 'testEntryId';
 const testAssetId = 'testAssetId';
 const testBulkActionId = 'testBulkActionId';
 
-type BulkAction = BasicBulkAction | { error: any };
+type BulkActionResponse = BulkAction | { error: any };
 
 const versionedLink = ({ type, id, version = 0 }): VersionedLink => ({
   sys: {
@@ -151,8 +151,8 @@ const bulkActionResponse = ({
   status = 'created',
   payload = bulkPublishResponsePayload,
   error,
-}: ResponseOptions): BulkAction => {
-  const response: BulkAction = {
+}: ResponseOptions): BulkActionResponse => {
+  const response: BulkActionResponse = {
     sys: {
       type: 'BulkAction',
       id: testBulkActionId,
