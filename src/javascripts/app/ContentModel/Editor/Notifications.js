@@ -62,7 +62,7 @@ export function invalidAccordingToScope(errors, fieldNames) {
 }
 
 export function saveFailure(errData, contentType) {
-  const err = logger.findActualServerError(errData);
+  const err = findActualServerError(errData);
   const errorId = get(err, 'sys.id');
   if (errorId === 'ValidationFailed') {
     saveInvalidError(errData, contentType);
@@ -121,6 +121,12 @@ export function duplicateError(errData) {
 }
 
 function getServerMessage(errData) {
-  const err = logger.findActualServerError(errData);
+  const err = findActualServerError(errData);
   return get(err, 'message') || get(err, 'sys.id') || 'Unknown server error';
+}
+
+function findActualServerError(errData) {
+  errData = errData || {};
+  const actualErr = errData.body || errData.data || errData;
+  return get(actualErr, 'sys.type') === 'Error' ? actualErr : undefined;
 }
