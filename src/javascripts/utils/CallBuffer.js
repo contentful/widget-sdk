@@ -51,7 +51,7 @@ export function create() {
    * Executes recorded calls and marks buffer
    * as resolved.
    */
-  function resolve(_service) {
+  function resolve(_service = undefined) {
     if (state === OPEN) {
       state = RESOLVED;
       service = _service;
