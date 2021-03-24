@@ -1,4 +1,4 @@
-import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset, isNil } from 'lodash';
+import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset } from 'lodash';
 import { Normalizer } from '@contentful/editorial-primitives';
 import type { Property, PropertyBus, Stream, StreamBus } from 'core/utils/kefir';
 import * as K from 'core/utils/kefir';
@@ -374,15 +374,15 @@ export function create(
       await afterUpdate$.changes().take(1).toPromise();
       return saveEntity(options);
     }
+    const fieldsAreEqual =
+      changedEntityFieldPaths(entity.fields, lastSavedEntity.fields).length === 0;
+    // TODO: Ensure that changed `metadata.tags` order won't trigger a save.
+    const metadataIsEqual = isEqual(entity.metadata, lastSavedEntity.metadata);
+
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
-    if (
-      fieldsAreEqual(entity.fields, lastSavedEntity.fields) &&
-      // TODO: Ensure that changed `metadata.tags` order won't trigger a save.
-      isEqual(entity.metadata, lastSavedEntity.metadata)
-    ) {
-      return;
-    }
+    if (fieldsAreEqual && metadataIsEqual) return;
+
     // Re-try saving after connection errors but no further attempt to save otherwise.
     const lastError = K.getValue(errorBus.property);
     if (lastError && !(lastError instanceof DocError.Disconnected)) {
@@ -568,34 +568,6 @@ export function create(
       // do nothing
     }
   }
-}
-
-export function fieldsAreEqual(fields, savedFields) {
-  return isEqual(cleanObject(fields), cleanObject(savedFields));
-}
-
-function cleanObject(fields: { [fieldName: string]: any }) {
-  const allValues = Object.values(fields).map((locale: { [localeName: string]: any }) => {
-    const localeValues = Object.values(locale);
-    return localeValues.map((localeValue) => {
-      return typeof localeValue === 'object' && !isNil(localeValue)
-        ? removeUndefinedValues(localeValue)
-        : localeValue;
-    });
-  });
-  return allValues;
-}
-
-function removeUndefinedValues(obj) {
-  const newObj = {};
-  Object.keys(obj).forEach((key) => {
-    if (obj[key] === Object(obj[key])) {
-      newObj[key] = removeUndefinedValues(obj[key]);
-    } else if (!isNil(obj[key])) {
-      newObj[key] = obj[key];
-    }
-  });
-  return newObj;
 }
 
 function stateBus(

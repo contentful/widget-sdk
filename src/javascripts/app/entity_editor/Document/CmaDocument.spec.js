@@ -913,54 +913,6 @@ describe('CmaDocument', () => {
   });
 });
 
-describe('fieldsAreEqual', () => {
-  it('returns false when there are changes', () => {
-    const fields = { fieldOne: { 'en-US': 'original' } };
-    const newFields = { fieldOne: { 'en-US': 'changed' } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
-  });
-
-  it('returns true when the only difference is undefined in a JSON field', () => {
-    const fields = { fieldOne: { 'en-US': { iam: 'json' } } };
-    const newFields = { fieldOne: { 'en-US': { iam: 'json', newData: undefined } } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(true);
-  });
-
-  it('returns true when the only difference is undefined in a deeply nested JSON field', () => {
-    const fields = { fieldOne: { 'en-US': { iam: 'json', nested: { very: { exists: 'yes' } } } } };
-    const newFields = {
-      fieldOne: {
-        'en-US': { iam: 'json', nested: { very: { exists: 'yes', notExists: undefined } } },
-      },
-    };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(true);
-  });
-
-  it('can still make other fields undefined', () => {
-    const fields = { fieldOne: { 'en-US': 'string value' } };
-    const newFields = { fieldOne: { 'en-US': undefined } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
-  });
-
-  it('can still make other fields null', () => {
-    const fields = { fieldOne: { 'en-US': 'string value' } };
-    const newFields = { fieldOne: { 'en-US': null } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
-  });
-
-  it('returns false when a locale contains different arrays', () => {
-    const fields = { fieldOne: { 'en-US': [1, 2, 3] } };
-    const newFields = { fieldOne: { 'en-US': [1, 2, 4] } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(false);
-  });
-
-  it('retuns true when a locale contains similar arrays', () => {
-    const fields = { fieldOne: { 'en-US': [1, 2, 3] } };
-    const newFields = { fieldOne: { 'en-US': [1, 2, 3] } };
-    expect(CmaDocument.fieldsAreEqual(fields, newFields)).toEqual(true);
-  });
-});
-
 function mockGetUpdatedEntity(entity, path, value) {
   entityRepo.get.mockImplementation(async () => {
     const updated = cloneDeep(entity);
