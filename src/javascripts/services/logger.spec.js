@@ -14,60 +14,32 @@ describe('logger service', () => {
     expect(Sentry.enable).toHaveBeenCalledWith('USER');
   });
 
-  it('logs errors', function () {
-    logger.logError('test', { meta: 'Data' });
+  it('should send Sentry an error-level error when calling captureError', () => {
+    const error = new Error('something bad');
 
-    expect(Sentry.logMessage).toHaveBeenCalledWith('test', {
+    logger.captureError(error, {
+      specialMeta: 'yes',
+    });
+
+    expect(Sentry.logException).toBeCalledWith(error, {
       level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
       extra: {
-        type: 'Logged Error',
-        meta: 'Data',
+        specialMeta: 'yes',
       },
     });
   });
 
-  it('does not log errors with empty messages', function () {
-    logger.logError();
+  it('should send Sentry a warning-level error when calling captureWarning', () => {
+    const error = new Error('something kind of bad');
 
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-
-    logger.logError(null, { meta: 'Something' });
-
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-
-    logger.logError('', { meta: 'Something else' });
-
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-  });
-
-  it('handles messages that are of type Error as well as String', function () {
-    const err = new Error('Oops something went wrong');
-    const errMsg = 'Wowzers this is messed up';
-
-    logger.logError(errMsg);
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith(errMsg, {
-      level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
-      extra: {
-        type: 'Logged Error',
-      },
+    logger.captureWarning(error, {
+      warningMeta: 'data',
     });
 
-    logger.logError(err);
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith(err.message, {
-      level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
+    expect(Sentry.logException).toBeCalledWith(error, {
+      level: 'warning',
       extra: {
-        type: 'Logged Error',
+        warningMeta: 'data',
       },
     });
   });

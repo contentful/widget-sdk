@@ -116,24 +116,25 @@ function captureSentryException(error, level, metadata) {
   });
 }
 
-export function captureError(error, metadata) {
+/**
+ * Send an error to Sentry.
+ *
+ * @param  {Error} error
+ * @param  {Object} metadata
+ * @return {void}
+ */
+export function captureError(error, metadata = {}) {
   captureSentryException(error, 'error', metadata);
 }
 
-export function captureWarning(error, metadata) {
-  captureSentryException(error, 'warning', metadata);
-}
-
 /**
- * Log with error level
- * @param {string} message
- * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object?} metaData.data  Shows up on the bugsnag data tab.
- * @param {object?} metaData.error Shows up on the bugsnag error tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
+ * Send a warning to Sentry.
+ * @param  {Error} error
+ * @param  {Object} metadata
+ * @return {void}
  */
-export function logError(message, metaData) {
-  _log('Logged Error', 'error', message, metaData);
+export function captureWarning(error, metadata = {}) {
+  captureSentryException(error, 'warning', metadata);
 }
 
 /**
