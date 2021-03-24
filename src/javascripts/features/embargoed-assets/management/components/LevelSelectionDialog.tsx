@@ -4,8 +4,6 @@ import {
   Button,
   Modal,
   CheckboxField,
-  Paragraph,
-  Typography,
   Option,
   SelectField,
   FieldGroup,

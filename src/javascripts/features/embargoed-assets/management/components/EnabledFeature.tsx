@@ -17,7 +17,7 @@ import { LevelHelpTable } from './LevelHelpTable';
 
 interface EnabledFeatureParams {
   currentLevel: LEVEL;
-  setCurrentLevel: (level: LEVEL) => Promise<any>;
+  setCurrentLevel: (level: LEVEL) => Promise<void>;
 }
 
 export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeatureParams) {

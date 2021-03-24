@@ -62,7 +62,7 @@ export function EmbargoedAssets() {
 
         if (isMounted) {
           setIsFetching(false);
-          setCurrentLevel(settings.level);
+          setCurrentLevel(settings.level || LEVEL.DISABLED);
         }
       } catch (e) {
         if (isMounted) {

@@ -6,16 +6,29 @@ export interface EmbargoedAsset {
   level: LEVEL;
 }
 
+export interface EmbargoedAssetApi {
+  protectionMode: LEVEL | null;
+}
+
+function responseConverter(data: EmbargoedAssetApi): EmbargoedAsset {
+  return { level: data.protectionMode || LEVEL.DISABLED };
+}
+
 export function embargoedAssets(spaceId: string | undefined) {
   const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, undefined);
   const apiClient = new APIClient(endpoint);
 
   return {
-    getCurrentLevel() {
-      return apiClient.getEmbargoedAssetsSettingLevel() as Promise<EmbargoedAsset>;
+    async getCurrentLevel(): Promise<EmbargoedAsset> {
+      const response = await apiClient.getEmbargoedAssetsSettingLevel();
+      return responseConverter(response);
     },
-    setCurrentLevel(level: LEVEL | 'enabled') {
-      return apiClient.setEmbargoedAssetsSettingLevel(level) as Promise<EmbargoedAsset>;
+    async setCurrentLevel(level: LEVEL | 'enabled' | null): Promise<EmbargoedAsset> {
+      if (level === LEVEL.DISABLED) {
+        level = null;
+      }
+      const response = await apiClient.setEmbargoedAssetsSettingLevel(level);
+      return responseConverter(response);
     },
   };
 }

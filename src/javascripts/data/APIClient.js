@@ -562,37 +562,19 @@ APIClient.prototype.signRequest = function (appDefinitionId, data) {
 };
 
 APIClient.prototype.getEmbargoedAssetsSettingLevel = function () {
-  // return this._request({
-  //   method: 'GET',
-  //   path: ['embargoed_assets'],
-  // });
-
-  return new Promise((_resolve, _reject) => {
-    setTimeout(() => {
-      _resolve({ level: 'disabled' });
-      // reject({ level: 'all' });
-    }, 1000);
+  return this._request({
+    method: 'GET',
+    path: ['embargoed_assets'],
   });
 };
 
 APIClient.prototype.setEmbargoedAssetsSettingLevel = function (level) {
-  // return this._request({
-  //   method: 'POST',
-  //   path: ['embargoed_assets'],
-  //   data: {
-  //     level
-  //   },
-  // });
-
-  if (level === 'enabled') {
-    level = 'migrating';
-  }
-
-  return new Promise((_resolve, _reject) => {
-    setTimeout(() => {
-      // resolve({ level });
-      _resolve({ level });
-    }, 3000);
+  return this._request({
+    method: 'PUT',
+    path: ['embargoed_assets'],
+    data: {
+      protectionMode: level,
+    },
   });
 };
 
