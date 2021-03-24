@@ -163,9 +163,9 @@ export default function create($scope, contentTypeIds) {
       () => {
         $scope.publishedContentType = null;
       },
-      (err) => {
-        logger.logServerWarn('Error deactivating Content Type', { error: err });
-        return $q.reject(err);
+      (error) => {
+        logger.captureWarning(new Error('Error deactivating Content Type'), { error });
+        return $q.reject(error);
       }
     );
   }

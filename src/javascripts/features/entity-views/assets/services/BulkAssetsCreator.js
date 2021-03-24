@@ -69,8 +69,9 @@ export function open(localeCode) {
           });
       },
       (error) => {
-        logger.logServerWarn('Some assets failed to upload', { error });
+        logger.captureWarning(error);
         Notification.error('Some assets failed to upload');
+
         return Promise.reject(error);
       }
     );

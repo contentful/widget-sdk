@@ -305,7 +305,7 @@ export default function useCreateActions(props) {
     try {
       await spaceContext.publishedCTs.unpublish(state.contentType);
     } catch (error) {
-      logger.logServerWarn('Error deactivating Content Type', { error });
+      logger.captureWarning(error);
     }
   };
 

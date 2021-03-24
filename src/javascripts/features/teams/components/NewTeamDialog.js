@@ -12,7 +12,7 @@ import {
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createTeam } from '../services/TeamRepository';
-import { logServerError } from 'services/logger';
+import * as logger from 'services/logger';
 import { isTaken } from 'utils/ServerErrorUtils';
 import * as Navigator from 'states/Navigator';
 
@@ -66,7 +66,8 @@ export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
           };
         } else {
           Notification.error('Something went wrong. Could not create team');
-          logServerError('Could not create team', { error: e });
+
+          logger.captureError(e);
         }
       }
     },

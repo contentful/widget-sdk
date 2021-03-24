@@ -6,11 +6,6 @@ import { waitFor } from '@testing-library/dom';
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 
-jest.mock('services/logger', () => ({
-  logSharejsError: jest.fn(),
-  logServerError: jest.fn(),
-}));
-
 let args;
 const create = (patchArgs = noop) => {
   const otDoc = createDocumentMock().create();

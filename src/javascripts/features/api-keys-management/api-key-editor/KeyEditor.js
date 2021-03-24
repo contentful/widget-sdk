@@ -76,7 +76,7 @@ const notify = {
     Notification.error(`“${apiKey.name}” could not be saved`);
     // HTTP 422: Unprocessable entity
     if (get(error, 'statusCode') !== 422) {
-      logger.logServerWarn('ApiKey could not be saved', { error });
+      logger.captureWarning(error);
     }
   },
 
@@ -94,7 +94,7 @@ const notify = {
 
   deleteFail: function (error, apiKey) {
     Notification.error(`“${apiKey.name}” could not be deleted`);
-    logger.logServerWarn('ApiKey could not be deleted', { error });
+    logger.captureWarning(error);
   },
 };
 
