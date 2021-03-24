@@ -16,6 +16,7 @@ enum BulkActionStates {
   NO_BULK_ACTIONS = 'bulk-actions/no-bulk-actions-for-default-space',
   ONE_COMPLETED = 'bulk-actions/one-completed-bulk-action-for-default-entry',
   ONE_FAILED = 'bulk-actions/one-failed-bulk-action-default-entry',
+  ONE_IN_PROGRESS = 'bulk-actions/one-bulk-action-in-progress',
   MAX_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs-for-default-space',
 }
 
@@ -49,6 +50,20 @@ export const publishPayload = {
           version: 3,
         },
       },
+    ],
+  },
+};
+
+export const validatePayload = {
+  action: 'publish',
+  entities: {
+    sys: {
+      type: 'Array',
+    },
+    items: [
+      makeLink('Entry', defaultEntryTestIds.defaultId),
+      makeLink('Entry', defaultEntryTestIds.testEntryId2),
+      makeLink('Entry', defaultEntryTestIds.testEntryId3),
     ],
   },
 };
@@ -119,7 +134,7 @@ const bulkActionResponse = (overrides = {}) => {
     {
       sys: {
         type: 'BulkAction',
-        id: Matchers.somethingLike(defaultBulkActionTestId),
+        id: Matchers.somethingLike(defaultPublishBulkActionTestId),
         space: makeLink('Space', defaultSpaceId),
         environment: makeLink('Environment', defaultEnvironmentId),
         createdAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
@@ -155,21 +170,21 @@ const defaultContentTypeHeader = {
   'content-type': 'application/vnd.contentful.management.v1+json',
 };
 
-const defaultBulkActionTestId = 'testBulkActionId';
+// Needs to be the same as in bulk-actions-api.
+// Currently used for both publish and validate bulk actions.
+const defaultPublishBulkActionTestId = 'testBulkActionId';
 
-const getBulkActionRequest: any = {
+const getPublishBulkActionRequest: any = {
   provider: 'bulk-actions',
-  uponReceiving: `a request for BulkAction ${defaultBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'GET',
-    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/actions/${defaultBulkActionTestId}`,
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/actions/${defaultPublishBulkActionTestId}`,
     headers: defaultHeader,
   },
 };
 
-const publishBulkActionRequest: any = {
+const postPublishBulkActionRequest: any = {
   provider: 'bulk-actions',
-  uponReceiving: `a request to publish a BulkAction on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
   withRequest: {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/publish`,
@@ -181,11 +196,25 @@ const publishBulkActionRequest: any = {
   },
 };
 
-export const getBulkAction = {
+const postValidateBulkActionRequest: any = {
+  provider: 'bulk-actions',
+  withRequest: {
+    method: 'POST',
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/bulk_actions/validate`,
+    headers: {
+      ...defaultContentTypeHeader,
+      ...defaultHeader,
+    },
+    body: validatePayload,
+  },
+};
+
+export const getPublishBulkAction = {
   willReturnStatusInProgress(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
-      state: BulkActionStates.ONE_COMPLETED,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a publish bulk action in progress ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.ONE_IN_PROGRESS,
       willRespondWith: {
         status: 200,
         headers: {
@@ -199,13 +228,14 @@ export const getBulkAction = {
           action: 'publish',
         }),
       },
-    }).as('getSucceededBulkAction');
+    }).as('getSucceededPublishBulkAction');
 
-    return '@getSucceededBulkAction';
+    return '@getSucceededPublishBulkAction';
   },
   willReturnStatusSucceeded(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a completed publish bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_COMPLETED,
       willRespondWith: {
         status: 200,
@@ -221,14 +251,14 @@ export const getBulkAction = {
           action: 'publish',
         }),
       },
-    }).as('getSucceededBulkAction');
+    }).as('getSucceededPublishBulkAction');
 
-    return '@getSucceededBulkAction';
+    return '@getSucceededPublishBulkAction';
   },
-
   willReturnStatusFailed(): string {
     cy.addInteraction({
-      ...getBulkActionRequest,
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a failed publish bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.ONE_FAILED,
       willRespondWith: {
         status: 200,
@@ -245,16 +275,17 @@ export const getBulkAction = {
           error: versionMismatchError,
         }),
       },
-    }).as('getFailedBulkAction');
+    }).as('getFailedPublishBulkAction');
 
-    return '@getFailedBulkAction';
+    return '@getFailedPublishBulkAction';
   },
 };
 
 export const publishBulkAction = {
   willSucceed(): string {
     cy.addInteraction({
-      ...publishBulkActionRequest,
+      ...postPublishBulkActionRequest,
+      uponReceiving: `a request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.NO_BULK_ACTIONS,
       willRespondWith: {
         status: 201,
@@ -269,7 +300,8 @@ export const publishBulkAction = {
   },
   willFailWithTooManyRequests(): string {
     cy.addInteraction({
-      ...publishBulkActionRequest,
+      ...postPublishBulkActionRequest,
+      uponReceiving: `a failing request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
       state: BulkActionStates.MAX_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
@@ -286,5 +318,121 @@ export const publishBulkAction = {
     }).as('publishBulkActionFailure');
 
     return '@publishBulkActionFailure';
+  },
+};
+
+export const getValidateBulkAction = {
+  willReturnStatusInProgress(): string {
+    cy.addInteraction({
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a validate bulk action in progress ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.ONE_IN_PROGRESS,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'inProgress',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+        }),
+      },
+    }).as('getSucceededValidateBulkAction');
+
+    return '@getSucceededValidateBulkAction';
+  },
+  willReturnStatusSucceeded(): string {
+    cy.addInteraction({
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a completed validate bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.ONE_COMPLETED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'succeeded',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+        }),
+      },
+    }).as('getSucceededValidateBulkAction');
+
+    return '@getSucceededValidateBulkAction';
+  },
+  willReturnStatusFailed(): string {
+    cy.addInteraction({
+      ...getPublishBulkActionRequest,
+      uponReceiving: `a request to get a failed validate bulk action ${defaultPublishBulkActionTestId} on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.ONE_FAILED,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          sys: {
+            status: 'failed',
+            startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+            completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
+          },
+          action: 'validate',
+          error: versionMismatchError,
+        }),
+      },
+    }).as('getFailedValidateBulkAction');
+
+    return '@getFailedValidateBulkAction';
+  },
+};
+
+export const validateBulkAction = {
+  willSucceed(): string {
+    cy.addInteraction({
+      ...postValidateBulkActionRequest,
+      uponReceiving: `a request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.ONE_COMPLETED,
+      willRespondWith: {
+        status: 201,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: bulkActionResponse({
+          action: 'validate',
+          sys: { status: 'created' },
+          payload: { action: 'publish' },
+        }),
+      },
+    }).as('validateBulkAction');
+
+    return '@validateBulkAction';
+  },
+  willFailWithTooManyRequests(): string {
+    cy.addInteraction({
+      ...postValidateBulkActionRequest,
+      uponReceiving: `a failing request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
+      state: BulkActionStates.MAX_NUMBER_OF_JOBS,
+      willRespondWith: {
+        status: 429,
+        headers: {
+          ...defaultContentTypeHeader,
+        },
+        body: {
+          sys: {
+            id: 'RateLimitExceeded',
+            type: 'Error',
+          },
+        },
+      },
+    }).as('validateBulkActionFailure');
+
+    return '@validateBulkActionFailure';
   },
 };

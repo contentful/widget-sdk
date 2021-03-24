@@ -138,8 +138,14 @@ export const severalEntryReferencesWithUnresolvedResponse = {
   ],
   includes: {
     Entry: [
-      entry({ sys: { id: Matchers.somethingLike('EntryId_01') }, fields: {} }),
-      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} }),
+      entry({
+        sys: { id: Matchers.somethingLike('EntryId_01'), version: 1 },
+        fields: {},
+      }),
+      entry({
+        sys: { id: Matchers.somethingLike('EntryId_02'), version: 1 },
+        fields: {},
+      }),
     ],
   },
 };

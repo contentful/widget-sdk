@@ -5,6 +5,7 @@ import {
   defaultUserId,
   defaultContentTypeId,
   defaultEnvironmentId,
+  defaultEntryTestIds,
 } from '../../util/requests';
 
 interface EntryProps {
@@ -90,7 +91,7 @@ export const severalEntriesResponse = (): List<PublishableEntityWithMatchers> =>
   limit: Matchers.integer(40),
   items: [
     entry({
-      id: defaultEntryId + '3',
+      id: defaultEntryTestIds.testEntryId3,
       fields: {
         fieldID: { 'en-US': Matchers.somethingLike('three') },
       },
@@ -100,7 +101,7 @@ export const severalEntriesResponse = (): List<PublishableEntityWithMatchers> =>
       updatedAt: '2019-05-07T11:39:00.262Z',
     }),
     entry({
-      id: defaultEntryId + '2',
+      id: defaultEntryTestIds.testEntryId2,
       fields: {
         fieldID: { 'en-US': Matchers.somethingLike('two') },
       },

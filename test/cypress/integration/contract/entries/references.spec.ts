@@ -46,7 +46,7 @@ describe('Entry references', () => {
   beforeEach(() => {
     setupTestServers();
     setupInteractions();
-    cy.enableFeatureFlags([FeatureFlag.RELEASES]);
+    cy.enableFeatureFlags([FeatureFlag.REFERENCES]);
   });
 
   describe('Validation', () => {
@@ -81,6 +81,44 @@ describe('Entry references', () => {
         .should('be.visible')
         .should('contain', 'Some references did not pass validation');
     });
+
+    describe('with BulkActions API feature flag enabled', () => {
+      beforeEach(() => {
+        cy.enableFeatureFlags([FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]);
+      });
+
+      it('should validate publishing entities successfully', () => {
+        Entry.getEntryReferences.willReturnSeveralWithVersion();
+
+        BulkAction.validateBulkAction.willSucceed();
+        BulkAction.getValidateBulkAction.willReturnStatusSucceeded();
+
+        cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+        cy.findByTestId('selectAllReferences').check();
+        cy.findByTestId('validateReferencesBtn').click();
+
+        cy.findByTestId('cf-ui-notification')
+          .click({ timeout: 5000 }) // official cypress workaround for animation
+          .should('be.visible')
+          .should('contain', 'All references passed validation');
+      });
+
+      it('should display an error message when a validate BulkAction fails', () => {
+        Entry.getEntryReferences.willReturnSeveralWithVersion();
+
+        BulkAction.validateBulkAction.willSucceed();
+        BulkAction.getValidateBulkAction.willReturnStatusFailed();
+
+        cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+        cy.findByTestId('selectAllReferences').check();
+        cy.findByTestId('validateReferencesBtn').click();
+
+        cy.findByTestId('cf-ui-notification')
+          .click({ timeout: 5000 })
+          .should('be.visible')
+          .should('contain', 'Some references did not pass validation');
+      });
+    });
   });
 
   describe('Publication', () => {
@@ -90,7 +128,9 @@ describe('Entry references', () => {
 
     it.skip('publishes release skipping unresolved entities', () => {
       Entry.getEntryReferences.willReturnSeveralWithUnresolved();
+
       BulkAction.publishBulkAction.willSucceed();
+      BulkAction.getPublishBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -103,12 +143,12 @@ describe('Entry references', () => {
         .should('contain', 'one and 2 references were published successfully');
     });
 
-    it('should publish Entities successfully', () => {
+    it('should publish entities successfully', () => {
       Entry.getEntryReferences.willReturnSeveralWithVersion();
       Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
-      BulkAction.getBulkAction.willReturnStatusSucceeded();
+      BulkAction.getPublishBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -125,7 +165,7 @@ describe('Entry references', () => {
       Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
-      BulkAction.getBulkAction.willReturnStatusFailed();
+      BulkAction.getPublishBulkAction.willReturnStatusFailed();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();

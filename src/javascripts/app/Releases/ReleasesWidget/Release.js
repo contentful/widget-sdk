@@ -118,7 +118,7 @@ export default class Release extends Component {
         className={styles.card}
         onClick={this.props.shouldCardHandleClick ? this.handleClick : undefined}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
-        <strong testId="release-item" title={release.title} className={styles.textTag}>
+        <strong data-test-id="release-item" title={release.title} className={styles.textTag}>
           {release.title}
         </strong>
         <Dropdown

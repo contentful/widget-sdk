@@ -4,6 +4,8 @@ const testEntryId = 'testEntryId';
 const testAssetId = 'testAssetId';
 const testBulkActionId = 'testBulkActionId';
 
+type BulkActionResponse = BulkAction | { error: any };
+
 const versionedLink = ({ type, id, version = 0 }): VersionedLink => ({
   sys: {
     id,
@@ -20,7 +22,42 @@ const versionedEntries = [
   versionedLink({ type: 'Asset', id: 'testAssetId1', version: 1 }),
 ];
 
-const versionMismatchError = {
+const notVersionedEntries = [
+  makeLink('Entry', testEntryId),
+  makeLink('Asset', testAssetId),
+  makeLink('Entry', 'testEntryId1'),
+  makeLink('Asset', 'testAssetId1'),
+];
+
+const bulkPublishResponsePayload = {
+  entities: {
+    items: versionedEntries,
+    sys: {
+      type: 'Array',
+    },
+  },
+};
+
+const bulkValidateResponsePayload = {
+  action: 'publish',
+  entities: {
+    items: notVersionedEntries,
+    sys: {
+      type: 'Array',
+    },
+  },
+};
+
+export type BulkActionError = {
+  details?: Record<string, any>;
+  message: string;
+  sys: {
+    type: 'Error';
+    id: 'BulkActionFailed';
+  };
+};
+
+export const versionMismatchError: BulkActionError = {
   sys: {
     type: 'Error',
     id: 'BulkActionFailed',
@@ -48,7 +85,7 @@ const versionMismatchError = {
   },
 };
 
-const validationFailedError = {
+export const validationFailedError: BulkActionError = {
   sys: {
     type: 'Error',
     id: 'BulkActionFailed',
@@ -86,27 +123,36 @@ const validationFailedError = {
   },
 };
 
-const serverError = {
-  sys: {
-    type: 'Error',
-    id: 'ServerError',
-  },
+export type TransformedBulkActionError = {
+  statusCode: number;
+  data: { details?: BulkActionError['details'] };
+};
+
+// Same as `toErrorDataFormat` - all bulk actions related errors are transformed into this format
+export const toBulkActionErrorResponse = (
+  error: BulkActionError,
+  statusCode = 400
+): TransformedBulkActionError => {
+  return {
+    statusCode,
+    data: { details: error?.details },
+  };
 };
 
 type ResponseOptions = {
-  action: 'publish';
-  payload?: object;
-  status: 'created' | 'inProgress' | 'succeeded' | 'failed';
-  error?: object;
+  status?: 'created' | 'inProgress' | 'succeeded' | 'failed';
+  action?: 'publish' | 'validate';
+  payload?: typeof bulkPublishResponsePayload | typeof bulkValidateResponsePayload;
+  error?: BulkActionError;
 };
 
 const bulkActionResponse = ({
   action = 'publish',
   status = 'created',
-  payload = versionedEntries,
+  payload = bulkPublishResponsePayload,
   error,
-}: ResponseOptions): BulkAction => {
-  const response = {
+}: ResponseOptions): BulkActionResponse => {
+  const response: BulkActionResponse = {
     sys: {
       type: 'BulkAction',
       id: testBulkActionId,
@@ -120,18 +166,12 @@ const bulkActionResponse = ({
       status,
     },
     action,
-    payload: {
-      entities: {
-        items: payload,
-      },
-    },
+    payload,
   };
-
   if (error) {
-    response['error'] = error;
+    response.error = error;
   }
-
-  return response as BulkAction;
+  return response;
 };
 
 const publishBulkActionSuccessResponse = bulkActionResponse({
@@ -139,29 +179,32 @@ const publishBulkActionSuccessResponse = bulkActionResponse({
   action: 'publish',
 });
 
-const publishBulkActionErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: versionMismatchError,
+const validateBulkActionSuccessResponse = bulkActionResponse({
+  status: 'succeeded',
+  action: 'validate',
+  payload: bulkValidateResponsePayload,
 });
 
-const publishBulkActionEntryErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: validationFailedError,
-});
+const bulkActionVersionMismatchErrorResponse = toBulkActionErrorResponse(
+  bulkActionResponse({
+    action: 'publish',
+    status: 'failed',
+    payload: bulkPublishResponsePayload,
+    error: versionMismatchError,
+  }).error
+);
 
-const publishBulkActionServerErrorResponse = bulkActionResponse({
-  status: 'failed',
-  action: 'publish',
-  error: serverError,
-});
+const bulkActionEntryErrorResponse = toBulkActionErrorResponse(
+  bulkActionResponse({
+    status: 'failed',
+    action: 'publish',
+    error: validationFailedError,
+  }).error
+);
 
 export {
   publishBulkActionSuccessResponse,
-  publishBulkActionErrorResponse,
-  publishBulkActionServerErrorResponse,
-  publishBulkActionEntryErrorResponse,
-  versionMismatchError,
-  serverError,
+  validateBulkActionSuccessResponse,
+  bulkActionVersionMismatchErrorResponse,
+  bulkActionEntryErrorResponse,
 };
