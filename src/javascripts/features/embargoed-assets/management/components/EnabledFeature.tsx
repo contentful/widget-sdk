@@ -42,7 +42,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
       <Card testId="settings-section-card" className={styles.section}>
         <Typography>
           <Paragraph>Asset protection level</Paragraph>
-          <Heading>{levelDescription[currentLevel]}</Heading>
+          <Heading testId="embargoed-assets-current-mode">{levelDescription[currentLevel]}</Heading>
           <LevelHelpText level={currentLevel} />
           <LevelHelpTable currentLevel={currentLevel} />
           <Button

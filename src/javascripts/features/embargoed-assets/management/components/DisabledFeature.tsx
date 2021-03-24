@@ -13,7 +13,7 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { LEVEL } from '../constants';
 
 interface DisabledFeatureParams {
-  setCurrentLevel?: (level: LEVEL | 'enabled') => Promise<any>;
+  setCurrentLevel?: (level: LEVEL | 'enabled') => Promise<void>;
 }
 
 export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
@@ -39,11 +39,12 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
               setIsChanging(true);
               setCurrentLevel('enabled').finally(() => setIsChanging(false));
             }}
-            testId="turn-off">
+            testId="get-started">
             Get started
           </Button>
         ) : (
           <Button
+            testId="get-in-touch"
             href="https://www.contentful.com/support/?upgrade-teams=true"
             target="_blank"
             rel="noopener noreferrer">
