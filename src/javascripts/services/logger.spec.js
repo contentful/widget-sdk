@@ -44,6 +44,47 @@ describe('logger service', () => {
     });
   });
 
+  it('should augment the given metadata with custom keys on the error', () => {
+    const error = new Error('something happened');
+    Object.assign(error, {
+      customKey1: 'value1',
+      customKey2: 'value2',
+    });
+
+    logger.captureError(error, {
+      meta: 'data',
+    });
+
+    expect(Sentry.logException).toHaveBeenNthCalledWith(1, error, {
+      level: 'error',
+      extra: {
+        meta: 'data',
+        customKey1: 'value1',
+        customKey2: 'value2',
+      },
+    });
+
+    const warning = new Error('some warning happened');
+
+    Object.assign(warning, {
+      customKey1: 'value1',
+      customKey2: 'value2',
+    });
+
+    logger.captureWarning(warning, {
+      other: 'data',
+    });
+
+    expect(Sentry.logException).toHaveBeenNthCalledWith(2, warning, {
+      level: 'warning',
+      extra: {
+        other: 'data',
+        customKey1: 'value1',
+        customKey2: 'value2',
+      },
+    });
+  });
+
   it('logs sharejs errors', function () {
     logger.logSharejsError('test', { meta: 'Data' });
     expect(Sentry.logMessage).toHaveBeenCalledWith('test', {

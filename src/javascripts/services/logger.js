@@ -103,7 +103,15 @@ export function enable(user) {
 }
 
 function captureSentryException(error, level, metadata) {
-  const augmentedMetadata = augmentMetadata(metadata);
+  const fullMetadata = metadata;
+
+  // Get all custom keys from the error and assign them to the metadata
+  // so they don't get swallowed and therefore not logged
+  for (const key of Object.keys(error)) {
+    fullMetadata[key] = error[key];
+  }
+
+  const augmentedMetadata = augmentMetadata(fullMetadata);
 
   if (env !== 'production' && env !== 'jest') {
     /* eslint no-console: off */
