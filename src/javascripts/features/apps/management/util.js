@@ -1,7 +1,7 @@
 import { getSpaces } from 'services/TokenStore';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
-import * as urlSafeBase64 from 'urlsafe-base64';
+import { Base64 } from 'js-base64';
 import moment from 'moment';
 
 export async function getOrgSpacesFor(orgId) {
@@ -43,7 +43,7 @@ export async function getSha256FromBase64(base64String) {
 }
 
 export function base64ToHex(base64String) {
-  const u8Array = urlSafeBase64.decode(base64String);
+  const u8Array = Base64.toUint8Array(base64String);
 
   let hex = '';
 
