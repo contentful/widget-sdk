@@ -26,6 +26,9 @@ describe('logger service', () => {
       extra: {
         specialMeta: 'yes',
       },
+      tags: {
+        route: 'route',
+      },
     });
   });
 
@@ -40,6 +43,9 @@ describe('logger service', () => {
       level: 'warning',
       extra: {
         warningMeta: 'data',
+      },
+      tags: {
+        route: 'route',
       },
     });
   });
@@ -62,6 +68,9 @@ describe('logger service', () => {
         customKey1: 'value1',
         customKey2: 'value2',
       },
+      tags: {
+        route: 'route',
+      },
     });
 
     const warning = new Error('some warning happened');
@@ -81,6 +90,9 @@ describe('logger service', () => {
         other: 'data',
         customKey1: 'value1',
         customKey2: 'value2',
+      },
+      tags: {
+        route: 'route',
       },
     });
   });

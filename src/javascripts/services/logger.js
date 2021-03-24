@@ -121,6 +121,9 @@ function captureSentryException(error, level, metadata) {
   Sentry.logException(error, {
     level,
     extra: augmentedMetadata,
+    tags: {
+      route: getCurrentStateName(),
+    },
   });
 }
 
