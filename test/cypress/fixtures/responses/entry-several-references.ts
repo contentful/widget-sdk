@@ -81,7 +81,7 @@ export const severalEntryReferencesWithVersionResponse = {
       entry({
         sys: {
           id: defaultEntryTestIds.testEntryId2,
-          version: 1,
+          version: 2,
           publishedCounter: 0,
         },
         fields: {},
@@ -89,7 +89,7 @@ export const severalEntryReferencesWithVersionResponse = {
       entry({
         sys: {
           id: defaultEntryTestIds.testEntryId3,
-          version: 1,
+          version: 2,
           publishedCounter: 0,
         },
         fields: {},
@@ -139,11 +139,11 @@ export const severalEntryReferencesWithUnresolvedResponse = {
   includes: {
     Entry: [
       entry({
-        sys: { id: Matchers.somethingLike('EntryId_01'), version: 2 },
+        sys: { id: Matchers.somethingLike('EntryId_01'), version: 1 },
         fields: {},
       }),
       entry({
-        sys: { id: Matchers.somethingLike('EntryId_02'), version: 2 },
+        sys: { id: Matchers.somethingLike('EntryId_02'), version: 1 },
         fields: {},
       }),
     ],
