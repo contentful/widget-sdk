@@ -272,11 +272,15 @@ export async function getVariation(
     return getFlagOverride(flagName);
   }
 
+  const asyncError = new Error('LaunchDarkly error');
+
   // Since there isn't a fallback value, simply return undefined
   if (!Object.values(FLAGS).includes(flagName)) {
-    logger.logError(`LD flag ${flagName} was not defined in the app FLAGS map`, {
-      groupingHash: 'UndefinedAppLDFlag',
-      data: { flagName, organizationId, spaceId, environmentId },
+    logAsyncError(asyncError, 'LD flag was not defined in the app FLAGS map', {
+      flagName,
+      organizationId,
+      spaceId,
+      environmentId,
     });
 
     return undefined;
@@ -308,9 +312,12 @@ export async function getVariation(
       initializationPromise = null;
       client = null;
 
-      logger.logError(`LaunchDarkly initialization failed`, {
-        groupingHash: 'LDInitFailed',
-        data: { flagName, organizationId, spaceId, environmentId, error },
+      logAsyncError(asyncError, 'LaunchDarkly initialization failed', {
+        flagName,
+        organizationId,
+        spaceId,
+        environmentId,
+        error,
       });
 
       DegradedAppPerformance.trigger('LaunchDarkly');
@@ -348,15 +355,19 @@ export async function getVariation(
       .catch((error) => {
         // This shouldn't happen, but in case there is some error thrown by
         // `createFlagPromise`, log it and return the fallback value
-        logger.logError(`Unexpected error occurred while getting variation for ${flagName}`, {
-          groupingHash: 'UnexpectedFlagPromiseError',
+        logAsyncError(asyncError, 'Unexpected error occurred while getting variation', {
+          flagName,
+          organizationId,
+          spaceId,
+          environmentId,
           error,
-          data: { flagName, organizationId, spaceId, environmentId, error },
         });
+
+        console.log('Unexpected error', error);
 
         return FLAG_PROMISE_ERRED;
       })
-      .then((value) => {
+      .then((resultObject) => {
         // If the flag promise errs in some way, unset the cached promise
         // and resolve with the fallback value.
         //
@@ -364,13 +375,18 @@ export async function getVariation(
         // - client.identify throws
         // - the given org ID or space ID is invalid or not available in the token
         // - the variation is missing or the variation is not valid JSON
-        if (value === FLAG_PROMISE_ERRED) {
+        if (resultObject.success === false) {
           _.set(variationCache, key, undefined);
+
+          logAsyncError(asyncError, resultObject.message, resultObject.data);
 
           DegradedAppPerformance.trigger('LaunchDarkly');
 
           return FALLBACK_VALUES[flagName];
         }
+
+        const { value } = resultObject;
+
         _.set(variationCacheResolved, key, value);
 
         return value;
@@ -402,6 +418,7 @@ export function getVariationSync(
   if (isFlagOverridden(flagName)) {
     return getFlagOverride(flagName);
   }
+
   return (
     variationCacheResolved?.[getCacheKey(flagName, organizationId, spaceId, environmentId)] ??
     FALLBACK_VALUES[flagName]
@@ -437,23 +454,31 @@ async function createFlagPromise(
   try {
     org = organizationId ? await getOrganization(organizationId) : null;
   } catch (e) {
-    logger.logError(`Invalid org ID ${organizationId} given to LD`, {
-      groupingHash: 'InvalidLDOrgId',
-      data: { flagName, organizationId, spaceId, environmentId },
-    });
-
-    return FLAG_PROMISE_ERRED;
+    return {
+      success: false,
+      message: 'Invalid org ID supplied to LD',
+      data: {
+        flagName,
+        organizationId,
+        spaceId,
+        environmentId,
+      },
+    };
   }
 
   try {
     space = spaceId ? await getSpace(spaceId) : null;
   } catch (e) {
-    logger.logError(`Invalid space ID ${spaceId} given to LD`, {
-      groupingHash: 'InvalidLDSpaceId',
-      data: { flagName, organizationId, spaceId, environmentId },
-    });
-
-    return FLAG_PROMISE_ERRED;
+    return {
+      success: false,
+      message: 'Invalid space ID supplied to LD',
+      data: {
+        flagName,
+        organizationId,
+        spaceId,
+        environmentId,
+      },
+    };
   }
 
   const currentUser = await ldUser({ user, org, space, environmentId });
@@ -464,47 +489,63 @@ async function createFlagPromise(
 
       cachedIdentifiedUser = currentUser;
     } catch (error) {
-      logger.logError(`LaunchDarkly identify failed for ${flagName}`, {
-        groupingHash: 'LDIdentifyFailed',
-        data: { flagName, organizationId, spaceId, environmentId, error },
-      });
-
-      return FLAG_PROMISE_ERRED;
+      return {
+        success: false,
+        message: error?.message ?? 'LaunchDarkly identify failed',
+        data: {
+          flagName,
+          organizationId,
+          spaceId,
+          environmentId,
+        },
+      };
     }
   }
 
   const variation = ldClient.variation(flagName, MISSING_VARIATION_VALUE);
 
   if (variation === MISSING_VARIATION_VALUE) {
-    logger.logError(`Flag ${flagName} invalid or missing variation data`, {
-      groupingHash: 'InvalidLDFlag',
+    return {
+      success: false,
+      message: 'Flag variation invalid or missing data',
       data: {
         flagName,
         organizationId,
         spaceId,
         environmentId,
       },
-    });
-
-    return FLAG_PROMISE_ERRED;
+    };
   }
 
   if (typeof variation === 'string') {
+    // The variation is JSON, so we parse and return it
     try {
-      return JSON.parse(variation);
+      return {
+        success: true,
+        value: JSON.parse(variation),
+      };
     } catch (e) {
       // Should never happen, but if the variation data could not be parsed
       // log the error and return undefined
-      logger.logError(`Invalid variation JSON for ${flagName}`, {
-        groupingHash: 'InvalidLDVariationJSON',
-        data: { variation, organizationId, spaceId, environmentId },
-      });
-
-      return FLAG_PROMISE_ERRED;
+      return {
+        success: false,
+        message: 'Invalid variation JSON',
+        data: {
+          flagName,
+          variation,
+          organizationId,
+          spaceId,
+          environmentId,
+        },
+      };
     }
   }
 
-  return variation;
+  // The variation is not JSON, so just pass as-is
+  return {
+    success: true,
+    value: variation,
+  };
 }
 
 export function ensureFlagsHaveFallback() {
@@ -524,4 +565,12 @@ export function ensureFlagsHaveFallback() {
       )}`
     );
   }
+}
+
+function logAsyncError(asyncError, message, extra) {
+  Object.assign(asyncError, {
+    message,
+  });
+
+  logger.captureError(asyncError, extra);
 }
