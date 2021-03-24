@@ -2,7 +2,6 @@ import React, { useState, useCallback, useLayoutEffect, useRef } from 'react';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { Base64 } from 'js-base64';
 
 import {
   ModalConfirm,
@@ -93,7 +92,12 @@ export function AddKeyDialog({ onConfirm, isShown, onCancel }) {
     try {
       base64Der = util.keyPemTobase64Der(value);
       const fingerprint = await util.getSha256FromBase64(base64Der);
-      base64Fingerprint = Base64.encode(window.btoa(fingerprint), true);
+      base64Fingerprint = window
+        .btoa(fingerprint)
+        .toString('base64')
+        .replace(/\+/g, '-') // Convert '+' to '-'
+        .replace(/\//g, '_') // Convert '/' to '_'
+        .replace(/=+$/, ''); // Remove ending '='
     } catch {
       Notification.error("This doesn't appear to be a valid public key.");
       setLoading(false);
