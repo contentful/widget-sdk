@@ -123,6 +123,7 @@ function getItems(params, { orgId }) {
     {
       title: 'Teams',
       sref: 'account.organizations.teams',
+      highValueLabel: params.highValueLabelEnabled,
       srefParams: { orgId },
       rootSref: 'account.organizations.teams',
       srefOptions: {
@@ -212,6 +213,7 @@ export default class OrganizationNavigationBar extends React.Component {
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
       getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId: orgId }),
+      getVariation(FLAGS.HIGH_VALUE_LABEL, { organizationId: orgId }),
     ];
 
     const [
@@ -220,6 +222,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasAdvancedExtensibility,
       newSpacePurchaseFlowEnabled,
+      highValueLabelEnabled,
     ] = await Promise.all(promises);
 
     const params = {
@@ -232,6 +235,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
       newSpacePurchaseFlowEnabled,
+      highValueLabelEnabled,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };
 

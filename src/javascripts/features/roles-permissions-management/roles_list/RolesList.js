@@ -37,6 +37,7 @@ function RoleListActions(props) {
   const usage = ResourceUtils.getAccumulatedUsage(props.rolesResource);
   return (
     <div className={styles.actions}>
+      {props.highValueLabelEnabled && <div>Button will be displayed here</div>}
       {props.hasCustomRolesFeature && (
         <>
           <Paragraph>
@@ -66,6 +67,7 @@ RoleListActions.propTypes = {
   rolesResource: PropTypes.object.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
   newApiRolesLimit: PropTypes.number,
+  highValueLabelEnabled: PropTypes.bool,
 };
 
 export function RolesList(props) {
@@ -91,6 +93,7 @@ export function RolesList(props) {
           hasCustomRolesFeature={props.hasCustomRolesFeature}
           rolesResource={props.rolesResource}
           newApiRolesLimit={props.newApiRolesLimit}
+          highValueLabelEnabled={props.highValueLabelEnabled}
         />
       }>
       <div className={styles.container}>
@@ -145,4 +148,5 @@ RolesList.propTypes = {
   listHandler: PropTypes.object.isRequired,
   refetch: PropTypes.func.isRequired,
   newApiRolesLimit: PropTypes.number,
+  highValueLabelEnabled: PropTypes.bool,
 };

@@ -5,10 +5,10 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
-import { Tooltip } from '@contentful/forma-36-react-components';
+import { Tooltip, Icon as F36Icon } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon'; // TODO: remove this component and replace with Icon from F36
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
@@ -75,7 +75,10 @@ const styles = {
     alignItems: 'center',
   }),
   navIcon: css({
-    marginRight: tokens.spacingM,
+    marginRight: tokens.spacingS,
+  }),
+  navHightValueLabel: css({
+    marginLeft: tokens.spacing2Xs,
   }),
 };
 
@@ -161,6 +164,9 @@ export default function NavigationItem(props) {
           )}
           {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
           {item.title}
+          {item.highValueLabel && (
+            <F36Icon icon="InfoCircle" color="white" className={styles.navHightValueLabel} />
+          )}
         </Label>
       </a>
     </li>
@@ -180,5 +186,6 @@ NavigationItem.propTypes = {
     dataViewType: PropTypes.string,
     disabled: PropTypes.bool,
     tooltip: PropTypes.string,
+    highValueLabel: PropTypes.bool,
   }).isRequired,
 };

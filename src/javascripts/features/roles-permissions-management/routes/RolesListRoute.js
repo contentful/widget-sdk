@@ -47,6 +47,7 @@ export function RolesListRoute() {
   const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
   const [entitlementsSet, setEntitlementsSet] = useState();
+  const [highValueLabelEnabled, setHighValueLabelEnabled] = useState();
 
   useEffect(() => {
     if (!spaceId) return;
@@ -59,7 +60,12 @@ export function RolesListRoute() {
           .catch(() => {});
       }
     });
-  }, [spaceId]);
+    getVariation(FLAGS.HIGH_VALUE_LABEL, { organizationId: currentOrganization.sys.id }).then(
+      (isEnabled) => {
+        setHighValueLabelEnabled(isEnabled);
+      }
+    );
+  }, [spaceId, currentOrganization]);
 
   // get entitlementsSet from new API behind feature flag
   const newApiRolesLimit = entitlementsAPIEnabled
@@ -83,6 +89,7 @@ export function RolesListRoute() {
               isLegacyOrganization={isLegacyOrganization}
               refetch={fetch}
               newApiRolesLimit={newApiRolesLimit}
+              highValueLabelEnabled={highValueLabelEnabled}
               {...data}
             />
           );
