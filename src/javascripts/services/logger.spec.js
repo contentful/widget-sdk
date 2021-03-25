@@ -14,82 +14,85 @@ describe('logger service', () => {
     expect(Sentry.enable).toHaveBeenCalledWith('USER');
   });
 
-  it('logs exceptions', function () {
-    const exception = new Error();
-    logger.logException(exception, { meta: 'Data' });
+  it('should send Sentry an error-level error when calling captureError', () => {
+    const error = new Error('something bad');
 
-    expect(Sentry.logException).toHaveBeenCalledWith(exception, { meta: 'Data' });
-  });
+    logger.captureError(error, {
+      specialMeta: 'yes',
+    });
 
-  it('logs errors', function () {
-    logger.logError('test', { meta: 'Data' });
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith('test', {
+    expect(Sentry.logException).toBeCalledWith(error, {
       level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
       extra: {
-        type: 'Logged Error',
-        meta: 'Data',
+        specialMeta: 'yes',
+      },
+      tags: {
+        route: 'route',
       },
     });
   });
 
-  it('does not log errors with empty messages', function () {
-    logger.logError();
+  it('should send Sentry a warning-level error when calling captureWarning', () => {
+    const error = new Error('something kind of bad');
 
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-
-    logger.logError(null, { meta: 'Something' });
-
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-
-    logger.logError('', { meta: 'Something else' });
-
-    expect(Sentry.logMessage).not.toHaveBeenCalled();
-  });
-
-  it('handles messages that are of type Error as well as String', function () {
-    const err = new Error('Oops something went wrong');
-    const errMsg = 'Wowzers this is messed up';
-
-    logger.logError(errMsg);
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith(errMsg, {
-      level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
-      extra: {
-        type: 'Logged Error',
-      },
+    logger.captureWarning(error, {
+      warningMeta: 'data',
     });
 
-    logger.logError(err);
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith(err.message, {
-      level: 'error',
-      tags: {
-        route: expect.any(String),
-      },
-      extra: {
-        type: 'Logged Error',
-      },
-    });
-  });
-
-  it('logs warnings', function () {
-    logger.logWarn('test', { meta: 'Data' });
-
-    expect(Sentry.logMessage).toHaveBeenCalledWith('test', {
+    expect(Sentry.logException).toBeCalledWith(error, {
       level: 'warning',
-      tags: {
-        route: expect.any(String),
-      },
       extra: {
-        type: 'Logged Warning',
-        meta: 'Data',
+        warningMeta: 'data',
+      },
+      tags: {
+        route: 'route',
+      },
+    });
+  });
+
+  it('should augment the given metadata with custom keys on the error', () => {
+    const error = new Error('something happened');
+    Object.assign(error, {
+      customKey1: 'value1',
+      customKey2: 'value2',
+    });
+
+    logger.captureError(error, {
+      meta: 'data',
+    });
+
+    expect(Sentry.logException).toHaveBeenNthCalledWith(1, error, {
+      level: 'error',
+      extra: {
+        meta: 'data',
+        customKey1: 'value1',
+        customKey2: 'value2',
+      },
+      tags: {
+        route: 'route',
+      },
+    });
+
+    const warning = new Error('some warning happened');
+
+    Object.assign(warning, {
+      customKey1: 'value1',
+      customKey2: 'value2',
+    });
+
+    logger.captureWarning(warning, {
+      other: 'data',
+    });
+
+    expect(Sentry.logException).toHaveBeenNthCalledWith(2, warning, {
+      level: 'warning',
+      extra: {
+        other: 'data',
+        customKey1: 'value1',
+        customKey2: 'value2',
+      },
+      tags: {
+        route: 'route',
       },
     });
   });

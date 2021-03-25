@@ -61,7 +61,7 @@ const usePurchasedApps = (organizationId: string | undefined) => {
       getOrgFeature(organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
     ])
       .catch((error) => {
-        logger.logError('Failed to fetch contentful apps product catalog flags.', { error });
+        logger.captureError(error);
         return [false, false];
       })
       .then(([compose, launch]) => {

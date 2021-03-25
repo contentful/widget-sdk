@@ -41,14 +41,11 @@ export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail,
         });
         onSuccess(newSpace);
       } catch (err) {
-        logger.logException(err, {
-          data: {
-            // which template we were trying to create
-            template: TEMPLATE_NAME,
-            // how long did it take to end up here
-            runningTime: Date.now() - startingMoment,
-          },
-          groupingHash: 'Failed sample space creation',
+        logger.captureError(err, {
+          // which template we were trying to create
+          template: TEMPLATE_NAME,
+          // how long did it take to end up here
+          runningTime: Date.now() - startingMoment,
         });
         onFail(err);
       } finally {

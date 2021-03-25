@@ -53,12 +53,12 @@ export default addUserOrgSpace((eventName, data) => {
 
   // The data must always have a sessionId
   if (!data.sessionId) {
-    logger.logError('Session ID missing in space purchase event');
+    logger.captureError(new Error('Session ID missing in space purchase event'));
     return;
   }
 
   if (!transformers[action]) {
-    logger.logError(`SpacePurchase transformer for ${action} not found`);
+    logger.captureError(new Error(`SpacePurchase transformer for ${action} not found`));
     return;
   }
 

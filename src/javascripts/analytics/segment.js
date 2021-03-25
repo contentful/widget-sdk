@@ -50,9 +50,7 @@ function bufferedCall(fnName) {
       try {
         analytics[fnName](...args);
       } catch (err) {
-        logger.logError('Failed Segment call', {
-          err: err,
-          msg: err.message,
+        logger.captureError(err, {
           analyticsFn: fnName,
           analyticsFnArgs: args,
         });

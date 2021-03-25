@@ -44,7 +44,7 @@ describe('activationEmailResender', () => {
     });
   });
 
-  describe('error logging on rejection via `logger.logError()`', () => {
+  describe('error logging on rejection via `logger.captureError()`', () => {
     it('includes the right message and data', async function () {
       global.fetch.mockResolvedValue({
         ok: false,
@@ -59,14 +59,12 @@ describe('activationEmailResender', () => {
       } catch (e) {
         // do nothing
       }
-      expect(loggerMocked.logError).toHaveBeenCalledWith('Failed activation email resend attempt', {
-        data: {
-          email: 'user@example.com',
-          response: {
-            status: 418,
-            statusText: "I'm a teapot",
-            data: 'tea',
-          },
+      expect(loggerMocked.captureError).toHaveBeenCalledWith(expect.any(Error), {
+        email: 'user@example.com',
+        response: {
+          status: 418,
+          statusText: "I'm a teapot",
+          data: 'tea',
         },
       });
     });

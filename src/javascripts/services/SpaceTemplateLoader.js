@@ -237,13 +237,10 @@ function parseAssetFields(fields) {
           };
         }
       } catch (exp) {
-        logger.logError('No localizedField available', {
-          data: {
-            exp,
-            localizedField,
-            field,
-            fieldName,
-          },
+        logger.captureError(exp, {
+          localizedField,
+          field,
+          fieldName,
         });
       }
       return localizedField;

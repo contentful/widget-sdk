@@ -183,7 +183,7 @@ export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
     return fieldsCopy;
   } catch (error) {
     // TODO: Remove try/catch once we've gained some confidence.
-    logger.logError('appendDuplicateIndexToEntryTitle()', error);
+    logger.captureError(error);
     return fields;
   }
 }

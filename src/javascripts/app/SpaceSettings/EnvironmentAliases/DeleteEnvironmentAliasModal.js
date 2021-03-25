@@ -44,7 +44,7 @@ export default function DeleteEnvironmentAliasModal({ modalOpen, spaceId, setMod
       });
       setModalOpen(false);
     } catch (err) {
-      logger.logError('Aliases - deleteEnvironment exception', err);
+      logger.captureError(err);
     } finally {
       setLoading(false);
     }

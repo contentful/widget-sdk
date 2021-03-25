@@ -27,7 +27,7 @@ interface EntityFieldLocaleProps {
 
 function ErrorFallback({ error }) {
   React.useEffect(() => {
-    logger.logException(error, {});
+    logger.captureError(error);
   }, [error]);
 
   return (

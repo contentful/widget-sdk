@@ -183,10 +183,7 @@ export default function ScheduledActionsWidget({
         Notification.error(`${entityTitle} failed to schedule`);
       }
       setIsCreatingJob(false);
-      logger.logError(`${entityType} failed to schedule`, {
-        error,
-        message: error.message,
-      });
+      logger.captureError(error);
     }
   };
 

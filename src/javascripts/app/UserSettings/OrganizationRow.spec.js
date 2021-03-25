@@ -227,7 +227,7 @@ describe('OrganizationRow', () => {
       expect(
         await screen.findByText(`Could not leave organization ${fakeOrganization.name}`)
       ).toBeInTheDocument();
-      expect(logger.logError).toHaveBeenCalled();
+      expect(logger.captureError).toHaveBeenCalled();
       expect(screen.getByTestId('organization-row.organization-name')).toHaveTextContent(
         fakeOrganization.name
       );

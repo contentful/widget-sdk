@@ -121,7 +121,7 @@ export const BulkEntityEditor = ({
           setEditorState(editorState);
         }
       } catch (error) {
-        logger.logError(error);
+        logger.captureError(error);
       } finally {
         onEditorInitialized();
         setIsLoading(false);

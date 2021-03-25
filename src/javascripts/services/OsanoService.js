@@ -228,7 +228,7 @@ export async function persistConsent(user) {
     });
     await refreshToken();
   } catch (e) {
-    logger.logError(e);
+    logger.captureError(e);
   }
 
   return migrated;

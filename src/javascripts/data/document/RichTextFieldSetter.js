@@ -97,14 +97,14 @@ function setValueViaOps(doc, path, oldValue, newValue) {
   const hasMissingDataFields = ops.some(isAmendingRootNode);
 
   if (hasMissingDataFields) {
-    logger.logWarn('Amending RichText document');
+    logger.captureWarning(new Error('Amending RichText document'));
     return ShareJS.setDeep(doc, path, newValue);
   }
 
   return new Promise((resolve, reject) => {
     doc.submitOp(ops, (e, ...args) => {
       if (e) {
-        logger.logException(e);
+        logger.captureError(e);
         reject(e);
       } else {
         resolve(...args);

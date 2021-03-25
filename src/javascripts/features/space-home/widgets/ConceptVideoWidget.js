@@ -18,11 +18,7 @@ export class ConceptVideoWidget extends React.Component {
     });
   };
 
-  onError = (error) =>
-    logger.logError('Wistia video player', {
-      message: 'An error occurred while attempting to play Concept Video for authors and editors',
-      error,
-    });
+  onError = (error) => logger.captureError(error);
 
   componentDidMount = () => {
     window._wq = window._wq || [];

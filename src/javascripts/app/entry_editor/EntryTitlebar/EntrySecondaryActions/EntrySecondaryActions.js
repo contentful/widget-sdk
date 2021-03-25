@@ -75,10 +75,7 @@ export default function EntrySecondaryActions({
           goToCreatedEntry(entry);
           setOpen(false);
         } catch (error) {
-          logger.logError(`Adding entry failed`, {
-            error,
-            message: error.message,
-          });
+          logger.captureError(error);
           Notification.error('Entry creation failed');
         }
       },
@@ -126,10 +123,7 @@ export default function EntrySecondaryActions({
           goToCreatedEntry(entry);
           setOpen(false);
         } catch (error) {
-          logger.logError(`Duplicating entry failed`, {
-            error,
-            message: error.message,
-          });
+          logger.captureError(error);
           Notification.error('Entry duplication failed');
         }
       },

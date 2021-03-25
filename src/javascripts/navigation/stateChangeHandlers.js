@@ -80,11 +80,9 @@ function stateChangeStartHandler(event, toState, toStateParams, fromState, fromS
   }
 
   if (confirmationInProgress) {
-    logger.logError('Change state during state change confirmation', {
-      state: {
-        from: fromState.name,
-        to: toState.name,
-      },
+    logger.captureError(new Error('Change state during state change confirmation'), {
+      from: fromState.name,
+      to: toState.name,
     });
   }
 

@@ -110,9 +110,8 @@ describe('states/deeplink/resolver', () => {
   it('should give generic error in case no link', async function () {
     const result = await resolveLink(('' as unknown) as LinkType, {});
     expect(result).toEqual({ error: expect.any(Error) });
-    expect(logger.logException).toHaveBeenCalledWith(expect.any(Error), {
-      data: { link: '' },
-      groupingHash: 'Error during deeplink redirect',
+    expect(logger.captureError).toHaveBeenCalledWith(expect.any(Error), {
+      link: '',
     });
   });
 

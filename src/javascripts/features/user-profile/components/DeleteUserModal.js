@@ -16,7 +16,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import { deleteUserAccount } from 'app/UserProfile/Settings/AccountRepository';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {
@@ -54,7 +54,7 @@ export function DeleteUserModal({ singleOwnerOrganizations, onConfirm, onCancel,
     try {
       await deleteUserAccount({ reason: activeOption, description: details });
     } catch (e) {
-      logError('Could not delete user account', { error: e });
+      captureError(e);
 
       setDeleting(false);
 

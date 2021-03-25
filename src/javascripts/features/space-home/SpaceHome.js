@@ -75,7 +75,7 @@ const fetchData = (
     try {
       [key] = await getApiKeyRepo().getAll();
     } catch (e) {
-      logger.logError('Space Home', e);
+      logger.captureError(e);
     }
 
     // there might be no keys - it was not created yet, or user explicitly removed them

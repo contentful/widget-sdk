@@ -66,7 +66,7 @@ export const getEditorState = ({
         locale: localeStore.getDefaultLocale().internal_code,
       });
     } catch (error) {
-      logger.logError(error);
+      logger.captureError(error);
     }
 
     return {

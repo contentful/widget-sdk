@@ -27,7 +27,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
           return token || '';
         },
         captureException: (error) => {
-          logger.logException(error, {});
+          logger.captureError(error);
         },
       }),
     },
@@ -36,7 +36,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
 
   const batchClient = createDefaultBatchClient(client, {
     onError: (error, context) => {
-      logger.logException(error, context);
+      logger.captureError(error, context);
     },
   });
 

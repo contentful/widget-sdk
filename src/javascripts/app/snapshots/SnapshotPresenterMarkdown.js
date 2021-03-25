@@ -4,7 +4,7 @@ import isHtml from 'is-html';
 import { MarkdownPreview } from '@contentful/field-editor-markdown';
 import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 
 const SnapshotPresenterMarkdown = ({ className, value, direction }) => {
   const hasHtmlTags = isHtml(value);
@@ -53,7 +53,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    logError(`Markdown preview error: ${error.message}`, { error, data: errorInfo });
+    captureError(error, errorInfo);
   }
 
   render() {

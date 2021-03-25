@@ -16,7 +16,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import StateLink from 'app/common/StateLink';
 
 export function UserInvitation(props) {
@@ -88,7 +88,8 @@ export function UserInvitation(props) {
       if (errorMessageText) {
         Notification.error(`${errorMessageText}`);
       } else {
-        logError('Unable to accept org invitation', { error: e });
+        captureError(e);
+
         Notification.error(
           'Your invitation didn’t go through. Ask your Contentful organization admin to invite you again.'
         );

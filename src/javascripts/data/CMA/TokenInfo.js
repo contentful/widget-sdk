@@ -30,7 +30,7 @@ export default function makeFetchWithAuth(auth) {
       response = await doFetch(request);
     } catch (err) {
       Object.assign(err, { request });
-      logger.logException(err);
+      logger.captureError(err);
 
       throw new Error('Could not fetch token data');
     }
@@ -47,7 +47,7 @@ export default function makeFetchWithAuth(auth) {
         const resolveLinksError = new Error('Resolving token links threw');
         Object.assign(resolveLinksError, { request, response });
 
-        logger.logException(resolveLinksError);
+        logger.captureError(resolveLinksError);
 
         throw new Error('Could not fetch token data');
       }
@@ -55,7 +55,7 @@ export default function makeFetchWithAuth(auth) {
       const noDataError = new Error('Obtained /token info without `data`');
       Object.assign(noDataError, { request, response });
 
-      logger.logException(noDataError);
+      logger.captureError(noDataError);
 
       throw new Error('Could not fetch token data');
     }

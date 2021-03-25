@@ -54,11 +54,8 @@ export function resolveLink(
   params: Record<string, any>
 ): Promise<ResolvedLink | { error: Error }> {
   return resolveParams(link, params).catch((error) => {
-    logger.logException(error, {
-      data: {
-        link,
-      },
-      groupingHash: 'Error during deeplink redirect',
+    logger.captureError(error, {
+      link,
     });
     return { error };
   });

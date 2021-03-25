@@ -79,7 +79,7 @@ EntityListCache.prototype = {
     const self = this;
     _.forEach(entities, (entity) => {
       if (_.isUndefined(entity.data)) {
-        logger.logError('Entity data is undefined', {
+        logger.captureError(new Error('Entity data is undefined'), {
           data: {
             entities: entities,
           },

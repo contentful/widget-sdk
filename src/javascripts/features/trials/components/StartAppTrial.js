@@ -76,9 +76,8 @@ const goToSubscriptionPage = (orgId) =>
 
 const installApps = async (apps, orgId, spaceId, environmentId, cma) => {
   const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug)).catch((error) => {
-    logger.logError(`Failed to get app definitions during apps trial`, {
-      error,
-      groupingHash: 'AppTrialError',
+    logger.captureError(new Error(`Failed to get app definitions during apps trial`), {
+      originalError: error,
     });
     throw new AppInstallationError('all');
   });
@@ -96,9 +95,8 @@ const installApps = async (apps, orgId, spaceId, environmentId, cma) => {
       results.forEach((result, i) => {
         result.app = apps[i];
         if (result.status === 'rejected') {
-          logger.logError(`Failed to install ${result.app} during apps trial`, {
-            error: result.reason,
-            groupingHash: 'AppTrialError',
+          logger.captureError(new Error(`Failed to install ${result.app} during apps trial`), {
+            reason: result.reason,
           });
         }
       });
@@ -164,10 +162,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
         goToSpaceHome(spaceContext.getId());
       } else {
         // other errors including TrialSpaceCreation violation and permission errors.
-        logger.logError(`AppTrialError: ${e.message}`, {
-          error: e,
-          groupingHash: 'AppTrialError',
-        });
+        logger.captureError(e);
         goToSubscriptionPage(orgId);
       }
     }

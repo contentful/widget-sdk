@@ -99,11 +99,8 @@ export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
                   error,
                 });
 
-                logger.logError('SpacePurchaseError', {
-                  data: {
-                    error,
-                    organizationId: organization.sys.id,
-                  },
+                logger.captureError(error, {
+                  organizationId: organization.sys.id,
                 });
 
                 Notification.error('Your credit card couldn’t be saved. Please try again.');
@@ -114,9 +111,9 @@ export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
               onSubmit();
             }}
             onError={(error) => {
-              logger.logError('ZuoraIframeError', {
+              logger.captureError(new Error('Zuora credit card iframe error'), {
+                error,
                 location: 'account.organizations.subscription_new.new_space',
-                ...error,
               });
 
               Notification.error(

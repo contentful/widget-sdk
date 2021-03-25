@@ -76,7 +76,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
       setStep(STEPS.THIRD_CHANGE_ENV);
       Notification.success('You have successfully opted-in');
     } catch (err) {
-      logger.logError('Aliases - optIn exception', err);
+      logger.captureError(err);
       Notification.error('There was an error opting in - please try again');
     } finally {
       setLoading(false);

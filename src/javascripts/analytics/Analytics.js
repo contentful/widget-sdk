@@ -119,9 +119,7 @@ export function track(event, data) {
     logEventPayloadSize(event, transformedData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
-    logger.logError('Unexpected error during event tracking', {
-      error,
-      message: error.message,
+    logger.captureError(error, {
       event,
       data,
     });
@@ -149,7 +147,7 @@ function logEventPayloadSize(eventName, safePayload) {
           .some((v) => _.isFunction(v));
 
         if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
-          logger.logWarn('Potentially bloated tracking event payload', {
+          logger.captureWarning(new Error('Potentially bloated tracking event payload'), {
             event: eventName,
             primaryEventSize,
             contextEventsSize,

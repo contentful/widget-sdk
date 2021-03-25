@@ -322,7 +322,7 @@ describe('Request', () => {
     }
 
     expect(response).toBeInstanceOf(Error);
-    expect(response.message).toBe('API request failed');
+    expect(response.message).toBe('API request failed in preflight');
     expect({ ...response }).toEqual({
       config: { url: 'http://foo.com' },
       status: -1,

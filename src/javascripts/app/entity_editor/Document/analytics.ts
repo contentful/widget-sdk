@@ -97,9 +97,8 @@ function stateTrackingString(state) {
     case State.Deleted(): // Might be deleted or just not accessible for the user.
       return 'inaccessible';
     default:
-      logger.logError(`Unhandled entity state ${state}`, {
-        groupingHash: 'unhandledEntityStatusInDocumentAnalytics',
-        data: { entityState: state },
+      logger.captureError(new Error(`Unhandled entity state ${state}`), {
+        entityState: state,
       });
   }
 }

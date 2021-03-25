@@ -48,13 +48,10 @@ export default function withTracking(Component) {
       } else if (isKnownEntryEditorTrackingAction(actionName)) {
         this.trackEntryEditorAction(actionName, data);
       } else {
-        logger.logWarn(`Unexpected rich text tracking action \`${actionName}\``, {
-          groupingHash: 'UnexpectedRichTextTrackingAction',
-          data: {
-            trackingActionName: actionName,
-            originalActionName: name,
-            originalActionData: { origin, ...data },
-          },
+        logger.captureWarning(new Error(`Unexpected rich text tracking action \`${actionName}\``), {
+          trackingActionName: actionName,
+          originalActionName: name,
+          originalActionData: { origin, ...data },
         });
       }
     }

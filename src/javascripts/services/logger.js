@@ -102,48 +102,50 @@ export function enable(user) {
   Sentry.enable(user);
 }
 
-/**
- * Mostly used by the $uncaughtException service
- * @param {Error} exception  Exception Error object
- * @param {Object?} metaData  Metadata object. Can take any of the expected bugsnag metadata parameters.
- * @param {Object?} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
- */
-export function logException(exception, metaData) {
-  const augmentedMetadata = augmentMetadata(metaData);
+function captureSentryException(error, level, metadata) {
+  const fullMetadata = metadata;
+
+  // Get all custom keys from the error and assign them to the metadata
+  // so they don't get swallowed and therefore not logged
+  for (const key of Object.keys(error)) {
+    fullMetadata[key] = error[key];
+  }
+
+  const augmentedMetadata = augmentMetadata(fullMetadata);
 
   if (env !== 'production' && env !== 'jest') {
     /* eslint no-console: off */
-    console.error(exception, augmentedMetadata);
+    console.error(error, augmentedMetadata);
   }
 
-  Sentry.logException(exception, augmentedMetadata);
+  Sentry.logException(error, {
+    level,
+    extra: augmentedMetadata,
+    tags: {
+      route: getCurrentStateName(),
+    },
+  });
 }
 
 /**
- * Log with error level
- * @param {string} message
- * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object?} metaData.data  Shows up on the bugsnag data tab.
- * @param {object?} metaData.error Shows up on the bugsnag error tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
- */
-export function logError(message, metaData) {
-  _log('Logged Error', 'error', message, metaData);
-}
-
-/**
- * Log a warning to Bugsnag with the 'Logged Warning' title and the
- * given message.
+ * Send an error to Sentry.
  *
- * @param {string} message
- * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object?} metaData.data  Shows up on the bugsnag data tab.
- * @param {object?} metaData.error Shows up on the bugsnag error tab.
- * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
+ * @param  {Error} error
+ * @param  {Object} metadata
+ * @return {void}
  */
-export function logWarn(message, metaData) {
-  _log('Logged Warning', 'warning', message, metaData);
+export function captureError(error, metadata = {}) {
+  captureSentryException(error, 'error', metadata);
+}
+
+/**
+ * Send a warning to Sentry.
+ * @param  {Error} error
+ * @param  {Object} metadata
+ * @return {void}
+ */
+export function captureWarning(error, metadata = {}) {
+  captureSentryException(error, 'warning', metadata);
 }
 
 /**

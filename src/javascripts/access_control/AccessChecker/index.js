@@ -613,7 +613,7 @@ function checkIfCanCreateSpace(context) {
   try {
     response = context.can(Action.CREATE, 'Space');
   } catch (e) {
-    logger.logError('Worf exception - can create new space?', e);
+    logger.captureError(e);
   }
   return response;
 }

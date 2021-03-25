@@ -17,7 +17,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeAddOnPlanFromSubscription } from 'features/pricing-entities';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import { reload } from 'states/Navigator';
 
 const styles = {
@@ -32,7 +32,7 @@ async function handleConfirm(organizationId, addOnPlanId, parsedReasons) {
   try {
     await removeAddOnPlanFromSubscription(endpoint, addOnPlanId);
   } catch (e) {
-    logError(e);
+    captureError(e);
     throw e;
   }
 

@@ -10,7 +10,7 @@ import { getMembership, getUser } from 'access_control/OrganizationMembershipRep
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import { getUserSync, getOrganization } from 'services/TokenStore';
 
-import { logError } from 'services/logger';
+import { captureError } from 'services/logger';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner } from 'services/OrganizationRoles';
 
@@ -65,7 +65,7 @@ export default class UserDetailRoute extends React.Component {
               return <FetcherLoading />;
             }
             if (isError) {
-              logError('Failed to load org user page', { error });
+              captureError(error);
               return <StateRedirect path="^.list" />;
             }
             const user = data.initialMembership.sys.user;

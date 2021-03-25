@@ -58,18 +58,12 @@ describe('withTracking() returned hoc', () => {
       const data = { origin: 'SOME ORIGIN', foo: 'bar', nodeType: 'foo-bar' };
       locOnAction('someUnknownAction', data);
 
-      expect(logger.logWarn).toHaveBeenCalledTimes(1);
-      expect(logger.logWarn).toBeCalledWith(
-        'Unexpected rich text tracking action `someUnknownActionFooBar`',
-        {
-          groupingHash: 'UnexpectedRichTextTrackingAction',
-          data: {
-            trackingActionName: 'someUnknownActionFooBar',
-            originalActionName: 'someUnknownAction',
-            originalActionData: data,
-          },
-        }
-      );
+      expect(logger.captureWarning).toHaveBeenCalledTimes(1);
+      expect(logger.captureWarning).toBeCalledWith(expect.any(Error), {
+        trackingActionName: 'someUnknownActionFooBar',
+        originalActionName: 'someUnknownAction',
+        originalActionData: data,
+      });
     });
 
     it('calls analytics.track() for known action', () => {
