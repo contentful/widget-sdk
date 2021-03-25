@@ -112,7 +112,7 @@ export const useAppsList = () => {
             async (app): Promise<NavigationSwitcherAppProps | null> => {
               if (!purchasedApps[app.id]) return null;
 
-              const featureFlagId = FLAGS[app.featureFlagName];
+              const featureFlagId = app.featureFlagName ? FLAGS[app.featureFlagName] : null;
               const appFlagIsEnabled = featureFlagId
                 ? await getVariation(featureFlagId, ldContext)
                 : true;

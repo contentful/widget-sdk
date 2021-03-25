@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { noop } from 'lodash';
 import ldClient from 'ldclient-js';
 import { getVariation, reset, FLAGS, getVariationSync, hasCachedVariation } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
@@ -74,7 +74,7 @@ describe('LaunchDarkly', () => {
     // This is a mock implementation of the LaunchDarkly client
     // library
     client = {
-      waitForInitialization: jest.fn().mockResolvedValue(),
+      waitForInitialization: jest.fn().mockResolvedValue(null),
       identify: jest.fn().mockImplementation(async () => {
         return variations;
       }),
@@ -87,7 +87,7 @@ describe('LaunchDarkly', () => {
       }),
     };
 
-    ldClient.initialize.mockReturnValue(client);
+    (ldClient.initialize as jest.Mock).mockReturnValue(client);
 
     const user = {
       email: 'a',
@@ -99,23 +99,23 @@ describe('LaunchDarkly', () => {
       },
     };
 
-    getUser.mockResolvedValue(user);
-    getOrganization.mockResolvedValue(organization);
-    getSpace.mockResolvedValue(space);
+    (getUser as jest.Mock).mockResolvedValue(user);
+    (getOrganization as jest.Mock).mockResolvedValue(organization);
+    (getSpace as jest.Mock).mockResolvedValue(space);
 
-    jest.spyOn(DegradedAppPerformance, 'trigger').mockImplementation(() => {});
+    jest.spyOn(DegradedAppPerformance, 'trigger').mockImplementation(noop);
   });
 
   afterEach(() => {
-    getOrganization.mockReset();
-    getSpace.mockReset();
-    getUser.mockReset();
-    ldClient.initialize.mockReset();
-    logError.mockReset();
-    isFlagOverridden.mockReset();
-    getFlagOverride.mockReset();
+    (getOrganization as jest.Mock).mockReset();
+    (getSpace as jest.Mock).mockReset();
+    (getUser as jest.Mock).mockReset();
+    (ldClient.initialize as jest.Mock).mockReset();
+    (logError as jest.Mock).mockReset();
+    (isFlagOverridden as jest.Mock).mockReset();
+    (getFlagOverride as jest.Mock).mockReset();
 
-    DegradedAppPerformance.trigger.mockRestore();
+    (DegradedAppPerformance.trigger as jest.Mock).mockRestore();
 
     reset();
   });
@@ -127,8 +127,8 @@ describe('LaunchDarkly', () => {
     });
 
     it('should return the overridden flag variation and not initialize if flag has an override', async () => {
-      isFlagOverridden.mockReturnValueOnce(true);
-      getFlagOverride.mockReturnValueOnce('override-value');
+      (isFlagOverridden as jest.Mock).mockReturnValueOnce(true);
+      (getFlagOverride as jest.Mock).mockReturnValueOnce('override-value');
 
       const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
@@ -269,14 +269,14 @@ describe('LaunchDarkly', () => {
     it('should log and return the fallback if given invalid org or space id', async () => {
       let variation;
 
-      getOrganization.mockRejectedValueOnce(false);
+      (getOrganization as jest.Mock).mockRejectedValueOnce(false);
 
       variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
 
       expect(variation).toBe('fallback-value');
       expect(logError).toHaveBeenCalledTimes(1);
 
-      getSpace.mockRejectedValueOnce(false);
+      (getSpace as jest.Mock).mockRejectedValueOnce(false);
 
       variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
 
@@ -306,7 +306,7 @@ describe('LaunchDarkly', () => {
 
       reset(); // reset cache
 
-      getOrganization.mockRejectedValueOnce(false);
+      (getOrganization as jest.Mock).mockRejectedValueOnce(false);
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(2);
@@ -348,7 +348,7 @@ describe('LaunchDarkly', () => {
     });
 
     it('should provide org data if given valid orgId', async () => {
-      getOrganization.mockResolvedValueOnce(organization);
+      (getOrganization as jest.Mock).mockResolvedValueOnce(organization);
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_5678' });
 
@@ -384,7 +384,7 @@ describe('LaunchDarkly', () => {
     });
 
     it('should provide space data if given valid spaceId', async () => {
-      getSpace.mockResolvedValueOnce(space);
+      (getSpace as jest.Mock).mockResolvedValueOnce(space);
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_5678' });
 
@@ -410,8 +410,8 @@ describe('LaunchDarkly', () => {
     });
 
     it('should provide org and space data if given valid IDs', async () => {
-      getOrganization.mockResolvedValueOnce(organization);
-      getSpace.mockResolvedValueOnce(space);
+      (getOrganization as jest.Mock).mockResolvedValueOnce(organization);
+      (getSpace as jest.Mock).mockResolvedValueOnce(space);
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
         organizationId: 'org_5678',
