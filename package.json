@@ -245,7 +245,6 @@
     "rework": "^1.0.1",
     "rework-plugin-url": "^1.1.0",
     "rimraf": "^3.0.2",
-    "systemjs": "0.20.19",
     "terser": "4.6.3",
     "terser-webpack-plugin": "^5.1.1",
     "through2": "^3.0.1",
