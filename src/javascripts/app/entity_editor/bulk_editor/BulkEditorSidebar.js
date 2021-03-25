@@ -57,15 +57,17 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
         ? ctOrCtId
         : currentSpaceContentTypes.find((ct) => ct.sys.id === ctOrCtId);
 
-      return spaceEnvCMAClient.entry.create({ contentTypeId: contentType.sys.id }).then((entry) => {
-        Analytics.track('entry:create', {
-          eventOrigin: 'bulk-editor',
-          contentType,
-          response: entry,
+      return spaceEnvCMAClient.entry
+        .create({ contentTypeId: contentType.sys.id }, {})
+        .then((entry) => {
+          Analytics.track('entry:create', {
+            eventOrigin: 'bulk-editor',
+            contentType,
+            response: entry,
+          });
+          track.addNew();
+          return addLinks([linkEntity(entry)]);
         });
-        track.addNew();
-        return addLinks([linkEntity(entry)]);
-      });
     },
     [currentSpaceContentTypes, spaceEnvCMAClient, track, addLinks]
   );
