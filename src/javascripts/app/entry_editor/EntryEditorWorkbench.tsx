@@ -330,7 +330,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       <Modal isShown={isShown} onClose={onClose} size="large">
         {() => (
           <div>
-            <Modal.Header title="title of the page" onClose={onClose} />
+            <Modal.Header title="Reference view" onClose={onClose} />
             <Modal.Content>Details about the references from Contentful ProdDev</Modal.Content>
           </div>
         )}
