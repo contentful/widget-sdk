@@ -6,6 +6,11 @@ import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 import { makeSlug, slugify } from '@contentful/field-editor-slug';
 
+const toAlternativeLocaleCode = (localeCode, toPrivate = true) => {
+  const toAlternativeCode = toPrivate ? TheLocaleStore.toInternalCode : TheLocaleStore.toPublicCode;
+  return toAlternativeCode(localeCode) || localeCode;
+};
+
 /**
  * TODO This module is basically an adapter for the entity helper methods on
  * `spaceContext` with logic split across the two modules. This makes this
@@ -14,11 +19,8 @@ import { makeSlug, slugify } from '@contentful/field-editor-slug';
  * We should collect all entity helper logic in one point and create that
  * object where it is needed.
  */
-const toInternalLocaleCode = (localeCode) =>
-  TheLocaleStore.toInternalCode(localeCode) || localeCode;
-
 export function newForLocale(localeCode) {
-  const internalLocaleCode = toInternalLocaleCode(localeCode);
+  const internalLocaleCode = toAlternativeLocaleCode(localeCode, true);
 
   return {
     /**
@@ -62,20 +64,51 @@ export function newForLocale(localeCode) {
  * In particular it uses private ids.
  */
 function dataToEntity(data) {
-  const spaceContext = getModule('spaceContext');
-  let prepareFields = data.fields;
-  const contentTypeId = _.get(data, 'sys.contentType.sys.id');
+  return {
+    data: toPrivateEntity(data),
+    getType: _.constant(data.sys.type),
+    getContentTypeId: _.constant(_.get(data, 'sys.contentType.sys.id')),
+  };
+}
 
-  if (data.sys.type === 'Entry') {
+/*
+  Converts an entity fields to their corresponding ones of the 
+  private content type
+ */
+export function toPrivateEntity(entity) {
+  return convertEntity(entity, true);
+}
+
+/*
+  Converts an entity fields to their corresponding ones of the 
+  public content type
+ */
+export function toPublicEntity(entity) {
+  return convertEntity(entity, false);
+}
+
+/*
+  Converts an entity fields to their corresponding ones of the 
+  private or public content type, depending on the give `toPrivate`
+ */
+function convertEntity(entity, toPrivate = true) {
+  const spaceContext = getModule('spaceContext');
+  let preparedFields = entity.fields;
+  const contentTypeId = _.get(entity, 'sys.contentType.sys.id');
+
+  if (entity.sys.type === 'Entry') {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
 
     if (contentType) {
-      prepareFields = _.transform(
+      preparedFields = _.transform(
         contentType.data.fields,
         (acc, ctField) => {
-          const field = _.get(data, ['fields', ctField.apiName]);
+          const [from, to] = toPrivate
+            ? [ctField.apiName, ctField.id]
+            : [ctField.id, ctField.apiName];
+          const field = _.get(entity, ['fields', from]);
           if (field) {
-            acc[ctField.id] = field;
+            acc[to] = field;
           }
         },
         {}
@@ -83,11 +116,11 @@ function dataToEntity(data) {
     }
   }
 
-  const renamedFields = renameFieldLocales(prepareFields);
+  const renamedFields = renameFieldLocales(preparedFields, toPrivate);
+
   return {
-    data: { fields: renamedFields, sys: data.sys },
-    getType: _.constant(data.sys.type),
-    getContentTypeId: _.constant(contentTypeId),
+    fields: renamedFields,
+    sys: entity.sys,
   };
 }
 
@@ -95,14 +128,14 @@ function dataToEntity(data) {
  * Maps field locales from `code` to `internal_code` if locale is available.
  * The locale might be missing in some cases, e.g. it was deleted.
  */
-function renameFieldLocales(fields) {
+function renameFieldLocales(fields, toPrivate) {
   return _.mapValues(fields, (field) =>
-    _.mapKeys(field, (_, localeCode) => toInternalLocaleCode(localeCode))
+    _.mapKeys(field, (_, localeCode) => toAlternativeLocaleCode(localeCode, toPrivate))
   );
 }
 
 async function assetFile(data, localeCode) {
-  const internalLocaleCode = toInternalLocaleCode(localeCode);
+  const internalLocaleCode = toAlternativeLocaleCode(localeCode);
   const entity = await dataToEntity(data);
   return EntityFieldValueSpaceContext.getFieldValue(entity, 'file', internalLocaleCode);
 }

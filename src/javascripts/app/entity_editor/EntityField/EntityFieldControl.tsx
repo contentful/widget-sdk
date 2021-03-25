@@ -10,6 +10,8 @@ import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils'
 import { LocaleData } from './types';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
 import { usePubSubClient } from 'core/hooks';
+import * as K from 'core/utils/kefir';
+import { connectGetEntity } from './connectedGetEntity';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -42,6 +44,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     currentEnvironmentId,
     currentEnvironment,
     currentSpaceContentTypes,
+    documentPool,
   } = useSpaceEnvContext();
   const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
@@ -64,6 +67,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
 
   const internalContentType = editorData.entityInfo.contentType;
 
+  const lifeline = K.useLifeline();
   const widgetApi = React.useMemo(() => {
     const { widgetNamespace, widgetId, fieldId, parameters } = widget;
 
@@ -71,7 +75,8 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       throw new Error('Space id needs to be defined');
     }
 
-    return createFieldWidgetSDK({
+    const sdk = createFieldWidgetSDK({
+      fieldId,
       localeCode: locale.code,
       editorData,
       setInvalid,
@@ -82,7 +87,6 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       fieldLocaleListeners,
       widgetNamespace,
       widgetId,
-      fieldId,
       parameters,
       spaceId: currentSpaceId,
       environmentAliasId: currentEnvironmentAliasId,
@@ -92,6 +96,12 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       contentTypes: currentSpaceContentTypes,
       pubSubClient,
     });
+
+    if (sdk.space) {
+      Object.assign(sdk.space, connectGetEntity(sdk.space, documentPool, lifeline));
+    }
+
+    return sdk;
   }, [
     widget,
     locale.code,
@@ -109,6 +119,8 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     currentEnvironment,
     currentSpaceContentTypes,
     pubSubClient,
+    documentPool,
+    lifeline,
   ]);
 
   if (!widgetApi) {

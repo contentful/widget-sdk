@@ -59,6 +59,10 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     return angularSpaceContext?.users;
   }
 
+  function getDocPool() {
+    return angularSpaceContext?.docPool;
+  }
+
   const space = getSpace();
 
   // Most common values are exported as property values
@@ -77,6 +81,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceName: getSpaceName(space),
     currentSpaceContentTypes: contentTypes,
     currentUsers: getUsers(),
+    documentPool: getDocPool(),
   };
 
   return <SpaceEnvContext.Provider value={value}>{props.children}</SpaceEnvContext.Provider>;

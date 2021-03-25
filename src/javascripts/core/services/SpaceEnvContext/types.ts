@@ -13,6 +13,7 @@ export interface SpaceEnvContextValue {
   currentSpaceName?: string;
   currentSpaceContentTypes: ContentType[];
   currentUsers?: SpaceEnvUsers;
+  documentPool?: any;
 }
 
 export interface SpaceEnvUsers {

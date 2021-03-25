@@ -8,6 +8,7 @@ import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 const ASSET_PROCESSING_POLL_MS = 500;
+const GET_WAIT_ON_ENTITY_UPDATE = 500;
 
 /**
  * Makes a method throw an Exception when the API is read0only
@@ -68,7 +69,7 @@ export function createSpaceApi({
   readOnly?: boolean;
   appId?: string;
 }): InternalSpaceAPI {
-  return {
+  const spaceApi = {
     // Proxy directly to the CMA client:
     archiveEntry: makeReadOnlyGuardedMethod(readOnly, cma.archiveEntry),
     archiveAsset: makeReadOnlyGuardedMethod(readOnly, cma.archiveAsset),
@@ -122,6 +123,8 @@ export function createSpaceApi({
 
     signRequest: makeReadOnlyGuardedMethod(readOnly, makeSignRequest(appId)),
   };
+
+  return spaceApi;
 
   function makeSignRequest(appId) {
     return (req) => {
@@ -197,14 +200,23 @@ export function createSpaceApi({
     if (!pubSubClient) {
       return noop;
     }
-    const getEntity = entityType === 'Entry' ? cma.getEntry : cma.getAsset;
+    const getEntity = entityType === 'Entry' ? spaceApi.getEntry : spaceApi.getAsset;
     const handler = (msg: { environmentId: string; entityType: string; entityId: string }) => {
       if (
         environmentIds.includes(msg.environmentId) &&
         msg.entityType === entityType &&
         msg.entityId === entityId
       ) {
-        return getEntity(entityId).then(callback);
+        /* 
+        There is no guarantee that this callback is handled before the
+        cmaDocument one, which is actually updating the entity. So we wait a little bit
+        Since onEntityChanged is used only in reference field editors it shouldn't be a problem to
+        slow down.
+        TODO: a unified document management middleware can be a better approach
+        */
+        return new Promise((resolve) => setTimeout(resolve, GET_WAIT_ON_ENTITY_UPDATE))
+          .then(() => getEntity(entityId))
+          .then(callback);
       }
     };
     pubSubClient.on(CONTENT_ENTITY_UPDATED_EVENT, handler);

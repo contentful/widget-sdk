@@ -3,6 +3,8 @@ import {
   newForLocale,
   appendDuplicateIndexToEntryTitle,
   alignSlugWithEntryTitle,
+  toPrivateEntity,
+  toPublicEntity,
 } from './entityHelpers';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as EntityFieldValueSpaceContextMocked from 'classes/EntityFieldValueSpaceContext';
@@ -28,6 +30,8 @@ jest.mock('services/AssetUrlService', () => {
 jest.mock('services/localeStore', () => {
   return {
     toInternalCode: (code) => mockInternalLocale[code],
+    toPublicCode: (code) =>
+      Object.entries(mockInternalLocale).find(([, privateCode]) => privateCode === code)[0],
   };
 });
 
@@ -545,6 +549,58 @@ describe('EntityHelpers', () => {
 
       expect(slugData['en-US']).toBeUndefined();
       expect(slugData.de.startsWith('untitled-entry-2020-02-22')).toBe(true);
+    });
+
+    describe('Entity conversion', () => {
+      const contentType = {
+        fields: [
+          { apiName: 'fieldA', id: 'fieldA' },
+          { apiName: 'fieldB', id: 'fieldBRealId' },
+        ],
+      };
+
+      const publicFields = {
+        fieldA: { 'en-US': 'en' },
+        fieldB: { 'en-US': 'valEN', de: 'valDE' },
+      };
+
+      const privateFields = {
+        fieldA: publicFields.fieldA,
+        fieldBRealId: { 'en-US': 'valEN', 'de-internal': 'valDE' },
+      };
+
+      const publicEntry = {
+        sys: { type: 'Entry', contentType: { sys: { id: 'ctId' } } },
+        fields: publicFields,
+      };
+
+      const privateEntry = {
+        sys: publicEntry.sys,
+        fields: privateFields,
+      };
+
+      beforeAll(() => {
+        spaceContextMocked.publishedCTs.get.mockReturnValue({ data: contentType });
+      });
+
+      describe('toPrivateEntity', () => {
+        it('converts the entity to its private content type representation', () => {
+          const transformedEntry = toPrivateEntity(publicEntry);
+          expect(transformedEntry).toEqual(privateEntry);
+        });
+      });
+
+      describe('toPublicEntity', () => {
+        it('converts the entity to its private content type representation', () => {
+          const transformedEntry = toPublicEntity(privateEntry);
+          expect(transformedEntry).toEqual(publicEntry);
+        });
+      });
+
+      it('is identity in a conversion round trip', () => {
+        expect(toPublicEntity(toPrivateEntity(publicEntry))).toEqual(publicEntry);
+        expect(toPrivateEntity(toPublicEntity(privateEntry))).toEqual(privateEntry);
+      });
     });
   });
 });

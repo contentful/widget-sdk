@@ -38,7 +38,7 @@ export async function create(
     spaceId,
     environmentId,
   });
-  return { get, destroy };
+  return { get, destroy, getById };
 
   /**
    * Gets a doc for an entity.
@@ -121,6 +121,21 @@ export async function create(
     lifeline$.onEnd(() => unref(doc));
 
     return doc;
+  }
+
+  function getById(entityId, type, lifeline$) {
+    const key = prepareKey({
+      type: type,
+      id: entityId,
+    });
+    const instance = instances[key];
+    if (instance) {
+      instance.count += 1;
+      lifeline$.onEnd(() => unref(instance.doc));
+      return instance.doc;
+    }
+
+    return undefined;
   }
 
   function prepareKey(sys) {

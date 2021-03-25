@@ -3,6 +3,7 @@ import { entityHelpers } from '@contentful/field-editor-shared';
 import TheLocaleStore from 'services/localeStore';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
+import _ from 'lodash';
 
 function getContentTypeById(contentTypeId) {
   const spaceContext = getModule('spaceContext');

@@ -85,7 +85,7 @@ describe('DocumentPool', () => {
 
   describe('instance creation', () => {
     it('returns an object with pool API', function () {
-      expect(Object.keys(otDocumentPool).sort()).toEqual(['get', 'destroy'].sort());
+      expect(Object.keys(otDocumentPool).sort()).toEqual(['get', 'getById', 'destroy'].sort());
     });
   });
 
