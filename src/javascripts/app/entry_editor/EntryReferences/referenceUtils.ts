@@ -1,9 +1,10 @@
 import { EntitySys } from 'app/entity_editor/Document/types';
+import { BasicMetaSysProps } from 'contentful-management/types';
 import * as EntityState from 'data/CMA/EntityState';
 
 // If there is a circular reference that is not handled this will keep us from endless.
 const FAILSAFE_LEVEL = 15;
-const entityTypes = ['Asset', 'Entry'];
+const linkableEntityTypes = ['Asset', 'Entry'];
 
 interface Entity {
   sys: EntitySys;
@@ -40,7 +41,7 @@ const createTreeNode = (entity: Entity, key: string, level: number): TreeNode =>
     entity,
     level,
     isCircular: false,
-    isResolved: entity && entityTypes.includes(entity.sys.type),
+    isResolved: isLinkableEntity(entity),
     type: entity.sys.type,
     children,
     addChild(entity, key) {
@@ -203,7 +204,7 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
 
     if (areAllReferencesSelected) {
       selectionMap.set(`${entity.sys.id}-${type}`, entity);
-    } else if (selectedStates?.length && type !== 'Link') {
+    } else if (selectedStates?.length && isLinkableEntity(entity)) {
       const stateName = EntityState.stateName(EntityState.getState(entity.sys));
       selectedStates.forEach((entityState) => {
         if (stateName === entityState) {
@@ -247,4 +248,24 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
   };
 };
 
-export { createTreeNode, createTree, buildTreeOfReferences, traverse };
+type EntityShape = {
+  sys: BasicMetaSysProps;
+};
+
+const isLinkableEntity = (entity: EntityShape): boolean => {
+  if (!entity?.sys) {
+    return false;
+  }
+
+  return linkableEntityTypes.includes(entity.sys.type);
+};
+
+const isLink = (entity: EntityShape): boolean => {
+  if (!entity?.sys) {
+    return false;
+  }
+
+  return entity.sys.type === 'Link';
+};
+
+export { createTreeNode, createTree, buildTreeOfReferences, traverse, isLinkableEntity, isLink };

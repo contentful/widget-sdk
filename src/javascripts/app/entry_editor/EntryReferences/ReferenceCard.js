@@ -15,6 +15,8 @@ import { ReferencesContext } from './ReferencesContext';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import * as EntityState from 'data/CMA/EntityState';
 import { getEntityTitle } from './referencesService';
+import { isLinkableEntity } from './referenceUtils';
+import { isLink } from '@contentful/types';
 
 const styles = {
   card: css({
@@ -105,7 +107,7 @@ const ReferenceCard = ({
 
   useEffect(() => {
     async function getTitle() {
-      if (entity) {
+      if (entity && isLinkableEntity(entity)) {
         const fetchedTitle = await getEntityTitle(entity);
         setTitle(fetchedTitle || 'Untitled');
       }
@@ -125,6 +127,7 @@ const ReferenceCard = ({
   if (isMoreCard) {
     return (
       <ListItem
+        testId="reference-card__more"
         className={styles.listItem}
         title="There are more references, click the parent entry to see all of them.">
         <Card className={styles.card}>+ more</Card>
@@ -132,13 +135,11 @@ const ReferenceCard = ({
     );
   }
 
-  if (!entity) {
-    return null;
-  }
-
-  if (isUnresolved) {
+  // we check for isLink here as customers may have custom extension that link to other entity types, like
+  // ScheduledActions for example. We don't want to render these, that's why we have this check here.
+  if (isUnresolved && isLink(entity)) {
     return (
-      <ListItem className={styles.listItem}>
+      <ListItem testId="reference-card__unresolved" className={styles.listItem}>
         <Card className={styles.card} onClick={noop}>
           {entity.sys.linkType === 'Asset' && (
             <Icon icon="Asset" color="muted" className={styles.assetIcon} />
@@ -151,22 +152,14 @@ const ReferenceCard = ({
     );
   }
 
-  if (isMoreCard) {
-    return (
-      <ListItem
-        className={styles.listItem}
-        title="There are more references, click the parent entry to see all of them.">
-        <Card className={styles.card}>+ more</Card>
-      </ListItem>
-    );
-  }
-
-  if (!entity) {
+  if (!isLinkableEntity(entity)) {
     return null;
   }
 
   return (
-    <ListItem className={cx(styles.listItem, validationError && styles.erroredListItem)}>
+    <ListItem
+      testId="reference-card"
+      className={cx(styles.listItem, validationError && styles.erroredListItem)}>
       <Card className={styles.card}>
         <Checkbox
           labelText={isSelected ? 'Deselect entity' : 'Select entity'}
