@@ -335,6 +335,9 @@ export const getEntryReferences = {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
         headers: defaultHeader,
+        query: {
+          include: '10',
+        },
       },
       willRespondWith: {
         status: 200,
@@ -356,6 +359,9 @@ export const getEntryReferences = {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
         headers: defaultHeader,
+        query: {
+          include: '10',
+        },
       },
       willRespondWith: {
         status: 200,
@@ -377,6 +383,9 @@ export const getEntryReferences = {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
         headers: defaultHeader,
+        query: {
+          include: '10',
+        },
       },
       willRespondWith: {
         status: 200,

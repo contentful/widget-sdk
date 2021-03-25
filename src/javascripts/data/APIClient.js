@@ -248,10 +248,13 @@ APIClient.prototype.publishEntry = function (data, version) {
   return this._setResourceFlag('entries', data, 'published', version);
 };
 
-APIClient.prototype.getEntryReferences = function (id) {
+APIClient.prototype.getEntryReferences = function (id, maxDepth = 10) {
   return this._request({
     method: 'GET',
     path: ['entries', id, 'references'],
+    query: {
+      include: maxDepth,
+    },
   });
 };
 
