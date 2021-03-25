@@ -7,7 +7,7 @@ describe('Embargoed Assets settings page', () => {
 
   context('as a Space Admin', () => {
     context('with ProductCatalog feature enabled', () => {
-      context('initial mode is DISABLED (null)', () => {
+      describe('initial mode is DISABLED (null)', () => {
         beforeEach(() => {
           interactions = [...basicServerSetup(), getEmboargoedAssets.willReturnDisabled()];
 
@@ -20,7 +20,7 @@ describe('Embargoed Assets settings page', () => {
         });
       });
 
-      context('initial mode is MIGRATING', () => {
+      describe('initial mode is MIGRATING', () => {
         beforeEach(() => {
           interactions = [
             ...basicServerSetup(),
@@ -48,7 +48,7 @@ describe('Embargoed Assets settings page', () => {
         });
       });
 
-      context('initial mode is UNPUBLISHED', () => {
+      describe('initial mode is UNPUBLISHED', () => {
         beforeEach(() => {
           interactions = [
             ...basicServerSetup(),
@@ -79,7 +79,7 @@ describe('Embargoed Assets settings page', () => {
         });
       });
 
-      context('initial mode is ALL', () => {
+      describe('initial mode is ALL', () => {
         beforeEach(() => {
           interactions = [...basicServerSetup(), getEmboargoedAssets.willReturnEnabledForAll()];
 

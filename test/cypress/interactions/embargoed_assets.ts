@@ -14,21 +14,7 @@ const responses = {
     };
   },
 
-  disabled(spaceId: string) {
-    return {
-      sys: {
-        space: {
-          sys: {
-            id: spaceId,
-            type: 'Link',
-            linkType: 'Space',
-          },
-        },
-      },
-      protectionMode: null,
-    };
-  },
-  inMode(spaceId: string, mode: string) {
+  inMode(spaceId: string, mode: string | null) {
     return {
       sys: {
         space: {
@@ -86,7 +72,7 @@ export const getEmboargoedAssets = {
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
-        body: responses.disabled(defaultSpaceId),
+        body: responses.inMode(defaultSpaceId, null),
       },
     }).as('getEmboargoedAssetsForDefaultSpace');
 
