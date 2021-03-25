@@ -28,9 +28,9 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
           <Modal.Header title={title} />
           <Modal.Content>
             <Paragraph element="p" className={styles.paragraph}>
-              This trial will give you free access to Compose + Launch for 10 days. You can test
-              both apps in a new trial space with example content, or you can add some of your own.
-              No payment is required, and the trial wonʼt affect your exisiting spaces or content in
+              This trial will give you free access to Compose + Launch for 10 days. You’ll get both
+              apps in a new trial space where you can use our example content or create your own. No
+              payment is required, and the trial wonʼt affect your exisiting spaces or content in
               any way.
             </Paragraph>
           </Modal.Content>
