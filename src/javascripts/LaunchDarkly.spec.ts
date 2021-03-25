@@ -145,7 +145,8 @@ describe('LaunchDarkly', () => {
     });
 
     it('should log and return undefined if the flag does not exist in the map', async () => {
-      const variation = await getVariation('UNKNOWN_FLAG');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const variation = await getVariation(('UNKNOWN_FLAG' as unknown) as any);
 
       expect(variation).toBeUndefined();
       expect(logger.captureError).toHaveBeenCalledTimes(1);

@@ -19,7 +19,6 @@ import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'ser
 import { Organization, SpaceData, User } from 'core/services/SpaceEnvContext/types';
 
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
-const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
 
 let cachedIdentifiedUser: LDClient.LDUser | null = null;
 let client: LDClient.LDClient | null = null;
@@ -29,40 +28,40 @@ let variationCacheResolved = {};
 let initializationPromise: Promise<void> | null = null;
 let initialized = false;
 
-export const FLAGS = {
-  ENVIRONMENTS_FLAG: 'feature-dv-11-2017-environments',
-  ENTRY_COMMENTS: 'feature-04-2019-entry-comments',
-  ENTITY_EDITOR_CMA_EXPERIMENT: 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
-  ALL_REFERENCES_DIALOG: 'feature-pulitzer-02-2020-all-reference-dialog',
-  ADD_TO_RELEASE: 'feature-pulitzer-05-2020-add-to-release',
-  SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
-  NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
-  SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
-  ENTITLEMENTS_API: 'feature-hejo-11-2020-entitlements-api',
-  NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
-  SPACE_PLAN_CHANGE_NEW_PURCHASE_FLOW: 'feature-ogg-10-2020-enable-space-purchase-for-change',
-  SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
-  SPACE_PLAN_ASSIGNMENT_EXPERIMENT: 'feature-hejo-09-2020-space-plan-assignment-experiment',
-  CREATE_SPACE_FOR_SPACE_PLAN: 'feature-hejo-12-2020-create-space-for-space-plan',
-  CONTENT_LEVEL_PERMISSIONS: 'feature-dev-workflows-09-2020-content-level-permissions',
-  WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
-  COMPOSE_LAUNCH_PURCHASE: 'feature-ahoy-11-2020-compose-launch-purchase',
-  PATCH_ENTRY_UPDATES: 'feature-penguin-12-2020-patch-entry-updates',
-  COMPOSE_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-compose-eap',
-  LAUNCH_APP_LISTING_EAP: 'feature-ext-12-2020-contentful-apps-launch-eap',
-  REFERENCE_TREE_BULK_ACTIONS_SUPPORT: 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
-  APP_TRIAL: 'feature-moi-01-2021-app-trial-mechanics',
-  REACT_MIGRATION_CT: 'react-migration-10-2020-content-type-editor',
-  APP_HOSTING_UI: 'feature-extensibility-03-2021-app-hosting-ui',
-  HIGH_VALUE_LABEL: 'feature-hejo-03-2021-high-value-label',
+export enum FLAGS {
+  ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
+  ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
+  ENTITY_EDITOR_CMA_EXPERIMENT = 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
+  ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog',
+  ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
+  SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
+  NEW_FIELD_DIALOG = 'react-migration-new-content-type-field-dialog',
+  SSO_SETUP_NO_REDUX = 'feature-hejo-08-2020-sso-setup-no-redux',
+  ENTITLEMENTS_API = 'feature-hejo-11-2020-entitlements-api',
+  NEW_PURCHASE_FLOW = 'feature-ogg-08-2020-enable-space-purchase-flow',
+  SPACE_PLAN_CHANGE_NEW_PURCHASE_FLOW = 'feature-ogg-10-2020-enable-space-purchase-for-change',
+  SPACE_PLAN_ASSIGNMENT = 'feature-hejo-08-2020-space-plan-assignment',
+  SPACE_PLAN_ASSIGNMENT_EXPERIMENT = 'feature-hejo-09-2020-space-plan-assignment-experiment',
+  CREATE_SPACE_FOR_SPACE_PLAN = 'feature-hejo-12-2020-create-space-for-space-plan',
+  CONTENT_LEVEL_PERMISSIONS = 'feature-dev-workflows-09-2020-content-level-permissions',
+  WORKFLOWS_APP = 'ext-09-2020-enable-workflows',
+  COMPOSE_LAUNCH_PURCHASE = 'feature-ahoy-11-2020-compose-launch-purchase',
+  PATCH_ENTRY_UPDATES = 'feature-penguin-12-2020-patch-entry-updates',
+  COMPOSE_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-compose-eap',
+  LAUNCH_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-launch-eap',
+  REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
+  APP_TRIAL = 'feature-moi-01-2021-app-trial-mechanics',
+  REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
+  APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
+  HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
 
-  REQUEST_RETRY_EXPERIMENT: 'dev-workflows-02-2021-request-retry-experiment',
+  REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
-  __FLAG_FOR_UNIT_TESTS__: 'test-flag',
-  __SECOND_FLAG_FOR_UNIT_TEST__: 'test-flag-2',
-};
+  __FLAG_FOR_UNIT_TESTS__ = 'test-flag',
+  __SECOND_FLAG_FOR_UNIT_TEST__ = 'test-flag-2',
+}
 
 const FALLBACK_VALUES = {
   [FLAGS.ENVIRONMENTS_FLAG]: true,
@@ -223,7 +222,12 @@ async function ldUser({
   };
 }
 
-function getCacheKey(flagName, organizationId?: string, spaceId?: string, environmentId?: string) {
+function getCacheKey(
+  flagName: FLAGS,
+  organizationId?: string,
+  spaceId?: string,
+  environmentId?: string
+) {
   return `${flagName}:${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}:${
     environmentId ? environmentId : ''
   }`;
@@ -260,7 +264,7 @@ interface GetVariationOptions {
   environmentId?: string;
 }
 export async function getVariation(
-  flagName,
+  flagName: FLAGS,
   { organizationId, spaceId, environmentId }: GetVariationOptions = {}
 ) {
   /**
@@ -363,9 +367,16 @@ export async function getVariation(
           error,
         });
 
-        console.log('Unexpected error', error);
-
-        return FLAG_PROMISE_ERRED;
+        return {
+          success: false,
+          message: 'Unexpected LaunchDarkly error',
+          data: {
+            flagName,
+            organizationId,
+            spaceId,
+            environmentId,
+          },
+        } as FlagPromiseFailure;
       })
       .then((resultObject) => {
         // If the flag promise errs in some way, unset the cached promise
@@ -412,7 +423,7 @@ export async function getVariation(
  * @return boolean
  */
 export function getVariationSync(
-  flagName: string,
+  flagName: FLAGS,
   { organizationId, spaceId, environmentId }: GetVariationOptions = {}
 ) {
   if (isFlagOverridden(flagName)) {
@@ -426,7 +437,7 @@ export function getVariationSync(
 }
 
 export function hasCachedVariation(
-  flagName: string,
+  flagName: FLAGS,
   organizationId?: string,
   spaceId?: string,
   environmentId?: string
@@ -435,24 +446,45 @@ export function hasCachedVariation(
   return variationCacheResolved?.[key] !== undefined;
 }
 
+interface FlagPromiseSuccess {
+  success: true;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: LDClient.LDFlagValue;
+}
+
+interface FlagPromiseFailure {
+  success: false;
+  message: string;
+  data: {
+    flagName: string;
+    organizationId: string;
+    spaceId: string;
+    environmentId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    variation?: LDClient.LDFlagValue;
+  };
+}
+
+type FlagPromiseResult = FlagPromiseSuccess | FlagPromiseFailure;
+
 /*
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
  */
 async function createFlagPromise(
   ldClient: LDClient.LDClient,
-  flagName: string,
+  flagName: FLAGS,
   { user, organizationId, spaceId, environmentId }
-) {
-  let org;
-  let space;
+): Promise<FlagPromiseResult> {
+  let org: Organization;
+  let space: SpaceData;
 
   // Attempt to get the org and space, if given an ID.
   //
   // If the ID results in an unknown org or space, log the
   // error to Bugsnag and return undefined.
   try {
-    org = organizationId ? await getOrganization(organizationId) : null;
+    org = organizationId ? await getOrganization(organizationId) : undefined;
   } catch (e) {
     return {
       success: false,
@@ -467,7 +499,7 @@ async function createFlagPromise(
   }
 
   try {
-    space = spaceId ? await getSpace(spaceId) : null;
+    space = spaceId ? await getSpace(spaceId) : undefined;
   } catch (e) {
     return {
       success: false,
@@ -567,7 +599,8 @@ export function ensureFlagsHaveFallback() {
   }
 }
 
-function logAsyncError(asyncError, message, extra) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function logAsyncError(asyncError: Error, message: string, extra: any = {}) {
   Object.assign(asyncError, {
     message,
   });
