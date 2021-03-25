@@ -1,6 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { cx } from 'emotion';
-import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
+import {
+  Icon,
+  Tab,
+  TabPanel,
+  Tabs,
+  Tag,
+  Workbench,
+  ModalLauncher,
+  Modal,
+} from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import StatusNotification from 'app/entity_editor/StatusNotification';
@@ -125,7 +134,10 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   );
 
   const [selectedTab, setSelectedTab] = useState(() => validateTab(preferences.tab, availableTabs));
-  const [tabVisible, setTabVisible] = useState({ entryReferences: false });
+  const [tabVisible, setTabVisible] = useState({
+    entryReferences: false,
+    highValueLabelVisible: false,
+  });
 
   // kill this with fire when react migration allows it
   const $state = getModule('$state');
@@ -171,7 +183,16 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         spaceId: currentSpaceId,
         environmentId: currentEnvironmentId,
       });
-      setTabVisible({ entryReferences: isFeatureEnabled });
+      // Separate ff to controll the high value label experiment
+      const isHighValueLabelEnabled = await getVariation(FLAGS.HIGH_VALUE_LABEL, {
+        organizationId: currentOrganizationId,
+        spaceId: currentSpaceId,
+        environmentId: currentEnvironmentId,
+      });
+      setTabVisible({
+        entryReferences: isFeatureEnabled,
+        highValueLabelVisible: isHighValueLabelEnabled, // Additional value to just control the visibility based on high value label FF
+      });
     }
 
     getFeatureFlagVariation();
@@ -195,8 +216,11 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     const isTagsTab = currentTab.widgetId === EntryEditorWidgetTypes.TAGS_EDITOR.id;
 
     if (isReferenceTab) {
-      isTabVisible = tabVisible.entryReferences;
-      isTabEnabled = entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
+      isTabVisible = tabVisible.entryReferences || tabVisible.highValueLabelVisible;
+      isTabEnabled =
+        entityInfo.type === 'Entry' &&
+        hasLinks(editorData.entity.data.fields) &&
+        !tabVisible.highValueLabelVisible;
     }
 
     if (isTagsTab) {
@@ -300,6 +324,20 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     goToPreviousSlideOrExit('arrow_back');
   };
 
+  const showCustomModal = () => {
+    // temporary, it will be replaced with the final Modal
+    ModalLauncher.open(({ onClose, isShown }) => (
+      <Modal isShown={isShown} onClose={onClose} size="large">
+        {() => (
+          <div>
+            <Modal.Header title="title of the page" onClose={onClose} />
+            <Modal.Content>Details about the references from Contentful ProdDev</Modal.Content>
+          </div>
+        )}
+      </Modal>
+    ));
+  };
+
   return (
     <div className="entry-editor">
       <Workbench>
@@ -337,28 +375,42 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             />
           )}
           <Tabs className={styles.tabs} withDivider>
-            {visibleTabs.map((tab) => (
-              <Tab
-                id={tab.key}
-                key={tab.key}
-                testId={`test-id-${tab.key}`}
-                disabled={!tab.isEnabled()}
-                selected={selectedTab === tab.key}
-                className={cx(styles.tab, {
-                  // the class name is to provide a hook to attach intercom product tours
-                  [`tab-${tab.key}--enabled`]: tab.isEnabled(),
-                })}
-                onSelect={tab.onClick}>
-                <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
-                {tab.title}
-                {tab.key ===
-                  `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
-                  <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
-                    new
-                  </Tag>
-                )}
-              </Tab>
-            ))}
+            {visibleTabs.map((tab) => {
+              // Temporary, will be removed after high value label experiment is finished
+              const referenceTab =
+                tab.key ===
+                `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.REFERENCE_TREE.id}`;
+              const showHighValueModal = referenceTab && tabVisible.highValueLabelVisible;
+
+              return (
+                <Tab
+                  id={tab.key}
+                  key={tab.key}
+                  testId={`test-id-${tab.key}`}
+                  disabled={!tabVisible.highValueLabelVisible && !tab.isEnabled()} // when highValueLabel is visible don't disable the tab
+                  selected={selectedTab === tab.key}
+                  className={cx(styles.tab, {
+                    // the class name is to provide a hook to attach intercom product tours
+                    [`tab-${tab.key}--enabled`]: tab.isEnabled(),
+                  })}
+                  // when highValueLabel FF is enabled show custom modal on click, not show the content of the tab
+                  onSelect={showHighValueModal ? showCustomModal : tab.onClick}>
+                  <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
+                  {tab.title}
+
+                  {tab.key ===
+                    `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.TAGS_EDITOR.id}` && (
+                    <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
+                      new
+                    </Tag>
+                  )}
+                  {/* when highValueLabel FF is enabled show info icon next to the reference tab */}
+                  {showHighValueModal && (
+                    <Icon icon="InfoCircle" color="muted" className={styles.promotionTag} />
+                  )}
+                </Tab>
+              );
+            })}
           </Tabs>
           <StatusNotification {...statusNotificationProps} />
           {visibleTabs.length <= 0 ? (
