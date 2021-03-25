@@ -86,8 +86,9 @@ export const refreshToken = createExclusiveTask(async () => {
     try {
       await loginSecureAssets(token);
     } catch (error) {
-      logger.logServerWarn(`Error signing in to secure assets host: ${error}`);
+      logger.captureWarning(error);
     }
+
     tokenStore.set(token);
     updateToken(token);
     return token;
@@ -151,7 +152,7 @@ export function init() {
       // In development, we use localStorage / login via url hash, which won't
       // trigger the secure assets login unless we do the following:
       loginSecureAssets(previousToken).catch((error) => {
-        logger.logServerWarn(`Error signing in to secure assets host: ${error}`);
+        logger.captureWarning(error);
       });
     }
   }
@@ -191,7 +192,7 @@ export async function logout() {
     try {
       await logoutSecureAssets();
     } catch (error) {
-      logger.logServerWarn(`Error signing out of secure assets host: ${error}`);
+      logger.captureWarning(error);
     }
   } finally {
     setLocation(Config.authUrl('logout'));

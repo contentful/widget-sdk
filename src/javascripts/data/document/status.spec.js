@@ -4,11 +4,6 @@ import { create } from './status';
 import * as Kefir from 'core/utils/kefir';
 import * as K from '__mocks__/kefirMock';
 
-jest.mock('services/logger', () => ({
-  logSharejsError: jest.fn(),
-  logServerError: jest.fn(),
-}));
-
 describe('Document status', () => {
   const sys$ = Kefir.createPropertyBus({ archivedVersion: null, deletedVersion: null });
   const docError$ = Kefir.createPropertyBus(null);

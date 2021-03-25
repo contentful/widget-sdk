@@ -89,7 +89,8 @@ export function handleSaveError(response) {
   }
 
   Notification.error('Error saving role. Please try again.');
-  logger.logServerWarn('Error saving role', { errors });
+
+  logger.captureWarning(new Error('Error saving role'), { errors });
 
   return Promise.reject();
 }
@@ -239,7 +240,6 @@ export class RoleEditor extends React.Component {
         });
       }
     } catch (err) {
-      logger.logServerWarn(`Could not find title for ${entityId}`);
       return entityId;
     }
   };

@@ -110,7 +110,7 @@ const createNewSpace = (
       // this means that something went wrong.
       if (!errors || !errors.length) {
         Notification.error(DEFAULT_ERROR_MESSAGE);
-        logger.logServerWarn('Could not create Space', { error: error });
+        logger.captureWarning(error);
 
         return;
       }
@@ -194,6 +194,6 @@ export const requestSpaceCreation = (
     })
     .catch((error) => {
       Notification.error(DEFAULT_ERROR_MESSAGE);
-      logger.logServerWarn('Could not fetch permissions', { error: error });
+      logger.captureWarning(error);
     });
 };

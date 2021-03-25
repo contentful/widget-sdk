@@ -96,7 +96,7 @@ export const useCreateEnvAliasState = (props) => {
           },
         });
       } else if (result.type === EnvironmentAlias.ServerError) {
-        logger.logServerError(result.error);
+        logger.captureError(result.error);
         dispatch({ type: SET_SERVER_FAILURE, value: true });
       }
 

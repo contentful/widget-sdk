@@ -33,7 +33,7 @@ export function create(sys$, docError$, canUpdate) {
       docError instanceof DocError.ShareJsInternalServerError ||
       docError === 'internal-server-error'
     ) {
-      logger.logSharejsError('Internal server error', { error: docError });
+      logger.captureError(docError);
       return DocumentStatusCode.INTERNAL_SERVER_ERROR;
     }
     if (!canUpdate || docError instanceof DocError.OpenForbidden) {
@@ -46,7 +46,7 @@ export function create(sys$, docError$, canUpdate) {
       return DocumentStatusCode.ARCHIVED;
     }
     if (docError) {
-      logger.logSharejsError('Unknown ShareJS document error', { error: docError });
+      logger.captureError(docError);
       return DocumentStatusCode.CONNECTION_ERROR;
     }
     if (sys.archivedVersion) {

@@ -42,7 +42,7 @@ export function codeChangeError() {
 
 export function deleteError(err) {
   Notification.error('Locale could not be deleted: ' + err.body.message);
-  logger.logServerWarn('Locale could not be deleted', { error: err });
+  logger.captureWarning(err);
 }
 
 export function saveError(err) {
@@ -51,7 +51,7 @@ export function saveError(err) {
     Notification.error('Locale could not be saved: ' + message);
   } else {
     Notification.error('Locale could not be saved');
-    logger.logServerWarn('Locale could not be saved', { error: err });
+    logger.captureWarning(err);
   }
 }
 

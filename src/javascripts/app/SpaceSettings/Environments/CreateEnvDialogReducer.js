@@ -101,7 +101,7 @@ export const useCreateEnvState = (props) => {
           },
         });
       } else if (result.type === Environment.ServerError) {
-        logger.logServerError(result.error);
+        logger.captureError(result.error);
         dispatch({ type: SET_SERVER_FAILURE, value: true });
       }
 
