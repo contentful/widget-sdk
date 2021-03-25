@@ -1,7 +1,6 @@
-import React, { useMemo, useCallback, useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { getQueryString } from 'utils/location';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
@@ -38,6 +37,7 @@ import {
   getSpacePlanForSpace,
 } from 'features/pricing-entities';
 import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
+import { useQueryParams } from 'core/hooks/useQueryParams';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { actions, SpacePurchaseState } from '../context';
@@ -190,8 +190,7 @@ export const SpacePurchaseRoute = ({
   from: fromRouterParam,
   preselect: preselectRouterParam,
 }) => {
-  // TODO(jo-sm): This should become a hook at some point
-  const queryParams = useMemo(() => getQueryString(), []);
+  const queryParams = useQueryParams();
 
   // We do this to allow the use of a URL like /new_space?from= from an external place
   // like the marketing website, while also allowing it to be used internally

@@ -106,12 +106,14 @@ export const refreshToken = createExclusiveTask(async () => {
  * local storage. If no token is stored we call `refreshToken()`.
  *
  * If we land in the app being redirected from Gatekeeper’s login we
- * revoke any existing tokens and call `refreshToken()`.
- *
- * We also set the path when we return from a login page after we were
- * redirected there by the app.
+ * revoke any existing tokens and call `refreshToken()`. We also set
+ * the path when we return from a login page after we were redirected
+ * there by the app.
  *
  * This function is only called when the app is booted.
+ *
+ * This function returns true if the user will be redirected somewhere,
+ * otherwise returns false.
  */
 export function init() {
   const $location = getModule('$location');
@@ -132,8 +134,7 @@ export function init() {
   const previousToken = tokenStore.get();
 
   if (!previousToken) {
-    refreshAndRedirect();
-    return;
+    return refreshAndRedirect();
   }
 
   if ($location.url() === '/?login=1') {
@@ -141,9 +142,10 @@ export function init() {
     // a new gatekeeper session. In that case we throw away our current
     // token since it might belong to a different user
     revokeToken(previousToken);
-    refreshAndRedirect();
+    return refreshAndRedirect();
   } else {
     updateToken(previousToken);
+
     if (Config.env === 'development') {
       // In production we use a session-scoped localStorage, so if we've already
       // logged in through usual means, the user should have already logged into
@@ -155,15 +157,25 @@ export function init() {
         logger.captureWarning(error);
       });
     }
+
+    return false;
   }
 }
 
+/**
+ * Refreshes the token and redirects to any previously stored URL.
+ *
+ * If this function redirects (using `$location.url`), it returns true.
+ * Otherwise, false. This is used to determine route handling in `prelude`.
+ * @return {boolean} whether the user will be redirected
+ */
 function refreshAndRedirect() {
   const $location = getModule('$location');
 
   refreshToken();
 
   const afterLoginPath = afterLoginPathStore.get();
+
   if (afterLoginPath) {
     afterLoginPathStore.remove();
     // https://stackoverflow.com/questions/24764330/location-changes-the-parameter-delimiter
@@ -171,7 +183,10 @@ function refreshAndRedirect() {
     // https://stackoverflow.com/questions/31838484/difference-between-location-path-and-location-url
     // more on the difference between $location.path/$location.url
     $location.url(afterLoginPath);
+    return true;
   }
+
+  return false;
 }
 
 /**

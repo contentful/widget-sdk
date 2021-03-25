@@ -26,7 +26,7 @@ import {
   getAllProductRatePlans,
 } from 'features/pricing-entities';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
-import * as qs from 'qs';
+import { setQueryParameters } from 'test/helpers/setQueryParameters';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -497,14 +497,6 @@ describe('SpacePurchaseRoute', () => {
     });
   });
 });
-
-function setQueryParameters(queryParams) {
-  const serializedParams = qs.stringify(queryParams);
-
-  // The path name doesn't matter here, but the serialzied query params appearing after
-  // does
-  window.history.replaceState({}, 'Space Purchase', `/?${serializedParams}`);
-}
 
 async function build(customProps, shouldWait = true) {
   const props = {

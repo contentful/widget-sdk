@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { LoadingState } from 'features/loading-state';
 import { go } from 'states/Navigator';
@@ -7,12 +6,15 @@ import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { init as initAutoCreateNewSpace } from 'components/shared/auto_create_new_space';
 import { PRESELECT_VALUES } from 'features/space-purchase';
+import { useQueryParams } from 'core/hooks/useQueryParams';
 
 import { EmptyHome } from './EmptyHome';
 
 const localStorage = getBrowserStorage();
 
-export function EmptyHomeRouter({ appsPurchase }) {
+export function EmptyHomeRouter() {
+  const { appsPurchase } = useQueryParams();
+
   const [loading, setLoading] = useState(appsPurchase);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function EmptyHomeRouter({ appsPurchase }) {
           options: { location: 'replace' },
         });
       } else {
-        await initAutoCreateNewSpace();
+        initAutoCreateNewSpace();
         setLoading(false);
       }
     }
@@ -67,14 +69,10 @@ export function EmptyHomeRouter({ appsPurchase }) {
   return <EmptyHome />;
 }
 
-EmptyHomeRouter.propTypes = {
-  appsPurchase: PropTypes.bool.isRequired,
-};
-
 // This routing declaration refers to the "root" home, rather than the space home.
 export const homeState = {
   name: 'home',
-  url: '/?appsPurchase',
+  url: '/',
   params: {
     orgId: null,
     appsPurchase: {
