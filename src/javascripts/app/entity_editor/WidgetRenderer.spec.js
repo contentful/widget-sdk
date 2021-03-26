@@ -139,6 +139,7 @@ describe('WidgetRenderer', () => {
       WidgetRendererExternal.isCustomWidget = jest.fn().mockReturnValue(true);
 
       const { queryByTestId } = renderComponent((props) => {
+        props.widget.widgetNamespace = `NOT_${WidgetRendererExternal.WidgetNamespace.BUILTIN}`;
         props.loadEvents = {};
         return props;
       });

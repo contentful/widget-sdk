@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import * as K from 'core/utils/kefir';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
@@ -50,7 +50,7 @@ export const EntryEditor = (props) => {
   });
 
   const loadEvents = K.useLifeline();
-  useEffect(() => {
+  useLayoutEffect(() => {
     bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, trackLoadEvent);
   }, [editorData, loadEvents, otDoc, trackLoadEvent]);
 

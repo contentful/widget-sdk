@@ -28,7 +28,7 @@ const onMediaAction = (loadEvents, sdk) => (action) => {
       break;
     case 'rendered':
       loadEvents.emit({
-        actionName: 'linksRendered',
+        actionName: 'linkRendered',
         field: {
           id: sdk.field.id,
           locale: sdk.field.locale,

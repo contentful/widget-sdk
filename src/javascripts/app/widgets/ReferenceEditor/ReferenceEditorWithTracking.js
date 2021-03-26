@@ -14,9 +14,6 @@ export function getCtId(entry) {
 }
 
 const onEntryAction = (loadEvents, sdk) => {
-  const toRenderCount = (sdk.field.getValue() || []).length;
-  let renderedCount = 0;
-
   return (action) => {
     switch (action.type) {
       case 'select_and_link':
@@ -43,16 +40,13 @@ const onEntryAction = (loadEvents, sdk) => {
         }
         break;
       case 'rendered':
-        renderedCount += 1;
-        if (!toRenderCount || renderedCount === toRenderCount) {
-          loadEvents.emit({
-            actionName: 'linksRendered',
-            field: {
-              id: sdk.field.id,
-              locale: sdk.field.locale,
-            },
-          });
-        }
+        loadEvents.emit({
+          actionName: 'linkRendered',
+          field: {
+            id: sdk.field.id,
+            locale: sdk.field.locale,
+          },
+        });
         break;
       default:
         break;

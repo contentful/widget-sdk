@@ -45,19 +45,22 @@ const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
   const isCustom = isCustomWidget(widgetNamespace);
   const isBuiltIn = widgetNamespace === WidgetNamespace.BUILTIN;
 
-  const { trackLinksRendered, handleWidgetLinkRenderEvents } = getTrackingEvents({
-    loadEvents,
-    widget,
-    locale,
-    widgetApi,
-  });
-
   // The rendering needs only to be tracked once
   React.useEffect(() => {
-    if (hasProblem || isCustom) {
-      trackLinksRendered();
-    } else if (isBuiltIn) {
+    const { trackLinksRendered, handleWidgetLinkRenderEvents } = getTrackingEvents({
+      loadEvents,
+      widget,
+      locale,
+      widgetApi,
+    });
+    if (isBuiltIn && !hasProblem) {
       handleWidgetLinkRenderEvents();
+    } else {
+      // TODO: This is wrong, we have to check whether this is actually a link type field! Perhaps just send the
+      //  field locale and ID and use a map to keep track of fields instead of a counter.
+
+      // Custom widget renderer (app or ui-extension) that we can't measure or an issue (e.g. no widget renderer)
+      trackLinksRendered();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
