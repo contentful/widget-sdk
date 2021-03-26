@@ -40,6 +40,9 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
+import { getBasePlan } from 'features/pricing-entities';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -175,6 +178,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   }, [localeData, editorContext, editorData.fieldControls.form, preferences.showDisabledFields]);
 
   const noLocalizedFieldsAdviceProps = getNoLocalizedFieldsAdviceProps(widgets, localeData);
+  const endpoint = createOrganizationEndpoint(currentOrganizationId);
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -189,14 +193,19 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         spaceId: currentSpaceId,
         environmentId: currentEnvironmentId,
       });
+
+      // make sure that org is enterprise to display modal only for community
+      const basePlan = await getBasePlan(endpoint);
+      const basePlanIsEnterprise = isEnterprisePlan(basePlan);
+
       setTabVisible({
         entryReferences: isFeatureEnabled,
-        highValueLabelVisible: isHighValueLabelEnabled, // Additional value to just control the visibility based on high value label FF
+        highValueLabelVisible: isHighValueLabelEnabled && !basePlanIsEnterprise, // Additional value to just control the visibility based on high value label FF
       });
     }
 
     getFeatureFlagVariation();
-  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible]);
+  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible, endpoint]);
 
   const fieldLocaleListeners = useFieldLocaleListeners(
     editorData.fieldControls.all,
