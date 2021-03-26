@@ -27,6 +27,12 @@ const RETRY_VERSION = {
   2: wrapWithRetryWithQueue,
 };
 
+export class PreflightRequestError extends Error {
+  constructor() {
+    super('Request failure in preflight');
+  }
+}
+
 function getRetryVersion() {
   if (!hasCachedVariation(FLAGS.REQUEST_RETRY_EXPERIMENT)) {
     return 0;
@@ -53,12 +59,7 @@ async function fetchFn(config) {
   try {
     rawResponse = await window.fetch(...args);
   } catch {
-    // Network problem
-    throw Object.assign(asyncError, {
-      message: 'API request failed in preflight',
-      status: -1,
-      config,
-    });
+    throw new PreflightRequestError();
   }
 
   const response = {

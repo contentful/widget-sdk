@@ -310,25 +310,6 @@ describe('Request', () => {
     });
   });
 
-  it('rejects with preflight error', async () => {
-    window.fetch.mockRejectedValueOnce(new Error('Network problem'));
-
-    let response;
-
-    try {
-      await request({ url: 'http://foo.com' });
-    } catch (e) {
-      response = e;
-    }
-
-    expect(response).toBeInstanceOf(Error);
-    expect(response.message).toBe('API request failed in preflight');
-    expect({ ...response }).toEqual({
-      config: { url: 'http://foo.com' },
-      status: -1,
-    });
-  });
-
   it('returns data as null if the status is 204', async () => {
     const arrayBufferFn = jest.fn();
     const jsonFn = jest.fn();

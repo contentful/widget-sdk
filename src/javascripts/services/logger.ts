@@ -3,6 +3,7 @@ import * as Sentry from 'analytics/Sentry';
 import { getCurrentStateName } from 'states/Navigator';
 import { User } from 'core/services/SpaceEnvContext/types';
 import { Severity } from '@sentry/types';
+import { PreflightRequestError } from 'data/Request';
 
 interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,6 +18,11 @@ export function enable(user: User) {
 }
 
 function captureSentryException(error: Error, level: Severity, metadata: Metadata) {
+  // We don't care about preflight request errors
+  if (error instanceof PreflightRequestError) {
+    return;
+  }
+
   const fullMetadata = metadata;
 
   // Get all custom keys from the error and assign them to the metadata
