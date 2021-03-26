@@ -9,9 +9,12 @@ import { ComposeAndLaunchReceiptStep } from './ComposeAndLaunchReceiptStep';
 import { addProductRatePlanToSubscription } from 'features/pricing-entities';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import * as TokenStore from 'services/TokenStore';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { NO_SPACE_PLAN } from '../../context';
 
 const mockOrganization = Fake.Organization();
+const mockLastUsedSpace = Fake.Space();
+const mockRandomSpaceFromOrganization = Fake.Space();
 const mockcomposeAndLaunchProductRatePlan = Fake.Plan();
 const mockSelectedPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
 
@@ -25,6 +28,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('services/TokenStore', () => ({
   refresh: jest.fn(),
+  getSpacesByOrganization: jest.fn(),
 }));
 
 jest.mock('features/pricing-entities', () => ({
@@ -37,15 +41,22 @@ jest.mock('../../hooks/useSessionMetadata', () => ({
 
 jest.mock('core/services/BrowserStorage', () => {
   const store = {
-    get: () => 'last_space_used_id',
+    get: jest.fn(),
   };
 
   return {
-    getBrowserStorage: () => store,
+    getBrowserStorage: jest.fn().mockReturnValue(store),
   };
 });
 
 describe('ComposeAndLaunchReceiptStep', () => {
+  beforeEach(() => {
+    getBrowserStorage().get.mockReturnValue(mockLastUsedSpace.sys.id);
+    TokenStore.getSpacesByOrganization.mockReturnValue({
+      [mockOrganization.sys.id]: [mockRandomSpaceFromOrganization, Fake.Space(), mockLastUsedSpace],
+    });
+  });
+
   it('should show message when Compose+Launch has been successfully ordered', async () => {
     build();
 
@@ -63,18 +74,55 @@ describe('ComposeAndLaunchReceiptStep', () => {
     );
   });
 
-  it('should take the user to the last used space when "take me to" button is clicked', async () => {
-    build();
-    await waitFor(() => {
-      expect(addProductRatePlanToSubscription).toBeCalled();
+  describe('should take the user to the one of their spaces when "take me to" button is clicked', () => {
+    it('should take the user to the last used space when there is a last used space', async () => {
+      build();
+      await waitFor(() => {
+        expect(addProductRatePlanToSubscription).toBeCalled();
+      });
+
+      const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
+      userEvent.click(redirectToSpace);
+
+      expect(go).toBeCalledWith({
+        path: ['spaces', 'detail'],
+        params: { spaceId: mockLastUsedSpace.sys.id },
+      });
     });
 
-    const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
-    userEvent.click(redirectToSpace);
+    it('should take the user a space they have access to when they do no have access to the last used space', async () => {
+      getBrowserStorage().get.mockReturnValue('no access space id');
+      build();
+      await waitFor(() => {
+        expect(addProductRatePlanToSubscription).toBeCalled();
+      });
 
-    expect(go).toBeCalledWith({
-      path: ['spaces', 'detail'],
-      params: { spaceId: 'last_space_used_id' },
+      const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
+      userEvent.click(redirectToSpace);
+
+      expect(go).toBeCalledWith({
+        path: ['spaces', 'detail'],
+        params: { spaceId: mockRandomSpaceFromOrganization.sys.id },
+      });
+    });
+
+    it('should take the user to a space from their organization if there is no last used space', async () => {
+      getBrowserStorage().get.mockReturnValue(null);
+      TokenStore.getSpacesByOrganization.mockReturnValue({
+        [mockOrganization.sys.id]: [mockRandomSpaceFromOrganization],
+      });
+      build();
+      await waitFor(() => {
+        expect(addProductRatePlanToSubscription).toBeCalled();
+      });
+
+      const redirectToSpace = screen.getByTestId('receipt-page.redirect-to-space');
+      userEvent.click(redirectToSpace);
+
+      expect(go).toBeCalledWith({
+        path: ['spaces', 'detail'],
+        params: { spaceId: mockRandomSpaceFromOrganization.sys.id },
+      });
     });
   });
 });

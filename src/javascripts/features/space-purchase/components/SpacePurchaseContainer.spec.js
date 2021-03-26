@@ -13,11 +13,13 @@ import {
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing/index';
+import { getSpacesByOrganization } from 'services/TokenStore';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
 
 const mockOrganization = FakeFactory.Organization({ isBillable: false });
+const mockSpaceFromOrganization = FakeFactory.Space();
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
@@ -81,6 +83,7 @@ const mockSpaceRatePlans = [
 jest.mock('services/TokenStore', () => ({
   ...jest.requireActual('services/TokenStore'),
   refresh: jest.fn().mockResolvedValue(),
+  getSpacesByOrganization: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -668,6 +671,9 @@ describe('SpacePurchaseContainer', () => {
     });
 
     it('sucessful completion of organization with billing details - buying only compose+launch platform and no space', async () => {
+      getSpacesByOrganization.mockReturnValue({
+        [mockOrganization.sys.id]: [mockSpaceFromOrganization],
+      });
       await build(
         { purchasingApps: true },
         {
