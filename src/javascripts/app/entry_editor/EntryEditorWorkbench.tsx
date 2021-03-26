@@ -40,9 +40,6 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
-import { getBasePlan } from 'features/pricing-entities';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
