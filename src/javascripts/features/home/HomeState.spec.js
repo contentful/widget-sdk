@@ -6,6 +6,7 @@ import { go } from 'states/Navigator';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { render, screen, waitFor } from '@testing-library/react';
 import { PRESELECT_VALUES } from 'features/space-purchase';
+import { setQueryParameters } from 'test/helpers/setQueryParameters';
 
 import { EmptyHomeRouter } from './HomeState';
 
@@ -66,71 +67,81 @@ describe('EmptyHomeRouter', () => {
     });
   });
 
+  afterEach(() => {
+    setQueryParameters();
+  });
+
   it('should render the empty home component if appsPurchase is false', async () => {
-    render(<EmptyHomeRouter appsPurchase={false} />);
+    render(<EmptyHomeRouter />);
 
     await waitFor(() => expect(screen.queryByTestId('cf-ui-loading-state')).toBeNull());
 
     expect(screen.getByTestId('empty-space-home.container')).toBeVisible();
   });
 
-  it('should redirect to the lastUsedOrg purchase page if the lastUsedOrg is pricing v2', async () => {
-    getBrowserStorage().get.mockReturnValueOnce(mockOrg2.sys.id);
-
-    render(<EmptyHomeRouter appsPurchase={true} />);
-
-    await waitFor(() => expect(go).toBeCalled());
-
-    expect(go).toBeCalledWith({
-      path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg2.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-      options: { location: 'replace' },
+  describe('with appsPurchase query param', () => {
+    beforeEach(() => {
+      setQueryParameters({ appsPurchase: true });
     });
-  });
 
-  it('should redirect to the first available v2 org if the lastUsedOrg is pricing v1', async () => {
-    getBrowserStorage().get.mockReturnValueOnce(mockOrgPricingV1_2.sys.id);
+    it('should redirect to the lastUsedOrg purchase page if the lastUsedOrg is pricing v2', async () => {
+      getBrowserStorage().get.mockReturnValueOnce(mockOrg2.sys.id);
 
-    render(<EmptyHomeRouter appsPurchase={true} />);
-    await waitFor(() => expect(go).toBeCalled());
+      render(<EmptyHomeRouter />);
 
-    expect(go).toBeCalledWith({
-      path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-      options: { location: 'replace' },
+      await waitFor(() => expect(go).toBeCalled());
+
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'new_space'],
+        params: { orgId: mockOrg2.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        options: { location: 'replace' },
+      });
     });
-  });
 
-  it('should redirect to the first v2 org in the token if the lastUsedOrg does not exist', async () => {
-    getBrowserStorage().get.mockReturnValueOnce('unknown-org-id');
+    it('should redirect to the first available v2 org if the lastUsedOrg is pricing v1', async () => {
+      getBrowserStorage().get.mockReturnValueOnce(mockOrgPricingV1_2.sys.id);
 
-    render(<EmptyHomeRouter appsPurchase={true} />);
-    await waitFor(() => expect(go).toBeCalled());
+      render(<EmptyHomeRouter />);
+      await waitFor(() => expect(go).toBeCalled());
 
-    expect(go).toBeCalledWith({
-      path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-      options: { location: 'replace' },
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'new_space'],
+        params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        options: { location: 'replace' },
+      });
     });
-  });
 
-  it('should not redirect and enable onboarding if no pricing v2 org was found', async () => {
-    TokenStore.getOrganizations.mockResolvedValueOnce([mockOrgPricingV1_1, mockOrgPricingV1_2]);
+    it('should redirect to the first v2 org in the token if the lastUsedOrg does not exist', async () => {
+      getBrowserStorage().get.mockReturnValueOnce('unknown-org-id');
 
-    render(<EmptyHomeRouter appsPurchase={true} />);
+      render(<EmptyHomeRouter />);
+      await waitFor(() => expect(go).toBeCalled());
 
-    await waitFor(() => expect(onboarding.init).toBeCalled());
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'new_space'],
+        params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        options: { location: 'replace' },
+      });
+    });
 
-    expect(go).not.toBeCalled();
-  });
+    it('should not redirect and enable onboarding if no pricing v2 org was found', async () => {
+      TokenStore.getOrganizations.mockResolvedValueOnce([mockOrgPricingV1_1, mockOrgPricingV1_2]);
 
-  it('should not attempt to redirect and re-enable onboarding if no organization was found', async () => {
-    TokenStore.getOrganizations.mockResolvedValueOnce([]);
+      render(<EmptyHomeRouter />);
 
-    render(<EmptyHomeRouter appsPurchase={true} />);
+      await waitFor(() => expect(onboarding.init).toBeCalled());
 
-    await waitFor(() => expect(onboarding.init).toBeCalled());
+      expect(go).not.toBeCalled();
+    });
 
-    expect(go).not.toBeCalled();
+    it('should not attempt to redirect and re-enable onboarding if no organization was found', async () => {
+      TokenStore.getOrganizations.mockResolvedValueOnce([]);
+
+      render(<EmptyHomeRouter />);
+
+      await waitFor(() => expect(onboarding.init).toBeCalled());
+
+      expect(go).not.toBeCalled();
+    });
   });
 });

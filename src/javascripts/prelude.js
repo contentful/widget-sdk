@@ -244,10 +244,10 @@ angular
       loadAllStates();
       initDebug(window);
       initBackendTracing();
-      initAuthentication();
       initTokenStore();
       initExtentionActivationTracking();
       initDegradedAppPerformance();
+      const willRedirect = initAuthentication();
 
       initDialogsController();
       setupStateChangeHandlers();
@@ -285,6 +285,11 @@ angular
       };
       window.addEventListener('message', cb);
 
+      if (willRedirect) {
+        angular.module('contentful/app').loaded = true;
+        return;
+      }
+
       // Due to the async loading, we need to take the route above and attempt
       // to route to it
       let matchFound = false;
@@ -300,8 +305,8 @@ angular
         }
 
         const { url } = state.$$state();
-        const params = qs.parse(window.location.search.substr(1));
-        const matchedParams = url.exec(window.location.pathname, params);
+        const queryParams = qs.parse(window.location.search.substr(1));
+        const matchedParams = url.exec(window.location.pathname, queryParams);
 
         if (matchedParams) {
           matchFound = true;
