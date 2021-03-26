@@ -110,7 +110,12 @@ function tabIsDefault(tabKey, tabs) {
 }
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
-  const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
+  const {
+    currentSpaceId,
+    currentEnvironmentId,
+    currentOrganizationId,
+    currentOrganization,
+  } = useSpaceEnvContext();
   const {
     editorContext,
     editorData,
@@ -178,7 +183,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   }, [localeData, editorContext, editorData.fieldControls.form, preferences.showDisabledFields]);
 
   const noLocalizedFieldsAdviceProps = getNoLocalizedFieldsAdviceProps(widgets, localeData);
-  const endpoint = createOrganizationEndpoint(currentOrganizationId);
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -194,18 +198,21 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         environmentId: currentEnvironmentId,
       });
 
-      // make sure that org is enterprise to display modal only for community
-      const basePlan = await getBasePlan(endpoint);
-      const basePlanIsEnterprise = isEnterprisePlan(basePlan);
-
       setTabVisible({
         entryReferences: isFeatureEnabled,
-        highValueLabelVisible: isHighValueLabelEnabled && !basePlanIsEnterprise, // Additional value to just control the visibility based on high value label FF
+        highValueLabelVisible:
+          isHighValueLabelEnabled && currentOrganization && !currentOrganization.isBillable, // Additional value to just control the visibility based on high value label FF
       });
     }
 
     getFeatureFlagVariation();
-  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible, endpoint]);
+  }, [
+    currentEnvironmentId,
+    currentOrganizationId,
+    currentSpaceId,
+    setTabVisible,
+    currentOrganization,
+  ]);
 
   const fieldLocaleListeners = useFieldLocaleListeners(
     editorData.fieldControls.all,
