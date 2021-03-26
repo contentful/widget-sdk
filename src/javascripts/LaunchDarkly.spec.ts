@@ -167,7 +167,6 @@ describe('LaunchDarkly', () => {
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledWith('LaunchDarkly');
     });
 
