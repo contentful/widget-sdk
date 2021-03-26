@@ -1,4 +1,4 @@
-import { validate } from './AppEditor';
+import { validate } from './validate';
 
 describe('validate', () => {
   it('accepts a valid definition', () => {

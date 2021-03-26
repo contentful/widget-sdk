@@ -14,17 +14,17 @@ import {
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import c from 'classnames';
-import { cloneDeep, isEmpty, isEqual, noop } from 'lodash';
+import { cloneDeep, isEqual, noop } from 'lodash';
 import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { toApiFieldType, toInternalFieldType } from 'widgets/FieldTypes';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { FIELD_TYPES_ORDER, LOCATION_ORDER, SRC_REG_EXP, EMPTY_SPACE_REG_EXP } from './constants';
+import { FIELD_TYPES_ORDER, LOCATION_ORDER } from './constants';
 import { InstanceParameterEditor } from './InstanceParameterEditor';
 import { styles } from './styles';
 import { ValidationError } from './types';
-import { AppDefinition, AppLocation, FieldType } from 'contentful-management/types';
-import { AppHosting } from './AppHosting';
+import { AppLocation, FieldType } from 'contentful-management/types';
+import { AppDefinitionWithBundle, AppHosting } from './AppHosting';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -32,68 +32,20 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function validate(definition, errorPath: string[] = []) {
-  const errors: ValidationError[] = [];
-
-  if (isEmpty(definition.name)) {
-    errors.push({
-      path: [...errorPath, 'name'],
-      details: 'Please enter an app name',
-    });
-  }
-
-  if (!isEmpty(definition.src) && !SRC_REG_EXP.test(definition.src)) {
-    errors.push({
-      path: [...errorPath, 'src'],
-      details: 'Please enter a valid URL',
-    });
-  }
-
-  const entryFieldLocation = definition.locations.find(
-    (l) => l.location === WidgetLocation.ENTRY_FIELD
-  );
-  if (entryFieldLocation && (entryFieldLocation.fieldTypes ?? []).length === 0) {
-    errors.push({
-      path: [...errorPath, 'locations', 'entry-field', 'fieldTypes'],
-      details: 'Please select at least one field type',
-    });
-  }
-
-  const pageLocation = definition.locations.find((l) => l.location === WidgetLocation.PAGE);
-  if (pageLocation?.navigationItem) {
-    if (isEmpty(pageLocation.navigationItem.name)) {
-      errors.push({
-        path: [...errorPath, 'locations', 'page', 'navigationItem', 'name'],
-        details: 'Please enter a link name',
-      });
-    }
-
-    if (
-      !pageLocation?.navigationItem.path.startsWith('/') ||
-      EMPTY_SPACE_REG_EXP.test(pageLocation?.navigationItem.path)
-    ) {
-      errors.push({
-        path: [...errorPath, 'locations', 'page', 'navigationItem', 'path'],
-        details: 'Please enter a path which starts with / and does not contain empty space',
-      });
-    }
-  }
-
-  return errors;
-}
-
-interface AppEditorProps {
-  definition: AppDefinition;
-  onChange: (appDefinition: AppDefinition) => void;
+export interface AppEditorProps {
+  definition: AppDefinitionWithBundle;
+  onChange: (appDefinition: AppDefinitionWithBundle) => void;
   errorPath?: string[];
   errors?: ValidationError[];
   onErrorsChange?: (errors: ValidationError[]) => void;
   disabled: boolean;
 }
 
-type DefinitionWithLocations = Exclude<AppDefinition, 'locations'> & { locations: AppLocation[] };
+type DefinitionWithLocations = Exclude<AppDefinitionWithBundle, 'locations'> & {
+  locations: AppLocation[];
+};
 
-const hasLocations = (definition: AppDefinition): definition is DefinitionWithLocations =>
+const hasLocations = (definition: AppDefinitionWithBundle): definition is DefinitionWithLocations =>
   !!definition.locations && typeof definition.locations === 'object';
 
 // TODO export from management types
@@ -270,7 +222,7 @@ export function AppEditor({
           clearErrorForField={clearErrorForField}
         />
 
-        {definition.src && (
+        {(definition.src || definition.bundle) && (
           <>
             <div className={styles.location}>
               <div className={styles.locationLabel}>

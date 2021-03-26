@@ -41,6 +41,7 @@ function save(definition) {
 
   const widgetConfig = {
     src: definition.src,
+    bundle: definition.bundle,
     locations: definition.locations || [],
     parameters: {
       instance: definition?.parameters?.instance ?? [],
@@ -56,7 +57,7 @@ function save(definition) {
     path: ['app_definitions'].concat(isPersisted ? [id] : []),
     data: {
       name: definition.name,
-      ...(definition.src ? widgetConfig : {}),
+      ...(definition.src || definition.bundle ? widgetConfig : {}),
     },
   });
 }

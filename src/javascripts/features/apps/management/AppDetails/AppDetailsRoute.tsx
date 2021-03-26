@@ -7,6 +7,8 @@ import { AppDefinition } from 'contentful-management/types';
 import { Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingState } from 'features/loading-state';
+import { HostingStateProvider } from './HostingStateProvider';
+import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 
 interface Event {
   enabled: boolean;
@@ -25,7 +27,7 @@ interface Props {
 
 export function AppDetailsRoute(props: Props) {
   const [events, setEvents] = React.useState<Event | null>(null);
-  const definition = React.useMemo<AppDefinition | undefined>(
+  const definition = React.useMemo<AppDefinitionWithBundle | undefined>(
     () => props.definitions.find((d) => d.sys.id === props.definitionId),
     [props.definitions, props.definitionId]
   );
@@ -108,14 +110,16 @@ export function AppDetailsRoute(props: Props) {
     );
 
   return (
-    <AppDetails
-      {...props}
-      definition={definition}
-      events={events}
-      goToTab={goToTab}
-      goToListView={goToListView}
-      setRequestLeaveConfirmation={setRequestLeaveConfirmation}
-      setDirty={setDirty}
-    />
+    <HostingStateProvider defaultValue={!definition.src && !!definition.bundle}>
+      <AppDetails
+        {...props}
+        definition={definition}
+        events={events}
+        goToTab={goToTab}
+        goToListView={goToListView}
+        setRequestLeaveConfirmation={setRequestLeaveConfirmation}
+        setDirty={setDirty}
+      />
+    </HostingStateProvider>
   );
 }

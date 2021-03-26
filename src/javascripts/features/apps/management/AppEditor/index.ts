@@ -1,2 +1,3 @@
-export { AppEditor, validate } from './AppEditor';
+export { validate } from './validate';
+export { LazyLoadedAppEditor as AppEditor } from './LazyLoadedAppEditor';
 export type { ValidationError } from './types';

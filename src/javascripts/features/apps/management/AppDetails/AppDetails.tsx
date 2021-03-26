@@ -17,11 +17,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { AppDefinition } from 'contentful-management/types';
 import deepEqual from 'fast-deep-equal';
 import React from 'react';
-import { AppEditor, validate as validateDefinition } from '../AppEditor';
-import { ValidationError } from '../AppEditor/types';
+import { validate as validateDefinition, ValidationError, AppEditor } from '../AppEditor';
 import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
 import { AppEvents, validate as validateEvents } from '../events';
@@ -33,6 +31,8 @@ import { TAB_PATHS } from './constants';
 import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
+import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { HostingStateContext } from './HostingStateProvider';
 
 const ERROR_PATH_DEFINITION = ['definition'];
 const ERROR_PATH_EVENTS = ['events'];
@@ -54,7 +54,7 @@ interface Event {
 }
 
 interface Props {
-  definition: AppDefinition;
+  definition: AppDefinitionWithBundle;
   events: Event;
   goToListView: () => void;
   goToTab: (tab: string) => void;
@@ -68,8 +68,8 @@ interface State {
   dirty: boolean;
   busy: boolean;
   name: string;
-  savedDefinition: AppDefinition;
-  definition: AppDefinition;
+  savedDefinition: AppDefinitionWithBundle;
+  definition: AppDefinitionWithBundle;
   savedEvents: Event;
   events: Event;
   selectedTab: string;
@@ -79,6 +79,7 @@ interface State {
 }
 
 export class AppDetails extends React.Component<Props, State> {
+  static contextType = HostingStateContext;
   constructor(props: Props) {
     super(props);
 
@@ -226,7 +227,12 @@ export class AppDetails extends React.Component<Props, State> {
 
   saveDefinition = async () => {
     try {
-      return await ManagementApiClient.save(this.state.definition);
+      return await ManagementApiClient.save({
+        ...this.state.definition,
+        // save only what has been selected as switch option
+        bundle: this.context.isAppHosting ? this.state.definition.bundle : undefined,
+        src: !this.context.isAppHosting ? this.state.definition.src : undefined,
+      });
     } catch (err) {
       if (err.status === 422) {
         err.data.details.errors.forEeach((error: ValidationError) => {

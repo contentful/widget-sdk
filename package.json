@@ -117,6 +117,7 @@
     "react-click-outside": "^3.0.1",
     "react-codemirror2": "7.1.0",
     "react-dom": "16.13.1",
+    "react-dropzone": "^11.3.1",
     "react-error-boundary": "^3.1.1",
     "react-helmet": "^6.0.0",
     "react-highlight-words": "^0.16.0",

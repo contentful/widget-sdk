@@ -19,11 +19,7 @@ function withDefinitions(Component) {
 
         const definitionsData = await getDefinitionsData(props.orgId);
 
-        setDefinitions(
-          // TODO: Currently in the UI we don't support AppDefinitions linking
-          // to AppBundle. Just skip them for the time being.
-          definitionsData.filter((def) => !def.bundle)
-        );
+        setDefinitions(definitionsData);
 
         setIsLoading(false);
       }

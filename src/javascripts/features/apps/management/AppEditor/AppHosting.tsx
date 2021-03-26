@@ -6,6 +6,8 @@ import {
   TextField,
   Switch,
   HelpText,
+  Tooltip,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import { isEqual } from 'lodash';
@@ -14,19 +16,24 @@ import { ValidationError } from './types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
+import { DataLink, HostingDropzone } from './HostingDropzone';
+import { HostingStateContext } from '../AppDetails/HostingStateProvider';
 
 const appHostingStyles = {
   hostingSwitch: css({
-    marginBottom: tokens.spacingS,
+    marginBottom: tokens.spacingM,
   }),
   additionalInformation: css({
     marginTop: tokens.spacingXs,
   }),
 };
 
+// needed until management is updated with bundle defintion
+export type AppDefinitionWithBundle = AppDefinition & { bundle?: DataLink };
+
 interface AppHostingProps {
-  definition: AppDefinition;
-  onChange: (appDefinition: AppDefinition) => void;
+  definition: AppDefinitionWithBundle;
+  onChange: (appDefinition: AppDefinitionWithBundle) => void;
   errorPath?: string[];
   errors?: ValidationError[];
   disabled: boolean;
@@ -44,10 +51,12 @@ export function AppHosting({
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
   React.useEffect(() => {
-    getVariation(FLAGS.APP_HOSTING_UI).then((value) => setHostingEnabled(value));
-  }, []);
+    getVariation(FLAGS.APP_HOSTING_UI, {
+      organizationId: definition.sys.organization.sys.id,
+    }).then((value) => setHostingEnabled(value));
+  }, [definition.sys.organization.sys.id]);
 
-  const [isAppHosting, setIsAppHosting] = React.useState(!definition.src);
+  const hostingState = React.useContext(HostingStateContext);
 
   const validationMessage = React.useMemo(
     () => errors?.find((error) => isEqual(error.path, [...errorPath, 'src']))?.details,
@@ -59,26 +68,50 @@ export function AppHosting({
     onChange({ ...definition, src: e.target.value.trim() });
   };
 
+  const onAppBundleCreate = (bundle: DataLink) => {
+    onChange({
+      ...definition,
+      src: undefined,
+      bundle: { sys: { type: 'Link', linkType: 'AppBundle', id: bundle.sys.id } },
+    });
+  };
+
+  const renderSwitch = () => (
+    <Switch
+      className={appHostingStyles.hostingSwitch}
+      isDisabled={!definition.sys.id || !hostingState}
+      isChecked={!!(hostingState && hostingState.isAppHosting)}
+      onToggle={hostingState?.setIsAppHosting}
+      labelText="Hosted by Contentful"
+      id="app-hosting"
+    />
+  );
+
   return (
     <>
-      {hostingEnabled ? (
+      {hostingEnabled || definition.bundle ? (
         <>
           <FormLabel htmlFor="app-hosting">Frontend</FormLabel>
-          <Switch
-            className={appHostingStyles.hostingSwitch}
-            isChecked={isAppHosting}
-            onToggle={setIsAppHosting}
-            labelText="Hosted by Contentful"
-            id="app-hosting"
-          />
-          {isAppHosting ? (
-            <div>DROPZONE</div>
+          <Flex>
+            {!definition.sys.id ? (
+              <Tooltip
+                place="top-start"
+                content="Please create your app first to enable hosting by Contentful">
+                {renderSwitch()}
+              </Tooltip>
+            ) : (
+              renderSwitch()
+            )}
+          </Flex>
+          {hostingState && hostingState.isAppHosting ? (
+            <HostingDropzone onAppBundleCreated={onAppBundleCreate} definition={definition} />
           ) : (
             <div className={styles.input()}>
               <TextInput
                 name="app-src"
                 id="app-src"
                 testId="app-src-input"
+                placeholder="e.g. http://localhost:1234"
                 error={!!validationMessage}
                 value={definition.src || ''}
                 onChange={onInputChange}
