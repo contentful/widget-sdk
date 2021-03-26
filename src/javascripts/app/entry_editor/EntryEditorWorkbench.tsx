@@ -217,10 +217,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
     if (isReferenceTab) {
       isTabVisible = tabVisible.entryReferences || tabVisible.highValueLabelVisible;
-      isTabEnabled =
-        entityInfo.type === 'Entry' &&
-        hasLinks(editorData.entity.data.fields) &&
-        !tabVisible.highValueLabelVisible;
+      isTabEnabled = entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
     }
 
     if (isTagsTab) {
@@ -380,7 +377,8 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
               const referenceTab =
                 tab.key ===
                 `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.REFERENCE_TREE.id}`;
-              const showHighValueModal = referenceTab && tabVisible.highValueLabelVisible;
+              const showHighValueModal =
+                referenceTab && tabVisible.highValueLabelVisible && !tabVisible.entryReferences;
 
               return (
                 <Tab
