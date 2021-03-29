@@ -4,7 +4,6 @@ import {
   organizationAppDefinitions,
   appInstallation,
   publicAppDefinitions,
-  resolvedPublicAppDefintions,
 } from '../../../interactions/apps';
 import { getAllContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import {
@@ -76,7 +75,6 @@ describe('App Installation', () => {
             appInstallation.willNotReturnPublicApp(),
             getAllContentTypesInDefaultSpace.willReturnOne(),
             queryForEditorInterfaces.willReturnSeveral(),
-            resolvedPublicAppDefintions.willReturnPublicApp(),
           ];
 
           // Open the action list
@@ -174,15 +172,7 @@ describe('App Installation', () => {
             .findByTestId('cf-ui-icon-button')
             .click();
 
-          // Config screen interactions
-          const loadAppConfigurationScreenInteraction = [
-            appInstallation.willReturnPublicApp(),
-            getAllContentTypesInDefaultSpace.willReturnOne(),
-            queryForEditorInterfaces.willReturnSeveral(),
-            resolvedPublicAppDefintions.willReturnPublicApp(),
-          ];
-
-          // Find and click configure in the action list
+          // Find and click uninstall in the action list
           cy.findByTestId('cf-ui-dropdown-list').should('be.visible');
           cy.findByTestId('cf-ui-dropdown-list').within(() => {
             cy.get('button').contains('Configure').should('be.visible');
@@ -191,6 +181,12 @@ describe('App Installation', () => {
           });
           cy.get('button').contains('Configure').click();
 
+          // Config screen interactions
+          const loadAppConfigurationScreenInteraction = [
+            appInstallation.willReturnPublicApp(),
+            getAllContentTypesInDefaultSpace.willReturnOne(),
+            queryForEditorInterfaces.willReturnSeveral(),
+          ];
           cy.wait(loadAppConfigurationScreenInteraction, { timeout: 4000 });
 
           // Uninstall on the config screen

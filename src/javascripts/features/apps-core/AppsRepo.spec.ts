@@ -4,12 +4,10 @@ import type APIClient from 'data/APIClient';
 import { appsListingEntryMock } from './__mocks__/appsListingEntryMock';
 import { appEntriesMock } from './__mocks__/appEntriesMock';
 import { contentfulAppEntriesMock } from './__mocks__/contentfulAppEntriesMock';
-import { resolvedAppMock } from './__mocks__/resolvedAppMock';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 const COMPOSE_DEFINITION_ID = '6TfQEqkcINtj1MS0TuQTWJ';
 const FIRST_PARTY_DEFINITION_ID = '4iIetqcwsR1GIZxaYI6fRm';
-const APP_LISTING_ID = '2fPbSMx3baxlwZoCyXC7F1';
 
 jest.mock('Config.js', () => ({
   domain: 'contentful.com',
@@ -79,18 +77,6 @@ describe('AppsRepo', () => {
     src: 'http://localhost:666',
   };
 
-  const hostedDefinition = {
-    ...resolvedAppMock,
-    src: null,
-    bundle: {
-      sys: {
-        id: 'appbundleid',
-        type: 'Link',
-        linkType: 'AppBundle',
-      },
-    },
-  };
-
   const loader = {
     getByIds: jest.fn((ids) => {
       if (ids.includes(COMPOSE_DEFINITION_ID)) {
@@ -105,11 +91,6 @@ describe('AppsRepo', () => {
     }),
     getAllForCurrentOrganization: jest.fn(() => {
       return Promise.resolve([privateDefinition]);
-    }),
-    getResolvedById: jest.fn((id, orgId) => {
-      if (id === resolvedAppMock.sys.id && orgId === resolvedAppMock.sys.organization.sys.id) {
-        return Promise.resolve(resolvedAppMock);
-      }
     }),
   };
 
@@ -133,7 +114,7 @@ describe('AppsRepo', () => {
       expect(
         window.fetch
       ).toHaveBeenCalledWith(
-        `https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=${APP_LISTING_ID}`,
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
@@ -186,7 +167,7 @@ describe('AppsRepo', () => {
 
     it('should return an array of apps when the marketplace endpoint returns good data', async () => {
       (window.fetch as jest.Mock).mockImplementation((url) => {
-        const jsonResponse = url.endsWith(APP_LISTING_ID)
+        const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
           : url.includes('contentfulApp')
           ? contentfulAppEntriesMock
@@ -200,7 +181,7 @@ describe('AppsRepo', () => {
       expect(
         window.fetch
       ).toHaveBeenCalledWith(
-        `https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=${APP_LISTING_ID}`,
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
@@ -225,7 +206,7 @@ describe('AppsRepo', () => {
   describe('getAppByIdOrSlug', () => {
     beforeEach(() => {
       (window.fetch as jest.Mock).mockImplementation((url) => {
-        const jsonResponse = url.endsWith(APP_LISTING_ID)
+        const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
           : url.includes('contentfulApp')
           ? contentfulAppEntriesMock
@@ -281,66 +262,6 @@ describe('AppsRepo', () => {
       expect.assertions(1);
       try {
         await repo.getAppByIdOrSlug('fails-either-way');
-      } catch (err) {
-        expect(err.message).toBe('api error');
-      }
-    });
-  });
-
-  describe('getResolvedAppById', () => {
-    beforeEach(() => {
-      (window.fetch as jest.Mock).mockImplementation((url) => {
-        const jsonResponse = url.endsWith(APP_LISTING_ID)
-          ? appsListingEntryMock
-          : url.includes('contentfulApp')
-          ? contentfulAppEntriesMock
-          : appEntriesMock;
-
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(jsonResponse),
-        });
-      });
-      (loader.getAllForCurrentOrganization as jest.Mock).mockResolvedValue([hostedDefinition]);
-    });
-
-    it('will return the resolved definition for private apps', async () => {
-      const repo = new AppsRepo(cma, loader);
-
-      const result = await repo.getResolvedAppById(resolvedAppMock.sys.id);
-
-      expect(result.appDefinition).toEqual(resolvedAppMock);
-    });
-
-    it('will return the normal definition for non private apps', async () => {
-      const repo = new AppsRepo(cma, loader);
-
-      const netlify = await repo.getAppByIdOrSlug('netlify');
-      expect(netlify.appDefinition).toEqual(netlifyDefinition);
-      expect(netlify.appInstallation).toEqual(netlifyInstallation);
-    });
-
-    it('fails if an app is not present', async () => {
-      const repo = new AppsRepo(cma, loader);
-
-      expect.assertions(1);
-      try {
-        await repo.getResolvedAppById('not-here');
-      } catch (err) {
-        expect(err.message).toBe('Could not find an app with ID "not-here".');
-      }
-    });
-
-    it('fails if API call fails', async () => {
-      const cma = ({
-        getAppInstallations: () => Promise.reject(new Error('api error')),
-      } as unknown) as APIClient;
-
-      const repo = new AppsRepo(cma, loader);
-
-      expect.assertions(1);
-      try {
-        await repo.getResolvedAppById('fails-either-way');
       } catch (err) {
         expect(err.message).toBe('api error');
       }

@@ -242,20 +242,3 @@ export const publicAppDefinitions = {
     }
   ),
 };
-
-const dropboxAppDefinition = appDefinitionsPublic.items.find((item) => item.name === 'Dropbox');
-export const resolvedPublicAppDefintions = {
-  willReturnPublicApp: interaction(
-    'get resolved Dropbox app definition',
-    {
-      method: 'GET',
-      path: `/organizations/${dropboxAppDefinition?.sys.organization.sys.id}/app_definitions/${dropboxAppDefinition?.sys.id}/resolved`,
-      headers: defaultHeader,
-    },
-    {
-      status: 200,
-      headers: { 'Content-Type': contentfulJson },
-      body: dropboxAppDefinition,
-    }
-  ),
-};

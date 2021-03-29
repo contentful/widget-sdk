@@ -34,8 +34,8 @@ import {
 import {
   WidgetRenderer,
   WidgetLocation,
-  WidgetNamespace,
   buildAppDefinitionWidget,
+  WidgetNamespace,
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -67,7 +67,7 @@ const APP_HAS_ERROR_TIMEOUT = 15000;
 interface Props {
   appId: string;
   repo: {
-    getResolvedAppById: (appId: string) => Promise<MarketplaceApp>;
+    getAppByIdOrSlug: (appId: string) => Promise<MarketplaceApp>;
   };
   appHookBus: AppHookBus;
   hasAdvancedAppsFeature: boolean;
@@ -145,7 +145,7 @@ export function AppRoute(props: Props) {
     if (!props.repo || !props.appId) return;
 
     props.repo
-      .getResolvedAppById(props.appId)
+      .getAppByIdOrSlug(props.appId)
       .then(setApp)
       .catch(() => {
         Notification.error('Failed to load the app.');
