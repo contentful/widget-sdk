@@ -186,14 +186,13 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
         spaceId: currentSpaceId,
         environmentId: currentEnvironmentId,
       });
-
       setTabVisible({
         entryReferences: isFeatureEnabled,
       });
     }
 
     getFeatureFlagVariation();
-  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId]);
+  }, [currentEnvironmentId, currentOrganizationId, currentSpaceId, setTabVisible]);
 
   useEffect(() => {
     async function getHightValueLabelFeatureFlagVariation() {
