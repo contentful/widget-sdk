@@ -235,7 +235,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
       newSpacePurchaseFlowEnabled,
-      highValueLabelEnabled,
+      highValueLabelEnabled: highValueLabelEnabled && !organization.isBillable,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };
 
