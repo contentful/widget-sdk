@@ -310,19 +310,11 @@ export async function getVariation(
       await initializationPromise;
 
       initialized = true;
-    } catch (error) {
+    } catch {
       // If LaunchDarkly couldn't initialize, return whatever the fallback value is
       // for the flag and reset the state so we can try to initialize later
       initializationPromise = null;
       client = null;
-
-      logAsyncError(asyncError, 'LaunchDarkly initialization failed', {
-        flagName,
-        organizationId,
-        spaceId,
-        environmentId,
-        error,
-      });
 
       DegradedAppPerformance.trigger('LaunchDarkly');
 

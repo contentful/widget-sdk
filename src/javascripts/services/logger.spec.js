@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import * as logger from './logger';
 import * as Sentry from 'analytics/Sentry';
+import { PreflightRequestError } from 'data/Request';
 
 jest.mock('analytics/Sentry');
 
@@ -95,5 +96,13 @@ describe('logger service', () => {
         route: 'route',
       },
     });
+  });
+
+  it('should ignore errors that are an instance of PreflightRequestError', () => {
+    const error = new PreflightRequestError();
+
+    logger.captureError(error);
+
+    expect(Sentry.logException).not.toBeCalled();
   });
 });
