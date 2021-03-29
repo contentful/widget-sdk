@@ -9,6 +9,8 @@ import {
   TableCell,
   Button,
   Paragraph,
+  Tooltip,
+  ModalLauncher,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
@@ -19,6 +21,8 @@ import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
 import { createRoleRemover } from '../components/RoleRemover';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { CUSTOM_ROLES_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 
 const styles = {
   actions: css({
@@ -33,11 +37,40 @@ const styles = {
   }),
 };
 
+const openDialog = (modalData) =>
+  ModalLauncher.open(({ onClose, isShown }) => (
+    <FeatureModal isShown={isShown} onClose={() => onClose(true)} {...modalData} />
+  ));
+
+// get high value label modal data from Contentful
+const initialFetch = async () => await fetchWebappContentByEntryID(CUSTOM_ROLES_CONTENT_ENTRY_ID);
+
 function RoleListActions(props) {
   const usage = ResourceUtils.getAccumulatedUsage(props.rolesResource);
+  const fetchData = async () => {
+    try {
+      const modalData = await initialFetch();
+      openDialog(modalData);
+    } catch {
+      // do nothing, user will be able to see tooltip with information about the feature
+      throw new Error('Something went wrong while fetching data from Contentful');
+    }
+  };
+
   return (
     <div className={styles.actions}>
-      {props.highValueLabelEnabled && <div>Button will be displayed here</div>}
+      {props.highValueLabelEnabled && !props.hasCustomRolesFeature && (
+        <Tooltip place="left" content="This feature is a part of Enterprise plan. ">
+          <Button
+            icon="InfoCircle"
+            className={styles.addRoleButton}
+            testId="add-role-button"
+            buttonType="primary"
+            onClick={fetchData}>
+            Create a new role
+          </Button>
+        </Tooltip>
+      )}
       {props.hasCustomRolesFeature && (
         <>
           <Paragraph>

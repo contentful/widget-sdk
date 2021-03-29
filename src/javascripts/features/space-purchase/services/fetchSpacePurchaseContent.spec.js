@@ -1,4 +1,4 @@
-import { initWebappContentCDAClient } from 'core/services/ContentfulCDA';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 
 import {
   fetchSpacePurchaseContent,
@@ -8,7 +8,7 @@ import {
 } from './fetchSpacePurchaseContent';
 
 jest.mock('core/services/ContentfulCDA', () => ({
-  initWebappContentCDAClient: jest.fn(),
+  fetchWebappContentByEntryID: jest.fn(),
 }));
 
 const mockPageContent = {
@@ -18,34 +18,22 @@ const mockPageContent = {
 
 describe('fetchSpacePurchaseContent', () => {
   it('should return the entry for the content of the space purchase page', async () => {
-    const getEntry = jest.fn().mockReturnValue({
+    fetchWebappContentByEntryID.mockReturnValue({
       fields: mockPageContent,
     });
-
-    initWebappContentCDAClient.mockReturnValueOnce({
-      getEntry,
-    });
     const result = await fetchSpacePurchaseContent();
-
-    expect(initWebappContentCDAClient).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(mockPageContent);
-    expect(getEntry).toBeCalledWith(SPACE_PURCHASE_CONTENT_ENTRY_ID, { include: 2 });
+    expect(result).toEqual({ fields: mockPageContent });
+    expect(fetchWebappContentByEntryID).toBeCalledWith(SPACE_PURCHASE_CONTENT_ENTRY_ID);
   });
 });
 
 describe('fetchPlatformPurchaseContent', () => {
   it('should return the entry for the content of the platform purchase page', async () => {
-    const getEntry = jest.fn().mockReturnValue({
+    fetchWebappContentByEntryID.mockReturnValue({
       fields: mockPageContent,
     });
-
-    initWebappContentCDAClient.mockReturnValueOnce({
-      getEntry,
-    });
     const result = await fetchPlatformPurchaseContent();
-
-    expect(initWebappContentCDAClient).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(mockPageContent);
-    expect(getEntry).toBeCalledWith(PLATFORM_PURCHASE_CONTENT_ENTRY_ID, { include: 2 });
+    expect(result).toEqual({ fields: mockPageContent });
+    expect(fetchWebappContentByEntryID).toBeCalledWith(PLATFORM_PURCHASE_CONTENT_ENTRY_ID);
   });
 });
