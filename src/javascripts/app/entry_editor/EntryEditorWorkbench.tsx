@@ -205,7 +205,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       });
       const isOrgBillable = currentOrganization && !currentOrganization.isBillable;
 
-      setHightValueLabelEnabled(isHighValueLabelEnabled && isOrgBillable); // Additional value to just control the visibility based on high value label FF
+      isOrgBillable && setHightValueLabelEnabled(isHighValueLabelEnabled); // Additional value to just control the visibility based on high value label FF
     }
     getHightValueLabelFeatureFlagVariation();
   }, [currentEnvironmentId, currentOrganization, currentOrganizationId, currentSpaceId]);
