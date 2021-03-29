@@ -1,4 +1,4 @@
-import { omit, sortBy } from 'lodash';
+import { omit, sortBy, get } from 'lodash';
 
 import { fetchMarketplaceApps, fetchContentfulApps } from './MarketplaceClient';
 import type APIClient from 'data/APIClient';
@@ -78,6 +78,26 @@ export class AppsRepo {
     }
 
     throw new Error(`Could not find an app with ID "${idOrSlug}".`);
+  };
+
+  getResolvedAppById = async (id: string): Promise<MarketplaceApp> => {
+    const apps = await this.getAllApps();
+
+    const app = apps.find((app) => app.id === id || app.appDefinition.sys.id === id);
+
+    if (!app) {
+      throw new Error(`Could not find an app with ID "${id}".`);
+    }
+
+    const orgId = get(app, 'appDefinition.sys.organization.sys.id');
+    const appDefinitionId = get(app, 'appDefinition.sys.id');
+
+    const resolved = await this.appDefinitionLoader.getResolvedById(appDefinitionId, orgId);
+    if (resolved) {
+      return { ...app, appDefinition: resolved };
+    } else {
+      return app;
+    }
   };
 
   getAllApps = async (): Promise<MarketplaceApp[]> => {

@@ -94,6 +94,34 @@ describe('AppDefinitionLoader', () => {
     });
   });
 
+  describe('getResolvedById', () => {
+    it('calls only the organization endpoint', async () => {
+      const appId = 'my_app';
+      const orgId = 'my_org';
+      const definitionsEndpoint = jest.fn();
+      const orgEndpoint = jest.fn(() => Promise.resolve({ id: appId }));
+
+      const resultEndpoint = jest.fn(() => Promise.resolve({ id: appId }));
+      const createOrgEndpoint = jest.fn(() => resultEndpoint);
+
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, createOrgEndpoint);
+
+      const result = await loader.getResolvedById(appId, orgId);
+
+      expect(definitionsEndpoint).not.toBeCalled();
+      expect(createOrgEndpoint).toBeCalledTimes(1);
+      expect(createOrgEndpoint).toBeCalledWith(orgId);
+
+      expect(resultEndpoint).toBeCalledTimes(1);
+      expect(resultEndpoint).toBeCalledWith({
+        method: 'GET',
+        path: ['app_definitions', appId, 'resolved'],
+      });
+
+      expect(result).toStrictEqual({ id: appId });
+    });
+  });
+
   describe('getByIds', () => {
     it('fetches from the public endpoint', async () => {
       const definitionsEndpoint = jest.fn(() => {

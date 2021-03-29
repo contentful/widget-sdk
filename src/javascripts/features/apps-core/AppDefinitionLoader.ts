@@ -1,8 +1,9 @@
 import { uniq, difference } from 'lodash';
 
-export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
+export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint, createOrgEndpoint) {
   return {
     getById,
+    getResolvedById,
     getByIds,
     getAllForCurrentOrganization,
     getKeysForAppDefinition,
@@ -19,6 +20,14 @@ export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
     } else {
       throw new Error(`Definition with ID ${id} couldn't be found.`);
     }
+  }
+
+  function getResolvedById(id, orgId) {
+    const appOrgEndpoint = createOrgEndpoint(orgId);
+    return appOrgEndpoint({
+      method: 'GET',
+      path: ['app_definitions', id, 'resolved'],
+    });
   }
 
   async function getByIds(ids) {
