@@ -17,6 +17,9 @@ import _, { isEqual, endsWith } from 'lodash';
 import * as logger from 'services/logger';
 import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'services/TokenStore';
 import { Organization, SpaceData, User } from 'core/services/SpaceEnvContext/types';
+import PQueue from 'p-queue';
+
+const flagPromiseQueue = new PQueue({ concurrency: 1 });
 
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 
@@ -342,58 +345,62 @@ export async function getVariation(
   let variationPromise = _.get(variationCache, key, null);
 
   if (!variationPromise) {
-    variationPromise = createFlagPromise(client, flagName, {
-      user,
-      organizationId,
-      spaceId,
-      environmentId,
-    })
-      .catch((error) => {
-        // This shouldn't happen, but in case there is some error thrown by
-        // `createFlagPromise`, log it and return the fallback value
-        logAsyncError(asyncError, 'Unexpected error occurred while getting variation', {
-          flagName,
-          organizationId,
-          spaceId,
-          environmentId,
-          error,
-        });
-
-        return {
-          success: false,
-          message: 'Unexpected LaunchDarkly error',
-          data: {
+    variationPromise = flagPromiseQueue.add(() =>
+      // Client won't be null by the time we get here, it's just null-able due to the tests
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      createFlagPromise(client!, flagName, {
+        user,
+        organizationId,
+        spaceId,
+        environmentId,
+      })
+        .catch((error) => {
+          // This shouldn't happen, but in case there is some error thrown by
+          // `createFlagPromise`, log it and return the fallback value
+          logAsyncError(asyncError, 'Unexpected error occurred while getting variation', {
             flagName,
             organizationId,
             spaceId,
             environmentId,
-          },
-        } as FlagPromiseFailure;
-      })
-      .then((resultObject) => {
-        // If the flag promise errs in some way, unset the cached promise
-        // and resolve with the fallback value.
-        //
-        // Possible error cases include:
-        // - client.identify throws
-        // - the given org ID or space ID is invalid or not available in the token
-        // - the variation is missing or the variation is not valid JSON
-        if (resultObject.success === false) {
-          _.set(variationCache, key, undefined);
+            error,
+          });
 
-          logAsyncError(asyncError, resultObject.message, resultObject.data);
+          return {
+            success: false,
+            message: 'Unexpected LaunchDarkly error',
+            data: {
+              flagName,
+              organizationId,
+              spaceId,
+              environmentId,
+            },
+          } as FlagPromiseFailure;
+        })
+        .then((resultObject) => {
+          // If the flag promise errs in some way, unset the cached promise
+          // and resolve with the fallback value.
+          //
+          // Possible error cases include:
+          // - client.identify throws
+          // - the given org ID or space ID is invalid or not available in the token
+          // - the variation is missing or the variation is not valid JSON
+          if (resultObject.success === false) {
+            _.set(variationCache, key, undefined);
 
-          DegradedAppPerformance.trigger('LaunchDarkly');
+            logAsyncError(asyncError, resultObject.message, resultObject.data);
 
-          return FALLBACK_VALUES[flagName];
-        }
+            DegradedAppPerformance.trigger('LaunchDarkly');
 
-        const { value } = resultObject;
+            return FALLBACK_VALUES[flagName];
+          }
 
-        _.set(variationCacheResolved, key, value);
+          const { value } = resultObject;
 
-        return value;
-      });
+          _.set(variationCacheResolved, key, value);
+
+          return value;
+        })
+    );
 
     _.set(variationCache, key, variationPromise);
   }
