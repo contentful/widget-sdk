@@ -12,12 +12,12 @@ import { DocumentationTextLink } from './DocumentationTextLink';
 import { TurnOffDialog } from './TurnOffDialog';
 import { LevelSelectionDialog } from './LevelSelectionDialog';
 import { LevelHelpText } from './LevelHelpText';
-import { LEVEL, levelDescription } from '../constants';
+import { LEVEL, Level, levelDescription, SwitchableLevel } from '../constants';
 import { LevelHelpTable } from './LevelHelpTable';
 
 interface EnabledFeatureParams {
-  currentLevel: LEVEL;
-  setCurrentLevel: (level: LEVEL) => Promise<void>;
+  currentLevel: SwitchableLevel;
+  setCurrentLevel: (level: Level) => Promise<void>;
 }
 
 export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeatureParams) {
@@ -25,7 +25,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
   const [displaySelectionDialog, setDisplaySelectionDialog] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
 
-  const handleLevelSelection = (newLevel: LEVEL) => {
+  const handleLevelSelection = (newLevel: Level) => {
     setDisplaySelectionDialog(false);
     setIsChanging(true);
     setCurrentLevel(newLevel).finally(() => setIsChanging(false));

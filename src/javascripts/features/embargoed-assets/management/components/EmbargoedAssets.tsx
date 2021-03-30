@@ -1,14 +1,14 @@
 import { Notification, Paragraph } from '@contentful/forma-36-react-components';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import React, { useEffect, useState } from 'react';
-import { LEVEL } from '../constants';
+import { EnabledLevel, Level, LEVEL } from '../constants';
 import { styles } from '../EmbargoedAssets.styles';
 import { embargoedAssets } from '../services/embargoedAssetsService';
 import { DisabledFeature } from './DisabledFeature';
 import { EnabledFeature } from './EnabledFeature';
 import { LoadingFeature } from './LoadingFeature';
 
-function notificationForLevel(level: LEVEL) {
+function notificationForLevel(level: Level) {
   switch (level) {
     case LEVEL.MIGRATING:
       return (
@@ -49,7 +49,7 @@ function notificationForLevel(level: LEVEL) {
 
 export function EmbargoedAssets() {
   const { currentSpaceId } = useSpaceEnvContext();
-  const [currentLevel, setCurrentLevel] = useState<LEVEL>(LEVEL.DISABLED);
+  const [currentLevel, setCurrentLevel] = useState<Level>(LEVEL.DISABLED);
   const [isFetching, setIsFetching] = useState(true);
   const [isDenied, setIsDenied] = useState(false);
 
@@ -87,7 +87,7 @@ export function EmbargoedAssets() {
     return <DisabledFeature />;
   }
 
-  const handleLevelChange = (newLevel: LEVEL | 'enabled') => {
+  const handleLevelChange = (newLevel: Level | EnabledLevel) => {
     return embargoedAssets(currentSpaceId)
       .setCurrentLevel(newLevel)
       .then(

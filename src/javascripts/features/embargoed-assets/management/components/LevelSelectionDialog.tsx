@@ -9,19 +9,24 @@ import {
   FieldGroup,
 } from '@contentful/forma-36-react-components';
 import { styles } from '../EmbargoedAssets.styles';
-import { confirmLabelByLevel, LEVEL, levelDescription } from '../constants';
+import {
+  confirmLabelByLevel,
+  levelDescription,
+  SwitchableLevel,
+  SWITCHABLE_LEVEL_VALUES,
+} from '../constants';
 import { LevelHelpText } from './LevelHelpText';
 import { LevelHelpTable } from './LevelHelpTable';
 
 interface TurnOffDialogParams {
   onClose: () => void;
-  onSubmit: (level: LEVEL) => void;
-  currentLevel: LEVEL;
+  onSubmit: (level: SwitchableLevel) => void;
+  currentLevel: SwitchableLevel;
 }
 
 const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialogParams) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<LEVEL>(currentLevel);
+  const [selectedLevel, setSelectedLevel] = useState<SwitchableLevel>(currentLevel);
 
   const levelIsDifferent = currentLevel !== selectedLevel;
 
@@ -47,10 +52,10 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
                 labelText="Asset protection level"
                 onChange={(e) => {
                   setCheckboxChecked(false);
-                  setSelectedLevel((e.target as HTMLSelectElement).value as LEVEL);
+                  setSelectedLevel((e.target as HTMLSelectElement).value as SwitchableLevel);
                 }}
                 value={currentLevel}>
-                {[LEVEL.MIGRATING, LEVEL.UNPUBLISHED, LEVEL.ALL].map((level) => (
+                {SWITCHABLE_LEVEL_VALUES.map((level) => (
                   <Option key={level} value={level}>
                     {levelDescription[level]}
                     {level === currentLevel ? ' (active)' : null}

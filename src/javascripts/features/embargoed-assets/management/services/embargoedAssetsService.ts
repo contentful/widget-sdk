@@ -1,17 +1,17 @@
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
-import { LEVEL } from '../constants';
+import { Level } from '../constants';
 
 export interface EmbargoedAsset {
-  level: LEVEL;
+  level: Level;
 }
 
 export interface EmbargoedAssetApi {
-  protectionMode: LEVEL | null;
+  protectionMode: Level | null;
 }
 
 function responseConverter(data: EmbargoedAssetApi): EmbargoedAsset {
-  return { level: data.protectionMode || LEVEL.DISABLED };
+  return { level: data.protectionMode || 'disabled' };
 }
 
 export function embargoedAssets(spaceId: string | undefined) {
@@ -23,8 +23,8 @@ export function embargoedAssets(spaceId: string | undefined) {
       const response = await apiClient.getEmbargoedAssetsSettingLevel();
       return responseConverter(response);
     },
-    async setCurrentLevel(level: LEVEL | 'enabled' | null): Promise<EmbargoedAsset> {
-      if (level === LEVEL.DISABLED) {
+    async setCurrentLevel(level: Level | 'enabled' | null): Promise<EmbargoedAsset> {
+      if (level === 'disabled') {
         level = null;
       }
       const response = await apiClient.setEmbargoedAssetsSettingLevel(level);

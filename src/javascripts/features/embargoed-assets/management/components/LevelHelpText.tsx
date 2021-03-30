@@ -1,9 +1,9 @@
 import React from 'react';
-import { LEVEL } from '../constants';
+import { Level, LEVEL } from '../constants';
 import { Paragraph, Typography } from '@contentful/forma-36-react-components';
 
 interface LevelHelpTextParams {
-  level?: LEVEL;
+  level?: Level;
 }
 
 export function LevelHelpText({ level }: LevelHelpTextParams) {

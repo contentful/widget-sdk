@@ -7,7 +7,7 @@ const noopFn = (): void => {
   return;
 };
 
-it('does something', async () => {
+it('renders', async () => {
   render(
     <LevelSelectionDialog currentLevel={LEVEL.MIGRATING} onSubmit={noopFn} onClose={noopFn} />
   );

@@ -10,7 +10,7 @@ describe('if no props are passed (aka disabled mode)', () => {
   });
 });
 
-describe('if setCurrentLevel prop is passed', () => {
+describe('if setCurrentLevel prop is passed (feature available, but no state is set)', () => {
   it('renders get started button', async () => {
     const noop = () => Promise.resolve();
     render(<DisabledFeature setCurrentLevel={noop} />);

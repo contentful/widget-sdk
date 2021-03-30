@@ -10,10 +10,10 @@ import SafeIcon from 'svg/safe.svg';
 
 import { styles } from '../EmbargoedAssets.styles';
 import { DocumentationTextLink } from './DocumentationTextLink';
-import { LEVEL } from '../constants';
+import { EnabledLevel, LEVEL, SwitchableLevel } from '../constants';
 
 interface DisabledFeatureParams {
-  setCurrentLevel?: (level: LEVEL | 'enabled') => Promise<void>;
+  setCurrentLevel?: (level: SwitchableLevel | EnabledLevel) => Promise<void>;
 }
 
 export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
@@ -37,7 +37,7 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
             disabled={isChanging}
             onClick={() => {
               setIsChanging(true);
-              setCurrentLevel('enabled').finally(() => setIsChanging(false));
+              setCurrentLevel(LEVEL.ENABLED).finally(() => setIsChanging(false));
             }}
             testId="get-started">
             Get started

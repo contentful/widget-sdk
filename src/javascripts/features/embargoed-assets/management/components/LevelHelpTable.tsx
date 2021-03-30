@@ -1,5 +1,5 @@
 import React from 'react';
-import { LEVEL } from '../constants';
+import { LevelToUrlSecurity, LEVEL, SwitchableLevel } from '../constants';
 import {
   Icon,
   Table,
@@ -50,7 +50,7 @@ function AssetUrlCell({ current, selected }: AssetUrlCellParams) {
   );
 }
 
-const levelToUrlSecurity = {
+const levelToUrlSecurity: LevelToUrlSecurity = {
   [LEVEL.MIGRATING]: {
     cma: false,
     cpa: false,
@@ -69,8 +69,8 @@ const levelToUrlSecurity = {
 };
 
 interface LevelHelpTableParams {
-  currentLevel: LEVEL;
-  selectedLevel?: LEVEL;
+  currentLevel: SwitchableLevel;
+  selectedLevel?: SwitchableLevel;
 }
 
 export function LevelHelpTable({ currentLevel, selectedLevel }: LevelHelpTableParams) {
