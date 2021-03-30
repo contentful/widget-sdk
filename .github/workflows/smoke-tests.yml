@@ -21,8 +21,10 @@ jobs:
             # happen when setting up the test strategy, so it can't be used here and instead
             # we need to more or less indirectly reference the secret name.
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_STAGING'
+            selfServiceOrgId: '6selMqONp4fK4Sqwz1bJ4q'
           - environment: 'production'
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_PRODUCTION'
+            selfServiceOrgId: '60oVkVQwAUW8Tp4bSKsojd'
 
     steps:
       - uses: actions/checkout@v2
@@ -49,6 +51,7 @@ jobs:
           SMOKE_TEST_ENVIRONMENT: ${{ matrix.environment }}
           SMOKE_TEST_USER_PASSWORD: ${{ secrets[matrix.passwordSecretName] }}
           LIBRATO_AUTH_TOKEN: ${{ secrets.LIBRATO_AUTH_TOKEN }}
+          SMOKE_TEST_SELF_SERVICE_ORG_ID: ${{ matrix.selfServiceOrgId }}
         with:
           # We installed above, so skip it here
           install: false

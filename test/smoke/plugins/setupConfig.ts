@@ -9,6 +9,7 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
     SMOKE_TEST_USER_EMAIL,
     SMOKE_TEST_USER_PASSWORD,
     SMOKE_TEST_ENVIRONMENT,
+    SMOKE_TEST_SELF_SERVICE_ORG_ID,
     LIBRATO_AUTH_TOKEN,
   } = process.env;
 
@@ -42,6 +43,9 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
   config.env.domain = domain;
   config.env.environment = environment;
   config.env.libratoAuthToken = LIBRATO_AUTH_TOKEN;
+
+  // hard coded space/org/etc. IDs below
+  config.env.selfServiceOrgId = SMOKE_TEST_SELF_SERVICE_ORG_ID;
 
   return config;
 }

@@ -1,6 +1,6 @@
 declare global {
   namespace Cypress {
-    interface Chainable {
+    interface Chainable<Subject> {
       /**
        * Quickly log into the app. Used in most specs, with the exception being the actual login spec.
        *
@@ -26,6 +26,8 @@ declare global {
        * })
        */
       measure: typeof measureCommand;
+
+      count: () => Cypress.Chainable<number>;
     }
   }
 }
@@ -57,3 +59,15 @@ function measureCommand(testName: string, metricName: string, value: number) {
 }
 
 Cypress.Commands.add('measure', measureCommand);
+
+function countCommand(elements: Cypress.Chainable<JQuery<HTMLElement>>) {
+  let count = 0;
+
+  elements.each(() => {
+    count++;
+  });
+
+  return cy.wrap(count);
+}
+
+Cypress.Commands.add('count', { prevSubject: 'element' }, countCommand);

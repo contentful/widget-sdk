@@ -8,14 +8,14 @@ export function id() {
   return letter(1) + alnum(15);
 }
 
-export function fromArray(a) {
+export function fromArray(a: string | string[]) {
   return a[random(0, a.length - 1)];
 }
 
-export function letter(count) {
+export function letter(count: number) {
   return times(count, () => fromArray(LETTERS)).join('');
 }
 
-export function alnum(count) {
+export function alnum(count: number) {
   return times(count, () => fromArray(ALNUM)).join('');
 }
