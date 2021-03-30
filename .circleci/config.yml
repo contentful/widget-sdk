@@ -309,7 +309,7 @@ jobs:
       - run:
           name: Deploy micro-backends
           command: |
-            export MICRO_BACKENDS_VERSION="0.7.0"
+            export MICRO_BACKENDS_VERSION="0.8.0"
             export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"
             export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"
             export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"
