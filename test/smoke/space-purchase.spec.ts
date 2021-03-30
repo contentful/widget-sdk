@@ -17,7 +17,6 @@ test('space-purchase', () => {
   spacePurchasePage.spaceNameInput.clear();
   spacePurchasePage.spaceNameInput.type(newSpaceName);
   spacePurchasePage.spaceDetailsContinueButton.click();
-
   spacePurchasePage.confirmPurchaseButton.click();
 
   const spaceHome = spacePurchasePage.goToNewSpace();
@@ -39,6 +38,9 @@ test('space-purchase', () => {
     deleteSpaceModal.spaceNameInput.type(newSpaceName);
     deleteSpaceModal.confirm();
 
+    // A little slower to revisit this page, but more reliable as the table may not fully
+    // reload its data before the assertion is called. It's also clearer and less brittle
+    // than adding a cy.wait(...).
     orgSettingsPage = OrganizationSettingsPage.visit(orgId);
 
     orgSettingsPage.spaceTableRows.count().should('equal', numSpaces - 1);
