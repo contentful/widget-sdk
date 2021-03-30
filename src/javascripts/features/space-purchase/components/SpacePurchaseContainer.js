@@ -79,7 +79,7 @@ const generateBreadcrumbItems = (step) => {
   return [
     { text: '1.Subscription', isActive: spaceSteps.includes(step) },
     { text: '2.Payment', isActive: paymentSteps.includes(step) },
-    { text: '3.Confirmation', isActive: confirmationSteps.includes(step) },
+    { text: '3.Done', isActive: confirmationSteps.includes(step) },
   ];
 };
 
