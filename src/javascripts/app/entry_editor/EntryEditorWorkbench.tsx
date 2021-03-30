@@ -140,7 +140,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const [selectedTab, setSelectedTab] = useState(() => validateTab(preferences.tab, availableTabs));
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
-  const [isHightValueLabelEnabled, setHightValueLabelEnabled] = useState(false);
+  const [isHighValueLabelEnabled, setHighValueLabelEnabled] = useState(false);
 
   // kill this with fire when react migration allows it
   const $state = getModule('$state');
@@ -204,7 +204,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       });
       const isOrgBillable = currentOrganization && !currentOrganization.isBillable;
 
-      isOrgBillable && setHightValueLabelEnabled(isHighValueLabelEnabled); // Additional value to just control the visibility based on high value label FF
+      setHighValueLabelEnabled(isOrgBillable && isHighValueLabelEnabled); // Additional value to just control the visibility based on high value label FF
     }
     getHightValueLabelFeatureFlagVariation();
   }, [currentEnvironmentId, currentOrganization, currentOrganizationId, currentSpaceId]);
@@ -227,7 +227,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     const isTagsTab = currentTab.widgetId === EntryEditorWidgetTypes.TAGS_EDITOR.id;
 
     if (isReferenceTab) {
-      isTabVisible = tabVisible.entryReferences || isHightValueLabelEnabled;
+      isTabVisible = tabVisible.entryReferences || isHighValueLabelEnabled;
       isTabEnabled = entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
     }
 
@@ -385,18 +385,18 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
           <Tabs className={styles.tabs} withDivider>
             {visibleTabs.map((tab) => {
               // Temporary, will be removed after high value label experiment is finished
-              const referenceTab =
+              const isReferenceTab =
                 tab.key ===
                 `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.REFERENCE_TREE.id}`;
               const showHighValueModal =
-                referenceTab && isHightValueLabelEnabled && !tabVisible.entryReferences;
+                isReferenceTab && isHighValueLabelEnabled && !tabVisible.entryReferences;
 
               return (
                 <Tab
                   id={tab.key}
                   key={tab.key}
                   testId={`test-id-${tab.key}`}
-                  disabled={!isHightValueLabelEnabled && !tab.isEnabled()} // when highValueLabel is visible don't disable the tab
+                  disabled={!isHighValueLabelEnabled && !tab.isEnabled()} // when highValueLabel is visible don't disable the tab
                   selected={selectedTab === tab.key}
                   className={cx(styles.tab, {
                     // the class name is to provide a hook to attach intercom product tours
