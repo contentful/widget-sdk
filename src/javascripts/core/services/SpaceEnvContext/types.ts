@@ -70,7 +70,7 @@ export interface SpaceData {
   name: string;
   activatedAt: unknown; // TODO: Confirm type
   readOnlyAt: string;
-  trialPeriodEndsAt: string;
+  trialPeriodEndsAt?: string;
   sys: SpaceDataSys;
   currentShard: CurrentShard;
   spaceMembership: SpaceMembership;
@@ -111,7 +111,7 @@ export interface Organization {
   name: string;
   subscriptionState: unknown; // TODO: Confirm type
   isBillable: boolean;
-  trialPeriodEndsAt: unknown; // TODO: Confirm type
+  trialPeriodEndsAt: string | null;
   cancellationActiveAt: unknown; // TODO: Confirm type
   hasSsoEnabled: boolean;
   sys: Sys;

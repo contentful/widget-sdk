@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const calcTrialDaysLeft = (trialEndDate) => {
+export const calcTrialDaysLeft = (trialEndDate?: string) => {
   if (!trialEndDate) {
     return;
   }

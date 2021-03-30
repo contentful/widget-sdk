@@ -12,7 +12,7 @@ const styles = {
 
 export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
   const handleOnConfirm = () => {
-    trackEvent(EVENTS.APP_TRIAL_START)();
+    trackEvent(EVENTS.APP_TRIAL_START);
     onConfirm();
     onClose();
   };

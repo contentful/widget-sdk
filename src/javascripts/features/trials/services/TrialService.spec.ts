@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   isExpiredTrialSpace,
   isOrganizationOnTrial,
@@ -10,25 +11,25 @@ const today = '2019-10-01T03:00:00.000Z';
 const trialEndsAt = '2019-10-10';
 const trialEndedAt = '2019-09-10';
 
-const mockOrganization = fake.Organization();
+const mockOrganization = fake.Organization() as any;
 
 const mockTrialOrganization = fake.Organization({
   trialPeriodEndsAt: trialEndsAt,
-});
+}) as any;
 
 const trialExpiredOrganization = fake.Organization({
   trialPeriodEndsAt: trialEndedAt,
-});
+}) as any;
 
-const mockSpace = fake.Space();
+const mockSpace = fake.Space() as any;
 
 const mockTrialSpace = fake.Space({
   trialPeriodEndsAt: trialEndsAt,
-});
+}) as any;
 
 const trialExpiredSpace = fake.Space({
   trialPeriodEndsAt: trialEndedAt,
-});
+}) as any;
 
 describe('TrialService', () => {
   beforeEach(() => {

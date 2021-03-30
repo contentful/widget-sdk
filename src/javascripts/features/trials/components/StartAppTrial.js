@@ -176,7 +176,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
       duration: trialDuration,
       withContentModel: !existingUsers,
       isSuccessful: isSuccessful,
-    })();
+    });
   }, [orgId, existingUsers]);
 
   useAsync(trialBootstrap);

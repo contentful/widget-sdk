@@ -7,7 +7,7 @@ jest.mock('analytics/Analytics', () => ({
 
 describe('trackEvent', () => {
   it('calls track()', async () => {
-    trackEvent(EVENTS.HELP_LINK, { test: 'test' })();
+    trackEvent(EVENTS.HELP_LINK, { test: 'test' });
 
     expect(track).toHaveBeenCalledWith(`trial:${EVENTS.HELP_LINK}`, { test: 'test' });
   });

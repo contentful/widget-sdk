@@ -22,6 +22,8 @@ const styles = {
   }),
 };
 
+const trackHelpLinkClick = (href) => () => trackEvent(EVENTS.HELP_LINK, { href });
+
 export const EnterpriseTrialInfo = () => {
   const learningCenterLink = withInAppHelpUtmParamsSubscription(
     'https://public.learningcenter.contentful.com/index/'
@@ -40,7 +42,7 @@ export const EnterpriseTrialInfo = () => {
           First steps{' '}
           <TextLink
             href={contentful123Link}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: contentful123Link })}
+            onClick={trackHelpLinkClick(contentful123Link)}
             rel="noopener noreferrer"
             target="_blank">
             Contentful 1-2-3
@@ -50,7 +52,7 @@ export const EnterpriseTrialInfo = () => {
           Contentful{' '}
           <TextLink
             href={learningCenterLink}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: learningCenterLink })}
+            onClick={trackHelpLinkClick(learningCenterLink)}
             rel="noopener noreferrer"
             target="_blank">
             Learning Center
@@ -59,7 +61,7 @@ export const EnterpriseTrialInfo = () => {
         <ListItem className={styles.listItem}>
           <TextLink
             href={helpCenterLink}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: helpCenterLink })}
+            onClick={trackHelpLinkClick(helpCenterLink)}
             rel="noopener noreferrer"
             target="_blank">
             Help center
@@ -68,7 +70,7 @@ export const EnterpriseTrialInfo = () => {
         <ListItem className={styles.listItem}>
           <TextLink
             href={developerDocsLink}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: developerDocsLink })}
+            onClick={trackHelpLinkClick(developerDocsLink)}
             rel="noopener noreferrer"
             target="_blank">
             Developer portal

@@ -11,9 +11,9 @@ export const EVENTS = {
   APP_TRIAL_START: 'app_trial_start_clicked',
   // App Trial's performance event
   APP_TRIAL_PERFORMANCE: 'app_trial_start_performance',
-};
+} as const;
 
-export const trackEvent = (eventName, data = {}) => () => {
+export const trackEvent = (eventName: typeof EVENTS[keyof typeof EVENTS], data = {}) => {
   track(`trial:${eventName}`, data);
 };
 

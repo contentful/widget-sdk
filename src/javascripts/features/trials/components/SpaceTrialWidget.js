@@ -42,13 +42,15 @@ const FairUsePolicyLink = () => (
   <TextLink
     href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
     target="_blank"
-    onClick={trackEvent(EVENTS.FAIR_USAGE_POLICY)}
+    onClick={() => trackEvent(EVENTS.FAIR_USAGE_POLICY)}
     data-test-id="fair_use_policy_link"
     rel="noopener noreferrer"
     className={styles.learnMoreLink}>
     fair use policy
   </TextLink>
 );
+
+const trackHelpLinkClick = (href) => () => trackEvent(EVENTS.HELP_LINK, { href });
 
 export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
   const [isTrialSpace, setIsTrialSpace] = useState(false);
@@ -94,7 +96,7 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
           Check out{' '}
           <TextLink
             href={contentful123Link}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: contentful123Link })}
+            onClick={trackHelpLinkClick(contentful123Link)}
             rel="noopener noreferrer"
             target="_blank">
             Contentful 1-2-3
@@ -103,7 +105,7 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
           <TextLink
             href={learningCenterLink}
             rel="noopener noreferrer"
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: learningCenterLink })}
+            onClick={trackHelpLinkClick(learningCenterLink)}
             target="_blank">
             Learning Center
           </TextLink>
@@ -111,14 +113,14 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
           <TextLink
             href={helpCenterLink}
             rel="noopener noreferrer"
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: helpCenterLink })}
+            onClick={trackHelpLinkClick(helpCenterLink)}
             target="_blank">
             help center
           </TextLink>{' '}
           or our{' '}
           <TextLink
             href={developerDocsLink}
-            onClick={trackEvent(EVENTS.HELP_LINK, { href: developerDocsLink })}
+            onClick={trackHelpLinkClick(developerDocsLink)}
             rel="noopener noreferrer"
             target="_blank">
             developer portal
@@ -127,7 +129,7 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
         </Paragraph>
         <Paragraph>
           Got questions?{' '}
-          <ContactUsButton noIcon isLink onClick={trackEvent(EVENTS.GET_IN_TOUCH)}>
+          <ContactUsButton noIcon isLink onClick={() => trackEvent(EVENTS.GET_IN_TOUCH)}>
             Get in touch
           </ContactUsButton>{' '}
           or check our <FairUsePolicyLink />
