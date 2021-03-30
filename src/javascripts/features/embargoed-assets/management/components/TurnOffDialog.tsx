@@ -39,30 +39,26 @@ const TurnOffDialog = ({ onClose, onSubmit }: TurnOffDialogParams) => {
                 create new asset signing keys, and existing signed URLs may cease functioning before
                 their expiry.
               </Paragraph>
-              <div>
-                {' '}
-                {/* wrapping in Paragraph is invalid, since a <div> shall not be nested in a <p> tag */}
-                <CheckboxField
-                  id="understand-change"
-                  checked={checkboxChecked}
-                  labelText={confirmLabelByLevel[LEVEL.DISABLED]}
-                  onChange={onCheckboxChange}
-                />
-              </div>
-              <div>
-                <Button
-                  buttonType="negative"
-                  disabled={!checkboxChecked}
-                  onClick={onSubmit}
-                  className={styles.marginRight}>
-                  Make all assets unprotected
-                </Button>
-                <Button buttonType="muted" onClick={onClose}>
-                  Cancel
-                </Button>
-              </div>
             </Typography>
+            <CheckboxField
+              id="understand-change"
+              checked={checkboxChecked}
+              labelText={confirmLabelByLevel[LEVEL.DISABLED]}
+              onChange={onCheckboxChange}
+            />
           </Modal.Content>
+          <Modal.Controls>
+            <Button
+              buttonType="negative"
+              disabled={!checkboxChecked}
+              onClick={onSubmit}
+              className={styles.marginRight}>
+              Make all assets unprotected
+            </Button>
+            <Button buttonType="muted" onClick={onClose}>
+              Cancel
+            </Button>
+          </Modal.Controls>
         </>
       )}
     </Modal>
