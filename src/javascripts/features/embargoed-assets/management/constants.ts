@@ -1,4 +1,4 @@
-// helper to make union types of the const map
+// helper to make union types of the const map;
 // is a convenience for `typeof T[keyof typeof T]`
 type Values<T> = T[keyof T];
 
@@ -7,10 +7,12 @@ export const SWITCHABLE_LEVEL = {
   UNPUBLISHED: 'unpublished',
   ALL: 'all',
 } as const;
-export const DISABLED_LEVEL = {
+
+const DISABLED_LEVEL = {
   DISABLED: 'disabled',
 } as const;
-export const ENABLED_LEVEL = {
+
+const ENABLED_LEVEL = {
   ENABLED: 'enabled',
 } as const;
 
@@ -18,29 +20,32 @@ export const LEVEL = { ...SWITCHABLE_LEVEL, ...DISABLED_LEVEL, ...ENABLED_LEVEL 
 export type LEVEL = typeof SWITCHABLE_LEVEL | typeof DISABLED_LEVEL | typeof ENABLED_LEVEL;
 
 export type SwitchableLevel = Values<typeof SWITCHABLE_LEVEL>;
-export type DisabledLeveL = Values<typeof DISABLED_LEVEL>;
+
 export type EnabledLevel = Values<typeof ENABLED_LEVEL>;
-export type Level = SwitchableLevel | DisabledLeveL;
+
+type DisabledLevel = Values<typeof DISABLED_LEVEL>;
+
+export type Level = SwitchableLevel | DisabledLevel;
 
 export type SwitchableLevels = Array<SwitchableLevel>;
+
 export const SWITCHABLE_LEVEL_VALUES: SwitchableLevels = Object.values(SWITCHABLE_LEVEL);
 
-export type LevelToUrlSecurity = Record<SwitchableLevel, LevelToUrlSecurityApis>;
 type LevelToUrlSecurityApis = {
   cma: boolean;
   cpa: boolean;
   cda: boolean;
 };
 
-type LevelDescription = Record<SwitchableLevel, string>;
-export const levelDescription: LevelDescription = {
+export type LevelToUrlSecurity = Record<SwitchableLevel, LevelToUrlSecurityApis>;
+
+export const levelDescription: Record<SwitchableLevel, string> = {
   [LEVEL.MIGRATING]: 'Preparation mode',
   [LEVEL.UNPUBLISHED]: 'Unpublished assets protected',
   [LEVEL.ALL]: 'All assets protected',
 };
 
-type ConfirmLabelByLevel = Record<Level, string>;
-export const confirmLabelByLevel: ConfirmLabelByLevel = {
+export const confirmLabelByLevel: Record<Level, string> = {
   [LEVEL.MIGRATING]:
     'I understand that all of my assets will become immediately publicly accessible.',
   [LEVEL.UNPUBLISHED]:
