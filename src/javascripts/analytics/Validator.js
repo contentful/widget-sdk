@@ -165,6 +165,8 @@ export const validEvents = {
     'change_environment_open',
     'change_environment_abort',
     'notification_environment_alias_changed',
+    'notification_environment_alias_created',
+    'notification_environment_alias_deleted',
     'notification_switch_to_alias',
     'notification_continue_on_environment',
   ],
