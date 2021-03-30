@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   SkeletonContainer,
   SkeletonBodyText,
@@ -8,10 +9,7 @@ import {
 
 export const ContentPreviewListSkeleton = () => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="page-settings" />
-      <Workbench.Title>Content preview</Workbench.Title>
-    </Workbench.Header>
+    <Workbench.Header icon={<ProductIcon icon="Settings" size="large" />} title="Content preview" />
     <Workbench.Content type="full">
       <SkeletonContainer
         svgWidth={600}
