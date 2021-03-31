@@ -5,13 +5,16 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
-import { Tooltip, Icon as F36Icon } from '@contentful/forma-36-react-components';
+import { Tooltip, Icon as F36Icon, ModalLauncher } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon'; // TODO: remove this component and replace with Icon from F36
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
+
+import { TEAMS_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 
 const styles = {
   appTopBarAction: css({
@@ -77,8 +80,16 @@ const styles = {
   navIcon: css({
     marginRight: tokens.spacingXs,
   }),
-  navHightValueLabel: css({
-    marginLeft: tokens.spacing2Xs,
+  navHighValueIcon: css({
+    marginLeft: tokens.spacingXs,
+  }),
+  navHighValueIconTrial: css({
+    fill: tokens.colorPurpleMid,
+    borderRadius: '50%',
+
+    '& path:first-child': css({
+      fill: 'white',
+    }),
   }),
 };
 
@@ -110,16 +121,37 @@ function getNavigationProps(item) {
   };
 }
 
+const openDialog = (modalData) =>
+  ModalLauncher.open(({ onClose, isShown }) => (
+    <FeatureModal isShown={isShown} onClose={() => onClose(true)} {...modalData} />
+  ));
+
+const initialFetch = async () => await fetchWebappContentByEntryID(TEAMS_CONTENT_ENTRY_ID);
+
 export default function NavigationItem(props) {
   const { item } = props;
+  const fetchData = async () => {
+    try {
+      const modalData = await initialFetch();
+      openDialog(modalData);
+    } catch {
+      // do nothing, user will be able to see tooltip with information about the feature
+      throw new Error('Something went wrong while fetching data from Contentful');
+    }
+  };
 
   const onClick = () => {
     if (item.disabled) {
       return;
     }
 
-    Navigator.go(getNavigationProps(item));
+    if (item.highValueLabel && !item.isOrganizationOnTrial) {
+      fetchData();
+    } else {
+      Navigator.go(getNavigationProps(item));
+    }
   };
+
   const isActive = Navigator.includes({ path: item.rootSref || item.sref });
   return (
     <li
@@ -165,7 +197,13 @@ export default function NavigationItem(props) {
           {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
           {item.title}
           {item.highValueLabel && (
-            <F36Icon icon="InfoCircle" color="white" className={styles.navHightValueLabel} />
+            <F36Icon
+              icon="InfoCircle"
+              color="white"
+              className={cn(styles.navHighValueIcon, {
+                [styles.navHighValueIconTrial]: item.isOrganizationOnTrial,
+              })}
+            />
           )}
         </Label>
       </a>
@@ -187,5 +225,6 @@ NavigationItem.propTypes = {
     disabled: PropTypes.bool,
     tooltip: PropTypes.string,
     highValueLabel: PropTypes.bool,
+    isOrganizationOnTrial: PropTypes.bool,
   }).isRequired,
 };

@@ -1,6 +1,7 @@
 import { EntryFields, Entry, Asset } from 'contentful';
 
 export const CUSTOM_ROLES_CONTENT_ENTRY_ID = '57081bvT4YDJecjTT8P2CZ';
+export const TEAMS_CONTENT_ENTRY_ID = '1latlrTvD7j105w3WBlxjS';
 
 export interface FeatureContent {
   pageName: string;

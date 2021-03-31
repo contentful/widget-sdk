@@ -13,6 +13,7 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getSpaceEntitlementSet } from 'features/space-usage';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { isOrganizationOnTrial } from 'features/trials';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) => {
   const listHandler = RoleListHandler.create(spaceId, environmentId);
@@ -48,6 +49,7 @@ export function RolesListRoute() {
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
   const [entitlementsSet, setEntitlementsSet] = useState();
   const [highValueLabelEnabled, setHighValueLabelEnabled] = useState();
+  const isOrgOnTrial = isOrganizationOnTrial(currentOrganization);
 
   useEffect(() => {
     if (!spaceId) return;
@@ -90,6 +92,7 @@ export function RolesListRoute() {
               refetch={fetch}
               newApiRolesLimit={newApiRolesLimit}
               highValueLabelEnabled={highValueLabelEnabled}
+              isOrgOnTrial={isOrgOnTrial}
               {...data}
             />
           );

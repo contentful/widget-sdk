@@ -56,10 +56,11 @@ function RoleListActions(props) {
       throw new Error('Something went wrong while fetching data from Contentful');
     }
   };
+  const showHighValueLabel = props.highValueLabelEnabled && !props.hasCustomRolesFeature;
 
   return (
     <div className={styles.actions}>
-      {props.highValueLabelEnabled && !props.hasCustomRolesFeature && (
+      {showHighValueLabel && (
         <Tooltip place="left" content="This feature is a part of Enterprise plan. ">
           <Button
             icon="InfoCircle"
@@ -77,16 +78,34 @@ function RoleListActions(props) {
             Your {props.isLegacyOrganization ? 'organization' : 'space'} is using {usage} out of{' '}
             {props.newApiRolesLimit ? props.newApiRolesLimit : props.limit} available roles.
           </Paragraph>
-          <Button
-            className={styles.addRoleButton}
-            testId="add-role-button"
-            buttonType="primary"
-            disabled={props.hasReachedLimit}
-            onClick={() => {
-              go({ path: '^.new' });
-            }}>
-            Create a new role
-          </Button>
+          {props.isOrgOnTrial ? (
+            <Tooltip
+              place="left"
+              content="This feature is a part of the Enterprise plan. You can use it during your trial.">
+              <Button
+                icon="InfoCircle"
+                className={styles.addRoleButton}
+                testId="add-role-button"
+                buttonType="primary"
+                disabled={props.hasReachedLimit}
+                onClick={() => {
+                  go({ path: '^.new' });
+                }}>
+                Create a new role
+              </Button>
+            </Tooltip>
+          ) : (
+            <Button
+              className={styles.addRoleButton}
+              testId="add-role-button"
+              buttonType="primary"
+              disabled={props.hasReachedLimit}
+              onClick={() => {
+                go({ path: '^.new' });
+              }}>
+              Create a new role
+            </Button>
+          )}
         </>
       )}
     </div>
@@ -101,6 +120,7 @@ RoleListActions.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
   newApiRolesLimit: PropTypes.number,
   highValueLabelEnabled: PropTypes.bool,
+  isOrgOnTrial: PropTypes.bool,
 };
 
 export function RolesList(props) {
@@ -127,6 +147,7 @@ export function RolesList(props) {
           rolesResource={props.rolesResource}
           newApiRolesLimit={props.newApiRolesLimit}
           highValueLabelEnabled={props.highValueLabelEnabled}
+          isOrgOnTrial={props.isOrgOnTrial}
         />
       }>
       <div className={styles.container}>
@@ -182,4 +203,5 @@ RolesList.propTypes = {
   refetch: PropTypes.func.isRequired,
   newApiRolesLimit: PropTypes.number,
   highValueLabelEnabled: PropTypes.bool,
+  isOrgOnTrial: PropTypes.bool,
 };

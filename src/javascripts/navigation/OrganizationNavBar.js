@@ -12,6 +12,7 @@ import { isOrganizationOnTrial } from 'features/trials';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
+
   const accessToolsDropdownItems = [
     {
       title: 'Single Sign-On (SSO)',
@@ -124,6 +125,7 @@ function getItems(params, { orgId }) {
       title: 'Teams',
       sref: 'account.organizations.teams',
       highValueLabel: params.highValueLabelEnabled,
+      isOrganizationOnTrial: params.isOrganizationOnTrial,
       srefParams: { orgId },
       rootSref: 'account.organizations.teams',
       srefOptions: {
@@ -131,6 +133,12 @@ function getItems(params, { orgId }) {
       },
       navIcon: 'Teams',
       dataViewType: 'organization-teams',
+      tooltip:
+        params.highValueLabelEnabled && !params.isOrganizationOnTrial
+          ? 'This feature is a part of Enterprise plan. '
+          : params.isOrganizationOnTrial
+          ? 'This feature is a part of Enterprise plan. You can use it during your trial.'
+          : null,
     },
     {
       if: params.hasAdvancedExtensibility,
