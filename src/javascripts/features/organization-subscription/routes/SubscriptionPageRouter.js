@@ -63,14 +63,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     organizationId: organization.sys.id,
   });
 
-  const composeAndLaunchEnabled = await getVariation(FLAGS.COMPOSE_LAUNCH_PURCHASE, {
-    organizationId: organization.sys.id,
-  });
-
-  const appTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
-    organizationId: organization.sys.id,
-  });
-
   if (!isOwnerOrAdmin(organization)) {
     if (isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
@@ -119,8 +111,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     organization,
     productRatePlans,
     newSpacePurchaseEnabled,
-    composeAndLaunchEnabled,
-    appTrialEnabled,
     isTrialAvailable,
     isTrialActive: isActiveAppTrial(appCatalogFeature),
     isTrialExpired: isExpiredAppTrial(appCatalogFeature),
@@ -164,7 +154,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         organization={data.organization}
         memberAccessibleSpaces={data.memberAccessibleSpaces}
         grandTotal={grandTotal}
-        organizationId={organizationId}
         initialLoad={isLoading}
         spacePlans={spacePlans}
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}

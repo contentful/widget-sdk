@@ -30,7 +30,6 @@ import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
 import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
-import { ContentfulAppsTrial } from './ContentfulAppsTrial';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -55,18 +54,16 @@ export function SubscriptionPage({
   usersMeta,
   organization,
   grandTotal,
-  organizationId,
   initialLoad,
   spacePlans,
   onSpacePlansChange,
   memberAccessibleSpaces,
   newSpacePurchaseEnabled,
-  composeAndLaunchEnabled,
-  appTrialEnabled,
   isTrialAvailable,
   isTrialActive,
   isTrialExpired,
 }) {
+  const organizationId = organization?.sys.id;
   const [changedSpaceId, setChangedSpaceId] = useState('');
 
   useEffect(() => {
@@ -156,18 +153,12 @@ export function SubscriptionPage({
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
 
   // Contentful Apps card should not show to Enterprise orgs and user is not Admin/Owner
-  const showContentfulAppsCard =
-    composeAndLaunchEnabled && !enterprisePlan && isOrgOwnerOrAdmin && !!addOnPlan;
-  const showContentfulAppsTrial =
-    appTrialEnabled && !enterprisePlan && isOrgOwnerOrAdmin && !addOnPlan;
+  const showContentfulAppsCard = !enterprisePlan && isOrgOwnerOrAdmin;
 
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
   const rightColumnHasContent =
-    showPayingOnDemandCopy ||
-    showNonPayingOrgCopy ||
-    showContentfulAppsCard ||
-    showContentfulAppsTrial;
+    showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
   return (
     <Workbench testId="subscription-page">
@@ -242,20 +233,16 @@ export function SubscriptionPage({
                       <PayingOnDemandOrgCopy grandTotal={grandTotal} />
                     </Flex>
                   )}
-                  {showContentfulAppsTrial && (
+                  {showContentfulAppsCard && (
                     <Flex flexDirection="column">
-                      <ContentfulAppsTrial
-                        organization={organization}
+                      <ContentfulApps
+                        organizationId={organizationId}
                         startAppTrial={handleStartAppTrial}
                         isTrialAvailable={isTrialAvailable}
                         isTrialActive={isTrialActive}
                         isTrialExpired={isTrialExpired}
+                        addOnPlan={addOnPlan}
                       />
-                    </Flex>
-                  )}
-                  {showContentfulAppsCard && (
-                    <Flex flexDirection="column">
-                      <ContentfulApps organizationId={organizationId} addOnPlan={addOnPlan} />
                     </Flex>
                   )}
                   {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
@@ -299,7 +286,6 @@ export function SubscriptionPage({
 
 SubscriptionPage.propTypes = {
   initialLoad: PropTypes.bool.isRequired,
-  organizationId: PropTypes.string.isRequired,
   basePlan: PropTypes.object,
   addOnPlan: PropTypes.object,
   spacePlans: PropTypes.array,
@@ -309,8 +295,6 @@ SubscriptionPage.propTypes = {
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
   newSpacePurchaseEnabled: PropTypes.bool,
-  composeAndLaunchEnabled: PropTypes.bool,
-  appTrialEnabled: PropTypes.bool,
   isTrialAvailable: PropTypes.bool,
   isTrialActive: PropTypes.bool,
   isTrialExpired: PropTypes.bool,

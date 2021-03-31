@@ -282,10 +282,10 @@ describe('SubscriptionPage', () => {
   describe('contentful apps card', () => {
     it('shows Contentful Apps trial card for users who have not purchased apps', () => {
       isOwnerOrAdmin.mockReturnValueOnce(true);
-      build({ organization: mockOrganization, appTrialEnabled: true });
+      build({ organization: mockOrganization, isTrialActive: true });
 
-      expect(screen.getByTestId('contentful-apps-trial')).toBeVisible();
-      expect(screen.queryByTestId('contentful-apps-card')).toBeNull();
+      expect(screen.getByTestId('apps-trial-header')).toBeVisible();
+      expect(screen.queryByTestId('apps-header')).toBeNull();
     });
 
     it('shows Contentful Apps card for users who have purchased apps', () => {
@@ -296,8 +296,8 @@ describe('SubscriptionPage', () => {
         composeAndLaunchEnabled: true,
       });
 
-      expect(screen.getByTestId('contentful-apps-card')).toBeVisible();
-      expect(screen.queryByTestId('contentful-apps-trial')).toBeNull();
+      expect(screen.getByTestId('apps-header')).toBeVisible();
+      expect(screen.queryByTestId('apps-trial-header')).toBeNull();
     });
   });
 });
@@ -306,12 +306,11 @@ function build(custom) {
   const props = Object.assign(
     {
       initialLoad: false,
-      organizationId: mockOrganization.sys.id,
+      organization: mockOrganization,
       basePlan: mockBasePlan,
       spacePlans: [],
       grandTotal: null,
       usersMeta: null,
-      organization: null,
       onSpacePlansChange: null,
       newSpacePurchaseEnabled: true,
     },
