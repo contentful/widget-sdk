@@ -25,8 +25,8 @@ export function useUnsavedChangesModal() {
     return unsubscribe;
   }, []);
 
-  function registerSaveAction(save, modal = true) {
-    requestLeaveConfirmation.current = modal ? createUnsavedChangesDialogOpener(save) : save;
+  function registerSaveAction(save) {
+    requestLeaveConfirmation.current = createUnsavedChangesDialogOpener(save);
   }
 
   function setDirty(value) {
