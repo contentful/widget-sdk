@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { set, get } from 'lodash';
+import { set, get, extend, filter } from 'lodash';
 import { css } from 'emotion';
 import {
   Workbench,
@@ -22,6 +22,11 @@ import SnapshotWidgetCell from './SnapshotWidgetCell';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { getModule } from 'core/NgRegistry';
+import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
+import { go } from 'states/Navigator';
+import { LoadingState } from 'features/loading-state';
 
 const styles = {
   workbenchContent: css({
@@ -62,6 +67,12 @@ const styles = {
   fieldLocale: css({
     display: 'flex',
   }),
+  loader: css({
+    height: '100%',
+    '> div': {
+      height: '100%',
+    },
+  }),
 };
 
 const handleSaveError = (error) => {
@@ -72,18 +83,23 @@ const handleSaveError = (error) => {
   }
 };
 
-const SnapshotComparator = ({
-  snapshot,
-  widgets,
-  getEditorData,
-  setDirty,
-  registerSaveAction,
-  redirect: stateRedirect,
-  onUpdateEntry,
-  ...props
-}) => {
+const SnapshotComparator = (props) => {
+  const [editorData, setEditorData] = useState(null);
+  const [snapshot, setSnapshot] = useState(null);
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
-  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove it after contract tests is fixed for cma
+  const getEditorData = useCallback(() => editorData, [editorData]);
+  const widgets = useMemo(() => {
+    if (!editorData) return [];
+
+    return filter(editorData.fieldControls.form, (widget) => !get(widget, 'field.disabled'));
+  }, [editorData]);
+  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({
+    widgets,
+    getEditorData,
+    snapshot,
+  });
   const [
     { selectedVersions, pathsToRestore },
     { setSelectedVersionForField, setSelectAllSnapshots },
@@ -94,17 +110,49 @@ const SnapshotComparator = ({
     setDirty(pathsToRestoreExist);
   }, [pathsToRestoreExist, setDirty]);
 
-  const editorData = getEditorData();
+  useEffect(() => {
+    if (!props.entryId) return;
+    loadEditorData(spaceContext, props.entryId).then(setEditorData);
+  }, [spaceContext, props.entryId]);
+
+  useEffect(() => {
+    registerSaveAction(trackVersioning.trackableConfirmator(onSave), false);
+  }, []); // eslint-disable-line
+
+  useEffect(() => {
+    if (!editorData || !snapshot || !props.source) return;
+
+    trackVersioning.setData(editorData.entity.data, snapshot);
+    trackVersioning.opened(props.source);
+  }, [editorData, snapshot, props.source]);
+
+  useEffect(() => {
+    if (!editorData || !props.snapshotId) return;
+
+    async function init() {
+      try {
+        const { entity, contentType } = editorData;
+        const snapshot = await spaceContext.cma.getEntrySnapshot(entity.getId(), props.snapshotId);
+
+        setSnapshot(
+          extend(snapshot, {
+            snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data),
+          })
+        );
+      } catch (err) {
+        Notification.error(`Entry version not found.`);
+        go({ path: '^.^' });
+      }
+    }
+
+    init();
+  }, [props.snapshotId, editorData, spaceContext]);
+
   const entry = get(editorData, 'entity', {});
   const entryData = get(entry, ['data'], {});
   const permissions = Permissions.create(entryData);
 
-  const title = EntityFieldValueSpaceContext.entryTitle(entry);
-
-  const goToSnapshot = ({ sys }) => {
-    setDirty(false);
-    props.goToSnapshot(sys.id);
-  };
+  const title = editorData ? EntityFieldValueSpaceContext.entryTitle(entry) : '';
 
   const onClose = () => {
     if (!pathsToRestoreExist) {
@@ -126,7 +174,21 @@ const SnapshotComparator = ({
     return restoredResult;
   };
 
-  const onSave = async (redirect) => {
+  function onUpdateEntry(entry) {
+    return spaceContext.cma.updateEntry(entry);
+  }
+
+  function goToSnapshot(snapshot) {
+    setDirty(false);
+    return go({ path: '.', params: { snapshotId: snapshot.sys.id, source: 'compareView' } });
+  }
+
+  function stateRedirect(reload) {
+    if (reload) return go({ path: '^.^', options: { reload: true } });
+    return go({ path: '^.^' });
+  }
+
+  async function onSave(redirect) {
     try {
       const restoredResult = prepareRestoredEntry();
       const entry = await onUpdateEntry(restoredResult);
@@ -138,11 +200,18 @@ const SnapshotComparator = ({
     } catch (error) {
       handleSaveError(error);
     }
-  };
-
-  registerSaveAction(trackVersioning.trackableConfirmator(onSave));
+  }
 
   const hasDiff = diffCount > 0;
+
+  if (!editorData || !snapshot) {
+    return (
+      <div className={styles.loader}>
+        <LoadingState />
+      </div>
+    );
+  }
+
   return (
     <Workbench>
       <Workbench.Header
@@ -264,34 +333,9 @@ const SnapshotComparator = ({
 };
 
 SnapshotComparator.propTypes = {
-  getEditorData: PropTypes.func.isRequired,
-  registerSaveAction: PropTypes.func.isRequired,
-  setDirty: PropTypes.func.isRequired,
-  goToSnapshot: PropTypes.func.isRequired,
-  redirect: PropTypes.func.isRequired,
-  onUpdateEntry: PropTypes.func.isRequired,
-  snapshot: PropTypes.shape({
-    snapshot: PropTypes.object,
-  }),
-  widgets: PropTypes.arrayOf(
-    PropTypes.shape({
-      field: PropTypes.oneOfType([
-        PropTypes.shape({
-          id: PropTypes.string,
-          type: PropTypes.string,
-          linkType: PropTypes.string,
-        }),
-        PropTypes.shape({
-          id: PropTypes.string,
-          type: PropTypes.string,
-          items: PropTypes.shape({
-            type: PropTypes.string,
-            linkType: PropTypes.string,
-          }),
-        }),
-      ]),
-    })
-  ).isRequired,
+  entryId: PropTypes.string.isRequired,
+  snapshotId: PropTypes.string.isRequired,
+  source: PropTypes.string.isRequired,
 };
 
 export default SnapshotComparator;
