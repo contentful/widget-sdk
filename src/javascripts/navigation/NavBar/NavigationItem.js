@@ -75,7 +75,7 @@ const styles = {
     alignItems: 'center',
   }),
   navIcon: css({
-    marginRight: tokens.spacingS,
+    marginRight: tokens.spacingXs,
   }),
   navHightValueLabel: css({
     marginLeft: tokens.spacing2Xs,

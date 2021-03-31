@@ -104,7 +104,7 @@ const styles = {
     color: tokens.colorWhite,
   }),
   navBarProductIcon: css({
-    marginRight: tokens.spacingM,
+    marginRight: tokens.spacingXs,
   }),
   tag: css({
     marginLeft: tokens.spacingXs,
