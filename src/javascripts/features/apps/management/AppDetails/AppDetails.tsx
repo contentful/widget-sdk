@@ -33,6 +33,7 @@ import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { HostingStateContext } from './HostingStateProvider';
+import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
 
 const ERROR_PATH_DEFINITION = ['definition'];
 const ERROR_PATH_EVENTS = ['events'];
@@ -178,6 +179,7 @@ export class AppDetails extends React.Component<Props, State> {
       savedDefinition = definitionResult.value;
       this.setState({ savedDefinition });
       this.updateFormState({ definition: savedDefinition, events: savedEvents });
+      evictCustomAppDefinition(savedDefinition.sys.id);
     } else {
       if (definitionResult.reason.status === 422) {
         errors.push(...definitionResult.reason.data.details.errors);

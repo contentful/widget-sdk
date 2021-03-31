@@ -1,6 +1,10 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
-import { WidgetLoader, MarketplaceDataProvider } from '@contentful/widget-renderer';
+import {
+  WidgetLoader,
+  MarketplaceDataProvider,
+  WidgetNamespace,
+} from '@contentful/widget-renderer';
 import { createClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 import * as Config from 'Config';
@@ -29,14 +33,16 @@ export function getMarketplaceDataProvider() {
 // Both Extension and AppInstallation are environment-level
 // entities. The loader uses the SDK with the current token.
 // Hence we cache loaders per token/space-environment combination.
-const cache = {};
+const cache: {
+  [accessToken: string]: { [spaceId: string]: { [aliasOrEnvId: string]: WidgetLoader } };
+} = {};
 
 export async function getCustomWidgetLoader() {
   const accessToken = await getToken();
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const aliasOrEnvId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
-  const cachePath = [accessToken, spaceId, aliasOrEnvId];
+  const cachePath = [accessToken, spaceId, aliasOrEnvId] as const;
 
   let loader: WidgetLoader = get(cache, cachePath);
 
@@ -58,4 +64,19 @@ export async function getCustomWidgetLoader() {
   }
 
   return loader;
+}
+
+export function evictCustomAppDefinition(appDefinitionId: string): void {
+  getAllCachedLoaders().forEach((loader) =>
+    loader.evict({
+      widgetNamespace: WidgetNamespace.APP,
+      widgetId: appDefinitionId,
+    })
+  );
+}
+
+function getAllCachedLoaders(): WidgetLoader[] {
+  return Object.values(cache).flatMap((spaceCache) =>
+    Object.values(spaceCache).flatMap((envCache) => Object.values(envCache))
+  );
 }
