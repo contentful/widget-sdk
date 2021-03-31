@@ -27,6 +27,9 @@ export function embargoedAssets(spaceId: string | undefined) {
       if (level === 'disabled') {
         level = null;
       }
+      if (level === 'enabled') {
+        level = 'migrating';
+      }
       const response = await apiClient.setEmbargoedAssetsSettingLevel(level);
       return responseConverter(response);
     },

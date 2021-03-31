@@ -34,7 +34,7 @@ enum States {
   WUT = 'embargoed_assets/wut',
 }
 
-export const getEmboargoedAssets = {
+export const getEmbargoedAssets = {
   willReturnDenied() {
     cy.addInteraction({
       provider: 'embargoed_assets',
@@ -141,5 +141,96 @@ export const getEmboargoedAssets = {
     }).as('getEmboargoedAssetsForDefaultSpace');
 
     return '@getEmboargoedAssetsForDefaultSpace';
+  },
+};
+
+export const setEmbargoedAssets = {
+  willChangeToMigrating() {
+    cy.addInteraction({
+      provider: 'embargoed_assets',
+      state: States.WUT,
+      uponReceiving: `a request to set embargoed_assets state to "migrating" for "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/embargoed_assets`,
+        headers: defaultHeader,
+        body: { protectionMode: 'migrating' },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: responses.inMode(defaultSpaceId, 'migrating'),
+      },
+    }).as('setEmboargoedAssetsForDefaultSpace');
+
+    return '@setEmboargoedAssetsForDefaultSpace';
+  },
+  willChangeToUnpublished() {
+    cy.addInteraction({
+      provider: 'embargoed_assets',
+      state: States.WUT,
+      uponReceiving: `a request to set embargoed_assets state to "unpublished" for "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/embargoed_assets`,
+        headers: defaultHeader,
+        body: { protectionMode: 'unpublished' },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: responses.inMode(defaultSpaceId, 'unpublished'),
+      },
+    }).as('setEmboargoedAssetsForDefaultSpace');
+
+    return '@setEmboargoedAssetsForDefaultSpace';
+  },
+  willChangeToAll() {
+    cy.addInteraction({
+      provider: 'embargoed_assets',
+      state: States.WUT,
+      uponReceiving: `a request to set embargoed_assets state to "all" for "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/embargoed_assets`,
+        headers: defaultHeader,
+        body: { protectionMode: 'all' },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: responses.inMode(defaultSpaceId, 'all'),
+      },
+    }).as('setEmboargoedAssetsForDefaultSpace');
+
+    return '@setEmboargoedAssetsForDefaultSpace';
+  },
+  willChangeToDisabled() {
+    cy.addInteraction({
+      provider: 'embargoed_assets',
+      state: States.WUT,
+      uponReceiving: `a request to set embargoed_assets state to "null" (disabled) for "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/embargoed_assets`,
+        headers: defaultHeader,
+        body: { protectionMode: null },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: responses.inMode(defaultSpaceId, null),
+      },
+    }).as('setEmboargoedAssetsForDefaultSpace');
+
+    return '@setEmboargoedAssetsForDefaultSpace';
   },
 };
