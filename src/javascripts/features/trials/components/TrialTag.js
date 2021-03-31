@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { css } from 'emotion';
-import { Tag, TextLink, Tooltip } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { Tag, Tooltip } from '@contentful/forma-36-react-components';
 import { Pluralized } from 'core/components/formatting';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
@@ -29,10 +30,17 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 const styles = {
   tag: css({
     margin: 'auto',
-  }),
-  link: css({
-    ':link': {
-      whiteSpace: 'pre',
+
+    a: {
+      color: tokens.colorPurpleBase,
+    },
+
+    'a:link': {
+      color: tokens.colorPurpleBase,
+
+      ':hover': {
+        textDecoration: 'underline',
+      },
     },
   }),
 };
@@ -151,7 +159,7 @@ export const TrialTag = () => {
   };
 
   return (
-    <Tag className={styles.tag} tagType="primary-filled" testId={`${ctaType}`}>
+    <Tag className={styles.tag} tagType="featured" testId={`${ctaType}`}>
       <TrackTargetedCTAImpression impressionType={ctaType}>
         <Tooltip
           testId="trial_tag-tooltip"
@@ -164,13 +172,7 @@ export const TrialTag = () => {
             )
           }>
           {pathParamsObj ? (
-            <StateLink
-              className={styles.link}
-              testId={`${ctaType}-link`}
-              {...pathParamsObj}
-              {...tracking}
-              component={TextLink}
-              linkType="white">
+            <StateLink data-test-id={`${ctaType}-link`} {...pathParamsObj} {...tracking}>
               TRIAL
             </StateLink>
           ) : (

@@ -1,5 +1,5 @@
 import React from 'react';
-import Autocomplete from '@contentful/forma-36-react-components/dist/components/Autocomplete';
+import { Autocomplete } from '@contentful/forma-36-react-components/dist/components/Autocomplete';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
