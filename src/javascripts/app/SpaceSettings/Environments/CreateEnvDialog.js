@@ -108,6 +108,7 @@ function CreateForm({
   SetSourceEnvironment,
   CancelDialog,
   currentEnvironment,
+  maxIdLength,
 }) {
   const inputRef = useRef(null);
 
@@ -129,10 +130,13 @@ function CreateForm({
         textInputProps={{
           inputRef,
           testId: 'field.id',
+          maxLength: maxIdLength,
+          type: 'text',
+          autoComplete: '', // Empty/random string because this apparently disables password managers. Very hacky, but only solution that worked, short of more hacking.
         }}
+        countCharacters
         name={`field.${fields.id.name}`}
         id={`field.${fields.id.name}`}
-        maxLength={40}
         type="text"
         helpText="The environment ID represents how it is referred to in the API"
         value={fields.id.value}
@@ -186,6 +190,7 @@ CreateForm.propTypes = {
   SetSourceEnvironment: PropTypes.func.isRequired,
   CancelDialog: PropTypes.func.isRequired,
   Submit: PropTypes.func.isRequired,
+  maxIdLength: PropTypes.number,
 };
 
 function DisplayServerError({ inProgress, CancelDialog, Submit }) {

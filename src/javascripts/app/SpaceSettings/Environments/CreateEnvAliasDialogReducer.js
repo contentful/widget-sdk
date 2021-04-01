@@ -9,11 +9,14 @@ import {
   triggerAliasCreatedToast,
 } from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
 
+const MAX_ENV_ALIAS_ID_LENGTH = 64;
+
 const ID_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
   'Please use only letters, numbers, underscores, dashes and dots for the ID.';
 const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
+const ENV_ALIAS_ID_TOO_LONG_ERROR_MESSAGE = `Please provide an ID that has ${MAX_ENV_ALIAS_ID_LENGTH} characters or less.`;
 
 /**
  * Actions
@@ -64,6 +67,7 @@ export const useCreateEnvAliasState = (props) => {
     currentEnvironment,
     selectedEnvironment: currentEnvironment || environments[0].id,
     inProgress: false,
+    maxIdLength: MAX_ENV_ALIAS_ID_LENGTH,
   };
 
   const [state, dispatch] = useReducer(createEnvAliasReducer, initialState);
@@ -130,6 +134,11 @@ export const validations = {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
     }
+
+    if (value.length > MAX_ENV_ALIAS_ID_LENGTH) {
+      return ENV_ALIAS_ID_TOO_LONG_ERROR_MESSAGE;
+    }
+
     if (!isValidResourceId(value)) {
       return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
