@@ -166,6 +166,34 @@ const bulkActionResponse = (overrides = {}) => {
   return Matchers.like(mergedResponse);
 };
 
+const validateBulkActionResponse = (overrides = {}) => {
+  const validateOverrides = deepMerge(
+    {
+      action: 'validate',
+      payload: {
+        action: 'publish',
+        entities: Matchers.somethingLike({
+          sys: {
+            type: 'Array',
+          },
+          items: Matchers.eachLike(
+            {
+              sys: {
+                id: 'testString',
+                linkType: 'Entry or Asset',
+                type: 'Link',
+              },
+            },
+            { min: 1 }
+          ),
+        }),
+      },
+    },
+    overrides
+  );
+  return bulkActionResponse(validateOverrides);
+};
+
 const defaultContentTypeHeader = {
   'content-type': 'application/vnd.contentful.management.v1+json',
 };
@@ -332,12 +360,11 @@ export const getValidateBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: validateBulkActionResponse({
           sys: {
             status: 'inProgress',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'validate',
         }),
       },
     }).as('getSucceededValidateBulkAction');
@@ -354,13 +381,12 @@ export const getValidateBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: validateBulkActionResponse({
           sys: {
             status: 'succeeded',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
             completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'validate',
         }),
       },
     }).as('getSucceededValidateBulkAction');
@@ -377,13 +403,12 @@ export const getValidateBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: validateBulkActionResponse({
           sys: {
             status: 'failed',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
             completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'validate',
           error: versionMismatchError,
         }),
       },
@@ -404,10 +429,8 @@ export const validateBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
-          action: 'validate',
+        body: validateBulkActionResponse({
           sys: { status: 'created' },
-          payload: { action: 'publish' },
         }),
       },
     }).as('validateBulkAction');
