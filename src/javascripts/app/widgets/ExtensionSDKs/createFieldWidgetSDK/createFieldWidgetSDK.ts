@@ -3,6 +3,7 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createEditorApi } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createSpaceApi } from '../createSpaceApi';
@@ -14,11 +15,11 @@ import { noop, omit } from 'lodash';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import { createAPIClient } from 'core/services/APIClient/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
-import { createAPIClient } from 'core/services/APIClient/utils';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -40,7 +41,6 @@ export function createFieldWidgetSDK({
   environment,
   contentTypes,
   pubSubClient,
-  cma,
 }: {
   fieldId: string;
   localeCode: string;
@@ -64,8 +64,8 @@ export function createFieldWidgetSDK({
   space: any;
   spaceId: string;
   pubSubClient?: PubSubClient;
-  cma: ReturnType<typeof createAPIClient>;
 }): FieldExtensionSDK {
+  const cma = createAPIClient(spaceId, environmentId);
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const aliasesId = getEnvironmentAliasesIds(environment);
@@ -126,7 +126,7 @@ export function createFieldWidgetSDK({
   });
 
   const spaceApi = createSpaceApi({
-    cma,
+    cma: getBatchingApiClient(cma),
     initialContentTypes: contentTypes,
     pubSubClient,
     environmentIds: [environmentId, ...aliasesId],

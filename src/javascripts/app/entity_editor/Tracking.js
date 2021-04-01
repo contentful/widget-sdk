@@ -2,6 +2,9 @@ import { get, flatten, uniqBy } from 'lodash';
 import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState';
 import * as K from 'core/utils/kefir';
+import { getModule } from 'core/NgRegistry';
+
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, (data) => {
@@ -20,10 +23,8 @@ export async function trackEntryView({
   editorType,
   currentSlideLevel,
   locale,
-  cma,
-  publishedCTs,
 }) {
-  const refCts = await getReferencesContentTypes(editorData, locale, cma, publishedCTs);
+  const refCts = await getReferencesContentTypes(editorData, locale);
 
   track('entry_editor:view', {
     entryId: entityInfo.id,
@@ -32,8 +33,8 @@ export async function trackEntryView({
     referencesCTMetadata: [
       ...uniqBy(
         refCts.map((ct) => ({
-          id: ct.sys.id,
-          name: ct.name,
+          id: ct.data.sys.id,
+          name: ct.data.name,
         })),
         'id'
       ),
@@ -54,7 +55,10 @@ const getReferenceEntitiesIds = (id, locale, editorData) => {
   return localeField ? localeField.map((entity) => entity.sys.id) : [];
 };
 
-async function getReferencesContentTypes(editorData, locale, cma, publishedCTs) {
+async function getReferencesContentTypes(editorData, locale) {
+  const spaceContext = getModule('spaceContext');
+
+  const batchingApiClient = getBatchingApiClient(spaceContext.cma);
   const referenceFieldsIds = editorData.fieldControls.form
     .filter(isEntryReferenceField)
     .map(getFieldId);
@@ -62,12 +66,10 @@ async function getReferencesContentTypes(editorData, locale, cma, publishedCTs) 
     .filter((id) => editorData.entity.data.fields[id] !== undefined)
     .map((id) => getReferenceEntitiesIds(id, locale, editorData));
   const refEntities = await Promise.all(
-    flatten(refEntitiesIds).map((id) => cma.getEntry(id).catch((_error) => null))
+    flatten(refEntitiesIds).map((id) => batchingApiClient.getEntry(id).catch((_error) => null))
   );
   const refCts = refEntities
     .filter(Boolean)
-    .map((entity) =>
-      publishedCTs.find((ct) => get(ct, 'sys.id') === get(entity, 'sys.contentType.sys.id'))
-    );
+    .map((entity) => spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id')));
   return refCts;
 }

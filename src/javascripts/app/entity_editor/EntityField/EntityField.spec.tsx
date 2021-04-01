@@ -4,7 +4,6 @@ import { EntityField } from './EntityField';
 import { EntityType } from '@contentful/app-sdk';
 import ShareJsDocMock from '../Document/__mocks__/ShareJsDocMock';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 jest.mock('app/entity_editor/fieldLocaleController', () => ({
   createFieldLocaleController: jest.fn().mockReturnValue({
@@ -125,9 +124,7 @@ const renderComponent = (override = (props) => props) => {
         currentEnvironmentId: 'environment-id',
         currentSpaceContentTypes: [],
       }}>
-      <CurrentSpaceAPIClientProvider>
-        <EntityField {...override(defaultProps)} />
-      </CurrentSpaceAPIClientProvider>
+      <EntityField {...override(defaultProps)} />
     </SpaceEnvContext.Provider>
   );
 };

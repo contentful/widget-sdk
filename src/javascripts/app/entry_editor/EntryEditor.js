@@ -13,14 +13,8 @@ import {
   useEditorState,
   useEmitter,
 } from '../entity_editor/useEditorHooks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 export const EntryEditor = (props) => {
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
-  const cma = useCurrentSpaceAPIClient();
-
   // @TODO remove getViewProps() as soon as feature flag * is removed
   const { viewProps = props.getViewProps(), fieldController, fields, currentSlideLevel } = props;
   const { editorData, trackLoadEvent } = viewProps;
@@ -37,8 +31,6 @@ export const EntryEditor = (props) => {
         ...args,
         currentSlideLevel,
         editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
-        cma: getBatchingApiClient(cma),
-        publishedCTs: currentSpaceContentTypes,
       });
     },
   });
