@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { Button, Paragraph, Modal } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
@@ -10,7 +9,13 @@ const styles = {
   }),
 };
 
-export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
+export interface StartAppTrialModalProps {
+  isShown: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+export function StartAppTrialModal({ onConfirm, isShown, onClose }: StartAppTrialModalProps) {
   const handleOnConfirm = () => {
     trackEvent(EVENTS.APP_TRIAL_START);
     onConfirm();
@@ -47,9 +52,3 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }) {
     </Modal>
   );
 }
-
-StartAppTrialModal.propTypes = {
-  isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-};

@@ -22,7 +22,8 @@ describe('StartAppTrialModal', () => {
   it('fires off all needed events on click', async () => {
     build();
 
-    await waitFor(() => fireEvent.click(screen.queryByTestId('confirm-button')));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    await waitFor(() => fireEvent.click(screen.queryByTestId('confirm-button')!));
 
     expect(track).toHaveBeenCalledWith('trial:app_trial_start_clicked', {});
 

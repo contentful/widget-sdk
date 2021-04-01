@@ -7,11 +7,11 @@ import { isSpaceOnTrial } from '../services/TrialService';
 import { track } from 'analytics/Analytics';
 
 // Needed for ContactUsButton
-global.open = () => {};
+global.open = jest.fn();
 
 const mockedSpace = fake.Space();
 
-const build = (props) => {
+const build = (props?: unknown) => {
   return render(<SpaceTrialWidget spaceId={mockedSpace.sys.id} {...props} />);
 };
 
@@ -29,8 +29,8 @@ jest.mock('../services/TrialService', () => ({
 
 describe('SpaceTrialWidget', () => {
   beforeEach(() => {
-    getSpace.mockResolvedValue(mockedSpace);
-    isSpaceOnTrial.mockReturnValue(true);
+    (getSpace as jest.Mock).mockResolvedValue(mockedSpace);
+    (isSpaceOnTrial as jest.Mock).mockReturnValue(true);
   });
 
   it('renders correctly when the space is on trial', async () => {
@@ -40,7 +40,7 @@ describe('SpaceTrialWidget', () => {
   });
 
   it('does not render when the space is not on trial', async () => {
-    isSpaceOnTrial.mockReturnValueOnce(false);
+    (isSpaceOnTrial as jest.Mock).mockReturnValue(false);
 
     build();
 
@@ -48,7 +48,7 @@ describe('SpaceTrialWidget', () => {
   });
 
   it('does not render when the space is App Trial Space', async () => {
-    isSpaceOnTrial.mockReturnValueOnce(false);
+    (isSpaceOnTrial as jest.Mock).mockReturnValue(false);
 
     build({ hasActiveAppTrial: true });
 
@@ -58,7 +58,8 @@ describe('SpaceTrialWidget', () => {
   it('tracks the get_in_touch link click event', async () => {
     build();
 
-    await waitFor(() => fireEvent.click(screen.queryByTestId('cf-contact-us-button')));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    await waitFor(() => fireEvent.click(screen.queryByTestId('cf-contact-us-button')!));
 
     expect(track).toHaveBeenCalledWith('trial:get_in_touch_clicked', {});
   });
@@ -66,7 +67,8 @@ describe('SpaceTrialWidget', () => {
   it('tracks the fair_use_policy link click event', async () => {
     build();
 
-    await waitFor(() => fireEvent.click(screen.queryByTestId('fair_use_policy_link')));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    await waitFor(() => fireEvent.click(screen.queryByTestId('fair_use_policy_link')!));
 
     expect(track).toHaveBeenCalledWith('trial:fair_use_policy_clicked', {});
   });

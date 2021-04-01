@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Heading,
   Card,
@@ -38,21 +37,25 @@ const styles = {
   }),
 };
 
+export interface SpaceTrialWidgetProps {
+  spaceId: string;
+  hasActiveAppTrial?: boolean;
+}
+
 const FairUsePolicyLink = () => (
   <TextLink
     href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
     target="_blank"
     onClick={() => trackEvent(EVENTS.FAIR_USAGE_POLICY)}
     data-test-id="fair_use_policy_link"
-    rel="noopener noreferrer"
-    className={styles.learnMoreLink}>
+    rel="noopener noreferrer">
     fair use policy
   </TextLink>
 );
 
-const trackHelpLinkClick = (href) => () => trackEvent(EVENTS.HELP_LINK, { href });
+const trackHelpLinkClick = (href: string) => () => trackEvent(EVENTS.HELP_LINK, { href });
 
-export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
+export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }: SpaceTrialWidgetProps) => {
   const [isTrialSpace, setIsTrialSpace] = useState(false);
   const [trialExpiresAt, setTrialExpiresAt] = useState();
 
@@ -140,9 +143,4 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }) => {
       </div>
     </Card>
   );
-};
-
-SpaceTrialWidget.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  hasActiveAppTrial: PropTypes.bool,
 };

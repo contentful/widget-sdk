@@ -15,7 +15,7 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
-const build = (spaces) => {
+const build = (spaces: any) => {
   render(<SpacesListForMembers spaces={spaces} />);
 };
 

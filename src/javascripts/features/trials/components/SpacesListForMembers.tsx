@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes, { object } from 'prop-types';
 import moment from 'moment';
 import {
   Heading,
@@ -31,8 +30,12 @@ const styles = {
   }),
 };
 
-export const SpacesListForMembers = ({ spaces }) => {
-  const onViewSpace = (id) =>
+export interface SpacesListForMembersProps {
+  spaces: any[];
+}
+
+export const SpacesListForMembers = ({ spaces }: SpacesListForMembersProps) => {
+  const onViewSpace = (id: string) =>
     go({
       path: ['spaces', 'detail', 'home'],
       params: { spaceId: id },
@@ -48,7 +51,7 @@ export const SpacesListForMembers = ({ spaces }) => {
         <Table testId="subscription-page-trial-members.table">
           <colgroup>
             <col className={styles.nameCol} />
-            <col className={styles.createdOnCol} />
+            <col />
             <col className={styles.actionsCol} />
           </colgroup>
           <TableHead>
@@ -96,8 +99,4 @@ export const SpacesListForMembers = ({ spaces }) => {
       )}
     </>
   );
-};
-
-SpacesListForMembers.propTypes = {
-  spaces: PropTypes.arrayOf(object).isRequired,
 };

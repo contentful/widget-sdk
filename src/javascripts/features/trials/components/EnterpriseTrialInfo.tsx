@@ -22,7 +22,7 @@ const styles = {
   }),
 };
 
-const trackHelpLinkClick = (href) => () => trackEvent(EVENTS.HELP_LINK, { href });
+const trackHelpLinkClick = (href: string) => () => trackEvent(EVENTS.HELP_LINK, { href });
 
 export const EnterpriseTrialInfo = () => {
   const learningCenterLink = withInAppHelpUtmParamsSubscription(
