@@ -62,7 +62,7 @@ export default class NavBar extends React.Component {
                     <OnboardingRelaunch />
                   </div>
                 )}
-                <TrialTag />
+                <TrialTag organizationId={this.props.organizationId} />
                 {this.props.showQuickNavigation && <QuickNavigation />}
                 <KnowledgeMenu />
               </div>
@@ -85,4 +85,5 @@ NavBar.propTypes = {
   listItems: PropTypes.array.isRequired,
   showQuickNavigation: PropTypes.bool.isRequired,
   showModernStackOnboardingRelaunch: PropTypes.bool.isRequired,
+  organizationId: PropTypes.string,
 };

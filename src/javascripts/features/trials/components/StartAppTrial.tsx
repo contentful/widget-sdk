@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { css, cx } from 'emotion';
-import PropTypes from 'prop-types';
 import { useAsync } from 'core/hooks';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { contentImport, startAppTrial } from '../services/AppTrialService';
@@ -18,7 +17,6 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import StartAppTrialIllustration from 'svg/illustrations/start-app-trial-illustration.svg';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import {
@@ -50,13 +48,20 @@ const styles = {
   }),
 };
 
+export interface StartAppTrialProps {
+  orgId: string;
+  existingUsers: boolean;
+}
+
+type ResultWithAppName = PromiseSettledResult<void> & { app: string };
+
 const markOnboarding = async () => {
   const store = getBrowserStorage();
   const user = await TokenStore.getUser();
   store.set(getSpaceAutoCreatedKey(user, 'success'), true);
 };
 
-const goToSpaceHome = (spaceId) =>
+const goToSpaceHome = (spaceId: string) =>
   go({
     path: ['spaces', 'detail'],
     params: {
@@ -65,7 +70,7 @@ const goToSpaceHome = (spaceId) =>
     options: { location: 'replace' },
   });
 
-const goToSubscriptionPage = (orgId) =>
+const goToSubscriptionPage = (orgId: string) =>
   go({
     path: ['account', 'organizations', 'subscription_new'],
     params: {
@@ -74,7 +79,13 @@ const goToSubscriptionPage = (orgId) =>
     options: { location: 'replace' },
   });
 
-const installApps = async (apps, orgId, spaceId, environmentId, cma) => {
+const installApps = async (
+  apps: string[],
+  orgId: string,
+  spaceId: string,
+  environmentId: string,
+  cma: unknown
+) => {
   const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug)).catch((error) => {
     logger.captureError(new Error(`Failed to get app definitions during apps trial`), {
       originalError: error,
@@ -86,16 +97,17 @@ const installApps = async (apps, orgId, spaceId, environmentId, cma) => {
 
   await Promise.allSettled(appRepos.map((app) => appsManager.installApp(app, true, false))).then(
     (results) => {
-      const failedApps = results.filter((r) => r.status === 'rejected');
+      const failedApps = results.filter((r) => r.status === 'rejected') as ResultWithAppName[];
 
       if (!failedApps.length) {
         return;
       }
 
       results.forEach((result, i) => {
-        result.app = apps[i];
+        const appName = apps[i];
+        (result as ResultWithAppName).app = appName;
         if (result.status === 'rejected') {
-          logger.captureError(new Error(`Failed to install ${result.app} during apps trial`), {
+          logger.captureError(new Error(`Failed to install ${appName} during apps trial`), {
             reason: result.reason,
           });
         }
@@ -106,7 +118,7 @@ const installApps = async (apps, orgId, spaceId, environmentId, cma) => {
   );
 };
 
-export function StartAppTrial({ orgId, existingUsers }) {
+export function StartAppTrial({ orgId, existingUsers }: StartAppTrialProps) {
   const trialBootstrap = useCallback(async () => {
     const startTimeTracker = window.performance.now();
 
@@ -137,7 +149,7 @@ export function StartAppTrial({ orgId, existingUsers }) {
       await installApps(apps, orgId, spaceId, environmentId, cma);
 
       if (!existingUsers) {
-        await contentImport(getCMAClient({ spaceId, environmentId }));
+        await contentImport(spaceId, environmentId);
       }
 
       isSuccessful = true;
@@ -193,8 +205,3 @@ export function StartAppTrial({ orgId, existingUsers }) {
     </div>
   );
 }
-
-StartAppTrial.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  existingUsers: PropTypes.bool,
-};

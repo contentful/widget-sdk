@@ -1,14 +1,15 @@
 import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
-import { TrialTag } from './TrialTag';
+import { TrialTag, TrialTagProps } from './TrialTag';
 import * as fake from 'test/helpers/fakeFactory';
-import { getOrganization, getSpace } from 'services/TokenStore';
+import { getOrganization as _getOrganization } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { href, isOrgRoute, isSpaceRoute } from 'states/Navigator';
+import { isOwnerOrAdmin as _isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { href, isOrgRoute as _isOrgRoute } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
-import { getAppTrialSpaceKey } from '../services/AppTrialService';
-import { getTrial } from '../services/AppTrialRepo';
+import { getAppTrialSpaceKey as _getAppTrialSpaceKey } from '../services/AppTrialService';
+import { getTrial as _getTrial } from '../services/AppTrialRepo';
+import { useSpaceEnvContext as _useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -72,13 +73,13 @@ const purchasedAppTrial = {
   },
 };
 
-const spaceNotOnTrial = (organization) =>
+const spaceNotOnTrial = (organization: unknown) =>
   fake.Space({
     organization,
   });
 
-const build = () => {
-  render(<TrialTag />);
+const build = (props?: TrialTagProps) => {
+  render(<TrialTag {...props} />);
 };
 
 jest.mock('analytics/Analytics', () => ({
@@ -91,11 +92,6 @@ jest.mock('services/OrganizationRoles', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
-  getSpace: jest.fn(),
-}));
-
-jest.mock('core/NgRegistry', () => ({
-  getModule: jest.fn().mockReturnValue({ orgId: 'something', spaceId: 'something' }),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -103,25 +99,35 @@ jest.mock('states/Navigator', () => ({
   href: jest.fn(),
   getCurrentStateName: jest.fn(),
   isOrgRoute: jest.fn(),
-  isSpaceRoute: jest.fn(),
 }));
 
-jest.mock('../services/AppTrialService', () => ({
-  ...jest.requireActual('../services/AppTrialService'),
-  getAppTrialSpaceKey: jest.fn(),
-}));
+jest.mock('../services/AppTrialService', () => {
+  const originalModule = jest.requireActual('../services/AppTrialService');
+  return {
+    ...originalModule,
+    getAppTrialSpaceKey: jest.fn(),
+  };
+});
 
 jest.mock('../services/AppTrialRepo', () => ({
   getTrial: jest.fn(),
 }));
 
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn().mockReturnValue({}),
+}));
+
+const getOrganization = _getOrganization as jest.Mock;
+const isOrgRoute = _isOrgRoute as jest.Mock;
+const isOwnerOrAdmin = _isOwnerOrAdmin as jest.Mock;
+const getTrial = (_getTrial as unknown) as jest.Mock;
+const getAppTrialSpaceKey = _getAppTrialSpaceKey as jest.Mock;
+const useSpaceEnvContext = _useSpaceEnvContext as jest.Mock;
+
 describe('TrialTag', () => {
   beforeEach(() => {
-    getOrganization.mockResolvedValue(trialOrganization);
-    getSpace.mockResolvedValue(trialSpace);
-    isOrgRoute.mockReturnValue(true);
-    isSpaceRoute.mockReturnValue(false);
-    getVariation.mockResolvedValue(false);
+    (getVariation as jest.Mock).mockResolvedValue(false);
+    isOwnerOrAdmin.mockReturnValue(false);
 
     const mockedNow = new Date(today).valueOf();
     jest.spyOn(Date, 'now').mockImplementation(() => mockedNow);
@@ -129,7 +135,6 @@ describe('TrialTag', () => {
 
   it('does not render the trial tag if AccountSettingNavbar or ErrorNavbar', async () => {
     isOrgRoute.mockReturnValue(false);
-    isSpaceRoute.mockReturnValue(false);
 
     build();
 
@@ -140,11 +145,12 @@ describe('TrialTag', () => {
 
   describe('Enterprise trial', () => {
     beforeEach(() => {
-      isOwnerOrAdmin.mockReturnValue(false);
+      isOrgRoute.mockReturnValue(true);
     });
 
     it('renders when the organization is on trial and the navbar is OrgSettingsNavbar', async () => {
-      build();
+      getOrganization.mockResolvedValue(trialOrganization);
+      build({ organizationId: trialOrganization.sys.id });
 
       await waitFor(() =>
         expect(screen.getByTestId('enterprise_trial_tag')).toHaveTextContent(`TRIAL`)
@@ -156,9 +162,11 @@ describe('TrialTag', () => {
     });
 
     it('navigates to the subscription page when clicked', async () => {
-      build();
+      getOrganization.mockResolvedValue(trialOrganization);
+      build({ organizationId: trialOrganization.sys.id });
 
-      await waitFor(() => fireEvent.click(screen.queryByTestId('enterprise_trial_tag-link')));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      await waitFor(() => fireEvent.click(screen.queryByTestId('enterprise_trial_tag-link')!));
 
       expect(href).toHaveBeenCalledWith({
         path: 'account.organizations.subscription_new',
@@ -174,7 +182,7 @@ describe('TrialTag', () => {
 
     it('does not render if the trial has ended', async () => {
       getOrganization.mockResolvedValue(trialExpiredOrganization);
-      build();
+      build({ organizationId: trialExpiredOrganization.sys.id });
 
       await waitFor(() => screen.queryByTestId('enterprise_trial_tag'));
       expect(screen.queryByTestId('enterprise_trial_tag')).not.toBeInTheDocument();
@@ -182,7 +190,7 @@ describe('TrialTag', () => {
 
     it('does not render if the organization is not on trial', async () => {
       getOrganization.mockResolvedValue(organizationNotOnTrial);
-      build();
+      build({ organizationId: organizationNotOnTrial.sys.id });
 
       await waitFor(() => screen.queryByTestId('enterprise_trial_tag'));
       expect(screen.queryByTestId('enterprise_trial_tag')).not.toBeInTheDocument();
@@ -190,9 +198,10 @@ describe('TrialTag', () => {
 
     it('renders when the organization is on trial and the navbar is SpaceNavbar', async () => {
       const space = spaceNotOnTrial(trialOrganization);
-      getSpace.mockResolvedValue(space);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: space,
+      });
       isOrgRoute.mockReturnValue(false);
-      isSpaceRoute.mockReturnValue(true);
       build();
 
       await waitFor(() => expect(screen.getByTestId('enterprise_trial_tag')).toBeInTheDocument());
@@ -201,9 +210,10 @@ describe('TrialTag', () => {
 
   describe('Space trial', () => {
     beforeEach(() => {
-      isOwnerOrAdmin.mockReturnValue(false);
       isOrgRoute.mockReturnValue(false);
-      isSpaceRoute.mockReturnValue(true);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialSpace,
+      });
     });
 
     it('renders when the space is on trial and the navbar is SpaceNavbar', async () => {
@@ -213,7 +223,9 @@ describe('TrialTag', () => {
     });
 
     it('renders when the trial has ended', async () => {
-      getSpace.mockResolvedValue(trialExpiredSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialExpiredSpace,
+      });
 
       build();
 
@@ -227,7 +239,9 @@ describe('TrialTag', () => {
     });
 
     it('does not render when the active trial space becomes read-only', async () => {
-      getSpace.mockResolvedValue(readOnlyTrialSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: readOnlyTrialSpace,
+      });
 
       build();
 
@@ -236,7 +250,9 @@ describe('TrialTag', () => {
     });
 
     it('does not render when the expired trial space becomes read-only', async () => {
-      getSpace.mockResolvedValue(readOnlyExpiredTrialSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: readOnlyExpiredTrialSpace,
+      });
 
       build();
 
@@ -247,7 +263,8 @@ describe('TrialTag', () => {
     it('navigates to the space home when clicked', async () => {
       build();
 
-      await waitFor(() => fireEvent.click(screen.queryByTestId('trial_space_tag-link')));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      await waitFor(() => fireEvent.click(screen.queryByTestId('trial_space_tag-link')!));
       expect(href).toHaveBeenCalledWith({
         path: 'spaces.detail.home',
         params: { spaceId: trialSpace.sys.id },
@@ -262,7 +279,9 @@ describe('TrialTag', () => {
 
     it('does not render if neither the space nor organization is on trial', async () => {
       const mockSpace = spaceNotOnTrial(organizationNotOnTrial);
-      getSpace.mockResolvedValue(mockSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: mockSpace,
+      });
 
       build();
 
@@ -273,16 +292,18 @@ describe('TrialTag', () => {
 
     it('does not render when the space is on trial but the navbar is OrgSettingsNavbar', async () => {
       isOrgRoute.mockReturnValue(true);
-      isSpaceRoute.mockReturnValue(false);
+      getOrganization.mockReturnValue(organizationNotOnTrial);
 
-      build();
+      build({ organizationId: organizationNotOnTrial.sys.id });
 
       await waitFor(() => screen.queryByTestId('space-trial-tag'));
       expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
     });
 
     it('renders when only the Trial App is purchased and the Trial Space becomes expired', async () => {
-      getSpace.mockResolvedValue(trialExpiredSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialExpiredSpace,
+      });
       getTrial.mockResolvedValue(purchasedAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
 
@@ -296,18 +317,18 @@ describe('TrialTag', () => {
 
   describe('App trial', () => {
     beforeEach(() => {
-      getVariation.mockResolvedValue(true);
-      isOwnerOrAdmin.mockReturnValue(false);
-      getSpace.mockResolvedValue(trialSpace);
-      isSpaceRoute.mockReturnValue(true);
+      (getVariation as jest.Mock).mockResolvedValue(true);
       isOrgRoute.mockReturnValue(false);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialSpace,
+      });
       getTrial.mockResolvedValue(activeAppTrial);
       getOrganization.mockResolvedValue(organizationNotOnTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialSpace.sys.id);
     });
 
     it('does not fetch the app feature when the feature flag is off', async () => {
-      getVariation.mockResolvedValue(false);
+      (getVariation as jest.Mock).mockResolvedValue(false);
 
       build();
 
@@ -316,9 +337,8 @@ describe('TrialTag', () => {
     });
 
     it('renders when the App Trial is active and the navbar is OrgSettingsNavbar', async () => {
-      isSpaceRoute.mockReturnValue(false);
       isOrgRoute.mockReturnValue(true);
-      build();
+      build({ organizationId: organizationNotOnTrial.sys.id });
 
       await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
     });
@@ -326,7 +346,8 @@ describe('TrialTag', () => {
     it('navigates to the App Trial Space Home when clicked', async () => {
       build();
 
-      await waitFor(() => fireEvent.click(screen.queryByTestId('app_trial_tag-link')));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      await waitFor(() => fireEvent.click(screen.queryByTestId('app_trial_tag-link')!));
 
       expect(href).toHaveBeenCalledWith({
         path: 'spaces.detail.home',
@@ -358,7 +379,9 @@ describe('TrialTag', () => {
     it('renders when the App Trial is expired and the navbar is SpaceNavbar', async () => {
       getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
-      getSpace.mockResolvedValue(trialExpiredSpace);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialExpiredSpace,
+      });
 
       build();
 
@@ -366,19 +389,23 @@ describe('TrialTag', () => {
     });
 
     it('does not render when the App Trial is expired and the navbar is OrgSettingsNavbar', async () => {
-      isSpaceRoute.mockReturnValue(false);
       isOrgRoute.mockReturnValue(true);
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: trialExpiredSpace,
+      });
       getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(trialExpiredSpace.sys.id);
 
-      build();
+      build({ organizationId: organizationNotOnTrial.sys.id });
 
       await waitFor(() => screen.queryByTestId('app_trial_tag'));
       expect(screen.queryByTestId('app_trial_tag')).not.toBeInTheDocument();
     });
 
     it('does not render when both the App Trial and Trial Space are purchased', async () => {
-      getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: spaceNotOnTrial(organizationNotOnTrial),
+      });
       getTrial.mockResolvedValue(purchasedAppTrial);
 
       build();
@@ -389,7 +416,9 @@ describe('TrialTag', () => {
     });
 
     it('renders when the Trial Space is purchased during the active App Trial', async () => {
-      getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: spaceNotOnTrial(organizationNotOnTrial),
+      });
       getTrial.mockResolvedValue(activeAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(null);
 
@@ -402,7 +431,9 @@ describe('TrialTag', () => {
     });
 
     it('does not render when the Trial Space is purchased after the App Trial expired', async () => {
-      getSpace.mockResolvedValue(spaceNotOnTrial(organizationNotOnTrial));
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: spaceNotOnTrial(organizationNotOnTrial),
+      });
       getTrial.mockResolvedValue(expiredAppTrial);
       getAppTrialSpaceKey.mockResolvedValue(null);
 

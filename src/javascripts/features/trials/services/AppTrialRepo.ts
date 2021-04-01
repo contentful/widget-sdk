@@ -7,7 +7,7 @@ import { AppTrial, AppTrialFeature } from '../types/AppTrial';
 
 const headers = getAlphaHeader(COMPOSE_LAUNCH_TRIAL);
 
-const getFeatureTrial = (featureId) =>
+const getFeatureTrial = (featureId: string) =>
   memoize(async (orgId) => {
     const endpoint = createOrganizationEndpoint(orgId);
     const data = await endpoint<CollectionProp<AppTrialFeature>>({
@@ -22,7 +22,7 @@ const getFeatureTrial = (featureId) =>
 
 export const getTrial = getFeatureTrial('compose_app');
 
-export const createTrial = (orgId) => {
+export const createTrial = (orgId: string) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const response = endpoint<AppTrial>(
     {

@@ -4,7 +4,10 @@ import { render, waitFor, screen } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
-import { startAppTrial, contentImport } from '../services/AppTrialService';
+import {
+  startAppTrial as _startAppTrial,
+  contentImport as _contentImport,
+} from '../services/AppTrialService';
 import * as TokenStore from 'services/TokenStore';
 
 import { StartAppTrial } from './StartAppTrial';
@@ -31,10 +34,6 @@ jest.mock('components/shared/auto_create_new_space/getSpaceAutoCreatedKey', () =
   getSpaceAutoCreatedKey: jest.fn(),
 }));
 
-jest.mock('core/services/usePlainCMAClient', () => ({
-  getCMAClient: jest.fn(),
-}));
-
 const mockedStorageSet = jest.fn();
 
 jest.mock('core/services/BrowserStorage', () => ({
@@ -56,7 +55,7 @@ jest.mock('../services/AppTrialService', () => ({
   contentImport: jest.fn(),
 }));
 
-const mockedResetWithSpace = jest.fn().mockResolvedValue({});
+const mockedResetWithSpace = jest.fn();
 
 jest.mock('core/NgRegistry', () => ({
   getModule: jest.fn().mockImplementation(() => ({
@@ -67,7 +66,7 @@ jest.mock('core/NgRegistry', () => ({
   })),
 }));
 
-const mockedInstallApp = jest.fn().mockResolvedValue();
+const mockedInstallApp = jest.fn();
 
 jest.mock('features/apps', () => ({
   AppManager: jest.fn().mockImplementation(() => ({
@@ -84,17 +83,23 @@ jest.mock('features/apps-core', () => ({
 }));
 
 jest.spyOn(TokenStore, 'getSpace').mockResolvedValue(mockedTrialSpace);
-jest.spyOn(TokenStore, 'refresh').mockResolvedValue({});
+jest.spyOn(TokenStore, 'refresh').mockResolvedValue();
 jest.spyOn(TokenStore, 'getUser').mockResolvedValue({});
 
 // required for cleanupNotifications
 jest.useFakeTimers();
 
+const startAppTrial = _startAppTrial as jest.Mock;
+const contentImport = _contentImport as jest.Mock;
+
 describe('StartAppTrial', () => {
+  beforeEach(() => {
+    (getVariation as jest.Mock).mockResolvedValue(true);
+  });
   afterEach(cleanupNotifications);
 
   it('when trials feature flag is off', async () => {
-    getVariation.mockResolvedValueOnce(false);
+    (getVariation as jest.Mock).mockResolvedValue(false);
     build();
 
     await waitFor(() => expect(getVariation).toHaveBeenCalledTimes(1));
@@ -108,7 +113,6 @@ describe('StartAppTrial', () => {
   });
 
   it('when trials feature flag is on and for existing users', async () => {
-    getVariation.mockResolvedValueOnce(true);
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build();
 
@@ -127,7 +131,6 @@ describe('StartAppTrial', () => {
   });
 
   it('bootstrap the space for new users', async () => {
-    getVariation.mockResolvedValueOnce(true);
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build({ existingUsers: false });
 
@@ -204,7 +207,7 @@ describe('StartAppTrial', () => {
     });
 
     it('should show a correct notification when one installation fails', async () => {
-      mockedInstallApp.mockRejectedValueOnce(new Error()).mockResolvedValueOnce();
+      mockedInstallApp.mockRejectedValueOnce(new Error()).mockResolvedValueOnce(undefined);
 
       build();
 
@@ -216,8 +219,8 @@ describe('StartAppTrial', () => {
 
   describe('when content import fails', () => {
     beforeEach(() => {
-      startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
-      mockedInstallApp.mockResolvedValue();
+      startAppTrial.mockResolvedValue(mockedAppsTrial);
+      mockedInstallApp.mockResolvedValue(undefined);
       contentImport.mockRejectedValue(new ContentImportError());
     });
 
@@ -244,7 +247,6 @@ describe('StartAppTrial', () => {
   });
 
   it('suppress the onboarding modal', async () => {
-    getVariation.mockResolvedValueOnce(true);
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build({ existingUsers: false });
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Tag, Tooltip } from '@contentful/forma-36-react-components';
@@ -7,8 +7,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { calcTrialDaysLeft } from '../utils/utils';
-import { getModule } from 'core/NgRegistry';
-import { getOrganization, getSpace } from 'services/TokenStore';
+import { getOrganization } from 'services/TokenStore';
 import {
   isOrganizationOnTrial,
   isSpaceOnTrial,
@@ -26,6 +25,9 @@ import {
   getAppTrialSpaceKey,
 } from '../services/AppTrialService';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { AppTrialFeature } from '../types/AppTrial';
+import { Organization } from 'core/services/SpaceEnvContext/types';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   tag: css({
@@ -45,52 +47,48 @@ const styles = {
   }),
 };
 
-export const TrialTag = () => {
-  const [organization, setOrganization] = useState();
-  const [space, setSpace] = useState();
+export interface TrialTagProps {
+  organizationId?: string;
+}
 
-  const { orgId, spaceId } = getModule('$stateParams');
+type TrialData = {
+  organization: Organization | undefined;
+  appFeature?: AppTrialFeature;
+  appTrialSpaceId?: string | null;
+};
+
+export const TrialTag = ({ organizationId }: TrialTagProps) => {
+  const { currentSpaceData: space } = useSpaceEnvContext();
 
   const fetchData = useCallback(async () => {
-    let org;
-    let space;
-
-    if (Navigator.isOrgRoute()) {
-      org = await getOrganization(orgId);
-    }
-
-    if (Navigator.isSpaceRoute()) {
-      try {
-        space = await getSpace(spaceId);
-        org = space.organization;
-      } catch (err) {
-        // space is invalid or inaccessible
-        space = undefined;
-      }
-    }
-
-    setOrganization(org);
-    setSpace(space);
+    const organization = organizationId
+      ? await getOrganization(organizationId)
+      : space?.organization;
 
     const showAppTag = await getVariation(FLAGS.APP_TRIAL, {
-      organizationId: org.sys.id,
+      organizationId: organization?.sys.id,
     });
 
     if (showAppTag) {
-      const appFeature = await Repo.getTrial(org.sys.id);
+      const appFeature = await Repo.getTrial(organization?.sys.id);
       const appTrialSpaceId = await getAppTrialSpaceKey(appFeature);
       return {
         appFeature,
         appTrialSpaceId,
+        organization,
       };
     }
-  }, [spaceId, orgId]);
 
-  const { isLoading, data = {} } = useAsync(fetchData);
+    return { organization };
+  }, [organizationId, space]);
+
+  const { isLoading, data: { appFeature, appTrialSpaceId, organization } = {} } = useAsync<
+    TrialData
+  >(fetchData);
 
   const isEnterpriseTrial = isOrganizationOnTrial(organization);
-  const isAppTrial = isActiveAppTrial(data.appFeature);
-  const isAppTrialExpired = isExpiredAppTrial(data.appFeature);
+  const isAppTrial = isActiveAppTrial(appFeature);
+  const isAppTrialExpired = isExpiredAppTrial(appFeature);
   const isTrialSpace = isSpaceOnTrial(space);
   const isTrialSpaceExpired = isExpiredTrialSpace(space);
 
@@ -116,36 +114,36 @@ export const TrialTag = () => {
     return null;
   }
 
-  let daysLeft;
-  let ctaType;
-  let pathParamsObj;
+  let daysLeft = -1;
+  let ctaType = '';
+  let pathParamsObj: { path: string; params: unknown } | undefined;
 
   if (isEnterpriseTrial) {
-    daysLeft = calcTrialDaysLeft(organization.trialPeriodEndsAt);
+    daysLeft = calcTrialDaysLeft(organization?.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.ENTERPRISE_TRIAL_TAG;
     pathParamsObj = {
       path: 'account.organizations.subscription_new',
-      params: { orgId: organization.sys.id },
+      params: { orgId: organization?.sys.id },
     };
   } else if (isAppTrial || isAppTrialExpired) {
-    if (isAppTrialExpired && (Navigator.isOrgRoute() || space.sys.id !== data.appTrialSpaceId)) {
-      // only display App expired tag on the App Trial Space
+    if (isAppTrialExpired && (Navigator.isOrgRoute() || space?.sys.id !== appTrialSpaceId)) {
+      // only display the expired app tag on the SpaceNavBar of the Apps Trial Space
       return null;
     }
-    daysLeft = calcTrialDaysLeft(data.appFeature.sys.trial.endsAt);
+    daysLeft = calcTrialDaysLeft(appFeature?.sys.trial?.endsAt);
     ctaType = CTA_EVENTS.APP_TRIAL_TAG;
-    pathParamsObj = data.appTrialSpaceId
+    pathParamsObj = appTrialSpaceId
       ? {
           path: 'spaces.detail.home',
-          params: { spaceId: data.appTrialSpaceId },
+          params: { spaceId: appTrialSpaceId },
         }
       : undefined;
   } else if (isTrialSpace || isTrialSpaceExpired) {
-    daysLeft = calcTrialDaysLeft(space.trialPeriodEndsAt);
+    daysLeft = calcTrialDaysLeft(space?.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.TRIAL_SPACE_TAG;
     pathParamsObj = {
       path: 'spaces.detail.home',
-      params: { spaceId: space.sys.id },
+      params: { spaceId: space?.sys.id },
     };
   }
 

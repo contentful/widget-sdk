@@ -13,6 +13,7 @@ import type { PlainClientAPI } from 'contentful-management';
 import { AppTrialFeature } from '../types/AppTrial';
 import * as logger from 'services/logger';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 export const canStartAppTrial = async (organizationId: string) => {
   if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
@@ -54,7 +55,7 @@ export const startAppTrial = async (organizationId: string) => {
   }
 };
 
-export const isActiveAppTrial = (feature: AppTrialFeature) => {
+export const isActiveAppTrial = (feature?: AppTrialFeature) => {
   if (!feature || !feature.sys.trial || !feature.enabled) {
     return false;
   }
@@ -90,7 +91,8 @@ export const getAppTrialSpaceKey = async (feature: AppTrialFeature): Promise<str
   return appTrialSpace.sys.id;
 };
 
-export const contentImport = async (client: PlainClientAPI) => {
+export const contentImport = async (spaceId: string, environmentId: string) => {
+  const client = getCMAClient({ spaceId, environmentId }) as PlainClientAPI;
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const { provisionHelpCenter } = await importer();
   try {

@@ -16,5 +16,5 @@ export {
 export { canStartAppTrial, isActiveAppTrial, isExpiredAppTrial } from './services/AppTrialService';
 
 export { AppTrialRepo };
-export { trialState } from './trialState';
+export { trialState } from './TrialState';
 export type { AppTrialFeature } from './types/AppTrial';

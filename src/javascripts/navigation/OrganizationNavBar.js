@@ -259,6 +259,7 @@ export default class OrganizationNavigationBar extends React.Component {
             showQuickNavigation={false}
             showModernStackOnboardingRelaunch={false}
             listItems={this.state.items}
+            organizationId={this.props.stateParams.orgId}
           />
         </div>
       </>
