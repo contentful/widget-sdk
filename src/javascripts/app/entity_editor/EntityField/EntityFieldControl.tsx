@@ -12,6 +12,8 @@ import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
 import { usePubSubClient } from 'core/hooks';
 import * as K from 'core/utils/kefir';
 import { connectGetEntity } from './connectedGetEntity';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -46,6 +48,8 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     currentSpaceContentTypes,
     documentPool,
   } = useSpaceEnvContext();
+
+  const cma = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
@@ -95,6 +99,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       environment: currentEnvironment,
       contentTypes: currentSpaceContentTypes,
       pubSubClient,
+      cma: getBatchingApiClient(cma),
     });
 
     if (sdk.space) {
@@ -121,6 +126,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     pubSubClient,
     documentPool,
     lifeline,
+    cma,
   ]);
 
   if (!widgetApi) {

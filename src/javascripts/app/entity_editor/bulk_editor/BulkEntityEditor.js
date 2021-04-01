@@ -19,6 +19,8 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { trackEntryView } from '../Tracking';
 import { EntityField } from '../EntityField/EntityField';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const styles = {
   workbench: css({
@@ -48,6 +50,7 @@ export const BulkEntityEditor = ({
     currentSpace,
     currentSpaceId,
   } = useSpaceEnvContext();
+  const cma = useCurrentSpaceAPIClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const [isExpanded, setIsExpanded] = useState(true);
@@ -101,6 +104,8 @@ export const BulkEntityEditor = ({
               ...args,
               currentSlideLevel: 0,
               editorType: 'bulk_editor',
+              cma: getBatchingApiClient(cma),
+              publishedCTs: currentSpaceContentTypes,
             }),
         });
 
