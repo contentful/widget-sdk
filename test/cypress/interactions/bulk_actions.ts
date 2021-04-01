@@ -201,8 +201,6 @@ const defaultContentTypeHeader = {
   'content-type': 'application/vnd.contentful.management.v1+json',
 };
 
-// TODO Needs to be the same as in bulk-actions-api.
-// Currently used for both publish and validate bulk actions.
 const defaultPublishBulkActionTestId = 'testPublishBulkActionId';
 const defaultValidateBulkActionTestId = 'testValidateBulkActionId';
 
