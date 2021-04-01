@@ -13,6 +13,7 @@ import { AppBundleDataWithCreator, AppBundleData } from '../AppEditor';
 import { css } from 'emotion';
 import { noop } from 'lodash';
 import { deleteAppBundle } from '../AppEditor/appHostingApi';
+import { openAppBundleDetailModal } from './AppBundleDetailsModal';
 import React from 'react';
 import { isNil } from 'lodash';
 
