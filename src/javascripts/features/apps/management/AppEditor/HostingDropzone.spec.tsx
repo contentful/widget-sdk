@@ -6,7 +6,14 @@ import { AppDefinitionWithBundle } from './AppHosting';
 describe('HostingDropzone', () => {
   beforeEach(() => {
     render(
-      <HostingDropzone onAppBundleCreated={jest.fn()} definition={{} as AppDefinitionWithBundle} />
+      <HostingDropzone
+        onAppBundleCreated={jest.fn()}
+        definition={
+          ({
+            sys: { id: 'test-id', organization: { sys: 'test-id' } },
+          } as unknown) as AppDefinitionWithBundle
+        }
+      />
     );
   });
   it('renders overlay when dragover event is fired', () => {

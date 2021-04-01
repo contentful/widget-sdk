@@ -35,11 +35,13 @@ interface HostingDropdownProps {
 export function HostingDropdown({ definition }: HostingDropdownProps) {
   const [isOpen, setOpen] = React.useState(false);
 
+  const bundleId = definition.bundle?.sys.id;
+
   const fetchBundle = React.useCallback(async () => {
-    if (definition.bundle) {
-      return await getAppBundle(definition);
+    if (bundleId) {
+      return await getAppBundle(definition.sys.organization.sys.id, definition.sys.id, bundleId);
     }
-  }, [definition]);
+  }, [definition.sys.organization.sys.id, definition.sys.id, bundleId]);
 
   const { data, isLoading } = useAsync<AppBundleData | undefined>(fetchBundle);
 

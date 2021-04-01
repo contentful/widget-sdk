@@ -47,14 +47,18 @@ export async function createAppBundleFromFile(
   }) as Promise<DataLink>;
 }
 
-export async function getAppBundle(definition: AppDefinitionWithBundle): Promise<AppBundleData> {
+export async function getAppBundle(
+  orgId: string,
+  defId: string,
+  bundleId: string
+): Promise<AppBundleData> {
   const bundleEndpoint = createAppDefinitionsEndpoint(
-    Config.apiUrl(`organizations/${definition.sys.organization.sys.id}`),
+    Config.apiUrl(`organizations/${orgId}`),
     Auth
   );
 
   return bundleEndpoint({
     method: 'GET',
-    path: [`${definition.sys.id}`, 'app_bundles', definition.bundle?.sys.id],
+    path: [defId, 'app_bundles', bundleId],
   });
 }
