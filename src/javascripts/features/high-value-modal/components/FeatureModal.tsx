@@ -1,9 +1,10 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Button, Modal } from '@contentful/forma-36-react-components';
-import { ContentfulRichText } from 'core/services/ContentfulCDA';
+import { Button, Modal, Flex } from '@contentful/forma-36-react-components';
+import { ContentfulRichText, ContentfulImage } from 'core/services/ContentfulCDA';
 import { Document } from '@contentful/rich-text-types';
+import { Asset } from 'contentful';
 
 const styles = {
   // TODO: fix in F36
@@ -19,6 +20,7 @@ interface ModalFeatureContentProps {
   isShown: boolean;
   onClose: () => boolean;
   name: string;
+  illustration: Asset;
   longDescription: Document;
   primaryCtaAdmins: string;
   helpCenterUrl: string;
@@ -32,6 +34,7 @@ const FeatureModal = ({
   isShown,
   onClose,
   name,
+  illustration,
   longDescription,
   primaryCtaAdmins,
   helpCenterUrl,
@@ -45,8 +48,12 @@ const FeatureModal = ({
           <Modal.Header title={`${name}`} onClose={onClose} />
           <Modal.Content>
             <>
-              <div>Illustration placeholder</div>
-              <ContentfulRichText document={longDescription} />
+              <Flex justifyContent="center" marginBottom="spacingM">
+                <ContentfulImage image={illustration} />
+              </Flex>
+              <Flex marginBottom="spacingM" flexDirection="column">
+                <ContentfulRichText document={longDescription} />
+              </Flex>
             </>
           </Modal.Content>
           <Modal.Controls position="right" className={styles.modalControllsFullWith}>
