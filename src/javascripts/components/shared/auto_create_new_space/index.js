@@ -133,7 +133,7 @@ function attemptedSpaceAutoCreation(user, store) {
 function startAppsTrial(orgId) {
   go({
     path: ['account', 'organizations', 'start_trial'],
-    params: { orgId, existingUsers: false },
+    params: { orgId, existingUsers: false, from: 'content_choice_path' },
     options: {
       location: 'replace',
     },

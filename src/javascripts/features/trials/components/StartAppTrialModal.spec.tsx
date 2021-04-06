@@ -14,6 +14,10 @@ jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
 }));
 
+jest.mock('states/Navigator', () => ({
+  getCurrentStateName: jest.fn().mockReturnValue('current.state.name'),
+}));
+
 describe('StartAppTrialModal', () => {
   it('should render', () => {
     expect(build().baseElement).toMatchSnapshot();
@@ -25,7 +29,9 @@ describe('StartAppTrialModal', () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await waitFor(() => fireEvent.click(screen.queryByTestId('confirm-button')!));
 
-    expect(track).toHaveBeenCalledWith('trial:app_trial_start_clicked', {});
+    expect(track).toHaveBeenCalledWith('trial:app_trial_start_clicked', {
+      fromState: 'current.state.name',
+    });
 
     expect(onConfirm).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();

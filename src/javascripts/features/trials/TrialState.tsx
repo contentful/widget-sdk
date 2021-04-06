@@ -12,6 +12,7 @@ export const trialState = {
   url: '/start_trial',
   params: {
     existingUsers: false,
+    from: '',
   },
   component: withOrganizationRoute((props: StartAppTrialProps) => (
     <LazyLoadedComponent importer={importer}>
