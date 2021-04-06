@@ -25,7 +25,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="menu"
-      class="Button__Button___1ZfFj emotion-0 Button__Button--naked___mB6LS Button__Button--is-dropdown___383da"
+      class="Button__Button___1ZfFj emotion-0 Button__Button--naked___mB6LS"
       data-test-id="space-role-editor.button"
       type="button"
     >
@@ -80,7 +80,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="menu"
-      class="Button__Button___1ZfFj emotion-0 Button__Button--naked___mB6LS Button__Button--is-dropdown___383da"
+      class="Button__Button___1ZfFj emotion-0 Button__Button--naked___mB6LS"
       data-test-id="space-role-editor.button"
       type="button"
     >
