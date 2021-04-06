@@ -1,10 +1,62 @@
 import React from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 import { go } from 'states/Navigator';
-import { Modal, Button } from '@contentful/forma-36-react-components';
+import { Modal, Button, Notification } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
+import { getModule } from 'core/NgRegistry';
+import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
+import * as trackVersioning from 'analytics/events/versioning';
+import { LoadingState } from 'features/loading-state';
 
-const SnapshotRedirect = ({ snapshotId }) => {
+const styles = {
+  loader: css({
+    height: '100%',
+    '> div': {
+      height: '100%',
+    },
+  }),
+};
+
+const SnapshotRedirect = (props) => {
+  const [editorData, setEditorData] = React.useState(null);
+  const [snapshotId, setSnapshotId] = React.useState(null);
+  const spaceContext = React.useMemo(() => getModule('spaceContext'), []); // TODO: Remove it after contract tests is fixed for cma
+
+  React.useEffect(() => {
+    loadEditorData(spaceContext, props.entryId)
+      .then(setEditorData)
+      .catch(() => {
+        Notification.error('Entry not found.');
+        go({ path: 'spaces.detail.entries.list' });
+      });
+  }, [spaceContext, props.entryId]);
+
+  React.useEffect(() => {
+    if (!editorData) return;
+
+    async function init() {
+      const entityId = editorData.entity.getId();
+      try {
+        const res = await spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 });
+        const firstSnapshotId = get(res, 'items[0].sys.id');
+        setSnapshotId(firstSnapshotId);
+      } catch (error) {} // eslint-disable-line no-empty
+      trackVersioning.noSnapshots(entityId);
+    }
+
+    init();
+  }, [editorData, spaceContext]);
+
+  if (!editorData || !snapshotId) {
+    return (
+      <div className={styles.loader}>
+        <LoadingState />
+      </div>
+    );
+  }
+
   if (snapshotId) {
     return (
       <StateRedirect
@@ -16,6 +68,7 @@ const SnapshotRedirect = ({ snapshotId }) => {
       />
     );
   }
+
   return (
     <Modal
       title="This entry has no versions"
@@ -42,7 +95,7 @@ const SnapshotRedirect = ({ snapshotId }) => {
 };
 
 SnapshotRedirect.propTypes = {
-  snapshotId: PropTypes.string,
+  entryId: PropTypes.string,
 };
 
 export default SnapshotRedirect;
