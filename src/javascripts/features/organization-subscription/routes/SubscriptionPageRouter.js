@@ -2,7 +2,6 @@ import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { get, isUndefined } from 'lodash';
 
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -59,17 +58,12 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   const endpoint = createOrganizationEndpoint(organizationId);
 
-  const newSpacePurchaseEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW, {
-    organizationId: organization.sys.id,
-  });
-
   if (!isOwnerOrAdmin(organization)) {
     if (isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
       return {
         organization,
         memberAccessibleSpaces: spaces,
-        newSpacePurchaseEnabled,
       };
     }
 
@@ -110,7 +104,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     numMemberships,
     organization,
     productRatePlans,
-    newSpacePurchaseEnabled,
     isTrialAvailable,
     isTrialActive: isActiveAppTrial(appCatalogFeature),
     isTrialExpired: isExpiredAppTrial(appCatalogFeature),
@@ -157,9 +150,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         initialLoad={isLoading}
         spacePlans={spacePlans}
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-        newSpacePurchaseEnabled={data.newSpacePurchaseEnabled}
-        composeAndLaunchEnabled={data.composeAndLaunchEnabled}
-        appTrialEnabled={data.appTrialEnabled}
         isTrialAvailable={data.isTrialAvailable}
         isTrialActive={data.isTrialActive}
         isTrialExpired={data.isTrialExpired}

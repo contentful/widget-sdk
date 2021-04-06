@@ -74,19 +74,7 @@ function getItems(params, { orgId }) {
       dataViewType: 'subscription-new',
     },
     {
-      if: params.hasBillingTab && !params.newSpacePurchaseFlowEnabled,
-      title: 'Billing',
-      sref: 'account.organizations.billing-gatekeeper',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.billing-gatekeeper',
-      srefOptions: {
-        inherit: false,
-      },
-      navIcon: 'Billing',
-      dataViewType: 'billing',
-    },
-    {
-      if: params.hasBillingTab && params.newSpacePurchaseFlowEnabled,
+      if: params.hasBillingTab,
       title: 'Billing',
       sref: 'account.organizations.billing',
       srefParams: { orgId },
@@ -220,7 +208,6 @@ export default class OrganizationNavigationBar extends React.Component {
       getOrgFeature(orgId, 'scim'),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
-      getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId: orgId }),
       getVariation(FLAGS.HIGH_VALUE_LABEL, { organizationId: orgId }),
     ];
 
@@ -229,7 +216,6 @@ export default class OrganizationNavigationBar extends React.Component {
       scimFeatureEnabled,
       hasOffsiteBackup,
       hasAdvancedExtensibility,
-      newSpacePurchaseFlowEnabled,
       highValueLabelEnabled,
     ] = await Promise.all(promises);
 
@@ -242,7 +228,6 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
-      newSpacePurchaseFlowEnabled,
       highValueLabelEnabled: highValueLabelEnabled && !organization.isBillable,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };

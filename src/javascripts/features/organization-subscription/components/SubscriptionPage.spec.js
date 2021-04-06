@@ -197,42 +197,14 @@ describe('SubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalled();
   });
 
-  it('should show the billing copy if the org is nonpaying, user is org owner, and the new space purchase flow is disabled', () => {
-    isOwner.mockReturnValue(true);
-    build({
-      organization: Fake.Organization({ isBillable: false }),
-      newSpacePurchaseEnabled: false,
-    });
-
-    expect(screen.getByTestId('subscription-page.billing-copy')).toBeVisible();
-  });
-
   it('should not show the billing copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is disabled', () => {
     isOwner.mockReturnValue(false);
     build({
       organization: Fake.Organization({ isBillable: false }),
-      newSpacePurchaseEnabled: false,
     });
 
     expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
-  });
-
-  it('should redirect to the billing page when the CTA add billing button is clicked', () => {
-    const navigatorObject = { test: true };
-    const nonBillableOrganization = Fake.Organization({ isBillable: false });
-    isOwner.mockReturnValue(true);
-    links.billing.mockReturnValue(navigatorObject);
-
-    build({
-      organization: nonBillableOrganization,
-      organizationId: nonBillableOrganization.sys.id,
-      newSpacePurchaseEnabled: false,
-    });
-
-    userEvent.click(screen.getByTestId('subscription-page.add-billing-button'));
-    expect(links.billing).toHaveBeenCalledWith(nonBillableOrganization.sys.id);
-    expect(go).toHaveBeenCalledWith(navigatorObject);
   });
 
   it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
@@ -312,7 +284,6 @@ function build(custom) {
       grandTotal: null,
       usersMeta: null,
       onSpacePlansChange: null,
-      newSpacePurchaseEnabled: true,
     },
     custom
   );

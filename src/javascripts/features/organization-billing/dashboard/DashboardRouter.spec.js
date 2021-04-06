@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
 import { DashboardRouter } from './DashboardRouter';
 import * as Fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
@@ -70,18 +69,6 @@ describe('DashboardRouter', () => {
     isLegacyEnterprise.mockReturnValue(false);
     isSelfServicePlan.mockReturnValue(true);
     isEnterprisePlan.mockReturnValue(false);
-  });
-
-  it('should redirect to the old billing view if the flag is not enabled', async () => {
-    getVariation.mockResolvedValueOnce(false);
-
-    build();
-
-    await waitFor(() => expect(go).toBeCalled());
-
-    expect(go).toBeCalledWith({
-      path: ['account', 'organizations', 'billing-gatekeeper'],
-    });
   });
 
   it('should redirect to home if the user is not an org owner', async () => {

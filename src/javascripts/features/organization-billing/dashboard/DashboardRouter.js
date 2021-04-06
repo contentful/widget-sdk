@@ -11,7 +11,6 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { isOwner } from 'services/OrganizationRoles';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 
@@ -24,16 +23,6 @@ const ACTIONS = {
 };
 
 const fetch = (organizationId, dispatch) => async () => {
-  const isEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId });
-
-  if (!isEnabled) {
-    go({
-      path: ['account', 'organizations', 'billing-gatekeeper'],
-    });
-
-    return;
-  }
-
   let organization;
 
   try {

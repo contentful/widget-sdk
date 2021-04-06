@@ -18,7 +18,6 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 
-import { links } from '../utils';
 import { go } from 'states/Navigator';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
@@ -44,10 +43,6 @@ const styles = {
   }),
 };
 
-const goToBillingPage = (organizationId) => {
-  go(links.billing(organizationId));
-};
-
 export function SubscriptionPage({
   basePlan,
   addOnPlan,
@@ -58,7 +53,6 @@ export function SubscriptionPage({
   spacePlans,
   onSpacePlansChange,
   memberAccessibleSpaces,
-  newSpacePurchaseEnabled,
   isTrialAvailable,
   isTrialActive,
   isTrialExpired,
@@ -245,12 +239,7 @@ export function SubscriptionPage({
                       />
                     </Flex>
                   )}
-                  {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
-                    <Flex flexDirection="column" marginTop="spacingXl">
-                      <NonPayingOrgCopyLegacy organizationId={organizationId} />
-                    </Flex>
-                  )}
-                  {showNonPayingOrgCopy && newSpacePurchaseEnabled && (
+                  {showNonPayingOrgCopy && (
                     <Flex flexDirection="column" marginTop="spacingXl">
                       <NonPayingOrgCopy createSpace={createSpace} />
                     </Flex>
@@ -294,7 +283,6 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
-  newSpacePurchaseEnabled: PropTypes.bool,
   isTrialAvailable: PropTypes.bool,
   isTrialActive: PropTypes.bool,
   isTrialExpired: PropTypes.bool,
@@ -331,28 +319,6 @@ function PayingOnDemandOrgCopy({ grandTotal }) {
 
 PayingOnDemandOrgCopy.propTypes = {
   grandTotal: PropTypes.number.isRequired,
-};
-
-function NonPayingOrgCopyLegacy({ organizationId }) {
-  return (
-    <Typography testId="subscription-page.billing-copy">
-      <Heading className="section-title">Your payment details</Heading>
-      <Paragraph>
-        You need to provide us with your billing address and credit card details before creating
-        paid spaces or adding users beyond the free limit.
-      </Paragraph>
-      <TextLink
-        icon="Receipt"
-        testId="subscription-page.add-billing-button"
-        onClick={() => goToBillingPage(organizationId)}>
-        Enter payment details
-      </TextLink>
-    </Typography>
-  );
-}
-
-NonPayingOrgCopyLegacy.propTypes = {
-  organizationId: PropTypes.string.isRequired,
 };
 
 function NonPayingOrgCopy({ createSpace }) {
