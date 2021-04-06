@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { fromInternal } from 'widgets/PublicContentType';
 
 const orderedKeys = ['name', 'description', 'displayField', 'fields', 'sys'];
 
@@ -11,7 +12,7 @@ export default function getContentTypePreview(contentType) {
 }
 
 getContentTypePreview.fromData = (data) => {
-  return Promise.resolve(data).then(orderPreviewKeys).then(omitApiName);
+  return Promise.resolve(data).then(fromInternal).then(orderPreviewKeys);
 };
 
 // We rely on the fact the keys are displayed in the order they
@@ -25,9 +26,4 @@ function orderPreviewKeys(data) {
     {}
   );
   return _.defaults(ordered, data);
-}
-
-function omitApiName(data) {
-  data.fields = _.map(data.fields, (field) => _.omit(field, 'apiName'));
-  return data;
 }
