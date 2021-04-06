@@ -26,6 +26,7 @@ export default function EditorFieldTabs(props) {
         <Tab
           id="fields"
           onSelect={() => {
+            props.setCurrentTab('fields');
             go({ path: '^.fields' });
           }}
           selected={props.currentTab === 'fields'}>
@@ -36,6 +37,7 @@ export default function EditorFieldTabs(props) {
           id="preview"
           selected={props.currentTab === 'preview'}
           onSelect={() => {
+            props.setCurrentTab('preview');
             go({ path: '^.preview' });
           }}>
           JSON preview
@@ -45,6 +47,7 @@ export default function EditorFieldTabs(props) {
             id="sidebar_configuration"
             selected={props.currentTab === 'sidebar_configuration'}
             onSelect={() => {
+              props.setCurrentTab('sidebar_configuration');
               go({ path: '^.sidebar_configuration' });
             }}
             testId="sidebar-config-tab">
@@ -56,6 +59,7 @@ export default function EditorFieldTabs(props) {
             id="entry_editor_configuration"
             selected={props.currentTab === 'entry_editor_configuration'}
             onSelect={() => {
+              props.setCurrentTab('entry_editor_configuration');
               go({ path: '^.entry_editor_configuration' });
             }}
             className={styles.tabWithTag}
@@ -73,6 +77,7 @@ export default function EditorFieldTabs(props) {
 
 EditorFieldTabs.propTypes = {
   currentTab: PropTypes.string.isRequired,
+  setCurrentTab: PropTypes.func.isRequired,
   fieldsCount: PropTypes.number.isRequired,
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
 };

@@ -1,9 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import {
-  getDefaultContentType,
-  getPublishedVersionOfDefaultContentType,
-  getAllContentTypesInDefaultSpace,
-} from '../../../interactions/content_types';
+import { getDefaultContentType } from '../../../interactions/content_types';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 
@@ -14,9 +10,7 @@ describe('Sidebar configuration', () => {
     const interactions = [
       ...defaultRequestsMock(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-      getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
-      getPublishedVersionOfDefaultContentType.willReturnIt(),
     ];
 
     cy.visit(

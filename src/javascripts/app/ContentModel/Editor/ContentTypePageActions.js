@@ -93,7 +93,7 @@ export default function ContentTypePageActions(props) {
 }
 
 ContentTypePageActions.propTypes = {
-  isNew: PropTypes.bool.isRequired,
+  isNew: PropTypes.bool,
   canEdit: PropTypes.bool.isRequired,
   showMetadataDialog: PropTypes.object.isRequired,
   save: PropTypes.object.isRequired,

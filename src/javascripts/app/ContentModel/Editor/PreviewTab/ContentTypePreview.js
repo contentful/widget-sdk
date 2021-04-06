@@ -35,7 +35,7 @@ function ContentTypePreview(props) {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    loadPreview(!publishedVersion).then((preview) => {
+    loadPreview().then((preview) => {
       setPreview(preview);
       setLoading(false);
     });
