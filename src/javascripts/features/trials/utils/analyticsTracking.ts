@@ -11,7 +11,7 @@ export const EVENTS = {
   GET_IN_TOUCH: 'get_in_touch_clicked',
   HELP_LINK: 'help_link_clicked',
   TRIAL_TAG: 'trial_tag_clicked',
-  APP_TRIAL_START: 'app_trial_start_clicked',
+  START_APP_TRIAL_MODAL: 'app_trial_start_clicked',
   // Performance events
   APP_TRIAL_PERFORMANCE: 'app_trial_start_performance',
 } as const;
