@@ -203,7 +203,6 @@ const validateBulkActionResponse = (overrides = {}) => {
     {
       action: 'validate',
       payload: {
-        action: 'publish',
         entities: toCollectionMatcher({
           sys: {
             type: 'Link',
