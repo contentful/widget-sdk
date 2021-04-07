@@ -126,7 +126,7 @@ const useSpaceEnvContext = _useSpaceEnvContext as jest.Mock;
 
 describe('TrialTag', () => {
   beforeEach(() => {
-    (getVariation as jest.Mock).mockResolvedValue(false);
+    (getVariation as jest.Mock).mockResolvedValue(true);
     isOwnerOrAdmin.mockReturnValue(false);
 
     const mockedNow = new Date(today).valueOf();
@@ -141,6 +141,10 @@ describe('TrialTag', () => {
     await waitFor(() => screen.queryByTestId('enterprise_trial_tag'));
     expect(screen.queryByTestId('enterprise_trial_tag')).not.toBeInTheDocument();
     expect(screen.queryByTestId('trial_space_tag')).not.toBeInTheDocument();
+
+    expect(getOrganization).toHaveBeenCalledTimes(0);
+    expect(getTrial).toHaveBeenCalledTimes(0);
+    expect(getAppTrialSpaceKey).toHaveBeenCalledTimes(0);
   });
 
   describe('Enterprise trial', () => {
@@ -317,7 +321,6 @@ describe('TrialTag', () => {
 
   describe('App trial', () => {
     beforeEach(() => {
-      (getVariation as jest.Mock).mockResolvedValue(true);
       isOrgRoute.mockReturnValue(false);
       useSpaceEnvContext.mockReturnValue({
         currentSpaceData: trialSpace,
