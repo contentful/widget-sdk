@@ -4,12 +4,12 @@ import { createAppDefinitionsEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
 import { AppDefinitionWithBundle } from './AppHosting';
-import { AppBundleData, DataLink } from './HostingDropzone';
+import { AppBundleData } from './types';
 
 export async function createAppBundleFromFile(
   definition: AppDefinitionWithBundle,
   file: File | Blob
-): Promise<DataLink> {
+): Promise<AppBundleData> {
   const binary: string | ArrayBuffer | null = await new Promise((res) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -44,7 +44,7 @@ export async function createAppBundleFromFile(
     data: {
       upload: { sys: { type: 'Link', linkType: 'AppUpload', id: appUpload.sys.id } },
     },
-  }) as Promise<DataLink>;
+  }) as Promise<AppBundleData>;
 }
 
 export async function getAppBundle(

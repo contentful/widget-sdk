@@ -56,4 +56,7 @@ export const styles = {
   validationErrorIcon: css({
     marginLeft: tokens.spacing2Xs,
   }),
+  hostingTag: css({
+    marginLeft: tokens.spacingXs,
+  }),
 };

@@ -1,8 +1,9 @@
-import { render, wait } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { noop } from 'lodash';
 import React from 'react';
 import mockDefinitions from '../__mocks__/mockDefinitions.json';
 import { AppDetails } from './AppDetails';
+import { HostingStateProvider } from './HostingStateProvider';
 
 jest.mock('../ManagementApiClient');
 
@@ -24,26 +25,33 @@ const props = {
   setDirty: jest.fn(),
 };
 
+const renderInContext = (props) =>
+  render(
+    <HostingStateProvider defaultValue={false} bundles={{ items: [] }}>
+      <AppDetails {...props} />
+    </HostingStateProvider>
+  );
+
 describe('AppDetails', () => {
   describe('When passed a tab that is implemented', () => {
     it('gos to the general tab', async () => {
       const localProps: any = { ...props, tab: 'events' };
-      render(<AppDetails {...localProps} />);
+      renderInContext({ ...localProps });
 
-      await wait();
-
-      expect(props.goToTab).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(props.goToTab).not.toHaveBeenCalled();
+      });
     });
   });
 
   describe('When passed a tab that is not implemented', () => {
     it('gos to the general tab', async () => {
       const localProps: any = { ...props, tab: 'not_a_real_tab' };
-      render(<AppDetails {...localProps} />);
+      renderInContext({ ...localProps });
 
-      await wait();
-
-      expect(localProps.goToTab).toHaveBeenCalledWith('');
+      await waitFor(() => {
+        expect(localProps.goToTab).toHaveBeenCalledWith('');
+      });
     });
   });
 });

@@ -10,7 +10,7 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import moment from 'moment/moment';
-import { AppBundleData } from './HostingDropzone';
+import { AppBundleData } from './types';
 import { getAppBundle } from './appHostingApi';
 import { useAsync } from 'core/hooks';
 import { AppDefinitionWithBundle } from './AppHosting';

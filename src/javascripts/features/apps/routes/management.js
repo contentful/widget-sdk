@@ -7,6 +7,7 @@ import { getAppDefinitionLoader } from 'features/apps-core';
 import { NewAppRoute } from '../management/NewAppRoute';
 import { go } from 'states/Navigator';
 import { AppDetailsRoute } from '../management/AppDetails/AppDetailsRoute';
+import { useAsync } from 'core/hooks';
 
 function withDefinitions(Component) {
   function WithDefinitions(props) {
@@ -39,6 +40,26 @@ function withDefinitions(Component) {
   };
 
   return WithDefinitions;
+}
+
+function withBundles(Component) {
+  function WithBundles(props) {
+    const { isLoading, data: bundles } = useAsync(
+      React.useCallback(
+        () => getAppDefinitionLoader(props.orgId).getAppBundles(props.definitionId),
+        [props.orgId, props.definitionId]
+      )
+    );
+
+    return <Component {...props} isLoadingBundles={isLoading} bundles={bundles} />;
+  }
+
+  WithBundles.propTypes = {
+    orgId: PropTypes.string.isRequired,
+    definitionId: PropTypes.string.isRequired,
+  };
+
+  return WithBundles;
 }
 
 function withCanManageApps(Component, options = {}) {
@@ -98,8 +119,8 @@ export const managementRoute = {
     {
       name: 'definitions',
       url: '/definitions/:definitionId/:tab',
-      component: withDefinitions(
-        withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true })
+      component: withBundles(
+        withDefinitions(withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true }))
       ),
     },
   ],

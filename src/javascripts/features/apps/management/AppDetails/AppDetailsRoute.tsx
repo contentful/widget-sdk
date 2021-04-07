@@ -9,6 +9,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingState } from 'features/loading-state';
 import { HostingStateProvider } from './HostingStateProvider';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { AppBundleData } from '../AppEditor';
 
 interface Event {
   enabled: boolean;
@@ -18,11 +19,13 @@ interface Event {
 
 interface Props {
   definitions: AppDefinition[];
+  bundles: { items: AppBundleData[] };
   definitionId: string;
   orgId: string;
   tab: string;
   isLoadingCanManageApps: boolean;
   isLoadingDefinitions: boolean;
+  isLoadingBundles: boolean;
 }
 
 export function AppDetailsRoute(props: Props) {
@@ -33,7 +36,11 @@ export function AppDetailsRoute(props: Props) {
   );
   const requestLeaveConfirmation = React.useRef<Function | undefined>();
   const isDirty = React.useRef(false);
-  const isLoading = [props.isLoadingCanManageApps, props.isLoadingDefinitions].some(Boolean);
+  const isLoading = [
+    props.isLoadingCanManageApps,
+    props.isLoadingDefinitions,
+    props.isLoadingBundles,
+  ].some(Boolean);
 
   React.useEffect(() => {
     async function getEvents() {
@@ -100,7 +107,7 @@ export function AppDetailsRoute(props: Props) {
     isDirty.current = value;
   }
 
-  if (isLoading || !definition || !events)
+  if (isLoading || !definition || !events || !props.bundles)
     return (
       <Workbench>
         <DocumentTitle title="Apps" />
@@ -110,10 +117,13 @@ export function AppDetailsRoute(props: Props) {
     );
 
   return (
-    <HostingStateProvider defaultValue={!definition.src && !!definition.bundle}>
+    <HostingStateProvider
+      defaultValue={!definition.src && !!definition.bundle}
+      bundles={props.bundles}>
       <AppDetails
         {...props}
         definition={definition}
+        bundles={props.bundles}
         events={events}
         goToTab={goToTab}
         goToListView={goToListView}

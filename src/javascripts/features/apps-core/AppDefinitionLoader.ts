@@ -8,6 +8,7 @@ export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
     getKeysForAppDefinition,
     getAppEvents,
     getAppSigningSecret,
+    getAppBundles,
   };
 
   async function getById(id) {
@@ -107,5 +108,12 @@ export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
       path: ['app_definitions', appDefinitionId, 'signing_secret'],
     });
     return redactedValue;
+  }
+
+  async function getAppBundles(appDefinitionId) {
+    return await orgEndpoint({
+      method: 'GET',
+      path: ['app_definitions', appDefinitionId, 'app_bundles'],
+    });
   }
 }

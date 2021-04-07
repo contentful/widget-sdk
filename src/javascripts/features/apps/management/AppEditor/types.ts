@@ -19,3 +19,30 @@ export interface ParameterDefinition {
     false?: string;
   };
 }
+
+// TODO: replace with types from management
+export interface DataLink {
+  sys: {
+    id: string;
+    type: 'Link';
+    linkType: string;
+  };
+}
+export interface AppBundleData {
+  files: Array<{
+    md5: string;
+    name: string;
+    size: number;
+  }>;
+  sys: {
+    appDefinition: DataLink;
+    createdAt: string;
+    createdBy: DataLink;
+    id: string;
+    organization: DataLink;
+    type: 'AppBundle';
+    updatedAt: string;
+    updatedBy: DataLink;
+  };
+  comment?: string;
+}
