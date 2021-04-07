@@ -8,7 +8,7 @@ import { AppBundleData, DataLink } from './HostingDropzone';
 
 export async function createAppBundleFromFile(
   definition: AppDefinitionWithBundle,
-  file: File
+  file: File | Blob
 ): Promise<DataLink> {
   const binary: string | ArrayBuffer | null = await new Promise((res) => {
     const reader = new FileReader();
