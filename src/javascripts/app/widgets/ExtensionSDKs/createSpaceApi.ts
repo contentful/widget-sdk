@@ -1,3 +1,4 @@
+import { TagsRepoType } from 'features/content-tags';
 import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
 import { CONTENT_ENTITY_UPDATED_EVENT, PubSubClient } from 'services/PubSubService';
 import { getToken } from 'Authentication';
@@ -36,10 +37,6 @@ type InternalSpaceAPI = SpaceAPI & {
   executeRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;
   validateRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;
   validateEntry: (data: any, version: number) => Promise<any>;
-  readTags: (skip: number, limit: number) => Promise<any>;
-  createTag: (id: string, name: string, version: number) => Promise<any>;
-  deleteTag: (id: string, version: number) => Promise<boolean>;
-  updateTag: (id: string, name: string, version: number) => Promise<any>;
   signAssetUrls: (data: any) => Promise<any>;
   onEntityChanged: (
     entityType: string,
@@ -64,7 +61,7 @@ export function createSpaceApi({
   pubSubClient?: PubSubClient;
   environmentIds: string[];
   spaceId: string;
-  tagsRepo: any;
+  tagsRepo: TagsRepoType;
   usersRepo: any;
   readOnly?: boolean;
   appId?: string;
@@ -101,6 +98,10 @@ export function createSpaceApi({
     updateAsset: makeReadOnlyGuardedMethod(readOnly, cma.updateAsset),
     updateContentType: makeReadOnlyGuardedMethod(readOnly, cma.updateContentType),
     updateEntry: makeReadOnlyGuardedMethod(readOnly, cma.updateEntry),
+    readTags: tagsRepo.readTags,
+    createTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.createTag),
+    deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
+    updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
 
     // Implementation in this module:
     getCachedContentTypes,
@@ -115,10 +116,6 @@ export function createSpaceApi({
     executeRelease: makeReadOnlyGuardedMethod(readOnly, cma.executeRelease),
     validateRelease: makeReadOnlyGuardedMethod(readOnly, cma.validateRelease),
     validateEntry: makeReadOnlyGuardedMethod(readOnly, cma.validateEntry),
-    readTags: tagsRepo.readTags,
-    createTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.createTag),
-    deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
-    updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
     onEntityChanged,
 
     signRequest: makeReadOnlyGuardedMethod(readOnly, makeSignRequest(appId)),

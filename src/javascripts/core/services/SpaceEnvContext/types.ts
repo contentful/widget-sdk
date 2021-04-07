@@ -90,7 +90,7 @@ export interface Sys {
 }
 
 export interface LinkSys {
-  type: string;
+  type: 'Link';
   id: string;
   linkType: string;
 }

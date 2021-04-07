@@ -10,7 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
-    "@contentful/app-sdk": "^3.32.0",
+    "@contentful/app-sdk": "^3.33.0",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "0.17.1",
     "@contentful/entity-search": "0.16.0",

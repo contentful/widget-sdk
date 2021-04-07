@@ -9,7 +9,7 @@ export {
 export { TagPropType } from 'features/content-tags/core/TagPropType';
 export { create as createTagsRepo } from 'features/content-tags/core/state/TagsRepo';
 export { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
-export { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
+export { TagsRepoContext, TagsRepoType } from 'features/content-tags/core/state/TagsRepoContext';
 export { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 export { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 export { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
