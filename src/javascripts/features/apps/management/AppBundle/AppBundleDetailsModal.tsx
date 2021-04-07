@@ -50,23 +50,23 @@ const styles = {
   }),
 };
 
-const parseFileSize = (size: number): string => {
+export const parseFileSize = (size: number): string => {
   const kbInBytes = 1000;
   const mbInBytes = kbInBytes * 1000;
 
   if (size > mbInBytes) {
-    return `${parseFloat((size / mbInBytes).toString()).toFixed(2)} Kb`;
+    return `${parseFloat((size / mbInBytes).toString()).toFixed(2)} Mb`;
   } else if (size > kbInBytes) {
-    return `${parseFloat((size / kbInBytes).toString()).toFixed(2)} Mb`;
+    return `${parseFloat((size / kbInBytes).toString()).toFixed(2)} Kb`;
   } else {
     return `${size} b`;
   }
 };
 
-const splitFileAndPath = (fullPath: string): Record<string, string> => {
-  const indexOfFileNameStart = fullPath.lastIndexOf('/');
-  const name = indexOfFileNameStart > -1 ? fullPath.slice(indexOfFileNameStart) : fullPath;
-  const path = indexOfFileNameStart > -1 ? fullPath.slice(0, indexOfFileNameStart) : '';
+export const splitFileAndPath = (fullPath: string): { name: string; path: string } => {
+  const indexOfFileNameStart = fullPath.lastIndexOf('/') + 1;
+  const name = fullPath.substring(indexOfFileNameStart);
+  const path = fullPath.substring(0, indexOfFileNameStart);
 
   return {
     name,
