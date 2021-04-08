@@ -16,6 +16,7 @@ import { AppEditor, validate } from './AppEditor';
 import { ManagementApiClient } from './ManagementApiClient';
 import { AppDefinition } from 'contentful-management/types';
 import { ValidationError } from './AppEditor';
+import { HostingStateProvider } from './AppDetails/HostingStateProvider';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -128,14 +129,18 @@ export class NewApp extends React.Component<NewAppProps, NewAppState> {
               to get started.
             </Paragraph>
           </Note>
-
-          <AppEditor
-            definition={definition}
-            onChange={(definition) => this.setState({ definition })}
-            errors={this.state.errors}
-            onErrorsChange={(errors) => this.setState({ errors })}
-            disabled={busy}
-          />
+          <HostingStateProvider
+            defaultValue={false}
+            bundles={{ items: [] }}
+            orgId={this.props.orgId}>
+            <AppEditor
+              definition={definition}
+              onChange={(definition) => this.setState({ definition })}
+              errors={this.state.errors}
+              onErrorsChange={(errors) => this.setState({ errors })}
+              disabled={busy}
+            />
+          </HostingStateProvider>
         </Workbench.Content>
       </Workbench>
     );
