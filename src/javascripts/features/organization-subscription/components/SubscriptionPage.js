@@ -181,7 +181,7 @@ export function SubscriptionPage({
                   <SkeletonBodyText numberOfLines={4} offsetTop={29} />
                 </SkeletonContainer>
               ) : (
-                <BasePlan basePlan={basePlan} organizationId={organizationId} />
+                <BasePlan basePlan={basePlan} />
               )}
               {rightColumnHasContent && (
                 <Flex flexDirection="column" marginTop="spacingXl">

@@ -40,7 +40,7 @@ export const ExpiredTrialSpaceHome = () => {
   const isExpiredSpace = isExpiredTrialSpace(currentSpaceData);
 
   useEffect(() => {
-    if (!isExpiredSpace) {
+    if (!currentOrganizationId || !isExpiredSpace) {
       return;
     }
 
@@ -52,7 +52,7 @@ export const ExpiredTrialSpaceHome = () => {
       });
 
       if (isAppTrialEnabled) {
-        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId as string);
+        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
         setAppTrialFeature(appTrial);
 
         if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {

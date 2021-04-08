@@ -68,7 +68,7 @@ export function createSpaceEndpoint(
   baseUrl: string,
   spaceId: string,
   auth: AuthParamsType,
-  envId: string
+  envId?: string | null
 ): SpaceEndpoint {
   const spaceEndpoint = create<'Space'>(withBaseUrl, auth) as SpaceEndpoint;
 

@@ -93,6 +93,10 @@ export const SpacePlansTable = ({
   };
 
   const fetchSpacesUsage = useCallback(() => {
+    if (!organizationId) {
+      throw new Error('Organization id needs to be defined');
+    }
+
     const orgEndpoint = createOrganizationEndpoint(organizationId);
     return getSpacesUsage(orgEndpoint, {
       order: buildSortParam(sortState),

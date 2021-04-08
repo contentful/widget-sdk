@@ -23,7 +23,7 @@ import { ApiEndpoint, OrganizationEndpoint, SpaceEndpoint, UserEndpoint } from '
  * @param {string} orgId
  * @returns {function(): Promise<Object>}
  */
-export function createOrganizationEndpoint(orgId): OrganizationEndpoint {
+export function createOrganizationEndpoint(orgId: string): OrganizationEndpoint {
   return EndpointImpl.createOrganizationEndpoint(apiUrl(), orgId, auth);
 }
 
@@ -37,7 +37,7 @@ export function createOrganizationEndpoint(orgId): OrganizationEndpoint {
  * @returns {function<T>(): Promise<T>}
  */
 
-export function createSpaceEndpoint(spaceId, envId): SpaceEndpoint {
+export function createSpaceEndpoint(spaceId: string, envId?: string | null): SpaceEndpoint {
   return EndpointImpl.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
 }
 

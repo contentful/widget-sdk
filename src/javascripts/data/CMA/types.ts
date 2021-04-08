@@ -29,7 +29,7 @@ export type BaseEndpoint<Scope> = {
 };
 
 export type UserEndpoint = BaseEndpoint<'User'>;
-export type SpaceEndpoint = BaseEndpoint<'Space'> & { envId?: string; spaceId?: string };
+export type SpaceEndpoint = BaseEndpoint<'Space'> & { envId?: string | null; spaceId?: string };
 export type ApiEndpoint = BaseEndpoint<'Api'>;
 export type OrganizationEndpoint = BaseEndpoint<'Organization'>;
 export type AppDefinitionEndpoint = BaseEndpoint<'AppDefinition'>;
