@@ -12,7 +12,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import { oauthUrl } from 'Config';
-import { deleteUserIdentityData } from 'app/UserProfile/Settings/AccountRepository';
+import { deleteUserIdentityData } from '../services/AccountRepository';
 
 import GithubIcon from 'svg/github-icon.svg';
 import GoogleIcon from 'svg/google-icon.svg';

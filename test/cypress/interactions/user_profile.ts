@@ -8,7 +8,6 @@ const updateDefaultData = require('../fixtures/responses/user_account/udated-def
 const updatePasswordDefaultData = require('../fixtures/responses/user_account/updated-password-default-data.json');
 const updateIdentityLoginData = require('../fixtures/responses/user_account/updated-password-identity-login.json');
 const currentPasswordValidationFailedData = require('../fixtures/responses/user_account/current-password-validation-failed-data.json');
-const invalidCurrentPasswordData = require('../fixtures/responses/user_account/invalid-current-password.json');
 const insecureNewPasswordData = require('../fixtures/responses/user_account/insecure-new-password.json');
 
 const verify2FASuccess = require('../fixtures/responses/user_account/2fa-verify-success.json');
@@ -256,15 +255,12 @@ export const deleteIdentity = {
   },
 };
 
-function queryDeleteUserAccount(): RequestOptions {
+function queryDeleteUserAccount(body): RequestOptions {
   return {
     method: 'POST',
     path: '/users/me/user_cancellations',
     headers: { ...defaultHeader, 'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json' },
-    body: {
-      reason: 'other',
-      description: '',
-    },
+    body,
   };
 }
 
@@ -274,9 +270,33 @@ export const deleteUserAccount = {
       provider: 'user_profile',
       state: 'user profile default login',
       uponReceiving: `a request to delete the user account`,
-      withRequest: queryDeleteUserAccount(),
+      withRequest: queryDeleteUserAccount({
+        reason: 'other',
+        description: '',
+        password: 'correct-password',
+      }),
       willRespondWith: {
         status: 201,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+      },
+    }).as('deleteUserAccount');
+
+    return '@deleteUserAccount';
+  },
+  willReturnError() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to delete the user account with invalid password`,
+      withRequest: queryDeleteUserAccount({
+        reason: 'other',
+        description: '',
+        password: 'invalid-current-password',
+      }),
+      willRespondWith: {
+        status: 403,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },

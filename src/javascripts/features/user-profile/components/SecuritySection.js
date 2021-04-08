@@ -14,7 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import { authUrl, websiteUrl } from 'Config';
-import { getUserTotp, deleteUserTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { getUserTotp, deleteUserTotp } from '../services/AccountRepository';
 import { useAsyncFn } from 'core/hooks';
 import { window } from 'core/services/window';
 import { joinWithAnd } from 'utils/StringUtils';

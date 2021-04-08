@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, within, wait, screen } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import { enableTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { enableTotp } from '../services/AccountRepository';
 import { Enable2FAModal } from './Enable2FAModal';
 import { createQRCodeDataURI } from '../utils/createQRCodeDataURI';
 
@@ -10,7 +10,7 @@ jest.mock('../utils/createQRCodeDataURI', () => ({
   createQRCodeDataURI: jest.fn(),
 }));
 
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('../services/AccountRepository', () => ({
   enableTotp: jest.fn(),
 }));
 

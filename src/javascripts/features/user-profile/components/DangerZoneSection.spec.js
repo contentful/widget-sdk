@@ -1,40 +1,27 @@
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 
-import { cancelUser } from 'Authentication';
 import { DangerZoneSection } from './DangerZoneSection';
 
-describe('DangerZoneSection', () => {
-  const build = () => {
-    return render(<DangerZoneSection singleOwnerOrganizations={[]} />);
+function build(customProps) {
+  const props = {
+    singleOwnerOrganizations: [],
+    ...customProps,
   };
+  render(<DangerZoneSection {...props} />);
+}
 
+describe('DangerZoneSection', () => {
   beforeEach(() => {
-    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+    jest.spyOn(ModalLauncher, 'open');
   });
 
-  it('should not call cancelUser if ModalLauncher.open resolves false', async () => {
-    ModalLauncher.open.mockResolvedValueOnce(false);
+  it('should open Modal if "Delete my account" button is clicked', async () => {
+    build();
 
-    const { queryByTestId } = build();
+    fireEvent.click(screen.queryByTestId('delete-cta'));
 
-    fireEvent.click(queryByTestId('delete-cta'));
-
-    await wait();
-
-    expect(cancelUser).not.toBeCalled();
-  });
-
-  it('should call cancelUser if ModalLauncher.open does not resolve false', async () => {
-    ModalLauncher.open.mockResolvedValueOnce();
-
-    const { queryByTestId } = build();
-
-    fireEvent.click(queryByTestId('delete-cta'));
-
-    await wait();
-
-    expect(cancelUser).toBeCalled();
+    await waitFor(() => expect(screen.queryByTestId('delete-user-modal')).not.toBeNull());
   });
 });

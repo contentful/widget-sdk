@@ -28,3 +28,13 @@ export interface Identity {
   sys: Sys;
   provider: 'google_oauth2' | 'github' | 'twitter';
 }
+
+/* eslint-disable @typescript-eslint/camelcase */
+export enum AccountDeletionReasons {
+  other_solution = "I've found another solution",
+  not_useful = "I don't find it useful",
+  dont_understand = "I don't understand how to use it",
+  temporary = "It's temporary. I'll be back",
+  other = 'Other',
+}
+/* eslint-enable @typescript-eslint/camelcase */

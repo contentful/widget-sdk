@@ -5,7 +5,7 @@ export type RequestMethod = 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE';
 export type RequestConfig = {
   query?: Record<string, any>;
   method: RequestMethod;
-  path: string | (string | null | undefined)[];
+  path?: string | (string | null | undefined)[];
   version?: number;
   data?: any;
 };

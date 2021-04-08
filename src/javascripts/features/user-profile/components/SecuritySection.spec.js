@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification, ModalLauncher } from '@contentful/forma-36-react-components';
 import { window } from 'core/services/window';
 
-import { getUserTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { getUserTotp } from '../services/AccountRepository';
 import { SecuritySection } from './SecuritySection';
 
 jest.mock('core/services/window', () => {
@@ -22,7 +22,7 @@ jest.mock('core/services/window', () => {
   };
 });
 
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('../services/AccountRepository', () => ({
   getUserTotp: jest.fn(),
   deleteUserTotp: jest.fn(),
 }));

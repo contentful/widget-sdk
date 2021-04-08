@@ -4,7 +4,7 @@ import { Workbench, Grid } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import ErrorState from 'app/common/ErrorState';
-import { fetchUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { fetchUserData } from '../services/AccountRepository';
 import { useAsync } from 'core/hooks';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingEmptyState } from 'features/loading-state';
@@ -24,7 +24,7 @@ export function UserProfilePage() {
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
-      const user = (await fetchUserData()) as UserData;
+      const user = await fetchUserData();
       const orgs = await getOrganizations();
       // We fetch the user here and set it above so that children
       // components can update the user without needing to fetch

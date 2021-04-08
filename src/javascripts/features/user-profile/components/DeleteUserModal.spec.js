@@ -1,116 +1,158 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
-import { Notification } from '@contentful/forma-36-react-components';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-import { deleteUserAccount } from 'app/UserProfile/Settings/AccountRepository';
+import { deleteUserAccount } from '../services/AccountRepository';
 import { DeleteUserModal } from './DeleteUserModal';
 
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('../services/AccountRepository', () => ({
   deleteUserAccount: jest.fn(),
 }));
 
-describe('DeleteUser', () => {
-  const build = (custom) => {
-    const opts = Object.assign(
-      {},
-      {
-        singleOwnerOrganizations: [],
-        onConfirm: () => {},
-        onCancel: () => {},
-      },
-      custom
-    );
+const mockPassword = 'password123';
 
-    return render(<DeleteUserModal isShown {...opts} />);
+function build(customProps) {
+  const props = {
+    singleOwnerOrganizations: [],
+    onConfirm: () => {},
+    onCancel: () => {},
+    ...customProps,
   };
 
+  render(<DeleteUserModal isShown {...props} />);
+
+  return {
+    get passwordInput() {
+      return screen.queryByTestId('password').querySelector('input');
+    },
+    get confirmButton() {
+      return screen.queryByTestId('delete-user-confirm');
+    },
+    get cancelButton() {
+      return screen.queryByTestId('delete-user-cancel');
+    },
+    getRadioByTestId(testId) {
+      return screen.queryByTestId(testId).querySelector('input');
+    },
+  };
+}
+
+describe('DeleteUserModal', () => {
   beforeEach(() => {
     deleteUserAccount.mockResolvedValueOnce();
   });
 
   it('should default to selecting the "other" reason', () => {
-    const { queryByTestId } = build();
-
-    const otherRadio = queryByTestId('reason-other').querySelector('input');
+    const { getRadioByTestId } = build();
+    const otherRadio = getRadioByTestId('reason-other');
 
     expect(otherRadio).toHaveAttribute('checked');
   });
 
   it('should call onCancel if the cancel button is pressed', () => {
     const onCancel = jest.fn();
+    const { cancelButton } = build({ onCancel });
 
-    const { queryByTestId } = build({ onCancel });
-
-    fireEvent.click(queryByTestId('cancel'));
-
+    fireEvent.click(cancelButton);
     expect(onCancel).toHaveBeenCalled();
   });
 
+  it('should not be able to submit if a password was not given', () => {
+    const { confirmButton } = build();
+
+    expect(confirmButton).toBeDisabled();
+    fireEvent.click(confirmButton);
+    expect(deleteUserAccount).not.toHaveBeenCalled();
+  });
+
   it('should submit the API request with the reason key and empty details if no details are given', async () => {
-    const { queryByTestId } = build();
+    const { getRadioByTestId, passwordInput, confirmButton } = build();
+    const notUsefulRadio = getRadioByTestId('reason-not_useful');
 
-    fireEvent.click(queryByTestId('reason-not_useful').querySelector('input'));
-
-    fireEvent.click(queryByTestId('confirm-delete-account-button'));
+    fireEvent.click(notUsefulRadio);
+    fireEvent.change(passwordInput, {
+      target: { value: mockPassword },
+    });
+    fireEvent.click(confirmButton);
 
     await waitFor(() =>
       expect(deleteUserAccount).toHaveBeenCalledWith({
         reason: 'not_useful',
         description: '',
+        password: mockPassword,
       })
     );
   });
 
   it('should submit the API request with the reason key and details if details are given', async () => {
-    const { queryByTestId } = build();
+    const { getRadioByTestId, passwordInput, confirmButton } = build();
 
-    fireEvent.click(queryByTestId('reason-dont_understand').querySelector('input'));
-    fireEvent.change(queryByTestId('cancellation-details'), {
-      target: { value: 'This is too complicated!!!!' },
+    const dontUnderstandRadio = getRadioByTestId('reason-dont_understand');
+    const additionalDetailsTextarea = screen
+      .queryByTestId('cancellation-details')
+      .querySelector('textarea');
+
+    fireEvent.click(dontUnderstandRadio);
+    fireEvent.change(additionalDetailsTextarea, {
+      target: { value: 'This is too complicated!' },
     });
-    fireEvent.click(queryByTestId('confirm-delete-account-button'));
+    fireEvent.change(passwordInput, {
+      target: { value: mockPassword },
+    });
+    fireEvent.click(confirmButton);
 
     await waitFor(() =>
       expect(deleteUserAccount).toHaveBeenCalledWith({
         reason: 'dont_understand',
-        description: 'This is too complicated!!!!',
+        description: 'This is too complicated!',
+        password: mockPassword,
       })
     );
   });
 
   it('should call onConfirm if the API request was successful', async () => {
     const onConfirm = jest.fn();
+    const { passwordInput, confirmButton } = build({ onConfirm });
 
-    const { queryByTestId } = build({ onConfirm });
-
-    fireEvent.click(queryByTestId('confirm-delete-account-button'));
+    fireEvent.change(passwordInput, {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(confirmButton);
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalled());
   });
 
-  it('should show a notification if there was an error while deleting the user from the API', async () => {
-    jest.spyOn(Notification, 'error').mockImplementation(() => {});
-    deleteUserAccount.mockReset().mockRejectedValueOnce();
+  it('should show an error message if there was an error while deleting the user from the API', async () => {
+    const error = new Error('Something went wrong');
+    deleteUserAccount.mockReset().mockRejectedValueOnce(error);
 
     const onConfirm = jest.fn();
+    const { passwordInput, confirmButton } = build({ onConfirm });
 
-    const { queryByTestId } = build({ onConfirm });
+    fireEvent.change(passwordInput, {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(confirmButton);
 
-    fireEvent.click(queryByTestId('confirm-delete-account-button'));
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('password').querySelector('p[class^="ValidationMessage"]')
+      ).toBeVisible();
+    });
 
-    await waitFor(() => expect(Notification.error).toHaveBeenCalled());
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
   it('should show a warning if any orgs are only owned by this user', () => {
-    const { queryByTestId } = build({ singleOwnerOrganizations: [{ name: 'Awesome org' }] });
+    build({ singleOwnerOrganizations: [{ name: 'Awesome org' }] });
 
-    expect(queryByTestId('single-owner-orgs-warning')).toBeVisible();
+    const warning = screen.queryByTestId('single-owner-orgs-warning');
+    expect(warning).toBeVisible();
   });
 
   it('should not show a warning if no orgs are only owned by this user', () => {
-    const { queryByTestId } = build({ singleOwnerOrganizations: [] });
+    build({ singleOwnerOrganizations: [] });
 
-    expect(queryByTestId('single-owner-orgs-warning')).toBeNull();
+    const warning = screen.queryByTestId('single-owner-orgs-warning');
+    expect(warning).toBeNull();
   });
 });
