@@ -18,7 +18,7 @@ export async function createZipFromFiles(files: FileWithPath[]) {
   const isOneFile = hasSameRootFolder(files);
 
   files.forEach((file) => {
-    // Identify folders by path and remove empty elements
+    // Identify folders by path
     const folders = file.path.split('/').filter((folder) => folder.length > 0);
     if (isOneFile) {
       // remove root folder
@@ -27,7 +27,6 @@ export async function createZipFromFiles(files: FileWithPath[]) {
     // add file to zip instance
     zipFileFromPath(zip, file, folders);
   });
-
   return await zip.generateAsync({ type: 'blob' });
 }
 

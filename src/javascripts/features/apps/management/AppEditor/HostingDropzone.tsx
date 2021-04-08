@@ -3,14 +3,14 @@ import { useDropzone } from 'react-dropzone';
 
 import { styles } from './hostingDropzoneStyles';
 import { styles as appEditorStyles } from './styles';
-import { createAppBundleFromFile } from './appHostingApi';
+import { createBundle } from './appHostingApi';
 import { AppDefinitionWithBundle } from './AppHosting';
-import { createZipFromFiles } from './zipFiles';
 import { css } from 'emotion';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
 import { AppBundleData } from './types';
 
 import { HelpText, Notification, Spinner, Paragraph } from '@contentful/forma-36-react-components';
+import { validateBundle } from './bundleValidation';
 
 enum DropZoneStatus {
   ACTIVE,
@@ -37,36 +37,18 @@ export function HostingDropzone({
   const { addBundle } = React.useContext(HostingStateContext);
 
   const onDrop = async (acceptedFiles: File[]) => {
-    let zipFile: File | Blob | null = null;
-
-    if (acceptedFiles.length < 1) {
-      Notification.error('You tried to deploy an empty folder');
-      return;
-    }
-    setDropzoneStatus(DropZoneStatus.LOADING);
-    try {
-      // File is already one zip file
-      if (acceptedFiles.length === 1 && acceptedFiles[0].type === 'application/zip') {
-        zipFile = acceptedFiles[0];
-      } else {
-        zipFile = await createZipFromFiles(acceptedFiles as FileWithPath[]);
+    const errorMessage = await validateBundle(acceptedFiles);
+    if (errorMessage) {
+      Notification.error(errorMessage, { title: 'Invalid bundle' });
+    } else {
+      setDropzoneStatus(DropZoneStatus.LOADING);
+      const bundle = await createBundle(acceptedFiles, definition);
+      if (bundle) {
+        onAppBundleCreated(bundle);
+        addBundle(bundle);
       }
-      if (!zipFile) {
-        Notification.error('Something went wrong while uploading your deploy. Please try again.');
-        setDropzoneStatus(DropZoneStatus.IDLE);
-        return;
-      }
-
-      const bundle = await createAppBundleFromFile(definition, zipFile);
-      Notification.success('Save your app to activate this bundle for all of its installations.', {
-        title: 'Bundle successfully uploaded! ',
-      });
-      onAppBundleCreated(bundle);
-      addBundle(bundle);
-    } catch (e) {
-      console.error(e);
-      Notification.error('Something went wrong while uploading your deploy. Please try again.');
     }
+
     setDropzoneStatus(DropZoneStatus.IDLE);
   };
 

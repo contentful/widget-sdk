@@ -4,7 +4,33 @@ import { createAppDefinitionsEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
 import { AppDefinitionWithBundle } from './AppHosting';
+
+import { createZipFromFiles } from './zipFiles';
+import { Notification } from '@contentful/forma-36-react-components';
 import { AppBundleData } from './types';
+import { FileWithPath } from './HostingDropzone';
+
+export async function createBundle(files: File[], definition: AppDefinitionWithBundle) {
+  let zipFile: File | Blob | null = null;
+  try {
+    // File is already one zip file
+    if (files.length === 1 && files[0].type === 'application/zip') {
+      zipFile = files[0];
+    } else {
+      zipFile = await createZipFromFiles(files as FileWithPath[]);
+    }
+    const bundle = await createAppBundleFromFile(definition, zipFile);
+    Notification.success('Save your app to activate this bundle for all of its installations.', {
+      title: 'Bundle successfully uploaded! ',
+    });
+    return bundle;
+  } catch (e) {
+    Notification.error(
+      e.data?.message || 'Something went wrong while uploading your deploy. Please try again.',
+      { title: e.data?.message ? 'Invalid bundle' : undefined }
+    );
+  }
+}
 
 export async function createAppBundleFromFile(
   definition: AppDefinitionWithBundle,
