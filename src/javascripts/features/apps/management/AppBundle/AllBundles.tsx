@@ -22,7 +22,7 @@ export const AllBundles: React.FC<AllBundlesProps> = ({
   savedDefinition,
   onChange,
 }) => {
-  const { bundles, setIsAppHosting } = React.useContext(HostingStateContext);
+  const { bundles, setIsAppHosting, removeBundle } = React.useContext(HostingStateContext);
 
   const setNewAppBundle = (bundle: AppBundleData) => {
     setIsAppHosting(true);
@@ -42,6 +42,7 @@ export const AllBundles: React.FC<AllBundlesProps> = ({
         return id !== definition.bundle?.sys.id && id !== savedDefinition.bundle?.sys.id ? (
           <BundleCard
             setNewAppBundle={setNewAppBundle}
+            removeBundle={removeBundle}
             className={styles.cardSpacing}
             key={bundle.sys.id}
             bundle={bundle}

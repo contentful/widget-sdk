@@ -88,3 +88,19 @@ export async function getAppBundle(
     path: [defId, 'app_bundles', bundleId],
   });
 }
+
+export async function deleteAppBundle(
+  orgId: string,
+  defId: string,
+  bundleId: string
+): Promise<AppBundleData> {
+  const bundleEndpoint = createAppDefinitionsEndpoint(
+    Config.apiUrl(`organizations/${orgId}`),
+    Auth
+  );
+
+  return bundleEndpoint({
+    method: 'DELETE',
+    path: [defId, 'app_bundles', bundleId],
+  });
+}

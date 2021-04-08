@@ -6,6 +6,7 @@ interface HostingStateContextValue {
   setIsAppHosting: (val: boolean) => void;
   bundles: AppBundleData[];
   addBundle: (newBundle: AppBundleData) => void;
+  removeBundle: (newBundle: AppBundleData) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -29,6 +30,14 @@ export const HostingStateProvider = ({
     setBundle,
   ]);
 
+  const removeBundle = React.useCallback(
+    (bundleToRemove) => {
+      const newBundles = savedBundles.filter(({ sys: { id } }) => id !== bundleToRemove.sys.id);
+      setBundle(newBundles);
+    },
+    [savedBundles, setBundle]
+  );
+
   return (
     <HostingStateContext.Provider
       value={{
@@ -36,6 +45,7 @@ export const HostingStateProvider = ({
         setIsAppHosting,
         bundles: savedBundles,
         addBundle,
+        removeBundle,
       }}>
       {children}
     </HostingStateContext.Provider>
