@@ -32,6 +32,7 @@ export default ({
   environment,
   contentTypes,
   pubSubClient,
+  cma,
 }) => {
   const spaceContext = getModule('spaceContext');
   const isMasterEnvironment = isMaster(getEnvironment(space));
@@ -240,6 +241,7 @@ export default ({
           environment,
           contentTypes,
           pubSubClient,
+          cma,
         })
       ),
       widget: toRendererWidget(widget.descriptor),
@@ -256,6 +258,8 @@ export default ({
         preferences,
         doc: otDoc,
         parameters,
+        //TODO: instead of using `spaceContext.cma` use `cma` passed to the hook
+        //so the optmization done by `getBatchingApiClient` can work
         spaceContext,
         widgetNamespace,
         widgetId,

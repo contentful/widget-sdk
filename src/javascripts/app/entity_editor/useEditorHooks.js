@@ -12,6 +12,8 @@ import installTracking from './Tracking';
 import * as K from 'core/utils/kefir';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
 import { usePubSubClient } from 'core/hooks';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 export const useEmitter = () => {
   const { current: emitter } = useRef(mitt());
@@ -112,11 +114,11 @@ export const useEntrySidebarProps = ({
   } = useSpaceEnvContext();
 
   const spaceEndpoint = useSpaceEnvEndpoint();
-
+  const cma = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
 
   useEffect(() => {
-    if (state && pubSubClient && !entrySidebarProps && currentSpace) {
+    if (state && pubSubClient && !entrySidebarProps && currentSpace && cma) {
       const props = createEntrySidebarProps({
         aliasId: currentEnvironmentAliasId,
         editorContext,
@@ -134,6 +136,7 @@ export const useEntrySidebarProps = ({
         contentTypes: currentSpaceContentTypes,
         pubSubClient,
         environment: currentEnvironment,
+        cma: getBatchingApiClient(cma),
       });
       setEntrySidebarProps(props);
     }
@@ -155,6 +158,7 @@ export const useEntrySidebarProps = ({
     currentSpaceContentTypes,
     pubSubClient,
     currentEnvironment,
+    cma,
   ]);
 
   return entrySidebarProps;
