@@ -1,3 +1,5 @@
+import type { User } from 'contentful-management/types';
+
 export interface ValidationError {
   path: (string | number)[];
   details: string;
@@ -46,3 +48,9 @@ export interface AppBundleData {
   };
   comment?: string;
 }
+
+export type AppBundleDataWithCreator = AppBundleData & {
+  sys: {
+    createdBy: User;
+  };
+};

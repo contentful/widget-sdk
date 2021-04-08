@@ -27,7 +27,7 @@ const props = {
 
 const renderInContext = (props) =>
   render(
-    <HostingStateProvider defaultValue={false} bundles={{ items: [] }}>
+    <HostingStateProvider orgId="myOrg" defaultValue={false} bundles={{ items: [] }}>
       <AppDetails {...props} />
     </HostingStateProvider>
   );

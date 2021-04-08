@@ -118,6 +118,7 @@ export function AppDetailsRoute(props: Props) {
 
   return (
     <HostingStateProvider
+      orgId={props.orgId}
       defaultValue={!definition.src && !!definition.bundle}
       bundles={props.bundles}>
       <AppDetails

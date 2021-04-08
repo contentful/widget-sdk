@@ -1,17 +1,31 @@
 import React from 'react';
 import { ActiveBundle } from './ActiveBundle';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import {
   HostingStateProvider,
   HostingStateProviderProps,
 } from '../AppDetails/HostingStateProvider';
 import { appBundleMock } from '../__mocks__/appBundles';
 
+jest.mock('data/userCache', () =>
+  jest.fn().mockReturnValue({
+    get: jest.fn().mockResolvedValue({
+      firstName: 'user',
+      lastName: 'user',
+      avatarUrl: 'https://www.urls.com',
+      sys: {
+        type: 'User',
+        id: '2LSyXwc717JeKfw5DIgg6W',
+      },
+    }),
+  })
+);
 const renderInContext = (
   props,
   contextProps = {
     bundles: appBundleMock,
     defaultValue: true,
+    orgId: 'myOrg',
   }
 ) => {
   return render(
@@ -47,15 +61,17 @@ describe('ActiveBundle', () => {
     });
   });
   describe('when the saved bundle uses bundle hosting', () => {
-    it('renders an activeBundle and a dropzone', () => {
+    it('renders an activeBundle and a dropzone', async () => {
       renderInContext({ ...defaultProps });
 
-      screen.getByText('Active');
+      await waitFor(() => {
+        screen.getByText('Active');
+      });
       screen.getByText(/drag and drop your app/);
     });
   });
   describe('when the saved bundle contains no src or bundle', () => {
-    it('just renders a dropzone', () => {
+    it('just renders a dropzone', async () => {
       renderInContext({ ...defaultProps, definition: {}, savedDefinition: {} });
 
       expect(screen.queryByText('Active')).toBeNull();
@@ -74,14 +90,18 @@ describe('ActiveBundle', () => {
       });
     });
 
-    it('renders a staged app instead of a dropzone', () => {
-      expect(screen.queryByText(/drag and drop your app/)).toBeNull();
+    it('renders a staged app instead of a dropzone', async () => {
+      await waitFor(() => {
+        expect(screen.queryByText(/drag and drop your app/)).toBeNull();
+      });
       screen.getByText(/This bundle becomes active on save/);
     });
 
     describe('when the cancel button is clicked', () => {
-      it('calls resetDefinitionBundle', () => {
-        fireEvent.click(screen.getByText('Cancel'));
+      it('calls resetDefinitionBundle', async () => {
+        await waitFor(() => {
+          fireEvent.click(screen.getByText('Cancel'));
+        });
         expect(defaultProps.resetDefinitionBundle).toHaveBeenCalledTimes(1);
       });
     });

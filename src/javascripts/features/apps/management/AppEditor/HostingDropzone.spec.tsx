@@ -7,7 +7,7 @@ import { HostingStateProvider } from '../AppDetails/HostingStateProvider';
 describe('HostingDropzone', () => {
   beforeEach(() => {
     render(
-      <HostingStateProvider bundles={{ items: [] }} defaultValue={true}>
+      <HostingStateProvider orgId="myOrg" bundles={{ items: [] }} defaultValue={true}>
         <HostingDropzone
           onAppBundleCreated={jest.fn()}
           definition={

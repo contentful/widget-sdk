@@ -9,7 +9,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import tokens from '@contentful/forma-36-tokens';
-import { AppBundleData } from '../AppEditor';
+import { AppBundleDataWithCreator, AppBundleData } from '../AppEditor';
 import { css } from 'emotion';
 import { noop } from 'lodash';
 import { deleteAppBundle } from '../AppEditor/appHostingApi';
@@ -36,10 +36,22 @@ const styles = {
     justifyContent: 'center',
     width: '100%',
   }),
+  userAvatar: css({
+    borderRadius: '100%',
+    background: tokens.colorTextBase,
+    width: '20px',
+    height: '20px',
+    marginRight: tokens.spacingXs,
+  }),
+  user: css({
+    marginTop: tokens.spacing2Xs,
+    display: 'flex',
+    alignItems: 'center',
+  }),
 };
 
 interface BundleCardProps {
-  bundle: AppBundleData;
+  bundle: AppBundleDataWithCreator;
   className?: string;
   setNewAppBundle?: (bundle: AppBundleData) => void;
   removeBundle?: (bundle) => void;
@@ -75,8 +87,15 @@ export const BundleCard: React.FC<BundleCardProps> = ({
               </span>
               <span className={styles.bundleComment}>{bundle.comment ?? 'No bundle comment'}</span>
             </Paragraph>
-            {/* TODO fetch this data and render it correctly */}
-            {bundle.sys.createdBy.sys.id}
+            <span className={styles.user}>
+              <img
+                alt=""
+                role="presentation"
+                className={styles.userAvatar}
+                src={bundle.sys.createdBy.avatarUrl}
+              />
+              {`${bundle.sys.createdBy.firstName} ${bundle.sys.createdBy.lastName}`}
+            </span>
           </div>
           {children}
           <CardActions className={css({ display: 'flex' })}>

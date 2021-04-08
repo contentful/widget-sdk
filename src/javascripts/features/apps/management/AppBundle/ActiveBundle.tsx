@@ -1,5 +1,5 @@
 import { HostingDropzone } from '../AppEditor/HostingDropzone';
-import { AppBundleData } from '../AppEditor';
+import { AppBundleData, AppBundleDataWithCreator } from '../AppEditor';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { css } from 'emotion';
 import React from 'react';
@@ -119,7 +119,7 @@ const getStagedBundle = (savedDefinition, definition, bundles) => {
 };
 
 interface StagedBundleProps {
-  bundle: AppBundleData;
+  bundle: AppBundleDataWithCreator;
   unstageBundle: () => void;
 }
 const StagedBundle: React.FC<StagedBundleProps> = ({ bundle, unstageBundle }) => (
