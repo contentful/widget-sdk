@@ -41,6 +41,7 @@ export const styles = {
     position: 'fixed',
   }),
   innerText: css({
+    fontWeight: tokens.fontWeightMedium,
     userSelect: 'none',
   }),
 };

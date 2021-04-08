@@ -19,13 +19,14 @@ describe('BundleCard', () => {
     beforeEach(() => {
       renderBundle({ ...defaultProps });
     });
-    it('does not render a delete button', async () => {
+    it('renders a disabled delete button', async () => {
       const dropDownButton = screen.getByTestId('cf-ui-icon-button');
       fireEvent.click(dropDownButton);
       await waitFor(() => {
         expect(screen.getByTestId('cf-ui-dropdown-list')).toBeVisible();
       });
-      expect(screen.queryByText('Delete bundle')).toBeNull();
+      const deleteButton = screen.getByText('Delete bundle');
+      expect(deleteButton.closest('button')).toHaveAttribute('disabled');
     });
   });
 
@@ -61,13 +62,13 @@ describe('BundleCard', () => {
     beforeEach(() => {
       renderBundle({ ...defaultProps });
     });
-    it('does not render an activate  button', async () => {
+    it('does not render a Promote button', async () => {
       const dropDownButton = screen.getByTestId('cf-ui-icon-button');
       fireEvent.click(dropDownButton);
       await waitFor(() => {
         expect(screen.getByTestId('cf-ui-dropdown-list')).toBeVisible();
       });
-      expect(screen.queryByText('Activate bundle')).toBeNull();
+      expect(screen.queryByText('Promote bundle')).toBeNull();
     });
   });
 
@@ -84,12 +85,12 @@ describe('BundleCard', () => {
     });
 
     it('renders the button', async () => {
-      screen.getByText('Activate bundle');
+      screen.getByText('Promote bundle');
     });
 
     describe('when the button is clicked', () => {
       it('calls setNewAppBundle with the bundles data', () => {
-        fireEvent.click(screen.getByText('Activate bundle'));
+        fireEvent.click(screen.getByText('Promote bundle'));
         expect(setNewAppBundle).toHaveBeenCalledWith(appBundleMock.items[0]);
       });
     });

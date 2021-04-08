@@ -52,8 +52,13 @@ export function HostingDropzone({
     setDropzoneStatus(DropZoneStatus.IDLE);
   };
 
+  const dropzoneRef = React.useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const activateDropzone = () => {
+      if (!isInViewport(dropzoneRef.current)) {
+        dropzoneRef.current?.scrollIntoView({ block: 'center' });
+      }
       setDropzoneStatus(DropZoneStatus.ACTIVE);
     };
     const deActivateDropzone = () => {
@@ -72,7 +77,7 @@ export function HostingDropzone({
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <div className={styles.dropzoneWrapper}>
+    <div ref={dropzoneRef} className={styles.dropzoneWrapper}>
       {dropzoneStatus === DropZoneStatus.ACTIVE && (
         <div data-test-id="dropzone-overlay" className={styles.activeOverlay} />
       )}
@@ -100,5 +105,15 @@ export function HostingDropzone({
         run <span className={appEditorStyles.monospace}>npm run deploy</span> in your terminal.
       </HelpText>
     </div>
+  );
+}
+
+function isInViewport(el) {
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }

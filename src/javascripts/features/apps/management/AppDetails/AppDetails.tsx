@@ -447,10 +447,10 @@ export class AppDetails extends React.Component<Props, State> {
               </Tab>
               {this.state.hostingEnabled ? (
                 <Tab
-                  id={TAB_PATHS.HOSTING}
-                  selected={selectedTab === TAB_PATHS.HOSTING}
+                  id={TAB_PATHS.BUNDLES}
+                  selected={selectedTab === TAB_PATHS.BUNDLES}
                   onSelect={this.onTabSelect}>
-                  Hosting{' '}
+                  Bundles{' '}
                   <Tag className={styles.hostingTag} tagType="primary-filled" size="small">
                     New
                   </Tag>
@@ -491,8 +491,8 @@ export class AppDetails extends React.Component<Props, State> {
               </TabPanel>
             )}
             {this.state.hostingEnabled
-              ? selectedTab === TAB_PATHS.HOSTING && (
-                  <TabPanel id={TAB_PATHS.HOSTING} className={styles.tabPanel}>
+              ? selectedTab === TAB_PATHS.BUNDLES && (
+                  <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
                     <AppBundles
                       resetDefinitionBundle={this.resetDefinitionBundle}
                       definition={definition}

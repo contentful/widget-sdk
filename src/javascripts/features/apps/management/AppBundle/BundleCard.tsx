@@ -6,14 +6,15 @@ import {
   DropdownListItem,
   Notification,
   Spinner,
+  DateTime,
 } from '@contentful/forma-36-react-components';
-import RelativeDateTime from 'components/shared/RelativeDateTime';
 import tokens from '@contentful/forma-36-tokens';
 import { AppBundleDataWithCreator, AppBundleData } from '../AppEditor';
 import { css } from 'emotion';
 import { noop } from 'lodash';
 import { deleteAppBundle } from '../AppEditor/appHostingApi';
 import React from 'react';
+import { isNil } from 'lodash';
 
 const styles = {
   card: css({
@@ -26,10 +27,11 @@ const styles = {
   }),
   cardTitle: css({
     color: tokens.colorTextDark,
-    fontWeight: 'bold',
+    fontWeight: tokens.fontWeightDemiBold,
   }),
+  cardActions: css({ display: 'flex', marginLeft: tokens.spacingM }),
   bundleComment: css({
-    fontWeight: 'bold',
+    fontWeight: tokens.fontWeightDemiBold,
   }),
   spinner: css({
     display: 'flex',
@@ -82,7 +84,7 @@ export const BundleCard: React.FC<BundleCardProps> = ({
           <div data-test-id="app-bundle.card" className={styles.cardInfo}>
             <Paragraph>
               <span className={styles.cardTitle}>
-                <RelativeDateTime value={bundle.sys.createdAt} />
+                <DateTime date={bundle.sys.createdAt} />
                 {': '}
               </span>
               <span className={styles.bundleComment}>{bundle.comment ?? 'No bundle comment'}</span>
@@ -98,38 +100,42 @@ export const BundleCard: React.FC<BundleCardProps> = ({
             </span>
           </div>
           {children}
-          <CardActions className={css({ display: 'flex' })}>
+          <CardActions iconButtonProps={{ buttonType: 'primary' }} className={styles.cardActions}>
             <DropdownList>
               {setNewAppBundle && (
                 <DropdownListItem
                   onClick={() => {
                     setNewAppBundle(bundle);
                   }}>
-                  Activate bundle
+                  Promote bundle
                 </DropdownListItem>
               )}
               <DropdownListItem onClick={noop /* TODO: implement in EXT-2623 */}>
                 Inspect uploaded files
               </DropdownListItem>
-              {removeBundle && (
-                <DropdownListItem
-                  onClick={async () => {
-                    setIsBeingDeleted(true);
-                    try {
-                      await deleteAppBundle(
-                        bundle.sys.organization.sys.id,
-                        bundle.sys.appDefinition.sys.id,
-                        bundle.sys.id
-                      );
-                      removeBundle(bundle);
-                    } catch (e) {
-                      Notification.error("Something went wrong. Couldn't delete the app bundle.");
-                    }
-                    setIsBeingDeleted(false);
-                  }}>
-                  Delete bundle
-                </DropdownListItem>
-              )}
+              <DropdownListItem
+                isDisabled={isNil(removeBundle)}
+                onClick={async () => {
+                  if (isNil(removeBundle)) {
+                    // this should never happen, because we disable the button
+                    // if this function is not defined
+                    return;
+                  }
+                  setIsBeingDeleted(true);
+                  try {
+                    await deleteAppBundle(
+                      bundle.sys.organization.sys.id,
+                      bundle.sys.appDefinition.sys.id,
+                      bundle.sys.id
+                    );
+                    removeBundle(bundle);
+                  } catch (e) {
+                    Notification.error("Something went wrong. Couldn't delete the app bundle.");
+                  }
+                  setIsBeingDeleted(false);
+                }}>
+                Delete bundle
+              </DropdownListItem>
             </DropdownList>
           </CardActions>
         </>

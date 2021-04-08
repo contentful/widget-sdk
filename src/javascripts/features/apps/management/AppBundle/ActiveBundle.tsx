@@ -6,7 +6,15 @@ import React from 'react';
 import { BundleCard } from './BundleCard';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
 import tokens from '@contentful/forma-36-tokens';
-import { Tag, Paragraph, TextLink, Card, Icon } from '@contentful/forma-36-react-components';
+import {
+  Tag,
+  Paragraph,
+  TextLink,
+  Card,
+  Icon,
+  Subheading,
+  SectionHeading,
+} from '@contentful/forma-36-react-components';
 
 const styles = {
   attachedCard: css({
@@ -34,6 +42,9 @@ const styles = {
   bold: css({
     fontWeight: 'bold',
   }),
+  marginBottom: css({
+    marginBottom: tokens.spacingXs,
+  }),
   arrowIconContainer: css({
     position: 'relative',
   }),
@@ -50,6 +61,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  }),
+  notHostedInfo: css({
+    marginBottom: tokens.spacingM,
+  }),
+  sectionHeading: css({
+    color: tokens.colorTextLight,
+    marginBottom: tokens.spacingM,
   }),
 };
 
@@ -76,37 +94,52 @@ export const ActiveBundle: React.FC<ActiveBundleProps> = ({
     });
   };
 
+  const hasExistingBundles = bundles.length > 0;
+
   const activeBundle = bundles.find(({ sys: { id } }) => id === savedDefinition.bundle?.sys.id);
+
+  const hasCurrentHosting = !!(activeBundle || savedDefinition.src);
 
   const stagedBundle = getStagedBundle(savedDefinition, definition, bundles);
 
-  return (
-    <>
-      {activeBundle ? (
-        <BundleCard className={styles.attachedCard} bundle={activeBundle}>
-          <Tag className={styles.cardTag} tagType={'positive'}>
-            Active
-          </Tag>
-        </BundleCard>
-      ) : savedDefinition.src ? (
-        <SelfHostedCard src={savedDefinition.src} />
-      ) : (
-        <NotHostedCard />
-      )}
-      {stagedBundle ? (
-        <>
-          <ArrowIcon />
-          <StagedBundle bundle={stagedBundle} unstageBundle={resetDefinitionBundle} />
-        </>
-      ) : (
-        <HostingDropzone
-          containerStyles={styles.container}
-          onAppBundleCreated={setNewAppBundle}
-          definition={definition}
-        />
-      )}
-    </>
-  );
+  if (!hasExistingBundles) {
+    return (
+      <>
+        <NotHosted />
+        <HostingDropzone onAppBundleCreated={setNewAppBundle} definition={definition} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <SectionHeading className={styles.sectionHeading}>Active Bundle</SectionHeading>
+        {activeBundle ? (
+          <BundleCard className={styles.attachedCard} bundle={activeBundle}>
+            <Tag className={styles.cardTag} tagType={'positive'}>
+              Active
+            </Tag>
+          </BundleCard>
+        ) : savedDefinition.src ? (
+          <SelfHostedCard src={savedDefinition.src} />
+        ) : null}
+        {stagedBundle ? (
+          <>
+            <StagedBundle
+              hasCurrentHosting={hasCurrentHosting}
+              bundle={stagedBundle}
+              unstageBundle={resetDefinitionBundle}
+            />
+          </>
+        ) : (
+          <HostingDropzone
+            containerStyles={activeBundle || savedDefinition.src ? styles.container : ''}
+            onAppBundleCreated={setNewAppBundle}
+            definition={definition}
+          />
+        )}
+      </>
+    );
+  }
 };
 
 const getStagedBundle = (savedDefinition, definition, bundles) => {
@@ -121,16 +154,24 @@ const getStagedBundle = (savedDefinition, definition, bundles) => {
 interface StagedBundleProps {
   bundle: AppBundleDataWithCreator;
   unstageBundle: () => void;
+  hasCurrentHosting: boolean;
 }
-const StagedBundle: React.FC<StagedBundleProps> = ({ bundle, unstageBundle }) => (
-  <BundleCard className={styles.stagedBundle} bundle={bundle}>
-    <Paragraph className={styles.cancelText}>
-      This bundle becomes active on save.{' '}
-      <TextLink onClick={unstageBundle} linkType="negative">
-        Cancel
-      </TextLink>
-    </Paragraph>
-  </BundleCard>
+const StagedBundle: React.FC<StagedBundleProps> = ({
+  bundle,
+  unstageBundle,
+  hasCurrentHosting,
+}) => (
+  <>
+    {hasCurrentHosting && <ArrowIcon />}
+    <BundleCard className={hasCurrentHosting ? styles.stagedBundle : ''} bundle={bundle}>
+      <Paragraph className={styles.cancelText}>
+        This bundle becomes active on save.{' '}
+        <TextLink onClick={unstageBundle} linkType="negative">
+          Cancel
+        </TextLink>
+      </Paragraph>
+    </BundleCard>
+  </>
 );
 
 interface SelfHostedCardProps {
@@ -145,11 +186,17 @@ const SelfHostedCard: React.FC<SelfHostedCardProps> = ({ src }) => {
   );
 };
 
-const NotHostedCard: React.FC = () => {
+const NotHosted: React.FC = () => {
   return (
-    <Card className={styles.attachedCard}>
-      <Paragraph className={styles.bold}>Not currently hosted</Paragraph>
-    </Card>
+    <div className={styles.notHostedInfo}>
+      <Subheading className={styles.marginBottom}>Host apps on Contentful</Subheading>
+      <Paragraph className={styles.marginBottom}>
+        Ready to go live? Host your app frontend with Contentful by drag and dropping your output
+        folder below. Only getting started? Use npx create-contentful-app init in your terminal to
+        bootstrap an app.
+      </Paragraph>
+      <TextLink>Learn more about hosting your app</TextLink>
+    </div>
   );
 };
 
