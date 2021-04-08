@@ -499,13 +499,17 @@ export default function useCreateActions(props) {
   };
 
   const getPublishedField = (id) => {
-    const publishedFields = _.get(state.contentType, 'data.fields', []);
+    const publishedFields = _.get(
+      spaceContext.publishedCTs.get(state.contentType.data.sys.id),
+      'data.fields',
+      []
+    );
     return _.cloneDeep(_.find(publishedFields, { id: id }));
   };
 
   const deleteField = async (field, isTitle) => {
     const publishedField = getPublishedField(field.id);
-    const publishedOmitted = publishedField && publishedField.omitted;
+    const publishedOmitted = publishedField?.omitted;
 
     const isOmittedInApiAndUi = publishedOmitted && field.omitted;
     const isOmittedInUiOnly = !publishedOmitted && field.omitted;
@@ -518,7 +522,6 @@ export default function useCreateActions(props) {
       updateField(field.id, {
         deleted: true,
       });
-      setContextDirty(false);
     } else if (isOmittedInUiOnly) {
       await openSaveDialog();
       save.execute();
