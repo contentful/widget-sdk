@@ -3,12 +3,12 @@ import { parseFileSize, splitFileAndPath } from './AppBundleDetailsModal';
 describe('Parsing file sizes', () => {
   it('converts to Mb before Kb', () => {
     const readableSize = parseFileSize(1234567);
-    expect(readableSize).toEqual('1.23 mB');
+    expect(readableSize).toEqual('1.23 MB');
   });
 
   it('converts to Kb before bytes', () => {
     const readableSize = parseFileSize(1234);
-    expect(readableSize).toEqual('1.23 kB');
+    expect(readableSize).toEqual('1.23 KB');
   });
 
   it('always falls back to bytes', () => {

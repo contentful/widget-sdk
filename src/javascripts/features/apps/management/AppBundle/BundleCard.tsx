@@ -11,7 +11,6 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { AppBundleDataWithCreator, AppBundleData } from '../AppEditor';
 import { css } from 'emotion';
-import { noop } from 'lodash';
 import { deleteAppBundle } from '../AppEditor/appHostingApi';
 import { openAppBundleDetailModal } from './AppBundleDetailsModal';
 import React from 'react';
@@ -111,7 +110,10 @@ export const BundleCard: React.FC<BundleCardProps> = ({
                   Promote bundle
                 </DropdownListItem>
               )}
-              <DropdownListItem onClick={noop /* TODO: implement in EXT-2623 */}>
+              <DropdownListItem
+                onClick={() => {
+                  openAppBundleDetailModal(bundle);
+                }}>
                 Inspect uploaded files
               </DropdownListItem>
               <DropdownListItem
