@@ -9,7 +9,7 @@ export {
 export { TagPropType } from 'features/content-tags/core/TagPropType';
 export { create as createTagsRepo } from 'features/content-tags/core/state/TagsRepo';
 export { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
-export { TagsRepoContext, TagsRepoType } from 'features/content-tags/core/state/TagsRepoContext';
+export { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 export { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 export { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 export { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
@@ -39,3 +39,4 @@ export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveT
 export { useTagsValuesForIdList } from 'features/content-tags/core/hooks/useTagsValuesForIdList';
 export { useTagsValuesForTagsList } from 'features/content-tags/core/hooks/useTagsValuesForTagsList';
 export { SelectTagsModal, selectTags } from 'features/content-tags/core/components/SelectTagsModal';
+export { TagsRepoType } from 'features/content-tags/types';
