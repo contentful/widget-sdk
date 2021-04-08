@@ -55,11 +55,11 @@ export const parseFileSize = (size: number): string => {
   const mbInBytes = kbInBytes * 1000;
 
   if (size > mbInBytes) {
-    return `${parseFloat((size / mbInBytes).toString()).toFixed(2)} Mb`;
+    return `${parseFloat((size / mbInBytes).toString()).toFixed(2)} mB`;
   } else if (size > kbInBytes) {
-    return `${parseFloat((size / kbInBytes).toString()).toFixed(2)} Kb`;
+    return `${parseFloat((size / kbInBytes).toString()).toFixed(2)} kB`;
   } else {
-    return `${size} b`;
+    return `${size} B`;
   }
 };
 
