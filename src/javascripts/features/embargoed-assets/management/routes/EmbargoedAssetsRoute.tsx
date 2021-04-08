@@ -12,9 +12,9 @@ function EmbargoedAssetsRoute() {
       <Workbench>
         <Workbench.Header
           title={'Embargoed assets'}
-          icon={<ProductIcon icon="Settings" size="large" tag={'span'} />}
+          icon={<ProductIcon icon="Settings" size="large" tag="span" />}
         />
-        <Workbench.Content type="text" className={'embargoed-assets-workbench-content'}>
+        <Workbench.Content type="text" className="embargoed-assets-workbench-content">
           <EmbargoedAssets />
         </Workbench.Content>
       </Workbench>

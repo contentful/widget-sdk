@@ -20,7 +20,7 @@ export function DisabledFeature({ setCurrentLevel }: DisabledFeatureParams) {
   const [isChanging, setIsChanging] = useState(false);
 
   return (
-    <Card testId="danger-zone-section-card" className={styles.sectionWide}>
+    <Card testId="danger-zone-section-card" className={styles.section}>
       <Typography className={styles.centered}>
         <SafeIcon />
         <Heading>Protect your assets with secure URLs</Heading>

@@ -3,14 +3,11 @@ import tokens from '@contentful/forma-36-tokens';
 
 export const styles = {
   section: css({
-    maxWidth: '600px',
     margin: `${tokens.spacingL} auto`,
     padding: tokens.spacingXl,
   }),
-  sectionWide: css({
-    maxWidth: '768px',
-    margin: `${tokens.spacingL} auto`,
-    padding: tokens.spacingXl,
+  largeMarginBottom: css({
+    marginBottom: tokens.spacingL,
   }),
   lockIcon: css({
     verticalAlign: 'middle',

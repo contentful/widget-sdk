@@ -44,7 +44,7 @@ const LevelSelectionDialog = ({ onClose, onSubmit, currentLevel }: TurnOffDialog
         <>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content>
-            <FieldGroup>
+            <FieldGroup className={styles.largeMarginBottom}>
               <SelectField
                 id="asset-protection-level"
                 name="asset-protection-level"

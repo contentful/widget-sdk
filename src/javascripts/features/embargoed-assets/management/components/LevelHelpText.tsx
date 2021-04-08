@@ -2,6 +2,8 @@ import React from 'react';
 import { Level, LEVEL } from '../constants';
 import { Paragraph, Typography } from '@contentful/forma-36-react-components';
 
+import { styles } from '../EmbargoedAssets.styles';
+
 interface LevelHelpTextParams {
   level?: Level;
 }
@@ -11,11 +13,11 @@ export function LevelHelpText({ level }: LevelHelpTextParams) {
     case LEVEL.MIGRATING:
       return (
         <Typography>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             Asset metadata returned from the Delivery, Management and Preview API contains Public
             Asset URLs. All assets will still be unprotected and accessible.
           </Paragraph>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             You can generate signing keys to sign Secure Asset URLs and fetch assets from the Secure
             Asset CDN using Signed Secure Asset URLs. Typography
           </Paragraph>
@@ -24,15 +26,15 @@ export function LevelHelpText({ level }: LevelHelpTextParams) {
     case LEVEL.UNPUBLISHED:
       return (
         <Typography>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             All asset URLs returned from the CMA and CPA will point to the Secure Assets CDN and
             must be signed before use.
           </Paragraph>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             All unpublished media URLs pointing to the normal assets CDN will cease to function
             within 48 hours.
           </Paragraph>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             All published assets will remain publicly accessible and URLs returned from the CDA will
             continue to point to the normal Assets CDN. An asset is considered published if it is
             published in any environment in a space.
@@ -42,11 +44,11 @@ export function LevelHelpText({ level }: LevelHelpTextParams) {
     case LEVEL.ALL:
       return (
         <Typography>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             All asset URLs returned from the CDA, CMA, and CPA will point to the Secure Assets CDN
             and must be signed before use.
           </Paragraph>
-          <Paragraph>
+          <Paragraph className={styles.largeMarginBottom}>
             All media URLs pointing to the normal assets CDN will cease to function within 48 hours.
           </Paragraph>
         </Typography>

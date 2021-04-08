@@ -11,7 +11,7 @@ import { styles } from '../EmbargoedAssets.styles';
 
 export function LoadingFeature() {
   return (
-    <Card testId="loading-section-card" className={styles.sectionWide}>
+    <Card testId="loading-section-card" className={styles.section}>
       <Typography className={styles.centered}>
         <SkeletonContainer>
           <SkeletonDisplayText numberOfLines={1} width={200} />
