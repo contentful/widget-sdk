@@ -183,12 +183,6 @@ describe('NonEnterpriseSubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
-  it('should show CTA to talk to support', () => {
-    build();
-
-    expect(screen.getByText('Get in touch with us')).toBeVisible();
-  });
-
   describe('contentful apps card', () => {
     it('shows Contentful Apps trial card for users who have not purchased apps', () => {
       isOwnerOrAdmin.mockReturnValueOnce(true);

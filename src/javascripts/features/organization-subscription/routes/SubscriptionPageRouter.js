@@ -1,6 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { get, isUndefined } from 'lodash';
+import { Workbench } from '@contentful/forma-36-react-components';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
@@ -10,8 +13,8 @@ import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
-import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import {
@@ -22,8 +25,11 @@ import {
   isExpiredAppTrial,
 } from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
@@ -152,62 +158,87 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
     }
   }, [spacePlans, data.addOnPlan, data.basePlan, data.numMemberships]);
 
-  if (error) {
-    return <ForbiddenPage />;
+  // Show the generic loading state until we know if we're purchasing apps or not
+  if (isLoading) {
+    return (
+      <EmptyStateContainer>
+        <FetcherLoading />
+      </EmptyStateContainer>
+    );
   }
 
-  if (data?.isSubscriptionPageRebrandingEnabled) {
-    return (
-      <>
-        <DocumentTitle title="Subscription" />
-        {data.orgIsEnterprise && (
-          <EnterpriseSubscriptionPage
-            basePlan={data.basePlan}
-            usersMeta={data.usersMeta}
-            organization={data.organization}
-            memberAccessibleSpaces={data.memberAccessibleSpaces}
-            grandTotal={grandTotal}
-            initialLoad={isLoading}
-            spacePlans={spacePlans}
-            onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-          />
-        )}
-        {!data.orgIsEnterprise && (
-          <NonEnterpriseSubscriptionPage
-            basePlan={data.basePlan}
-            addOnPlan={data.addOnPlan}
-            usersMeta={data.usersMeta}
-            organization={data.organization}
-            grandTotal={grandTotal}
-            initialLoad={isLoading}
-            spacePlans={spacePlans}
-            onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-            isAppTrialAvailable={data.isAppTrialAvailable}
-            isAppTrialActive={data.isAppTrialActive}
-            isAppTrialExpired={data.isAppTrialExpired}
-          />
-        )}
-      </>
-    );
+  if (error) {
+    return <ForbiddenPage />;
   }
 
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage
-        basePlan={data.basePlan}
-        addOnPlan={data.addOnPlan}
-        usersMeta={data.usersMeta}
-        organization={data.organization}
-        memberAccessibleSpaces={data.memberAccessibleSpaces}
-        grandTotal={grandTotal}
-        initialLoad={isLoading}
-        spacePlans={spacePlans}
-        onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-        isTrialAvailable={data.isAppTrialAvailable}
-        isTrialActive={data.isAppTrialActive}
-        isTrialExpired={data.isAppTrialExpired}
-      />
+      <Workbench testId="subscription-page">
+        <Workbench.Header
+          icon={<ProductIcon icon="Subscription" size="large" />}
+          title="Subscription"
+          actions={
+            <ContactUsButton testId="contact-us" disabled={isLoading} isLink>
+              Questions or feedback? Contact us
+            </ContactUsButton>
+          }
+        />
+        {/**
+         * the workbench needs this 'position relative' or it will render double scrollbars
+         * when its children have 'flex-direction: column'
+         * */}
+        <Workbench.Content className={css({ position: 'relative' })}>
+          {data.isSubscriptionPageRebrandingEnabled && (
+            <>
+              {data.orgIsEnterprise && (
+                <EnterpriseSubscriptionPage
+                  basePlan={data.basePlan}
+                  usersMeta={data.usersMeta}
+                  organization={data.organization}
+                  memberAccessibleSpaces={data.memberAccessibleSpaces}
+                  grandTotal={grandTotal}
+                  initialLoad={isLoading}
+                  spacePlans={spacePlans}
+                  onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+                />
+              )}
+              {!data.orgIsEnterprise && (
+                <NonEnterpriseSubscriptionPage
+                  basePlan={data.basePlan}
+                  addOnPlan={data.addOnPlan}
+                  usersMeta={data.usersMeta}
+                  organization={data.organization}
+                  grandTotal={grandTotal}
+                  initialLoad={isLoading}
+                  spacePlans={spacePlans}
+                  onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+                  isAppTrialAvailable={data.isAppTrialAvailable}
+                  isAppTrialActive={data.isAppTrialActive}
+                  isAppTrialExpired={data.isAppTrialExpired}
+                />
+              )}
+            </>
+          )}
+          {/** if the feature flag is off, show the user the general subscription page */}
+          {!data.isSubscriptionPageRebrandingEnabled && (
+            <SubscriptionPage
+              basePlan={data.basePlan}
+              addOnPlan={data.addOnPlan}
+              usersMeta={data.usersMeta}
+              organization={data.organization}
+              memberAccessibleSpaces={data.memberAccessibleSpaces}
+              grandTotal={grandTotal}
+              initialLoad={isLoading}
+              spacePlans={spacePlans}
+              onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+              isTrialAvailable={data.isAppTrialAvailable}
+              isTrialActive={data.isAppTrialActive}
+              isTrialExpired={data.isAppTrialExpired}
+            />
+          )}
+        </Workbench.Content>
+      </Workbench>
     </>
   );
 }

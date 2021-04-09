@@ -141,12 +141,6 @@ describe('EnterpriseSubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
-  it('should show CTA to talk to support', () => {
-    build();
-
-    expect(screen.getByText('Get in touch with us')).toBeVisible();
-  });
-
   describe('organization on platform trial', () => {
     beforeEach(() => {
       isOwnerOrAdmin.mockReturnValue(true);
