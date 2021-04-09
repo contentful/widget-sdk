@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { get, isUndefined } from 'lodash';
 
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -10,6 +11,9 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import isLegacyEnterprise from 'data/isLegacyEnterprise';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import {
   isOrganizationOnTrial,
   canStartAppTrial,
@@ -22,12 +26,20 @@ import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SubscriptionPage } from '../components/SubscriptionPage';
+import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
+import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 
-const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
+function isOrganizationEnterprise(organization, basePlan) {
+  const isLegacyOrg = isLegacyOrganization(organization);
 
-const getAddOnPlan = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
+  return isLegacyOrg ? isLegacyEnterprise(organization) : isEnterprisePlan(basePlan);
+}
 
-const getSpacePlans = (plans, accessibleSpaces) =>
+const findBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
+
+const findAddOnPlan = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
+
+const findSpacePlans = (plans, accessibleSpaces) =>
   plans.items
     .filter(({ planType }) => ['space', 'free_space'].includes(planType))
     .sort((plan1, plan2) => {
@@ -84,18 +96,23 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
   const accessibleSpaces = await getSpaces();
 
   // separating all the different types of plans
-  const basePlan = getBasePlan(plansWithSpaces);
-  const addOnPlan = getAddOnPlan(plansWithSpaces);
-  const spacePlans = getSpacePlans(plansWithSpaces, accessibleSpaces);
+  const basePlan = findBasePlan(plansWithSpaces);
+  const addOnPlan = findAddOnPlan(plansWithSpaces);
+  const spacePlans = findSpacePlans(plansWithSpaces, accessibleSpaces);
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const [appCatalogFeature, isTrialAvailable] = await Promise.all([
+  const [appCatalogFeature, isAppTrialAvailable] = await Promise.all([
     AppTrialRepo.getTrial(organizationId),
     canStartAppTrial(organizationId),
   ]);
 
   setSpacePlans(spacePlans);
+
+  const isSubscriptionPageRebrandingEnabled = await getVariation(
+    FLAGS.SUBSCRIPTION_PAGE_REBRANDING
+  );
+  const orgIsEnterprise = isOrganizationEnterprise(organization, basePlan);
 
   return {
     basePlan,
@@ -104,9 +121,11 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     numMemberships,
     organization,
     productRatePlans,
-    isTrialAvailable,
-    isTrialActive: isActiveAppTrial(appCatalogFeature),
-    isTrialExpired: isExpiredAppTrial(appCatalogFeature),
+    isAppTrialAvailable,
+    isAppTrialActive: isActiveAppTrial(appCatalogFeature),
+    isAppTrialExpired: isExpiredAppTrial(appCatalogFeature),
+    isSubscriptionPageRebrandingEnabled,
+    orgIsEnterprise,
   };
 };
 
@@ -137,6 +156,41 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
     return <ForbiddenPage />;
   }
 
+  if (data?.isSubscriptionPageRebrandingEnabled) {
+    return (
+      <>
+        <DocumentTitle title="Subscription" />
+        {data.orgIsEnterprise && (
+          <EnterpriseSubscriptionPage
+            basePlan={data.basePlan}
+            usersMeta={data.usersMeta}
+            organization={data.organization}
+            memberAccessibleSpaces={data.memberAccessibleSpaces}
+            grandTotal={grandTotal}
+            initialLoad={isLoading}
+            spacePlans={spacePlans}
+            onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+          />
+        )}
+        {!data.orgIsEnterprise && (
+          <NonEnterpriseSubscriptionPage
+            basePlan={data.basePlan}
+            addOnPlan={data.addOnPlan}
+            usersMeta={data.usersMeta}
+            organization={data.organization}
+            grandTotal={grandTotal}
+            initialLoad={isLoading}
+            spacePlans={spacePlans}
+            onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
+            isAppTrialAvailable={data.isAppTrialAvailable}
+            isAppTrialActive={data.isAppTrialActive}
+            isAppTrialExpired={data.isAppTrialExpired}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       <DocumentTitle title="Subscription" />
@@ -150,9 +204,9 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
         initialLoad={isLoading}
         spacePlans={spacePlans}
         onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-        isTrialAvailable={data.isTrialAvailable}
-        isTrialActive={data.isTrialActive}
-        isTrialExpired={data.isTrialExpired}
+        isTrialAvailable={data.isAppTrialAvailable}
+        isTrialActive={data.isAppTrialActive}
+        isTrialExpired={data.isAppTrialExpired}
       />
     </>
   );
