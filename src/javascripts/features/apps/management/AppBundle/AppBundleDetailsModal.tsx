@@ -26,10 +26,18 @@ const styles = {
   infoAbout: css({
     color: tokens.colorTextDark,
     fontWeight: tokens.fontWeightDemiBold,
+    marginRight: tokens.spacing2Xs,
+  }),
+  bundleId: css({
+    fontFamily: tokens.fontStackMonospace,
+    fontSize: tokens.fontSizeS,
+  }),
+  fileList: css({
+    paddingTop: tokens.spacingS,
+    maxHeight: '400px',
+    overflow: 'auto',
   }),
   fileWrapper: css({
-    marginTop: tokens.spacingS,
-    marginBottom: tokens.spacingS,
     display: 'flex',
   }),
   fileNameWrapper: css({
@@ -49,7 +57,9 @@ const styles = {
   fileSize: css({
     flexGrow: 1,
     paddingLeft: tokens.spacing2Xl,
+    paddingTop: tokens.spacingXs,
     fontFamily: tokens.fontStackMonospace,
+    fontSize: tokens.fontSizeS,
     textAlign: 'right',
     display: 'inline-block',
     whiteSpace: 'nowrap',
@@ -105,33 +115,36 @@ const AppBundleDetailsModal = ({ isOpen, onClose, appBundle }) => {
           <Modal.Content>
             <div className={styles.metaInfo}>
               <Paragraph className={styles.infoWrapper}>
-                <span className={styles.infoAbout}>ID:</span> {appBundle.sys.id}
+                <span className={styles.infoAbout}>ID</span>{' '}
+                <span className={styles.bundleId}>{appBundle.sys.id}</span>
               </Paragraph>
               <Paragraph className={styles.infoWrapper}>
                 <span className={styles.infoAbout}>Uploaded at</span>{' '}
                 <DateTime date={appBundle.sys.createdAt} />
               </Paragraph>
             </div>
-            {appBundle.files.map((file) => {
-              const parsedFileName = splitFileAndPath(file.name);
+            <div className={styles.fileList}>
+              {appBundle.files.map((file) => {
+                const parsedFileName = splitFileAndPath(file.name);
 
-              return (
-                <div className={styles.fileWrapper} key={file.md5}>
-                  <span className={styles.fileNameWrapper}>
-                    <CopyButton
-                      className={`${copyButton} ${styles.copyButton}`}
-                      copyValue={file.md5}
-                      tooltipText={'Copy md5 hash'}
-                      tooltipCopiedText={'Copied'}
-                      tooltipPlace={'right'}
-                    />
-                    <span className={styles.filePath}>{parsedFileName.path}</span>
-                    <span className={styles.fileName}>{parsedFileName.name}</span>
-                  </span>
-                  <span className={styles.fileSize}>{parseFileSize(file.size)}</span>
-                </div>
-              );
-            })}
+                return (
+                  <div className={styles.fileWrapper} key={file.md5}>
+                    <span className={styles.fileNameWrapper}>
+                      <CopyButton
+                        className={`${copyButton} ${styles.copyButton}`}
+                        copyValue={file.md5}
+                        tooltipText={'Copy md5 hash'}
+                        tooltipCopiedText={'Copied'}
+                        tooltipPlace={'right'}
+                      />
+                      <span className={styles.filePath}>{parsedFileName.path}</span>
+                      <span className={styles.fileName}>{parsedFileName.name}</span>
+                    </span>
+                    <span className={styles.fileSize}>{parseFileSize(file.size)}</span>
+                  </div>
+                );
+              })}
+            </div>
           </Modal.Content>
         </>
       )}
