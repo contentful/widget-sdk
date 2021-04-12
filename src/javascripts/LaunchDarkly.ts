@@ -52,7 +52,6 @@ export enum FLAGS {
   COMPOSE_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-compose-eap',
   LAUNCH_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-launch-eap',
   REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
-  APP_TRIAL = 'feature-moi-01-2021-app-trial-mechanics',
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
@@ -85,7 +84,6 @@ const FALLBACK_VALUES = {
   [FLAGS.PATCH_ENTRY_UPDATES]: false,
   [FLAGS.COMPOSE_APP_LISTING_EAP]: false,
   [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
-  [FLAGS.APP_TRIAL]: false,
   [FLAGS.APP_HOSTING_UI]: false,
   [FLAGS.HIGH_VALUE_LABEL]: false,
 

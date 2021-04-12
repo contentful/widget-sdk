@@ -6,7 +6,6 @@ import { getOrganization as _getOrganization } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin as _isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute as _isOrgRoute } from 'states/Navigator';
-import { getVariation } from 'LaunchDarkly';
 import { getAppTrialSpaceKey as _getAppTrialSpaceKey } from '../services/AppTrialService';
 import { getTrial as _getTrial } from '../services/AppTrialRepo';
 import { useSpaceEnvContext as _useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -126,14 +125,13 @@ const useSpaceEnvContext = _useSpaceEnvContext as jest.Mock;
 
 describe('TrialTag', () => {
   beforeEach(() => {
-    (getVariation as jest.Mock).mockResolvedValue(true);
     isOwnerOrAdmin.mockReturnValue(false);
 
     const mockedNow = new Date(today).valueOf();
     jest.spyOn(Date, 'now').mockImplementation(() => mockedNow);
   });
 
-  it('does not render the trial tag if AccountSettingNavbar or ErrorNavbar', async () => {
+  it('does not render the trial tag on AccountSettingNavbar or ErrorNavbar', async () => {
     isOrgRoute.mockReturnValue(false);
 
     build();
@@ -157,7 +155,7 @@ describe('TrialTag', () => {
       build({ organizationId: trialOrganization.sys.id });
 
       await waitFor(() =>
-        expect(screen.getByTestId('enterprise_trial_tag')).toHaveTextContent(`TRIAL`)
+        expect(screen.getByTestId('enterprise_trial_tag')).toHaveTextContent('TRIAL')
       );
       fireEvent.mouseOver(screen.getByTestId('enterprise_trial_tag-link'));
       await waitFor(() =>
@@ -223,7 +221,7 @@ describe('TrialTag', () => {
     it('renders when the space is on trial and the navbar is SpaceNavbar', async () => {
       build();
 
-      await waitFor(() => expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('trial_space_tag')).toHaveTextContent('TRIAL'));
     });
 
     it('renders when the trial has ended', async () => {
@@ -314,7 +312,7 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() => screen.getByTestId('trial_space_tag'));
-      expect(screen.getByTestId('trial_space_tag')).toHaveTextContent(`TRIAL`);
+      expect(screen.getByTestId('trial_space_tag')).toHaveTextContent('TRIAL');
       expect(screen.queryByTestId('app_trial_tag')).not.toBeInTheDocument();
     });
   });
@@ -330,20 +328,11 @@ describe('TrialTag', () => {
       getAppTrialSpaceKey.mockResolvedValue(trialSpace.sys.id);
     });
 
-    it('does not fetch the app feature when the feature flag is off', async () => {
-      (getVariation as jest.Mock).mockResolvedValue(false);
-
-      build();
-
-      await waitFor(() => expect(getTrial).toHaveBeenCalledTimes(0));
-      expect(getAppTrialSpaceKey).toHaveBeenCalledTimes(0);
-    });
-
     it('renders when the App Trial is active and the navbar is OrgSettingsNavbar', async () => {
       isOrgRoute.mockReturnValue(true);
       build({ organizationId: organizationNotOnTrial.sys.id });
 
-      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
     });
 
     it('navigates to the App Trial Space Home when clicked', async () => {
@@ -369,14 +358,14 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
     });
 
     it('renders when the App Trial is active and the navbar is SpaceNavbar', async () => {
       build();
 
-      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
     });
 
     it('renders when the App Trial is expired and the navbar is SpaceNavbar', async () => {
@@ -388,7 +377,7 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
     });
 
     it('does not render when the App Trial is expired and the navbar is OrgSettingsNavbar', async () => {
@@ -427,9 +416,8 @@ describe('TrialTag', () => {
 
       build();
 
-      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent(`TRIAL`));
+      await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
-
       expect(screen.queryByTestId('trial_space_tag')).not.toBeInTheDocument();
     });
 

@@ -30,3 +30,23 @@ export const createIdsApiWithoutField = ({
     [widgetNamespace]: widgetId,
   };
 };
+
+/**
+ * - removes object props with undefined value
+ * - replaces array undefined array values with null
+ */
+export function cleanupJSONValue(value: any): any {
+  if (Array.isArray(value)) {
+    return value.map((v) => (v === undefined ? null : cleanupJSONValue(v)));
+  } else if (value === null) {
+    return null;
+  } else if (typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, v]) => v !== undefined)
+        .map(([key, v]) => [key, cleanupJSONValue(v)])
+    );
+  } else {
+    return value;
+  }
+}

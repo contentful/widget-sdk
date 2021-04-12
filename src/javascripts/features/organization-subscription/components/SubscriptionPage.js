@@ -15,7 +15,6 @@ import {
   SkeletonDisplayText,
   TextLink,
   Typography,
-  Workbench,
 } from '@contentful/forma-36-react-components';
 
 import { go } from 'states/Navigator';
@@ -31,9 +30,7 @@ import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
-import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
-import ContactUsButton from 'ui/Components/ContactUsButton';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
@@ -155,36 +152,50 @@ export function SubscriptionPage({
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
   return (
-    <Workbench testId="subscription-page">
-      <Workbench.Header
-        icon={<ProductIcon icon="Subscription" size="large" />}
-        title="Subscription"
-      />
-      {/* the workbench needs this 'position relative' here or it will render double scrollbars when its children have 'flex-direction: column' */}
-      <Workbench.Content className={css({ position: 'relative' })}>
-        <Flex className={styles.fullRow} justifyContent="flex-end" marginBottom="spacingM">
-          <ContactUsButton disabled={initialLoad} isLink />
+    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+      {organization && isOrgOnTrial && (
+        <Flex className={styles.fullRow} flexDirection="column">
+          <EnterpriseTrialInfo organization={organization} />
         </Flex>
+      )}
 
-        <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
-          {organization && isOrgOnTrial && (
-            <Flex className={styles.fullRow} flexDirection="column">
-              <EnterpriseTrialInfo organization={organization} />
+      {!isNotAdminOrOwnerOfTrialOrg && (
+        <Flex flexDirection="column">
+          {initialLoad ? (
+            <SkeletonContainer svgHeight={117}>
+              <SkeletonDisplayText />
+              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+            </SkeletonContainer>
+          ) : (
+            <BasePlan basePlan={basePlan} />
+          )}
+          {rightColumnHasContent && (
+            <Flex flexDirection="column" marginTop="spacingXl">
+              <UsersForPlan
+                organizationId={organizationId}
+                numberFreeUsers={usersMeta && usersMeta.numFree}
+                numberPaidUsers={usersMeta && usersMeta.numPaid}
+                costOfUsers={usersMeta && usersMeta.cost}
+                unitPrice={usersMeta && usersMeta.unitPrice}
+                hardLimit={usersMeta && usersMeta.hardLimit}
+                isFreePlan={isFreePlan(basePlan)}
+                isOnEnterpriseTrial={isOrgOnTrial}
+              />
             </Flex>
           )}
-
-          {!isNotAdminOrOwnerOfTrialOrg && (
-            <Flex flexDirection="column">
-              {initialLoad ? (
-                <SkeletonContainer svgHeight={117}>
-                  <SkeletonDisplayText />
-                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-                </SkeletonContainer>
-              ) : (
-                <BasePlan basePlan={basePlan} />
-              )}
-              {rightColumnHasContent && (
-                <Flex flexDirection="column" marginTop="spacingXl">
+        </Flex>
+      )}
+      {!isNotAdminOrOwnerOfTrialOrg && (
+        <Flex flexDirection="column">
+          {initialLoad ? (
+            <SkeletonContainer svgHeight={117}>
+              <SkeletonDisplayText />
+              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+            </SkeletonContainer>
+          ) : (
+            <>
+              {!rightColumnHasContent && (
+                <Flex flexDirection="column" marginBottom="spacingXl">
                   <UsersForPlan
                     organizationId={organizationId}
                     numberFreeUsers={usersMeta && usersMeta.numFree}
@@ -197,79 +208,52 @@ export function SubscriptionPage({
                   />
                 </Flex>
               )}
-            </Flex>
-          )}
-          {!isNotAdminOrOwnerOfTrialOrg && (
-            <Flex flexDirection="column">
-              {initialLoad ? (
-                <SkeletonContainer svgHeight={117}>
-                  <SkeletonDisplayText />
-                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-                </SkeletonContainer>
-              ) : (
-                <>
-                  {!rightColumnHasContent && (
-                    <Flex flexDirection="column" marginBottom="spacingXl">
-                      <UsersForPlan
-                        organizationId={organizationId}
-                        numberFreeUsers={usersMeta && usersMeta.numFree}
-                        numberPaidUsers={usersMeta && usersMeta.numPaid}
-                        costOfUsers={usersMeta && usersMeta.cost}
-                        unitPrice={usersMeta && usersMeta.unitPrice}
-                        hardLimit={usersMeta && usersMeta.hardLimit}
-                        isFreePlan={isFreePlan(basePlan)}
-                        isOnEnterpriseTrial={isOrgOnTrial}
-                      />
-                    </Flex>
-                  )}
-                  {showPayingOnDemandCopy && (
-                    <Flex flexDirection="column" marginBottom="spacingXl">
-                      <PayingOnDemandOrgCopy grandTotal={grandTotal} />
-                    </Flex>
-                  )}
-                  {showContentfulAppsCard && (
-                    <Flex flexDirection="column">
-                      <ContentfulApps
-                        organizationId={organizationId}
-                        startAppTrial={handleStartAppTrial}
-                        isTrialAvailable={isTrialAvailable}
-                        isTrialActive={isTrialActive}
-                        isTrialExpired={isTrialExpired}
-                        addOnPlan={addOnPlan}
-                      />
-                    </Flex>
-                  )}
-                  {showNonPayingOrgCopy && (
-                    <Flex flexDirection="column" marginTop="spacingXl">
-                      <NonPayingOrgCopy createSpace={createSpace} />
-                    </Flex>
-                  )}
-                </>
+              {showPayingOnDemandCopy && (
+                <Flex flexDirection="column" marginBottom="spacingXl">
+                  <PayingOnDemandOrgCopy grandTotal={grandTotal} />
+                </Flex>
               )}
-            </Flex>
+              {showContentfulAppsCard && (
+                <Flex flexDirection="column">
+                  <ContentfulApps
+                    organizationId={organizationId}
+                    startAppTrial={handleStartAppTrial}
+                    isTrialAvailable={isTrialAvailable}
+                    isTrialActive={isTrialActive}
+                    isTrialExpired={isTrialExpired}
+                    addOnPlan={addOnPlan}
+                  />
+                </Flex>
+              )}
+              {showNonPayingOrgCopy && (
+                <Flex flexDirection="column" marginTop="spacingXl">
+                  <NonPayingOrgCopy createSpace={createSpace} />
+                </Flex>
+              )}
+            </>
           )}
+        </Flex>
+      )}
 
-          <Flex className={styles.fullRow} flexDirection="column">
-            {isNotAdminOrOwnerOfTrialOrg ? (
-              <SpacesListForMembers spaces={memberAccessibleSpaces} />
-            ) : (
-              <SpacePlans
-                initialLoad={initialLoad}
-                spacePlans={spacePlans}
-                upgradedSpaceId={changedSpaceId}
-                onCreateSpace={createSpace}
-                onChangeSpace={changeSpace}
-                organizationId={organizationId}
-                onDeleteSpace={deleteSpace}
-                enterprisePlan={enterprisePlan}
-                anySpacesInaccessible={anySpacesInaccessible}
-                isOwnerOrAdmin={isOrgOwnerOrAdmin}
-              />
-            )}
-          </Flex>
-        </Grid>
-      </Workbench.Content>
-    </Workbench>
+      <Flex className={styles.fullRow} flexDirection="column">
+        {isNotAdminOrOwnerOfTrialOrg ? (
+          <SpacesListForMembers spaces={memberAccessibleSpaces} />
+        ) : (
+          <SpacePlans
+            initialLoad={initialLoad}
+            spacePlans={spacePlans}
+            upgradedSpaceId={changedSpaceId}
+            onCreateSpace={createSpace}
+            onChangeSpace={changeSpace}
+            organizationId={organizationId}
+            onDeleteSpace={deleteSpace}
+            enterprisePlan={enterprisePlan}
+            anySpacesInaccessible={anySpacesInaccessible}
+            isOwnerOrAdmin={isOrgOwnerOrAdmin}
+          />
+        )}
+      </Flex>
+    </Grid>
   );
 }
 

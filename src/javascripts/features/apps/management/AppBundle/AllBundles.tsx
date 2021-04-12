@@ -54,7 +54,7 @@ export const AllBundles: React.FC<AllBundlesProps> = ({
 
   return (
     <>
-      <SectionHeading className={styles.sectionHeading}>Active Bundles</SectionHeading>
+      <SectionHeading className={styles.sectionHeading}>All Bundles</SectionHeading>
       {bundlesToDisplay.map((bundle) => {
         return (
           <BundleCard

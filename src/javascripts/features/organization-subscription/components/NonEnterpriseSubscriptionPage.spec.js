@@ -7,7 +7,7 @@ import { getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { SubscriptionPage } from './SubscriptionPage';
+import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 import { links } from '../utils';
 
 import * as trackCTA from 'analytics/trackCTA';
@@ -41,15 +41,12 @@ const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 const mockOrganization = Fake.Organization();
-const mockTrialOrganization = Fake.Organization({
-  trialPeriodEndsAt: new Date(),
-});
 
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
 
-describe('SubscriptionPage', () => {
+describe('NonEnterpriseSubscriptionPage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     getVariation.mockClear().mockResolvedValue(false);
@@ -151,33 +148,11 @@ describe('SubscriptionPage', () => {
     });
   });
 
-  it('should show user details correctly for the Enterprise trial customers', () => {
-    const usersMeta = {
-      numFree: 100,
-      hardLimit: null,
-    };
-
-    build({ usersMeta, organization: mockTrialOrganization });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
-        `Customers on the Enterprise tier can purchase additional users for $15/month per user.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-  });
-
   it('should show the monthly cost for on demand users', () => {
     build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
 
     expect(screen.getByText('Monthly total')).toBeVisible();
     expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
-  });
-
-  it('should show the limitations copy if the org is nonpaying, user is org owner, and the new space purchase flow is enabled', () => {
-    build({ organization: Fake.Organization({ isBillable: false }) });
-
-    expect(screen.getByTestId('subscription-page.non-paying-org-limits')).toBeVisible();
   });
 
   it('should not show the limitations copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is enabled', () => {
@@ -186,15 +161,6 @@ describe('SubscriptionPage', () => {
 
     expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
-  });
-
-  it('should open the create space dialog if the limitations create space CTA is clicked', () => {
-    isOwner.mockReturnValue(true);
-    build({ organization: Fake.Organization({ isBillable: false }) });
-
-    userEvent.click(screen.getByTestId('subscription-page.add-space-free-org-cta'));
-
-    expect(beginSpaceCreation).toBeCalled();
   });
 
   it('should not show the billing copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is disabled', () => {
@@ -217,38 +183,10 @@ describe('SubscriptionPage', () => {
     expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
-  describe('organization on platform trial', () => {
-    beforeEach(() => {
-      isOwnerOrAdmin.mockReturnValue(true);
-    });
-
-    it('should show trial info for admins and owners', () => {
-      build({
-        organization: mockTrialOrganization,
-      });
-
-      expect(screen.getByTestId('platform-trial-info')).toBeVisible();
-    });
-
-    it('should show trial info and spaces section for members', () => {
-      isOwnerOrAdmin.mockReturnValueOnce(false);
-      build({
-        organization: mockTrialOrganization,
-        memberAccessibleSpaces: [],
-      });
-
-      expect(screen.getByTestId('platform-trial-info')).toBeVisible();
-      expect(screen.getByTestId('subscription-page-trial-members.heading')).toBeVisible();
-      expect(
-        screen.getByTestId('subscription-page-trial-members.no-spaces-placeholder')
-      ).toBeVisible();
-    });
-  });
-
   describe('contentful apps card', () => {
     it('shows Contentful Apps trial card for users who have not purchased apps', () => {
       isOwnerOrAdmin.mockReturnValueOnce(true);
-      build({ organization: mockOrganization, isTrialActive: true });
+      build({ organization: mockOrganization, isAppTrialActive: true });
 
       expect(screen.getByTestId('apps-trial-header')).toBeVisible();
       expect(screen.queryByTestId('apps-header')).toBeNull();
@@ -282,5 +220,5 @@ function build(custom) {
     custom
   );
 
-  render(<SubscriptionPage {...props} />);
+  render(<NonEnterpriseSubscriptionPage {...props} />);
 }

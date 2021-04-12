@@ -3,7 +3,6 @@ import { render, waitFor, screen } from '@testing-library/react';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
-import { getVariation } from 'LaunchDarkly';
 import {
   startAppTrial as _startAppTrial,
   contentImport as _contentImport,
@@ -105,26 +104,9 @@ const startAppTrial = _startAppTrial as jest.Mock;
 const contentImport = _contentImport as jest.Mock;
 
 describe('StartAppTrial', () => {
-  beforeEach(() => {
-    (getVariation as jest.Mock).mockResolvedValue(true);
-  });
   afterEach(cleanupNotifications);
 
-  it('when trials feature flag is off', async () => {
-    (getVariation as jest.Mock).mockResolvedValue(false);
-    build();
-
-    await waitFor(() => expect(getVariation).toHaveBeenCalledTimes(1));
-    expect(go).toHaveBeenCalledWith({
-      path: ['account', 'organizations', 'subscription_new'],
-      params: {
-        orgId: mockedOrg.sys.id,
-      },
-      options: { location: 'replace' },
-    });
-  });
-
-  it('when trials feature flag is on and for existing users', async () => {
+  it('should navigate existing users to space home', async () => {
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build();
 
@@ -143,7 +125,7 @@ describe('StartAppTrial', () => {
     expect(track).toHaveBeenCalledWith('trial:app_trial_started', { from: 'marketing' });
   });
 
-  it('bootstrap the space for new users', async () => {
+  it('should perform content import on new users', async () => {
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
     build({ existingUsers: false });
 
@@ -159,7 +141,7 @@ describe('StartAppTrial', () => {
     });
   });
 
-  describe('when start app trial fails', () => {
+  describe('when start apps trial fails', () => {
     it('should redirect to the subscription page', async () => {
       startAppTrial.mockRejectedValueOnce(new TrialSpaceServerError());
       build();
@@ -174,7 +156,7 @@ describe('StartAppTrial', () => {
       });
     });
 
-    it('should show a notification if failed with 5XX errors', async () => {
+    it('should show an error notification on 5XX errors', async () => {
       startAppTrial.mockRejectedValueOnce(new TrialSpaceServerError());
       build();
 
@@ -183,7 +165,7 @@ describe('StartAppTrial', () => {
       expect(screen.getByTestId('cf-ui-notification')).toHaveTextContent('start your trial');
     });
 
-    it('should not show a notification if failed with other errors', async () => {
+    it('should not show an error notification on other errors', async () => {
       startAppTrial.mockRejectedValueOnce(new Error());
       build();
 

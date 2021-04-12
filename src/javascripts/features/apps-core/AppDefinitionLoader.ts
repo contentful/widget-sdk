@@ -11,10 +11,6 @@ export function createAppDefinitionLoader(
     getById,
     getByIds,
     getAllForCurrentOrganization,
-    getKeysForAppDefinition,
-    getAppEvents,
-    getAppSigningSecret,
-    getAppBundles,
   };
 
   async function getById(id) {
@@ -50,7 +46,7 @@ export function createAppDefinitionLoader(
       }
     );
 
-    const publicDefinitions = publicResponse.items;
+    const publicDefinitions = publicResponse.includes.ResolvedAppDefinition;
     const fetchedIds = publicDefinitions.map((def) => def.sys.id);
     const missingIds = difference(uniqueIds, fetchedIds);
 
@@ -79,52 +75,21 @@ export function createAppDefinitionLoader(
   }
 
   async function fetchFromOrganizationEndpoint(ids) {
-    const { items } = await orgEndpoint({
+    const response = await orgEndpoint({
       method: 'GET',
       path: ['app_definitions'],
       query: { 'sys.id[in]': ids.join(',') },
     });
 
-    return items;
+    return response.includes.ResolvedAppDefinition;
   }
 
   async function getAllForCurrentOrganization() {
-    const { items } = await orgEndpoint({
+    const response = await orgEndpoint({
       method: 'GET',
       path: ['app_definitions'],
     });
 
-    return items;
-  }
-
-  async function getKeysForAppDefinition(appDefinitionId) {
-    const { items } = await orgEndpoint({
-      method: 'GET',
-      path: ['app_definitions', appDefinitionId, 'keys'],
-    });
-
-    return items;
-  }
-
-  async function getAppEvents(appDefinitionId) {
-    return await orgEndpoint({
-      method: 'GET',
-      path: ['app_definitions', appDefinitionId, 'event_subscription'],
-    });
-  }
-
-  async function getAppSigningSecret(appDefinitionId) {
-    const { redactedValue } = await orgEndpoint({
-      method: 'GET',
-      path: ['app_definitions', appDefinitionId, 'signing_secret'],
-    });
-    return redactedValue;
-  }
-
-  async function getAppBundles(appDefinitionId) {
-    return await orgEndpoint({
-      method: 'GET',
-      path: ['app_definitions', appDefinitionId, 'app_bundles'],
-    });
+    return response.includes.ResolvedAppDefinition;
   }
 }

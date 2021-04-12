@@ -14,7 +14,6 @@ import {
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { AddSigningSecretDialog } from './AddSigningSecretDialog';
 import { generateSecret } from './utils';
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { styles } from './styles';
 
@@ -57,7 +56,7 @@ export const SigningSecret = ({ definition }) => {
   useEffect(() => {
     (async () => {
       try {
-        const secret = await getAppDefinitionLoader(orgId).getAppSigningSecret(definitionId);
+        const secret = await ManagementApiClient.getAppSigningSecret(orgId, definitionId);
         setSecret(secret?.padStart(16, '*'));
       } catch (err) {
         // ignore "secret not found" as it is expected

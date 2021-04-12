@@ -3,7 +3,6 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import * as Repo from './AppTrialRepo';
 import { isTrialSpaceType } from './TrialService';
 import * as TokenStore from 'services/TokenStore';
@@ -21,17 +20,12 @@ export const canStartAppTrial = async (organizationId: string) => {
   }
 
   const orgEndpoint = createOrganizationEndpoint(organizationId);
-  const [featureFlag, basePlan, productFeature] = await Promise.all([
-    getVariation(FLAGS.APP_TRIAL, {
-      organizationId,
-      spaceId: undefined,
-      environmentId: undefined,
-    }),
+  const [basePlan, productFeature] = await Promise.all([
     getBasePlan(orgEndpoint),
     Repo.getTrial(organizationId),
   ]);
 
-  if (!featureFlag || isEnterprisePlan(basePlan)) {
+  if (isEnterprisePlan(basePlan)) {
     return false;
   }
 
