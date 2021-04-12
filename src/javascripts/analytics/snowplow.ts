@@ -1,6 +1,7 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config';
 import { getSnowplowSchemaForEvent } from 'analytics/transform';
+import { EventPayload } from './types';
 import * as LazyLoader from 'utils/LazyLoader';
 import { window } from 'core/services/window';
 
@@ -12,7 +13,7 @@ import { window } from 'core/services/window';
  * Cannot be re-enabled once the service is disabled.
  */
 
-const snowplow = { q: [] };
+const snowplow: { q: Array<any> } = { q: [] };
 const namespace = 'snowplow';
 
 let isDisabled = false;
@@ -21,8 +22,8 @@ let isDisabled = false;
 // When snowplow.js loads, it looks up the value in window.GlobalSnowplowNamespace,
 // which we've defined as 'snowplow'. It sends events buffered in
 // window['snowplow'].q. Finally it replaces window['snowplow'] with an object
-// {push: push}, where push is sends events to snowplow.
-function initSnowplow() {
+// {push: push}, where push sends events to snowplow.
+function initSnowplow(): void {
   window.GlobalSnowplowNamespace = [namespace];
   window[namespace] = snowplow;
   LazyLoader.get('snowplow');
@@ -51,37 +52,23 @@ function initSnowplow() {
 export const enable = once(initSnowplow);
 
 /**
- * @ngdoc method
- * @name analytics/snowplow#disable
- * @description
- * Prevent further calls to `track` from being added to the queue
+ * Prevent further calls to `track` from being added to the queue.
  */
-export function disable() {
+export function disable(): void {
   isDisabled = true;
 }
 
 /**
- * @ngdoc method
- * @name analytics/snowplow#identify
- * @param {string} userId
- *
- * @description
- * Sets current user id in Snowplow
+ * Sets current user id in Snowplow.
  */
-export function identify(userId) {
+export function identify(userId: string): void {
   snowplowSend('setUserId', userId);
 }
 
 /**
- * @ngdoc method
- * @name analytics/snowplow#track
- * @param {string} eventName
- * @param {object} rawData
- *
- * @description
- * Tracks an event in Snowplow if it is registered in the snowplow events service
+ * Tracks an event in Snowplow if it is registered in the snowplow events service.
  */
-export function track(eventName, rawData) {
+export function track(eventName: string, rawData: EventPayload): void {
   const eventData = buildUnstructEventData(eventName, rawData);
 
   if (eventData) {
@@ -90,18 +77,10 @@ export function track(eventName, rawData) {
 }
 
 /**
- * @ngdoc method
- * @name analytics/snowplow#buildUnstructEventData
- * @param {string} eventName
- * @param {object} data
- * @returns {object[]|undefined}
- *
- * @description
  * Builds an unstructured event for Snowplow. All our current events that reach
  * Snowplow are unstructured in Snowplow parlance.
  */
-
-export function buildUnstructEventData(eventName, data) {
+export function buildUnstructEventData(eventName: string, data: EventPayload) {
   const schema = getSnowplowSchemaForEvent(eventName);
 
   if (schema) {

@@ -6,6 +6,7 @@ import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
 import { getSegmentSchemaForEvent } from './transform';
+import { EventPayload } from './types';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -89,8 +90,7 @@ function install(loadOptions) {
   ];
 
   analytics.factory = (method) =>
-    function () {
-      const args = _.toArray(arguments);
+    function (...args) {
       args.unshift(method);
       analytics.push(args);
       return analytics;
@@ -114,10 +114,15 @@ function install(loadOptions) {
   return LazyLoader.get('segment');
 }
 
+// TODO: This must have been broken since d8f5417 as we're receiving `data.data`
+//  and a transformed `element_id` instead of `elementId` now.
+//  Should this be fixed or can we remove it? If fixing it we should make sure there's
+//  no Intercom campaigns that would be triggered after the fix.
+/*
 // we send an event to Segment (Intercom included) if modern onboarding
 // flow was completed (onboarding deployment completed). We send it as an
 // event, and it is immediately available to react – e.g. send a survey
-function sendOnboardingDeploymentEvent(event, data) {
+function sendOnboardingDeploymentEvent(event, data: EventPayload) {
   // we have this information in `element:click` event with certain data
   // so we just check it and if so, send this event.
   if (
@@ -141,6 +146,7 @@ function sendOnboardingDeploymentEvent(event, data) {
     );
   }
 }
+ */
 
 async function getIntegrations() {
   const integrationsUrl = `https://cdn.segment.com/v1/projects/${Config.services.segment_io}/integrations`;
@@ -162,7 +168,7 @@ export default {
    * Sends a single event with data to
    * the selected integrations.
    */
-  track: function track(event, data) {
+  track: function track(event: string, data: EventPayload): void {
     // we need to send an event to segment (Intercom included)
     // usually we don't do that, but you might have to do so
     // alternatively, you can use `updateUserInSegment` from
@@ -170,7 +176,8 @@ export default {
     // attribute – https://developers.intercom.com/docs/adding-custom-information
     // Intercom docs on events:
     // https://developers.intercom.com/docs/working-with-events
-    sendOnboardingDeploymentEvent(event, data);
+    // TODO: Solve TODO on sendOnboardingDeploymentEvent
+    //sendOnboardingDeploymentEvent(event, data);
 
     const schema = getSegmentSchemaForEvent(event);
 

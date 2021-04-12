@@ -42,13 +42,8 @@ import SpacePurchaseTransformer from './transformers/SpacePurchase';
 import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
 import { getSegmentSchema } from './SchemasSegment';
+import { EventPayload, Payload } from './types';
 
-export type Payload = Record<string, unknown>;
-export type EventPayload = {
-  schema?: string;
-  data: Record<string, unknown>;
-  contexts?: Record<string, unknown>;
-};
 type Transformer = Function | { (event: string, data: Payload): EventPayload };
 
 type EventMeta = {
