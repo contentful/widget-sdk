@@ -90,4 +90,17 @@ export const styles = {
   promotionTag: css({
     marginLeft: tokens.spacingXs,
   }),
+  // TODO: temporary, after the experiment, move the icon into F36
+  highValueIconTrial: css({
+    fill: tokens.colorPurpleMid,
+    borderRadius: '50%',
+
+    '& path:first-child': css({
+      fill: 'white',
+    }),
+  }),
+  // not cut off the tooltip
+  highValueLabelTooltipContainer: css({
+    overflow: 'visible',
+  }),
 };

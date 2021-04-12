@@ -8,7 +8,8 @@ import {
   Tag,
   Workbench,
   ModalLauncher,
-  Modal,
+  Flex,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
@@ -40,6 +41,9 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
+import { REFERENCES_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { isOrganizationOnTrial } from 'features/trials';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -106,6 +110,14 @@ function tabIsDefault(tabKey, tabs) {
   return tabs.length ? tabKey === `${tabs[0].widgetNamespace}-${tabs[0].widgetId}` : true;
 }
 
+// get high value label modal data from Contentful
+const initialFetch = async () => await fetchWebappContentByEntryID(REFERENCES_ENTRY_ID);
+
+const openDialog = (modalData) =>
+  ModalLauncher.open(({ onClose, isShown }) => (
+    <FeatureModal isShown={isShown} onClose={() => onClose()} {...modalData} />
+  ));
+
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const {
     currentSpaceId,
@@ -132,6 +144,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   };
   const { processingAction, references, selectedEntities } = referencesState;
   const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
+  const isOrgOnTrial = isOrganizationOnTrial(currentOrganization);
 
   const availableTabs = React.useMemo(
     () => editorData.editorsExtensions.filter((editor) => !editor.disabled && !editor.problem),
@@ -332,18 +345,14 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     goToPreviousSlideOrExit('arrow_back');
   };
 
-  const showCustomModal = () => {
-    // temporary, it will be replaced with the final Modal
-    ModalLauncher.open(({ onClose, isShown }) => (
-      <Modal isShown={isShown} onClose={onClose} size="large">
-        {() => (
-          <div>
-            <Modal.Header title="Reference view" onClose={onClose} />
-            <Modal.Content>Details about the references from Contentful ProdDev</Modal.Content>
-          </div>
-        )}
-      </Modal>
-    ));
+  const showCustomModal = async () => {
+    try {
+      const modalData = await initialFetch();
+      openDialog(modalData);
+    } catch {
+      // do nothing, user will be able to see tooltip with information about the feature
+      throw new Error('Something went wrong while fetching data from Contentful');
+    }
   };
 
   return (
@@ -382,28 +391,37 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
               message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
             />
           )}
-          <Tabs className={styles.tabs} withDivider>
+          <Tabs
+            className={cx(styles.tabs, {
+              [styles.highValueLabelTooltipContainer]: isHighValueLabelEnabled,
+            })}
+            withDivider>
             {visibleTabs.map((tab) => {
               // Temporary, will be removed after high value label experiment is finished
               const isReferenceTab =
                 tab.key ===
                 `${WidgetNamespace.EDITOR_BUILTIN}-${EntryEditorWidgetTypes.REFERENCE_TREE.id}`;
-              const showHighValueModal =
-                isReferenceTab && isHighValueLabelEnabled && !tabVisible.entryReferences;
+              const showHighValueLabelForCommunity =
+                isReferenceTab &&
+                isHighValueLabelEnabled &&
+                !tabVisible.entryReferences &&
+                !currentOrganization?.isBillable;
+              const showHighValueLabelForCommunityOnTrial =
+                isReferenceTab && isHighValueLabelEnabled && isOrgOnTrial;
 
               return (
                 <Tab
                   id={tab.key}
                   key={tab.key}
                   testId={`test-id-${tab.key}`}
-                  disabled={!isHighValueLabelEnabled && !tab.isEnabled()} // when highValueLabel is visible don't disable the tab
+                  disabled={!showHighValueLabelForCommunity && !tab.isEnabled()} // when highValueLabel is visible don't disable the tab
                   selected={selectedTab === tab.key}
                   className={cx(styles.tab, {
                     // the class name is to provide a hook to attach intercom product tours
                     [`tab-${tab.key}--enabled`]: tab.isEnabled(),
                   })}
                   // when highValueLabel FF is enabled show custom modal on click, not show the content of the tab
-                  onSelect={showHighValueModal ? showCustomModal : tab.onClick}>
+                  onSelect={showHighValueLabelForCommunity ? showCustomModal : tab.onClick}>
                   <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
                   {tab.title}
 
@@ -413,9 +431,26 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                       new
                     </Tag>
                   )}
-                  {/* when highValueLabel FF is enabled show info icon next to the reference tab */}
-                  {showHighValueModal && (
-                    <Icon icon="InfoCircle" color="muted" className={styles.promotionTag} />
+
+                  {/* when highValueLabel FF is enabled show info icon next to the reference tab for community and community on enterprise trial*/}
+                  {(showHighValueLabelForCommunity || showHighValueLabelForCommunityOnTrial) && (
+                    <Tooltip
+                      place="bottom"
+                      content={
+                        showHighValueLabelForCommunity
+                          ? 'This feature is a part of Enterprise plan.'
+                          : 'This feature is a part of the Enterprise plan. You can use it during your trial.'
+                      }>
+                      <Flex>
+                        <Icon
+                          icon="InfoCircle"
+                          color="muted"
+                          className={cx(styles.promotionTag, {
+                            [styles.highValueIconTrial]: showHighValueLabelForCommunityOnTrial,
+                          })}
+                        />
+                      </Flex>
+                    </Tooltip>
                   )}
                 </Tab>
               );
