@@ -30,7 +30,6 @@ import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
@@ -53,14 +52,8 @@ const fetchData = (
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
-  const hasActiveAppTrial = await getVariation(FLAGS.APP_TRIAL, {
-    organizationId: currentOrganizationId,
-  }).then(async (enabled) => {
-    if (enabled) {
-      const appTrialFeature = await AppTrialRepo.getTrial(currentOrganizationId);
-      return isActiveAppTrial(appTrialFeature);
-    }
-  });
+  const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
+  const hasActiveAppTrial = isActiveAppTrial(appTrial);
 
   if (!currentSpaceId || !isSpaceAdmin) {
     setState({
