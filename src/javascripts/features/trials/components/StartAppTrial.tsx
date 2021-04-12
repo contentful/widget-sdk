@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { css, cx } from 'emotion';
 import { useAsync } from 'core/hooks';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { contentImport, startAppTrial } from '../services/AppTrialService';
 import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
@@ -127,14 +126,6 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
 
   const spaceContext = getModule('spaceContext');
   try {
-    const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
-      organizationId,
-    });
-
-    if (!appTrialFeatureEnabled) {
-      throw new Error('The feature is not available just yet');
-    }
-
     const { trial, apps } = await startAppTrial(organizationId);
 
     markOnboarding();

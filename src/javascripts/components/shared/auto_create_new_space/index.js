@@ -1,4 +1,3 @@
-import React from 'react';
 import * as K from 'core/utils/kefir';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
@@ -14,9 +13,6 @@ import {
   isUserOrgCreator,
 } from 'data/User';
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 
 let creatingSampleSpace = false;
@@ -59,15 +55,9 @@ export function init() {
 
       creatingSampleSpace = true;
 
-      const isAppsTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
-        organizationId: org.sys.id,
-      });
-
       create({
         markOnboarding,
-        onDefaultChoice: () => {
-          isAppsTrialEnabled ? startAppsTrial(org.sys.id) : defaultChoice({ org, user, store });
-        },
+        onDefaultChoice: () => startAppsTrial(org.sys.id),
         org,
         user,
       });
@@ -76,33 +66,6 @@ export function init() {
         store.set(getSpaceAutoCreatedKey(user, action), true);
       }
     });
-}
-
-function defaultChoice({ org, user, store }) {
-  const handleSpaceCreationSuccess = (createdSpace) => {
-    store.set(getSpaceAutoCreatedKey(user, 'success'), true);
-    store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, createdSpace.sys.id);
-
-    creatingSampleSpace = false;
-  };
-
-  const handleSpaceCreationFailure = () => {
-    // serialize the fact that auto space creation failed to localStorage
-    // to power any behaviour to work around the failure
-    store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
-
-    creatingSampleSpace = false;
-  };
-
-  ModalLauncher.open(({ isShown, onClose }) => (
-    <CreateSampleSpaceModal
-      isShown={isShown}
-      onClose={onClose}
-      organization={org}
-      onFail={handleSpaceCreationFailure}
-      onSuccess={handleSpaceCreationSuccess}
-    />
-  ));
 }
 
 function qualifyUser(user, spacesByOrg, store) {

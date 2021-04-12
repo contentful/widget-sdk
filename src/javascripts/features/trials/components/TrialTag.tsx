@@ -24,7 +24,6 @@ import {
   isActiveAppTrial,
   getAppTrialSpaceKey,
 } from '../services/AppTrialService';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AppTrialFeature } from '../types/AppTrial';
 import { Organization } from 'core/services/SpaceEnvContext/types';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -65,11 +64,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
       ? await getOrganization(organizationId)
       : space?.organization;
 
-    const showAppTag = await getVariation(FLAGS.APP_TRIAL, {
-      organizationId: organization?.sys.id,
-    });
-
-    if (showAppTag && organization) {
+    if (organization) {
       const appFeature = await Repo.getTrial(organization?.sys.id);
       const appTrialSpaceId = await getAppTrialSpaceKey(appFeature);
       return {

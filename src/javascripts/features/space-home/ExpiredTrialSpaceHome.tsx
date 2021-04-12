@@ -14,7 +14,6 @@ import {
   isExpiredAppTrial,
 } from 'features/trials';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -45,21 +44,13 @@ export const ExpiredTrialSpaceHome = () => {
     }
 
     const fetchData = async () => {
-      const isAppTrialEnabled = await getVariation(FLAGS.APP_TRIAL, {
-        organizationId: currentOrganizationId,
-        spaceId: undefined,
-        environmentId: undefined,
-      });
+      const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
+      setAppTrialFeature(appTrial);
 
-      if (isAppTrialEnabled) {
-        const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
-        setAppTrialFeature(appTrial);
-
-        if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {
-          const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
-          const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
-          setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
-        }
+      if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {
+        const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
+        const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
+        setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
       }
     };
 
