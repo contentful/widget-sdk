@@ -1,4 +1,3 @@
-//@ts-check
 import { createAppDefinitionLoader, ORGANIZATION_HEADER } from './AppDefinitionLoader';
 
 const ORGANIZATION_ID = 'organization';
