@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, wait, screen } from '@testing-library/react';
 
-import { fetchUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { fetchUserData } from '../services/AccountRepository';
 import { UserProfilePage } from './UserProfilePage';
 
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('../services/AccountRepository', () => ({
   fetchUserData: jest.fn(),
 }));
 

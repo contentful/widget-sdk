@@ -40,7 +40,7 @@ export const ExpiredTrialSpaceHome = () => {
   const isExpiredSpace = isExpiredTrialSpace(currentSpaceData);
 
   useEffect(() => {
-    if (!isExpiredSpace) {
+    if (!currentOrganizationId || !isExpiredSpace) {
       return;
     }
 

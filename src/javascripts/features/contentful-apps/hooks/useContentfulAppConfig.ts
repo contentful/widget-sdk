@@ -46,7 +46,7 @@ export const fetchContentfulAppsConfig = async ({
       } as any),
       checkInstalledApp(appId),
       canStartAppTrial(organizationId as string),
-      AppTrialRepo.getTrial(organizationId),
+      AppTrialRepo.getTrial(organizationId as string),
     ].map(fallBackClose)
   );
 

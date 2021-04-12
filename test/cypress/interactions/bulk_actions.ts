@@ -132,7 +132,10 @@ export const bulkActionEntryNotFoundError = {
   },
 };
 
-const bulkActionResponse = (overrides = {}) => {
+// Use a very loose definition since matchers aren't compatible with the defined API shape
+type BulkActionResponse<TPayload = any> = Record<string, any> & { payload: TPayload };
+
+const bulkActionResponse = (overrides: BulkActionResponse) => {
   const mergedResponse = deepMerge(
     {
       sys: {
@@ -144,29 +147,61 @@ const bulkActionResponse = (overrides = {}) => {
         updatedAt: Matchers.somethingLike('2020-12-15T17:12:43.531Z'),
         createdBy: makeLink('User', defaultUserId),
       },
-      payload: {
-        entities: Matchers.somethingLike({
-          sys: {
-            type: 'Array',
-          },
-          items: Matchers.eachLike(
-            {
-              sys: {
-                id: 'testString',
-                linkType: 'Entry or Asset',
-                type: 'Link',
-                version: 1,
-              },
-            },
-            { min: 1 }
-          ),
-        }),
-      },
     },
     overrides
   );
 
   return Matchers.like(mergedResponse);
+};
+
+/**
+ * Given a Matcher shape for an item returns a Contentful collection matcher
+ *
+ * @param itemMatcher the shape that each item in the entities.items should look like
+ * @returns a Matcher.somethingLike for the collection
+ * @example
+ * > toCollectionMatcher({
+ *   sys: {
+ *     type: 'Link',
+ *     linkType: Matcher.regex({ generate: 'Entry', matcher: 'Entry|Asset' }),
+ *     id: Matcher.string('myTestId')
+ *   }
+ * })
+ * > _
+ * {
+ *   sys: { type: 'Array' },
+ *   items: Matchers.eachLike(..., { min: 1 }),
+ * }
+ */
+const toCollectionMatcher = (itemMatcher) =>
+  Matchers.somethingLike({
+    sys: {
+      type: 'Array',
+    },
+    items: Matchers.eachLike(itemMatcher, { min: 1 }),
+  });
+
+const publishBulkActionResponse = (overrides = {}) => {
+  const publishOverrides = deepMerge(
+    {
+      sys: {
+        id: Matchers.somethingLike(defaultBulkActionTestId),
+      },
+      action: 'publish',
+      payload: {
+        entities: toCollectionMatcher({
+          sys: {
+            type: 'Link',
+            id: 'testString',
+            linkType: Matchers.regex({ generate: 'Entry', matcher: 'Entry|Asset' }),
+            version: Matchers.integer(1),
+          },
+        }),
+      },
+    },
+    overrides
+  );
+  return bulkActionResponse(publishOverrides);
 };
 
 const validateBulkActionResponse = (overrides = {}) => {
@@ -177,20 +212,12 @@ const validateBulkActionResponse = (overrides = {}) => {
       },
       action: 'validate',
       payload: {
-        entities: Matchers.somethingLike({
+        entities: toCollectionMatcher({
           sys: {
-            type: 'Array',
+            type: 'Link',
+            id: 'testString',
+            linkType: Matchers.regex({ generate: 'Entry', matcher: 'Entry|Asset' }),
           },
-          items: Matchers.eachLike(
-            {
-              sys: {
-                id: 'testString',
-                linkType: 'Entry or Asset',
-                type: 'Link',
-              },
-            },
-            { min: 1 }
-          ),
         }),
       },
     },
@@ -260,12 +287,11 @@ export const getPublishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: publishBulkActionResponse({
           sys: {
             status: 'inProgress',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'publish',
         }),
       },
     }).as('getSucceededPublishBulkAction');
@@ -282,13 +308,12 @@ export const getPublishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: publishBulkActionResponse({
           sys: {
             status: 'succeeded',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
             completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'publish',
         }),
       },
     }).as('getSucceededPublishBulkAction');
@@ -305,13 +330,12 @@ export const getPublishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({
+        body: publishBulkActionResponse({
           sys: {
             status: 'failed',
             startedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
             completedAt: Matchers.somethingLike('2020-12-15T17:12:43.215Z'),
           },
-          action: 'publish',
           error: versionMismatchError,
         }),
       },
@@ -332,7 +356,7 @@ export const publishBulkAction = {
         headers: {
           ...defaultContentTypeHeader,
         },
-        body: bulkActionResponse({ action: 'publish', sys: { status: 'created' } }),
+        body: publishBulkActionResponse({ sys: { status: 'created' } }),
       },
     }).as('publishBulkAction');
 

@@ -2,10 +2,10 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import { deleteUserIdentityData } from 'app/UserProfile/Settings/AccountRepository';
+import { deleteUserIdentityData } from '../services/AccountRepository';
 import { IdentitiesSection } from './IdentitiesSection';
 
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('../services/AccountRepository', () => ({
   deleteUserIdentityData: jest.fn(),
 }));
 

@@ -12,7 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
-import { enableTotp } from 'app/UserProfile/Settings/AccountRepository';
+import { enableTotp } from '../services/AccountRepository';
 import { createQRCodeDataURI } from '../utils/createQRCodeDataURI';
 
 const styles = {

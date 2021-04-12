@@ -144,6 +144,7 @@ registerGenericEvent('trial:get_in_touch_clicked');
 registerGenericEvent('trial:help_link_clicked');
 registerGenericEvent('trial:app_trial_start_clicked');
 registerGenericEvent('trial:app_trial_start_performance');
+registerGenericEvent('trial:app_trial_started');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');

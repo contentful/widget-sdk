@@ -4,7 +4,6 @@ import { when } from 'jest-when';
 import { EditPaymentMethodRouter } from './EditPaymentMethodRouter';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
-import { getVariation } from 'LaunchDarkly';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
@@ -53,23 +52,6 @@ jest.useFakeTimers();
 
 describe('EditPaymentMethodRouter', () => {
   afterEach(cleanupNotifications);
-
-  it('should first get the variation and redirect to the old billing flow if it is false', async () => {
-    getVariation.mockResolvedValueOnce(false);
-
-    build();
-
-    await waitFor(() => expect(getVariation).toBeCalled());
-
-    expect(go).toHaveBeenCalledWith({
-      path: ['account', 'organizations', 'billing-gatekeeper'],
-    });
-
-    expect(LazyLoader.get).not.toBeCalled();
-    expect(mockEndpoint).not.toHaveBeenCalledWith(
-      expect.objectContaining({ path: ['hosted_payment_params'] })
-    );
-  });
 
   it('should redirect to home if the user is not an org owner', async () => {
     isOwner.mockReturnValueOnce(false);

@@ -12,27 +12,21 @@ import { DeleteUserModal } from './DeleteUserModal';
 
 import type { UserData } from '../types';
 
-const openDeleteUserModal = async (singleOwnerOrganizations) => {
-  const result = await ModalLauncher.open(({ isShown, onClose }) => {
-    return (
-      <DeleteUserModal
-        isShown={isShown}
-        onConfirm={() => onClose(true)}
-        onCancel={() => onClose(false)}
-        singleOwnerOrganizations={singleOwnerOrganizations}
-      />
-    );
-  });
+type singleOwnerOrganizations = UserData['userCancellationWarning']['singleOwnerOrganizations'];
 
-  if (result === false) {
-    return;
-  }
-
-  cancelUser();
+const openDeleteUserModal = (singleOwnerOrganizations: singleOwnerOrganizations) => {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <DeleteUserModal
+      isShown={isShown}
+      onConfirm={() => cancelUser()}
+      onCancel={onClose}
+      singleOwnerOrganizations={singleOwnerOrganizations}
+    />
+  ));
 };
 
 interface DangerZoneSectionProps {
-  singleOwnerOrganizations: UserData['userCancellationWarning']['singleOwnerOrganizations'];
+  singleOwnerOrganizations: singleOwnerOrganizations;
 }
 
 export function DangerZoneSection({ singleOwnerOrganizations }: DangerZoneSectionProps) {

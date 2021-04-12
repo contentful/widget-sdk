@@ -8,7 +8,7 @@ import { AppTrial, AppTrialFeature } from '../types/AppTrial';
 const headers = getAlphaHeader(COMPOSE_LAUNCH_TRIAL);
 
 const getFeatureTrial = (featureId: string) =>
-  memoize(async (orgId) => {
+  memoize(async (orgId: string) => {
     const endpoint = createOrganizationEndpoint(orgId);
     const data = await endpoint<CollectionProp<AppTrialFeature>>({
       method: 'GET',

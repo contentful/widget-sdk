@@ -1,7 +1,6 @@
-import { TagsRepoType } from './TagsRepoContext';
 import { SpaceEndpoint } from 'data/CMA/types';
 import { CollectionProp } from 'contentful-management/types';
-import { TagVisibilityType } from 'features/content-tags/types';
+import { TagVisibilityType, TagsRepoType } from 'features/content-tags/types';
 import { Tag } from '@contentful/types';
 
 function create(spaceEndpoint: SpaceEndpoint, environmentId: string): TagsRepoType {

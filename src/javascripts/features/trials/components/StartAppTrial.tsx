@@ -25,6 +25,7 @@ import {
   TrialSpaceServerError,
 } from '../utils/AppTrialError';
 import { capitalizeFirst } from 'utils/StringUtils';
+import { useQueryParams } from 'core/hooks/useQueryParams';
 
 const styles = {
   emptyContainer: css({
@@ -51,6 +52,7 @@ const styles = {
 export interface StartAppTrialProps {
   orgId: string;
   existingUsers: boolean;
+  from?: string;
 }
 
 type ResultWithAppName = PromiseSettledResult<void> & { app: string };
@@ -118,78 +120,86 @@ const installApps = async (
   );
 };
 
-export function StartAppTrial({ orgId, existingUsers }: StartAppTrialProps) {
-  const trialBootstrap = useCallback(async () => {
-    const startTimeTracker = window.performance.now();
+const initialFetch = (organizationId: string, existingUsers: boolean, from: string) => async () => {
+  const startTimeTracker = window.performance.now();
 
-    let isSuccessful = false;
+  let isSuccessful = false;
 
-    const spaceContext = getModule('spaceContext');
-    try {
-      const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
-        organizationId: orgId,
-      });
+  const spaceContext = getModule('spaceContext');
+  try {
+    const appTrialFeatureEnabled = await getVariation(FLAGS.APP_TRIAL, {
+      organizationId,
+    });
 
-      if (!appTrialFeatureEnabled) {
-        throw new Error('The feature is not available just yet');
-      }
-
-      const { trial, apps } = await startAppTrial(orgId);
-
-      markOnboarding();
-
-      await TokenStore.refresh()
-        .then(() => TokenStore.getSpace(trial.spaceKey))
-        .then((space) => spaceContext.resetWithSpace(space));
-
-      const environmentId = spaceContext.getEnvironmentId();
-      const spaceId = spaceContext.getId();
-      const cma = spaceContext.cma;
-
-      await installApps(apps, orgId, spaceId, environmentId, cma);
-
-      if (!existingUsers) {
-        await contentImport(spaceId, environmentId);
-      }
-
-      isSuccessful = true;
-      Notification.success('Congratulations, we started your trial!');
-      goToSpaceHome(spaceId);
-    } catch (e) {
-      if (e instanceof TrialSpaceServerError) {
-        Notification.error('Use the ´Start free trial´ button above to try again.', {
-          title: 'Oh sorry! We couldn’t start your trial.',
-        });
-        goToSubscriptionPage(orgId);
-      } else if (e instanceof AppInstallationError) {
-        const title = `Oh sorry! We weren’t able to install ${
-          e.message === 'all' ? 'Compose + Launch' : capitalizeFirst(e.message)
-        }.`;
-        const message = `Use the ´Start installation´ button above to install ${
-          e.message === 'all' ? 'them' : 'it'
-        } manually.`;
-        Notification.error(message, { title });
-        goToSpaceHome(spaceContext.getId());
-      } else if (e instanceof ContentImportError) {
-        goToSpaceHome(spaceContext.getId());
-      } else {
-        // other errors including TrialSpaceCreation violation and permission errors.
-        logger.captureError(e);
-        goToSubscriptionPage(orgId);
-      }
+    if (!appTrialFeatureEnabled) {
+      throw new Error('The feature is not available just yet');
     }
 
-    clearCachedProductCatalogFlags();
+    const { trial, apps } = await startAppTrial(organizationId);
 
-    const stopTimeTracker = window.performance.now();
-    const trialDuration = stopTimeTracker - startTimeTracker;
+    markOnboarding();
 
-    trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
-      duration: trialDuration,
-      withContentModel: !existingUsers,
-      isSuccessful: isSuccessful,
-    });
-  }, [orgId, existingUsers]);
+    trackEvent(EVENTS.APP_TRIAL_STARTED, { from });
+
+    await TokenStore.refresh()
+      .then(() => TokenStore.getSpace(trial.spaceKey))
+      .then((space) => spaceContext.resetWithSpace(space));
+
+    const environmentId = spaceContext.getEnvironmentId();
+    const spaceId = spaceContext.getId();
+    const cma = spaceContext.cma;
+
+    await installApps(apps, organizationId, spaceId, environmentId, cma);
+
+    if (!existingUsers) {
+      await contentImport(spaceId, environmentId);
+    }
+
+    isSuccessful = true;
+    Notification.success('Congratulations, we started your trial!');
+    goToSpaceHome(spaceId);
+  } catch (e) {
+    if (e instanceof TrialSpaceServerError) {
+      Notification.error('Use the ´Start free trial´ button above to try again.', {
+        title: 'Oh sorry! We couldn’t start your trial.',
+      });
+      goToSubscriptionPage(organizationId);
+    } else if (e instanceof AppInstallationError) {
+      const title = `Oh sorry! We weren’t able to install ${
+        e.message === 'all' ? 'Compose + Launch' : capitalizeFirst(e.message)
+      }.`;
+      const message = `Use the ´Start installation´ button above to install ${
+        e.message === 'all' ? 'them' : 'it'
+      } manually.`;
+      Notification.error(message, { title });
+      goToSpaceHome(spaceContext.getId());
+    } else if (e instanceof ContentImportError) {
+      goToSpaceHome(spaceContext.getId());
+    } else {
+      // other errors including TrialSpaceCreation violation and permission errors.
+      logger.captureError(e);
+      goToSubscriptionPage(organizationId);
+    }
+  }
+
+  clearCachedProductCatalogFlags();
+
+  const stopTimeTracker = window.performance.now();
+  const trialDuration = stopTimeTracker - startTimeTracker;
+
+  trackEvent(EVENTS.APP_TRIAL_PERFORMANCE, {
+    duration: trialDuration,
+    withContentModel: !existingUsers,
+    isSuccessful: isSuccessful,
+  });
+};
+
+export function StartAppTrial({ orgId, existingUsers, from: fromRouterParam }: StartAppTrialProps) {
+  const queryParams = useQueryParams();
+  // if /start_trial is called without ?from=, assume the origin is the marketing website CTA
+  const from = fromRouterParam ? fromRouterParam : queryParams.from?.toString() ?? 'marketing';
+
+  const trialBootstrap = useCallback(initialFetch(orgId, existingUsers, from), []);
 
   useAsync(trialBootstrap);
 

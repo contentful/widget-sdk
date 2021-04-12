@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { AppListingRoute } from '../management/AppListing/AppListingRoute';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { NewAppRoute } from '../management/NewAppRoute';
 import { go } from 'states/Navigator';
 import { AppDetailsRoute } from '../management/AppDetails/AppDetailsRoute';
+import { useAsync } from 'core/hooks';
+import { ManagementApiClient } from '../management/ManagementApiClient';
 
 function withDefinitions(Component) {
   function WithDefinitions(props) {
@@ -28,7 +29,7 @@ function withDefinitions(Component) {
     }, [props.orgId]);
 
     async function getDefinitionsData(orgId) {
-      return getAppDefinitionLoader(orgId).getAllForCurrentOrganization();
+      return ManagementApiClient.getAppDefinitionsForOrganization(orgId);
     }
 
     return <Component {...props} isLoadingDefinitions={isLoading} definitions={definitions} />;
@@ -39,6 +40,26 @@ function withDefinitions(Component) {
   };
 
   return WithDefinitions;
+}
+
+function withBundles(Component) {
+  function WithBundles(props) {
+    const { isLoading, data: bundles } = useAsync(
+      React.useCallback(() => ManagementApiClient.getAppBundles(props.orgId, props.definitionId), [
+        props.orgId,
+        props.definitionId,
+      ])
+    );
+
+    return <Component {...props} isLoadingBundles={isLoading} bundles={bundles} />;
+  }
+
+  WithBundles.propTypes = {
+    orgId: PropTypes.string.isRequired,
+    definitionId: PropTypes.string.isRequired,
+  };
+
+  return WithBundles;
 }
 
 function withCanManageApps(Component, options = {}) {
@@ -98,8 +119,8 @@ export const managementRoute = {
     {
       name: 'definitions',
       url: '/definitions/:definitionId/:tab',
-      component: withDefinitions(
-        withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true })
+      component: withBundles(
+        withDefinitions(withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true }))
       ),
     },
   ],

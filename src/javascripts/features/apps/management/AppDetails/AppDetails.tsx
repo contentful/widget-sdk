@@ -14,6 +14,7 @@ import {
   TabPanel,
   Tabs,
   Workbench,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -27,13 +28,16 @@ import { KeyListing } from '../keys/KeyListing';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
 import { SigningSecret } from '../SigningSecret';
+import { AppBundles } from '../AppBundle';
 import { TAB_PATHS } from './constants';
 import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { AppBundleData } from '../AppEditor';
 import { HostingStateContext } from './HostingStateProvider';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const ERROR_PATH_DEFINITION = ['definition'];
 const ERROR_PATH_EVENTS = ['events'];
@@ -56,6 +60,7 @@ interface Event {
 
 interface Props {
   definition: AppDefinitionWithBundle;
+  bundles: { items: AppBundleData[] };
   events: Event;
   goToListView: () => void;
   goToTab: (tab: string) => void;
@@ -77,6 +82,7 @@ interface State {
   creator: string;
   errors: ValidationError[];
   actionsDropdownOpen: boolean;
+  hostingEnabled: boolean;
 }
 
 export class AppDetails extends React.Component<Props, State> {
@@ -96,6 +102,7 @@ export class AppDetails extends React.Component<Props, State> {
       creator: userNameCache[props.definition.sys.id] || '',
       errors: [],
       actionsDropdownOpen: false,
+      hostingEnabled: false,
     };
 
     this.props.setRequestLeaveConfirmation(this.openUnsavecChangesDialog);
@@ -115,6 +122,15 @@ export class AppDetails extends React.Component<Props, State> {
 
     if (!Object.values(TAB_PATHS).includes(this.props.tab)) {
       this.onTabSelect(TAB_PATHS.GENERAL);
+    }
+
+    if (definition.bundle) {
+      // If a customer already has bundle enabled, we show them the UI
+      this.setState({ hostingEnabled: true });
+    } else {
+      getVariation(FLAGS.APP_HOSTING_UI, {
+        organizationId: definition.sys.organization.sys.id,
+      }).then((hostingEnabled) => this.setState({ hostingEnabled }));
     }
   }
 
@@ -330,6 +346,12 @@ export class AppDetails extends React.Component<Props, State> {
     this.props.setDirty(dirty);
   };
 
+  resetDefinitionBundle = () => {
+    const originalBundle = this.state.savedDefinition.bundle;
+    const definition = { ...this.state.definition, bundle: originalBundle };
+    this.setState({ definition });
+  };
+
   render() {
     const { name, definition, events, savedEvents, errors, busy, selectedTab, dirty } = this.state;
 
@@ -423,6 +445,17 @@ export class AppDetails extends React.Component<Props, State> {
                   )}
                 </Flex>
               </Tab>
+              {this.state.hostingEnabled ? (
+                <Tab
+                  id={TAB_PATHS.BUNDLES}
+                  selected={selectedTab === TAB_PATHS.BUNDLES}
+                  onSelect={this.onTabSelect}>
+                  Bundles{' '}
+                  <Tag className={styles.hostingTag} tagType="primary-filled" size="small">
+                    New
+                  </Tag>
+                </Tab>
+              ) : null}
               <Tab
                 id={TAB_PATHS.SECURITY}
                 selected={selectedTab === TAB_PATHS.SECURITY}
@@ -457,6 +490,18 @@ export class AppDetails extends React.Component<Props, State> {
                 />
               </TabPanel>
             )}
+            {this.state.hostingEnabled
+              ? selectedTab === TAB_PATHS.BUNDLES && (
+                  <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
+                    <AppBundles
+                      resetDefinitionBundle={this.resetDefinitionBundle}
+                      definition={definition}
+                      savedDefinition={this.state.savedDefinition}
+                      onChange={(definition) => this.updateFormState({ events, definition })}
+                    />
+                  </TabPanel>
+                )
+              : null}
             {selectedTab === TAB_PATHS.SECURITY && (
               <TabPanel id={TAB_PATHS.SECURITY} className={styles.tabPanel}>
                 <KeyListing definition={definition} />

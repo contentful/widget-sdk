@@ -55,7 +55,6 @@ export function createDialogsApi(
     space: {
       ...sdk.space,
       getTags: () => {
-        // @ts-expect-error
         return sdk.space.readTags(0, 10000);
       },
     },

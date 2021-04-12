@@ -22,7 +22,6 @@ export const angularInitRun = [
     componentsAppContainerCfAppContainerDirectiveEs6();
 
     const modules = await Promise.all([
-      import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
     ]);

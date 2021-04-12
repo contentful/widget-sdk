@@ -1,39 +1,38 @@
-import React from 'react';
-import { css } from 'emotion';
-import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
-
-import { LoadingState } from 'features/loading-state';
-import { FLAGS } from 'LaunchDarkly';
-import { useFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
-import ContentTypesPageAngular from 'app/ContentModel/Editor/ContentTypesPage_deprecated';
+import React, { useState } from 'react';
 import ContentTypesPageReact from 'app/ContentModel/Editor/ContentTypesPage';
+import { getModule } from 'core/NgRegistry';
 
-const styles = {
-  loaderWrapper: css({
-    height: '100%',
-  }),
-};
+function getCurrentTab($state) {
+  if ($state.is('^.preview')) {
+    return 'preview';
+  }
+  if ($state.is('^.sidebar_configuration')) {
+    return 'sidebar_configuration';
+  }
+  if ($state.is('^.entry_editor_configuration')) {
+    return 'entry_editor_configuration';
+  }
+  return 'fields';
+}
 
 const Container = (props) => {
-  const { isSpaceFeatureLoading, spaceFeatureEnabled } = useFeatureFlagVariation(
-    FLAGS.REACT_MIGRATION_CT,
-    false
-  );
+  const $state = getModule('$state');
+  const [currentTab, setCurrentTab] = useState(getCurrentTab($state));
+  const {
+    params: { contentTypeId },
+    current: { name },
+  } = $state;
 
-  if (isSpaceFeatureLoading) {
-    return (
-      <Flex className={styles.loaderWrapper}>
-        <LoadingState />
-      </Flex>
-    );
-  }
-  if (!isSpaceFeatureLoading && spaceFeatureEnabled) {
-    return <ContentTypesPageReact {...props} />;
-  }
-  if (!isSpaceFeatureLoading && !spaceFeatureEnabled) {
-    return <ContentTypesPageAngular {...props} />;
-  }
-  return null;
+  const isNew = name.split('.').includes('new');
+  return (
+    <ContentTypesPageReact
+      currentTab={currentTab}
+      setCurrentTab={setCurrentTab}
+      contentTypeId={contentTypeId}
+      isNew={isNew}
+      {...props}
+    />
+  );
 };
 
 export default Container;

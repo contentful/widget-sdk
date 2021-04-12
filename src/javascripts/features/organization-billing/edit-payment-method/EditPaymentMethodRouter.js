@@ -7,7 +7,6 @@ import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { setDefaultPaymentMethod } from '../services/PaymentMethodService';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
@@ -16,18 +15,6 @@ import * as logger from 'services/logger';
 import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
 
 const fetch = (organizationId) => async () => {
-  // Do this here, so that the user is redirected much earlier (loading the HPM
-  // params takes a while)
-  const shouldShowPage = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
-
-  if (!shouldShowPage) {
-    go({
-      path: ['account', 'organizations', 'billing-gatekeeper'],
-    });
-
-    return false;
-  }
-
   let organization;
 
   try {

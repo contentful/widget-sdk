@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
+import { css } from 'emotion';
 import { get, isEqual } from 'lodash';
-import { Workbench } from '@contentful/forma-36-react-components';
+import { Workbench, Flex } from '@contentful/forma-36-react-components';
 import ContentTypePageActions from './ContentTypePageActions';
 import {
   FieldsSection,
@@ -20,26 +21,47 @@ import { WidgetLocation } from '@contentful/widget-renderer';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import useCreateActions from 'app/ContentModel/Editor/Actions';
 import { openCreateDialog } from './Utils';
+import * as accessChecker from 'access_control/AccessChecker';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { LoadingState } from 'features/loading-state';
+
+const styles = {
+  loaderWrapper: css({
+    height: '100%',
+  }),
+};
 
 function isEntryEditorWidget(widget) {
   return widget.locations?.includes(WidgetLocation.ENTRY_EDITOR);
 }
 
 export default function ContentTypesPage(props) {
-  const customWidgets = props.extensions.filter(isEntryEditorWidget);
-  const { actions, state, setContextDirty, setEditorInterface } = useCreateActions({
-    editorInterface: props.editorInterface,
-    extensions: props.extensions,
-    contentTypeId: props.contentTypeData.sys.id,
+  const {
+    currentOrganizationId: organizationId,
+    currentSpaceId: spaceId,
+    currentEnvironmentId: environmentId,
+  } = useSpaceEnvContext();
+
+  const spaceData = { organizationId, spaceId, environmentId };
+  const canEdit = accessChecker.can('update', 'ContentType');
+  const {
+    actions,
+    state,
+    setContextDirty,
+    setEditorInterface,
+    contentTypeIds,
+    hasAdvancedExtensibility,
+    extensions,
+  } = useCreateActions({
+    contentTypeId: props.contentTypeId,
     isNew: props.isNew,
-    updateAngularContext: props.updateContext,
-    syncContentTypeWithScope: props.syncContentType,
-    contentTypeData: props.contentTypeData,
   });
+
+  const customWidgets = extensions.filter(isEntryEditorWidget);
 
   useEffect(() => {
     if (props.isNew && state.contentType.handleUpdate && actions.setContentType) {
-      openCreateDialog(props.contentTypeIds, state.contentType, actions.setContentType);
+      openCreateDialog(contentTypeIds, state.contentType, actions.setContentType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.contentType.handleUpdate]);
@@ -51,6 +73,7 @@ export default function ContentTypesPage(props) {
       setContextDirty(true);
     }
   };
+
   const onEntryEditorUpdateConfiguration = (editors) => {
     setEditorInterface({ ...state.editorInterface, editors });
     setContextDirty(true);
@@ -58,7 +81,7 @@ export default function ContentTypesPage(props) {
 
   if (!state.contentType) return null;
 
-  return (
+  return state.contentType.data.fields ? (
     <Workbench>
       <Workbench.Header
         title={state.contentType.data.name}
@@ -67,7 +90,7 @@ export default function ContentTypesPage(props) {
         actions={
           <ContentTypePageActions
             isNew={props.isNew}
-            canEdit={props.canEdit}
+            canEdit={canEdit}
             save={actions.save}
             delete={actions.delete}
             cancel={actions.cancel}
@@ -80,7 +103,8 @@ export default function ContentTypesPage(props) {
         <EditorFieldTabs
           fieldsCount={state.contentType.data.fields.length}
           currentTab={props.currentTab}
-          hasAdvancedExtensibility={props.hasAdvancedExtensibility}
+          setCurrentTab={props.setCurrentTab}
+          hasAdvancedExtensibility={hasAdvancedExtensibility}
         />
         <form name="contentTypeForm">
           {props.currentTab === 'fields' && (
@@ -88,7 +112,7 @@ export default function ContentTypesPage(props) {
               <DocumentTitle title={[state.contentType.data.name, 'Content Model']} />
               <FieldsList
                 displayField={state.contentType.data.displayField}
-                canEdit={props.canEdit}
+                canEdit={canEdit}
                 fields={state.contentType.data.fields}
                 actions={actions}
               />
@@ -104,7 +128,7 @@ export default function ContentTypesPage(props) {
               />
             </React.Fragment>
           )}
-          {props.hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
+          {hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
             <React.Fragment>
               <DocumentTitle
                 title={['Sidebar Configuration', state.contentType.data.name, 'Content Model']}
@@ -112,13 +136,13 @@ export default function ContentTypesPage(props) {
               <div>
                 <SidebarConfiguration
                   configuration={state.editorInterface.sidebar}
-                  extensions={props.extensions}
+                  extensions={extensions}
                   onUpdateConfiguration={onUpdateConfiguration}
                 />
               </div>
             </React.Fragment>
           )}
-          {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
+          {hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
               <DocumentTitle
                 title={['Entry editors', state.contentType.data.name, 'Content Model']}
@@ -127,10 +151,7 @@ export default function ContentTypesPage(props) {
                 <EntryEditorConfiguration
                   configuration={state.editorInterface.editors}
                   customWidgets={customWidgets}
-                  getDefaultEntryEditorConfiguration={getEntryConfiguration.bind(
-                    null,
-                    props.spaceData
-                  )}
+                  getDefaultEntryEditorConfiguration={getEntryConfiguration.bind(null, spaceData)}
                   onUpdateConfiguration={onEntryEditorUpdateConfiguration}
                 />
               </div>
@@ -142,7 +163,7 @@ export default function ContentTypesPage(props) {
         <Workbench.Sidebar position="right">
           <div>
             <FieldsSection
-              canEdit={props.canEdit}
+              canEdit={canEdit}
               showNewFieldDialog={actions.showNewFieldDialog}
               fieldsUsed={state.contentType.data.fields.length}
             />
@@ -153,40 +174,16 @@ export default function ContentTypesPage(props) {
         </Workbench.Sidebar>
       )}
     </Workbench>
+  ) : (
+    <Flex className={styles.loaderWrapper}>
+      <LoadingState />
+    </Flex>
   );
 }
 
 ContentTypesPage.propTypes = {
-  updateContext: PropTypes.func.isRequired,
-  syncContentType: PropTypes.func.isRequired,
-  contentTypeIds: PropTypes.array.isRequired,
-  isNew: PropTypes.bool.isRequired,
-  contentTypeData: PropTypes.object.isRequired,
-  canEdit: PropTypes.bool.isRequired,
+  isNew: PropTypes.bool,
+  contentTypeId: PropTypes.string,
   currentTab: PropTypes.string.isRequired,
-  actions: PropTypes.shape({
-    showNewFieldDialog: PropTypes.object.isRequired,
-    showMetadataDialog: PropTypes.object.isRequired,
-    save: PropTypes.object.isRequired,
-    delete: PropTypes.object.isRequired,
-    cancel: PropTypes.object.isRequired,
-    duplicate: PropTypes.object.isRequired,
-    openFieldDialog: PropTypes.func.isRequired,
-    setFieldAsTitle: PropTypes.func.isRequired,
-    toggleFieldProperty: PropTypes.func.isRequired,
-    deleteField: PropTypes.func.isRequired,
-    undeleteField: PropTypes.func.isRequired,
-    updateOrder: PropTypes.func.isRequired,
-    updateSidebarConfiguration: PropTypes.func.isRequired,
-    updateEditorConfiguration: PropTypes.func.isRequired,
-    loadPreview: PropTypes.func.isRequired,
-  }).isRequired,
-  hasAdvancedExtensibility: PropTypes.bool.isRequired,
-  editorInterface: PropTypes.any.isRequired,
-  extensions: PropTypes.array,
-  spaceData: PropTypes.shape({
-    spaceId: PropTypes.string.isRequired,
-    environmentId: PropTypes.string.isRequired,
-    organizationId: PropTypes.string.isRequired,
-  }),
+  setCurrentTab: PropTypes.func.isRequired,
 };

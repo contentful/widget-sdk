@@ -5,7 +5,7 @@ import * as Analytics from 'analytics/Analytics';
 import * as Segment from 'analytics/segment';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
-import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { updateUserData } from 'features/user-profile';
 import { getUserSync } from 'services/TokenStore';
 
 jest.mock('utils/LazyLoader', () => {
@@ -31,7 +31,7 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 jest.mock('analytics/isAnalyticsAllowed', () => jest.fn().mockReturnValue(true));
-jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+jest.mock('features/user-profile', () => ({
   updateUserData: jest.fn().mockResolvedValue(true),
 }));
 

@@ -201,6 +201,7 @@ export const validEvents = {
     'help_link_clicked',
     'app_trial_start_clicked',
     'app_trial_start_performance',
+    'app_trial_started',
   ],
   space_purchase: [
     'begin',

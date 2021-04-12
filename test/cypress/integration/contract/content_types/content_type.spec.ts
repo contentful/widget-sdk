@@ -2,9 +2,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
 import {
   getEditorInterfaceForDefaultContentType,
-  getAllContentTypesInDefaultSpace,
   getDefaultContentType,
-  getPublishedVersionOfDefaultContentType,
   saveDefaultContentTypeWithNewField,
   publishDefaultContentTypeWithNewField,
   saveDefaultContentTypeEditorInterfaceWithNewField,
@@ -18,9 +16,7 @@ describe('Content type page', () => {
       const interactions = [
         ...defaultRequestsMock(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-        getAllContentTypesInDefaultSpace.willReturnOne(),
         getDefaultContentType.willReturnIt(),
-        getPublishedVersionOfDefaultContentType.willReturnIt(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
       cy.wait(interactions);

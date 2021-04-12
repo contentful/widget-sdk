@@ -46,12 +46,7 @@ describe('Content types list page', () => {
     });
 
     it('redirects correctly by "Add content type" button', () => {
-      const interactions = [getAllContentTypesInDefaultSpace.willReturnNone()];
-
       cy.findByTestId('create-content-type-empty-state').click();
-
-      cy.wait(interactions);
-
       cy.url().should('contain', '/content_types_new/fields');
     });
   });

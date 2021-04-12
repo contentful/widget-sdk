@@ -1,17 +1,18 @@
-import { createUsersEndpoint } from 'data/EndpointFactory';
 import { MFA_API, getAlphaHeader } from 'alphaHeaders.js';
-const totpAlphaHeader = getAlphaHeader(MFA_API);
+import { createUsersEndpoint } from 'data/EndpointFactory';
+import type { UserData, AccountDeletionReasons } from '../types';
 
-export async function fetchUserData() {
-  const usersEndpoint = createUsersEndpoint();
+const totpAlphaHeader = getAlphaHeader(MFA_API);
+const usersEndpoint = createUsersEndpoint();
+
+export async function fetchUserData(): Promise<UserData> {
   return await usersEndpoint({
     method: 'GET',
     query: { profile: '' },
   });
 }
 
-export async function updateUserData({ version, data }) {
-  const usersEndpoint = createUsersEndpoint();
+export async function updateUserData({ version, data }): Promise<UserData> {
   return await usersEndpoint({
     method: 'PUT',
     data,
@@ -20,8 +21,6 @@ export async function updateUserData({ version, data }) {
 }
 
 export async function getUserTotp() {
-  const usersEndpoint = createUsersEndpoint();
-
   return usersEndpoint(
     {
       method: 'POST',
@@ -33,8 +32,6 @@ export async function getUserTotp() {
 }
 
 export async function deleteUserTotp() {
-  const usersEndpoint = createUsersEndpoint();
-
   return usersEndpoint(
     {
       method: 'DELETE',
@@ -44,9 +41,7 @@ export async function deleteUserTotp() {
   );
 }
 
-export async function enableTotp(code) {
-  const usersEndpoint = createUsersEndpoint();
-
+export async function enableTotp(code: string) {
   return usersEndpoint(
     {
       method: 'PUT',
@@ -57,16 +52,18 @@ export async function enableTotp(code) {
   );
 }
 
-export async function deleteUserIdentityData(id) {
-  const usersEndpoint = createUsersEndpoint();
+export async function deleteUserIdentityData(id: string) {
   return await usersEndpoint({
     method: 'DELETE',
     path: ['identities', id],
   });
 }
 
-export async function deleteUserAccount(data) {
-  const usersEndpoint = createUsersEndpoint();
+export async function deleteUserAccount(data: {
+  password: string;
+  reason: keyof typeof AccountDeletionReasons;
+  description?: string;
+}) {
   return await usersEndpoint({
     method: 'POST',
     path: ['user_cancellations'],

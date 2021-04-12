@@ -17,8 +17,13 @@ export interface StartAppTrialModalProps {
 
 export function StartAppTrialModal({ onConfirm, isShown, onClose }: StartAppTrialModalProps) {
   const handleOnConfirm = () => {
-    trackEvent(EVENTS.APP_TRIAL_START);
+    trackEvent(EVENTS.START_APP_TRIAL_MODAL, { elementId: 'confirm_button' });
     onConfirm();
+    onClose();
+  };
+
+  const handleOnClose = () => {
+    trackEvent(EVENTS.START_APP_TRIAL_MODAL, { elementId: 'cancel_button' });
     onClose();
   };
 
@@ -43,7 +48,7 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }: StartAppTria
             <Button onClick={handleOnConfirm} testId="confirm-button">
               Start your free trial
             </Button>
-            <Button onClick={onClose} buttonType="muted">
+            <Button onClick={handleOnClose} buttonType="muted" testId="cancel-button">
               Cancel
             </Button>
           </Modal.Controls>

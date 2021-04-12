@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { updateUserData } from '../services/AccountRepository';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { getValidationMessageFor } from '../utils/getValidationMessageFor';
 

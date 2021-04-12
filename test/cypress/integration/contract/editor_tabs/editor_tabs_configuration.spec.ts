@@ -1,8 +1,6 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
-  getAllContentTypesInDefaultSpace,
   getDefaultContentType,
-  getPublishedVersionOfDefaultContentType,
   getEditorInterfaceForDefaultContentType,
   saveDefaultContentTypeWithCustomSidebar,
   publishDefaultContentType,
@@ -159,9 +157,7 @@ describe('Editor tabs configuration', () => {
     const interactions = [
       ...defaultRequestsMock(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-      getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
-      getPublishedVersionOfDefaultContentType.willReturnIt(),
       queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
       queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
       queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
@@ -190,6 +186,8 @@ describe('Editor tabs configuration', () => {
       ];
 
       cy.findAllByTestId('remove-selected-widget').first().click();
+
+      cy.findByTestId('available-widget');
 
       cy.findByTestId('save-content-type').click();
 

@@ -81,6 +81,25 @@ async function getCreatorNameOf(entry) {
   return `${firstName} ${lastName}`;
 }
 
+async function getAppDefinitionsForOrganization(orgId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  const { items } = await orgEndpoint({
+    method: 'GET',
+    path: ['app_definitions'],
+  });
+  return items;
+}
+
+async function getAppBundles(orgId, definitionId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return await orgEndpoint({
+    method: 'GET',
+    path: ['app_definitions', definitionId, 'app_bundles'],
+  });
+}
+
 function addKey({ orgId, definitionId, jwk }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
@@ -112,11 +131,31 @@ function revokeKey({ orgId, definitionId, fingerprint }) {
   });
 }
 
+async function getKeysForAppDefinition(orgId, definitionId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  const { items } = await orgEndpoint({
+    method: 'GET',
+    path: ['app_definitions', definitionId, 'keys'],
+  });
+
+  return items;
+}
+
 // TODO: whats the shape?
 type AppEvents = {
   targetUrl: string;
   topics: any[];
 };
+
+async function getAppEvents(orgId, definitionId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return await orgEndpoint<AppEvents>({
+    method: 'GET',
+    path: ['app_definitions', definitionId, 'event_subscription'],
+  });
+}
 
 function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
@@ -136,6 +175,16 @@ function deleteAppEvents(orgId, definitionId) {
   });
 }
 
+async function getAppSigningSecret(orgId, definitionId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  const { redactedValue } = await orgEndpoint({
+    method: 'GET',
+    path: ['app_definitions', definitionId, 'signing_secret'],
+  });
+  return redactedValue;
+}
+
 function addAppSigningSecret(orgId, definitionId, value) {
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
@@ -151,11 +200,16 @@ export const ManagementApiClient = {
   save,
   deleteDef,
   getCreatorNameOf,
+  getAppDefinitionsForOrganization,
+  getAppBundles,
   addKey,
   generateKey,
   revokeKey,
+  getKeysForAppDefinition,
+  getAppEvents,
   updateAppEvents,
   deleteAppEvents,
+  getAppSigningSecret,
   addAppSigningSecret,
   VALIDATION_MESSAGE,
 };

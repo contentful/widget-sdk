@@ -10,6 +10,7 @@ import {
   onSlideStateChanged,
 } from 'navigation/SlideInNavigator';
 import { Slide, SlideState } from './types';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 export const SlideInEditor: React.FunctionComponent<SlideInEditorProps> = (props) => {
   const { fields, fieldController } = props;
@@ -64,19 +65,21 @@ export const SlideInEditor: React.FunctionComponent<SlideInEditorProps> = (props
   };
 
   return (
-    <SlideIn currentSlideClassName="workbench-layer--is-current" onLayerClick={onLayerClick}>
-      {slides.map((slide, i) => (
-        <EntityEditor
-          key={getSlideAsString(slide)}
-          slide={slide}
-          hasInitialFocus={i + 1 === slides.length}
-          updateSlideStateByKey={updateSlideStateByKey}
-          slideStates={slideStates.current}
-          fields={fields}
-          fieldController={fieldController}
-        />
-      ))}
-    </SlideIn>
+    <CurrentSpaceAPIClientProvider>
+      <SlideIn currentSlideClassName="workbench-layer--is-current" onLayerClick={onLayerClick}>
+        {slides.map((slide, i) => (
+          <EntityEditor
+            key={getSlideAsString(slide)}
+            slide={slide}
+            hasInitialFocus={i + 1 === slides.length}
+            updateSlideStateByKey={updateSlideStateByKey}
+            slideStates={slideStates.current}
+            fields={fields}
+            fieldController={fieldController}
+          />
+        ))}
+      </SlideIn>
+    </CurrentSpaceAPIClientProvider>
   );
 };
 

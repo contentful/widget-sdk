@@ -14,6 +14,8 @@ import { StartAppTrial } from './StartAppTrial';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
+import { track } from 'analytics/Analytics';
+import { getQueryString } from 'utils/location';
 
 const mockedOrg = fake.Organization();
 const mockedTrialSpace = fake.Space();
@@ -26,8 +28,10 @@ const mockedAppsTrial = {
   },
 };
 
-const build = ({ existingUsers = true } = {}) => {
-  return render(<StartAppTrial orgId={mockedOrg.sys.id} existingUsers={existingUsers} />);
+const build = ({ existingUsers = true, from = '' } = {}) => {
+  return render(
+    <StartAppTrial orgId={mockedOrg.sys.id} existingUsers={existingUsers} from={from} />
+  );
 };
 
 jest.mock('components/shared/auto_create_new_space/getSpaceAutoCreatedKey', () => ({
@@ -82,6 +86,14 @@ jest.mock('features/apps-core', () => ({
   })),
 }));
 
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
+
+jest.mock('utils/location', () => ({
+  getQueryString: jest.fn().mockReturnValue({}),
+}));
+
 jest.spyOn(TokenStore, 'getSpace').mockResolvedValue(mockedTrialSpace);
 jest.spyOn(TokenStore, 'refresh').mockResolvedValue();
 jest.spyOn(TokenStore, 'getUser').mockResolvedValue({});
@@ -128,6 +140,7 @@ describe('StartAppTrial', () => {
       },
       options: { location: 'replace' },
     });
+    expect(track).toHaveBeenCalledWith('trial:app_trial_started', { from: 'marketing' });
   });
 
   it('bootstrap the space for new users', async () => {
@@ -253,5 +266,26 @@ describe('StartAppTrial', () => {
     await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
 
     expect(mockedStorageSet).toHaveBeenCalledTimes(1);
+  });
+
+  it('track the app_trial_started event correctly', async () => {
+    startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
+
+    build({ existingUsers: false, from: 'from_props' });
+
+    await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+
+    expect(track).toHaveBeenCalledWith('trial:app_trial_started', { from: 'from_props' });
+  });
+
+  it('track the app_trial_started event with query string params', async () => {
+    startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
+    (getQueryString as jest.Mock).mockReturnValue({ from: 'from_query_params' });
+
+    build({ existingUsers: false });
+
+    await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
+
+    expect(track).toHaveBeenCalledWith('trial:app_trial_started', { from: 'from_query_params' });
   });
 });

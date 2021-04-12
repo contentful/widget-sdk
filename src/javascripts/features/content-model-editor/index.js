@@ -5,3 +5,4 @@ export {
   getEnabledRichTextOptions,
   groupValidations,
 } from './field-dialog/utils/helpers';
+export { getUpdatedField } from './field-dialog/utils/getUpdatedField';

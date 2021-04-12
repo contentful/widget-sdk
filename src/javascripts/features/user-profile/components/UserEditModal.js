@@ -14,7 +14,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { updateUserData } from '../services/AccountRepository';
 import { getValidationMessageFor } from '../utils/getValidationMessageFor';
 
 const styles = {
@@ -365,7 +365,7 @@ export function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   );
 }
 
-const User = PropTypes.shape({
+const UserPropType = PropTypes.shape({
   firstName: PropTypes.string,
   lastName: PropTypes.string,
   avatarUrl: PropTypes.string,
@@ -382,5 +382,5 @@ UserEditModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  user: User.isRequired,
+  user: UserPropType.isRequired,
 };

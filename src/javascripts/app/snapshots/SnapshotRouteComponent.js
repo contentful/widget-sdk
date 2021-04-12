@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { set, get } from 'lodash';
+import { set, get, extend, filter } from 'lodash';
 import { css } from 'emotion';
 import {
   Workbench,
@@ -22,6 +22,11 @@ import SnapshotWidgetCell from './SnapshotWidgetCell';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { getModule } from 'core/NgRegistry';
+import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
+import { go } from 'states/Navigator';
+import { LoadingState } from 'features/loading-state';
 
 const styles = {
   workbenchContent: css({
@@ -62,6 +67,12 @@ const styles = {
   fieldLocale: css({
     display: 'flex',
   }),
+  loader: css({
+    height: '100%',
+    '> div': {
+      height: '100%',
+    },
+  }),
 };
 
 const handleSaveError = (error) => {
@@ -72,39 +83,124 @@ const handleSaveError = (error) => {
   }
 };
 
-const SnapshotComparator = ({
-  snapshot,
-  widgets,
-  getEditorData,
-  setDirty,
-  registerSaveAction,
-  redirect: stateRedirect,
-  onUpdateEntry,
-  ...props
-}) => {
+const SnapshotComparator = (props) => {
+  const [editorData, setEditorData] = useState(null);
+  const [snapshot, setSnapshot] = useState(null);
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
-  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove it after contract tests is fixed for cma
+  const getEditorData = useCallback(() => editorData, [editorData]);
+  const widgets = useMemo(() => {
+    if (!editorData) return [];
+
+    return filter(editorData.fieldControls.form, (widget) => !get(widget, 'field.disabled'));
+  }, [editorData]);
+  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({
+    widgets,
+    getEditorData,
+    snapshot,
+  });
   const [
     { selectedVersions, pathsToRestore },
     { setSelectedVersionForField, setSelectAllSnapshots },
   ] = useSelectedVersions({ enrichedWidgets });
+
+  const entry = get(editorData, 'entity', {});
+  const entryData = get(entry, ['data'], {});
+  const permissions = Permissions.create(entryData);
+
+  const title = editorData ? EntityFieldValueSpaceContext.entryTitle(entry) : '';
+
+  const onSave = useCallback(
+    async (redirect) => {
+      function prepareRestoredEntry() {
+        const ctData = get(editorData, 'contentType.data', {});
+        const restoredSnapshot = Entries.internalToExternal(snapshot.snapshot || {}, ctData);
+        const restoredResult = Entries.internalToExternal(entry.data, ctData);
+
+        pathsToRestore.forEach((path) => {
+          path = Entries.internalPathToExternal(ctData, path);
+          set(restoredResult, path, get(restoredSnapshot, path));
+        });
+
+        return restoredResult;
+      }
+
+      async function onUpdateEntry(entry) {
+        return spaceContext.cma.updateEntry(entry);
+      }
+
+      try {
+        const restoredResult = prepareRestoredEntry();
+        const entry = await onUpdateEntry(restoredResult);
+        trackVersioning.registerRestoredVersion(entry);
+        trackVersioning.restored(pathsToRestore, diffCount, showOnlyDifferences);
+        setDirty(false);
+        Notification.success('Entry successfully restored.');
+        if (redirect) stateRedirect(false);
+      } catch (error) {
+        handleSaveError(error);
+      }
+    },
+    [
+      diffCount,
+      editorData,
+      entry.data,
+      pathsToRestore,
+      setDirty,
+      showOnlyDifferences,
+      snapshot,
+      spaceContext,
+    ]
+  );
 
   const pathsToRestoreExist = pathsToRestore.length > 0;
   useEffect(() => {
     setDirty(pathsToRestoreExist);
   }, [pathsToRestoreExist, setDirty]);
 
-  const editorData = getEditorData();
-  const entry = get(editorData, 'entity', {});
-  const entryData = get(entry, ['data'], {});
-  const permissions = Permissions.create(entryData);
+  useEffect(() => {
+    if (!props.entryId) return;
+    loadEditorData(spaceContext, props.entryId)
+      .then(setEditorData)
+      .catch(() => {
+        Notification.error('Entry not found.');
+        go({ path: 'spaces.detail.entries.list' });
+      });
+  }, [spaceContext, props.entryId]);
 
-  const title = EntityFieldValueSpaceContext.entryTitle(entry);
+  useEffect(() => {
+    registerSaveAction(trackVersioning.trackableConfirmator(onSave), false);
+  }, [registerSaveAction, onSave]);
 
-  const goToSnapshot = ({ sys }) => {
-    setDirty(false);
-    props.goToSnapshot(sys.id);
-  };
+  useEffect(() => {
+    if (!editorData || !snapshot || !props.source) return;
+
+    trackVersioning.setData(editorData.entity.data, snapshot);
+    trackVersioning.opened(props.source);
+  }, [editorData, snapshot, props.source]);
+
+  useEffect(() => {
+    if (!editorData || !props.snapshotId) return;
+
+    async function init() {
+      try {
+        const { entity, contentType } = editorData;
+        const snapshot = await spaceContext.cma.getEntrySnapshot(entity.getId(), props.snapshotId);
+
+        setSnapshot(
+          extend(snapshot, {
+            snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data),
+          })
+        );
+      } catch (err) {
+        Notification.error('Entry version not found.');
+        go({ path: '^.^' });
+      }
+    }
+
+    init();
+  }, [props.snapshotId, editorData, spaceContext]);
 
   const onClose = () => {
     if (!pathsToRestoreExist) {
@@ -113,36 +209,26 @@ const SnapshotComparator = ({
     return stateRedirect();
   };
 
-  const prepareRestoredEntry = () => {
-    const ctData = get(editorData, 'contentType.data', {});
-    const restoredSnapshot = Entries.internalToExternal(snapshot.snapshot || {}, ctData);
-    const restoredResult = Entries.internalToExternal(entry.data, ctData);
+  function goToSnapshot(snapshot) {
+    setDirty(false);
+    return go({ path: '.', params: { snapshotId: snapshot.sys.id, source: 'compareView' } });
+  }
 
-    pathsToRestore.forEach((path) => {
-      path = Entries.internalPathToExternal(ctData, path);
-      set(restoredResult, path, get(restoredSnapshot, path));
-    });
-
-    return restoredResult;
-  };
-
-  const onSave = async (redirect) => {
-    try {
-      const restoredResult = prepareRestoredEntry();
-      const entry = await onUpdateEntry(restoredResult);
-      trackVersioning.registerRestoredVersion(entry);
-      trackVersioning.restored(pathsToRestore, diffCount, showOnlyDifferences);
-      setDirty(false);
-      Notification.success('Entry successfully restored.');
-      if (redirect) stateRedirect(false);
-    } catch (error) {
-      handleSaveError(error);
-    }
-  };
-
-  registerSaveAction(trackVersioning.trackableConfirmator(onSave));
+  function stateRedirect(reload) {
+    if (reload) return go({ path: '^.^', options: { reload: true } });
+    return go({ path: '^.^' });
+  }
 
   const hasDiff = diffCount > 0;
+
+  if (!editorData || !snapshot) {
+    return (
+      <div className={styles.loader}>
+        <LoadingState />
+      </div>
+    );
+  }
+
   return (
     <Workbench>
       <Workbench.Header
@@ -264,34 +350,9 @@ const SnapshotComparator = ({
 };
 
 SnapshotComparator.propTypes = {
-  getEditorData: PropTypes.func.isRequired,
-  registerSaveAction: PropTypes.func.isRequired,
-  setDirty: PropTypes.func.isRequired,
-  goToSnapshot: PropTypes.func.isRequired,
-  redirect: PropTypes.func.isRequired,
-  onUpdateEntry: PropTypes.func.isRequired,
-  snapshot: PropTypes.shape({
-    snapshot: PropTypes.object,
-  }),
-  widgets: PropTypes.arrayOf(
-    PropTypes.shape({
-      field: PropTypes.oneOfType([
-        PropTypes.shape({
-          id: PropTypes.string,
-          type: PropTypes.string,
-          linkType: PropTypes.string,
-        }),
-        PropTypes.shape({
-          id: PropTypes.string,
-          type: PropTypes.string,
-          items: PropTypes.shape({
-            type: PropTypes.string,
-            linkType: PropTypes.string,
-          }),
-        }),
-      ]),
-    })
-  ).isRequired,
+  entryId: PropTypes.string.isRequired,
+  snapshotId: PropTypes.string.isRequired,
+  source: PropTypes.string.isRequired,
 };
 
 export default SnapshotComparator;

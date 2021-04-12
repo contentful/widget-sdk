@@ -12,7 +12,7 @@ import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getUserSync, refresh as refreshToken } from 'services/TokenStore';
-import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { updateUserData } from 'features/user-profile';
 import * as logger from 'services/logger';
 import { debounce } from 'lodash';
 import { getBrowserStorage } from 'core/services/BrowserStorage';

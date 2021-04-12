@@ -31,13 +31,22 @@ export const LOCATION_ORDER: [string, string][] = [
   ['Page', WidgetLocation.PAGE],
 ];
 
+export const ACCEPTED_ENTRY_FILES = ['index.html'];
+
 export const SRC_REG_EXP = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 export const PARAMETER_ID_REG_EXP = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 export const EMPTY_SPACE_REG_EXP = /\s/;
+export const ABSOLUTE_PATH_REG_EXP = /(src|href)="\/([^/])([^"]*)+"/g;
 
 export const PARAMETER_TYPE_LABEL = {
   Symbol: 'Short text',
   Boolean: 'Boolean',
   Number: 'Number',
   Enum: 'Select',
+};
+
+export const UI_BUNDLE_ERRORS = {
+  EMPTY: 'You tried to upload an empty folder',
+  UNKNOWN: 'Something went wrong while uploading your bundle. Please try again.',
+  ENTRY_FILE: 'Make sure your bundle includes a valid index.html file in its root folder.',
 };

@@ -69,7 +69,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
       organizationId: organization?.sys.id,
     });
 
-    if (showAppTag) {
+    if (showAppTag && organization) {
       const appFeature = await Repo.getTrial(organization?.sys.id);
       const appTrialSpaceId = await getAppTrialSpaceKey(appFeature);
       return {

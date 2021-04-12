@@ -1,0 +1,224 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as Fake from 'test/helpers/fakeFactory';
+import { getVariation } from 'LaunchDarkly';
+
+import { go } from 'states/Navigator';
+
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
+import { links } from '../utils';
+
+import * as trackCTA from 'analytics/trackCTA';
+
+import { beginSpaceCreation } from 'services/CreateSpace';
+import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+
+jest.mock('services/CreateSpace', () => ({
+  beginSpaceCreation: jest.fn(),
+}));
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwner: jest.fn(),
+  isOwnerOrAdmin: jest.fn(),
+}));
+
+jest.mock('../utils', () => ({
+  links: {
+    billing: jest.fn(),
+    memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
+  },
+}));
+
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(),
+  href: jest.fn(),
+  getCurrentStateName: jest.fn(),
+}));
+
+const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
+
+const mockOrganization = Fake.Organization();
+
+const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
+const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
+const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
+
+describe('NonEnterpriseSubscriptionPage', () => {
+  beforeEach(() => {
+    isOwner.mockReturnValue(true);
+    getVariation.mockClear().mockResolvedValue(false);
+    isOwnerOrAdmin.mockReturnValue(true);
+  });
+
+  it('should show skeletons when initialLoad is true', () => {
+    build({ initialLoad: true });
+
+    screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
+      expect(ele).toBeVisible();
+    });
+  });
+
+  it('should display the base name', () => {
+    build();
+
+    expect(screen.getByTestId('subscription-page.base-plan-details')).toHaveTextContent(
+      mockBasePlan.name
+    );
+  });
+
+  it('should show user details', () => {
+    const usersMeta = {
+      numFree: 7,
+      numPaid: 10,
+      cost: 1000000,
+      unitPrice: 100,
+      hardLimit: 25,
+    };
+
+    build({ usersMeta });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.numFree
+      } users are included free with your subscription. ` +
+        `You will be charged an additional $${usersMeta.unitPrice}/month per user for ${usersMeta.numPaid} users. That is $${usersMeta.cost} per month.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+  });
+
+  it('should show user details and CTA to upgrade for the Community customers', () => {
+    const navigatorObject = { test: true };
+    links.billing.mockReturnValue(navigatorObject);
+
+    const usersMeta = {
+      numFree: 5,
+      numPaid: 2,
+      hardLimit: 5,
+    };
+
+    build({ usersMeta, basePlan: mockFreeBasePlan });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.hardLimit
+      } users are included free with your subscription.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+
+    const ctaLink = screen.getByTestId('subscription-page.upgrade-to-team-link');
+    expect(ctaLink).toBeVisible();
+
+    userEvent.click(ctaLink);
+    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_TEAM, {
+      organizationId: mockOrganization.sys.id,
+    });
+
+    expect(links.billing).toHaveBeenCalledWith(mockOrganization.sys.id);
+    expect(go).toHaveBeenCalledWith(navigatorObject);
+  });
+
+  it('should show user details and CTA to contact support for the Team users', () => {
+    const usersMeta = {
+      numFree: 10,
+      numPaid: 17,
+      hardLimit: 25,
+    };
+
+    build({ usersMeta, basePlan: mockTeamBasePlan });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.hardLimit
+      } users are included with your subscription.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+
+    const ctaLink = screen.getByTestId('subscription-page.contact-support-link');
+    expect(ctaLink).toBeVisible();
+
+    userEvent.click(ctaLink);
+    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.REQUEST_TEAM_USER_LIMIT, {
+      organizationId: mockOrganization.sys.id,
+    });
+  });
+
+  it('should show the monthly cost for on demand users', () => {
+    build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
+
+    expect(screen.getByText('Monthly total')).toBeVisible();
+    expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
+  });
+
+  it('should not show the limitations copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is enabled', () => {
+    isOwner.mockReturnValue(false);
+    build({ organization: Fake.Organization({ isBillable: false }) });
+
+    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
+  });
+
+  it('should not show the billing copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is disabled', () => {
+    isOwner.mockReturnValue(false);
+    build({
+      organization: Fake.Organization({ isBillable: false }),
+    });
+
+    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
+  });
+
+  it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
+    build();
+
+    userEvent.click(screen.getByTestId('subscription-page.create-space'));
+    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
+      organizationId: mockOrganization.sys.id,
+    });
+    expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
+  });
+
+  describe('contentful apps card', () => {
+    it('shows Contentful Apps trial card for users who have not purchased apps', () => {
+      isOwnerOrAdmin.mockReturnValueOnce(true);
+      build({ organization: mockOrganization, isAppTrialActive: true });
+
+      expect(screen.getByTestId('apps-trial-header')).toBeVisible();
+      expect(screen.queryByTestId('apps-header')).toBeNull();
+    });
+
+    it('shows Contentful Apps card for users who have purchased apps', () => {
+      isOwnerOrAdmin.mockReturnValueOnce(true);
+      build({
+        organization: mockOrganization,
+        addOnPlan: { sys: { id: 'addon_id' } },
+        composeAndLaunchEnabled: true,
+      });
+
+      expect(screen.getByTestId('apps-header')).toBeVisible();
+      expect(screen.queryByTestId('apps-trial-header')).toBeNull();
+    });
+  });
+});
+
+function build(custom) {
+  const props = Object.assign(
+    {
+      initialLoad: false,
+      organization: mockOrganization,
+      basePlan: mockBasePlan,
+      spacePlans: [],
+      grandTotal: null,
+      usersMeta: null,
+      onSpacePlansChange: null,
+    },
+    custom
+  );
+
+  render(<NonEnterpriseSubscriptionPage {...props} />);
+}

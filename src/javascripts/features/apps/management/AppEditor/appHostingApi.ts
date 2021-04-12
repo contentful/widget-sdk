@@ -4,12 +4,38 @@ import { createAppDefinitionsEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
 import { AppDefinitionWithBundle } from './AppHosting';
-import { AppBundleData, DataLink } from './HostingDropzone';
+
+import { createZipFromFiles } from './zipFiles';
+import { Notification } from '@contentful/forma-36-react-components';
+import { AppBundleData } from './types';
+import { FileWithPath } from './HostingDropzone';
+
+export async function createBundle(files: File[], definition: AppDefinitionWithBundle) {
+  let zipFile: File | Blob | null = null;
+  try {
+    // File is already one zip file
+    if (files.length === 1 && files[0].type === 'application/zip') {
+      zipFile = files[0];
+    } else {
+      zipFile = await createZipFromFiles(files as FileWithPath[]);
+    }
+    const bundle = await createAppBundleFromFile(definition, zipFile);
+    Notification.success('Save your app to activate this bundle for all of its installations.', {
+      title: 'Bundle successfully uploaded! ',
+    });
+    return bundle;
+  } catch (e) {
+    Notification.error(
+      e.data?.message || 'Something went wrong while uploading your deploy. Please try again.',
+      { title: e.data?.message ? 'Invalid bundle' : undefined }
+    );
+  }
+}
 
 export async function createAppBundleFromFile(
   definition: AppDefinitionWithBundle,
-  file: File
-): Promise<DataLink> {
+  file: File | Blob
+): Promise<AppBundleData> {
   const binary: string | ArrayBuffer | null = await new Promise((res) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -44,7 +70,7 @@ export async function createAppBundleFromFile(
     data: {
       upload: { sys: { type: 'Link', linkType: 'AppUpload', id: appUpload.sys.id } },
     },
-  }) as Promise<DataLink>;
+  }) as Promise<AppBundleData>;
 }
 
 export async function getAppBundle(
@@ -59,6 +85,22 @@ export async function getAppBundle(
 
   return bundleEndpoint({
     method: 'GET',
+    path: [defId, 'app_bundles', bundleId],
+  });
+}
+
+export async function deleteAppBundle(
+  orgId: string,
+  defId: string,
+  bundleId: string
+): Promise<AppBundleData> {
+  const bundleEndpoint = createAppDefinitionsEndpoint(
+    Config.apiUrl(`organizations/${orgId}`),
+    Auth
+  );
+
+  return bundleEndpoint({
+    method: 'DELETE',
     path: [defId, 'app_bundles', bundleId],
   });
 }

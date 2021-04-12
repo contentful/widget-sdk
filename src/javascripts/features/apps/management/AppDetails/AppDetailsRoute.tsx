@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AppDetails } from './AppDetails';
 import { go } from 'states/Navigator';
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { getModule } from 'core/NgRegistry';
 import { AppDefinition } from 'contentful-management/types';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -9,6 +8,8 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingState } from 'features/loading-state';
 import { HostingStateProvider } from './HostingStateProvider';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { AppBundleData } from '../AppEditor';
+import { ManagementApiClient } from '../ManagementApiClient';
 
 interface Event {
   enabled: boolean;
@@ -18,11 +19,13 @@ interface Event {
 
 interface Props {
   definitions: AppDefinition[];
+  bundles: { items: AppBundleData[] };
   definitionId: string;
   orgId: string;
   tab: string;
   isLoadingCanManageApps: boolean;
   isLoadingDefinitions: boolean;
+  isLoadingBundles: boolean;
 }
 
 export function AppDetailsRoute(props: Props) {
@@ -33,12 +36,17 @@ export function AppDetailsRoute(props: Props) {
   );
   const requestLeaveConfirmation = React.useRef<Function | undefined>();
   const isDirty = React.useRef(false);
-  const isLoading = [props.isLoadingCanManageApps, props.isLoadingDefinitions].some(Boolean);
+  const isLoading = [
+    props.isLoadingCanManageApps,
+    props.isLoadingDefinitions,
+    props.isLoadingBundles,
+  ].some(Boolean);
 
   React.useEffect(() => {
     async function getEvents() {
       try {
-        const { targetUrl, topics } = await getAppDefinitionLoader(props.orgId).getAppEvents(
+        const { targetUrl, topics } = await ManagementApiClient.getAppEvents(
+          props.orgId,
           props.definitionId
         );
 
@@ -100,7 +108,7 @@ export function AppDetailsRoute(props: Props) {
     isDirty.current = value;
   }
 
-  if (isLoading || !definition || !events)
+  if (isLoading || !definition || !events || !props.bundles)
     return (
       <Workbench>
         <DocumentTitle title="Apps" />
@@ -110,10 +118,14 @@ export function AppDetailsRoute(props: Props) {
     );
 
   return (
-    <HostingStateProvider defaultValue={!definition.src && !!definition.bundle}>
+    <HostingStateProvider
+      orgId={props.orgId}
+      defaultValue={!definition.src && !!definition.bundle}
+      bundles={props.bundles}>
       <AppDetails
         {...props}
         definition={definition}
+        bundles={props.bundles}
         events={events}
         goToTab={goToTab}
         goToListView={goToListView}

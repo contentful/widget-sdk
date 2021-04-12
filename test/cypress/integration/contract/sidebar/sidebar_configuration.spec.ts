@@ -1,8 +1,6 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
-  getAllContentTypesInDefaultSpace,
   getDefaultContentType,
-  getPublishedVersionOfDefaultContentType,
   getEditorInterfaceForDefaultContentType,
   saveDefaultContentTypeWithCustomSidebar,
   publishDefaultContentType,
@@ -34,9 +32,7 @@ describe('Sidebar configuration', () => {
     const interactions = [
       ...defaultRequestsMock(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-      getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
-      getPublishedVersionOfDefaultContentType.willReturnIt(),
       queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
       queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
       queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),

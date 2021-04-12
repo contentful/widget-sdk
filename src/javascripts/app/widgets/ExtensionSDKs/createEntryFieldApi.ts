@@ -9,6 +9,7 @@ import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentTypeField } from './createContentTypeApi';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import { cleanupJSONValue } from './utils';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -124,7 +125,8 @@ export function createEntryFieldApi({
       const entrySys = K.getValue(doc.sysProperty);
 
       try {
-        await doc.setValueAt(currentPath, value);
+        const cleanedValue = cleanupJSONValue(value);
+        await doc.setValueAt(currentPath, cleanedValue);
 
         Analytics.track('extension:set_value', {
           contentTypeId: entrySys.contentType?.sys.id,
@@ -135,7 +137,7 @@ export function createEntryFieldApi({
           appDefinitionId: widgetNamespace === WidgetNamespace.APP ? widgetId : null,
         });
 
-        return value;
+        return cleanedValue;
       } catch (err) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
       }

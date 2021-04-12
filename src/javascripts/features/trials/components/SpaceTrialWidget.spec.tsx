@@ -27,6 +27,10 @@ jest.mock('../services/TrialService', () => ({
   isSpaceOnTrial: jest.fn(),
 }));
 
+jest.mock('states/Navigator', () => ({
+  getCurrentStateName: jest.fn().mockReturnValue('current.state.name'),
+}));
+
 describe('SpaceTrialWidget', () => {
   beforeEach(() => {
     (getSpace as jest.Mock).mockResolvedValue(mockedSpace);
@@ -61,7 +65,9 @@ describe('SpaceTrialWidget', () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await waitFor(() => fireEvent.click(screen.queryByTestId('cf-contact-us-button')!));
 
-    expect(track).toHaveBeenCalledWith('trial:get_in_touch_clicked', {});
+    expect(track).toHaveBeenCalledWith('trial:get_in_touch_clicked', {
+      fromState: 'current.state.name',
+    });
   });
 
   it('tracks the fair_use_policy link click event', async () => {
@@ -70,6 +76,8 @@ describe('SpaceTrialWidget', () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await waitFor(() => fireEvent.click(screen.queryByTestId('fair_use_policy_link')!));
 
-    expect(track).toHaveBeenCalledWith('trial:fair_use_policy_clicked', {});
+    expect(track).toHaveBeenCalledWith('trial:fair_use_policy_clicked', {
+      fromState: 'current.state.name',
+    });
   });
 });

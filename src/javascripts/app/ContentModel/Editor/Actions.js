@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import validation from '@contentful/validation';
@@ -18,49 +18,57 @@ import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
 import { go } from 'states/Navigator';
-import { getUpdatedField } from 'components/field_dialog/openFieldDialog';
-import { openFieldModalDialog } from 'features/content-model-editor';
+import { openFieldModalDialog, getUpdatedField } from 'features/content-model-editor';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { openEditContentTypeDialog } from './Dialogs';
 import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { AdvancedExtensibilityFeature } from 'features/extensions-management';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
 
 export default function useCreateActions(props) {
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+  const [hasAdvancedExtensibility, setAdvancedExtensibility] = useState(false);
+  const [extensions, setExtentions] = useState([]);
   const [state, dispatch] = useReducer(
     reducer,
     {
       isNew: props.isNew,
-      editorInterface: props.editorInterface,
-      contentTypeData: props.contentTypeData,
+      editorInterface: {},
+      contentTypeData: {},
     },
     initActionsReducer
   );
-  // TODO: remove 'spaceContext'
+  // TODO: remove 'spaceContext' after `spaceContext.cma` migration
   const spaceContext = getModule('spaceContext');
 
-  const { currentSpace, currentSpaceContentTypes, currentSpaceId: spaceId } = useSpaceEnvContext();
+  const {
+    currentSpace,
+    currentSpaceContentTypes,
+    currentSpaceId: spaceId,
+    currentOrganizationId,
+  } = useSpaceEnvContext();
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
+
+  const setContextDirty = (dirty) => {
+    setDirty(dirty);
+    dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty } });
+  };
 
   const setContentType = (contentType) => {
     dispatch({ type: reducerActions.SET_CONTENT_TYPE, payload: { contentType } });
   };
 
-  useEffect(() => {
-    // updates content type on scope so correct data can be saved from angular context
-    props.syncContentTypeWithScope(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.contentType, state.editorInterface]);
-
-  useEffect(() => {
-    // this is needed to keep $scope.context.dirty up-to-date
-    // TODO: remove after src/javascripts/navigation/stateChangeHandlers.js migration
-    props.updateAngularContext(state.contextState.dirty);
-  }, [state.contextState.dirty, props]);
+  const setEditorInterface = (editorInterface) => {
+    dispatch({ type: reducerActions.UPDATE_EDITOR_INTERFACE, payload: { editorInterface } });
+  };
 
   useEffect(() => {
     async function initContentType() {
@@ -70,6 +78,22 @@ export default function useCreateActions(props) {
             sys: { type: 'ContentType' },
             fields: [],
           });
+      const editorInterfaceFromApi = await spaceContext.cma.getEditorInterface(
+        contentType.data.sys.id
+      );
+      const editorInterface = EditorInterfaceTransformer.fromAPI(
+        contentType.data,
+        editorInterfaceFromApi
+      );
+      const advancedExtensibility = await AdvancedExtensibilityFeature.isEnabled(
+        currentOrganizationId
+      );
+      const loader = await getCustomWidgetLoader();
+      const widgets = await loader.getUncachedForListing();
+      const extensions = widgets.map(toLegacyWidget);
+      setExtentions(extensions);
+      setAdvancedExtensibility(advancedExtensibility);
+      setEditorInterface(editorInterface);
       setContentType(contentType);
     }
     initContentType();
@@ -77,18 +101,6 @@ export default function useCreateActions(props) {
     // it means the whole page is re-rendered anyway
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const setEditorInterface = (editorInterface) => {
-    dispatch({ type: reducerActions.UPDATE_EDITOR_INTERFACE, payload: { editorInterface } });
-  };
-
-  const setContextDirty = (dirty) => {
-    dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty } });
-  };
-
-  const setPristine = () => {
-    dispatch({ type: reducerActions.SET_CONTEXT_STATE_DIRTY, payload: { dirty: false } });
-  };
 
   const updateFields = (fields) => {
     dispatch({ type: reducerActions.UPDATE_FIELDS, payload: { fields } });
@@ -155,7 +167,7 @@ export default function useCreateActions(props) {
       state.contentType,
       onFieldUpdate,
       state.editorInterface,
-      props.extensions
+      extensions
     );
   };
 
@@ -387,6 +399,7 @@ export default function useCreateActions(props) {
 
   const saveContentType = async () => {
     try {
+      setContextDirty(false);
       assureDisplayField(state.contentType.data);
 
       const buildMessage = errorMessageBuilder.forContentType;
@@ -427,19 +440,26 @@ export default function useCreateActions(props) {
         type: reducerActions.UPDATE_EDITOR_INTERFACE,
         payload: { editorInterface: editorInterfaceFromAPI },
       });
-      setPristine();
       getContentPreview().clearCache();
       spaceContext.uiConfig.addOrEditCt(state.contentType.data).catch(() => {});
-      if (state.contextState.isNew) {
-        return goToDetails(state.contentType);
-      }
-      setContextDirty(false);
       notify.saveSuccess();
     } catch (error) {
+      setContextDirty(true);
       trackEnforcedButtonClick(error);
       triggerApiErrorNotification(error);
+    } finally {
+      if (state.contextState.isNew) {
+        goToDetails(state.contentType);
+      }
     }
   };
+
+  useEffect(() => {
+    registerSaveAction(saveContentType);
+
+    // TODO: remove with angular state migration
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveContentType]);
 
   const save = createCommand(saveContentType, {
     disabled: function () {
@@ -474,22 +494,22 @@ export default function useCreateActions(props) {
     }
   }
 
-  const loadPreview = (isNew) => {
-    if (isNew) {
-      return getContentTypePreview.fromData(state.contentType.data);
-    } else {
-      return getContentTypePreview(state.contentType);
-    }
+  const loadPreview = () => {
+    return getContentTypePreview.fromData(state.contentType.data);
   };
 
   const getPublishedField = (id) => {
-    const publishedFields = _.get(state.contentType, 'data.fields', []);
+    const publishedFields = _.get(
+      spaceContext.publishedCTs.get(state.contentType.data.sys.id),
+      'data.fields',
+      []
+    );
     return _.cloneDeep(_.find(publishedFields, { id: id }));
   };
 
   const deleteField = async (field, isTitle) => {
     const publishedField = getPublishedField(field.id);
-    const publishedOmitted = publishedField && publishedField.omitted;
+    const publishedOmitted = publishedField?.omitted;
 
     const isOmittedInApiAndUi = publishedOmitted && field.omitted;
     const isOmittedInUiOnly = !publishedOmitted && field.omitted;
@@ -502,7 +522,6 @@ export default function useCreateActions(props) {
       updateField(field.id, {
         deleted: true,
       });
-      setContextDirty(true);
     } else if (isOmittedInUiOnly) {
       await openSaveDialog();
       save.execute();
@@ -529,7 +548,7 @@ export default function useCreateActions(props) {
     ));
     if (confirmed) {
       // mark the form as pristine so we can navigate without confirmation dialog
-      setPristine();
+      setContextDirty(false);
       return goToDetails(duplicated);
     }
   };
@@ -619,5 +638,8 @@ export default function useCreateActions(props) {
     state,
     setContextDirty,
     setEditorInterface,
+    contentTypeIds,
+    hasAdvancedExtensibility,
+    extensions,
   };
 }

@@ -169,12 +169,26 @@ describe('User profile page', () => {
       });
     });
 
-    it('delete user', () => {
-      const deleteUserAccountInteraction = [deleteUserAccount.willReturnIt()];
-      cy.findByTestId('delete-cta').click();
-      cy.findByTestId('confirm-delete-account-button').click();
-      cy.wait(deleteUserAccountInteraction);
-      cy.url().should('include', '/goodbye');
+    describe('delete user profile', () => {
+      it('with correct password', () => {
+        const deleteUserAccountInteraction = [deleteUserAccount.willReturnIt()];
+        cy.findByTestId('delete-cta').click();
+        cy.findByTestId('password').find('input').clear().type('correct-password');
+        cy.findByTestId('delete-user-confirm').click();
+        cy.wait(deleteUserAccountInteraction);
+        cy.url().should('include', '/goodbye');
+      });
+
+      it('with incorrect password', () => {
+        const deleteUserAccountInteraction = [deleteUserAccount.willReturnError()];
+        cy.findByTestId('delete-cta').click();
+        cy.findByTestId('password').find('input').clear().type('invalid-current-password');
+        cy.findByTestId('delete-user-confirm').click();
+        cy.wait(deleteUserAccountInteraction);
+        cy.findByText(
+          'Check your password and try again. Your account will be locked after 5 failed attempts.'
+        ).should('be.visible');
+      });
     });
   });
 

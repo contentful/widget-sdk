@@ -1,4 +1,3 @@
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { formatPastDate, base64ToHex, ManagementApiClient } from 'features/apps';
 import moment from 'moment';
 
@@ -11,7 +10,7 @@ export interface Key {
 }
 
 export const fetchKeys = async (orgId, definitionId): Promise<Key[]> => {
-  const keys = await getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
+  const keys = await ManagementApiClient.getKeysForAppDefinition(orgId, definitionId);
 
   return Promise.all(keys.map(getFormattedKey));
 };

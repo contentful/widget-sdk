@@ -16,8 +16,10 @@ import { ValidationError } from './types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { DataLink, HostingDropzone } from './HostingDropzone';
+import { DataLink, AppBundleData } from './types';
+import { HostingDropzone } from './HostingDropzone';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
+import { HostingDropdown } from './HostingDropdown';
 
 const appHostingStyles = {
   hostingSwitch: css({
@@ -68,7 +70,7 @@ export function AppHosting({
     onChange({ ...definition, src: e.target.value.trim() });
   };
 
-  const onAppBundleCreate = (bundle: DataLink) => {
+  const onAppBundleCreate = (bundle: AppBundleData) => {
     onChange({
       ...definition,
       src: undefined,
@@ -79,9 +81,19 @@ export function AppHosting({
   const renderSwitch = () => (
     <Switch
       className={appHostingStyles.hostingSwitch}
-      isDisabled={!definition.sys.id || !hostingState}
-      isChecked={!!(hostingState && hostingState.isAppHosting)}
-      onToggle={hostingState?.setIsAppHosting}
+      isDisabled={!definition.sys.id}
+      isChecked={hostingState.isAppHosting}
+      onToggle={(value) => {
+        hostingState.setIsAppHosting(value);
+
+        if (!value && !definition.src) {
+          // This allows us to save when turning off app hosting with no src set
+          onChange({
+            ...definition,
+            src: '',
+          });
+        }
+      }}
       labelText="Hosted by Contentful"
       id="app-hosting"
     />
@@ -104,7 +116,10 @@ export function AppHosting({
             )}
           </Flex>
           {hostingState && hostingState.isAppHosting ? (
-            <HostingDropzone onAppBundleCreated={onAppBundleCreate} definition={definition} />
+            <>
+              <HostingDropdown definition={definition} />
+              <HostingDropzone onAppBundleCreated={onAppBundleCreate} definition={definition} />
+            </>
           ) : (
             <div className={styles.input()}>
               <TextInput

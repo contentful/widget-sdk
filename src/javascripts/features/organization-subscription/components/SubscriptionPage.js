@@ -15,10 +15,8 @@ import {
   SkeletonDisplayText,
   TextLink,
   Typography,
-  Workbench,
 } from '@contentful/forma-36-react-components';
 
-import { links } from '../utils';
 import { go } from 'states/Navigator';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
@@ -32,9 +30,7 @@ import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
-import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
-import ContactUsButton from 'ui/Components/ContactUsButton';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
@@ -42,10 +38,6 @@ const styles = {
     gridColumnStart: 1,
     gridColumnEnd: 3,
   }),
-};
-
-const goToBillingPage = (organizationId) => {
-  go(links.billing(organizationId));
 };
 
 export function SubscriptionPage({
@@ -58,7 +50,6 @@ export function SubscriptionPage({
   spacePlans,
   onSpacePlansChange,
   memberAccessibleSpaces,
-  newSpacePurchaseEnabled,
   isTrialAvailable,
   isTrialActive,
   isTrialExpired,
@@ -138,7 +129,7 @@ export function SubscriptionPage({
   const handleStartAppTrial = async () => {
     go({
       path: ['account', 'organizations', 'start_trial'],
-      params: { orgId: organizationId, existingUsers: true },
+      params: { orgId: organizationId, existingUsers: true, from: 'subscription' },
     });
   };
 
@@ -161,36 +152,50 @@ export function SubscriptionPage({
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
   return (
-    <Workbench testId="subscription-page">
-      <Workbench.Header
-        icon={<ProductIcon icon="Subscription" size="large" />}
-        title="Subscription"
-      />
-      {/* the workbench needs this 'position relative' here or it will render double scrollbars when its children have 'flex-direction: column' */}
-      <Workbench.Content className={css({ position: 'relative' })}>
-        <Flex className={styles.fullRow} justifyContent="flex-end" marginBottom="spacingM">
-          <ContactUsButton disabled={initialLoad} isLink />
+    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+      {organization && isOrgOnTrial && (
+        <Flex className={styles.fullRow} flexDirection="column">
+          <EnterpriseTrialInfo organization={organization} />
         </Flex>
+      )}
 
-        <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
-          {organization && isOrgOnTrial && (
-            <Flex className={styles.fullRow} flexDirection="column">
-              <EnterpriseTrialInfo organization={organization} />
+      {!isNotAdminOrOwnerOfTrialOrg && (
+        <Flex flexDirection="column">
+          {initialLoad ? (
+            <SkeletonContainer svgHeight={117}>
+              <SkeletonDisplayText />
+              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+            </SkeletonContainer>
+          ) : (
+            <BasePlan basePlan={basePlan} />
+          )}
+          {rightColumnHasContent && (
+            <Flex flexDirection="column" marginTop="spacingXl">
+              <UsersForPlan
+                organizationId={organizationId}
+                numberFreeUsers={usersMeta && usersMeta.numFree}
+                numberPaidUsers={usersMeta && usersMeta.numPaid}
+                costOfUsers={usersMeta && usersMeta.cost}
+                unitPrice={usersMeta && usersMeta.unitPrice}
+                hardLimit={usersMeta && usersMeta.hardLimit}
+                isFreePlan={isFreePlan(basePlan)}
+                isOnEnterpriseTrial={isOrgOnTrial}
+              />
             </Flex>
           )}
-
-          {!isNotAdminOrOwnerOfTrialOrg && (
-            <Flex flexDirection="column">
-              {initialLoad ? (
-                <SkeletonContainer svgHeight={117}>
-                  <SkeletonDisplayText />
-                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-                </SkeletonContainer>
-              ) : (
-                <BasePlan basePlan={basePlan} organizationId={organizationId} />
-              )}
-              {rightColumnHasContent && (
-                <Flex flexDirection="column" marginTop="spacingXl">
+        </Flex>
+      )}
+      {!isNotAdminOrOwnerOfTrialOrg && (
+        <Flex flexDirection="column">
+          {initialLoad ? (
+            <SkeletonContainer svgHeight={117}>
+              <SkeletonDisplayText />
+              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+            </SkeletonContainer>
+          ) : (
+            <>
+              {!rightColumnHasContent && (
+                <Flex flexDirection="column" marginBottom="spacingXl">
                   <UsersForPlan
                     organizationId={organizationId}
                     numberFreeUsers={usersMeta && usersMeta.numFree}
@@ -203,84 +208,52 @@ export function SubscriptionPage({
                   />
                 </Flex>
               )}
-            </Flex>
-          )}
-          {!isNotAdminOrOwnerOfTrialOrg && (
-            <Flex flexDirection="column">
-              {initialLoad ? (
-                <SkeletonContainer svgHeight={117}>
-                  <SkeletonDisplayText />
-                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-                </SkeletonContainer>
-              ) : (
-                <>
-                  {!rightColumnHasContent && (
-                    <Flex flexDirection="column" marginBottom="spacingXl">
-                      <UsersForPlan
-                        organizationId={organizationId}
-                        numberFreeUsers={usersMeta && usersMeta.numFree}
-                        numberPaidUsers={usersMeta && usersMeta.numPaid}
-                        costOfUsers={usersMeta && usersMeta.cost}
-                        unitPrice={usersMeta && usersMeta.unitPrice}
-                        hardLimit={usersMeta && usersMeta.hardLimit}
-                        isFreePlan={isFreePlan(basePlan)}
-                        isOnEnterpriseTrial={isOrgOnTrial}
-                      />
-                    </Flex>
-                  )}
-                  {showPayingOnDemandCopy && (
-                    <Flex flexDirection="column" marginBottom="spacingXl">
-                      <PayingOnDemandOrgCopy grandTotal={grandTotal} />
-                    </Flex>
-                  )}
-                  {showContentfulAppsCard && (
-                    <Flex flexDirection="column">
-                      <ContentfulApps
-                        organizationId={organizationId}
-                        startAppTrial={handleStartAppTrial}
-                        isTrialAvailable={isTrialAvailable}
-                        isTrialActive={isTrialActive}
-                        isTrialExpired={isTrialExpired}
-                        addOnPlan={addOnPlan}
-                      />
-                    </Flex>
-                  )}
-                  {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
-                    <Flex flexDirection="column" marginTop="spacingXl">
-                      <NonPayingOrgCopyLegacy organizationId={organizationId} />
-                    </Flex>
-                  )}
-                  {showNonPayingOrgCopy && newSpacePurchaseEnabled && (
-                    <Flex flexDirection="column" marginTop="spacingXl">
-                      <NonPayingOrgCopy createSpace={createSpace} />
-                    </Flex>
-                  )}
-                </>
+              {showPayingOnDemandCopy && (
+                <Flex flexDirection="column" marginBottom="spacingXl">
+                  <PayingOnDemandOrgCopy grandTotal={grandTotal} />
+                </Flex>
               )}
-            </Flex>
+              {showContentfulAppsCard && (
+                <Flex flexDirection="column">
+                  <ContentfulApps
+                    organizationId={organizationId}
+                    startAppTrial={handleStartAppTrial}
+                    isTrialAvailable={isTrialAvailable}
+                    isTrialActive={isTrialActive}
+                    isTrialExpired={isTrialExpired}
+                    addOnPlan={addOnPlan}
+                  />
+                </Flex>
+              )}
+              {showNonPayingOrgCopy && (
+                <Flex flexDirection="column" marginTop="spacingXl">
+                  <NonPayingOrgCopy createSpace={createSpace} />
+                </Flex>
+              )}
+            </>
           )}
+        </Flex>
+      )}
 
-          <Flex className={styles.fullRow} flexDirection="column">
-            {isNotAdminOrOwnerOfTrialOrg ? (
-              <SpacesListForMembers spaces={memberAccessibleSpaces} />
-            ) : (
-              <SpacePlans
-                initialLoad={initialLoad}
-                spacePlans={spacePlans}
-                upgradedSpaceId={changedSpaceId}
-                onCreateSpace={createSpace}
-                onChangeSpace={changeSpace}
-                organizationId={organizationId}
-                onDeleteSpace={deleteSpace}
-                enterprisePlan={enterprisePlan}
-                anySpacesInaccessible={anySpacesInaccessible}
-                isOwnerOrAdmin={isOrgOwnerOrAdmin}
-              />
-            )}
-          </Flex>
-        </Grid>
-      </Workbench.Content>
-    </Workbench>
+      <Flex className={styles.fullRow} flexDirection="column">
+        {isNotAdminOrOwnerOfTrialOrg ? (
+          <SpacesListForMembers spaces={memberAccessibleSpaces} />
+        ) : (
+          <SpacePlans
+            initialLoad={initialLoad}
+            spacePlans={spacePlans}
+            upgradedSpaceId={changedSpaceId}
+            onCreateSpace={createSpace}
+            onChangeSpace={changeSpace}
+            organizationId={organizationId}
+            onDeleteSpace={deleteSpace}
+            enterprisePlan={enterprisePlan}
+            anySpacesInaccessible={anySpacesInaccessible}
+            isOwnerOrAdmin={isOrgOwnerOrAdmin}
+          />
+        )}
+      </Flex>
+    </Grid>
   );
 }
 
@@ -294,7 +267,6 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
-  newSpacePurchaseEnabled: PropTypes.bool,
   isTrialAvailable: PropTypes.bool,
   isTrialActive: PropTypes.bool,
   isTrialExpired: PropTypes.bool,
@@ -331,28 +303,6 @@ function PayingOnDemandOrgCopy({ grandTotal }) {
 
 PayingOnDemandOrgCopy.propTypes = {
   grandTotal: PropTypes.number.isRequired,
-};
-
-function NonPayingOrgCopyLegacy({ organizationId }) {
-  return (
-    <Typography testId="subscription-page.billing-copy">
-      <Heading className="section-title">Your payment details</Heading>
-      <Paragraph>
-        You need to provide us with your billing address and credit card details before creating
-        paid spaces or adding users beyond the free limit.
-      </Paragraph>
-      <TextLink
-        icon="Receipt"
-        testId="subscription-page.add-billing-button"
-        onClick={() => goToBillingPage(organizationId)}>
-        Enter payment details
-      </TextLink>
-    </Typography>
-  );
-}
-
-NonPayingOrgCopyLegacy.propTypes = {
-  organizationId: PropTypes.string.isRequired,
 };
 
 function NonPayingOrgCopy({ createSpace }) {
