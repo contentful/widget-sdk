@@ -43,4 +43,9 @@ describe('cleanupJSONValue', () => {
       otherkey: { array: [42, null], object: { key: 'value' } },
     });
   });
+
+  it('returns date as-is', () => {
+    const date = new Date();
+    expect(cleanupJSONValue(date)).toBe(date);
+  });
 });

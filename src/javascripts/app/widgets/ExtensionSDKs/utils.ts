@@ -40,6 +40,8 @@ export function cleanupJSONValue(value: any): any {
     return value.map((v) => (v === undefined ? null : cleanupJSONValue(v)));
   } else if (value === null) {
     return null;
+  } else if (value instanceof Date) {
+    return value;
   } else if (typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value)
