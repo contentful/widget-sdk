@@ -43,8 +43,8 @@ import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
 import { getSegmentSchema } from './SchemasSegment';
 
-type Payload = Record<string, unknown>;
-type EventPayload = {
+export type Payload = Record<string, unknown>;
+export type EventPayload = {
   schema?: string;
   data: Record<string, unknown>;
   contexts?: Record<string, unknown>;
@@ -525,7 +525,7 @@ export function eventExists(eventName) {
 /**
  * Returns data transformed for Snowplow/Segment
  */
-export function transformEvent(event: string, data: Payload) {
+export function transformEvent(event: string, data: Payload): EventPayload {
   const transformer = _events[event].transformer;
   return transformer(event, data);
 }

@@ -44,8 +44,7 @@ function enable(loadOptions = {}) {
 }
 
 function bufferedCall(fnName) {
-  return function () {
-    const args = _.toArray(arguments);
+  return function (...args) {
     buffer.call((analytics) => {
       try {
         analytics[fnName](...args);
