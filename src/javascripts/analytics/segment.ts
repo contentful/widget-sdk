@@ -114,40 +114,6 @@ function install(loadOptions) {
   return LazyLoader.get('segment');
 }
 
-// TODO: This must have been broken since d8f5417 as we're receiving `data.data`
-//  and a transformed `element_id` instead of `elementId` now.
-//  Should this be fixed or can we remove it? If fixing it we should make sure there's
-//  no Intercom campaigns that would be triggered after the fix.
-/*
-// we send an event to Segment (Intercom included) if modern onboarding
-// flow was completed (onboarding deployment completed). We send it as an
-// event, and it is immediately available to react – e.g. send a survey
-function sendOnboardingDeploymentEvent(event, data: EventPayload) {
-  // we have this information in `element:click` event with certain data
-  // so we just check it and if so, send this event.
-  if (
-    event === 'element:click' &&
-    data.elementId &&
-    data.elementId.startsWith('deploy_screen_completed')
-  ) {
-    const provider = data.elementId.split(':')[1];
-    // we create yet another event for this specific thing
-    // events support human-readable names, and we use them
-    bufferedTrack(
-      'onboarding deployment completed',
-      {
-        provider,
-      },
-      {
-        integrations: {
-          Intercom: true,
-        },
-      }
-    );
-  }
-}
- */
-
 async function getIntegrations() {
   const integrationsUrl = `https://cdn.segment.com/v1/projects/${Config.services.segment_io}/integrations`;
 
@@ -169,16 +135,6 @@ export default {
    * the selected integrations.
    */
   track: function track(event: string, data: EventPayload): void {
-    // we need to send an event to segment (Intercom included)
-    // usually we don't do that, but you might have to do so
-    // alternatively, you can use `updateUserInSegment` from
-    // `analytics/Analytics` module, which will set a custom
-    // attribute – https://developers.intercom.com/docs/adding-custom-information
-    // Intercom docs on events:
-    // https://developers.intercom.com/docs/working-with-events
-    // TODO: Solve TODO on sendOnboardingDeploymentEvent
-    //sendOnboardingDeploymentEvent(event, data);
-
     const schema = getSegmentSchemaForEvent(event);
 
     bufferedTrack(schema.name, data, { integrations: TRACK_INTEGRATIONS });
