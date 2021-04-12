@@ -6,7 +6,7 @@ import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
 import { getSegmentSchemaForEvent } from './transform';
-import { EventPayload } from './types';
+import { TransformedEventData } from './types';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -134,7 +134,7 @@ export default {
    * Sends a single event with data to
    * the selected integrations.
    */
-  track: function track(event: string, data: EventPayload): void {
+  track: function track(event: string, data: TransformedEventData): void {
     const schema = getSegmentSchemaForEvent(event);
 
     bufferedTrack(schema.name, data, { integrations: TRACK_INTEGRATIONS });

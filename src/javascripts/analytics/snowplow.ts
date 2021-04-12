@@ -1,7 +1,7 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config';
 import { getSnowplowSchemaForEvent } from 'analytics/transform';
-import { EventPayload } from './types';
+import { TransformedEventData } from './types';
 import * as LazyLoader from 'utils/LazyLoader';
 import { window } from 'core/services/window';
 
@@ -68,7 +68,7 @@ export function identify(userId: string): void {
 /**
  * Tracks an event in Snowplow if it is registered in the snowplow events service.
  */
-export function track(eventName: string, rawData: EventPayload): void {
+export function track(eventName: string, rawData: TransformedEventData): void {
   const eventData = buildUnstructEventData(eventName, rawData);
 
   if (eventData) {
@@ -80,7 +80,7 @@ export function track(eventName: string, rawData: EventPayload): void {
  * Builds an unstructured event for Snowplow. All our current events that reach
  * Snowplow are unstructured in Snowplow parlance.
  */
-export function buildUnstructEventData(eventName: string, data: EventPayload) {
+export function buildUnstructEventData(eventName: string, data: TransformedEventData) {
   const schema = getSnowplowSchemaForEvent(eventName);
 
   if (schema) {

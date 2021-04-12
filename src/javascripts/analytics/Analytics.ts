@@ -5,7 +5,7 @@ import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import { eventExists, transformEvent } from 'analytics/transform';
-import { EventPayload, Payload } from './types';
+import { TransformedEventData, EventData } from './types';
 import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
 import * as random from '../utils/Random';
@@ -93,7 +93,7 @@ export function getSessionData(path: string, defaultValue?: unknown): unknown {
  * if it is on the valid events list.
  */
 
-export function track(event: string, data?: Payload): void {
+export function track(event: string, data?: EventData): void {
   if (!isEnabled) {
     return;
   }
@@ -129,7 +129,7 @@ export function track(event: string, data?: Payload): void {
  * of the web app caused by heavy payload serialization in wootric (loaded in segment)
  *
  */
-function logEventPayloadSize(eventName: string, safePayload: EventPayload) {
+function logEventPayloadSize(eventName: string, safePayload: TransformedEventData) {
   requestIdleCallback(() => {
     try {
       const { contexts: contextEvents = [], ...primaryPayload } = safePayload;
