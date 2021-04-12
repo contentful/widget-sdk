@@ -21,7 +21,7 @@ export function getAppDefinitionLoader(orgId) {
   if (!loader) {
     const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
     const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
-    loader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
+    loader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint, orgId);
     perOrgCache[orgId] = loader;
   }
 

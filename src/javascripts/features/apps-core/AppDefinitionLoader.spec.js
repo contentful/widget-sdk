@@ -1,4 +1,8 @@
-import { createAppDefinitionLoader } from './AppDefinitionLoader';
+//@ts-check
+import { createAppDefinitionLoader, ORGANIZATION_HEADER } from './AppDefinitionLoader';
+
+const ORGANIZATION_ID = 'organization';
+const GET_IDS_HEADERS = { [ORGANIZATION_HEADER]: ORGANIZATION_ID };
 
 describe('AppDefinitionLoader', () => {
   describe('getById', () => {
@@ -14,18 +18,21 @@ describe('AppDefinitionLoader', () => {
 
       const orgEndpoint = jest.fn();
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       const result = await loader.getById('def2');
 
       expect(definitionsEndpoint).toBeCalledTimes(1);
-      expect(definitionsEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: [],
-        query: {
-          'sys.id[in]': 'def2',
+      expect(definitionsEndpoint).toBeCalledWith(
+        {
+          method: 'GET',
+          path: [],
+          query: {
+            'sys.id[in]': 'def2',
+          },
         },
-      });
+        GET_IDS_HEADERS
+      );
 
       expect(orgEndpoint).not.toBeCalled();
       expect(result).toEqual({ sys: { type: 'AppDefinition', id: 'def2' } });
@@ -47,18 +54,21 @@ describe('AppDefinitionLoader', () => {
         });
       });
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       const result = await loader.getById('def2');
 
       expect(definitionsEndpoint).toBeCalledTimes(1);
-      expect(definitionsEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: [],
-        query: {
-          'sys.id[in]': 'def2',
+      expect(definitionsEndpoint).toBeCalledWith(
+        {
+          method: 'GET',
+          path: [],
+          query: {
+            'sys.id[in]': 'def2',
+          },
         },
-      });
+        GET_IDS_HEADERS
+      );
 
       expect(orgEndpoint).toBeCalledTimes(1);
       expect(orgEndpoint).toBeCalledWith({
@@ -81,7 +91,7 @@ describe('AppDefinitionLoader', () => {
         });
       });
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       expect.assertions(3);
       try {
@@ -107,18 +117,21 @@ describe('AppDefinitionLoader', () => {
 
       const orgEndpoint = jest.fn();
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       const result = await loader.getByIds(['def1', 'def2']);
 
       expect(definitionsEndpoint).toBeCalledTimes(1);
-      expect(definitionsEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: [],
-        query: {
-          'sys.id[in]': 'def1,def2',
+      expect(definitionsEndpoint).toBeCalledWith(
+        {
+          method: 'GET',
+          path: [],
+          query: {
+            'sys.id[in]': 'def1,def2',
+          },
         },
-      });
+        GET_IDS_HEADERS
+      );
 
       expect(orgEndpoint).not.toBeCalled();
 
@@ -141,18 +154,21 @@ describe('AppDefinitionLoader', () => {
         });
       });
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       const result = await loader.getByIds(['def1', 'def2', 'def3']);
 
       expect(definitionsEndpoint).toBeCalledTimes(1);
-      expect(definitionsEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: [],
-        query: {
-          'sys.id[in]': 'def1,def2,def3',
+      expect(definitionsEndpoint).toBeCalledWith(
+        {
+          method: 'GET',
+          path: [],
+          query: {
+            'sys.id[in]': 'def1,def2,def3',
+          },
         },
-      });
+        GET_IDS_HEADERS
+      );
 
       expect(orgEndpoint).toBeCalledTimes(1);
       expect(orgEndpoint).toBeCalledWith({
@@ -176,7 +192,7 @@ describe('AppDefinitionLoader', () => {
       const definitionsEndpoint = jest.fn();
       const orgEndpoint = jest.fn(() => Promise.resolve({ items: 'DEFINITIONS' }));
 
-      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint, ORGANIZATION_ID);
 
       const result = await loader.getAllForCurrentOrganization();
 

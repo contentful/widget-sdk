@@ -1,6 +1,12 @@
 import { uniq, difference } from 'lodash';
 
-export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
+export const ORGANIZATION_HEADER = 'x-contentful-organization';
+
+export function createAppDefinitionLoader(
+  appDefinitionsEndpoint,
+  orgEndpoint,
+  currentOrganizationId
+) {
   return {
     getById,
     getByIds,
@@ -33,11 +39,16 @@ export function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
     }
 
     // Try to fetch all from the public endpoint.
-    const publicResponse = await appDefinitionsEndpoint({
-      method: 'GET',
-      path: [],
-      query: { 'sys.id[in]': uniqueIds.join(',') },
-    });
+    const publicResponse = await appDefinitionsEndpoint(
+      {
+        method: 'GET',
+        path: [],
+        query: { 'sys.id[in]': uniqueIds.join(',') },
+      },
+      {
+        [ORGANIZATION_HEADER]: currentOrganizationId,
+      }
+    );
 
     const publicDefinitions = publicResponse.items;
     const fetchedIds = publicDefinitions.map((def) => def.sys.id);

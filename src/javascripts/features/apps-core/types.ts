@@ -45,4 +45,6 @@ export interface MarketplaceApp {
   featureFlagName?: string | null;
   supportUrl?: string;
   isContentfulApp?: boolean;
+  learnMoreUrl?: string;
+  isPaidApp?: boolean;
 }

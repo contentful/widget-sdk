@@ -37,10 +37,12 @@ function getPrivateApps(
 function makeMarketplaceAppObject(
   marketplaceApp: MarketplaceApp,
   appDefinition: AppDefinition,
-  appInstallation: AppInstallation
+  appInstallation: AppInstallation,
+  isPaidApp?: boolean
 ) {
   return {
     ...omit(marketplaceApp, ['definitionId']),
+    isPaidApp,
     appDefinition,
     appInstallation,
   };
@@ -184,13 +186,15 @@ export class AppsRepo {
         const definitionId = app.definitionId!;
         const appDefinition = appDefinitionMap[definitionId];
         const appInstallation = installationMap[definitionId];
+        const isPaidApp = !!app.learnMoreUrl;
 
         // Referred definition, for whatever reason, is missing. Skip the app.
-        if (!appDefinition) {
+        // Unless it's a paid app, for which we expect the definition to not be returned.
+        if (!appDefinition && !isPaidApp) {
           return acc;
         }
 
-        return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
+        return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation, isPaidApp)];
       }, [] as MarketplaceApp[]),
       (app) => app.title.toLowerCase()
     );

@@ -122,6 +122,12 @@ export function AppDetails(props: AppDetailsProps) {
   const hasConfig = hasConfigLocation(app.appDefinition);
   const hasOpenLink = isInstalled && app.isContentfulApp;
 
+  // Purchased App:
+  //   free app
+  //     or
+  //   paid app whose definition is visible (that is, the organization id has been added to the ACL)
+  const isPurchasedApp = !app.isPaidApp || app.appDefinition;
+
   const configCTA = hasConfig ? 'Configure' : 'Remove';
   const ctaWhenInstalled = app.isContentfulApp ? 'Open' : configCTA;
   const cta = isInstalled ? ctaWhenInstalled : 'Install';
@@ -179,18 +185,24 @@ export function AppDetails(props: AppDetailsProps) {
         {app.description && <MarkdownRenderer source={app.description} />}
       </div>
       <div className={styles.sidebarColumn}>
-        <StateLink path="^.detail" params={{ appId: app.id }}>
-          {({ onClick }) => (
-            <Button
-              onClick={determineOnClick(onClick)}
-              isFullWidth
-              buttonType="primary"
-              disabled={usageExceeded || !canManageApps}
-              {...(hasOpenLink ? { icon: 'ExternalLink' } : {})}>
-              {cta}
-            </Button>
-          )}
-        </StateLink>
+        {isPurchasedApp ? (
+          <StateLink path="^.detail" params={{ appId: app.id }}>
+            {({ onClick }) => (
+              <Button
+                onClick={determineOnClick(onClick)}
+                isFullWidth
+                buttonType="primary"
+                disabled={usageExceeded || !canManageApps}
+                {...(hasOpenLink ? { icon: 'ExternalLink' } : {})}>
+                {cta}
+              </Button>
+            )}
+          </StateLink>
+        ) : (
+          <Button href={app.learnMoreUrl} isFullWidth buttonType="muted" icon="ExternalLink">
+            Contact us
+          </Button>
+        )}
 
         {app.appInstallation && (
           <>

@@ -102,6 +102,8 @@ See build status in real-time, track progress and view recent changes all from w
     "id": "netlify",
     "isEarlyAccess": false,
     "isListed": true,
+    "isPaidApp": false,
+    "learnMoreUrl": null,
     "legal": Object {
       "eula": "https://github.com/contentful/apps/blob/master/apps/netlify/LICENSE",
       "privacyPolicy": "https://www.contentful.com/legal/us/privacy/",
@@ -185,6 +187,8 @@ See build status in real-time, track progress and view recent changes all from w
     "id": "workflows",
     "isEarlyAccess": false,
     "isListed": true,
+    "isPaidApp": false,
+    "learnMoreUrl": null,
     "legal": Object {
       "eula": "https://github.com/contentful/apps/blob/master/apps/netlify/LICENSE",
       "privacyPolicy": "https://www.contentful.com/legal/us/privacy/",

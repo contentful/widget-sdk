@@ -126,6 +126,7 @@ function createAppObject(entry, isListed) {
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map((msg) => msg.fields),
     featureFlagName: get(entry, ['fields', 'featureFlagName'], null),
     isEarlyAccess,
+    learnMoreUrl: get(entry, ['fields', 'learnMoreUrl'], null),
   };
 }
 
