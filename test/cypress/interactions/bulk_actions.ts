@@ -177,7 +177,6 @@ const validateBulkActionResponse = (overrides = {}) => {
       },
       action: 'validate',
       payload: {
-        action: 'publish',
         entities: Matchers.somethingLike({
           sys: {
             type: 'Array',
