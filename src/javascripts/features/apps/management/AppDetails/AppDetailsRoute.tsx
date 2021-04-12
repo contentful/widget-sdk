@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AppDetails } from './AppDetails';
 import { go } from 'states/Navigator';
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { getModule } from 'core/NgRegistry';
 import { AppDefinition } from 'contentful-management/types';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -10,6 +9,7 @@ import { LoadingState } from 'features/loading-state';
 import { HostingStateProvider } from './HostingStateProvider';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
+import { ManagementApiClient } from '../ManagementApiClient';
 
 interface Event {
   enabled: boolean;
@@ -45,7 +45,8 @@ export function AppDetailsRoute(props: Props) {
   React.useEffect(() => {
     async function getEvents() {
       try {
-        const { targetUrl, topics } = await getAppDefinitionLoader(props.orgId).getAppEvents(
+        const { targetUrl, topics } = await ManagementApiClient.getAppEvents(
+          props.orgId,
           props.definitionId
         );
 

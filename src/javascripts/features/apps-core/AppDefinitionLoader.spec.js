@@ -9,6 +9,12 @@ describe('AppDefinitionLoader', () => {
             { sys: { type: 'AppDefinition', id: 'def1' } },
             { sys: { type: 'AppDefinition', id: 'def2' } },
           ],
+          includes: {
+            ResolvedAppDefinition: [
+              { sys: { type: 'ResolvedAppDefinition', id: 'def1' } },
+              { sys: { type: 'ResolvedAppDefinition', id: 'def2' } },
+            ],
+          },
         });
       });
 
@@ -28,13 +34,16 @@ describe('AppDefinitionLoader', () => {
       });
 
       expect(orgEndpoint).not.toBeCalled();
-      expect(result).toEqual({ sys: { type: 'AppDefinition', id: 'def2' } });
+      expect(result).toEqual({ sys: { type: 'ResolvedAppDefinition', id: 'def2' } });
     });
 
     it('falls back to the organization endpoint', async () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [{ sys: { type: 'AppDefinition', id: 'def1' } }],
+          includes: {
+            ResolvedAppDefinition: [{ sys: { type: 'ResolvedAppDefinition', id: 'def1' } }],
+          },
         });
       });
 
@@ -44,6 +53,12 @@ describe('AppDefinitionLoader', () => {
             { sys: { type: 'AppDefinition', id: 'def2' } },
             { sys: { type: 'AppDefinition', id: 'def3' } },
           ],
+          includes: {
+            ResolvedAppDefinition: [
+              { sys: { type: 'ResolvedAppDefinition', id: 'def2' } },
+              { sys: { type: 'ResolvedAppDefinition', id: 'def3' } },
+            ],
+          },
         });
       });
 
@@ -69,15 +84,25 @@ describe('AppDefinitionLoader', () => {
         },
       });
 
-      expect(result).toEqual({ sys: { type: 'AppDefinition', id: 'def2' } });
+      expect(result).toEqual({ sys: { type: 'ResolvedAppDefinition', id: 'def2' } });
     });
 
     it('throws if definition was not found in both endpoint reposnses', async () => {
-      const definitionsEndpoint = jest.fn(() => Promise.resolve({ items: [] }));
+      const definitionsEndpoint = jest.fn(() =>
+        Promise.resolve({
+          items: [],
+          includes: {
+            ResolvedAppDefinition: [],
+          },
+        })
+      );
 
       const orgEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [{ sys: { type: 'AppDefinition', id: 'def1' } }],
+          includes: {
+            ResolvedAppDefinition: [{ sys: { type: 'ResolvedAppDefinition', id: 'def1' } }],
+          },
         });
       });
 
@@ -102,6 +127,12 @@ describe('AppDefinitionLoader', () => {
             { sys: { type: 'AppDefinition', id: 'def1' } },
             { sys: { type: 'AppDefinition', id: 'def2' } },
           ],
+          includes: {
+            ResolvedAppDefinition: [
+              { sys: { type: 'ResolvedAppDefinition', id: 'def1' } },
+              { sys: { type: 'ResolvedAppDefinition', id: 'def2' } },
+            ],
+          },
         });
       });
 
@@ -123,8 +154,8 @@ describe('AppDefinitionLoader', () => {
       expect(orgEndpoint).not.toBeCalled();
 
       expect(result).toEqual({
-        def1: { sys: { type: 'AppDefinition', id: 'def1' } },
-        def2: { sys: { type: 'AppDefinition', id: 'def2' } },
+        def1: { sys: { type: 'ResolvedAppDefinition', id: 'def1' } },
+        def2: { sys: { type: 'ResolvedAppDefinition', id: 'def2' } },
       });
     });
 
@@ -132,12 +163,18 @@ describe('AppDefinitionLoader', () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [{ sys: { type: 'AppDefinition', id: 'def1' } }],
+          includes: {
+            ResolvedAppDefinition: [{ sys: { type: 'ResolvedAppDefinition', id: 'def1' } }],
+          },
         });
       });
 
       const orgEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [{ sys: { type: 'AppDefinition', id: 'def2' } }],
+          includes: {
+            ResolvedAppDefinition: [{ sys: { type: 'ResolvedAppDefinition', id: 'def2' } }],
+          },
         });
       });
 
@@ -164,8 +201,8 @@ describe('AppDefinitionLoader', () => {
       });
 
       expect(result).toEqual({
-        def1: { sys: { type: 'AppDefinition', id: 'def1' } },
-        def2: { sys: { type: 'AppDefinition', id: 'def2' } },
+        def1: { sys: { type: 'ResolvedAppDefinition', id: 'def1' } },
+        def2: { sys: { type: 'ResolvedAppDefinition', id: 'def2' } },
         def3: null,
       });
     });
@@ -174,7 +211,12 @@ describe('AppDefinitionLoader', () => {
   describe('getAllForCurrentOrganization', () => {
     it('calls only the organization endpoint', async () => {
       const definitionsEndpoint = jest.fn();
-      const orgEndpoint = jest.fn(() => Promise.resolve({ items: 'DEFINITIONS' }));
+      const orgEndpoint = jest.fn(() =>
+        Promise.resolve({
+          items: 'DEFINITIONS',
+          includes: { ResolvedAppDefinition: 'RESOLVED_DEFINITIONS' },
+        })
+      );
 
       const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
@@ -187,7 +229,7 @@ describe('AppDefinitionLoader', () => {
         path: ['app_definitions'],
       });
 
-      expect(result).toBe('DEFINITIONS');
+      expect(result).toBe('RESOLVED_DEFINITIONS');
     });
   });
 });
