@@ -1,14 +1,14 @@
 import { SpacePurchasePage, OrganizationSettingsPage } from './pages';
 import { id as randomId } from '../../src/javascripts/utils/Random';
 
-test('space-purchase', () => {
+test('space-creation', () => {
   const orgId = Cypress.env('selfServiceOrgId');
 
   cy.login();
 
   const spacePurchasePage = SpacePurchasePage.visit(orgId);
 
-  spacePurchasePage.mediumSpacePlanCard.click();
+  spacePurchasePage.communitySpaceCard.click();
   spacePurchasePage.webAppPlatformCard.click();
   spacePurchasePage.spaceSelectionContinueButton.click();
 
@@ -17,7 +17,6 @@ test('space-purchase', () => {
   spacePurchasePage.spaceNameInput.clear();
   spacePurchasePage.spaceNameInput.type(newSpaceName);
   spacePurchasePage.spaceDetailsContinueButton.click();
-  spacePurchasePage.confirmPurchaseButton.click();
 
   const spaceHome = spacePurchasePage.goToNewSpace();
 

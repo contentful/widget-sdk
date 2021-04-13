@@ -1,8 +1,8 @@
 name: Run the smoke tests
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '*/7 * * * *'
+  schedule:
+    - cron: '*/7 * * * *'
 
 jobs:
   run-tests:
@@ -21,7 +21,7 @@ jobs:
             # happen when setting up the test strategy, so it can't be used here and instead
             # we need to more or less indirectly reference the secret name.
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_STAGING'
-            selfServiceOrgId: '6selMqONp4fK4Sqwz1bJ4q'
+            selfServiceOrgId: '6dIhZWiEh0reDpbLNI4ni0'
           - environment: 'production'
             passwordSecretName: 'SMOKE_TEST_USER_PASSWORD_PRODUCTION'
             selfServiceOrgId: '60oVkVQwAUW8Tp4bSKsojd'
