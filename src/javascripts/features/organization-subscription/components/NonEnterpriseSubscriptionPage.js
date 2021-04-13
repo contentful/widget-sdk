@@ -8,24 +8,19 @@ import {
   Grid,
   Heading,
   Note,
-  SkeletonBodyText,
-  SkeletonContainer,
-  SkeletonDisplayText,
   Typography,
 } from '@contentful/forma-36-react-components';
 
+import { isFreePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { go } from 'states/Navigator';
-
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
-
-import { BasePlan } from './BasePlan';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { ContentfulApps } from './ContentfulApps';
-import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
-import { isFreePlan } from 'account/pricing/PricingDataProvider';
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+import { BasePlanCard } from './BasePlanCard';
 
 const styles = {
   fullRow: css({
@@ -49,8 +44,9 @@ export function NonEnterpriseSubscriptionPage({
 }) {
   const organizationId = organization?.sys.id;
   const [changedSpaceId, setChangedSpaceId] = useState('');
+  const [content, setContent] = useState();
 
-  //// TODO: Refactor into own hook to use in both subscription pages
+  // TODO: Refactor into own hook to use in both subscription pages
   useEffect(() => {
     let timer;
 
@@ -62,6 +58,21 @@ export function NonEnterpriseSubscriptionPage({
 
     return () => clearTimeout(timer);
   }, [changedSpaceId]);
+
+  // TODO: create custom hook to fetch baseplan content
+  useEffect(() => {
+    const fetchBasePlanContent = async () => {
+      let entryContent;
+
+      if (basePlan && isFreePlan(basePlan)) {
+        entryContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
+      }
+
+      setContent(entryContent);
+    };
+
+    fetchBasePlanContent();
+  }, [basePlan]);
 
   const handleStartAppTrial = async () => {
     go({
@@ -82,82 +93,43 @@ export function NonEnterpriseSubscriptionPage({
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
 
-  const showPayingOnDemandCopy = isOrgBillable;
-
   const showContentfulAppsCard = isOrgOwnerOrAdmin;
 
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
-  const rightColumnHasContent = showPayingOnDemandCopy || showContentfulAppsCard;
+  const freeSpace = spacePlans.find(isFreeSpacePlan);
 
   return (
     <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
-      <Flex flexDirection="column">
-        {initialLoad ? (
-          <SkeletonContainer svgHeight={117}>
-            <SkeletonDisplayText />
-            <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-          </SkeletonContainer>
-        ) : (
-          <BasePlan basePlan={basePlan} organizationId={organizationId} />
-        )}
-        {rightColumnHasContent && (
-          <Flex flexDirection="column" marginTop="spacingXl">
-            <UsersForPlan
-              organizationId={organizationId}
-              numberFreeUsers={usersMeta && usersMeta.numFree}
-              numberPaidUsers={usersMeta && usersMeta.numPaid}
-              costOfUsers={usersMeta && usersMeta.cost}
-              unitPrice={usersMeta && usersMeta.unitPrice}
-              hardLimit={usersMeta && usersMeta.hardLimit}
-              isFreePlan={isFreePlan(basePlan)}
-              isOnEnterpriseTrial={false}
-            />
-          </Flex>
-        )}
-      </Flex>
-      <Flex flexDirection="column">
-        {initialLoad ? (
-          <SkeletonContainer svgHeight={117}>
-            <SkeletonDisplayText />
-            <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-          </SkeletonContainer>
-        ) : (
-          <>
-            {!rightColumnHasContent && (
-              <Flex flexDirection="column" marginBottom="spacingXl">
-                <UsersForPlan
-                  organizationId={organizationId}
-                  numberFreeUsers={usersMeta && usersMeta.numFree}
-                  numberPaidUsers={usersMeta && usersMeta.numPaid}
-                  costOfUsers={usersMeta && usersMeta.cost}
-                  unitPrice={usersMeta && usersMeta.unitPrice}
-                  hardLimit={usersMeta && usersMeta.hardLimit}
-                  isFreePlan={isFreePlan(basePlan)}
-                  isOnEnterpriseTrial={false}
-                />
-              </Flex>
-            )}
-            {showPayingOnDemandCopy && (
-              <Flex flexDirection="column" marginBottom="spacingXl">
-                <PayingOnDemandOrgCopy grandTotal={grandTotal} />
-              </Flex>
-            )}
-            {showContentfulAppsCard && (
-              <Flex flexDirection="column">
-                <ContentfulApps
-                  organizationId={organizationId}
-                  startAppTrial={handleStartAppTrial}
-                  isTrialAvailable={isAppTrialAvailable}
-                  isTrialActive={isAppTrialActive}
-                  isTrialExpired={isAppTrialExpired}
-                  addOnPlan={addOnPlan}
-                />
-              </Flex>
-            )}
-          </>
-        )}
-      </Flex>
+      {content && (
+        <Flex flexDirection="column" className={styles.fullRow}>
+          <BasePlanCard
+            content={content}
+            organizationId={organizationId}
+            upgradableSpaceId={freeSpace?.space.sys.id}
+            users={
+              usersMeta && {
+                count: usersMeta.numFree + usersMeta.numPaid,
+                limit: usersMeta.hardLimit,
+              }
+            }
+          />
+        </Flex>
+      )}
+
+      {isOrgBillable && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+      {showContentfulAppsCard && (
+        <Flex className={!isOrgBillable && styles.fullRow} flexDirection="column">
+          <ContentfulApps
+            organizationId={organizationId}
+            startAppTrial={handleStartAppTrial}
+            isTrialAvailable={isAppTrialAvailable}
+            isTrialActive={isAppTrialActive}
+            isTrialExpired={isAppTrialExpired}
+            addOnPlan={addOnPlan}
+          />
+        </Flex>
+      )}
 
       <Flex className={styles.fullRow} flexDirection="column">
         <SpacePlans

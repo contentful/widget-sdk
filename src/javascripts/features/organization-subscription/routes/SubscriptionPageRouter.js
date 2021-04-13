@@ -13,7 +13,7 @@ import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan, FREE } from 'account/pricing/PricingDataProvider';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
@@ -34,6 +34,10 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
+
+// List of tiers that already have content entries in Contentful
+// and can already use the rebranded version of our SubscriptionPage
+const TiersWithContent = [FREE];
 
 function isOrganizationEnterprise(organization, basePlan) {
   const isLegacyOrg = isLegacyOrganization(organization);
@@ -189,7 +193,12 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
          * when its children have 'flex-direction: column'
          * */}
         <Workbench.Content className={css({ position: 'relative' })}>
-          {data.isSubscriptionPageRebrandingEnabled && (
+          {/**
+           * if the feature flag is on and the base plan content is already created in Contentful, show one of the rebranded Subscription Pages
+           * Otherwise, show the generic Subscription Page
+           * */}
+          {data.isSubscriptionPageRebrandingEnabled &&
+          TiersWithContent.includes(data.basePlan.customerType) ? (
             <>
               {data.orgIsEnterprise && (
                 <EnterpriseSubscriptionPage
@@ -219,9 +228,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
                 />
               )}
             </>
-          )}
-          {/** if the feature flag is off, show the user the general subscription page */}
-          {!data.isSubscriptionPageRebrandingEnabled && (
+          ) : (
             <SubscriptionPage
               basePlan={data.basePlan}
               addOnPlan={data.addOnPlan}

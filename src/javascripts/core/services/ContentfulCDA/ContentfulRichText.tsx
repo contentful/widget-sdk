@@ -76,14 +76,20 @@ interface ContentfulRichTextProps {
    * Each property is a function (node, children) => ReactNode
    * */
   customRenderNode?: RenderNode;
+  /** A string to be used in tests */
+  testId?: string;
 }
 
-export function ContentfulRichText({ document, customRenderNode }: ContentfulRichTextProps) {
+export function ContentfulRichText({
+  document,
+  customRenderNode,
+  testId,
+}: ContentfulRichTextProps) {
   return (
-    <>
+    <span data-test-id={testId}>
       {documentToReactComponents(document, {
         renderNode: { ...deaultRenderNode, ...customRenderNode },
       })}
-    </>
+    </span>
   );
 }
