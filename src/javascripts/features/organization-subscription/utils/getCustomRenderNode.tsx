@@ -1,22 +1,11 @@
 import React from 'react';
-import { css } from 'emotion';
-import {
-  TextLink,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Tooltip,
-  Icon,
-} from '@contentful/forma-36-react-components';
+import { TextLink } from '@contentful/forma-36-react-components';
 
-import { INLINES, BLOCKS } from '@contentful/rich-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import type { RenderNode } from '@contentful/rich-text-react-renderer';
 
 import {
   WebappContentTypes,
-  WebappTable,
   InternalActionValues,
   InternalVariableValues,
 } from 'core/services/ContentfulCDA';
@@ -36,65 +25,6 @@ export const getCustomRenderNode = (
   orgId: string,
   options?: GetCustomRenderNodeOptions
 ): RenderNode => ({
-  [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-    const {
-      fields,
-      sys: {
-        contentType: {
-          sys: { id },
-        },
-      },
-    } = node.data.target;
-
-    if (id === WebappContentTypes.TABLE) {
-      const { table, extras } = fields as WebappTable;
-
-      // The first element in the array is always the table’s header
-      const [headerRow, ...bodyRows] = table.tableData;
-      const references = extras.reduce((acc, extra) => {
-        return { ...acc, [extra.fields.text]: extra.fields.tooltipContent };
-      }, {});
-
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              {headerRow.map((cell, idx) => (
-                <TableCell key={idx}>{cell}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {bodyRows.map((row, idx) => {
-              return (
-                <TableRow key={idx}>
-                  {row.map((cell, idx) => {
-                    const tooltipContent = references[cell];
-                    return (
-                      <TableCell key={idx}>
-                        {idx === 0 ? <b>{cell}</b> : cell}{' '}
-                        {tooltipContent && (
-                          <Tooltip place="bottom" content={tooltipContent}>
-                            <Icon
-                              className={css({
-                                marginBottom: '-3px',
-                              })}
-                              icon="InfoCircleTrimmed"
-                              color="muted"
-                            />
-                          </Tooltip>
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      );
-    }
-  },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
     const {
       fields,

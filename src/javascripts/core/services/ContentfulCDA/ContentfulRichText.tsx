@@ -1,72 +1,9 @@
 import React from 'react';
 
-import {
-  Paragraph,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-} from '@contentful/forma-36-react-components';
-import { BLOCKS, INLINES, Document, Text } from '@contentful/rich-text-types';
+import { Document } from '@contentful/rich-text-types';
 import { documentToReactComponents, RenderNode } from '@contentful/rich-text-react-renderer';
 
-import ExternalTextLink from 'app/common/ExternalTextLink';
-import { WebappContentTypes } from './types';
-
-const deaultRenderNode: RenderNode = {
-  [BLOCKS.PARAGRAPH]: (_node, children) => <Paragraph>{children}</Paragraph>,
-  [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-    const {
-      fields,
-      sys: {
-        contentType: {
-          sys: { id },
-        },
-      },
-    } = node.data.target;
-
-    if (id === WebappContentTypes.TABLE) {
-      // The first element in the array is always the table’s header
-      const [headerRow, ...bodyRows] = fields.table.tableData;
-
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              {headerRow.map((cell, idx) => (
-                <TableCell key={idx}>{cell}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {bodyRows.map((row, idx) => {
-              return (
-                <TableRow key={idx}>
-                  {row.map((cell, idx) => (
-                    <TableCell key={idx}>{cell}</TableCell>
-                  ))}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      );
-    }
-  },
-  [INLINES.HYPERLINK]: (node) => {
-    const {
-      data: { uri },
-      content,
-    } = node;
-
-    return (
-      <ExternalTextLink href={uri}>
-        {(content as Text[]).map(({ value }) => value)}
-      </ExternalTextLink>
-    );
-  },
-};
+import { defaultRenderNode } from './utils/defaultRenderNode';
 
 interface ContentfulRichTextProps {
   /** Object returned by the CDA for rich text fields in a content entry */
@@ -83,12 +20,12 @@ interface ContentfulRichTextProps {
 export function ContentfulRichText({
   document,
   customRenderNode,
-  testId,
+  testId = 'contentful-rich-text',
 }: ContentfulRichTextProps) {
   return (
     <span data-test-id={testId}>
       {documentToReactComponents(document, {
-        renderNode: { ...deaultRenderNode, ...customRenderNode },
+        renderNode: { ...defaultRenderNode, ...customRenderNode },
       })}
     </span>
   );
