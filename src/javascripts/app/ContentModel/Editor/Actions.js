@@ -22,7 +22,6 @@ import { openFieldModalDialog, getUpdatedField } from 'features/content-model-ed
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { openEditContentTypeDialog } from './Dialogs';
-import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
 import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
@@ -494,10 +493,6 @@ export default function useCreateActions(props) {
     }
   }
 
-  const loadPreview = () => {
-    return getContentTypePreview.fromData(state.contentType.data);
-  };
-
   const getPublishedField = (id) => {
     const publishedFields = _.get(
       spaceContext.publishedCTs.get(state.contentType.data.sys.id),
@@ -629,7 +624,6 @@ export default function useCreateActions(props) {
     cancel,
     save,
     saveAndClose,
-    loadPreview,
     duplicate,
   };
 
