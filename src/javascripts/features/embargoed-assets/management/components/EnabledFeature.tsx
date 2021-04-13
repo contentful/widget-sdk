@@ -58,9 +58,8 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
         <Typography>
           <Heading>Documentation</Heading>
           <Paragraph>
-            Restrict access to media by signing requests to the CDN with a valid token and policy.
-            The secured asset URLs are then used to access assets via the Delivery, Management or
-            Preview API.
+            Restrict access to media by using cryptographically signed time-limited asset URLs. You
+            can protect only unpublished assets or all assets.
           </Paragraph>
           <DocumentationTextLink />
         </Typography>
@@ -68,7 +67,7 @@ export function EnabledFeature({ setCurrentLevel, currentLevel }: EnabledFeature
       <Card testId="danger-zone-section-card" className={styles.section}>
         <Typography>
           <Heading>Turn off embargoed assets</Heading>
-          <Paragraph>All assets will become unprotected and accessible.</Paragraph>
+          <Paragraph>All assets will become unprotected and publicly accessible.</Paragraph>
           <Button
             buttonType="muted"
             disabled={isChanging}

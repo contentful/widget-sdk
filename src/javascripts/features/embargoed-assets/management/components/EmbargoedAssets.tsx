@@ -14,7 +14,9 @@ function notificationForLevel(level: Level) {
       return (
         <>
           <Paragraph className={styles.bolder}>Preparation mode activated</Paragraph>
-          <Paragraph>Use this mode to set up your assets to be protected.</Paragraph>
+          <Paragraph>
+            All assets are publicly accessible and you can use embargoed assets APIs.
+          </Paragraph>
         </>
       );
     case LEVEL.UNPUBLISHED:
@@ -22,8 +24,8 @@ function notificationForLevel(level: Level) {
         <>
           <Paragraph className={styles.bolder}>Unpublished assets protected</Paragraph>
           <Paragraph>
-            Unpublished assets are protected within 48 hours, and published assets are publicly
-            accessible.
+            Unpublished assets are protected (takes effect within 48 hours), and published assets
+            are publicly accessible.
           </Paragraph>
         </>
       );
@@ -31,7 +33,7 @@ function notificationForLevel(level: Level) {
       return (
         <>
           <Paragraph className={styles.bolder}>All assets protected</Paragraph>
-          <Paragraph>All assets will be protected within 48 hours.</Paragraph>
+          <Paragraph>All assets are protected (takes effect within 48 hours).</Paragraph>
         </>
       );
 
@@ -39,7 +41,7 @@ function notificationForLevel(level: Level) {
       return (
         <>
           <Paragraph className={styles.bolder}>Embargoed assets turned off</Paragraph>
-          <Paragraph>All assets are now publicly accessible.</Paragraph>
+          <Paragraph>All assets are publicly accessible.</Paragraph>
         </>
       );
     default:
