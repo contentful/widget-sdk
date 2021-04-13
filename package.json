@@ -13,7 +13,7 @@
     "@contentful/app-sdk": "^3.33.0",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "0.21.0",
-    "@contentful/entity-search": "0.17.2",
+    "@contentful/entity-search": "0.17.5",
     "@contentful/errors": "^1.20.2",
     "@contentful/experience-cma-utils": "0.4.3",
     "@contentful/experience-components": "0.28.0",
