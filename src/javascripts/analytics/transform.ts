@@ -42,14 +42,9 @@ import SpacePurchaseTransformer from './transformers/SpacePurchase';
 import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
 import { getSegmentSchema } from './SchemasSegment';
+import { TransformedEventData, EventData } from './types';
 
-type Payload = Record<string, unknown>;
-type EventPayload = {
-  schema?: string;
-  data: Record<string, unknown>;
-  contexts?: Record<string, unknown>;
-};
-type Transformer = Function | { (event: string, data: Payload): EventPayload };
+type Transformer = Function | { (event: string, data: EventData): TransformedEventData };
 
 type EventMeta = {
   transformer: Transformer;
@@ -529,7 +524,7 @@ export function eventExists(eventName) {
 /**
  * Returns data transformed for Snowplow/Segment
  */
-export function transformEvent(event: string, data: Payload) {
+export function transformEvent(event: string, data: EventData): TransformedEventData {
   const transformer = _events[event].transformer;
   return transformer(event, data);
 }

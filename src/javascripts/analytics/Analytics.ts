@@ -1,16 +1,19 @@
 import * as Config from 'Config';
-import * as Snowplow from 'analytics/snowplow';
+import segment from 'analytics/segment';
+import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
-import segment from 'analytics/segment';
 import { eventExists, transformEvent } from 'analytics/transform';
+import { TransformedEventData, EventData } from './types';
 import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
 import * as random from '../utils/Random';
 import { clearSequenceContext, initSequenceContext } from './sequenceContext';
 
-function removeCircularRefs(obj) {
+const requestIdleCallback = (window as any).requestIdleCallback || _.noop;
+
+function removeCircularRefs(obj): Record<string, unknown> {
   return JSON.parse(stringifySafe(obj));
 }
 
@@ -42,7 +45,7 @@ const ANALYTICS_ENVS = ['production', 'staging', 'preview'];
 const VALUE_UNKNOWN = {};
 
 let env = Config.env;
-const session = {};
+const session: Record<string, unknown> = {};
 let isEnabled = false;
 
 // Ugly but it's super tricky to simulate environment.
@@ -66,7 +69,7 @@ export const enable = _.once((user, segmentLoadOptions) => {
 
   if (ANALYTICS_ENVS.includes(env)) {
     segment.enable(segmentLoadOptions);
-    Snowplow.enable();
+    snowplow.enable();
   }
 
   identify(prepareUserData(removeCircularRefs(user)));
@@ -74,17 +77,10 @@ export const enable = _.once((user, segmentLoadOptions) => {
 });
 
 /**
- * @ngdoc method
- * @name analytics#getSessionData
- * @param {string|array?} path
- * @param {any?} defaultValue
- * @returns {object}
- * @description
- * Gets session data. If `path` is provided then
- * extract specific nested value.
+ * Gets specific nested session data at `path`.
  */
-export function getSessionData(path, defaultValue) {
-  return _.get(session, path || [], defaultValue);
+export function getSessionData(path: string, defaultValue?: unknown): unknown {
+  return _.get(session, path, defaultValue);
 }
 
 /**
@@ -97,7 +93,7 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 
-export function track(event, data) {
+export function track(event: string, data?: EventData): void {
   if (!isEnabled) {
     return;
   }
@@ -114,7 +110,7 @@ export function track(event, data) {
     const transformedData = transformEvent(event, data);
 
     segment.track(event, transformedData);
-    Snowplow.track(event, transformedData);
+    snowplow.track(event, transformedData);
     analyticsConsole.add(event, transformedData);
     logEventPayloadSize(event, transformedData);
   } catch (error) {
@@ -133,51 +129,44 @@ export function track(event, data) {
  * of the web app caused by heavy payload serialization in wootric (loaded in segment)
  *
  */
-function logEventPayloadSize(eventName, safePayload) {
-  if (typeof window.requestIdleCallback !== 'undefined') {
-    window.requestIdleCallback(() => {
-      try {
-        const { contexts: contextEvents = [], ...primaryPayload } = safePayload;
-        const primaryEventSize = JSON.stringify(primaryPayload).length;
-        const contextEventsSize = JSON.stringify(contextEvents).length - 2; // -2 to account for `[]`
+function logEventPayloadSize(eventName: string, safePayload: TransformedEventData) {
+  requestIdleCallback(() => {
+    try {
+      const { contexts: contextEvents = [], ...primaryPayload } = safePayload;
+      const primaryEventSize = JSON.stringify(primaryPayload).length;
+      // Context events are Snowplow specific
+      const contextEventsSize = JSON.stringify(contextEvents).length - 2; // -2 to account for `[]`
 
-        // any of the payload fields has methods on the first level
-        const hasMethods = Object.entries(safePayload || {})
-          .flatMap(([_, v]) => Object.values(v || {}))
-          .some((v) => _.isFunction(v));
+      // any of the payload fields has methods on the first level
+      const hasMethods = Object.entries(safePayload || {})
+        .flatMap(([_, v]) => Object.values(v || {}))
+        .some((v) => _.isFunction(v));
 
-        if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
-          logger.captureWarning(new Error('Potentially bloated tracking event payload'), {
-            event: eventName,
-            primaryEventSize,
-            contextEventsSize,
-            contextEventsCount: contextEvents.length,
-            hasMethods,
-          });
-        }
-      } catch (error) {
-        // ignore error
+      if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
+        logger.captureWarning(new Error('Potentially bloated tracking event payload'), {
+          event: eventName,
+          primaryEventSize,
+          contextEventsSize,
+          contextEventsCount: contextEvents.length,
+          hasMethods,
+        });
       }
-    });
-  }
+    } catch (error) {
+      // ignore error
+    }
+  });
 }
 
 /**
- * @description This function allows you to extend user's details
- * which will be sent to segment (and automatically to Intercom)
- * @param {object} params - object with new data
+ * This function allows you to extend user's details which will
+ * be sent to segment (and automatically to Intercom)
  */
 export const updateUserInSegment = identify;
 
 /**
- * @ngdoc method
- * @name analytics#identify
- * @param {object} extension
- * @description
- * Sets or extends session user data. Identifying
- * data is also set on Segment's client.
+ * Sets or extends session user data. Identifying data is also set on Segment's client.
  */
-function identify(extension) {
+function identify(extension?: object): void {
   session.user = session.user || {};
   const rawUserData = _.merge(session.user, extension || {});
 
@@ -197,27 +186,23 @@ function identify(extension) {
   // flattened when it is passed to Intercom and creates a lot of noise
   const user = _.omitBy(rawUserData, (val) => _.isArray(val) || _.isObject(val));
 
-  const userId = getSessionData('user.sys.id');
+  const userId = getSessionData('user.sys.id') as string;
   const userSignature = getSessionData('user.intercomUserSignature');
 
   if (userId && user) {
     segment.identify(userId, user, {
       integrations: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         Intercom: { user_hash: userSignature }, // for identity verification purpose
       },
     });
-    Snowplow.identify(userId);
+    snowplow.identify(userId);
   }
 
   sendSessionDataToConsole();
 }
 
 /**
- * @ngdoc method
- * @name analytics#trackContextChange
- * @param {object} space
- * @param {object} organization
- * @description
  * Sets or replaces session space and organization
  * data. Pass `null` when leaving context.
  *
@@ -225,7 +210,7 @@ function identify(extension) {
  * space/org contexts.
  */
 
-export function trackContextChange(space, organization) {
+export function trackContextChange(space: null | object, organization: null | object): void {
   if (space) {
     session.space = removeCircularRefs(space);
   } else if (space === null) {
@@ -242,20 +227,23 @@ export function trackContextChange(space, organization) {
   track(space ? 'global:space_changed' : 'global:space_left');
 }
 
+// TODO: Either combine trackStateChange() state and params or just pass a string for state.name
+type NavigationSate = {
+  name: string;
+};
+
 /**
- * @ngdoc method
- * @name analytics#trackStateChange
- * @param {object} state
- * @param {object} params
- * @param {object} from
- * @param {object} fromParams
- * @description
  * Sets or replaces session navigation data.
  * Accepts arguments of `$stateChangeSuccess`
  * handler. Current state is set as a page on
  * the Segment's client.
  */
-export function trackStateChange(state, params, from, fromParams) {
+export function trackStateChange(
+  state: NavigationSate,
+  params: object,
+  from: NavigationSate,
+  fromParams: object
+): void {
   if (!isEnabled) {
     return;
   }
@@ -270,6 +258,7 @@ export function trackStateChange(state, params, from, fromParams) {
   sendSessionDataToConsole();
 
   if (state.name === 'spaces.detail.entries.list') {
+    // eslint-disable-next-line @typescript-eslint/camelcase
     initSequenceContext({ sequence_key: random.id() });
   } else {
     clearSequenceContext();
@@ -279,7 +268,14 @@ export function trackStateChange(state, params, from, fromParams) {
   segment.page(state.name, params);
 }
 
-function getBasicPayload() {
+type BasicEventData = {
+  userId?: string;
+  spaceId?: string;
+  organizationId?: string;
+  currentState?: string;
+};
+
+function getBasicPayload(): BasicEventData {
   // IMPORTANT: Do not add anything here without ensuring that it won't end up in any Snowplow
   //  events which might be considered invalid with additional properties unknown to their schema!
   return _.pickBy(
