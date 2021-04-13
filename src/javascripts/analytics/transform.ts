@@ -13,7 +13,7 @@ import { BoilerplateTransform, ClipboardCopyTransform } from './transformers/Api
 import AppOpen from './transformers/AppOpen';
 import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
-import EditorLoad from './transformers/EditorLoad';
+import EditorLoadTransform from './transformers/EditorLoad';
 import TranslationSidebar from './transformers/TranslationSidebar';
 import Snapshot from './transformers/Snapshot';
 import InviteUserExperiment from './transformers/InviteUserExperiment';
@@ -490,7 +490,7 @@ function registerSlideInEditorEvent(event) {
 }
 
 function registerEditorLoadEvent(event) {
-  registerSnowplowEvent(event, 'editor_load', EditorLoad);
+  registerEvent(event, { segment: 'editor_loaded', snowplow: 'editor_load' }, EditorLoadTransform);
 }
 
 function registerTranslationSidebarEvent(event) {
@@ -536,5 +536,13 @@ export function getSnowplowSchemaForEvent(event: string) {
 
 export function getSegmentSchemaForEvent(event: string) {
   const schemaName = _events[event].segmentSchema;
-  return getSegmentSchema(schemaName) || { name: schemaName, version: '1' };
+  const schema = getSegmentSchema(schemaName);
+  if (schema) {
+    return schema;
+  }
+  // Segment schemas that aren't registered explicitly are assumed to exist due to the Segment -> Snowplow migration.
+  // Schemas were auto generated and named after the internal web app event names. Due to a previous tracking bug
+  // their data is required to be wrapped in an additional `{ data }`.
+  // TODO: Register all schemas explicitly, note which ones were migrated.
+  return { name: schemaName, version: '1', wrapPayloadInData: true };
 }

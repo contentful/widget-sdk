@@ -7,6 +7,7 @@ import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
 import { getSegmentSchemaForEvent } from './transform';
 import { TransformedEventData } from './types';
+import { Schema } from './SchemasSegment';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -136,8 +137,9 @@ export default {
    */
   track: function track(event: string, data: TransformedEventData): void {
     const schema = getSegmentSchemaForEvent(event);
+    const eventPayload = buildPayload(schema, data);
 
-    bufferedTrack(schema.name, data, { integrations: TRACK_INTEGRATIONS });
+    bufferedTrack(schema.name, eventPayload, { integrations: TRACK_INTEGRATIONS });
   },
   /**
    * Sets current page.
@@ -149,3 +151,7 @@ export default {
   identify: bufferedCall('identify'),
   getIntegrations,
 };
+
+export function buildPayload(schema: Schema, data: TransformedEventData): object {
+  return schema.wrapPayloadInData ? { data: data.data } : data.data;
+}
