@@ -122,11 +122,11 @@ export function AppDetails(props: AppDetailsProps) {
   const hasConfig = hasConfigLocation(app.appDefinition);
   const hasOpenLink = isInstalled && app.isContentfulApp;
 
-  // Purchased App:
-  //   free app
+  // Installable App:
+  //   non-paid app
   //     or
   //   paid app whose definition is visible (that is, the organization id has been added to the ACL)
-  const isPurchasedApp = !app.isPaidApp || app.appDefinition;
+  const isInstallableApp = !app.isPaidApp || app.appDefinition;
 
   const configCTA = hasConfig ? 'Configure' : 'Remove';
   const ctaWhenInstalled = app.isContentfulApp ? 'Open' : configCTA;
@@ -185,7 +185,7 @@ export function AppDetails(props: AppDetailsProps) {
         {app.description && <MarkdownRenderer source={app.description} />}
       </div>
       <div className={styles.sidebarColumn}>
-        {isPurchasedApp ? (
+        {isInstallableApp ? (
           <StateLink path="^.detail" params={{ appId: app.id }}>
             {({ onClick }) => (
               <Button
