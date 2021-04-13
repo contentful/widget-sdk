@@ -123,7 +123,12 @@ function getNavigationProps(item) {
 
 const openDialog = (modalData) =>
   ModalLauncher.open(({ onClose, isShown }) => (
-    <FeatureModal isShown={isShown} onClose={() => onClose(true)} {...modalData} />
+    <FeatureModal
+      isShown={isShown}
+      onClose={() => onClose()}
+      {...modalData}
+      featureTracking="teams"
+    />
   ));
 
 const initialFetch = async () => await fetchWebappContentByEntryID(TEAMS_CONTENT_ENTRY_ID);

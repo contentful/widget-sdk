@@ -5,6 +5,7 @@ import { Button, Modal, Flex } from '@contentful/forma-36-react-components';
 import { ContentfulRichText, ContentfulImage } from 'core/services/ContentfulCDA';
 import { Document } from '@contentful/rich-text-types';
 import { Asset } from 'contentful';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   // TODO: fix in F36
@@ -26,6 +27,7 @@ interface ModalFeatureContentProps {
   helpCenterUrl: string;
   secondaryCtaForAdmins: string;
   learnMore: string;
+  featureTracking: string;
 }
 
 // Content displayed in the modal is fetched from Contentful ProdDev space.
@@ -40,12 +42,28 @@ const FeatureModal = ({
   helpCenterUrl,
   secondaryCtaForAdmins,
   learnMore,
+  featureTracking,
 }: ModalFeatureContentProps) => {
+  const handleOnClick = (cta) => {
+    track(`high_value_feature:modal_${cta}`, {
+      userType: 'community',
+      feature: featureTracking,
+    });
+  };
+
+  const handleOnClose = () => {
+    track(`high_value_feature:modal_close`, {
+      userType: 'community',
+      feature: featureTracking,
+    });
+    onClose();
+  };
+
   return (
-    <Modal isShown={isShown} onClose={onClose} size="large">
+    <Modal isShown={isShown} onClose={handleOnClose} size="large">
       {() => (
         <div>
-          <Modal.Header title={`${name}`} onClose={onClose} />
+          <Modal.Header title={`${name}`} onClose={handleOnClose} />
           <Modal.Content>
             <>
               <Flex justifyContent="center" marginBottom="spacingM">
@@ -57,10 +75,17 @@ const FeatureModal = ({
             </>
           </Modal.Content>
           <Modal.Controls position="right" className={styles.modalControllsFullWith}>
-            <Button buttonType="muted" href={learnMore} className={styles.buttonWithSpaceRight}>
+            <Button
+              buttonType="muted"
+              href={learnMore}
+              onClick={() => handleOnClick('learn_more_cta')}
+              className={styles.buttonWithSpaceRight}>
               {secondaryCtaForAdmins}
             </Button>
-            <Button buttonType="primary" href={helpCenterUrl}>
+            <Button
+              buttonType="primary"
+              href={helpCenterUrl}
+              onClick={() => handleOnClick('help_center_cta')}>
               {primaryCtaAdmins}
             </Button>
           </Modal.Controls>

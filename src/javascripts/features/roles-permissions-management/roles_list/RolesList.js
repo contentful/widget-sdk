@@ -39,7 +39,12 @@ const styles = {
 
 const openDialog = (modalData) =>
   ModalLauncher.open(({ onClose, isShown }) => (
-    <FeatureModal isShown={isShown} onClose={() => onClose(true)} {...modalData} />
+    <FeatureModal
+      isShown={isShown}
+      onClose={() => onClose()}
+      {...modalData}
+      featureTracking="roles_and_permissions"
+    />
   ));
 
 // get high value label modal data from Contentful

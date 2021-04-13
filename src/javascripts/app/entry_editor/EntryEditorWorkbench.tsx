@@ -115,7 +115,12 @@ const initialFetch = async () => await fetchWebappContentByEntryID(REFERENCES_EN
 
 const openDialog = (modalData) =>
   ModalLauncher.open(({ onClose, isShown }) => (
-    <FeatureModal isShown={isShown} onClose={() => onClose()} {...modalData} />
+    <FeatureModal
+      isShown={isShown}
+      onClose={() => onClose()}
+      {...modalData}
+      featureTracking="references"
+    />
   ));
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
