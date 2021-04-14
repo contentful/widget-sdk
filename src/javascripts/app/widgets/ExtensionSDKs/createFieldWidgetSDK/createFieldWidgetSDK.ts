@@ -19,6 +19,8 @@ import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
 import { createAPIClient } from 'core/services/APIClient/utils';
+import { Source } from 'i13n/constants';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -40,7 +42,6 @@ export function createFieldWidgetSDK({
   environment,
   contentTypes,
   pubSubClient,
-  cma,
 }: {
   fieldId: string;
   localeCode: string;
@@ -64,12 +65,12 @@ export function createFieldWidgetSDK({
   space: any;
   spaceId: string;
   pubSubClient?: PubSubClient;
-  cma: ReturnType<typeof createAPIClient>;
 }): FieldExtensionSDK {
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const aliasesId = getEnvironmentAliasesIds(environment);
   const isMaster = isMasterEnvironment(environment);
+  const cma = getBatchingApiClient(createAPIClient(spaceId, environmentId, Source.Widget));
 
   const editorApi = createEditorApi({
     editorInterface: editorData.editorInterface,
