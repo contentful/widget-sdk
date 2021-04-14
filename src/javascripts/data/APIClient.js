@@ -20,16 +20,24 @@ const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
  * It requires a space endpoint request function as the constructor
  * argument.
  *
+ * Second argument is only used for tracing purposes and identifies
+ * where the request is coming from.
+ *   It's used as headers for Splunk/RedShift metrics.
+ *
  * @usage[js]
  * import APIClient from 'data/APIClient';
  * const client = new APIClient(spaceContext.endpoint);
  * client.getEntries(query).then(handleResponses);
  */
 
-export default function APIClient(spaceEndpoint) {
+export default function APIClient(spaceEndpoint, source) {
   this._endpoint = spaceEndpoint;
   this.envId = spaceEndpoint.envId;
   this.spaceId = spaceEndpoint.spaceId;
+
+  if (source) {
+    this.source = source;
+  }
 }
 
 APIClient.prototype._get = function (path, query) {

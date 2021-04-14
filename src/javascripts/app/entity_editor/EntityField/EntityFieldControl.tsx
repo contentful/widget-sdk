@@ -13,7 +13,8 @@ import { usePubSubClient } from 'core/hooks';
 import * as K from 'core/utils/kefir';
 import { connectGetEntity } from './connectedGetEntity';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { createAPIClient } from 'core/services/APIClient/utils';
+import { Source } from 'i13n/constants';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -49,7 +50,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     documentPool,
   } = useSpaceEnvContext();
 
-  const cma = useCurrentSpaceAPIClient();
+  const cma = createAPIClient(currentSpaceId, currentEnvironmentId, Source.Widget);
   const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 

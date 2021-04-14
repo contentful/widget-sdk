@@ -2,8 +2,12 @@ import * as BackendTracing from 'i13n/BackendTracing';
 import { gitRevision, env } from 'Config';
 
 // these headers are sent in all requests
-export function getDefaultHeaders() {
+export function getDefaultHeaders(source?: string) {
   const userAgentParts = ['app contentful.web-app', 'platform browser'];
+
+  if (source) {
+    userAgentParts.push(`source ${source}`);
+  }
 
   // Add active git revision to headers
   if (gitRevision) {
