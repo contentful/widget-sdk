@@ -66,10 +66,13 @@ export function isCurrentEnvironmentMaster(space?: SpaceEnv): boolean {
 }
 
 export function isMasterEnvironment(environment?: Environment): boolean {
-  return !!(
+  if (
     environment?.sys.id === 'master' ||
     environment?.sys.aliases?.find((alias) => alias.sys.id === 'master')
-  );
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function isMasterEnvironmentById(environments: Environment[], envId) {

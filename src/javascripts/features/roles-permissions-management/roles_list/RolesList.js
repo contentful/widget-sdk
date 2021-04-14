@@ -2,20 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import {
+  Button,
+  ModalLauncher,
+  Paragraph,
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableRow,
-  TableCell,
-  Button,
-  Paragraph,
   Tooltip,
-  ModalLauncher,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
-import { RoleListItem, AdministratorRoleListItem } from './RoleListItem';
-import { go } from 'states/Navigator';
+import { AdministratorRoleListItem, RoleListItem } from './RoleListItem';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
@@ -23,6 +22,7 @@ import { createRoleRemover } from '../components/RoleRemover';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { CUSTOM_ROLES_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   actions: css({
@@ -51,6 +51,7 @@ const openDialog = (modalData) =>
 const initialFetch = async () => await fetchWebappContentByEntryID(CUSTOM_ROLES_CONTENT_ENTRY_ID);
 
 function RoleListActions(props) {
+  const navigate = useRouteNavigate();
   const usage = ResourceUtils.getAccumulatedUsage(props.rolesResource);
   const fetchData = async () => {
     try {
@@ -94,7 +95,7 @@ function RoleListActions(props) {
                 buttonType="primary"
                 disabled={props.hasReachedLimit}
                 onClick={() => {
-                  go({ path: '^.new' });
+                  navigate({ path: 'roles.new' });
                 }}>
                 Create a new role
               </Button>
@@ -106,7 +107,7 @@ function RoleListActions(props) {
               buttonType="primary"
               disabled={props.hasReachedLimit}
               onClick={() => {
-                go({ path: '^.new' });
+                navigate({ path: 'roles.new' });
               }}>
               Create a new role
             </Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -10,7 +10,9 @@ describe('features/locales-management/LocalesListPricingOne', () => {
     it('if getComputeLocalesUsageForOrganization returns positive value than notification should be shown', () => {
       const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});
       const { container } = render(
-        <AddLocaleButton getComputeLocalesUsageForOrganization={() => true} />
+        <MemoryRouter>
+          <AddLocaleButton getComputeLocalesUsageForOrganization={() => true} />
+        </MemoryRouter>
       );
       fireEvent.click(container.querySelector('button'));
       expect(Notification.error).toHaveBeenCalledWith(true);
@@ -21,11 +23,13 @@ describe('features/locales-management/LocalesListPricingOne', () => {
     it('if getComputeLocalesUsageForOrganization returns negative value than $state.go should be called', () => {
       const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});
       const { container } = render(
-        <AddLocaleButton getComputeLocalesUsageForOrganization={() => false} />
+        <MemoryRouter>
+          <AddLocaleButton getComputeLocalesUsageForOrganization={() => false} />
+        </MemoryRouter>
       );
       fireEvent.click(container.querySelector('button'));
       expect(Notification.error).not.toHaveBeenCalled();
-      expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
+
       notificationSpy.mockRestore();
     });
   });

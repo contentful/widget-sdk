@@ -1,14 +1,10 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { render } from '@testing-library/react';
 
-import { render, fireEvent } from '@testing-library/react';
-import * as $stateMocked from 'ng/$state';
 import { LocalesTable } from './LocalesTable';
 
 describe('features/locales-management/LocalesTable', () => {
-  beforeEach(() => {
-    $stateMocked.go.mockClear();
-  });
-
   const locales = [
     {
       sys: { id: 1 },
@@ -49,7 +45,11 @@ describe('features/locales-management/LocalesTable', () => {
   ];
 
   const renderComponent = () => {
-    const { container } = render(<LocalesTable locales={locales} />);
+    const { container } = render(
+      <MemoryRouter>
+        <LocalesTable locales={locales} />
+      </MemoryRouter>
+    );
     const list = container.querySelector('tbody');
     const rows = list.querySelectorAll('tr');
     const cells = list.querySelectorAll('td');
@@ -94,16 +94,5 @@ describe('features/locales-management/LocalesTable', () => {
 
     expect(cells[4]).toHaveTextContent('Content is required');
     expect(cells[9]).toHaveTextContent('Can be published empty');
-  });
-
-  it('click on row should redirect to details page', () => {
-    expect.assertions(2);
-    const { rows } = renderComponent();
-
-    fireEvent.click(rows[0]);
-    expect($stateMocked.go).toHaveBeenCalledWith('^.detail', { localeId: 1 }, undefined);
-
-    fireEvent.click(rows[3]);
-    expect($stateMocked.go).toHaveBeenCalledWith('^.detail', { localeId: 4 }, undefined);
   });
 });

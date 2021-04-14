@@ -1,4 +1,5 @@
 import { renderAppsNavigationItem } from 'features/apps';
+import { routes } from 'core/react-routing';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {
@@ -17,11 +18,17 @@ export function getSpaceNavigationItems({
   contentTagsEnabled,
   canManageSpace,
 }) {
+  const locales = routes['locales.list']({ withEnvironment: !isUnscopedRoute });
+  const users = routes['users.list']({ withEnvironment: !isUnscopedRoute });
+  const webhooks = routes['webhooks.list']({ withEnvironment: !isUnscopedRoute });
+  const roles = routes['roles.list']({ withEnvironment: !isUnscopedRoute });
+
   const dropdownItems = {
     locales: {
       if: canNavigateTo('locales'),
-      sref: makeRef('settings.locales.list', isUnscopedRoute),
-      rootSref: makeRef('settings.locales', isUnscopedRoute),
+      sref: locales.path,
+      srefParams: locales.params,
+      rootSref: locales.path,
       dataViewType: 'spaces-settings-locales',
       title: 'Locales',
     },
@@ -48,8 +55,9 @@ export function getSpaceNavigationItems({
     },
     users: {
       if: canNavigateTo('users'),
-      sref: makeRef('settings.users.list', isUnscopedRoute),
-      rootSref: makeRef('settings.users', isUnscopedRoute),
+      sref: users.path,
+      srefParams: users.params,
+      rootSref: users.path,
       dataViewType: 'spaces-settings-users',
       title: 'Users',
     },
@@ -63,8 +71,9 @@ export function getSpaceNavigationItems({
     },
     roles: {
       if: canNavigateTo('roles'),
-      sref: makeRef('settings.roles.list', isUnscopedRoute),
-      rootSref: makeRef('settings.roles', isUnscopedRoute),
+      sref: roles.path,
+      srefParams: roles.params,
+      rootSref: roles.path,
       dataViewType: 'spaces-settings-roles',
       title: 'Roles & permissions',
     },
@@ -83,8 +92,9 @@ export function getSpaceNavigationItems({
     },
     webhooks: {
       if: canNavigateTo('webhooks'),
-      sref: makeRef('settings.webhooks.list', isUnscopedRoute),
-      rootSref: makeRef('settings.webhooks', isUnscopedRoute),
+      sref: webhooks.path,
+      srefParams: webhooks.params,
+      rootSref: webhooks.path,
       dataViewType: 'spaces-settings-webhooks',
       title: 'Webhooks',
     },

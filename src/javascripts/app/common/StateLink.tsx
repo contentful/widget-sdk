@@ -1,19 +1,36 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 import { track } from 'analytics/Analytics';
+import type { EventData } from 'analytics/types';
 
-const StateLink = ({
+export type StateLinkChildrenFn = (params: {
+  getHref: () => string;
+  onClick: (e?: any) => unknown;
+}) => React.ReactNode;
+
+export type StateLinkProps = {
+  path: string | string[];
+  children?: React.ReactNode | StateLinkChildrenFn;
+  params?: { [key: string]: unknown };
+  options?: { [key: string]: unknown };
+  onClick?: (e?: unknown) => unknown;
+  component?: React.FunctionComponent;
+  trackingEvent?: string;
+  trackParams?: EventData;
+  target?: '_blank';
+};
+
+export const StateLink = ({
   path,
-  params = undefined,
-  options = undefined,
-  children = undefined,
-  onClick = undefined,
-  component = undefined,
-  trackingEvent = undefined,
-  trackParams = undefined,
+  params,
+  options,
+  children,
+  onClick,
+  component,
+  trackingEvent,
+  trackParams,
   ...rest
-}) => {
+}: StateLinkProps) => {
   const trackClick = () => {
     if (trackingEvent) {
       track(trackingEvent, trackParams);
@@ -56,17 +73,6 @@ const StateLink = ({
       {children}
     </Component>
   );
-};
-
-StateLink.propTypes = {
-  path: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
-  params: PropTypes.object,
-  options: PropTypes.object,
-  children: PropTypes.any,
-  onClick: PropTypes.func,
-  component: PropTypes.any,
-  trackingEvent: PropTypes.string,
-  trackParams: PropTypes.object,
 };
 
 export default StateLink;

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useBlocker, useLocation } from 'react-router-dom';
 
 import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
@@ -17,6 +18,40 @@ export default function createUnsavedChangesDialogOpener(save) {
       ),
       { modalId: 'UnsavedChangesDialog' }
     );
+}
+
+export function UnsavedChangesBlocker({ when, save }) {
+  const location = useLocation();
+  // Re-create blocker on location change to re-enable blocking once previous tx was retried due to ignoreLeaveConfirmation
+  const blocker = React.useCallback(
+    (tx) => {
+      if (tx.location?.state?.ignoreLeaveConfirmation) {
+        return tx.retry();
+      }
+
+      ModalLauncher.open(
+        ({ isShown, onClose }) => (
+          <UnsavedChangesDialog
+            key={`${Date.now()}`}
+            save={save}
+            isShown={isShown}
+            onClose={onClose}
+          />
+        ),
+        { modalId: 'UnsavedChangesDialog' }
+      ).then((result) => {
+        if (result) {
+          tx.retry();
+        }
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [save, location]
+  );
+
+  useBlocker(blocker, when);
+
+  return null;
 }
 
 class UnsavedChangesDialog extends React.Component {

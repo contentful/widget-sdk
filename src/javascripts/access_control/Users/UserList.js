@@ -1,6 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import _, { groupBy, first, map, filter, get } from 'lodash';
+import React, { useCallback, useMemo, useState } from 'react';
+import _, { filter, first, get, groupBy, map } from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { canModifyUsers } from 'access_control/AccessChecker';
@@ -24,6 +23,7 @@ import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { useNavigationState } from 'core/react-routing';
 
 const fetch = (orgId, endpoint, space, setData) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
@@ -43,7 +43,9 @@ const fetch = (orgId, endpoint, space, setData) => async () => {
   setData({ resolvedMembers, roles, spaceUsers, hasTeamsFeature });
 };
 
-const UserList = ({ jumpToRole }) => {
+export default function UserList() {
+  const navigationState = useNavigationState();
+  const jumpToRole = navigationState?.jumpToRole ?? null;
   const { currentSpace, currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
   const organization = getOrganization(currentSpace);
   const organizationId = getOrganizationId(currentSpace);
@@ -158,9 +160,4 @@ const UserList = ({ jumpToRole }) => {
       />
     ));
   }
-};
-UserList.propTypes = {
-  jumpToRole: PropTypes.string,
-};
-
-export default UserList;
+}

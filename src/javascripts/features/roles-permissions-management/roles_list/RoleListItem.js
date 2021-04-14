@@ -4,19 +4,16 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import * as RoleListHandler from '../components/RoleListHandler';
 import {
-  TableRow,
-  TableCell,
-  Paragraph,
-  TextLink,
-  IconButton,
   Dropdown,
   DropdownList,
   DropdownListItem,
+  IconButton,
+  Paragraph,
+  TableCell,
+  TableRow,
+  TextLink,
 } from '@contentful/forma-36-react-components';
-import { jumpToRole } from '../utils/jumpToRole';
-import { go } from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { ReactRouterLink, useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   clickableCell: css({
@@ -29,10 +26,6 @@ const styles = {
     fontWeight: tokens.fontWeightDemiBold,
   }),
 };
-
-function jumpToAdminRoleMembers(isMasterEnvironment) {
-  jumpToRole(RoleListHandler.ADMIN_ROLE_NAME, isMasterEnvironment);
-}
 
 function RoleActions(props) {
   const [isOpen, setOpen] = React.useState(false);
@@ -74,9 +67,6 @@ RoleActions.propTypes = {
 };
 
 export function AdministratorRoleListItem(props) {
-  const { currentSpace } = useSpaceEnvContext();
-  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-
   return (
     <TableRow testId="role-row">
       <TableCell>
@@ -95,9 +85,14 @@ export function AdministratorRoleListItem(props) {
         )}
       </TableCell>
       <TableCell>
-        <TextLink onClick={() => jumpToAdminRoleMembers(isMasterEnvironment)}>
+        <ReactRouterLink
+          route={{
+            path: 'users.list',
+            navigationState: { jumpToRole: RoleListHandler.ADMIN_ROLE_NAME },
+          }}
+          component={TextLink}>
           {props.count} {props.count !== 1 ? 'members' : 'member'}
-        </TextLink>
+        </ReactRouterLink>
       </TableCell>
       <TableCell />
     </TableRow>
@@ -111,13 +106,12 @@ AdministratorRoleListItem.propTypes = {
 
 // eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
 export function RoleListItem(props) {
-  const { currentSpace } = useSpaceEnvContext();
-  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const navigate = useRouteNavigate();
 
   const openRole = () => {
-    go({
-      path: '^.detail',
-      params: { roleId: props.role.sys.id },
+    navigate({
+      path: 'roles.detail',
+      roleId: props.role.sys.id,
     });
   };
 
@@ -126,7 +120,7 @@ export function RoleListItem(props) {
   };
 
   const duplicateRole = () => {
-    go({ path: '^.new', params: { baseRoleId: props.role.sys.id } });
+    navigate({ path: 'roles.new', navigationState: { baseRoleId: props.role.sys.id } });
   };
 
   return (
@@ -140,12 +134,11 @@ export function RoleListItem(props) {
         {props.role.description && <Paragraph>{props.role.description}</Paragraph>}
       </TableCell>
       <TableCell>
-        <TextLink
-          onClick={() => {
-            jumpToRole(props.role.name, isMasterEnvironment);
-          }}>
+        <ReactRouterLink
+          route={{ path: 'users.list', navigationState: { jumpToRole: props.role.name } }}
+          component={TextLink}>
           {props.role.count} {props.role.count !== 1 ? 'members' : 'member'}
-        </TextLink>
+        </ReactRouterLink>
       </TableCell>
       <TableCell>
         {props.hasCustomRolesFeature && (

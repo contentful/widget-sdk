@@ -102,7 +102,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
   let daysLeft = -1;
   let ctaType = '';
-  let pathParamsObj: { path: string; params: unknown } | undefined;
+  let pathParamsObj: { path: string; params: { [key: string]: unknown } } | undefined;
 
   if (isEnterpriseTrial) {
     daysLeft = calcTrialDaysLeft(organization?.trialPeriodEndsAt);

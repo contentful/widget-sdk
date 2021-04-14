@@ -1,11 +1,9 @@
-import { Note, Notification, TabPanel, Tabs } from '@contentful/forma-36-react-components';
+import { Note, Notification, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import FeedbackButton from 'app/common/FeedbackButton';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { Route, RouteTab } from 'core/routing';
-import { RouteProvider } from 'core/routing/RouteProvider';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { css } from 'emotion';
 import { TagPropType, tagsPayloadToOptions } from 'features/content-tags';
@@ -18,8 +16,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import TheLocaleStore from 'services/localeStore';
 import * as logger from 'services/logger';
-import * as Navigator from 'states/Navigator';
-import { RoleEditRoutes } from 'states/settingsRolesPermissions';
 
 import * as RoleListHandler from '../components/RoleListHandler';
 import { createRoleRemover } from '../components/RoleRemover';
@@ -27,6 +23,10 @@ import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { getLocales } from '../utils/getLocales';
 import { RoleEditorActions } from './RoleEditorActions';
 import { equalArrayContent } from '../utils/equalArrays';
+import { RoleEditRoutes } from '../routes/RoleEditorRoute';
+import { Route, Routes, withRouteNavigate } from 'core/react-routing';
+import { RoleEditorTabs } from './RoleEditorTabs';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 const styles = {
   tabs: css({
@@ -95,7 +95,7 @@ export function handleSaveError(response) {
   return Promise.reject();
 }
 
-export class RoleEditor extends React.Component {
+class RoleEditorWithNavigator extends React.Component {
   static propTypes = {
     role: PropTypes.shape({
       name: PropTypes.string,
@@ -116,10 +116,9 @@ export class RoleEditor extends React.Component {
     hasCustomRolesFeature: PropTypes.bool.isRequired,
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
-    ngStateUrl: PropTypes.string.isRequired,
-    tab: PropTypes.string.isRequired,
     tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
     fetchEntity: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
   };
 
   static contextType = SpaceEnvContext;
@@ -154,7 +153,6 @@ export class RoleEditor extends React.Component {
       },
       incompleteRulesList: {},
       internal,
-      tab: this.props.tab || RoleEditRoutes.Details.url,
     };
   }
 
@@ -252,9 +250,7 @@ export class RoleEditor extends React.Component {
       createRoleRemover(listHandler, role, currentSpace).then((removed) => {
         if (removed) {
           this.setDirty(false);
-          Navigator.go({
-            path: 'spaces.detail.settings.roles.list',
-          });
+          this.props.navigate({ path: 'roles.list' });
         }
       });
     });
@@ -264,9 +260,10 @@ export class RoleEditor extends React.Component {
     const { role } = this.props;
 
     if (get(role, 'sys.id')) {
-      Navigator.go({
-        path: '^.new',
-        params: { baseRoleId: role.sys.id, tab: this.state.tab },
+      this.props.navigate({
+        path: 'roles.new',
+        tab: 'details',
+        navigationState: { baseRoleId: role.sys.id },
       });
     }
   };
@@ -294,14 +291,14 @@ export class RoleEditor extends React.Component {
 
     if (isNew) {
       this.setDirty(false);
-      return Navigator.go({ path: '^.detail', params: { roleId: role.sys.id } });
-    } else {
-      const newInternal = PolicyBuilder.toInternal(role);
-      const incompleteRulesList = this.getIncompleteRules(newInternal);
-      this.setState({ internal: newInternal, incompleteRulesList });
-      this.setDirty(false);
-      return Promise.resolve(role);
+      return this.props.navigate({ path: 'roles.detail', roleId: role.sys.id });
     }
+
+    const newInternal = PolicyBuilder.toInternal(role);
+    const incompleteRulesList = this.getIncompleteRules(newInternal);
+    this.setState({ internal: newInternal, incompleteRulesList });
+    this.setDirty(false);
+    return Promise.resolve(role);
   };
 
   updateInternal = (updater) => {
@@ -476,18 +473,11 @@ export class RoleEditor extends React.Component {
   };
 
   navigateToList() {
-    return Navigator.go({ path: '^.list' });
+    return this.props.navigate({ path: 'roles.list' });
   }
 
   navigateToTab = (tab) => {
-    this.setState({ tab });
-    return Navigator.go({
-      path: '.',
-      params: { tab },
-      options: {
-        notify: false,
-      },
-    });
+    return this.props.navigate(tab, { replace: true, state: { ignoreLeaveConfirmation: true } });
   };
 
   render() {
@@ -511,53 +501,54 @@ export class RoleEditor extends React.Component {
     }
 
     return (
-      <RouteProvider ngStateUrl={this.state.tab}>
-        <DocumentTitle title={`${title} | Roles`} />
-        <RolesWorkbenchSkeleton
-          type={'full'}
-          title={title}
-          onBack={() => {
-            this.navigateToList();
-          }}
-          actions={
-            <div className={styles.actionsWrapper}>
-              <div className={styles.feedback}>
-                <FeedbackButton
-                  className={styles.feedback}
-                  about="Roles & Permissions"
-                  target="devWorkflows"
-                  label={'Give feedback'}
-                />
-              </div>
-              <RoleEditorActions
-                hasCustomRolesFeature={hasCustomRolesFeature}
-                canModifyRoles={canModifyRoles}
-                showTranslator={showTranslator}
-                dirty={dirty}
-                saving={saving}
-                isLegacy={isLegacy}
-                internal={internal}
-                onSave={this.save}
-                onDuplicate={this.duplicate}
-                onDelete={this.delete}
+      <RolesWorkbenchSkeleton
+        type={'full'}
+        title={title}
+        onBack={() => {
+          this.navigateToList();
+        }}
+        actions={
+          <div className={styles.actionsWrapper}>
+            <div className={styles.feedback}>
+              <FeedbackButton
+                className={styles.feedback}
+                about="Roles & Permissions"
+                target="devWorkflows"
+                label={'Give feedback'}
               />
             </div>
-          }>
-          <Tabs withDivider className={styles.tabs}>
-            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Details} />
-            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Content} />
-            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Media} />
-            <RouteTab onSelect={this.navigateToTab} {...RoleEditRoutes.Permissions} />
-          </Tabs>
-          {/* TODO repurpose warning for incomplete rules or remove */}
-          {false && (
-            <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
-              Some rules have been removed because of changes in your content structure. Please
-              review your rules and click &quot;Save changes&quot;.
-            </Note>
-          )}
-          <TabPanel id={`role-tab-panel`} className={styles.tabPanel}>
-            <Route path={RoleEditRoutes.Details.url}>
+            <RoleEditorActions
+              hasCustomRolesFeature={hasCustomRolesFeature}
+              canModifyRoles={canModifyRoles}
+              showTranslator={showTranslator}
+              dirty={dirty}
+              saving={saving}
+              isLegacy={isLegacy}
+              internal={internal}
+              onSave={this.save}
+              onDuplicate={this.duplicate}
+              onDelete={this.delete}
+            />
+          </div>
+        }>
+        <DocumentTitle title={`${title} | Roles`} />
+
+        {this.state.dirty && <UnsavedChangesBlocker when save={this.save} />}
+
+        <Routes>
+          <Route path=":tab" element={<RoleEditorTabs navigateToTab={this.navigateToTab} />} />
+        </Routes>
+
+        {/* TODO repurpose warning for incomplete rules or remove */}
+        {false && (
+          <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
+            Some rules have been removed because of changes in your content structure. Please review
+            your rules and click &quot;Save changes&quot;.
+          </Note>
+        )}
+        <TabPanel id={`role-tab-panel`} className={styles.tabPanel}>
+          <Routes>
+            <Route path={RoleEditRoutes.Details.name}>
               <RoleEditorDetails
                 updateRoleFromTextInput={this.updateRoleFromTextInput}
                 updateLocale={this.updateLocale}
@@ -567,7 +558,7 @@ export class RoleEditor extends React.Component {
                 internal={internal}
               />
             </Route>
-            <Route path={RoleEditRoutes.Content.url}>
+            <Route path={RoleEditRoutes.Content.name}>
               <RoleEditorEntities
                 title={'Content'}
                 entity={'entry'}
@@ -593,7 +584,7 @@ export class RoleEditor extends React.Component {
               />
             </Route>
 
-            <Route path={RoleEditRoutes.Media.url}>
+            <Route path={RoleEditRoutes.Media.name}>
               <RoleEditorEntities
                 title={'Media'}
                 entity={'asset'}
@@ -618,7 +609,7 @@ export class RoleEditor extends React.Component {
                 incompleteRulesList={incompleteRulesList}
               />
             </Route>
-            <Route path={RoleEditRoutes.Permissions.url}>
+            <Route path={RoleEditRoutes.Permissions.name}>
               <RoleEditorPermissions
                 internal={internal}
                 canModifyRoles={canModifyRoles}
@@ -627,9 +618,11 @@ export class RoleEditor extends React.Component {
                 hasEnvironmentAliasesEnabled={hasEnvironmentAliasesEnabled}
               />
             </Route>
-          </TabPanel>
-        </RolesWorkbenchSkeleton>
-      </RouteProvider>
+          </Routes>
+        </TabPanel>
+      </RolesWorkbenchSkeleton>
     );
   }
 }
+
+export const RoleEditor = withRouteNavigate(RoleEditorWithNavigator);

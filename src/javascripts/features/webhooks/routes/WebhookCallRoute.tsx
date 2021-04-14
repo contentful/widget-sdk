@@ -1,27 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { WebhookCall } from '../WebhookCall';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { WebhookSkeletons } from '../skeletons/WebhookListRouteSkeleton';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import StateRedirect from 'app/common/StateRedirect';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { go } from 'states/Navigator';
+import { useRouteNavigate, RouteNavigate, useParams } from 'core/react-routing';
 
-const WebhookCallFetcher = createFetcherComponent((props) => {
-  const { webhookId, callId, spaceId } = props;
-  const webhookRepo = getWebhookRepo({ spaceId });
+const WebhookCallFetcher = createFetcherComponent(
+  (props: { callId: string; webhookId: string; spaceId: string }) => {
+    const { webhookId, callId, spaceId } = props;
+    const webhookRepo = getWebhookRepo({ spaceId });
 
-  return Promise.all([webhookRepo.get(webhookId), webhookRepo.logs.getCall(webhookId, callId)]);
-});
+    return Promise.all([webhookRepo.get(webhookId), webhookRepo.logs.getCall(webhookId, callId)]);
+  }
+);
 
-export function WebhookCallRoute(props) {
+export function WebhookCallRoute() {
+  const navigate = useRouteNavigate();
   const { currentSpaceId } = useSpaceEnvContext();
 
+  const { callId, webhookId } = useParams() as { webhookId: string; callId: string };
+
   function onGoBack() {
-    return go({ path: '^' });
+    return navigate({ path: 'webhooks.detail', webhookId });
   }
 
   if (!getSectionVisibility()['webhooks']) {
@@ -29,13 +32,13 @@ export function WebhookCallRoute(props) {
   }
 
   return (
-    <WebhookCallFetcher {...props} spaceId={currentSpaceId}>
+    <WebhookCallFetcher callId={callId} webhookId={webhookId} spaceId={currentSpaceId}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <WebhookSkeletons.WebhookLoading />;
         }
         if (isError) {
-          return <StateRedirect path="^.^.detail" />;
+          return <RouteNavigate replace route={{ path: 'webhooks.detail', webhookId }} />;
         }
         const [webhook, call] = data;
         return <WebhookCall webhook={webhook} call={call} onGoBack={onGoBack} />;
@@ -43,8 +46,3 @@ export function WebhookCallRoute(props) {
     </WebhookCallFetcher>
   );
 }
-
-WebhookCallRoute.propTypes = {
-  webhookId: PropTypes.string.isRequired,
-  callId: PropTypes.string.isRequired,
-};

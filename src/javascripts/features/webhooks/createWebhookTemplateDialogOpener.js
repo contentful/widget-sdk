@@ -1,6 +1,5 @@
 import React from 'react';
 import { get } from 'lodash';
-import * as Navigator from 'states/Navigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as WebhookEditorActions from './WebhookEditorActions';
 import { WebhookTemplateDialog } from './WebhookTemplateDialog';
@@ -8,7 +7,7 @@ import { WebhookTemplates } from './templates';
 
 const isNonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
-export function createWebhookTemplateDialogOpener(config, spaceId) {
+export function createWebhookTemplateDialogOpener(config, spaceId, goToWebhookEditor) {
   const { contentTypes, defaultLocaleCode, domain, hasAwsProxy } = config;
 
   const validTemplateIds = WebhookTemplates.map((template) => template.id);
@@ -35,12 +34,7 @@ export function createWebhookTemplateDialogOpener(config, spaceId) {
             })
           ).then((webhooks) => {
             onClose();
-            Navigator.go({
-              path: ['^.detail'],
-              params: {
-                webhookId: get(webhooks, '[0].sys.id'),
-              },
-            });
+            goToWebhookEditor({ webhookId: get(webhooks, '[0].sys.id') });
             return webhooks;
           })
         }

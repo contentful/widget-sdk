@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import isArray from 'lodash/isArray';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
@@ -92,7 +93,7 @@ export function useDeeplinkPage({ searchParams }) {
         setStatus(PageStatuses.selectApp);
       }
       setRedirect({
-        path: result.path.join('.'),
+        path: isArray(result.path) ? result.path.join('.') : result.path,
         params: result.params,
         options: { location: 'replace' },
       });

@@ -13,6 +13,7 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { LocalesTable } from './LocalesTable';
 import StateLink from 'app/common/StateLink';
 import { LocalesUsageStatus, getLocalesUsageStatus } from './utils/LocalesUsageStatus';
+import { useRouteNavigate } from 'core/react-routing';
 
 const LocalesListPropTypes = {
   locales: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -24,26 +25,25 @@ const LocalesListPropTypes = {
   subscriptionPlanName: PropTypes.string.isRequired,
 };
 
-export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
-  <StateLink path="^.new">
-    {({ onClick }) => (
-      <Button
-        icon="PlusCircle"
-        testId="add-locales-button"
-        buttonType="primary"
-        onClick={() => {
-          const usage = getComputeLocalesUsageForOrganization();
-          if (usage) {
-            Notification.error(usage);
-          } else {
-            onClick();
-          }
-        }}>
-        Add locale
-      </Button>
-    )}
-  </StateLink>
-);
+export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => {
+  const navigate = useRouteNavigate();
+  return (
+    <Button
+      icon="PlusCircle"
+      testId="add-locales-button"
+      buttonType="primary"
+      onClick={() => {
+        const usage = getComputeLocalesUsageForOrganization();
+        if (usage) {
+          Notification.error(usage);
+        } else {
+          navigate({ path: 'locales.new' });
+        }
+      }}>
+      Add locale
+    </Button>
+  );
+};
 
 AddLocaleButton.propTypes = {
   getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
@@ -168,7 +168,7 @@ export const LocalesAdvice = (props) => {
 
 LocalesAdvice.propTypes = LocalesListPropTypes;
 
-export class LocalesListPricingOne extends React.Component {
+export class LocalesListPricingOne extends React.PureComponent {
   render() {
     return (
       <Workbench testId="locale-list-workbench">

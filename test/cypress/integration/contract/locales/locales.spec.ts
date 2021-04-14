@@ -57,7 +57,7 @@ describe('Locales Management', () => {
     it('add locale button should redirect to new locale page', () => {
       cy.findByTestId('add-locales-button').should('be.visible').click();
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq(`/spaces/${defaultSpaceId}/settings/locales_new`);
+        expect(loc.pathname).to.eq(`/spaces/${defaultSpaceId}/settings/locales/new`);
       });
     });
   });
@@ -66,7 +66,7 @@ describe('Locales Management', () => {
       cy.resetAllFakeServers();
       interactions = [...defaultRequestsMock()];
 
-      cy.visit(`/spaces/${defaultSpaceId}/settings/locales_new`);
+      cy.visit(`/spaces/${defaultSpaceId}/settings/locales/new`);
       cy.wait(interactions, { timeout: 10000 });
     });
 

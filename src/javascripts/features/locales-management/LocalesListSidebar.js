@@ -4,7 +4,6 @@ import { Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Pluralized } from 'core/components/formatting';
-import StateLink from 'app/common/StateLink';
 import { Typography, Paragraph } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -14,6 +13,7 @@ import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { RouteLink } from 'core/react-routing';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -172,12 +172,13 @@ UpgradeOnDemand.propTypes = { upgradeSpace: PropTypes.func.isRequired };
 
 const AddLocaleButton = () => {
   return (
-    <StateLink path="^.new">
-      {({ onClick }) => (
-        <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
-          Add Locale
-        </Button>
-      )}
-    </StateLink>
+    <RouteLink
+      as={Button}
+      route={{ path: 'locales.new' }}
+      isFullWidth
+      buttonType="primary"
+      testId="add-locales-button">
+      Add Locale
+    </RouteLink>
   );
 };

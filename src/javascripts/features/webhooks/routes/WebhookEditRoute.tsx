@@ -1,23 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { WebhookEditor } from '../WebhookEditor';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { WebhookSkeletons } from '../skeletons/WebhookListRouteSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useParams, RouteNavigate } from 'core/react-routing';
 
-const WebhookFetcher = createFetcherComponent((props) => {
+const WebhookFetcher = createFetcherComponent((props: { spaceId: string; webhookId: string }) => {
   const { webhookId, spaceId } = props;
   const webhookRepo = getWebhookRepo({ spaceId });
   return webhookRepo.get(webhookId);
 });
 
-export function WebhookEditRoute(props) {
+export function WebhookEditRoute() {
+  const { webhookId } = useParams() as { webhookId: string };
   const { currentSpaceId } = useSpaceEnvContext();
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
@@ -26,13 +26,13 @@ export function WebhookEditRoute(props) {
   }
 
   return (
-    <WebhookFetcher webhookId={props.webhookId} spaceId={currentSpaceId}>
+    <WebhookFetcher webhookId={webhookId} spaceId={currentSpaceId}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <WebhookSkeletons.WebhookLoading />;
         }
         if (isError) {
-          return <StateRedirect path="^.list" />;
+          return <RouteNavigate route={{ path: 'webhooks.list' }} replace />;
         }
         return (
           <React.Fragment>
@@ -48,7 +48,3 @@ export function WebhookEditRoute(props) {
     </WebhookFetcher>
   );
 }
-
-WebhookEditRoute.propTypes = {
-  webhookId: PropTypes.string.isRequired,
-};

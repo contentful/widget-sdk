@@ -16,9 +16,10 @@ import { WebhookSidebar } from './WebhookSidebar';
 import * as WebhookEditorActions from './WebhookEditorActions';
 import { WebhookRemovalDialog } from './dialogs/WebhookRemovalDialog';
 import { WebhookActivityLog } from './WebhookActivityLog';
-import * as Navigator from 'states/Navigator';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import type { WebhookProps } from 'contentful-management/types';
+import { withRouteNavigate, RouteNavigateFn, RouteNavigate } from 'core/react-routing';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 enum TabType {
   Settings = 1,
@@ -31,6 +32,7 @@ const style = {
 };
 
 interface WebhookEditorProps {
+  navigate: RouteNavigateFn;
   initialWebhook: WebhookProps;
   registerSaveAction: (save: (spaceId: string) => Promise<void>) => void;
   setDirty: (dirty: boolean) => void;
@@ -44,9 +46,10 @@ interface WebhookEditorState {
   busy: boolean;
   isDeleteDialogShown: boolean;
   refreshLog?: ({ spaceId }: { spaceId: string }) => Promise<void>;
+  navigateToWebhook: string | null;
 }
 
-export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEditorState> {
+class WebhookEditorWithNavigator extends React.Component<WebhookEditorProps, WebhookEditorState> {
   static contextType = SpaceEnvContext;
 
   constructor(props) {
@@ -66,6 +69,7 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
       // All buttons triggering HTTP requests are disabled then.
       busy: false,
       isDeleteDialogShown: false,
+      navigateToWebhook: null,
     };
   }
 
@@ -91,21 +95,25 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
 
   navigateToSaved(webhook: WebhookProps) {
     this.props.setDirty(false);
-    return Navigator.go({ path: '^.detail', params: { webhookId: webhook.sys.id } });
+    this.setState({ dirty: false, navigateToWebhook: webhook.sys.id });
   }
 
   navigateToList(force = false) {
-    force && this.props.setDirty(false);
-    return Navigator.go({ path: '^.list' });
+    if (force) {
+      this.props.setDirty(false);
+      this.setState({ dirty: false });
+    }
+    return this.props.navigate({ path: 'webhooks.list' }, { replace: force });
   }
 
-  save = async (spaceId: string) => {
+  save = async () => {
+    const { currentSpaceId } = this.context;
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      const saved = await WebhookEditorActions.save(webhook, spaceId);
+      const saved = await WebhookEditorActions.save(webhook, currentSpaceId);
 
       if (fresh) {
         this.navigateToSaved(saved);
@@ -121,13 +129,15 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
     this.setState({ busy: false });
   };
 
-  remove = async (spaceId: string) => {
+  remove = async () => {
+    const { currentSpaceId } = this.context;
+
     const { webhook } = this.state;
 
     this.setState({ busy: true });
 
     try {
-      await WebhookEditorActions.remove(webhook, spaceId);
+      await WebhookEditorActions.remove(webhook, currentSpaceId);
       this.navigateToList(true);
       Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
     } catch (err) {
@@ -175,17 +185,22 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
   render() {
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
-    const { currentSpaceId } = this.context;
-
     return (
       <React.Fragment>
+        {this.state.navigateToWebhook && (
+          <RouteNavigate
+            route={{ path: 'webhooks.detail', webhookId: this.state.navigateToWebhook }}
+            replace
+          />
+        )}
+        {this.state.dirty && <UnsavedChangesBlocker when save={this.save} />}
         <Workbench testId="webhook-editor-page">
           <Workbench.Header
             onBack={() => {
-              Navigator.go({ path: '^.list' });
+              this.props.navigate({ path: 'webhooks.list' });
             }}
             icon={<ProductIcon icon="Settings" size="large" />}
-            title={`Webhook: ${webhook.name || 'Unnamed'}${dirty ? '*' : ''}`}
+            title={`Webhook: ${webhook.name || 'Unnamed'}${this.state.dirty ? '*' : ''}`}
             actions={
               <>
                 {tab === TabType.Settings && !fresh && (
@@ -207,7 +222,7 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
                     buttonType="positive"
                     disabled={!dirty}
                     loading={busy}
-                    onClick={() => this.save(currentSpaceId)}>
+                    onClick={() => this.save()}>
                     Save
                   </Button>
                 )}
@@ -254,7 +269,7 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
           isShown={this.state.isDeleteDialogShown}
           webhookUrl={this.state.webhook.url}
           isConfirmLoading={busy}
-          onConfirm={() => this.remove(currentSpaceId)}
+          onConfirm={() => this.remove()}
           onCancel={() => {
             this.setState({ isDeleteDialogShown: false });
           }}
@@ -263,3 +278,5 @@ export class WebhookEditor extends React.Component<WebhookEditorProps, WebhookEd
     );
   }
 }
+
+export const WebhookEditor = withRouteNavigate(WebhookEditorWithNavigator);

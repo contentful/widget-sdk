@@ -54,8 +54,8 @@ export const LocalesListPricingTwo = ({
 };
 
 LocalesListPricingTwo.propTypes = {
-  locales: PropTypes.object,
-  insideMasterEnv: PropTypes.object,
+  locales: PropTypes.array,
+  insideMasterEnv: PropTypes.bool,
   localeResource: PropTypes.object,
   allowedToEnforceLimits: PropTypes.bool,
   isOrgOwnerOrAdmin: PropTypes.bool,
