@@ -83,7 +83,7 @@ function RoleListActions(props) {
             Your {props.isLegacyOrganization ? 'organization' : 'space'} is using {usage} out of{' '}
             {props.newApiRolesLimit ? props.newApiRolesLimit : props.limit} available roles.
           </Paragraph>
-          {props.isOrgOnTrial ? (
+          {props.isOrgOnTrial && props.highValueLabelEnabled ? (
             <Tooltip
               place="left"
               content="This feature is a part of the Enterprise plan. You can use it during your trial.">

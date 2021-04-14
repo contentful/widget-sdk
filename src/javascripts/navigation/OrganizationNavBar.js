@@ -34,6 +34,12 @@ function getItems(params, { orgId }) {
     },
   ];
 
+  const teamsTooltip = params.highValueLabelEnabled
+    ? params.isOrganizationOnTrial
+      ? 'This feature is a part of Enterprise plan. You can use it during your trial.'
+      : 'This feature is a part of Enterprise plan. '
+    : null;
+
   return [
     {
       if: params.hasSettingsTab,
@@ -121,12 +127,7 @@ function getItems(params, { orgId }) {
       },
       navIcon: 'Teams',
       dataViewType: 'organization-teams',
-      tooltip:
-        params.highValueLabelEnabled && !params.isOrganizationOnTrial
-          ? 'This feature is a part of Enterprise plan. '
-          : params.isOrganizationOnTrial
-          ? 'This feature is a part of Enterprise plan. You can use it during your trial.'
-          : null,
+      tooltip: teamsTooltip,
     },
     {
       if: params.hasAdvancedExtensibility,
