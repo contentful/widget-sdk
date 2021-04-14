@@ -27,7 +27,8 @@ describe('data/EndpointFactory', () => {
         'API_URL',
         'SPACE_ID',
         expect.any(Object),
-        'ENV_ID'
+        'ENV_ID',
+        undefined
       );
     });
   });
