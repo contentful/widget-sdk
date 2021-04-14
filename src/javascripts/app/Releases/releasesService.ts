@@ -35,7 +35,7 @@ async function createRelease(title: string, items: Entity[] = []) {
   const apiClient = new APIClient(createEndpoint());
   const arrayOfEntityLinks = items.map((item) => ({
     sys: {
-      type: 'Link',
+      type: 'Link' as const,
       linkType: item.sys.type,
       id: item.sys.id,
     },
