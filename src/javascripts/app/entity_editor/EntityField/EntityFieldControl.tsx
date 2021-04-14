@@ -13,6 +13,7 @@ import { usePubSubClient } from 'core/hooks';
 import * as K from 'core/utils/kefir';
 import { connectGetEntity } from './connectedGetEntity';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -102,7 +103,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       environment: currentEnvironment,
       contentTypes: currentSpaceContentTypes,
       pubSubClient,
-      cma: customWidgetClient,
+      cma: getBatchingApiClient(customWidgetClient),
     });
 
     if (sdk.space) {
