@@ -135,7 +135,6 @@ async function getResponseBody(response) {
 // we require `body` to be a JSON string
 // we also send a special X-Contentful-User-Agent header
 function buildRequestArguments(data, source) {
-  console.log('buildRequestArguments', { source });
   const url = withQuery(data.url, data.query);
   const requestData = {
     ...data,
