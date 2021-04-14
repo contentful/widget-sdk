@@ -12,5 +12,4 @@ export { useIsInitialLoadingOfTags } from 'features/content-tags/core/hooks/useI
 export { useHistoryReducer } from 'features/content-tags/core/hooks/useHistoryReducer';
 export { useCanManageTags } from 'features/content-tags/core/hooks/useCanManageTags';
 export { useToggle } from 'features/content-tags/core/hooks/useToggle';
-export { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
 export { useFilteredTags } from 'features/content-tags/core/hooks/useFilteredTags';

@@ -5,7 +5,6 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { DEFAULT_FEATURES_STATUS, FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { css } from 'emotion';
 import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
-import { useContentLevelPermissions } from 'features/content-tags/core/hooks/useContentLevelPermissions';
 import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
 import { TagSelectionHeader } from 'features/content-tags/editor/components/TagSelectionHeader';
 import { TagsSelection } from 'features/content-tags/editor/components/TagsSelection';
@@ -61,7 +60,6 @@ function useLocalTags(tags, setTags) {
 const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) => {
   const { hasTags, localTags, addTag, removeTag } = useLocalTags(tags, setTags);
   const isInitialLoad = useIsInitialLoadingOfTags();
-  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
 
   const hasCustomRolesFeatureCheck = useCallback(async () => {
@@ -88,7 +86,7 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) =
 
   return (
     <React.Fragment>
-      {hasCustomRolesFeature && contentLevelPermissionsEnabled && (
+      {hasCustomRolesFeature && (
         <Note className={styles.note}>
           <span className={styles.nodeHeading}>Carefully add and remove tags</span>
           <div>

@@ -118,7 +118,6 @@ export class RoleEditor extends React.Component {
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
     ngStateUrl: PropTypes.string.isRequired,
     tab: PropTypes.string.isRequired,
-    hasClpFeature: PropTypes.bool.isRequired,
     tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
     fetchEntity: PropTypes.func.isRequired,
   };
@@ -584,7 +583,7 @@ export class RoleEditor extends React.Component {
                 searchEntities={this.searchEntities}
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
-                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                hasClpFeature={this.props.hasContentTagsFeature}
                 newRuleIds={this.state.newRules.entries}
                 addNewRule={this.addNewRule('entries')}
                 removeNewRule={this.removeNewRule('entries')}
@@ -610,7 +609,7 @@ export class RoleEditor extends React.Component {
                 searchEntities={this.searchEntities}
                 getEntityTitle={this.getEntityTitle}
                 resetPolicies={this.resetPolicies}
-                hasClpFeature={this.props.hasClpFeature && this.props.hasContentTagsFeature}
+                hasClpFeature={this.props.hasContentTagsFeature}
                 newRuleIds={this.state.newRules.assets}
                 addNewRule={this.addNewRule('assets')}
                 removeNewRule={this.removeNewRule('assets')}

@@ -16,7 +16,6 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import { MetadataTags, ReadTagsContext } from 'features/content-tags';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
@@ -25,13 +24,12 @@ import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createAPIClient } from 'core/services/APIClient/utils';
 
 const RoleEditorFetcher = createFetcherComponent(
-  async ({ spaceId, organizationId, environmentId, getContentTypes, getEntities, isNew }) => {
+  async ({ spaceId, getContentTypes, getEntities, isNew }) => {
     const [
       contentTypes,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature,
       hasContentTagsFeature,
-      hasClpFeature,
       resource,
       _,
     ] = await Promise.all([
@@ -39,7 +37,6 @@ const RoleEditorFetcher = createFetcherComponent(
       getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
       getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false),
-      getVariation(FLAGS.CONTENT_LEVEL_PERMISSIONS, { spaceId, environmentId, organizationId }),
       createResourceService(spaceId).get('role'),
       getEntities(),
     ]);
@@ -50,7 +47,6 @@ const RoleEditorFetcher = createFetcherComponent(
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: false,
         hasContentTagsFeature,
-        hasClpFeature,
         canModifyRoles: false,
       };
     }
@@ -62,7 +58,6 @@ const RoleEditorFetcher = createFetcherComponent(
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: true,
         hasContentTagsFeature,
-        hasClpFeature,
         canModifyRoles: false,
       };
     }
@@ -72,7 +67,6 @@ const RoleEditorFetcher = createFetcherComponent(
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature: true,
       hasContentTagsFeature,
-      hasClpFeature,
       canModifyRoles: true,
     };
   }
@@ -84,7 +78,6 @@ export function RoleEditorRoute(props) {
     currentSpace,
     currentSpaceContentTypes,
     currentOrganization,
-    currentOrganizationId,
     currentEnvironmentId,
     currentSpaceId,
   } = useSpaceEnvContext();
@@ -213,8 +206,6 @@ export function RoleEditorRoute(props) {
                       <DocumentTitle title="Roles" />
                       <RoleEditorFetcher
                         spaceId={currentSpaceId}
-                        organizationId={currentOrganizationId}
-                        environmentId={currentEnvironmentId}
                         getContentTypes={() => currentSpaceContentTypes}
                         getEntities={fetchEntities}
                         isNew={props.isNew}>
