@@ -13,7 +13,6 @@ import {
   isSpaceOnTrial,
   isExpiredTrialSpace,
 } from '../services/TrialService';
-import { captureError } from 'services/logger';
 import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
@@ -86,14 +85,6 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
   const isAppTrialExpired = isExpiredAppTrial(appFeature);
   const isTrialSpace = isSpaceOnTrial(space);
   const isTrialSpaceExpired = isExpiredTrialSpace(space);
-
-  if (isEnterpriseTrial && isTrialSpace) {
-    captureError(new Error('Unexpected behaviour, both space and organization are on trial'), {
-      organization,
-      space,
-    });
-    return null;
-  }
 
   if (isLoading || space?.readOnlyAt) {
     return null;
