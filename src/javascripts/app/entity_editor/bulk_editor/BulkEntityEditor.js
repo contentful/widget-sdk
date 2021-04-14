@@ -50,7 +50,7 @@ export const BulkEntityEditor = ({
     currentSpace,
     currentSpaceId,
   } = useSpaceEnvContext();
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const [isExpanded, setIsExpanded] = useState(true);

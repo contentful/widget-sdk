@@ -51,7 +51,7 @@ const SnapshotPresenterCustomWidget = ({
     currentSpace,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
-  const spaceApiClient = useCurrentSpaceAPIClient();
+  const { client: spaceApiClient } = useCurrentSpaceAPIClient();
 
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceId = currentSpaceId as string;

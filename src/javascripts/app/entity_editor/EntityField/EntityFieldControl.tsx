@@ -48,7 +48,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     documentPool,
   } = useSpaceEnvContext();
 
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma, customWidgetClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
@@ -78,7 +78,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       throw new Error('Space id needs to be defined');
     }
 
-    if (!cma) {
+    if (!cma || !customWidgetClient) {
       return null;
     }
 
@@ -102,6 +102,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       environment: currentEnvironment,
       contentTypes: currentSpaceContentTypes,
       pubSubClient,
+      cma: customWidgetClient,
     });
 
     if (sdk.space) {
@@ -129,6 +130,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     documentPool,
     lifeline,
     cma,
+    customWidgetClient,
   ]);
 
   if (!widgetApi) {

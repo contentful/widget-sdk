@@ -28,7 +28,7 @@ describe('ExtensionsListRoute', () => {
 
   it('should render Forbidden page when no access', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing: jest.fn() });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing: jest.fn() } });
     render(<ExtensionsListRoute />);
     expect(screen.queryByTestId(selectors.forbiddenPage)).toBeInTheDocument();
   });
@@ -37,7 +37,7 @@ describe('ExtensionsListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
     expect.assertions(4);
     const getExtensionsForListing = jest.fn();
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing } });
     render(
       <ExtensionsListRoute extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json" />
     );
@@ -54,7 +54,7 @@ describe('ExtensionsListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(3);
     const getExtensionsForListing = jest.fn();
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing } });
     render(<ExtensionsListRoute />);
 
     expect(go).not.toHaveBeenCalled();

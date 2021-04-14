@@ -17,7 +17,7 @@ const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
 });
 
 export function ExtensionEditorRoute(props) {
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
   const requestLeaveConfirmation = React.useRef();
   const isDirty = React.useRef(false);
 

@@ -37,7 +37,7 @@ const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
 });
 
 export function ExtensionsListRoute(props) {
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
   const extensionUrl = props.extensionUrl || '';
   const extensionUrlReferrer = props.referrer || null;
 

@@ -19,7 +19,7 @@ import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpac
 
 export const EntryEditor = (props) => {
   const { currentSpaceContentTypes } = useSpaceEnvContext();
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
 
   // @TODO remove getViewProps() as soon as feature flag * is removed
   const { viewProps = props.getViewProps(), fieldController, fields, currentSlideLevel } = props;
