@@ -11,9 +11,7 @@ interface PromiseState {
 /**
  * Returns the resolved value of the given AppRepo method.
  */
-function usePromiseWithEnv<T extends 'getAllApps' | 'getOnlyInstalledApps' | 'getContentfulApps'>(
-  methodName: T
-) {
+function usePromiseWithEnv<T extends 'getOnlyInstalledApps' | 'getContentfulApps'>(methodName: T) {
   const [{ value, error }, setState] = React.useState<PromiseState>({});
   const repo = useAppsRepo();
   const repoCacheKey = repo?._cacheKey;
@@ -36,7 +34,6 @@ function usePromiseWithEnv<T extends 'getAllApps' | 'getOnlyInstalledApps' | 'ge
   return [value, error] as const;
 }
 
-export const useApps = () => usePromiseWithEnv('getAllApps');
 export const useInstalledApps = () => usePromiseWithEnv('getOnlyInstalledApps');
 export const useContentfulApps = () => usePromiseWithEnv('getContentfulApps');
 
