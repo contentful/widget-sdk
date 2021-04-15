@@ -60,11 +60,14 @@ export function EmbargoedAssets() {
 
     async function fetchSettings() {
       try {
-        const settings = await embargoedAssets(currentSpaceId).getCurrentLevel();
+        const settings =
+          currentSpaceId !== undefined
+            ? await embargoedAssets(currentSpaceId).getCurrentLevel()
+            : undefined;
 
         if (isMounted) {
           setIsFetching(false);
-          setCurrentLevel(settings.level || LEVEL.DISABLED);
+          setCurrentLevel(settings?.level ?? LEVEL.DISABLED);
         }
       } catch (e) {
         if (isMounted) {
@@ -90,17 +93,21 @@ export function EmbargoedAssets() {
   }
 
   const handleLevelChange = (newLevel: Level | EnabledLevel) => {
-    return embargoedAssets(currentSpaceId)
-      .setCurrentLevel(newLevel)
-      .then(
-        ({ level }) => {
-          setCurrentLevel(level);
-          Notification.success(notificationForLevel(level) as string);
-        },
-        () => {
-          Notification.error('Error saving settings');
-        }
-      );
+    if (currentSpaceId) {
+      return embargoedAssets(currentSpaceId)
+        .setCurrentLevel(newLevel)
+        .then(
+          ({ level }) => {
+            setCurrentLevel(level);
+            Notification.success(notificationForLevel(level) as string);
+          },
+          () => {
+            Notification.error('Error saving settings');
+          }
+        );
+    } else {
+      return Promise.resolve();
+    }
   };
 
   if (currentLevel === LEVEL.DISABLED) {

@@ -14,7 +14,7 @@ function responseConverter(data: EmbargoedAssetApi): EmbargoedAsset {
   return { level: data.protectionMode || 'disabled' };
 }
 
-export function embargoedAssets(spaceId: string | undefined) {
+export function embargoedAssets(spaceId: string) {
   const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, undefined);
   const apiClient = new APIClient(endpoint);
 
