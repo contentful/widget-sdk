@@ -223,22 +223,22 @@ describe('AppsRepo', () => {
       const repo = new AppsRepo(cma, loader);
 
       const app1 = await repo.getAppByIdOrSlug('app-definition-id');
-      expect(app1.appDefinition).toEqual(privateDefinition);
+      expect(app1?.appDefinition).toEqual(privateDefinition);
 
       const app2 = await repo.getAppByIdOrSlug('netlify');
-      expect(app2.appDefinition).toEqual(netlifyDefinition);
-      expect(app2.appInstallation).toEqual(netlifyInstallation);
+      expect(app2?.appDefinition).toEqual(netlifyDefinition);
+      expect(app2?.appInstallation).toEqual(netlifyInstallation);
 
       const app3 = await repo.getAppByIdOrSlug('workflows');
-      expect(app3.appDefinition).toEqual(firstPartyDefinition);
-      expect(app3.appInstallation).toEqual(firstPartyInstallation);
+      expect(app3?.appDefinition).toEqual(firstPartyDefinition);
+      expect(app3?.appInstallation).toEqual(firstPartyInstallation);
 
       const app4 = await repo.getAppByIdOrSlug(FIRST_PARTY_DEFINITION_ID);
-      expect(app4.appDefinition).toEqual(firstPartyDefinition);
-      expect(app4.appInstallation).toEqual(firstPartyInstallation);
+      expect(app4?.appDefinition).toEqual(firstPartyDefinition);
+      expect(app4?.appInstallation).toEqual(firstPartyInstallation);
 
       const app5 = await repo.getAppByIdOrSlug(COMPOSE_DEFINITION_ID);
-      expect(app5.appDefinition).toEqual(composeAppDefinition);
+      expect(app5?.appDefinition).toEqual(composeAppDefinition);
     });
 
     it('fails if an app is not present', async () => {

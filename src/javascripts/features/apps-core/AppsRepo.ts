@@ -3,7 +3,7 @@ import { omit, sortBy } from 'lodash';
 import { fetchMarketplaceApps, fetchContentfulApps } from './MarketplaceClient';
 import type APIClient from 'data/APIClient';
 import { AppDefinition, AppInstallation } from 'contentful-management/types';
-import { MarketplaceApp } from './types';
+import { MarketplaceApp, NonInstallableMarketplaceApp } from './types';
 
 interface AppsRepoCache {
   marketplaceAppDefinitions?: Promise<MarketplaceApp[]>;
@@ -71,18 +71,16 @@ export class AppsRepo {
     this.cacheInvalidatedListeners.forEach((callback) => callback());
   }
 
-  getAppByIdOrSlug = async (idOrSlug: string): Promise<MarketplaceApp> => {
+  getAppByIdOrSlug = async (idOrSlug: string): Promise<MarketplaceApp | undefined> => {
     const apps = await this.getAllApps();
 
-    const app = apps.find((app) => app.id === idOrSlug || app.appDefinition.sys.id === idOrSlug);
+    const app = apps.find((app) => app.id === idOrSlug || app.appDefinition?.sys.id === idOrSlug);
     if (app) {
       return app;
     }
-
-    throw new Error(`Could not find an app with ID "${idOrSlug}".`);
   };
 
-  getAllApps = async (): Promise<MarketplaceApp[]> => {
+  getAllApps = async (): Promise<MarketplaceApp[] | NonInstallableMarketplaceApp[]> => {
     const orgDefinitions = await this.appDefinitionLoader.getAllForCurrentOrganization();
 
     const [installationMap, resolvedMarketplaceApps, resolvedContentfulApps] = await Promise.all([
@@ -170,7 +168,7 @@ export class AppsRepo {
     return this.getCachedOrCreate('appInstallations', () => this.cma.getAppInstallations());
   }
 
-  private async getMarketplaceApps(): Promise<MarketplaceApp[]> {
+  private async getMarketplaceApps(): Promise<MarketplaceApp[] | NonInstallableMarketplaceApp[]> {
     const [installationMap, fetchedApps] = await Promise.all([
       this.getAppDefinitionToInstallationMap(),
       this.getMarketplaceAppDefinitions(),

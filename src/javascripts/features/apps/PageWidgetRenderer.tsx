@@ -34,7 +34,7 @@ export interface PageWidgetParameters {
 interface PageWidgetRendererProps {
   path: string;
   repo: {
-    getAppByIdOrSlug: (appId: string) => Promise<MarketplaceApp>;
+    getAppByIdOrSlug: (appId: string) => Promise<MarketplaceApp | undefined>;
   };
   appId?: string;
   widget?: Widget;
@@ -72,7 +72,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const [widget, setWidget] = React.useState<Widget | null>(props.widget ?? null);
-  const [app, setApp] = React.useState<MarketplaceApp | null>(null);
+  const [app, setApp] = React.useState<MarketplaceApp | undefined>(undefined);
   const pubSubClient = usePubSubClient();
 
   const parameters = React.useMemo(() => {
