@@ -17,19 +17,19 @@ const caseNodes = cheerio.load(reportXMLString, { xmlMode: true })('testcase').t
 const measurements = caseNodes.map((caseNode) => {
   const children = caseNode.children;
 
-  const metricName = `testcase.${caseNode.attribs.name}.success`;
+  let value = 1;
 
   // If there is a `<failure ...>` child node, then this test case failed
   if (children.find((ele) => ele.tagName === 'failure')) {
-    return {
-      name: metricName,
-      value: 0,
-    };
+    value = 0;
   }
 
   return {
-    name: metricName,
-    value: 1,
+    name: 'testcase-success',
+    value,
+    tags: {
+      testName: caseNode.attribs.name,
+    },
   };
 });
 
