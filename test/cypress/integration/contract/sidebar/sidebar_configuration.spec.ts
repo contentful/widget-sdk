@@ -7,12 +7,7 @@ import {
   saveDefaultContentTypeEditorInterface,
 } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import {
-  queryForCustomSidebarInDefaultOrg,
-  queryForTeamsInDefaultOrg,
-  queryForSelfConfigureSsoInDefaultOrg,
-  queryForScimInDefaultOrg,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 
 describe('Sidebar configuration', () => {
   beforeEach(() => {
@@ -33,10 +28,10 @@ describe('Sidebar configuration', () => {
       ...defaultRequestsMock(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
       getDefaultContentType.willReturnIt(),
-      queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-      queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-      queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-      queryForScimInDefaultOrg.willFindFeatureEnabled(),
+      ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+      ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+      ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+      ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
     ];
 
     cy.visit(

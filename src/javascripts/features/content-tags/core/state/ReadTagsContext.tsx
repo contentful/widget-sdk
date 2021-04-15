@@ -14,6 +14,7 @@ type ReadTagsContextType = {
   addTag: (tag: Tag) => void;
 };
 
-const ReadTagsContext = React.createContext<ReadTagsContextType | undefined>(undefined);
+// @ts-expect-error
+const ReadTagsContext = React.createContext<ReadTagsContextType>(undefined);
 
 export { ReadTagsContext };

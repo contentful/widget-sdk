@@ -44,9 +44,6 @@ export const styles = {
     borderTop: '1px dotted gray',
     marginTop: '-1px',
     padding: '15px 5px',
-    '& span': {
-      color: 'red',
-    },
   }),
   data: css({
     fontSize: '0.9em',

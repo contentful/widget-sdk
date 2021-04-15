@@ -7,6 +7,7 @@ import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
 import { RoleEditor } from 'features/roles-permissions-management/role_editor/RoleEditor';
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
+import { MemoryRouter } from 'react-router';
 
 function createErrorResponse(error, rest = {}) {
   return { body: { details: { errors: [error] } }, ...rest };
@@ -216,8 +217,6 @@ function renderRoleEditor(props = {}) {
     hasCustomRolesFeature: true,
     hasContentTagsFeature: true,
     hasEnvironmentAliasesEnabled: true,
-    tab: 'details',
-    ngStateUrl: '/details',
     hasClpFeature: true,
     internal: {
       uiCompatible: true,
@@ -240,7 +239,10 @@ function renderRoleEditor(props = {}) {
       <TagsRepoContext.Provider value={{ ...defaultTagsRepo }}>
         <ReadTagsProvider>
           <FilteredTagsProvider>
-            <RoleEditor {...RoleEditorDefaultProps} {...props} />
+            <MemoryRouter
+              initialEntries={[{ pathname: `/${props.tab || 'details'}`, state: props }]}>
+              <RoleEditor {...RoleEditorDefaultProps} {...props} />
+            </MemoryRouter>
           </FilteredTagsProvider>
         </ReadTagsProvider>
       </TagsRepoContext.Provider>

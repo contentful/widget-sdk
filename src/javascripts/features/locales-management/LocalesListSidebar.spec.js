@@ -1,8 +1,7 @@
 import React from 'react';
-
-import { render, fireEvent, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
 import { LocalesListSidebar } from './LocalesListSidebar';
-import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
@@ -19,18 +18,20 @@ describe('features/locales-management/LocalesListSidebar', () => {
       upgradeSpace: jest.fn(),
     };
     const { queryByTestId } = render(
-      <SpaceEnvContextProvider>
-        <LocalesListSidebar
-          allowedToEnforceLimits={false}
-          upgradeSpace={stubs.upgradeSpace}
-          subscriptionState={{
-            path: ['account', 'organizations', 'subscription_new'],
-            params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
-            options: { replace: true },
-          }}
-          {...props}
-        />
-      </SpaceEnvContextProvider>
+      <MemoryRouter initialEntries={[{ pathname: '/' }]}>
+        <SpaceEnvContextProvider>
+          <LocalesListSidebar
+            allowedToEnforceLimits={false}
+            upgradeSpace={stubs.upgradeSpace}
+            subscriptionState={{
+              path: ['account', 'organizations', 'subscription_new'],
+              params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
+              options: { replace: true },
+            }}
+            {...props}
+          />
+        </SpaceEnvContextProvider>
+      </MemoryRouter>
     );
 
     return {
@@ -44,15 +45,10 @@ describe('features/locales-management/LocalesListSidebar', () => {
     };
   };
 
-  beforeEach(() => {
-    $stateMocked.go.mockClear();
-    $stateMocked.href.mockClear();
-  });
-
   describe('if environment is not "master"', () => {
     describe('if environment usage enforcement is not enabled', () => {
       it('add button and documentation are shown', () => {
-        expect.assertions(5);
+        expect.assertions(4);
         const {
           addLocaleButton,
           documentationSection,
@@ -73,10 +69,6 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(documentationSection).toBeInTheDocument();
         expect(usagesSection).not.toBeInTheDocument();
         expect(upgradeSpaceButton).not.toBeInTheDocument();
-
-        fireEvent.click(addLocaleButton);
-
-        expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
       });
     });
 
@@ -154,7 +146,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
   describe('if environment is "master"', () => {
     describe('if limit is not reached', () => {
       it('all sections and texts are shown correctly', () => {
-        expect.assertions(7);
+        expect.assertions(5);
         const {
           addLocaleButton,
           documentationSection,
@@ -178,10 +170,6 @@ describe('features/locales-management/LocalesListSidebar', () => {
         );
         expect(changeSpaceSection).not.toBeInTheDocument();
         expect(upgradeSpaceButton).not.toBeInTheDocument();
-
-        fireEvent.click(addLocaleButton);
-        expect($stateMocked.go).toHaveBeenCalledTimes(1);
-        expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
       });
     });
 

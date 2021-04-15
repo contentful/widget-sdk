@@ -1,15 +1,20 @@
-export type Service = 'segment' | 'snowplow';
+export type EventSource = 'segment' | 'snowplow' | 'raw';
 
 export interface Event {
   time: string;
-  name: string;
   isValid: boolean;
-  data?: object;
-  snowplow: {
+  raw: {
+    // Untransformed data.
+    name: string;
+    version: undefined;
+    data: object;
+    context: undefined;
+  };
+  snowplow?: {
     name: string;
     version: string;
-    data?: object;
-    context?: object;
+    data: object;
+    context: undefined;
   };
   segment: {
     name: string;

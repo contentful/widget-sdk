@@ -10,7 +10,7 @@ import {
   TableBody,
   Tag,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { RouteLink } from 'core/react-routing';
 
 function groupLocaleNamesByCode(locales) {
   return _.transform(
@@ -37,35 +37,33 @@ export class LocalesTable extends React.Component {
 
   renderRowForLocale(locale) {
     return (
-      <StateLink path="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
-        {({ onClick }) => (
-          <TableRow
-            onClick={onClick}
-            style={{ cursor: 'pointer' }}
-            testId={`locale-${locale.code}`}>
-            <TableCell aria-label="cell-name">
-              {locale.name} ({locale.code})
-              {locale.default && (
-                <span className="entity-list-badge">
-                  <Tag tagType="muted">Default</Tag>
-                </span>
-              )}
-            </TableCell>
-            <TableCell testId="locale-list-fallback-column">
-              {locale.fallbackCode ? this.state.localeNamesByCode[locale.fallbackCode] : 'None'}
-            </TableCell>
-            <TableCell testId="locale-list-cda-column">
-              {locale.contentDeliveryApi ? 'Enabled' : 'Disabled'}
-            </TableCell>
-            <TableCell testId="locale-list-cma-column">
-              {locale.contentManagementApi ? 'Enabled' : 'Disabled'}
-            </TableCell>
-            <TableCell testId="locale-list-optional-column">
-              {locale.optional ? 'Can be published empty' : 'Content is required'}
-            </TableCell>
-          </TableRow>
-        )}
-      </StateLink>
+      <RouteLink
+        as={TableRow}
+        key={`locale-row-${locale.sys.id}`}
+        route={{ path: 'locales.detail', localeId: locale.sys.id }}
+        style={{ cursor: 'pointer' }}
+        testId={`locale-${locale.code}`}>
+        <TableCell aria-label="cell-name">
+          {locale.name} ({locale.code})
+          {locale.default && (
+            <span className="entity-list-badge">
+              <Tag tagType="muted">Default</Tag>
+            </span>
+          )}
+        </TableCell>
+        <TableCell testId="locale-list-fallback-column">
+          {locale.fallbackCode ? this.state.localeNamesByCode[locale.fallbackCode] : 'None'}
+        </TableCell>
+        <TableCell testId="locale-list-cda-column">
+          {locale.contentDeliveryApi ? 'Enabled' : 'Disabled'}
+        </TableCell>
+        <TableCell testId="locale-list-cma-column">
+          {locale.contentManagementApi ? 'Enabled' : 'Disabled'}
+        </TableCell>
+        <TableCell testId="locale-list-optional-column">
+          {locale.optional ? 'Can be published empty' : 'Content is required'}
+        </TableCell>
+      </RouteLink>
     );
   }
 

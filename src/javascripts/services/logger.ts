@@ -5,13 +5,16 @@ import { User } from 'core/services/SpaceEnvContext/types';
 import { Severity } from '@sentry/types';
 import { PreflightRequestError } from 'data/Request';
 
+// For details about error tracking and best practices, please see the error tracking doc at
+// /docs/guides/error-tracking.md.
+
 interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
 /**
- * Load bugsnag and set the user data.
+ * Load Sentry and set the user data.
  */
 export function enable(user: User) {
   Sentry.enable(user);

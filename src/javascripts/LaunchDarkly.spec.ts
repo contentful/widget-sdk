@@ -13,6 +13,9 @@ jest.mock('ldclient-js', () => ({
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
+  OrganizationFeatures: {
+    SELF_CONFIGURE_SSO: 'self_configure_sso',
+  },
 }));
 
 jest.mock('data/User', () => ({

@@ -1,9 +1,10 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Spinner, Note } from '@contentful/forma-36-react-components';
+import { Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import getContentTypePreview from './getContentTypePreview';
 
 const styles = {
   newPreviewNote: css({
@@ -29,19 +30,15 @@ const styles = {
   }),
 };
 
-function ContentTypePreview(props) {
-  const { loadPreview, publishedVersion } = props;
-  const [isLoading, setLoading] = useState(true);
+function ContentTypePreview({ contentTypeData: internalContentType, isDirty }) {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    loadPreview().then((preview) => {
-      setPreview(preview);
-      setLoading(false);
-    });
-  }, [publishedVersion, loadPreview]);
+    const preview = getContentTypePreview(internalContentType);
+    setPreview(preview);
+  }, [internalContentType]);
 
-  const isNew = !publishedVersion;
+  const isNew = !internalContentType?.sys?.publishedVersion;
 
   return (
     <div className="ct-editor-json">
@@ -58,25 +55,16 @@ function ContentTypePreview(props) {
       )}
       {!isNew && (
         <div>
-          {isLoading && (
-            <div className={styles.loaderContainer}>
-              <div className={styles.loadingText}>Loading JSON preview</div>
-              <Spinner size="large" className={styles.spinner} />
-            </div>
-          )}
-
-          {!isLoading && (
-            <div>
-              {props.isDirty && (
-                <Note className={styles.unsavedChanges}>
-                  You have unsaved changes. Save content type to get a preview.
-                </Note>
-              )}
-              <code className="ct-editor-json__code">
-                <pre>{JSON.stringify(preview, null, 2)}</pre>
-              </code>
-            </div>
-          )}
+          <div>
+            {isDirty && (
+              <Note className={styles.unsavedChanges}>
+                You have unsaved changes. Save content type to get a preview.
+              </Note>
+            )}
+            <code className="ct-editor-json__code">
+              <pre>{JSON.stringify(preview, null, 2)}</pre>
+            </code>
+          </div>
         </div>
       )}
     </div>
@@ -84,9 +72,8 @@ function ContentTypePreview(props) {
 }
 
 ContentTypePreview.propTypes = {
+  contentTypeData: PropTypes.object.isRequired,
   isDirty: PropTypes.bool.isRequired,
-  loadPreview: PropTypes.func.isRequired,
-  publishedVersion: PropTypes.number,
 };
 
 export default ContentTypePreview;

@@ -53,9 +53,7 @@ const WizardFixedFooter = ({
 
         <Flex flexDirection="row" justifyContent="flex-end" alignItems="center" fullWidth>
           <StateLink
-            testId="go-back-btn"
             component={Button}
-            buttonType="muted"
             path={'^'}
             trackingEvent={
               flowType === CREATION_FLOW_TYPE ? 'space_creation:back' : 'space_assignment:back'
@@ -65,7 +63,11 @@ const WizardFixedFooter = ({
               space_id: spaceId,
               flow: flowType === CREATION_FLOW_TYPE ? 'space_creation' : 'assign_plan_to_space',
             }}>
-            Cancel
+            {({ onClick }) => (
+              <Button buttonType="muted" testId="go-back-btn" onClick={onClick}>
+                Cancel
+              </Button>
+            )}
           </StateLink>
           <Flex marginLeft="spacingM">
             <Button

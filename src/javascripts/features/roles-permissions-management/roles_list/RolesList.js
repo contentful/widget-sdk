@@ -2,27 +2,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import {
+  Button,
+  ModalLauncher,
+  Paragraph,
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableRow,
-  TableCell,
-  Button,
-  Paragraph,
   Tooltip,
-  ModalLauncher,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
-import { RoleListItem, AdministratorRoleListItem } from './RoleListItem';
-import { go } from 'states/Navigator';
+import { AdministratorRoleListItem, RoleListItem } from './RoleListItem';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
 import { createRoleRemover } from '../components/RoleRemover';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { CUSTOM_ROLES_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import {
+  CUSTOM_ROLES_CONTENT_ENTRY_ID,
+  FeatureModal,
+  handleHighValueLabelTracking,
+  ROLES_AND_PERMISSIONS_TRACKING_NAME,
+} from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   actions: css({
@@ -37,20 +42,24 @@ const styles = {
   }),
 };
 
-const openDialog = (modalData) =>
+const openDialog = (modalData) => {
+  handleHighValueLabelTracking('click', ROLES_AND_PERMISSIONS_TRACKING_NAME, false);
+
   ModalLauncher.open(({ onClose, isShown }) => (
     <FeatureModal
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
-      featureTracking="roles_and_permissions"
+      featureTracking={ROLES_AND_PERMISSIONS_TRACKING_NAME}
     />
   ));
+};
 
 // get high value label modal data from Contentful
 const initialFetch = async () => await fetchWebappContentByEntryID(CUSTOM_ROLES_CONTENT_ENTRY_ID);
 
 function RoleListActions(props) {
+  const navigate = useRouteNavigate();
   const usage = ResourceUtils.getAccumulatedUsage(props.rolesResource);
   const fetchData = async () => {
     try {
@@ -66,7 +75,12 @@ function RoleListActions(props) {
   return (
     <div className={styles.actions}>
       {showHighValueLabel && (
-        <Tooltip place="left" content="This feature is a part of Enterprise plan. ">
+        <Tooltip
+          place="left"
+          content="This feature is a part of Enterprise plan."
+          onMouseOver={() =>
+            handleHighValueLabelTracking('hover', ROLES_AND_PERMISSIONS_TRACKING_NAME, false)
+          }>
           <Button
             icon="InfoCircle"
             className={styles.addRoleButton}
@@ -83,10 +97,13 @@ function RoleListActions(props) {
             Your {props.isLegacyOrganization ? 'organization' : 'space'} is using {usage} out of{' '}
             {props.newApiRolesLimit ? props.newApiRolesLimit : props.limit} available roles.
           </Paragraph>
-          {props.isOrgOnTrial ? (
+          {props.isOrgOnTrial && props.highValueLabelEnabled ? (
             <Tooltip
               place="left"
-              content="This feature is a part of the Enterprise plan. You can use it during your trial.">
+              content="This feature is a part of the Enterprise plan. You can use it during your trial."
+              onMouseOver={() =>
+                handleHighValueLabelTracking('hover', ROLES_AND_PERMISSIONS_TRACKING_NAME, true)
+              }>
               <Button
                 icon="InfoCircle"
                 className={styles.addRoleButton}
@@ -94,7 +111,8 @@ function RoleListActions(props) {
                 buttonType="primary"
                 disabled={props.hasReachedLimit}
                 onClick={() => {
-                  go({ path: '^.new' });
+                  handleHighValueLabelTracking('click', ROLES_AND_PERMISSIONS_TRACKING_NAME, true);
+                  navigate({ path: 'roles.new' });
                 }}>
                 Create a new role
               </Button>
@@ -106,7 +124,7 @@ function RoleListActions(props) {
               buttonType="primary"
               disabled={props.hasReachedLimit}
               onClick={() => {
-                go({ path: '^.new' });
+                navigate({ path: 'roles.new' });
               }}>
               Create a new role
             </Button>

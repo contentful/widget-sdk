@@ -12,18 +12,7 @@ import { queryForDefaultAssets, severalAssetsBody } from '../../../interactions/
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId, defaultReleaseId, defaultEntryId } from '../../../util/requests';
 import { severalReleases } from '../../../fixtures/responses/releases';
-import {
-  queryForAdvancedAppsInDefaultOrg,
-  queryForBasicAppsInDefaultSpace,
-  queryForContentTagsInDefaultSpace,
-  queryForCustomSidebarInDefaultOrg,
-  queryForReleasesInDefaultSpace,
-  queryForSelfConfigureSsoInDefaultOrg,
-  queryForTasksInDefaultSpace,
-  queryForTeamsInDefaultOrg,
-  queryForScimInDefaultOrg,
-  getLaunchAppFeatureInDefaultOrg,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 import {
   createScheduledReleaseForDefaultSpace,
   cancelDefaultJobInDefaultSpace,
@@ -50,7 +39,7 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnNone();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -69,7 +58,7 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -111,7 +100,7 @@ describe.skip('Releases', () => {
         getReleaseActionInteraction = publishRelease.willSucceed();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -137,7 +126,7 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -394,14 +383,13 @@ function basicServerSetUp(): string[] {
 
   return [
     ...defaultRequestsMock(),
-    queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-    queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-    queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-    queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-    queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-    queryForScimInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+    ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
   ];
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { BundleCard } from './BundleCard';
 import { AppBundleData } from '../AppEditor';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
-import { SectionHeading } from '@contentful/forma-36-react-components';
+import { SectionHeading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
@@ -22,6 +22,13 @@ interface AllBundlesProps {
   savedDefinition: AppDefinitionWithBundle;
   onChange: (appDefinition: AppDefinitionWithBundle) => void;
 }
+
+enum States {
+  NoBundles = 'NoBundles',
+  NoPreviousBundles = 'NoPreviousBundles',
+  PreviousBundles = 'PreviousBundles',
+}
+
 export const AllBundles: React.FC<AllBundlesProps> = ({
   definition,
   savedDefinition,
@@ -48,13 +55,31 @@ export const AllBundles: React.FC<AllBundlesProps> = ({
     [bundles, definition, savedDefinition]
   );
 
-  if (bundlesToDisplay.length < 1) {
+  const state =
+    bundles.length === 0
+      ? States.NoBundles
+      : bundlesToDisplay.length === 0
+      ? States.NoPreviousBundles
+      : States.PreviousBundles;
+
+  if (state === States.NoBundles) {
     return null;
+  }
+
+  if (state === States.NoPreviousBundles) {
+    return (
+      <>
+        <SectionHeading className={styles.sectionHeading}>Previous Bundles</SectionHeading>
+        <Paragraph>
+          Previous bundles will appear here, along with the ability to promote them.
+        </Paragraph>
+      </>
+    );
   }
 
   return (
     <>
-      <SectionHeading className={styles.sectionHeading}>All Bundles</SectionHeading>
+      <SectionHeading className={styles.sectionHeading}>Previous Bundles</SectionHeading>
       {bundlesToDisplay.map((bundle) => {
         return (
           <BundleCard

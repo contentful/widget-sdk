@@ -1,19 +1,18 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 import { getVariation } from 'LaunchDarkly';
 
-import { go } from 'states/Navigator';
-
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
-import { links } from '../utils';
 
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+import { FREE } from 'account/pricing/PricingDataProvider';
+import { mockWebappContent } from './__mocks__/webappContent';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
@@ -37,14 +36,15 @@ jest.mock('states/Navigator', () => ({
   getCurrentStateName: jest.fn(),
 }));
 
+jest.mock('core/services/ContentfulCDA', () => ({
+  fetchWebappContentByEntryID: jest.fn(),
+}));
+
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
-const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 const mockOrganization = Fake.Organization();
-
-const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
-const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
-const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
+const mockFreeBasePlan = Fake.Plan({ name: 'Community Platform', customerType: FREE });
+const mockFreeSpacePlan = { planType: 'free_space', space: { sys: { id: 'test' } } };
 
 describe('NonEnterpriseSubscriptionPage', () => {
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe('NonEnterpriseSubscriptionPage', () => {
     isOwnerOrAdmin.mockReturnValue(true);
   });
 
-  it('should show skeletons when initialLoad is true', () => {
+  it('should show skeletons when initialLoad is true', async () => {
     build({ initialLoad: true });
 
     screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
@@ -61,91 +61,11 @@ describe('NonEnterpriseSubscriptionPage', () => {
     });
   });
 
-  it('should display the base name', () => {
+  it('show the BasePlanCard when content is fetched', async () => {
+    fetchWebappContentByEntryID.mockResolvedValue(mockWebappContent);
     build();
 
-    expect(screen.getByTestId('subscription-page.base-plan-details')).toHaveTextContent(
-      mockBasePlan.name
-    );
-  });
-
-  it('should show user details', () => {
-    const usersMeta = {
-      numFree: 7,
-      numPaid: 10,
-      cost: 1000000,
-      unitPrice: 100,
-      hardLimit: 25,
-    };
-
-    build({ usersMeta });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
-        usersMeta.numFree
-      } users are included free with your subscription. ` +
-        `You will be charged an additional $${usersMeta.unitPrice}/month per user for ${usersMeta.numPaid} users. That is $${usersMeta.cost} per month.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-  });
-
-  it('should show user details and CTA to upgrade for the Community customers', () => {
-    const navigatorObject = { test: true };
-    links.billing.mockReturnValue(navigatorObject);
-
-    const usersMeta = {
-      numFree: 5,
-      numPaid: 2,
-      hardLimit: 5,
-    };
-
-    build({ usersMeta, basePlan: mockFreeBasePlan });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
-        usersMeta.hardLimit
-      } users are included free with your subscription.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-
-    const ctaLink = screen.getByTestId('subscription-page.upgrade-to-team-link');
-    expect(ctaLink).toBeVisible();
-
-    userEvent.click(ctaLink);
-    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_TEAM, {
-      organizationId: mockOrganization.sys.id,
-    });
-
-    expect(links.billing).toHaveBeenCalledWith(mockOrganization.sys.id);
-    expect(go).toHaveBeenCalledWith(navigatorObject);
-  });
-
-  it('should show user details and CTA to contact support for the Team users', () => {
-    const usersMeta = {
-      numFree: 10,
-      numPaid: 17,
-      hardLimit: 25,
-    };
-
-    build({ usersMeta, basePlan: mockTeamBasePlan });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
-        usersMeta.hardLimit
-      } users are included with your subscription.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-
-    const ctaLink = screen.getByTestId('subscription-page.contact-support-link');
-    expect(ctaLink).toBeVisible();
-
-    userEvent.click(ctaLink);
-    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.REQUEST_TEAM_USER_LIMIT, {
-      organizationId: mockOrganization.sys.id,
-    });
+    await waitFor(() => expect(screen.queryByTestId('base-plan-card')).toBeDefined());
   });
 
   it('should show the monthly cost for on demand users', () => {
@@ -211,8 +131,8 @@ function build(custom) {
     {
       initialLoad: false,
       organization: mockOrganization,
-      basePlan: mockBasePlan,
-      spacePlans: [],
+      basePlan: mockFreeBasePlan,
+      spacePlans: [mockFreeSpacePlan],
       grandTotal: null,
       usersMeta: null,
       onSpacePlansChange: null,

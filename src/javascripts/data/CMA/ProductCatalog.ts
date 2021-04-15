@@ -7,20 +7,33 @@ import { AppTrialRepo } from 'features/trials';
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 import { Endpoint } from 'data/CMA/types';
 
-// Gatekeeper Product Catalog features
+export enum SpaceFeatures {
+  BASIC_APPS = 'basic_apps',
+  ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements',
+  ENVIRONMENT_ALIASING = 'environment_aliasing',
+  CONTENT_WORKFLOW_TASKS = 'tasks',
+  SCHEDULED_PUBLISHING = 'scheduled_publishing',
+  PC_CONTENT_TAGS = 'content_tags',
+  PC_SPACE_RELEASES = 'releases',
+  PC_SPACE_REFERENCE_TREE = 'reference_tree',
+  CUSTOM_ROLES_FEATURE = 'custom_roles',
+}
+
+export enum OrganizationFeatures {
+  PC_ORG_COMPOSE_APP = 'compose_app',
+  PC_ORG_LAUNCH_APP = 'launch_app',
+  SELF_CONFIGURE_SSO = 'self_configure_sso',
+  ADVANCED_APPS = 'advanced_apps',
+  TEAMS = 'teams',
+}
+
+/**
+ * Gatekeeper Product Catalog features
+ * @deprecated use SpaceFeatures or OrganizationFeatures
+ */
 export const FEATURES = {
-  ENVIRONMENT_USAGE_ENFORCEMENT: 'environment_usage_enforcements',
-  ENVIRONMENT_ALIASING: 'environment_aliasing',
-  CONTENT_WORKFLOW_TASKS: 'tasks',
-  SCHEDULED_PUBLISHING: 'scheduled_publishing',
-  PC_CONTENT_TAGS: 'content_tags',
-  PC_SPACE_RELEASES: 'releases',
-  PC_SPACE_REFERENCE_TREE: 'reference_tree',
-  // Todo: merge planner and launch into one
-  PC_ORG_PLANNER_APP: 'planner_app',
-  PC_ORG_COMPOSE_APP: 'compose_app',
-  PC_ORG_LAUNCH_APP: 'launch_app',
-  CUSTOM_ROLES_FEATURE: 'custom_roles',
+  ...SpaceFeatures,
+  ...OrganizationFeatures,
 };
 
 // Gatekeeper Product Catalog features default values
@@ -33,15 +46,15 @@ export const DEFAULT_FEATURES_STATUS = {
 // There is no prefetching! Just doing carpooling for HTTP.
 // Please remember these are sent as query string parameters, so
 // we may hit the URL length limit (~8k chars) some day.
-const COMMON_FOR_SPACE = ['basic_apps'];
+const COMMON_FOR_SPACE = [SpaceFeatures.BASIC_APPS];
 const COMMON_FOR_ORG = [
   'custom_sidebar',
   'teams',
-  'self_configure_sso',
   'scim',
-  'advanced_apps',
-  FEATURES.PC_ORG_LAUNCH_APP,
-  FEATURES.PC_ORG_COMPOSE_APP,
+  OrganizationFeatures.ADVANCED_APPS,
+  OrganizationFeatures.PC_ORG_LAUNCH_APP,
+  OrganizationFeatures.PC_ORG_COMPOSE_APP,
+  OrganizationFeatures.SELF_CONFIGURE_SSO,
 ];
 
 // This module exposes two methods for getting feature statuses
@@ -115,7 +128,11 @@ const load = async (loader, featureId, defaultValue = false, common: any[] = [])
   }
 };
 
-export const getOrgFeature = async (orgId, featureId, defaultValue) => {
+export const getOrgFeature = async (
+  orgId: string | undefined,
+  featureId: OrganizationFeatures,
+  defaultValue?: boolean
+) => {
   if (!orgId || !featureId) {
     return isUndefined(defaultValue)
       ? Promise.reject('No orgId or featureId provided when fetching an org feature')
@@ -127,7 +144,7 @@ export const getOrgFeature = async (orgId, featureId, defaultValue) => {
 
 export const getSpaceFeature = (
   spaceId: string | undefined,
-  featureId: string,
+  featureId: SpaceFeatures,
   defaultValue?: boolean
 ) => {
   if (!spaceId || !featureId) {
@@ -146,9 +163,15 @@ export const clearCachedProductCatalogFlags = () => {
   AppTrialRepo.getTrial.cache.clear?.();
 };
 
-const createFeatureHook = (getFeature: typeof getSpaceFeature | typeof getOrgFeature) => (
+type FeatureGetter<TFeatures> = (
+  scopeId: string,
+  featureId: TFeatures,
+  defaultValue?: boolean
+) => Promise<boolean>;
+
+const createFeatureHook = <TFeatures>(getFeature: FeatureGetter<TFeatures>) => (
   scopeId: string | undefined,
-  featureId: string,
+  featureId: TFeatures,
   defaultValue: boolean
 ) => {
   const [isEnabled, setIsEnabled] = React.useState<boolean | null>(null);

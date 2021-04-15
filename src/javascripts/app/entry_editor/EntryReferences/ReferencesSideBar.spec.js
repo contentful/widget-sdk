@@ -64,10 +64,6 @@ jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
-jest.mock('app/Releases/ReleasesFeatureFlag', () => ({
-  getReleasesFeatureVariation: jest.fn().mockResolvedValue(true),
-}));
-
 jest.mock('./BulkAction/BulkActionService', () => ({
   createPublishBulkAction: jest.fn(),
   createValidateBulkAction: jest.fn(),

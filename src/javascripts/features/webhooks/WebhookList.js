@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import StateLink from 'app/common/StateLink';
 import { WebhookSkeletons } from './skeletons/WebhookListRouteSkeleton';
 import {
   Table,
@@ -13,6 +12,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import { RouteLink } from 'core/react-routing';
 
 import { WebhookHealth } from './WebhookHealth';
 import { WebhookListSidebar } from './WebhookListSidebar';
@@ -56,13 +56,13 @@ export class WebhookList extends React.Component {
       <WebhookSkeletons.ListShell
         title={`Webhooks (${webhooks.length})`}
         actions={
-          <StateLink path="^.new">
-            {({ onClick }) => (
-              <Button testId="add-webhook-button" icon="PlusCircle" onClick={onClick}>
-                Add Webhook
-              </Button>
-            )}
-          </StateLink>
+          <RouteLink
+            route={{ path: 'webhooks.new' }}
+            as={Button}
+            testId="add-webhook-button"
+            icon="PlusCircle">
+            Add Webhook
+          </RouteLink>
         }
         sidebar={<WebhookListSidebar openTemplateDialog={openTemplateDialog} />}>
         <Table>
@@ -78,33 +78,29 @@ export class WebhookList extends React.Component {
             {webhooks.length > 0 &&
               webhooks.map((wh) => {
                 return (
-                  <StateLink
-                    path="^.detail"
-                    params={{
-                      webhookId: wh.sys.id,
-                    }}
-                    key={wh.sys.id}>
-                    {({ onClick }) => (
-                      <TableRow testId="webhook-row" onClick={onClick} className={styles.row}>
-                        <TableCell>
-                          <strong data-test-id="webhook-name" className="x--ellipsis">
-                            {wh.name}
-                          </strong>
-                        </TableCell>
-                        <TableCell>
-                          <code data-test-id="webhook-code" className="x--ellipsis">
-                            {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
-                          </code>
-                        </TableCell>
-                        <TableCell>
-                          <WebhookHealth webhookId={wh.sys.id} />
-                        </TableCell>
-                        <TableCell>
-                          <TextLink>View details</TextLink>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </StateLink>
+                  <RouteLink
+                    key={wh.sys.id}
+                    as={TableRow}
+                    route={{ path: 'webhooks.detail', webhookId: wh.sys.id }}
+                    testId="webhook-row"
+                    className={styles.row}>
+                    <TableCell>
+                      <strong data-test-id="webhook-name" className="x--ellipsis">
+                        {wh.name}
+                      </strong>
+                    </TableCell>
+                    <TableCell>
+                      <code data-test-id="webhook-code" className="x--ellipsis">
+                        {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
+                      </code>
+                    </TableCell>
+                    <TableCell>
+                      <WebhookHealth webhookId={wh.sys.id} />
+                    </TableCell>
+                    <TableCell>
+                      <TextLink>View details</TextLink>
+                    </TableCell>
+                  </RouteLink>
                 );
               })}
             {webhooks.length < 1 && (

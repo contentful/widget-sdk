@@ -1,0 +1,22 @@
+declare global {
+  interface Window {
+    analytics: any;
+    GlobalSnowplowNamespace: Array<string>;
+  }
+}
+
+/**
+ * Raw analytics event data as accepted by Analytics.track()
+ * This is not the data that will be sent to Snowplow or Segment as it's not "transformed".
+ */
+export type EventData = Record<string, unknown>;
+
+/**
+ * `EventData` transformed by the Analytics service which can be passed to segment or snowplow
+ * services for further processing into the final service specific payload.
+ */
+export type TransformedEventData = {
+  schema?: string;
+  data: Record<string, unknown>;
+  contexts?: Record<string, unknown>;
+};

@@ -157,7 +157,11 @@ Process:
    variables to launch as an HTTPS (rather than HTTP) server. For example:
 
    ```sh
-   # env HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem HTTPS_CERT_FILE=_wildcard.joistio.com.pem npm run dev-staging
+   # env \
+       HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem \
+       HTTPS_CERT_FILE=_wildcard.joistio.com.pem \
+       npm run dev-staging \
+       -- --public app.joistio.com:3001
    ```
 
 5. Visit `https://app.joistio.com:3001/#access_token=<your access token>`. This
@@ -207,6 +211,14 @@ application. Note that it requires Chrome to be available on your computer.
 # In another terminal...
 
 > npm run cypress
+```
+
+If you see an error that looks like "No version of Cypress is installed in: ..."
+then you need to actually install the Cypress runner (which is not installed
+when you `npm install`). To do this, run:
+
+```sh
+> npx cypress install
 ```
 
 #### Additional documentation

@@ -4,15 +4,18 @@ import { noop } from 'lodash';
 import { MarketplacePage } from '../MarketplacePage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
-import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
+import {
+  getSpaceFeature,
+  getOrgFeature,
+  SpaceFeatures,
+  OrganizationFeatures,
+} from 'data/CMA/ProductCatalog';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
 
-export const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
 export const DEFAULT_ADVANCED_APPS_STATUS = false;
 
 export function canUserManageApps() {
@@ -29,13 +32,17 @@ function withAppsResolver(Component) {
     const { current: repo } = React.useRef(getAppsRepo());
 
     React.useEffect(() => {
-      getSpaceFeature(currentSpaceId, BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS)
+      getSpaceFeature(currentSpaceId, SpaceFeatures.BASIC_APPS, DEFAULT_FEATURE_STATUS)
         .then(setAppsFeature)
         .catch(noop);
     }, [currentSpaceId]);
 
     React.useEffect(() => {
-      getOrgFeature(currentOrganizationId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS)
+      getOrgFeature(
+        currentOrganizationId,
+        OrganizationFeatures.ADVANCED_APPS,
+        DEFAULT_ADVANCED_APPS_STATUS
+      )
         .then(setAdvancedAppsFeature)
         .catch(noop);
     }, [currentOrganizationId]);

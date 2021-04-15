@@ -48,6 +48,7 @@
 
   --font-size-s: 0.75rem;
   --font-size-m: 0.875rem;
+  --font-weight-demi-bold: 600;
   --line-height-default: 1.5;
   --spacing-xs: 0.5rem;
   --spacing-m: 1rem;
@@ -173,7 +174,7 @@ pre,
   b,
   strong {
     color: var(--color-text-dark);
-    font-weight: bold;
+    font-weight: var(--font-weight-demi-bold);
   }
   .ui-corner-all {
     border-radius: 3px 3px 3px 3px;

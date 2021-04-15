@@ -7,7 +7,6 @@ import PublicationWidget from './PublicationWidget';
 import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
-import { getReleasesFeatureVariation as releasesPCFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 export default class PublicationWidgetContainer extends Component {
@@ -27,16 +26,10 @@ export default class PublicationWidgetContainer extends Component {
     userId: undefined,
     entity: undefined,
     validator: undefined,
-    isAddToRelease: false,
     entityTitle: null,
   };
 
   async componentDidMount() {
-    const { currentSpaceId: spaceId } = this.context;
-
-    const addToReleaseEnabled = await releasesPCFeatureVariation(spaceId);
-    this.setState({ isAddToRelease: addToReleaseEnabled });
-
     this.props.emitter.on(
       SidebarEventTypes.UPDATED_PUBLICATION_WIDGET,
       this.onUpdatePublicationWidget

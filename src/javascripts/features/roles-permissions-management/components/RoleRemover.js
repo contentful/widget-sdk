@@ -1,12 +1,15 @@
 import React from 'react';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
-import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+import {
+  ModalConfirm,
+  ModalLauncher,
+  Notification,
+  Paragraph,
+} from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
-import { jumpToRole } from '../utils/jumpToRole';
-import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { getRouter } from 'core/react-routing';
 
 export function createRoleRemover(listHandler, role, space) {
   const roleRepo = getInstance(space);
@@ -17,7 +20,6 @@ export function createRoleRemover(listHandler, role, space) {
     const isUsed = roleCount > 0;
     return (
       <RemoveRoleModalConfirm
-        isMasterEnvironment={isCurrentEnvironmentMaster(space)}
         key={uniqueModalKey}
         isShown={isShown}
         role={role}
@@ -46,15 +48,7 @@ export function createRoleRemover(listHandler, role, space) {
   }
 }
 
-export function RemoveRoleModalConfirm({
-  isUsed,
-  isShown,
-  onCancel,
-  onConfirm,
-  role,
-  count,
-  isMasterEnvironment,
-}) {
+export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
 
   return (
@@ -65,7 +59,7 @@ export function RemoveRoleModalConfirm({
       isConfirmLoading={loading}
       onConfirm={() => {
         if (isUsed) {
-          jumpToRole(role.name, isMasterEnvironment);
+          getRouter().go({ path: 'users.list', navigationState: { jumpToRole: role.name } });
           onCancel();
           return;
         }
@@ -103,6 +97,5 @@ RemoveRoleModalConfirm.propTypes = {
   isUsed: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  isMasterEnvironment: PropTypes.bool.isRequired,
   count: PropTypes.number,
 };

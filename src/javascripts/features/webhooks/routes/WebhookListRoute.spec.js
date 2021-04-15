@@ -5,6 +5,7 @@ import { WebhookListRoute } from './WebhookListRoute';
 import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { MemoryRouter } from 'react-router';
 
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([]),
@@ -38,7 +39,9 @@ const build = (props = {}) => {
         currentSpaceId: 'space-id',
         currentOrganizationId: 'organization-id',
       }}>
-      <WebhookListRoute {...props} />
+      <MemoryRouter initialEntries={[{ pathname: '/', state: props }]}>
+        <WebhookListRoute {...props} />
+      </MemoryRouter>
     </SpaceEnvContext.Provider>
   );
 };

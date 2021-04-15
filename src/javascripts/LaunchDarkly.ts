@@ -1,6 +1,6 @@
 import * as config from 'Config';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import {
   getOrgRole,
@@ -45,7 +45,6 @@ export enum FLAGS {
   SPACE_PLAN_ASSIGNMENT = 'feature-hejo-08-2020-space-plan-assignment',
   SPACE_PLAN_ASSIGNMENT_EXPERIMENT = 'feature-hejo-09-2020-space-plan-assignment-experiment',
   CREATE_SPACE_FOR_SPACE_PLAN = 'feature-hejo-12-2020-create-space-for-space-plan',
-  CONTENT_LEVEL_PERMISSIONS = 'feature-dev-workflows-09-2020-content-level-permissions',
   WORKFLOWS_APP = 'ext-09-2020-enable-workflows',
   COMPOSE_LAUNCH_PURCHASE = 'feature-ahoy-11-2020-compose-launch-purchase',
   PATCH_ENTRY_UPDATES = 'feature-penguin-12-2020-patch-entry-updates',
@@ -78,7 +77,6 @@ const FALLBACK_VALUES = {
   [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
   [FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT]: false,
   [FLAGS.CREATE_SPACE_FOR_SPACE_PLAN]: false,
-  [FLAGS.CONTENT_LEVEL_PERMISSIONS]: false,
   [FLAGS.WORKFLOWS_APP]: false,
   [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false,
   [FLAGS.PATCH_ENTRY_UPDATES]: false,
@@ -180,7 +178,7 @@ async function ldUser({
     // determining if the org is V2 committed
     const currentOrgHasSsoSelfConfigFeature = await getOrgFeature(
       organizationId,
-      'self_configure_sso',
+      OrganizationFeatures.SELF_CONFIGURE_SSO,
       false
     );
 

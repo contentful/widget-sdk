@@ -10,6 +10,7 @@ import * as spaceContextMock from '__mocks__/ng/spaceContext';
 import { canReadApiKeys as _canReadApiKeys } from 'access_control/AccessChecker';
 import { resolveLink, LinkType } from './resolver';
 import { getOrganizationSpaces as _getOrganizationSpaces } from 'services/TokenStore';
+import { routes } from 'core/react-routing';
 
 const mockApiKeyRepo = {
   getAll: jest.fn(),
@@ -59,7 +60,10 @@ jest.mock('utils/ResourceUtils', () => ({
   isLegacyOrganization: jest.fn().mockReturnValue(true),
 }));
 
-async function testSpaceScopedPathDeeplinks(link, expected) {
+async function testSpaceScopedPathDeeplinks(
+  link,
+  expected: { path: string | string[]; params?: any }
+) {
   const space = {
     sys: { id: 'test' },
   };
@@ -73,8 +77,8 @@ async function testSpaceScopedPathDeeplinks(link, expected) {
 
   expect(spaceContextMock.resetWithSpace).toHaveBeenCalledWith(space);
   expect(result).toEqual({
-    params: { spaceId: 'test' },
-    path: expected,
+    params: { spaceId: 'test', ...expected.params },
+    path: expected.path,
   });
 }
 
@@ -182,89 +186,71 @@ describe('states/deeplink/resolver', () => {
 
   describe('#home', () => {
     it('should redirect the user to space home', async function () {
-      await testSpaceScopedPathDeeplinks('home', ['spaces', 'detail', 'home']);
+      await testSpaceScopedPathDeeplinks('home', { path: ['spaces', 'detail', 'home'] });
     });
   });
 
   describe('#general-settings', () => {
     it('should redirect the user to space general settings', async function () {
-      await testSpaceScopedPathDeeplinks('general-settings', [
-        'spaces',
-        'detail',
-        'settings',
-        'space',
-      ]);
+      await testSpaceScopedPathDeeplinks('general-settings', {
+        path: ['spaces', 'detail', 'settings', 'space'],
+      });
     });
   });
 
   describe('#locales', () => {
     it('should redirect the user to space locale settings', async function () {
-      await testSpaceScopedPathDeeplinks('locales', [
-        'spaces',
-        'detail',
-        'settings',
+      await testSpaceScopedPathDeeplinks(
         'locales',
-        'list',
-      ]);
+        routes['locales.list']({ withEnvironment: false })
+      );
     });
   });
 
   describe('#roles-and-permissions', () => {
     it('should redirect the user to space roles settings page', async function () {
-      await testSpaceScopedPathDeeplinks('roles-and-permissions', [
-        'spaces',
-        'detail',
-        'settings',
-        'roles',
-        'list',
-      ]);
+      await testSpaceScopedPathDeeplinks(
+        'roles-and-permissions',
+        routes['roles.list']({ withEnvironment: false })
+      );
     });
   });
 
   describe('#content-preview', () => {
     it('should redirect the user to content previews page', async function () {
-      await testSpaceScopedPathDeeplinks('content-preview', [
-        'spaces',
-        'detail',
-        'settings',
-        'content_preview',
-        'list',
-      ]);
+      await testSpaceScopedPathDeeplinks('content-preview', {
+        path: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
+      });
     });
   });
 
   describe('#content', () => {
     it('should redirect the user to entries list page', async function () {
-      await testSpaceScopedPathDeeplinks('content', ['spaces', 'detail', 'entries', 'list']);
+      await testSpaceScopedPathDeeplinks('content', {
+        path: ['spaces', 'detail', 'entries', 'list'],
+      });
     });
   });
 
   describe('#media', () => {
     it('should redirect the user to the assets list page', async function () {
-      await testSpaceScopedPathDeeplinks('media', ['spaces', 'detail', 'assets', 'list']);
+      await testSpaceScopedPathDeeplinks('media', { path: ['spaces', 'detail', 'assets', 'list'] });
     });
   });
 
   describe('#content-model', () => {
     it('should redirect the user to content model page', async function () {
-      await testSpaceScopedPathDeeplinks('content-model', [
-        'spaces',
-        'detail',
-        'content_types',
-        'list',
-      ]);
+      await testSpaceScopedPathDeeplinks('content-model', {
+        path: ['spaces', 'detail', 'content_types', 'list'],
+      });
     });
   });
 
   describe('#extensions', () => {
     it('should redirect the user to the extensions list page', async function () {
-      await testSpaceScopedPathDeeplinks('extensions', [
-        'spaces',
-        'detail',
-        'settings',
-        'extensions',
-        'list',
-      ]);
+      await testSpaceScopedPathDeeplinks('extensions', {
+        path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+      });
     });
   });
 
@@ -547,7 +533,7 @@ describe('states/deeplink/resolver', () => {
 
   describe('#tags', () => {
     it('should redirect the user to space tags settings', async function () {
-      await testSpaceScopedPathDeeplinks('tags', ['spaces', 'detail', 'settings', 'tags']);
+      await testSpaceScopedPathDeeplinks('tags', routes['tags']({ withEnvironment: false }));
     });
   });
 });

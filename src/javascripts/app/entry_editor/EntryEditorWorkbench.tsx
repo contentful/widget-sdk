@@ -41,15 +41,22 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
-import { REFERENCES_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import {
+  REFERENCES_ENTRY_ID,
+  FeatureModal,
+  handleHighValueLabelTracking,
+  REFERENCES_TRACKING_NAME,
+} from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { isOrganizationOnTrial } from 'features/trials';
 
-const trackTabOpen = (tab) =>
+const trackTabOpen = (tab, isOrgOnTrial) => {
+  isOrgOnTrial && handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, true);
   track('editor_workbench:tab_open', {
     /* eslint-disable-next-line @typescript-eslint/camelcase */
     tab_name: tab,
   });
+};
 
 interface EntryEditorWorkbenchProps {
   localeData: LocaleData;
@@ -113,15 +120,18 @@ function tabIsDefault(tabKey, tabs) {
 // get high value label modal data from Contentful
 const initialFetch = async () => await fetchWebappContentByEntryID(REFERENCES_ENTRY_ID);
 
-const openDialog = (modalData) =>
+const openDialog = (modalData) => {
+  handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, false);
+
   ModalLauncher.open(({ onClose, isShown }) => (
     <FeatureModal
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
-      featureTracking="references"
+      featureTracking={REFERENCES_TRACKING_NAME}
     />
   ));
+};
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const {
@@ -333,7 +343,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       },
       onClick(selectedTab) {
         navigateToTab(selectedTab);
-        trackTabOpen(selectedTab);
+        trackTabOpen(selectedTab, isOrgOnTrial);
         selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) &&
           setHasReferenceTabBeenClicked(true);
       },
@@ -445,6 +455,13 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                         showHighValueLabelForCommunity
                           ? 'This feature is a part of Enterprise plan.'
                           : 'This feature is a part of the Enterprise plan. You can use it during your trial.'
+                      }
+                      onMouseOver={() =>
+                        handleHighValueLabelTracking(
+                          'hover',
+                          REFERENCES_TRACKING_NAME,
+                          showHighValueLabelForCommunityOnTrial ? true : false
+                        )
                       }>
                       <Flex>
                         <Icon

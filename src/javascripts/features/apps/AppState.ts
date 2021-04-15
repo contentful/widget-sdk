@@ -80,6 +80,7 @@ export function validateState(targetState) {
     (ei.controls || []).forEach((control: Control) => {
       const validControl =
         isObject(control) &&
+        Object.keys(control).every((key) => ['fieldId', 'settings'].includes(key)) &&
         typeof control.fieldId === 'string' &&
         control.fieldId.length > 0 &&
         isValidSettingsObject(control.settings);
@@ -113,7 +114,14 @@ const validatePositionalPartialTargetState = (
   if (isObject(partialTargetState)) {
     const validPosition =
       !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
-    if (!validPosition || !isValidSettingsObject(partialTargetState.settings)) {
+    const hasAdditionalKeys = Object.keys(partialTargetState).some(
+      (key) => !['position', 'settings'].includes(key)
+    );
+    if (
+      !validPosition ||
+      !isValidSettingsObject(partialTargetState.settings) ||
+      hasAdditionalKeys
+    ) {
       throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
     }
   }

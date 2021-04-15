@@ -26,9 +26,6 @@ const styles = {
     borderTopRightRadius: 0,
     borderTopLeftRadius: 0,
   }),
-  cardTag: css({
-    marginRight: tokens.spacingXs,
-  }),
   stagedBundle: css({
     borderTop: 'none',
     borderTopRightRadius: 0,
@@ -36,8 +33,8 @@ const styles = {
     background: tokens.colorElementLightest,
     marginBottom: tokens.spacingXl,
   }),
-  cancelText: css({
-    marginRight: tokens.spacingS,
+  firstBundle: css({
+    marginBottom: tokens.spacingXl,
   }),
   bold: css({
     fontWeight: 'bold',
@@ -115,9 +112,7 @@ export const ActiveBundle: React.FC<ActiveBundleProps> = ({
         <SectionHeading className={styles.sectionHeading}>Active Bundle</SectionHeading>
         {activeBundle ? (
           <BundleCard className={styles.attachedCard} bundle={activeBundle}>
-            <Tag className={styles.cardTag} tagType={'positive'}>
-              Active
-            </Tag>
+            <Tag tagType={'positive'}>Active</Tag>
           </BundleCard>
         ) : savedDefinition.src ? (
           <SelfHostedCard src={savedDefinition.src} />
@@ -163,8 +158,10 @@ const StagedBundle: React.FC<StagedBundleProps> = ({
 }) => (
   <>
     {hasCurrentHosting && <ArrowIcon />}
-    <BundleCard className={hasCurrentHosting ? styles.stagedBundle : ''} bundle={bundle}>
-      <Paragraph className={styles.cancelText}>
+    <BundleCard
+      className={hasCurrentHosting ? styles.stagedBundle : styles.firstBundle}
+      bundle={bundle}>
+      <Paragraph>
         This bundle becomes active on save.{' '}
         <TextLink onClick={unstageBundle} linkType="negative">
           Cancel

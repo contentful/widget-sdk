@@ -2,7 +2,6 @@ import React, { Component, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
-import StateRedirect from 'app/common/StateRedirect';
 import * as LocaleNotifications from '../utils/LocaleNotifications';
 import { LocaleEditForm } from '../LocaleEditForm';
 import { getSectionVisibility } from 'access_control/AccessChecker';
@@ -12,6 +11,7 @@ import TheLocaleStore from 'services/localeStore';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { RouteNavigate } from 'core/react-routing';
 
 const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {
   return localeRepo.getAll();
@@ -22,7 +22,6 @@ class NewLocaleForm extends Component {
     spaceLocales: PropTypes.arrayOf(PropTypes.object).isRequired,
     saveLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
-    goToList: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
   };
 
@@ -57,11 +56,9 @@ class NewLocaleForm extends Component {
   render() {
     if (this.state.savedLocale) {
       return (
-        <StateRedirect
-          path="^.detail"
-          params={{
-            localeId: this.state.savedLocale.sys.id,
-          }}
+        <RouteNavigate
+          route={{ path: 'locales.detail', localeId: this.state.savedLocale.sys.id }}
+          replace
         />
       );
     }
@@ -80,7 +77,6 @@ class NewLocaleForm extends Component {
         isSaving={this.state.isSaving}
         onSave={this.onSaveLocale}
         setDirty={this.props.setDirty}
-        goToList={this.props.goToList}
         registerSaveAction={this.props.registerSaveAction}
       />
     );
@@ -114,7 +110,7 @@ export function LocalesNewRoute(props) {
             return <LocalesFormSkeleton />;
           }
           if (isError) {
-            return <StateRedirect path="^.list" />;
+            return <RouteNavigate route={{ path: 'locales.list' }} replace />;
           }
           const spaceLocales = data;
           return (
@@ -122,7 +118,6 @@ export function LocalesNewRoute(props) {
               spaceLocales={spaceLocales}
               saveLocale={save}
               setDirty={props.setDirty}
-              goToList={props.goToList}
               registerSaveAction={props.registerSaveAction}
             />
           );
@@ -135,5 +130,4 @@ export function LocalesNewRoute(props) {
 LocalesNewRoute.propTypes = {
   setDirty: PropTypes.func.isRequired,
   registerSaveAction: PropTypes.func.isRequired,
-  goToList: PropTypes.func.isRequired,
 };

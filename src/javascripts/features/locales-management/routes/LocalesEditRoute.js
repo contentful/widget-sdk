@@ -5,7 +5,6 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import { LocaleEditForm } from '../LocaleEditForm';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import StateRedirect from 'app/common/StateRedirect';
 import * as LocaleNotifications from '../utils/LocaleNotifications';
 import { LocaleRemovalConfirmDialog } from '../dialogs/LocaleRemovalConfirmDialog';
 import { ChooseNewFallbackLocaleDialog } from '../dialogs/ChooseNewFallbackLocaleDialog';
@@ -17,6 +16,7 @@ import TheLocaleStore from 'services/localeStore';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useParams, RouteNavigate } from 'core/react-routing';
 
 const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {
   return localeRepo.getAll();
@@ -29,7 +29,6 @@ class EditLocaleForm extends Component {
     saveLocale: PropTypes.func.isRequired,
     removeLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
-    goToList: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
   };
 
@@ -163,7 +162,7 @@ class EditLocaleForm extends Component {
 
   render() {
     if (this.state.isDeleted) {
-      return <StateRedirect path="^.list" />;
+      return <RouteNavigate route={{ path: 'locales.list' }} replace />;
     }
     const isDefaultLocale = !!this.props.initialLocale.default;
     return (
@@ -175,7 +174,6 @@ class EditLocaleForm extends Component {
         onDelete={isDefaultLocale ? null : this.onDeleteLocale}
         isDeleting={this.state.isDeleting}
         setDirty={this.props.setDirty}
-        goToList={this.props.goToList}
         registerSaveAction={this.props.registerSaveAction}
       />
     );
@@ -183,6 +181,7 @@ class EditLocaleForm extends Component {
 }
 
 export function LocalesEditRoute(props) {
+  const params = useParams();
   const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
   const spaceEndpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
     currentSpaceId,
@@ -212,12 +211,12 @@ export function LocalesEditRoute(props) {
           return <LocalesFormSkeleton />;
         }
         if (isError) {
-          return <StateRedirect path="^.list" />;
+          return <RouteNavigate route={{ path: 'locales.list' }} replace />;
         }
         const spaceLocales = data;
-        const locale = spaceLocales.find((locale) => locale.sys.id === props.localeId);
+        const locale = spaceLocales.find((locale) => locale.sys.id === params.localeId);
         if (!locale) {
-          return <StateRedirect path="^.list" />;
+          return <RouteNavigate route={{ path: 'locales.list' }} replace />;
         }
 
         return (
@@ -233,7 +232,6 @@ export function LocalesEditRoute(props) {
               }
               removeLocale={remove}
               setDirty={props.setDirty}
-              goToList={props.goToList}
               registerSaveAction={props.registerSaveAction}
             />
           </React.Fragment>
@@ -244,8 +242,6 @@ export function LocalesEditRoute(props) {
 }
 
 LocalesEditRoute.propTypes = {
-  localeId: PropTypes.string.isRequired,
   setDirty: PropTypes.func.isRequired,
-  goToList: PropTypes.func.isRequired,
   registerSaveAction: PropTypes.func.isRequired,
 };

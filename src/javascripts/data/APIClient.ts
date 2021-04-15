@@ -499,6 +499,23 @@ export default class APIClient {
     return this.createResource(`app_installations/${appDefinitionId}/signed_requests`, data);
   };
 
+  getEmbargoedAssetsSettingLevel = () => {
+    return this.request({
+      method: 'GET',
+      path: ['embargoed_assets'],
+    });
+  };
+
+  setEmbargoedAssetsSettingLevel = (level) => {
+    return this.request({
+      method: 'PUT',
+      path: ['embargoed_assets'],
+      data: {
+        protectionMode: level,
+      },
+    });
+  };
+
   private request = <T>(req, headers?) => {
     return this.endpoint<T>(req, headers);
   };

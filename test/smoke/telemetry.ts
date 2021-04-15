@@ -60,7 +60,7 @@ export async function measure(
  * anything from a Cypress command, yet we might define something and want its result. For example:
  *
  * ```
- * const spaceHome = measureDuration<SpaceHomePage>('login', 'time-login-to-space-home', () => {
+ * const spaceHome = wrapWithDuration<SpaceHomePage>('time-login-to-space-home', () => {
  *  const spaceHome = loginPage.submitForm();
  *
  *  spaceHome.container.should('be.visible');
@@ -71,11 +71,10 @@ export async function measure(
  *
  * Without being able to do this, you can't guarantee that the value of `spaceHome` is defined
  * (as TS doesn't know that the callback was ever called), leading to TS errors.
- * @param testName   Name of the test, e.g. `login`
  * @param metricName The metric name, e.g. `time-login-to-space-home`
  * @param cb Set of Cypress commands in a callback
  */
-export function wrapWithDuration<T>(testName: string, metricName: string, cb: () => T): T {
+export function wrapWithDuration<T>(metricName: string, cb: () => T): T {
   const start = Date.now();
 
   const result = cb();
@@ -83,7 +82,7 @@ export function wrapWithDuration<T>(testName: string, metricName: string, cb: ()
   cy.wrap(() => {
     return Date.now() - start;
   }).then((duration) => {
-    cy.task('measure', { name: `${testName}.${metricName}`, value: duration() });
+    cy.task('measure', { name: metricName, value: duration() });
   });
 
   return result;

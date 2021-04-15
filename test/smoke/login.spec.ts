@@ -7,7 +7,7 @@ test('login', () => {
   loginPage.emailField.type(Cypress.env('email'));
   loginPage.passwordField.type(Cypress.env('password'));
 
-  const spaceHome = wrapWithDuration<SpaceHomePage>('login', 'time-login-to-space-home', () => {
+  const spaceHome = wrapWithDuration<SpaceHomePage>('time-login-to-space-home', () => {
     const spaceHome = loginPage.submitForm();
 
     // The test account will always have at least one space, and should always be the space admin

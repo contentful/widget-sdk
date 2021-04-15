@@ -13,8 +13,8 @@ export class SpacePurchasePage {
     cy.get('[data-test-id="space-plan-card"]:not([aria-disabled=true])', { timeout: 12500 });
   }
 
-  get mediumSpacePlanCard() {
-    return cy.findByText('Medium space').parents('[data-test-id="space-plan-card"]');
+  get communitySpaceCard() {
+    return cy.findByText('Community space').parents('[data-test-id="space-plan-card"]');
   }
 
   get webAppPlatformCard() {
@@ -36,16 +36,10 @@ export class SpacePurchasePage {
     return cy.findByTestId('next-step-new-details-page');
   }
 
-  get confirmPurchaseButton() {
-    return cy.findByTestId('confirm-purchase-button');
-  }
-
   goToNewSpace() {
-    // This will likely eventually start timing out as more and more spaces are added and deleted from the org.
-    // This is because each space addition / deletion is a Zuora amendment and these slowly get slower the more
-    // amendments are made to a subscription. If this starts to fail, make a new subscription for the org.
+    // If the space creation request takes more than 20 seconds something weird is going on.
     cy.get('[data-test-id="receipt-page.redirect-to-space"]:not([aria-disabled=true])').click({
-      timeout: 30000,
+      timeout: 20000,
     });
 
     return new SpaceHomePage();

@@ -122,7 +122,10 @@ export function href(state) {
     };
   }
   const $state = getModule('$state');
-  return $state.href(isArray(state.path) ? state.path.join('.') : state.path, state.params);
+
+  return decodeURIComponent(
+    $state.href(isArray(state.path) ? state.path.join('.') : state.path, state.params)
+  );
 }
 
 export function includes(state) {

@@ -7,6 +7,7 @@ import { getModule } from 'core/NgRegistry';
 import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'features/api-keys-management';
+import { routes } from 'core/react-routing';
 
 export enum LinkType {
   API = 'api',
@@ -40,7 +41,7 @@ export enum LinkType {
 }
 
 interface ResolvedLink {
-  path: string[];
+  path: string[] | string;
   params: Record<string, any>;
 }
 
@@ -82,13 +83,15 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
   }),
   [LinkType.Locales]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list'],
+    spaceScopedPath: routes['locales.list']({ withEnvironment: false }).path,
+    params: routes['locales.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Environments]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'settings', 'environments'],
   }),
   [LinkType.RolesAndPermissions]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list'],
+    spaceScopedPath: routes['roles.list']({ withEnvironment: false }).path,
+    params: routes['roles.list']({ withEnvironment: false }).params,
   }),
   [LinkType.ContentPreview]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
@@ -127,7 +130,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     orgScopedPath: ['account', 'organizations', 'start_trial'],
   }),
   [LinkType.Tags]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'tags'],
+    spaceScopedPath: routes['tags']({ withEnvironment: false }).path,
+    params: routes['tags']({ withEnvironment: false }).params,
   }),
 };
 
@@ -150,8 +154,14 @@ function resolveParams(link: LinkType, params: Record<string, any>) {
   }
 }
 
-function makeSpaceScopedPathResolver({ spaceScopedPath }): () => Promise<ResolvedLink> {
-  if (!spaceScopedPath || !Array.isArray(spaceScopedPath)) {
+function makeSpaceScopedPathResolver({
+  spaceScopedPath,
+  params,
+}: {
+  spaceScopedPath: string[] | string;
+  params?: { [key: string]: unknown };
+}): () => Promise<ResolvedLink> {
+  if (!spaceScopedPath) {
     throw new Error('A path for a deeplink to resolve to must be provided');
   }
 
@@ -165,7 +175,7 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }): () => Promise<Resolve
     await spaceContext.resetWithSpace(space);
     return {
       path: spaceScopedPath,
-      params: { spaceId },
+      params: { spaceId, ...params },
     };
   };
 }
@@ -276,12 +286,20 @@ async function resolveWebhookTemplate({ id, referrer }) {
     throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
   }
   const { spaceId } = await getSpaceInfo();
+  const route = routes['webhooks.list'](
+    { withEnvironment: false },
+    {
+      navigationState: {
+        referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+        ...(id ? { templateId: id } : {}),
+      },
+    }
+  );
   return {
-    path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
+    path: route.path,
     params: {
+      ...route.params,
       spaceId,
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(id ? { templateId: id } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,

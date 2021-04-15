@@ -36,7 +36,14 @@ before(() => cy.startGateway(5000));
 before(() => {
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['enforcements', 'environments', 'content_types', 'locales', 'token'],
+    providers: [
+      'enforcements',
+      'environments',
+      'content_types',
+      'locales',
+      'token',
+      'embargoed_assets',
+    ],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),

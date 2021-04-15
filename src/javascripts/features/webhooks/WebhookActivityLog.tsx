@@ -4,14 +4,14 @@ import { range } from 'lodash';
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableRow,
-  TableCell,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
 import { WebhookCallStatus } from './WebhookCallStatus';
 import { getWebhookRepo } from './services/WebhookRepoInstance';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { RouteLink } from 'core/react-routing';
 
 const PER_PAGE = 30;
 
@@ -25,7 +25,7 @@ interface WebhookLogCall {
 }
 
 interface WebhookActivityLogProps {
-  webhookId?: string;
+  webhookId: string;
   registerLogRefreshAction: (fetch: ({ spaceId: string }) => Promise<void>) => void;
 }
 
@@ -100,24 +100,23 @@ export class WebhookActivityLog extends React.Component<
               pageCalls.length > 0 &&
               pageCalls.map((call) => {
                 return (
-                  <StateLink
-                    path="^.detail.call"
-                    params={{
+                  <RouteLink
+                    as={TableRow}
+                    route={{
+                      path: 'webhooks.detail.call',
                       callId: call.sys.id,
+                      webhookId: this.props.webhookId,
                     }}
-                    key={call.sys.id}>
-                    {({ onClick }) => (
-                      <TableRow style={{ cursor: 'pointer' }} onClick={onClick}>
-                        <TableCell>{call.requestAt}</TableCell>
-                        <TableCell>
-                          <WebhookCallStatus call={call} />
-                        </TableCell>
-                        <TableCell>
-                          <button className="text-link">View details</button>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </StateLink>
+                    key={call.sys.id}
+                    style={{ cursor: 'pointer' }}>
+                    <TableCell>{call.requestAt}</TableCell>
+                    <TableCell>
+                      <WebhookCallStatus call={call} />
+                    </TableCell>
+                    <TableCell>
+                      <button className="text-link">View details</button>
+                    </TableCell>
+                  </RouteLink>
                 );
               })}
           </TableBody>

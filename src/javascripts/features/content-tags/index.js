@@ -1,4 +1,4 @@
-export { tagsState, TagsRoute } from 'features/content-tags/management/routes/TagsRoute';
+export { tagsState } from 'features/content-tags/routes/TagsRoute';
 export {
   useTagsFeatureEnabled,
   useReadTags,

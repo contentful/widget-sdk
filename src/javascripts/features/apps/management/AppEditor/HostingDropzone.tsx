@@ -102,7 +102,7 @@ export function HostingDropzone({
       </div>
       <HelpText className={styles.dropzoneHelpText}>
         Using <span className={appEditorStyles.monospace}>create-contentful-app</span>? You can also
-        run <span className={appEditorStyles.monospace}>npm run deploy</span> in your terminal.
+        run <span className={appEditorStyles.monospace}>npm run upload</span> in your terminal.
       </HelpText>
     </div>
   );

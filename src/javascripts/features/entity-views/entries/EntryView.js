@@ -1,3 +1,4 @@
+import { MetadataTags } from 'features/content-tags';
 import React, { useCallback, Fragment, useEffect, useMemo, useState } from 'react';
 import { EntryList } from './EntryList';
 import { useListView } from 'features/entity-search';
@@ -118,57 +119,59 @@ export const EntryView = () => {
   );
 
   return (
-    <EntitiesView
-      title="Content"
-      listViewContext={listViewContext}
-      entityType={entityType}
-      environmentId={currentEnvironmentId}
-      space={currentSpaceData}
-      organization={currentOrganization}
-      isMasterEnvironment={isMasterEnvironment}
-      fetchEntities={fetchEntries}
-      searchControllerProps={searchControllerProps}
-      renderAddEntityActions={(
-        { showNoEntitiesAdvice, contentTypes, creatableContentTypes },
-        className
-      ) => (
-        <span className={className}>
-          <CreateEntryButton
+    <MetadataTags>
+      <EntitiesView
+        title="Content"
+        listViewContext={listViewContext}
+        entityType={entityType}
+        environmentId={currentEnvironmentId}
+        space={currentSpaceData}
+        organization={currentOrganization}
+        isMasterEnvironment={isMasterEnvironment}
+        fetchEntities={fetchEntries}
+        searchControllerProps={searchControllerProps}
+        renderAddEntityActions={(
+          { showNoEntitiesAdvice, contentTypes, creatableContentTypes },
+          className
+        ) => (
+          <span className={className}>
+            <CreateEntryButton
+              contentTypes={creatableContentTypes}
+              suggestedContentTypeId={suggestedContentTypeId}
+              onSelect={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
+            />
+          </span>
+        )}
+        renderSavedViewsActions={() => (
+          <Fragment>
+            <ScheduledActionsPageLink isMasterEnvironment={isMasterEnvironment} />
+            <ReleasesPageLink />
+          </Fragment>
+        )}
+        renderEmptyState={(
+          { showNoEntitiesAdvice, contentTypes, creatableContentTypes },
+          className
+        ) => (
+          <EmptyStates
+            className={className}
+            hasContentType={contentTypes.length > 0}
             contentTypes={creatableContentTypes}
             suggestedContentTypeId={suggestedContentTypeId}
-            onSelect={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
+            onCreate={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
           />
-        </span>
-      )}
-      renderSavedViewsActions={() => (
-        <Fragment>
-          <ScheduledActionsPageLink isMasterEnvironment={isMasterEnvironment} />
-          <ReleasesPageLink />
-        </Fragment>
-      )}
-      renderEmptyState={(
-        { showNoEntitiesAdvice, contentTypes, creatableContentTypes },
-        className
-      ) => (
-        <EmptyStates
-          className={className}
-          hasContentType={contentTypes.length > 0}
-          contentTypes={creatableContentTypes}
-          suggestedContentTypeId={suggestedContentTypeId}
-          onCreate={newEntry(goTo, contentTypes, showNoEntitiesAdvice)}
-        />
-      )}
-      renderEntityList={({ entities, isLoading, updateEntities }, className) => (
-        <EntryList
-          className={className}
-          entries={entities}
-          listViewContext={listViewContext}
-          jobs={jobs}
-          searchControllerProps={searchControllerProps}
-          isLoading={isLoading}
-          updateEntries={() => updateEntities()}
-        />
-      )}
-    />
+        )}
+        renderEntityList={({ entities, isLoading, updateEntities }, className) => (
+          <EntryList
+            className={className}
+            entries={entities}
+            listViewContext={listViewContext}
+            jobs={jobs}
+            searchControllerProps={searchControllerProps}
+            isLoading={isLoading}
+            updateEntries={() => updateEntities()}
+          />
+        )}
+      />
+    </MetadataTags>
   );
 };

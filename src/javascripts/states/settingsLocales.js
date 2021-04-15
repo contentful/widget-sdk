@@ -1,75 +1,38 @@
 import * as React from 'react';
-import _ from 'lodash';
-import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { LocalesListRoute, LocalesNewRoute, LocalesEditRoute } from 'features/locales-management';
-import { getModule } from 'core/NgRegistry';
-import { go } from 'states/Navigator';
+import { LocalesEditRoute, LocalesListRoute, LocalesNewRoute } from 'features/locales-management';
+import { window } from 'core/services/window';
+import StateRedirect from 'app/common/StateRedirect';
+import { RouteErrorBoundary, Route, Routes, CustomRouter } from 'core/react-routing';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
 
 function withUnsavedChangesDialog(Component) {
   return function WithUnsavedChangesDialog(props) {
-    const requestLeaveConfirmation = React.useRef();
-    const isDirty = React.useRef(false);
-
-    React.useEffect(() => {
-      const $rootScope = getModule('$rootScope');
-
-      const unsubscribe = $rootScope.$on('$stateChangeStart', (event, toState, toStateParams) => {
-        if (!isDirty.current || !requestLeaveConfirmation.current) return;
-
-        event.preventDefault();
-        requestLeaveConfirmation.current().then((confirmed) => {
-          if (!confirmed) return;
-
-          isDirty.current = false;
-          return go({ path: toState.name, params: toStateParams });
-        });
-      });
-
-      return unsubscribe;
-    }, []);
-
-    function registerSaveAction(save) {
-      requestLeaveConfirmation.current = createUnsavedChangesDialogOpener(save);
-    }
-
-    function setDirty(value) {
-      isDirty.current = value;
-    }
-
-    function goToList() {
-      return go({ path: '^.list' });
-    }
-
-    return (
-      <Component
-        {...props}
-        goToList={goToList}
-        setDirty={setDirty}
-        registerSaveAction={registerSaveAction}
-      />
-    );
+    const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+    return <Component {...props} setDirty={setDirty} registerSaveAction={registerSaveAction} />;
   };
 }
 
+const LocaleRouter = () => {
+  const [basename] = window.location.pathname.split('locales');
+  const UnsavedNewRoute = withUnsavedChangesDialog(LocalesNewRoute);
+  const UnsavedEditRoute = withUnsavedChangesDialog(LocalesEditRoute);
+
+  return (
+    <CustomRouter splitter="settings/locales">
+      <RouteErrorBoundary>
+        <Routes basename={basename + 'locales'}>
+          <Route path="/" element={<LocalesListRoute />} />
+          <Route path="/new" element={<UnsavedNewRoute />} />
+          <Route path="/:localeId" element={<UnsavedEditRoute />} />
+          <Route path="*" element={<StateRedirect path="home" />} />
+        </Routes>
+      </RouteErrorBoundary>
+    </CustomRouter>
+  );
+};
+
 export const localesSettingsState = {
   name: 'locales',
-  url: '/locales',
-  abstract: true,
-  children: [
-    {
-      name: 'list',
-      url: '',
-      component: LocalesListRoute,
-    },
-    {
-      name: 'new',
-      url: '_new',
-      component: withUnsavedChangesDialog(LocalesNewRoute),
-    },
-    {
-      name: 'detail',
-      url: '/:localeId',
-      component: withUnsavedChangesDialog(LocalesEditRoute),
-    },
-  ],
+  url: '/locales{pathname:any}',
+  component: LocaleRouter,
 };

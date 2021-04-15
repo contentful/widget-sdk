@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { WebhookForbiddenPage } from '../WebhookForbiddenPage';
 import { WebhookList } from '../WebhookList';
@@ -15,6 +14,7 @@ import TheLocaleStore from 'services/localeStore';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import * as TokenStore from 'services/TokenStore';
+import { useNavigationState, useRouteNavigate } from 'core/react-routing';
 
 const WebhooksFetcher = createFetcherComponent(({ spaceId, organizationId, userEmail }) => {
   const webhookRepo = getWebhookRepo({ spaceId });
@@ -29,9 +29,13 @@ const WebhooksFetcher = createFetcherComponent(({ spaceId, organizationId, userE
   });
 });
 
-export function WebhookListRoute(props) {
-  const templateId = props.templateId ?? null;
-  const templateIdReferrer = props.referrer ?? null;
+export function WebhookListRoute() {
+  const navigationState = useNavigationState();
+  const templateId = navigationState?.templateId ?? null;
+  const templateIdReferrer = navigationState?.referrer ?? null;
+
+  const navigate = useRouteNavigate();
+
   const { email: userEmail } = TokenStore.getUserSync();
   const { currentSpaceId, currentOrganizationId, currentSpaceContentTypes } = useSpaceEnvContext();
 
@@ -43,7 +47,10 @@ export function WebhookListRoute(props) {
         domain: Config.domain,
         hasAwsProxy,
       },
-      currentSpaceId
+      currentSpaceId,
+      ({ webhookId }) => {
+        navigate({ path: 'webhooks.detail', webhookId });
+      }
     );
   }
 
@@ -83,8 +90,3 @@ export function WebhookListRoute(props) {
     </WebhooksFetcher>
   );
 }
-
-WebhookListRoute.propTypes = {
-  templateId: PropTypes.string,
-  referrer: PropTypes.string,
-};

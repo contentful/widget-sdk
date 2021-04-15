@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { css } from 'emotion';
-import { get, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { Workbench, Flex } from '@contentful/forma-36-react-components';
 import ContentTypePageActions from './ContentTypePageActions';
 import {
@@ -123,8 +123,7 @@ export default function ContentTypesPage(props) {
               <DocumentTitle title={['Preview', state.contentType.data.name, 'Content Model']} />
               <ContentTypePreview
                 isDirty={state.contextState.dirty}
-                publishedVersion={get(state.contentType.data, 'sys.publishedVersion')}
-                loadPreview={actions.loadPreview}
+                contentTypeData={state.contentType.data}
               />
             </React.Fragment>
           )}
