@@ -10,6 +10,7 @@ import { usersSettingsState } from './settingsUsers';
 import teamsSettingsState from './settingsTeams';
 import { SpaceSettingsRoute } from 'features/space-settings';
 import { tagsState } from 'features/content-tags';
+import { embargoedAssetsState } from 'features/embargoed-assets';
 
 export default SpaceSettingsBase({
   name: 'settings',
@@ -31,5 +32,6 @@ export default SpaceSettingsBase({
     extensionsSettingsState,
     webhooksRouteState,
     tagsState,
+    embargoedAssetsState,
   ],
 });
