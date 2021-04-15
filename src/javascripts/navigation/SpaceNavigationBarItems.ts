@@ -1,12 +1,17 @@
 import { renderAppsNavigationItem } from 'features/apps';
 import { routes } from 'core/react-routing';
 
-const makeRef = (ref, isMaster) => {
-  if (isMaster) {
-    return `spaces.detail.${ref}`;
-  } else {
-    return `spaces.detail.environment.${ref}`;
-  }
+const makeRef = (ref, isMaster) =>
+  isMaster ? `spaces.detail.${ref}` : `spaces.detail.environment.${ref}`;
+
+type Props = {
+  canNavigateTo: (section: string) => boolean;
+  usageEnabled: boolean;
+  hasOrgTeamFeature: boolean;
+  useSpaceEnvironment: boolean;
+  isUnscopedRoute: boolean;
+  contentTagsEnabled: boolean;
+  canManageSpace: boolean;
 };
 
 export function getSpaceNavigationItems({
@@ -17,11 +22,12 @@ export function getSpaceNavigationItems({
   isUnscopedRoute,
   contentTagsEnabled,
   canManageSpace,
-}) {
+}: Props) {
   const locales = routes['locales.list']({ withEnvironment: !isUnscopedRoute });
   const users = routes['users.list']({ withEnvironment: !isUnscopedRoute });
   const webhooks = routes['webhooks.list']({ withEnvironment: !isUnscopedRoute });
   const roles = routes['roles.list']({ withEnvironment: !isUnscopedRoute });
+  const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
     locales: {
@@ -41,8 +47,8 @@ export function getSpaceNavigationItems({
     },
     tags: {
       if: contentTagsEnabled && canNavigateTo('tags'),
-      sref: makeRef('settings.tags', isUnscopedRoute),
-      //rootSref: makeRef('settings.tags', isUnscopedRoute),
+      sref: tags.path,
+      rootSref: tags.path,
       dataViewType: 'spaces-settings-tags',
       title: 'Tags',
       tagLabel: 'new',

@@ -130,7 +130,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     orgScopedPath: ['account', 'organizations', 'start_trial'],
   }),
   [LinkType.Tags]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'tags'],
+    spaceScopedPath: routes['tags']({ withEnvironment: false }).path,
+    params: routes['tags']({ withEnvironment: false }).params,
   }),
 };
 

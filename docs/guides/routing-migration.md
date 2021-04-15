@@ -4,9 +4,9 @@ A step-by-step approach to migrate from Angular UI Router to React Router v6.
 
 ## Links
 
-* React Router v6 docs: https://github.com/ReactTraining/react-router/tree/dev/docs
-* API Reference for React Router v6: https://github.com/ReactTraining/react-router/blob/dev/docs/api-reference.md
-* Working with Query Params in React Router
+- React Router v6 docs: https://github.com/ReactTraining/react-router/tree/dev/docs
+- API Reference for React Router v6: https://github.com/ReactTraining/react-router/blob/dev/docs/api-reference.md
+- Working with Query Params in React Router
   v6: https://github.com/ReactTraining/react-router/blob/dev/docs/advanced-guides/working-with-the-search-string.md
 
 ## Description of the approach
@@ -101,17 +101,12 @@ Angular `$state.go` calls.
 This part is a bit explicit but it allows us to achieve type-safety and allows to simplify using links inside of the
 application (you will see this in the last step)
 
-```jsx
+```tsx
+type LocalesListRouteType = { path: 'locales.list' };
+type LocalesNewRouteType = { path: 'locales.new' };
+type LocalesDetailRouteType = { path: 'locales.detail'; localeId: string };
 
-type
-LocalesListRouteType = { path: 'locales.list' };
-type
-LocalesNewRouteType = { path: 'locales.new' };
-type
-LocalesDetailRouteType = { path: 'locales.detail'; localeId: string };
-
-type
-LocalesRouteType = LocalesListRouteType | LocalesNewRouteType | LocalesDetailRouteType;
+type LocalesRouteType = LocalesListRouteType | LocalesNewRouteType | LocalesDetailRouteType;
 
 const localesRoutes = {
   'locales.list': (env: EnvironmentParams) => ({
@@ -136,32 +131,27 @@ const localesRoutes = {
 
 // when you need to pass a navigationState parameter
 
-type
-UsersListRouteType = {
+type UsersListRouteType = {
   path: 'users.list';
-  navigationState? : {
-    jumpToRole? : string;
+  navigationState?: {
+    jumpToRole?: string;
   };
 };
 
 const usersListRoutes = {
-  'users.list': (env: EnvironmentParams, params ? : Omit < UsersListRouteType, 'path'
->) =>
-({
-  path: spaceEnvBase(env, 'settings.users'),
-  params: {
-    pathname: '/',
-    navigationState: params?.navigationState,
-  },
-}),
-}
-;
+  'users.list': (env: EnvironmentParams, params?: Omit<UsersListRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'settings.users'),
+    params: {
+      pathname: '/',
+      navigationState: params?.navigationState,
+    },
+  }),
+};
 
 export const routes = {
   ...localesRoutes,
   ...usersListRoutes,
-}
-
+};
 ```
 
 This abstraction layer allows us to encapsulate transformation from Angular UI to React Router links, so while
@@ -200,9 +190,9 @@ import { ReactRouterRedirect } from 'core/react-routing';
 
 <StateRedirect path="^.list" />;
 
-// after 
+// after
 
-<ReactRouterRedirect route={{ path: 'locales.list' }} />
+<ReactRouterRedirect route={{ path: 'locales.list' }} />;
 ```
 
 ```jsx
@@ -212,11 +202,9 @@ import { getRouter } from 'core/react-routing';
 
 Navigator.go({ path: '^.detail', params: { localeId: locale.sys.id } });
 
-// after 
+// after
 
-getRouter().go({ path: 'locale.detail', localeId: locale.sys.id }
-})
-;
+getRouter().go({ path: 'locale.detail', localeId: locale.sys.id });
 ```
 
 #### 3.2 Links within the same react-router tree
@@ -251,9 +239,9 @@ import { RouteNavigate } from 'core/react-routing';
 
 <StateRedirect path="^.list" />;
 
-// after 
+// after
 
-<RouteNavigate route={{ path: 'locales.list' }} replace />
+<RouteNavigate route={{ path: 'locales.list' }} replace />;
 ```
 
 ```jsx
@@ -276,7 +264,6 @@ const ComponentWithNavigate = withRouteNavigate(Component);
 
 // inside Component
 this.props.navigate({ path: 'locales.detail', localeId: locale.sys.id });
-
 ```
 
 ### 4. Change how route params are read
@@ -294,7 +281,6 @@ const { localeId } = useParams();
 // For navigation state (params what are not visible in the URL but are passed from one route to another)
 
 const { jumpToRole } = useNavigationState();
-
 ```
 
 For query params like `/test?foo=bar` refer

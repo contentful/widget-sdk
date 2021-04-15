@@ -150,15 +150,34 @@ const rolesRoutes = {
   }),
 };
 
+/** Tags */
+
+type TagsRouteType = { path: 'tags' };
+
+const tagsRoutes = {
+  tags: (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings.tags'),
+    params: {
+      pathname: '/',
+    },
+  }),
+};
+
 /**
  * All paths combined together
  */
 
-export type RouteType = WebhookRouteType | LocalesRouteType | UsersListRouteType | RolesRouteType;
+export type RouteType =
+  | WebhookRouteType
+  | LocalesRouteType
+  | UsersListRouteType
+  | RolesRouteType
+  | TagsRouteType;
 
 export const routes = {
   ...webhookRoutes,
   ...localesRoutes,
   ...usersListRoutes,
   ...rolesRoutes,
+  ...tagsRoutes,
 };

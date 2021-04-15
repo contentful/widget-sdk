@@ -1,8 +1,6 @@
 import { Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import FeedbackButton from 'app/common/FeedbackButton';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { css } from 'emotion';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { useCanManageTags, useReadTags } from 'features/content-tags/core/hooks';
@@ -10,7 +8,7 @@ import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import * as Navigator from 'states/Navigator';
+import { getRouter } from 'core/react-routing';
 
 const styles = {
   wrapper: css({
@@ -19,7 +17,7 @@ const styles = {
   }),
   iconWrapper: css({
     marginLeft: tokens.spacingL,
-    order: '2',
+    order: 2,
   }),
   tagLimits: css({
     marginLeft: 'auto',
@@ -30,15 +28,13 @@ const styles = {
 };
 
 const TagSelectionHeader = ({ totalSelected }) => {
-  const { currentEnvironment } = useSpaceEnvContext();
   const { isLoading, hasTags } = useReadTags();
   const canManageTags = useCanManageTags();
   const onCreate = useCallback(() => {
     if (canManageTags) {
-      const isMaster = isMasterEnvironment(currentEnvironment);
-      Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
+      getRouter().go({ path: 'tags' });
     }
-  }, [canManageTags, currentEnvironment]);
+  }, [canManageTags]);
 
   const renderNoTags = useMemo(() => {
     return (
