@@ -86,11 +86,12 @@ export const getAppTrialSpaceKey = async (feature: AppTrialFeature): Promise<str
 };
 
 export const contentImport = async (spaceId: string, environmentId: string) => {
-  const client = getCMAClient({ spaceId, environmentId }) as PlainClientAPI;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { internal, ...client } = getCMAClient({ spaceId, environmentId });
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const { provisionHelpCenter } = await importer();
   try {
-    await provisionHelpCenter(client, defaultLocaleCode);
+    await provisionHelpCenter(client as PlainClientAPI, defaultLocaleCode);
   } catch (e) {
     logger.captureError(new Error('Content import failed during apps trial'), {
       originalError: e,

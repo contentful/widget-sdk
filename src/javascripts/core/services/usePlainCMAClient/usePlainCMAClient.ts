@@ -1,6 +1,7 @@
 import {
   createOnErrorWithInterceptor,
   createDefaultBatchClient,
+  createInternalMethods,
 } from '@contentful/experience-cma-utils';
 import { useMemo } from 'react';
 import { createClient } from 'contentful-management';
@@ -40,9 +41,12 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
     },
   });
 
+  const internal = createInternalMethods(client.raw);
+
   return {
     ...client,
     ...batchClient,
+    internal,
   };
 }
 
