@@ -16,7 +16,7 @@ const styles = {
   }),
 };
 
-const RoleChangeDialog = ({
+export const RoleChangeDialog = ({
   availableRoles,
   initiallySelectedRoleIds,
   displayName,
@@ -73,5 +73,3 @@ RoleChangeDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   isLastAdmin: PropTypes.bool.isRequired,
 };
-
-export default RoleChangeDialog;

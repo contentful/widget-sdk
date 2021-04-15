@@ -20,7 +20,7 @@ const styles = {
   }),
 };
 
-export default function AddUsersError({ rejected, onRetry, onClose }) {
+export function AddUsersError({ rejected, onRetry, onClose }) {
   return (
     <>
       <Modal.Content>

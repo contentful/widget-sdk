@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 
-const UserRemovalConfirmDialog = ({ displayName, isShown, onClose }) => (
+export const UserRemovalConfirmDialog = ({ displayName, isShown, onClose }) => (
   <ModalConfirm
     title={`Remove user ${displayName} from space`}
     intent="negative"
@@ -18,10 +18,9 @@ const UserRemovalConfirmDialog = ({ displayName, isShown, onClose }) => (
     </Paragraph>
   </ModalConfirm>
 );
+
 UserRemovalConfirmDialog.propTypes = {
   displayName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
-
-export default UserRemovalConfirmDialog;

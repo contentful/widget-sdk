@@ -11,10 +11,10 @@ import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { FilterPill } from 'features/entity-search';
-import UserListRow from './UserListRow';
+import { UserListRow } from './UserListRow';
 
-import AddUsersToSpaceNote from './AddUsersToSpaceNote';
-import { VIEW_LABELS } from './constants';
+import { AddUsersToSpaceNote } from './AddUsersToSpaceNote';
+import { VIEW_LABELS } from '../constants';
 
 const styles = {
   workbench: {
@@ -59,7 +59,7 @@ const scrollToRole = (roleGroupEl) => {
   roleGroupEl.current.scrollIntoView({ block: 'start' });
 };
 
-const UserListPresentation = ({
+export const UserListPresentation = ({
   canModifyUsers,
   openSpaceInvitationDialog,
   orgId,
@@ -149,8 +149,6 @@ const UserListPresentation = ({
     </>
   );
 };
-
-export default UserListPresentation;
 
 UserListPresentation.propTypes = {
   userGroups: PropTypes.objectOf(PropTypes.arrayOf(SpaceMemberPropType)).isRequired,

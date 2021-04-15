@@ -7,11 +7,11 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { go } from 'states/Navigator';
 
-import { ADMIN_ROLE_ID } from '../constants';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
 
-import RoleChangeDialog from './RoleChangeDialog';
-import UserRemovalConfirmDialog from './UserRemovalConfirmDialog';
-import LastAdminRemovalConfirmDialog from './LastAdminRemovalConfirmDialog';
+import { RoleChangeDialog } from './RoleChangeDialog';
+import { UserRemovalConfirmDialog } from './UserRemovalConfirmDialog';
+import { LastAdminRemovalConfirmDialog } from './LastAdminRemovalConfirmDialog';
 
 const getDisplayName = ({ firstName, lastName, email }) =>
   firstName || lastName ? `${firstName} ${lastName}` : email;

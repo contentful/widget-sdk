@@ -5,7 +5,7 @@ import { track } from 'analytics/Analytics';
 
 import StateLink from 'app/common/StateLink';
 
-const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
+export const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
   <Typography>
     {hasTeamsFeature && (
       <Paragraph>
@@ -59,8 +59,6 @@ const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
     )}
   </Typography>
 );
-
-export default AddUsersToSpaceNote;
 
 AddUsersToSpaceNote.propTypes = {
   orgId: PropTypes.string.isRequired,

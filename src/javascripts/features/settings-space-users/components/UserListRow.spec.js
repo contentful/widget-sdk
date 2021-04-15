@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import UserListRow from './UserListRow';
+import { UserListRow } from './UserListRow';
 
 import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
-describe('User List Row', () => {
+describe('features/settings-space-users/UserListRow', () => {
   const openRoleChangeDialog = jest.fn();
   const openRemovalConfirmationDialog = jest.fn();
 

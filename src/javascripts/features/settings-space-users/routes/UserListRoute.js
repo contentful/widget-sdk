@@ -11,15 +11,15 @@ import { useAsync } from 'core/hooks';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
-import * as UserListActions from './UserListActions';
-import UserListPresentation from './UserListPresentation';
-import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
+import * as UserListActions from '../components/UserListActions';
+import { UserListPresentation } from '../components/UserListPresentation';
+import { VIEW_BY_NAME, VIEW_BY_ROLE } from '../constants';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
-import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
+import { AddUsers } from '../components/AddUsers';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -43,7 +43,7 @@ const fetch = (orgId, endpoint, space, setData) => async () => {
   setData({ resolvedMembers, roles, spaceUsers, hasTeamsFeature });
 };
 
-export default function UserList() {
+export function UserListRoute() {
   const navigationState = useNavigationState();
   const jumpToRole = navigationState?.jumpToRole ?? null;
   const { currentSpace, currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();

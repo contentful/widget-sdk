@@ -1,4 +1,4 @@
-import UserList from 'access_control/Users/UserList';
+import { UserListRoute } from 'features/settings-space-users';
 import StateRedirect from '../app/common/StateRedirect';
 import * as React from 'react';
 import { Route, RouteErrorBoundary, Routes, CustomRouter } from 'core/react-routing';
@@ -11,7 +11,7 @@ function UsersRouter() {
     <CustomRouter splitter="settings/users">
       <RouteErrorBoundary>
         <Routes basename={basename + 'users'}>
-          <Route path="/" element={<UserList />} />
+          <Route path="/" element={<UserListRoute />} />
           <Route path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>

@@ -41,7 +41,7 @@ const styles = {
   }),
 };
 
-const UserListRow = ({
+export const UserListRow = ({
   member,
   openRoleChangeDialog,
   openRemovalConfirmationDialog,
@@ -96,5 +96,3 @@ UserListRow.propTypes = {
   numberOfTeamMemberships: PropTypes.objectOf(PropTypes.number).isRequired,
   openRemovalConfirmationDialog: PropTypes.func.isRequired,
 };
-
-export default UserListRow;

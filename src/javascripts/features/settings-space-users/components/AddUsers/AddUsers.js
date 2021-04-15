@@ -6,13 +6,13 @@ import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershi
 import { fetchAndResolve } from 'data/LinkResolver';
 import { useAsync } from 'core/hooks';
 
-import UserSelection from './UserSelection';
+import { UserSelection } from './UserSelection';
 import { Modal, Notification } from '@contentful/forma-36-react-components';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import RoleSelection from './RoleSelection';
+import { RoleSelection } from './RoleSelection';
 import RoleRepository from 'access_control/RoleRepository';
 import { track } from 'analytics/Analytics';
-import AddUsersError from './AddUsersError';
+import { AddUsersError } from './AddUsersError';
 import { isTaken } from 'utils/ServerErrorUtils';
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { getSpaceId, getEnvironmentId } from 'core/services/SpaceEnvContext/utils';
@@ -57,7 +57,7 @@ const reducer = createImmerReducer({
   },
 });
 
-export default function AddUsers({ unavailableUserIds, orgId, isShown, onClose, space }) {
+export function AddUsers({ unavailableUserIds, orgId, isShown, onClose, space }) {
   const [{ selectedUsers, selectedRoles, rejected, currentStep }, dispatch] = useReducer(
     reducer,
     initialState

@@ -56,7 +56,7 @@ const styles = {
   }),
 };
 
-export default function RoleSelection({
+export function RoleSelection({
   selectedUsers,
   selectedRoles,
   spaceRoles,

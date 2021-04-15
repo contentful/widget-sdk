@@ -10,7 +10,7 @@ const styles = {
   }),
 };
 
-const LastAdminRemovalConfirmDialog = ({ displayName, isShown, onClose }) => {
+export const LastAdminRemovalConfirmDialog = ({ displayName, isShown, onClose }) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
@@ -51,5 +51,3 @@ LastAdminRemovalConfirmDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
-
-export default LastAdminRemovalConfirmDialog;

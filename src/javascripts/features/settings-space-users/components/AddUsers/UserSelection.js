@@ -4,7 +4,7 @@ import { OrganizationMembership as OrganizationMembershipPropType } from 'app/Or
 import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { flow, trim, deburr, lowerCase, get } from 'lodash';
-import AvailableUsers from './AvailableUsers';
+import { AvailableUsers } from './AvailableUsers';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
@@ -29,7 +29,7 @@ const initialState = {
   searchTerm: '',
 };
 
-export default function UserSelection({
+export function UserSelection({
   availableUsers,
   selectedUsers,
   onClose,
