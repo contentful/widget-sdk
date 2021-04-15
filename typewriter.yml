@@ -12,4 +12,4 @@ trackingPlans:
   # https://app.segment.com/contentful/protocols/tracking-plans/rs_1crHn74jVn5FkduxG4nRt1sNwO9
   - id: rs_1crHn74jVn5FkduxG4nRt1sNwO9
     workspaceSlug: contentful
-    path: src/javascripts/analytics/typewriter
+    path: src/javascripts/analytics/generated
