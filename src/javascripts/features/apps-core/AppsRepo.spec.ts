@@ -241,14 +241,14 @@ describe('AppsRepo', () => {
       expect(app5?.appDefinition).toEqual(composeAppDefinition);
     });
 
-    it('fails if an app is not present', async () => {
+    it('does not throw if an app definition is not present', async () => {
       const repo = new AppsRepo(cma, loader);
 
-      expect.assertions(1);
+      expect.assertions(0);
       try {
         await repo.getAppByIdOrSlug('not-here');
       } catch (err) {
-        expect(err.message).toBe('Could not find an app with ID "not-here".');
+        expect(err).toBeDefined();
       }
     });
 
