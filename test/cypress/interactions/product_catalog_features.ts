@@ -223,12 +223,6 @@ export const queryForEnvironmentAliasingInDefaultSpace = createDefaultSpaceFeatu
 export const queryForEnvironmentUsageInDefaultSpace = createDefaultSpaceFeatureVariants({
   featureId: 'environment_usage_enforcements',
 });
-/**
- * @deprecated superseded by launch_app on the organization level
- */
-export const queryForReleasesInDefaultSpace = createDefaultSpaceFeatureVariants({
-  featureId: 'releases',
-});
 export const queryForScheduledPublishingInDefaultSpace = createDefaultSpaceFeatureVariants({
   featureId: 'scheduled_publishing',
 });

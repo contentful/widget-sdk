@@ -69,7 +69,6 @@ describe('Tasks entry editor sidebar', () => {
         ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willFailWithAnInternalServerError(),
-        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -89,7 +88,6 @@ describe('Tasks entry editor sidebar', () => {
         ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
-        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -110,7 +108,6 @@ describe('Tasks entry editor sidebar', () => {
         ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnSeveral(),
-        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -244,7 +241,6 @@ describe('Tasks entry editor sidebar', () => {
         ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
-        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
     });
 

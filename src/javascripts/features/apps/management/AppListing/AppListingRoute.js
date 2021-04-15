@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench, Heading } from '@contentful/forma-36-react-components';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
-import { ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS } from 'features/apps/routes';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
+import { DEFAULT_ADVANCED_APPS_STATUS } from 'features/apps/routes';
 import { ADVANCED_APPS_LIMIT, BASIC_APPS_LIMIT } from 'features/apps/limits.js';
 import { AppListing } from './AppListing';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -26,7 +26,7 @@ export function AppListingRoute(props) {
     try {
       hasAdvancedApps = await getOrgFeature(
         orgId,
-        ADVANCED_APPS_FEATURE_KEY,
+        OrganizationFeatures.ADVANCED_APPS,
         DEFAULT_ADVANCED_APPS_STATUS
       );
     } catch {

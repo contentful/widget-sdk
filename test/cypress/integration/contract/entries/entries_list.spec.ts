@@ -126,7 +126,6 @@ describe('Entries list page', () => {
         ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
-        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
       cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
       cy.findByTestId('create-entry-button-menu-trigger').click();

@@ -1,6 +1,6 @@
 import * as config from 'Config';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import {
   getOrgRole,
@@ -178,7 +178,7 @@ async function ldUser({
     // determining if the org is V2 committed
     const currentOrgHasSsoSelfConfigFeature = await getOrgFeature(
       organizationId,
-      'self_configure_sso',
+      OrganizationFeatures.SELF_CONFIGURE_SSO,
       false
     );
 

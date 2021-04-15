@@ -383,7 +383,6 @@ function basicServerSetUp(): string[] {
 
   return [
     ...defaultRequestsMock(),
-    ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
     ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
     ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
     ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),

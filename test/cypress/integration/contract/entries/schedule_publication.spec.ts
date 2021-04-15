@@ -160,7 +160,6 @@ function basicServerSetUp(): string[] {
     ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
     ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
     ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
-    ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
     ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
     ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
   ];

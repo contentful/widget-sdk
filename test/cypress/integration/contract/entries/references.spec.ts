@@ -40,7 +40,6 @@ describe('Entry references', () => {
     ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled();
-    ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled();
   };
 
   beforeEach(() => {
