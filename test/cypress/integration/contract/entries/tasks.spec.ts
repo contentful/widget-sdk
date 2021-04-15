@@ -17,14 +17,7 @@ import {
   getAllPublicContentTypesInDefaultSpace,
 } from '../../../interactions/content_types';
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
-import {
-  PROVIDER as PRODUCT_CATALOG_PROVIDER,
-  queryForScheduledPublishingOnEntryPage,
-  queryForTasksInDefaultSpace,
-  queryForBasicAppsInDefaultSpace,
-  queryForContentTagsInDefaultSpace,
-  queryForReleasesInDefaultSpace,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
 const users = require('../../../fixtures/responses/users.json');
@@ -34,7 +27,7 @@ describe('Tasks entry editor sidebar', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['tasks-v2', 'entries', 'users', 'microbackend', PRODUCT_CATALOG_PROVIDER],
+      providers: ['tasks-v2', 'entries', 'users', 'microbackend', ProductCatalog.PROVIDER],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -59,7 +52,7 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
 
     return [
-      queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
+      ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
       ...defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
       }),
@@ -72,11 +65,11 @@ describe('Tasks entry editor sidebar', () => {
   context('tasks service error', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willFailWithAnInternalServerError(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -92,11 +85,11 @@ describe('Tasks entry editor sidebar', () => {
   context('no tasks on the entry', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -113,11 +106,11 @@ describe('Tasks entry editor sidebar', () => {
   context('several tasks on the entry', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnSeveral(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       visitEntry();
@@ -247,11 +240,11 @@ describe('Tasks entry editor sidebar', () => {
     let interactions: string[];
     beforeEach(() => {
       interactions = [
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
-        queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
       ];
     });
 

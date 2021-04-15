@@ -14,19 +14,7 @@ import {
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails, queryForUsers } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
-import {
-  queryForCustomSidebarInDefaultOrg,
-  queryForTeamsInDefaultOrg,
-  queryForSelfConfigureSsoInDefaultOrg,
-  queryForScimInDefaultOrg,
-  queryForScheduledPublishingInDefaultSpace,
-  queryForTasksInDefaultSpace,
-  queryForBasicAppsInDefaultSpace,
-  queryForAdvancedAppsInDefaultOrg,
-  queryForContentTagsInDefaultSpace,
-  getComposeAppFeatureInDefaultOrg,
-  getLaunchAppFeatureInDefaultOrg,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 
 describe('Jobs page', () => {
   before(() =>
@@ -50,18 +38,17 @@ describe('Jobs page', () => {
       const interactions = [
         ...defaultRequestsMock(),
 
-        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-        queryForScimInDefaultOrg.willFindFeatureEnabled(),
-
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
 
@@ -113,18 +100,17 @@ describe('Jobs page', () => {
         queryForDefaultEntryWithoutEnvironment.willFindIt(),
         queryForDefaultUserDetails.willFindTheUserDetails(),
 
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-
-        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-        queryForScimInDefaultOrg.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
@@ -168,18 +154,17 @@ describe('Jobs page', () => {
 
       const interactions = [
         ...defaultRequestsMock(),
-        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
-        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-
-        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-        queryForScimInDefaultOrg.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+        ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);

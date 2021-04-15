@@ -17,20 +17,7 @@ import {
   queryAllScheduledJobsForDefaultEntry,
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
-import {
-  queryForTasksInDefaultSpace,
-  queryForBasicAppsInDefaultSpace,
-  queryForAdvancedAppsInDefaultOrg,
-  queryForScheduledPublishingOnEntryPage,
-  queryForContentTagsInDefaultSpace,
-  queryForCustomSidebarInDefaultOrg,
-  queryForTeamsInDefaultOrg,
-  queryForSelfConfigureSsoInDefaultOrg,
-  queryForScimInDefaultOrg,
-  queryForReleasesInDefaultSpace,
-  getComposeAppFeatureInDefaultOrg,
-  getLaunchAppFeatureInDefaultOrg,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
   let interactions: string[];
@@ -164,17 +151,17 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-    queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
-    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-    queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-    queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
-    queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-    queryForScimInDefaultOrg.willFindFeatureEnabled(),
-    queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
-    getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-    getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+    ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.queryForReleasesInDefaultSpace.willFindFeatureEnabled(),
+    ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+    ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
   ];
 }

@@ -6,15 +6,7 @@ import {
   publicAppDefinitions,
 } from '../../../interactions/apps';
 import { getAllContentTypesInDefaultSpace } from '../../../interactions/content_types';
-import {
-  getLaunchAppFeatureInDefaultOrg,
-  getComposeAppFeatureInDefaultOrg,
-  queryForAdvancedAppsInDefaultOrg,
-  queryForCustomSidebarInDefaultOrg,
-  queryForSelfConfigureSsoInDefaultOrg,
-  queryForScimInDefaultOrg,
-  queryForTeamsInDefaultOrg,
-} from '../../../interactions/product_catalog_features';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 import { queryForEditorInterfaces } from '../../../interactions/editor_interfaces';
 import { getBasePlan } from '../../../interactions/plans';
 
@@ -47,13 +39,13 @@ describe('App Installation', () => {
         ...defaultRequestsMock(),
         organizationAppDefinitions.willListOnePrivate(),
         getBasePlan.willReturnEnterprise(),
-        getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-        getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
-        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
-        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
-        queryForScimInDefaultOrg.willFindFeatureEnabled(),
-        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
-        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
+        ProductCatalog.queryForScimInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        ProductCatalog.queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
       ];
       // There are multiple requests to /app_definitions with different query strings
       // We always want to return the same, independent of query string, so we don't wait for the interaction
