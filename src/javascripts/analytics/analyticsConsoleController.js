@@ -8,6 +8,7 @@ import * as logger from 'services/logger';
 import { getSegmentSchemaForEvent, getSnowplowSchemaForEvent } from 'analytics/transform';
 import * as Snowplow from 'analytics/snowplow';
 import { render } from 'analytics/AnalyticsConsole';
+import { buildPayload } from './segment';
 
 /**
  * @description
@@ -65,20 +66,22 @@ function show(overrideScopeOptions) {
 
 /**
  * @param {string} name
- * @param {object?} data
+ * @param {TransformedEventData} transformedData Transformed event data.
+ * @param {EventData} rawData Original untransformed analytics.track() event data.
  * @description
  * Adds an event to the console.
  */
-export function add(name, data) {
-  const snowplowEvent = buildSnowplowEvent(name, data);
-
+export function add(name, transformedData, rawData) {
   const event = {
     time: moment().format('HH:mm:ss'),
-    name: name,
-    data: data,
     isValid: validateEvent(name),
+    raw: {
+      name: name,
+      data: rawData,
+    },
   };
 
+  const snowplowEvent = buildSnowplowEvent(name, transformedData);
   if (snowplowEvent) {
     const snowplowSchema = getSnowplowSchemaForEvent(name);
 
@@ -94,7 +97,7 @@ export function add(name, data) {
   event.segment = {
     name: segmentSchema.name,
     version: segmentSchema.version,
-    data,
+    data: buildPayload(segmentSchema, transformedData),
   };
 
   eventsBus.emit(event);

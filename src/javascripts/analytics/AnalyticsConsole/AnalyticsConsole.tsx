@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from 'emotion';
 import ReactDOM from 'react-dom';
 import {
   Button,
@@ -8,13 +9,14 @@ import {
   EditorToolbarButton,
   Option,
   Select,
+  Tag,
   TextField,
   TextLink,
 } from '@contentful/forma-36-react-components';
 import type { Observable } from 'kefir';
 import pluralize from 'pluralize';
 import { styles } from './styles';
-import { Event, Service, SessionData } from './types';
+import { Event, EventSource, FilteredEvent, SessionData } from './types';
 import { getFilteredEvents } from './utils';
 import { useScroll } from './useScroll';
 import { useCachedState } from './useCachedState';
@@ -26,10 +28,7 @@ interface AnalyticsConsoleProps {
   events$: Observable<Event[], unknown>;
 }
 
-const PrettyData = ({ data }: { data?: object }) => {
-  const prettyData = (data?: object): string => (data ? JSON.stringify(data, null, 2) : 'no data');
-  return <pre className={styles.data}>{prettyData(data)}</pre>;
-};
+const DEFAULT_EVENT_SOURCE: EventSource = 'segment'; // Do not use "raw" as it might be more verbose and less informative.
 
 const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
   isVisible,
@@ -43,9 +42,9 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
 
   const [isCollapsed, setIsCollapsed] = useCachedState('isCollapsed', false);
   const [showSessionData, setShowSessionData] = useCachedState('showSessionData', false);
-  const [showServiceDebugInfo, setShowServiceDebugInfo] = useCachedState<Service | ''>(
+  const [eventSource, setEventSource] = useCachedState<EventSource>(
     'showServiceDebugInfo',
-    ''
+    DEFAULT_EVENT_SOURCE
   );
   const [showData, setShowData] = useCachedState('showData', false);
   const [events, setEvents] = useCachedState<Event[]>('events', []);
@@ -81,16 +80,16 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
   if (!isVisible) return null;
 
   const toggleSessionData = () => {
-    setShowServiceDebugInfo('');
+    setEventSource(DEFAULT_EVENT_SOURCE);
     const newShowSessionData = !showSessionData;
     setShowSessionData(newShowSessionData);
     showSessionData ? scrollUp() : scrollDown();
   };
 
   const toggleServiceDebugInfo = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const service = e.target.value as Service | '';
+    const service = e.target.value as EventSource;
     setShowSessionData(false);
-    setShowServiceDebugInfo(service);
+    setEventSource(service);
     if (service) {
       scrollDown();
     }
@@ -101,7 +100,7 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
 
   const { hiddenEvents, filteredEvents } = getFilteredEvents(
     clearedEventsIndex,
-    showServiceDebugInfo,
+    eventSource,
     filterText,
     events
   );
@@ -120,25 +119,14 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
           <TextLink onClick={clearSearch}>[clear search]</TextLink>
         </div>
       )}
-      {showServiceDebugInfo
-        ? filteredEvents.map(({ index, time, ...serviceEvents }) => (
-            <ServiceEvent
-              key={index}
-              index={index}
-              time={time}
-              serviceEvent={serviceEvents[showServiceDebugInfo]}
-              showData={showData}
-            />
-          ))
-        : filteredEvents.map(({ index, time, name, isValid, data }) => (
-            <div key={index} className={styles.event}>
-              <div>
-                #{index + 1} - {time} <strong>{name}</strong>
-                {!isValid && <span> invalid name</span>}
-              </div>
-              {showData && <PrettyData data={data} />}
-            </div>
-          ))}
+      {filteredEvents.map((event) => (
+        <PrettyEvent
+          key={`${eventSource}-${event.index}`}
+          showData={showData}
+          event={event}
+          eventSource={eventSource}
+        />
+      ))}
     </React.Fragment>
   );
 
@@ -164,8 +152,9 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
             id="show-transformed"
             name="showTransformed"
             width="auto"
-            onChange={toggleServiceDebugInfo}>
-            <Option value="">Untransformed</Option>
+            onChange={toggleServiceDebugInfo}
+            value={eventSource}>
+            <Option value="raw">Untransformed</Option>
             <Option value="snowplow">Snowplow</Option>
             <Option value="segment">Segment</Option>
           </Select>
@@ -218,33 +207,55 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
   );
 };
 
-function ServiceEvent({
-  index,
-  time,
-  serviceEvent,
-  showData,
-}: {
-  index: number;
-  time: string;
-  serviceEvent: Event['snowplow'] | Event['segment'];
+interface PrettyEventProps {
   showData: boolean;
-}) {
+  event: FilteredEvent;
+  eventSource: EventSource;
+}
+
+function PrettyEvent({ showData, event, eventSource }: PrettyEventProps) {
+  const { index, time, isValid } = event;
+  const current = event[eventSource];
+  if (!current) {
+    return null; // Event isn't tracked to the selected service.
+  }
   return (
     <div className={styles.event}>
       <div>
-        #{index + 1} - {time}{' '}
-        <strong>
-          {serviceEvent.name}, v{serviceEvent.version}
-        </strong>
+        #{index + 1} - {time} <strong>{event.raw.name}</strong>
+        {eventSource === 'raw' && event.segment && <Info type="positive" value="Segment" />}
+        {eventSource === 'raw' && event.snowplow && <Info type="warning" value="Snowplow" />}
+        {current.name !== event.raw.name && (
+          <Info type="primary" isLowerCase={true} value={current.name} />
+        )}
+        {current.version && <Info type="secondary" value={`v${current.version}`} />}
+        {!isValid && <Info type="negative" value="invalid name" />}
       </div>
       {showData && (
         <React.Fragment>
-          <PrettyData data={serviceEvent.data} />
-          {serviceEvent.context && <PrettyData data={serviceEvent.context} />}
+          <PrettyData data={current.data} />
+          {current.context && <PrettyData data={current.context} />}
         </React.Fragment>
       )}
     </div>
   );
+}
+
+function Info({ value, type, isLowerCase = false }) {
+  const style = isLowerCase ? css({ textTransform: 'none' }) : undefined;
+  return (
+    <>
+      {' '}
+      <Tag className={style} size="small" tagType={type}>
+        {value}
+      </Tag>
+    </>
+  );
+}
+
+function PrettyData({ data }: { data?: object }) {
+  const prettyData = (data?: object): string => (data ? JSON.stringify(data, null, 2) : 'no data');
+  return <pre className={styles.data}>{prettyData(data)}</pre>;
 }
 
 const WRAPPER_CLASS_NAME = 'analytics-console-wrapper';

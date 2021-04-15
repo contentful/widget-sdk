@@ -111,7 +111,7 @@ export function track(event: string, data?: EventData): void {
 
     segment.track(event, transformedData);
     snowplow.track(event, transformedData);
-    analyticsConsole.add(event, transformedData);
+    analyticsConsole.add(event, transformedData, data);
     logEventPayloadSize(event, transformedData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic

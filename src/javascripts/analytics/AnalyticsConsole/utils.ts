@@ -1,8 +1,8 @@
-import { Event, FilteredEvent, Service } from './types';
+import { Event, FilteredEvent, EventSource } from './types';
 
 export const getFilteredEvents = (
   clearedEventsIndex: number,
-  showServiceSpecificDebugInfo: Service | '',
+  eventSource: EventSource,
   filterText: string,
   events: Event[]
 ): { hiddenEvents: number; filteredEvents: FilteredEvent[] } => {
@@ -10,19 +10,17 @@ export const getFilteredEvents = (
     if (index <= clearedEventsIndex) {
       return false;
     }
-    if (!showServiceSpecificDebugInfo) {
-      return true;
-    }
-    return (
-      (showServiceSpecificDebugInfo === 'snowplow' && event.snowplow) ||
-      (showServiceSpecificDebugInfo === 'segment' && event.segment)
-    );
+    return !!event[eventSource];
   };
 
   const isSearchResultEvent = (event) => {
     if (!filterText) return true;
     const isMatch = (text: string) => text.includes(filterText);
-    return isMatch(event.name) || (event.snowplow && isMatch(event.snowplow.name));
+    return (
+      isMatch(event.raw.name) ||
+      (event.snowplow && isMatch(event.snowplow.name)) ||
+      (event.segment && isMatch(event.segment.name))
+    );
   };
 
   const relevantEvents = events
