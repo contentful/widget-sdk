@@ -24,6 +24,7 @@ export enum OrganizationFeatures {
   PC_ORG_LAUNCH_APP = 'launch_app',
   SELF_CONFIGURE_SSO = 'self_configure_sso',
   ADVANCED_APPS = 'advanced_apps',
+  TEAMS = 'teams',
 }
 
 /**
