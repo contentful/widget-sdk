@@ -141,7 +141,7 @@ export function SubscriptionPage({
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
-  const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
+  const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner && !isOrgOnTrial;
 
   // Contentful Apps card should not show to Enterprise orgs and user is not Admin/Owner
   const showContentfulAppsCard = !enterprisePlan && isOrgOwnerOrAdmin;

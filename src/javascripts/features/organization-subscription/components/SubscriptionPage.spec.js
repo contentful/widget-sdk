@@ -188,6 +188,13 @@ describe('SubscriptionPage', () => {
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
+  it('should not show the limitations copy if the org is on trial', () => {
+    build({ organization: mockTrialOrganization });
+
+    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
+  });
+
   it('should open the create space dialog if the limitations create space CTA is clicked', () => {
     isOwner.mockReturnValue(true);
     build({ organization: Fake.Organization({ isBillable: false }) });
