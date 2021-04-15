@@ -20,7 +20,12 @@ import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
 import { createRoleRemover } from '../components/RoleRemover';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { CUSTOM_ROLES_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import {
+  CUSTOM_ROLES_CONTENT_ENTRY_ID,
+  FeatureModal,
+  handleHighValueLabelTracking,
+  ROLES_AND_PERMISSIONS_TRACKING_NAME,
+} from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { useRouteNavigate } from 'core/react-routing';
 
@@ -37,15 +42,18 @@ const styles = {
   }),
 };
 
-const openDialog = (modalData) =>
+const openDialog = (modalData) => {
+  handleHighValueLabelTracking('click', ROLES_AND_PERMISSIONS_TRACKING_NAME, false);
+
   ModalLauncher.open(({ onClose, isShown }) => (
     <FeatureModal
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
-      featureTracking="roles_and_permissions"
+      featureTracking={ROLES_AND_PERMISSIONS_TRACKING_NAME}
     />
   ));
+};
 
 // get high value label modal data from Contentful
 const initialFetch = async () => await fetchWebappContentByEntryID(CUSTOM_ROLES_CONTENT_ENTRY_ID);
@@ -67,7 +75,12 @@ function RoleListActions(props) {
   return (
     <div className={styles.actions}>
       {showHighValueLabel && (
-        <Tooltip place="left" content="This feature is a part of Enterprise plan. ">
+        <Tooltip
+          place="left"
+          content="This feature is a part of Enterprise plan."
+          onMouseOver={() =>
+            handleHighValueLabelTracking('hover', ROLES_AND_PERMISSIONS_TRACKING_NAME, false)
+          }>
           <Button
             icon="InfoCircle"
             className={styles.addRoleButton}
@@ -87,7 +100,10 @@ function RoleListActions(props) {
           {props.isOrgOnTrial && props.highValueLabelEnabled ? (
             <Tooltip
               place="left"
-              content="This feature is a part of the Enterprise plan. You can use it during your trial.">
+              content="This feature is a part of the Enterprise plan. You can use it during your trial."
+              onMouseOver={() =>
+                handleHighValueLabelTracking('hover', ROLES_AND_PERMISSIONS_TRACKING_NAME, true)
+              }>
               <Button
                 icon="InfoCircle"
                 className={styles.addRoleButton}
@@ -95,6 +111,7 @@ function RoleListActions(props) {
                 buttonType="primary"
                 disabled={props.hasReachedLimit}
                 onClick={() => {
+                  handleHighValueLabelTracking('click', ROLES_AND_PERMISSIONS_TRACKING_NAME, true);
                   navigate({ path: 'roles.new' });
                 }}>
                 Create a new role

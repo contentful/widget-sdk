@@ -193,7 +193,13 @@ export const validEvents = {
   pricing_update: ['communication_seen'],
   space_assignment: ['change', 'continue', 'confirm', 'back'],
   space_creation: ['begin', 'continue', 'confirm', 'back', 'get_in_touch'],
-  high_value_feature: ['modal_help_center_cta', 'modal_learn_more_cta', 'modal_close'],
+  high_value_feature: [
+    'modal_help_center_cta',
+    'modal_learn_more_cta',
+    'modal_close',
+    'click',
+    'hover',
+  ],
   degraded_app_performance: ['modal_shown'],
   trial: [
     'trial_tag_clicked',

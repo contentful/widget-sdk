@@ -13,7 +13,12 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
 
-import { TEAMS_CONTENT_ENTRY_ID, FeatureModal } from 'features/high-value-modal';
+import {
+  TEAMS_CONTENT_ENTRY_ID,
+  FeatureModal,
+  handleHighValueLabelTracking,
+  TEAMS_TRACKING_NAME,
+} from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 
 const styles = {
@@ -93,12 +98,17 @@ const styles = {
   }),
 };
 
-function Label({ hasTooptip, children, ...rest }) {
+function Label({ hasTooptip, children, highValueLabel, isOrganizationOnTrial, ...rest }) {
   if (hasTooptip) {
     return (
       <Tooltip
         {...rest}
-        targetWrapperClassName={cn(styles.navBarListLabel, 'border-bottom--active')}>
+        targetWrapperClassName={cn(styles.navBarListLabel, 'border-bottom--active')}
+        onMouseOver={
+          highValueLabel &&
+          (() =>
+            handleHighValueLabelTracking('hover', TEAMS_TRACKING_NAME, !!isOrganizationOnTrial))
+        }>
         {children}
       </Tooltip>
     );
@@ -108,6 +118,8 @@ function Label({ hasTooptip, children, ...rest }) {
 
 Label.propTypes = {
   hasTooptip: PropTypes.bool.isRequired,
+  highValueLabel: PropTypes.bool,
+  isOrganizationOnTrial: PropTypes.bool,
 };
 
 function getNavigationProps(item) {
@@ -121,15 +133,18 @@ function getNavigationProps(item) {
   };
 }
 
-const openDialog = (modalData) =>
+const openDialog = (modalData) => {
+  handleHighValueLabelTracking('click', TEAMS_TRACKING_NAME, false);
+
   ModalLauncher.open(({ onClose, isShown }) => (
     <FeatureModal
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
-      featureTracking="teams"
+      featureTracking={TEAMS_TRACKING_NAME}
     />
   ));
+};
 
 const initialFetch = async () => await fetchWebappContentByEntryID(TEAMS_CONTENT_ENTRY_ID);
 
@@ -153,6 +168,8 @@ export default function NavigationItem(props) {
     if (item.highValueLabel && !item.isOrganizationOnTrial) {
       fetchData();
     } else {
+      item.isOrganizationOnTrial &&
+        handleHighValueLabelTracking('click', TEAMS_TRACKING_NAME, true);
       Navigator.go(getNavigationProps(item));
     }
   };
@@ -188,7 +205,12 @@ export default function NavigationItem(props) {
         {...{
           tabIndex: item.disabled ? undefined : '0',
         }}>
-        <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
+        <Label
+          hasTooptip={Boolean(item.tooltip)}
+          content={item.tooltip}
+          placement="bottom"
+          highValueLabel={item.highValueLabel}
+          isOrganizationOnTrial={item.isOrganizationOnTrial}>
           {item.navIcon ? (
             <ProductIcon
               icon={item.navIcon}
