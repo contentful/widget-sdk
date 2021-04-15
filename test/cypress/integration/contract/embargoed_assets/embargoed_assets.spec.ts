@@ -37,6 +37,7 @@ describe('Embargoed Assets settings page', () => {
 
         it('renders detail page with current mode and URL security labels', () => {
           cy.findByTestId('embargoed-assets-current-mode').should('have.text', 'Preparation mode');
+          cy.findByTestId('embargoed-assets-level-table').scrollIntoView();
           cy.findByTestId('embargoed-assets.cma')
             .should('be.visible')
             .findByTestId('cf-ui-tag')
@@ -130,6 +131,7 @@ describe('Embargoed Assets settings page', () => {
             'have.text',
             'Unpublished assets protected'
           );
+          cy.findByTestId('embargoed-assets-level-table').scrollIntoView();
           cy.findByTestId('embargoed-assets.cma')
             .should('be.visible')
             .findByTestId('cf-ui-tag')
@@ -226,6 +228,7 @@ describe('Embargoed Assets settings page', () => {
             'have.text',
             'All assets protected'
           );
+          cy.findByTestId('embargoed-assets-level-table').scrollIntoView();
           cy.findByTestId('embargoed-assets.cma')
             .should('be.visible')
             .findByTestId('cf-ui-tag')

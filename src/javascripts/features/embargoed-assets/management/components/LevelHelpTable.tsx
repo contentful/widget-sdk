@@ -78,7 +78,7 @@ export function LevelHelpTable({ currentLevel, selectedLevel }: LevelHelpTablePa
   const toLevelSecurity = levelToUrlSecurity[selectedLevel ?? currentLevel];
 
   return (
-    <Table className={styles.table}>
+    <Table testId="embargoed-assets-level-table" className={styles.table}>
       <TableHead>
         <TableRow>
           <TableCell testId="embargoed-assets.api" className={styles.tableFirstCol}>
