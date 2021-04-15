@@ -71,11 +71,14 @@ export class AppsRepo {
     this.cacheInvalidatedListeners.forEach((callback) => callback());
   }
 
+  isMarketPlaceApp = (a: MarketplaceApp | NonInstallableMarketplaceApp): a is MarketplaceApp =>
+    !!a.appDefinition;
+
   getAppByIdOrSlug = async (idOrSlug: string): Promise<MarketplaceApp | undefined> => {
     const apps = await this.getAllApps();
 
     const app = apps.find((app) => app.id === idOrSlug || app.appDefinition?.sys.id === idOrSlug);
-    if (app) {
+    if (app && this.isMarketPlaceApp(app)) {
       return app;
     }
   };

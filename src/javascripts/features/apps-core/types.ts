@@ -49,4 +49,14 @@ export interface MarketplaceApp {
   isPaidApp?: boolean;
 }
 
-export type NonInstallableMarketplaceApp = Omit<MarketplaceApp, 'appDefinition'>;
+export type NonInstallableMarketplaceApp = Omit<MarketplaceApp, 'appDefinition'> & {
+  appDefinition?: {
+    sys: {
+      type: string;
+      id: string;
+      organization: SysLink;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
+};
