@@ -21,6 +21,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderColor: tokens.colorElementLight,
   }),
   cardInfo: css({
     flexGrow: 1,
@@ -49,6 +50,7 @@ const styles = {
     marginTop: tokens.spacing2Xs,
     display: 'flex',
     alignItems: 'center',
+    color: tokens.colorTextMid,
   }),
 };
 
