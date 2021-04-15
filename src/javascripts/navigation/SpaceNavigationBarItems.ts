@@ -79,7 +79,7 @@ export function getSpaceNavigationItems({
       if: canNavigateTo('embargoedAssets'),
       sref: makeRef('settings.embargoedAssets', isUnscopedRoute),
       dataViewType: 'spaces-settings-embargoedAssets',
-      title: 'Embargoed Assets',
+      title: 'Embargoed assets',
     },
     roles: {
       if: canNavigateTo('roles'),
