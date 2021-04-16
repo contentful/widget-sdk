@@ -22,7 +22,7 @@
 
     // enable the following when we ready
     "noImplicitAny": false,
-    "types": ["node", "jest", "testing-library__jest-dom"],
+    "types": ["node", "jest", "testing-library__jest-dom", "segment-analytics"],
     "resolveJsonModule": true
   },
   "include": ["./src/javascripts/**/*"],

@@ -67,12 +67,15 @@ function bufferedCall(fnName) {
 function install(loadOptions) {
   const analytics = (window.analytics = window.analytics || []);
 
+  // @ts-expect-error
   if (analytics.initialize || analytics.invoked) {
     return Promise.reject();
   } else {
+    // @ts-expect-error
     analytics.invoked = true;
   }
 
+  // @ts-expect-error
   analytics.methods = [
     'trackSubmit',
     'trackClick',
@@ -92,18 +95,23 @@ function install(loadOptions) {
     'on',
   ];
 
+  // @ts-expect-error
   analytics.factory = (method) =>
     function (...args) {
       args.unshift(method);
+      // @ts-expect-error
       analytics.push(args);
       return analytics;
     };
 
+  // @ts-expect-error
   analytics.methods.forEach((key) => {
+    // @ts-expect-error
     analytics[key] = analytics.factory(key);
   });
 
   analytics.load = _.noop;
+  // @ts-expect-error analyticsJS to work as the legacy
   analytics._loadOptions = loadOptions;
   analytics.ready(() => {
     // Only enable Intercom if the user actually enabled it

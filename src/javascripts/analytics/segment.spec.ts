@@ -20,6 +20,7 @@ describe('Segment', () => {
 
     track = jest.fn();
     window.analytics = {
+      // @ts-expect-error
       push: noop,
     };
     mockAnalytics = {
