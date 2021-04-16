@@ -9,21 +9,22 @@ import { Endpoint } from 'data/CMA/types';
 
 export enum SpaceFeatures {
   BASIC_APPS = 'basic_apps',
-  ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements',
-  ENVIRONMENT_ALIASING = 'environment_aliasing',
   CONTENT_WORKFLOW_TASKS = 'tasks',
-  SCHEDULED_PUBLISHING = 'scheduled_publishing',
-  PC_CONTENT_TAGS = 'content_tags',
-  PC_SPACE_RELEASES = 'releases',
-  PC_SPACE_REFERENCE_TREE = 'reference_tree',
   CUSTOM_ROLES_FEATURE = 'custom_roles',
+  ENVIRONMENT_ALIASING = 'environment_aliasing',
+  ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements',
+  PC_CONTENT_TAGS = 'content_tags',
+  PC_SPACE_REFERENCE_TREE = 'reference_tree',
+  SCHEDULED_PUBLISHING = 'scheduled_publishing',
 }
 
 export enum OrganizationFeatures {
+  ADVANCED_APPS = 'advanced_apps',
+  CUSTOM_SIDEBAR = 'custom_sidebar',
   PC_ORG_COMPOSE_APP = 'compose_app',
   PC_ORG_LAUNCH_APP = 'launch_app',
+  SCIM = 'scim',
   SELF_CONFIGURE_SSO = 'self_configure_sso',
-  ADVANCED_APPS = 'advanced_apps',
   TEAMS = 'teams',
 }
 
@@ -46,11 +47,14 @@ export const DEFAULT_FEATURES_STATUS = {
 // There is no prefetching! Just doing carpooling for HTTP.
 // Please remember these are sent as query string parameters, so
 // we may hit the URL length limit (~8k chars) some day.
-const COMMON_FOR_SPACE = [SpaceFeatures.BASIC_APPS];
-const COMMON_FOR_ORG = [
-  'custom_sidebar',
-  'teams',
-  'scim',
+const COMMON_FOR_SPACE: SpaceFeatures[] = [
+  SpaceFeatures.BASIC_APPS,
+  SpaceFeatures.SCHEDULED_PUBLISHING,
+];
+const COMMON_FOR_ORG: OrganizationFeatures[] = [
+  OrganizationFeatures.CUSTOM_SIDEBAR,
+  OrganizationFeatures.TEAMS,
+  OrganizationFeatures.SCIM,
   OrganizationFeatures.ADVANCED_APPS,
   OrganizationFeatures.PC_ORG_LAUNCH_APP,
   OrganizationFeatures.PC_ORG_COMPOSE_APP,
@@ -75,11 +79,13 @@ const COMMON_FOR_ORG = [
 // be used when Product Catalog is not available or returns
 // a malformed response.
 
-const getLoaderForEndpoint = (endpoint: Endpoint) => {
+const getLoaderForEndpoint = <TFeatures extends string>(
+  endpoint: Endpoint
+): DataLoader<TFeatures, boolean> => {
   // disable batching in contract tests
   const enableBatchRequests = Config.env !== 'development';
-  return new DataLoader(
-    async (featureIds: readonly string[]) => {
+  return new DataLoader<TFeatures, boolean>(
+    async (featureIds: readonly TFeatures[]) => {
       // API quirk:
       // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
       const qs = featureIds
@@ -117,7 +123,12 @@ const getLoaderForSpace = memoize((spaceId: string) => {
   return getLoaderForEndpoint(createSpaceEndpoint(spaceId, null));
 });
 
-const load = async (loader, featureId, defaultValue = false, common: any[] = []) => {
+const load = async <TFeatures>(
+  loader: DataLoader<TFeatures, boolean>,
+  featureId: TFeatures,
+  defaultValue = false,
+  common: TFeatures[] = []
+) => {
   const featureIds = uniq([featureId, ...common]);
 
   try {

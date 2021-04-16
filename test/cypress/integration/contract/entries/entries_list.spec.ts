@@ -26,6 +26,40 @@ const nonArchivedQuery = {
   skip: '0',
   'sys.archivedAt[exists]': 'false',
 };
+
+// List of key => pointer to product catalog expectation function (NOT executed)
+const defaultProductCatalogResponses = {
+  scheduledPublishing:
+    ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled,
+  tasks: ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled,
+  contentTags: ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled,
+  environmentUsage: ProductCatalog.queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled,
+  basicApps: ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled,
+} as const;
+
+/**
+ * sets up expected calls to the product catalog with the ability to override
+ * @example
+ * const interactions = [
+ *   ...withProductCatalogResponses({
+ *     tasks: ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureDisabled
+ *   })
+ * ]
+ *
+ * will execute all of the usual response expectations with tasks being disabled
+ */
+function withProductCatalogResponses(
+  overrides: Partial<typeof defaultProductCatalogResponses> = {}
+) {
+  const merged = {
+    ...defaultProductCatalogResponses,
+    ...overrides,
+  };
+
+  // go init all of the Pact expectations
+  return Object.values(merged).map((fn) => fn());
+}
+
 describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
@@ -59,12 +93,9 @@ describe('Entries list page', () => {
 
       const interactions = [
         ...defaultRequestsMock({}),
+        ...withProductCatalogResponses(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
         '@queryNonArchivedEntries',
-        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -99,11 +130,8 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
         }),
+        ...withProductCatalogResponses(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
-        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -123,7 +151,6 @@ describe('Entries list page', () => {
         getDefaultEntry.willReturnIt(),
         queryLinksToDefaultEntry.willReturnNone(),
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
-        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
@@ -157,13 +184,9 @@ describe('Entries list page', () => {
       const interactions = [
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
+        ...withProductCatalogResponses(),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
-        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -215,14 +238,10 @@ describe('Entries list page', () => {
 
       const interactions = [
         ...defaultRequestsMock({}),
+        ...withProductCatalogResponses(),
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithMaxLimit.willFindSeveral(),
-        ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
