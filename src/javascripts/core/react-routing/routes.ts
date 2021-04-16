@@ -164,6 +164,40 @@ const tagsRoutes = {
 };
 
 /**
+ * Extensions
+ */
+
+type ExtensionsListRouteType = {
+  path: 'extensions.list';
+  navigationState?: {
+    referrer?: string;
+    extensionUrl?: string;
+  };
+};
+type ExtensionsDetailRouteType = { path: 'extensions.detail'; extensionsId: string };
+
+type ExtensionsRouteType = ExtensionsListRouteType | ExtensionsDetailRouteType;
+
+const extensionsRoutes = {
+  'extensions.list': (env: EnvironmentParams, params?: Omit<ExtensionsListRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'settings.extensions'),
+    params: {
+      pathname: '/',
+      navigationState: params?.navigationState,
+    },
+  }),
+  'extensions.detail': (
+    env: EnvironmentParams,
+    params: Omit<ExtensionsDetailRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'settings.extensions'),
+    params: {
+      pathname: `/${params.extensionsId}`,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -172,6 +206,7 @@ export type RouteType =
   | LocalesRouteType
   | UsersListRouteType
   | RolesRouteType
+  | ExtensionsRouteType
   | TagsRouteType;
 
 export const routes = {
@@ -179,5 +214,6 @@ export const routes = {
   ...localesRoutes,
   ...usersListRoutes,
   ...rolesRoutes,
+  ...extensionsRoutes,
   ...tagsRoutes,
 };

@@ -6,13 +6,13 @@ import { Notification, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { getExtensionParameterIds } from './getExtensionParameterIds';
-import StateLink from 'app/common/StateLink';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { ExtensionForm } from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ExtensionEditorSkeleton } from './skeletons/ExtensionEditorSkeleton';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 const styles = {
   actionButton: css({
@@ -132,13 +132,9 @@ export class ExtensionEditor extends React.Component {
   renderActions = (dirty) => {
     return (
       <React.Fragment>
-        <StateLink path="^.list">
-          {({ onClick }) => (
-            <Button className={styles.actionButton} buttonType="muted" onClick={onClick}>
-              Close
-            </Button>
-          )}
-        </StateLink>
+        <Button className={styles.actionButton} buttonType="muted" onClick={this.props.goToList}>
+          Close
+        </Button>
         <Button
           buttonType="positive"
           disabled={!dirty || this.state.saving}
@@ -153,12 +149,15 @@ export class ExtensionEditor extends React.Component {
     const dirty = this.isDirty();
 
     return (
-      <ExtensionEditorSkeleton
-        goToList={this.props.goToList}
-        title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
-        actions={this.renderActions(dirty)}>
-        {this.renderContent()}
-      </ExtensionEditorSkeleton>
+      <React.Fragment>
+        {dirty && <UnsavedChangesBlocker when save={this.save} />}
+        <ExtensionEditorSkeleton
+          goToList={this.props.goToList}
+          title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
+          actions={this.renderActions(dirty)}>
+          {this.renderContent()}
+        </ExtensionEditorSkeleton>
+      </React.Fragment>
     );
   }
 }

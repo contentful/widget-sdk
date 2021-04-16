@@ -5,6 +5,7 @@ import {
   TextField,
   Paragraph,
   TextLink,
+  Typography,
 } from '@contentful/forma-36-react-components';
 import * as Fetcher from './ExtensionFetcher';
 
@@ -77,26 +78,30 @@ export class GitHubInstallerModal extends React.Component {
         onCancel={onCancel}
         isConfirmDisabled={disabled}
         isConfirmLoading={fetching}>
-        <Paragraph>
-          Paste a public GitHub link to an <code>extension.json</code> descriptor file.{' '}
-          <strong>Important:</strong> use only sources that you trust. You can check the{' '}
-          <TextLink
-            href="https://github.com/contentful/extensions/tree/master/samples"
-            target="_blank"
-            rel="noopener noreferrer">
-            <code>contentful/extensions</code>
-          </TextLink>{' '}
-          repository.
-        </Paragraph>
-        <TextField
-          id="github-repo"
-          name="github-repo"
-          labelText="GitHub URL"
-          type="text"
-          value={url || ''}
-          onChange={(e) => this.checkUrl(e.target.value)}
-          validationMessage={this.getValidationMessage()}
-        />
+        <Typography>
+          <Paragraph>
+            Paste a public GitHub link to an <code>extension.json</code> descriptor file.{' '}
+          </Paragraph>
+          <Paragraph>
+            <strong>Important:</strong> use only sources that you trust. You can check the{' '}
+            <TextLink
+              href="https://github.com/contentful/extensions/tree/master/samples"
+              target="_blank"
+              rel="noopener noreferrer">
+              <code>contentful/extensions</code>
+            </TextLink>{' '}
+            repository.
+          </Paragraph>
+          <TextField
+            id="github-repo"
+            name="github-repo"
+            labelText="GitHub URL"
+            type="text"
+            value={url || ''}
+            onChange={(e) => this.checkUrl(e.target.value)}
+            validationMessage={this.getValidationMessage()}
+          />
+        </Typography>
       </ModalConfirm>
     );
   }

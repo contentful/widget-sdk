@@ -1,6 +1,6 @@
 import { getDescriptorUrl } from './ExtensionFetcher';
 
-describe('getDescriptorUrl', () => {
+describe('ExtensionFetcher', () => {
   describe('when passed a valid extension.js path', () => {
     it('returns the raw file url', () => {
       const result = getDescriptorUrl(

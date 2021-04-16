@@ -1,54 +1,28 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { ExtensionEditor } from '../ExtensionEditor';
 import { ExtensionEditorSkeleton } from '../skeletons/ExtensionEditorSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import StateRedirect from 'app/common/StateRedirect';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getModule } from 'core/NgRegistry';
-import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { go } from 'states/Navigator';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { useParams } from 'core/react-routing';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useRouteNavigate, RouteNavigate } from 'core/react-routing';
 
 const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
   return cma.getExtension(extensionId);
 });
 
-export function ExtensionEditorRoute(props) {
+export function ExtensionEditorRoute() {
+  const { extensionId } = useParams();
+  const navigate = useRouteNavigate();
   const { client: cma } = useCurrentSpaceAPIClient();
-  const requestLeaveConfirmation = React.useRef();
-  const isDirty = React.useRef(false);
 
-  React.useEffect(() => {
-    const $rootScope = getModule('$rootScope');
-
-    const unsubscribe = $rootScope.$on('$stateChangeStart', (event, toState, toStateParams) => {
-      if (!isDirty.current || !requestLeaveConfirmation.current) return;
-
-      event.preventDefault();
-      requestLeaveConfirmation.current().then((confirmed) => {
-        if (!confirmed) return;
-
-        isDirty.current = false;
-        return go({ path: toState.name, params: toStateParams });
-      });
-    });
-
-    return unsubscribe;
-  }, []);
-
-  function registerSaveAction(save) {
-    requestLeaveConfirmation.current = createUnsavedChangesDialogOpener(save);
-  }
-
-  function setDirty(value) {
-    isDirty.current = value;
-  }
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
   function goToList() {
-    return go({ path: '^.list' });
+    return navigate({ path: 'extensions.list' });
   }
 
   if (!getSectionVisibility()['extensions']) {
@@ -56,13 +30,13 @@ export function ExtensionEditorRoute(props) {
   }
 
   return (
-    <ExtensionFetcher cma={cma} extensionId={props.extensionId}>
+    <ExtensionFetcher cma={cma} extensionId={extensionId}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <ExtensionEditorSkeleton goToList={goToList} />;
         }
         if (isError) {
-          return <StateRedirect path="^.list" />;
+          return <RouteNavigate route={{ path: 'extensions.list' }} replace />;
         }
         return (
           <React.Fragment>
@@ -80,7 +54,3 @@ export function ExtensionEditorRoute(props) {
     </ExtensionFetcher>
   );
 }
-
-ExtensionEditorRoute.propTypes = {
-  extensionId: PropTypes.string.isRequired,
-};

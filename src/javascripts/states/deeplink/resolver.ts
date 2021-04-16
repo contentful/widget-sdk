@@ -106,7 +106,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
   }),
   [LinkType.Extensions]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+    spaceScopedPath: routes['extensions.list']({ withEnvironment: false }).path,
+    params: routes['extensions.list']({ withEnvironment: false }).params,
   }),
   [LinkType.OnboardingGetStarted]: createOnboardingScreenResolver('getStarted'),
   [LinkType.OnboardingCopy]: createOnboardingScreenResolver('copy'),
@@ -245,13 +246,23 @@ async function resolveInstallExtension({ url, referrer }) {
   const { space, spaceId } = await getSpaceInfo();
   const spaceContext = getModule('spaceContext');
   await spaceContext.resetWithSpace(space);
+
+  const route = routes['extensions.list'](
+    { withEnvironment: true },
+    {
+      navigationState: {
+        referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+        ...(url ? { extensionUrl: url } : {}),
+      },
+    }
+  );
+
   return {
-    path: ['spaces', 'detail', 'environment', 'settings', 'extensions', 'list'],
+    path: route.path,
     params: {
+      ...route.params,
       spaceId,
       environmentId: 'master',
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(url ? { extensionUrl: url } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,

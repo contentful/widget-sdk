@@ -248,9 +248,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#extensions', () => {
     it('should redirect the user to the extensions list page', async function () {
-      await testSpaceScopedPathDeeplinks('extensions', {
-        path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
-      });
+      await testSpaceScopedPathDeeplinks(
+        'extensions',
+        routes['extensions.list']({ withEnvironment: false })
+      );
     });
   });
 
@@ -372,13 +373,22 @@ describe('states/deeplink/resolver', () => {
         url: 'https://example.org',
       });
 
+      const route = routes['extensions.list'](
+        { withEnvironment: true },
+        {
+          navigationState: {
+            extensionUrl: 'https://example.org',
+            referrer: 'deeplink',
+          },
+        }
+      );
+
       expect(result).toEqual({
-        path: ['spaces', 'detail', 'environment', 'settings', 'extensions', 'list'],
+        path: route.path,
         params: {
           spaceId: 'test-space-id',
           environmentId: 'master',
-          extensionUrl: 'https://example.org',
-          referrer: 'deeplink',
+          ...route.params,
         },
         deeplinkOptions: {
           selectSpace: true,

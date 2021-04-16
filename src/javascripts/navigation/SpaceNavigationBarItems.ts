@@ -27,6 +27,7 @@ export function getSpaceNavigationItems({
   const users = routes['users.list']({ withEnvironment: !isUnscopedRoute });
   const webhooks = routes['webhooks.list']({ withEnvironment: !isUnscopedRoute });
   const roles = routes['roles.list']({ withEnvironment: !isUnscopedRoute });
+  const extensions = routes['extensions.list']({ withEnvironment: !isUnscopedRoute });
   const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
@@ -40,8 +41,9 @@ export function getSpaceNavigationItems({
     },
     extensions: {
       if: canNavigateTo('extensions'),
-      sref: makeRef('settings.extensions.list', isUnscopedRoute),
-      rootSref: makeRef('settings.extensions', isUnscopedRoute),
+      sref: extensions.path,
+      srefParams: extensions.params,
+      rootSref: extensions.path,
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions',
     },

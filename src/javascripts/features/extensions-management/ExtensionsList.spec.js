@@ -2,17 +2,17 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import { ExtensionsList } from './ExtensionsList';
-import * as $stateMocked from 'ng/$state';
+import { MemoryRouter } from 'react-router-dom';
 
-describe('features/extensions-management/Extensions', () => {
-  beforeEach(() => {
-    $stateMocked.go.mockClear();
-  });
-
+describe('features/extensions-management/ExtensionsList', () => {
   const cma = { deleteExtension: () => {} };
   const refresh = () => Promise.resolve({});
   const mount = (extensions = []) => {
-    return Enzyme.mount(<ExtensionsList cma={cma} extensions={extensions} refresh={refresh} />);
+    return Enzyme.mount(
+      <MemoryRouter>
+        <ExtensionsList cma={cma} extensions={extensions} refresh={refresh} />
+      </MemoryRouter>
+    );
   };
 
   const extensions = [
@@ -47,16 +47,6 @@ describe('features/extensions-management/Extensions', () => {
     expect.assertions(1);
     const wrapper = mount();
     expect(wrapper.exists("[data-test-id='extensions.empty']")).toEqual(true);
-  });
-
-  it('navigates to single extension', function () {
-    expect.assertions(2);
-
-    const wrapper = mount(extensions);
-
-    expect($stateMocked.go).not.toHaveBeenCalled();
-    wrapper.find('a').first().simulate('click');
-    expect($stateMocked.go).toHaveBeenCalled();
   });
 
   it('lists extensions', function () {

@@ -7,7 +7,7 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const ERR_SELECTOR = { 'data-test-id': 'ext-url-error' };
 
-describe('ExtensionForm', () => {
+describe('features/extensions-management/ExtensionForm', () => {
   const mount = (entity, selfHosted) => {
     const updateEntityStub = jest.fn();
     const setSelfHostedStub = jest.fn();

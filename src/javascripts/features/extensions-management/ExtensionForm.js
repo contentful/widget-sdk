@@ -8,6 +8,7 @@ import {
   Paragraph,
   TextLink,
   RadioButtonField,
+  Typography,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -101,10 +102,12 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
         <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
           Legacy sidebar extension
         </FormLabel>
-        <Paragraph className={styles.legacySidebarText}>
-          Sidebar extension, if used with a field control, will remove itself from the entry editor
-          and instead render itself the sidebar.
-        </Paragraph>
+        <Typography>
+          <Paragraph className={styles.legacySidebarText}>
+            Sidebar extension, if used with a field control, will remove itself from the entry
+            editor and instead render itself the sidebar.
+          </Paragraph>
+        </Typography>
         <FormLabel className={styles.checkboxLabel}>
           <CheckboxField
             checked={entity.extension.sidebar}
@@ -161,18 +164,20 @@ export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted 
           <FormLabel element={'h3'} className={styles.sectionHeader} required={true}>
             Code
           </FormLabel>
-          <Paragraph className>
-            Maximum accepted code size is 200KB. For a larger size use the self-hosted option.{' '}
-            <br />
-            You can also develop your extensions locally. Learn about the{' '}
-            <TextLink
-              href="https://github.com/contentful/extensions#managing-extensions"
-              target="_blank"
-              rel="noopener noreferrer">
-              CLI based development flow
-            </TextLink>
-            .
-          </Paragraph>
+          <Typography>
+            <Paragraph>
+              Maximum accepted code size is 200KB. For a larger size use the self-hosted option.{' '}
+              <br />
+              You can also develop your extensions locally. Learn about the{' '}
+              <TextLink
+                href="https://github.com/contentful/extensions#managing-extensions"
+                target="_blank"
+                rel="noopener noreferrer">
+                CLI based development flow
+              </TextLink>
+              .
+            </Paragraph>
+          </Typography>
           <Editor
             height="700px"
             value={entity.extension.srcdoc}
