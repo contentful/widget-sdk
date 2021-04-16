@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AppDetails } from './AppDetails';
 import { go } from 'states/Navigator';
-import { getModule } from 'core/NgRegistry';
 import { AppDefinition } from 'contentful-management/types';
 import { Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -10,6 +9,7 @@ import { HostingStateProvider } from './HostingStateProvider';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
 import { ManagementApiClient } from '../ManagementApiClient';
+import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
 
 interface Event {
   enabled: boolean;
@@ -34,8 +34,9 @@ export function AppDetailsRoute(props: Props) {
     () => props.definitions.find((d) => d.sys.id === props.definitionId),
     [props.definitions, props.definitionId]
   );
-  const requestLeaveConfirmation = React.useRef<Function | undefined>();
-  const isDirty = React.useRef(false);
+
+  const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+
   const isLoading = [
     props.isLoadingCanManageApps,
     props.isLoadingDefinitions,
@@ -64,25 +65,6 @@ export function AppDetailsRoute(props: Props) {
   }, [props.orgId, props.definitionId]);
 
   React.useEffect(() => {
-    const $rootScope = getModule('$rootScope');
-
-    // TODO: Find a way to remove it
-    const unsubscribe = $rootScope.$on('$stateChangeStart', (event, toState, toStateParams) => {
-      if (!isDirty.current || !requestLeaveConfirmation.current) return;
-
-      event.preventDefault();
-      requestLeaveConfirmation.current().then((confirmed) => {
-        if (!confirmed) return;
-
-        isDirty.current = false;
-        go({ path: toState.name, params: toStateParams });
-      });
-    });
-
-    return unsubscribe;
-  }, []);
-
-  React.useEffect(() => {
     if (props.definitions.length > 0 && !definition) {
       go({ path: 'error' });
     }
@@ -98,14 +80,6 @@ export function AppDetailsRoute(props: Props) {
 
   function goToListView() {
     go({ path: '^.list' });
-  }
-
-  function setRequestLeaveConfirmation(callback) {
-    requestLeaveConfirmation.current = callback;
-  }
-
-  function setDirty(value) {
-    isDirty.current = value;
   }
 
   if (isLoading || !definition || !events || !props.bundles)
@@ -129,7 +103,7 @@ export function AppDetailsRoute(props: Props) {
         events={events}
         goToTab={goToTab}
         goToListView={goToListView}
-        setRequestLeaveConfirmation={setRequestLeaveConfirmation}
+        setRequestLeaveConfirmation={registerSaveAction}
         setDirty={setDirty}
       />
     </HostingStateProvider>
