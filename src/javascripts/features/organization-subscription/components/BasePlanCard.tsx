@@ -47,8 +47,10 @@ export function BasePlanCard({
   upgradableSpaceId,
   users,
 }: BasePlanCardProps) {
+  const colorAccent = content.colorAccent.fields.value;
+
   return (
-    <Card className={styles.card(content.colorAccent.fields.value)} padding="large">
+    <Card className={styles.card(colorAccent)} padding="large">
       <Grid columns="60% 40%">
         <Typography>
           <Heading testId="base-plan-title">{content.title}</Heading>
@@ -58,6 +60,7 @@ export function BasePlanCard({
             customRenderNode={getCustomRenderNode(organizationId, {
               upgradableSpaceId,
               users,
+              colorAccent,
             })}
           />
         </Typography>

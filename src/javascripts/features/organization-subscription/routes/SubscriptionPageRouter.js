@@ -13,7 +13,7 @@ import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
-import { isEnterprisePlan, FREE } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
@@ -37,7 +37,7 @@ import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscription
 
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
-const TiersWithContent = [FREE];
+const TiersWithContent = [FREE, SELF_SERVICE];
 
 function isOrganizationEnterprise(organization, basePlan) {
   const isLegacyOrg = isLegacyOrganization(organization);

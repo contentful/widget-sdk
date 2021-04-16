@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 
-import { isFreePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
+import { isFreeSpacePlan, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
@@ -64,8 +64,15 @@ export function NonEnterpriseSubscriptionPage({
     const fetchBasePlanContent = async () => {
       let entryContent;
 
-      if (basePlan && isFreePlan(basePlan)) {
-        entryContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
+      switch (basePlan?.customerType) {
+        case FREE:
+          entryContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
+          break;
+        case SELF_SERVICE:
+          entryContent = await fetchWebappContentByEntryID('7y4ItLmbvc3ZGl0L8vtRPB');
+          break;
+        default:
+          break;
       }
 
       setContent(entryContent);

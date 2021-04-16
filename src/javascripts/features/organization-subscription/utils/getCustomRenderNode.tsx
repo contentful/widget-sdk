@@ -1,7 +1,9 @@
 import React from 'react';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import { TextLink, Icon, List, ListItem } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
-import { INLINES } from '@contentful/rich-text-types';
+import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import type { RenderNode } from '@contentful/rich-text-react-renderer';
 
 import {
@@ -11,8 +13,24 @@ import {
 } from 'core/services/ContentfulCDA';
 import StateLink from 'app/common/StateLink';
 
+const styles = {
+  list: css({
+    marginBottom: tokens.spacingM,
+  }),
+  listItem: css({
+    display: 'flex',
+    alignContent: 'center',
+  }),
+  checkmarkIcon: (color?: string) =>
+    css({
+      marginRight: tokens.spacingXs,
+      fill: color && tokens[color],
+    }),
+};
+
 export interface GetCustomRenderNodeOptions {
   upgradableSpaceId?: string;
+  colorAccent?: string;
   users?: {
     count: number;
     limit: number;
@@ -25,6 +43,20 @@ export const getCustomRenderNode = (
   orgId: string,
   options?: GetCustomRenderNodeOptions
 ): RenderNode => ({
+  [BLOCKS.UL_LIST]: (_node, children) => {
+    return (
+      <List>
+        {(children as React.ReactElement[])?.map((child, index) => {
+          return (
+            <ListItem className={styles.listItem} key={index}>
+              <Icon className={styles.checkmarkIcon(options?.colorAccent)} icon="CheckCircle" />
+              {React.createElement(React.Fragment, child.props)}
+            </ListItem>
+          );
+        })}
+      </List>
+    );
+  },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
     const {
       fields,
