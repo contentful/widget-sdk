@@ -14,6 +14,7 @@ import {
   Entity,
 } from '@contentful/types';
 import { EditorInterfaceProps } from 'contentful-management/types';
+import type { EmbargoedAssetApi } from 'features/embargoed-assets';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -499,14 +500,14 @@ export default class APIClient {
     return this.createResource(`app_installations/${appDefinitionId}/signed_requests`, data);
   };
 
-  getEmbargoedAssetsSettingLevel = () => {
+  getEmbargoedAssetsSettingLevel = (): Promise<EmbargoedAssetApi> => {
     return this.request({
       method: 'GET',
       path: ['embargoed_assets'],
     });
   };
 
-  setEmbargoedAssetsSettingLevel = (level) => {
+  setEmbargoedAssetsSettingLevel = (level): Promise<EmbargoedAssetApi> => {
     return this.request({
       method: 'PUT',
       path: ['embargoed_assets'],
