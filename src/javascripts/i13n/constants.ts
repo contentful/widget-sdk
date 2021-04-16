@@ -1,3 +1,3 @@
 export enum Source {
-  Widget = 'widget',
+  CustomWidget = 'custom-widget',
 }

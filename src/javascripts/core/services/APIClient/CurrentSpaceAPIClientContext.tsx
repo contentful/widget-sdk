@@ -17,12 +17,14 @@ export const CurrentSpaceAPIClientProvider: React.FC<{}> = (props) => {
   const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
   const [client, setClient] = React.useState(createAPIClient(currentSpaceId, currentEnvironmentId));
   const [customWidgetClient, setCustomWidgetClient] = React.useState(
-    createAPIClient(currentSpaceId, currentEnvironmentId, Source.Widget)
+    createAPIClient(currentSpaceId, currentEnvironmentId, Source.CustomWidget)
   );
 
   React.useEffect(() => {
     setClient(createAPIClient(currentSpaceId, currentEnvironmentId));
-    setCustomWidgetClient(createAPIClient(currentSpaceId, currentEnvironmentId, Source.Widget));
+    setCustomWidgetClient(
+      createAPIClient(currentSpaceId, currentEnvironmentId, Source.CustomWidget)
+    );
   }, [currentSpaceId, currentEnvironmentId]);
 
   return (
