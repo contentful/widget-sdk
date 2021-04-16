@@ -187,6 +187,9 @@ export function createAppDefinitionsEndpoint(
  * @param {string|function} baseUrl  can be a string - will be used as is
  *                                   can be a function of path to full URL
  * @param {object} auth
+ * @param {string} source - used to tag requests based on their source
+ *                          (e.g. custom widget). When missing, source
+ *                          is understood to be the webapp
  * @returns {function<T>(): Promise<T>}
  */
 export function create<Scope>(
