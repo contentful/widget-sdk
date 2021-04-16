@@ -17,7 +17,6 @@ import {
   TableRow,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -28,8 +27,8 @@ import { ExtensionListSkeleton } from './skeletons/ExtensionListSkeleton';
 
 import { DocsLink } from './ExtensionsSidebar';
 import { ExtensionsActions } from './ExtensionsActions';
-import { openGitHubInstaller } from './ExtensionsActions';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { RouteLink } from 'core/react-routing';
 
 const styles = {
   deleteDropdown: css({
@@ -159,15 +158,7 @@ export class ExtensionsList extends React.Component {
       deleteExtension: PropTypes.func.isRequired,
     }).isRequired,
     refresh: PropTypes.func.isRequired,
-    extensionUrl: PropTypes.string,
-    extensionUrlReferrer: PropTypes.string,
   };
-
-  componentDidMount() {
-    if (this.props.extensionUrl) {
-      openGitHubInstaller(this.props.extensionUrl, this.props.extensionUrlReferrer);
-    }
-  }
 
   renderList() {
     const { extensions, cma, refresh } = this.props;
@@ -179,9 +170,9 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map((extension) => (
       <TableRow key={extension.id}>
         <TableCell>
-          <StateLink path="^.detail" params={{ extensionId: extension.id }}>
+          <RouteLink route={{ path: 'extensions.detail', extensionsId: extension.id }}>
             {extension.name}
-          </StateLink>
+          </RouteLink>
         </TableCell>
         <TableCell>{extension.hosting}</TableCell>
         <TableCell>{extension.fieldTypes}</TableCell>
@@ -196,13 +187,12 @@ export class ExtensionsList extends React.Component {
         <TableCell className="x--small-cell">
           <div>
             <div>
-              <StateLink path="^.detail" params={{ extensionId: extension.id }}>
-                {({ getHref, onClick }) => (
-                  <TextLink href={getHref()} onClick={onClick} linkType="primary">
-                    Edit
-                  </TextLink>
-                )}
-              </StateLink>
+              <RouteLink
+                route={{ path: 'extensions.detail', extensionsId: extension.id }}
+                as={TextLink}
+                linkType="primary">
+                Edit
+              </RouteLink>
             </div>
             <div>
               <DeleteButton

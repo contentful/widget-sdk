@@ -1,9 +1,16 @@
 import React from 'react';
 import { TextLink } from '@contentful/forma-36-react-components';
-import PropTypes from 'prop-types';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import { useNavigationState } from 'core/react-routing';
 
-export const ExtensionsForbiddenPage = ({ extensionUrl }) => {
+export const ExtensionsForbiddenPage = () => {
+  const navigationState = useNavigationState();
+  const extensionUrl = navigationState?.extensionUrl || '';
+
+  if (!extensionUrl) {
+    return <ForbiddenPage data-test-id="extensions.forbidden" />;
+  }
+
   const messages = ['Contact the administrator of this space to get access.'];
   const fullUrl = `https://app.contentful.com/deeplink?link=install-extension&url=${encodeURI(
     extensionUrl
@@ -19,7 +26,4 @@ export const ExtensionsForbiddenPage = ({ extensionUrl }) => {
     </div>
   );
   return <ForbiddenPage data-test-id="extensions.forbidden" message={messages} />;
-};
-ExtensionsForbiddenPage.propTypes = {
-  extensionUrl: PropTypes.string.isRequired,
 };

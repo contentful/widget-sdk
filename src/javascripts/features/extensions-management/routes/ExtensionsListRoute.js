@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 import StateRedirect from 'app/common/StateRedirect';
@@ -9,7 +8,6 @@ import { ExtensionsList } from '../ExtensionsList';
 import { ExtensionListSkeleton } from '../skeletons/ExtensionListSkeleton';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
@@ -36,16 +34,11 @@ const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
   return extensions.map(prepareExtension);
 });
 
-export function ExtensionsListRoute(props) {
+export function ExtensionsListRoute() {
   const cma = useCurrentSpaceAPIClient();
-  const extensionUrl = props.extensionUrl || '';
-  const extensionUrlReferrer = props.referrer || null;
 
   if (!getSectionVisibility()['extensions']) {
-    if (extensionUrl) {
-      return <ExtensionsForbiddenPage extensionUrl={extensionUrl} />;
-    }
-    return <ForbiddenPage data-test-id="extensions.forbidden" />;
+    return <ExtensionsForbiddenPage />;
   }
 
   return (
@@ -60,21 +53,10 @@ export function ExtensionsListRoute(props) {
         return (
           <React.Fragment>
             <DocumentTitle title="Extensions" />
-            <ExtensionsList
-              extensionUrl={extensionUrl}
-              extensionUrlReferrer={extensionUrlReferrer}
-              extensions={data}
-              cma={cma}
-              refresh={fetch}
-            />
+            <ExtensionsList extensions={data} cma={cma} refresh={fetch} />
           </React.Fragment>
         );
       }}
     </ExtensionsFetcher>
   );
 }
-
-ExtensionsListRoute.propTypes = {
-  extensionUrl: PropTypes.string,
-  referrer: PropTypes.string,
-};
