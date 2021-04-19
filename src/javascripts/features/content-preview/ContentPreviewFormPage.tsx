@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
   Button,
-  Form,
-  TextField,
-  FieldGroup,
   CheckboxField,
-  Notification,
-  ModalConfirm,
+  FieldGroup,
+  Form,
   Heading,
+  ModalConfirm,
+  ModalLauncher,
+  Notification,
   Paragraph,
+  TextField,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ContentPreviewFormSkeleton } from './skeletons/ContentPreviewFormSkeleton';
 import { validate } from './ContentPreviewFormValidation';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { slugify } from '@contentful/field-editor-slug';
 import { getContentPreview } from './services/getContentPreview';
-import * as Navigator from 'states/Navigator';
 import * as Analytics from 'analytics/Analytics';
+import { RouteNavigateFn, withRouteNavigate } from 'core/react-routing';
+import { UnsavedChangesModalProps } from 'core/hooks';
+import { ContentTypeField } from 'core/services/SpaceEnvContext/types';
 
 const styles = {
   removeButton: css({
@@ -28,28 +29,34 @@ const styles = {
   }),
 };
 
-export class ContentPreviewFormPage extends Component {
-  static propTypes = {
-    isNew: PropTypes.bool.isRequired,
-    registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired,
-    initialValue: PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string,
-      version: PropTypes.number,
-      configs: PropTypes.arrayOf(
-        PropTypes.shape({
-          contentType: PropTypes.string.isRequired,
-          enabled: PropTypes.bool.isRequired,
-          name: PropTypes.string.isRequired,
-          url: PropTypes.string.isRequired,
-          contentTypeFields: PropTypes.arrayOf(PropTypes.object).isRequired,
-        }).isRequired
-      ).isRequired,
-    }),
-  };
+type InitialValue = {
+  id?: string;
+  name: string;
+  description?: string;
+  version?: number;
+  configs: {
+    contentType: string;
+    enabled: boolean;
+    name: string;
+    url: string;
+    contentTypeFields: ContentTypeField[];
+  }[];
+};
 
+type Props = {
+  isNew: boolean;
+  navigate: RouteNavigateFn;
+  initialValue: InitialValue;
+} & UnsavedChangesModalProps;
+
+type State = {
+  preview: InitialValue;
+  errors: { name?: string; description?: string; [key: string]: string | undefined };
+  busy: boolean;
+  dirty: boolean;
+};
+
+class ContentPreviewFormPageWithNavigate extends Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -83,6 +90,7 @@ export class ContentPreviewFormPage extends Component {
               ...newState,
               errors: {
                 ...newState.errors,
+                // @ts-expect-error
                 [`config-${item.contentType}`]: item.error,
               },
             };
@@ -135,7 +143,7 @@ export class ContentPreviewFormPage extends Component {
           name: this.state.preview.name,
           id: this.state.preview.id,
         });
-        Navigator.go({ path: '^.list' });
+        this.props.navigate({ path: 'content_preview.list' });
       })
       .catch(() => {
         Notification.error('An error occurred');
@@ -176,11 +184,7 @@ export class ContentPreviewFormPage extends Component {
 
         // redirect if it's new
         if (this.props.isNew) {
-          Navigator.go({
-            path: '^.detail',
-            params: { contentPreviewId: env.sys.id },
-            options: { reload: true },
-          });
+          this.props.navigate({ path: 'content_preview.detail', contentPreviewId: env.sys.id });
         }
       },
       (err) => {
@@ -281,7 +285,7 @@ export class ContentPreviewFormPage extends Component {
             testId="preview-name-field"
             value={this.state.preview.name}
             validationMessage={this.state.errors.name}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               this.updateField('name', e.target.value);
               this.updateError('name', '');
             }}
@@ -294,7 +298,7 @@ export class ContentPreviewFormPage extends Component {
             testId="preview-description-field"
             value={this.state.preview.description}
             validationMessage={this.state.errors.description}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               this.updateField('description', e.target.value);
               this.updateError('description', '');
             }}
@@ -323,7 +327,7 @@ export class ContentPreviewFormPage extends Component {
                     id={`${config.contentType}-checkbox`}
                     name={`${config.contentType}-checkbox`}
                     checked={config.enabled}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       this.updateConfig(config.contentType, 'enabled', e.target.checked);
                       this.updateError(config.contentType, '');
                     }}
@@ -339,7 +343,7 @@ export class ContentPreviewFormPage extends Component {
                       }}
                       value={config.url}
                       validationMessage={this.state.errors[`config-${config.contentType}`]}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         this.updateConfig(config.contentType, 'url', e.target.value);
                         this.updateError(`config-${config.contentType}`, '');
                       }}
@@ -354,3 +358,5 @@ export class ContentPreviewFormPage extends Component {
     );
   }
 }
+
+export const ContentPreviewFormPage = withRouteNavigate(ContentPreviewFormPageWithNavigate);

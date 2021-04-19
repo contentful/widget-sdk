@@ -1,7 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import PropTypes from 'prop-types';
 
 const styles = {
   root: css({
@@ -26,7 +25,11 @@ const styles = {
   }),
 };
 
-export default function WorkbenchSidebarItem(props) {
+export default function WorkbenchSidebarItem(props: {
+  title: string;
+  testId?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className={styles.root} data-test-id={props.testId}>
       <div className={styles.title}>{props.title}</div>
@@ -34,8 +37,3 @@ export default function WorkbenchSidebarItem(props) {
     </div>
   );
 }
-
-WorkbenchSidebarItem.propTypes = {
-  title: PropTypes.string.isRequired,
-  testId: PropTypes.string,
-};

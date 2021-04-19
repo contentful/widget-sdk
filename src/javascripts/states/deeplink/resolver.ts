@@ -94,7 +94,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     params: routes['roles.list']({ withEnvironment: false }).params,
   }),
   [LinkType.ContentPreview]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
+    spaceScopedPath: routes['content_preview.list']({ withEnvironment: false }).path,
+    params: routes['content_preview.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Content]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'entries', 'list'],

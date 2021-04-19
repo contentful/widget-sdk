@@ -29,6 +29,7 @@ export function getSpaceNavigationItems({
   const roles = routes['roles.list']({ withEnvironment: !isUnscopedRoute });
   const extensions = routes['extensions.list']({ withEnvironment: !isUnscopedRoute });
   const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
+  const contentPreview = routes['content_preview.list']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
     locales: {
@@ -114,8 +115,9 @@ export function getSpaceNavigationItems({
     },
     previews: {
       if: canNavigateTo('previews'),
-      sref: makeRef('settings.content_preview.list', isUnscopedRoute),
-      rootSref: makeRef('settings.content_preview', isUnscopedRoute),
+      sref: contentPreview.path,
+      srefParams: contentPreview.params,
+      rootSref: contentPreview.path,
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       srefOptions: {

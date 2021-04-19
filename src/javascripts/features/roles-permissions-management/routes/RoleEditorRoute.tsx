@@ -21,7 +21,7 @@ import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createAPIClient } from 'core/services/APIClient/utils';
 import type { Role } from 'core/services/SpaceEnvContext/types';
 import { useNavigationState, useParams } from 'core/react-routing';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 
 export const RoleEditRoutes = {
   Details: {

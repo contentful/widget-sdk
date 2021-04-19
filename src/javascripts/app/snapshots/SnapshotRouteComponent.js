@@ -22,7 +22,7 @@ import SnapshotWidgetCell from './SnapshotWidgetCell';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 import { getModule } from 'core/NgRegistry';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import { go } from 'states/Navigator';

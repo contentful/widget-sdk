@@ -5,7 +5,7 @@ import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
 import { KeyEditorRoute } from 'features/api-keys-management';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { KeyEditorWorkbench } from 'features/api-keys-management/api-key-editor/KeyEditorWorkbench';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 
 export function KeyEditorContainer(props) {
   const [isLoading, setIsLoading] = React.useState(true);

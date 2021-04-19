@@ -3,7 +3,7 @@ import { WebhookEditor } from '../WebhookEditor';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 
 export function WebhookNewRoute() {
   const initialWebhook = { headers: [], topics: ['*.*'] };

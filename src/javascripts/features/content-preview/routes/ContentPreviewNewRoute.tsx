@@ -1,13 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { AdminOnly } from './AdminOnly';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 import { ContentPreviewFormPage } from '../ContentPreviewFormPage';
 import { contentPreviewToInternal } from '../services/contentPreviewToInternal';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import type { UnsavedChangesModalProps } from 'core/hooks';
 
-export function ContentPreviewNewRoute(props) {
+export function ContentPreviewNewRoute(props: UnsavedChangesModalProps) {
   const { currentSpaceContentTypes } = useSpaceEnvContext();
 
   const initialValue = contentPreviewToInternal(
@@ -33,8 +33,3 @@ export function ContentPreviewNewRoute(props) {
     </AdminOnly>
   );
 }
-
-ContentPreviewNewRoute.propTypes = {
-  registerSaveAction: PropTypes.func.isRequired,
-  setDirty: PropTypes.func.isRequired,
-};

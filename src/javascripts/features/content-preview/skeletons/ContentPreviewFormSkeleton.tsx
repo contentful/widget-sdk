@@ -1,29 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Form,
-  SkeletonContainer,
-  SkeletonBodyText,
-  SkeletonDisplayText,
   Heading,
+  SkeletonBodyText,
+  SkeletonContainer,
+  SkeletonDisplayText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import * as Navigator from 'states/Navigator';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import {
-  WhatIsContentPreview,
-  TokensForContentPreview,
-  LinkedEntries,
   LegacyTokens,
+  LinkedEntries,
+  TokensForContentPreview,
+  WhatIsContentPreview,
 } from '../ContentPreviewSidebar';
+import { useRouteNavigate } from 'core/react-routing';
 
-export const ContentPreviewFormSkeleton = (props) => {
+export const ContentPreviewFormSkeleton = (props: {
+  title?: React.ReactNode;
+  actions?: React.ReactElement;
+  children?: React.ReactNode;
+}) => {
+  const navigate = useRouteNavigate();
   return (
     <Workbench>
       <Workbench.Header
         onBack={() => {
-          Navigator.go({ path: '^.list' });
+          navigate({ path: 'content_preview.list' });
         }}
         icon={<ProductIcon icon="Settings" size="large" />}
         title={
@@ -64,10 +68,4 @@ export const ContentPreviewFormSkeleton = (props) => {
       </Workbench.Sidebar>
     </Workbench>
   );
-};
-
-ContentPreviewFormSkeleton.propTypes = {
-  title: PropTypes.node,
-  actions: PropTypes.node,
-  children: PropTypes.node,
 };

@@ -3,6 +3,21 @@ import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 
+export type UnsavedChangesModalProps = ReturnType<typeof useUnsavedChangesModal>;
+
+export function withUnsavedChangesDialog<T = {}>(WrappedComponent: React.ComponentType<T>) {
+  return function WithUnsavedChangesDialog(props: Omit<T, 'setDirty' | 'registerSaveAction'>) {
+    const { registerSaveAction, setDirty } = useUnsavedChangesModal();
+    return (
+      <WrappedComponent
+        {...(props as T)}
+        setDirty={setDirty}
+        registerSaveAction={registerSaveAction}
+      />
+    );
+  };
+}
+
 export function useUnsavedChangesModal() {
   const requestLeaveConfirmation = React.useRef<Function>();
   const isDirty = React.useRef(false);
@@ -25,11 +40,11 @@ export function useUnsavedChangesModal() {
     return unsubscribe;
   }, []);
 
-  function registerSaveAction(save, modal = true) {
+  function registerSaveAction(save: (...args: any[]) => Promise<void>, modal = true) {
     requestLeaveConfirmation.current = modal ? createUnsavedChangesDialogOpener(save) : save;
   }
 
-  function setDirty(value) {
+  function setDirty(value: boolean) {
     isDirty.current = value;
   }
 

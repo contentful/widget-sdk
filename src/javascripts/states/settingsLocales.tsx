@@ -3,7 +3,7 @@ import { LocalesEditRoute, LocalesListRoute, LocalesNewRoute } from 'features/lo
 import { window } from 'core/services/window';
 import StateRedirect from 'app/common/StateRedirect';
 import { RouteErrorBoundary, Route, Routes, CustomRouter } from 'core/react-routing';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 
 function withUnsavedChangesDialog(Component) {
   return function WithUnsavedChangesDialog(props) {

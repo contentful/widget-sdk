@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { RouteLink } from 'core/react-routing';
 
 export function CreatePreviewButton() {
   return (
-    <StateLink path="^.new">
+    <RouteLink route={{ path: 'content_preview.new' }}>
       {({ onClick }) => (
         <Button
           icon="PlusCircle"
@@ -14,6 +14,6 @@ export function CreatePreviewButton() {
           Add content preview
         </Button>
       )}
-    </StateLink>
+    </RouteLink>
   );
 }

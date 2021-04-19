@@ -24,7 +24,7 @@ import { AddFieldDialogModal } from './Dialogs/AddField';
 import { openEditContentTypeDialog } from './Dialogs';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { toLegacyWidget } from 'widgets/WidgetCompat';

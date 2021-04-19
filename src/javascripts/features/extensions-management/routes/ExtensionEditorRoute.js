@@ -7,7 +7,7 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { useParams } from 'core/react-routing';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 import { useRouteNavigate, RouteNavigate } from 'core/react-routing';
 
 const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {

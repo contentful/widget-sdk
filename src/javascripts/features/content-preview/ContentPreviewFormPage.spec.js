@@ -1,12 +1,11 @@
 import React from 'react';
-import _ from 'lodash';
 import { ContentPreviewFormPage } from './ContentPreviewFormPage';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
-import { Notification } from '@contentful/forma-36-react-components';
+import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockContentPreview = {
   create: jest.fn(),
@@ -17,6 +16,9 @@ const mockContentPreview = {
 jest.mock('./services/getContentPreview', () => ({
   getContentPreview: () => mockContentPreview,
 }));
+
+const mockNavigate = jest.fn();
+jest.mock('core/react-routing/useRouteNavigate', () => ({ useRouteNavigate: () => mockNavigate }));
 
 describe('app/settings/content_preview/ContentPreviewFormPage', () => {
   beforeEach(() => {
@@ -85,13 +87,15 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       };
 
       const wrapper = Enzyme.mount(
-        <ContentPreviewFormPage
-          isNew
-          setDirty={stubs.setDirty}
-          registerSaveAction={stubs.registerSaveAction}
-          initialValue={initialValue}
-          {...props}
-        />
+        <MemoryRouter>
+          <ContentPreviewFormPage
+            isNew
+            setDirty={stubs.setDirty}
+            registerSaveAction={stubs.registerSaveAction}
+            initialValue={initialValue}
+            {...props}
+          />
+        </MemoryRouter>
       );
       return { wrapper, stubs };
     };
@@ -230,11 +234,10 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           isDiscoveryApp: false,
         });
 
-        expect($state.go).toHaveBeenCalledWith(
-          '^.detail',
-          { contentPreviewId: 'ct-1' },
-          { reload: true }
-        );
+        expect(mockNavigate).toHaveBeenCalledWith({
+          path: 'content_preview.detail',
+          contentPreviewId: 'ct-1',
+        });
 
         done();
       });
@@ -366,7 +369,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           name: initialValue.name,
           id: initialValue.id,
         });
-        expect($state.go).toHaveBeenCalledWith('^.list', undefined, undefined);
+        expect(mockNavigate).toHaveBeenCalledWith({ path: 'content_preview.list' });
         done();
       });
     });

@@ -9,7 +9,7 @@ import { HostingStateProvider } from './HostingStateProvider';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
 import { ManagementApiClient } from '../ManagementApiClient';
-import { useUnsavedChangesModal } from 'core/hooks/useUnsavedChangesModal/useUnsavedChangesModal';
+import { useUnsavedChangesModal } from 'core/hooks';
 
 interface Event {
   enabled: boolean;

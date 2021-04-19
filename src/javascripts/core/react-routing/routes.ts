@@ -163,6 +163,41 @@ const tagsRoutes = {
   }),
 };
 
+/** Content preview **/
+
+type ContentPreviewListRouteType = { path: 'content_preview.list' };
+type ContentPreviewNewRouteType = { path: 'content_preview.new' };
+type ContentPreviewDetailRouteType = { path: 'content_preview.detail'; contentPreviewId: string };
+
+type ContentPreviewRouteType =
+  | ContentPreviewListRouteType
+  | ContentPreviewNewRouteType
+  | ContentPreviewDetailRouteType;
+
+const contentPreviewRoutes = {
+  'content_preview.list': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings.content_preview'),
+    params: {
+      pathname: '/',
+    },
+  }),
+  'content_preview.new': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings.content_preview'),
+    params: {
+      pathname: `/new`,
+    },
+  }),
+  'content_preview.detail': (
+    env: EnvironmentParams,
+    params: Omit<ContentPreviewDetailRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'settings.content_preview'),
+    params: {
+      pathname: `/${params.contentPreviewId}`,
+    },
+  }),
+};
+
 /**
  * Extensions
  */
@@ -207,7 +242,8 @@ export type RouteType =
   | UsersListRouteType
   | RolesRouteType
   | ExtensionsRouteType
-  | TagsRouteType;
+  | TagsRouteType
+  | ContentPreviewRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -216,4 +252,5 @@ export const routes = {
   ...rolesRoutes,
   ...extensionsRoutes,
   ...tagsRoutes,
+  ...contentPreviewRoutes,
 };

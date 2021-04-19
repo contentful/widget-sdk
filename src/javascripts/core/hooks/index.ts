@@ -7,3 +7,5 @@ export { useStateWithDebounce } from './useStateWithDebounce';
 export { useSelectedEntities } from './useSelectedEntities';
 export { useBulkActions } from './useBulkActions';
 export { usePubSubClient } from './usePubSubClient';
+export { useUnsavedChangesModal, withUnsavedChangesDialog } from './useUnsavedChangesModal';
+export type { UnsavedChangesModalProps } from './useUnsavedChangesModal';

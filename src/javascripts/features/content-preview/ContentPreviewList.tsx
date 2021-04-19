@@ -1,7 +1,5 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import StateLink from 'app/common/StateLink';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { css } from 'emotion';
 import {
@@ -9,13 +7,15 @@ import {
   Heading,
   Paragraph,
   Table,
-  TableHead,
   TableBody,
   TableCell,
+  TableHead,
   TableRow,
 } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/illustrations/content-preview-empty-state.svg';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { RouteLink } from 'core/react-routing';
+import { ContentPreview } from './types';
 
 const styles = {
   illustrationWrapper: css({
@@ -26,19 +26,7 @@ const styles = {
   }),
 };
 
-export class ContentPreviewList extends Component {
-  static propTypes = {
-    contentPreviews: PropTypes.arrayOf(
-      PropTypes.shape({
-        sys: PropTypes.shape({
-          id: PropTypes.string.isRequired,
-        }).isRequired,
-        name: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-  };
-
+export class ContentPreviewList extends Component<{ contentPreviews: ContentPreview[] }> {
   renderList() {
     return (
       // eslint-disable-next-line rulesdir/restrict-inline-styles
@@ -51,10 +39,9 @@ export class ContentPreviewList extends Component {
         </TableHead>
         <TableBody>
           {this.props.contentPreviews.map((preview) => (
-            <StateLink
+            <RouteLink
               key={preview.sys.id}
-              path="^.detail"
-              params={{ contentPreviewId: preview.sys.id }}>
+              route={{ path: 'content_preview.detail', contentPreviewId: preview.sys.id }}>
               {({ onClick }) => (
                 // eslint-disable-next-line rulesdir/restrict-inline-styles
                 <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -62,7 +49,7 @@ export class ContentPreviewList extends Component {
                   <TableCell>{preview.description}</TableCell>
                 </TableRow>
               )}
-            </StateLink>
+            </RouteLink>
           ))}
         </TableBody>
       </Table>
@@ -81,13 +68,13 @@ export class ContentPreviewList extends Component {
           custom content preview for this space in{' '}
           <KnowledgeBase target="content_preview" text="our guide" inlineText />.
         </Paragraph>
-        <StateLink path="^.new">
+        <RouteLink route={{ path: 'content_preview.new' }}>
           {({ onClick }) => (
             <Button buttonType="primary" onClick={onClick} testId="add-content-preview-button">
               Set up content preview
             </Button>
           )}
-        </StateLink>
+        </RouteLink>
       </EmptyStateContainer>
     );
   }

@@ -1,31 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { AdminOnly } from './AdminOnly';
-import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';
 import { ContentPreviewFormPage } from '../ContentPreviewFormPage';
 import { getContentPreview } from '../services/getContentPreview';
 import { contentPreviewToInternal } from '../services/contentPreviewToInternal';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import type { UnsavedChangesModalProps } from 'core/hooks';
+import { RouteNavigate, useParams } from 'core/react-routing';
 
 const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
   return getContentPreview().get(contentPreviewId);
 });
 
-export function ContentPreviewEditRoute(props) {
+export function ContentPreviewEditRoute(props: UnsavedChangesModalProps) {
+  const { contentPreviewId } = useParams();
   const { currentSpaceContentTypes } = useSpaceEnvContext();
 
   return (
     <AdminOnly>
-      <ContentTypesFetcher contentPreviewId={props.contentPreviewId}>
+      <ContentTypesFetcher contentPreviewId={contentPreviewId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <ContentPreviewFormSkeleton />;
           }
-          if (isError) {
-            return <StateRedirect path="^.list" />;
+          if (isError || !data) {
+            return <RouteNavigate route={{ path: 'content_preview.list' }} />;
           }
           const initialValue = contentPreviewToInternal(data, currentSpaceContentTypes);
           return (
@@ -44,9 +45,3 @@ export function ContentPreviewEditRoute(props) {
     </AdminOnly>
   );
 }
-
-ContentPreviewEditRoute.propTypes = {
-  contentPreviewId: PropTypes.string.isRequired,
-  registerSaveAction: PropTypes.func.isRequired,
-  setDirty: PropTypes.func.isRequired,
-};

@@ -67,7 +67,7 @@ interface Props {
   tab: string;
 
   setDirty: (dirty: boolean) => void;
-  setRequestLeaveConfirmation: (fn: () => void) => void;
+  setRequestLeaveConfirmation: (fn: () => Promise<void>) => void;
 }
 
 interface State {

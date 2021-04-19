@@ -218,9 +218,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#content-preview', () => {
     it('should redirect the user to content previews page', async function () {
-      await testSpaceScopedPathDeeplinks('content-preview', {
-        path: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
-      });
+      await testSpaceScopedPathDeeplinks(
+        'content-preview',
+        routes['content_preview.list']({ withEnvironment: false })
+      );
     });
   });
 
