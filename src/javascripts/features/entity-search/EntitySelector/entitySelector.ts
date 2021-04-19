@@ -1,7 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import type { EntitySelectorExtensionSDK } from '@contentful/entity-search';
 import { EntitySelector } from '@contentful/entity-search';
-import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 
 const checkFeatureFlags = async () => {
   // temporary use of `spaceContext`
@@ -11,7 +11,7 @@ const checkFeatureFlags = async () => {
 
   try {
     const [isTagsEnabled] = await Promise.all([
-      getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false),
+      getSpaceFeature(spaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
     ]);
     return { isTagsEnabled };
   } catch (e) {

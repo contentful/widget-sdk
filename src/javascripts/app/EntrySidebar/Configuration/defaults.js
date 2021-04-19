@@ -1,5 +1,5 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
-import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { fetchContentfulAppsConfig } from 'features/contentful-apps';
 import { FLAGS, getVariation } from 'LaunchDarkly';
@@ -93,7 +93,7 @@ const getAvailabilityMap = (spaceId, environmentId, organizationId) => ({
     fetchContentfulAppsConfig({ spaceId, environmentId, organizationId, appId: 'launch' }).then(
       (app) => app.isPurchased && app.isInstalled
     ),
-  [Tasks.widgetId]: () => getSpaceFeature(spaceId, FEATURES.CONTENT_WORKFLOW_TASKS, false),
+  [Tasks.widgetId]: () => getSpaceFeature(spaceId, SpaceFeatures.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,
   [Translation.widgetId]: true,

@@ -16,7 +16,7 @@ import * as AppLifecycleTracking from '../AppLifecycleTracking';
 import { isUsageExceeded } from '../utils';
 import { ADVANCED_APPS_LIMIT, BASIC_APPS_LIMIT } from '../limits';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { FEATURES, getOrgFeature } from 'data/CMA/ProductCatalog';
+import { OrganizationFeatures, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { AppsListShell } from './AppListShell';
 import { MarketplacePageLoading } from './MarketplacePageLoading';
 import { styles } from './styles';
@@ -98,8 +98,8 @@ export function MarketplacePage(props: MarketplacePageProps) {
     async function init() {
       try {
         const [launchApp, composeApp, isTrialAvailable, appManager] = await Promise.all([
-          getOrgFeature(organizationId, FEATURES.PC_ORG_LAUNCH_APP, false),
-          getOrgFeature(organizationId, FEATURES.PC_ORG_COMPOSE_APP, false),
+          getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_LAUNCH_APP, false),
+          getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_COMPOSE_APP, false),
           canStartAppTrial(organizationId as string),
           new AppManager(cma, environmentId, spaceId, organizationId, async () => await loadApps()),
           loadApps(),

@@ -2,7 +2,7 @@ import { Note, SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-
 import tokens from '@contentful/forma-36-tokens';
 import { useAsync } from 'core/hooks';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { DEFAULT_FEATURES_STATUS, FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { DEFAULT_FEATURES_STATUS, SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { css } from 'emotion';
 import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';
 import { FilteredTagsProvider } from 'features/content-tags/core/state/FilteredTagsProvider';
@@ -65,7 +65,7 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) =
   const hasCustomRolesFeatureCheck = useCallback(async () => {
     return await getSpaceFeature(
       spaceId,
-      FEATURES.CUSTOM_ROLES_FEATURE,
+      SpaceFeatures.CUSTOM_ROLES_FEATURE,
       DEFAULT_FEATURES_STATUS.CUSTOM_ROLES_FEATURE
     );
   }, [spaceId]);

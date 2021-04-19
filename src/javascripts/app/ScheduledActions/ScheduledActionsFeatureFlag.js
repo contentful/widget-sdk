@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BooleanSpaceFeature from 'utils/ProductCatalog/BooleanSpaceFeature';
-import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import { trackAlphaEligibilityToIntercom } from './Analytics/ScheduledActionsAnalytics';
 
 export function getScheduledActionsFeatureVariation({ spaceId }) {
-  return getSpaceFeature(spaceId, FEATURES.SCHEDULED_PUBLISHING);
+  return getSpaceFeature(spaceId, SpaceFeatures.SCHEDULED_PUBLISHING);
 }
 
 /**
@@ -14,7 +14,7 @@ export function getScheduledActionsFeatureVariation({ spaceId }) {
  */
 export default function ScheduledActionsFeatureFlag({ children }) {
   return (
-    <BooleanSpaceFeature spaceFeatureKey={FEATURES.SCHEDULED_PUBLISHING}>
+    <BooleanSpaceFeature spaceFeatureKey={SpaceFeatures.SCHEDULED_PUBLISHING}>
       {({ currentVariation }) => {
         if (currentVariation) {
           trackAlphaEligibilityToIntercom();

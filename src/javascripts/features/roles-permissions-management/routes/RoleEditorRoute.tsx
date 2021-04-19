@@ -13,7 +13,7 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
 import { EntitiesContext, EntitiesProvider } from '../role_editor/EntitiesProvider';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import { MetadataTags, ReadTagsContext } from 'features/content-tags';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -56,9 +56,9 @@ const RoleEditorFetcher = createFetcherComponent(
       resource,
     ] = await Promise.all([
       getContentTypes(),
-      getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_ALIASING),
+      getSpaceFeature(spaceId, SpaceFeatures.ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
-      getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false),
+      getSpaceFeature(spaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
       createResourceService(spaceId).get('role'),
       getEntities(),
     ]);
