@@ -49,6 +49,7 @@ export const DEFAULT_FEATURES_STATUS = {
 // we may hit the URL length limit (~8k chars) some day.
 const COMMON_FOR_SPACE: SpaceFeatures[] = [
   SpaceFeatures.BASIC_APPS,
+  SpaceFeatures.PC_CONTENT_TAGS,
   SpaceFeatures.SCHEDULED_PUBLISHING,
 ];
 const COMMON_FOR_ORG: OrganizationFeatures[] = [
