@@ -14,6 +14,11 @@ import * as logger from 'services/logger';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
+const FEATURE_TO_APP_NAME = {
+  compose_app: 'compose', // eslint-disable-line @typescript-eslint/camelcase
+  launch_app: 'launch', // eslint-disable-line @typescript-eslint/camelcase
+};
+
 export const canStartAppTrial = async (organizationId: string) => {
   if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
     return false;
@@ -34,9 +39,20 @@ export const canStartAppTrial = async (organizationId: string) => {
 
 export const startAppTrial = async (organizationId: string) => {
   try {
-    const trial = await Repo.createTrial(organizationId);
+    const trialsClient = getCMAClient({ organizationId }).internal.trials;
+    const appsTrial = await trialsClient.create({ productId: 'add_on_compose_launch' });
+    const {
+      sys: { space },
+    } = await trialsClient.create({
+      productId: 'space_size_3',
+      parentId: appsTrial.sys.id,
+      spaceName: 'Contentful Apps',
+    });
 
-    return { apps: ['compose', 'launch'], trial };
+    return {
+      apps: appsTrial.sys.features?.map((feature) => FEATURE_TO_APP_NAME[feature]),
+      trialSpace: space,
+    };
   } catch (e) {
     if (e.status >= 500) {
       logger.captureError(new Error('Could not create apps trial space'), {

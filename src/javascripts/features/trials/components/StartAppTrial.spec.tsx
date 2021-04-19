@@ -21,9 +21,8 @@ const mockedTrialSpace = fake.Space();
 
 const mockedAppsTrial = {
   apps: ['compose', 'launch'],
-  trial: {
-    spaceKey: mockedTrialSpace.sys.id,
-    trial: { startedAt: '2021-02-01', endsAt: '2021-02-10' },
+  trialSpace: {
+    sys: { id: mockedTrialSpace.sys.id },
   },
 };
 
@@ -118,7 +117,7 @@ describe('StartAppTrial', () => {
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {
-        spaceId: mockedAppsTrial.trial.spaceKey,
+        spaceId: mockedAppsTrial.trialSpace.sys.id,
       },
       options: { location: 'replace' },
     });
@@ -135,7 +134,7 @@ describe('StartAppTrial', () => {
     expect(go).toHaveBeenCalledWith({
       path: ['spaces', 'detail'],
       params: {
-        spaceId: mockedAppsTrial.trial.spaceKey,
+        spaceId: mockedAppsTrial.trialSpace.sys.id,
       },
       options: { location: 'replace' },
     });
@@ -187,7 +186,7 @@ describe('StartAppTrial', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail'],
         params: {
-          spaceId: mockedAppsTrial.trial.spaceKey,
+          spaceId: mockedAppsTrial.trialSpace.sys.id,
         },
         options: { location: 'replace' },
       });
@@ -227,7 +226,7 @@ describe('StartAppTrial', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail'],
         params: {
-          spaceId: mockedAppsTrial.trial.spaceKey,
+          spaceId: mockedAppsTrial.trialSpace.sys.id,
         },
         options: { location: 'replace' },
       });

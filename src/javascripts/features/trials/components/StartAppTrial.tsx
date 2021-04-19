@@ -81,7 +81,7 @@ const goToSubscriptionPage = (orgId: string) =>
   });
 
 const installApps = async (
-  apps: string[],
+  apps: string[] = [],
   orgId: string,
   spaceId: string,
   environmentId: string,
@@ -126,14 +126,14 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
 
   const spaceContext = getModule('spaceContext');
   try {
-    const { trial, apps } = await startAppTrial(organizationId);
+    const { trialSpace, apps } = await startAppTrial(organizationId);
 
     markOnboarding();
 
     trackEvent(EVENTS.APP_TRIAL_STARTED, { from });
 
     await TokenStore.refresh()
-      .then(() => TokenStore.getSpace(trial.spaceKey))
+      .then(() => TokenStore.getSpace(trialSpace?.sys.id as string))
       .then((space) => spaceContext.resetWithSpace(space));
 
     const environmentId = spaceContext.getEnvironmentId();
