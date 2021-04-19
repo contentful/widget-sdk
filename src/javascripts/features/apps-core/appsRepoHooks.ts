@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getAppsRepo, MarketplaceApp } from '.';
+import { NonInstallableMarketplaceApp } from './types';
+import { getAppsRepo } from '.';
 
 interface PromiseState {
-  value?: MarketplaceApp[];
+  value?: NonInstallableMarketplaceApp[];
   isLoading?: boolean;
   error?: Error | undefined;
 }
@@ -11,7 +12,9 @@ interface PromiseState {
 /**
  * Returns the resolved value of the given AppRepo method.
  */
-function usePromiseWithEnv<T extends 'getOnlyInstalledApps' | 'getContentfulApps'>(methodName: T) {
+function usePromiseWithEnv<T extends 'getOnlyInstalledApps' | 'getContentfulAppsListing'>(
+  methodName: T
+) {
   const [{ value, error }, setState] = React.useState<PromiseState>({});
   const repo = useAppsRepo();
   const repoCacheKey = repo?._cacheKey;
@@ -35,7 +38,7 @@ function usePromiseWithEnv<T extends 'getOnlyInstalledApps' | 'getContentfulApps
 }
 
 export const useInstalledApps = () => usePromiseWithEnv('getOnlyInstalledApps');
-export const useContentfulApps = () => usePromiseWithEnv('getContentfulApps');
+export const useContentfulApps = () => usePromiseWithEnv('getContentfulAppsListing');
 
 export function useAppsRepo() {
   const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();

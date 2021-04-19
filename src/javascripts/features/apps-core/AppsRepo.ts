@@ -7,7 +7,7 @@ import { MarketplaceApp, NonInstallableMarketplaceApp } from './types';
 
 interface AppsRepoCache {
   marketplaceAppDefinitions?: Promise<MarketplaceApp[]>;
-  contentfulAppDefinitions?: Promise<MarketplaceApp[]>;
+  contentfulAppListings?: Promise<NonInstallableMarketplaceApp[]>;
   appInstallations?: Promise<any>;
 }
 
@@ -35,7 +35,7 @@ function getPrivateApps(
 }
 
 function makeMarketplaceAppObject(
-  marketplaceApp: MarketplaceApp,
+  marketplaceApp: MarketplaceApp | NonInstallableMarketplaceApp,
   appDefinition: AppDefinition,
   appInstallation: AppInstallation,
   isPaidApp?: boolean
@@ -102,7 +102,7 @@ export class AppsRepo {
   async getContentfulApps(): Promise<MarketplaceApp[]> {
     const [installationMap, fetchedApps] = await Promise.all([
       this.getAppDefinitionToInstallationMap(),
-      this.getContentfulAppDefinitions(),
+      this.getContentfulAppListsings(),
     ]);
     const ctfAppDefs = await this.appDefinitionLoader.getByIds(
       fetchedApps?.map((c) => c.definitionId)
@@ -120,13 +120,31 @@ export class AppsRepo {
     );
   }
 
+  async getContentfulAppsListing(): Promise<NonInstallableMarketplaceApp[]> {
+    const [installationMap, fetchedApps] = await Promise.all([
+      this.getAppDefinitionToInstallationMap(),
+      this.getContentfulAppListsings(),
+    ]);
+
+    return sortBy(
+      fetchedApps?.map((app) => ({
+        ...app,
+        appInstallation: installationMap[app.definitionId!],
+      })),
+      (ctflApp) => ctflApp.title.toLowerCase()
+    );
+  }
+
   getOnlyInstalledApps = async (): Promise<MarketplaceApp[]> => {
     const [appInstallations, marketplaceApps, contentfulApps] = await Promise.all([
       this.getAppInstallations(),
       this.getMarketplaceAppDefinitions(),
-      this.getContentfulAppDefinitions(),
+      this.getContentfulAppListsings(),
     ]);
-    const availableApps = marketplaceApps.concat(contentfulApps);
+    const availableApps = (marketplaceApps as (
+      | MarketplaceApp
+      | NonInstallableMarketplaceApp
+    )[]).concat(contentfulApps);
 
     return appInstallations.items.map((appInstallation) => {
       const definitionId = appInstallation.sys.appDefinition.sys.id;
@@ -163,8 +181,8 @@ export class AppsRepo {
     return this.getCachedOrCreate('marketplaceAppDefinitions', fetchMarketplaceApps);
   }
 
-  private async getContentfulAppDefinitions() {
-    return this.getCachedOrCreate('contentfulAppDefinitions', fetchContentfulApps);
+  private async getContentfulAppListsings() {
+    return this.getCachedOrCreate('contentfulAppListings', fetchContentfulApps);
   }
 
   private async getAppInstallations() {
