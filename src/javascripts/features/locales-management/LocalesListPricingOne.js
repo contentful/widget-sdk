@@ -1,4 +1,6 @@
 import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
@@ -23,6 +25,15 @@ const LocalesListPropTypes = {
   insideMasterEnv: PropTypes.bool.isRequired,
   subscriptionState: PropTypes.object,
   subscriptionPlanName: PropTypes.string.isRequired,
+};
+
+const styles = {
+  knowledgeBaseIcon: css({
+    lineHeight: tokens.lineHeightXl,
+    marginLeft: tokens.spacing2Xs,
+    padding: `0 ${tokens.spacing2Xs}`,
+    fontSize: tokens.fontSizeXl,
+  }),
 };
 
 export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => {
@@ -177,7 +188,7 @@ export class LocalesListPricingOne extends React.PureComponent {
           title={
             <>
               <Heading>Locales</Heading>
-              <span className="workbench-header__kb-link">
+              <span className={styles.knowledgeBaseIcon}>
                 <KnowledgeBase target="locale" />
               </span>
             </>

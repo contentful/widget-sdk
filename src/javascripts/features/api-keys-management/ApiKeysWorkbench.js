@@ -1,9 +1,20 @@
 import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+
+const styles = {
+  knowledgeBaseIcon: css({
+    lineHeight: tokens.lineHeightXl,
+    marginLeft: tokens.spacing2Xs,
+    padding: `0 ${tokens.spacing2Xs}`,
+    fontSize: tokens.fontSizeXl,
+  }),
+};
 
 export function ApiKeysWorkbench(props) {
   return (
@@ -15,7 +26,7 @@ export function ApiKeysWorkbench(props) {
           title={
             <>
               <Heading>APIs</Heading>
-              <div className="workbench-header__kb-link">
+              <div className={styles.knowledgeBaseIcon}>
                 <KnowledgeBase target="api_key" />
               </div>
             </>

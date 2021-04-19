@@ -1,4 +1,6 @@
 import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import {
   Heading,
@@ -10,6 +12,15 @@ import {
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Navigator from 'states/Navigator';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+
+const styles = {
+  knowledgeBaseIcon: css({
+    lineHeight: tokens.lineHeightXl,
+    marginLeft: tokens.spacing2Xs,
+    padding: `0 ${tokens.spacing2Xs}`,
+    fontSize: tokens.fontSizeXl,
+  }),
+};
 
 export function KeyEditorWorkbench(props) {
   return (
@@ -23,7 +34,7 @@ export function KeyEditorWorkbench(props) {
                 <SkeletonDisplayText lineHeight={21} width={270} />
               </SkeletonContainer>
             )}
-            <div className="workbench-header__kb-link">
+            <div className={styles.knowledgeBaseIcon}>
               <KnowledgeBase target="api_key" />
             </div>
           </>

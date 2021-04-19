@@ -31,10 +31,17 @@ import { debounce } from 'lodash';
 import qs from 'qs';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   banner: css({
-    marginBottom: '20px',
+    marginBottom: tokens.spacingL,
+  }),
+  knowledgeBaseIcon: css({
+    lineHeight: tokens.lineHeightXl,
+    marginLeft: tokens.spacing2Xs,
+    padding: `0 ${tokens.spacing2Xs}`,
+    fontSize: tokens.fontSizeXl,
   }),
 };
 
@@ -149,7 +156,7 @@ export function ContentTypeListPage({
         title={
           <>
             <Heading>Content Model</Heading>
-            <div className="workbench-header__kb-link">
+            <div className={styles.knowledgeBaseIcon}>
               <KnowledgeBase target="content_model" />
             </div>
           </>

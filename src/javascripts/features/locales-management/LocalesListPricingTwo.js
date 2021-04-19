@@ -1,4 +1,6 @@
 import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
@@ -6,11 +8,20 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { LocalesListSidebar } from './LocalesListSidebar';
 import { LocalesTable } from './LocalesTable';
 
+const styles = {
+  knowledgeBaseIcon: css({
+    lineHeight: tokens.lineHeightXl,
+    marginLeft: tokens.spacing2Xs,
+    padding: `0 ${tokens.spacing2Xs}`,
+    fontSize: tokens.fontSizeXl,
+  }),
+};
+
 function LocalesTitle() {
   return (
     <>
       <Heading>Locales</Heading>
-      <span className="workbench-header__kb-link">
+      <span className={styles.knowledgeBaseIcon}>
         <KnowledgeBase target="locale" />
       </span>
     </>
