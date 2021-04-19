@@ -53,7 +53,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
 
   const pubSubClient = usePubSubClient();
 
-  if (!currentEnvironmentId || !currentSpaceId) return null;
+  if (!currentEnvironmentId || !currentSpaceId || !currentEnvironment || !currentSpace) return null;
 
   if (extension.problem) {
     return (
