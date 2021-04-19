@@ -196,7 +196,7 @@ import { ReactRouterRedirect } from 'core/react-routing';
 ```
 
 ```jsx
-import { getRouter } from 'core/react-routing';
+import { router } from 'core/react-routing';
 
 // before
 
@@ -204,7 +204,7 @@ Navigator.go({ path: '^.detail', params: { localeId: locale.sys.id } });
 
 // after
 
-getRouter().go({ path: 'locale.detail', localeId: locale.sys.id });
+router.navigate({ path: 'locale.detail', localeId: locale.sys.id });
 ```
 
 #### 3.2 Links within the same react-router tree

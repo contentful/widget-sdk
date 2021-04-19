@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { RouteType } from './routes';
-import { getRouter } from './useRouter';
+import { router } from './useRouter';
 
 export type RouteNavigateFn = (
   route: RouteType | 'string',
@@ -17,8 +17,6 @@ export function useRouteNavigate() {
 
   const routeNavigate: RouteNavigateFn = useCallback(
     (route, options) => {
-      const router = getRouter();
-
       if (typeof route === 'string') {
         navigate(route, options);
       } else {

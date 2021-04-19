@@ -9,7 +9,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
-import { getRouter } from 'core/react-routing';
+import { router } from 'core/react-routing';
 
 export function createRoleRemover(listHandler, role, space) {
   const roleRepo = getInstance(space);
@@ -59,7 +59,7 @@ export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, r
       isConfirmLoading={loading}
       onConfirm={() => {
         if (isUsed) {
-          getRouter().go({ path: 'users.list', navigationState: { jumpToRole: role.name } });
+          router.navigate({ path: 'users.list', navigationState: { jumpToRole: role.name } });
           onCancel();
           return;
         }

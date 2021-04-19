@@ -2,7 +2,7 @@ export { useParams, Routes, Route } from 'react-router-dom';
 export { ReactRouterLink } from './ReactRouterLink';
 export { ReactRouterRedirect } from './ReactRouterRedirect';
 export { routes } from './routes';
-export { getRouter } from './useRouter';
+export { router } from './useRouter';
 export { withRouteErrorBoundary, RouteErrorBoundary } from './RouteErrorBoundary';
 export { useNavigationState } from './useNavigationState';
 export { withRouteNavigate } from './WithRouteNavigate';

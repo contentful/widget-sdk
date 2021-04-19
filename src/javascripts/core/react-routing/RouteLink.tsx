@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createPath } from 'history';
 import { LinkProps, useHref, useLocation, useNavigate, useResolvedPath } from 'react-router-dom';
 import { RouteType } from './routes';
-import { getRouter } from './useRouter';
+import { router } from './useRouter';
 
 function isModifiedEvent(event: React.MouseEvent) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
@@ -19,7 +19,7 @@ export const RouteLink = (
   } else {
     // @ts-expect-error
     fullState = { ...route?.navigationState, ...fullState };
-    to = getRouter().href(route);
+    to = router.href(route);
   }
   return <Link {...rest} to={to} state={fullState} />;
 };

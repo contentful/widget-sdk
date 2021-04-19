@@ -8,7 +8,7 @@ import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { getRouter } from 'core/react-routing';
+import { router } from 'core/react-routing';
 
 const styles = {
   wrapper: css({
@@ -32,7 +32,7 @@ const TagSelectionHeader = ({ totalSelected }) => {
   const canManageTags = useCanManageTags();
   const onCreate = useCallback(() => {
     if (canManageTags) {
-      getRouter().go({ path: 'tags' });
+      router.navigate({ path: 'tags' });
     }
   }, [canManageTags]);
 
