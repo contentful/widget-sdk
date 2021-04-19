@@ -42,7 +42,7 @@ interface CreateEditorExtensionSDKOptions {
   pubSubClient?: PubSubClient;
 }
 
-export const createEditorExtensionSDK = ({
+export const createEditorWidgetSDK = ({
   editorData,
   localeData,
   preferences,
