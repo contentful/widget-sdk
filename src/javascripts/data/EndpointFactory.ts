@@ -34,11 +34,16 @@ export function createOrganizationEndpoint(orgId: string): OrganizationEndpoint 
  * @param {string} spaceId
  * @param {string?} envId  if provided will call environment-scoped
  *                         endpoints for applicable entities
+ * @param {string?} source if provided, will tag Librato metrics with source
  * @returns {function<T>(): Promise<T>}
  */
 
-export function createSpaceEndpoint(spaceId: string, envId?: string | null): SpaceEndpoint {
-  return EndpointImpl.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
+export function createSpaceEndpoint(
+  spaceId: string,
+  envId?: string | null,
+  source?: string
+): SpaceEndpoint {
+  return EndpointImpl.createSpaceEndpoint(apiUrl(), spaceId, auth, envId, source);
 }
 
 export function createUsersEndpoint(): UserEndpoint {

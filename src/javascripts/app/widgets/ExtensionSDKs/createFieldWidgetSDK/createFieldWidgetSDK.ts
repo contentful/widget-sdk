@@ -18,7 +18,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
-import { createAPIClient } from 'core/services/APIClient/utils';
+import APIClient from 'data/APIClient';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -64,7 +64,7 @@ export function createFieldWidgetSDK({
   space: any;
   spaceId: string;
   pubSubClient?: PubSubClient;
-  cma: ReturnType<typeof createAPIClient>;
+  cma: APIClient;
 }): FieldExtensionSDK {
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);

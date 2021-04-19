@@ -35,7 +35,7 @@ const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
 });
 
 export function ExtensionsListRoute() {
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
 
   if (!getSectionVisibility()['extensions']) {
     return <ExtensionsForbiddenPage />;

@@ -20,6 +20,7 @@ import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultCli
 
 let withRetry;
 let withRetryVersion = 1;
+let currentSource;
 
 const RETRY_VERSION = {
   0: wrapWithRetry,
@@ -41,17 +42,20 @@ function getRetryVersion() {
   return variation ? 2 : 1;
 }
 
-export default function makeRequest(auth) {
+export default function makeRequest(auth, source) {
   const version = getRetryVersion();
-  if (version !== withRetryVersion || !withRetry) {
-    withRetry = RETRY_VERSION[version](fetchFn, version);
+
+  if (version !== withRetryVersion || currentSource !== source || !withRetry) {
+    withRetry = RETRY_VERSION[version]((config) => fetchFn(config, source), version);
     withRetryVersion = version;
+    currentSource = source;
   }
-  return wrapWithCounter(wrapWithAuth(auth, withRetry));
+
+  return wrapWithCounter(wrapWithAuth(auth, withRetry), source);
 }
 
-async function fetchFn(config) {
-  const args = buildRequestArguments(config);
+async function fetchFn(config, source) {
+  const args = buildRequestArguments(config, source);
   let rawResponse;
 
   const asyncError = new Error('API request failed');
@@ -130,13 +134,13 @@ async function getResponseBody(response) {
 // fetch requires the url as the first argument.
 // we require `body` to be a JSON string
 // we also send a special X-Contentful-User-Agent header
-function buildRequestArguments(data) {
+function buildRequestArguments(data, source) {
   const url = withQuery(data.url, data.query);
   const requestData = {
     ...data,
     body: data.body ? JSON.stringify(data.body) : null,
     headers: {
-      ...getDefaultHeaders(),
+      ...getDefaultHeaders(source),
       ...data.headers,
     },
   };
@@ -155,12 +159,13 @@ function withQuery(url, query) {
   return url;
 }
 
-function wrapWithCounter(request) {
+function wrapWithCounter(request, source) {
   return async (args) => {
     Telemetry.count('cma-req', {
       endpoint: getEndpoint(args.url),
       state: getCurrentState(),
       version: withRetryVersion,
+      source: source,
     });
 
     return request(args);

@@ -12,8 +12,9 @@ import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
 import { usePubSubClient } from 'core/hooks';
 import * as K from 'core/utils/kefir';
 import { connectGetEntity } from './connectedGetEntity';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { isCustomWidget } from '@contentful/widget-renderer';
 
 type EntityFieldControlProps = {
   hasInitialFocus: boolean;
@@ -49,7 +50,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     documentPool,
   } = useSpaceEnvContext();
 
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma, customWidgetClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
@@ -70,6 +71,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
   } = props;
 
   const internalContentType = editorData.entityInfo.contentType;
+  const isCustom = isCustomWidget(widget.widgetNamespace);
 
   const lifeline = K.useLifeline();
   const widgetApi = React.useMemo(() => {
@@ -79,7 +81,9 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       throw new Error('Space id needs to be defined');
     }
 
-    if (!cma) {
+    const apiClient = isCustom ? customWidgetClient : cma;
+
+    if (!apiClient) {
       return null;
     }
 
@@ -103,7 +107,7 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       environment: currentEnvironment,
       contentTypes: currentSpaceContentTypes,
       pubSubClient,
-      cma: getBatchingApiClient(cma),
+      cma: getBatchingApiClient(apiClient),
     });
 
     if (sdk.space) {
@@ -131,6 +135,8 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     documentPool,
     lifeline,
     cma,
+    customWidgetClient,
+    isCustom,
   ]);
 
   if (!widgetApi) {

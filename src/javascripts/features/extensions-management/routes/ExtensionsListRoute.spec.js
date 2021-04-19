@@ -24,7 +24,7 @@ describe('features/extensions-management/ExtensionsListRoute', () => {
 
   it('should render Forbidden page when no access', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing: jest.fn() });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing: jest.fn() } });
     render(
       <MemoryRouter>
         <ExtensionsListRoute />
@@ -37,7 +37,7 @@ describe('features/extensions-management/ExtensionsListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
     expect.assertions(3);
     const getExtensionsForListing = jest.fn();
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing } });
     render(
       <MemoryRouter
         initialEntries={[
@@ -64,7 +64,7 @@ describe('features/extensions-management/ExtensionsListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(2);
     const getExtensionsForListing = jest.fn();
-    useCurrentSpaceAPIClient.mockReturnValue({ getExtensionsForListing });
+    useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing } });
     render(
       <MemoryRouter>
         <ExtensionsListRoute />

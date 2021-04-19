@@ -17,7 +17,7 @@ const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
 export function ExtensionEditorRoute() {
   const { extensionId } = useParams();
   const navigate = useRouteNavigate();
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
 
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 

@@ -8,7 +8,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUsersCache from 'data/userCache';
 
 export function useBaseSearchSdk() {
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
   const {
     currentSpaceId = '',
     currentEnvironmentId = '',

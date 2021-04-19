@@ -68,9 +68,10 @@ export function createSpaceEndpoint(
   baseUrl: string,
   spaceId: string,
   auth: AuthParamsType,
-  envId?: string | null
+  envId?: string | null,
+  source?: string
 ): SpaceEndpoint {
-  const spaceEndpoint = create<'Space'>(withBaseUrl, auth) as SpaceEndpoint;
+  const spaceEndpoint = create<'Space'>(withBaseUrl, auth, source) as SpaceEndpoint;
 
   // spaceEndpoint is a function. we assign additional
   // properties so we can detect in which environment we
@@ -186,10 +187,17 @@ export function createAppDefinitionsEndpoint(
  * @param {string|function} baseUrl  can be a string - will be used as is
  *                                   can be a function of path to full URL
  * @param {object} auth
+ * @param {string} source - used to tag requests based on their source
+ *                          (e.g. custom widget). When missing, source
+ *                          is understood to be the webapp
  * @returns {function<T>(): Promise<T>}
  */
-export function create<Scope>(baseUrl: BaseUrlParam, auth: AuthParamsType): BaseEndpoint<Scope> {
-  const baseRequest = makeRequest(auth);
+export function create<Scope>(
+  baseUrl: BaseUrlParam,
+  auth: AuthParamsType,
+  source?: string
+): BaseEndpoint<Scope> {
+  const baseRequest = makeRequest(auth, source);
   let withBaseUrl;
   if (typeof baseUrl === 'string') {
     withBaseUrl = (path: string) => joinPath([baseUrl].concat(path));

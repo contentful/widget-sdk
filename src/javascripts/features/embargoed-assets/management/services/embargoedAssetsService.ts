@@ -1,14 +1,7 @@
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
 import { Level } from '../constants';
-
-export interface EmbargoedAsset {
-  level: Level;
-}
-
-export interface EmbargoedAssetApi {
-  protectionMode: Level | null;
-}
+import { EmbargoedAssetApi, EmbargoedAsset } from '../types';
 
 function responseConverter(data: EmbargoedAssetApi): EmbargoedAsset {
   return { level: data.protectionMode || 'disabled' };

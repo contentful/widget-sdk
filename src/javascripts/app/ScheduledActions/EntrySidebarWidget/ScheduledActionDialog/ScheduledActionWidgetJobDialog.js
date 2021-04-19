@@ -21,7 +21,7 @@ function ScheduledActionWidgetJobDialog({
 }) {
   const [validationError, setValidationError] = useState('');
 
-  const client = useCurrentSpaceAPIClient();
+  const { client } = useCurrentSpaceAPIClient();
 
   async function handleSubmit({ action, date, time, timezone }) {
     const truncatedTitle =

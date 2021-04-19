@@ -68,6 +68,7 @@ function toErrorDataFormat({ error }): APIClientError {
     data: { details: error?.details },
   };
 }
+
 /**
  * @description
  * Given a BulkAction ID, returns if the BulkAction has `succeeded` or `failed`
@@ -120,7 +121,7 @@ async function getUpdatedEntities(entities: PublishableEntity[]): Promise<Publis
     entities.map(({ sys }) => {
       if (sys.type === 'Asset') return batchApiClient().getAsset(sys.id);
       if (sys.type === 'Entry') return batchApiClient().getEntry(sys.id);
-    })
+    }) as Promise<PublishableEntity>[]
   );
 }
 
