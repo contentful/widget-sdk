@@ -1,14 +1,16 @@
 import { AppExtensionSDK } from '@contentful/app-sdk';
-import { WidgetNamespace, WidgetLocation, Widget } from '@contentful/widget-renderer';
-import { SpaceMember, createUserApi } from '../createUserApi';
+import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
+import { createUserApi, SpaceMember } from '../createUserApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
 import { createSpaceApi } from '../createSpaceApi';
 import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
-import { createAppApi, AppHookListener } from '../createAppApi';
+import { AppHookListener, createAppApi } from '../createAppApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { AppHookBus } from 'features/apps-core';
+import { createAPIClient } from 'core/services/APIClient/utils';
+import { Source } from 'i13n/constants';
 
 interface CreateAppExtensionSDKOptions {
   spaceContext: any;
@@ -26,6 +28,8 @@ export const createAppExtensionSDK = ({
   currentAppWidget,
 }: CreateAppExtensionSDKOptions): { sdk: AppExtensionSDK; onAppHook: AppHookListener } => {
   const spaceMember: SpaceMember = spaceContext.space.data.spaceMember;
+  const source = widgetNamespace === WidgetNamespace.BUILTIN ? undefined : Source.CustomWidget;
+  const cma = createAPIClient(spaceContext.getId(), spaceContext.getEnvironmentId(), source);
 
   const userApi = createUserApi(spaceMember);
 
@@ -37,7 +41,7 @@ export const createAppExtensionSDK = ({
   };
 
   const spaceApi = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
+    cma: getBatchingApiClient(cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
@@ -54,7 +58,7 @@ export const createAppExtensionSDK = ({
   const navigatorApi = createNavigatorApi({
     environmentId: spaceContext.getEnvironmentId(),
     spaceId: spaceContext.getId(),
-    cma: spaceContext.cma,
+    cma,
     isMaster: spaceContext.isMasterEnvironment(),
     widgetNamespace,
     widgetId,
