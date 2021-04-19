@@ -5,6 +5,17 @@ import { mockWebappContent } from './__mocks__/webappContent';
 import { BasePlanCard } from './BasePlanCard';
 
 describe('BasePlanCard', () => {
+  it('shows the skeletons if loading is true', () => {
+    build({ loading: true });
+
+    const skeletons = screen.getAllByTestId('cf-ui-skeleton-form');
+
+    expect(skeletons).toHaveLength(2);
+    for (const skeleton of skeletons) {
+      expect(skeleton).toBeVisible();
+    }
+  });
+
   it('shows the correct base plan content', () => {
     build();
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
@@ -12,21 +12,49 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import { isFreeSpacePlan, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
-import { go } from 'states/Navigator';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
-import { ContentfulApps } from './ContentfulApps';
-import { SpacePlans } from './SpacePlans';
+import { go } from 'states/Navigator';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { captureError } from 'services/logger';
+
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+
 import { BasePlanCard } from './BasePlanCard';
+import { ContentfulApps } from './ContentfulApps';
+import { SpacePlans } from './SpacePlans';
 
 const styles = {
   fullRow: css({
     gridColumnStart: 1,
     gridColumnEnd: 3,
   }),
+};
+
+const fetchContent = (basePlan) => async () => {
+  const fetchWebappContentError = new Error(
+    'Something went wrong while fetching content from Contentful'
+  );
+  let basePlanContent;
+
+  try {
+    switch (basePlan?.customerType) {
+      case FREE:
+        basePlanContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
+        break;
+      case SELF_SERVICE:
+        basePlanContent = await fetchWebappContentByEntryID('7y4ItLmbvc3ZGl0L8vtRPB');
+        break;
+      default:
+        break;
+    }
+  } catch (err) {
+    captureError(fetchWebappContentError, err);
+  }
+
+  return { basePlanContent };
 };
 
 export function NonEnterpriseSubscriptionPage({
@@ -44,7 +72,8 @@ export function NonEnterpriseSubscriptionPage({
 }) {
   const organizationId = organization?.sys.id;
   const [changedSpaceId, setChangedSpaceId] = useState('');
-  const [content, setContent] = useState();
+
+  const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
 
   // TODO: Refactor into own hook to use in both subscription pages
   useEffect(() => {
@@ -58,28 +87,6 @@ export function NonEnterpriseSubscriptionPage({
 
     return () => clearTimeout(timer);
   }, [changedSpaceId]);
-
-  // TODO: create custom hook to fetch baseplan content
-  useEffect(() => {
-    const fetchBasePlanContent = async () => {
-      let entryContent;
-
-      switch (basePlan?.customerType) {
-        case FREE:
-          entryContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
-          break;
-        case SELF_SERVICE:
-          entryContent = await fetchWebappContentByEntryID('7y4ItLmbvc3ZGl0L8vtRPB');
-          break;
-        default:
-          break;
-      }
-
-      setContent(entryContent);
-    };
-
-    fetchBasePlanContent();
-  }, [basePlan]);
 
   const handleStartAppTrial = async () => {
     go({
@@ -108,21 +115,20 @@ export function NonEnterpriseSubscriptionPage({
 
   return (
     <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
-      {content && (
-        <Flex flexDirection="column" className={styles.fullRow}>
-          <BasePlanCard
-            content={content}
-            organizationId={organizationId}
-            upgradableSpaceId={freeSpace?.space.sys.id}
-            users={
-              usersMeta && {
-                count: usersMeta.numFree + usersMeta.numPaid,
-                limit: usersMeta.hardLimit,
-              }
+      <Flex flexDirection="column" className={styles.fullRow}>
+        <BasePlanCard
+          loading={isLoading || error}
+          content={data?.basePlanContent}
+          organizationId={organizationId}
+          upgradableSpaceId={freeSpace?.space.sys.id}
+          users={
+            usersMeta && {
+              count: usersMeta.numFree + usersMeta.numPaid,
+              limit: usersMeta.hardLimit,
             }
-          />
-        </Flex>
-      )}
+          }
+        />
+      </Flex>
 
       {isOrgBillable && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
       {showContentfulAppsCard && (

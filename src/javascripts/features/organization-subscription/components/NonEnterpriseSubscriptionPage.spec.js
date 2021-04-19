@@ -1,121 +1,77 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
 
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { FREE } from 'account/pricing/PricingDataProvider';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+
+import { mockWebappContent } from './__mocks__/webappContent';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 
-import * as trackCTA from 'analytics/trackCTA';
-
-import { beginSpaceCreation } from 'services/CreateSpace';
-import { FREE } from 'account/pricing/PricingDataProvider';
-import { mockWebappContent } from './__mocks__/webappContent';
-
-jest.mock('services/CreateSpace', () => ({
-  beginSpaceCreation: jest.fn(),
-}));
-
-jest.mock('services/OrganizationRoles', () => ({
-  isOwner: jest.fn(),
-  isOwnerOrAdmin: jest.fn(),
-}));
-
-jest.mock('../utils', () => ({
-  links: {
-    billing: jest.fn(),
-    memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
-  },
-}));
-
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
-  href: jest.fn(),
-  getCurrentStateName: jest.fn(),
-}));
-
 jest.mock('core/services/ContentfulCDA', () => ({
-  fetchWebappContentByEntryID: jest.fn(),
+  fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
 }));
-
-const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
+jest.mock('services/OrganizationRoles', () => ({
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true),
+}));
 
 const mockOrganization = Fake.Organization();
 const mockFreeBasePlan = Fake.Plan({ name: 'Community Platform', customerType: FREE });
-const mockFreeSpacePlan = { planType: 'free_space', space: { sys: { id: 'test' } } };
+const mockFreeSpacePlan = {
+  name: 'Mock free space',
+  planType: 'free_space',
+  space: { sys: { id: 'test' } },
+};
 
 describe('NonEnterpriseSubscriptionPage', () => {
   beforeEach(() => {
-    isOwner.mockReturnValue(true);
-    getVariation.mockClear().mockResolvedValue(false);
-    isOwnerOrAdmin.mockReturnValue(true);
+    fetchWebappContentByEntryID.mockReset().mockResolvedValue(mockWebappContent);
   });
+  afterEach(cleanup);
 
-  it('should show skeletons when initialLoad is true', async () => {
-    build({ initialLoad: true });
+  describe('BasePlan section', () => {
+    it('show the BasePlanCard initially loading', async () => {
+      await build();
 
-    screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
-      expect(ele).toBeVisible();
+      const basePlanCard = screen.getByTestId('base-plan-card');
+      const skeletons = within(basePlanCard).queryAllByTestId('cf-ui-skeleton-form');
+
+      expect(basePlanCard).toBeVisible();
+      skeletons.forEach((skeleton) => expect(skeleton).toBeVisible());
+    });
+
+    it('show the BasePlanCard with the fetched content', async () => {
+      await build();
+
+      const basePlanCard = screen.getByTestId('base-plan-card');
+
+      expect(basePlanCard).toBeVisible();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('base-plan-title')).toBeVisible();
+      });
     });
   });
 
-  it('show the BasePlanCard when content is fetched', async () => {
-    fetchWebappContentByEntryID.mockResolvedValue(mockWebappContent);
-    build();
+  describe('Monthly Total section', () => {
+    it('should show the monthly cost for on demand users', async () => {
+      await build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
 
-    await waitFor(() => expect(screen.queryByTestId('base-plan-card')).toBeDefined());
-  });
-
-  it('should show the monthly cost for on demand users', () => {
-    build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
-
-    expect(screen.getByText('Monthly total')).toBeVisible();
-    expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
-  });
-
-  it('should not show the limitations copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is enabled', () => {
-    isOwner.mockReturnValue(false);
-    build({ organization: Fake.Organization({ isBillable: false }) });
-
-    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
-    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
-  });
-
-  it('should not show the billing copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is disabled', () => {
-    isOwner.mockReturnValue(false);
-    build({
-      organization: Fake.Organization({ isBillable: false }),
+      expect(screen.getByText('Monthly total')).toBeVisible();
+      expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
     });
-
-    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
-    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
-  it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
-    build();
-
-    userEvent.click(screen.getByTestId('subscription-page.create-space'));
-    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
-      organizationId: mockOrganization.sys.id,
-    });
-    expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
-  });
-
-  describe('contentful apps card', () => {
-    it('shows Contentful Apps trial card for users who have not purchased apps', () => {
-      isOwnerOrAdmin.mockReturnValueOnce(true);
-      build({ organization: mockOrganization, isAppTrialActive: true });
+  describe('Contentful Apps section', () => {
+    it('shows Contentful Apps trial card for users who have not purchased apps', async () => {
+      await build({ isAppTrialActive: true });
 
       expect(screen.getByTestId('apps-trial-header')).toBeVisible();
       expect(screen.queryByTestId('apps-header')).toBeNull();
     });
 
-    it('shows Contentful Apps card for users who have purchased apps', () => {
-      isOwnerOrAdmin.mockReturnValueOnce(true);
-      build({
-        organization: mockOrganization,
+    it('shows Contentful Apps card for users who have purchased apps', async () => {
+      await build({
         addOnPlan: { sys: { id: 'addon_id' } },
         composeAndLaunchEnabled: true,
       });
@@ -124,9 +80,18 @@ describe('NonEnterpriseSubscriptionPage', () => {
       expect(screen.queryByTestId('apps-trial-header')).toBeNull();
     });
   });
+
+  describe('Spaces section', () => {
+    it('shows the space plans’ table', async () => {
+      await build();
+
+      const spacesTable = screen.getByTestId('subscription-page.table');
+      expect(spacesTable).toBeVisible();
+    });
+  });
 });
 
-function build(custom) {
+async function build(custom) {
   const props = Object.assign(
     {
       initialLoad: false,
@@ -141,4 +106,8 @@ function build(custom) {
   );
 
   render(<NonEnterpriseSubscriptionPage {...props} />);
+
+  await waitFor(() => {
+    expect(fetchWebappContentByEntryID).toHaveBeenCalled();
+  });
 }

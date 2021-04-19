@@ -2,13 +2,15 @@ export const mockWebappContent = {
   title: 'Comunity tier (free)',
   colorAccent: { fields: { name: 'Yellow mid', value: 'colorYellowMid' } },
   description: {
+    nodeType: 'document',
+    data: {},
     content: [
       {
         nodeType: 'paragraph',
         content: [
           {
             nodeType: 'text',
-            value: 'this is a mock paragraph',
+            value: 'This is just a mock paragraph',
             marks: [],
             data: {},
           },

@@ -105,7 +105,7 @@ export const SpacePlansTable = ({
     });
   }, [organizationId, pagination.skip, pagination.limit, sortState]);
 
-  const { isLoading, error, data = { total: 0 } } = useAsync(fetchSpacesUsage);
+  const { isLoading, error, data = { total: 0, items: [] } } = useAsync(fetchSpacesUsage);
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
 
