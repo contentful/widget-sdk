@@ -2,7 +2,7 @@ import { User } from '@contentful/app-sdk';
 
 export interface SpaceMember {
   admin: boolean;
-  roles: { name: string; description: string }[];
+  roles: { name: string; description: string | null }[];
   sys: {
     id: string;
     user: {
@@ -35,7 +35,7 @@ export const createUserApi = (spaceMember: SpaceMember): User => {
       admin: !!spaceMember.admin,
       roles: spaceMember.roles.map((role) => ({
         name: role.name,
-        description: role.description,
+        description: role.description ?? '',
       })),
     },
   };
