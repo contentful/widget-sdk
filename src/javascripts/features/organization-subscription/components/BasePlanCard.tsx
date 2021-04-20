@@ -36,6 +36,10 @@ const styles = {
         transition: `background-color ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
       },
     }),
+  illustration: css({
+    margin: '0 auto',
+    height: '100%',
+  }),
 };
 
 interface BasePlanCardProps {
@@ -78,8 +82,8 @@ export function BasePlanCard({
                 })}
               />
             </Typography>
-            <Flex justifySelf="center">
-              <ContentfulImage image={content.illustration} />
+            <Flex flexDirection="column">
+              <ContentfulImage image={content.illustration} className={styles.illustration} />
             </Flex>
           </>
         )}
