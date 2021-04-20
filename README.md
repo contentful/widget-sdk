@@ -194,7 +194,7 @@ Process:
 ### Running the tests
 
 We have tests in a few different frameworks: Jest and Cypress. Jest is for our unit and React component tests,
-and Cypress is for our integration and contract tests..
+and Cypress is for our integration and contract tests.
 
 #### Jest
 

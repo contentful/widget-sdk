@@ -13,11 +13,11 @@ import {
 } from '../util/requests';
 
 enum BulkActionStates {
-  EMPTY = 'bulk-actions/no-bulk-actions-for-default-space',
-  MAX_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs-for-default-space',
-  COMPLETED = 'bulk-actions/completed-bulk-actions-for-default-space',
-  FAILED = 'bulk-actions/failed-bulk-actions-for-default-space',
-  IN_PROGRESS = 'bulk-actions/bulk-actions-in-progress-for-default-space',
+  EMPTY_LIST = 'bulk-actions/empty-list',
+  MAXIMUM_NUMBER_OF_JOBS = 'bulk-actions/maximum-number-of-jobs',
+  COMPLETED = 'bulk-actions/completed',
+  FAILED = 'bulk-actions/failed',
+  IN_PROGRESS = 'bulk-actions/in-progress',
 }
 
 export const publishPayload = {
@@ -347,7 +347,7 @@ export const publishBulkAction = {
     cy.addInteraction({
       ...postPublishBulkActionRequest,
       uponReceiving: `a request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
-      state: BulkActionStates.EMPTY,
+      state: BulkActionStates.EMPTY_LIST,
       willRespondWith: {
         status: 201,
         headers: {
@@ -363,7 +363,7 @@ export const publishBulkAction = {
     cy.addInteraction({
       ...postPublishBulkActionRequest,
       uponReceiving: `a failing request to create a publish bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
-      state: BulkActionStates.MAX_NUMBER_OF_JOBS,
+      state: BulkActionStates.MAXIMUM_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
         headers: {
@@ -456,7 +456,7 @@ export const validateBulkAction = {
     cy.addInteraction({
       ...postValidateBulkActionRequest,
       uponReceiving: `a request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
-      state: BulkActionStates.EMPTY,
+      state: BulkActionStates.EMPTY_LIST,
       willRespondWith: {
         status: 201,
         headers: {
@@ -474,7 +474,7 @@ export const validateBulkAction = {
     cy.addInteraction({
       ...postValidateBulkActionRequest,
       uponReceiving: `a failing request to create a validate bulk action on space ${defaultSpaceId} and ${defaultEnvironmentId} environment`,
-      state: BulkActionStates.MAX_NUMBER_OF_JOBS,
+      state: BulkActionStates.MAXIMUM_NUMBER_OF_JOBS,
       willRespondWith: {
         status: 429,
         headers: {
