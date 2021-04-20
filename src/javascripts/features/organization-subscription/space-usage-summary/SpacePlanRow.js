@@ -15,7 +15,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 import { SpaceUsageTableCell } from './SpaceUsageTableCell';
 import { track } from 'analytics/Analytics';
@@ -56,11 +56,9 @@ export const SpacePlanRow = ({
 
   const onViewUsage = () => {
     track('space_usage_summary:go_to_detailed_usage');
-    go({
-      path: ['spaces', 'detail', 'settings', 'usage'],
-      params: {
-        spaceId: space.sys.id,
-      },
+    router.navigate({
+      path: 'usage',
+      spaceId: space.sys.id,
     });
   };
 

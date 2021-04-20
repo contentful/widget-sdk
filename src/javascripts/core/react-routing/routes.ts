@@ -181,6 +181,22 @@ const contentPreviewRoutes = {
       pathname: '/',
     },
   }),
+};
+/** Usage */
+
+type SpaceUsageRouteType = {
+  path: 'usage';
+  spaceId?: string;
+};
+
+const spaceUsageRoutes = {
+  usage: (env: EnvironmentParams, params?: Omit<SpaceUsageRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'settings.usage'),
+    params: {
+      pathname: '/',
+      ...params,
+    },
+  }),
   'content_preview.new': (env: EnvironmentParams) => ({
     path: spaceEnvBase(env, 'settings.content_preview'),
     params: {
@@ -264,7 +280,8 @@ export type RouteType =
   | ExtensionsRouteType
   | TagsRouteType
   | ContentPreviewRouteType
-  | TeamsRouteType;
+  | TeamsRouteType
+  | SpaceUsageRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -275,4 +292,5 @@ export const routes = {
   ...tagsRoutes,
   ...contentPreviewRoutes,
   ...teamsRoutes,
+  ...spaceUsageRoutes,
 };

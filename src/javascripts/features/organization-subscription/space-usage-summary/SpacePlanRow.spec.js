@@ -3,6 +3,7 @@ import { render, screen, fireEvent, within, act } from '@testing-library/react';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 import { SpacePlanRow } from './SpacePlanRow';
@@ -48,6 +49,12 @@ const mockSpaceUsage = {
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
+}));
+
+jest.mock('core/react-routing', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 const mockOnChangeSpace = jest.fn();
@@ -301,9 +308,9 @@ describe('Space Plan Row', () => {
         );
       });
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['spaces', 'detail', 'settings', 'usage'],
-        params: { spaceId: mockTrialPlan.space.sys.id },
+      expect(router.navigate).toHaveBeenCalledWith({
+        path: 'usage',
+        spaceId: mockTrialPlan.space.sys.id,
       });
     });
 

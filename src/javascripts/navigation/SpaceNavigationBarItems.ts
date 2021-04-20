@@ -31,6 +31,7 @@ export function getSpaceNavigationItems({
   const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
   const contentPreview = routes['content_preview.list']({ withEnvironment: !isUnscopedRoute });
   const teams = routes['teams.list']({ withEnvironment: !isUnscopedRoute });
+  const spaceUsage = routes['usage']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
     locales: {
@@ -128,7 +129,9 @@ export function getSpaceNavigationItems({
     },
     usage: {
       if: usageEnabled && canNavigateTo('usage'),
-      sref: makeRef('settings.usage', isUnscopedRoute),
+      sref: spaceUsage.path,
+      srefParams: spaceUsage.params,
+      rootSref: spaceUsage.path,
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       srefOptions: {
