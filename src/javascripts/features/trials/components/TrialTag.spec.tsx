@@ -8,7 +8,7 @@ import { isOwnerOrAdmin as _isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute as _isOrgRoute } from 'states/Navigator';
 import { getAppTrialSpaceKey as _getAppTrialSpaceKey } from '../services/AppTrialService';
 import { getTrial as _getTrial } from '../services/AppTrialRepo';
-import { useSpaceEnvContext as _useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext as _useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -112,7 +112,7 @@ jest.mock('../services/AppTrialRepo', () => ({
   getTrial: jest.fn(),
 }));
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn().mockReturnValue({}),
 }));
 

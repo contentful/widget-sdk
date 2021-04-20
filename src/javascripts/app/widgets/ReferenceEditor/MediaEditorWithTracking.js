@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
 import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const onMediaAction = (loadEvents, sdk) => (action) => {

@@ -7,7 +7,7 @@ import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentType
 import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
 import { Entity } from 'app/entity_editor/Document/types';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
 import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -49,8 +49,8 @@ const SnapshotPresenterCustomWidget = ({
     currentEnvironmentId,
     currentEnvironmentAliasId,
     currentSpace,
-    currentSpaceContentTypes,
   } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
   const { client: spaceApiClient } = useCurrentSpaceAPIClient();
 
   const sdk: FieldExtensionSDK = useMemo(() => {

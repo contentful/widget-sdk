@@ -2,18 +2,15 @@ import { useMemo } from 'react';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceApi } from 'app/widgets/ExtensionSDKs/createSpaceApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
 import { createTagsRepo } from 'features/content-tags';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUsersCache from 'data/userCache';
 
 export function useBaseSearchSdk() {
   const { client: cma } = useCurrentSpaceAPIClient();
-  const {
-    currentSpaceId = '',
-    currentEnvironmentId = '',
-    currentSpaceContentTypes,
-  } = useSpaceEnvContext();
+  const { currentSpaceId = '', currentEnvironmentId = '' } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
 
   return useMemo(() => {
     const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);

@@ -6,7 +6,7 @@ import {
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference';
 import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 export function getCtId(entry) {

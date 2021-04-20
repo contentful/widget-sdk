@@ -123,7 +123,6 @@ const renderComponent = (override = (props) => props) => {
       value={{
         currentSpaceId: 'space-id',
         currentEnvironmentId: 'environment-id',
-        currentSpaceContentTypes: [],
       }}>
       <CurrentSpaceAPIClientProvider>
         <EntityField {...override(defaultProps)} />

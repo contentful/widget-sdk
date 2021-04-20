@@ -12,7 +12,7 @@ const environmentMetaMock = {
   isMasterEnvironment: true,
 };
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn().mockReturnValue({
     currentSpaceId: spaceId,
     currentSpace: {

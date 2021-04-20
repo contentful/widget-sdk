@@ -3,7 +3,7 @@ import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { isExpiredTrialSpace, isExpiredAppTrial } from 'features/trials';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
@@ -39,7 +39,7 @@ jest.mock('features/trials', () => ({
   },
 }));
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn(),
 }));
 

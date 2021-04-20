@@ -8,7 +8,7 @@ import { createClient } from 'contentful-management';
 import type { PlainClientDefaultParams } from 'contentful-management';
 import * as auth from 'Authentication';
 import * as logger from 'services/logger';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
 

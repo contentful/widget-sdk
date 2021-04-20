@@ -1,6 +1,6 @@
 import React, { ReactNode, ReactElement, forwardRef, Ref } from 'react';
 
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getLaunchAppDeepLink } from '../utils/getLaunchAppDeepLink';
 import { LaunchAppDeepLinkRaw } from './LaunchAppDeepLinkRaw';
 import { IconProps } from '@contentful/forma-36-react-components/dist/components/Icon';

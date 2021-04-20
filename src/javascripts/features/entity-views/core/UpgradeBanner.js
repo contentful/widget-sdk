@@ -17,7 +17,7 @@ import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const WARNING_THRESHOLD = 0.9;

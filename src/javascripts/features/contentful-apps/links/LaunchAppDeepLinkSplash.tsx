@@ -2,7 +2,7 @@ import { AppLogos } from '@contentful/experience-components';
 import { Button, Flex, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { track } from 'analytics/Analytics';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { css } from 'emotion';
 import React from 'react';
 import { getLaunchAppDeepLink } from '../utils/getLaunchAppDeepLink';

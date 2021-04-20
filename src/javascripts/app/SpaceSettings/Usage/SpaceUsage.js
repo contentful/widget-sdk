@@ -13,7 +13,7 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceEntitlementSet } from './services/EntitlementService';
 import { can } from 'access_control/AccessChecker';
 import { go } from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
 
 const addMasterEnvironment = flow(

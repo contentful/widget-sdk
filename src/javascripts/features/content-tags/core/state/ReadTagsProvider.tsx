@@ -3,7 +3,7 @@ import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContex
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
 import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { Tag } from '@contentful/types';
 
 type Props = PropsWithChildren<{}>;

@@ -13,7 +13,7 @@ import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
 import {
   isCurrentEnvironmentMaster,
   getEnvironmentAliasesIds,
@@ -64,10 +64,12 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   const {
     currentSpace,
     currentSpaceId,
-    currentSpaceContentTypes,
+
     currentEnvironmentId,
     currentEnvironment,
   } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
+
   const aliasesIds = getEnvironmentAliasesIds(currentEnvironment);
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);

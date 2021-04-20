@@ -12,7 +12,7 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { RouteLink } from 'core/react-routing';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({

@@ -25,7 +25,7 @@ import {
 } from '../services/AppTrialService';
 import { AppTrialFeature } from '../types/AppTrial';
 import { Organization } from 'core/services/SpaceEnvContext/types';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 
 const styles = {
   tag: css({

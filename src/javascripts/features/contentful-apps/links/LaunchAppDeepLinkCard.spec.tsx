@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { LaunchAppDeepLinkCard } from './LaunchAppDeepLinkCard';
 import * as Analytics from 'analytics/Analytics';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 
 jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
@@ -17,7 +17,7 @@ jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
 }));
 
 jest.mock('analytics/Analytics', () => ({ track: jest.fn() }));
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn(),
 }));
 

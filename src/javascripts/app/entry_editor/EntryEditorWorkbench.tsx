@@ -38,7 +38,7 @@ import { Action, ReferencesState } from './EntryReferences/state/reducer';
 import { filterWidgets, getNoLocalizedFieldsAdviceProps } from './formWidgetsController';
 import { useFieldLocaleListeners } from './makeFieldLocaleListeners';
 import NoEditorsWarning from './NoEditorsWarning';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
 import {

@@ -16,7 +16,7 @@ import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
 import { EntitySearch, usePaginator, useSearchController } from 'features/entity-search';
 import { getCreatableContentTypes, getReadableContentTypes } from 'data/ContentTypeRepo/filter';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useContentTypes } from 'core/services/SpaceEnvContext';
 import { LoadingEmptyState } from 'features/loading-state';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 
@@ -95,7 +95,7 @@ export const EntitiesView = ({
   const paginator = usePaginator();
   const [isInitialized, setIsInitialized] = useState(false);
   const { contentTypeId } = listViewContext.getView();
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
   const { tagsEnabled, isTagsEnabledLoading } = useTagsFeatureEnabled();
 
   const [

@@ -11,7 +11,7 @@ import { BulkActionDeleteConfirm } from './BulkActionsDeleteConfirm';
 import { TagsBulkAction, useReadTags, useTagsFeatureEnabled } from 'features/content-tags';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useBulkActions } from 'core/hooks/useBulkActions';
 
 const styles = {

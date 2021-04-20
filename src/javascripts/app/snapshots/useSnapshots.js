@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { get } from 'lodash';
 import Paginator from 'classes/Paginator';
 import * as snapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import createCache from 'data/userCache';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';

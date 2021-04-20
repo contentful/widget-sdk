@@ -17,7 +17,7 @@ import { openDeleteSpaceDialog } from 'features/space-settings';
 import * as TokenStore from 'services/TokenStore';
 import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 const styles = {

@@ -27,7 +27,7 @@ import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { canStartAppTrial } from 'features/trials';
 import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { EnvironmentMeta } from 'core/services/SpaceEnvContext/types';
 import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';

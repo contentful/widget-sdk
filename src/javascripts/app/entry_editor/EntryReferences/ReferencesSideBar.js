@@ -30,7 +30,7 @@ import {
   SET_PROCESSING_ACTION,
 } from './state/actions';
 import { validateEntities, getReferencesForEntryId } from './referencesService';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { createPublishBulkAction, createValidateBulkAction } from './BulkAction/BulkActionService';
 import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';

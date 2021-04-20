@@ -23,7 +23,7 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import ApiKeysEmptyIllustration from '../svg/api-keys-empty-illustation.svg';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 
 const styles = {
   actions: css({

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { go } from 'states/Navigator';
 
 import { LoadingState } from 'features/loading-state';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';

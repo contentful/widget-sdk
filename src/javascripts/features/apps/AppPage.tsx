@@ -38,8 +38,8 @@ import {
   WidgetNamespace,
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';

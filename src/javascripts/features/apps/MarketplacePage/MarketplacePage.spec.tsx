@@ -18,7 +18,7 @@ const getMockAppsRepo = (apps?) => ({
   getAllApps: jest.fn(() => Promise.resolve(apps)),
 });
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: () => ({
     currentOrganizationId: '123',
     currentSpaceId: '456',

@@ -14,8 +14,8 @@ import createTaskPermissionChecker, {
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
 import TaskList from './View/TaskList';
 import { trackIsTasksAlphaEligible } from './analytics';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   const [isEnabled, setIsEnabled] = useState(false);

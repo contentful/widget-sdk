@@ -5,7 +5,7 @@ import { WebhookSkeletons } from '../skeletons/WebhookListRouteSkeleton';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useRouteNavigate, RouteNavigate, useParams } from 'core/react-routing';
 
 const WebhookCallFetcher = createFetcherComponent(

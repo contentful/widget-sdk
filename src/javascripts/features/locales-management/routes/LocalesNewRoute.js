@@ -8,7 +8,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
 import { RouteNavigate } from 'core/react-routing';

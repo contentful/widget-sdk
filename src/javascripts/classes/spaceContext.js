@@ -48,6 +48,8 @@ export default function register() {
       let enforcementsDeInit;
 
       const spaceContext = {
+        resettingSpace: false,
+
         /**
          * @type {Published}
          * @description
@@ -84,93 +86,101 @@ export default function register() {
          */
         resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
           const self = this;
-          accessChecker.setSpace(spaceData);
 
-          /**
-           * @deprecated
-           * This is a legacy client instance which returns entities as `.data` and uses
-           * `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs.
-           * Use e.g. `spaceContext.cma` or `sdk.space`  instead wherever possible.
-           */
-          let space = client.newSpace(spaceData);
+          self.resettingSpace = true;
 
-          if (uriEnvOrAliasId) {
-            // creates env aware routes on space
-            space = space.makeEnvironment(uriEnvOrAliasId, shouldUseEnvEndpoint);
-          }
+          try {
+            accessChecker.setSpace(spaceData);
 
-          const spaceId = spaceData.sys.id;
+            /**
+             * @deprecated
+             * This is a legacy client instance which returns entities as `.data` and uses
+             * `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs.
+             * Use e.g. `spaceContext.cma` or `sdk.space`  instead wherever possible.
+             */
+            let space = client.newSpace(spaceData);
 
-          self.endpoint = createSpaceEndpoint(Config.apiUrl(), spaceId, Auth, uriEnvOrAliasId);
+            if (uriEnvOrAliasId) {
+              // creates env aware routes on space
+              space = space.makeEnvironment(uriEnvOrAliasId, shouldUseEnvEndpoint);
+            }
 
-          resetMembers(self);
+            const spaceId = spaceData.sys.id;
 
-          self.space = space;
-          self.cma = new APIClient(self.endpoint);
-          self.users = createUserCache(self.endpoint);
-          self.organization = deepFreezeClone(self.getData('organization'));
+            self.endpoint = createSpaceEndpoint(Config.apiUrl(), spaceId, Auth, uriEnvOrAliasId);
 
-          const localeRepoSpaceEndpoint = createSpaceEndpoint(
-            Config.apiUrl(),
-            spaceId,
-            Auth,
-            uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
-          );
-          self.localeRepo = createLocaleRepo(localeRepoSpaceEndpoint);
+            resetMembers(self);
 
-          // TODO: publicly accessible docConnection is
-          // used only in a process of creating space out
-          // of a template. We shouldn't use it in newly
-          // created code.
+            self.space = space;
+            self.cma = new APIClient(self.endpoint);
+            self.users = createUserCache(self.endpoint);
+            self.organization = deepFreezeClone(self.getData('organization'));
 
-          self.docConnection = ShareJSConnection.create(
-            Config.otUrl,
-            Auth,
-            spaceId,
-            uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
-          );
+            const localeRepoSpaceEndpoint = createSpaceEndpoint(
+              Config.apiUrl(),
+              spaceId,
+              Auth,
+              uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
+            );
+            self.localeRepo = createLocaleRepo(localeRepoSpaceEndpoint);
 
-          self.memberships = MembershipRepo.create(self.endpoint);
-          self.members = createSpaceMembersRepo(self.endpoint);
-          self.user = K.getValue(TokenStore.user$);
+            // TODO: publicly accessible docConnection is
+            // used only in a process of creating space out
+            // of a template. We shouldn't use it in newly
+            // created code.
 
-          // This happens here, rather than in `prelude.js`, since it's scoped to a space
-          // and not the user, so the spaceId is required.
-          enforcementsDeInit = EnforcementsService.init(spaceId);
+            self.docConnection = ShareJSConnection.create(
+              Config.otUrl,
+              Auth,
+              spaceId,
+              uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
+            );
 
-          const start = Date.now();
-          return Promise.all([
-            setupEnvironments(self, uriEnvOrAliasId),
-            TheLocaleStore.init(self.localeRepo),
-            setupPublishedCTsBus(self).then(() => {
-              const ctMap = self.publishedCTs
-                .getAllBare()
-                .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
-              self.uiConfig = createUiConfigStore(
-                space,
-                self.endpoint,
-                self.publishedCTs,
-                createViewMigrator(ctMap)
-              );
-            }),
-            (async () => {
-              self.pubsubClient = await createPubSubClientForSpace(spaceId);
-              self.docPool = await DocumentPool.create(
-                self.docConnection,
-                self.endpoint,
-                self.pubsubClient,
-                self.organization.sys.id,
-                spaceId,
-                uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
-              );
-            })(),
-          ]).then(() => {
+            self.memberships = MembershipRepo.create(self.endpoint);
+            self.members = createSpaceMembersRepo(self.endpoint);
+            self.user = K.getValue(TokenStore.user$);
+
+            // This happens here, rather than in `prelude.js`, since it's scoped to a space
+            // and not the user, so the spaceId is required.
+            enforcementsDeInit = EnforcementsService.init(spaceId);
+
+            const start = Date.now();
+            await Promise.all([
+              setupEnvironments(self, uriEnvOrAliasId),
+              TheLocaleStore.init(self.localeRepo),
+              setupPublishedCTsBus(self).then(() => {
+                const ctMap = self.publishedCTs
+                  .getAllBare()
+                  .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
+                self.uiConfig = createUiConfigStore(
+                  space,
+                  self.endpoint,
+                  self.publishedCTs,
+                  createViewMigrator(ctMap)
+                );
+              }),
+              (async () => {
+                self.pubsubClient = await createPubSubClientForSpace(spaceId);
+                self.docPool = await DocumentPool.create(
+                  self.docConnection,
+                  self.endpoint,
+                  self.pubsubClient,
+                  self.organization.sys.id,
+                  spaceId,
+                  uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
+                );
+              })(),
+            ]);
+
             Telemetry.record('space_context_http_time', Date.now() - start);
             // TODO: remove this after we have store with combined reducers on top level
             // string is hardcoded because this code _is_ temporary
             $rootScope.$broadcast('spaceContextUpdated');
+
             return self;
-          });
+          } finally {
+            self.resettingSpace = false;
+          }
         },
 
         /**

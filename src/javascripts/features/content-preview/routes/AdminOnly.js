@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 export function AdminOnly(props) {

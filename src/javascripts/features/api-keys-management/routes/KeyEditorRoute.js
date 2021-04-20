@@ -7,7 +7,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const ApiKeyFetcher = createFetcherComponent(

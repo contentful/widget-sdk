@@ -1,13 +1,13 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
 import { getBlankEntryView } from 'data/UiConfig/Blanks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useContentTypes } from 'core/services/SpaceEnvContext';
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
-  useSpaceEnvContext: jest.fn(),
+jest.mock('core/services/SpaceEnvContext', () => ({
+  useContentTypes: jest.fn(),
 }));
 
-useSpaceEnvContext.mockReturnValue({
+useContentTypes.mockReturnValue({
   currentSpaceContentTypes: [
     {
       displayField: 0,

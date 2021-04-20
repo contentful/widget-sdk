@@ -13,7 +13,7 @@ import {
   IconButton,
   Notification,
 } from '@contentful/forma-36-react-components';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
 import { valuePropertyAt } from 'app/entity_editor/Document';
 import {
   alignSlugWithEntryTitle,
@@ -35,7 +35,8 @@ export default function EntrySecondaryActions({
   preferences,
   onDelete,
 }) {
-  const { currentSpaceContentTypes, currentSpace } = useSpaceEnvContext();
+  const { currentSpace } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
   const [isOpen, setOpen] = useState(false);
 
   const canCreateEntry = () => {

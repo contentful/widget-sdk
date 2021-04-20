@@ -8,7 +8,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from '../components/RoleListHandler';
 import { RolesList } from '../roles_list/RolesList';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getSpaceEntitlementSet } from 'features/space-usage';

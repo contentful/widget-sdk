@@ -14,7 +14,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { remove as removeComment } from 'data/CMA/CommentsRepo';
 import { canRemoveComment } from './utils';
 import * as types from './CommentPropTypes';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 
 export const styles = {
   comment: css({

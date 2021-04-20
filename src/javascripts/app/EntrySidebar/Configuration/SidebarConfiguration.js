@@ -10,7 +10,7 @@ import {
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 
 const styles = {
   container: css({

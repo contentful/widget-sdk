@@ -1,7 +1,7 @@
 import { Note, SkeletonBodyText, SkeletonContainer } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { useAsync } from 'core/hooks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { DEFAULT_FEATURES_STATUS, SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { css } from 'emotion';
 import { useIsInitialLoadingOfTags, useReadTags } from 'features/content-tags/core/hooks';

@@ -6,7 +6,7 @@ import { WebhookSkeletons } from '../skeletons/WebhookListRouteSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { useParams, RouteNavigate } from 'core/react-routing';
 

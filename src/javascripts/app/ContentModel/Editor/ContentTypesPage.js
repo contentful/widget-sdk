@@ -22,7 +22,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import useCreateActions from 'app/ContentModel/Editor/Actions';
 import { openCreateDialog } from './Utils';
 import * as accessChecker from 'access_control/AccessChecker';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { LoadingState } from 'features/loading-state';
 
 const styles = {

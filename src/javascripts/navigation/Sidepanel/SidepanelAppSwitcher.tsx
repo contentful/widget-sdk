@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppSwitcher, AppSwitcherAction } from '@contentful/experience-components';
 import * as Navigator from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { NavigationSwitcherAppProps } from './useAppsList';
 
 export const SidepanelAppSwitcher = ({

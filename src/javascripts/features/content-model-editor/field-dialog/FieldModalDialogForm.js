@@ -26,7 +26,7 @@ import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useContentTypes } from 'core/services/SpaceEnvContext';
 
 const styles = {
   modalHeader: css({
@@ -82,7 +82,7 @@ const FieldModalDialogForm = ({
   editorInterface,
   customWidgets,
 }) => {
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
   const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));

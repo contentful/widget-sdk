@@ -1,4 +1,4 @@
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const useIsAdmin = (): boolean => {

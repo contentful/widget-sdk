@@ -60,7 +60,7 @@ jest.mock('services/OrganizationRoles');
 
 const defaultSpaceId = 'space123';
 const defaultOrganizationId = 'org123';
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+jest.mock('core/services/SpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn().mockReturnValue({
     currentSpaceId: defaultSpaceId,
     currentEnvironmentAliasId: 'master',

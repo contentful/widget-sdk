@@ -6,7 +6,7 @@ import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkele
 import { ContentPreviewFormPage } from '../ContentPreviewFormPage';
 import { getContentPreview } from '../services/getContentPreview';
 import { contentPreviewToInternal } from '../services/contentPreviewToInternal';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useContentTypes } from 'core/services/SpaceEnvContext';
 import type { UnsavedChangesModalProps } from 'core/hooks';
 import { RouteNavigate, useParams } from 'core/react-routing';
 
@@ -16,7 +16,7 @@ const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
 
 export function ContentPreviewEditRoute(props: UnsavedChangesModalProps) {
   const { contentPreviewId } = useParams();
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useContentTypes();
 
   return (
     <AdminOnly>

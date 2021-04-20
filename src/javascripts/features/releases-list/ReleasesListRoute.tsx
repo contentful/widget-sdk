@@ -3,7 +3,7 @@ import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
 import { ReleasesListPage } from './ReleasesListPage';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 import { appsMarketingUrl } from 'Config';
 

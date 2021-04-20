@@ -1,5 +1,5 @@
 import { Notification, Paragraph } from '@contentful/forma-36-react-components';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import React, { useEffect, useState } from 'react';
 import { EnabledLevel, Level, LEVEL } from '../constants';
 import { styles } from '../EmbargoedAssets.styles';

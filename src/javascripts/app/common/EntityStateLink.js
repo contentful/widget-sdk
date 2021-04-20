@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import StateLink from './StateLink';
 import { href } from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const entityTypeToPathParams = {
