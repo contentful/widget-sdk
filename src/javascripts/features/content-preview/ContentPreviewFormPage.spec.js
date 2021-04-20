@@ -284,13 +284,15 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         registerSaveAction: jest.fn(),
       };
       const wrapper = Enzyme.mount(
-        <ContentPreviewFormPage
-          isNew={false}
-          setDirty={stubs.setDirty}
-          registerSaveAction={stubs.registerSaveAction}
-          initialValue={initialValue}
-          {...props}
-        />
+        <MemoryRouter>
+          <ContentPreviewFormPage
+            isNew={false}
+            setDirty={stubs.setDirty}
+            registerSaveAction={stubs.registerSaveAction}
+            initialValue={initialValue}
+            {...props}
+          />
+        </MemoryRouter>
       );
       return { wrapper, stubs };
     };

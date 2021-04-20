@@ -22,6 +22,7 @@ import * as Analytics from 'analytics/Analytics';
 import { RouteNavigateFn, withRouteNavigate } from 'core/react-routing';
 import { UnsavedChangesModalProps } from 'core/hooks';
 import { ContentTypeField } from 'core/services/SpaceEnvContext/types';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 const styles = {
   removeButton: css({
@@ -273,6 +274,8 @@ class ContentPreviewFormPageWithNavigate extends Component<Props, State> {
             </Button>
           </React.Fragment>
         }>
+        {this.state.dirty && <UnsavedChangesBlocker when save={this.save} />}
+
         <Form className="content-preview-editor">
           <Heading className="section-title" element="h3">
             General information
