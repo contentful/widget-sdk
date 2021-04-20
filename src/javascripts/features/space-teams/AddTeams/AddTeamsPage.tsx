@@ -9,10 +9,20 @@ import { getInstance as createRoleRepo } from 'access_control/RoleRepository';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 
-import AddTeamsPage from './AddTeamsPage';
+import { AddTeamsPageContent } from './AddTeamsPageContent';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
+import { Role, SpaceEnv } from 'core/services/SpaceEnvContext/types';
 
-const fetch = (spaceId, organizationId, space) => async () => {
+type FetchResponseProps = {
+  teams: TeamProps[];
+  teamSpaceMemberships: TeamSpaceMembership[];
+  roles: Role[];
+};
+
+const fetch = (spaceId: string, organizationId: string, space: SpaceEnv) => async (): Promise<
+  FetchResponseProps
+> => {
   const orgEndpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
   const roleRepo = createRoleRepo(space);
@@ -26,14 +36,13 @@ const fetch = (spaceId, organizationId, space) => async () => {
   return { teams, teamSpaceMemberships, roles };
 };
 
-export default function AddTeamsRouter() {
+const AddTeamsPage = () => {
   const { currentSpaceId, currentOrganizationId, currentSpace } = useSpaceEnvContext();
   const { isLoading, error, data } = useAsync(
-    useCallback(fetch(currentSpaceId, currentOrganizationId, currentSpace), [
-      currentSpaceId,
-      currentOrganizationId,
-      currentSpace,
-    ])
+    useCallback(
+      fetch(currentSpaceId as string, currentOrganizationId as string, currentSpace as SpaceEnv),
+      [currentSpaceId, currentOrganizationId, currentSpace]
+    )
   );
 
   const hasAccess = getSectionVisibility().teams;
@@ -46,7 +55,9 @@ export default function AddTeamsRouter() {
   }
 
   if (!hasError) {
-    page = <AddTeamsPage spaceId={currentSpaceId} {...data} />;
+    page = (
+      <AddTeamsPageContent spaceId={currentSpaceId as string} {...(data as FetchResponseProps)} />
+    );
   }
 
   if (!hasAccess) {
@@ -59,4 +70,6 @@ export default function AddTeamsRouter() {
       {page || <UnknownErrorMessage />}
     </>
   );
-}
+};
+
+export { AddTeamsPage };

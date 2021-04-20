@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 
-import styles from '../styles';
+type DowngradeLastAdminMembershipConfirmationProps = {
+  close: () => void;
+  onConfirm: () => void;
+  isShown: boolean;
+  teamName: string;
+  isLastAdminMembership: boolean;
+};
 
-const RemoveOwnAdminMembershipConfirmation = ({
+const DowngradeLastAdminMembershipConfirmation = ({
   close,
   isShown,
   onConfirm,
   teamName,
   isLastAdminMembership,
-}) => {
+}: DowngradeLastAdminMembershipConfirmationProps) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
@@ -19,36 +24,37 @@ const RemoveOwnAdminMembershipConfirmation = ({
 
   return (
     <ModalConfirm
-      testId="remove-own-admin-confirmation"
       onCancel={close}
+      // TODO: add type declaration in forma for onClose property
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
       onClose={close}
       onConfirm={onConfirm}
       isShown={isShown}
-      title="Remove team from this space"
+      title="Change role of team for this space"
       intent="negative"
-      confirmLabel="Remove"
-      cancelLabel="Don't remove"
+      confirmLabel="Change role"
+      cancelLabel="Don't change role"
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
-      <div className={styles.modalContent}>
+      <div>
         <Paragraph>
-          You are removing the team {<strong className={styles.strong}>{teamName}</strong>} from
-          this space.
+          You are removing the admin role of the team {<strong>{teamName}</strong>}.
           {isLastAdminMembership &&
             ' This team has a user with the last administrator role for this space.'}
         </Paragraph>
         {!isLastAdminMembership && (
           <Paragraph>
-            If you remove this team, you will lose your administrator role for this space.
+            If you change this role, you will lose your administrator role for this space.
           </Paragraph>
         )}
         {isLastAdminMembership && (
           <Paragraph>
-            If you remove this team, it can only be managed by an organization admin.
+            If you change this role, it can only be managed by an organization admin.
           </Paragraph>
         )}
         <Paragraph>
-          To confirm you want to remove this team, please type
-          {<strong className={styles.strong}> &quot;I&nbsp;UNDERSTAND&quot; </strong>}
+          To confirm you want to change this role, please type
+          {<strong> &quot;I&nbsp;UNDERSTAND&quot; </strong>}
           in the field below:
         </Paragraph>
         <TextInput
@@ -60,12 +66,4 @@ const RemoveOwnAdminMembershipConfirmation = ({
   );
 };
 
-RemoveOwnAdminMembershipConfirmation.propTypes = {
-  close: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired,
-  teamName: PropTypes.string.isRequired,
-  isLastAdminMembership: PropTypes.bool.isRequired,
-};
-
-export default RemoveOwnAdminMembershipConfirmation;
+export { DowngradeLastAdminMembershipConfirmation };

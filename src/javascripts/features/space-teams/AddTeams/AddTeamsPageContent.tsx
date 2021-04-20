@@ -13,21 +13,23 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Autocomplete } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
-import * as tokens from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 import { useAsyncFn } from 'core/hooks';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
-import { go } from 'states/Navigator';
-import { createImmerReducer } from 'core/utils/createImmerReducer';
+
 import EmptyStateTeams from 'svg/illustrations/empty-state-teams.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
+import { reducer, initialState, closeTabWarning } from './reducer';
 
-import RoleSelector from './RoleSelector';
+import { RoleSelector } from './RoleSelector';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { useRouteNavigate } from 'core/react-routing';
+import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
+import { Role } from 'core/services/SpaceEnvContext/types';
 
 const styles = {
   workbench: css({
@@ -122,52 +124,7 @@ const styles = {
 
 const makeLink = (id) => ({ sys: { id, type: 'Link', linkType: 'Role' } });
 
-const closeTabWarning = (evt) => {
-  evt.preventDefault();
-  evt.returnValue = '';
-};
-
-const reducer = createImmerReducer({
-  SELECT_ADMIN: (state, action) => {
-    if (action.payload === true) {
-      state.selectedRoleIds = [];
-    }
-
-    state.adminSelected = action.payload;
-  },
-  ADD_TEAM: (state, action) => {
-    state.selectedTeamIds.push(action.payload);
-
-    state.shouldShowControls = true;
-    state.searchTerm = '';
-
-    if (state.selectedTeamIds.length === 1) {
-      window.addEventListener('beforeunload', closeTabWarning);
-    }
-  },
-  REMOVE_TEAM: (state, action) => {
-    state.selectedTeamIds = _.pull(state.selectedTeamIds, action.payload);
-
-    if (state.selectedTeamIds.length === 0) {
-      window.removeEventListener('beforeunload', closeTabWarning);
-    }
-  },
-  SELECT_ROLE: (state, action) => {
-    if (action.payload.isSelected) {
-      state.selectedRoleIds.push(action.payload.id);
-    } else {
-      state.selectedRoleIds = _.pull(state.selectedRoleIds, action.payload.id);
-    }
-  },
-  SUBMIT: (state, action) => {
-    state.isLoading = action.payload;
-  },
-  SEARCH: (state, action) => {
-    state.searchTerm = action.payload.toLowerCase();
-  },
-});
-
-const submit = (spaceId, teams, dispatch) => async ({
+const submit = (spaceId, teams, dispatch, navigate) => async ({
   selectedTeamIds,
   selectedRoleIds,
   adminSelected,
@@ -176,7 +133,7 @@ const submit = (spaceId, teams, dispatch) => async ({
 
   dispatch({ type: 'SUBMIT', payload: true });
 
-  const erredTeams = [];
+  const erredTeams: string[] = [];
   const promises = selectedTeamIds.map((teamId) =>
     createTeamSpaceMembership(endpoint, teamId, {
       admin: adminSelected,
@@ -227,22 +184,28 @@ const submit = (spaceId, teams, dispatch) => async ({
     adminSelected,
   });
 
-  go({
-    path: ['spaces', 'detail', 'settings', 'teams', 'list'],
+  navigate({
+    path: 'teams.list',
   });
 };
 
-export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, spaceId }) {
-  const [state, dispatch] = useReducer(reducer, {
-    adminSelected: true,
-    selectedTeamIds: [],
-    selectedRoleIds: [],
-    shouldShowControls: false,
-    isLoading: false,
-    searchTerm: '',
-  });
+type AddTeamsPageContentProps = {
+  teams: TeamProps[];
+  teamSpaceMemberships: TeamSpaceMembership[];
+  roles: Role[];
+  spaceId: string;
+};
 
-  const [, doSubmit] = useAsyncFn(submit(spaceId, teams, dispatch));
+const AddTeamsPageContent = ({
+  teams,
+  teamSpaceMemberships,
+  roles,
+  spaceId,
+}: AddTeamsPageContentProps) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const navigate = useRouteNavigate();
+  const [, doSubmit] = useAsyncFn(submit(spaceId, teams, dispatch, navigate));
 
   useEffect(() => {
     return () => {
@@ -288,6 +251,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
           onChange={(team) => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
           onQueryChange={(value) => dispatch({ type: 'SEARCH', payload: value })}
           items={teamsInAutocomplete}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
           dropdownProps={{ isFullWidth: true }}>
           {(items) => items.map((team) => <AutocompleteTeam key={team.sys.id} team={team} />)}
         </Autocomplete>
@@ -310,8 +275,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
 
                     return (
                       <TeamInfo
-                        key={team.sys.id}
-                        team={team}
+                        key={team?.sys.id}
+                        team={team as TeamProps}
                         onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
                       />
                     );
@@ -353,13 +318,9 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     <EmptyStateContainer>
       <EmptyStateTeams />
       <Heading>No Teams are available to be added to this space</Heading>
-      <StateLink path="^.list">
-        {({ onClick }) => (
-          <Button buttonType="primary" onClick={onClick}>
-            Back to Teams list
-          </Button>
-        )}
-      </StateLink>
+      <Button buttonType="primary" onClick={() => navigate({ path: 'teams.list' })}>
+        Back to Teams list
+      </Button>
     </EmptyStateContainer>
   );
 
@@ -369,8 +330,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
         title="Add teams"
         icon={<ProductIcon icon="Teams" size="large" />}
         onBack={() =>
-          go({
-            path: ['spaces', 'detail', 'settings', 'teams', 'list'],
+          navigate({
+            path: 'teams.list',
           })
         }
       />
@@ -379,13 +340,6 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
       </Workbench.Content>
     </Workbench>
   );
-}
-
-AddTeamsPage.propTypes = {
-  teams: PropTypes.array.isRequired,
-  roles: PropTypes.array.isRequired,
-  spaceId: PropTypes.string.isRequired,
-  teamSpaceMemberships: PropTypes.array.isRequired,
 };
 
 function TeamInfo({ team, onCloseClick }) {
@@ -441,3 +395,5 @@ function AutocompleteTeam({ team }) {
 AutocompleteTeam.propTypes = {
   team: PropTypes.object.isRequired,
 };
+
+export { AddTeamsPageContent };

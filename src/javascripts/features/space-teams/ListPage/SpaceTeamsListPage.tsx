@@ -1,6 +1,5 @@
 import React, { useCallback, useReducer } from 'react';
-import PropTypes from 'prop-types';
-import { findIndex, clone, filter } from 'lodash';
+import { filter } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -21,82 +20,11 @@ import { ADMIN_ROLE_ID } from 'access_control/constants';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-import styles from './styles';
-import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
+import { reducer, SpaceTeamsReducerActionType, initialState } from './reducer';
+import { SpaceTeamsPagePresentation } from './SpaceTeamsPagePresentation';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
-
-const initialState = {
-  isPending: false,
-  teamSpaceMemberships: [],
-  teams: [],
-  availableRoles: [],
-};
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case 'ERROR':
-      return { ...state, error: true, isPending: false };
-    case 'INITIAL_FETCH_SUCCESS': {
-      const { teamSpaceMemberships, spaceMemberships, availableRoles, teams } = payload;
-      const sortedTeamSpaceMemberships = teamSpaceMemberships.sort(
-        (
-          {
-            sys: {
-              team: { name: nameA },
-            },
-          },
-          {
-            sys: {
-              team: { name: nameB },
-            },
-          }
-        ) => nameA.localeCompare(nameB)
-      );
-      return {
-        ...state,
-        availableRoles,
-        teams,
-        teamSpaceMemberships: sortedTeamSpaceMemberships,
-        spaceMemberships,
-        error: false,
-      };
-    }
-    case 'OPERATION_PENDING': {
-      return { ...state, isPending: true };
-    }
-    case 'UPDATE_SUCCESS': {
-      const { updatedMembership } = payload;
-      const { teamSpaceMemberships, availableRoles } = state;
-      const [updatedMembershipWithRoles] = resolveLinks({
-        paths: ['roles'],
-        includes: { Role: availableRoles },
-        items: [updatedMembership],
-      });
-      const index = findIndex(teamSpaceMemberships, { sys: { id: updatedMembership.sys.id } });
-      const oldMembership = teamSpaceMemberships[index];
-      const updatedMembershipResolvedLinks = {
-        ...updatedMembershipWithRoles,
-        sys: { ...updatedMembershipWithRoles.sys, team: oldMembership.sys.team },
-      };
-
-      const updatedTeamSpaceMemberships = clone(teamSpaceMemberships);
-      updatedTeamSpaceMemberships.splice(index, 1, updatedMembershipResolvedLinks);
-      return { ...state, teamSpaceMemberships: updatedTeamSpaceMemberships, isPending: false };
-    }
-    case 'DELETE_SUCCESS': {
-      const { teamSpaceMemberships } = state;
-      const { membershipId } = payload;
-      return {
-        ...state,
-        teamSpaceMemberships: teamSpaceMemberships.filter(({ sys: { id } }) => id !== membershipId),
-        isPending: false,
-      };
-    }
-    default:
-      return state;
-  }
-};
+import { SpaceMembership } from 'core/services/SpaceEnvContext/types';
 
 const fetch = (spaceId, organizationId, dispatch) => async () => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
@@ -114,18 +42,31 @@ const fetch = (spaceId, organizationId, dispatch) => async () => {
     getAllTeams(orgEndpoint),
   ]);
   dispatch({
-    type: 'INITIAL_FETCH_SUCCESS',
+    type: SpaceTeamsReducerActionType.INITIAL_FETCH_SUCCESS,
     payload: { teamSpaceMemberships, availableRoles, teams, spaceMemberships },
   });
 };
 
-const useFetching = (spaceId, organizationId) => {
+type UseFetchingResponse = {
+  state: typeof initialState;
+  error: ErrorConstructor | undefined;
+  isLoading: boolean;
+};
+
+const useFetching = (
+  spaceId,
+  organizationId
+): [
+  UseFetchingResponse,
+  (membership: SpaceMembership, selectedRoleIds: string[]) => void,
+  (membership: SpaceMembership) => void
+] => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, error } = useAsync(useCallback(fetch(spaceId, organizationId, dispatch), []));
 
   const onUpdateTeamSpaceMembership = useCallback(
     async (membership, selectedRoleIds) => {
-      dispatch({ type: 'OPERATION_PENDING' });
+      dispatch({ type: SpaceTeamsReducerActionType.OPERATION_PENDING });
 
       const { availableRoles } = state;
       const newRoles = availableRoles.filter(({ sys: { id } }) => selectedRoleIds.includes(id));
@@ -144,11 +85,14 @@ const useFetching = (spaceId, organizationId) => {
             sys: { id, type: 'Link', linkType: 'Role' },
           }))
         );
-        dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
+        dispatch({
+          type: SpaceTeamsReducerActionType.UPDATE_SUCCESS,
+          payload: { updatedMembership },
+        });
         Notification.success('Team role successfully changed');
       } catch (e) {
         Notification.error(`Could not change roles for team ${teamName}`);
-        dispatch({ type: 'ERROR' });
+        dispatch({ type: SpaceTeamsReducerActionType.ERROR });
         throw e;
       }
     },
@@ -157,7 +101,7 @@ const useFetching = (spaceId, organizationId) => {
 
   const onRemoveTeamSpaceMembership = useCallback(
     async (membership) => {
-      dispatch({ type: 'OPERATION_PENDING' });
+      dispatch({ type: SpaceTeamsReducerActionType.OPERATION_PENDING });
       const {
         sys: {
           id: membershipId,
@@ -167,11 +111,11 @@ const useFetching = (spaceId, organizationId) => {
 
       try {
         await deleteTeamSpaceMembership(createSpaceEndpoint(spaceId), membership);
-        dispatch({ type: 'DELETE_SUCCESS', payload: { membershipId } });
+        dispatch({ type: SpaceTeamsReducerActionType.DELETE_SUCCESS, payload: { membershipId } });
         Notification.success(`Successfully removed team ${teamName}`);
       } catch (e) {
         Notification.error(`Could not remove team ${teamName}`);
-        dispatch({ type: 'ERROR' });
+        dispatch({ type: SpaceTeamsReducerActionType.ERROR });
         throw e;
       }
     },
@@ -181,11 +125,15 @@ const useFetching = (spaceId, organizationId) => {
   return [{ state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
 };
 
-const SpaceTeamsPage = ({ spaceId }) => {
+const SpaceTeamsListPage = () => {
   // TODO: Move this to mapInjectedToProps/a routing component
   //
   // This cannot be done yet due to spaceMember being an object which causes overflows
-  const { currentOrganizationId: organizationId, currentSpace } = useSpaceEnvContext();
+  const {
+    currentOrganizationId: organizationId,
+    currentSpace,
+    currentSpaceId,
+  } = useSpaceEnvContext();
   const spaceMember = getSpaceMember(currentSpace);
   const readOnly = !isAdmin(currentSpace);
 
@@ -197,7 +145,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
     },
     onUpdateTeamSpaceMembership,
     onRemoveTeamSpaceMembership,
-  ] = useFetching(spaceId, organizationId);
+  ] = useFetching(currentSpaceId, organizationId);
 
   if (!getSectionVisibility().teams) {
     return <ForbiddenPage />;
@@ -217,7 +165,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
 
   if (error) {
     return (
-      <div className={styles.contentAlignment}>
+      <div>
         <UnknownErrorMessage />
       </div>
     );
@@ -226,6 +174,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
   return (
     <>
       <DocumentTitle title="Teams" />
+      {/* @ts-ignore */}
       <SpaceTeamsPagePresentation
         {...{
           teamSpaceMemberships,
@@ -244,8 +193,4 @@ const SpaceTeamsPage = ({ spaceId }) => {
   );
 };
 
-SpaceTeamsPage.propTypes = {
-  spaceId: PropTypes.string,
-};
-
-export default SpaceTeamsPage;
+export { SpaceTeamsListPage };

@@ -4,20 +4,21 @@ import { TextLink, Paragraph, Typography } from '@contentful/forma-36-react-comp
 import { track } from 'analytics/Analytics';
 
 import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
 export const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
   <Typography>
     {hasTeamsFeature && (
       <Paragraph>
         To add a group of users with the same role, try{' '}
-        <StateLink
+        <ReactRouterLink
+          route={{ path: 'teams.list' }}
           component={TextLink}
-          path="spaces.detail.settings.teams.list"
           onClick={() => {
             track('teams_in_space:users_to_teams_page_navigation');
           }}>
           adding a team
-        </StateLink>
+        </ReactRouterLink>
       </Paragraph>
     )}
     <Paragraph>

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { RadioButtonField, CheckboxField } from '@contentful/forma-36-react-components';
-import * as tokens from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   container: css({
@@ -20,14 +20,14 @@ const styles = {
   }),
 };
 
-export default function RoleSelector({
+const RoleSelector = ({
   roles,
   selectedRoleIds,
   onRoleSelected,
   adminSelected,
   onAdminSelected,
   disabled,
-}) {
+}) => {
   return (
     <>
       <RadioButtonField
@@ -69,7 +69,7 @@ export default function RoleSelector({
                   labelText={role.name}
                   checked={Boolean(selectedRoleIds.find((id) => role.sys.id === id))}
                   disabled={adminSelected || disabled}
-                  onChange={(e) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const isChecked = e.target.checked;
 
                     onRoleSelected(role.sys.id, isChecked);
@@ -82,7 +82,7 @@ export default function RoleSelector({
       )}
     </>
   );
-}
+};
 
 RoleSelector.propTypes = {
   roles: PropTypes.array.isRequired,
@@ -92,3 +92,5 @@ RoleSelector.propTypes = {
   adminSelected: PropTypes.bool,
   selectedRoleIds: PropTypes.array.isRequired,
 };
+
+export { RoleSelector };

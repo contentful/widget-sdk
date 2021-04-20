@@ -4,12 +4,12 @@ import { Table, TableBody } from '@contentful/forma-36-react-components';
 
 import { noop } from 'lodash';
 
-import MembershipRow from './MembershipRow';
+import { MembershipRow } from './MembershipRow';
 
 let onUpdateTeamSpaceMembership;
 let onRemoveTeamSpaceMembership;
 
-const build = (props) =>
+const build = (props = {}) =>
   render(
     <Table>
       <TableBody>
@@ -82,7 +82,11 @@ describe('MembershipRow', () => {
     it('should open / close menu', async () => {
       const { queryByTestId, getByTestId } = build();
       expect(queryByTestId('change-role')).not.toBeInTheDocument();
-      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
+      fireEvent.click(
+        within(queryByTestId('row-menu') as HTMLElement).queryByTestId(
+          'cf-ui-icon-button'
+        ) as Element
+      );
       expect(await getByTestId('change-role')).toBeInTheDocument();
     });
 
@@ -119,7 +123,11 @@ describe('MembershipRow', () => {
     it('should delete with confirmation prompt', async () => {
       const { findByTestId, queryByTestId } = build();
 
-      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
+      fireEvent.click(
+        within(queryByTestId('row-menu') as HTMLElement).queryByTestId(
+          'cf-ui-icon-button'
+        ) as Element
+      );
       fireEvent.click(
         getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
       );
@@ -132,10 +140,8 @@ describe('MembershipRow', () => {
     });
 
     it('should delete with admin loss confirmation prompt', async () => {
-      // suppress jsdom console error
-      delete window.location;
-
       window.location = {
+        ...window.location,
         replace: jest.fn(),
       };
 
@@ -155,7 +161,11 @@ describe('MembershipRow', () => {
         teamSpaceMembership: lastMembership,
       });
 
-      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
+      fireEvent.click(
+        within(queryByTestId('row-menu') as HTMLElement).queryByTestId(
+          'cf-ui-icon-button'
+        ) as Element
+      );
       fireEvent.click(
         getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
       );

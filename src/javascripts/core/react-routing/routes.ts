@@ -232,6 +232,26 @@ const extensionsRoutes = {
   }),
 };
 
+type TeamsListRouteType = { path: 'teams.list' };
+type TeamsAddRouteType = { path: 'teams.add' };
+type TeamsRouteType = TeamsListRouteType | TeamsAddRouteType;
+
+/** Teams */
+const teamsRoutes = {
+  'teams.list': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings.teams'),
+    params: {
+      pathname: '/',
+    },
+  }),
+  'teams.add': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings.teams'),
+    params: {
+      pathname: '/add',
+    },
+  }),
+};
+
 /**
  * All paths combined together
  */
@@ -243,7 +263,8 @@ export type RouteType =
   | RolesRouteType
   | ExtensionsRouteType
   | TagsRouteType
-  | ContentPreviewRouteType;
+  | ContentPreviewRouteType
+  | TeamsRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -253,4 +274,5 @@ export const routes = {
   ...extensionsRoutes,
   ...tagsRoutes,
   ...contentPreviewRoutes,
+  ...teamsRoutes,
 };

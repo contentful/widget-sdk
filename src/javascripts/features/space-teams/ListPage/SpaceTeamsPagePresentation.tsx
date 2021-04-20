@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Table,
   TableBody,
@@ -12,22 +11,27 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
-import {
-  SpaceMembership as SpaceMembershipPropType,
-  SpaceRole as SpaceRolePropType,
-  TeamSpaceMembership as TeamSpaceMembershipPropType,
-} from 'app/OrganizationSettings/PropTypes';
-import { go } from 'states/Navigator';
+import { LoadingPlaceholder } from './LoadingPlaceholder';
+import { styles } from '../styles';
+import { MembershipRow } from './MembershipRow';
+import { EmptyStatePlaceholder } from './EmptyStatePlaceholder';
+import { useRouteNavigate } from 'core/react-routing';
+import { SpaceMembership } from 'core/services/SpaceEnvContext/types';
+import { TeamSpaceMembership } from 'contentful-management/types';
+import { SpaceRole } from 'app/OrganizationSettings/PropTypes';
 
-import LoadingPlaceholder from './List/LoadingPlaceholder';
-import styles from './styles';
-import MembershipRow from './List/MembershipRow';
-import EmptyStatePlaceholder from './EmptyStatePlaceholder';
-
-const goToAddTeams = () =>
-  go({
-    path: ['spaces', 'detail', 'settings', 'teams', 'add'],
-  });
+type SpaceTeamsPagePresentationProps = {
+  isLoading: boolean;
+  teamSpaceMemberships: TeamSpaceMembership[];
+  spaceMemberships: SpaceMembership[];
+  teams: [];
+  availableRoles: typeof SpaceRole[];
+  onUpdateTeamSpaceMembership: (membership: SpaceMembership, selectedRoleIds: string[]) => void;
+  onRemoveTeamSpaceMembership: (membership: SpaceMembership) => void;
+  isPending: boolean;
+  readOnly: boolean;
+  currentUserAdminSpaceMemberships: SpaceMembership[] | TeamSpaceMembership[];
+};
 
 const SpaceTeamsPagePresentation = ({
   teamSpaceMemberships,
@@ -40,8 +44,9 @@ const SpaceTeamsPagePresentation = ({
   readOnly,
   currentUserAdminSpaceMemberships,
   spaceMemberships,
-}) => {
-  const [editingRow, setEditingRow] = useState(null);
+}: SpaceTeamsPagePresentationProps) => {
+  const [editingRow, setEditingRow] = useState<string | null>(null);
+  const navigate = useRouteNavigate();
 
   // close editing mode after pending no more
   useEffect(() => {
@@ -69,7 +74,7 @@ const SpaceTeamsPagePresentation = ({
             <Button
               testId="add-teams"
               disabled={noTeamsInOrg || allTeamsAdded || readOnly}
-              onClick={goToAddTeams}>
+              onClick={() => navigate({ path: 'teams.add' })}>
               Add team
             </Button>
           </Tooltip>
@@ -82,7 +87,7 @@ const SpaceTeamsPagePresentation = ({
             <colgroup>
               <col className={styles.nameCol} />
               <col className={styles.membersCol} />
-              <col className={styles.roleCol} />
+              <col />
               <col className={styles.actionsCol} />
             </colgroup>
             <TableHead>
@@ -98,9 +103,13 @@ const SpaceTeamsPagePresentation = ({
               {!isLoading &&
                 teamSpaceMemberships.map((teamSpaceMembership) => {
                   const {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                    // @ts-ignore
                     sys: { id: membershipId },
                   } = teamSpaceMembership;
                   return (
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                    // @ts-ignore
                     <MembershipRow
                       key={membershipId}
                       {...{
@@ -127,19 +136,4 @@ const SpaceTeamsPagePresentation = ({
   );
 };
 
-SpaceTeamsPagePresentation.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType),
-  spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
-  teams: PropTypes.array.isRequired,
-  availableRoles: PropTypes.arrayOf(SpaceRolePropType),
-  onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
-  onRemoveTeamSpaceMembership: PropTypes.func.isRequired,
-  isPending: PropTypes.bool.isRequired,
-  readOnly: PropTypes.bool.isRequired,
-  currentUserAdminSpaceMemberships: PropTypes.arrayOf(
-    PropTypes.oneOfType([SpaceMembershipPropType, TeamSpaceMembershipPropType])
-  ).isRequired,
-};
-
-export default SpaceTeamsPagePresentation;
+export { SpaceTeamsPagePresentation };

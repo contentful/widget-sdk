@@ -7,9 +7,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { range } from 'lodash';
 
-export default () => (
+const LoadingPlaceholder = () => (
   <TableRow testId="loading-placeholder">
-    <TableCell colSpan="4">
+    <TableCell colSpan={4}>
       <SkeletonContainer
         data-test-id="content-loader"
         ariaLabel="Loading Space teams list"
@@ -21,3 +21,5 @@ export default () => (
     </TableCell>
   </TableRow>
 );
+
+export { LoadingPlaceholder };

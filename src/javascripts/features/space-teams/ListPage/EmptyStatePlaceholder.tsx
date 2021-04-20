@@ -6,7 +6,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/add-team-to-space-illustration.svg';
 
-export default () => (
+const EmptyStatePlaceholder = () => (
   <EmptyStateContainer data-test-id="no-teams-in-space-placeholder">
     <div className={defaultSVGStyle}>
       <Illustration />
@@ -18,3 +18,5 @@ export default () => (
     </Paragraph>
   </EmptyStateContainer>
 );
+
+export { EmptyStatePlaceholder };

@@ -1,8 +1,9 @@
 import React from 'react';
 import { noop } from 'lodash';
 import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
-import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
+import { SpaceTeamsPagePresentation } from './SpaceTeamsPagePresentation';
 
 const build = (props = {}) =>
   render(
@@ -20,7 +21,10 @@ const build = (props = {}) =>
         currentUserAdminSpaceMemberships: [],
         ...props,
       }}
-    />
+    />,
+    {
+      wrapper: MemoryRouter,
+    }
   );
 
 let isLoading;
@@ -190,7 +194,7 @@ describe('SpaceTeamsPage', () => {
 
       const addTeamsButton = helpers.getByTestId('add-teams');
 
-      expect(addTeamsButton.hasAttribute('disabled')).toBeFalse();
+      expect(addTeamsButton.hasAttribute('disabled')).toBe(false);
     });
 
     it('should disable the Add Teams button if number of teamSpaceMemberships equals number of teams - 2', () => {
@@ -198,7 +202,7 @@ describe('SpaceTeamsPage', () => {
 
       const addTeamsButton = helpers.getByTestId('add-teams');
 
-      expect(addTeamsButton.hasAttribute('disabled')).toBeTrue();
+      expect(addTeamsButton.hasAttribute('disabled')).toBe(true);
     });
   });
 });

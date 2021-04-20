@@ -21,10 +21,10 @@ import {
 import { ADMIN_ROLE } from 'access_control/constants';
 import { href } from 'states/Navigator';
 
-import RowMenu from './RowMenu';
-import styles from '../styles';
-import DowngradeLastAdminMembershipConfirmation from './DowngradeLastAdminMembershipConfirmation';
-import RemoveLastAdminMembershipConfirmation from './RemoveLastAdminMembershipConfirmation';
+import { RowMenu } from './RowMenu';
+import { styles } from '../styles';
+import { DowngradeLastAdminMembershipConfirmation } from './DowngradeLastAdminMembershipConfirmation';
+import { RemoveLastAdminMembershipConfirmation } from './RemoveLastAdminMembershipConfirmation';
 
 const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
@@ -242,4 +242,4 @@ MembershipRow.propTypes = {
   ).isRequired,
 };
 
-export default MembershipRow;
+export { MembershipRow };

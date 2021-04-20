@@ -1,7 +1,7 @@
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
-export default {
+const styles = {
   nameCol: css({
     width: '30%',
   }),
@@ -11,7 +11,6 @@ export default {
   actionsCol: css({
     width: '60px', // width of the '...' button + padding
   }),
-
   teamName: css({
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextDark,
@@ -24,8 +23,10 @@ export default {
     marginTop: tokens.spacingXs,
     overflow: 'hidden',
     display: '-webkit-box',
-    WebkitLineClamp: '2',
-    MozLineClamp: '2',
-    WebkitBoxOrient: 'vertical',
+    webkitLineClamp: '2',
+    mozLineClamp: '2',
+    webkitBoxOrient: 'vertical',
   }),
 };
+
+export { styles };

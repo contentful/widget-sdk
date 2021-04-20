@@ -1,8 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { CardActions, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 
-const RowMenu = ({ setEditing, onRemove }) => (
+type RowMenuProps = {
+  setEditing: (value: boolean) => void;
+  onRemove: () => void;
+};
+
+const RowMenu = ({ setEditing, onRemove }: RowMenuProps) => (
   <CardActions testId="row-menu" iconButtonProps={{ buttonType: 'primary' }}>
     <DropdownList>
       <DropdownListItem testId="change-role" onClick={() => setEditing(true)}>
@@ -15,9 +19,4 @@ const RowMenu = ({ setEditing, onRemove }) => (
   </CardActions>
 );
 
-RowMenu.propTypes = {
-  setEditing: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
-};
-
-export default RowMenu;
+export { RowMenu };

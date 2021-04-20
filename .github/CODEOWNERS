@@ -9,3 +9,6 @@ src/javascripts/features/webhooks/* @contentful/extensibility-devs
 
 # Extensions Manager
 src/javascripts/features/extensions-management/* @contentful/extensibility-devs
+
+# Space Teams
+src/javascripts/features/space-teams/* @contentful/team-hejo

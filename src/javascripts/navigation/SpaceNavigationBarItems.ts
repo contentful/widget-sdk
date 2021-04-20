@@ -30,6 +30,7 @@ export function getSpaceNavigationItems({
   const extensions = routes['extensions.list']({ withEnvironment: !isUnscopedRoute });
   const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
   const contentPreview = routes['content_preview.list']({ withEnvironment: !isUnscopedRoute });
+  const teams = routes['teams.list']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
     locales: {
@@ -72,8 +73,9 @@ export function getSpaceNavigationItems({
     },
     teams: {
       if: hasOrgTeamFeature && canNavigateTo('teams'),
-      sref: makeRef('settings.teams.list', isUnscopedRoute),
-      rootSref: makeRef('settings.teams', isUnscopedRoute),
+      sref: teams.path,
+      srefParams: teams.params,
+      rootSref: teams.path,
       dataViewType: 'spaces-settings-teams',
       label: 'new',
       title: 'Teams',

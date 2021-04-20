@@ -4,7 +4,10 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import { track } from 'analytics/Analytics';
-import AddTeamsPage from './AddTeamsPage';
+import { AddTeamsPageContent } from './AddTeamsPageContent';
+import { MemoryRouter } from 'react-router-dom';
+import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
+import { Role } from 'core/services/SpaceEnvContext/types';
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn().mockResolvedValue(true),
@@ -26,14 +29,24 @@ jest.mock('analytics/Analytics', () => ({
 // eslint-disable-next-line
 Element.prototype.scrollIntoView = jest.fn();
 
-const mount = ({ teams = [], roles = [], teamSpaceMemberships = [] } = {}) => {
+type MountType = {
+  teams?: TeamProps[];
+  roles?: Role[];
+  teamSpaceMemberships?: TeamSpaceMembership[];
+};
+
+const mount = (props?: MountType) => {
+  const { teams = [], roles = [], teamSpaceMemberships = [] } = props || {};
   return render(
-    <AddTeamsPage
+    <AddTeamsPageContent
       teams={teams}
       roles={roles}
       teamSpaceMemberships={teamSpaceMemberships}
       spaceId="space_1234"
-    />
+    />,
+    {
+      wrapper: MemoryRouter,
+    }
   );
 };
 
@@ -56,7 +69,7 @@ const teams = [
       id: 'team_0987',
     },
   },
-];
+] as TeamProps[];
 
 const roles = [
   {
@@ -71,7 +84,7 @@ const roles = [
       id: 'role_5678',
     },
   },
-];
+] as Role[];
 
 const searchAndSelectTeam = (teamName, { queryByTestId }) => {
   fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
@@ -93,8 +106,8 @@ describe('AddTeamsPage', () => {
   let notificationSuccessSpy;
 
   beforeEach(() => {
-    notificationErrorSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});
-    notificationSuccessSpy = jest.spyOn(Notification, 'success').mockImplementation(() => {});
+    notificationErrorSpy = jest.spyOn(Notification, 'error').mockImplementation(jest.fn());
+    notificationSuccessSpy = jest.spyOn(Notification, 'success').mockImplementation(jest.fn());
   });
 
   afterEach(() => {
@@ -103,7 +116,8 @@ describe('AddTeamsPage', () => {
   });
 
   it('should show the search box on initial load (at least one team, no interaction)', () => {
-    const { queryByTestId } = mount({ teams: [{ sys: { id: 'team1' }, name: 'Team 1' }] });
+    const teams = { teams: [{ sys: { id: 'team1' }, name: 'Team 1' }] } as MountType;
+    const { queryByTestId } = mount(teams);
 
     expect(queryByTestId('autocomplete.input')).toBeVisible();
   });
@@ -137,7 +151,7 @@ describe('AddTeamsPage', () => {
 
     expect(queryAllByTestId('team-in-list')).toHaveLength(1);
 
-    fireEvent.click(queryByTestId('team-in-list.close'));
+    fireEvent.click(queryByTestId('team-in-list.close') as HTMLElement);
 
     expect(queryAllByTestId('team-in-list')).toHaveLength(0);
   });
@@ -193,11 +207,11 @@ describe('AddTeamsPage', () => {
 
     searchAndSelectTeam('Test team', { queryByTestId });
 
-    expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeFalse();
+    expect((queryByTestId('submit-button') as HTMLElement).hasAttribute('disabled')).toBe(false);
 
-    fireEvent.click(queryByTestId('team-in-list.close'));
+    fireEvent.click(queryByTestId('team-in-list.close') as HTMLElement);
 
-    expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeTrue();
+    expect((queryByTestId('submit-button') as HTMLElement).hasAttribute('disabled')).toBe(true);
   });
 
   it('should disable the submit button if non-admin is selected but no role is selected', () => {
@@ -205,45 +219,44 @@ describe('AddTeamsPage', () => {
 
     searchAndSelectTeam('Test team', { queryByTestId });
 
-    expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeFalse();
+    expect((queryByTestId('submit-button') as HTMLElement).hasAttribute('disabled')).toBe(false);
 
     fireEvent.click(getByText('Other roles'));
 
-    expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeTrue();
+    expect((queryByTestId('submit-button') as HTMLElement).hasAttribute('disabled')).toBe(true);
   });
 
   it('should attempt to add all the teams with the roles via the API when submitted', () => {
-    createTeamSpaceMembership.mockResolvedValue(true);
+    (createTeamSpaceMembership as jest.Mock).mockResolvedValue(true);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     expect(createTeamSpaceMembership).toHaveBeenCalledTimes(2);
   });
 
   it('should display a success notification and navigate if all teams were successfully added', async () => {
-    createTeamSpaceMembership.mockResolvedValue(true);
+    (createTeamSpaceMembership as jest.Mock).mockResolvedValue(true);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
     expect(notificationSuccessSpy).toHaveBeenCalledTimes(1);
-    expect(go).toHaveBeenCalledTimes(1);
   });
 
   it('should display both success and error notifications and navigate if a partial failure occurred', async () => {
-    createTeamSpaceMembership.mockResolvedValueOnce();
-    createTeamSpaceMembership.mockRejectedValue();
+    (createTeamSpaceMembership as jest.Mock).mockResolvedValueOnce(true);
+    (createTeamSpaceMembership as jest.Mock).mockRejectedValue(false);
 
     const { queryByTestId } = mount({ teams });
 
@@ -251,24 +264,23 @@ describe('AddTeamsPage', () => {
     searchAndSelectTeam('Awesome other team', { queryByTestId });
     searchAndSelectTeam('Third team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
     expect(notificationSuccessSpy).toHaveBeenCalledTimes(1);
     expect(notificationErrorSpy).toHaveBeenCalledTimes(2);
-    expect(go).toHaveBeenCalledTimes(1);
   });
 
   it('should display error notification and not navigate if a total failure occurred', async () => {
-    createTeamSpaceMembership.mockRejectedValue();
+    (createTeamSpaceMembership as jest.Mock).mockRejectedValue(false);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
@@ -278,14 +290,14 @@ describe('AddTeamsPage', () => {
   });
 
   it('should track when all teams were successfully added', async () => {
-    createTeamSpaceMembership.mockResolvedValue(true);
+    (createTeamSpaceMembership as jest.Mock).mockResolvedValue(true);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
@@ -298,15 +310,15 @@ describe('AddTeamsPage', () => {
   });
 
   it('should track when some teams failed and some were successfully added', async () => {
-    createTeamSpaceMembership.mockResolvedValueOnce();
-    createTeamSpaceMembership.mockRejectedValue();
+    (createTeamSpaceMembership as jest.Mock).mockResolvedValueOnce(true);
+    (createTeamSpaceMembership as jest.Mock).mockRejectedValue(false);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
@@ -319,14 +331,14 @@ describe('AddTeamsPage', () => {
   });
 
   it('should track when all teams are not successfully added', async () => {
-    createTeamSpaceMembership.mockRejectedValue();
+    (createTeamSpaceMembership as jest.Mock).mockRejectedValue(false);
 
     const { queryByTestId } = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId });
     searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.click(queryByTestId('submit-button'));
+    fireEvent.click(queryByTestId('submit-button') as HTMLElement);
 
     await wait();
 
