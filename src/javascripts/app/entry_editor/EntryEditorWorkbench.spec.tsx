@@ -19,8 +19,7 @@ jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
   getSpaceFeature: jest.fn(),
-  FEATURES: {
-    PC_CONTENT_TAGS: false,
+  SpaceFeatures: {
     SCHEDULED_PUBLISHING: 'ff',
   },
 }));

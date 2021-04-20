@@ -13,7 +13,7 @@ export default function register() {
     '$rootScope',
     function ClientController($scope, $state, spaceContext, $rootScope) {
       let logger;
-      let FEATURES;
+      let SpaceFeatures;
       let getSpaceFeature;
       let EnforcementsService;
       let NavState;
@@ -98,7 +98,7 @@ export default function register() {
         if (shouldCheckUsageForCurrentLocation()) {
           const allowNewUsageCheck = await getSpaceFeature(
             spaceId,
-            FEATURES.ENVIRONMENT_USAGE_ENFORCEMENT,
+            SpaceFeatures.ENVIRONMENT_USAGE_ENFORCEMENT,
             false
           );
 
@@ -173,7 +173,7 @@ export default function register() {
       async function initialize() {
         [
           logger,
-          { getSpaceFeature, FEATURES },
+          { getSpaceFeature, SpaceFeatures },
           EnforcementsService,
           NavState,
           CreateSpace,

@@ -16,7 +16,7 @@ import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import { useDeleteTag, useReadTags } from 'features/content-tags/core/hooks';
-import { getSpaceFeature, FEATURES, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, SpaceFeatures, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Conditional } from 'features/content-tags/core/components/Conditional';
@@ -55,7 +55,7 @@ function DeleteTagModal({ tag, isShown, onClose }) {
   const hasCustomRolesFeatureCheck = useCallback(async () => {
     return await getSpaceFeature(
       spaceId,
-      FEATURES.CUSTOM_ROLES_FEATURE,
+      SpaceFeatures.CUSTOM_ROLES_FEATURE,
       DEFAULT_FEATURES_STATUS.CUSTOM_ROLES_FEATURE
     );
   }, [spaceId]);

@@ -1,10 +1,10 @@
 import React from 'react';
 import * as accessChecker from 'access_control/AccessChecker';
 import {
-  FEATURES,
   getOrgFeature,
   getSpaceFeature,
   OrganizationFeatures,
+  SpaceFeatures,
 } from 'data/CMA/ProductCatalog';
 import NavBar from './NavBar/NavBar';
 import { FLAGS, getVariation } from 'LaunchDarkly';
@@ -69,7 +69,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
         environmentId: currentEnvironmentId,
       }),
       getOrgFeature(organizationId, OrganizationFeatures.TEAMS, false),
-      getSpaceFeature(currentSpaceId, FEATURES.PC_CONTENT_TAGS, false),
+      getSpaceFeature(currentSpaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');

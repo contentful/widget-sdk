@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useCallback, useEffect, useState } from 'reac
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
-import { FEATURES, getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Tag } from '@contentful/types';
 
@@ -16,7 +16,7 @@ const ReadTagsProvider: React.FC<Props> = ({ children }) => {
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
-      if (!(await getSpaceFeature(spaceId, FEATURES.PC_CONTENT_TAGS, false)) || !tagsRepo) {
+      if (!(await getSpaceFeature(spaceId, SpaceFeatures.PC_CONTENT_TAGS, false)) || !tagsRepo) {
         return [];
       }
       const getResult = async (skip = 0) => {

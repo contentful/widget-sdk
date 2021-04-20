@@ -75,7 +75,7 @@ jest.mock('features/trials', () => ({
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  FEATURES: { PC_CONTENT_TAGS: 'content_tags' },
+  SpaceFeatures: { PC_CONTENT_TAGS: 'content_tags' },
   getSpaceFeature: jest.fn().mockResolvedValue(false),
 }));
 

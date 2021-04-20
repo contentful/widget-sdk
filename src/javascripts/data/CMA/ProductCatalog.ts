@@ -28,15 +28,6 @@ export enum OrganizationFeatures {
   TEAMS = 'teams',
 }
 
-/**
- * Gatekeeper Product Catalog features
- * @deprecated use SpaceFeatures or OrganizationFeatures
- */
-export const FEATURES = {
-  ...SpaceFeatures,
-  ...OrganizationFeatures,
-};
-
 // Gatekeeper Product Catalog features default values
 export const DEFAULT_FEATURES_STATUS = {
   CUSTOM_ROLES_FEATURE: false,
@@ -140,30 +131,49 @@ const load = async <TFeatures>(
   }
 };
 
+/**
+ * Determines if an org-level feature should be considered enabled with an optional fallback
+ *
+ * @param orgId the orgId (or a false-y value) to check. Will default to +defaultvalue+ if not specified
+ * @param featureId the feature to check for
+ * @param defaultValue the value to use if the orgId is false-y or otherwise unavailable
+ * @throws {TypeError} a fallback value was not provided and the featureId could not be otherwise resolved
+ */
 export const getOrgFeature = async (
   orgId: string | undefined,
   featureId: OrganizationFeatures,
   defaultValue?: boolean
-) => {
+): Promise<boolean> => {
   if (!orgId || !featureId) {
-    return isUndefined(defaultValue)
-      ? Promise.reject('No orgId or featureId provided when fetching an org feature')
-      : Promise.resolve(defaultValue);
+    if (isUndefined(defaultValue)) {
+      throw new TypeError('No orgId or featureId provided when fetching an org feature');
+    }
+    return defaultValue;
   }
 
   return load(getLoaderForOrg(orgId), featureId, defaultValue, COMMON_FOR_ORG);
 };
 
-export const getSpaceFeature = (
+/**
+ * Determines if an space-level feature should be considered enabled with an optional fallback
+ *
+ * @param spaceId the spaceId (or a false-y value) to check. Will default to +defaultvalue+ if not specified
+ * @param featureId the feature to check for
+ * @param defaultValue the value to use if the spaceId is false-y or otherwise unavailable
+ * @throws {TypeError} a fallback value was not provided and the featureId could not be otherwise resolved
+ */
+export const getSpaceFeature = async (
   spaceId: string | undefined,
   featureId: SpaceFeatures,
   defaultValue?: boolean
-) => {
+): Promise<boolean> => {
   if (!spaceId || !featureId) {
-    return isUndefined(defaultValue)
-      ? Promise.reject('No spaceId or featureId provided when fetching a space feature')
-      : Promise.resolve(defaultValue);
+    if (isUndefined(defaultValue)) {
+      throw new TypeError('No spaceId or featureId provided when fetching an org feature');
+    }
+    return defaultValue;
   }
+
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };
 

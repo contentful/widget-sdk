@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getOrgFeature, FEATURES } from 'data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getAppsRepo } from 'features/apps-core';
 import { canStartAppTrial, isActiveAppTrial, AppTrialRepo } from 'features/trials';
@@ -12,12 +12,12 @@ const APPS_CONFIG = {
   compose: {
     id: 'compose',
     featureFlag: FLAGS.COMPOSE_APP_LISTING_EAP,
-    catalogFlag: FEATURES.PC_ORG_COMPOSE_APP,
+    catalogFlag: OrganizationFeatures.PC_ORG_COMPOSE_APP,
   },
   launch: {
     id: 'launch',
     featureFlag: FLAGS.COMPOSE_APP_LISTING_EAP,
-    catalogFlag: FEATURES.PC_ORG_LAUNCH_APP,
+    catalogFlag: OrganizationFeatures.PC_ORG_LAUNCH_APP,
   },
 };
 

@@ -7,7 +7,7 @@ import * as ProductCatalog from 'data/CMA/ProductCatalog';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getSpaceFeature: jest.fn(),
-  FEATURES: {
+  SpaceFeatures: {
     TASKS: 'test-tasks',
   },
 }));
@@ -26,7 +26,7 @@ describe('<TasksWidgetContainer />', () => {
         off: jest.fn(),
         emit: jest.fn(),
       },
-      featureFlagKey: ProductCatalog.FEATURES.TASKS,
+      featureFlagKey: ProductCatalog.SpaceFeatures.TASKS,
       children: jest.fn().mockReturnValue(null),
     };
     return { rendered: render(<TasksWidgetContainer {...props} />) };
