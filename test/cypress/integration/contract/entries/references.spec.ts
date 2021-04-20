@@ -125,8 +125,9 @@ describe('Entry references', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
 
-    it.skip('publishes release skipping unresolved entities', () => {
+    it('publishes release skipping unresolved entities', () => {
       Entry.getEntryReferences.willReturnSeveralWithUnresolved();
+      Entry.queryForDefaultEntries.willFindMultiple();
 
       BulkAction.publishBulkAction.willSucceed();
       BulkAction.getPublishBulkAction.willReturnStatusSucceeded();

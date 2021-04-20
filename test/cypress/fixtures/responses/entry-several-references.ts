@@ -104,14 +104,26 @@ export const severalEntryReferencesWithUnresolvedResponse = {
   },
   items: [
     entry({
-      sys: { id: Matchers.somethingLike(defaultEntryId) },
+      sys: {
+        id: defaultEntryId,
+        version: 2,
+      },
       fields: {
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'EntryId_01',
+              id: defaultEntryTestIds.testEntryId2,
+            },
+          },
+        },
+        entryRef2: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: defaultEntryTestIds.testEntryId3,
             },
           },
         },
@@ -124,26 +136,25 @@ export const severalEntryReferencesWithUnresolvedResponse = {
             },
           },
         },
-        entryRef2: {
-          'en-US': {
-            sys: {
-              type: 'Link',
-              linkType: 'Entry',
-              id: 'EntryId_02',
-            },
-          },
-        },
       },
     }),
   ],
   includes: {
     Entry: [
       entry({
-        sys: { id: Matchers.somethingLike('EntryId_01'), version: 1 },
+        sys: {
+          id: defaultEntryTestIds.testEntryId2,
+          version: 2,
+          publishedCounter: 0,
+        },
         fields: {},
       }),
       entry({
-        sys: { id: Matchers.somethingLike('EntryId_02'), version: 1 },
+        sys: {
+          id: defaultEntryTestIds.testEntryId3,
+          version: 2,
+          publishedCounter: 0,
+        },
         fields: {},
       }),
     ],
