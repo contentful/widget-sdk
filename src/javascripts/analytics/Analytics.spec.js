@@ -6,7 +6,9 @@ jest.mock('analytics/segment', () => {
         ...acc,
         [key]: jest.fn(),
       }),
-      {}
+      {
+        plan: {},
+      }
     ),
   };
 });
@@ -132,7 +134,7 @@ describe('Analytics', () => {
     });
   });
 
-  describe('tracking events', function () {
+  describe('.track()', function () {
     it('calls analytics services if event is valid', function () {
       const { analytics, segment, Snowplow } = getAllDeps();
       analytics.enable(userData);

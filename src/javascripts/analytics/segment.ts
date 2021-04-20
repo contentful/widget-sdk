@@ -49,25 +49,10 @@ function enable(loadOptions = {}) {
 }
 
 function bufferedCall(fnName, fn?) {
-  if (fn === undefined) {
-    return function (...args) {
-      buffer.call((analytics) => {
-        try {
-          analytics[fnName](...args);
-        } catch (err) {
-          logger.captureError(err, {
-            analyticsFn: fnName,
-            analyticsFnArgs: args,
-          });
-        }
-      });
-    };
-  }
-
   return function (...args) {
-    buffer.call(() => {
+    buffer.call((analytics) => {
       try {
-        fn(...args);
+        (fn ? fn : analytics[fnName])(...args);
       } catch (err) {
         captureError(err, {
           extra: {
@@ -157,33 +142,24 @@ async function getIntegrations() {
   return resp.map((item) => item.creationName);
 }
 
-const wrapBuffered = (object: TrackingPlan) => {
-  const result = {};
-
-  for (const [name, fn] of Object.entries(object)) {
-    // TODO bufferedCall needs to accept the fn it should buffer
-    result[name] = bufferedCall(name, fn);
-  }
-
-  return result as TrackingPlan;
-};
-
-const allThingsBuffered = wrapBuffered(plan);
+// TODO:xxx On staging/dev environments we never call .enable() and therefore never execute the
+//  buffered calls and don't get typewriter benefits on these environments!
+//  It should be fine to not buffer these calls as the mock `window.analytics.track` constructed
+//  in install() above is used by `plan` members internally. It's replaced by the real `analytics`
+//  object once loaded.
+const bufferedPlan: TrackingPlan = _.mapValues(plan, (fn, fnName) => () =>
+  bufferedCall(fnName, fn)
+);
 
 export default {
-  ...allThingsBuffered,
-  tracking<K extends keyof Plan>(key: K, ...params: Parameters<Plan[K]>) {
-    // @ts-expect-error
-    allThingsBuffered[key](...params);
-  },
-
+  plan: bufferedPlan,
   enable: _.once(enable),
   /**
    * Sends a single event with data to
    * the selected integrations.
    */
   track: function track(event: string, data: TransformedEventData): void {
-    const schema = getSegmentSchemaForEvent(event);
+    const schema = getSegmentSchemaForEvent(event) as Schema;
     const eventPayload = buildPayload(schema, data);
 
     bufferedTrack(schema.name, eventPayload, { integrations: TRACK_INTEGRATIONS });

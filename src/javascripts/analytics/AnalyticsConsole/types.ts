@@ -12,12 +12,12 @@ export interface Event {
   };
   snowplow?: {
     name: string;
-    version: string;
+    version: undefined;
     data: object;
     context: undefined;
   };
   segment: {
-    name: string;
+    name?: string;
     version: string;
     data?: object;
     context?: object;

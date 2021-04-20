@@ -4,7 +4,7 @@ import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
-import { eventExists, transformEvent } from 'analytics/transform';
+import { eventExists, getSnowplowSchemaForEvent, transformEvent } from 'analytics/transform';
 import { TransformedEventData, EventData } from './types';
 import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
@@ -84,13 +84,10 @@ export function getSessionData(path: string, defaultValue?: unknown): unknown {
 }
 
 /**
- * @ngdoc method
- * @name analytics#track
- * @param {string} event
- * @param {object?} data
- * @description
- * Sends tracking event (with optionally provided data) to Segment and Snowplow
- * if it is on the valid events list.
+ * @deprecated Use `Analytics.tracking.…` methods instead which takes the final event data without
+ *  sending it through the deprecated event transformers.
+ *
+ * Sends tracking event with provided data to Segment and Snowplow if registered properly for the event.
  */
 
 export function track(event: string, data?: EventData): void {
@@ -123,6 +120,41 @@ export function track(event: string, data?: EventData): void {
     });
   }
 }
+
+type TrackingPlan = typeof segment.plan;
+
+/**
+ * Exposes all Segment typewriter tracking functions for each Segment plan (schema).
+ * E.g. `Analytics.tracking.editorLoaded(data);`
+ *
+ * Use this instead of `Analytics.track()`. Update event registration and remove
+ * transformation from transform.ts when migrating an event from `Analytics.track().
+ */
+export const tracking = new Proxy<TrackingPlan>(segment.plan, {
+  get(plan, planKey: keyof TrackingPlan) {
+    return (props) => {
+      // TODO:xxx Can we enrich `props` with getBasicPayload() props? Consider `.data` being
+      //  used on some events but not on others when doing so!
+
+      // Track to segment by using original plan function:
+      plan[planKey](props);
+
+      // Depending on the `data` format we get and the event we're dealing with, we've got to ensure it's
+      // in the right format for Snowplow where we never wrapped { data } while this is done in most
+      // migrated events' Snowplow schemas due to an old tracking bug where data was accidentally wrapped.
+      const likeTransformedData: TransformedEventData = _.isObject(props.data)
+        ? props
+        : { data: props };
+      const snowplowSchema = getSnowplowSchemaForEvent(planKey);
+
+      if (snowplowSchema) {
+        snowplow.track(planKey, likeTransformedData);
+      }
+
+      analyticsConsole.add(planKey, likeTransformedData, props);
+    };
+  },
+});
 
 /**
  * This method helps to identify misuse of the analytics module

@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { get as getAtPath, snakeCase } from 'lodash';
 import { getSnowplowSchema } from './SchemasSnowplow';
+import * as segmentTypewriterPlans from './events';
+import { getSegmentSchema } from './SchemasSegment';
+import { TransformedEventData, EventData } from './types';
 
 import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
@@ -41,16 +44,16 @@ import EnvironmentAliases from './transformers/EnvironmentAliases';
 import SpacePurchaseTransformer from './transformers/SpacePurchase';
 import * as ReleasesTransformer from './transformers/Releases';
 import { withSequenceContext } from './sequenceContext';
-import { getSegmentSchema } from './SchemasSegment';
-import { TransformedEventData, EventData } from './types';
 
 type Transformer = Function | { (event: string, data: EventData): TransformedEventData };
 
 type EventMeta = {
   transformer: Transformer;
-  segmentSchema: string;
+  segmentSchema?: string;
   snowplowSchema?: string;
 };
+
+const planNames = Object.keys(segmentTypewriterPlans);
 
 /**
  * Registers each analytics event which should be sent to Snowplow/Segment with a
@@ -443,8 +446,35 @@ function registerSnowplowEvent(event: string, schema: string, transformer: Trans
   registerEvent(event, { snowplow: schema, segment: event }, transformer);
 }
 
+/**
+ * @deprecated Do not register transformers for new Segment events. Instead use `Analytics.tracking.fooBar()`
+ *  which gets exposed to track your new event after a tracking plan for `foo_bar` has been added to the
+ *  segment-schema-registry and after `npm run segment`.
+ */
 function registerSegmentEvent(event: string, schema: string, transformer: Transformer) {
   registerEvent(event, { segment: schema }, transformer);
+}
+
+/**
+ * Signals that events for a given Snowplow schema should no longer be tracked via `Analytics.track()` but
+ * via `Analytics.tracking.` which is taking advantage of Segment's typewriter and doesn't rely on transformers.
+ * If the legacy Snowplow event is registered via this function then the event will be tracked to Snowplow until
+ * the service gets deprecated for good.
+ *
+ * @param segmentPlanFnName
+ * @param snowplowSchemaName
+ */
+function migratedLegacyEvent(
+  segmentPlanFnName: keyof typeof segmentTypewriterPlans,
+  snowplowSchemaName: string
+) {
+  if (!planNames.includes(segmentPlanFnName)) {
+    throw new Error(`"${segmentPlanFnName}" is not a known Segment plan tracking function`);
+  }
+  _events[segmentPlanFnName] = {
+    snowplowSchema: snowplowSchemaName,
+    transformer: (data) => data,
+  };
 }
 
 /**
@@ -538,6 +568,10 @@ export function getSnowplowSchemaForEvent(event: string) {
 
 export function getSegmentSchemaForEvent(event: string) {
   const schemaName = _events[event].segmentSchema;
+  if (!schemaName) {
+    // Event is already tracked via `Analytics.tracking.` so it's no longer registered here.
+    return null;
+  }
   const schema = getSegmentSchema(schemaName);
   if (schema) {
     return schema;

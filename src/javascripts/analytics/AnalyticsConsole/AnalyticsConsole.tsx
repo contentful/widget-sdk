@@ -225,7 +225,7 @@ function PrettyEvent({ showData, event, eventSource }: PrettyEventProps) {
         #{index + 1} - {time} <strong>{event.raw.name}</strong>
         {eventSource === 'raw' && event.segment && <Info type="positive" value="Segment" />}
         {eventSource === 'raw' && event.snowplow && <Info type="warning" value="Snowplow" />}
-        {current.name !== event.raw.name && (
+        {current.name && current.name !== event.raw.name && (
           <Info type="primary" isLowerCase={true} value={current.name} />
         )}
         {current.version && <Info type="secondary" value={`v${current.version}`} />}
