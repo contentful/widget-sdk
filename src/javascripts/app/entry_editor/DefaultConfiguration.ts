@@ -2,7 +2,6 @@ import { WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import EntryEditorWidgetTypes from './EntryEditorWidgetTypes';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
-
 interface EntryEditorWidget {
   widgetId: string;
   widgetNamespace: WidgetNamespace;

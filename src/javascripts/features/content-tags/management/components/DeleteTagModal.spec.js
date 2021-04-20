@@ -10,7 +10,7 @@ import { SpaceEnvContext } from '../../../../core/services/SpaceEnvContext/Space
 const enterpriseSpaceId = 'm8xyo6sh8zj8';
 
 jest.mock('data/CMA/ProductCatalog', () => {
-  const FEATURES = {
+  const SpaceFeatures = {
     CUSTOM_ROLES_FEATURE: 'custom_roles',
   };
 
@@ -22,7 +22,7 @@ jest.mock('data/CMA/ProductCatalog', () => {
     return spaceId === enterpriseSpaceId;
   };
   return {
-    FEATURES,
+    SpaceFeatures,
     DEFAULT_FEATURES_STATUS,
     getSpaceFeature: jest.fn(getSpaceFeature),
   };
