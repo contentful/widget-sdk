@@ -1,5 +1,5 @@
 import * as fake from 'test/helpers/fakeFactory';
-import { getAppTrialSpaceKey, isActiveAppTrial, isExpiredAppTrial } from './AppTrialService';
+import { isActiveAppTrial, isExpiredAppTrial } from './AppTrialService';
 import { AppTrialFeature } from '../types/AppTrial';
 import { getSpaces } from 'services/TokenStore';
 
@@ -91,15 +91,6 @@ const mockTrialSpaceTwo = fake.Space({
   trialPeriodEndsAt: trialEndsAt,
 });
 
-const mockExpiredTrialSpace = fake.Space({
-  organization: {
-    sys: {
-      id: mockOrganization.sys.id,
-    },
-  },
-  trialPeriodEndsAt: trialEndedAt,
-});
-
 const mockSpace = fake.Space();
 
 jest.mock('services/TokenStore', () => ({
@@ -148,28 +139,6 @@ describe('AppTrialService', () => {
 
     it('should return False if the App Trial is not started', () => {
       expect(isExpiredAppTrial(appTrialNotStarted)).toBe(false);
-    });
-  });
-
-  describe('getAppTrialSpaceKey', () => {
-    it('should return the correct Space Id of the Trial Space when the App Trial is active', async () => {
-      expect(await getAppTrialSpaceKey(activeAppTrial)).toBe(mockTrialSpaceOne.sys.id);
-    });
-    it('should return the correct Space Id of the Trial Space when the App Trial is expired', async () => {
-      (getSpaces as jest.Mock).mockResolvedValue([
-        mockExpiredTrialSpace,
-        mockTrialSpaceTwo,
-        mockSpace,
-      ]);
-      expect(await getAppTrialSpaceKey(expiredAppTrial)).toBe(mockExpiredTrialSpace.sys.id);
-    });
-    it('should return null if the Trial Space cannot be found in the user Token', async () => {
-      (getSpaces as jest.Mock).mockResolvedValue([]);
-
-      expect(await getAppTrialSpaceKey(activeAppTrial)).toBeNull();
-    });
-    it('should return null if the App Trial is never started', async () => {
-      expect(await getAppTrialSpaceKey(appTrialNotStarted)).toBeNull();
     });
   });
 });
