@@ -8,6 +8,7 @@ import {
 import { getAllContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import * as ProductCatalog from '../../../interactions/product_catalog_features';
 import { queryForEditorInterfaces } from '../../../interactions/editor_interfaces';
+import { getBasePlan } from '../../../interactions/plans';
 
 describe('App Installation', () => {
   before(() =>
@@ -19,6 +20,7 @@ describe('App Installation', () => {
         'content_types',
         'editor_interfaces',
         'entries',
+        'plans',
         'product_catalog_features',
       ],
       cors: true,
@@ -36,6 +38,7 @@ describe('App Installation', () => {
       interactions = [
         ...defaultRequestsMock(),
         organizationAppDefinitions.willListOnePrivate(),
+        getBasePlan.willReturnEnterprise(),
         ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled(),
         ProductCatalog.getComposeAppFeatureInDefaultOrg.willFindFeatureEnabled(),
         ProductCatalog.queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),

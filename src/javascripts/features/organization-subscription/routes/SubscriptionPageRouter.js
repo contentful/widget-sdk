@@ -19,10 +19,10 @@ import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import {
   isOrganizationOnTrial,
+  canStartAppTrial,
   AppTrialRepo,
   isActiveAppTrial,
   isExpiredAppTrial,
-  useAppsTrial,
 } from 'features/trials';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -112,7 +112,10 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const appCatalogFeature = await AppTrialRepo.getTrial(organizationId);
+  const [appCatalogFeature, isAppTrialAvailable] = await Promise.all([
+    AppTrialRepo.getTrial(organizationId),
+    canStartAppTrial(organizationId),
+  ]);
 
   setSpacePlans(spacePlans);
 
@@ -128,6 +131,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     numMemberships,
     organization,
     productRatePlans,
+    isAppTrialAvailable,
     isAppTrialActive: isActiveAppTrial(appCatalogFeature),
     isAppTrialExpired: isExpiredAppTrial(appCatalogFeature),
     isSubscriptionPageRebrandingEnabled,
@@ -157,8 +161,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
       setGrandTotal(totalPrice);
     }
   }, [spacePlans, data.addOnPlan, data.basePlan, data.numMemberships]);
-
-  const { canStartTrial: isAppTrialAvailable } = useAppsTrial(organizationId);
 
   // Show the generic loading state until we know if we're purchasing apps or not
   if (isLoading) {
@@ -220,7 +222,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
                   initialLoad={isLoading}
                   spacePlans={spacePlans}
                   onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-                  isAppTrialAvailable={isAppTrialAvailable}
+                  isAppTrialAvailable={data.isAppTrialAvailable}
                   isAppTrialActive={data.isAppTrialActive}
                   isAppTrialExpired={data.isAppTrialExpired}
                 />
@@ -237,7 +239,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
               initialLoad={isLoading}
               spacePlans={spacePlans}
               onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-              isTrialAvailable={isAppTrialAvailable}
+              isTrialAvailable={data.isAppTrialAvailable}
               isTrialActive={data.isAppTrialActive}
               isTrialExpired={data.isAppTrialExpired}
             />

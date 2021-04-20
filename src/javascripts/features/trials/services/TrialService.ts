@@ -1,6 +1,5 @@
-import moment from 'moment';
-
 import { Organization, SpaceData } from 'core/services/SpaceEnvContext/types';
+import moment from 'moment';
 
 /**
  * Return True if an organization is on active trial.

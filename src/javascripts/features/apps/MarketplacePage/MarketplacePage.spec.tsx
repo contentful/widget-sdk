@@ -38,10 +38,6 @@ jest.mock('core/services/APIClient/useCurrentSpaceAPIClient', () => ({
   useCurrentSpaceAPIClient: () => ({}),
 }));
 
-jest.mock('features/trials', () => ({
-  useAppsTrial: () => ({}),
-}));
-
 describe('MarketplacePage', () => {
   it('should match snapshot for loading state', async () => {
     const { container } = render(
