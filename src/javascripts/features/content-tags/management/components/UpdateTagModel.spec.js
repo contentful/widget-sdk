@@ -8,7 +8,7 @@ import { UpdateTagModal } from 'features/content-tags/management/components/Upda
 import { wait } from '@testing-library/dom';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  FEATURES: { PC_CONTENT_TAGS: 'content_tags' },
+  SpaceFeatures: { PC_CONTENT_TAGS: 'content_tags' },
   getSpaceFeature: jest.fn().mockResolvedValue(true),
 }));
 

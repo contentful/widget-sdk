@@ -7,7 +7,7 @@ import * as ProductCatalog from 'data/CMA/ProductCatalog';
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getSpaceFeature: jest.fn(),
-  FEATURES: {
+  SpaceFeatures: {
     TASKS: 'test-tasks',
   },
 }));

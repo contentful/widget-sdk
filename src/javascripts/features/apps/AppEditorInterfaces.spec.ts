@@ -21,6 +21,11 @@ jest.mock('features/contentful-apps', () => ({
   }),
 }));
 
+jest.mock('data/CMA/ProductCatalog', () => ({
+  SpaceFeatures: { CONTENT_WORKFLOW_TASKS: 'tags', PC_CONTENT_TAGS: 'content_tags' },
+  getSpaceFeature: jest.fn().mockResolvedValue(false),
+}));
+
 const installation = {
   sys: {
     type: 'AppInstallation',
