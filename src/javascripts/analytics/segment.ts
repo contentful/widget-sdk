@@ -8,6 +8,7 @@ import { window } from 'core/services/window';
 import { getSegmentSchemaForEvent } from './transform';
 import { TransformedEventData } from './types';
 import { Schema } from './SchemasSegment';
+import * as plan from './events';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -139,7 +140,28 @@ async function getIntegrations() {
   return resp.map((item) => item.creationName);
 }
 
+// TODO better naming maybe
+type Plan = typeof plan;
+
+const wrapBuffered = (object: Plan) => {
+  const result = {};
+
+  for (const [name, fn] of Object.entries(object)) {
+    // TODO bufferedCall needs to accept the fn it should buffer
+    result[name] = bufferedCall(name, fn);
+  }
+
+  return result as Plan;
+};
+
+const allThingsBuffered = wrapBuffered(plan);
+
 export default {
+  ...allThingsBuffered,
+  tracking<K extends keyof Plan>(key: K, ...params: Parameters<Plan[K]>) {
+    // @ts-expect-error
+    allThingsBuffered[key](...params);
+  },
   enable: _.once(enable),
   /**
    * Sends a single event with data to
