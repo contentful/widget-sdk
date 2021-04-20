@@ -34,6 +34,8 @@ const buffer = CallBuffer.create();
 const bufferedTrack = bufferedCall('track');
 let isEnabled = false;
 
+type TrackingPlan = typeof plan;
+
 /**
  * Loads lazily the script and starts
  * sending analytical events.
@@ -46,11 +48,26 @@ function enable(loadOptions = {}) {
   }
 }
 
-function bufferedCall(fnName) {
+function bufferedCall(fnName, fn?) {
+  if (fn === undefined) {
+    return function (...args) {
+      buffer.call((analytics) => {
+        try {
+          analytics[fnName](...args);
+        } catch (err) {
+          logger.captureError(err, {
+            analyticsFn: fnName,
+            analyticsFnArgs: args,
+          });
+        }
+      });
+    };
+  }
+
   return function (...args) {
-    buffer.call((analytics) => {
+    buffer.call(() => {
       try {
-        analytics[fnName](...args);
+        fn(...args);
       } catch (err) {
         captureError(err, {
           extra: {
@@ -140,10 +157,7 @@ async function getIntegrations() {
   return resp.map((item) => item.creationName);
 }
 
-// TODO better naming maybe
-type Plan = typeof plan;
-
-const wrapBuffered = (object: Plan) => {
+const wrapBuffered = (object: TrackingPlan) => {
   const result = {};
 
   for (const [name, fn] of Object.entries(object)) {
@@ -151,7 +165,7 @@ const wrapBuffered = (object: Plan) => {
     result[name] = bufferedCall(name, fn);
   }
 
-  return result as Plan;
+  return result as TrackingPlan;
 };
 
 const allThingsBuffered = wrapBuffered(plan);
@@ -162,6 +176,7 @@ export default {
     // @ts-expect-error
     allThingsBuffered[key](...params);
   },
+
   enable: _.once(enable),
   /**
    * Sends a single event with data to
