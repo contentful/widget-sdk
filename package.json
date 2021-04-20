@@ -301,7 +301,8 @@
     "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts",
     "check-types": "tsc",
     "check-code-ownership": "node ./tools/codeownership/check.js",
-    "wait-for-app": "wait-on --verbose --interval 2000 --delay 60000 http://localhost:3001"
+    "wait-for-app": "wait-on --verbose --interval 2000 --delay 60000 http://localhost:3001",
+    "segment": "typewriter"
   },
   "lint-staged": {
     "*.{t,j}s?(x)": [

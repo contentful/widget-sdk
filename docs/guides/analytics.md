@@ -1,5 +1,40 @@
-Analytics
-=========
+# Analytics
+
+# Tracking with Segment
+
+<strong>Analytics with Typewriter</strong>
+
+With the introduction of [typewriter][typewriter], we are now introducting a way to
+type check while implementing tracking.
+
+## Account setup
+
+You will need access to [Segment][segment-prod] to view the tracking sources,
+protocols, etc. If you cannot login with SSO or don't see any `Contentful Production`
+sources, follow the [Segment First Steps][segment-first-steps] to get the
+required permissions.
+
+## Sources and tracking plans (protocols)
+
+Logging into segment, you should see a list of sources and destinations. The
+`contentful Production` sources track events fired from browser clients. These events
+must match the schemas defined in the `user_interface` tracking plan, visible in
+the Segment UI under Protocols -> Tracking Plans.
+
+## Adding/modifying events
+
+See the [segment-schema-registry readme][segment-schema-registry-dev] for
+instructions on adding and modifying events.
+
+After changing events, call `TYPEWRITER_TOKEN=token_from_1password npm run segment`
+to use [typewriter][typewriter] to generate typed methods for the tracking
+plan's events. You can find the `TYPEWRITER_TOKEN` in 1Password by searching for
+"typewriter".
+
+[segment-prod]: https://app.segment.com/contentful
+[segment-first-steps]: https://contentful.atlassian.net/wiki/spaces/ENG/pages/2038071636/Segment+First+Steps#Required-Permissions
+[segment-schema-registry-dev]: https://github.com/contentful/segment-schema-registry#development
+[typewriter]: https://segment.com/docs/protocols/apis-and-extensions/typewriter/
 
 This guide explains how we track events occurring in the app and what data
 we send to analytical services.
@@ -78,7 +113,6 @@ Anatomy of an event name:
 Namespace should be derived from the location in the app where events are
 tracked. Event name should be descriptive 1-5 words in the past tense.
 
-
 ## Adding a new tracking event
 
 Please follow this checklist:
@@ -107,7 +141,6 @@ Please follow this checklist:
   [analytics/snowplow/Schemas](../../src/javascripts/analytics/snowplow/Schemas.js). Transformer is a function that accepts event
   name and data and returns the output sent to Snowplow
 
-
 ## Default payload
 
 Every event by default contains the following data:
@@ -121,92 +154,91 @@ Each event can extend this payload with custom payload. In very rare cases
 space/organization ID may not be available (organization/space not created
 yet).
 
-
 ## List of events (OUTDATED)
 
-| namespace           | event name                            | payload
-|---------------------|---------------------------------------|---------
-| global              | app_loaded                            | -
-| global              | space_changed                         | -
-| global              | space_left                            | -
-| global              | state_changed                         | <code>state: string<br>params: obj<br>fromState: string<br>fromParams: obj</code>
-| global              | logout_clicked                        | -
-| global              | top_banner_dismissed                  | -
-| global              | navigated                             | -
-| home                | space_selected                        | -
-| home                | space_learn_selected                  | -
-| home                | language_selected                     | -
-| home                | link_opened                           | -
-| home                | command_copied                        | -
-| notification        | action_performed                      | <code>action: string<br>currentPlan: string</code>
-| learn               | step_clicked                          | <code>linkName: string</code>
-| learn               | language_selected                     | <code>language: string (js, ruby...)</code>
-| learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>
-| space_switcher      | opened                                | -
-| space_switcher      | create_clicked                        | -
-| space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
-| space               | template_selected                     | <code>templateName: string</code>
-| space               | create                                | <code>templateName: string</code>
-| search              | search_performed                      | TODO: link Snowplow schema when merged
-| search              | view_created                          | TODO: link Snowplow schema when merged
-| search              | view_edited                           | TODO: link Snowplow schema when merged
-| search              | view_deleted                          | TODO: link Snowplow schema when merged
-| search              | view_loaded                           | TODO: link Snowplow schema when merged
-| search              | ui_config_migrate                     | TODO: link Snowplow schema when merged
-| search              | filter_added                          | TODO: link Snowplow schema when merged
-| search              | filter_removed                        | TODO: link Snowplow schema when merged
-| search              | query_changed                         | TODO: link Snowplow schema when merged
-| search              | entry_clicked                         | TODO: link Snowplow schema when merged
-| content_modelling   | field_added                           | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code>
-| entry_editor        | state_changed                         | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>
-| entry_editor        | disabled_fields_visibility_toggled    | <code>entryId: id-string<br>show: bool</code>
-| entry_editor        | created_with_same_ct                  | <code>contentTypeId: id-string<br>entryId: id-string</code>
-| entry_editor        | preview_opened                        | <code>envName: string<br>envId: id-string<br>previewUrl: string<br>entryId: id-string</code>
-| entry_editor        | custom_extension_rendered             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string<br>contentTypeId: id-string<br>entryId: id-string</code>
-| versioning          | no_snapshots                          | <code>entryId: id-string</code>
-| versioning          | snapshot_opened                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>source: string</code>
-| versioning          | snapshot_closed                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>changesDiscarded: bool</code>
-| versioning          | snapshot_restored                     | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>fullRestore: bool<br>restoredFieldsCount: number<br>showDiffsOnly: bool</code>
-| versioning          | published_restored                    | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool</code>
-| bulk_editor         | open                                  | <code>parentEntryId: string<br>refCount: number</code>
-| bulk_editor         | close                                 | <code>parentEntryId: string<br>refCount: number<br>numEditedEntries: number<br>numPublishedEntries: number</code>
-| bulk_editor         | action                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>
-| bulk_editor         | status                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>
-| bulk_editor         | add                                   | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>
-| content_preview     | created                               | <code>name: string<br>id: id-string<br>isDiscoveryApp: bool</code>
-| content_preview     | updated                               | <code>name: string<br>id: id-string</code>
-| content_preview     | deleted                               | <code>name: string<br>id: id-string</code>
-| content_type        | create                                | <code>actionData: obj<br>response: obj</code>
-| entry               | create                                | <code>actionData: obj<br>response: obj, eventOrigin: string</code>
-| asset               | create                                | <code>actionData: obj<br>response: obj</code>
-| api_key             | create                                | <code>actionData: obj<br>response: obj</code>
-| api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
-| api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>
-| experiment          | start                                 | <code>id: string<br />variation: bool</code>
-| experiment          | interaction                           | <code>id: string<br />variation: bool<br />interaction_context: string</code>
-| element             | click                                 | <code>elementId: string<br />fromState: string<br />toState: string?</code>
-| personal_access_token | action                              | <code>action: string<br>patId: string</code>
-| reference_editor    | create_entry                          | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br>inline_editing_toggled_on:boolean</code>
-| reference_editor    | edit_entry                            | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number</code>
-| reference_editor    | toggle_inline_editor                  | <code>toggle_state: boolean<br>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br/>selector: string</code>
-| incoming_links      | dialog_open                           | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>
-| incoming_links      | dialog_confirm                        | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>
-| incoming_links      | dialog_link_click                     | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string<br />dialog_session_id: string</code>
-| incoming_links      | sidebar_link_click                    | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string</code>
-| incoming_links      | query                                 | <code>entry_id: string<br />incoming_links_count: number</code>
-| environment_aliases | custom_alias_feedback_start           | -
-| environment_aliases | custom_alias_feedback_complete        | -
-| environment_aliases | custom_alias_feedback_abort           | -
-| environment_aliases | opt_in_start                          | -
-| environment_aliases | opt_in_complete                       | -
-| environment_aliases | opt_in_step_1                         | -
-| environment_aliases | opt_in_step_2                         | -
-| environment_aliases | opt_in_step_3                         | -
-| environment_aliases | opt_in_abort_step_1                   | -
-| environment_aliases | opt_in_abort_step_2                   | -
-| environment_aliases | change_environment_open               | -
-| environment_aliases | change_environment_abort              | -
-| environment_aliases | notification_environment_alias_changed| <code>update: obj<br />newTarget: string<br />oldTarget: string<br />aliasId: string</code>
-| environment_aliases | notification_switch_to_alias          | -
-| environment_aliases | notification_continue_on_environment  | -
-| entity_list         | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)<br>succeeded_count: number<br>failed_count: number
+| namespace             | event name                             | payload                                                                                                                                                                                                  |
+| --------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| global                | app_loaded                             | -                                                                                                                                                                                                        |
+| global                | space_changed                          | -                                                                                                                                                                                                        |
+| global                | space_left                             | -                                                                                                                                                                                                        |
+| global                | state_changed                          | <code>state: string<br>params: obj<br>fromState: string<br>fromParams: obj</code>                                                                                                                        |
+| global                | logout_clicked                         | -                                                                                                                                                                                                        |
+| global                | top_banner_dismissed                   | -                                                                                                                                                                                                        |
+| global                | navigated                              | -                                                                                                                                                                                                        |
+| home                  | space_selected                         | -                                                                                                                                                                                                        |
+| home                  | space_learn_selected                   | -                                                                                                                                                                                                        |
+| home                  | language_selected                      | -                                                                                                                                                                                                        |
+| home                  | link_opened                            | -                                                                                                                                                                                                        |
+| home                  | command_copied                         | -                                                                                                                                                                                                        |
+| notification          | action_performed                       | <code>action: string<br>currentPlan: string</code>                                                                                                                                                       |
+| learn                 | step_clicked                           | <code>linkName: string</code>                                                                                                                                                                            |
+| learn                 | language_selected                      | <code>language: string (js, ruby...)</code>                                                                                                                                                              |
+| learn                 | resource_selected                      | <code>language: string<br>resource: string (documentation, example....)</code>                                                                                                                           |
+| space_switcher        | opened                                 | -                                                                                                                                                                                                        |
+| space_switcher        | create_clicked                         | -                                                                                                                                                                                                        |
+| space_switcher        | space_switched                         | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>                                                                                                                                         |
+| space                 | template_selected                      | <code>templateName: string</code>                                                                                                                                                                        |
+| space                 | create                                 | <code>templateName: string</code>                                                                                                                                                                        |
+| search                | search_performed                       | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | view_created                           | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | view_edited                            | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | view_deleted                           | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | view_loaded                            | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | ui_config_migrate                      | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | filter_added                           | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | filter_removed                         | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | query_changed                          | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| search                | entry_clicked                          | TODO: link Snowplow schema when merged                                                                                                                                                                   |
+| content_modelling     | field_added                            | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code> |
+| entry_editor          | state_changed                          | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>                                                                      |
+| entry_editor          | disabled_fields_visibility_toggled     | <code>entryId: id-string<br>show: bool</code>                                                                                                                                                            |
+| entry_editor          | created_with_same_ct                   | <code>contentTypeId: id-string<br>entryId: id-string</code>                                                                                                                                              |
+| entry_editor          | preview_opened                         | <code>envName: string<br>envId: id-string<br>previewUrl: string<br>entryId: id-string</code>                                                                                                             |
+| entry_editor          | custom_extension_rendered              | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string<br>contentTypeId: id-string<br>entryId: id-string</code>                                                                      |
+| versioning            | no_snapshots                           | <code>entryId: id-string</code>                                                                                                                                                                          |
+| versioning            | snapshot_opened                        | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>source: string</code>                                                                                 |
+| versioning            | snapshot_closed                        | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>changesDiscarded: bool</code>                                                                         |
+| versioning            | snapshot_restored                      | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>fullRestore: bool<br>restoredFieldsCount: number<br>showDiffsOnly: bool</code>                        |
+| versioning            | published_restored                     | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool</code>                                                                                                   |
+| bulk_editor           | open                                   | <code>parentEntryId: string<br>refCount: number</code>                                                                                                                                                   |
+| bulk_editor           | close                                  | <code>parentEntryId: string<br>refCount: number<br>numEditedEntries: number<br>numPublishedEntries: number</code>                                                                                        |
+| bulk_editor           | action                                 | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>                                                                                                                |
+| bulk_editor           | status                                 | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>                                                                                                                |
+| bulk_editor           | add                                    | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>                                                                                                                                   |
+| content_preview       | created                                | <code>name: string<br>id: id-string<br>isDiscoveryApp: bool</code>                                                                                                                                       |
+| content_preview       | updated                                | <code>name: string<br>id: id-string</code>                                                                                                                                                               |
+| content_preview       | deleted                                | <code>name: string<br>id: id-string</code>                                                                                                                                                               |
+| content_type          | create                                 | <code>actionData: obj<br>response: obj</code>                                                                                                                                                            |
+| entry                 | create                                 | <code>actionData: obj<br>response: obj, eventOrigin: string</code>                                                                                                                                       |
+| asset                 | create                                 | <code>actionData: obj<br>response: obj</code>                                                                                                                                                            |
+| api_key               | create                                 | <code>actionData: obj<br>response: obj</code>                                                                                                                                                            |
+| api                   | boilerplate                            | <code>platform: string<br>action: select                                                                                                                                                                 | download | github</code> |
+| api                   | clipboard_copy                         | <code>source: space                                                                                                                                                                                      | cda | cpa</code> |
+| experiment            | start                                  | <code>id: string<br />variation: bool</code>                                                                                                                                                             |
+| experiment            | interaction                            | <code>id: string<br />variation: bool<br />interaction_context: string</code>                                                                                                                            |
+| element               | click                                  | <code>elementId: string<br />fromState: string<br />toState: string?</code>                                                                                                                              |
+| personal_access_token | action                                 | <code>action: string<br>patId: string</code>                                                                                                                                                             |
+| reference_editor      | create_entry                           | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br>inline_editing_toggled_on:boolean</code>                                         |
+| reference_editor      | edit_entry                             | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number</code>                                                                              |
+| reference_editor      | toggle_inline_editor                   | <code>toggle_state: boolean<br>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br/>selector: string</code>                                |
+| incoming_links        | dialog_open                            | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>                                                                                                           |
+| incoming_links        | dialog_confirm                         | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>                                                                                                           |
+| incoming_links        | dialog_link_click                      | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string<br />dialog_session_id: string</code>                                                                               |
+| incoming_links        | sidebar_link_click                     | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string</code>                                                                                                              |
+| incoming_links        | query                                  | <code>entry_id: string<br />incoming_links_count: number</code>                                                                                                                                          |
+| environment_aliases   | custom_alias_feedback_start            | -                                                                                                                                                                                                        |
+| environment_aliases   | custom_alias_feedback_complete         | -                                                                                                                                                                                                        |
+| environment_aliases   | custom_alias_feedback_abort            | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_start                           | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_complete                        | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_step_1                          | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_step_2                          | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_step_3                          | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_abort_step_1                    | -                                                                                                                                                                                                        |
+| environment_aliases   | opt_in_abort_step_2                    | -                                                                                                                                                                                                        |
+| environment_aliases   | change_environment_open                | -                                                                                                                                                                                                        |
+| environment_aliases   | change_environment_abort               | -                                                                                                                                                                                                        |
+| environment_aliases   | notification_environment_alias_changed | <code>update: obj<br />newTarget: string<br />oldTarget: string<br />aliasId: string</code>                                                                                                              |
+| environment_aliases   | notification_switch_to_alias           | -                                                                                                                                                                                                        |
+| environment_aliases   | notification_continue_on_environment   | -                                                                                                                                                                                                        |
+| entity_list           | bulk_action_performed                  | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)<br>succeeded_count: number<br>failed_count: number                                                                     |
