@@ -2,17 +2,18 @@ import { get, isObject, set, isPlainObject as _isPlainObject, isUndefined } from
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { AppState } from '@contentful/app-sdk';
 import { Control, Editor, SidebarItem } from 'contentful-management/types';
+import APIClient from 'data/APIClient';
 
 export type PartialTargetState =
   | boolean
   | { position: number; settings?: Record<string, string | number | boolean> };
 
 export const getCurrentState = async (
-  spaceContext: any,
+  cma: APIClient,
   widgetId: string,
   widgetNamespace: WidgetNamespace
 ): Promise<AppState> => {
-  const { items: editorInterfaces } = await spaceContext.cma.getEditorInterfaces();
+  const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const CurrentState = { EditorInterface: {} };
 

@@ -1,6 +1,7 @@
 import { getCurrentState, validateState } from './AppState';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { Control, Editor, SidebarItem } from 'contentful-management/types';
+import APIClient from 'data/APIClient';
 
 const DEFAULT_WIDGET_ID = 'widgetId';
 const DEFAULT_WIDGET_NAMESPACE = WidgetNamespace.APP;
@@ -102,12 +103,10 @@ const createEditorInterfaceResponse = (...editorInterfaces) => {
   };
 };
 
-const createSpaceContext = (editorInterfaceResponse) => {
-  return {
-    cma: {
-      getEditorInterfaces: jest.fn().mockResolvedValueOnce(editorInterfaceResponse),
-    },
-  };
+const createAPIClient = (editorInterfaceResponse) => {
+  return ({
+    getEditorInterfaces: jest.fn().mockResolvedValueOnce(editorInterfaceResponse),
+  } as unknown) as APIClient;
 };
 
 describe('AppState', () => {
@@ -121,13 +120,9 @@ describe('AppState', () => {
           editor: makeEditor(),
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {
@@ -148,13 +143,9 @@ describe('AppState', () => {
           editors: [makeEditor(), makeEditor('another-widget-id')],
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {
@@ -177,13 +168,9 @@ describe('AppState', () => {
           controls: [makeControl(yetAnotherFieldId)],
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {
@@ -212,13 +199,9 @@ describe('AppState', () => {
           sidebar: [makeSidebarItem()],
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {
@@ -233,13 +216,9 @@ describe('AppState', () => {
     });
     it('returns an empty object if no editor interfaces', async () => {
       const editorInterfaceResponse = createEditorInterfaceResponse([]);
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {},
@@ -260,13 +239,9 @@ describe('AppState', () => {
           editors: [makeEditor()],
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {
@@ -292,13 +267,9 @@ describe('AppState', () => {
           editors: [makeEditor()],
         })
       );
-      const spaceContext = createSpaceContext(editorInterfaceResponse);
+      const apiClient = createAPIClient(editorInterfaceResponse);
 
-      const result = await getCurrentState(
-        spaceContext,
-        DEFAULT_WIDGET_ID,
-        DEFAULT_WIDGET_NAMESPACE
-      );
+      const result = await getCurrentState(apiClient, DEFAULT_WIDGET_ID, DEFAULT_WIDGET_NAMESPACE);
 
       expect(result).toEqual({
         EditorInterface: {},

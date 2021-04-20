@@ -73,7 +73,7 @@ export const createAppExtensionSDK = ({
   });
 
   const { appApi, onAppHook } = createAppApi({
-    spaceContext,
+    cma,
     widgetId,
     widgetNamespace,
     appHookBus,
