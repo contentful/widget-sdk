@@ -15,7 +15,6 @@ import * as Trials from 'features/trials';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 
 jest.mock('data/EndpointFactory');
-jest.mock('data/CMA/ProductCatalog');
 jest.mock('services/LegacyFeatureService');
 jest.mock('components/shared/persistent-notification/service');
 jest.mock('access_control/Enforcements');

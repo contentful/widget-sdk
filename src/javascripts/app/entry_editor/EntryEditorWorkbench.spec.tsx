@@ -20,7 +20,6 @@ jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true),
   getSpaceFeature: jest.fn(),
   SpaceFeatures: {
-    PC_CONTENT_TAGS: false,
     SCHEDULED_PUBLISHING: 'ff',
   },
 }));

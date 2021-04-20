@@ -10,7 +10,6 @@ import * as CustomWidgetLoaderInstance from 'widgets/CustomWidgetLoaderInstance'
 
 jest.mock('widgets/WidgetRenderable');
 jest.mock('services/localeStore');
-jest.mock('data/CMA/ProductCatalog');
 jest.mock('widgets/CustomWidgetLoaderInstance');
 
 const $q = { resolve: jest.fn().mockImplementation((...args) => Promise.resolve(...args)) };

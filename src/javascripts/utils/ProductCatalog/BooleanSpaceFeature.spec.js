@@ -9,8 +9,6 @@ import { waitFor } from '@testing-library/dom';
 
 const spaceId = 'space-id';
 
-jest.mock('data/CMA/ProductCatalog', () => ({ getSpaceFeature: jest.fn() }));
-
 const flushPromises = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('BooleanSpaceFeature Component', () => {
