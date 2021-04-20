@@ -114,7 +114,7 @@ export const useEntrySidebarProps = ({
   } = useSpaceEnvContext();
 
   const spaceEndpoint = useSpaceEnvEndpoint();
-  const cma = useCurrentSpaceAPIClient();
+  const { client: cma } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
 
   useEffect(() => {
