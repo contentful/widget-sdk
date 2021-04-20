@@ -1,9 +1,4 @@
 import moment from 'moment';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import { getBasePlan } from 'features/pricing-entities';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import * as Repo from './AppTrialRepo';
 import { isTrialSpaceType } from './TrialService';
 import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
@@ -17,24 +12,6 @@ import { getCMAClient } from 'core/services/usePlainCMAClient';
 const FEATURE_TO_APP_NAME = {
   compose_app: 'compose', // eslint-disable-line @typescript-eslint/camelcase
   launch_app: 'launch', // eslint-disable-line @typescript-eslint/camelcase
-};
-
-export const canStartAppTrial = async (organizationId: string) => {
-  if (!isOwnerOrAdmin({ sys: { id: organizationId } })) {
-    return false;
-  }
-
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
-  const [basePlan, productFeature] = await Promise.all([
-    getBasePlan(orgEndpoint),
-    Repo.getTrial(organizationId),
-  ]);
-
-  if (isEnterprisePlan(basePlan)) {
-    return false;
-  }
-
-  return !productFeature.enabled && !productFeature.sys.trial;
 };
 
 export const startAppTrial = async (organizationId: string) => {

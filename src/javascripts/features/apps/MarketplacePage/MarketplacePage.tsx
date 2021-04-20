@@ -25,7 +25,7 @@ import { MarketplaceApp } from 'features/apps-core';
 import { ContentfulAppsList } from './ContentfulAppList';
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
-import { canStartAppTrial } from 'features/trials';
+import { useAppsTrial } from 'features/trials';
 import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { EnvironmentMeta } from 'core/services/SpaceEnvContext/types';
@@ -86,7 +86,6 @@ export function MarketplacePage(props: MarketplacePageProps) {
     props.app ?? null
   );
   const [isPurchased, setIsPurchased] = React.useState(false);
-  const [isTrialAvailable, setIsTrialAvailable] = React.useState(false);
   const spaceInformation: SpaceInformation = {
     envMeta: getEnvironmentMeta(currentSpace) as EnvironmentMeta,
     spaceId: spaceId as string,
@@ -94,13 +93,14 @@ export function MarketplacePage(props: MarketplacePageProps) {
   };
   const canManageApps = props.canManageApps ?? false;
 
+  const { canStartTrial: isTrialAvailable } = useAppsTrial(organizationId);
+
   React.useEffect(() => {
     async function init() {
       try {
-        const [launchApp, composeApp, isTrialAvailable, appManager] = await Promise.all([
+        const [launchApp, composeApp, appManager] = await Promise.all([
           getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_LAUNCH_APP, false),
           getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_COMPOSE_APP, false),
-          canStartAppTrial(organizationId as string),
           new AppManager(cma, environmentId, spaceId, organizationId, async () => await loadApps()),
           loadApps(),
         ]);
@@ -108,7 +108,6 @@ export function MarketplacePage(props: MarketplacePageProps) {
 
         setAppManager(appManager);
         setIsPurchased(isPurchased);
-        setIsTrialAvailable(isTrialAvailable);
 
         setReady(true);
       } catch (err) {

@@ -17,7 +17,6 @@ jest.mock('features/contentful-apps', () => ({
     isPurchased: true,
     isEnabled: true,
     isInstalled: true,
-    isTrialAvailable: true,
   }),
 }));
 
