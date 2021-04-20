@@ -13,7 +13,6 @@ jest.mock('features/contentful-apps', () => ({
     isPurchased: true,
     isEnabled: true,
     isInstalled: true,
-    isTrialAvailable: true,
   }),
 }));
 
@@ -143,7 +142,6 @@ describe('BulkActionsRow', () => {
       isPurchased: true,
       isEnabled: true,
       isInstalled: true,
-      isTrialAvailable: true,
     });
   });
 
@@ -248,7 +246,6 @@ describe('BulkActionsRow', () => {
         isPurchased: false,
         isEnabled: false,
         isInstalled: false,
-        isTrialAvailable: false,
       });
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),

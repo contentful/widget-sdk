@@ -12,7 +12,6 @@ jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
     isPurchased: true,
     isEnabled: true,
     isInstalled: true,
-    isTrialAvailable: true,
   }),
 }));
 
@@ -35,7 +34,6 @@ describe('components/ui/Loader', () => {
       isPurchased: true,
       isEnabled: true,
       isInstalled: true,
-      isTrialAvailable: true,
     });
   });
 
@@ -95,7 +93,6 @@ describe('components/ui/Loader', () => {
       isPurchased: false,
       isEnabled: false,
       isInstalled: false,
-      isTrialAvailable: false,
     });
     const { queryByTestId } = render(<LaunchAppDeepLinkCard eventOrigin="test-page" />);
     expect(queryByTestId('launch-app-deep-link')).toBeNull();

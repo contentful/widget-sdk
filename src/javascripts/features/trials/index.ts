@@ -13,7 +13,8 @@ export {
   isExpiredTrialSpace,
 } from './services/TrialService';
 
-export { canStartAppTrial, isActiveAppTrial, isExpiredAppTrial } from './services/AppTrialService';
+export { isActiveAppTrial, isExpiredAppTrial } from './services/AppTrialService';
+export { useAppsTrial } from './hooks/useAppsTrials';
 
 export { AppTrialRepo };
 export { trialState } from './TrialState';
