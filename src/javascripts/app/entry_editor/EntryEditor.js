@@ -1,4 +1,4 @@
-import React, { Fragment, useLayoutEffect } from 'react';
+import React, { Fragment, useEffect, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import * as K from 'core/utils/kefir';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
@@ -22,7 +22,14 @@ export const EntryEditor = (props) => {
   const { client: cma } = useCurrentSpaceAPIClient();
 
   // @TODO remove getViewProps() as soon as feature flag * is removed
-  const { viewProps = props.getViewProps(), fieldController, fields, currentSlideLevel } = props;
+  const {
+    viewProps = props.getViewProps(),
+    fieldController,
+    fields,
+    currentSlideLevel,
+    incomingLinksResponse,
+  } = props;
+
   const { editorData, trackLoadEvent } = viewProps;
 
   const emitter = useEmitter();
@@ -62,7 +69,8 @@ export const EntryEditor = (props) => {
     bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, trackLoadEvent);
   }, [editorData, loadEvents, otDoc, trackLoadEvent]);
 
-  const entrySidebarProps = useEntrySidebarProps({
+  //TODO: can useEntrySidebarProps be moved up to EntityEditor?
+  const [entrySidebarProps, setIncomingLinks] = useEntrySidebarProps({
     editorContext,
     editorData,
     emitter,
@@ -72,6 +80,16 @@ export const EntryEditor = (props) => {
     preferences,
     state,
   });
+
+  useEffect(() => {
+    if (!setIncomingLinks) {
+      return;
+    }
+    setIncomingLinks({
+      entityInfo: editorData.entityInfo,
+      incomingLinksResponse,
+    });
+  }, [editorData.entityInfo, setIncomingLinks, incomingLinksResponse]);
 
   return (
     <Fragment>
@@ -88,6 +106,7 @@ export const EntryEditor = (props) => {
         state={state}
         statusNotificationProps={statusNotificationProps}
         title={title}
+        incomingLinks={incomingLinksResponse.links}
       />
     </Fragment>
   );
@@ -99,6 +118,7 @@ EntryEditor.propTypes = {
   currentSlideLevel: PropTypes.number.isRequired,
   fieldController: PropTypes.object,
   fields: PropTypes.object,
+  incomingLinksResponse: PropTypes.any,
 };
 
 EntryEditor.defaultProps = {

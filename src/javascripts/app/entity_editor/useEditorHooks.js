@@ -102,7 +102,7 @@ export const useEntrySidebarProps = ({
   preferences,
   state,
 }) => {
-  const [entrySidebarProps, setEntrySidebarProps] = useState();
+  const [entrySidebarProps, setEntrySidebarProps] = useState([]);
 
   const {
     currentSpace,
@@ -118,7 +118,7 @@ export const useEntrySidebarProps = ({
   const pubSubClient = usePubSubClient();
 
   useEffect(() => {
-    if (state && pubSubClient && !entrySidebarProps && currentSpace && cma) {
+    if (state && pubSubClient && !entrySidebarProps[0] && currentSpace && cma) {
       const props = createEntrySidebarProps({
         aliasId: currentEnvironmentAliasId,
         editorContext,

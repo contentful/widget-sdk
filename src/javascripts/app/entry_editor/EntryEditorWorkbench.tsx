@@ -103,6 +103,7 @@ interface EntryEditorWorkbenchProps {
   };
   preferences: Record<string, any>;
   fields: Record<string, any>;
+  incomingLinks: any[];
 }
 
 // Is the selected tab available? Do we need to provide a default tab?
@@ -151,6 +152,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     state,
     statusNotificationProps,
     title,
+    incomingLinks,
   } = props;
   const { entityInfo } = editorData;
   const { state: referencesState } = (useContext(ReferencesContext) as unknown) as {
@@ -381,7 +383,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
               localeName={localeData.focusedLocale.name}
               isSingleLocaleModeOn={localeData.isSingleLocaleModeOn}
               contentTypeName={editorContext.entityInfo.contentType?.name}
-              entityInfo={entityInfo}
+              incomingLinks={incomingLinks}
             />
           }
           icon={<ProductIcon icon="Content" size="xlarge" />}

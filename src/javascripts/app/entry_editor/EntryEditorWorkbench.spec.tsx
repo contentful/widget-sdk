@@ -150,6 +150,7 @@ describe('When rendering editors page with no editors', () => {
     },
     preferences: { showDisabledFields: false },
     fields: {},
+    incomingLinks: [],
   };
 
   it('renders the warning', () => {

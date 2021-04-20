@@ -84,7 +84,6 @@ class StateChangeConfirmation extends React.Component {
     return (
       <FetchLinksToEntity
         {...entityInfo}
-        origin={IncomingLinksOrigin.DIALOG}
         render={({ links, requestState }) => {
           const { title, body, confirm, secondary } = getMessages({
             action,
@@ -113,7 +112,6 @@ class StateChangeConfirmation extends React.Component {
               {requestState === RequestState.PENDING && <Loader />}
               {requestState === RequestState.SUCCESS && (
                 <IncomingLinksList
-                  origin={IncomingLinksOrigin.DIALOG}
                   entityId={entityInfo.id}
                   entityType={entityInfo.type}
                   links={links}

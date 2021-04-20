@@ -8,6 +8,10 @@ import { getSlideAsString } from 'navigation/SlideInNavigator';
 
 import { BulkEditorWrapper } from './bulk_editor/BulkEditorWrapper';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
+import { RequestState } from './Components/FetchLinksToEntity';
+import { useState, useEffect } from 'react';
+import fetchLinks from './Components/FetchLinksToEntity/fetchLinks';
+import { once } from 'lodash';
 
 interface EntityEditorProps {
   slide: Slide;
@@ -29,6 +33,33 @@ export const EntityEditor: FunctionComponent<EntityEditorProps> = (props) => {
   } = props;
 
   const [{ editorData, loadingError }, trackLoadEvent] = useEntityLoader(slide, slideStates);
+  const [incomingLinksResponse, setIncomingLinksResponse] = useState({
+    links: [],
+    state: RequestState.PENDING,
+  });
+  //@ts-expect-error
+  const { id: entityId, type: entityType } = editorData?.entityInfo || {};
+  useEffect(
+    once(() => {
+      if (!entityId || !entityType) {
+        return;
+      }
+      fetchLinks(entityId, entityType)
+        .then((links) => {
+          setIncomingLinksResponse({
+            links,
+            state: RequestState.SUCCESS,
+          });
+        })
+        .catch(() =>
+          setIncomingLinksResponse({
+            links: [],
+            state: RequestState.ERROR,
+          })
+        );
+    }),
+    [entityId, entityType]
+  );
 
   const slideKey = getSlideAsString(slide);
   if (!editorData || loadingError) {
@@ -56,13 +87,18 @@ export const EntityEditor: FunctionComponent<EntityEditorProps> = (props) => {
   };
 
   updateSlideStateByKey(slideKey, { viewProps });
-
   const { type } = slide;
   switch (type) {
     case 'Asset':
-      return <AssetEditor {...editorProps} />;
+      return <AssetEditor {...editorProps} incomingLinksResponse={incomingLinksResponse} />;
     case 'Entry':
-      return <EntryEditor {...editorProps} currentSlideLevel={slideStates.length} />;
+      return (
+        <EntryEditor
+          {...editorProps}
+          currentSlideLevel={slideStates.length}
+          incomingLinksResponse={incomingLinksResponse}
+        />
+      );
     case 'BulkEditor':
       return <BulkEditorWrapper slide={slide} editorData={editorData} />;
     default:

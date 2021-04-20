@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import IncomingLinksList from 'app/entity_editor/Components/IncomingLinksList';
 import IncomingLinksListError from 'app/entity_editor/Components/IncomingLinksList/Error';
-import FetchLinksToEntity, { RequestState } from 'app/entity_editor/Components/FetchLinksToEntity';
+import { RequestState } from 'app/entity_editor/Components/FetchLinksToEntity';
 import { EntityType, getNumberOfLinks } from 'app/entity_editor/Components/constants';
 import messages from './messages';
 import EntrySidebarWidget from '../EntrySidebarWidget';
@@ -24,6 +24,7 @@ export default class SidebarIncomingLinks extends React.Component {
       id: PropTypes.string,
       type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]),
     }),
+    incomingLinksResponse: PropTypes.any,
   };
 
   handleClick = ({ linkEntityId, incomingLinksCount }) => {
@@ -37,30 +38,27 @@ export default class SidebarIncomingLinks extends React.Component {
   };
 
   render() {
-    const { entityInfo } = this.props;
+    const {
+      entityInfo,
+      incomingLinksResponse: { state: responseState, links },
+    } = this.props;
 
     return (
       <EntrySidebarWidget testId="sidebar-incoming-links-section" title="Links">
         {entityInfo && (
-          <FetchLinksToEntity
-            {...entityInfo}
-            origin={IncomingLinksOrigin.SIDEBAR}
-            render={({ links, requestState }) => (
-              <div className="entity-sidebar__incoming-links">
-                {requestState === RequestState.SUCCESS && (
-                  <IncomingLinksList
-                    origin={IncomingLinksOrigin.SIDEBAR}
-                    entityId={entityInfo.id}
-                    entityType={entityInfo.type}
-                    links={links}
-                    message={getMessages({ entityInfo, links }).subtitle}
-                    onClick={this.handleClick}
-                  />
-                )}
-                {requestState === RequestState.ERROR && <IncomingLinksListError />}
-              </div>
+          <div className="entity-sidebar__incoming-links">
+            {responseState === RequestState.SUCCESS && (
+              <IncomingLinksList
+                origin={IncomingLinksOrigin.SIDEBAR}
+                entityId={entityInfo.id}
+                entityType={entityInfo.type}
+                links={links}
+                message={getMessages({ entityInfo, links }).subtitle}
+                onClick={this.handleClick}
+              />
             )}
-          />
+            {responseState === RequestState.ERROR && <IncomingLinksListError />}
+          </div>
         )}
       </EntrySidebarWidget>
     );

@@ -52,6 +52,7 @@ const AssetEditorWorkbench = ({
   editorContext,
   otDoc,
   editorData,
+  incomingLinks,
 }) => {
   const widgets = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
   const { entityInfo } = editorData;
@@ -107,7 +108,7 @@ const AssetEditorWorkbench = ({
               localeName={localeData.focusedLocale.name}
               isSingleLocaleModeOn={localeData.isSingleLocaleModeOn}
               contentTypeName="Asset"
-              entityInfo={entityInfo}
+              incomingLinks={incomingLinks}
             />
           }
           icon={<ProductIcon icon="Media" size="xlarge" />}
@@ -232,6 +233,7 @@ AssetEditorWorkbench.propTypes = {
       form: PropTypes.array,
     }),
   }),
+  incomingLinks: PropTypes.arrayOf(PropTypes.any),
 };
 
 export default AssetEditorWorkbench;

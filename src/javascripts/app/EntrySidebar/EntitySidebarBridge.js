@@ -42,11 +42,16 @@ export default ({
   const user = K.getValue(user$);
   const isEntry = entityInfo.type === 'Entry';
 
-  const initializeIncomingLinks = once(() => {
-    emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
-      entityInfo: entityInfo,
-    });
-  });
+  let initializeIncomingLinks = () => {};
+
+  const setIncomingLinks = (...args) => {
+    //set the links now or register to be set once the sidebar widget
+    //is ready
+    initializeIncomingLinks = () => {
+      emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, ...args);
+    };
+    initializeIncomingLinks();
+  };
 
   const initializeContentPreview = once(() => {
     const updateEntry = (entry) => {
@@ -275,15 +280,18 @@ export default ({
     (ns, id, params) => [ns, id, JSON.stringify(params)].join(',')
   );
 
-  return {
-    legacySidebarExtensions: legacyExtensions,
-    localeData: localeData,
-    entityInfo: entityInfo,
-    sidebar: editorData.sidebar,
-    sidebarExtensions: editorData.sidebarExtensions,
-    makeSidebarWidgetSDK,
-    isEntry,
-    isMasterEnvironment,
-    emitter,
-  };
+  return [
+    {
+      legacySidebarExtensions: legacyExtensions,
+      localeData: localeData,
+      entityInfo: entityInfo,
+      sidebar: editorData.sidebar,
+      sidebarExtensions: editorData.sidebarExtensions,
+      makeSidebarWidgetSDK,
+      isEntry,
+      isMasterEnvironment,
+      emitter,
+    },
+    setIncomingLinks,
+  ];
 };

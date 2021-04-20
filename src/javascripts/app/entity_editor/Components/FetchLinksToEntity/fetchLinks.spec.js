@@ -4,6 +4,7 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import { when } from 'jest-when';
 import fetchLinks from './fetchLinks';
 import * as Navigator from 'states/Navigator';
+import * as incomingLinksEvents from 'analytics/events/IncomingLinks';
 
 const mockEntityHelper = jest.fn();
 
@@ -31,6 +32,10 @@ jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
     code: '',
   }),
+}));
+
+jest.mock('analytics/events/IncomingLinks', () => ({
+  onFetchLinks: jest.fn(),
 }));
 
 describe('fetchLinks', () => {
@@ -117,5 +122,17 @@ describe('fetchLinks', () => {
     }
 
     throw new Error('fetchLinks is expected to throw');
+  });
+
+  it('tracks the call', async () => {
+    const id = 'entity-id';
+    const type = 'Entry';
+
+    await fetchLinks(id, type);
+    expect(incomingLinksEvents.onFetchLinks).toBeCalledWith({
+      entityId: 'entity-id',
+      entityType: 'Entry',
+      incomingLinkIds: ['entity-id-0', 'entity-id-1', 'entity-id-2', 'entity-id-3'],
+    });
   });
 });

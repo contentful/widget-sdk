@@ -65,11 +65,7 @@ describe('FetchLinksToEntity', () => {
         requestState: 'success',
       })
     );
-    expect(onFetchLinks).toHaveBeenCalledWith({
-      entityId: 'entry-id',
-      entityType: EntityType.ENTRY,
-      incomingLinkIds: [1, 2],
-    });
+    expect(onFetchLinks).not.toBeCalled();
   });
 
   it('passes error state and empty links if api fails to return data', async function () {

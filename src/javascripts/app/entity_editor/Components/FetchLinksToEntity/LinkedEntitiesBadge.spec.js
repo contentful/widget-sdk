@@ -37,19 +37,12 @@ const mockedLinks = [
 
 describe('LinkedEntitiesBadge', () => {
   const build = (props) => {
-    const resultProps = {
-      entityInfo: {
-        id: 'entityId',
-        type: 'Entry',
-      },
-    };
-
-    return [render(<LinkedEntitiesBadge {...resultProps} />), props];
+    return [render(<LinkedEntitiesBadge {...props} />), props];
   };
 
   it('renders the component with 2 linked entries', async () => {
     fetchLinks.mockImplementation(() => Promise.resolve(mockedLinks));
-    const [renderResult] = build();
+    const [renderResult] = build({ links: mockedLinks });
     await wait();
     fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     expect(renderResult).toMatchSnapshot();
@@ -57,7 +50,7 @@ describe('LinkedEntitiesBadge', () => {
 
   it('does not render with 1 linked entry', async () => {
     fetchLinks.mockImplementation(() => Promise.resolve([mockedLinks[0]]));
-    const [renderResult] = build();
+    const [renderResult] = build({ links: [mockedLinks[0]] });
     await wait();
     fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     expect(renderResult).toMatchSnapshot();
@@ -65,7 +58,7 @@ describe('LinkedEntitiesBadge', () => {
 
   it('does render the disabled badge component if no links are present', async () => {
     fetchLinks.mockImplementation(() => Promise.resolve([]));
-    const [renderResult] = build();
+    const [renderResult] = build({ links: [] });
     await wait();
     fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     expect(renderResult).toMatchSnapshot();
@@ -73,7 +66,7 @@ describe('LinkedEntitiesBadge', () => {
 
   it('opens the entry in a slide in editor', async () => {
     fetchLinks.mockImplementation(() => Promise.resolve(mockedLinks));
-    const [renderResult] = build();
+    const [renderResult] = build({ links: mockedLinks });
     await wait();
     fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     fireEvent.click(renderResult.getByTestId(`cf-linked-entry-${mockedLinks[0].id}`));

@@ -11,24 +11,33 @@ export default class IncomingLinksWidgetContainer extends Component {
 
   state = {
     entityInfo: null,
+    incomingLinksResponse: null,
   };
 
   componentDidMount() {
-    this.props.emitter.on(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, this.onUpdateEntityInfo);
+    this.props.emitter.on(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, this.linksUpdateHandler);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.INCOMING_LINKS);
   }
   componentWillUnmount() {
     this.props.emitter.off(
       SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET,
-      this.onUpdateEntityInfo
+      this.linksUpdateHandler
     );
   }
 
-  onUpdateEntityInfo = ({ entityInfo }) => {
-    this.setState({ entityInfo });
+  linksUpdateHandler = ({ entityInfo, incomingLinksResponse }) => {
+    this.setState({ entityInfo, incomingLinksResponse });
   };
 
   render() {
-    return <IncomingLinksWidget entityInfo={this.state.entityInfo} />;
+    if (!this.state.entityInfo || !this.state.incomingLinksResponse) {
+      return null;
+    }
+    return (
+      <IncomingLinksWidget
+        entityInfo={this.state.entityInfo}
+        incomingLinksResponse={this.state.incomingLinksResponse}
+      />
+    );
   }
 }

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { keys } from 'lodash';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -13,7 +13,12 @@ import {
 
 export const AssetEditor = (props) => {
   // @TODO remove getViewProps() as soon as feature flag * is removed
-  const { viewProps = props.getViewProps(), fieldController, fields } = props;
+  const {
+    viewProps = props.getViewProps(),
+    fieldController,
+    fields,
+    incomingLinksResponse,
+  } = props;
   const { editorData } = viewProps;
 
   const [preferences] = useProxyState({ ...viewProps.preferences });
@@ -43,7 +48,8 @@ export const AssetEditor = (props) => {
     shouldHideLocaleErrors,
   });
 
-  const entrySidebarProps = useEntrySidebarProps({
+  //TODO: can useEntrySidebarProps be moved up to EntityEditor?
+  const [entrySidebarProps, setIncomingLinks] = useEntrySidebarProps({
     editorContext,
     editorData,
     emitter,
@@ -52,7 +58,18 @@ export const AssetEditor = (props) => {
     otDoc: doc,
     preferences,
     state,
+    incomingLinksResponse,
   });
+
+  useEffect(() => {
+    if (!setIncomingLinks) {
+      return;
+    }
+    setIncomingLinks({
+      entityInfo: editorData.entityInfo,
+      incomingLinksResponse,
+    });
+  }, [editorData.entityInfo, setIncomingLinks, incomingLinksResponse]);
 
   return (
     <Fragment>
@@ -68,6 +85,7 @@ export const AssetEditor = (props) => {
         state={state}
         statusNotificationProps={statusNotificationProps}
         title={title}
+        incomingLinks={incomingLinksResponse.links}
       />
     </Fragment>
   );
@@ -78,4 +96,5 @@ AssetEditor.propTypes = {
   getViewProps: PropTypes.func,
   fieldController: PropTypes.object,
   fields: PropTypes.object,
+  incomingLinksResponse: PropTypes.any,
 };

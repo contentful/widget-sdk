@@ -3,7 +3,7 @@ import { Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import LinkedEntitiesBadge from 'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge.js';
+import LinkedEntitiesBadge from 'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge';
 
 const styles = {
   wrapper: css({
@@ -43,9 +43,9 @@ const styles = {
 export default function WorkbenchTitle({
   title,
   localeName,
-  entityInfo,
   contentTypeName,
   isSingleLocaleModeOn,
+  incomingLinks,
 }) {
   return (
     <div className={styles.wrapper}>
@@ -53,7 +53,7 @@ export default function WorkbenchTitle({
       <Heading className={styles.heading}>
         {title + ' '}
         {isSingleLocaleModeOn && <span className={styles.locale}> {`- ${localeName}`}</span>}
-        <LinkedEntitiesBadge entityInfo={entityInfo} className={styles.linkedEntitiesBadge} />
+        <LinkedEntitiesBadge links={incomingLinks} className={styles.linkedEntitiesBadge} />
       </Heading>
     </div>
   );
@@ -62,10 +62,7 @@ export default function WorkbenchTitle({
 WorkbenchTitle.propTypes = {
   title: PropTypes.string,
   localeName: PropTypes.string,
-  entityInfo: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-  }),
   contentTypeName: PropTypes.string,
   isSingleLocaleModeOn: PropTypes.bool,
+  incomingLinks: PropTypes.arrayOf(PropTypes.any),
 };
