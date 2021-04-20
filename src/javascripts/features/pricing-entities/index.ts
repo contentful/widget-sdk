@@ -12,5 +12,10 @@ export {
   updateSpacePlan,
   removeAddOnPlanFromSubscription,
 } from './plans';
-export type { ProductRatePlan, ProductRatePlanCharge } from './types/ProductRatePlan';
-export type { BasePlan } from './types/Plan';
+export { PlanCustomerType } from './types/Plan';
+export type {
+  ProductRatePlan,
+  ProductRatePlanCharge,
+  AddOnProductRatePlan,
+} from './types/ProductRatePlan';
+export type { BasePlan, SpacePlan, Plan } from './types/Plan';

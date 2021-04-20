@@ -13,8 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import type { Document } from '@contentful/rich-text-types';
-import type { Asset, Entry } from 'contentful';
+import type { BasePlanContent } from '../types';
 
 // When importing from 'core/services/ContentfulCDA' our tests are getting an error about default/named imports
 import { ContentfulRichText } from 'core/services/ContentfulCDA/ContentfulRichText';
@@ -41,12 +40,7 @@ const styles = {
 
 interface BasePlanCardProps {
   // The content is fetched from Contentful and the model is defined by the "Tier" content model
-  content?: {
-    title: string;
-    colorAccent: Entry<{ name: string; value: string }>;
-    description: Document;
-    illustration: Asset;
-  };
+  content?: BasePlanContent;
   organizationId: string;
   // Community orgs have one community space and we create a link in the card to upgrade them, for that we need that space’s id
   upgradableSpaceId?: GetCustomRenderNodeOptions['upgradableSpaceId'];

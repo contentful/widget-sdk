@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import {
   DisplayText,
   Flex,
@@ -11,10 +9,12 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 
-import { isFreeSpacePlan, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+import { isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
+import type { Organization } from 'core/services/SpaceEnvContext/types';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { PlanCustomerType, BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { captureError } from 'services/logger';
@@ -22,6 +22,7 @@ import { captureError } from 'services/logger';
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
 
+import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
 import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
@@ -33,7 +34,9 @@ const styles = {
   }),
 };
 
-const fetchContent = (basePlan) => async () => {
+const fetchContent = (basePlan: BasePlan) => async (): Promise<{
+  basePlanContent: BasePlanContent;
+}> => {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
@@ -41,10 +44,10 @@ const fetchContent = (basePlan) => async () => {
 
   try {
     switch (basePlan?.customerType) {
-      case FREE:
+      case PlanCustomerType.FREE:
         basePlanContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
         break;
-      case SELF_SERVICE:
+      case PlanCustomerType.SELF_SERVICE:
         basePlanContent = await fetchWebappContentByEntryID('7y4ItLmbvc3ZGl0L8vtRPB');
         break;
       default:
@@ -57,23 +60,35 @@ const fetchContent = (basePlan) => async () => {
   return { basePlanContent };
 };
 
-export function NonEnterpriseSubscriptionPage({
-  basePlan,
-  addOnPlan,
-  usersMeta,
-  organization,
-  grandTotal,
-  initialLoad,
-  spacePlans,
-  onSpacePlansChange,
-  isAppTrialAvailable,
-  isAppTrialActive,
-  isAppTrialExpired,
-}) {
-  const organizationId = organization?.sys.id;
-  const [changedSpaceId, setChangedSpaceId] = useState('');
+interface NonEnterpriseSubscriptionPageProps {
+  addOnPlan: AddOnProductRatePlan;
+  basePlan: BasePlan;
+  grandTotal: number;
+  initialLoad: boolean;
+  isAppTrialActive: boolean;
+  isAppTrialAvailable: boolean;
+  isAppTrialExpired: boolean;
+  onSpacePlansChange: () => void;
+  organization: Organization;
+  spacePlans: SpacePlan[];
+  usersMeta: UsersMeta;
+}
 
+export function NonEnterpriseSubscriptionPage({
+  addOnPlan,
+  basePlan,
+  grandTotal,
+  initialLoad = false,
+  isAppTrialActive,
+  isAppTrialAvailable,
+  isAppTrialExpired,
+  onSpacePlansChange,
+  organization,
+  spacePlans,
+  usersMeta,
+}: NonEnterpriseSubscriptionPageProps) {
   const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
+  const [changedSpaceId, setChangedSpaceId] = useState<string>();
 
   // TODO: Refactor into own hook to use in both subscription pages
   useEffect(() => {
@@ -81,14 +96,20 @@ export function NonEnterpriseSubscriptionPage({
 
     if (changedSpaceId) {
       timer = setTimeout(() => {
-        setChangedSpaceId(null);
+        setChangedSpaceId(undefined);
       }, 6000);
     }
-
     return () => clearTimeout(timer);
   }, [changedSpaceId]);
 
-  const handleStartAppTrial = async () => {
+  const organizationId = organization.sys.id;
+
+  const isOrgBillable = organization.isBillable;
+  const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
+  const anySpacesInaccessible = hasAnyInaccessibleSpaces(spacePlans);
+  const freeSpace = spacePlans.find(isFreeSpacePlan);
+
+  const onStartAppTrial = async () => {
     go({
       path: ['account', 'organizations', 'start_trial'],
       params: { orgId: organizationId, existingUsers: true, from: 'subscription' },
@@ -104,20 +125,11 @@ export function NonEnterpriseSubscriptionPage({
   );
   const onDeleteSpace = deleteSpace(spacePlans, onSpacePlansChange);
 
-  const isOrgBillable = organization && organization.isBillable;
-  const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
-
-  const showContentfulAppsCard = isOrgOwnerOrAdmin;
-
-  const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
-
-  const freeSpace = spacePlans.find(isFreeSpacePlan);
-
   return (
     <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
-          loading={isLoading || error}
+          loading={isLoading || !!error}
           content={data?.basePlanContent}
           organizationId={organizationId}
           upgradableSpaceId={freeSpace?.space.sys.id}
@@ -131,11 +143,11 @@ export function NonEnterpriseSubscriptionPage({
       </Flex>
 
       {isOrgBillable && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-      {showContentfulAppsCard && (
-        <Flex className={!isOrgBillable && styles.fullRow} flexDirection="column">
+      {isOrgOwnerOrAdmin && (
+        <Flex className={cx({ [styles.fullRow]: !isOrgBillable })} flexDirection="column">
           <ContentfulApps
             organizationId={organizationId}
-            startAppTrial={handleStartAppTrial}
+            startAppTrial={onStartAppTrial}
             isTrialAvailable={isAppTrialAvailable}
             isTrialActive={isAppTrialActive}
             isTrialExpired={isAppTrialExpired}
@@ -162,32 +174,15 @@ export function NonEnterpriseSubscriptionPage({
   );
 }
 
-NonEnterpriseSubscriptionPage.propTypes = {
-  initialLoad: PropTypes.bool.isRequired,
-  basePlan: PropTypes.object,
-  addOnPlan: PropTypes.object,
-  spacePlans: PropTypes.array,
-  grandTotal: PropTypes.number,
-  usersMeta: PropTypes.object,
-  organization: PropTypes.object,
-  onSpacePlansChange: PropTypes.func,
-  isAppTrialAvailable: PropTypes.bool,
-  isAppTrialActive: PropTypes.bool,
-  isAppTrialExpired: PropTypes.bool,
-};
+interface PayingOnDemandOrgCopyProps {
+  grandTotal: number;
+}
 
-NonEnterpriseSubscriptionPage.defaultProps = {
-  initialLoad: true,
-};
-
-function PayingOnDemandOrgCopy({ grandTotal }) {
+function PayingOnDemandOrgCopy({ grandTotal }: PayingOnDemandOrgCopyProps) {
   return (
     <Typography>
       <Heading className="section-title">Monthly total</Heading>
-      <DisplayText
-        element="h2"
-        data-test-id="subscription-page.sidebar.grand-total"
-        className={styles.grandTotal}>
+      <DisplayText element="h2" data-test-id="subscription-page.sidebar.grand-total">
         <Price value={grandTotal} testId="on-demand-monthly-cost" />
       </DisplayText>
       <Note>
@@ -197,7 +192,3 @@ function PayingOnDemandOrgCopy({ grandTotal }) {
     </Typography>
   );
 }
-
-PayingOnDemandOrgCopy.propTypes = {
-  grandTotal: PropTypes.number.isRequired,
-};
