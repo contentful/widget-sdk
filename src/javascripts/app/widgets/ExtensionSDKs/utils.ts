@@ -41,7 +41,7 @@ export function cleanupJSONValue(value: any): any {
   } else if (value === null) {
     return null;
   } else if (value instanceof Date) {
-    return value;
+    return value.toISOString();
   } else if (typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value)
