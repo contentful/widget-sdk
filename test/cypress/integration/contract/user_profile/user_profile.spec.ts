@@ -107,6 +107,7 @@ describe('User profile page', () => {
         cy.findByTestId('user-full-name').contains('NewFirstName NewLastName');
         cy.findByTestId('user-email').contains('new-email@example.com');
       });
+
       it('with incorrect password', () => {
         const updateUserProfileInteraction = [updateDefaultUserProfileData.willReturnError()];
 
@@ -130,6 +131,7 @@ describe('User profile page', () => {
           .should('be.visible');
       });
     });
+
     describe('update user profile password', () => {
       it('with valid new password', () => {
         const changePasswordInteraction = [changePassword.willReturnSuccess()];
@@ -173,7 +175,7 @@ describe('User profile page', () => {
       it('with correct password', () => {
         const deleteUserAccountInteraction = [deleteUserAccount.willReturnIt()];
         cy.findByTestId('delete-cta').click();
-        cy.findByTestId('password').find('input').clear().type('correct-password');
+        cy.findByTestId('password').find('input').clear().type('test12345');
         cy.findByTestId('delete-user-confirm').click();
         cy.wait(deleteUserAccountInteraction);
         cy.url().should('include', '/goodbye');

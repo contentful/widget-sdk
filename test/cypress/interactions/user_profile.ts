@@ -273,7 +273,7 @@ export const deleteUserAccount = {
       withRequest: queryDeleteUserAccount({
         reason: 'other',
         description: '',
-        password: 'correct-password',
+        password: 'test12345',
       }),
       willRespondWith: {
         status: 201,
