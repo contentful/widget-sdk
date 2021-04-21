@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
@@ -32,6 +32,7 @@ import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
   fullRow: css({
@@ -55,19 +56,7 @@ export function SubscriptionPage({
   isTrialExpired,
 }) {
   const organizationId = organization?.sys.id;
-  const [changedSpaceId, setChangedSpaceId] = useState('');
-
-  useEffect(() => {
-    let timer;
-
-    if (changedSpaceId) {
-      timer = setTimeout(() => {
-        setChangedSpaceId(null);
-      }, 6000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [changedSpaceId]);
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const createSpace = () => {
     trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });

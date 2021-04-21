@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
@@ -18,6 +18,7 @@ import { SpacePlans } from './SpacePlans';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
   fullRow: css({
@@ -36,20 +37,7 @@ export function EnterpriseSubscriptionPage({
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
-  const [changedSpaceId, setChangedSpaceId] = useState('');
-
-  // TODO: Refactor into own hook to use in both subscription pages
-  useEffect(() => {
-    let timer;
-
-    if (changedSpaceId) {
-      timer = setTimeout(() => {
-        setChangedSpaceId(null);
-      }, 6000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [changedSpaceId]);
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const onCreateSpace = createSpace(organizationId);
   const onChangeSpace = changeSpace(

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { css, cx } from 'emotion';
 import {
   DisplayText,
@@ -21,6 +21,7 @@ import { captureError } from 'services/logger';
 
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
 import { BasePlanCard } from './BasePlanCard';
@@ -88,19 +89,7 @@ export function NonEnterpriseSubscriptionPage({
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
   const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
-  const [changedSpaceId, setChangedSpaceId] = useState<string>();
-
-  // TODO: Refactor into own hook to use in both subscription pages
-  useEffect(() => {
-    let timer;
-
-    if (changedSpaceId) {
-      timer = setTimeout(() => {
-        setChangedSpaceId(undefined);
-      }, 6000);
-    }
-    return () => clearTimeout(timer);
-  }, [changedSpaceId]);
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const organizationId = organization.sys.id;
 
