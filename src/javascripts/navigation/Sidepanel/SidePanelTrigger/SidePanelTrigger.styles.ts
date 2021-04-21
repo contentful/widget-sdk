@@ -49,7 +49,15 @@ export const styles = {
     lineHeight: tokens.lineHeightDefault,
   }),
   envLabel: css({ fontSize: tokens.fontSizeS }),
-  noShrink: css({ display: 'flex', flexShrink: 0 }),
+  noShrink: css({
+    display: 'flex',
+    flexShrink: 0,
+    zIndex: 2,
+  }),
+  reduceButtonSize: css({
+    marginLeft: `-${tokens.spacingS}`,
+    marginRight: `-${tokens.spacingS}`,
+  }),
   hoverBackground: css({
     position: 'absolute',
     left: 0,
