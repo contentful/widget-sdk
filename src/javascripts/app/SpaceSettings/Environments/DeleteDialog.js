@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
-import * as StateNavigator from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { css } from 'emotion';
 
 const styles = {
@@ -111,8 +111,9 @@ function SpaceEnvironmentsDeleteDialog({
     try {
       await runDelete(confirmationId);
       if (confirmationId === activeEnvironmentId) {
-        await StateNavigator.go({
-          path: 'spaces.detail.settings.environments',
+        await router.navigate({
+          path: 'settings.environments',
+          environmentId: 'master',
         });
         Notification.success(
           'The current environment has been successfully deleted, master will be loaded.'

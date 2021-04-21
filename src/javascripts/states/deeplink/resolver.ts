@@ -87,7 +87,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     params: routes['locales.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Environments]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'settings', 'environments'],
+    spaceScopedPath: routes['settings.environments']({ withEnvironment: false }).path,
+    params: routes['settings.environments']({ withEnvironment: false }).params,
   }),
   [LinkType.RolesAndPermissions]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['roles.list']({ withEnvironment: false }).path,

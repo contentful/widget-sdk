@@ -162,6 +162,25 @@ const tagsRoutes = {
     },
   }),
 };
+/** Environments */
+
+type EnvironmentsRouteType = {
+  path: 'settings.environments';
+  environmentId?: string;
+};
+
+const environmentsRoutes = {
+  'settings.environments': (
+    env: EnvironmentParams,
+    params?: Omit<EnvironmentsRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'settings.environments'),
+    params: {
+      pathname: '/',
+      ...params,
+    },
+  }),
+};
 
 /** Content preview **/
 
@@ -281,7 +300,8 @@ export type RouteType =
   | TagsRouteType
   | ContentPreviewRouteType
   | TeamsRouteType
-  | SpaceUsageRouteType;
+  | SpaceUsageRouteType
+  | EnvironmentsRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -293,4 +313,5 @@ export const routes = {
   ...contentPreviewRoutes,
   ...teamsRoutes,
   ...spaceUsageRoutes,
+  ...environmentsRoutes,
 };

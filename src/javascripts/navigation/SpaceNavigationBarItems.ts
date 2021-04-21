@@ -32,6 +32,7 @@ export function getSpaceNavigationItems({
   const contentPreview = routes['content_preview.list']({ withEnvironment: !isUnscopedRoute });
   const teams = routes['teams.list']({ withEnvironment: !isUnscopedRoute });
   const spaceUsage = routes['usage']({ withEnvironment: !isUnscopedRoute });
+  const environments = routes['settings.environments']({ withEnvironment: !isUnscopedRoute });
 
   const dropdownItems = {
     locales: {
@@ -96,8 +97,10 @@ export function getSpaceNavigationItems({
       title: 'Roles & permissions',
     },
     environments: {
-      if: canNavigateTo('environments'),
-      sref: makeRef('settings.environments', isUnscopedRoute),
+      if: canNavigateTo('settings.environments'),
+      sref: environments.path,
+      srefParams: environments.params,
+      rootSref: environments.path,
       dataViewType: 'spaces-settings-environments',
       title: 'Environments',
     },

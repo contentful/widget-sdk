@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import { CodeFragment } from 'ui/Content';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections';
@@ -10,6 +9,7 @@ import InfoIcon from 'svg/info.svg';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   aliasSpacer: css({ marginBottom: tokens.spacingL }),
@@ -73,9 +73,9 @@ function Hint() {
       <InfoIcon />
       <p className={styles.hintParagraph}>
         You {`haven't`} set up any additional environments for this space. Head to the{' '}
-        <StateLink key="state-link-environments" path="spaces.detail.settings.environments">
+        <ReactRouterLink key="state-link-environments" route={{ path: 'settings.environments' }}>
           environment settings
-        </StateLink>{' '}
+        </ReactRouterLink>{' '}
         to learn more.
       </p>
     </div>
