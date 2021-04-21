@@ -1,6 +1,8 @@
-export { useParams, Routes, Route } from 'react-router-dom';
+export { useParams, Routes, useLocation, useBlocker, MemoryRouter } from 'react-router-dom';
 export { ReactRouterLink } from './ReactRouterLink';
 export { ReactRouterRedirect } from './ReactRouterRedirect';
+export { RouteNameCursor } from './RouteNameCursor';
+export { Route } from './Route';
 export { routes } from './routes';
 export { router } from './useRouter';
 export { withRouteErrorBoundary, RouteErrorBoundary } from './RouteErrorBoundary';

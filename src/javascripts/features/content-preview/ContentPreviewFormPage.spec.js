@@ -5,7 +5,7 @@ import 'jest-enzyme';
 import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockContentPreview = {
   create: jest.fn(),

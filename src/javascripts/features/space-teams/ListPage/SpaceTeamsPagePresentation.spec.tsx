@@ -1,7 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 
 import { SpaceTeamsPagePresentation } from './SpaceTeamsPagePresentation';
 

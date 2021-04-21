@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 import { render } from '@testing-library/react';
 
 import { LocalesTable } from './LocalesTable';

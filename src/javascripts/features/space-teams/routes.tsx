@@ -12,9 +12,13 @@ const TeamsRouter = () => {
     <CustomRouter splitter="settings/teams">
       <RouteErrorBoundary>
         <Routes basename={routesBaseName}>
-          <Route path="/" element={<SpaceTeamsListPage />} />
-          <Route path="/add" element={<AddTeamsPage />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.teams.list"
+            path="/"
+            element={<SpaceTeamsListPage />}
+          />
+          <Route name="spaces.detail.settings.teams.add" path="/add" element={<AddTeamsPage />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

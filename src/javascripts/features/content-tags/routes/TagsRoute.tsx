@@ -85,8 +85,8 @@ function TagsRouter() {
     <CustomRouter splitter="settings/tags">
       <RouteErrorBoundary>
         <Routes basename={basename + 'tags'}>
-          <Route path="/" element={<TagsRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route name="spaces.detail.settings.tags.list" path="/" element={<TagsRoute />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

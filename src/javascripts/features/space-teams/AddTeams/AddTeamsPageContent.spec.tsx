@@ -5,7 +5,7 @@ import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import { track } from 'analytics/Analytics';
 import { AddTeamsPageContent } from './AddTeamsPageContent';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
 import { Role } from 'core/services/SpaceEnvContext/types';
 

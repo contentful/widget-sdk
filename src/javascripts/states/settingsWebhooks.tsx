@@ -15,11 +15,27 @@ const WebhooksRouter = () => {
     <CustomRouter splitter="settings/webhooks">
       <RouteErrorBoundary>
         <Routes basename={basename + 'webhooks'}>
-          <Route path="/" element={<WebhookListRoute />} />
-          <Route path="/new" element={<WebhookNewRoute />} />
-          <Route path="/:webhookId" element={<WebhookEditRoute />} />
-          <Route path="/:webhookId/call/:callId" element={<WebhookCallRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.webhooks.list"
+            path="/"
+            element={<WebhookListRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.webhooks.new"
+            path="/new"
+            element={<WebhookNewRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.webhooks.detail"
+            path="/:webhookId"
+            element={<WebhookEditRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.webhooks.detail.call"
+            path="/:webhookId/call/:callId"
+            element={<WebhookCallRoute />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

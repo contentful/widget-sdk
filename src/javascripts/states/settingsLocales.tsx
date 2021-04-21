@@ -21,10 +21,22 @@ const LocaleRouter = () => {
     <CustomRouter splitter="settings/locales">
       <RouteErrorBoundary>
         <Routes basename={basename + 'locales'}>
-          <Route path="/" element={<LocalesListRoute />} />
-          <Route path="/new" element={<UnsavedNewRoute />} />
-          <Route path="/:localeId" element={<UnsavedEditRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.locales.list"
+            path="/"
+            element={<LocalesListRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.locales.new"
+            path="/new"
+            element={<UnsavedNewRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.locales.detail"
+            path="/:localeId"
+            element={<UnsavedEditRoute />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

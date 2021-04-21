@@ -11,9 +11,17 @@ const ExtensionsRouter = () => {
     <CustomRouter splitter="settings/extensions">
       <RouteErrorBoundary>
         <Routes basename={basename + 'extensions'}>
-          <Route path="/" element={<ExtensionsListRoute />} />
-          <Route path="/:extensionId" element={<ExtensionEditorRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.extensions.list"
+            path="/"
+            element={<ExtensionsListRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.extensions.detail"
+            path="/:extensionId"
+            element={<ExtensionEditorRoute />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

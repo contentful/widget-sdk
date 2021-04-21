@@ -11,11 +11,19 @@ function RolesPermissionsRoute() {
     <CustomRouter splitter="settings/roles">
       <RouteErrorBoundary>
         <Routes basename={basename + 'roles'}>
-          <Route path="/" element={<RolesListRoute />} />
+          <Route name="spaces.detail.settings.roles.list" path="/" element={<RolesListRoute />} />
           {/* "key" is required to fully unmount the component between "new"/":roleId" route changes */}
-          <Route path="/new*" element={<RoleEditorRoute isNew={true} key="new" />} />
-          <Route path="/:roleId*" element={<RoleEditorRoute isNew={false} key="existing" />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.roles.new"
+            path="/new*"
+            element={<RoleEditorRoute isNew={true} key="new" />}
+          />
+          <Route
+            name="spaces.detail.settings.roles.detail"
+            path="/:roleId*"
+            element={<RoleEditorRoute isNew={false} key="existing" />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

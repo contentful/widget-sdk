@@ -1,7 +1,7 @@
 import { RoleEditRoutes } from '../routes/RoleEditorRoute';
 import { Tab, Tabs } from '@contentful/forma-36-react-components';
 import React from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'core/react-routing';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 

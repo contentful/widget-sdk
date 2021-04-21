@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 import { render, screen } from '@testing-library/react';
 import { LocalesListSidebar } from './LocalesListSidebar';
 import * as spaceContextMocked from 'ng/spaceContext';

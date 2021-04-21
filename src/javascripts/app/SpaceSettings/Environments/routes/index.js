@@ -10,8 +10,12 @@ function EnvironmentsRouter() {
     <CustomRouter splitter="settings/environments">
       <RouteErrorBoundary>
         <Routes basename={basename + 'settings/environments'}>
-          <Route path="/" element={<EnvironmentsRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.environments"
+            path="/"
+            element={<EnvironmentsRoute />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

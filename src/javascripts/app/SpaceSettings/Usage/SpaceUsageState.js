@@ -10,8 +10,8 @@ function SpaceUsageRouter() {
     <CustomRouter splitter="settings/usage">
       <RouteErrorBoundary>
         <Routes basename={basename + 'usage'}>
-          <Route path="/" element={<SpaceUsage />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route name="spaces.detail.settings.usage" path="/" element={<SpaceUsage />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

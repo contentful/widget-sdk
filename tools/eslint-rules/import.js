@@ -23,5 +23,16 @@ module.exports = {
     'import/no-unresolved': 'error',
     'import/default': 'error',
     'rulesdir/relative-imports': 'error',
+    'no-restricted-imports': [
+      'error',
+      {
+        name: 'react-router',
+        message: 'Please use import from `core/react-routing` instead.',
+      },
+      {
+        name: 'react-router-dom',
+        message: 'Please use import from `core/react-routing` instead.',
+      },
+    ],
   },
 };

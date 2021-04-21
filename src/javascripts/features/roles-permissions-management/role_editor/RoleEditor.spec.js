@@ -7,7 +7,7 @@ import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
 import { RoleEditor } from 'features/roles-permissions-management/role_editor/RoleEditor';
 import { FilteredTagsProvider, ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'core/react-routing';
 
 function createErrorResponse(error, rest = {}) {
   return { body: { details: { errors: [error] } }, ...rest };

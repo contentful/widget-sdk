@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 import { render, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';

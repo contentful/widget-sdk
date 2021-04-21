@@ -18,10 +18,22 @@ function ContentPreviewRouter() {
     <CustomRouter splitter="settings/content_preview">
       <RouteErrorBoundary>
         <Routes basename={basename + 'content_preview'}>
-          <Route path="/" element={<ContentPreviewListRoute />} />
-          <Route path="/new" element={<UnsavedNewRoute />} />
-          <Route path="/:contentPreviewId" element={<UnsavedEditRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route
+            name="spaces.detail.settings.content_preview.list"
+            path="/"
+            element={<ContentPreviewListRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.content_preview.new"
+            path="/new"
+            element={<UnsavedNewRoute />}
+          />
+          <Route
+            name="spaces.detail.settings.content_preview.detail"
+            path="/:contentPreviewId"
+            element={<UnsavedEditRoute />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>

@@ -5,7 +5,7 @@ import { WebhookListRoute } from './WebhookListRoute';
 import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([]),

@@ -11,8 +11,8 @@ function UsersRouter() {
     <CustomRouter splitter="settings/users">
       <RouteErrorBoundary>
         <Routes basename={basename + 'users'}>
-          <Route path="/" element={<UserListRoute />} />
-          <Route path="*" element={<StateRedirect path="home" />} />
+          <Route name="spaces.detail.settings.users.list" path="/" element={<UserListRoute />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>
     </CustomRouter>
