@@ -13,6 +13,7 @@ import Hamburger from 'svg/hamburger.svg';
 import { navState$, NavStates } from 'navigation/NavState';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { styles } from './SidePanelTrigger.styles';
+import { AppNavLogo } from '@contentful/experience-components';
 import { SkeletonContainer, SkeletonImage } from '@contentful/forma-36-react-components';
 
 interface Props {
