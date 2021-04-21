@@ -1,36 +1,45 @@
 # Smoke tests
 
-<!-- MarkdownTOC autolink="true" -->
-
-- [Smoke tests in the CI](#smoke-tests-in-the-ci)
-- [Running smoke tests locally](#running-smoke-tests-locally)
-  - [Running against a different domain](#running-against-a-different-domain)
-- [Smoke test spec best practices](#smoke-test-spec-best-practices)
-  - [Page objects](#page-objects)
-    - [Getter vs non-getter methods](#getter-vs-non-getter-methods)
-    - [Element querying](#element-querying)
-    - [Interfacing with page objects](#interfacing-with-page-objects)
-    - [Practical example: Initially visiting a page](#practical-example-initially-visiting-a-page)
-    - [Practical example: Putting it all together](#practical-example-putting-it-all-together)
-
-<!-- /MarkdownTOC -->
-
 Our smoke tests are used for testing critical functionality (critical paths) of the web app.
 
 For high level information, please see the Confluence pages on [the critical paths](https://contentful.atlassian.net/wiki/spaces/ENG/pages/2785312930) and [smoke tests](https://contentful.atlassian.net/wiki/spaces/ENG/pages/2794029205).
 
 # Smoke tests in the CI
 
-**Please note** that the smoke tests do not run on the schedule described below currently. We will start running the tests on a schedule in the near future.
+To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [every 7 minutes in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b4c7bc398e1d525af02d6791f6c648bab43ef9d1/.github/workflows/smoke-test-staging.yml#L5). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-test-staging.yml).
 
-To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [every 10 minutes in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b4c7bc398e1d525af02d6791f6c648bab43ef9d1/.github/workflows/smoke-test-staging.yml#L5). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-test-staging.yml).
+## Running a change to the smoke test setup
+
+If you make a change to the smoke tests, either the workflow, a test, telemetry, etc., it's best to test it in the CI to ensure that it works as expected.
+
+To do this, first push your branch to Github. You don't need to open a PR.
+
+Go to the [Actions](https://github.com/contentful/user_interface/actions) section of the repo:
+
+![Actions section button](./images/smoke-tests.step1.png)
+
+Click on the **Run the smoke tests** workflow item:
+
+![Smoke tests workflow item](./images/smoke-tests.step2.png)
+
+Click on the **Run workflow** dropbown button, and select the branch you want from the list:
+
+![Run workflow dropdown button](./images/smoke-tests.step3.png)
+
+If it doesn't appear, double check that your branch is pushed to Github.
+
+After selecting the branch, click the green **Run workflow** button:
+
+![Green Run workflow button](./images/smoke-tests.step4.png)
+
+The run will shortly appear in the list:
+
+![List of runs](./images/smoke-tests.step5.png)
 
 <!--
 TODO(jo-sm): uncomment this when we are able to run the tests against a specific ui_version.
 
-Also, remove the initial space here for the TOC to render as expected when uncommented.
-
- ## Manually triggering a smoke test run
+## Manually triggering a smoke test run
 
 If you have a change in your branch that you're worried may affect the smoke tests, you can manually trigger a smoke test run against your branch. To do so, go to the Github Actions interface:
 
@@ -72,7 +81,68 @@ SMOKE_TEST_DOMAIN='quirely.com' npm run smoke
 
 **Please note** that the account you use must not have 2FA enabled, or else the tests will fail.
 
+# Telemetry and Librato
+
+At the moment we use Librato for telemetry. If you don't have an account, please request one from IT.
+
+## Test telemetry setup
+
+The basic telemetry - if a specific test case passes or fails - is automatically handled with [`tools/bin/report-smoke-test-telemetry.ts`](https://github.com/contentful/user_interface/blob/master/tools/bin/report-smoke-test-telemetry.ts).
+
+In addition to the automatic telemetry setup, you can also track the duration of something specific using [`wrapWithDuration`](https://github.com/contentful/user_interface/blob/master/test/smoke/telemetry.ts#L77-L89):
+
+```typescript
+test('my-spec', () => {
+  const page = wrapWithDuration<Page>('my-metric', () => {
+    page.doSomething();
+
+    some.container.should('be.visible');
+
+    return page;
+  });
+});
+```
+
+For more details, please see [the documentation for `wrapWithDuration`](https://github.com/contentful/user_interface/blob/master/test/smoke/telemetry.ts#L56-L76).
+
+## Metrics and the dashboard
+
+All metrics are namespaced under `web-app-smoke-tests`, e.g. `web-app-smoke-tests.some-metric`. All metrics are tagged with the environment, e.g. `production`, `staging`.
+
+The main metric, the success/failure of a test, is the metric `web-app-smoke-tests.testcase-success`, and each individual test gets its own tag for the name of the test case. An example JSON payload to Librato looks like this:
+
+```json
+{
+  "name": "web-app-smoke-tests.testcase-success",
+  "value": 1,
+  "tags": {
+    "testName": "space-creation",
+    "environment": "production"
+  }
+}
+```
+
+Other metrics may exist (for example, `time-login-to-space-home`). These metrics are currently only tagged with the environment and their value. Please see the metrics list in Librato for a complete list.
+
+You can see a high level view on the dashboard, [located here](https://metrics.librato.com/s/spaces/1309245). You can also search for the name _Web app smoke tests_ in Librato.
+
+## Alerts
+
+Alerts are also setup in Librato, and should have, like the metrics, the `web-app-smoke-tests` namespace. At the moment, there are alerts setup for the login and space creation smoke tests, for both staging and production. As more tests are added, more alerts will be added.
+
+At the moment, the alerts ping just Slack, but long term they will be setup to page the Frontend on-call person.
+
 # Smoke test spec best practices
+
+## Spec naming and its important w.r.t. telemetry
+
+The name of the spec is very important, as it used for reporting data to Librato for telemetry purposes. **Always name the test using hyphen case**. It's also highly recommended not to nest tests within a describe block and to just use the `test` global.
+
+```typescript
+test('some-smoke-test-name-like-login', () => {
+  // ...
+});
+```
 
 ## Page objects
 
