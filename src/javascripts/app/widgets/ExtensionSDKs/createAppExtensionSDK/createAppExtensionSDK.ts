@@ -9,11 +9,11 @@ import { createDialogsApi } from '../createDialogsApi';
 import { AppHookListener, createAppApi } from '../createAppApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { AppHookBus } from 'features/apps-core';
-import { createAPIClient } from 'core/services/APIClient/utils';
-import { Source } from 'i13n/constants';
+import APIClient from 'data/APIClient';
 
 interface CreateAppExtensionSDKOptions {
   spaceContext: any;
+  cma: APIClient;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   appHookBus: AppHookBus;
@@ -22,14 +22,13 @@ interface CreateAppExtensionSDKOptions {
 
 export const createAppExtensionSDK = ({
   spaceContext,
+  cma,
   widgetNamespace,
   widgetId,
   appHookBus,
   currentAppWidget,
 }: CreateAppExtensionSDKOptions): { sdk: AppExtensionSDK; onAppHook: AppHookListener } => {
   const spaceMember: SpaceMember = spaceContext.space.data.spaceMember;
-  const source = widgetNamespace === WidgetNamespace.BUILTIN ? undefined : Source.CustomWidget;
-  const cma = createAPIClient(spaceContext.getId(), spaceContext.getEnvironmentId(), source);
 
   const userApi = createUserApi(spaceMember);
 

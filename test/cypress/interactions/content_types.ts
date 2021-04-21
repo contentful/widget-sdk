@@ -4,6 +4,7 @@ import {
   defaultContentTypeId,
   defaultHeader,
   appContentTypeId,
+  defaultEnvironmentId,
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 import {
@@ -137,7 +138,7 @@ export const getAllPublicContentTypesInDefaultSpace = {
 function getAllContentTypesInDefaultSpaceRequest(query?: Query): RequestOptions {
   return {
     method: 'GET',
-    path: `/spaces/${defaultSpaceId}/content_types`,
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types`,
     headers: defaultHeader,
     query,
   };

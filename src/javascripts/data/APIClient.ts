@@ -13,7 +13,7 @@ import {
   Collection,
   Entity,
 } from '@contentful/types';
-import { EditorInterfaceProps } from 'contentful-management/types';
+import { AppInstallationProps, EditorInterfaceProps } from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
@@ -187,7 +187,11 @@ export default class APIClient {
     });
   };
 
-  updateAppInstallation = (appDefinitionId, parameters = {}, isMarketplaceInstallation = false) => {
+  updateAppInstallation = (
+    appDefinitionId,
+    parameters = {},
+    isMarketplaceInstallation = false
+  ): Promise<AppInstallationProps> => {
     return this.request(
       {
         method: 'PUT',
