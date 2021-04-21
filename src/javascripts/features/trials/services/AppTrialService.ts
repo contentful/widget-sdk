@@ -1,6 +1,4 @@
 import moment from 'moment';
-import { isTrialSpaceType } from './TrialService';
-import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
 import importer from '../utils/importer';
 import type { PlainClientAPI } from 'contentful-management';
@@ -56,26 +54,6 @@ export const isExpiredAppTrial = (feature?: AppTrialFeature) => {
   }
 
   return moment().isAfter(moment(feature.sys.trial.endsAt), 'date');
-};
-
-export const getAppTrialSpaceKey = async (feature: AppTrialFeature): Promise<string | null> => {
-  if (!feature || !feature.sys.trial) {
-    return null;
-  }
-
-  const appTrialSpace = await TokenStore.getSpaces().then((accessibleSpaces) =>
-    accessibleSpaces.find(
-      (space) =>
-        space.organization.sys.id === feature.sys.organization.sys.id && isTrialSpaceType(space)
-    )
-  );
-
-  if (!appTrialSpace) {
-    // the App Trial Space was deleted or is not accessible to the user
-    return null;
-  }
-
-  return appTrialSpace.sys.id;
 };
 
 export const contentImport = async (spaceId: string, environmentId: string) => {
