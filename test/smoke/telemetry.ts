@@ -25,7 +25,7 @@ export async function measure(
   authToken: string,
   environment: SmokeTestEnvironment,
   rawMeasurements: RawMeasurement[]
-) {
+): Promise<true> {
   const measurements = prepareMeasurements(environment, rawMeasurements);
 
   const response = await fetch('https://metrics-api.librato.com/v1/measurements', {
