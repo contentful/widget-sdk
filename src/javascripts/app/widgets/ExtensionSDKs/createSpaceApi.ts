@@ -133,7 +133,7 @@ export function createSpaceApi({
   }
 
   function getCachedContentTypes() {
-    return initialContentTypes.map(createContentTypeApi);
+    return (initialContentTypes || []).map(createContentTypeApi);
   }
 
   async function createUpload(base64Data: string) {
@@ -204,7 +204,7 @@ export function createSpaceApi({
         msg.entityType === entityType &&
         msg.entityId === entityId
       ) {
-        /* 
+        /*
         There is no guarantee that this callback is handled before the
         cmaDocument one, which is actually updating the entity. So we wait a little bit
         Since onEntityChanged is used only in reference field editors it shouldn't be a problem to
