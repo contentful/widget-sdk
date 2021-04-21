@@ -16,7 +16,7 @@ import {
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';

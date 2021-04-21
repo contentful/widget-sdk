@@ -18,7 +18,7 @@ import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'features/api-keys-management';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import {
   isAdmin,
   getSpaceRoles,
@@ -115,9 +115,9 @@ export const SpaceHome = () => {
     currentSpace,
     currentSpaceData,
     currentSpaceName,
+    currentSpaceContentTypes,
     currentOrganizationId,
   } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
   const [
     { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled, hasActiveAppTrial },
     setState,

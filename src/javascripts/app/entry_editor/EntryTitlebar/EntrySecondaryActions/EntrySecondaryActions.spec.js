@@ -3,13 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 
 import * as Navigator from 'states/Navigator';
 import EntrySecondaryActions from './EntrySecondaryActions';
-
-import { useContentTypes, useSpaceEnvContext } from 'core/services/SpaceEnvContext';
-
-jest.mock('core/services/SpaceEnvContext', () => ({
-  useContentTypes: jest.fn(),
-  useSpaceEnvContext: jest.fn(),
-}));
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('states/Navigator');
 jest.mock('access_control/AccessChecker', () => ({
@@ -34,23 +28,6 @@ const currentSpace = {
 };
 
 describe('EntrySecondaryActions', () => {
-  beforeEach(() => {
-    useContentTypes.mockReturnValue({
-      currentSpaceContentTypes: [
-        {
-          fields: [],
-          sys: {
-            id: 'ctid',
-          },
-        },
-      ],
-    });
-
-    useSpaceEnvContext.mockReturnValue({
-      currentSpace,
-    });
-  });
-
   const build = (props) => {
     const resultProps = {
       entityInfo: {
@@ -72,7 +49,25 @@ describe('EntrySecondaryActions', () => {
       ...props,
     };
 
-    return [render(<EntrySecondaryActions {...resultProps} />), resultProps];
+    return [
+      render(
+        <SpaceEnvContext.Provider
+          value={{
+            currentSpaceContentTypes: [
+              {
+                fields: [],
+                sys: {
+                  id: resultProps.entityInfo.contentTypeId,
+                },
+              },
+            ],
+            currentSpace,
+          }}>
+          <EntrySecondaryActions {...resultProps} />
+        </SpaceEnvContext.Provider>
+      ),
+      resultProps,
+    ];
   };
 
   it.each([

@@ -11,6 +11,7 @@ export interface SpaceEnvContextValue {
   currentSpaceEnvironments?: Environment[];
   currentSpaceId?: string;
   currentSpaceName?: string;
+  currentSpaceContentTypes: ContentType[];
   currentUsers?: SpaceEnvUsers;
   documentPool?: any;
 }

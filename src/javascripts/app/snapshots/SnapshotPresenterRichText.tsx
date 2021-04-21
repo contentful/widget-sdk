@@ -8,7 +8,7 @@ import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
 import { LegacyWidget } from 'widgets/WidgetCompat';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -32,8 +32,8 @@ const SnapshotPresenterRichText = ({
     currentEnvironmentId,
     currentEnvironmentAliasId,
     currentSpace,
+    currentSpaceContentTypes,
   } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
   const { client: spaceApiClient } = useCurrentSpaceAPIClient();
 
   const sdk: FieldExtensionSDK = useMemo(() => {

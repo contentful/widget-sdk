@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { NonInstallableMarketplaceApp } from './types';
 import { getAppsRepo } from '.';
 

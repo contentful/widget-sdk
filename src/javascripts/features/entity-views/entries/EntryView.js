@@ -15,7 +15,7 @@ import { EmptyStates } from './EmptyStates';
 import EntityListCache from 'classes/entityListCache';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { go } from 'states/Navigator';
 

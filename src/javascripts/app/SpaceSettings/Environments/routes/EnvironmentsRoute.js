@@ -34,7 +34,7 @@ import EnvironmentsSidebar from '../EnvironmentsSidebar';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 import AliasIcon from 'svg/alias.svg';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';

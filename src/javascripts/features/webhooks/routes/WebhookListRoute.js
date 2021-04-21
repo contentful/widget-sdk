@@ -12,7 +12,7 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
 import { getWebhookRepo } from '../services/WebhookRepoInstance';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import * as TokenStore from 'services/TokenStore';
 import { useNavigationState, useRouteNavigate } from 'core/react-routing';
 
@@ -37,8 +37,7 @@ export function WebhookListRoute() {
   const navigate = useRouteNavigate();
 
   const { email: userEmail } = TokenStore.getUserSync();
-  const { currentSpaceId, currentOrganizationId } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
+  const { currentSpaceId, currentOrganizationId, currentSpaceContentTypes } = useSpaceEnvContext();
 
   function setupTemplateOpener(hasAwsProxy = false) {
     return createWebhookTemplateDialogOpener(

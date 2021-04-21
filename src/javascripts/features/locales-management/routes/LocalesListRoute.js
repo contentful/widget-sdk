@@ -15,7 +15,7 @@ import { useAsync } from 'core/hooks';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
 import * as PricingService from 'services/PricingService';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { checkComposeIsInstalled } from './checkComposeIsInstalled';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export const useIsComposeInstalledFlag = () => {
   const [flag, setFlag] = useState(false);

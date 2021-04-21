@@ -16,7 +16,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import { MetadataTags, ReadTagsContext } from 'features/content-tags';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createAPIClient } from 'core/services/APIClient/utils';
 import type { Role } from 'core/services/SpaceEnvContext/types';
@@ -104,11 +104,11 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   const entitySelectorSdk = useEntitySelectorSdk();
   const {
     currentSpace,
+    currentSpaceContentTypes,
     currentOrganization,
     currentEnvironmentId,
     currentSpaceId,
   } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
   const roleRepo = React.useMemo(() => RoleRepository.getInstance(currentSpace), [currentSpace]);
   const [role, setRole] = React.useState<Role | null>(null);
   const [baseRole, setBaseRole] = React.useState(null);

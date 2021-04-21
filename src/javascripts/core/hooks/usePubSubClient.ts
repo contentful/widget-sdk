@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { createPubSubClientForSpace, PubSubClient } from 'services/PubSubService';
 import noop from 'lodash/noop';
 

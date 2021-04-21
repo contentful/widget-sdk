@@ -4,11 +4,11 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 
 import { ContentPreviewFormPage } from '../ContentPreviewFormPage';
 import { contentPreviewToInternal } from '../services/contentPreviewToInternal';
-import { useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import type { UnsavedChangesModalProps } from 'core/hooks';
 
 export function ContentPreviewNewRoute(props: UnsavedChangesModalProps) {
-  const { currentSpaceContentTypes } = useContentTypes();
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
 
   const initialValue = contentPreviewToInternal(
     {

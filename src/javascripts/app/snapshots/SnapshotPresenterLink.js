@@ -6,7 +6,7 @@ import { Card } from '@contentful/forma-36-react-components';
 import TheLocaleStore from 'services/localeStore';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { WrappedEntryCard, WrappedAssetCard } from '@contentful/field-editor-reference';
-import { useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
 
@@ -19,7 +19,7 @@ const styles = {
 
 const SnapshotPresenterLink = ({ locale, value, linkType }) => {
   const [models, setModels] = useState([]);
-  const { currentSpaceContentTypes } = useContentTypes();
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 
   useEffect(() => {

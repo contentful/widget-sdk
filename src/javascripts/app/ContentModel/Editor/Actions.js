@@ -22,7 +22,7 @@ import { openFieldModalDialog, getUpdatedField } from 'features/content-model-ed
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { openEditContentTypeDialog } from './Dialogs';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
@@ -47,8 +47,12 @@ export default function useCreateActions(props) {
   // TODO: remove 'spaceContext' after `spaceContext.cma` migration
   const spaceContext = getModule('spaceContext');
 
-  const { currentSpace, currentSpaceId: spaceId, currentOrganizationId } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
+  const {
+    currentSpace,
+    currentSpaceContentTypes,
+    currentSpaceId: spaceId,
+    currentOrganizationId,
+  } = useSpaceEnvContext();
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
 

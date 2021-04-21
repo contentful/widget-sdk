@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ConnectedRichTextEditor } from '@contentful/field-editor-rich-text';
 import { EntityProvider } from '@contentful/field-editor-reference';
 import { rtSdkDecorator } from './rtSdkDecorator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 export default function ReadOnlyRichTextEditor({ value, sdk }) {

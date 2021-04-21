@@ -15,7 +15,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useParams, RouteNavigate } from 'core/react-routing';
 
 const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {

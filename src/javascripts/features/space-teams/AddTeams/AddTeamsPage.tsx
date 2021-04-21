@@ -10,7 +10,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import { AddTeamsPageContent } from './AddTeamsPageContent';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
 import { Role, SpaceEnv } from 'core/services/SpaceEnvContext/types';
 

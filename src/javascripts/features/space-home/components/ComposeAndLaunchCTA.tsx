@@ -3,7 +3,7 @@ import { WidgetContainer } from '../widgets/WidgetContainer';
 import { ContentfulAppTile, SpaceInformation, canUserManageApps } from 'features/apps';
 import LaunchAndComposeIcon from 'svg/illustrations/launch-compose-screenshot.svg';
 import { go } from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 import { useAppsTrial } from 'features/trials';
 

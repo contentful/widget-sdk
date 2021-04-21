@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 /*
  * React hook to retrieve a Product Catalog feature flag for current space.

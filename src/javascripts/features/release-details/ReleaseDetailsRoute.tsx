@@ -3,7 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
 import { ReleaseDetailsPage } from './ReleaseDetailsPage';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { appsMarketingUrl } from 'Config';
 
 const ReleaseDetailsRoute = () => {

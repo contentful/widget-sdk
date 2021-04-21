@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { WidgetContainer } from '../widgets/WidgetContainer';
 import { ContentfulAppTile, SpaceInformation, canUserManageApps } from 'features/apps';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { AppLogos } from '@contentful/experience-components';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 

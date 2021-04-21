@@ -3,7 +3,7 @@ import React from 'react';
 import { RichTextEditor } from '@contentful/field-editor-rich-text';
 import { rtSdkDecorator } from './rtSdkDecorator';
 import withTracking from './withTracking';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const RichTextEditorWithTracking = withTracking(RichTextEditor);

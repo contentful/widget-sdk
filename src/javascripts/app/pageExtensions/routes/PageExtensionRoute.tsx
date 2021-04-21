@@ -14,7 +14,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { PageWidgetRenderer } from 'features/apps';
 import { getAppsRepo } from 'features/apps-core';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();

@@ -12,7 +12,7 @@ import {
 } from 'data/CMA/ProductCatalog';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const DEFAULT_FEATURE_STATUS = true; // Fail open
 

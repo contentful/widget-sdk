@@ -14,7 +14,7 @@ import { delay, get } from 'lodash';
 import { EntitiesView } from '../core/EntitiesView';
 import { FileSizeLimitWarning } from './FileSizeLimitWarning';
 import { shouldHide } from 'access_control/AccessChecker';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { ScheduledActionsPageLink } from 'app/ScheduledActions';
 import { createSpaceEndpoint } from 'data/EndpointFactory';

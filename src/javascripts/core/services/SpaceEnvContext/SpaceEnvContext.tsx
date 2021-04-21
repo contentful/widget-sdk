@@ -1,6 +1,6 @@
-import React, { createContext, useMemo } from 'react';
-
+import React, { createContext, useMemo, useState, useEffect } from 'react';
 import { getModule } from 'core/NgRegistry';
+import * as K from 'core/utils/kefir';
 import {
   getSpaceId,
   getSpaceName,
@@ -14,6 +14,7 @@ import {
   getOrganization,
 } from './utils';
 import { SpaceEnv, SpaceEnvContextValue, Environment, SpaceEnvUsers } from './types';
+import { ContentType } from './types';
 
 // We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
 function getAngularSpaceContext() {
@@ -21,11 +22,23 @@ function getAngularSpaceContext() {
 }
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
+  currentSpaceContentTypes: [],
   currentEnvironmentId: 'master',
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
+  const [contentTypes, setContentTypes] = useState<ContentType[]>(getContentTypes());
+
+  useEffect(() => {
+    if (!angularSpaceContext?.publishedCTs?.items$) return;
+
+    const deregister = K.onValue(angularSpaceContext.publishedCTs.items$, (items) => {
+      setContentTypes(items as ContentType[]);
+    });
+
+    return deregister;
+  }, []); // eslint-disable-line
 
   // TODO: Methods depending on the angular space context directly, they should be refactored
   function getSpace(): SpaceEnv {
@@ -34,6 +47,12 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
 
   function getEnvironments(): Environment[] {
     return angularSpaceContext?.environments ?? [];
+  }
+
+  function getContentTypes(): ContentType[] {
+    if (!angularSpaceContext?.publishedCTs?.items$) return [];
+
+    return K.getValue(angularSpaceContext.publishedCTs.items$);
   }
 
   function getUsers(): SpaceEnvUsers {
@@ -60,6 +79,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceEnvironments: getEnvironments(),
     currentSpaceId: getSpaceId(space),
     currentSpaceName: getSpaceName(space),
+    currentSpaceContentTypes: contentTypes,
     currentUsers: getUsers(),
     documentPool: getDocPool(),
   };

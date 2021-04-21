@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ContentTypeListPage } from './ContentTypeListPage';
 import { LocationProvider } from 'core/services/LocationContext';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export function ContentTypesPage({ spaceId }) {
   const {

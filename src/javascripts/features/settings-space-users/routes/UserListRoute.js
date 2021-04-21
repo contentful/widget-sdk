@@ -20,7 +20,7 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { AddUsers } from '../components/AddUsers';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { useNavigationState } from 'core/react-routing';

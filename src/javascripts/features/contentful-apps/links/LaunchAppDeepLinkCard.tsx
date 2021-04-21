@@ -2,7 +2,7 @@ import React from 'react';
 import { cx } from 'emotion';
 import { Paragraph } from '@contentful/forma-36-react-components';
 
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getLaunchAppDeepLink } from '../utils/getLaunchAppDeepLink';
 import { styles } from '../styles/LaunchAppDeepLinkCard.styles';
 import { IfAppInstalled } from '../wrappers/ContentfulAppWrapper';

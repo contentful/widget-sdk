@@ -18,7 +18,7 @@ import { TagPropType } from 'features/content-tags/core/TagPropType';
 import { useDeleteTag, useReadTags } from 'features/content-tags/core/hooks';
 import { getSpaceFeature, SpaceFeatures, DEFAULT_FEATURES_STATUS } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Conditional } from 'features/content-tags/core/components/Conditional';
 
 const styles = {

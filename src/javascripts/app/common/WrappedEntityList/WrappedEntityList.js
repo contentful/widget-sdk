@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { EntityList } from '@contentful/forma-36-react-components';
 import WrappedEntityListItem from './WrappedEntityListItem';
 import { getLaunchAppDeepLink } from 'features/contentful-apps';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import EntityStateLink from 'app/common/EntityStateLink';
 
 const WrappedEntityList = ({ entities, onEntityClick, contentTypes, renderDropdown }) => {

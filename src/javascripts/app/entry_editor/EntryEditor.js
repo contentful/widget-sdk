@@ -13,12 +13,12 @@ import {
   useEditorState,
   useEmitter,
 } from '../entity_editor/useEditorHooks';
-import { useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 export const EntryEditor = (props) => {
-  const { currentSpaceContentTypes } = useContentTypes();
+  const { currentSpaceContentTypes } = useSpaceEnvContext();
   const { client: cma } = useCurrentSpaceAPIClient();
 
   // @TODO remove getViewProps() as soon as feature flag * is removed

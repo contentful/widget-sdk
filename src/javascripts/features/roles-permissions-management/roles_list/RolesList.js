@@ -19,7 +19,7 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
 import { createRoleRemover } from '../components/RoleRemover';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import {
   CUSTOM_ROLES_CONTENT_ENTRY_ID,
   FeatureModal,

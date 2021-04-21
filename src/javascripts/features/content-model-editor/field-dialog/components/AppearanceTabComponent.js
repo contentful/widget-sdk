@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import getDefaultWidgetId from 'widgets/DefaultWidget';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { FieldDialogAppearanceTab } from './FieldDialogAppearanceTab';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const getDefaultWidget = (ctField, contentType, availableWidgets) => {

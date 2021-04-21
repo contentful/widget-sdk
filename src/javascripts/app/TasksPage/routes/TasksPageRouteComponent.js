@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getSpaceMember, isMasterEnvironmentById } from 'core/services/SpaceEnvContext/utils';
 import TheLocaleStore from 'services/localeStore';
 import TasksPage from './..';
@@ -11,8 +11,8 @@ const RouteComponent = () => {
     currentSpace,
     currentUsers: users,
     currentSpaceEnvironments,
+    currentSpaceContentTypes,
   } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
   const currentUserId = getSpaceMember(currentSpace).sys.user.sys.id;
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const getContentType = (contentTypeId) =>

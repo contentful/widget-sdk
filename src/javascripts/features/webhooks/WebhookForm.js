@@ -23,7 +23,7 @@ import { WebhookFilters } from './WebhookFilters';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 import { WILDCARD } from './WebhookSegmentationState';
 import { WebhookOtherEventsSection } from './WebhookOtherEventsSection';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { hasOptedIntoAliases } from 'core/services/SpaceEnvContext/utils';
 
 const METHODS = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'];

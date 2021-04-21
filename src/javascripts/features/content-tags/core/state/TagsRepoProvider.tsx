@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import * as TagsRepo from 'features/content-tags/core/state/TagsRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 type Props = React.PropsWithChildren<{}>;
 

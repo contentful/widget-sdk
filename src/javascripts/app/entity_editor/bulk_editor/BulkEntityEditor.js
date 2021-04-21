@@ -15,7 +15,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { getEditorState } from '../editorState';
-import { useSpaceEnvContext, useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { trackEntryView } from '../Tracking';
 import { EntityField } from '../EntityField/EntityField';
@@ -44,8 +44,12 @@ export const BulkEntityEditor = ({
   onRemove,
   hasInitialFocus,
 }) => {
-  const { currentEnvironmentId, currentSpace, currentSpaceId } = useSpaceEnvContext();
-  const { currentSpaceContentTypes } = useContentTypes();
+  const {
+    currentSpaceContentTypes,
+    currentEnvironmentId,
+    currentSpace,
+    currentSpaceId,
+  } = useSpaceEnvContext();
   const { client: cma } = useCurrentSpaceAPIClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 

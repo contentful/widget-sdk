@@ -20,9 +20,9 @@ import { ADMIN_ROLE_ID } from 'access_control/constants';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-import { SpaceTeamsPagePresentation } from './SpaceTeamsPagePresentation';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { reducer, SpaceTeamsReducerActionType, initialState } from './reducer';
+import { SpaceTeamsPagePresentation } from './SpaceTeamsPagePresentation';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import { SpaceMembership } from 'core/services/SpaceEnvContext/types';
 

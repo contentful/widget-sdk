@@ -1,7 +1,7 @@
 import { useMemo, useRef, useCallback } from 'react';
 import { createListViewPersistor } from './ListViewPersistor';
 import { assign, noop } from 'lodash';
-import { useContentTypes, useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getAvailableDisplayFields } from 'features/entity-views';
 
 export type View = Record<string, any>;
@@ -14,14 +14,16 @@ export const useListView = ({
   entityType: 'asset' | 'entry';
   onUpdate: ViewCallback;
 }) => {
-  const { currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
-  const { currentSpaceContentTypes: contentTypes } = useContentTypes();
-
+  const {
+    currentSpaceContentTypes: contentTypes,
+    currentEnvironmentId,
+    currentSpaceId,
+  } = useSpaceEnvContext();
   const viewPersistor = useMemo(
     () =>
       createListViewPersistor({
         entityType,
-        environmentId: currentEnvironmentId as string,
+        environmentId: currentEnvironmentId,
         spaceId: currentSpaceId,
       }),
     [entityType, currentEnvironmentId, currentSpaceId]

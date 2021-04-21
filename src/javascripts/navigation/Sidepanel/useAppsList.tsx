@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { OrganizationFeatures, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';

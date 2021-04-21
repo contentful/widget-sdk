@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 

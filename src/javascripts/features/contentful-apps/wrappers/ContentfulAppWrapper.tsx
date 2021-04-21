@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useContentfulAppsConfig } from '../hooks/useContentfulAppConfig';
 
 interface IfAppInstalledProps {

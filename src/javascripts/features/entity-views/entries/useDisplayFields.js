@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { sortBy, pick } from 'lodash';
 import * as SystemFields from 'data/SystemFields';
 import * as MetadataFields from 'data/MetadataFields';
-import { useContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 export const getAvailableDisplayFields = (contentTypes, contentTypeId) => {
   const filteredContentType = contentTypes.find((ct) => ct.sys.id === contentTypeId);
@@ -21,7 +21,7 @@ const VIEW_KEYS = ['displayedFieldIds', 'contentTypeId'];
 export const useDisplayFields = ({ listViewContext, updateEntities }) => {
   const [hiddenFields, setHiddenFields] = useState([]);
   const [displayedFields, setDisplayedFields] = useState([]);
-  const { currentSpaceContentTypes: contentTypes } = useContentTypes();
+  const { currentSpaceContentTypes: contentTypes } = useSpaceEnvContext();
 
   const view = listViewContext.getView();
   const { displayedFieldIds, contentTypeId } = view;

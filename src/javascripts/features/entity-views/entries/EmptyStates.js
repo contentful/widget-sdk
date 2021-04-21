@@ -10,7 +10,7 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import { NoContentTypeAdvice } from 'core/components/NoContentTypeAdvice';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 export const EmptyStates = ({ hasContentType, contentTypes, onCreate, suggestedContentTypeId }) => {
