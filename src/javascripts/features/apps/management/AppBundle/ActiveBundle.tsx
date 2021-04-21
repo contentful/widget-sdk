@@ -1,6 +1,5 @@
 import { HostingDropzone } from '../AppEditor/HostingDropzone';
 import { AppBundleData, AppBundleDataWithCreator } from '../AppEditor';
-import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { css } from 'emotion';
 import React from 'react';
 import { BundleCard } from './BundleCard';
@@ -15,6 +14,7 @@ import {
   Subheading,
   SectionHeading,
 } from '@contentful/forma-36-react-components';
+import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const styles = {
   attachedCard: css({
@@ -69,23 +69,18 @@ const styles = {
 };
 
 interface ActiveBundleProps {
-  onChange: (appDefinition: AppDefinitionWithBundle) => void;
-  definition: AppDefinitionWithBundle;
-  savedDefinition: AppDefinitionWithBundle;
   resetDefinitionBundle: () => void;
 }
 
-export const ActiveBundle: React.FC<ActiveBundleProps> = ({
-  onChange,
-  definition,
-  savedDefinition,
-  resetDefinitionBundle,
-}) => {
+export const ActiveBundle: React.FC<ActiveBundleProps> = ({ resetDefinitionBundle }) => {
   const { bundles, setIsAppHosting } = React.useContext(HostingStateContext);
+  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
+    AppDetailsStateContext
+  );
   const setNewAppBundle = (bundle: AppBundleData) => {
     setIsAppHosting(true);
-    onChange({
-      ...definition,
+    setDraftDefinition({
+      ...draftDefinition,
       src: undefined,
       bundle: { sys: { type: 'Link', linkType: 'AppBundle', id: bundle.sys.id } },
     });
@@ -97,13 +92,13 @@ export const ActiveBundle: React.FC<ActiveBundleProps> = ({
 
   const hasCurrentHosting = !!(activeBundle || savedDefinition.src);
 
-  const stagedBundle = getStagedBundle(savedDefinition, definition, bundles);
+  const stagedBundle = getStagedBundle(savedDefinition, draftDefinition, bundles);
 
   if (!hasExistingBundles) {
     return (
       <>
         <NotHosted />
-        <HostingDropzone onAppBundleCreated={setNewAppBundle} definition={definition} />
+        <HostingDropzone onAppBundleCreated={setNewAppBundle} definition={draftDefinition} />
       </>
     );
   } else {
@@ -129,7 +124,7 @@ export const ActiveBundle: React.FC<ActiveBundleProps> = ({
           <HostingDropzone
             containerStyles={activeBundle || savedDefinition.src ? styles.container : ''}
             onAppBundleCreated={setNewAppBundle}
-            definition={definition}
+            definition={draftDefinition}
           />
         )}
       </>

@@ -35,12 +35,13 @@ import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
-import { HostingStateContext } from './HostingStateProvider';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-
-const ERROR_PATH_DEFINITION = ['definition'];
-const ERROR_PATH_EVENTS = ['events'];
+import {
+  AppDetailsStateContext,
+  ERROR_PATH_DEFINITION,
+  ERROR_PATH_EVENTS,
+} from './AppDetailsStateContext';
 
 function formatDate(date: string) {
   return new Date(date).toLocaleString('en-US', {
@@ -65,89 +66,93 @@ interface Props {
   goToListView: () => void;
   goToTab: (tab: string) => void;
   tab: string;
-
   setDirty: (dirty: boolean) => void;
   setRequestLeaveConfirmation: (fn: () => Promise<void>) => void;
 }
 
-interface State {
-  dirty: boolean;
-  busy: boolean;
-  name: string;
-  savedDefinition: AppDefinitionWithBundle;
-  definition: AppDefinitionWithBundle;
-  savedEvents: Event;
-  events: Event;
-  selectedTab: string;
-  creator: string;
-  errors: ValidationError[];
-  actionsDropdownOpen: boolean;
-  hostingEnabled: boolean;
-}
+export const AppDetails = (props: Props) => {
+  const [dirty, setDirty] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+  const [name, setName] = React.useState(props.definition.name);
+  const [selectedTab, setSelectedTab] = React.useState(props.tab);
+  const [creator, setCreator] = React.useState(userNameCache[props.definition.sys.id] || '');
+  const [errors, setErrors] = React.useState<ValidationError[]>([]);
+  const [actionsDropdownOpen, setActionsDropdownOpen] = React.useState(false);
+  const [hostingEnabled, setHostingEnabled] = React.useState(false);
+  const [savedEvents, setSavedEvents] = React.useState(props.events);
 
-export class AppDetails extends React.Component<Props, State> {
-  static contextType = HostingStateContext;
-  constructor(props: Props) {
-    super(props);
+  const {
+    draftDefinition,
+    setDraftDefinition,
+    draftEvents,
+    setDraftEvents,
+    saveDefinition,
+    saveEvents,
+    setSavedDefinition,
+    savedDefinition,
+  } = React.useContext(AppDetailsStateContext);
 
-    this.state = {
-      dirty: false,
-      busy: false,
-      name: props.definition.name,
-      savedDefinition: props.definition,
-      definition: props.definition,
-      savedEvents: props.events,
-      events: props.events,
-      selectedTab: props.tab,
-      creator: userNameCache[props.definition.sys.id] || '',
-      errors: [],
-      actionsDropdownOpen: false,
-      hostingEnabled: false,
+  React.useEffect(() => {
+    props.setRequestLeaveConfirmation(openUnsavecChangesDialog);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    const setCreatorCall = async () => {
+      let creator = userNameCache[props.definition.sys.id];
+
+      if (!creator) {
+        creator = await ManagementApiClient.getCreatorNameOf(props.definition);
+        userNameCache[props.definition.sys.id] = creator;
+      }
+
+      setCreator(creator);
     };
 
-    this.props.setRequestLeaveConfirmation(this.openUnsavecChangesDialog);
-  }
+    setCreatorCall();
+  }, [props.definition]);
 
-  async componentDidMount() {
-    const { definition } = this.props;
+  const { goToTab, tab } = props;
 
-    let creator = userNameCache[definition.sys.id];
+  const onTabSelect = React.useCallback(
+    (tab: string) => {
+      setSelectedTab(tab);
+      goToTab(tab);
+    },
+    [goToTab]
+  );
 
-    if (!creator) {
-      creator = await ManagementApiClient.getCreatorNameOf(definition);
-      userNameCache[definition.sys.id] = creator;
+  React.useEffect(() => {
+    if (!Object.values(TAB_PATHS).includes(tab)) {
+      onTabSelect(TAB_PATHS.GENERAL);
     }
+  }, [onTabSelect, tab]);
 
-    this.setState({ creator });
-
-    if (!Object.values(TAB_PATHS).includes(this.props.tab)) {
-      this.onTabSelect(TAB_PATHS.GENERAL);
-    }
-
-    if (definition.bundle) {
+  React.useEffect(() => {
+    if (props.definition.bundle) {
       // If a customer already has bundle enabled, we show them the UI
-      this.setState({ hostingEnabled: true });
+      setHostingEnabled(true);
     } else {
       getVariation(FLAGS.APP_HOSTING_UI, {
-        organizationId: definition.sys.organization.sys.id,
-      }).then((hostingEnabled) => this.setState({ hostingEnabled }));
+        organizationId: props.definition.sys.organization.sys.id,
+      }).then(setHostingEnabled);
     }
-  }
+  }, [props.definition]);
 
-  validate = () => {
+  const validate = () => {
     const errors = [
-      ...validateDefinition(this.state.definition, ERROR_PATH_DEFINITION),
-      ...validateEvents(this.state.events, ERROR_PATH_EVENTS),
+      ...validateDefinition(draftDefinition, ERROR_PATH_DEFINITION),
+      ...validateEvents(draftEvents, ERROR_PATH_EVENTS),
     ];
-    this.setState({ errors });
+    setErrors(errors);
     return errors;
   };
 
   /**
    * Only gets called when dirty = true
    */
-  openUnsavecChangesDialog = async () => {
-    const errors = this.validate();
+  const openUnsavecChangesDialog = async () => {
+    const errors = validate();
 
     if (errors.length > 0) {
       return await ModalLauncher.open(({ isShown, onClose }) => (
@@ -156,22 +161,22 @@ export class AppDetails extends React.Component<Props, State> {
     }
 
     return await ModalLauncher.open(({ isShown, onClose }) => (
-      <UnsavedChangesDialog save={this.save} isShown={isShown} onClose={onClose} />
+      <UnsavedChangesDialog save={save} isShown={isShown} onClose={onClose} />
     ));
   };
 
-  openSaveConfirmModal = async () => {
-    const errors = this.validate();
-    if (errors.length > 0) {
+  const openSaveConfirmModal = async () => {
+    const validationErrors = validate();
+    if (validationErrors.length > 0) {
       return;
     }
 
     await ModalLauncher.open(({ isShown, onClose }) => (
       <SaveConfirmModal
         isShown={isShown}
-        name={this.state.definition.name}
+        name={draftDefinition.name}
         onConfirm={() => {
-          this.save();
+          save();
           onClose();
         }}
         onClose={onClose}
@@ -179,41 +184,42 @@ export class AppDetails extends React.Component<Props, State> {
     ));
   };
 
-  save = async () => {
-    this.setState({ busy: true });
+  const save = async () => {
+    setBusy(true);
 
     const [definitionResult, eventsResult] = await Promise.allSettled([
-      this.saveDefinition(),
-      this.saveEvents(),
+      saveDefinition(),
+      saveEvents(),
     ]);
 
-    let savedDefinition = this.state.savedDefinition;
-    let savedEvents = this.state.savedEvents;
+    let savedDefinitionDraft = savedDefinition;
+    let savedEventsDraft = savedEvents;
 
-    const errors: ValidationError[] = [];
+    const validationErrors: ValidationError[] = [];
     if (definitionResult.status === 'fulfilled') {
-      savedDefinition = definitionResult.value;
-      this.setState({ savedDefinition });
-      this.updateFormState({ definition: savedDefinition, events: savedEvents });
+      savedDefinitionDraft = definitionResult.value;
+      setSavedDefinition(savedDefinitionDraft);
+      setName(definitionResult.value.name);
       evictCustomAppDefinition(savedDefinition.sys.id);
     } else {
       if (definitionResult.reason.status === 422) {
-        errors.push(...definitionResult.reason.data.details.errors);
+        validationErrors.push(...definitionResult.reason.data.details.errors);
       }
     }
 
     if (eventsResult.status === 'fulfilled') {
-      savedEvents = eventsResult.value;
-      this.setState({ savedEvents });
-      this.updateFormState({ definition: savedDefinition, events: savedEvents });
+      savedEventsDraft = eventsResult.value;
+      setSavedEvents(savedEventsDraft);
+      setDraftDefinition(savedDefinitionDraft);
+      setDraftEvents(savedEventsDraft);
     } else {
       if (eventsResult.reason.status === 422) {
-        errors.push(...eventsResult.reason.data.details.errors);
+        validationErrors.push(...eventsResult.reason.data.details.errors);
       }
     }
 
     if (errors.length > 0) {
-      this.setState({ errors });
+      setErrors(validationErrors);
     }
 
     if (definitionResult.status === 'fulfilled' && eventsResult.status === 'fulfilled') {
@@ -221,314 +227,227 @@ export class AppDetails extends React.Component<Props, State> {
     } else if (definitionResult.status === 'fulfilled' && eventsResult.status === 'rejected') {
       Notification.success('App definition saved successfully.');
       Notification.error(
-        errors.length > 0
+        validationErrors.length > 0
           ? ManagementApiClient.VALIDATION_MESSAGE
           : "Something went wrong. Couldn't save app events."
       );
     } else if (definitionResult.status === 'rejected' && eventsResult.status === 'fulfilled') {
       Notification.error(
-        errors.length > 0
+        validationErrors.length > 0
           ? ManagementApiClient.VALIDATION_MESSAGE
           : "Something went wrong. Couldn't save app definition."
       );
       Notification.success('App events saved successfully.');
     } else {
       Notification.error(
-        errors.length > 0
+        validationErrors.length > 0
           ? ManagementApiClient.VALIDATION_MESSAGE
           : "Something went wrong. Couldn't save app definition and events."
       );
     }
 
-    this.setState({ busy: false });
+    setBusy(false);
   };
 
-  saveDefinition = async () => {
-    try {
-      return await ManagementApiClient.save({
-        ...this.state.definition,
-        // save only what has been selected as switch option
-        bundle: this.context.isAppHosting ? this.state.definition.bundle : undefined,
-        src: !this.context.isAppHosting ? this.state.definition.src : undefined,
-      });
-    } catch (err) {
-      if (err.status === 422) {
-        err.data.details.errors.forEeach((error: ValidationError) => {
-          if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            error.path[1] = this.state.definition.locations![error.path[1]].location;
-          }
-
-          error.path = [...ERROR_PATH_DEFINITION, ...error.path];
-        });
-      }
-
-      throw err;
-    }
-  };
-
-  saveEvents = async () => {
-    try {
-      if (this.state.events.enabled) {
-        const { targetUrl, topics } = await ManagementApiClient.updateAppEvents(
-          this.props.definition.sys.organization.sys.id,
-          this.props.definition.sys.id,
-          {
-            targetUrl: this.state.events.targetUrl,
-            topics: this.state.events.topics,
-          }
-        );
-        return { enabled: true, targetUrl, topics };
-      } else {
-        if (this.state.savedEvents.enabled) {
-          await ManagementApiClient.deleteAppEvents(
-            this.props.definition.sys.organization.sys.id,
-            this.props.definition.sys.id
-          );
-        }
-        return { enabled: false, targetUrl: '', topics: [] };
-      }
-    } catch (err) {
-      if (err.status === 422) {
-        return err.data.details.errors.forEeach((error: ValidationError) => {
-          error.path = [...ERROR_PATH_EVENTS, ...error.path];
-        });
-      }
-
-      throw err;
-    }
-  };
-
-  delete = async () => {
-    this.setState({ busy: true });
+  const deleteDef = async () => {
+    setBusy(true);
 
     try {
-      await ManagementApiClient.deleteDef(this.state.definition);
-      Notification.success(`${this.state.definition.name} was deleted!`);
-      this.props.goToListView();
+      await ManagementApiClient.deleteDef(props.definition);
+      Notification.success(`${props.definition} was deleted!`);
+      props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
-      this.setState({ busy: false });
+      setBusy(false);
     }
   };
 
-  openInstallModal = () => {
+  const openInstallModal = () => {
     ModalLauncher.open(({ isShown, onClose }) => (
-      <AppInstallModal definition={this.state.definition} isShown={isShown} onClose={onClose} />
+      <AppInstallModal definition={draftDefinition} isShown={isShown} onClose={onClose} />
     ));
   };
 
-  openDeleteModal = () => {
+  const openDeleteModal = () => {
     ModalLauncher.open(({ isShown, onClose }) => (
       <DeleteAppDialog
         isShown={isShown}
         onCancel={onClose}
         onConfirm={async () => {
-          await this.delete();
+          await deleteDef();
           onClose();
         }}
-        appName={this.state.name}
+        appName={name}
       />
     ));
   };
 
-  onTabSelect = (tab: string) => {
-    this.setState({ selectedTab: tab });
-    this.props.goToTab(tab);
+  const { setDirty: onDirtyChange } = props;
+
+  // check if form is dirty
+  React.useEffect(() => {
+    const newDirty =
+      !deepEqual(savedDefinition, draftDefinition) || !deepEqual(savedEvents, draftEvents);
+    setDirty(newDirty);
+    onDirtyChange(newDirty);
+  }, [savedDefinition, draftDefinition, savedEvents, draftEvents, onDirtyChange]);
+
+  const resetDefinitionBundle = () => {
+    const originalBundle = savedDefinition.bundle;
+    setDraftDefinition({ ...draftDefinition, bundle: originalBundle });
   };
 
-  updateFormState = ({ events, definition }) => {
-    const dirty =
-      !deepEqual(this.state.savedDefinition, definition) ||
-      !deepEqual(this.state.savedEvents, events);
-
-    this.setState({ events, definition, dirty });
-    this.props.setDirty(dirty);
-  };
-
-  resetDefinitionBundle = () => {
-    const originalBundle = this.state.savedDefinition.bundle;
-    const definition = { ...this.state.definition, bundle: originalBundle };
-    this.setState({ definition });
-  };
-
-  render() {
-    const { name, definition, events, savedEvents, errors, busy, selectedTab, dirty } = this.state;
-
-    return (
-      <Workbench>
-        <DocumentTitle title="Apps" />
-        <Workbench.Header
-          title="App details"
-          actions={
-            <div className="workbench-header__actions">
-              <Dropdown
-                isOpen={this.state.actionsDropdownOpen}
-                onClose={() => this.setState({ actionsDropdownOpen: false })}
-                toggleElement={
-                  <Button
-                    buttonType="muted"
-                    indicateDropdown
-                    onClick={() =>
-                      this.setState({ actionsDropdownOpen: !this.state.actionsDropdownOpen })
-                    }>
-                    Actions
-                  </Button>
-                }>
-                <DropdownList>
-                  <DropdownListItem
-                    onClick={() => {
-                      this.setState({ actionsDropdownOpen: false });
-                      this.openInstallModal();
-                    }}>
-                    Install to space
-                  </DropdownListItem>
-                  <DropdownListItem
-                    onClick={() => {
-                      this.setState({ actionsDropdownOpen: false });
-                      this.openDeleteModal();
-                    }}
-                    testId="app-delete"
-                    isDisabled={busy}>
-                    Delete {name}
-                  </DropdownListItem>
-                </DropdownList>
-              </Dropdown>
-              <Button
-                loading={busy}
-                buttonType="positive"
-                disabled={busy || !dirty}
-                onClick={this.openSaveConfirmModal}
-                testId="app-save">
-                Save
-              </Button>
-            </div>
-          }
-          onBack={this.props.goToListView}
-        />
-        <Workbench.Content>
-          <div className={styles.workbenchContent}>
-            <div className={styles.title}>
-              <ProductIcon icon="Apps" size="xlarge" />
-              <div>
-                <Heading>{name}</Heading>
-                <div className={styles.sysId}>
-                  <Paragraph>{definition.sys.id}</Paragraph>
-                  <CopyButton className={styles.copyButton} copyValue={definition.sys.id} />
-                </div>
+  return (
+    <Workbench>
+      <DocumentTitle title="Apps" />
+      <Workbench.Header
+        title="App details"
+        actions={
+          <div className="workbench-header__actions">
+            <Dropdown
+              isOpen={actionsDropdownOpen}
+              onClose={() => setActionsDropdownOpen(false)}
+              toggleElement={
+                <Button
+                  buttonType="muted"
+                  indicateDropdown
+                  onClick={() => setActionsDropdownOpen(!actionsDropdownOpen)}>
+                  Actions
+                </Button>
+              }>
+              <DropdownList>
+                <DropdownListItem
+                  onClick={() => {
+                    setActionsDropdownOpen(false);
+                    openInstallModal();
+                  }}>
+                  Install to space
+                </DropdownListItem>
+                <DropdownListItem
+                  onClick={() => {
+                    setActionsDropdownOpen(false);
+                    openDeleteModal();
+                  }}
+                  testId="app-delete"
+                  isDisabled={busy}>
+                  Delete {name}
+                </DropdownListItem>
+              </DropdownList>
+            </Dropdown>
+            <Button
+              loading={busy}
+              buttonType="positive"
+              disabled={busy || !dirty}
+              onClick={openSaveConfirmModal}
+              testId="app-save">
+              Save
+            </Button>
+          </div>
+        }
+        onBack={props.goToListView}
+      />
+      <Workbench.Content>
+        <div className={styles.workbenchContent}>
+          <div className={styles.title}>
+            <ProductIcon icon="Apps" size="xlarge" />
+            <div>
+              <Heading>{name}</Heading>
+              <div className={styles.sysId}>
+                <Paragraph>{draftDefinition.sys.id}</Paragraph>
+                <CopyButton className={styles.copyButton} copyValue={draftDefinition.sys.id} />
               </div>
             </div>
-            <div className={styles.info}>
-              <Paragraph>
-                <b>Created</b> {formatDate(definition.sys.createdAt)}
-              </Paragraph>
-              <Paragraph>
-                <b>Created by</b>{' '}
-                <span className={this.state.creator ? styles.creator : styles.creatorMissing}>
-                  {this.state.creator}
-                </span>
-              </Paragraph>
-            </div>
-            <Tabs withDivider>
-              <Tab
-                id={TAB_PATHS.GENERAL}
-                selected={selectedTab === TAB_PATHS.GENERAL}
-                onSelect={this.onTabSelect}>
-                <Flex alignItems="center">
-                  General
-                  {errors.find((error) => error.path[0] === 'definition') && (
-                    <Icon
-                      color="negative"
-                      icon="InfoCircle"
-                      className={styles.validationErrorIcon}
-                    />
-                  )}
-                </Flex>
-              </Tab>
-              {this.state.hostingEnabled ? (
-                <Tab
-                  id={TAB_PATHS.BUNDLES}
-                  selected={selectedTab === TAB_PATHS.BUNDLES}
-                  onSelect={this.onTabSelect}>
-                  Bundles{' '}
-                  <Tag className={styles.hostingTag} tagType="primary-filled" size="small">
-                    New
-                  </Tag>
-                </Tab>
-              ) : null}
-              <Tab
-                id={TAB_PATHS.SECURITY}
-                selected={selectedTab === TAB_PATHS.SECURITY}
-                onSelect={this.onTabSelect}>
-                Security
-              </Tab>
-              <Tab
-                id={TAB_PATHS.EVENTS}
-                selected={selectedTab === TAB_PATHS.EVENTS}
-                onSelect={this.onTabSelect}>
-                <Flex alignItems="center">
-                  Events
-                  {errors.find((error) => error.path[0] === 'events') && (
-                    <Icon
-                      color="negative"
-                      icon="InfoCircle"
-                      className={styles.validationErrorIcon}
-                    />
-                  )}
-                </Flex>
-              </Tab>
-            </Tabs>
-            {selectedTab === TAB_PATHS.GENERAL && (
-              <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
-                <AppEditor
-                  definition={definition}
-                  onChange={(definition) => this.updateFormState({ events, definition })}
-                  errorPath={ERROR_PATH_DEFINITION}
-                  errors={errors}
-                  onErrorsChange={(errors) => this.setState({ errors })}
-                  disabled={busy}
-                />
-              </TabPanel>
-            )}
-            {this.state.hostingEnabled
-              ? selectedTab === TAB_PATHS.BUNDLES && (
-                  <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
-                    <AppBundles
-                      resetDefinitionBundle={this.resetDefinitionBundle}
-                      definition={definition}
-                      savedDefinition={this.state.savedDefinition}
-                      onChange={(definition) => this.updateFormState({ events, definition })}
-                    />
-                  </TabPanel>
-                )
-              : null}
-            {selectedTab === TAB_PATHS.SECURITY && (
-              <TabPanel id={TAB_PATHS.SECURITY} className={styles.tabPanel}>
-                <KeyListing definition={definition} />
-                <SigningSecret definition={definition} />
-              </TabPanel>
-            )}
-            {selectedTab === TAB_PATHS.EVENTS && (
-              <TabPanel id={TAB_PATHS.EVENTS} className={styles.tabPanel}>
-                <AppEvents
-                  definition={definition}
-                  events={events}
-                  savedEvents={savedEvents}
-                  onChange={(events) => this.updateFormState({ events, definition })}
-                  errorPath={ERROR_PATH_EVENTS}
-                  errors={errors}
-                  onErrorsChange={(errors) => this.setState({ errors })}
-                  disabled={busy}
-                />
-              </TabPanel>
-            )}
-            {
-              // old route that moved to /security
-              selectedTab === TAB_PATHS.KEY_PAIRS && this.onTabSelect(TAB_PATHS.SECURITY)
-            }
           </div>
-        </Workbench.Content>
-      </Workbench>
-    );
-  }
-}
+          <div className={styles.info}>
+            <Paragraph>
+              <b>Created</b> {formatDate(draftDefinition.sys.createdAt)}
+            </Paragraph>
+            <Paragraph>
+              <b>Created by</b>{' '}
+              <span className={creator ? styles.creator : styles.creatorMissing}>{creator}</span>
+            </Paragraph>
+          </div>
+          <Tabs withDivider>
+            <Tab
+              id={TAB_PATHS.GENERAL}
+              selected={selectedTab === TAB_PATHS.GENERAL}
+              onSelect={onTabSelect}>
+              <Flex alignItems="center">
+                General
+                {errors.find((error) => error.path[0] === 'definition') && (
+                  <Icon color="negative" icon="InfoCircle" className={styles.validationErrorIcon} />
+                )}
+              </Flex>
+            </Tab>
+            {hostingEnabled ? (
+              <Tab
+                id={TAB_PATHS.BUNDLES}
+                selected={selectedTab === TAB_PATHS.BUNDLES}
+                onSelect={onTabSelect}>
+                Bundles{' '}
+                <Tag className={styles.hostingTag} tagType="primary-filled" size="small">
+                  New
+                </Tag>
+              </Tab>
+            ) : null}
+            <Tab
+              id={TAB_PATHS.SECURITY}
+              selected={selectedTab === TAB_PATHS.SECURITY}
+              onSelect={onTabSelect}>
+              Security
+            </Tab>
+            <Tab
+              id={TAB_PATHS.EVENTS}
+              selected={selectedTab === TAB_PATHS.EVENTS}
+              onSelect={onTabSelect}>
+              <Flex alignItems="center">
+                Events
+                {errors.find((error) => error.path[0] === 'events') && (
+                  <Icon color="negative" icon="InfoCircle" className={styles.validationErrorIcon} />
+                )}
+              </Flex>
+            </Tab>
+          </Tabs>
+          {selectedTab === TAB_PATHS.GENERAL && (
+            <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
+              <AppEditor
+                errorPath={ERROR_PATH_DEFINITION}
+                errors={errors}
+                onErrorsChange={setErrors}
+                disabled={busy}
+              />
+            </TabPanel>
+          )}
+          {hostingEnabled
+            ? selectedTab === TAB_PATHS.BUNDLES && (
+                <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
+                  <AppBundles resetDefinitionBundle={resetDefinitionBundle} />
+                </TabPanel>
+              )
+            : null}
+          {selectedTab === TAB_PATHS.SECURITY && (
+            <TabPanel id={TAB_PATHS.SECURITY} className={styles.tabPanel}>
+              <KeyListing definition={draftDefinition} />
+              <SigningSecret definition={draftDefinition} />
+            </TabPanel>
+          )}
+          {selectedTab === TAB_PATHS.EVENTS && (
+            <TabPanel id={TAB_PATHS.EVENTS} className={styles.tabPanel}>
+              <AppEvents
+                savedEvents={savedEvents}
+                errorPath={ERROR_PATH_EVENTS}
+                errors={errors}
+                onErrorsChange={setErrors}
+                disabled={busy}
+              />
+            </TabPanel>
+          )}
+          {
+            // old route that moved to /security
+            selectedTab === TAB_PATHS.KEY_PAIRS && onTabSelect(TAB_PATHS.SECURITY)
+          }
+        </div>
+      </Workbench.Content>
+    </Workbench>
+  );
+};

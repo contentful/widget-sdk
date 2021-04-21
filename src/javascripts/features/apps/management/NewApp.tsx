@@ -14,9 +14,9 @@ import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { AppEditor, validate } from './AppEditor';
 import { ManagementApiClient } from './ManagementApiClient';
-import { AppDefinition } from 'contentful-management/types';
 import { ValidationError } from './AppEditor';
 import { HostingStateProvider } from './AppDetails/HostingStateProvider';
+import { AppDetailsStateContext } from './AppDetails/AppDetailsStateContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -39,110 +39,91 @@ interface NewAppProps {
   orgId: string;
 }
 
-interface NewAppState {
-  busy: boolean;
-  definition: AppDefinition;
-  errors: ValidationError[];
-}
+export const NewApp = (props: NewAppProps) => {
+  const [busy, setBusy] = React.useState(false);
+  const [errors, setErrors] = React.useState<ValidationError[]>([]);
 
-export class NewApp extends React.Component<NewAppProps, NewAppState> {
-  constructor(props) {
-    super(props);
+  const { draftDefinition } = React.useContext(AppDetailsStateContext);
 
-    this.state = {
-      busy: false,
-      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId) as AppDefinition,
-      errors: [],
-    };
-  }
-
-  save = async () => {
-    const errors = validate(this.state.definition, []);
+  const save = async () => {
+    const validationErrors = validate(draftDefinition, []);
     if (errors.length > 0) {
-      this.setState({ errors });
+      setErrors(validationErrors);
       return;
     }
 
-    this.setState({ busy: true });
+    setBusy(true);
 
     try {
-      const saved = await ManagementApiClient.save(this.state.definition);
+      const saved = await ManagementApiClient.save(draftDefinition);
       Notification.success('App created successfully.');
-      this.props.goToDefinition(saved.sys.id);
+      props.goToDefinition(saved.sys.id);
     } catch (err) {
       if (err.status === 422) {
-        this.setState({
-          errors: err.data.details.errors.map((error) => {
+        setErrors(
+          err.data.details.errors.map((error) => {
             if (
               error.path[0] === 'locations' &&
               typeof error.path[1] === 'number' &&
-              this.state.definition.locations
+              draftDefinition.locations
             ) {
-              error.path[1] = this.state.definition.locations[error.path[1]].location;
+              error.path[1] = draftDefinition.locations[error.path[1]].location;
             }
             return error;
-          }),
-        });
+          })
+        );
+
         Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
       } else {
         Notification.error("Something went wrong. Couldn't create app.");
       }
     }
 
-    this.setState({ busy: false });
+    setBusy(false);
   };
 
-  render() {
-    const { definition, busy } = this.state;
-
-    return (
-      <Workbench>
-        <DocumentTitle title="Apps" />
-        <Workbench.Header
-          title="Create app"
-          onBack={this.props.goToListView}
-          icon={<ProductIcon icon="Apps" size="large" />}
-          actions={
-            <div className="workbench-header__actions">
-              <Button
-                loading={busy}
-                disabled={busy}
-                buttonType="positive"
-                onClick={this.save}
-                testId="app-create">
-                Create
-              </Button>
-            </div>
-          }
-        />
-        <Workbench.Content type="text">
-          <Note className={styles.spacerXl}>
-            <Paragraph>
-              Build apps for Contentful to extend the core functionality of the web app and optimize
-              the workflow of editors. Learn{' '}
-              <TextLink
-                href={withInAppHelpUtmParams(BUILDING_APPS_URL)}
-                target="_blank"
-                rel="noopener noreferrer">
-                how to build your first app
-              </TextLink>{' '}
-              to get started.
-            </Paragraph>
-          </Note>
-          <HostingStateProvider
-            defaultValue={false}
-            bundles={{ items: [] }}
-            orgId={this.props.orgId}>
-            <AppEditor
-              definition={definition}
-              onChange={(definition) => this.setState({ definition })}
-              errors={this.state.errors}
-              onErrorsChange={(errors) => this.setState({ errors })}
+  return (
+    <Workbench>
+      <DocumentTitle title="Apps" />
+      <Workbench.Header
+        title="Create app"
+        onBack={props.goToListView}
+        icon={<ProductIcon icon="Apps" size="large" />}
+        actions={
+          <div className="workbench-header__actions">
+            <Button
+              loading={busy}
               disabled={busy}
-            />
-          </HostingStateProvider>
-        </Workbench.Content>
-      </Workbench>
-    );
-  }
-}
+              buttonType="positive"
+              onClick={save}
+              testId="app-create">
+              Create
+            </Button>
+          </div>
+        }
+      />
+      <Workbench.Content type="text">
+        <Note className={styles.spacerXl}>
+          <Paragraph>
+            Build apps for Contentful to extend the core functionality of the web app and optimize
+            the workflow of editors. Learn{' '}
+            <TextLink
+              href={withInAppHelpUtmParams(BUILDING_APPS_URL)}
+              target="_blank"
+              rel="noopener noreferrer">
+              how to build your first app
+            </TextLink>{' '}
+            to get started.
+          </Paragraph>
+        </Note>
+        <HostingStateProvider defaultValue={false} bundles={{ items: [] }} orgId={props.orgId}>
+          <AppEditor
+            errors={errors}
+            onErrorsChange={(changedErrors) => setErrors(changedErrors)}
+            disabled={busy}
+          />
+        </HostingStateProvider>
+      </Workbench.Content>
+    </Workbench>
+  );
+};

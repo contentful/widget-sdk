@@ -16,6 +16,7 @@ import { LEARN_MORE_URL } from '../DocumentationUrls';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
 import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
 import { TopicEventTable } from './TopicEventTable';
+import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -49,17 +50,9 @@ const styles = {
   }),
 };
 
-export function AppEvents({
-  definition,
-  events,
-  onChange,
-  errorPath,
-  errors,
-  savedEvents,
-  onErrorsChange,
-  disabled,
-}) {
-  const topicValues = useMemo(() => transformTopicsToMap(events.topics), [events]);
+export function AppEvents({ errorPath, errors, savedEvents, onErrorsChange, disabled }) {
+  const { draftDefinition, draftEvents, setDraftEvents } = React.useContext(AppDetailsStateContext);
+  const topicValues = useMemo(() => transformTopicsToMap(draftEvents.topics), [draftEvents]);
 
   const [isAppEventsModalShown, setIsAppEventsModalShown] = useState(false);
 
@@ -84,32 +77,32 @@ export function AppEvents({
         id="appEvent"
         labelText="Enable events"
         className={styles.spacer}
-        isChecked={events.enabled}
+        isChecked={draftEvents.enabled}
         onToggle={() => {
-          if (events.enabled) {
+          if (draftEvents.enabled) {
             if (savedEvents.enabled) {
               setIsAppEventsModalShown(true);
             } else {
-              onChange({
-                ...events,
+              setDraftEvents({
+                ...draftEvents,
                 enabled: false,
               });
             }
           } else {
-            onChange({
-              ...events,
+            setDraftEvents({
+              ...draftEvents,
               enabled: true,
             });
           }
         }}
       />
-      {events.enabled && (
+      {draftEvents.enabled && (
         <>
           <TextField
             id="targetUrl"
             className={styles.spacer}
             required={true}
-            value={events.targetUrl}
+            value={draftEvents.targetUrl}
             textInputProps={{
               placeholder: 'https://',
               disabled,
@@ -119,8 +112,8 @@ export function AppEvents({
             }
             onChange={(event) => {
               clearErrorForField([...errorPath, 'targetUrl']);
-              onChange({
-                ...events,
+              setDraftEvents({
+                ...draftEvents,
                 targetUrl: event.target.value.trim(),
               });
             }}
@@ -136,8 +129,8 @@ export function AppEvents({
             id="appEventTopics"
             values={topicValues}
             onChange={(map) => {
-              onChange({
-                ...events,
+              setDraftEvents({
+                ...draftEvents,
                 topics: transformMapToTopics(map),
               });
             }}
@@ -147,14 +140,14 @@ export function AppEvents({
       )}
       <DisableAppEventsModal
         onDisableAppEvents={() => {
-          onChange({
-            ...events,
+          setDraftEvents({
+            ...draftEvents,
             enabled: false,
           });
           setIsAppEventsModalShown(false);
         }}
         isShown={isAppEventsModalShown}
-        title={`Disable events for ${definition.name}`}
+        title={`Disable events for ${draftDefinition.name}`}
         onClose={() => setIsAppEventsModalShown(false)}
       />
     </div>
@@ -162,10 +155,7 @@ export function AppEvents({
 }
 
 AppEvents.propTypes = {
-  definition: PropTypes.object.isRequired,
-  events: PropTypes.object.isRequired,
   savedEvents: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
   errorPath: PropTypes.array.isRequired,
   errors: PropTypes.array.isRequired,
   onErrorsChange: PropTypes.func.isRequired,
