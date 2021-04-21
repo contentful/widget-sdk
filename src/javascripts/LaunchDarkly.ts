@@ -54,8 +54,8 @@ export enum FLAGS {
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
-
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
+  ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -84,6 +84,7 @@ const FALLBACK_VALUES = {
   [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
   [FLAGS.APP_HOSTING_UI]: false,
   [FLAGS.HIGH_VALUE_LABEL]: false,
+  [FLAGS.ENVIRONMENT_POLICIES]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
