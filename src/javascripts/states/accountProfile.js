@@ -3,9 +3,10 @@ import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 
 import SpaceMembershipsRouter from 'app/UserSettings/SpaceMembershipsRouter';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
-import { UserCMATokensRoute } from 'features/api-keys-management';
+
 import AccountView from 'account/AccountView';
 import { userProfileState } from 'features/user-profile';
+import { accountCMATokensRouteState } from 'features/account-settings';
 
 const spaceMemberships = {
   name: 'space_memberships',
@@ -17,12 +18,6 @@ const organizationMemberships = {
   name: 'organization_memberships',
   url: '/organization_memberships',
   component: OrganizationMembershipsRoute,
-};
-
-const cmaTokens = {
-  name: 'cma_tokens',
-  url: '/cma_tokens',
-  component: UserCMATokensRoute,
 };
 
 const accessGrants = {
@@ -60,7 +55,7 @@ export default {
   children: [
     userCancellation,
     userProfileState,
-    cmaTokens,
+    accountCMATokensRouteState,
     spaceMemberships,
     organizationMemberships,
     accessGrants,

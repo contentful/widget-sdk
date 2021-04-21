@@ -1,3 +1,4 @@
+import { routes } from 'core/react-routing';
 import React from 'react';
 import NavBar from './NavBar/NavBar';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
@@ -7,7 +8,8 @@ export default function ProfileNavigationBar() {
     {
       title: 'Personal access tokens',
       navIcon: 'Token',
-      sref: 'account.profile.cma_tokens',
+      sref: routes['account.cma_tokens']().path,
+      srefParams: routes['account.cma_tokens']().params,
       srefOptions: {
         inherit: false,
       },

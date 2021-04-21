@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TextInput, Note } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   note: css({
@@ -21,13 +21,13 @@ export default function UserProvisioningToken({ personalAccessToken }) {
         Make sure to immediately copy your new personal access token. You won’t be able to see it
         again.
         <br />
-        <StateLink
-          path="account.profile.cma_tokens"
+        <ReactRouterLink
+          route={{ path: 'account.cma_tokens' }}
           data-test-id="tokens-url"
           target="_blank"
           rel="noopener noreferrer">
           Manage your tokens.
-        </StateLink>
+        </ReactRouterLink>
       </Note>
       <TextInput
         name="scim-token"
