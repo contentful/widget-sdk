@@ -296,7 +296,7 @@ export const deleteUserAccount = {
         password: 'invalid-current-password',
       }),
       willRespondWith: {
-        status: 403,
+        status: 422,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
