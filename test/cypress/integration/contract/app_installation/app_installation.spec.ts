@@ -65,7 +65,7 @@ describe('App Installation', () => {
         it('public Dropbox app', () => {
           const loadAppConfigurationScreenInteraction = [
             appInstallation.willNotReturnPublicApp(),
-            getAllContentTypesInDefaultSpace.willReturnOne(),
+            getAllContentTypesInDefaultSpace.willReturnOne(true),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
 
@@ -176,7 +176,7 @@ describe('App Installation', () => {
           // Config screen interactions
           const loadAppConfigurationScreenInteraction = [
             appInstallation.willReturnPublicApp(),
-            getAllContentTypesInDefaultSpace.willReturnOne(),
+            getAllContentTypesInDefaultSpace.willReturnOne(true),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
           cy.wait(loadAppConfigurationScreenInteraction, { timeout: 4000 });
