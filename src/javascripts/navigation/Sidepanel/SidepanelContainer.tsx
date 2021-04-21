@@ -10,8 +10,7 @@ const SidepanelContainer = () => {
   const [sidePanelIsShown, setSidePanelIsShown] = React.useState(false);
   const [orgDropdownIsShown, setOrgDropdownIsShown] = React.useState(false);
   const [appSwitcherIsShown, setAppSwitcherIsShown] = React.useState(false);
-  const { isLoading: isLoadingAppsList, appsList } = useAppsList();
-  const hasContentfulApps = isLoadingAppsList ? null : appsList.length > 1;
+  const { appsList } = useAppsList();
 
   const closeDropdownOrPanel = React.useCallback(() => {
     if (orgDropdownIsShown) {
@@ -71,7 +70,6 @@ const SidepanelContainer = () => {
           onClose={() => setAppSwitcherIsShown(false)}
         />
         <SidePanelTrigger
-          hasContentfulApps={hasContentfulApps}
           onClickOrganization={() => setSidePanelIsShown(true)}
           openAppSwitcher={() => setAppSwitcherIsShown(true)}
         />

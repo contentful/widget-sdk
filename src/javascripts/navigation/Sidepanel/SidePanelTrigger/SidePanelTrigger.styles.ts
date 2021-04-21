@@ -9,7 +9,7 @@ export const styles = {
     backgroundColor: tokens.colorContrastMid,
     display: 'flex',
     flexGrow: 1,
-    padding: `0 ${tokens.spacingM} 0 ${tokens.spacingM}`,
+    padding: `0 ${tokens.spacingM} 0 0`,
     textAlign: 'left',
     width: '280px',
     height: '100%',
@@ -26,7 +26,7 @@ export const styles = {
     flexShrink: 1,
     overflow: 'hidden',
     textAlign: 'left',
-    padding: `0 ${tokens.spacingM} 0 ${tokens.spacingM}`,
+    padding: `0 ${tokens.spacingM} 0 ${tokens.spacingXs}`,
     outline: 'none',
   }),
   ellipsis: css({
@@ -52,11 +52,13 @@ export const styles = {
   noShrink: css({
     display: 'flex',
     flexShrink: 0,
-    zIndex: 2,
   }),
-  reduceButtonSize: css({
-    marginLeft: `-${tokens.spacingS}`,
-    marginRight: `-${tokens.spacingS}`,
+  noBorder: css({
+    border: 'none',
+    // The tooltip wrapper adds 5px margin-bottom
+    marginBottom: '-5px',
+    // Fill the container height
+    padding: '3px 0',
   }),
   hoverBackground: css({
     position: 'absolute',
