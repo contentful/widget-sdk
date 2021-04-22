@@ -153,5 +153,7 @@ export default {
 };
 
 export function buildPayload(schema: Schema, data: TransformedEventData): object {
-  return schema.wrapPayloadInData ? { data: data.data } : data.data;
+  return schema.wrapPayloadInData
+    ? data // `data` might contain other legacy props `schema` and `contexts` next to `data.data`
+    : data.data;
 }
