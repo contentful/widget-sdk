@@ -1,4 +1,4 @@
-export { tagsState } from 'features/content-tags/routes/TagsRoute';
+export { TagsRouter } from 'features/content-tags/routes/TagsRoute';
 export {
   useTagsFeatureEnabled,
   useReadTags,
@@ -39,4 +39,4 @@ export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveT
 export { useTagsValuesForIdList } from 'features/content-tags/core/hooks/useTagsValuesForIdList';
 export { useTagsValuesForTagsList } from 'features/content-tags/core/hooks/useTagsValuesForTagsList';
 export { SelectTagsModal, selectTags } from 'features/content-tags/core/components/SelectTagsModal';
-export { TagsRepoType } from 'features/content-tags/types';
+export type { TagsRepoType } from 'features/content-tags/types';

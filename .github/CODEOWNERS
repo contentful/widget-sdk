@@ -15,3 +15,12 @@ src/javascripts/features/space-teams/* @contentful/team-hejo
 
 # Space memberships
 src/javascripts/features/space-memberships/* @contentful/team-hejo
+
+# Roles and permissions
+src/javascripts/features/roles-permissions-management/* @contentful/team-hejo
+
+# Locales
+src/javascripts/features/locales-management/* @contentful/team-dante
+
+# Space Users
+src/javascripts/features/settings-space-users/* @contentful/team-hejo

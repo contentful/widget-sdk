@@ -9,8 +9,7 @@ import { TagsWorkbenchSkeleton } from 'features/content-tags/management/skeleton
 import { TagsList } from 'features/content-tags/management/components/TagsList';
 import { MetadataTags } from 'features/content-tags';
 import { FilteredTagsContext } from 'features/content-tags/core/state/FilteredTagsContext';
-import { window } from 'core/services/window';
-import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-routing';
+import { Route, RouteErrorBoundary, Routes } from 'core/react-routing';
 
 function TagsRoute({ redirectUrl = 'spaces.detail' }) {
   const { tagsEnabled, isTagsEnabledLoading } = useTagsFeatureEnabled();
@@ -78,25 +77,11 @@ function TagsRoute({ redirectUrl = 'spaces.detail' }) {
   );
 }
 
-function TagsRouter() {
-  const [basename] = window.location.pathname.split('tags');
-
-  return (
-    <CustomRouter splitter="settings/tags">
-      <RouteErrorBoundary>
-        <Routes basename={basename + 'tags'}>
-          <Route name="spaces.detail.settings.tags.list" path="/" element={<TagsRoute />} />
-          <Route name={null} path="*" element={<StateRedirect path="home" />} />
-        </Routes>
-      </RouteErrorBoundary>
-    </CustomRouter>
-  );
-}
-
-const tagsState = {
-  name: 'tags',
-  url: '/tags{pathname:any}',
-  component: TagsRouter,
-};
-
-export { TagsRoute, tagsState };
+export const TagsRouter = () => (
+  <RouteErrorBoundary>
+    <Routes>
+      <Route name="spaces.detail.settings.tags.list" path="/" element={<TagsRoute />} />
+      <Route name={null} path="*" element={<StateRedirect path="home" />} />
+    </Routes>
+  </RouteErrorBoundary>
+);

@@ -30,31 +30,31 @@ type WebhookRouteType =
 
 const webhookRoutes = {
   'webhooks.list': (env: EnvironmentParams, params?: Omit<WebhookListRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.webhooks'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/webhooks',
       navigationState: params?.navigationState,
     },
   }),
   'webhooks.new': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.webhooks'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/new',
+      pathname: '/webhooks/new',
     },
   }),
   'webhooks.detail': (env: EnvironmentParams, params: Omit<WebhookDetailRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.webhooks'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/${params.webhookId}`,
+      pathname: `/webhooks/${params.webhookId}`,
     },
   }),
   'webhooks.detail.call': (
     env: EnvironmentParams,
     params: Omit<WebhookDetailCallRouteType, 'path'>
   ) => ({
-    path: spaceEnvBase(env, 'settings.webhooks'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/${params.webhookId}/call/${params.callId}`,
+      pathname: `/webhooks/${params.webhookId}/call/${params.callId}`,
     },
   }),
 };
@@ -69,21 +69,21 @@ type LocalesRouteType = LocalesListRouteType | LocalesNewRouteType | LocalesDeta
 
 const localesRoutes = {
   'locales.list': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.locales'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/locales',
     },
   }),
   'locales.new': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.locales'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/new',
+      pathname: '/locales/new',
     },
   }),
   'locales.detail': (env: EnvironmentParams, params: Omit<LocalesDetailRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.locales'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/${params.localeId}`,
+      pathname: `/locales/${params.localeId}`,
     },
   }),
 };
@@ -99,9 +99,9 @@ type UsersListRouteType = {
 
 const usersListRoutes = {
   'users.list': (env: EnvironmentParams, params?: Omit<UsersListRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.users'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/users',
       navigationState: params?.navigationState,
     },
   }),
@@ -123,22 +123,22 @@ type RolesRouteType = RolesListRouteType | RolesNewRouteType | RolesDetailRouteT
 
 const rolesRoutes = {
   'roles.list': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.roles'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/roles',
     },
   }),
   'roles.new': (env: EnvironmentParams, params: Omit<RolesNewRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.roles'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/new/${params?.tab || 'details'}`,
+      pathname: `/roles/new/${params?.tab || 'details'}`,
       navigationState: params?.navigationState,
     },
   }),
   'roles.detail': (env: EnvironmentParams, params: Omit<RolesDetailRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.roles'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/${params.roleId}/${params?.tab || 'details'}`,
+      pathname: `/roles/${params.roleId}/${params?.tab || 'details'}`,
     },
   }),
 };
@@ -149,9 +149,9 @@ type TagsRouteType = { path: 'tags' };
 
 const tagsRoutes = {
   tags: (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.tags'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/tags',
     },
   }),
 };
@@ -173,9 +173,9 @@ type ExtensionsRouteType = ExtensionsListRouteType | ExtensionsDetailRouteType;
 
 const extensionsRoutes = {
   'extensions.list': (env: EnvironmentParams, params?: Omit<ExtensionsListRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.extensions'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/extensions',
       navigationState: params?.navigationState,
     },
   }),
@@ -183,9 +183,9 @@ const extensionsRoutes = {
     env: EnvironmentParams,
     params: Omit<ExtensionsDetailRouteType, 'path'>
   ) => ({
-    path: spaceEnvBase(env, 'settings.extensions'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: `/${params.extensionsId}`,
+      pathname: `/extensions/${params.extensionsId}`,
     },
   }),
 };
@@ -203,9 +203,24 @@ type ContentPreviewRouteType =
 
 const contentPreviewRoutes = {
   'content_preview.list': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.content_preview'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/content_preview',
+    },
+  }),
+  'content_preview.new': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings'),
+    params: {
+      pathname: `/content_preview/new`,
+    },
+  }),
+  'content_preview.detail': (
+    env: EnvironmentParams,
+    params: Omit<ContentPreviewDetailRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'settings'),
+    params: {
+      pathname: `/content_preview/${params.contentPreviewId}`,
     },
   }),
 };
@@ -219,25 +234,10 @@ type SpaceUsageRouteType = {
 
 const spaceUsageRoutes = {
   usage: (env: EnvironmentParams, params?: Omit<SpaceUsageRouteType, 'path'>) => ({
-    path: spaceEnvBase(env, 'settings.usage'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/usage',
       ...params,
-    },
-  }),
-  'content_preview.new': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.content_preview'),
-    params: {
-      pathname: `/new`,
-    },
-  }),
-  'content_preview.detail': (
-    env: EnvironmentParams,
-    params: Omit<ContentPreviewDetailRouteType, 'path'>
-  ) => ({
-    path: spaceEnvBase(env, 'settings.content_preview'),
-    params: {
-      pathname: `/${params.contentPreviewId}`,
     },
   }),
 };
@@ -254,30 +254,61 @@ const environmentsRoutes = {
     env: EnvironmentParams,
     params?: Omit<EnvironmentsRouteType, 'path'>
   ) => ({
-    path: spaceEnvBase(env, 'settings.environments'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/environments',
       ...params,
     },
   }),
 };
 
+/** Teams */
+
 type TeamsListRouteType = { path: 'teams.list' };
 type TeamsAddRouteType = { path: 'teams.add' };
 type TeamsRouteType = TeamsListRouteType | TeamsAddRouteType;
 
-/** Teams */
 const teamsRoutes = {
   'teams.list': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.teams'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/',
+      pathname: '/teams',
     },
   }),
   'teams.add': (env: EnvironmentParams) => ({
-    path: spaceEnvBase(env, 'settings.teams'),
+    path: spaceEnvBase(env, 'settings'),
     params: {
-      pathname: '/add',
+      pathname: '/teams/add',
+    },
+  }),
+};
+
+/** Space */
+
+type SpaceRouteType = {
+  path: 'settings.space';
+};
+
+const spaceRoutes = {
+  'settings.space': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings'),
+    params: {
+      pathname: '/space',
+    },
+  }),
+};
+
+/** Embargoed assets */
+
+type EmbargoedAssetsRouteType = {
+  path: 'settings.embargoedAssets';
+};
+
+const embargoedAssetsRoutes = {
+  'settings.embargoedAssets': (env: EnvironmentParams) => ({
+    path: spaceEnvBase(env, 'settings'),
+    params: {
+      pathname: '/embargoed-assets',
     },
   }),
 };
@@ -296,7 +327,9 @@ export type SpaceSettingsRouteType =
   | ContentPreviewRouteType
   | TeamsRouteType
   | SpaceUsageRouteType
-  | EnvironmentsRouteType;
+  | EnvironmentsRouteType
+  | SpaceRouteType
+  | EmbargoedAssetsRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -309,4 +342,6 @@ export const routes = {
   ...teamsRoutes,
   ...environmentsRoutes,
   ...spaceUsageRoutes,
+  ...spaceRoutes,
+  ...embargoedAssetsRoutes,
 };

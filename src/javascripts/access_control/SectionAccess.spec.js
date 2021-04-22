@@ -1,5 +1,6 @@
 import { getFirstAccessibleSref } from './SectionAccess';
 import { getSectionVisibility } from 'access_control/AccessChecker';
+import { routes } from '../core/react-routing';
 
 const mockAllTrue = {
   contentType: true,
@@ -115,9 +116,8 @@ describe('#getFirstAccessibleSref', () => {
       apiKey: false,
       settings: true,
     }));
-    expect(getFirstAccessibleSref(customRoleSpace)).toEqual({
-      path: 'spaces.detail.settings.users',
-      params: { pathname: '/', navigationState: undefined },
-    });
+    expect(getFirstAccessibleSref(customRoleSpace)).toEqual(
+      routes['users.list']({ withEnvironment: false })
+    );
   });
 });
