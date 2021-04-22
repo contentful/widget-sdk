@@ -1,23 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
-import {
-  Flex,
-  Grid,
-  SkeletonBodyText,
-  SkeletonContainer,
-  SkeletonDisplayText,
-} from '@contentful/forma-36-react-components';
+import { Flex, Grid } from '@contentful/forma-36-react-components';
 
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
-import { BasePlan } from './BasePlan';
-import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+import { BasePlanCard } from './BasePlanCard';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
@@ -38,6 +32,18 @@ export function EnterpriseSubscriptionPage({
 }) {
   const organizationId = organization?.sys.id;
   const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
+  const [content, setContent] = useState();
+
+  // TODO: create custom hook to fetch baseplan content
+  useEffect(() => {
+    const fetchBasePlanContent = async () => {
+      const entryContent = await fetchWebappContentByEntryID('G7TaplIVAIntn3QIDaSCd');
+
+      setContent(entryContent);
+    };
+
+    fetchBasePlanContent();
+  }, [basePlan]);
 
   const onCreateSpace = createSpace(organizationId);
   const onChangeSpace = changeSpace(
@@ -55,39 +61,18 @@ export function EnterpriseSubscriptionPage({
 
   return (
     <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
-      {!isNotAdminOrOwnerOfTrialOrg && (
-        <Flex flexDirection="column">
-          {initialLoad ? (
-            <SkeletonContainer svgHeight={117}>
-              <SkeletonDisplayText />
-              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-            </SkeletonContainer>
-          ) : (
-            <BasePlan basePlan={basePlan} organizationId={organizationId} />
-          )}
-        </Flex>
-      )}
-      {!isNotAdminOrOwnerOfTrialOrg && (
-        <Flex flexDirection="column">
-          {initialLoad ? (
-            <SkeletonContainer svgHeight={117}>
-              <SkeletonDisplayText />
-              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-            </SkeletonContainer>
-          ) : (
-            <Flex flexDirection="column" marginBottom="spacingXl">
-              <UsersForPlan
-                organizationId={organizationId}
-                numberFreeUsers={usersMeta && usersMeta.numFree}
-                numberPaidUsers={usersMeta && usersMeta.numPaid}
-                costOfUsers={usersMeta && usersMeta.cost}
-                unitPrice={usersMeta && usersMeta.unitPrice}
-                hardLimit={usersMeta && usersMeta.hardLimit}
-                isFreePlan={false}
-                isOnEnterpriseTrial={isOrgOnEnterpriseTrial}
-              />
-            </Flex>
-          )}
+      {content && (
+        <Flex flexDirection="column" className={styles.fullRow}>
+          <BasePlanCard
+            content={content}
+            organizationId={organizationId}
+            users={
+              usersMeta && {
+                count: usersMeta.numFree + usersMeta.numPaid,
+                limit: usersMeta.hardLimit,
+              }
+            }
+          />
         </Flex>
       )}
 

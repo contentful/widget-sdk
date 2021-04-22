@@ -6,7 +6,11 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
+import {
+  ENTERPRISE,
+  ENTERPRISE_HIGH_DEMAND,
+  getPlansWithSpaces,
+} from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
@@ -37,7 +41,7 @@ import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscription
 
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
-const TiersWithContent = [FREE, SELF_SERVICE];
+const TiersWithContent = [FREE, SELF_SERVICE, ENTERPRISE, ENTERPRISE_HIGH_DEMAND];
 
 function isOrganizationEnterprise(organization, basePlan) {
   const isLegacyOrg = isLegacyOrganization(organization);

@@ -10,7 +10,6 @@ import { EnterpriseSubscriptionPage } from './EnterpriseSubscriptionPage';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
@@ -35,7 +34,6 @@ jest.mock('states/Navigator', () => ({
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
-const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 const mockOrganization = Fake.Organization();
 const mockTrialOrganization = Fake.Organization({
@@ -43,7 +41,6 @@ const mockTrialOrganization = Fake.Organization({
 });
 
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
-const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
 
 describe('EnterpriseSubscriptionPage', () => {
   beforeEach(() => {
@@ -58,77 +55,6 @@ describe('EnterpriseSubscriptionPage', () => {
     screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
       expect(ele).toBeVisible();
     });
-  });
-
-  it('should display the base name', () => {
-    build();
-
-    expect(screen.getByTestId('subscription-page.base-plan-details')).toHaveTextContent(
-      mockBasePlan.name
-    );
-  });
-
-  it('should show user details', () => {
-    const usersMeta = {
-      numFree: 7,
-      numPaid: 10,
-      cost: 1000000,
-      unitPrice: 100,
-      hardLimit: 25,
-    };
-
-    build({ usersMeta });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
-        usersMeta.numFree
-      } users are included free with your subscription. ` +
-        `You will be charged an additional $${usersMeta.unitPrice}/month per user for ${usersMeta.numPaid} users. That is $${usersMeta.cost} per month.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-  });
-
-  it('should show user details and CTA to contact support for the Team users', () => {
-    const usersMeta = {
-      numFree: 10,
-      numPaid: 17,
-      hardLimit: 25,
-    };
-
-    build({ usersMeta, basePlan: mockTeamBasePlan });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
-        usersMeta.hardLimit
-      } users are included with your subscription.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
-
-    const ctaLink = screen.getByTestId('subscription-page.contact-support-link');
-    expect(ctaLink).toBeVisible();
-
-    userEvent.click(ctaLink);
-    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.REQUEST_TEAM_USER_LIMIT, {
-      organizationId: mockOrganization.sys.id,
-    });
-  });
-
-  it('should show user details correctly for the Enterprise trial customers', () => {
-    const usersMeta = {
-      numFree: 100,
-      hardLimit: null,
-    };
-
-    build({ usersMeta, organization: mockTrialOrganization });
-
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
-        `Customers on the Enterprise tier can purchase additional users for $15/month per user.`
-    );
-
-    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
   });
 
   it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
