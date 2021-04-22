@@ -6,7 +6,7 @@ For high level information, please see the Confluence pages on [the critical pat
 
 # Smoke tests in the CI
 
-To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [every 7 minutes in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b4c7bc398e1d525af02d6791f6c648bab43ef9d1/.github/workflows/smoke-test-staging.yml#L5). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-test-staging.yml).
+To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [every 7 minutes in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b33fbdf404a17113d5ea925a2903480fa6bef714/.github/workflows/smoke-tests.yml). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-tests.yml).
 
 ## Running a change to the smoke test setup
 
@@ -60,12 +60,17 @@ This manually triggered run will shortly appear in the list and you can monitor 
 
 # Running smoke tests locally
 
-Before running the smoke tests, ensure that the password (and optionally the email) for the account used for testing is available in your environment with the `SMOKE_TEST_USER_PASSWORD` variable. By default, the account email is `test@contentful.com`, and the password is available in 1password. If you don't set this password Cypress will err and tell you what the problem is.
+To run the smoke tests locally, you'll need the password and email for the account used for testing. By default the email is set to `test@contentful.com`, so if you're using this account, you only need to provide the password using the environment variable `SMOKE_TEST_USER_PASSWORD`. This password is available in 1Password. If you don't set the password Cypress will err and tell you what the problem is.
+
+You will also need to either provide a Librato auth token using the `LIBRATO_AUTH_TOKEN` environment variable, or alternatively setting the `SKIP_LIBRATO` environment variable. Without doing one of these Cypress will err.
 
 The simplest way to run the smoke tests is using the `npm` task:
 
 ```
 export SMOKE_TEST_USER_PASSWORD="..."
+export LIBRATO_AUTH_TOKEN="..."
+# or...
+export SKIP_LIBRATO="true"
 
 npm run smoke # runs against contentful.com
 npm run smoke-staging # runs against flinkly.com
@@ -134,7 +139,7 @@ At the moment, the alerts ping just Slack, but long term they will be setup to p
 
 # Smoke test spec best practices
 
-## Spec naming and its important w.r.t. telemetry
+## Spec naming and its importance w.r.t. telemetry
 
 The name of the spec is very important, as it used for reporting data to Librato for telemetry purposes. **Always name the test using hyphen case**. It's also highly recommended not to nest tests within a describe block and to just use the `test` global.
 

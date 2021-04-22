@@ -11,14 +11,18 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
     SMOKE_TEST_ENVIRONMENT,
     SMOKE_TEST_SELF_SERVICE_ORG_ID,
     LIBRATO_AUTH_TOKEN,
+    SKIP_LIBRATO,
   } = process.env;
 
   if (!SMOKE_TEST_USER_PASSWORD) {
     throw new EnvironmentVariableMissingError('SMOKE_TEST_USER_PASSWORD');
   }
 
-  if (!LIBRATO_AUTH_TOKEN) {
-    throw new EnvironmentVariableMissingError('LIBRATO_AUTH_TOKEN');
+  if (!LIBRATO_AUTH_TOKEN && !SKIP_LIBRATO) {
+    throw new EnvironmentVariableMissingError(
+      'LIBRATO_AUTH_TOKEN',
+      `Alternatively, set the SKIP_LIBRATO environment variable.`
+    );
   }
 
   const email = SMOKE_TEST_USER_EMAIL ? SMOKE_TEST_USER_EMAIL : 'test@contentful.com';
@@ -43,6 +47,7 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
   config.env.domain = domain;
   config.env.environment = environment;
   config.env.libratoAuthToken = LIBRATO_AUTH_TOKEN;
+  config.env.skipLibrato = SKIP_LIBRATO ? true : false;
 
   // hard coded space/org/etc. IDs below
   config.env.selfServiceOrgId = SMOKE_TEST_SELF_SERVICE_ORG_ID;
@@ -51,7 +56,7 @@ export function setupConfig(_, config: Cypress.PluginConfigOptions) {
 }
 
 class EnvironmentVariableMissingError extends Error {
-  constructor(envVarName: string) {
-    super(`Environment variable ${envVarName} expected but missing`);
+  constructor(envVarName: string, extraMessage: string = '') {
+    super(`Environment variable ${envVarName} expected but missing. ${extraMessage}`);
   }
 }
