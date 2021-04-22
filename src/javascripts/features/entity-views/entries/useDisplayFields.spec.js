@@ -19,6 +19,8 @@ useSpaceEnvContext.mockReturnValue({
 
 let mockView = getBlankEntryView();
 
+const updateEntities = jest.fn();
+
 const initHook = (contentTypeId) => {
   const listViewContext = {
     getView: jest.fn().mockImplementation(() => mockView),
@@ -31,7 +33,7 @@ const initHook = (contentTypeId) => {
   return renderHook(() =>
     useDisplayFields({
       listViewContext,
-      updateEntities: jest.fn(),
+      updateEntities,
     })
   );
 };
@@ -209,5 +211,21 @@ describe('useSelectedEntities', () => {
       },
       { id: 2 },
     ]);
+  });
+
+  it('should update the entities when there is a link field', () => {
+    const { result } = initHook();
+
+    act(() => result.current[1].addDisplayField({ type: 'Link', id: 3 }));
+    expect(updateEntities).toHaveBeenCalled();
+    updateEntities.mockReset();
+
+    act(() => result.current[1].addDisplayField({ type: 'Array', items: { type: 'Link' }, id: 4 }));
+    expect(updateEntities).toHaveBeenCalled();
+    updateEntities.mockReset();
+
+    act(() => result.current[1].addDisplayField({ type: 'Array', items: { type: 'foo' }, id: 5 }));
+
+    expect(updateEntities).not.toHaveBeenCalled();
   });
 });
