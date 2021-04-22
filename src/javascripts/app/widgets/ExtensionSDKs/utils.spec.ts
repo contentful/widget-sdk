@@ -44,8 +44,8 @@ describe('cleanupJSONValue', () => {
     });
   });
 
-  it('returns date as-is', () => {
+  it('returns date as ISO strings', () => {
     const date = new Date();
-    expect(cleanupJSONValue(date)).toBe(date);
+    expect(cleanupJSONValue(date)).toBe(date.toISOString());
   });
 });

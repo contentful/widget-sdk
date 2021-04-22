@@ -34,6 +34,7 @@ export const createIdsApiWithoutField = ({
 /**
  * - removes object props with undefined value
  * - replaces array undefined array values with null
+ * - replaces Date objects with ISO strings
  */
 export function cleanupJSONValue(value: any): any {
   if (Array.isArray(value)) {
