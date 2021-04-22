@@ -16,23 +16,17 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { useAsync } from 'core/hooks';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { LoadingState } from 'features/loading-state';
-import {
-  isOrganizationOnTrial,
-  AppTrialRepo,
-  isActiveAppTrial,
-  isExpiredAppTrial,
-  useAppsTrial,
-} from 'features/trials';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization, getSpaces } from 'services/TokenStore';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isOrganizationOnTrial } from 'features/trials';
+import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
@@ -116,8 +110,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const appCatalogFeature = await AppTrialRepo.getTrial(organizationId);
-
   setSpacePlans(spacePlans);
 
   const isSubscriptionPageRebrandingEnabled = await getVariation(
@@ -132,8 +124,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     numMemberships,
     organization,
     productRatePlans,
-    isAppTrialActive: isActiveAppTrial(appCatalogFeature),
-    isAppTrialExpired: isExpiredAppTrial(appCatalogFeature),
     isSubscriptionPageRebrandingEnabled,
     orgIsEnterprise,
   };
@@ -161,8 +151,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
       setGrandTotal(totalPrice);
     }
   }, [spacePlans, data.addOnPlan, data.basePlan, data.numMemberships]);
-
-  const { canStartTrial: isAppTrialAvailable } = useAppsTrial(organizationId);
 
   if (isLoading) {
     return <LoadingState testId="subs-page-loading" />;
@@ -219,9 +207,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
                   initialLoad={isLoading}
                   spacePlans={spacePlans}
                   onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-                  isAppTrialAvailable={isAppTrialAvailable}
-                  isAppTrialActive={data.isAppTrialActive}
-                  isAppTrialExpired={data.isAppTrialExpired}
                 />
               )}
             </>
@@ -236,9 +221,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
               initialLoad={isLoading}
               spacePlans={spacePlans}
               onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
-              isTrialAvailable={isAppTrialAvailable}
-              isTrialActive={data.isAppTrialActive}
-              isTrialExpired={data.isAppTrialExpired}
             />
           )}
         </Workbench.Content>

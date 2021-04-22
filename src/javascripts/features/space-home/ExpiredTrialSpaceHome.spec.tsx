@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
-import { isExpiredTrialSpace, isExpiredAppTrial } from 'features/trials';
+import { isExpiredTrialSpace } from 'features/trials';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import { useAppsTrial as _useAppsTrial } from 'features/trials';
 
 const mockedSpace = fake.Space();
 const readOnlySpace = {
@@ -33,10 +34,7 @@ jest.mock('services/TokenStore', () => ({
 
 jest.mock('features/trials', () => ({
   isExpiredTrialSpace: jest.fn(),
-  isExpiredAppTrial: jest.fn(),
-  AppTrialRepo: {
-    getTrial: jest.fn().mockResolvedValue({ sys: {} }),
-  },
+  useAppsTrial: jest.fn().mockResolvedValue({}),
 }));
 
 jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
@@ -68,6 +66,8 @@ jest.mock('features/pricing-entities', () => ({
   getAddOnProductRatePlans: jest.fn().mockResolvedValue([{ price: 100 }]),
 }));
 
+const useAppsTrial = _useAppsTrial as jest.Mock;
+
 describe('ExpiredTrialSpaceHome', () => {
   beforeEach(() => {
     (useSpaceEnvContext as jest.Mock).mockReturnValue(defaultSpaceContextValues);
@@ -76,7 +76,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('does not render when the Trial App is active', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(false);
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: false });
     (isExpiredTrialSpace as jest.Mock).mockReturnValue(false);
     build();
 
@@ -107,7 +107,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('renders correctly when the space is an expired App Trial Space', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
     build();
 
     await waitFor(() =>
@@ -120,7 +120,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('navigates to the upgrade flow when clicked', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
     build();
 
     await waitFor(() => fireEvent.click(screen.getByTestId('expired-trial-space-home.buy-now')));
@@ -129,7 +129,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('opens a delete space modal when clicked', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
     build();
 
     await waitFor(() =>
@@ -143,7 +143,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('does not render the CTA buttons when the user is not an org admin or owner', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
     (isOwnerOrAdmin as jest.Mock).mockReturnValue(false);
     build();
 
@@ -152,6 +152,7 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('does not fetch the add-on price when the user is not an org admin or owner', async () => {
+    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
     (isOwnerOrAdmin as jest.Mock).mockReturnValue(false);
     build();
 
@@ -159,7 +160,6 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('does not render when the App Trial is expired but the Trial Space is purchased', async () => {
-    (isExpiredAppTrial as jest.Mock).mockReturnValue(true);
     (isExpiredTrialSpace as jest.Mock).mockReturnValue(false);
 
     build();

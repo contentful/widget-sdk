@@ -30,7 +30,7 @@ import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
-import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
+import { useAppsTrial } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -52,13 +52,8 @@ const fetchData = (
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
-  const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
-  const hasActiveAppTrial = isActiveAppTrial(appTrial);
 
   if (!currentSpaceId || !isSpaceAdmin) {
-    setState({
-      hasActiveAppTrial,
-    });
     setLoading(false);
     return;
   }
@@ -79,7 +74,6 @@ const fetchData = (
         hasTeamsEnabled,
         cdaToken: key.accessToken,
         cpaToken: keyWithPreview.preview_api_key.accessToken,
-        hasActiveAppTrial,
       });
     }
 
@@ -96,12 +90,10 @@ const fetchData = (
         hasTeamsEnabled,
         managementToken: credentials && credentials.managementToken,
         personEntry,
-        hasActiveAppTrial,
       });
     } else {
       setState({
         hasTeamsEnabled,
-        hasActiveAppTrial,
       });
     }
     setLoading(false);
@@ -119,11 +111,12 @@ export const SpaceHome = () => {
     currentOrganizationId,
   } = useSpaceEnvContext();
   const [
-    { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled, hasActiveAppTrial },
+    { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
   const [spaceTemplateCreated, setSpaceTemplateCreated] = useState(false);
+  const { isAppsTrialActive } = useAppsTrial(currentOrganizationId);
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
   const isSpaceAdmin = isAdmin(currentSpace);
@@ -133,7 +126,7 @@ export const SpaceHome = () => {
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
-  const isTrialSpace = isSpaceOnTrial(currentSpaceData) && !hasActiveAppTrial;
+  const isEnterpriseTrialSpace = isSpaceOnTrial(currentSpaceData) && !isAppsTrialActive;
 
   const spaceHomeProps = {
     orgId: currentOrganizationId,
@@ -186,8 +179,8 @@ export const SpaceHome = () => {
           cpaToken={cpaToken}
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
-          isTrialSpace={isTrialSpace}
-          hasActiveAppTrial={hasActiveAppTrial}
+          isTrialSpace={isEnterpriseTrialSpace}
+          hasActiveAppTrial={isAppsTrialActive}
         />
       );
     } else if (isModernStack) {
@@ -209,8 +202,8 @@ export const SpaceHome = () => {
           orgId={spaceHomeProps.orgId}
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
-          isTrialSpace={isTrialSpace}
-          hasActiveAppTrial={hasActiveAppTrial}
+          isTrialSpace={isEnterpriseTrialSpace}
+          hasActiveAppTrial={isAppsTrialActive}
         />
       );
     }
@@ -229,16 +222,20 @@ export const SpaceHome = () => {
           spaceName={spaceHomeProps.spaceName}
           orgName={spaceHomeProps.orgName}
           spaceId={spaceHomeProps.spaceId}
-          isTrialSpace={isTrialSpace}
-          hasActiveAppTrial={hasActiveAppTrial}
+          isTrialSpace={isEnterpriseTrialSpace}
+          hasActiveAppTrial={isAppsTrialActive}
         />
       )}
       {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}
       {!isLoading && readOnlySpace && <ReadOnlySpaceHome isAdmin={isSpaceAdmin} />}
       {!isLoading && <ExpiredTrialSpaceHome />}
-      {!isLoading && !isSpaceAdmin && !isAuthorOrEditor && isTrialSpace && !readOnlySpace && (
-        <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
-      )}
+      {!isLoading &&
+        !isSpaceAdmin &&
+        !isAuthorOrEditor &&
+        isEnterpriseTrialSpace &&
+        !readOnlySpace && (
+          <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
+        )}
     </div>
   );
 };

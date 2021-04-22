@@ -7,12 +7,18 @@ import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 
 import { mockWebappContent } from './__mocks__/webappContent';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
+import { useAppsTrial } from 'features/trials';
 
 jest.mock('core/services/ContentfulCDA', () => ({
   fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
 }));
+
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
+}));
+
+jest.mock('features/trials', () => ({
+  useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 
 const mockOrganization = Fake.Organization();
@@ -64,17 +70,17 @@ describe('NonEnterpriseSubscriptionPage', () => {
 
   describe('Contentful Apps section', () => {
     it('shows Contentful Apps trial card for users who have not purchased apps', async () => {
-      await build({ isAppTrialActive: true });
+      useAppsTrial.mockReturnValue({ isAppsTrialActive: true });
+
+      await build();
 
       expect(screen.getByTestId('apps-trial-header')).toBeVisible();
       expect(screen.queryByTestId('apps-header')).toBeNull();
     });
 
     it('shows Contentful Apps card for users who have purchased apps', async () => {
-      await build({
-        addOnPlan: { sys: { id: 'addon_id' } },
-        composeAndLaunchEnabled: true,
-      });
+      useAppsTrial.mockReturnValue({ isAppsTrialActive: false });
+      await build({ addOnPlan: { sys: { id: 'addon_id' } } });
 
       expect(screen.getByTestId('apps-header')).toBeVisible();
       expect(screen.queryByTestId('apps-trial-header')).toBeNull();

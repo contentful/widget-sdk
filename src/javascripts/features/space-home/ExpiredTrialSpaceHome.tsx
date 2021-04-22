@@ -7,12 +7,7 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/expired-trial-space-home-ill.svg';
-import {
-  AppTrialRepo,
-  isExpiredTrialSpace,
-  AppTrialFeature,
-  isExpiredAppTrial,
-} from 'features/trials';
+import { useAppsTrial, isExpiredTrialSpace } from 'features/trials';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -30,10 +25,9 @@ const styles = {
 };
 
 export const ExpiredTrialSpaceHome = () => {
-  const [appTrialFeature, setAppTrialFeature] = useState<AppTrialFeature>();
   const [composeAndLaunchProductPrice, setComposeAndLaunchProductPrice] = useState<number>(0);
-
   const { currentSpaceData, currentOrganizationId, currentOrganization } = useSpaceEnvContext();
+  const { hasAppsTrialExpired, appsTrialEndsAt } = useAppsTrial(currentOrganizationId);
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(currentOrganization);
   const isExpiredSpace = isExpiredTrialSpace(currentSpaceData);
@@ -44,10 +38,7 @@ export const ExpiredTrialSpaceHome = () => {
     }
 
     const fetchData = async () => {
-      const appTrial = await AppTrialRepo.getTrial(currentOrganizationId);
-      setAppTrialFeature(appTrial);
-
-      if (isOrgOwnerOrAdmin && isExpiredAppTrial(appTrial)) {
+      if (isOrgOwnerOrAdmin && hasAppsTrialExpired) {
         const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
         const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
         setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
@@ -62,7 +53,7 @@ export const ExpiredTrialSpaceHome = () => {
     return null;
   }
 
-  const isAppTrialSpace = isExpiredAppTrial(appTrialFeature);
+  const isAppTrialSpace = hasAppsTrialExpired;
   const isTrialSpace = isExpiredSpace && !isAppTrialSpace;
 
   const handlePurchase = () => {
@@ -99,9 +90,9 @@ export const ExpiredTrialSpaceHome = () => {
               'D MMMM YYYY'
             )}`}
           {isAppTrialSpace &&
-            `Your Contentful Apps trial expired on ${moment(
-              appTrialFeature?.sys.trial?.endsAt
-            ).format('D MMMM YYYY')}`}
+            `Your Contentful Apps trial expired on ${moment(appsTrialEndsAt).format(
+              'D MMMM YYYY'
+            )}`}
         </Heading>
         <Paragraph>
           All of your content is saved, but you can’t create or edit anymore.

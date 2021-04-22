@@ -9,7 +9,7 @@ import {
   Flex,
 } from '@contentful/forma-36-react-components';
 import { appsMarketingUrl } from 'Config';
-import { StartAppTrialModal } from 'features/trials';
+import { StartAppTrialModal, useAppsTrial } from 'features/trials';
 import { go } from 'states/Navigator';
 import { PRESELECT_VALUES } from 'features/space-purchase';
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -50,16 +50,10 @@ function getDescriptionText(addOnPlan, isTrialActive) {
   );
 }
 
-export function ContentfulApps({
-  organizationId,
-  startAppTrial,
-  isTrialAvailable,
-  isTrialActive,
-  isTrialExpired,
-  addOnPlan,
-}) {
-  const showStartTrialButton = isTrialAvailable;
-  const showBuyButton = isTrialActive || isTrialExpired;
+export function ContentfulApps({ organizationId, startAppTrial, addOnPlan }) {
+  const { canStartTrial, isAppsTrialActive, hasAppsTrialExpired } = useAppsTrial(organizationId);
+  const showStartTrialButton = canStartTrial;
+  const showBuyButton = isAppsTrialActive || hasAppsTrialExpired;
 
   const showPurchase = () => {
     go({
@@ -81,14 +75,14 @@ export function ContentfulApps({
   return (
     <Card testId="contentful-apps-card">
       <Flex marginBottom="spacingM">
-        {!isTrialActive && <Heading testId="apps-header">Compose + Launch</Heading>}
-        {isTrialActive && <Heading testId="apps-trial-header">Contentful Apps trial</Heading>}
+        {!isAppsTrialActive && <Heading testId="apps-header">Compose + Launch</Heading>}
+        {isAppsTrialActive && <Heading testId="apps-trial-header">Contentful Apps trial</Heading>}
       </Flex>
       <Flex flexDirection="column" marginBottom="spacingXs">
-        <Paragraph>{getDescriptionText(addOnPlan, isTrialActive)}</Paragraph>
+        <Paragraph>{getDescriptionText(addOnPlan, isAppsTrialActive)}</Paragraph>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        {(!!addOnPlan || !isTrialActive) && (
+        {(!!addOnPlan || !isAppsTrialActive) && (
           <ExternalTextLink href={appsMarketingUrl}>Learn more</ExternalTextLink>
         )}
         {!!addOnPlan && (
@@ -127,12 +121,6 @@ ContentfulApps.propTypes = {
   organizationId: PropTypes.string,
   // Function that handles what happens after we confirm the Start of a Trial inside the Modal
   startAppTrial: PropTypes.func.isRequired,
-  // Check for if Trial is available
-  isTrialAvailable: PropTypes.bool,
-  // Check for active Trial
-  isTrialActive: PropTypes.bool,
-  // Check for expired Trial
-  isTrialExpired: PropTypes.bool,
-  // The purchased addOnPlan
+  // Check whether addon has been purchased
   addOnPlan: PropTypes.object,
 };

@@ -1,8 +1,6 @@
-import moment from 'moment';
-import TheLocaleStore from 'services/localeStore';
-import importer from '../utils/importer';
 import type { PlainClientAPI } from 'contentful-management';
-import { AppTrialFeature } from '../types/AppTrial';
+import LocaleStore from 'services/localeStore';
+import importer from '../utils/importer';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
@@ -40,26 +38,10 @@ export const startAppTrial = async (organizationId: string) => {
   }
 };
 
-export const isActiveAppTrial = (feature?: AppTrialFeature) => {
-  if (!feature || !feature.sys.trial || !feature.enabled) {
-    return false;
-  }
-
-  return moment().isSameOrBefore(moment(feature.sys.trial.endsAt), 'date');
-};
-
-export const isExpiredAppTrial = (feature?: AppTrialFeature) => {
-  if (!feature || !feature.sys.trial || feature.enabled) {
-    return false;
-  }
-
-  return moment().isAfter(moment(feature.sys.trial.endsAt), 'date');
-};
-
 export const contentImport = async (spaceId: string, environmentId: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { internal, ...client } = getCMAClient({ spaceId, environmentId });
-  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const defaultLocaleCode = LocaleStore.getDefaultLocale().code;
   const { provisionHelpCenter } = await importer();
   try {
     await provisionHelpCenter(client as PlainClientAPI, defaultLocaleCode);

@@ -8,6 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { isTrialSpacePlan } from 'account/pricing/PricingDataProvider';
+import { useAppsTrial } from 'features/trials';
 
 import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../../context';
 import { usePageContent } from '../../hooks/usePageContent.ts';
@@ -55,7 +56,7 @@ const styles = {
 // TODO: this is a placeholder url, update with link to packages comparison
 export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
 
-export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces, activeAppTrial }) => {
+export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const {
     state: {
       organization,
@@ -72,6 +73,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces, activeA
     dispatch,
   } = useContext(SpacePurchaseState);
   const { faqEntries } = usePageContent(pageContent);
+  const { isAppsTrialActive } = useAppsTrial(organization?.sys.id);
 
   const platformSectionRef = createRef();
   const spaceSectionRef = createRef();
@@ -225,7 +227,7 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces, activeA
                   onSelectSpace(NO_SPACE_PLAN);
                 }}>
                 <Heading element="p">Use your existing spaces</Heading>
-                {activeAppTrial && (
+                {isAppsTrialActive && (
                   <Flex className={styles.trialSpacesWarning} flexDirection="row">
                     <Icon color="warning" icon="Warning" />
                     <Paragraph>
@@ -246,8 +248,8 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces, activeA
     </section>
   );
 };
+
 PlatformSelectionStep.propTypes = {
   track: PropTypes.func.isRequired,
   showPlatformsAboveSpaces: PropTypes.bool,
-  activeAppTrial: PropTypes.bool,
 };

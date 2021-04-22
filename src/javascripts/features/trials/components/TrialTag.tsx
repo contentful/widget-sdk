@@ -17,9 +17,6 @@ import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
 import { EVENTS } from '../utils/analyticsTracking';
-import * as Repo from '../services/AppTrialRepo';
-import { isExpiredAppTrial, isActiveAppTrial } from '../services/AppTrialService';
-import { AppTrialFeature } from '../types/AppTrial';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Organization } from 'core/services/SpaceEnvContext/types';
 import { useAppsTrial } from '../hooks/useAppsTrials';
@@ -48,43 +45,35 @@ export interface TrialTagProps {
 
 type TrialData = {
   organization: Organization | undefined;
-  appFeature?: AppTrialFeature;
   isAppsTrialSpaceAccessible?: boolean;
 };
 
 export const TrialTag = ({ organizationId }: TrialTagProps) => {
   const { currentSpaceData: space } = useSpaceEnvContext();
-  const { appsTrialSpaceKey } = useAppsTrial(
-    organizationId ?? (space?.organization.sys.id as string)
-  );
+  const {
+    appsTrialSpaceKey,
+    isAppsTrialActive,
+    hasAppsTrialExpired,
+    appsTrialEndsAt,
+  } = useAppsTrial(organizationId ?? (space?.organization.sys.id as string));
 
   const fetchData = useCallback(async () => {
     const organization = organizationId
       ? await getOrganization(organizationId)
       : space?.organization;
+    const isAppsTrialSpaceAccessible = await isSpaceAccessible(appsTrialSpaceKey);
 
-    if (organization) {
-      const appFeature = await Repo.getTrial(organization.sys.id);
-      const isAppsTrialSpaceAccessible = await isSpaceAccessible(appsTrialSpaceKey);
-
-      return {
-        appFeature,
-        organization,
-        isAppsTrialSpaceAccessible,
-      };
-    }
-
-    return { organization };
+    return {
+      organization,
+      isAppsTrialSpaceAccessible,
+    };
   }, [space, organizationId, appsTrialSpaceKey]);
 
-  const {
-    isLoading,
-    data: { appFeature, isAppsTrialSpaceAccessible, organization } = {},
-  } = useAsync<TrialData>(fetchData);
+  const { isLoading, data: { isAppsTrialSpaceAccessible, organization } = {} } = useAsync<
+    TrialData
+  >(fetchData);
 
   const isEnterpriseTrial = isOrganizationOnTrial(organization);
-  const isAppTrial = isActiveAppTrial(appFeature);
-  const isAppTrialExpired = isExpiredAppTrial(appFeature);
   const isTrialSpace = isSpaceOnTrial(space);
   const isTrialSpaceExpired = isExpiredTrialSpace(space);
 
@@ -95,9 +84,9 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
   if (
     !isEnterpriseTrial &&
     !isTrialSpace &&
-    !isAppTrial &&
+    !isAppsTrialActive &&
     !isTrialSpaceExpired &&
-    !isAppTrialExpired
+    !hasAppsTrialExpired
   ) {
     return null;
   }
@@ -113,13 +102,13 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
       path: 'account.organizations.subscription_new',
       params: { orgId: organization?.sys.id },
     };
-  } else if (isAppTrial || isAppTrialExpired) {
-    if (isAppTrialExpired && (Navigator.isOrgRoute() || space?.sys.id !== appsTrialSpaceKey)) {
-      // only display the expired app tag on the SpaceNavBar of the Apps Trial Space
+  } else if (isAppsTrialActive || hasAppsTrialExpired) {
+    if (hasAppsTrialExpired && (Navigator.isOrgRoute() || space?.sys.id !== appsTrialSpaceKey)) {
       return null;
     }
 
-    daysLeft = calcTrialDaysLeft(appFeature?.sys.trial?.endsAt);
+    // only display the expired app tag on the SpaceNavBar of the Apps Trial Space
+    daysLeft = calcTrialDaysLeft(appsTrialEndsAt);
     ctaType = CTA_EVENTS.APP_TRIAL_TAG;
     pathParamsObj = isAppsTrialSpaceAccessible
       ? {
@@ -152,7 +141,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
           testId="trial_tag-tooltip"
           place="bottom"
           content={
-            isAppTrialExpired || isTrialSpaceExpired ? (
+            hasAppsTrialExpired || isTrialSpaceExpired ? (
               'EXPIRED'
             ) : (
               <Pluralized text="DAY" count={daysLeft} />

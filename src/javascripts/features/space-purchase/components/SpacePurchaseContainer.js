@@ -97,14 +97,12 @@ const fetchBillingDetails = async (organization, dispatch) => {
 export const SpacePurchaseContainer = ({
   track,
   preselectApps = false,
-  activeAppTrial = false,
   purchasingApps = false,
 }) => {
   const {
     state: { organization, selectedPlatform, selectedPlan, currentSpace },
     dispatch,
   } = useContext(SpacePurchaseState);
-
   // if the user has already purchased apps, we want them to start at the space selection step
   // otherwise, they should start in the platfform and space selection step
   const initialStep = purchasingApps ? STEPS.PLATFORM_SELECTION : STEPS.SPACE_PLAN_SELECTION;
@@ -157,13 +155,7 @@ export const SpacePurchaseContainer = ({
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case STEPS.PLATFORM_SELECTION:
-        return (
-          <PlatformSelectionStep
-            track={track}
-            showPlatformsAboveSpaces={preselectApps}
-            activeAppTrial={activeAppTrial}
-          />
-        );
+        return <PlatformSelectionStep track={track} showPlatformsAboveSpaces={preselectApps} />;
       case STEPS.SPACE_PLAN_SELECTION:
         return (
           <SpacePlanSelectionStep
@@ -318,6 +310,4 @@ SpacePurchaseContainer.propTypes = {
   preselectApps: PropTypes.bool,
   /** When true, Space Purchase will present the user with the option to buy apps (first step will be PlatformSelectionStep) */
   purchasingApps: PropTypes.bool,
-  /** It tells the Space Purchase flow if the user as an App Trail active */
-  activeAppTrial: PropTypes.bool,
 };

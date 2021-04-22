@@ -66,9 +66,6 @@ interface NonEnterpriseSubscriptionPageProps {
   basePlan: BasePlan;
   grandTotal: number;
   initialLoad: boolean;
-  isAppTrialActive: boolean;
-  isAppTrialAvailable: boolean;
-  isAppTrialExpired: boolean;
   onSpacePlansChange: () => void;
   organization: Organization;
   spacePlans: SpacePlan[];
@@ -80,9 +77,6 @@ export function NonEnterpriseSubscriptionPage({
   basePlan,
   grandTotal,
   initialLoad = false,
-  isAppTrialActive,
-  isAppTrialAvailable,
-  isAppTrialExpired,
   onSpacePlansChange,
   organization,
   spacePlans,
@@ -137,9 +131,6 @@ export function NonEnterpriseSubscriptionPage({
           <ContentfulApps
             organizationId={organizationId}
             startAppTrial={onStartAppTrial}
-            isTrialAvailable={isAppTrialAvailable}
-            isTrialActive={isAppTrialActive}
-            isTrialExpired={isAppTrialExpired}
             addOnPlan={addOnPlan}
           />
         </Flex>

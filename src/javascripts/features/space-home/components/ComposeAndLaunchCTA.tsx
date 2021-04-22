@@ -42,7 +42,9 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
 
   const canManage = canUserManageApps();
 
-  const { canStartTrial: isTrialAvailable } = useAppsTrial(currentOrganizationId);
+  const { canStartTrial: isAppsTrialAvailable, isAppsTrialActive } = useAppsTrial(
+    currentOrganizationId
+  );
 
   const appsEnabled = compose.isEnabled && launch.isEnabled;
   const appsPurchased = compose.isPurchased && launch.isPurchased;
@@ -50,11 +52,11 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
 
   const showInstallAction = appsEnabled && appsPurchased && !appsInstalled;
   const showBuyOrTrialAction =
-    !showInstallAction && (compose.isTrialActive || (appsEnabled && !appsPurchased));
+    !showInstallAction && (isAppsTrialActive || (appsEnabled && !appsPurchased));
 
   const PROMO_TEXT = {
     trial: {
-      title: isTrialAvailable
+      title: isAppsTrialAvailable
         ? 'Compose + Launch free trial'
         : 'Compose + Launch: powerful tools to deliver content faster',
       text: `Compose and Launch give your content teams powerful new tools that allow them to work faster and collaborate more effectively. None of your content will be affected, and no payment details are needed to start.
@@ -105,7 +107,7 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
               spaceInformation={spaceInfo as SpaceInformation}
               isInstalled={false}
               isPurchased={false}
-              isTrialAvailable={isTrialAvailable}
+              isTrialAvailable={isAppsTrialAvailable}
               isFlipped
               isScreenshot
             />
