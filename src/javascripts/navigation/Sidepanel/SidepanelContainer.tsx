@@ -2,9 +2,14 @@ import React from 'react';
 import SidePanelTrigger from './SidePanelTrigger';
 import Sidepanel from './Sidepanel';
 import keycodes from 'utils/keycodes';
+import * as Config from 'Config';
 import { SidepanelAppSwitcher } from './SidepanelAppSwitcher';
 import { useAppsList } from './useAppsList';
 import { WhatsNewContextProvider } from '@contentful/experience-components';
+
+// we need to pass this utm parameters in the url
+// to make sure that analytics know that the traffic in those pages are coming from the user_interface
+const utmParams = 'utm_source=webapp';
 
 const SidepanelContainer = () => {
   const [sidePanelIsShown, setSidePanelIsShown] = React.useState(false);
@@ -35,8 +40,10 @@ const SidepanelContainer = () => {
     return () => window.removeEventListener('keyup', handleEsc);
   }, [handleEsc]);
 
+  const changelogUrl = `${Config.developersChangelogUrl}/?${utmParams}`;
+
   return (
-    <WhatsNewContextProvider>
+    <WhatsNewContextProvider changelogUrl={changelogUrl}>
       <React.Fragment>
         <div className="nav-sidepanel-container">
           <div

@@ -39,11 +39,8 @@ const TriggerIcon = ({ openAppSwitcher }: { openAppSwitcher?: () => void }) => {
   return (
     <AppNavLogo
       label="Switch Contentful app"
-      expandedProps={{
-        showTooltip: false,
-      }}
+      showTooltip={false}
       onClick={onClick}
-      testId="sidepanel-trigger-apps"
       className={styles.noBorder}
     />
   );
