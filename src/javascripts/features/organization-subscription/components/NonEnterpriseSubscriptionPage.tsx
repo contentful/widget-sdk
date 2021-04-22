@@ -115,7 +115,7 @@ export function NonEnterpriseSubscriptionPage({
   const onDeleteSpace = deleteSpace(spacePlans, onSpacePlansChange);
 
   return (
-    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+    <Grid testId="non-enterprise-subs-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
           loading={isLoading || !!error}

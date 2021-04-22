@@ -7,20 +7,20 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
+  getPlansWithSpaces,
+  isEnterprisePlan,
+  FREE,
+  SELF_SERVICE,
   ENTERPRISE,
   ENTERPRISE_HIGH_DEMAND,
-  getPlansWithSpaces,
 } from 'account/pricing/PricingDataProvider';
+import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import { useAsync } from 'core/hooks';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import createResourceService from 'services/ResourceService';
-import { getSpaces } from 'services/TokenStore';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getOrganization } from 'services/TokenStore';
-import { isEnterprisePlan, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
-import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { LoadingState } from 'features/loading-state';
 import {
   isOrganizationOnTrial,
   AppTrialRepo,
@@ -28,13 +28,14 @@ import {
   isExpiredAppTrial,
   useAppsTrial,
 } from 'features/trials';
-import DocumentTitle from 'components/shared/DocumentTitle';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import { FetcherLoading } from 'app/common/createFetcherComponent';
-import { useAsync } from 'core/hooks';
+import createResourceService from 'services/ResourceService';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getOrganization, getSpaces } from 'services/TokenStore';
+import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
+
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
@@ -81,7 +82,6 @@ async function fetchNumMemberships(organizationId) {
 
 const fetch = (organizationId, { setSpacePlans }) => async () => {
   const organization = await getOrganization(organizationId);
-
   const endpoint = createOrganizationEndpoint(organizationId);
 
   if (!isOwnerOrAdmin(organization)) {
@@ -164,13 +164,8 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
 
   const { canStartTrial: isAppTrialAvailable } = useAppsTrial(organizationId);
 
-  // Show the generic loading state until we know if we're purchasing apps or not
   if (isLoading) {
-    return (
-      <EmptyStateContainer>
-        <FetcherLoading />
-      </EmptyStateContainer>
-    );
+    return <LoadingState testId="subs-page-loading" />;
   }
 
   if (error) {
@@ -180,7 +175,7 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <Workbench testId="subscription-page">
+      <Workbench>
         <Workbench.Header
           icon={<ProductIcon icon="Subscription" size="large" />}
           title="Subscription"

@@ -141,7 +141,7 @@ export function SubscriptionPage({
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
   return (
-    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+    <Grid testId="subscription-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
       {organization && isOrgOnTrial && (
         <Flex className={styles.fullRow} flexDirection="column">
           <EnterpriseTrialInfo organization={organization} />
