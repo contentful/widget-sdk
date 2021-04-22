@@ -1,26 +1,26 @@
 # By default, everything is owned by the frontend chapter
-docs/* @contentful/frontend
+docs/ @contentful/frontend
 
 # Content Tags
-src/javascripts/features/content-tags/* @contentful/team-dev-workflows
+src/javascripts/features/content-tags/ @contentful/team-dev-workflows
 
 # Webhooks
-src/javascripts/features/webhooks/* @contentful/extensibility-devs
+src/javascripts/features/webhooks/ @contentful/extensibility-devs
 
 # Extensions Manager
-src/javascripts/features/extensions-management/* @contentful/extensibility-devs
+src/javascripts/features/extensions-management/ @contentful/extensibility-devs
 
 # Space Teams
-src/javascripts/features/space-teams/* @contentful/team-hejo
+src/javascripts/features/space-teams/ @contentful/team-hejo
 
 # Space memberships
-src/javascripts/features/space-memberships/* @contentful/team-hejo
+src/javascripts/features/space-memberships/ @contentful/team-hejo
 
 # Roles and permissions
-src/javascripts/features/roles-permissions-management/* @contentful/team-hejo
+src/javascripts/features/roles-permissions-management/ @contentful/team-hejo
 
 # Locales
-src/javascripts/features/locales-management/* @contentful/team-dante
+src/javascripts/features/locales-management/ @contentful/team-dante
 
 # Space Users
-src/javascripts/features/settings-space-users/* @contentful/team-hejo
+src/javascripts/features/settings-space-users/ @contentful/team-hejo
