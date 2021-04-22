@@ -130,6 +130,9 @@ export const useAppsList = () => {
               };
               const appUrl = getContentfulAppUrl(app.id, spaceInformation);
 
+              // Remove long description for showing in AppSwitcher
+              delete app.description;
+
               return appFlagIsEnabled
                 ? {
                     ...app,

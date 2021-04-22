@@ -6,22 +6,18 @@ import cn from 'classnames';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 
-import ContentfulLogo from 'svg/logo-label.svg';
-import AppGridIcon from 'svg/app-grid-icon.svg';
 import * as K from 'core/utils/kefir';
 import Hamburger from 'svg/hamburger.svg';
 import { navState$, NavStates } from 'navigation/NavState';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { styles } from './SidePanelTrigger.styles';
-import { SkeletonContainer, SkeletonImage } from '@contentful/forma-36-react-components';
+import { AppNavLogo } from '@contentful/experience-components';
 
 interface Props {
   onClickOrganization: React.MouseEventHandler;
   openAppSwitcher?: () => void;
   testId?: string;
   showIcon?: boolean;
-  // null meaning that the flag isn't yet loaded;
-  hasContentfulApps: boolean | null;
 }
 
 type OrganizationProps = {
@@ -34,41 +30,18 @@ type environmentMetaProps = {
   isMasterEnvironment?: boolean;
 };
 
-const TriggerIcon = ({
-  hasContentfulApps,
-  openAppSwitcher,
-}: {
-  hasContentfulApps: boolean | null;
-  openAppSwitcher?: () => void;
-}) => {
+const TriggerIcon = ({ openAppSwitcher }: { openAppSwitcher?: () => void }) => {
   const onClick: React.MouseEventHandler = (event) => {
     event.stopPropagation();
     openAppSwitcher?.();
   };
-  const appSwitcherIconWidth = 40;
-
-  if (hasContentfulApps === true) {
-    return (
-      <button aria-label="Switch Contentful app" data-test-id="sidepanel-trigger-apps">
-        <AppGridIcon onClick={onClick} width={appSwitcherIconWidth} height={appSwitcherIconWidth} />
-      </button>
-    );
-  }
-  if (hasContentfulApps === false) return <ContentfulLogo />;
-
   return (
-    <SkeletonContainer
-      backgroundOpacity={0.25}
-      foregroundOpacity={0.25}
-      svgWidth={appSwitcherIconWidth}
-      svgHeight={appSwitcherIconWidth}>
-      <SkeletonImage
-        width={appSwitcherIconWidth}
-        height={appSwitcherIconWidth}
-        radiusX={appSwitcherIconWidth / 2}
-        radiusY={appSwitcherIconWidth / 2}
-      />
-    </SkeletonContainer>
+    <AppNavLogo
+      label="Switch Contentful app"
+      showTooltip={false}
+      onClick={onClick}
+      className={styles.noBorder}
+    />
   );
 };
 
@@ -76,7 +49,6 @@ export const SidePanelTrigger = ({
   onClickOrganization,
   openAppSwitcher,
   testId = 'sidepanel-trigger',
-  hasContentfulApps,
 }: Props) => {
   const [navState, setNavState] = useState<unknown>(null);
   const [showOrganization, setShowOrganization] = useState(false);
@@ -103,9 +75,9 @@ export const SidePanelTrigger = ({
       onClick={onClickOrganization}
       data-ui-tour-step="sidepanel-trigger"
       data-test-id={testId}>
-      <div className={styles.noShrink}>
-        <TriggerIcon openAppSwitcher={openAppSwitcher} hasContentfulApps={hasContentfulApps} />
-      </div>
+      <ul className={styles.noShrink}>
+        <TriggerIcon openAppSwitcher={openAppSwitcher} />
+      </ul>
       <button
         className={styles.content}
         aria-label="Switch Space/Organization"
