@@ -3,13 +3,17 @@ import TheLocaleStore from 'services/localeStore';
 import importer from '../utils/importer';
 import type { PlainClientAPI } from 'contentful-management';
 import { AppTrialFeature } from '../types/AppTrial';
-import * as logger from 'services/logger';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 const FEATURE_TO_APP_NAME = {
   compose_app: 'compose', // eslint-disable-line @typescript-eslint/camelcase
   launch_app: 'launch', // eslint-disable-line @typescript-eslint/camelcase
+};
+
+const isTrialSpaceServerError = (error) => {
+  const errorStatus = error?.message && JSON.parse(error?.message).status;
+  return errorStatus !== 422 && errorStatus !== 403;
 };
 
 export const startAppTrial = async (organizationId: string) => {
@@ -29,11 +33,7 @@ export const startAppTrial = async (organizationId: string) => {
       trialSpace: space,
     };
   } catch (e) {
-    if (e.status >= 500) {
-      logger.captureError(new Error('Could not create apps trial space'), {
-        originalError: e,
-      });
-
+    if (isTrialSpaceServerError(e)) {
       throw new TrialSpaceServerError();
     }
     throw e;
@@ -64,9 +64,6 @@ export const contentImport = async (spaceId: string, environmentId: string) => {
   try {
     await provisionHelpCenter(client as PlainClientAPI, defaultLocaleCode);
   } catch (e) {
-    logger.captureError(new Error('Content import failed during apps trial'), {
-      originalError: e,
-    });
     throw new ContentImportError();
   }
 };
