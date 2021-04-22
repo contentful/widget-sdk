@@ -12,3 +12,6 @@ src/javascripts/features/extensions-management/* @contentful/extensibility-devs
 
 # Space Teams
 src/javascripts/features/space-teams/* @contentful/team-hejo
+
+# Space memberships
+src/javascripts/features/space-memberships/* @contentful/team-hejo

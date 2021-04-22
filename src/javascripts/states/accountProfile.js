@@ -1,18 +1,10 @@
 import React from 'react';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
-
-import SpaceMembershipsRouter from 'app/UserSettings/SpaceMembershipsRouter';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 
 import AccountView from 'account/AccountView';
 import { userProfileState } from 'features/user-profile';
-import { accountCMATokensRouteState } from 'features/account-settings';
-
-const spaceMemberships = {
-  name: 'space_memberships',
-  url: '/space_memberships',
-  component: SpaceMembershipsRouter,
-};
+import { accountCMATokensRouteState, spaceMembershipsRouteState } from 'features/account-settings';
 
 const organizationMemberships = {
   name: 'organization_memberships',
@@ -56,7 +48,7 @@ export default {
     userCancellation,
     userProfileState,
     accountCMATokensRouteState,
-    spaceMemberships,
+    spaceMembershipsRouteState,
     organizationMemberships,
     accessGrants,
     applications,

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 import * as fake from 'test/helpers/fakeFactory';
 
-import SpaceMembershipsList from './SpaceMembershipsList';
+import { SpaceMembershipsList } from './SpaceMembershipsList';
 
 const build = (props = {}) =>
   render(

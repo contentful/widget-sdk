@@ -2,14 +2,14 @@ import React from 'react';
 import { render, screen, wait, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
-import { create, remove } from 'access_control/SpaceMembershipRepository';
+import { create } from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { getSpaces } from 'services/TokenStore';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as fake from 'test/helpers/fakeFactory';
 
-import SpaceMembershipsRouter from './SpaceMembershipsRouter';
+import { SpaceMembershipsPage } from './SpaceMembershipsPage';
 
 jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
 
@@ -22,7 +22,6 @@ jest.mock('states/Navigator', () => ({
 }));
 
 jest.mock('access_control/SpaceMembershipRepository', () => ({
-  remove: jest.fn(),
   create: jest.fn(),
 }));
 
@@ -30,13 +29,15 @@ jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest.fn(),
 }));
 
+const remove = jest.fn();
+
 const build = async () => {
-  render(<SpaceMembershipsRouter />);
+  render(<SpaceMembershipsPage />);
 
   return wait();
 };
 
-describe('SpaceMembershipsRouter', () => {
+describe('SpaceMembershipsPage', () => {
   describe('being rendered', () => {
     it('should not break', async () => {
       await expect(build()).resolves.not.toThrow();
@@ -48,9 +49,9 @@ describe('SpaceMembershipsRouter', () => {
     const createdEndpoint = { example: 'test' };
 
     beforeEach(() => {
-      getSpaces.mockResolvedValue(spaces);
-      createSpaceEndpoint.mockReturnValue(createdEndpoint);
-      create.mockReturnValue({ remove: remove });
+      (getSpaces as jest.Mock).mockResolvedValue(spaces);
+      (createSpaceEndpoint as jest.Mock).mockReturnValue(createdEndpoint);
+      (create as jest.Mock).mockReturnValue({ remove });
     });
 
     it('should call `onLeave` when clicking leave button', async () => {

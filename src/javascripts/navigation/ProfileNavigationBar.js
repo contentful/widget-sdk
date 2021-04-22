@@ -46,7 +46,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'Spaces',
               navIcon: 'Spaces',
-              sref: 'account.profile.space_memberships',
+              sref: routes['account.space_memberships']().path,
+              srefParams: routes['account.space_memberships']().params,
               srefOptions: {
                 inherit: false,
               },

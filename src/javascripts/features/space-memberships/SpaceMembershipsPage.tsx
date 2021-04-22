@@ -14,12 +14,26 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { go } from 'states/Navigator';
 
-import SpaceMembershipsList from './SpaceMembershipsList';
+import { SpaceMembershipsList } from './SpaceMembershipsList';
+import { SpaceData } from 'core/services/SpaceEnvContext/types';
 
-const SpaceMembershipsRouter = () => {
-  const [spaces, setSpaces] = useState(null);
+const SpaceMembershipsPage = () => {
+  const [spaces, setSpaces] = useState<SpaceData[] | null>(null);
+
   useEffect(() => {
-    (async () => setSpaces(await TokenStore.getSpaces()))();
+    let isMounted = true;
+    const updateSpaces = async () => {
+      const fetchedSpaces = await TokenStore.getSpaces();
+      if (isMounted) {
+        setSpaces(fetchedSpaces);
+      }
+    };
+
+    updateSpaces();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const goToSpace = (space) => {
@@ -76,4 +90,4 @@ const SpaceMembershipsRouter = () => {
   return <SpaceMembershipsList onLeave={onLeave} goToSpace={goToSpace} spaces={spaces} />;
 };
 
-export default SpaceMembershipsRouter;
+export { SpaceMembershipsPage };

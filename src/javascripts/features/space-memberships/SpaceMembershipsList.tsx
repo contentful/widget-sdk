@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   CardActions,
   TableRow,
@@ -15,8 +14,8 @@ import {
 import moment from 'moment';
 import { css } from 'emotion';
 
-import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { SpaceData } from 'core/services/SpaceEnvContext/types';
 
 const styles = {
   dotsRow: css({
@@ -25,7 +24,13 @@ const styles = {
   }),
 };
 
-const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
+type SpaceMembershipsList = {
+  onLeave: (space: SpaceData) => void;
+  goToSpace: (space: SpaceData) => void;
+  spaces: SpaceData[];
+};
+
+const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }: SpaceMembershipsList) => (
   <Workbench>
     <Workbench.Header
       icon={<ProductIcon icon="Spaces" size="large" />}
@@ -77,8 +82,7 @@ const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
                             !space.spaceMembership
                               ? 'You have access to this space through a team. To leave the space you must be removed from the team.'
                               : ''
-                          }
-                          className={styles.tooltip}>
+                          }>
                           Leave Space
                         </Tooltip>
                       </DropdownListItem>
@@ -94,10 +98,4 @@ const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
   </Workbench>
 );
 
-SpaceMembershipsList.propTypes = {
-  onLeave: PropTypes.func.isRequired,
-  goToSpace: PropTypes.func.isRequired,
-  spaces: PropTypes.arrayOf(SpacePropType),
-};
-
-export default SpaceMembershipsList;
+export { SpaceMembershipsList };

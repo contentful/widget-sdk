@@ -1,3 +1,16 @@
+type AccountProfileSpaceMembershipsType = {
+  path: 'account.space_memberships';
+};
+
+const accountProfileSpaceMembershipsRoute = {
+  'account.space_memberships': () => ({
+    path: 'account.profile.space_memberships',
+    params: {
+      pathname: '/',
+    },
+  }),
+};
+
 /**
  * AccountProfileCMATokens
  */
@@ -19,8 +32,13 @@ const accountProfileCMATokensRoute = {
  * All paths combined together
  */
 
-export type AccountSettingsRouteType = AccountProfileCMATokensType;
-
-export const routes = {
+const routes = {
   ...accountProfileCMATokensRoute,
+  ...accountProfileSpaceMembershipsRoute,
 };
+
+type AccountSettingsRouteType = AccountProfileCMATokensType | AccountProfileSpaceMembershipsType;
+
+export type { AccountSettingsRouteType };
+
+export { routes };

@@ -1,10 +1,10 @@
-import { spaceSettingsRoutes, accountSettingsRoutes } from './routes/index';
+import { spaceSettingsRoutes, accountSettingsRoutes } from './routes/';
 import type {
   SpaceSettingsRouteType,
   AccountSettingsRouteType,
   CreateRouteDefinition,
   RouteDefinition,
-} from './routes/index';
+} from './routes/';
 
 const routes = {
   ...spaceSettingsRoutes,
