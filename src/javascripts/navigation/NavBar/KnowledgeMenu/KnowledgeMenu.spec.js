@@ -1,4 +1,4 @@
-import { render, wait } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import React from 'react';
 import KnowledgeMenu from './KnowledgeMenu';
@@ -23,18 +23,5 @@ describe('<KnowledgeMenu />', () => {
     icon.click();
 
     await expect(findByTestId('help-menu-help-center')).rejects.toBeDefined();
-  });
-
-  it('should remove the notification badge after clicking on the menu once', async () => {
-    const { findByTestId } = render(<KnowledgeMenu />);
-
-    const icon = await findByTestId('help-menu-button');
-
-    await expect(findByTestId('help-menu-notification')).resolves.toBeDefined();
-
-    icon.click();
-    await wait();
-
-    await expect(findByTestId('help-menu-notification')).rejects.toBeDefined();
   });
 });

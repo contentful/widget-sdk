@@ -12,7 +12,6 @@ import { navState$, NavStates } from 'navigation/NavState';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { styles } from './SidePanelTrigger.styles';
 import { AppNavLogo } from '@contentful/experience-components';
-import { cx } from 'emotion';
 
 interface Props {
   onClickOrganization: React.MouseEventHandler;
@@ -76,9 +75,9 @@ export const SidePanelTrigger = ({
       onClick={onClickOrganization}
       data-ui-tour-step="sidepanel-trigger"
       data-test-id={testId}>
-      <div className={cx(styles.noShrink)}>
+      <ul className={styles.noShrink}>
         <TriggerIcon openAppSwitcher={openAppSwitcher} />
-      </div>
+      </ul>
       <button
         className={styles.content}
         aria-label="Switch Space/Organization"
