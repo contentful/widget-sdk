@@ -18,7 +18,7 @@ describe('data/Request/Utils', () => {
         'https://api.contentful.com/organization_memberships/some-id',
         'https://api.contentful.com/organization_memberships/some-id/THIS-WILL-BE-IGNORED',
       ],
-      '/enforcements': ['//foo.bar/spaces/id/enforcements'],
+      '/enforcements': ['https://foo.bar/spaces/id/enforcements'],
       '/content_types': [
         'http://foo/spaces/space-id/content_types',
         'http://api.flinkly.com/spaces/space-id/environments/id/content_types',
@@ -75,6 +75,10 @@ describe('data/Request/Utils', () => {
         urls.forEach((url) => {
           it(`is returned for url ${url}`, () => {
             expect(getEndpoint(url)).toEqual(expectedEndpoint);
+          });
+          const path = new URL(url).pathname;
+          it(`is returned for path ${path}`, () => {
+            expect(getEndpoint(path)).toEqual(expectedEndpoint);
           });
         });
       });
