@@ -30,7 +30,7 @@ import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { EnvironmentMeta } from 'core/services/SpaceEnvContext/types';
 import { go } from 'states/Navigator';
-import { getModule } from 'core/NgRegistry';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
   source: 'webapp',
@@ -76,7 +76,7 @@ export function MarketplacePage(props: MarketplacePageProps) {
     currentSpaceName: spaceName,
     currentSpace,
   } = useSpaceEnvContext();
-  const { cma } = React.useMemo(() => getModule('spaceContext'), []); // TODO: Temporary solution for contract tests
+  const { client: cma } = useCurrentSpaceAPIClient();
   const [ready, setReady] = React.useState(false);
   const [installedApps, setInstalledApps] = React.useState<MarketplaceApp[]>([]);
   const [availableApps, setAvailableApps] = React.useState<MarketplaceApp[]>([]);

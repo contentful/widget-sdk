@@ -1,4 +1,4 @@
-import { defaultSpaceId, defaultHeader } from '../util/requests';
+import { defaultSpaceId, defaultHeader, defaultEnvironmentId } from '../util/requests';
 const editorInterfacesResponse = require('../fixtures/responses/editor-interfaces.json');
 
 enum State {
@@ -13,7 +13,7 @@ export const queryForEditorInterfaces = {
       uponReceiving: `a request for getting the editor interfaces for space ${defaultSpaceId}`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/editor_interfaces`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/editor_interfaces`,
         headers: defaultHeader,
       },
       willRespondWith: {

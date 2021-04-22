@@ -14,6 +14,9 @@ import {
   getEnvironment,
   isMasterEnvironment as isMaster,
 } from 'core/services/SpaceEnvContext/utils';
+import { createAPIClient } from '../../core/services/APIClient/utils';
+import { WidgetNamespace } from '@contentful/widget-renderer';
+import { Source } from '../../i13n/constants';
 
 export default ({
   localeData,
@@ -256,6 +259,10 @@ export default ({
 
   const makeSidebarWidgetSDK = memoize(
     (widgetNamespace, widgetId, parameters) => {
+      const source =
+        widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN ? undefined : Source.CustomWidget;
+      const cma = createAPIClient(spaceContext.getId(), spaceContext.getEnvironmentId(), source);
+
       return createSidebarWidgetSDK({
         internalContentType: entityInfo.contentType,
         editorData,
@@ -263,8 +270,7 @@ export default ({
         preferences,
         doc: otDoc,
         parameters,
-        //TODO: instead of using `spaceContext.cma` use `cma` passed to the hook
-        //so the optmization done by `getBatchingApiClient` can work
+        cma,
         spaceContext,
         widgetNamespace,
         widgetId,

@@ -1,7 +1,7 @@
 import { Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { WidgetLocation, WidgetNamespace, WidgetRenderer } from '@contentful/widget-renderer';
-import { createEditorExtensionSDK } from 'app/widgets/ExtensionSDKs';
+import { createEditorWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { EditorExtensionSDK } from '@contentful/app-sdk';
 import { usePubSubClient } from 'core/hooks';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -53,7 +53,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
 
   const pubSubClient = usePubSubClient();
 
-  if (!currentEnvironmentId || !currentSpaceId) return null;
+  if (!currentEnvironmentId || !currentSpaceId || !currentEnvironment || !currentSpace) return null;
 
   if (extension.problem) {
     return (
@@ -65,7 +65,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
   }
 
   const widget = toRendererWidget(descriptor);
-  const sdk: EditorExtensionSDK = createEditorExtensionSDK({
+  const sdk: EditorExtensionSDK = createEditorWidgetSDK({
     editorData: scope.editorData,
     localeData: scope.localeData,
     preferences: scope.preferences,

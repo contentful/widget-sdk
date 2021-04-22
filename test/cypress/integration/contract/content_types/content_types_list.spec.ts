@@ -1,9 +1,6 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
-import {
-  getAllContentTypesInDefaultSpace,
-  getFirst1000ContentTypesInDefaultSpaceOrderedByName,
-} from '../../../interactions/content_types';
+import { getFirst1000ContentTypesInDefaultSpaceOrderedByName } from '../../../interactions/content_types';
 import { getResources, getContentTypeResource } from '../../../interactions/resources';
 import { getProductRatePlansWithSpace, getSpacePlan } from '../../../interactions/plans';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');

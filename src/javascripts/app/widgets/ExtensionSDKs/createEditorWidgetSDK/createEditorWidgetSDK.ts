@@ -1,9 +1,9 @@
 import { EditorExtensionSDK } from '@contentful/app-sdk';
-import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
+import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
-import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
-import { createUserApi, SpaceMember } from '../createUserApi';
-import { createEditorApi } from '../createEditorApi';
+import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
+import { createUserApi } from '../createUserApi';
+import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
@@ -20,13 +20,19 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
+import { Source } from 'i13n/constants';
+import { EditorInterface } from 'contentful-management/types';
+import { Proxy } from 'core/services/proxy';
+import { Environment, SpaceEnv } from 'core/services/SpaceEnvContext/types';
 
 interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
   doc: Document;
-  editorData: any;
-  localeData: any;
-  preferences: any;
+  editorData: {
+    editorInterface: EditorInterface;
+  };
+  localeData: Proxy<LocaleData>;
+  preferences: Proxy<Preferences>;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
@@ -35,14 +41,14 @@ interface CreateEditorExtensionSDKOptions {
   widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
   contentTypes: InternalContentType[];
-  environment: any;
+  environment: Environment;
   environmentId: string;
-  space: any;
+  space: SpaceEnv;
   spaceId: string;
   pubSubClient?: PubSubClient;
 }
 
-export const createEditorExtensionSDK = ({
+export const createEditorWidgetSDK = ({
   editorData,
   localeData,
   preferences,
@@ -60,7 +66,9 @@ export const createEditorExtensionSDK = ({
   pubSubClient,
 }: CreateEditorExtensionSDKOptions): EditorExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
-  const cma = createAPIClient(spaceId, environmentId);
+  const source =
+    widgetNamespace === WidgetNamespace.EDITOR_BUILTIN ? undefined : Source.CustomWidget;
+  const cma = createAPIClient(spaceId, environmentId, source);
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const aliasesId = getEnvironmentAliasesIds(environment);
@@ -72,7 +80,7 @@ export const createEditorExtensionSDK = ({
     getPreferences: () => preferences,
   });
 
-  const userApi = createUserApi(space.data.spaceMember as SpaceMember);
+  const userApi = createUserApi(space.data.spaceMember);
 
   const entryApi = createEntryApi({
     cma,
@@ -123,7 +131,7 @@ export const createEditorExtensionSDK = ({
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,
-    spaceMember: space.data.spaceMember as SpaceMember,
+    spaceMember: space.data.spaceMember,
     locationApi,
     navigatorApi,
     spaceApi,

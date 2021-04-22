@@ -28,6 +28,7 @@ import * as Config from 'Config';
 import client from 'services/client';
 import * as logger from 'services/logger';
 import { createPubSubClientForSpace } from 'services/PubSubService';
+import { SpaceContextEvent } from './SpaceContextEvent';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 
@@ -306,6 +307,7 @@ export default function register() {
       };
 
       resetMembers(spaceContext);
+      setupListeners(spaceContext);
       return spaceContext;
 
       /**
@@ -394,6 +396,15 @@ export default function register() {
               };
             }
           });
+      }
+
+      /**
+       * Transition listeners meant to decouple the rest of the codebase from the spaceContext instance
+       */
+      function setupListeners(spaceContext) {
+        $rootScope.$on(SpaceContextEvent.RefreshPublishedContentTypes, () => {
+          spaceContext.publishedCTs.refresh();
+        });
       }
     },
   ]);

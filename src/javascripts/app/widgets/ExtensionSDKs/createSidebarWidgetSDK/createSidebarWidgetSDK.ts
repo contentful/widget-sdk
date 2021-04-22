@@ -1,7 +1,7 @@
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { createDialogsApi } from '../createDialogsApi';
-import { createEditorApi } from '../createEditorApi';
+import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createIdsApiWithoutField } from '../utils';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
@@ -15,18 +15,25 @@ import { SidebarExtensionSDK } from '@contentful/app-sdk';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import { EditorInterface } from 'contentful-management/types';
+import { getModule } from 'core/NgRegistry';
+import { Proxy } from 'core/services/proxy';
+import APIClient from 'data/APIClient';
 
 interface CreateSidebarWidgetSDKOptions {
   internalContentType: InternalContentType;
   doc: Document;
   parameters: {
-    instance: Record<string, any>;
-    installation: Record<string, any>;
+    instance: Record<string, unknown>;
+    installation: Record<string, unknown>;
   };
-  editorData: any;
-  localeData: any;
-  preferences: any;
-  spaceContext: any;
+  editorData: {
+    editorInterface: EditorInterface;
+  };
+  localeData: Proxy<LocaleData>;
+  preferences: Proxy<Preferences>;
+  spaceContext: ReturnType<typeof getModule>;
+  cma: APIClient;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
@@ -40,12 +47,13 @@ export const createSidebarWidgetSDK = ({
   doc,
   parameters,
   spaceContext,
+  cma,
   widgetNamespace,
   widgetId,
   fieldLocaleListeners,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
-  const cma = getBatchingApiClient(spaceContext.cma);
+  const apiClient = getBatchingApiClient(cma);
 
   const editorApi = createEditorApi({
     editorInterface: editorData.editorInterface,
@@ -54,7 +62,7 @@ export const createSidebarWidgetSDK = ({
   });
 
   const entryApi = createEntryApi({
-    cma,
+    cma: apiClient,
     internalContentType,
     doc,
     fieldLocaleListeners: fieldLocaleListeners.lookup,
@@ -66,7 +74,7 @@ export const createSidebarWidgetSDK = ({
     widgetId,
   });
 
-  const userApi = createUserApi(spaceContext.space.data.spaceMember as SpaceMember);
+  const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
   const idsApi = createIdsApiWithoutField({
     spaceId: spaceContext.getId(),
@@ -83,7 +91,7 @@ export const createSidebarWidgetSDK = ({
   };
 
   const spaceApi = createSpaceApi({
-    cma,
+    cma: apiClient,
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
@@ -96,7 +104,7 @@ export const createSidebarWidgetSDK = ({
   const navigatorApi = createNavigatorApi({
     environmentId: spaceContext.getEnvironmentId(),
     spaceId: spaceContext.getId(),
-    cma: spaceContext.cma,
+    cma: apiClient,
     isMaster: spaceContext.isMasterEnvironment(),
     widgetNamespace,
     widgetId,

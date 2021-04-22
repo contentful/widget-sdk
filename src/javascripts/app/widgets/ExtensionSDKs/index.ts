@@ -1,4 +1,4 @@
-export { createEditorExtensionSDK } from './createEditorExtensionSDK';
+export { createEditorWidgetSDK } from './createEditorWidgetSDK';
 export { createFieldWidgetSDK, createReadonlyFieldWidgetSDK } from './createFieldWidgetSDK';
 export { createPageWidgetSDK } from './createPageWidgetSDK';
 export { createSidebarWidgetSDK } from './createSidebarWidgetSDK';

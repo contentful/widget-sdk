@@ -1,4 +1,10 @@
-import { defaultSpaceId, defaultHeader, defaultOrgId, defaultAppId } from '../util/requests';
+import {
+  defaultSpaceId,
+  defaultHeader,
+  defaultOrgId,
+  defaultAppId,
+  defaultEnvironmentId,
+} from '../util/requests';
 
 import { marketplaceEntryList } from '../fixtures/responses/app_definitions/apps-marketplace';
 
@@ -57,7 +63,7 @@ export const appInstallation = {
     'save dropbox app installation',
     {
       method: 'PUT',
-      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${defaultAppId}`,
       body: { parameters: {} },
     },
     {
@@ -70,7 +76,7 @@ export const appInstallation = {
     'save private app installation',
     {
       method: 'PUT',
-      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${privateAppId}`,
       body: { parameters: {} },
     },
     {
@@ -85,7 +91,7 @@ export const appInstallation = {
     'delete Dropbox app installation',
     {
       method: 'DELETE',
-      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${defaultAppId}`,
       headers: defaultHeader,
     },
     {
@@ -96,7 +102,7 @@ export const appInstallation = {
     'delete private app installation',
     {
       method: 'DELETE',
-      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${privateAppId}`,
       headers: defaultHeader,
     },
     {
@@ -107,7 +113,7 @@ export const appInstallation = {
     'get existing Dropbox app installation',
     {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${defaultAppId}`,
       headers: defaultHeader,
     },
     {
@@ -120,7 +126,7 @@ export const appInstallation = {
     'get existing private app installation',
     {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/app_installations/${privateAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${privateAppId}`,
       headers: defaultHeader,
     },
     {
@@ -133,7 +139,7 @@ export const appInstallation = {
     'fail get Dropbox installation',
     {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/app_installations/${defaultAppId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/app_installations/${defaultAppId}`,
       headers: defaultHeader,
     },
     {

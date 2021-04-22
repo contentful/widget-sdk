@@ -4,6 +4,7 @@ import {
   defaultContentTypeId,
   defaultHeader,
   appContentTypeId,
+  defaultEnvironmentId,
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 import {
@@ -143,13 +144,24 @@ function getAllContentTypesInDefaultSpaceRequest(query?: Query): RequestOptions 
   };
 }
 
+function getAllContentTypesInDefaultSpaceEnvironmentRequest(query?: Query): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types`,
+    headers: defaultHeader,
+    query,
+  };
+}
+
 export const getAllContentTypesInDefaultSpace = {
-  willReturnNone() {
+  willReturnNone(withEnvironment = false) {
     cy.addInteraction({
       provider: 'content_types',
       state: States.NONE,
       uponReceiving: `a request for all content types in space "${defaultSpaceId}"`,
-      withRequest: getAllContentTypesInDefaultSpaceRequest(),
+      withRequest: withEnvironment
+        ? getAllContentTypesInDefaultSpaceEnvironmentRequest()
+        : getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
         headers: {
@@ -163,12 +175,14 @@ export const getAllContentTypesInDefaultSpace = {
   },
   // TODO: Is not a good idea to test with a response of a single element against a collection
   // Unless there is a good reason for not doing so, test with several
-  willReturnOne() {
+  willReturnOne(withEnvironment = false) {
     cy.addInteraction({
       provider: 'content_types',
       state: States.SINGLE,
       uponReceiving: `a request for all content types in space "${defaultSpaceId}"`,
-      withRequest: getAllContentTypesInDefaultSpaceRequest(),
+      withRequest: withEnvironment
+        ? getAllContentTypesInDefaultSpaceEnvironmentRequest()
+        : getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
         headers: {

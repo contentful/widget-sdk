@@ -1,6 +1,6 @@
 import { PageExtensionSDK } from '@contentful/app-sdk';
-import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
-import { SpaceMember, createUserApi } from '../createUserApi';
+import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
+import { createUserApi, SpaceMember } from '../createUserApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
 import { createSpaceApi } from '../createSpaceApi';
@@ -13,6 +13,7 @@ import { getEnvironment, isMasterEnvironment } from 'core/services/SpaceEnvConte
 import { createAPIClient } from 'core/services/APIClient/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createUserCache from 'data/userCache';
+import { Source } from 'i13n/constants';
 
 interface CreatePageWidgetSDKOptions {
   parameters: {
@@ -44,7 +45,8 @@ export const createPageWidgetSDK = ({
 }: CreatePageWidgetSDKOptions): PageExtensionSDK => {
   const userApi = createUserApi(space.data.spaceMember);
   const environment = getEnvironment(space);
-  const cma = createAPIClient(spaceId, environmentId);
+  const source = widgetNamespace === WidgetNamespace.BUILTIN ? undefined : Source.CustomWidget;
+  const cma = createAPIClient(spaceId, environmentId, source);
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const isMaster = isMasterEnvironment(environment);
