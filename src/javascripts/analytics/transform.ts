@@ -16,7 +16,6 @@ import { BoilerplateTransform, ClipboardCopyTransform } from './transformers/Api
 import AppOpen from './transformers/AppOpen';
 import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
-import EditorLoadTransform from './transformers/EditorLoad';
 import TranslationSidebar from './transformers/TranslationSidebar';
 import Snapshot from './transformers/Snapshot';
 import InviteUserExperiment from './transformers/InviteUserExperiment';
@@ -63,6 +62,16 @@ const planNames = Object.keys(segmentTypewriterPlans);
  * See the documentation of `registerEvent()` on how to register an event.
  */
 const _events: Record<string, EventMeta> = {};
+
+/////////////////////////////////////////////////////////////////////////
+// MIGRATED events that now use `Analytics.tracking.` without transform:
+/////////////////////////////////////////////////////////////////////////
+
+migratedLegacyEvent('editorLoaded', 'editor_load');
+
+/////////////////////////////////////////////////////////////////////////
+// LEGACY Analytis.track() transform based event registration:
+/////////////////////////////////////////////////////////////////////////
 
 registerSnowplowEvent('element:click', 'element_click', ElementClickTransform);
 registerSnowplowEvent('global:state_changed', 'page_view', PageViewTransform);
@@ -172,13 +181,6 @@ registerTranslationSidebarEvent('translation_sidebar:toggle_widget_mode');
 registerTranslationSidebarEvent('translation_sidebar:deselect_active_locale');
 registerTranslationSidebarEvent('translation_sidebar:update_active_locales');
 registerTranslationSidebarEvent('translation_sidebar:change_focused_locale');
-
-registerEditorLoadEvent('editor_load:init');
-registerEditorLoadEvent('editor_load:entity_loaded');
-registerEditorLoadEvent('editor_load:sharejs_connected');
-registerEditorLoadEvent('editor_load:doc_connected');
-registerEditorLoadEvent('editor_load:links_rendered');
-registerEditorLoadEvent('editor_load:fully_interactive');
 
 registerSnapshotEvent('versioning:no_snapshots');
 registerSnapshotEvent('versioning:snapshot_opened');
@@ -519,10 +521,6 @@ function registerBulkEditorEvent(event) {
 
 function registerSlideInEditorEvent(event) {
   registerSnowplowEvent(event, 'slide_in_editor', SlideInEditor);
-}
-
-function registerEditorLoadEvent(event) {
-  registerEvent(event, { segment: 'editor_loaded', snowplow: 'editor_load' }, EditorLoadTransform);
 }
 
 function registerTranslationSidebarEvent(event) {
