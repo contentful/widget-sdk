@@ -9,7 +9,13 @@ import { css } from 'emotion';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
 import { AppBundleData } from './types';
 
-import { HelpText, Notification, Spinner, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  HelpText,
+  Notification,
+  Spinner,
+  Paragraph,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 import { validateBundle } from './bundleValidation';
 
 enum DropZoneStatus {
@@ -19,6 +25,7 @@ enum DropZoneStatus {
 }
 
 interface HostingDropzoneProps {
+  link?: { title: string; onLinkClick: () => void };
   definition: AppDefinitionWithBundle;
   onAppBundleCreated: (appBundle: AppBundleData) => void;
   containerStyles?: string;
@@ -32,6 +39,7 @@ export function HostingDropzone({
   definition,
   onAppBundleCreated,
   containerStyles,
+  link,
 }: HostingDropzoneProps) {
   const [dropzoneStatus, setDropzoneStatus] = React.useState(DropZoneStatus.IDLE);
   const { addBundle } = React.useContext(HostingStateContext);
@@ -101,8 +109,16 @@ export function HostingDropzone({
         )}
       </div>
       <HelpText className={styles.dropzoneHelpText}>
-        Using <span className={appEditorStyles.monospace}>create-contentful-app</span>? You can also
-        run <span className={appEditorStyles.monospace}>npm run upload</span> in your terminal.
+        <span>
+          Using <span className={appEditorStyles.monospace}>create-contentful-app</span>? You can
+          also run <span className={appEditorStyles.monospace}>npm run upload</span> in your
+          terminal.
+        </span>
+        {link && (
+          <TextLink className={styles.helpTextLink} onClick={link.onLinkClick}>
+            {link.title}
+          </TextLink>
+        )}
       </HelpText>
     </div>
   );

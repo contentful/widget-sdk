@@ -36,6 +36,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 export interface AppEditorProps {
   errorPath?: string[];
   errors?: ValidationError[];
+  goToTab?: (tab: string) => void;
   onErrorsChange?: (errors: ValidationError[]) => void;
   disabled: boolean;
 }
@@ -78,6 +79,7 @@ export function AppEditor({
   errors = [],
   onErrorsChange = noop,
   disabled,
+  goToTab,
 }: AppEditorProps) {
   const { draftDefinition, setDraftDefinition } = React.useContext(AppDetailsStateContext);
 
@@ -213,6 +215,7 @@ export function AppEditor({
           textInputProps={{ disabled }}
         />
         <AppHosting
+          goToTab={goToTab}
           disabled={disabled}
           errorPath={errorPath}
           errors={errors}

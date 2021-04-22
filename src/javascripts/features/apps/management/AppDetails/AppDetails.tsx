@@ -411,6 +411,7 @@ export const AppDetails = (props: Props) => {
           {selectedTab === TAB_PATHS.GENERAL && (
             <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
               <AppEditor
+                goToTab={onTabSelect}
                 errorPath={ERROR_PATH_DEFINITION}
                 errors={errors}
                 onErrorsChange={setErrors}

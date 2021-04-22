@@ -54,20 +54,6 @@ const defaultProps = {
 };
 
 describe('ActiveBundle', () => {
-  describe('when the saved bundle used src hosting', () => {
-    it('renders the active url and a dropzone', async () => {
-      renderInContext({
-        ...defaultProps,
-        savedDefinition: { src: 'https://www.cool.com' },
-        definition: {},
-      });
-
-      await waitFor(() => {
-        screen.getByText(/Self-hosted/);
-      });
-      screen.getByText(/drag and drop your app/);
-    });
-  });
   describe('when the saved bundle uses bundle hosting', () => {
     it('renders an activeBundle and a dropzone', async () => {
       renderInContext({ ...defaultProps });

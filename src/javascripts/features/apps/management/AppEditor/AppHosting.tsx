@@ -16,10 +16,9 @@ import { ValidationError } from './types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { DataLink, AppBundleData } from './types';
-import { HostingDropzone } from './HostingDropzone';
+import { DataLink } from './types';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
-import { HostingDropdown } from './HostingDropdown';
+import { ActiveBundle } from '../AppBundle/ActiveBundle';
 import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const appHostingStyles = {
@@ -38,6 +37,7 @@ interface AppHostingProps {
   errorPath?: string[];
   errors?: ValidationError[];
   disabled: boolean;
+  goToTab?: (tab: string) => void;
   clearErrorForField: (error: string[]) => void;
 }
 
@@ -46,10 +46,13 @@ export function AppHosting({
   disabled,
   errors = [],
   clearErrorForField,
+  goToTab,
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
-  const { draftDefinition, setDraftDefinition } = React.useContext(AppDetailsStateContext);
+  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
+    AppDetailsStateContext
+  );
 
   React.useEffect(() => {
     getVariation(FLAGS.APP_HOSTING_UI, {
@@ -69,11 +72,11 @@ export function AppHosting({
     setDraftDefinition({ ...draftDefinition, src: e.target.value.trim() });
   };
 
-  const onAppBundleCreate = (bundle: AppBundleData) => {
+  const onResetBundle = () => {
     setDraftDefinition({
       ...draftDefinition,
-      src: undefined,
-      bundle: { sys: { type: 'Link', linkType: 'AppBundle', id: bundle.sys.id } },
+      src: savedDefinition.src,
+      bundle: savedDefinition.bundle,
     });
   };
 
@@ -116,10 +119,13 @@ export function AppHosting({
           </Flex>
           {hostingState && hostingState.isAppHosting ? (
             <>
-              <HostingDropdown definition={draftDefinition} />
-              <HostingDropzone
-                onAppBundleCreated={onAppBundleCreate}
-                definition={draftDefinition}
+              <ActiveBundle
+                link={
+                  goToTab
+                    ? { title: 'View all bundles', onLinkClick: () => goToTab('bundles') }
+                    : undefined
+                }
+                resetDefinitionBundle={onResetBundle}
               />
             </>
           ) : (
