@@ -125,7 +125,11 @@ describe('Entry references', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
 
-    it('publishes release skipping unresolved entities', () => {
+    /**
+     * @todo Create the missing state with unresolved entities before activating this test [https://contentful.atlassian.net/browse/PUL-1706]
+     * `entries/several-references-with-unresolved` doesn't exist in `content_api` yet.
+     **/
+    it.skip('publishes release skipping unresolved entities', () => {
       Entry.getEntryReferences.willReturnSeveralWithUnresolved();
       Entry.queryForDefaultEntries.willFindMultiple();
 
