@@ -34,8 +34,6 @@ const buffer = CallBuffer.create();
 const bufferedTrack = bufferedCall('track');
 let isEnabled = false;
 
-type TrackingPlan = typeof plan;
-
 /**
  * Loads lazily the script and starts
  * sending analytical events.
@@ -142,17 +140,15 @@ async function getIntegrations() {
   return resp.map((item) => item.creationName);
 }
 
-// TODO:xxx On staging/dev environments we never call .enable() and therefore never execute the
-//  buffered calls and don't get typewriter benefits on these environments!
-//  It should be fine to not buffer these calls as the mock `window.analytics.track` constructed
-//  in install() above is used by `plan` members internally. It's replaced by the real `analytics`
-//  object once loaded.
-const bufferedPlan: TrackingPlan = _.mapValues(plan, (fn, fnName) => () =>
-  bufferedCall(fnName, fn)
-);
-
 export default {
-  plan: bufferedPlan,
+  /**
+   * Exposes Segment typewriter tracking functions for all known Segment events.
+   *
+   * Note: Calls are buffered by the fact that these functions internally are using
+   *  window.analytics.track() which is set up above with buffered calls until
+   *  the real `window.analytics` is lazy loaded.
+   */
+  plan,
   enable: _.once(enable),
   /**
    * Sends a single event with data to
