@@ -7,7 +7,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import * as Config from 'Config';
-import KnowledgeMenuNotification from './KnowledgeMenuNotification';
 
 const styles = {
   button: css({
@@ -41,7 +40,6 @@ function KnowledgeMenu() {
           type="button"
           onClick={handleDropdownToggle}
           data-test-id="help-menu-button">
-          <KnowledgeMenuNotification isMenuOpen={isOpen} />
           <Icon size="small" icon="HelpCircle" color="white" />
         </button>
       }>
@@ -68,16 +66,6 @@ function KnowledgeMenu() {
           target="_blank"
           rel="noopener noreferrer">
           Training courses
-        </DropdownListItem>
-      </DropdownList>
-
-      <DropdownList border="top">
-        <DropdownListItem
-          testId="help-menu-what-is-new"
-          href={`${Config.developersChangelogUrl}/?${utmParams}`}
-          target="_blank"
-          rel="noopener noreferrer">
-          What&apos;s new
         </DropdownListItem>
       </DropdownList>
     </Dropdown>
