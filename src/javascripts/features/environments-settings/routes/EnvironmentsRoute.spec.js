@@ -2,11 +2,11 @@ import React from 'react';
 import { render, waitForElement, wait, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import EnvironmentsRoute from './EnvironmentsRoute';
+import { EnvironmentsRoute } from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getVariation } from 'LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { openDeleteEnvironmentDialog } from '../DeleteDialog';
+import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
 import createResourceService from 'services/ResourceService';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
@@ -48,7 +48,7 @@ jest.mock('services/ChangeSpaceService', () => ({
 
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
-jest.mock('../DeleteDialog', () => ({
+jest.mock('../components/DeleteDialog', () => ({
   openDeleteEnvironmentDialog: jest.fn(),
 }));
 

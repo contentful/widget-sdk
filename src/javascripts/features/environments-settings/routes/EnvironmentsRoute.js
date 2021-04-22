@@ -30,7 +30,7 @@ import EnvironmentAliases from 'app/SpaceSettings/EnvironmentAliases/Environment
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useEnvironmentsRouteState } from './EnvironmentsRouteReducer';
-import EnvironmentsSidebar from '../EnvironmentsSidebar';
+import { EnvironmentsSidebar } from '../components/EnvironmentsSidebar';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 import AliasIcon from 'svg/alias.svg';
@@ -40,7 +40,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { usePubSubClient } from 'core/hooks';
 
-export default function EnvironmentsRoute() {
+export function EnvironmentsRoute() {
   const {
     currentSpaceId,
     currentEnvironmentId,

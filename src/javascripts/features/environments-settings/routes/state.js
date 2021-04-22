@@ -1,5 +1,5 @@
 import * as React from 'react';
-import EnvironmentsRoute from './EnvironmentsRoute';
+import { EnvironmentsRoute } from './EnvironmentsRoute';
 import StateRedirect from 'app/common/StateRedirect';
 import { Route, RouteErrorBoundary, Routes, CustomRouter } from 'core/react-routing';
 
@@ -22,7 +22,7 @@ function EnvironmentsRouter() {
   );
 }
 
-export default {
+export const state = {
   name: 'environments',
   url: '/environments{pathname:any}',
   params: {

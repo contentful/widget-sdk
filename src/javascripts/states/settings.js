@@ -1,5 +1,5 @@
 import SpaceSettingsBase from 'states/SpaceSettingsBase';
-import environmentsSettingsState from 'app/SpaceSettings/Environments/routes';
+import { state as environmentsSettingsState } from 'features/environments-settings';
 import spaceUsageState from 'app/SpaceSettings/Usage/SpaceUsageState';
 import { extensionsSettingsState } from './settingsExtensions';
 import { webhooksRouteState } from './settingsWebhooks';

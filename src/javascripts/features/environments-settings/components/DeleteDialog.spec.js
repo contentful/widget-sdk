@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpaceEnvironmentsDeleteDialogContent } from 'app/SpaceSettings/Environments/DeleteDialog';
+import { SpaceEnvironmentsDeleteDialogContent } from './DeleteDialog';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 describe('DeleteDialog', () => {

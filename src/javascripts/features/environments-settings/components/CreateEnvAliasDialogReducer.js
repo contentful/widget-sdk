@@ -129,7 +129,7 @@ export const useCreateEnvAliasState = (props) => {
  * functions that take the field value and return an error if the field
  * value is invalid.
  */
-export const validations = {
+export const environmentValidations = {
   id: (value) => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
@@ -155,7 +155,7 @@ function validate(fields) {
   let hasErrors = false;
 
   const errors = mapValues(fields, (field, name) => {
-    const validateField = validations[name];
+    const validateField = environmentValidations[name];
     const errorMessage = validateField(field.value);
     if (errorMessage) {
       hasErrors = true;

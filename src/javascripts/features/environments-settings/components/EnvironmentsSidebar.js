@@ -41,7 +41,7 @@ const sidebarStyles = {
   }),
 };
 
-export default function EnvironmentsSidebar({
+export function EnvironmentsSidebar({
   isLoading,
   canCreateEnv,
   resource,
