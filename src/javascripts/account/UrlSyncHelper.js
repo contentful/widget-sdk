@@ -1,6 +1,7 @@
 import { accountUrl } from 'Config';
-import { extend, startsWith, endsWith } from 'lodash';
+import { startsWith, endsWith } from 'lodash';
 import { getModule } from 'core/NgRegistry';
+import { window } from 'core/services/window';
 
 /**
  * @module account/UrlSyncHelper
@@ -13,11 +14,8 @@ import { getModule } from 'core/NgRegistry';
  */
 
 export function getGatekeeperUrl() {
-  const $state = getModule('$state');
-  const $location = getModule('$location');
-
-  const webappUrl = $location.url();
-  const baseUrl = $state.href('account');
+  const webappUrl = window.location.pathname;
+  const baseUrl = '/account';
 
   if (!startsWith(webappUrl, baseUrl)) {
     return null;
@@ -47,13 +45,20 @@ export function updateWebappUrl(gkUrl = '') {
 
   gkUrl = endsWith(gkUrl, '/') ? gkUrl.substr(0, gkUrl.length - 1) : gkUrl;
 
-  const baseUrl = $state.href($state.current.name, { pathSuffix: '' });
-  const isCurrentState = startsWith(gkUrl, baseUrl);
+  const baseUrl = decodeURIComponent(
+    $state.href($state.current.name, { pathSuffix: '', pathname: '' })
+  );
+
+  const isCurrentState = gkUrl.startsWith(baseUrl);
 
   if (isCurrentState) {
-    const pathSuffix = gkUrl.replace(baseUrl, '');
-    const params = extend($state.params, { pathSuffix });
-    $state.go($state.current, params, { location: 'replace' });
+    const pathSuffix = gkUrl.replace(baseUrl, '') || '/';
+
+    $state.transitionTo(
+      $state.current,
+      { ...$state.params, navigationState: null, pathSuffix, pathname: pathSuffix },
+      { reload: false, inherit: true, notify: false, location: 'replace' }
+    );
   } else {
     $location.url(gkUrl);
   }

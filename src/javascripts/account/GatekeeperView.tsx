@@ -1,11 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { getGatekeeperUrl } from 'account/UrlSyncHelper';
+import React, { useState } from 'react';
 import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { LoadingState } from 'features/loading-state';
+
+import { getGatekeeperUrl } from './UrlSyncHelper';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -15,18 +14,21 @@ const wrapperStyle = css({
   right: 0,
 });
 
-export default function AccountView({ title, icon }) {
-  const gatekeeperUrl = useMemo(() => getGatekeeperUrl(), []);
+export function GatekeeperView({
+  title,
+  icon,
+}: {
+  title: string;
+  icon?: React.ReactElement<unknown>;
+}) {
+  const gatekeeperUrl = React.useMemo(() => getGatekeeperUrl() as string, []);
   const [loading, setLoading] = useState(true);
 
   return (
     <Workbench testId="account-iframe-page">
       {loading && <LoadingState />}
 
-      <Workbench.Header
-        title={title}
-        icon={icon ? <ProductIcon icon={icon} size="large" /> : null}
-      />
+      <Workbench.Header title={title} icon={icon} />
       <Workbench.Content>
         <div className={wrapperStyle}>
           <iframe
@@ -42,8 +44,3 @@ export default function AccountView({ title, icon }) {
     </Workbench>
   );
 }
-
-AccountView.propTypes = {
-  title: PropTypes.string.isRequired,
-  icon: PropTypes.string,
-};

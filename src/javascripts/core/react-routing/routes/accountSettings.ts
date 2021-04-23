@@ -29,10 +29,44 @@ const accountProfileCMATokensRoute = {
 };
 
 /**
- * AccountProfileOrgMembership
+ * AccountProfileOAuthTokens
  */
 
-type AccountProfileOrgMembership = {
+type AccountProfileOAuthTokensType = {
+  path: 'account.oauth_tokens';
+};
+
+const accountProfileOAuthTokensRoute = {
+  'account.oauth_tokens': () => ({
+    path: 'account.profile.access_grants',
+    params: {
+      pathname: '/',
+    },
+  }),
+};
+
+/**
+ * AccountProfileOAuthApplications
+ */
+
+type AccountProfileOAuthApplicationsType = {
+  path: 'account.oauth_application';
+};
+
+const accountProfileOAuthApplicationsRoute = {
+  'account.oauth_application': () => ({
+    path: 'account.profile.applications',
+    params: {
+      pathname: '/',
+    },
+  }),
+};
+
+/**
+ *  AccountProfileOrgMembership
+ */
+
+type AccountProfileOrgMembershipType = {
   path: 'account.organization_memberships';
 };
 
@@ -51,14 +85,18 @@ const accountProfileOrgMembershipRoute = {
 
 const routes = {
   ...accountProfileCMATokensRoute,
+  ...accountProfileOAuthTokensRoute,
   ...accountProfileSpaceMembershipsRoute,
+  ...accountProfileOAuthApplicationsRoute,
   ...accountProfileOrgMembershipRoute,
 };
 
 type AccountSettingsRouteType =
   | AccountProfileCMATokensType
   | AccountProfileSpaceMembershipsType
-  | AccountProfileOrgMembership;
+  | AccountProfileOrgMembershipType
+  | AccountProfileOAuthApplicationsType
+  | AccountProfileOAuthTokensType;
 
 export type { AccountSettingsRouteType };
 

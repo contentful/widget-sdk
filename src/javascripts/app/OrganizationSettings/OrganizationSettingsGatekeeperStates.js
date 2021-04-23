@@ -1,7 +1,8 @@
 import React from 'react';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { withOrganizationRoute } from 'states/utils';
 import SpacesRoute from './SpacesV1/SpacesRoute';
-import AccountView from 'account/AccountView';
+import { GatekeeperView } from 'account/GatekeeperView';
 
 export const edit = {
   name: 'edit',
@@ -10,7 +11,10 @@ export const edit = {
     pathSuffix: '',
   },
   component: withOrganizationRoute(() => (
-    <AccountView title="Organization information" icon="OrgInfo" />
+    <GatekeeperView
+      title="Organization information"
+      icon={<ProductIcon size="large" icon="OrgInfo" />}
+    />
   )),
 };
 
@@ -20,7 +24,9 @@ export const subscription = {
   params: {
     pathSuffix: '',
   },
-  component: withOrganizationRoute(() => <AccountView title="Subscription" icon="Subscription" />),
+  component: withOrganizationRoute(() => (
+    <GatekeeperView title="Subscription" icon={<ProductIcon size="large" icon="Subscription" />} />
+  )),
 };
 
 export const subscriptionBilling = {
@@ -29,7 +35,9 @@ export const subscriptionBilling = {
   params: {
     pathSuffix: '',
   },
-  component: withOrganizationRoute(() => <AccountView title="Subscription" icon="Subscription" />),
+  component: withOrganizationRoute(() => (
+    <GatekeeperView title="Subscription" icon={<ProductIcon size="large" icon="Subscription" />} />
+  )),
 };
 
 export const spaces = {
@@ -44,7 +52,7 @@ export const offsitebackup = {
   params: {
     pathSuffix: '',
   },
-  component: withOrganizationRoute(() => <AccountView title="Offsite backup" />),
+  component: withOrganizationRoute(() => <GatekeeperView title="Offsite backup" />),
 };
 
 export const billing = {
@@ -53,7 +61,7 @@ export const billing = {
   params: {
     pathSuffix: '',
   },
-  component: withOrganizationRoute(() => <AccountView title="Billing" />),
+  component: withOrganizationRoute(() => <GatekeeperView title="Billing" />),
 };
 
 export const userGatekeeper = {
@@ -62,5 +70,5 @@ export const userGatekeeper = {
   params: {
     pathSuffix: '',
   },
-  component: withOrganizationRoute(() => <AccountView title="Organization users" />),
+  component: withOrganizationRoute(() => <GatekeeperView title="Organization users" />),
 };

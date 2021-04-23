@@ -1,8 +1,11 @@
 import React from 'react';
+import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-routing';
+
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { OrganizationsRouter } from 'app/UserSettings/OrganisationsReactRouter';
 
-import AccountView from 'account/AccountView';
+import { GatekeeperView } from 'account/GatekeeperView';
 import { userProfileState } from 'features/user-profile';
 import { accountCMATokensRouteState, spaceMembershipsRouteState } from 'features/account-settings';
 
@@ -15,31 +18,61 @@ const organizationMemberships = {
   component: OrganizationsRouter,
 };
 
+/**
+ *
+ * Gatekeeper views
+ */
+
 const accessGrants = {
   name: 'access_grants',
-  url: '/access_grants{pathSuffix:PathSuffix}',
-  params: {
-    pathSuffix: '',
+  url: '/access_grants{pathname:any}',
+  component: function OAuthTokensRouter() {
+    const [basename] = window.location.pathname.split('access_grants');
+    return (
+      <CustomRouter splitter="profile/access_grants">
+        <RouteErrorBoundary>
+          <Routes basename={basename + 'access_grants'}>
+            <Route
+              name="account.profile.access_grants"
+              path="/*"
+              element={
+                <GatekeeperView
+                  title="OAuth tokens"
+                  icon={<ProductIcon size="large" icon="Token" />}
+                />
+              }
+            />
+          </Routes>
+        </RouteErrorBoundary>
+      </CustomRouter>
+    );
   },
-  component: () => <AccountView title="OAuth tokens" icon="Token" />,
 };
 
 const applications = {
   name: 'applications',
-  url: '/developers/applications{pathSuffix:PathSuffix}',
-  params: {
-    pathSuffix: '',
+  url: '/developers/applications{pathname:any}',
+  component: function OAuthApplicationsRouter() {
+    const [basename] = window.location.pathname.split('developers/applications');
+    return (
+      <CustomRouter splitter="profile/developers/applications">
+        <RouteErrorBoundary>
+          <Routes basename={basename + 'developers/applications'}>
+            <Route
+              name="account.profile.applications"
+              path="/*"
+              element={
+                <GatekeeperView
+                  title="OAuth applications"
+                  icon={<ProductIcon size="large" icon="Oauth" />}
+                />
+              }
+            />
+          </Routes>
+        </RouteErrorBoundary>
+      </CustomRouter>
+    );
   },
-  component: () => <AccountView title="OAuth applications" icon="Oauth" />,
-};
-
-const userCancellation = {
-  name: 'user_cancellation',
-  url: '/user_cancellation{pathSuffix:PathSuffix}',
-  params: {
-    pathSuffix: '',
-  },
-  component: () => <AccountView title="User cancellation" />,
 };
 
 export default {
@@ -48,7 +81,6 @@ export default {
   abstract: true,
   navComponent: ProfileNavigationBar,
   children: [
-    userCancellation,
     userProfileState,
     accountCMATokensRouteState,
     spaceMembershipsRouteState,

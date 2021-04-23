@@ -7,19 +7,19 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 
-import AccountView from './AccountView';
+import { GatekeeperView } from './GatekeeperView';
 
-jest.mock('account/UrlSyncHelper', () => ({
+jest.mock('./UrlSyncHelper', () => ({
   getGatekeeperUrl: jest.fn().mockReturnValue('account/gatekeeperpage'),
 }));
 
-describe('AccountView', () => {
+describe('GatekeeperView', () => {
   const props = {
     title: 'My Account Page',
   };
 
   const build = () => {
-    return render(<AccountView {...props} />);
+    return render(<GatekeeperView {...props} />);
   };
 
   it('renders the iframe with the correct url', () => {
