@@ -1,6 +1,6 @@
 import React from 'react';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
-import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
+import { OrganizationsRouter } from 'app/UserSettings/OrganisationsReactRouter';
 
 import AccountView from 'account/AccountView';
 import { userProfileState } from 'features/user-profile';
@@ -8,8 +8,11 @@ import { accountCMATokensRouteState, spaceMembershipsRouteState } from 'features
 
 const organizationMemberships = {
   name: 'organization_memberships',
-  url: '/organization_memberships',
-  component: OrganizationMembershipsRoute,
+  url: '/organization_memberships{pathname:any}',
+  params: {
+    navigationState: null,
+  },
+  component: OrganizationsRouter,
 };
 
 const accessGrants = {

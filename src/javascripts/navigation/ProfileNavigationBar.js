@@ -56,7 +56,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'Organizations',
               navIcon: 'Organizations',
-              sref: 'account.profile.organization_memberships',
+              sref: routes['account.organization_memberships']().path,
+              srefParams: routes['account.organization_memberships']().params,
               srefOptions: {
                 inherit: false,
               },

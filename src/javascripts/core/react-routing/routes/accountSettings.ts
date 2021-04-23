@@ -29,15 +29,36 @@ const accountProfileCMATokensRoute = {
 };
 
 /**
+ * AccountProfileOrgMembership
+ */
+
+type AccountProfileOrgMembership = {
+  path: 'account.organization_memberships';
+};
+
+const accountProfileOrgMembershipRoute = {
+  'account.organization_memberships': () => ({
+    path: 'account.profile.organization_memberships',
+    params: {
+      pathname: '/',
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
 const routes = {
   ...accountProfileCMATokensRoute,
   ...accountProfileSpaceMembershipsRoute,
+  ...accountProfileOrgMembershipRoute,
 };
 
-type AccountSettingsRouteType = AccountProfileCMATokensType | AccountProfileSpaceMembershipsType;
+type AccountSettingsRouteType =
+  | AccountProfileCMATokensType
+  | AccountProfileSpaceMembershipsType
+  | AccountProfileOrgMembership;
 
 export type { AccountSettingsRouteType };
 
