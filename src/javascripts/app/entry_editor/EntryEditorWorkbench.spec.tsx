@@ -108,6 +108,7 @@ describe('When rendering editors page with no editors', () => {
     loadEvents: {},
     state: {
       delete: {},
+      current: 'published',
     },
     statusNotificationProps: { entityLabel: 'entry', status: 'cool' },
     otDoc: doc,

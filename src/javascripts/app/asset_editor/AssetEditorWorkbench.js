@@ -53,6 +53,7 @@ const AssetEditorWorkbench = ({
   otDoc,
   editorData,
   incomingLinks,
+  state: { current },
 }) => {
   const widgets = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
   const { entityInfo } = editorData;
@@ -188,7 +189,9 @@ const AssetEditorWorkbench = ({
               className={
                 'entity-editor-form cf-workbench-content workbench-layer--is-current cf-workbench-content-type__text'
               }>
-              {tagsEnabled && <ContentTagsTab doc={otDoc} entityType="asset" />}
+              {tagsEnabled && (
+                <ContentTagsTab doc={otDoc} entityType="asset" entityState={current} />
+              )}
             </div>
           </TabPanel>
         </Workbench.Content>
@@ -214,6 +217,7 @@ AssetEditorWorkbench.propTypes = {
   }),
   state: PropTypes.shape({
     delete: PropTypes.object,
+    current: PropTypes.string,
   }),
   preferences: PropTypes.object,
   statusNotificationProps: PropTypes.object,

@@ -65,6 +65,7 @@ interface EntryEditorWorkbenchProps {
   loadEvents: Record<string, any>;
   state: {
     delete: Record<string, any>;
+    current: string;
   };
   statusNotificationProps: { entityLabel: any; status: string };
   otDoc: any;
@@ -307,6 +308,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                   widgetId: currentTab.widgetId,
                   selectedTab,
                   otDoc,
+                  entityState: state.current,
                 }}
               />
             );

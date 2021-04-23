@@ -9,11 +9,16 @@ import { ContentTagsTab } from 'app/entity_editor/ContentTagsTab';
 import { styles } from './styles';
 import { EntityField } from 'app/entity_editor/EntityField/EntityField';
 
-export const DefaultTagsTab = React.memo(function DefaultTagsTab({ otDoc, selectedTab, widgetId }) {
+export const DefaultTagsTab = React.memo(function DefaultTagsTab({
+  otDoc,
+  selectedTab,
+  widgetId,
+  entityState,
+}) {
   return (
     <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
       {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
-        <ContentTagsTab doc={otDoc} entityType="entry" showEmpty />
+        <ContentTagsTab doc={otDoc} entityType="entry" entityState={entityState} showEmpty />
       )}
     </div>
   );
