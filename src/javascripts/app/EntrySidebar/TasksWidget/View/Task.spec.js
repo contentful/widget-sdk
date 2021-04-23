@@ -24,7 +24,13 @@ const validTask = {
   version: 42,
   body: 'Do something already!',
   assignee: MOCKS.UserViewData.existingLoadedSpaceUser,
-  creator: MOCKS.UserViewData.existingLoadedSpaceUser,
+  createdBy: {
+    sys: {
+      type: 'Link',
+      linkType: 'User',
+      id: 'user-id-1',
+    },
+  },
   createdAt: '2019-01-10T13:21:40.467Z',
   isDone: false,
   isDraft: false,

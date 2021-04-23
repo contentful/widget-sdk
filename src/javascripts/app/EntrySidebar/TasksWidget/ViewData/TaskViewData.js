@@ -124,15 +124,12 @@ function createTaskViewData(task, usersFetchingStatus) {
   const assignee = task.assignedTo
     ? createUserViewDataFromLinkAndFetcher(task.assignedTo, usersFetchingStatus)
     : null;
-  const creator = task.sys.createdBy
-    ? createUserViewDataFromLinkAndFetcher(task.sys.createdBy, usersFetchingStatus)
-    : null;
 
   return {
     key: id,
     version: task.sys.version,
     createdAt: task.sys.createdAt,
-    creator,
+    createdBy: task.sys.createdBy,
     assignee,
     body: task.body,
     isDone: task.status === TaskStatus.RESOLVED,
