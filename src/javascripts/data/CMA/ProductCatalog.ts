@@ -2,6 +2,7 @@ import React from 'react';
 import DataLoader from 'dataloader';
 import { get, isUndefined, memoize, uniq } from 'lodash';
 import * as Config from 'Config';
+import { clearAppsTrialCache } from 'features/trials';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 import { Endpoint } from 'data/CMA/types';
@@ -42,6 +43,7 @@ const COMMON_FOR_SPACE: SpaceFeatures[] = [
   SpaceFeatures.PC_CONTENT_TAGS,
   SpaceFeatures.SCHEDULED_PUBLISHING,
 ];
+
 const COMMON_FOR_ORG: OrganizationFeatures[] = [
   OrganizationFeatures.CUSTOM_SIDEBAR,
   OrganizationFeatures.TEAMS,
@@ -181,6 +183,7 @@ export const getSpaceFeature = async (
 export const clearCachedProductCatalogFlags = () => {
   getLoaderForOrg.cache.clear?.();
   getLoaderForSpace.cache.clear?.();
+  clearAppsTrialCache();
 };
 
 type FeatureGetter<TFeatures> = (

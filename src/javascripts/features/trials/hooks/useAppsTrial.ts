@@ -3,6 +3,7 @@ import type { Trial } from '@contentful/experience-cma-utils/dist/internal-endpo
 import { useEffect, useState } from 'react';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
+import { memoize } from 'lodash';
 
 const isAppsTrial = (trial: Trial) => trial.productId === 'add_on_compose_launch';
 
@@ -20,6 +21,14 @@ const hasExpired = (trial: Trial) => {
   return today > endsAt;
 };
 
+const trialsWithCache = memoize((organizationId) =>
+  getCMAClient({ organizationId }).internal.trials.get()
+);
+
+export function clearAppsTrialCache() {
+  trialsWithCache.cache.clear?.();
+}
+
 export function useAppsTrial(organizationId?: string) {
   const [canStartTrial, setCanStartTrial] = useState<boolean>(false);
   const [isAppsTrialActive, setIsAppsTrialActive] = useState<boolean>(false);
@@ -34,7 +43,7 @@ export function useAppsTrial(organizationId?: string) {
       }
 
       const [trials, hasAppsFeature] = await Promise.all([
-        getCMAClient({ organizationId }).internal.trials.get(),
+        trialsWithCache(organizationId),
         getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_COMPOSE_APP),
       ]);
 
