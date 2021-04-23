@@ -51,9 +51,6 @@ export function SubscriptionPage({
   spacePlans,
   onSpacePlansChange,
   memberAccessibleSpaces,
-  isTrialAvailable,
-  isTrialActive,
-  isTrialExpired,
 }) {
   const organizationId = organization?.sys.id;
   const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
@@ -207,9 +204,6 @@ export function SubscriptionPage({
                   <ContentfulApps
                     organizationId={organizationId}
                     startAppTrial={handleStartAppTrial}
-                    isTrialAvailable={isTrialAvailable}
-                    isTrialActive={isTrialActive}
-                    isTrialExpired={isTrialExpired}
                     addOnPlan={addOnPlan}
                   />
                 </Flex>
@@ -256,9 +250,6 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
-  isTrialAvailable: PropTypes.bool,
-  isTrialActive: PropTypes.bool,
-  isTrialExpired: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {

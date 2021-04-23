@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ContentfulApps } from './ContentfulApps';
+import { useAppsTrial } from 'features/trials';
 
 import * as Fake from 'test/helpers/fakeFactory';
 
@@ -8,6 +9,10 @@ const startAppTrial = jest.fn();
 
 const mockOrganization = Fake.Organization();
 const fakePlan = Fake.Plan();
+
+jest.mock('features/trials', () => ({
+  useAppsTrial: jest.fn().mockReturnValue({ canStartTrial: false }),
+}));
 
 function build(props) {
   render(
@@ -22,17 +27,24 @@ describe('ContentfulAppTrial', () => {
   });
 
   it('should display Start Trial button for eligible users', () => {
-    build({ isTrialAvailable: true });
+    useAppsTrial.mockReturnValue({ canStartTrial: true });
+    build();
     expect(screen.getByTestId('start-trial-button')).toBeVisible();
   });
 
   it('should display Buy Now button for eligible users', () => {
-    build({ isTrialActive: true });
+    useAppsTrial.mockReturnValue({ isAppsTrialActive: true });
+    build();
     expect(screen.getByTestId('buy-now-button')).toBeVisible();
   });
 
   it('should display cancel C+L button when C+L has been purchased', () => {
     build({ addOnPlan: fakePlan });
     expect(screen.getByTestId('subscription-page.delete-apps')).toBeVisible();
+  });
+
+  it('should not display Start Trial button when C+L has been purchased', () => {
+    build({ addOnPlan: fakePlan });
+    expect(screen.queryByTestId('start-trial-button')).not.toBeInTheDocument();
   });
 });

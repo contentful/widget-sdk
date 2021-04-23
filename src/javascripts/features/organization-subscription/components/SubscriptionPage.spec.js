@@ -14,6 +14,7 @@ import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+import { useAppsTrial } from 'features/trials';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
@@ -35,6 +36,11 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
   getCurrentStateName: jest.fn(),
+}));
+
+jest.mock('features/trials', () => ({
+  ...jest.requireActual('features/trials'),
+  useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
@@ -156,7 +162,6 @@ describe('SubscriptionPage', () => {
       numFree: 100,
       hardLimit: null,
     };
-
     build({ usersMeta, organization: mockTrialOrganization });
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
@@ -255,7 +260,8 @@ describe('SubscriptionPage', () => {
   describe('contentful apps card', () => {
     it('shows Contentful Apps trial card for users who have not purchased apps', () => {
       isOwnerOrAdmin.mockReturnValueOnce(true);
-      build({ organization: mockOrganization, isTrialActive: true });
+      useAppsTrial.mockReturnValueOnce({ isAppsTrialActive: true });
+      build({ organization: mockOrganization });
 
       expect(screen.getByTestId('apps-trial-header')).toBeVisible();
       expect(screen.queryByTestId('apps-header')).toBeNull();
@@ -266,7 +272,6 @@ describe('SubscriptionPage', () => {
       build({
         organization: mockOrganization,
         addOnPlan: { sys: { id: 'addon_id' } },
-        composeAndLaunchEnabled: true,
       });
 
       expect(screen.getByTestId('apps-header')).toBeVisible();
