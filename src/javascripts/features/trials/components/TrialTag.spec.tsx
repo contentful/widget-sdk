@@ -416,17 +416,5 @@ describe('TrialTag', () => {
       expect(screen.queryByTestId('app_trial_tag-link')).not.toBeInTheDocument();
       expect(screen.queryByTestId('trial_space_tag')).not.toBeInTheDocument();
     });
-
-    it('does not render when the Trial Space is purchased after the App Trial expired', async () => {
-      useSpaceEnvContext.mockReturnValue({
-        currentSpaceData: spaceNotOnTrial(organizationNotOnTrial),
-      });
-
-      build();
-
-      await waitFor(() => screen.queryByTestId('app_trial_tag'));
-      expect(screen.queryByTestId('app_trial_tag')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('trial_space_tag')).not.toBeInTheDocument();
-    });
   });
 });
