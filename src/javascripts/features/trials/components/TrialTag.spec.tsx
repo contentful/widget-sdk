@@ -6,7 +6,7 @@ import { getOrganization as _getOrganization } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin as _isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href, isOrgRoute as _isOrgRoute } from 'states/Navigator';
-import { useAppsTrial as _useAppsTrial } from '../hooks/useAppsTrials';
+import { useAppsTrial as _useAppsTrial } from '../hooks/useAppsTrial';
 import { useSpaceEnvContext as _useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isSpaceAccessible as _isSpaceAccessible } from '../utils/utils';
 
@@ -77,7 +77,7 @@ jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn().mockReturnValue({}),
 }));
 
-jest.mock('../hooks/useAppsTrials', () => ({
+jest.mock('../hooks/useAppsTrial', () => ({
   useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 

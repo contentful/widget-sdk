@@ -11,5 +11,5 @@ export {
   isExpiredTrialSpace,
 } from './services/TrialService';
 
-export { useAppsTrial } from './hooks/useAppsTrials';
+export { useAppsTrial } from './hooks/useAppsTrial';
 export { trialState } from './TrialState';

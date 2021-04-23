@@ -19,7 +19,7 @@ import * as Navigator from 'states/Navigator';
 import { EVENTS } from '../utils/analyticsTracking';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Organization } from 'core/services/SpaceEnvContext/types';
-import { useAppsTrial } from '../hooks/useAppsTrials';
+import { useAppsTrial } from '../hooks/useAppsTrial';
 
 const styles = {
   tag: css({
