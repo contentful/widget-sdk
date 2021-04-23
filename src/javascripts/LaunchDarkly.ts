@@ -35,6 +35,10 @@ export enum FLAGS {
   ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
   ENTITY_EDITOR_CMA_EXPERIMENT = 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
+  /**
+   * @deprecated use product catalog space feature "reference_tree" check instead
+   */
+
   ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',

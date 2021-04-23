@@ -40,12 +40,12 @@ describe('Entry references', () => {
     ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
     ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureEnabled();
+    ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureEnabled();
   };
 
   beforeEach(() => {
     setupTestServers();
     setupInteractions();
-    cy.enableFeatureFlags([FeatureFlag.REFERENCES]);
   });
 
   describe('Validation', () => {

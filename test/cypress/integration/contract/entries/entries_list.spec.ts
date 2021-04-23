@@ -147,6 +147,7 @@ describe('Entries list page', () => {
 
     it('redirects to the entry page after click on create button', () => {
       const interactions = [
+        ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureEnabled(),
         createAnEntryInDefaultSpace.willSucceed(),
         getDefaultEntry.willReturnIt(),
         queryLinksToDefaultEntry.willReturnNone(),

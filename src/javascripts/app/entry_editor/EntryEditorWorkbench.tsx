@@ -13,6 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
+import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
@@ -211,14 +212,12 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
-      const isFeatureEnabled = await getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
-        organizationId: currentOrganizationId,
-        spaceId: currentSpaceId,
-        environmentId: currentEnvironmentId,
-      });
-      setTabVisible({
-        entryReferences: isFeatureEnabled,
-      });
+      const isFeatureEnabled = await getSpaceFeature(
+        currentSpaceId,
+        SpaceFeatures.PC_SPACE_REFERENCE_TREE,
+        false
+      );
+      setTabVisible({ entryReferences: isFeatureEnabled });
     }
 
     getFeatureFlagVariation();
