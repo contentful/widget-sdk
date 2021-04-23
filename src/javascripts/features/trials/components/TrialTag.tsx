@@ -103,11 +103,15 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
       params: { orgId: organization?.sys.id },
     };
   } else if (isAppsTrialActive || hasAppsTrialExpired) {
-    if (hasAppsTrialExpired && (Navigator.isOrgRoute() || space?.sys.id !== appsTrialSpaceKey)) {
+    if (
+      hasAppsTrialExpired &&
+      (Navigator.isOrgRoute() || space?.sys.id !== appsTrialSpaceKey || !space?.trialPeriodEndsAt)
+    ) {
       return null;
     }
+    // only display the expired apps trial tag on the SpaceNavBar of the Apps
+    // Trial Space when it hasn't been purchased
 
-    // only display the expired app tag on the SpaceNavBar of the Apps Trial Space
     daysLeft = calcTrialDaysLeft(appsTrialEndsAt);
     ctaType = CTA_EVENTS.APP_TRIAL_TAG;
     pathParamsObj = isAppsTrialSpaceAccessible

@@ -349,7 +349,7 @@ describe('TrialTag', () => {
       await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
     });
 
-    it('renders when the Apps Trial is expired and the navbar is SpaceNavbar', async () => {
+    it('renders when the Apps Trial has expired on the Apps Trial Space', async () => {
       useAppsTrial.mockReturnValue({
         hasAppsTrialExpired: true,
         appsTrialSpaceKey: trialExpiredSpace.sys.id,
@@ -361,6 +361,20 @@ describe('TrialTag', () => {
       build();
 
       await waitFor(() => expect(screen.getByTestId('app_trial_tag')).toHaveTextContent('TRIAL'));
+    });
+
+    it('does not render on upgraded Apps Trial Spaces when the Apps Trial has expired', async () => {
+      useAppsTrial.mockReturnValue({
+        hasAppsTrialExpired: true,
+        appsTrialSpaceKey: trialExpiredSpace.sys.id,
+      });
+      useSpaceEnvContext.mockReturnValue({
+        currentSpaceData: spaceNotOnTrial(organizationNotOnTrial),
+      });
+
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('app_trial_tag')).not.toBeInTheDocument());
     });
 
     it('does not render when the App Trial is expired and the navbar is OrgSettingsNavbar', async () => {
