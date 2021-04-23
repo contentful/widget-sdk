@@ -34,7 +34,7 @@ async function check() {
     process.exit(1);
   } else {
     console.log(
-      'All specified code directories are covered by the CODEOWNERS file, which declares their respective owners..'
+      'All specified code directories are covered by the CODEOWNERS file, which declares their respective owners.'
     );
     process.exit(0);
   }
