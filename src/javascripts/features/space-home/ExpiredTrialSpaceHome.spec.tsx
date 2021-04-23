@@ -11,6 +11,7 @@ import { getAddOnProductRatePlans } from 'features/pricing-entities';
 import { useAppsTrial as _useAppsTrial } from 'features/trials';
 
 const mockedSpace = fake.Space();
+
 const readOnlySpace = {
   ...mockedSpace,
   readOnlyAt: 'some day',
@@ -68,6 +69,7 @@ jest.mock('features/pricing-entities', () => ({
 
 const useAppsTrial = _useAppsTrial as jest.Mock;
 
+// TODO(aris): split cases into Enterprise Trial and Apps Trial spaces
 describe('ExpiredTrialSpaceHome', () => {
   beforeEach(() => {
     (useSpaceEnvContext as jest.Mock).mockReturnValue(defaultSpaceContextValues);
@@ -107,7 +109,9 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('renders correctly when the space is an expired App Trial Space', async () => {
-    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
+    useAppsTrial.mockReturnValue({
+      appsTrialSpaceKey: mockedSpace.sys.id,
+    });
     build();
 
     await waitFor(() =>
@@ -120,7 +124,10 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('navigates to the upgrade flow when clicked', async () => {
-    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
+    useAppsTrial.mockReturnValue({
+      appsTrialSpaceKey: mockedSpace.sys.id,
+    });
+
     build();
 
     await waitFor(() => fireEvent.click(screen.getByTestId('expired-trial-space-home.buy-now')));
@@ -129,7 +136,9 @@ describe('ExpiredTrialSpaceHome', () => {
   });
 
   it('opens a delete space modal when clicked', async () => {
-    useAppsTrial.mockReturnValue({ hasAppsTrialExpired: true });
+    useAppsTrial.mockReturnValue({
+      appsTrialSpaceKey: mockedSpace.sys.id,
+    });
     build();
 
     await waitFor(() =>
