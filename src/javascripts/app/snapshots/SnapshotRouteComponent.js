@@ -151,7 +151,7 @@ const SnapshotComparator = (props) => {
 
   useEffect(() => {
     if (!props.entryId) return;
-    loadEditorData(getSpaceContext, props.entryId)
+    loadEditorData(getSpaceContext(), props.entryId)
       .then(setEditorData)
       .catch(() => {
         Notification.error('Entry not found.');
