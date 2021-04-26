@@ -55,11 +55,6 @@ export const resetWithSpace = async (params) => {
 function initSpaceContext() {
   const publishedCTsBus$ = K.createPropertyBus([]);
 
-  const lastResetWithSpaceParams = {
-    spaceId: undefined,
-    environmentId: undefined,
-  };
-
   GlobalEventBus.on(GlobalEvents.RefreshPublishedContentTypes, () => {
     if (spaceContext?.publishedCTs?.refresh) {
       spaceContext.publishedCTs.refresh();
@@ -104,16 +99,6 @@ function initSpaceContext() {
      * @returns {Promise<self>}
      */
     resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
-      if (
-        spaceData.sys.id === lastResetWithSpaceParams.spaceId &&
-        uriEnvOrAliasId === lastResetWithSpaceParams.environmentId
-      ) {
-        return;
-      }
-
-      lastResetWithSpaceParams.spaceId = spaceData.sys.id;
-      lastResetWithSpaceParams.environmentId = uriEnvOrAliasId;
-
       spaceContext.resettingSpace = true;
 
       try {
