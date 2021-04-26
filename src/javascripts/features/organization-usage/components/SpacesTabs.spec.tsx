@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, within } from '@testing-library/react';
+import { render, fireEvent, within, RenderResult } from '@testing-library/react';
 import * as echarts from 'echarts';
 import { track } from 'analytics/Analytics';
 import { SpacesTabs } from './SpacesTabs';
@@ -73,7 +73,7 @@ const defaultData = {
   totalUsage: sum(ORG_USAGE),
 };
 
-const renderComp = (data, dispatch) => {
+const renderComp = (data, dispatch = jest.fn()): RenderResult => {
   return render(
     <MockPovider {...data} dispatch={dispatch}>
       <SpacesTabs />
@@ -88,10 +88,6 @@ const MockPovider = (data) => {
       <UsageDispatchContext.Provider value={dispatch}> {children}</UsageDispatchContext.Provider>
     </UsageStateContext.Provider>
   );
-};
-
-MockPovider.defaultProps = {
-  dispatch: () => {},
 };
 
 describe('SpacesTabs', () => {
@@ -213,7 +209,7 @@ describe('SpacesTabs', () => {
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
       expect(table.firstElementChild).toBeInTheDocument();
-      within(table.firstChild).getByText('Current usage period');
+      within(table.firstChild as HTMLElement).getByText('Current usage period');
       expect(queryByTestId('api-usage-table-row')).toBeNull();
     });
 

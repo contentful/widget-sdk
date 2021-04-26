@@ -33,7 +33,7 @@ export const PeriodSelector = () => {
     });
 
     dispatch({ type: 'CHANGE_PERIOD', value: newPeriodIndex });
-    const data = await loadPeriodData(orgId, newPeriod);
+    const data = await loadPeriodData(orgId as string, newPeriod);
     dispatch({ type: 'SET_USAGE_DATA', value: data });
     dispatch({ type: 'SET_LOADING', value: false });
   };
@@ -44,9 +44,13 @@ export const PeriodSelector = () => {
     const end = isCurrentPeriod
       ? moment(start).add(1, 'month').subtract(1, 'day')
       : moment(endDate);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
     return `${formatDate(start)} – ${formatDate(end)} ${cond([
       [constant(isCurrentPeriod), constant('(current)')],
       [constant(end.year() === moment().year()), constant(`(${moment().to(start)})`)],
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
       [constant(stubTrue), constant(end.year())],
     ])()}`;
   };

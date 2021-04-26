@@ -1,7 +1,6 @@
 import React from 'react';
 import * as Analytics from 'analytics/Analytics';
 import { subscriptionState } from 'features/organization-subscription';
-import { usageState } from 'features/organization-usage';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
@@ -25,6 +24,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { trialState, isOrganizationOnTrial } from 'features/trials';
 import { GatekeeperView } from 'account/GatekeeperView';
+import { usageState } from 'features/organization-usage';
 
 const resolveOrganizationData = [
   '$stateParams',

@@ -1,7 +1,8 @@
-import { spaceSettingsRoutes, accountSettingsRoutes } from './routes/';
+import { spaceSettingsRoutes, accountSettingsRoutes, organizationSettingsRoutes } from './routes/';
 import type {
   SpaceSettingsRouteType,
   AccountSettingsRouteType,
+  OrganizationSettingsRouteType,
   CreateRouteDefinition,
   RouteDefinition,
 } from './routes/';
@@ -9,9 +10,10 @@ import type {
 const routes = {
   ...spaceSettingsRoutes,
   ...accountSettingsRoutes,
+  ...organizationSettingsRoutes,
 };
 
-type RouteType = SpaceSettingsRouteType | AccountSettingsRouteType;
+type RouteType = SpaceSettingsRouteType | AccountSettingsRouteType | OrganizationSettingsRouteType;
 
 export { routes };
 

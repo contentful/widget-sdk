@@ -11,7 +11,7 @@ import {
   SkeletonDisplayText,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import * as tokens from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 
 import { track } from 'analytics/Analytics';
 import { shortenStorageUnit } from 'utils/NumberUtils';
@@ -62,16 +62,28 @@ export const AssetBandwidthSection = () => {
   const UsageAndLimit = () => (
     <>
       <Paragraph data-test-id="asset-bandwidth-usage" className={styles.usageNumber}>
-        {withUnit(usage)}
+        {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
+          withUnit(usage)
+        }
       </Paragraph>
       <div className={styles.limit}>
-        <strong data-test-id="asset-bandwidth-limit" className={styles.includedLimit}>{`${withUnit(
-          limit
-        )} included`}</strong>
+        <strong data-test-id="asset-bandwidth-limit" className={styles.includedLimit}>{
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
+          `${withUnit(limit)} included`
+        }</strong>
         {usage > limit && (
           <small className={styles.overage} data-test-id="asset-bandwidth-overage">
             {' '}
-            + {withUnit(usage - limit)} overage
+            +{' '}
+            {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // @ts-ignore
+              withUnit(usage - limit)
+            }{' '}
+            overage
           </small>
         )}
         <TextLink

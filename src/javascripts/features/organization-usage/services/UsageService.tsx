@@ -1,6 +1,7 @@
 import { map, sum, unzip } from 'lodash';
 import { USAGE_INSIGHTS, getAlphaHeader } from 'alphaHeaders.js';
 import * as EndpointFactory from 'data/EndpointFactory';
+import { PeriodToDatesArgs } from '../utils/periodToDates';
 
 const headers = getAlphaHeader(USAGE_INSIGHTS);
 
@@ -27,7 +28,7 @@ export const getPeriods = (endpoint) =>
  * @param  {string} query.endDate - End of search period in yyyy-mm-dd format
  * @return {Promise}
  */
-export const getOrgUsage = (endpoint, { startDate, endDate }) =>
+export const getOrgUsage = (endpoint, { startDate, endDate }: PeriodToDatesArgs) =>
   endpoint({
     method: 'GET',
     path: ['organization_periodic_usages'],
@@ -99,7 +100,7 @@ export const mapResponseToState = ({ org, cma, cda, cpa, gql }) => ({
   },
 });
 
-export const loadPeriodData = async (orgId, period) => {
+export const loadPeriodData = async (orgId: string, period: PeriodToDatesArgs) => {
   const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
   const promises = [
     getOrgUsage(endpoint, {

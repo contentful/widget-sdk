@@ -1,17 +1,17 @@
-import { periodToDates } from './periodToDates';
+import { periodToDates, PeriodToDatesArgs } from './periodToDates';
 
 describe('periodToDates', () => {
   const defaultPeriod = {
     startDate: '2020-03-10',
     endDate: '2020-03-12',
-  };
+  } as PeriodToDatesArgs;
 
   it('should format dates as expected', () => {
     expect(periodToDates(defaultPeriod)).toEqual(['10 Mar', '11 Mar', '12 Mar']);
   });
 
   it('should return formatted dates for the current period if no end date', () => {
-    defaultPeriod.endDate = null;
+    defaultPeriod.endDate = undefined;
     const dates = periodToDates(defaultPeriod);
     expect(dates).toHaveLength(31); //31 days in March
     expect(dates[0]).toBe('10 Mar');

@@ -53,12 +53,15 @@ export const OrganizationUsageInfo = () => {
       {!isLoading && (
         <>
           <Paragraph data-test-id="org-usage-total" className={styles.usageNumber}>
-            {totalUsage.toLocaleString('en-US')}
-            {limitedUsage && totalUsage > apiRequestIncludedLimit && (
-              <small data-test-id="org-usage-overage" className={styles.overageNumber}>
-                {` +${(totalUsage - apiRequestIncludedLimit).toLocaleString('en-US')} overage`}
-              </small>
-            )}
+            {totalUsage?.toLocaleString('en-US')}
+            {limitedUsage &&
+              totalUsage &&
+              apiRequestIncludedLimit &&
+              totalUsage > apiRequestIncludedLimit && (
+                <small data-test-id="org-usage-overage" className={styles.overageNumber}>
+                  {` +${(totalUsage - apiRequestIncludedLimit).toLocaleString('en-US')} overage`}
+                </small>
+              )}
           </Paragraph>
           <Paragraph>
             {limitedUsage ? (

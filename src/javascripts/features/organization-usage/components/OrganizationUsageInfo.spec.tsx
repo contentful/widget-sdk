@@ -2,11 +2,12 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { track } from 'analytics/Analytics';
 import { OrganizationUsageInfo } from './OrganizationUsageInfo';
-import { UsageStateContext } from '../hooks/usageContext';
+import { UsageStateContext, initialState } from '../hooks/usageContext';
 
 const MockPovider = ({ children, totalUsage, apiRequestIncludedLimit, isLoading }) => (
   <UsageStateContext.Provider
     value={{
+      ...initialState,
       totalUsage,
       apiRequestIncludedLimit,
       isLoading,
@@ -29,11 +30,6 @@ const renderComp = (data) => {
 };
 
 describe('OrganisationUsageInfo', () => {
-  it('should render', () => {
-    const { container } = renderComp(defaultData);
-    expect(container).toMatchSnapshot();
-  });
-
   it('should render correct data', () => {
     const { getByTestId } = renderComp(defaultData);
     const total = getByTestId('org-usage-total');

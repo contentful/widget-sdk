@@ -3,14 +3,13 @@ import React from 'react';
 import moment from 'moment';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { PeriodSelector } from './PeriodSelector';
-import { UsageStateContext, UsageDispatchContext } from '../hooks/usageContext';
+import { UsageStateContext, UsageDispatchContext, initialState } from '../hooks/usageContext';
 import { loadPeriodData } from '../services/UsageService';
 
 jest.mock('../services/UsageService', () => ({
   loadPeriodData: jest.fn(),
 }));
 
-// set fixed date for stable snapshots
 // moment('2017-12-01').unix() = 1512082800
 jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
 
@@ -19,6 +18,7 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 // start date is 12 days before today
 const startDate = moment().startOf('day').subtract(12, 'days');
 const defaultData = {
+  ...initialState,
   periods: [
     {
       sys: { type: 'UsagePeriod', id: 'period1' },
@@ -37,7 +37,7 @@ const defaultData = {
   isAssetBandwidthTab: false,
 };
 
-const renderComp = (data, dispatch) => {
+const renderComp = (data, dispatch = jest.fn()) => {
   return render(
     <MockPovider {...data} dispatch={dispatch}>
       <PeriodSelector />
@@ -56,6 +56,7 @@ const MockPovider = ({
 }) => (
   <UsageStateContext.Provider
     value={{
+      ...initialState,
       periods,
       selectedPeriodIndex,
       orgId,
@@ -66,18 +67,9 @@ const MockPovider = ({
   </UsageStateContext.Provider>
 );
 
-MockPovider.defaultProps = {
-  dispatch: () => {},
-};
-
 describe('PeriodSelector', () => {
-  it('should render', () => {
-    const { container } = renderComp(defaultData);
-    expect(container).toMatchSnapshot();
-  });
-
   it('should load new period data when option is selected', async () => {
-    loadPeriodData.mockReset().mockReturnValue(Promise.resolve({}));
+    (loadPeriodData as jest.Mock).mockReset().mockReturnValue(Promise.resolve({}));
     const dispatchSpy = jest.fn();
     const { getByTestId } = renderComp(defaultData, dispatchSpy);
 

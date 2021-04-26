@@ -1,16 +1,12 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 
-import {
-  OrganizationUsageRoute,
-  WorkbenchContent,
-  WorkbenchActions,
-} from './OrganizationUsageRoute';
+import { OrganizationUsagePage, WorkbenchContent, WorkbenchActions } from './OrganizationUsagePage';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles';
 import * as TokenStoreMocked from 'services/TokenStore';
 import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository';
-import { UsageStateContext } from '../hooks/usageContext';
+import { UsageStateContext } from './hooks/usageContext';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
@@ -28,22 +24,22 @@ jest.mock('app/common/ReloadNotification', () => ({
   trigger: jest.fn(),
 }));
 
-jest.mock('../components/PeriodSelector', () => ({
+jest.mock('./components/PeriodSelector', () => ({
   PeriodSelector: jest.fn().mockReturnValue(<div data-test-id="period-selector" />),
 }));
 
-jest.mock('../components/OrganizationUsagePage', () => ({
-  OrganizationUsagePage: jest.fn().mockReturnValue(<div data-test-id="usage-page" />),
+jest.mock('./components/OrganizationUsageTabs', () => ({
+  OrganizationUsageTabs: jest.fn().mockReturnValue(<div data-test-id="usage-page" />),
 }));
 
 const DEFAULT_ORG = 'abcd';
 
-describe('OrganizationUsageRoute', () => {
+describe('OrganizationUsagePage', () => {
   describe('user is not owner or admin', () => {
     it('should populate error in the state', async () => {
-      OrganizationRolesMocked.isOwnerOrAdmin.mockReturnValueOnce(false);
+      (OrganizationRolesMocked.isOwnerOrAdmin as jest.Mock).mockReturnValueOnce(false);
 
-      const { getByText } = render(<OrganizationUsageRoute orgId={DEFAULT_ORG} />);
+      const { getByText } = render(<OrganizationUsagePage orgId={DEFAULT_ORG} />);
 
       expect(TokenStoreMocked.getOrganization).toHaveBeenCalledWith(DEFAULT_ORG);
       await waitFor(() => expect(OrganizationRolesMocked.isOwnerOrAdmin).toHaveBeenCalledWith({}));
@@ -53,12 +49,14 @@ describe('OrganizationUsageRoute', () => {
 
   describe('fetching org data fails with different error code', () => {
     it('should trigger reload notification', async () => {
-      const error400 = new Error('Test error');
+      const error400 = new Error('Test error') as Error & { status: number };
       error400.status = 400;
 
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error400);
+      (OrganizationMembershipRepositoryMocked.getAllSpaces as jest.Mock).mockRejectedValueOnce(
+        error400
+      );
 
-      render(<OrganizationUsageRoute orgId={DEFAULT_ORG} />);
+      render(<OrganizationUsagePage orgId={DEFAULT_ORG} />);
 
       await waitFor(() => expect(ReloadNotification.trigger).toHaveBeenCalled());
     });
@@ -68,10 +66,6 @@ describe('OrganizationUsageRoute', () => {
 const MockPovider = (data) => {
   const { children } = data;
   return <UsageStateContext.Provider value={data}>{children}</UsageStateContext.Provider>;
-};
-
-MockPovider.defaultProps = {
-  dispatch: () => {},
 };
 
 const defaultData = {

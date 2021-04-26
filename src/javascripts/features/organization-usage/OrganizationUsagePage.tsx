@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy } from 'lodash/fp';
 import { css } from 'emotion';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
-import { PeriodSelector } from '../components/PeriodSelector';
-import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
-import { getPeriods, loadPeriodData } from '../services/UsageService';
-import { UsageProvider, useUsageState, useUsageDispatch } from '../hooks/usageContext';
+import { OrganizationUsageTabs } from './components/OrganizationUsageTabs';
+import { PeriodSelector } from './components/PeriodSelector';
+import { NoSpacesPlaceholder } from './components/NoSpacesPlaceholder';
+import { getPeriods, loadPeriodData } from './services/UsageService';
+import { UsageProvider, useUsageState, useUsageDispatch } from './hooks/usageContext';
 
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
@@ -42,7 +41,7 @@ export const WorkbenchContent = () => {
     return <NoSpacesPlaceholder />;
   }
 
-  return <OrganizationUsagePage />;
+  return <OrganizationUsageTabs />;
 };
 
 export const WorkbenchActions = () => {
@@ -69,7 +68,7 @@ export const OrganizationUsage = () => {
 
   useEffect(() => {
     const checkPermissions = async () => {
-      const organization = await TokenStore.getOrganization(orgId);
+      const organization = await TokenStore.getOrganization(orgId as string);
 
       return OrganizationRoles.isOwnerOrAdmin(organization);
     };
@@ -84,7 +83,7 @@ export const OrganizationUsage = () => {
           return;
         }
 
-        const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
+        const endpoint = EndpointFactory.createOrganizationEndpoint(orgId as string);
         const service = createResourceService(orgId, 'organization');
         const basePlan = await getBasePlan(endpoint);
 
@@ -104,7 +103,7 @@ export const OrganizationUsage = () => {
           OrganizationMembershipRepository.getAllSpaces(endpoint),
           PricingDataProvider.getPlansWithSpaces(endpoint),
           getPeriods(endpoint),
-          service.get('api_request'),
+          service.get('api_request') as Promise<any>,
         ]);
 
         const periods = usagePeriods.items;
@@ -123,7 +122,7 @@ export const OrganizationUsage = () => {
         });
 
         const [usageData, assetBandwidthData] = await Promise.all([
-          loadPeriodData(orgId, periods[selectedPeriodIndex]),
+          loadPeriodData(orgId as string, periods[selectedPeriodIndex]),
           service.get('asset_bandwidth'),
         ]);
 
@@ -161,14 +160,14 @@ export const OrganizationUsage = () => {
   );
 };
 
-export const OrganizationUsageRoute = ({ orgId }) => {
+type OrganizationUsagePageProps = {
+  orgId: string;
+};
+
+export const OrganizationUsagePage = ({ orgId }: OrganizationUsagePageProps) => {
   return (
     <UsageProvider orgId={orgId}>
       <OrganizationUsage />
     </UsageProvider>
   );
-};
-
-OrganizationUsageRoute.propTypes = {
-  orgId: PropTypes.string.isRequired,
 };

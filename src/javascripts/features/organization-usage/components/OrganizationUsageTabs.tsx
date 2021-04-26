@@ -25,7 +25,7 @@ const styles = {
   }),
 };
 
-export const OrganizationUsagePage = () => {
+export const OrganizationUsageTabs = () => {
   const { selectedMainTab, isAssetBandwidthTab } = useUsageState();
   const dispatch = useUsageDispatch();
 

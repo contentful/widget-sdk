@@ -1,22 +1,54 @@
-import React from 'react';
+import React, { createContext, useReducer, Dispatch, Context, ReactNode } from 'react';
 import { mapResponseToState } from '../services/UsageService';
-import { periodToDates } from '../utils/periodToDates';
+import { periodToDates, PeriodToDatesArgs, PeriodToDatesResponse } from '../utils/periodToDates';
 import { sum, get } from 'lodash';
-import PropTypes from 'prop-types';
+import { noop } from 'lodash/fp';
 
 export const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
 
-const initialState = {
+type UsageContextStateType = {
+  isLoading: boolean;
+  error?: Error | null | undefined;
+  isAssetBandwidthTab: boolean;
+  selectedMainTab: string;
+  selectedPeriodIndex: number;
+  selectedSpacesTab: string;
+  isTeamOrEnterpriseCustomer?: boolean;
+  periodDates?: PeriodToDatesResponse;
+  periodicUsage?: {
+    org: {
+      usage: number[];
+    };
+    apis: any;
+  };
+  totalUsage?: number;
+  apiRequestIncludedLimit?: number;
+  assetBandwidthData?: {
+    usage: any;
+    limit: any;
+    uom: any;
+  };
+  spaceNames: Record<string, string>;
+  spaceTypeLookup: Record<string, any>;
+  periods: PeriodToDatesArgs[];
+  hasSpaces?: boolean;
+  orgId?: string;
+};
+
+export const initialState = {
   isLoading: true,
   error: null,
   isAssetBandwidthTab: false,
   selectedMainTab: 'apiRequest',
   selectedPeriodIndex: 0,
   selectedSpacesTab: 'cma',
+  spaceNames: {},
+  spaceTypeLookup: {},
+  periods: [] as PeriodToDatesArgs[],
 };
 
-export const UsageStateContext = React.createContext();
-export const UsageDispatchContext = React.createContext();
+export const UsageStateContext = createContext(initialState) as Context<UsageContextStateType>;
+export const UsageDispatchContext = createContext(noop) as Context<Dispatch<any>>;
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -74,17 +106,18 @@ const reducer = (state, action) => {
   }
 };
 
-export const UsageProvider = ({ children, orgId }) => {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+type UsageProviderProps = {
+  children: ReactNode;
+  orgId: string;
+};
+
+export const UsageProvider = ({ children, orgId }: UsageProviderProps) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <UsageStateContext.Provider value={{ ...state, orgId }}>
       <UsageDispatchContext.Provider value={dispatch}>{children}</UsageDispatchContext.Provider>
     </UsageStateContext.Provider>
   );
-};
-
-UsageProvider.propTypes = {
-  orgId: PropTypes.string,
 };
 
 export const useUsageState = () => {

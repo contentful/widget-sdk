@@ -8,14 +8,19 @@ import {
   Tag,
   SkeletonRow,
 } from '@contentful/forma-36-react-components';
-import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
 import { calcRelativeSpaceUsage } from '../utils/calcRelativeSpaceUsage';
 import { useUsageState, colours } from '../hooks/usageContext';
 import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 
-const SpaceRow = ({ spaceId, spaceUsage, color }) => {
+type SpaceRowProps = {
+  spaceId: string;
+  spaceUsage: number[];
+  color: string;
+};
+
+const SpaceRow = ({ spaceId, spaceUsage, color }: SpaceRowProps) => {
   const { spaceNames, totalUsage, spaceTypeLookup } = useUsageState();
 
   const spaceName = spaceNames[spaceId];
@@ -39,16 +44,10 @@ const SpaceRow = ({ spaceId, spaceUsage, color }) => {
   );
 };
 
-SpaceRow.propTypes = {
-  spaceId: PropTypes.string,
-  spaceUsage: PropTypes.arrayOf(PropTypes.number),
-  color: PropTypes.string,
-};
-
 export const SpacesTable = () => {
   const { periodicUsage, selectedSpacesTab, isLoading } = useUsageState();
 
-  const data = isLoading ? [] : periodicUsage.apis[selectedSpacesTab].items;
+  const data = isLoading ? [] : periodicUsage?.apis[selectedSpacesTab].items;
 
   return (
     <Table data-test-id="api-usage-table">

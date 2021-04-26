@@ -3,10 +3,10 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { track } from 'analytics/Analytics';
 import { AssetBandwidthSection } from './AssetBandwidthSection';
-import { UsageStateContext } from '../hooks/usageContext';
+import { UsageStateContext, initialState } from '../hooks/usageContext';
 
 const MockPovider = ({ children, assetBandwidthData, isLoading }) => (
-  <UsageStateContext.Provider value={{ assetBandwidthData, isLoading }}>
+  <UsageStateContext.Provider value={{ ...initialState, assetBandwidthData, isLoading }}>
     {children}
   </UsageStateContext.Provider>
 );
@@ -29,11 +29,6 @@ const renderComp = (data) => {
 };
 
 describe('AssetBandwidthSection', () => {
-  it('should render', () => {
-    const { container } = renderComp(defaultData);
-    expect(container).toMatchSnapshot();
-  });
-
   it('should render correct data', () => {
     const { getByTestId } = renderComp(defaultData);
     const bandwidthUsage = getByTestId('asset-bandwidth-usage');
