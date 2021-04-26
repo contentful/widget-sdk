@@ -3,6 +3,7 @@ import { AppSwitcher, AppSwitcherAction } from '@contentful/experience-component
 import * as Navigator from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { NavigationSwitcherAppProps } from './useAppsList';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export const SidepanelAppSwitcher = ({
   isVisible,
@@ -36,10 +37,12 @@ export const SidepanelAppSwitcher = ({
         return;
       }
 
-      // go to space home on click Web app
+      // go to space home or entries on click Web app
       if (app.active) {
         Navigator.go({
-          path: 'spaces.detail.home',
+          path: accessChecker.getSectionVisibility().spaceHome
+            ? 'spaces.detail.home'
+            : 'spaces.detail.entries.list',
           params: { environmentId: spaceEnv.currentEnvironmentId },
         });
 

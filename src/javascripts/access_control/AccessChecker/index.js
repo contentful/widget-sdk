@@ -635,7 +635,5 @@ function wrapGKMethod(name) {
 }
 
 export function isAuthorOrEditor(roles) {
-  return Boolean(
-    roles && roles.findIndex((role) => role.name === 'Author' || role.name === 'Editor') >= 0
-  );
+  return Boolean(roles?.find((role) => role.name === 'Author' || role.name === 'Editor'));
 }
