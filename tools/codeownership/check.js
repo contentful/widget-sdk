@@ -23,7 +23,7 @@ async function check() {
   ).filter((subDir) => !hasOwner(subDir, codeownersRepos));
 
   if (subDirectoriesWithoutOwners.length > 0) {
-    console.error("Some code directories don't have any declared owners:\n");
+    console.error("WARNING: Some code directories don't have declared owners:\n");
 
     subDirectoriesWithoutOwners.forEach((dir) => console.log(`• ${dir}`));
 
@@ -31,7 +31,7 @@ async function check() {
       '\nPlease declare owners for these directories, by adding them to `/.github/CODEOWNERS`.\nVisit https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax for more information.\n\n'
     );
 
-    process.exit(1);
+    process.exit(0);
   } else {
     console.log(
       'All specified code directories are covered by the CODEOWNERS file, which declares their respective owners.'
