@@ -8,19 +8,16 @@ import {
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
-import { getModule } from 'core/NgRegistry';
 import * as Authentication from 'Authentication';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { go } from 'states/Navigator';
+import { getCurrentStateName, go } from 'states/Navigator';
+import { window } from 'core/services/window';
 
 export default function handleGatekeeperMessage(data) {
-  const $rootScope = getModule('$rootScope');
-  const $location = getModule('$location');
-
   const match = makeMessageMatcher(data);
 
   if (match('create', 'UserCancellation')) {
@@ -34,7 +31,9 @@ export default function handleGatekeeperMessage(data) {
   } else if (data.type === 'flash') {
     showNotification(data);
   } else if (match('navigate', 'location')) {
-    $rootScope.$apply(() => $location.url(data.path));
+    window.setTimeout(() => {
+      window.location.pathname = data.path;
+    }, 10);
   } else if (match('update', 'location')) {
     UrlSyncHelper.updateWebappUrl(data.path);
   } else if (matchesError(data, 401)) {
@@ -129,13 +128,11 @@ function showNotification(data) {
 }
 
 function trackGKEvent({ event, data: eventData }) {
-  const $state = getModule('$state');
-
   if (event && eventData) {
     const newData = Object.assign({}, eventData);
 
     if (newData.fromState === '$state.current.name') {
-      newData.fromState = $state.current.name;
+      newData.fromState = getCurrentStateName();
     }
 
     Analytics.track(event, newData);
