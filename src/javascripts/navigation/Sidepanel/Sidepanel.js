@@ -114,25 +114,27 @@ export default class Sidepanel extends React.Component {
     });
   };
 
-  goToSpace = (spaceId, envId, isMaster) => {
+  goToSpace = async (spaceId, envId, isMaster) => {
     envId = isMaster ? undefined : envId;
     const path = ['spaces', 'detail'].concat(envId ? ['environment'] : []);
 
     this.props.closeSidePanel();
 
-    Navigator.go({
-      path,
-      params: {
-        spaceId,
-        environmentId: envId,
-      },
-      options: { reload: true },
-    }).catch((err) => {
+    try {
+      await Navigator.go({
+        path,
+        params: {
+          spaceId,
+          environmentId: envId,
+        },
+        options: { reload: true },
+      });
+    } catch (err) {
       // Collapse environment list if navigation failed
       // e.g. when environment was deleted
       this.setState({ openedSpaceId: null });
       logger.captureError(err);
-    });
+    }
   };
 
   createNewOrg = () => {

@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import { go } from 'states/Navigator';
 import { Modal, Button, Notification } from '@contentful/forma-36-react-components';
 import StateRedirect from 'app/common/StateRedirect';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import * as trackVersioning from 'analytics/events/versioning';
 import { LoadingState } from 'features/loading-state';
@@ -22,16 +22,15 @@ const styles = {
 const SnapshotRedirect = (props) => {
   const [editorData, setEditorData] = React.useState(null);
   const [snapshotId, setSnapshotId] = React.useState(null);
-  const spaceContext = React.useMemo(() => getModule('spaceContext'), []); // TODO: Remove it after contract tests is fixed for cma
 
   React.useEffect(() => {
-    loadEditorData(spaceContext, props.entryId)
+    loadEditorData(getSpaceContext(), props.entryId)
       .then(setEditorData)
       .catch(() => {
         Notification.error('Entry not found.');
         go({ path: 'spaces.detail.entries.list' });
       });
-  }, [spaceContext, props.entryId]);
+  }, [props.entryId]);
 
   React.useEffect(() => {
     if (!editorData) return;
@@ -39,7 +38,7 @@ const SnapshotRedirect = (props) => {
     async function init() {
       const entityId = editorData.entity.getId();
       try {
-        const res = await spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 });
+        const res = await getSpaceContext().cma.getEntrySnapshots(entityId, { limit: 2 });
         const firstSnapshotId = get(res, 'items[0].sys.id');
         setSnapshotId(firstSnapshotId);
       } catch (error) {} // eslint-disable-line no-empty
@@ -47,7 +46,7 @@ const SnapshotRedirect = (props) => {
     }
 
     init();
-  }, [editorData, spaceContext]);
+  }, [editorData]);
 
   if (!editorData || !snapshotId) {
     return (

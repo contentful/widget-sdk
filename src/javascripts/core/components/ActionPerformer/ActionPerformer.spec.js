@@ -1,19 +1,18 @@
 import React from 'react';
-import { getModule } from 'core/NgRegistry';
+import * as spaceContext from 'classes/spaceContext';
 import { render } from '@testing-library/react';
 import { ActionPerformer } from './ActionPerformer';
 import { mockUser } from './__mocks__/mockUser';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
-getModule.mockReturnValue({
-  users: {
-    get: () => Promise.resolve(mockUser),
-  },
-  user: mockUser,
-});
-
 describe('ActionPerformer', () => {
+  jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    users: {
+      get: () => Promise.resolve(mockUser),
+    },
+    user: mockUser,
+  }));
   const link = {
     sys: {
       type: 'Link',

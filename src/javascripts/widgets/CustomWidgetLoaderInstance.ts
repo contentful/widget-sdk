@@ -1,4 +1,4 @@
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { get, set } from 'lodash';
 import {
   WidgetLoader,
@@ -39,7 +39,7 @@ const cache: {
 
 export async function getCustomWidgetLoader() {
   const accessToken = await getToken();
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const spaceId = spaceContext.getId();
   const aliasOrEnvId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
   const cachePath = [accessToken, spaceId, aliasOrEnvId] as const;

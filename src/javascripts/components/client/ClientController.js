@@ -1,3 +1,4 @@
+import { getSpaceContext } from 'classes/spaceContext';
 import { registerController, appReady } from 'core/NgRegistry';
 import { onValueScope } from 'core/utils/kefir';
 import { isObject } from 'lodash';
@@ -9,9 +10,9 @@ export default function register() {
   registerController('ClientController', [
     '$scope',
     '$state',
-    'spaceContext',
     '$rootScope',
-    function ClientController($scope, $state, spaceContext, $rootScope) {
+    function ClientController($scope, $state, $rootScope) {
+      const spaceContext = getSpaceContext();
       let logger;
       let SpaceFeatures;
       let getSpaceFeature;

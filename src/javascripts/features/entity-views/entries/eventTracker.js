@@ -1,4 +1,4 @@
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { track } from 'analytics/Analytics';
 import { captureError } from 'services/logger';
 
@@ -16,7 +16,7 @@ export function onEntryEvent(actionName, { succeeded }) {
 }
 
 function entryEventTracker(action, origin) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   return ({ data }) => {
     try {
       const event = `entry:${action}`; // entry:create, entry:publish

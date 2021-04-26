@@ -59,8 +59,8 @@ jest.mock('../services/AppTrialService', () => ({
 
 const mockedResetWithSpace = jest.fn();
 
-jest.mock('core/NgRegistry', () => ({
-  getModule: jest.fn().mockImplementation(() => ({
+jest.mock('classes/spaceContext', () => ({
+  getSpaceContext: jest.fn().mockImplementation(() => ({
     resetWithSpace: mockedResetWithSpace,
     cma: jest.fn(),
     getEnvironmentId: jest.fn(),

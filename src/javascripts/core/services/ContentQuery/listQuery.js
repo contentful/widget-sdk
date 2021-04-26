@@ -1,5 +1,5 @@
 import { EditorialConstants } from '@contentful/editorial-primitives';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import _ from 'lodash';
 import * as SystemFields from 'data/SystemFields';
 
@@ -16,7 +16,7 @@ import { buildQuery as buildQueryFromUISearch } from './QueryBuilder';
  * @returns {object}
  */
 export async function getForEntries(opts) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   if (opts.contentTypeId) {
     return spaceContext.publishedCTs
       .fetch(opts.contentTypeId)

@@ -1,4 +1,4 @@
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import _ from 'lodash';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers';
 import localeStore from 'services/localeStore';
@@ -9,7 +9,7 @@ import localeStore from 'services/localeStore';
  * Get a content type object by id
  */
 export function getContentTypeById(contentTypeId) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   return spaceContext.publishedCTs.get(contentTypeId);
 }
 

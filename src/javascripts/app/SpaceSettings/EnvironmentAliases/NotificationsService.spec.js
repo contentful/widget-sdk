@@ -7,8 +7,8 @@ import { window } from 'core/services/window';
 import { cleanup, screen } from '@testing-library/react';
 import { when } from 'jest-when';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getModule } from 'core/NgRegistry';
 import { initEnvAliasDeleteHandler } from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
+import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
@@ -32,13 +32,11 @@ const infoModalOnScreen = () => screen.queryByTestId('aliaschangedinfomodal.moda
 const deleteModalOnScreen = () => screen.queryByTestId('aliasdeletedinfomodal.modal');
 
 const mockSpaceContextWithEnv = (environment, alias) => {
-  when(getModule)
-    .calledWith('spaceContext')
-    .mockReturnValue({
-      isMasterEnvironmentById: jest.fn().mockReturnValue(true),
-      getEnvironmentId: jest.fn().mockReturnValue(environment),
-      space: { environmentMeta: { environmentId: environment, aliasId: alias } },
-    });
+  jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+    isMasterEnvironmentById: jest.fn().mockReturnValue(true),
+    getEnvironmentId: jest.fn().mockReturnValue(environment),
+    space: { environmentMeta: { environmentId: environment, aliasId: alias } },
+  }));
 };
 
 const mockEnvAccess = (canAccess) => {

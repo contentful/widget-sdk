@@ -3,7 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getOrganization } from 'services/TokenStore';
 import { go } from 'states/Navigator';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
@@ -52,7 +52,7 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
 
   // if user is in a Legacy Org, they should go to LegacyWizard
   if (isLegacyOrganization(organization)) {
-    const spaceContext = getModule('spaceContext');
+    const spaceContext = getSpaceContext();
 
     ModalLauncher.open(({ isShown, onClose }) => {
       return (

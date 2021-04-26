@@ -18,16 +18,31 @@ export const ActionPerformer = ({ children, link, loadingComponent, formatName }
   const [actionPerformer, setActionPerformer] = useState('');
 
   useEffect(() => {
-    (async function () {
+    let isMounted = true;
+
+    const fetchData = async function () {
       try {
-        setIsReady(false);
-        setActionPerformer(await getActionPerformer(link));
+        const actionPerformer = await getActionPerformer(link);
+        if (isMounted) {
+          setActionPerformer(actionPerformer);
+        }
       } catch {
-        setActionPerformer('');
+        if (isMounted) {
+          setActionPerformer('');
+        }
       } finally {
-        setIsReady(true);
+        if (isMounted) {
+          setIsReady(true);
+        }
       }
-    })();
+    };
+
+    setIsReady(false);
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [link, children]);
 
   if (!isReady) {

@@ -4,7 +4,6 @@ import { useAsync } from 'core/hooks';
 import { contentImport, startAppTrial } from '../services/AppTrialService';
 import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
-import { getModule } from 'core/NgRegistry';
 import * as TokenStore from 'services/TokenStore';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
 import { go } from 'states/Navigator';
@@ -25,6 +24,7 @@ import {
 } from '../utils/AppTrialError';
 import { capitalizeFirst } from 'utils/StringUtils';
 import { useQueryParams } from 'core/hooks/useQueryParams';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const styles = {
   emptyContainer: css({
@@ -124,7 +124,7 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
 
   let isSuccessful = false;
 
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   try {
     const { trialSpace, apps } = await startAppTrial(organizationId);
 

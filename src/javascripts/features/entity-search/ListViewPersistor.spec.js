@@ -1,11 +1,17 @@
 import { getQueryString } from 'utils/location';
 import { createListViewPersistor, reset } from './ListViewPersistor';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import * as spaceContext from 'classes/spaceContext';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/location', () => ({ getQueryString: jest.fn() }));
 
 const pushStateSpy = jest.spyOn(global.window.history, 'pushState');
+
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+  getId: jest.fn().mockReturnValue('SPACE_ID'),
+  getEnvironmentId: jest.fn().mockReturnValue('ENV_ID'),
+}));
 
 describe('ListViewPersistor', () => {
   let store, viewPersistor;

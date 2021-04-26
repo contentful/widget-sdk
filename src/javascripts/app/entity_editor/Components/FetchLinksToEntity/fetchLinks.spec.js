@@ -4,6 +4,7 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import { when } from 'jest-when';
 import fetchLinks from './fetchLinks';
 import * as Navigator from 'states/Navigator';
+
 import * as incomingLinksEvents from 'analytics/events/IncomingLinks';
 
 const mockEntityHelper = jest.fn();

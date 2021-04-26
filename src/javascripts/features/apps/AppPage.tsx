@@ -39,12 +39,12 @@ import {
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getModule } from 'core/NgRegistry';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
-import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { getSpaceContext } from 'classes/spaceContext';
 
 enum InstallationState {
   Installation = 'installation',
@@ -124,7 +124,7 @@ export function AppRoute(props: Props) {
   const sdkInstance = React.useMemo(() => {
     if (!widget || !app || !customWidgetClient) return null;
 
-    const spaceContext = getModule('spaceContext');
+    const spaceContext = getSpaceContext();
 
     return createAppExtensionSDK({
       spaceContext,

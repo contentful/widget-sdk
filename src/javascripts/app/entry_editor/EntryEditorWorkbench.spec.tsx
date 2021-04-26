@@ -30,6 +30,7 @@ jest.mock('access_control/AccessChecker', () => {
     can: jest.fn(),
   };
 });
+
 jest.mock('services/localeStore', () => {
   const mockInternalLocale = {
     'en-US': 'en-US',

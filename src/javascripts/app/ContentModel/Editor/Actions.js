@@ -1,5 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { getModule } from 'core/NgRegistry';
+import React, { useState, useEffect, useReducer } from 'react';
 import _ from 'lodash';
 import validation from '@contentful/validation';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
@@ -30,6 +29,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
+import { getSpaceContext } from 'classes/spaceContext';
 
 export default function useCreateActions(props) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
@@ -44,8 +44,8 @@ export default function useCreateActions(props) {
     },
     initActionsReducer
   );
-  // TODO: remove 'spaceContext' after `spaceContext.cma` migration
-  const spaceContext = getModule('spaceContext');
+  // TODO: remove 'spaceContext'
+  const spaceContext = getSpaceContext();
 
   const {
     currentSpace,

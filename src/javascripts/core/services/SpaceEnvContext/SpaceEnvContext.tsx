@@ -1,7 +1,7 @@
 import React, { createContext, useMemo, useState, useEffect } from 'react';
-import { getModule } from 'core/NgRegistry';
 import deepEqual from 'fast-deep-equal';
 import * as K from 'core/utils/kefir';
+
 import {
   getSpaceId,
   getSpaceName,
@@ -15,12 +15,8 @@ import {
   getOrganization,
 } from './utils';
 import { SpaceEnv, SpaceEnvContextValue, Environment, SpaceEnvUsers } from './types';
+import { getSpaceContext } from 'classes/spaceContext';
 import { ContentType } from './types';
-
-// We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
-function getAngularSpaceContext() {
-  return getModule('spaceContext') ?? null;
-}
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
   currentSpaceContentTypes: [],
@@ -28,7 +24,7 @@ export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
-  const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
+  const angularSpaceContext = useMemo(() => getSpaceContext(), []);
   const [contentTypes, setContentTypes] = useState<ContentType[]>(() => getContentTypes());
 
   useEffect(() => {

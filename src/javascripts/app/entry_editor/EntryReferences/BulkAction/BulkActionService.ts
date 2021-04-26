@@ -4,7 +4,7 @@ import { PublishableEntity, VersionedLink, makeLink, BulkAction } from '@content
 import { sleep } from 'utils/Concurrent';
 import APIClient, { APIClientError } from 'data/APIClient';
 import * as EndpointFactory from 'data/EndpointFactory';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 const BULKACTION_REFRESH_MAX_ATTEMPTS = 30; // number of times we want to perform a refresh
@@ -104,7 +104,7 @@ let apiClientMemo: APIClient;
 function batchApiClient(): APIClient {
   if (apiClientMemo) return apiClientMemo;
 
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const endpoint = EndpointFactory.createSpaceEndpoint(
     spaceContext.getId(),
     spaceContext.getAliasId() || spaceContext.getEnvironmentId()

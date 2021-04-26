@@ -22,6 +22,10 @@ import { SlideInEditor } from 'app/entity_editor/SlideInEditor/SlideInEditor';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container) {
+  if (!Component) {
+    return;
+  }
+
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here

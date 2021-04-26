@@ -1,6 +1,6 @@
 import { once, memoize } from 'lodash';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
@@ -37,7 +37,7 @@ export default ({
   pubSubClient,
   cma,
 }) => {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const isMasterEnvironment = isMaster(getEnvironment(space));
 
   const { entityInfo } = editorData;
