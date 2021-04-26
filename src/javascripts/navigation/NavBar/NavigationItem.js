@@ -174,7 +174,11 @@ export default function NavigationItem(props) {
     }
   };
 
-  const isActive = Navigator.includes({ path: item.rootSref || item.sref });
+  const isActive = Navigator.includes({
+    path: item.rootSref || item.sref,
+    params: item.srefParams,
+  });
+
   return (
     <li
       key={item.title}

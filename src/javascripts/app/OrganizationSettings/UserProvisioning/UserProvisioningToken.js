@@ -22,7 +22,7 @@ export default function UserProvisioningToken({ personalAccessToken }) {
         again.
         <br />
         <ReactRouterLink
-          route={{ path: 'account.cma_tokens' }}
+          route={{ path: 'account.profile.cma_tokens' }}
           data-test-id="tokens-url"
           target="_blank"
           rel="noopener noreferrer">

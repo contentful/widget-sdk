@@ -138,7 +138,8 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['account', 'profile', 'user'],
+        path: 'account.profile',
+        params: { pathname: '/user' },
         options: { location: 'replace' },
       });
     });
@@ -219,7 +220,8 @@ describe('EmptyHome', () => {
       await waitFor(() => expect(go).toBeCalled());
 
       expect(go).toBeCalledWith({
-        path: ['account', 'profile', 'user'],
+        path: 'account.profile',
+        params: { pathname: '/user' },
         options: { location: 'replace' },
       });
     });

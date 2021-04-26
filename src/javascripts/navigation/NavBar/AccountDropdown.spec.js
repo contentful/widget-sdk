@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent, wait, screen, waitForElement } from '@testing-library/react';
 
 import AccountDropdown from './AccountDropdown';
-import { href } from 'states/Navigator';
 import { getUser } from 'services/TokenStore';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import * as Analytics from 'analytics/Analytics';
@@ -51,19 +50,6 @@ describe('AccountDropdown', () => {
     await build();
 
     expect(screen.getByTestId('account-menu-trigger')).toBeVisible();
-  });
-
-  it('navigates to the user profile page', async () => {
-    await build();
-
-    fireEvent.click(screen.getByTestId('account-menu-trigger'));
-    fireEvent.click(screen.getByTestId('nav.account.userProfile'));
-
-    expect(href).toHaveBeenCalledWith({
-      path: 'account.profile.user',
-      options: undefined,
-      params: undefined,
-    });
   });
 
   it('logs out the user', async () => {

@@ -1,12 +1,33 @@
+/**
+ * AccountProfileUser
+ */
+
+type AccountProfileUserType = {
+  path: 'account.profile.user';
+};
+
+const accountProfileUserRoute = {
+  'account.profile.user': () => ({
+    path: 'account.profile',
+    params: {
+      pathname: '/user',
+    },
+  }),
+};
+
+/**
+ * AccountProfileSpaceMemberships
+ */
+
 type AccountProfileSpaceMembershipsType = {
-  path: 'account.space_memberships';
+  path: 'account.profile.space_memberships';
 };
 
 const accountProfileSpaceMembershipsRoute = {
-  'account.space_memberships': () => ({
-    path: 'account.profile.space_memberships',
+  'account.profile.space_memberships': () => ({
+    path: 'account.profile',
     params: {
-      pathname: '/',
+      pathname: '/space_memberships',
     },
   }),
 };
@@ -16,14 +37,14 @@ const accountProfileSpaceMembershipsRoute = {
  */
 
 type AccountProfileCMATokensType = {
-  path: 'account.cma_tokens';
+  path: 'account.profile.cma_tokens';
 };
 
 const accountProfileCMATokensRoute = {
-  'account.cma_tokens': () => ({
-    path: 'account.profile.cma_tokens',
+  'account.profile.cma_tokens': () => ({
+    path: 'account.profile',
     params: {
-      pathname: '/',
+      pathname: '/cma_tokens',
     },
   }),
 };
@@ -33,14 +54,14 @@ const accountProfileCMATokensRoute = {
  */
 
 type AccountProfileOAuthTokensType = {
-  path: 'account.oauth_tokens';
+  path: 'account.profile.oauth_tokens';
 };
 
 const accountProfileOAuthTokensRoute = {
-  'account.oauth_tokens': () => ({
-    path: 'account.profile.access_grants',
+  'account.profile.oauth_tokens': () => ({
+    path: 'account.profile',
     params: {
-      pathname: '/',
+      pathname: '/access_grants',
     },
   }),
 };
@@ -50,14 +71,14 @@ const accountProfileOAuthTokensRoute = {
  */
 
 type AccountProfileOAuthApplicationsType = {
-  path: 'account.oauth_application';
+  path: 'account.profile.oauth_application';
 };
 
 const accountProfileOAuthApplicationsRoute = {
-  'account.oauth_application': () => ({
-    path: 'account.profile.applications',
+  'account.profile.oauth_application': () => ({
+    path: 'account.profile',
     params: {
-      pathname: '/',
+      pathname: '/developers/applications',
     },
   }),
 };
@@ -67,14 +88,14 @@ const accountProfileOAuthApplicationsRoute = {
  */
 
 type AccountProfileOrgMembershipType = {
-  path: 'account.organization_memberships';
+  path: 'account.profile.organization_memberships';
 };
 
 const accountProfileOrgMembershipRoute = {
-  'account.organization_memberships': () => ({
-    path: 'account.profile.organization_memberships',
+  'account.profile.organization_memberships': () => ({
+    path: 'account.profile',
     params: {
-      pathname: '/',
+      pathname: '/organization_memberships',
     },
   }),
 };
@@ -89,6 +110,7 @@ const routes = {
   ...accountProfileSpaceMembershipsRoute,
   ...accountProfileOAuthApplicationsRoute,
   ...accountProfileOrgMembershipRoute,
+  ...accountProfileUserRoute,
 };
 
 type AccountSettingsRouteType =
@@ -96,7 +118,8 @@ type AccountSettingsRouteType =
   | AccountProfileSpaceMembershipsType
   | AccountProfileOrgMembershipType
   | AccountProfileOAuthApplicationsType
-  | AccountProfileOAuthTokensType;
+  | AccountProfileOAuthTokensType
+  | AccountProfileUserType;
 
 export type { AccountSettingsRouteType };
 

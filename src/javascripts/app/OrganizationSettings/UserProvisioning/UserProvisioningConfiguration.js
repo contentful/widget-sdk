@@ -120,7 +120,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
                 Generate personal access token
               </Button>
               <ReactRouterLink
-                route={{ path: 'account.cma_tokens' }}
+                route={{ path: 'account.profile.cma_tokens' }}
                 data-test-id="tokens-url"
                 target="_blank"
                 rel="noopener noreferrer">

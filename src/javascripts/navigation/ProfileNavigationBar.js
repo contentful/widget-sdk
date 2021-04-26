@@ -4,11 +4,12 @@ import NavBar from './NavBar/NavBar';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
 export default function ProfileNavigationBar() {
-  const cmaTokens = routes['account.cma_tokens']();
-  const oauthTokens = routes['account.oauth_tokens']();
-  const oauthApplications = routes['account.oauth_application']();
-  const spaceMembership = routes['account.space_memberships']();
-  const orgMembership = routes['account.organization_memberships']();
+  const user = routes['account.profile.user']();
+  const cmaTokens = routes['account.profile.cma_tokens']();
+  const oauthTokens = routes['account.profile.oauth_tokens']();
+  const oauthApplications = routes['account.profile.oauth_application']();
+  const spaceMembership = routes['account.profile.space_memberships']();
+  const orgMembership = routes['account.profile.organization_memberships']();
 
   const accessTokensDropdownItems = [
     {
@@ -44,7 +45,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'User profile',
               navIcon: 'UserProfile',
-              sref: 'account.profile.user',
+              sref: user.path,
+              srefParams: user.params,
               srefOptions: {
                 inherit: false,
               },
