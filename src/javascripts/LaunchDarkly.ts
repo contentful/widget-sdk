@@ -58,6 +58,7 @@ export enum FLAGS {
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
+  V1_MIGRATION_2021_WARNING = 'feature-hejo-04-2021-v1-migration',
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
   ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
 
@@ -89,6 +90,7 @@ const FALLBACK_VALUES = {
   [FLAGS.APP_HOSTING_UI]: false,
   [FLAGS.HIGH_VALUE_LABEL]: false,
   [FLAGS.ENVIRONMENT_POLICIES]: false,
+  [FLAGS.V1_MIGRATION_2021_WARNING]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
