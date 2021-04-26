@@ -2,8 +2,8 @@ import SpaceSettingsBase from 'states/SpaceSettingsBase';
 import * as React from 'react';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 
-async function importer() {
-  return await import(/* webpackChunkName: "space-settings" */ './routers/SettingsRouter');
+function importer() {
+  return import(/* webpackChunkName: "space-settings" */ './routers/SettingsRouter');
 }
 
 const LazyLoadedSettings = () => (

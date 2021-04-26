@@ -1,27 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
+import noop from 'lodash/noop';
 import createFetcherComponent, { DelayedLoading } from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
-
 import { LoadingState } from 'features/loading-state';
 
-const AsyncComponentFetcher = createFetcherComponent(async ({ importer, onReady }) => {
-  onReady();
+const AsyncComponentFetcher = createFetcherComponent(
+  async ({ importer, onReady }: { importer: () => Promise<any>; onReady: VoidFunction }) => {
+    onReady();
+    const Component = await importer();
+    return Component;
+  }
+);
 
-  const Component = await importer();
+type Props = {
+  onReady?: VoidFunction;
+  importer: () => Promise<any>;
+  fallback?: React.ComponentType;
+  error?: React.ComponentType;
+  delay?: number;
+  children: (imported: any) => React.ReactNode;
+};
 
-  return Component;
-});
+const defaultFallback = () => <LoadingState />;
+const defaultError = () => <StateRedirect path="home" />;
 
 export default function LazyLoadedComponent({
-  onReady,
+  onReady = noop,
   importer,
   delay,
-  fallback: FallbackComponent,
-  error: ErrorComponent,
+  fallback: FallbackComponent = defaultFallback,
+  error: ErrorComponent = defaultError,
   children,
-}) {
+}: Props) {
   return (
     <AsyncComponentFetcher onReady={onReady} importer={importer}>
       {({ isLoading, isError, data }) => {
@@ -42,18 +52,3 @@ export default function LazyLoadedComponent({
     </AsyncComponentFetcher>
   );
 }
-
-LazyLoadedComponent.propTypes = {
-  onReady: PropTypes.func.isRequired,
-  importer: PropTypes.func.isRequired,
-  fallback: PropTypes.func,
-  error: PropTypes.func,
-  delay: PropTypes.number,
-  children: PropTypes.func.isRequired,
-};
-
-LazyLoadedComponent.defaultProps = {
-  fallback: () => <LoadingState />,
-  error: () => <StateRedirect path="home" />,
-  onReady: () => {},
-};
