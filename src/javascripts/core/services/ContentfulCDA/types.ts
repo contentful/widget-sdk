@@ -14,7 +14,7 @@ export enum WebappContentTypes {
 export interface WebappTable {
   name: string;
   table: { tableData: Array<string[]> };
-  extras: Entry<Tooltip>[];
+  extras?: Entry<Tooltip>[];
 }
 
 interface Tooltip {
