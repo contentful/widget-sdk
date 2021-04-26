@@ -1,5 +1,5 @@
 import * as Config from 'Config';
-import segment from 'analytics/segment';
+import segment, { Plan } from 'analytics/segment';
 import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
@@ -121,40 +121,59 @@ export function track(event: string, data?: EventData): void {
   }
 }
 
-type TrackingPlan = typeof segment.plan;
-
 /**
  * Exposes all Segment typewriter tracking functions for each Segment plan (schema).
- * E.g. `Analytics.tracking.editorLoaded(data);`
+ * E.g. `Analytics.tracking.editorLoaded(props);`
  *
  * Use this instead of `Analytics.track()`. Update event registration and remove
- * transformation from transform.ts when migrating an event from `Analytics.track().
+ * transformation from transform.ts when migrating an event from `Analytics.track() and
+ * use `migratedLegacyEvent()` if the event should still be tracked to Snowplow too.
+ *
+ * TODO: Can we enrich `props` with default props `organization_key`, `space_key` and `environment_key`?
+ *  Obstacles to this approach:
+ *  1. Some events that are org rather than space scoped might only have a `organization_key`
+ *  2. Legacy events from Snowplow -> Segment migration have other default properties,
+ *    `executing_user_id`, `space_id` and `organization_id`
+ *  3. Consider all props being wrapped in `props.data` on at least most legacy events, so default props
+ *     had to be attached to either `props.data` if it exists or `props` otherwise.
+ *  4. Legacy Snowplow migration events use camelCaseKeys like `executingUserId` in their Segment schema
+ *     This should be cleaned up soon as convention for all Segment schemas is also snake_case.
  */
-export const tracking = new Proxy<TrackingPlan>(segment.plan, {
-  get(plan, planKey: keyof TrackingPlan) {
-    return (props) => {
-      // TODO:xxx Can we enrich `props` with getBasicPayload() props? Consider `.data` being
-      //  used on some events but not on others when doing so!
+export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => {
+  return function (props) {
+    // Track to Segment by using original plan function:
+    planFn(props);
 
-      // Track to segment by using original plan function:
-      plan[planKey](props);
+    // Depending on the `data` format we get and the event we're dealing with, we've got to ensure it's
+    // in the right format for Snowplow where we never wrapped { data } while this is done in most
+    // migrated events' Snowplow schemas due to an old tracking bug where data was accidentally wrapped.
+    const likeTransformedData: TransformedEventData = _.isObject(props.data)
+      ? props
+      : { data: props };
+    const snowplowSchema = getSnowplowSchemaForEvent(planKey);
 
-      // Depending on the `data` format we get and the event we're dealing with, we've got to ensure it's
-      // in the right format for Snowplow where we never wrapped { data } while this is done in most
-      // migrated events' Snowplow schemas due to an old tracking bug where data was accidentally wrapped.
-      const likeTransformedData: TransformedEventData = _.isObject(props.data)
-        ? props
-        : { data: props };
-      const snowplowSchema = getSnowplowSchemaForEvent(planKey);
+    if (snowplowSchema) {
+      snowplow.track(planKey, likeTransformedData);
+    }
 
-      if (snowplowSchema) {
-        snowplow.track(planKey, likeTransformedData);
-      }
-
-      analyticsConsole.add(planKey, likeTransformedData, props);
-    };
-  },
+    // TODO: Catch errors via `onViolation` Segment TypeWriter option and display in analytics console.
+    analyticsConsole.add(planKey, likeTransformedData, props);
+  };
 });
+
+/**
+ * Returns props used by all legacy Snowplow events to be used with `Analytics.tracking.` as they have
+ * to be passed manually as there's no more transformers adding them automatically.
+ */
+export function legacyEventProps() {
+  const { userId, organizationId, spaceId } = getBasicPayload();
+  /* eslint-disable @typescript-eslint/camelcase */
+  return {
+    executing_user_id: userId,
+    organization_id: organizationId,
+    space_id: spaceId,
+  };
+}
 
 /**
  * This method helps to identify misuse of the analytics module

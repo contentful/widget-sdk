@@ -9,6 +9,7 @@ import { getSegmentSchemaForEvent } from './transform';
 import { TransformedEventData } from './types';
 import { Schema } from './SchemasSegment';
 import * as plan from './events';
+import { Options, Callback } from './generated/segment';
 
 /**
  * All calls (`track`, `page`, `identify`)
@@ -140,15 +141,26 @@ async function getIntegrations() {
   return resp.map((item) => item.creationName);
 }
 
+type PropsOnlyPlanTrackingFn<Fn> = Fn extends (
+  props: infer P,
+  options?: Options,
+  callback?: Callback
+) => void
+  ? (props: P) => void
+  : never;
+export type Plan = { [P in keyof typeof plan]: PropsOnlyPlanTrackingFn<typeof plan[P]> };
+
+const wrappedPlan: Plan = _.mapValues(plan, (planFn) => (props) => {
+  // Calls are buffered by the fact that these functions internally are calling window.analytics.track()
+  // which is set up above with buffered calls until the real `window.analytics` is lazy loaded.
+  planFn(props, { integrations: TRACK_INTEGRATIONS });
+});
+
 export default {
   /**
    * Exposes Segment typewriter tracking functions for all known Segment events.
-   *
-   * Note: Calls are buffered by the fact that these functions internally are using
-   *  window.analytics.track() which is set up above with buffered calls until
-   *  the real `window.analytics` is lazy loaded.
    */
-  plan,
+  plan: wrappedPlan,
   enable: _.once(enable),
   /**
    * Sends a single event with data to
