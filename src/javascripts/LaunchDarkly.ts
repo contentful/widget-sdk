@@ -17,17 +17,18 @@ import _, { isEqual, endsWith } from 'lodash';
 import * as logger from 'services/logger';
 import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'services/TokenStore';
 import { Organization, SpaceData, User } from 'core/services/SpaceEnvContext/types';
+import { createLaunchDarklyClient } from '@contentful/experience-feature-flags';
 import PQueue from 'p-queue';
+import { UserProps } from 'contentful-management/types';
 
 const flagPromiseQueue = new PQueue({ concurrency: 1 });
 
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 
 let cachedIdentifiedUser: LDClient.LDUser | null = null;
-let client: LDClient.LDClient | null = null;
+let client: any = null;
 let variationCache = {};
 let variationCacheResolved = {};
-
 let initializationPromise: Promise<void> | null = null;
 let initialized = false;
 
@@ -69,39 +70,39 @@ export enum FLAGS {
 }
 
 const FALLBACK_VALUES = {
-  [FLAGS.ENVIRONMENTS_FLAG]: true,
-  [FLAGS.ENTRY_COMMENTS]: true,
-  [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
-  [FLAGS.ALL_REFERENCES_DIALOG]: false,
-  [FLAGS.ADD_TO_RELEASE]: false,
-  [FLAGS.SHAREJS_REMOVAL]: { Asset: true, Entry: true },
-  [FLAGS.NEW_FIELD_DIALOG]: false,
-  [FLAGS.SSO_SETUP_NO_REDUX]: false,
-  [FLAGS.ENTITLEMENTS_API]: false,
-  [FLAGS.SUBSCRIPTION_PAGE_REBRANDING]: false,
-  [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
-  [FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT]: false,
-  [FLAGS.CREATE_SPACE_FOR_SPACE_PLAN]: false,
-  [FLAGS.WORKFLOWS_APP]: false,
-  [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false,
-  [FLAGS.PATCH_ENTRY_UPDATES]: false,
-  [FLAGS.COMPOSE_APP_LISTING_EAP]: false,
-  [FLAGS.LAUNCH_APP_LISTING_EAP]: false,
-  [FLAGS.APP_HOSTING_UI]: false,
-  [FLAGS.HIGH_VALUE_LABEL]: false,
-  [FLAGS.ENVIRONMENT_POLICIES]: false,
-  [FLAGS.V1_MIGRATION_2021_WARNING]: false,
+  [FLAGS.ENVIRONMENTS_FLAG]: true as const,
+  [FLAGS.ENTRY_COMMENTS]: true as const,
+  [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: false as const,
+  [FLAGS.ALL_REFERENCES_DIALOG]: false as const,
+  [FLAGS.ADD_TO_RELEASE]: false as const,
+  [FLAGS.SHAREJS_REMOVAL]: { Asset: false, Entry: false } as const,
+  [FLAGS.NEW_FIELD_DIALOG]: false as const,
+  [FLAGS.SSO_SETUP_NO_REDUX]: false as const,
+  [FLAGS.ENTITLEMENTS_API]: false as const,
+  [FLAGS.SUBSCRIPTION_PAGE_REBRANDING]: false as const,
+  [FLAGS.SPACE_PLAN_ASSIGNMENT]: false as const,
+  [FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT]: false as const,
+  [FLAGS.CREATE_SPACE_FOR_SPACE_PLAN]: false as const,
+  [FLAGS.WORKFLOWS_APP]: false as const,
+  [FLAGS.COMPOSE_LAUNCH_PURCHASE]: false as const,
+  [FLAGS.PATCH_ENTRY_UPDATES]: false as const,
+  [FLAGS.COMPOSE_APP_LISTING_EAP]: false as const,
+  [FLAGS.LAUNCH_APP_LISTING_EAP]: false as const,
+  [FLAGS.APP_HOSTING_UI]: false as const,
+  [FLAGS.HIGH_VALUE_LABEL]: false as const,
+  [FLAGS.ENVIRONMENT_POLICIES]: false as const,
+  [FLAGS.V1_MIGRATION_2021_WARNING]: false as const,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
-  [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
+  [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false as const,
 
-  [FLAGS.REACT_MIGRATION_CT]: false,
+  [FLAGS.REACT_MIGRATION_CT]: false as const,
 
-  [FLAGS.REQUEST_RETRY_EXPERIMENT]: false,
+  [FLAGS.REQUEST_RETRY_EXPERIMENT]: false as const,
 
   // See above
-  [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
-  [FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__]: 'fallback-value-2',
+  [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value' as const,
+  [FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__]: 'fallback-value-2' as const,
 };
 
 /*
@@ -147,6 +148,10 @@ interface CustomData {
   currentUserSpaceRole: string[]; // list of lower case roles that user has for current space
   isAutomationTestUser: boolean; // true if the current user was created by the automation suite
 }
+
+const isInLDExperiment = (user: User) => {
+  return endsWith(user.email, '@contentful.com');
+};
 
 async function ldUser({
   user,
@@ -226,6 +231,98 @@ async function ldUser({
   };
 }
 
+async function getCustomUserData({
+  user,
+  spaceId,
+  environmentId,
+  organizationId,
+}: {
+  user: UserProps;
+  spaceId?: string;
+  environmentId?: string;
+  organizationId?: string;
+}): Promise<Record<string, any>> {
+  // Attempt to get the org and space, if given an ID.
+  //
+  // If the ID results in an unknown org or space, log the
+  // error to Bugsnag and return undefined.
+  let org;
+  let space;
+  try {
+    org = organizationId ? await getOrganization(organizationId) : undefined;
+  } catch (e) {
+    console.log(e);
+  }
+
+  try {
+    space = spaceId ? await getSpace(spaceId) : undefined;
+  } catch (e) {
+    console.log(e);
+  }
+
+  let customData: CustomData = {
+    currentUserSignInCount: user.signInCount,
+
+    // by default, if there is no current space, we pass empty array
+    currentUserSpaceRole: [],
+
+    isAutomationTestUser: isAutomationTestUser(user),
+    currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
+    currentUserAge: getUserAgeInDays(user),
+    currentUserCreationDate: new Date(user.sys.createdAt).getTime(),
+    currentUserIsFromContentful: endsWith(user.email, '@contentful.com'),
+  };
+
+  if (org) {
+    const {
+      sys: { id: organizationId },
+    } = org;
+    const spacesByOrg = getSpacesByOrganization();
+
+    // Currently this is the best way to find out if an org is v2 commited (enterprise)
+    // The request is likely to be cached by dataloader
+    // By default all committed orgs on pricing v2 have this feature enabled in the product catalog
+    // but because the Product Catalog enables overrides, THIS IS NOT 100% RELIABLE for
+    // determining if the org is V2 committed
+    const currentOrgHasSsoSelfConfigFeature = await getOrgFeature(
+      organizationId,
+      OrganizationFeatures.SELF_CONFIGURE_SSO,
+      false
+    );
+
+    customData = _.assign({}, customData, {
+      currentOrgId: organizationId,
+      currentOrgSubscriptionStatus: _.get(org, 'subscription.status', null),
+      currentOrgPricingVersion: org.pricingVersion,
+      currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
+      currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
+      currentOrgHasPaymentMethod: Boolean(org.isBillable),
+      currentOrgCreationDate: new Date(org.sys.createdAt).getTime(),
+      currentOrgHasSsoSelfConfigFeature,
+      currentOrgHasSsoEnabled: _.get(org, 'hasSsoEnabled', false),
+      currentUserOrgRole: getOrgRole(user, organizationId),
+      currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
+      currentUserIsCurrentOrgCreator: isUserOrgCreator(user, org),
+      isNonPayingUser: !['paid', 'free_paid'].includes(_.get(org, ['subscription', 'status'])),
+    });
+  }
+
+  if (space) {
+    const roles = getUserSpaceRoles(space);
+    customData = _.assign({}, customData, {
+      currentSpaceId: space.sys.id,
+      currentUserSpaceRole: roles,
+    });
+  }
+
+  if (environmentId) {
+    customData = _.assign({}, customData, {
+      currentSpaceEnvironmentId: environmentId,
+    });
+  }
+  return _.omitBy(customData, _.isNull);
+}
+
 function getCacheKey(
   flagName: FLAGS,
   organizationId?: string,
@@ -299,20 +396,31 @@ export async function getVariation(
   // If the client doesn't exist, initialize with a basic LD user
   // object (no additional data besides the user)
   if (!client) {
-    // Since this is a basic user, we don't set it as the current identified user above
-    const clientUser = await ldUser({ user });
+    //hardcoded feature flag to roll out to devs first
+    if (isInLDExperiment(user)) {
+      client = createLaunchDarklyClient(config.launchDarkly.envId, FALLBACK_VALUES, {
+        onInitializationError: (error) => {
+          console.log(error);
+          DegradedAppPerformance.trigger('LaunchDarkly');
 
-    client = LDClient.initialize(config.launchDarkly.envId, clientUser);
+          return FALLBACK_VALUES[flagName];
+        },
+        getUserData: getCustomUserData,
+      });
+      client.enforceFlags();
+    } else {
+      // Since this is a basic user, we don't set it as the current identified user above
+      const clientUser = await ldUser({ user });
+      client = LDClient.initialize(config.launchDarkly.envId, clientUser);
+    }
   }
-
-  if (!initialized) {
+  if (!initialized && !isInLDExperiment(user)) {
     if (!initializationPromise) {
       initializationPromise = client.waitForInitialization();
     }
 
     try {
       await initializationPromise;
-
       initialized = true;
     } catch {
       // If LaunchDarkly couldn't initialize, return whatever the fallback value is
@@ -472,7 +580,7 @@ type FlagPromiseResult = FlagPromiseSuccess | FlagPromiseFailure;
   or undefined
  */
 async function createFlagPromise(
-  ldClient: LDClient.LDClient,
+  ldClient: any,
   flagName: FLAGS,
   { user, organizationId, spaceId, environmentId }
 ): Promise<FlagPromiseResult> {
@@ -514,11 +622,13 @@ async function createFlagPromise(
   }
 
   const currentUser = await ldUser({ user, org, space, environmentId });
-
   if (!isEqual(currentUser, cachedIdentifiedUser)) {
     try {
-      await ldClient.identify(currentUser);
-
+      if (isInLDExperiment(user)) {
+        await ldClient.initialize({ user, spaceId, environmentId, organizationId });
+      } else {
+        await ldClient.identify(currentUser);
+      }
       cachedIdentifiedUser = currentUser;
     } catch (error) {
       return {
