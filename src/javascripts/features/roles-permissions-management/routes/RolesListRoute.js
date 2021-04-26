@@ -91,7 +91,7 @@ export function RolesListRoute() {
               isLegacyOrganization={isLegacyOrganization}
               refetch={fetch}
               newApiRolesLimit={newApiRolesLimit}
-              highValueLabelEnabled={highValueLabelEnabled}
+              highValueLabelEnabled={highValueLabelEnabled && !currentOrganization.isBillable}
               isOrgOnTrial={isOrgOnTrial}
               {...data}
             />
