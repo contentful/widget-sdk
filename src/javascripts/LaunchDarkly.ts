@@ -74,7 +74,7 @@ const FALLBACK_VALUES = {
   [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
   [FLAGS.ALL_REFERENCES_DIALOG]: false,
   [FLAGS.ADD_TO_RELEASE]: false,
-  [FLAGS.SHAREJS_REMOVAL]: { Asset: false, Entry: false },
+  [FLAGS.SHAREJS_REMOVAL]: { Asset: true, Entry: true },
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.ENTITLEMENTS_API]: false,
