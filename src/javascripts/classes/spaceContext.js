@@ -208,11 +208,7 @@ function initSpaceContext() {
         // string is hardcoded because this code _is_ temporary
         getModule('$rootScope').$broadcast('spaceContextUpdated');
       } catch (err) {
-        logger.captureError(
-          new Error('Unexpected error when calling spaceContext.resetWithSpace', {
-            capturedObject: err,
-          })
-        );
+        logger.captureError(err);
       } finally {
         spaceContext.resettingSpace = false;
       }
