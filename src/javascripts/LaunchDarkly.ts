@@ -36,11 +36,6 @@ export enum FLAGS {
   ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
   ENTITY_EDITOR_CMA_EXPERIMENT = 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
-  /**
-   * @deprecated use product catalog space feature "reference_tree" check instead
-   */
-
-  ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
   NEW_FIELD_DIALOG = 'react-migration-new-content-type-field-dialog',
@@ -74,7 +69,6 @@ const FALLBACK_VALUES = {
   [FLAGS.ENVIRONMENTS_FLAG]: true as const,
   [FLAGS.ENTRY_COMMENTS]: true as const,
   [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: false as const,
-  [FLAGS.ALL_REFERENCES_DIALOG]: false as const,
   [FLAGS.ADD_TO_RELEASE]: false as const,
   [FLAGS.SHAREJS_REMOVAL]: { Asset: true, Entry: true } as const,
   [FLAGS.NEW_FIELD_DIALOG]: false as const,
