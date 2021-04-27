@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor, within, fireEvent } from '@testing-library/react';
-import SpacesRoute from './SpacesRoute';
+import { OrganizationSpacesV1Page } from './OrganizationSpacesV1Page';
 import moment from 'moment';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import createResourceService from 'services/ResourceService';
@@ -15,9 +15,9 @@ import { setUser } from 'services/OrganizationRoles';
 const DEFAULT_CREATED_AT_STRING = '2020-05-07T10:48:53Z';
 const CREATED_AT_FROM_NOW = moment(DEFAULT_CREATED_AT_STRING).fromNow();
 const CREATED_AT_FULL_FORMAT = 'Thursday, May 7, 2020 10:48 AM';
-const USER_COUNT = 2;
-const ENTRY_COUNT = 1;
-const REQUEST_COUNT = 10;
+const USER_COUNT = '2';
+const ENTRY_COUNT = '1';
+const REQUEST_COUNT = '10';
 const fakeSpace1 = fake.Space({ sys: fake.sys({ createdAt: DEFAULT_CREATED_AT_STRING }) });
 const fakeSpace2 = fake.Space({ sys: fake.sys({ createdAt: DEFAULT_CREATED_AT_STRING }) });
 const fakeResources = [
@@ -48,7 +48,7 @@ jest.mock('services/CreateSpace', () => ({
 }));
 
 jest.mock('services/TokenStore', () => ({
-  getSpaces: jest.fn().mockResolvedValue(),
+  getSpaces: jest.fn().mockResolvedValue([]),
   getUserSync: jest.fn(),
 }));
 
@@ -57,7 +57,7 @@ jest.mock('states/Navigator', () => ({
 }));
 
 const build = async () => {
-  render(<SpacesRoute orgId={mockOrganization.sys.id} />);
+  render(<OrganizationSpacesV1Page orgId={mockOrganization.sys.id} />);
 
   return waitFor(() => expect(getAllSpaces).toHaveBeenCalled());
 };
@@ -74,7 +74,7 @@ describe('SpacesRoute', () => {
     };
 
     setUser(user);
-    getUserSync.mockReturnValue(user);
+    (getUserSync as jest.Mock).mockReturnValue(user);
   });
   describe('it renders loading state', () => {
     it('should show an loading icon when waiting for data fetch', async () => {
@@ -90,7 +90,7 @@ describe('SpacesRoute', () => {
 
   describe('it renders with errors', () => {
     it('should render an error if fetching the space data fails', async () => {
-      getAllSpaces.mockReset().mockRejectedValue(new Error());
+      (getAllSpaces as jest.Mock).mockReset().mockRejectedValue(new Error());
 
       await build();
 
@@ -98,7 +98,7 @@ describe('SpacesRoute', () => {
     });
 
     it('should render an error if fetching the resource data fails', async () => {
-      createResourceService().getAll.mockReset().mockRejectedValue(new Error());
+      (createResourceService().getAll as jest.Mock).mockReset().mockRejectedValue(new Error());
 
       await build();
 
@@ -108,8 +108,8 @@ describe('SpacesRoute', () => {
 
   describe('it renders with no spaces', () => {
     beforeEach(() => {
-      getAllSpaces.mockReset().mockReturnValue([]);
-      getSpaces.mockReset().mockResolvedValue([]);
+      (getAllSpaces as jest.Mock).mockReset().mockReturnValue([]);
+      (getSpaces as jest.Mock).mockReset().mockResolvedValue([]);
     });
 
     it('should not call resource service', async () => {
@@ -130,11 +130,11 @@ describe('SpacesRoute', () => {
 
   describe('it renders spaces', () => {
     beforeEach(() => {
-      getAllSpaces.mockReset().mockReturnValue([fakeSpace1, fakeSpace2]);
+      (getAllSpaces as jest.Mock).mockReset().mockReturnValue([fakeSpace1, fakeSpace2]);
 
-      createResourceService().getAll.mockReset().mockReturnValue(fakeResources);
+      (createResourceService().getAll as jest.Mock).mockReset().mockReturnValue(fakeResources);
 
-      getSpaces.mockReset().mockResolvedValue([fakeSpace1, fakeSpace2]);
+      (getSpaces as jest.Mock).mockReset().mockResolvedValue([fakeSpace1, fakeSpace2]);
     });
 
     it('should fetch space and resource data when the component renders', async () => {
@@ -197,7 +197,7 @@ describe('SpacesRoute', () => {
 
       const createdAtCell = screen.queryAllByTestId('v1-space-row.created-at')[0];
 
-      fireEvent.mouseOver(createdAtCell.firstElementChild);
+      fireEvent.mouseOver(createdAtCell.firstElementChild as Element);
       const tooltip = screen.getByTestId('v1-space-created-at-tooltip');
 
       expect(tooltip).toBeVisible();
@@ -212,7 +212,9 @@ describe('SpacesRoute', () => {
       const actionIcon = screen.queryAllByTestId('v1-spaces-row.dropdown-menu.trigger')[0];
       fireEvent.click(actionIcon);
       const deleteContainer = screen.queryByTestId('v1-spaces-dropdown-item.delete-space');
-      fireEvent.click(within(deleteContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID));
+      fireEvent.click(
+        within(deleteContainer as HTMLElement).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
 
       expect(openDeleteSpaceDialog).toHaveBeenCalled();
     });
@@ -224,7 +226,9 @@ describe('SpacesRoute', () => {
 
       fireEvent.click(screen.queryAllByTestId('v1-spaces-row.dropdown-menu.trigger')[0]);
       const deleteContainer = screen.queryByTestId('v1-spaces-dropdown-item.delete-space');
-      fireEvent.click(within(deleteContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID));
+      fireEvent.click(
+        within(deleteContainer as HTMLElement).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
 
       const updatedRows = screen.queryAllByTestId('v1-space-row');
       expect(updatedRows).toHaveLength(1);
@@ -249,13 +253,15 @@ describe('SpacesRoute', () => {
       fireEvent.click(iconElm); // open the action dropdown
       const goToSpaceContainer = screen.queryByTestId('v1-spaces-dropdown-item.go-to-space');
       fireEvent.click(
-        within(goToSpaceContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+        within(goToSpaceContainer as HTMLElement).getByTestId(
+          FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
+        )
       );
     };
 
     it('should navigate to space home if it is accessible to the user', async () => {
       // fakeSpace1 is not accessible
-      getSpaces.mockReset().mockResolvedValue([fakeSpace2]);
+      (getSpaces as jest.Mock).mockReset().mockResolvedValue([fakeSpace2]);
       await build();
 
       const actionIcons = screen.queryAllByTestId('v1-spaces-row.dropdown-menu.trigger');

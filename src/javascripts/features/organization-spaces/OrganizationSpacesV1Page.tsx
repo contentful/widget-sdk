@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useAsync } from 'core/hooks';
-import PropTypes from 'prop-types';
 import {
   Workbench,
   Table,
@@ -29,6 +28,7 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import * as TokenStore from 'services/TokenStore';
+import { SpaceProps } from 'contentful-management/types';
 
 const styles = {
   content: css({
@@ -61,12 +61,28 @@ const styles = {
   }),
 };
 
-const SpacesRoute = ({ orgId }) => {
-  const [spaces, setSpaces] = useState([]);
-  const [resources, setResources] = useState(null);
+type OrganizationSpacesV1PageProps = {
+  orgId?: string;
+};
+
+type Resource = {
+  space_membership: {
+    usage: string;
+  };
+  entry: {
+    usage: string;
+  };
+  content_delivery_api_request: {
+    usage: string;
+  };
+};
+
+const OrganizationSpacesV1Page = ({ orgId }: OrganizationSpacesV1PageProps) => {
+  const [spaces, setSpaces] = useState<(SpaceProps & { isAccessible: boolean })[]>([]);
+  const [resources, setResources] = useState<Record<string, Resource>>({});
 
   const getSpacesWithResources = useCallback(async () => {
-    const endpoint = createOrganizationEndpoint(orgId);
+    const endpoint = createOrganizationEndpoint(orgId as string);
     const allSpaces = await getAllSpaces(endpoint);
     const accessibleSpaces = await TokenStore.getSpaces();
     const allResources = await Promise.all(
@@ -119,7 +135,7 @@ const SpacesRoute = ({ orgId }) => {
           actions={
             <Button
               buttonType="primary"
-              onClick={() => beginSpaceCreation(orgId)}
+              onClick={() => beginSpaceCreation(orgId as string)}
               testId="v1-spaces-list.new-space-button"
               type="button">
               New space
@@ -208,6 +224,4 @@ const SpacesRoute = ({ orgId }) => {
   );
 };
 
-SpacesRoute.propTypes = { orgId: PropTypes.string };
-
-export default SpacesRoute;
+export { OrganizationSpacesV1Page };

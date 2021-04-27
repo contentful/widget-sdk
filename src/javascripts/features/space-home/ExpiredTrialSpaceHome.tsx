@@ -17,6 +17,7 @@ import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { go } from 'states/Navigator';
 import { getAddOnProductRatePlans } from 'features/pricing-entities';
+import { SpaceData } from 'core/services/SpaceEnvContext/types';
 
 const styles = {
   buyButton: css({
@@ -69,7 +70,7 @@ export const ExpiredTrialSpaceHome = () => {
   const handleDelete = () => {
     trackTargetedCTAClick(CTA_EVENTS.DELETE_APP_TRIAL_SPACE);
     openDeleteSpaceDialog({
-      space: currentSpaceData,
+      space: currentSpaceData as SpaceData,
       plan: undefined,
       onSuccess: () => {
         go({

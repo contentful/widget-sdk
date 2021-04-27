@@ -19,6 +19,8 @@ import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataPr
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import ReloadNotification from 'app/common/ReloadNotification';
+import type { SpacePlan } from 'features/organization-subscription';
+import { SpaceData } from 'core/services/SpaceEnvContext/types';
 
 export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
   const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');
@@ -108,7 +110,17 @@ DeleteSpaceModal.propTypes = {
   space: SpacePropType.isRequired,
 };
 
-export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {
+type OpenDeleteSpaceDialogProps = {
+  space: SpaceData;
+  plan?: SpacePlan;
+  onSuccess?: () => void;
+};
+
+export async function openDeleteSpaceDialog({
+  space,
+  plan,
+  onSuccess,
+}: OpenDeleteSpaceDialogProps) {
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
 

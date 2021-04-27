@@ -1,7 +1,6 @@
 import React from 'react';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { withOrganizationRoute } from 'states/utils';
-import SpacesRoute from './SpacesV1/SpacesRoute';
 import { GatekeeperView } from 'account/GatekeeperView';
 
 export const edit = {
@@ -38,12 +37,6 @@ export const subscriptionBilling = {
   component: withOrganizationRoute(() => (
     <GatekeeperView title="Subscription" icon={<ProductIcon size="large" icon="Subscription" />} />
   )),
-};
-
-export const spaces = {
-  name: 'spaces',
-  url: '/spaces',
-  component: withOrganizationRoute(SpacesRoute),
 };
 
 export const offsitebackup = {

@@ -9,7 +9,6 @@ import {
   billing,
   edit,
   offsitebackup,
-  spaces,
   subscription,
   subscriptionBilling,
   userGatekeeper,
@@ -25,6 +24,7 @@ import { go } from 'states/Navigator';
 import { trialState, isOrganizationOnTrial } from 'features/trials';
 import { GatekeeperView } from 'account/GatekeeperView';
 import { usageState } from 'features/organization-usage';
+import { organizationSpacesState } from 'features/organization-spaces';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -104,7 +104,7 @@ export const organization = {
     billing,
     edit,
     offsitebackup,
-    spaces,
+    organizationSpacesState,
     subscription,
     subscriptionBilling,
     userGatekeeper,

@@ -13,6 +13,8 @@ import { routes } from 'core/react-routing';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
+  const orgSpacesRoute = routes['organizations.spaces']({}, { orgId });
+  const orgUsageRoute = routes['organizations.usage']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
@@ -95,9 +97,9 @@ function getItems(params, { orgId }) {
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
       title: 'Usage',
-      sref: routes['organizations.usage']({ orgId }).path,
-      srefParams: routes['organizations.usage']({ orgId }).params,
-      rootSref: routes['organizations.usage']({ orgId }).path,
+      sref: orgUsageRoute.path,
+      srefParams: orgUsageRoute.params,
+      rootSref: orgUsageRoute.path,
       srefOptions: {
         inherit: false,
       },
@@ -154,9 +156,9 @@ function getItems(params, { orgId }) {
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
-      sref: 'account.organizations.spaces',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.spaces',
+      sref: orgSpacesRoute.path,
+      srefParams: orgSpacesRoute.params,
+      rootSref: orgSpacesRoute.path,
       srefOptions: {
         inherit: false,
       },
