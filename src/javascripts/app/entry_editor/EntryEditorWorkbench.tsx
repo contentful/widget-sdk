@@ -123,7 +123,7 @@ function tabIsDefault(tabKey, tabs) {
 // get high value label modal data from Contentful
 const initialFetch = async () => await fetchWebappContentByEntryID(REFERENCES_ENTRY_ID);
 
-const openDialog = (modalData) => {
+const openDialog = (modalData, helpCenterUrl) => {
   handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, false);
 
   ModalLauncher.open(({ onClose, isShown }) => (
@@ -131,6 +131,7 @@ const openDialog = (modalData) => {
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
+      helpCenterUrl={helpCenterUrl} // overwrite primary url to funnel users to the self service purchase flow
       featureTracking={REFERENCES_TRACKING_NAME}
     />
   ));
@@ -366,7 +367,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const showCustomModal = async () => {
     try {
       const modalData = await initialFetch();
-      openDialog(modalData);
+      const helpCenterUrl = `/account/organizations/${currentOrganizationId}/upgrade_space/${currentSpaceId}`;
+
+      openDialog(modalData, helpCenterUrl);
     } catch {
       // do nothing, user will be able to see tooltip with information about the feature
       throw new Error('Something went wrong while fetching data from Contentful');

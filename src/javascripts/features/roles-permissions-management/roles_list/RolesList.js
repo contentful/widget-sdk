@@ -83,7 +83,6 @@ function RoleListActions(props) {
           }>
           <Button
             icon="InfoCircle"
-            className={styles.addRoleButton}
             testId="add-role-button"
             buttonType="primary"
             onClick={fetchData}>
@@ -99,7 +98,7 @@ function RoleListActions(props) {
           </Paragraph>
           {props.isOrgOnTrial && props.highValueLabelEnabled ? (
             <Tooltip
-              place="left"
+              place="bottom"
               content="This feature is a part of the Enterprise plan. You can use it during your trial."
               onMouseOver={() =>
                 handleHighValueLabelTracking('hover', ROLES_AND_PERMISSIONS_TRACKING_NAME, true)
