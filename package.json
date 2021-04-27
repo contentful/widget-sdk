@@ -199,6 +199,7 @@
     "canonical-path": "1.0.0",
     "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.5",
+    "codeowners": "^5.1.0",
     "commitizen": "^4.2.2",
     "css-loader": "^3.5.3",
     "csstype": "^3.0.2",
@@ -296,6 +297,7 @@
     "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
     "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts",
     "check-types": "tsc",
+    "check-code-ownership": "node ./tools/codeownership/check.js",
     "wait-for-app": "wait-on --verbose --interval 2000 --delay 60000 http://localhost:3001"
   },
   "lint-staged": {
