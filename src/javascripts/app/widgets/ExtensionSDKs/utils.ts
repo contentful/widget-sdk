@@ -59,7 +59,7 @@ export function serializeJSONValue(value: unknown): SerializedJSONValue | undefi
     return value.toISOString();
   } else if (typeof value === 'object' && !!value) {
     return Object.fromEntries(
-      Object.entries(value!)
+      Object.entries(value)
         .filter(([, v]) => v !== undefined)
         // serializeJSONValue returns undefined only if passing undefined
         .map(([key, v]) => [key, serializeJSONValue(v) as SerializedJSONValue])
