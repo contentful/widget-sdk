@@ -10,8 +10,13 @@ export const styles = {
     height: '128px',
   }),
   dropzoneHelpText: css({
+    display: 'flex',
+    justifyContent: 'space-between',
     fontSize: tokens.fontSizeS,
     marginTop: tokens.spacingXs,
+  }),
+  helpTextLink: css({
+    fontSize: tokens.fontSizeS,
   }),
   dropzoneContainer: (active: boolean) =>
     css({

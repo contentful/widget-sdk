@@ -1,13 +1,22 @@
+import { routes } from 'core/react-routing';
 import React from 'react';
 import NavBar from './NavBar/NavBar';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
 export default function ProfileNavigationBar() {
+  const user = routes['account.profile.user']();
+  const cmaTokens = routes['account.profile.cma_tokens']();
+  const oauthTokens = routes['account.profile.oauth_tokens']();
+  const oauthApplications = routes['account.profile.oauth_application']();
+  const spaceMembership = routes['account.profile.space_memberships']();
+  const orgMembership = routes['account.profile.organization_memberships']();
+
   const accessTokensDropdownItems = [
     {
       title: 'Personal access tokens',
       navIcon: 'Token',
-      sref: 'account.profile.cma_tokens',
+      sref: cmaTokens.path,
+      srefParams: cmaTokens.params,
       srefOptions: {
         inherit: false,
       },
@@ -16,7 +25,8 @@ export default function ProfileNavigationBar() {
     {
       title: 'OAuth tokens',
       navIcon: 'Token',
-      sref: 'account.profile.access_grants',
+      sref: oauthTokens.path,
+      srefParams: oauthTokens.params,
       srefOptions: {
         inherit: false,
       },
@@ -35,7 +45,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'User profile',
               navIcon: 'UserProfile',
-              sref: 'account.profile.user',
+              sref: user.path,
+              srefParams: user.params,
               srefOptions: {
                 inherit: false,
               },
@@ -44,7 +55,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'Spaces',
               navIcon: 'Spaces',
-              sref: 'account.profile.space_memberships',
+              sref: spaceMembership.path,
+              srefParams: spaceMembership.params,
               srefOptions: {
                 inherit: false,
               },
@@ -53,7 +65,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'Organizations',
               navIcon: 'Organizations',
-              sref: 'account.profile.organization_memberships',
+              sref: orgMembership.path,
+              srefParams: orgMembership.params,
               srefOptions: {
                 inherit: false,
               },
@@ -71,7 +84,8 @@ export default function ProfileNavigationBar() {
             {
               title: 'OAuth applications',
               navIcon: 'Oauth',
-              sref: 'account.profile.applications',
+              sref: oauthApplications.path,
+              srefParams: oauthApplications.params,
               srefOptions: {
                 inherit: false,
               },

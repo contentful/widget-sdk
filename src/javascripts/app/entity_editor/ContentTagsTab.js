@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { EditorTagsSkeleton, MetadataTags, useDocTags } from 'features/content-tags';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/PolicyBuilderConfig';
 
-export const ContentTagsTab = ({ doc, entityType, showEmpty }) => {
+export const ContentTagsTab = ({ doc, entityType, entityState, showEmpty }) => {
   const canEditTags = doc.permissions.canEditFieldLocale(
     PolicyBuilderConfig.TAGS,
     PolicyBuilderConfig.PATH_WILDCARD
   );
 
   const { tags, setTags } = useDocTags(doc);
+  const entityArchived = entityState === 'archived';
 
   return (
     <MetadataTags>
@@ -19,6 +20,7 @@ export const ContentTagsTab = ({ doc, entityType, showEmpty }) => {
         tags={tags}
         setTags={setTags}
         entityType={entityType}
+        entityArchived={entityArchived}
       />
     </MetadataTags>
   );
@@ -34,6 +36,7 @@ ContentTagsTab.propTypes = {
     }).isRequired,
   }),
   entityType: PropTypes.string.isRequired,
+  entityState: PropTypes.string.isRequired,
 };
 
 ContentTagsTab.defaultPropes = {

@@ -20,6 +20,9 @@ const styles = {
   listItem: css({
     display: 'flex',
     alignContent: 'center',
+    p: {
+      marginBottom: tokens.spacingXs,
+    },
   }),
   checkmarkIcon: (color?: string) =>
     css({

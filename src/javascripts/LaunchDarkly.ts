@@ -35,6 +35,10 @@ export enum FLAGS {
   ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
   ENTITY_EDITOR_CMA_EXPERIMENT = 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
+  /**
+   * @deprecated use product catalog space feature "reference_tree" check instead
+   */
+
   ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
@@ -54,6 +58,8 @@ export enum FLAGS {
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
+  EXPERIMENT_A_A = 'test-growth-04-2021-a-a-exp',
+  V1_MIGRATION_2021_WARNING = 'feature-hejo-04-2021-v1-migration',
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
   ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
 
@@ -69,7 +75,7 @@ const FALLBACK_VALUES = {
   [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
   [FLAGS.ALL_REFERENCES_DIALOG]: false,
   [FLAGS.ADD_TO_RELEASE]: false,
-  [FLAGS.SHAREJS_REMOVAL]: { Asset: false, Entry: false },
+  [FLAGS.SHAREJS_REMOVAL]: { Asset: true, Entry: true },
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.ENTITLEMENTS_API]: false,
@@ -85,6 +91,7 @@ const FALLBACK_VALUES = {
   [FLAGS.APP_HOSTING_UI]: false,
   [FLAGS.HIGH_VALUE_LABEL]: false,
   [FLAGS.ENVIRONMENT_POLICIES]: false,
+  [FLAGS.V1_MIGRATION_2021_WARNING]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
@@ -92,6 +99,8 @@ const FALLBACK_VALUES = {
   [FLAGS.REACT_MIGRATION_CT]: false,
 
   [FLAGS.REQUEST_RETRY_EXPERIMENT]: false,
+
+  [FLAGS.EXPERIMENT_A_A]: null,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

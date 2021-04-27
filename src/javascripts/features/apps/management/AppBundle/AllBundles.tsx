@@ -1,11 +1,11 @@
 import React from 'react';
 import { BundleCard } from './BundleCard';
 import { AppBundleData } from '../AppEditor';
-import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { SectionHeading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
+import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const styles = {
   cardSpacing: css({
@@ -17,29 +17,22 @@ const styles = {
   }),
 };
 
-interface AllBundlesProps {
-  definition: AppDefinitionWithBundle;
-  savedDefinition: AppDefinitionWithBundle;
-  onChange: (appDefinition: AppDefinitionWithBundle) => void;
-}
-
 enum States {
   NoBundles = 'NoBundles',
   NoPreviousBundles = 'NoPreviousBundles',
   PreviousBundles = 'PreviousBundles',
 }
 
-export const AllBundles: React.FC<AllBundlesProps> = ({
-  definition,
-  savedDefinition,
-  onChange,
-}) => {
+export const AllBundles = () => {
   const { bundles, setIsAppHosting, removeBundle } = React.useContext(HostingStateContext);
+  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
+    AppDetailsStateContext
+  );
 
   const setNewAppBundle = (bundle: AppBundleData) => {
     setIsAppHosting(true);
-    onChange({
-      ...definition,
+    setDraftDefinition({
+      ...draftDefinition,
       src: undefined,
       bundle: { sys: { type: 'Link', linkType: 'AppBundle', id: bundle.sys.id } },
     });
@@ -50,9 +43,9 @@ export const AllBundles: React.FC<AllBundlesProps> = ({
       bundles.filter(
         // Don't to render the active or staged bundle in this list
         ({ sys: { id } }) =>
-          id !== definition.bundle?.sys.id && id !== savedDefinition.bundle?.sys.id
+          id !== draftDefinition.bundle?.sys.id && id !== savedDefinition.bundle?.sys.id
       ),
-    [bundles, definition, savedDefinition]
+    [bundles, draftDefinition, savedDefinition]
   );
 
   const state =

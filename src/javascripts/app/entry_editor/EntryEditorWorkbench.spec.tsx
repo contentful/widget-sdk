@@ -30,6 +30,7 @@ jest.mock('access_control/AccessChecker', () => {
     can: jest.fn(),
   };
 });
+
 jest.mock('services/localeStore', () => {
   const mockInternalLocale = {
     'en-US': 'en-US',
@@ -108,6 +109,7 @@ describe('When rendering editors page with no editors', () => {
     loadEvents: {},
     state: {
       delete: {},
+      current: 'published',
     },
     statusNotificationProps: { entityLabel: 'entry', status: 'cool' },
     otDoc: doc,

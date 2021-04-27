@@ -57,15 +57,24 @@ describe('Segment', () => {
       segment.enable();
     });
 
-    it('tracks passed `data` as `{data} for events using `wrapPayloadInData: true` legacy option', () => {
+    describe('for events using `wrapPayloadInData: true` legacy option', () => {
       // Use arbitrary legacy event name from Snowplow -> Segment migration. Can be replaced with any other
       // event if this one gets removed in the future or if the `wrapPayloadInData` gets removed from it.
       const legacyEventName = 'entry:create';
       const schema = getSegmentSchemaForEvent('entry:create');
+      // Sanity check to ensure above event falls into the right category:
       expect(schema.wrapPayloadInData).toBe(true);
 
-      segment.track(legacyEventName, { data });
-      expect(track).toHaveBeenCalledWith(schema.name, { data }, expect.any(Object));
+      it('tracks passed `data` as `{data}', () => {
+        segment.track(legacyEventName, { data });
+        expect(track).toHaveBeenCalledWith(schema.name, { data }, expect.any(Object));
+      });
+
+      it('it passes other props next to `data`', () => {
+        const dataWithMoreProps = { data, more: 'data', contexts: { ...data } };
+        segment.track(legacyEventName, { ...dataWithMoreProps });
+        expect(track).toHaveBeenCalledWith(schema.name, dataWithMoreProps, expect.any(Object));
+      });
     });
 
     it('tracks passed `data` directly for events not using `wrapPayloadInData` legacy option', () => {

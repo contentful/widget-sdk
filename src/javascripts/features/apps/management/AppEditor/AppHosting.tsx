@@ -16,10 +16,10 @@ import { ValidationError } from './types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ConditionalValidationMessage } from './ConditionalValidationMessage';
-import { DataLink, AppBundleData } from './types';
-import { HostingDropzone } from './HostingDropzone';
+import { DataLink } from './types';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
-import { HostingDropdown } from './HostingDropdown';
+import { ActiveBundle } from '../AppBundle/ActiveBundle';
+import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const appHostingStyles = {
   hostingSwitch: css({
@@ -34,29 +34,31 @@ const appHostingStyles = {
 export type AppDefinitionWithBundle = AppDefinition & { bundle?: DataLink };
 
 interface AppHostingProps {
-  definition: AppDefinitionWithBundle;
-  onChange: (appDefinition: AppDefinitionWithBundle) => void;
   errorPath?: string[];
   errors?: ValidationError[];
   disabled: boolean;
+  goToTab?: (tab: string) => void;
   clearErrorForField: (error: string[]) => void;
 }
 
 export function AppHosting({
-  definition,
   errorPath = [],
-  onChange,
   disabled,
   errors = [],
   clearErrorForField,
+  goToTab,
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
+  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
+    AppDetailsStateContext
+  );
+
   React.useEffect(() => {
     getVariation(FLAGS.APP_HOSTING_UI, {
-      organizationId: definition.sys.organization.sys.id,
+      organizationId: draftDefinition.sys.organization.sys.id,
     }).then((value) => setHostingEnabled(value));
-  }, [definition.sys.organization.sys.id]);
+  }, [draftDefinition.sys.organization.sys.id]);
 
   const hostingState = React.useContext(HostingStateContext);
 
@@ -67,29 +69,29 @@ export function AppHosting({
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     clearErrorForField([...errorPath, 'src']);
-    onChange({ ...definition, src: e.target.value.trim() });
+    setDraftDefinition({ ...draftDefinition, src: e.target.value.trim() });
   };
 
-  const onAppBundleCreate = (bundle: AppBundleData) => {
-    onChange({
-      ...definition,
-      src: undefined,
-      bundle: { sys: { type: 'Link', linkType: 'AppBundle', id: bundle.sys.id } },
+  const onResetBundle = () => {
+    setDraftDefinition({
+      ...draftDefinition,
+      src: savedDefinition.src,
+      bundle: savedDefinition.bundle,
     });
   };
 
   const renderSwitch = () => (
     <Switch
       className={appHostingStyles.hostingSwitch}
-      isDisabled={!definition.sys.id}
+      isDisabled={!draftDefinition.sys.id}
       isChecked={hostingState.isAppHosting}
       onToggle={(value) => {
         hostingState.setIsAppHosting(value);
 
-        if (!value && !definition.src) {
+        if (!value && !draftDefinition.src) {
           // This allows us to save when turning off app hosting with no src set
-          onChange({
-            ...definition,
+          setDraftDefinition({
+            ...draftDefinition,
             src: '',
           });
         }
@@ -101,11 +103,11 @@ export function AppHosting({
 
   return (
     <>
-      {hostingEnabled || definition.bundle ? (
+      {hostingEnabled || draftDefinition.bundle ? (
         <>
           <FormLabel htmlFor="app-hosting">Frontend</FormLabel>
           <Flex>
-            {!definition.sys.id ? (
+            {!draftDefinition.sys.id ? (
               <Tooltip
                 place="top-start"
                 content="Please create your app first to enable hosting by Contentful">
@@ -117,8 +119,14 @@ export function AppHosting({
           </Flex>
           {hostingState && hostingState.isAppHosting ? (
             <>
-              <HostingDropdown definition={definition} />
-              <HostingDropzone onAppBundleCreated={onAppBundleCreate} definition={definition} />
+              <ActiveBundle
+                link={
+                  goToTab
+                    ? { title: 'View all bundles', onLinkClick: () => goToTab('bundles') }
+                    : undefined
+                }
+                resetDefinitionBundle={onResetBundle}
+              />
             </>
           ) : (
             <div className={styles.input()}>
@@ -128,7 +136,7 @@ export function AppHosting({
                 testId="app-src-input"
                 placeholder="e.g. http://localhost:1234"
                 error={!!validationMessage}
-                value={definition.src || ''}
+                value={draftDefinition.src || ''}
                 onChange={onInputChange}
                 disabled={disabled}
               />
@@ -151,7 +159,7 @@ export function AppHosting({
           id="app-src"
           labelText="App URL"
           testId="app-src-input"
-          value={definition.src || ''}
+          value={draftDefinition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
           onChange={onInputChange}
           validationMessage={validationMessage}

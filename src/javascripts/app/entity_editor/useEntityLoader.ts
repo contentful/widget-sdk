@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import { useEffect, useRef, useState } from 'react';
 import { loadAsset, loadEntry } from './DataLoader';
 import { createLoadEventTracker } from './LoadEventTracker';
@@ -7,6 +6,7 @@ import noop from 'lodash/noop';
 import * as random from 'utils/Random';
 import { LoadingError, Slide, SlideInEditorType, SlideState } from './SlideInEditor/types';
 import { EditorData } from './EntityField/types';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const entityLoaders = {
   Entry: loadEntry,
@@ -68,7 +68,7 @@ export const useEntityLoader = (
       trackLoadEvent('init');
       try {
         const { type, id, path } = slide;
-        const spaceContext = getModule('spaceContext');
+        const spaceContext = getSpaceContext();
         const loadEntity = entityLoaders[type];
         data.current = await loadEntity(spaceContext, type === 'BulkEditor' ? path[0] : id);
         trackLoadEvent('entity_loaded');

@@ -2,25 +2,27 @@ import { AppConfigAPI } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { createAppApi } from './createAppApi';
 import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus, makeAppHookBus } from 'features/apps-core';
+import APIClient from 'data/APIClient';
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
+jest.mock('core/NgRegistry', () => ({
+  getModule: () => ({
+    $emit: jest.fn(),
+  }),
+}));
+
 describe('createAppApi', () => {
   const widgetId = 'w-id';
   const widgetNamespace = WidgetNamespace.APP;
-  const spaceContext = {
-    cma: {
-      getEditorInterfaces: jest.fn(),
-    },
-    publishedCTs: {
-      refresh: jest.fn(),
-    },
-  };
+  const cma = ({
+    getEditorInterfaces: jest.fn(),
+  } as unknown) as APIClient;
 
   const buildApi = (appHookBus = makeAppHookBus()) => ({
-    result: createAppApi({ widgetId, widgetNamespace, spaceContext, appHookBus }),
+    result: createAppApi({ widgetId, widgetNamespace, cma, appHookBus }),
     appHookBus,
   });
 

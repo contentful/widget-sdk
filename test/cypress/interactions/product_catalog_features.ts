@@ -99,7 +99,7 @@ const createDefaultSpaceFeatureVariants = ({ featureId }) => ({
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for "${featureId}" feature for space "${defaultSpaceId}"`,
+      uponReceiving: `a query for disabled "${featureId}" feature for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(`sys.featureId[]=${featureId}`),
       willRespondWith: productCatalogResponse({
         items: [
@@ -122,7 +122,7 @@ const createDefaultSpaceFeatureVariants = ({ featureId }) => ({
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for "${featureId}" feature for space "${defaultSpaceId}"`,
+      uponReceiving: `a query for enabled "${featureId}" feature for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(`sys.featureId[]=${featureId}`),
       willRespondWith: productCatalogResponse({
         items: [
@@ -228,4 +228,7 @@ export const queryForScheduledPublishingInDefaultSpace = createDefaultSpaceFeatu
 });
 export const queryForTasksInDefaultSpace = createDefaultSpaceFeatureVariants({
   featureId: 'tasks',
+});
+export const queryForReferencesTreeInDefaultSpace = createDefaultSpaceFeatureVariants({
+  featureId: 'reference_tree',
 });

@@ -11,6 +11,7 @@ import * as logger from 'services/logger';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
+import { requestLogger, responseLogger } from './plainClientLogger';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
 
@@ -21,6 +22,8 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
       accessToken: () => {
         return auth.getToken();
       },
+      requestLogger,
+      responseLogger,
       headers: getDefaultHeaders(),
       onError: createOnErrorWithInterceptor({
         refreshToken: async () => {

@@ -51,6 +51,8 @@ const usePurchasedApps = (organizationId: string | undefined) => {
   > | null>(null);
 
   React.useEffect(() => {
+    let isMounted = true;
+
     if (!organizationId) {
       setPurchasedApps({ compose: false, launch: false });
       return;
@@ -65,8 +67,14 @@ const usePurchasedApps = (organizationId: string | undefined) => {
         return [false, false];
       })
       .then(([compose, launch]) => {
-        setPurchasedApps({ compose, launch });
+        if (isMounted) {
+          setPurchasedApps({ compose, launch });
+        }
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, [organizationId]);
 
   return purchasedApps;
@@ -93,7 +101,9 @@ export const useAppsList = () => {
   const [installedApps] = useInstalledApps();
 
   React.useEffect(() => {
-    if (!spaceId || !organizationId || !environmentId) {
+    let isMounted = true;
+
+    if ((!spaceId || !organizationId || !environmentId) && isMounted) {
       setIsLoading(false);
       return;
     }
@@ -124,11 +134,14 @@ export const useAppsList = () => {
               });
 
               const spaceInformation = {
-                spaceId: spaceId,
+                spaceId: spaceId as string,
                 spaceName: '', // not necessary downstream
                 envMeta: { environmentId, isMasterEnvironment: envIsMaster },
               };
               const appUrl = getContentfulAppUrl(app.id, spaceInformation);
+
+              // Remove long description for showing in AppSwitcher
+              delete app.description;
 
               return appFlagIsEnabled
                 ? {
@@ -145,11 +158,14 @@ export const useAppsList = () => {
         )
       ).filter((app): app is NonNullable<typeof app> => app !== null);
 
-      setEnabledApps([webApp, ...enabledApps]);
-      setIsLoading(false);
+      if (isMounted) {
+        setEnabledApps([webApp, ...enabledApps]);
+        setIsLoading(false);
+      }
     })();
 
     return () => {
+      isMounted = false;
       setEnabledApps([]);
       setIsLoading(true);
     };

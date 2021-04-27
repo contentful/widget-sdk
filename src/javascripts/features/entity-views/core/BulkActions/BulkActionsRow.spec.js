@@ -6,7 +6,26 @@ import { ReadTagsProvider, TagsRepoContext } from 'features/content-tags';
 import { upperFirst } from 'lodash';
 import React from 'react';
 import { BulkActionsRow } from './BulkActionsRow';
+import * as spaceContext from 'classes/spaceContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
+
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+  space: {
+    data: {
+      sys: {
+        id: 'space-id',
+      },
+    },
+    environment: {
+      sys: {
+        id: 'environment-id',
+      },
+    },
+  },
+  getData: () => {},
+  getId: () => {},
+  getEnvironmentId: () => {},
+}));
 
 jest.mock('features/contentful-apps', () => ({
   useContentfulAppsConfig: jest.fn().mockReturnValue({
@@ -40,25 +59,6 @@ jest.mock('core/hooks/useBulkActions/messages', () => ({
 
 jest.mock('core/hooks/useBulkActions/batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
-}));
-jest.mock('core/NgRegistry', () => ({
-  getModule: () => ({
-    space: {
-      data: {
-        sys: {
-          id: 'space-id',
-        },
-      },
-      environment: {
-        sys: {
-          id: 'environment-id',
-        },
-      },
-    },
-    getData: () => {},
-    getId: () => {},
-    getEnvironmentId: () => {},
-  }),
 }));
 
 jest.mock('app/Releases/releasesService', () => ({

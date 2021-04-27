@@ -1,7 +1,6 @@
 import React from 'react';
 import * as Analytics from 'analytics/Analytics';
 import { subscriptionState } from 'features/organization-subscription';
-import { usageState } from 'features/organization-usage';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
@@ -24,7 +23,8 @@ import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { trialState, isOrganizationOnTrial } from 'features/trials';
-import AccountView from 'account/AccountView';
+import { GatekeeperView } from 'account/GatekeeperView';
+import { usageState } from 'features/organization-usage';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -77,7 +77,7 @@ export const newOrganization = {
   name: 'new_organization',
   url: '/organizations/new',
   navComponent: EmptyNavigationBar,
-  component: () => <AccountView title="Create new organization" />,
+  component: () => <GatekeeperView title="Create new organization" />,
 };
 
 export const organization = {

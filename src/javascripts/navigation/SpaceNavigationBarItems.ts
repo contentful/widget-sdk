@@ -4,6 +4,16 @@ import { routes } from 'core/react-routing';
 const makeRef = (ref, isMaster) =>
   isMaster ? `spaces.detail.${ref}` : `spaces.detail.environment.${ref}`;
 
+const makeReactRouterRef = (route: keyof typeof routes, withEnvironment: boolean) => {
+  // @ts-expect-error ignore "params" arg, we expect only .list routes
+  const state = routes[route]({ withEnvironment });
+  return {
+    sref: state.path,
+    srefParams: state.params,
+    rootSref: state.path,
+  };
+};
+
 type Props = {
   canNavigateTo: (section: string) => boolean;
   usageEnabled: boolean;
@@ -23,86 +33,64 @@ export function getSpaceNavigationItems({
   contentTagsEnabled,
   canManageSpace,
 }: Props) {
-  const locales = routes['locales.list']({ withEnvironment: !isUnscopedRoute });
-  const users = routes['users.list']({ withEnvironment: !isUnscopedRoute });
-  const webhooks = routes['webhooks.list']({ withEnvironment: !isUnscopedRoute });
-  const roles = routes['roles.list']({ withEnvironment: !isUnscopedRoute });
-  const extensions = routes['extensions.list']({ withEnvironment: !isUnscopedRoute });
-  const tags = routes['tags']({ withEnvironment: !isUnscopedRoute });
-  const contentPreview = routes['content_preview.list']({ withEnvironment: !isUnscopedRoute });
-  const teams = routes['teams.list']({ withEnvironment: !isUnscopedRoute });
-  const spaceUsage = routes['usage']({ withEnvironment: !isUnscopedRoute });
-  const environments = routes['settings.environments']({ withEnvironment: !isUnscopedRoute });
+  const withEnvironment = !isUnscopedRoute;
 
   const dropdownItems = {
     locales: {
       if: canNavigateTo('locales'),
-      sref: locales.path,
-      srefParams: locales.params,
-      rootSref: locales.path,
       dataViewType: 'spaces-settings-locales',
       title: 'Locales',
+      ...makeReactRouterRef('locales.list', withEnvironment),
     },
     extensions: {
       if: canNavigateTo('extensions'),
-      sref: extensions.path,
-      srefParams: extensions.params,
-      rootSref: extensions.path,
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions',
+      ...makeReactRouterRef('extensions.list', withEnvironment),
     },
     tags: {
       if: contentTagsEnabled && canNavigateTo('tags'),
-      sref: tags.path,
-      rootSref: tags.path,
       dataViewType: 'spaces-settings-tags',
       title: 'Tags',
       tagLabel: 'new',
+      ...makeReactRouterRef('tags', withEnvironment),
     },
     settings: {
       if: canNavigateTo('settings'),
-      sref: makeRef('settings.space', isUnscopedRoute),
       dataViewType: 'spaces-settings-space',
       title: 'General settings',
+      ...makeReactRouterRef('settings.space', withEnvironment),
     },
     users: {
       if: canNavigateTo('users'),
-      sref: users.path,
-      srefParams: users.params,
-      rootSref: users.path,
       dataViewType: 'spaces-settings-users',
       title: 'Users',
+      ...makeReactRouterRef('users.list', withEnvironment),
     },
     teams: {
       if: hasOrgTeamFeature && canNavigateTo('teams'),
-      sref: teams.path,
-      srefParams: teams.params,
-      rootSref: teams.path,
       dataViewType: 'spaces-settings-teams',
       label: 'new',
       title: 'Teams',
+      ...makeReactRouterRef('teams.list', withEnvironment),
     },
     embargoedAssets: {
       if: canNavigateTo('embargoedAssets'),
-      sref: makeRef('settings.embargoedAssets', isUnscopedRoute),
       dataViewType: 'spaces-settings-embargoedAssets',
       title: 'Embargoed assets',
+      ...makeReactRouterRef('settings.embargoedAssets', withEnvironment),
     },
     roles: {
       if: canNavigateTo('roles'),
-      sref: roles.path,
-      srefParams: roles.params,
-      rootSref: roles.path,
       dataViewType: 'spaces-settings-roles',
       title: 'Roles & permissions',
+      ...makeReactRouterRef('roles.list', withEnvironment),
     },
     environments: {
       if: canNavigateTo('settings.environments'),
-      sref: environments.path,
-      srefParams: environments.params,
-      rootSref: environments.path,
       dataViewType: 'spaces-settings-environments',
       title: 'Environments',
+      ...makeReactRouterRef('settings.environments', withEnvironment),
     },
     keys: {
       if: canNavigateTo('apiKey'),
@@ -113,33 +101,27 @@ export function getSpaceNavigationItems({
     },
     webhooks: {
       if: canNavigateTo('webhooks'),
-      sref: webhooks.path,
-      srefParams: webhooks.params,
-      rootSref: webhooks.path,
       dataViewType: 'spaces-settings-webhooks',
       title: 'Webhooks',
+      ...makeReactRouterRef('webhooks.list', withEnvironment),
     },
     previews: {
       if: canNavigateTo('previews'),
-      sref: contentPreview.path,
-      srefParams: contentPreview.params,
-      rootSref: contentPreview.path,
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       srefOptions: {
         reload: useSpaceEnvironment,
       },
+      ...makeReactRouterRef('content_preview.list', withEnvironment),
     },
     usage: {
       if: usageEnabled && canNavigateTo('usage'),
-      sref: spaceUsage.path,
-      srefParams: spaceUsage.params,
-      rootSref: spaceUsage.path,
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       srefOptions: {
         reload: useSpaceEnvironment,
       },
+      ...makeReactRouterRef('usage', withEnvironment),
     },
   };
 

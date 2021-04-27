@@ -1,7 +1,8 @@
 import * as ListQuery from './listQuery';
 import Paginator from 'classes/Paginator';
+import * as spaceContext from 'classes/spaceContext';
 
-jest.mock('ng/spaceContext', () => ({
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
   publishedCTs: {
     fetch: jest.fn().mockResolvedValue({
       data: { fields: [] },

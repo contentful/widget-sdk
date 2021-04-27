@@ -37,6 +37,10 @@ jest.mock('../../utils/canCreateSpace', () => ({
   canOrgCreateFreeSpace: jest.fn().mockReturnValue(true),
 }));
 
+jest.mock('features/trials', () => ({
+  useAppsTrial: jest.fn().mockReturnValue({}),
+}));
+
 describe('PlatformSelectionStep', () => {
   it('should render a link to the package comparison page in the website', async () => {
     await build();

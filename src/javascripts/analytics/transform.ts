@@ -118,7 +118,7 @@ registerGenericEvent('usage:org_tab_selected');
 registerGenericEvent('usage:space_tab_selected');
 registerGenericEvent('usage:fair_use_policy_clicked');
 
-registerGenericEvent('pricing_update:communication_seen');
+registerGenericEvent('v1_migration_update:communication_seen');
 
 registerGenericEvent('space_assignment:change');
 registerGenericEvent('space_assignment:continue');

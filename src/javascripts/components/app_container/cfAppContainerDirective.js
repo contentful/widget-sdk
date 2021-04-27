@@ -12,6 +12,8 @@ export default function register() {
     controller: [
       '$scope',
       function ($scope) {
+        $scope.switchingSpaceContext = false;
+
         $scope.persistentNotificationComponent = PersistentNotification;
       },
     ],

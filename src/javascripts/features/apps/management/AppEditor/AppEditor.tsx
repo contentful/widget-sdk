@@ -25,6 +25,7 @@ import { styles } from './styles';
 import { ValidationError } from './types';
 import { AppLocation, FieldType } from 'contentful-management/types';
 import { AppDefinitionWithBundle, AppHosting } from './AppHosting';
+import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -33,10 +34,9 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 export interface AppEditorProps {
-  definition: AppDefinitionWithBundle;
-  onChange: (appDefinition: AppDefinitionWithBundle) => void;
   errorPath?: string[];
   errors?: ValidationError[];
+  goToTab?: (tab: string) => void;
   onErrorsChange?: (errors: ValidationError[]) => void;
   disabled: boolean;
 }
@@ -75,15 +75,16 @@ const hasNavigation = (pageLocation: PageLocation): pageLocation is PageLocation
   pageLocation && !!pageLocation.navigationItem && typeof pageLocation.navigationItem === 'object';
 
 export function AppEditor({
-  definition,
-  onChange,
   errorPath = [],
   errors = [],
   onErrorsChange = noop,
   disabled,
+  goToTab,
 }: AppEditorProps) {
-  definition.locations = definition.locations || [];
-  if (!hasLocations(definition)) {
+  const { draftDefinition, setDraftDefinition } = React.useContext(AppDetailsStateContext);
+
+  draftDefinition.locations = draftDefinition.locations || [];
+  if (!hasLocations(draftDefinition)) {
     throw new Error('App Definition had no locations in App Editor');
   }
 
@@ -92,26 +93,26 @@ export function AppEditor({
   };
 
   const getLocationIndex = (locationValue) => {
-    return definition.locations.findIndex(({ location }) => {
+    return draftDefinition.locations.findIndex(({ location }) => {
       return location === locationValue;
     });
   };
 
-  const getLocation = (locationValue) => definition.locations[getLocationIndex(locationValue)];
+  const getLocation = (locationValue) => draftDefinition.locations[getLocationIndex(locationValue)];
   const hasLocation = (locationValue) => !!getLocation(locationValue);
 
   const toggleLocation = (locationValue) => {
-    const updated = cloneDeep(definition);
+    const updated = cloneDeep(draftDefinition);
 
     if (hasLocation(locationValue)) {
       updated.locations = updated.locations.filter(({ location }) => {
         return location !== locationValue;
       });
     } else {
-      updated.locations = definition.locations.concat([{ location: locationValue }]);
+      updated.locations = draftDefinition.locations.concat([{ location: locationValue }]);
     }
 
-    onChange(updated);
+    setDraftDefinition(updated);
   };
 
   const getFieldTypeIndex = (internalFieldType: string): number => {
@@ -127,7 +128,7 @@ export function AppEditor({
     getFieldTypeIndex(internalFieldType) > -1;
 
   const toggleFieldType = (internalFieldType: string): void => {
-    const updated = cloneDeep(definition);
+    const updated = cloneDeep(draftDefinition);
     const locationIndex = getLocationIndex(WidgetLocation.ENTRY_FIELD);
     const entryFieldLocation = updated.locations[locationIndex];
     const fieldTypeIndex = getFieldTypeIndex(internalFieldType);
@@ -144,7 +145,7 @@ export function AppEditor({
       ).concat([toApiFieldType(internalFieldType)]);
     }
 
-    onChange(updated);
+    setDraftDefinition(updated);
   };
 
   const getNavigationItemValue = (field: 'name' | 'path'): string => {
@@ -158,16 +159,16 @@ export function AppEditor({
   };
 
   const togglePageLocationData = (): void => {
-    const updated = cloneDeep(definition);
+    const updated = cloneDeep(draftDefinition);
     const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
     if (isPageLocation(pageLocation) && hasNavigation(pageLocation)) {
       delete pageLocation.navigationItem;
     } else {
-      (pageLocation as PageLocation).navigationItem = { path: '/', name: definition.name };
+      (pageLocation as PageLocation).navigationItem = { path: '/', name: draftDefinition.name };
     }
 
-    onChange(updated);
+    setDraftDefinition(updated);
   };
 
   const updatePageLocation = ({
@@ -177,7 +178,7 @@ export function AppEditor({
     field: 'name' | 'path';
     value: string;
   }): void => {
-    const updated = cloneDeep(definition);
+    const updated = cloneDeep(draftDefinition);
     const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
     if (isPageLocation(pageLocation) && hasNavigation(pageLocation)) {
       if (field === 'path' && !value.startsWith('/')) {
@@ -186,7 +187,7 @@ export function AppEditor({
 
       pageLocation.navigationItem[field] = value.trim();
 
-      onChange(updated);
+      setDraftDefinition(updated);
     }
   };
 
@@ -203,10 +204,10 @@ export function AppEditor({
           id="app-name"
           labelText="Name"
           testId="app-name-input"
-          value={definition.name || ''}
+          value={draftDefinition.name || ''}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             clearErrorForField([...errorPath, 'name']);
-            onChange({ ...definition, name: e.target.value.trim() });
+            setDraftDefinition({ ...draftDefinition, name: e.target.value.trim() });
           }}
           validationMessage={
             errors.find((error) => isEqual(error.path, [...errorPath, 'name']))?.details
@@ -214,15 +215,14 @@ export function AppEditor({
           textInputProps={{ disabled }}
         />
         <AppHosting
-          definition={definition}
+          goToTab={goToTab}
           disabled={disabled}
-          onChange={onChange}
           errorPath={errorPath}
           errors={errors}
           clearErrorForField={clearErrorForField}
         />
 
-        {(definition.src || definition.bundle) && (
+        {(draftDefinition.src || draftDefinition.bundle) && (
           <>
             <div className={styles.location}>
               <div className={styles.locationLabel}>
@@ -344,7 +344,7 @@ export function AppEditor({
                                 required
                                 textInputProps={{
                                   maxLength: 40,
-                                  placeholder: definition.name,
+                                  placeholder: draftDefinition.name,
                                   disabled,
                                 }}
                                 name="page-link-name"
@@ -438,12 +438,12 @@ export function AppEditor({
               </div>
             </div>
             <InstanceParameterEditor
-              parameters={definition?.parameters?.instance ?? []}
+              parameters={draftDefinition?.parameters?.instance ?? []}
               onChange={(parameters) =>
-                onChange({
-                  ...definition,
+                setDraftDefinition({
+                  ...draftDefinition,
                   parameters: {
-                    ...definition.parameters,
+                    ...draftDefinition.parameters,
                     instance: parameters,
                   },
                 })
@@ -452,7 +452,7 @@ export function AppEditor({
               errors={errors}
               onErrorsChange={onErrorsChange}
               showWrongLocationNote={
-                !definition.locations.some(({ location }) =>
+                !draftDefinition.locations.some(({ location }) =>
                   [
                     WidgetLocation.ENTRY_EDITOR,
                     WidgetLocation.ENTRY_FIELD,
@@ -462,7 +462,7 @@ export function AppEditor({
               }
               disabled={
                 disabled ||
-                !definition.locations.some(({ location }) =>
+                !draftDefinition.locations.some(({ location }) =>
                   [
                     WidgetLocation.ENTRY_EDITOR,
                     WidgetLocation.ENTRY_FIELD,

@@ -24,7 +24,7 @@ import { aliasStyles } from './SharedStyles';
 import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases';
 import moment from 'moment';
 import * as Navigator from 'states/Navigator';
-import { validations } from '../Environments/CreateEnvDialogReducer';
+import { environmentValidations } from 'features/environments-settings';
 
 const aliasOptInStyles = {
   buttons: css({
@@ -65,7 +65,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
   const [loading, setLoading] = useState(false);
 
   const isValidEnvironmentId = () => {
-    return validations['id'](newEnvironmentId) === undefined;
+    return environmentValidations['id'](newEnvironmentId) === undefined;
   };
 
   const optIn = async () => {
@@ -213,7 +213,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
 
                         {newEnvironmentId && !isValidEnvironmentId() && (
                           <ValidationMessage>
-                            {validations['id'](newEnvironmentId)}
+                            {environmentValidations['id'](newEnvironmentId)}
                           </ValidationMessage>
                         )}
                       </StaticDropdown>

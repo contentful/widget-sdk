@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { css, cx } from 'emotion';
 import {
   DisplayText,
@@ -21,6 +21,7 @@ import { captureError } from 'services/logger';
 
 import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
 import { BasePlanCard } from './BasePlanCard';
@@ -65,9 +66,6 @@ interface NonEnterpriseSubscriptionPageProps {
   basePlan: BasePlan;
   grandTotal: number;
   initialLoad: boolean;
-  isAppTrialActive: boolean;
-  isAppTrialAvailable: boolean;
-  isAppTrialExpired: boolean;
   onSpacePlansChange: () => void;
   organization: Organization;
   spacePlans: SpacePlan[];
@@ -79,28 +77,13 @@ export function NonEnterpriseSubscriptionPage({
   basePlan,
   grandTotal,
   initialLoad = false,
-  isAppTrialActive,
-  isAppTrialAvailable,
-  isAppTrialExpired,
   onSpacePlansChange,
   organization,
   spacePlans,
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
   const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
-  const [changedSpaceId, setChangedSpaceId] = useState<string>();
-
-  // TODO: Refactor into own hook to use in both subscription pages
-  useEffect(() => {
-    let timer;
-
-    if (changedSpaceId) {
-      timer = setTimeout(() => {
-        setChangedSpaceId(undefined);
-      }, 6000);
-    }
-    return () => clearTimeout(timer);
-  }, [changedSpaceId]);
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const organizationId = organization.sys.id;
 
@@ -126,7 +109,7 @@ export function NonEnterpriseSubscriptionPage({
   const onDeleteSpace = deleteSpace(spacePlans, onSpacePlansChange);
 
   return (
-    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+    <Grid testId="non-enterprise-subs-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
           loading={isLoading || !!error}
@@ -148,9 +131,6 @@ export function NonEnterpriseSubscriptionPage({
           <ContentfulApps
             organizationId={organizationId}
             startAppTrial={onStartAppTrial}
-            isTrialAvailable={isAppTrialAvailable}
-            isTrialActive={isAppTrialActive}
-            isTrialExpired={isAppTrialExpired}
             addOnPlan={addOnPlan}
           />
         </Flex>

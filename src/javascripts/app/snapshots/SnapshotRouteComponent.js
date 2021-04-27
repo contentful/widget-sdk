@@ -23,10 +23,10 @@ import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
 import { useUnsavedChangesModal } from 'core/hooks';
-import { getModule } from 'core/NgRegistry';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import { go } from 'states/Navigator';
 import { LoadingState } from 'features/loading-state';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const styles = {
   workbenchContent: css({
@@ -88,7 +88,6 @@ const SnapshotComparator = (props) => {
   const [snapshot, setSnapshot] = useState(null);
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
-  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove it after contract tests is fixed for cma
   const getEditorData = useCallback(() => editorData, [editorData]);
   const widgets = useMemo(() => {
     if (!editorData) return [];
@@ -127,7 +126,7 @@ const SnapshotComparator = (props) => {
       }
 
       async function onUpdateEntry(entry) {
-        return spaceContext.cma.updateEntry(entry);
+        return getSpaceContext().cma.updateEntry(entry);
       }
 
       try {
@@ -142,16 +141,7 @@ const SnapshotComparator = (props) => {
         handleSaveError(error);
       }
     },
-    [
-      diffCount,
-      editorData,
-      entry.data,
-      pathsToRestore,
-      setDirty,
-      showOnlyDifferences,
-      snapshot,
-      spaceContext,
-    ]
+    [diffCount, editorData, entry.data, pathsToRestore, setDirty, showOnlyDifferences, snapshot]
   );
 
   const pathsToRestoreExist = pathsToRestore.length > 0;
@@ -161,13 +151,13 @@ const SnapshotComparator = (props) => {
 
   useEffect(() => {
     if (!props.entryId) return;
-    loadEditorData(spaceContext, props.entryId)
+    loadEditorData(getSpaceContext(), props.entryId)
       .then(setEditorData)
       .catch(() => {
         Notification.error('Entry not found.');
         go({ path: 'spaces.detail.entries.list' });
       });
-  }, [spaceContext, props.entryId]);
+  }, [props.entryId]);
 
   useEffect(() => {
     registerSaveAction(trackVersioning.trackableConfirmator(onSave), false);
@@ -186,7 +176,10 @@ const SnapshotComparator = (props) => {
     async function init() {
       try {
         const { entity, contentType } = editorData;
-        const snapshot = await spaceContext.cma.getEntrySnapshot(entity.getId(), props.snapshotId);
+        const snapshot = await getSpaceContext().cma.getEntrySnapshot(
+          entity.getId(),
+          props.snapshotId
+        );
 
         setSnapshot(
           extend(snapshot, {
@@ -200,7 +193,7 @@ const SnapshotComparator = (props) => {
     }
 
     init();
-  }, [props.snapshotId, editorData, spaceContext]);
+  }, [props.snapshotId, editorData]);
 
   const onClose = () => {
     if (!pathsToRestoreExist) {

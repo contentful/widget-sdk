@@ -46,11 +46,18 @@ const SECOND_LEVEL_PATHS = {
  *  - May return `/:entity/:id` as a prefix in specific cases (comments) and in other
  *    case ignore anything after the 2nd part of the path.
  *
- * @param {string} url
+ * @param {string} urlOrPath
  * @returns {string}
  */
-export function getEndpoint(url) {
-  const allSegments = url.split('?')[0].split('/').slice(3);
+export function getEndpoint(urlOrPath) {
+  let path;
+  try {
+    path = new URL(urlOrPath, 'http://notused').pathname;
+  } catch (e) {
+    //invalid url
+    return;
+  }
+  const allSegments = path.replace(/^\//, '').split('/');
 
   const segments =
     allSegments.length > 4 && allSegments[2] === 'environments'

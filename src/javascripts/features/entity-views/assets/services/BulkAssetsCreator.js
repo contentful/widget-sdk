@@ -4,7 +4,7 @@ import * as Config from 'Config';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import * as logger from 'services/logger';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 /**
@@ -26,7 +26,7 @@ export function open(localeCode) {
     throw new TypeError('locale must be a string');
   }
 
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
 
   const cma = getCMAClient({
     spaceId: spaceContext.getId(),

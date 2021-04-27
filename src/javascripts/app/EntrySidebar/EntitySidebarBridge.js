@@ -1,6 +1,6 @@
 import { once, memoize } from 'lodash';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
@@ -14,6 +14,9 @@ import {
   getEnvironment,
   isMasterEnvironment as isMaster,
 } from 'core/services/SpaceEnvContext/utils';
+import { createAPIClient } from '../../core/services/APIClient/utils';
+import { WidgetNamespace } from '@contentful/widget-renderer';
+import { Source } from '../../i13n/constants';
 
 export default ({
   localeData,
@@ -34,7 +37,7 @@ export default ({
   pubSubClient,
   cma,
 }) => {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const isMasterEnvironment = isMaster(getEnvironment(space));
 
   const { entityInfo } = editorData;
@@ -256,6 +259,10 @@ export default ({
 
   const makeSidebarWidgetSDK = memoize(
     (widgetNamespace, widgetId, parameters) => {
+      const source =
+        widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN ? undefined : Source.CustomWidget;
+      const cma = createAPIClient(spaceContext.getId(), spaceContext.getEnvironmentId(), source);
+
       return createSidebarWidgetSDK({
         internalContentType: entityInfo.contentType,
         editorData,
@@ -263,8 +270,7 @@ export default ({
         preferences,
         doc: otDoc,
         parameters,
-        //TODO: instead of using `spaceContext.cma` use `cma` passed to the hook
-        //so the optmization done by `getBatchingApiClient` can work
+        cma,
         spaceContext,
         widgetNamespace,
         widgetId,

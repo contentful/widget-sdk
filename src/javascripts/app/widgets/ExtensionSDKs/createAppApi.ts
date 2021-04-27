@@ -3,17 +3,20 @@ import { WidgetNamespace, AppStages } from '@contentful/widget-renderer';
 import { getCurrentState } from 'features/apps';
 import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
 import { isObject } from 'lodash';
+import APIClient from 'data/APIClient';
+import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
 export type AppHookListener = (stage: AppStages, result: any) => void;
+
 export function createAppApi({
   widgetId,
   widgetNamespace,
-  spaceContext,
+  cma,
   appHookBus,
 }: {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
-  spaceContext: any;
+  cma: APIClient;
   appHookBus: AppHookBus;
 }): { appApi: AppConfigAPI; onAppHook: AppHookListener } {
   appHookBus.on(APP_EVENTS_OUT.STARTED, preInstall);
@@ -35,7 +38,7 @@ export function createAppApi({
       const installation = appHookBus.getInstallation();
       const isInstalled = isObject(installation);
 
-      return isInstalled ? getCurrentState(spaceContext, widgetId, widgetNamespace) : null;
+      return isInstalled ? getCurrentState(cma, widgetId, widgetNamespace) : null;
     },
     getParameters: async () => {
       const installation = appHookBus.getInstallation();
@@ -79,7 +82,7 @@ export function createAppApi({
 
       // We cache published content types heavily in the Web App.
       // Refresh the cache since the app could create/update content types.
-      spaceContext.publishedCTs.refresh();
+      GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
     };
   }
 }

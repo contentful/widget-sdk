@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import * as spaceContextMocked from 'ng/spaceContext';
 import { ExtensionsListRoute } from './ExtensionsListRoute';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'core/react-routing';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 jest.mock('access_control/AccessChecker', () => ({

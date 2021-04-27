@@ -1,0 +1,3 @@
+rules:
+  # disable restricing of imports from react-router and react-router-dom
+  no-restricted-imports: 'off'

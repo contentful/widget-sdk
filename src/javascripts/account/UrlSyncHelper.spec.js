@@ -1,14 +1,21 @@
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as NgRegistry from 'core/NgRegistry';
+import { window } from 'core/services/window';
 
 jest.mock('core/NgRegistry');
+
+jest.mock('core/services/window', () => ({
+  window: {
+    location: { pathname: '' },
+  },
+}));
 
 describe('account/UrlSyncHelper', () => {
   let $state, $location;
   beforeEach(async function () {
     $state = {
       href: jest.fn(),
-      go: jest.fn(),
+      transitionTo: jest.fn(),
       current: {},
     };
     $location = {
@@ -27,8 +34,7 @@ describe('account/UrlSyncHelper', () => {
 
   describe('.getGatekeeperUrl()', () => {
     beforeEach(function () {
-      $location.url.mockReturnValue('/account/profile/user/foo%2fbar');
-      $state.href.mockReturnValue('/account');
+      window.location.pathname = '/account/profile/user/foo%2fbar';
     });
     it('returns gatekeeper url', function () {
       expect(UrlSyncHelper.getGatekeeperUrl()).toBe('//be.test.com/account/profile/user/foo/bar');
@@ -48,14 +54,14 @@ describe('account/UrlSyncHelper', () => {
 
     it('silently updates URL if state is the same', function () {
       UrlSyncHelper.updateWebappUrl('/account/profile/user/blah/blah');
-      expect($state.go.mock.calls[0][1].pathSuffix).toBe('/blah/blah');
+      expect($state.transitionTo.mock.calls[0][1].pathSuffix).toBe('/blah/blah');
     });
 
     it('updates location if the state has changed', function () {
       const newPath = '/account/profile/space_memberships/blah/blah';
       UrlSyncHelper.updateWebappUrl(newPath);
 
-      expect($state.go).not.toHaveBeenCalled();
+      expect($state.transitionTo).not.toHaveBeenCalled();
       expect($location.url).toHaveBeenCalledTimes(1);
       expect($location.url).toHaveBeenCalledWith(newPath);
     });

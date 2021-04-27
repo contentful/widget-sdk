@@ -62,7 +62,7 @@ describe('App Installation', () => {
         it('public Dropbox app', () => {
           const loadAppConfigurationScreenInteraction = [
             appInstallation.willNotReturnPublicApp(),
-            getAllContentTypesInDefaultSpace.willReturnOne(),
+            getAllContentTypesInDefaultSpace.willReturnOne(true),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
 
@@ -128,7 +128,7 @@ describe('App Installation', () => {
 
           // Actually do the install
           cy.get('button').contains('Authorize access').click();
-          cy.wait(installationInteractions, { timeout: 5000 });
+          cy.wait(installationInteractions, { timeout: 10000 });
 
           // Check if the install list is now displayed and contains the private app
           cy.findByTestId('installed-list').should('exist');
@@ -173,7 +173,7 @@ describe('App Installation', () => {
           // Config screen interactions
           const loadAppConfigurationScreenInteraction = [
             appInstallation.willReturnPublicApp(),
-            getAllContentTypesInDefaultSpace.willReturnOne(),
+            getAllContentTypesInDefaultSpace.willReturnOne(true),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
           cy.wait(loadAppConfigurationScreenInteraction, { timeout: 4000 });

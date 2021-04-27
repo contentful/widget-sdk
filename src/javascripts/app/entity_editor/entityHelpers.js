@@ -1,10 +1,10 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 import { makeSlug, slugify } from '@contentful/field-editor-slug';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const toAlternativeLocaleCode = (localeCode, toPrivate = true) => {
   const toAlternativeCode = toPrivate ? TheLocaleStore.toInternalCode : TheLocaleStore.toPublicCode;
@@ -92,7 +92,7 @@ export function toPublicEntity(entity) {
   private or public content type, depending on the give `toPrivate`
  */
 function convertEntity(entity, toPrivate = true) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   let preparedFields = entity.fields;
   const contentTypeId = _.get(entity, 'sys.contentType.sys.id');
 

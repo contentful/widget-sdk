@@ -19,6 +19,7 @@ import { getSpaces, getUserSync } from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
 
@@ -95,10 +96,7 @@ const initialLoad = (orgId) => async () => {
   const org = getOrg(user, orgId);
 
   if (!org) {
-    return go({
-      path: ['account', 'profile', 'user'],
-      options: { location: 'replace' },
-    });
+    return router.navigate({ path: 'account.profile.user' }, { location: 'replace' });
   }
 
   return {

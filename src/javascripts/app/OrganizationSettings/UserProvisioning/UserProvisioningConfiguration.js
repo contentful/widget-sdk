@@ -19,8 +19,8 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { GenerateCMATokenDialog, TokenResourceManager } from 'features/api-keys-management';
 import * as Auth from 'Authentication';
 import UserProvisioningToken from './UserProvisioningToken';
-import StateLink from 'app/common/StateLink';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { ReactRouterLink } from 'core/react-routing';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -119,13 +119,13 @@ export default function UserProvisioningConfiguration({ orgId }) {
               <Button testId="generate-btn" onClick={openGenerateDialog} className={styles.cta}>
                 Generate personal access token
               </Button>
-              <StateLink
-                path="account.profile.cma_tokens"
+              <ReactRouterLink
+                route={{ path: 'account.profile.cma_tokens' }}
                 data-test-id="tokens-url"
                 target="_blank"
                 rel="noopener noreferrer">
                 Manage your tokens
-              </StateLink>
+              </ReactRouterLink>
             </>
           )}
         </Typography>

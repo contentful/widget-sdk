@@ -26,6 +26,7 @@ import TaskDeleteDialog from './TaskDeleteDialog';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { TaskViewData } from '../ViewData/TaskViewData';
 import { taskStyles as styles } from './styles';
+import { ActionPerformer } from 'core/components/ActionPerformer';
 
 export default class Task extends React.Component {
   static propTypes = {
@@ -205,7 +206,7 @@ export default class Task extends React.Component {
 
   renderDetails = () => {
     const { isExpanded, isUpdating } = this.state;
-    const { body, creator, createdAt, assignee } = this.props.viewData;
+    const { body, createdAt, assignee, createdBy } = this.props.viewData;
 
     return (
       <React.Fragment>
@@ -231,7 +232,14 @@ export default class Task extends React.Component {
                   {moment(createdAt, moment.ISO_8601).fromNow()}
                 </time>{' '}
               </Visible>
-              by {creator.label}
+              <ActionPerformer link={createdBy}>
+                {({ actionPerformer, formattedNameAsString }) => {
+                  if (!actionPerformer) {
+                    return '';
+                  }
+                  return `by ${formattedNameAsString}`;
+                }}
+              </ActionPerformer>
             </div>
           </Visible>
         </div>

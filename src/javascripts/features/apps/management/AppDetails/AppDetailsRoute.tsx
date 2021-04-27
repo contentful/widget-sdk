@@ -6,6 +6,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { LoadingState } from 'features/loading-state';
 import { HostingStateProvider } from './HostingStateProvider';
+import { AppDetailsStateProvider } from './AppDetailsStateContext';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
 import { ManagementApiClient } from '../ManagementApiClient';
@@ -96,16 +97,18 @@ export function AppDetailsRoute(props: Props) {
       orgId={props.orgId}
       defaultValue={!definition.src && !!definition.bundle}
       bundles={props.bundles}>
-      <AppDetails
-        {...props}
-        definition={definition}
-        bundles={props.bundles}
-        events={events}
-        goToTab={goToTab}
-        goToListView={goToListView}
-        setRequestLeaveConfirmation={registerSaveAction}
-        setDirty={setDirty}
-      />
+      <AppDetailsStateProvider definition={definition} events={events}>
+        <AppDetails
+          {...props}
+          definition={definition}
+          bundles={props.bundles}
+          events={events}
+          goToTab={goToTab}
+          goToListView={goToListView}
+          setRequestLeaveConfirmation={registerSaveAction}
+          setDirty={setDirty}
+        />
+      </AppDetailsStateProvider>
     </HostingStateProvider>
   );
 }

@@ -52,6 +52,7 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
 
     return [
+      ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureDisabled(),
       ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
       ...defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,

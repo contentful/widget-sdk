@@ -8,7 +8,6 @@ import {
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as ProductCatalog from '../../../interactions/product_catalog_features';
 import { defaultHeader } from '../../../util/requests';
-import { FeatureFlag } from '../../../util/featureFlag';
 
 const editorInterfaceWithCustomEditorsRequestBody = {
   sys: {
@@ -33,11 +32,6 @@ const editorInterfaceWithCustomEditorsRequestBody = {
     },
   ],
   editors: [
-    {
-      widgetId: 'reference-tree',
-      widgetNamespace: 'editor-builtin',
-      settings: {},
-    },
     {
       widgetId: 'default-editor',
       widgetNamespace: 'editor-builtin',
@@ -96,11 +90,6 @@ const editorInterfaceWithCustomEditorsResponseBody = {
     },
   ],
   editors: [
-    {
-      widgetId: 'reference-tree',
-      widgetNamespace: 'editor-builtin',
-      settings: {},
-    },
     {
       widgetId: 'default-editor',
       widgetNamespace: 'editor-builtin',
@@ -169,7 +158,6 @@ describe('Editor tabs configuration', () => {
   describe('Saving the content type with configured custom tabs', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
-      cy.enableFeatureFlags([FeatureFlag.ALL_REFERENCES_DIALOG]);
     });
 
     it('checks that content type with a custom tabs has been successfully saved', () => {

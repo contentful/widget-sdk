@@ -9,6 +9,7 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
+import { routes } from 'core/react-routing';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
@@ -94,9 +95,9 @@ function getItems(params, { orgId }) {
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
       title: 'Usage',
-      sref: 'account.organizations.usage',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.usage',
+      sref: routes['organizations.usage']({ orgId }).path,
+      srefParams: routes['organizations.usage']({ orgId }).params,
+      rootSref: routes['organizations.usage']({ orgId }).path,
       srefOptions: {
         inherit: false,
       },

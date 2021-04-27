@@ -10,6 +10,7 @@ import { getCurrentStateName } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
 import {
   Icon,
@@ -218,7 +219,7 @@ export default class AccountDropdown extends Component {
           </button>
         }>
         <DropdownList border="bottom" className={styles.dropdownList}>
-          <StateLink path="account.profile.user">
+          <ReactRouterLink route={{ path: 'account.profile.user' }}>
             {({ getHref, onClick }) => (
               <DropdownListItem
                 testId="nav.account.userProfile"
@@ -230,7 +231,7 @@ export default class AccountDropdown extends Component {
                 Account settings
               </DropdownListItem>
             )}
-          </StateLink>
+          </ReactRouterLink>
           {this.state.shouldShowPendingTasks && (
             <StateLink path="spaces.detail.tasks.list">
               {({ getHref, onClick }) => (

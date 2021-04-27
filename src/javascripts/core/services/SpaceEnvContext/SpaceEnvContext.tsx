@@ -1,6 +1,7 @@
 import React, { createContext, useMemo, useState, useEffect } from 'react';
-import { getModule } from 'core/NgRegistry';
+import deepEqual from 'fast-deep-equal';
 import * as K from 'core/utils/kefir';
+
 import {
   getSpaceId,
   getSpaceName,
@@ -14,12 +15,8 @@ import {
   getOrganization,
 } from './utils';
 import { SpaceEnv, SpaceEnvContextValue, Environment, SpaceEnvUsers } from './types';
+import { getSpaceContext } from 'classes/spaceContext';
 import { ContentType } from './types';
-
-// We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
-function getAngularSpaceContext() {
-  return getModule('spaceContext') ?? null;
-}
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
   currentSpaceContentTypes: [],
@@ -27,15 +24,23 @@ export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
-  const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
-  const [contentTypes, setContentTypes] = useState<ContentType[]>(getContentTypes());
+  const angularSpaceContext = useMemo(() => getSpaceContext(), []);
+  const [contentTypes, setContentTypes] = useState<ContentType[]>(() => getContentTypes());
 
   useEffect(() => {
     if (!angularSpaceContext?.publishedCTs?.items$) return;
 
-    const deregister = K.onValue(angularSpaceContext.publishedCTs.items$, (items) => {
-      setContentTypes(items as ContentType[]);
-    });
+    const deregister = K.onValue(
+      angularSpaceContext.publishedCTs.items$.skipDuplicates((a, b) => {
+        return deepEqual(a, b);
+      }),
+      (items) => {
+        if (angularSpaceContext.resettingSpace) {
+          return;
+        }
+        setContentTypes((items as ContentType[]) || []);
+      }
+    );
 
     return deregister;
   }, []); // eslint-disable-line
@@ -52,7 +57,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   function getContentTypes(): ContentType[] {
     if (!angularSpaceContext?.publishedCTs?.items$) return [];
 
-    return K.getValue(angularSpaceContext.publishedCTs.items$);
+    return K.getValue(angularSpaceContext.publishedCTs.items$) || [];
   }
 
   function getUsers(): SpaceEnvUsers {

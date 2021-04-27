@@ -39,11 +39,12 @@ import {
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { getModule } from 'core/NgRegistry';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { getSpaceContext } from 'classes/spaceContext';
 
 enum InstallationState {
   Installation = 'installation',
@@ -87,8 +88,8 @@ export function AppRoute(props: Props) {
     InstallationState.NotBusy
   );
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
-  const spaceContext = React.useMemo(() => getModule('spaceContext'), []); // TODO: Temporary solution for contract tests
-  const { cma } = spaceContext;
+  const { customWidgetClient, client: cma } = useCurrentSpaceAPIClient();
+
   const {
     currentSpaceId: spaceId,
     currentOrganizationId: organizationId,
@@ -121,18 +122,19 @@ export function AppRoute(props: Props) {
   }, [app]);
 
   const sdkInstance = React.useMemo(() => {
-    if (!widget || !app) return null;
+    if (!widget || !app || !customWidgetClient) return null;
 
-    const spaceContext = getModule('spaceContext');
+    const spaceContext = getSpaceContext();
 
     return createAppExtensionSDK({
       spaceContext,
+      cma: customWidgetClient,
       widgetNamespace: WidgetNamespace.APP,
       widgetId: app.appDefinition.sys.id,
       appHookBus: props.appHookBus,
       currentAppWidget: widget,
     });
-  }, [widget, app, props.appHookBus]);
+  }, [widget, app, customWidgetClient, props.appHookBus]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
   const appIcon: string = get(app, ['icon'], '');
@@ -265,7 +267,7 @@ export function AppRoute(props: Props) {
   }
 
   async function onAppConfigured({ config }: { config: any }) {
-    if (!appManager || !app) return;
+    if (!appManager || !app || !cma) return;
 
     try {
       const spaceData = {

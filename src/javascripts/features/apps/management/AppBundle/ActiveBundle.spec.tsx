@@ -6,6 +6,8 @@ import {
   HostingStateProviderProps,
 } from '../AppDetails/HostingStateProvider';
 import { appBundleMock } from '../__mocks__/appBundles';
+import { AppDetailsStateProvider } from '../AppDetails/AppDetailsStateContext';
+import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 
 jest.mock('data/userCache', () =>
   jest.fn().mockReturnValue({
@@ -30,7 +32,11 @@ const renderInContext = (
 ) => {
   return render(
     <HostingStateProvider {...(contextProps as Omit<HostingStateProviderProps, 'children'>)}>
-      <ActiveBundle {...props} />
+      <AppDetailsStateProvider
+        savedDefinition={props.savedDefinition}
+        definition={props.definition as AppDefinitionWithBundle}>
+        <ActiveBundle {...props} />
+      </AppDetailsStateProvider>
     </HostingStateProvider>
   );
 };
@@ -48,20 +54,6 @@ const defaultProps = {
 };
 
 describe('ActiveBundle', () => {
-  describe('when the saved bundle used src hosting', () => {
-    it('renders the active url and a dropzone', async () => {
-      renderInContext({
-        ...defaultProps,
-        definition: {},
-        savedDefinition: { src: 'https://www.cool.com' },
-      });
-
-      await waitFor(() => {
-        screen.getByText(/Self-hosted/);
-      });
-      screen.getByText(/drag and drop your app/);
-    });
-  });
   describe('when the saved bundle uses bundle hosting', () => {
     it('renders an activeBundle and a dropzone', async () => {
       renderInContext({ ...defaultProps });

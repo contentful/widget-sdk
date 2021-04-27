@@ -26,6 +26,7 @@ export const publishedCTs = {
   get: jest.fn(),
   getAllBare: jest.fn().mockReturnValue([]),
   refresh: jest.fn(),
+  fetch: jest.fn().mockResolvedValue({ data: { fields: [] } }),
 };
 
 export const widgets = {
@@ -53,6 +54,8 @@ export const getAliasId = jest.fn();
 export const space = {
   getId: jest.fn(),
   endpoint: jest.fn(),
+  createEntry: jest.fn().mockResolvedValue({}),
+  createAsset: jest.fn().mockResolvedValue({}),
   data: {
     name: 'Blog',
     sys: {

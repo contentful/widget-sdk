@@ -273,7 +273,7 @@ export const deleteUserAccount = {
       withRequest: queryDeleteUserAccount({
         reason: 'other',
         description: '',
-        password: 'correct-password',
+        password: 'test12345',
       }),
       willRespondWith: {
         status: 201,
@@ -296,7 +296,7 @@ export const deleteUserAccount = {
         password: 'invalid-current-password',
       }),
       willRespondWith: {
-        status: 403,
+        status: 422,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },

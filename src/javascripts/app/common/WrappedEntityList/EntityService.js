@@ -1,12 +1,12 @@
-import { getModule } from 'core/NgRegistry';
 import { entityHelpers } from '@contentful/field-editor-shared';
 import TheLocaleStore from 'services/localeStore';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import _ from 'lodash';
+import { getSpaceContext } from 'classes/spaceContext';
 
 function getContentTypeById(contentTypeId) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const internalContentType = spaceContext.publishedCTs
     .getAllBare()
     .find((ct) => ct.sys.id === contentTypeId);
@@ -14,7 +14,7 @@ function getContentTypeById(contentTypeId) {
 }
 
 export async function getEntityData(entity) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
 
   const cma = getCMAClient({
     spaceId: spaceContext.getId(),

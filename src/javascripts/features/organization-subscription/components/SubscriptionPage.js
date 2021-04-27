@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
@@ -32,6 +32,7 @@ import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
   fullRow: css({
@@ -50,24 +51,9 @@ export function SubscriptionPage({
   spacePlans,
   onSpacePlansChange,
   memberAccessibleSpaces,
-  isTrialAvailable,
-  isTrialActive,
-  isTrialExpired,
 }) {
   const organizationId = organization?.sys.id;
-  const [changedSpaceId, setChangedSpaceId] = useState('');
-
-  useEffect(() => {
-    let timer;
-
-    if (changedSpaceId) {
-      timer = setTimeout(() => {
-        setChangedSpaceId(null);
-      }, 6000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [changedSpaceId]);
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const createSpace = () => {
     trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });
@@ -152,7 +138,7 @@ export function SubscriptionPage({
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
   return (
-    <Grid columns={2} columnGap="spacingXl" rowGap="spacingXl">
+    <Grid testId="subscription-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
       {organization && isOrgOnTrial && (
         <Flex className={styles.fullRow} flexDirection="column">
           <EnterpriseTrialInfo organization={organization} />
@@ -218,9 +204,6 @@ export function SubscriptionPage({
                   <ContentfulApps
                     organizationId={organizationId}
                     startAppTrial={handleStartAppTrial}
-                    isTrialAvailable={isTrialAvailable}
-                    isTrialActive={isTrialActive}
-                    isTrialExpired={isTrialExpired}
                     addOnPlan={addOnPlan}
                   />
                 </Flex>
@@ -267,9 +250,6 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
-  isTrialAvailable: PropTypes.bool,
-  isTrialActive: PropTypes.bool,
-  isTrialExpired: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {

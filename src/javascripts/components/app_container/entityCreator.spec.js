@@ -7,13 +7,6 @@ jest.mock('access_control/Enforcements', () => ({
   determineEnforcement: jest.fn(),
 }));
 
-jest.mock('ng/spaceContext', () => ({
-  space: {
-    createEntry: jest.fn().mockResolvedValue({}),
-    createAsset: jest.fn().mockResolvedValue({}),
-  },
-}));
-
 jest.mock('@contentful/forma-36-react-components', () => {
   const actual = jest.requireActual('@contentful/forma-36-react-components');
   return {

@@ -1,3 +1,4 @@
+import { getSpaceContext } from 'classes/spaceContext';
 import { registerController, appReady } from 'core/NgRegistry';
 import { onValueScope } from 'core/utils/kefir';
 import { isObject } from 'lodash';
@@ -9,9 +10,9 @@ export default function register() {
   registerController('ClientController', [
     '$scope',
     '$state',
-    'spaceContext',
     '$rootScope',
-    function ClientController($scope, $state, spaceContext, $rootScope) {
+    function ClientController($scope, $state, $rootScope) {
+      const spaceContext = getSpaceContext();
       let logger;
       let SpaceFeatures;
       let getSpaceFeature;
@@ -30,6 +31,7 @@ export default function register() {
       let initEnvAliasCreateHandler;
       let initEnvAliasDeleteHandler;
       let initOsano;
+      let openV1MigrationWarning;
       let pubSubClientRef;
 
       // TODO remove this eventually. All components should access it as a service
@@ -46,6 +48,7 @@ export default function register() {
 
       initialize().then(() => {
         const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
+          openV1MigrationWarning();
           unsubscribe();
         });
 
@@ -191,6 +194,7 @@ export default function register() {
             initEnvAliasDeleteHandler,
           },
           { init: initOsano },
+          { openV1MigrationWarning },
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'services/logger'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
@@ -205,6 +209,7 @@ export default function register() {
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
           ),
           import(/* webpackMode: "eager" */ 'services/OsanoService'),
+          import(/* webpackMode: "eager" */ 'features/news-slider'),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);

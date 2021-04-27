@@ -48,7 +48,7 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
       ...readViewKeys(),
       displayedFieldIds: [...displayedFieldIds, field.id],
     });
-    if (field.type === 'Link') {
+    if (isLinkField(field)) {
       // Refresh entity caches to display referenced entities
       updateEntities();
     }
@@ -71,3 +71,7 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
     { addDisplayField, removeDisplayField, updateFieldOrder },
   ];
 };
+
+function isLinkField(field) {
+  return field.type === 'Link' || (field.type === 'Array' && field.items.type === 'Link');
+}

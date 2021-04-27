@@ -35,6 +35,7 @@ const styles = {
     fontWeight: tokens.fontWeightDemiBold,
   }),
   spinner: css({
+    padding: tokens.spacingS,
     display: 'flex',
     justifyContent: 'center',
     width: '100%',

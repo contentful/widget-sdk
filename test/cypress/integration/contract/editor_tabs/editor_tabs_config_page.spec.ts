@@ -2,17 +2,36 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { getDefaultContentType } from '../../../interactions/content_types';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import { FeatureFlag } from '../../../util/featureFlag';
+import * as ProductCatalog from '../../../interactions/product_catalog_features';
 
 describe('Editor tabs configuration', () => {
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.ALL_REFERENCES_DIALOG]);
     cy.resetAllFakeServers();
+    cy.startFakeServers({
+      consumer: 'user_interface',
+      providers: [
+        'jobs',
+        'entries',
+        'users',
+        'product_catalog_features',
+        'releases',
+        'bulk-actions',
+      ],
+      cors: true,
+      dir: Cypress.env('pactDir'),
+      spec: 2,
+    });
 
     const interactions = [
       ...defaultRequestsMock(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
       getDefaultContentType.willReturnIt(),
+
+      ProductCatalog.queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+      ProductCatalog.queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+      ProductCatalog.queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+      ProductCatalog.queryForContentTagsInDefaultSpace.willFindFeatureDisabled(),
+      ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureEnabled(),
     ];
 
     cy.visit(

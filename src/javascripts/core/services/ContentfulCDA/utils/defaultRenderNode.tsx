@@ -35,7 +35,7 @@ export const defaultRenderNode: RenderNode = {
       // The first element in the array is always the table’s header
       const [headerRow, ...bodyRows] = table.tableData;
       // Manipulating possible extra entries in the table (e.g.: Copy with tooltip)
-      const references = extras.reduce((acc, extra) => {
+      const references = extras?.reduce((acc, extra) => {
         return { ...acc, [extra.fields.text]: extra.fields.tooltipContent };
       }, {});
 
@@ -53,7 +53,7 @@ export const defaultRenderNode: RenderNode = {
               return (
                 <TableRow key={idx}>
                   {row.map((cell, idx) => {
-                    const tooltipContent = references[cell];
+                    const tooltipContent = references && references[cell];
                     return (
                       <TableCell key={idx}>
                         {/* make text in the first column bold */}

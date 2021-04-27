@@ -1,5 +1,6 @@
-import { getModule } from '../NgRegistry';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+
+import { getModule } from 'core/NgRegistry';
 import * as React from 'react';
 
 function SyncState({ splitter }: { splitter: string }) {

@@ -13,7 +13,7 @@ import {
   TableRow,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import { ReactRouterLink, useRouteNavigate } from 'core/react-routing';
+import { RouteLink, useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   clickableCell: css({
@@ -85,14 +85,14 @@ export function AdministratorRoleListItem(props) {
         )}
       </TableCell>
       <TableCell>
-        <ReactRouterLink
+        <RouteLink
           route={{
             path: 'users.list',
             navigationState: { jumpToRole: RoleListHandler.ADMIN_ROLE_NAME },
           }}
-          component={TextLink}>
+          as={TextLink}>
           {props.count} {props.count !== 1 ? 'members' : 'member'}
-        </ReactRouterLink>
+        </RouteLink>
       </TableCell>
       <TableCell />
     </TableRow>
@@ -134,11 +134,11 @@ export function RoleListItem(props) {
         {props.role.description && <Paragraph>{props.role.description}</Paragraph>}
       </TableCell>
       <TableCell>
-        <ReactRouterLink
+        <RouteLink
           route={{ path: 'users.list', navigationState: { jumpToRole: props.role.name } }}
-          component={TextLink}>
+          as={TextLink}>
           {props.role.count} {props.role.count !== 1 ? 'members' : 'member'}
-        </ReactRouterLink>
+        </RouteLink>
       </TableCell>
       <TableCell>
         {props.hasCustomRolesFeature && (

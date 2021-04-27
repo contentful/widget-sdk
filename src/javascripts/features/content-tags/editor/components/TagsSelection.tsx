@@ -48,6 +48,7 @@ type Props = {
   disabled?: boolean;
   label: string;
   hasInlineTagCreation?: boolean;
+  entityArchived?: boolean;
 };
 
 const TagsSelection: React.FC<Props> = ({
@@ -57,6 +58,7 @@ const TagsSelection: React.FC<Props> = ({
   disabled = false,
   label = 'Tags',
   hasInlineTagCreation = false,
+  entityArchived = false,
 }) => {
   const { isLoading } = useReadTags();
   const { setSearch, filteredTags, search } = useFilteredTags();
@@ -176,12 +178,12 @@ const TagsSelection: React.FC<Props> = ({
             tags={localFilteredTags}
             isLoading={isLoading}
             onSelect={onSelect}
-            disabled={maxTagsReached || disabled}
+            disabled={maxTagsReached || entityArchived || disabled}
             onQueryChange={setSearch}
           />
         </ConditionalWrapper>
         <EntityTags
-          disabled={disabled}
+          disabled={entityArchived || disabled}
           tags={selectedTags}
           onRemove={onRemove}
           tagGroups={tagGroups}
@@ -209,6 +211,7 @@ const TagsSelection: React.FC<Props> = ({
     isCreatingTag,
     newTagData,
     onModalClose,
+    entityArchived,
   ]);
 
   if (isInitialLoad) {

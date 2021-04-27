@@ -1,12 +1,12 @@
 import handleGatekeeperMessage from './handleGatekeeperMessage';
 import * as Components from '@contentful/forma-36-react-components';
-import * as Window from 'core/services/window';
 import * as CreateSpace from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as Authentication from 'Authentication';
-import * as NgRegistry from 'core/NgRegistry';
+import * as Navigator from 'states/Navigator';
+import { window } from 'core/services/window';
 
 jest.mock('features/assembly-types', () => ({
   useIsComposeInstalledFlag: jest.fn(() => true),
@@ -14,31 +14,28 @@ jest.mock('features/assembly-types', () => ({
 jest.mock('@contentful/forma-36-react-components');
 jest.mock('core/services/window', () => ({
   window: {
+    setTimeout: jest.fn().mockImplementation((fn) => fn()),
     location: {},
   },
+}));
+jest.mock('states/Navigator', () => ({
+  getCurrentStateName: jest.fn(),
+  go: jest.fn(),
 }));
 jest.mock('services/CreateSpace');
 jest.mock('services/TokenStore');
 jest.mock('analytics/Analytics');
 jest.mock('account/UrlSyncHelper');
 jest.mock('Authentication');
-jest.mock('core/NgRegistry');
 
 describe('Gatekeeper Message Handler', () => {
   let stubs, Notification;
   beforeEach(async function () {
     stubs = {
-      window: {
-        location: {
-          search: '',
-        },
-      },
       beginSpaceCreation: jest.fn(),
       refresh: jest.fn(),
       track: jest.fn(),
-      $state: {},
       updateWebappUrl: jest.fn(),
-      $location_url: jest.fn(),
       redirectToLogin: jest.fn(),
       cancelUser: jest.fn(),
     };
@@ -48,25 +45,12 @@ describe('Gatekeeper Message Handler', () => {
       error: jest.fn(),
     };
     Components.Notification = Notification;
-    Window.window = stubs.window;
     CreateSpace.beginSpaceCreation = stubs.beginSpaceCreation;
     TokenStore.refresh = stubs.refresh;
     Analytics.track = stubs.track;
     UrlSyncHelper.updateWebappUrl = stubs.updateWebappUrl;
     Authentication.redirectToLogin = stubs.redirectToLogin;
     Authentication.cancelUser = stubs.cancelUser;
-
-    NgRegistry.getModule = jest.fn().mockImplementation((type) => {
-      if (type === '$state') {
-        return stubs.$state;
-      }
-      if (type === '$location') {
-        return {
-          url: stubs.$location_url,
-        };
-      }
-      return { $apply: jest.fn().mockImplementation((fn) => fn()) };
-    });
   });
 
   describe('actions on message', () => {
@@ -105,10 +89,7 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('sends an analytics event with resolved fromState', function () {
-      const currentStateName = 'some.current.name';
-      stubs.$state.current = {
-        name: currentStateName,
-      };
+      Navigator.getCurrentStateName.mockReturnValueOnce('some.current.name');
 
       const data = {
         elementId: 'someId',
@@ -119,13 +100,16 @@ describe('Gatekeeper Message Handler', () => {
       const [_, eventData] = stubs.track.mock.calls[0];
       expect(eventData).toEqual({
         ...data,
-        fromState: currentStateName,
+        fromState: 'some.current.name',
       });
     });
 
-    it('changes URL when triggered', function () {
+    it('changes URL when triggered', function (done) {
       handleGatekeeperMessage({ action: 'navigate', type: 'location', path: 'blah/blah' });
-      expect(stubs.$location_url).toHaveBeenCalledWith('blah/blah');
+      process.nextTick(() => {
+        expect(window.location.pathname).toEqual('blah/blah');
+        done();
+      });
     });
 
     it('updates location', function () {
@@ -139,10 +123,6 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     describe('handles gk errors', () => {
-      beforeEach(function () {
-        stubs.$state.go = jest.fn();
-      });
-
       it('redirects to login', function () {
         handleGatekeeperMessage({ type: 'error', status: 401 });
         expect(stubs.redirectToLogin).toHaveBeenCalledTimes(1);

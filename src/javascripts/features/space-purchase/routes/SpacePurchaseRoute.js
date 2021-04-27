@@ -36,7 +36,6 @@ import {
   getBasePlan,
   getSpacePlanForSpace,
 } from 'features/pricing-entities';
-import { AppTrialRepo, isActiveAppTrial } from 'features/trials';
 import { useQueryParams } from 'core/hooks/useQueryParams';
 
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
@@ -137,9 +136,6 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
 
   const sessionId = alnum(16);
 
-  const appCatalogFeature = await AppTrialRepo.getTrial(organizationId);
-  const activeAppTrial = isActiveAppTrial(appCatalogFeature);
-
   dispatch({
     type: actions.SET_INITIAL_STATE,
     payload: {
@@ -179,7 +175,6 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
 
   // TODO: move the requests related to activeAppTrial and purchasings to the step that is using them
   return {
-    activeAppTrial,
     purchasingApps,
   };
 };
@@ -231,7 +226,6 @@ export const SpacePurchaseRoute = ({
     <>
       <DocumentTitle title={documentTitle} />
       <SpacePurchaseContainer
-        activeAppTrial={data.activeAppTrial}
         purchasingApps={data.purchasingApps}
         preselectApps={preselectApps}
         track={(eventName, metadata) => {

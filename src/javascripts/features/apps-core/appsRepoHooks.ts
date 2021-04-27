@@ -22,15 +22,18 @@ function usePromiseWithEnv<T extends 'getOnlyInstalledApps' | 'getContentfulApps
   let isStale = false;
 
   React.useEffect(() => {
+    let isMounted = true;
+
     if (isStale) return;
 
     repo?.[methodName]()
-      .then((value) => setState({ value }))
-      .catch((e) => setState({ isLoading: false, error: e }));
+      .then((value) => isMounted && setState({ value }))
+      .catch((e) => isMounted && setState({ isLoading: false, error: e }));
 
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isStale = true;
+      isMounted = false;
     };
   }, [methodName, repo, repoCacheKey]);
 

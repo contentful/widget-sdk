@@ -128,6 +128,7 @@ export class TasksWidgetContainer extends Component {
       taskPermissionChecker,
       taskCreationBlocked
     );
+
     return <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />;
   }
 

@@ -4,6 +4,8 @@ import React from 'react';
 import mockDefinitions from '../__mocks__/mockDefinitions.json';
 import { AppDetails } from './AppDetails';
 import { HostingStateProvider } from './HostingStateProvider';
+import { AppDetailsStateProvider } from './AppDetailsStateContext';
+import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 
 jest.mock('../ManagementApiClient');
 
@@ -28,7 +30,9 @@ const props = {
 const renderInContext = (props) =>
   render(
     <HostingStateProvider orgId="myOrg" defaultValue={false} bundles={{ items: [] }}>
-      <AppDetails {...props} />
+      <AppDetailsStateProvider definition={props.definition as AppDefinitionWithBundle}>
+        <AppDetails {...props} />
+      </AppDetailsStateProvider>
     </HostingStateProvider>
   );
 

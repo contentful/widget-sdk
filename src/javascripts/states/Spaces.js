@@ -16,11 +16,11 @@ import scheduledActions from 'app/ScheduledActions/routes';
 import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-import { routes as releasesRoutes } from 'features/releases';
 import { spaceHomeState } from 'features/space-home';
 
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
+import { getSpaceContext } from 'classes/spaceContext';
 
 const store = getBrowserStorage();
 
@@ -36,24 +36,29 @@ const resolveSpaceData = [
   ($stateParams) => TokenStore.getSpace($stateParams.spaceId),
 ];
 
+const initializingSpaceContext = [
+  'spaceData',
+  '$stateParams',
+  '$rootScope',
+  (spaceData, $stateParams) => {
+    const spaceContext = getSpaceContext();
+    return spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
+  },
+];
+
 const spaceEnvironment = {
   name: 'environment',
   url: '/environments/:environmentId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: [
-      'spaceContext',
-      'spaceData',
-      '$stateParams',
-      (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
-    ],
+    initializingSpaceContext,
   },
   template: '<div />',
   controller: [
+    'initializingSpaceContext',
     'spaceData',
     '$state',
-    (spaceData, $state) => {
+    (_, spaceData, $state) => {
       if (!accessChecker.can('manage', 'Environments')) {
         $state.go('spaces.detail', null, { reload: true });
       } else if (isHibernated(spaceData)) {
@@ -77,7 +82,6 @@ const spaceEnvironment = {
     scheduledActions,
     tasks,
     pageExtensions,
-    releasesRoutes,
   ],
 };
 
@@ -86,13 +90,7 @@ const spaceDetail = {
   url: '/:spaceId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: [
-      'spaceContext',
-      'spaceData',
-      '$stateParams',
-      (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
-    ],
+    initializingSpaceContext,
   },
   onEnter: [
     'spaceData',
@@ -103,11 +101,13 @@ const spaceDetail = {
   ],
   template: '<react-component component="component" props="props"></react-component>',
   controller: [
+    'initializingSpaceContext',
     '$scope',
     '$state',
     'spaceData',
-    'spaceContext',
-    ($scope, $state, spaceData, spaceContext) => {
+    (_, $scope, $state, spaceData) => {
+      const spaceContext = getSpaceContext();
+
       const accessibleSref = getFirstAccessibleSref(spaceContext.space);
 
       if (isHibernated(spaceData)) {
@@ -134,7 +134,6 @@ const spaceDetail = {
     scheduledActions,
     tasks,
     pageExtensions,
-    releasesRoutes,
   ],
 };
 

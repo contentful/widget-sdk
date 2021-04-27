@@ -41,12 +41,13 @@ const styles = {
     display: 'flex',
   }),
   fileNameWrapper: css({
-    flexGrow: 1,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    direction: 'rtl',
-    textAlign: 'left',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    [`&:hover .${copyButton} button`]: css({
+      opacity: '1',
+      transform: 'translateX(0)',
+    }),
   }),
   filePath: css({
     color: tokens.colorTextLightest,
@@ -130,6 +131,8 @@ const AppBundleDetailsModal = ({ isOpen, onClose, appBundle }) => {
                 return (
                   <div className={styles.fileWrapper} key={file.md5}>
                     <span className={styles.fileNameWrapper}>
+                      <span className={styles.filePath}>{parsedFileName.path}</span>
+                      <span className={styles.fileName}>{parsedFileName.name}</span>
                       <CopyButton
                         className={`${copyButton} ${styles.copyButton}`}
                         copyValue={file.md5}
@@ -137,8 +140,6 @@ const AppBundleDetailsModal = ({ isOpen, onClose, appBundle }) => {
                         tooltipCopiedText={'Copied'}
                         tooltipPlace={'right'}
                       />
-                      <span className={styles.filePath}>{parsedFileName.path}</span>
-                      <span className={styles.fileName}>{parsedFileName.name}</span>
                     </span>
                     <span className={styles.fileSize}>{parseFileSize(file.size)}</span>
                   </div>

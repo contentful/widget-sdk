@@ -24,12 +24,11 @@ We use [LaunchDarkly][launch-darkly-app] for A/B tests as well as for [feature f
 6. Type in a value for key which follows the following format: `test-teamname-mm-yyyy-test-name` (e.g., `test-ps-03-2017-example-space-impact`)
 7. In the `Description` box, enter a link to your A/B test wiki document
 8. Add tags if you want to help group tests together
-9. Under `What kind of flag is this?` choose `Multivariate`
+9. Under `Flag variations` choose `string`
    a. Set variation 1 and name as `true` (test bucket)
    b. Set variation 2 and name as `false` (control bucket)
    c. Set variation 3 and name as `null` (disqualified user)
-10. Check the option named `Make this flag available to the client-side (JavaScript) SDK`
-11. Click `Save Flag`
+10. Click `Save Flag`
 
 You can then setup your targeting for your test. Please note a few points about targeting.
 
@@ -107,7 +106,7 @@ In LD, turn the test off (targeting -> off) and finally, document your findings.
    Therefore, when the web app loads, it's always in variation A. When values for the feature flags arrive from LaunchDarkly's sdk, the experiments kick in. When these experiments activate, users might see the web app interface change under their feet.
 2. Tests can very easily grow in scope. Please ensure that the metrics you want to track and measure success on are simple, few in number and not intertwined. Keep tests scope small and simple.
 3. Avoid running multiple tests that interact with each other on the same views and/or components.
-4. `getCurrentVariation` will resolve to `undefined` if the test/feature flag doesn't exist in LD or if LD itself is down.
+4. `getVariation` will resolve to `undefined` if the test/feature flag doesn't exist in LD or if LD itself is down.
 
 ## FAQ
 

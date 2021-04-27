@@ -6,7 +6,7 @@ import { getCMAClient } from 'core/services/usePlainCMAClient';
 import * as TokenStore from 'services/TokenStore';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 
 interface ApiKey {
   description: string;
@@ -62,7 +62,7 @@ export async function applyTemplateToSpace(
   newSpace: SpaceData,
   selectedTemplate: SelectedTemplate
 ): Promise<void> {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   // Need to set the correct space on the spaceContext
   await TokenStore.getSpace(newSpace.sys.id).then((space) => spaceContext.resetWithSpace(space));
 

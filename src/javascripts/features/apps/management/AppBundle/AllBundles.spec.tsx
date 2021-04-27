@@ -6,6 +6,8 @@ import {
   HostingStateProviderProps,
 } from '../AppDetails/HostingStateProvider';
 import { appBundleMock } from '../__mocks__/appBundles';
+import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { AppDetailsStateProvider } from '../AppDetails/AppDetailsStateContext';
 
 jest.mock('data/userCache', () =>
   jest.fn().mockReturnValue({
@@ -21,6 +23,12 @@ jest.mock('data/userCache', () =>
   })
 );
 
+const definition = {
+  bundle: {
+    sys: { id: 'my-bundle-id' },
+  },
+};
+
 const renderInContext = (
   props,
   contextProps = {
@@ -31,17 +39,16 @@ const renderInContext = (
 ) => {
   return render(
     <HostingStateProvider {...(contextProps as Omit<HostingStateProviderProps, 'children'>)}>
-      <AllBundles {...props} />
+      <AppDetailsStateProvider
+        savedDefinition={props.savedDefinition}
+        definition={props.definition as AppDefinitionWithBundle}>
+        <AllBundles {...props} />
+      </AppDetailsStateProvider>
     </HostingStateProvider>
   );
 };
 describe('AllBundles', () => {
   it('renders all bundles', async () => {
-    const definition = {
-      bundle: {
-        sys: { id: 'my-bundle-id' },
-      },
-    };
     renderInContext({ definition, savedDefinition: definition, onChange: jest.fn() });
     await waitFor(() => {
       expect(screen.getAllByTestId('app-bundle.card')).toHaveLength(3);

@@ -11,6 +11,7 @@ import {
 import { validateState } from './AppState';
 import { UninstallModal } from './UninstallModal';
 import { MarketplaceApp, getAppsRepo } from 'features/apps-core';
+import APIClient from 'data/APIClient';
 
 export type AppStatusCheck = (
   app: MarketplaceApp
@@ -37,7 +38,7 @@ export class AppManager {
     this.afterEachCallback = afterEachCallback;
   }
 
-  async checkAppStatus(app: MarketplaceApp) {
+  checkAppStatus = async (app: MarketplaceApp) => {
     if (!app.appDefinition) {
       throw new Error('AppDefinition not defined');
     }
@@ -56,7 +57,7 @@ export class AppManager {
         isMarketplaceInstallation: !app.isPrivateApp,
       };
     }
-  }
+  };
 
   async installApp(
     app,
@@ -147,7 +148,7 @@ export class AppManager {
 
 export async function installOrUpdate(
   app: MarketplaceApp,
-  cma: any,
+  cma: APIClient,
   callback: AppInstallCallback,
   checkAppStatus: AppStatusCheck,
   { parameters, targetState }: any = {},

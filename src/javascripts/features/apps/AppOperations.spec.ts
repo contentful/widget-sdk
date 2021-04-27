@@ -1,6 +1,7 @@
 import * as AppOperations from './AppOperations';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
+import APIClient from 'data/APIClient';
 
 jest.mock('features/contentful-apps', () => ({
   fetchContentfulAppsConfig: jest.fn().mockResolvedValue({
@@ -39,7 +40,7 @@ describe('AppOperations', () => {
       try {
         await AppOperations.installOrUpdate(
           {} as MarketplaceApp,
-          {},
+          ({} as unknown) as APIClient,
           () => ({}),
           () => ({} as any),
           {
@@ -59,7 +60,7 @@ describe('AppOperations', () => {
     });
 
     it('stores parameters in AppInstallation entity', async () => {
-      const cma = {
+      const cma = ({
         updateAppInstallation: jest.fn((_, parameters) => {
           return Promise.resolve({
             sys: status.appInstallation.sys,
@@ -67,7 +68,7 @@ describe('AppOperations', () => {
           });
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
-      };
+      } as unknown) as APIClient;
       const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {
@@ -97,9 +98,9 @@ describe('AppOperations', () => {
     });
 
     it('fails if AppInstallation cannot be updated', async () => {
-      const cma = {
+      const cma = ({
         updateAppInstallation: jest.fn(() => Promise.reject('unprocessable')),
-      };
+      } as unknown) as APIClient;
       const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {
@@ -127,7 +128,7 @@ describe('AppOperations', () => {
     });
 
     it('executes the target state plan', async () => {
-      const cma = {
+      const cma = ({
         updateAppInstallation: jest.fn(() => Promise.resolve(status.appInstallation)),
         getEditorInterfaces: jest.fn(() => {
           return Promise.resolve({
@@ -146,7 +147,7 @@ describe('AppOperations', () => {
           });
         }),
         updateEditorInterface: jest.fn((ext) => Promise.resolve(ext)),
-      };
+      } as unknown) as APIClient;
       const evictWidget = jest.fn().mockResolvedValue(null);
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
       const spaceData = {

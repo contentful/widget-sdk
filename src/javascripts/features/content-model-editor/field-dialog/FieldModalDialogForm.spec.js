@@ -37,7 +37,7 @@ describe('Field Modal Dialog Form', () => {
     const titleInput = getByTestId('content-type-field-name');
     expect(titleInput).toBeVisible();
     userEvent.type(within(titleInput).getByTestId('cf-ui-text-input'), 'New Title');
-    userEvent.click(getByTestId('save-field-dialog-form'));
+    userEvent.click(getByTestId('confirm-field-dialog-form'));
     wait(() => expect(onCloseMock).toBeCalled());
     wait(() => expect(updateFieldOnScope).toBeCalled());
   });
@@ -74,7 +74,7 @@ describe('Field Modal Dialog Form', () => {
     fireEvent.change(within(titleInput).getByTestId('cf-ui-text-input'), {
       target: { value: '' },
     });
-    userEvent.click(getByTestId('save-field-dialog-form'));
+    userEvent.click(getByTestId('confirm-field-dialog-form'));
     wait(() => expect(onCloseMock).toBeCalled());
     wait(() => expect(updateFieldOnScopeMock).toBeCalled());
     expect(await findByText('This field is required')).toBeVisible();

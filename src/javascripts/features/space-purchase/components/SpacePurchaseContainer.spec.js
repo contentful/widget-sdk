@@ -130,6 +130,10 @@ jest.mock('services/ResourceService', () => {
   });
 });
 
+jest.mock('features/trials', () => ({
+  useAppsTrial: jest.fn().mockReturnValue({}),
+}));
+
 describe('SpacePurchaseContainer', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);

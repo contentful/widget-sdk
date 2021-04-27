@@ -57,7 +57,7 @@ function useLocalTags(tags, setTags) {
   return { hasTags, localTags, removeTag, addTag };
 }
 
-const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) => {
+const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType, entityArchived }) => {
   const { hasTags, localTags, addTag, removeTag } = useLocalTags(tags, setTags);
   const isInitialLoad = useIsInitialLoadingOfTags();
   const { currentSpaceId: spaceId } = useSpaceEnvContext();
@@ -107,6 +107,7 @@ const EditorTagsSkeleton = ({ disable, tags, setTags, showEmpty, entityType }) =
             selectedTags={localTags}
             label={'Tags'}
             hasInlineTagCreation={true}
+            entityArchived={entityArchived}
           />
         </FilteredTagsProvider>
       )}
@@ -120,6 +121,7 @@ EditorTagsSkeleton.propTypes = {
   tags: PropTypes.array,
   setTags: PropTypes.func,
   entityType: PropTypes.string,
+  entityArchived: PropTypes.bool,
 };
 
 export { EditorTagsSkeleton };

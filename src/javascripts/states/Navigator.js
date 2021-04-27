@@ -22,6 +22,7 @@
  */
 import { get, isArray } from 'lodash';
 import { getModule } from 'core/NgRegistry';
+import { RouteNameCursor } from 'core/react-routing/RouteNameCursor';
 
 const ENTITY_PLURALS = {
   Entry: 'entries',
@@ -166,15 +167,13 @@ export function makeEntityRef(entity) {
  */
 export function getCurrentStateName() {
   const $state = getModule('$state');
-  return get($state, ['current', 'name']);
+  const currentReactRouteName = RouteNameCursor.getCurrentReactRouteName();
+  return currentReactRouteName || get($state, ['current', 'name']);
 }
 
+// todo: replace it with window.location.pathname check
 export function isOrgRoute() {
   return getCurrentStateName().includes('account.organizations');
-}
-
-export function isSpaceRoute() {
-  return getCurrentStateName().includes('spaces.detail');
 }
 
 function makeEntityPath(entity) {

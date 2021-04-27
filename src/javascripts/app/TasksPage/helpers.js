@@ -1,11 +1,11 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { TASKS_DASHBOARD, getAlphaHeader } from 'alphaHeaders.js';
 
 const alphaHeader = getAlphaHeader(TASKS_DASHBOARD);
 
 export async function getOpenAssignedTasksAndEntries(spaceId, envId, userId) {
-  const spaceContext = getModule('spaceContext');
+  const spaceContext = getSpaceContext();
   const { items: tasks } = await getOpenAssignedTasks(spaceId, envId, userId);
   const entryIds = new Set(tasks.map((task) => task.sys.parentEntity.sys.id));
   let entries = [];

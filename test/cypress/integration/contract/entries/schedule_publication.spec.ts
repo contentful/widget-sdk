@@ -29,6 +29,9 @@ describe('Schedule Publication', () => {
   describe('scheduling a publication', () => {
     beforeEach(() => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindNone());
+      interactions.push(
+        ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureEnabled()
+      );
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
@@ -105,6 +108,12 @@ describe('Schedule Publication', () => {
     });
   });
   describe('error states', () => {
+    beforeEach(() => {
+      interactions.push(
+        ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureEnabled()
+      );
+    });
+
     it('renders error note if the last job is failed', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 

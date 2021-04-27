@@ -13,6 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
+import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
@@ -64,6 +65,7 @@ interface EntryEditorWorkbenchProps {
   loadEvents: Record<string, any>;
   state: {
     delete: Record<string, any>;
+    current: string;
   };
   statusNotificationProps: { entityLabel: any; status: string };
   otDoc: any;
@@ -121,7 +123,7 @@ function tabIsDefault(tabKey, tabs) {
 // get high value label modal data from Contentful
 const initialFetch = async () => await fetchWebappContentByEntryID(REFERENCES_ENTRY_ID);
 
-const openDialog = (modalData) => {
+const openDialog = (modalData, helpCenterUrl) => {
   handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, false);
 
   ModalLauncher.open(({ onClose, isShown }) => (
@@ -129,6 +131,7 @@ const openDialog = (modalData) => {
       isShown={isShown}
       onClose={() => onClose()}
       {...modalData}
+      helpCenterUrl={helpCenterUrl} // overwrite primary url to funnel users to the self service purchase flow
       featureTracking={REFERENCES_TRACKING_NAME}
     />
   ));
@@ -211,14 +214,12 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
-      const isFeatureEnabled = await getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
-        organizationId: currentOrganizationId,
-        spaceId: currentSpaceId,
-        environmentId: currentEnvironmentId,
-      });
-      setTabVisible({
-        entryReferences: isFeatureEnabled,
-      });
+      const isFeatureEnabled = await getSpaceFeature(
+        currentSpaceId,
+        SpaceFeatures.PC_SPACE_REFERENCE_TREE,
+        false
+      );
+      setTabVisible({ entryReferences: isFeatureEnabled });
     }
 
     getFeatureFlagVariation();
@@ -308,6 +309,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
                   widgetId: currentTab.widgetId,
                   selectedTab,
                   otDoc,
+                  entityState: state.current,
                 }}
               />
             );
@@ -365,7 +367,9 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
   const showCustomModal = async () => {
     try {
       const modalData = await initialFetch();
-      openDialog(modalData);
+      const helpCenterUrl = `/account/organizations/${currentOrganizationId}/upgrade_space/${currentSpaceId}`;
+
+      openDialog(modalData, helpCenterUrl);
     } catch {
       // do nothing, user will be able to see tooltip with information about the feature
       throw new Error('Something went wrong while fetching data from Contentful');
