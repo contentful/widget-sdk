@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Button, Modal, Flex } from '@contentful/forma-36-react-components';
+import { Button, Modal, Flex, Typography } from '@contentful/forma-36-react-components';
 import { ContentfulRichText, ContentfulImage } from 'core/services/ContentfulCDA';
 import { Document } from '@contentful/rich-text-types';
 import { Asset } from 'contentful';
@@ -60,7 +60,7 @@ const FeatureModal = ({
   };
 
   return (
-    <Modal isShown={isShown} onClose={handleOnClose} size="large">
+    <Modal isShown={isShown} onClose={handleOnClose} size="medium">
       {() => (
         <div>
           <Modal.Header title={`${name}`} onClose={handleOnClose} />
@@ -69,8 +69,10 @@ const FeatureModal = ({
               <Flex justifyContent="center" marginBottom="spacingM">
                 <ContentfulImage image={illustration} />
               </Flex>
-              <Flex marginBottom="spacingM" flexDirection="column">
-                <ContentfulRichText document={longDescription} />
+              <Flex flexDirection="column">
+                <Typography>
+                  <ContentfulRichText document={longDescription} />
+                </Typography>
               </Flex>
             </>
           </Modal.Content>
