@@ -6,7 +6,7 @@ For high level information, please see the Confluence pages on [the critical pat
 
 # Smoke tests in the CI
 
-To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [every 7 minutes in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b33fbdf404a17113d5ea925a2903480fa6bef714/.github/workflows/smoke-tests.yml). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-tests.yml).
+To ensure that we regularly monitor the web app for changes that might disrupt the critical paths, the smoke tests run roughly [twice a day (UTC 05:30 and 17:30) in a Github Actions workflow](https://github.com/contentful/user_interface/blob/b33fbdf404a17113d5ea925a2903480fa6bef714/.github/workflows/smoke-tests.yml). You can view individual smoke test runs in the [Github Actions interface](https://github.com/contentful/user_interface/actions/workflows/smoke-tests.yml).
 
 ## Running a change to the smoke test setup
 
