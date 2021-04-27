@@ -18,8 +18,6 @@ export const getCurrentState = async (
   const CurrentState = { EditorInterface: {} };
 
   for (const editorInterface of editorInterfaces) {
-    console.log({ editorInterface });
-
     const contentTypeId = editorInterface.sys?.contentType?.sys?.id;
     if (!contentTypeId) {
       continue;
