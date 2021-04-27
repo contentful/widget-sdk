@@ -18,20 +18,40 @@ export const getCurrentState = async (
   const CurrentState = { EditorInterface: {} };
 
   for (const editorInterface of editorInterfaces) {
-    const contentTypeId = editorInterface.sys?.contentType?.sys?.id;
+    console.log({ editorInterface });
 
+    const contentTypeId = editorInterface.sys?.contentType?.sys?.id;
     if (!contentTypeId) {
       continue;
     }
-
     const controlsUsingApp = getControlsUsingApp({ widgetId, widgetNamespace }, editorInterface);
-    const isIncludedInControls = controlsUsingApp.length > 0;
 
+    const isIncludedInControls = controlsUsingApp.length > 0;
     const positionInSidebar = getPositionInSidebar({ widgetId, widgetNamespace }, editorInterface);
     const isIncludedInSidebar = positionInSidebar > -1;
 
-    if (isIncludedInEditors({ widgetId, widgetNamespace }, editorInterface)) {
-      set(CurrentState.EditorInterface, [contentTypeId, 'editor'], true);
+    // If editor is singular, return the legacy boolean value
+    if (editorInterface.editor) {
+      set(
+        CurrentState.EditorInterface,
+        [contentTypeId, 'editor'],
+        areSameApp(editorInterface.editor, {
+          widgetId,
+          widgetNamespace,
+        })
+      );
+      // if editors is a list, identify the position
+    } else if (editorInterface.editors) {
+      const positionInEditors = getPositionInEditors(
+        { widgetId, widgetNamespace },
+        editorInterface
+      );
+
+      if (positionInEditors > -1) {
+        set(CurrentState.EditorInterface, [contentTypeId, 'editors'], {
+          position: positionInEditors,
+        });
+      }
     }
 
     if (isIncludedInControls) {
@@ -148,6 +168,13 @@ const getControlsUsingApp = (app, editorInterface): Array<Control> => {
 const getPositionInSidebar = (app, editorInterface) => {
   if (editorInterface.sidebar) {
     return editorInterface.sidebar.findIndex((sidebarItem) => areSameApp(sidebarItem, app));
+  }
+  return -1;
+};
+
+const getPositionInEditors = (app, editorInterface) => {
+  if (editorInterface.editors) {
+    return editorInterface.editors.findIndex((editor) => areSameApp(editor, app));
   }
   return -1;
 };
