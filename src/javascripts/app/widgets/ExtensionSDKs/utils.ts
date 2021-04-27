@@ -31,24 +31,37 @@ export const createIdsApiWithoutField = ({
   };
 };
 
+type SerializedJSONValue =
+  | null
+  | string
+  | number
+  | boolean
+  | Array<SerializedJSONValue>
+  | { [key: string]: SerializedJSONValue };
+
 /**
  * - removes object props with undefined value
  * - replaces array undefined array values with null
+ * - replaces Date objects with ISO strings
  */
-export function cleanupJSONValue(value: any): any {
+export function serializeJSONValue(value: unknown): SerializedJSONValue | undefined {
+  if (typeof value === 'undefined') {
+    return;
+  }
+
   if (Array.isArray(value)) {
-    return value.map((v) => (v === undefined ? null : cleanupJSONValue(v)));
+    return value.map((v) => serializeJSONValue(v) ?? null);
   } else if (value === null) {
     return null;
   } else if (value instanceof Date) {
-    return value;
-  } else if (typeof value === 'object') {
+    return value.toISOString();
+  } else if (typeof value === 'object' && !!value) {
     return Object.fromEntries(
       Object.entries(value)
+        .map(([key, v]) => [key, serializeJSONValue(v)])
         .filter(([, v]) => v !== undefined)
-        .map(([key, v]) => [key, cleanupJSONValue(v)])
     );
   } else {
-    return value;
+    return value as string | number | boolean;
   }
 }
