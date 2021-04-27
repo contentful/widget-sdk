@@ -120,39 +120,6 @@ export function AppDetails(props: AppDetailsProps) {
 
   const isInstalled = app.appInstallation;
   const hasConfig = hasConfigLocation(app.appDefinition);
-  const hasOpenLink = isInstalled && app.isContentfulApp;
-
-  // Installable App:
-  //   non-paid app
-  //     or
-  //   paid app whose definition is visible (that is, the organization id has been added to the ACL)
-  const isInstallableApp = !app.isPaidApp || app.appDefinition;
-
-  const configCTA = hasConfig ? 'Configure' : 'Remove';
-  const ctaWhenInstalled = app.isContentfulApp ? 'Open' : configCTA;
-  const cta = isInstalled ? ctaWhenInstalled : 'Install';
-
-  const determineOnClick = (onClick) => {
-    if (hasOpenLink) {
-      return () => {
-        const appUrl = getContentfulAppUrl(app.id, spaceInformation);
-        window.open(appUrl, '_blank');
-      };
-    }
-
-    if (isInstalled) {
-      return async () => {
-        await onClose();
-        if (isInstalled && !hasConfig) {
-          appManager.showUninstall(app);
-        } else {
-          onClick();
-        }
-      };
-    }
-
-    return () => setShowPermissions(true);
-  };
 
   if (showPermissions) {
     return (
@@ -185,24 +152,15 @@ export function AppDetails(props: AppDetailsProps) {
         {app.description && <MarkdownRenderer source={app.description} />}
       </div>
       <div className={styles.sidebarColumn}>
-        {isInstallableApp ? (
-          <StateLink path="^.detail" params={{ appId: app.id }}>
-            {({ onClick }) => (
-              <Button
-                onClick={determineOnClick(onClick)}
-                isFullWidth
-                buttonType="primary"
-                disabled={usageExceeded || !canManageApps}
-                {...(hasOpenLink ? { icon: 'ExternalLink' } : {})}>
-                {cta}
-              </Button>
-            )}
-          </StateLink>
-        ) : (
-          <Button href={app.learnMoreUrl} isFullWidth buttonType="muted" icon="ExternalLink">
-            Contact us
-          </Button>
-        )}
+        <CTA
+          app={app}
+          appManager={appManager}
+          spaceInformation={spaceInformation}
+          setShowPermissions={setShowPermissions}
+          usageExceeded={usageExceeded ?? false}
+          canManageApps={canManageApps}
+          onClose={onClose}
+        />
 
         {app.appInstallation && (
           <>
@@ -315,5 +273,97 @@ export function AppDetails(props: AppDetailsProps) {
         )}
       </div>
     </div>
+  );
+}
+
+interface CTAProps {
+  app: MarketplaceApp;
+  appManager: AppManager;
+  spaceInformation: SpaceInformation;
+  setShowPermissions: (show: boolean) => void;
+  usageExceeded: boolean;
+  canManageApps: boolean;
+  onClose: () => void | Promise<void>;
+}
+
+function CTA({
+  app,
+  appManager,
+  spaceInformation,
+  setShowPermissions,
+  usageExceeded,
+  canManageApps,
+  onClose,
+}: CTAProps) {
+  if (app.isPaidApp && !app.appDefinition) {
+    return (
+      <Button
+        href={app.learnMoreUrl!}
+        target="_blank"
+        rel="noopener noreferrer"
+        isFullWidth
+        buttonType="muted"
+        icon="ExternalLink">
+        Contact us
+      </Button>
+    );
+  }
+
+  if (!app.appInstallation) {
+    return (
+      <Button
+        onClick={() => setShowPermissions(true)}
+        isFullWidth
+        buttonType="primary"
+        disabled={usageExceeded || !canManageApps}>
+        Install
+      </Button>
+    );
+  }
+
+  if (app.isContentfulApp) {
+    return (
+      <Button
+        href={getContentfulAppUrl(app.id, spaceInformation)}
+        target="_blank"
+        rel="noopener noreferrer"
+        isFullWidth
+        buttonType="primary"
+        icon="ExternalLink">
+        Open
+      </Button>
+    );
+  }
+
+  if (hasConfigLocation(app.appDefinition)) {
+    return (
+      <StateLink path="^.detail" params={{ appId: app.id }}>
+        {({ onClick }) => (
+          <Button
+            onClick={async () => {
+              await onClose();
+              onClick();
+            }}
+            isFullWidth
+            buttonType="primary"
+            disabled={!canManageApps}>
+            Configure
+          </Button>
+        )}
+      </StateLink>
+    );
+  }
+
+  return (
+    <Button
+      onClick={async () => {
+        await onClose();
+        await appManager.showUninstall(app);
+      }}
+      isFullWidth
+      buttonType="negative"
+      disabled={!canManageApps}>
+      Uninstall
+    </Button>
   );
 }
