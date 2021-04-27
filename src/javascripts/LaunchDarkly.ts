@@ -58,6 +58,7 @@ export enum FLAGS {
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
+  EXPERIMENT_A_A = 'test-growth-04-2021-a-a-exp',
   V1_MIGRATION_2021_WARNING = 'feature-hejo-04-2021-v1-migration',
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
   ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
@@ -98,6 +99,8 @@ const FALLBACK_VALUES = {
   [FLAGS.REACT_MIGRATION_CT]: false,
 
   [FLAGS.REQUEST_RETRY_EXPERIMENT]: false,
+
+  [FLAGS.EXPERIMENT_A_A]: null,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

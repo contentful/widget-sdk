@@ -30,6 +30,8 @@ import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
+import { getVariation, FLAGS } from 'LaunchDarkly';
+import { track } from 'analytics/Analytics';
 import { useAppsTrial } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
@@ -50,6 +52,19 @@ const fetchData = (
   currentOrganizationId
 ) => async () => {
   setLoading(true);
+
+  // this is a test A/A experiment which will be removed shortly
+  const testExperimentVariation = await getVariation(FLAGS.EXPERIMENT_A_A, {
+    organizationId: currentOrganizationId,
+  });
+  if (testExperimentVariation !== null) {
+    track('experiment:start', {
+      experiment: {
+        id: FLAGS.EXPERIMENT_A_A,
+        variation: testExperimentVariation,
+      },
+    });
+  }
 
   const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
 
