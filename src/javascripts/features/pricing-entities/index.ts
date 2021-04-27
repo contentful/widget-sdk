@@ -18,4 +18,4 @@ export type {
   ProductRatePlanCharge,
   AddOnProductRatePlan,
 } from './types/ProductRatePlan';
-export type { BasePlan, SpacePlan, Plan } from './types/Plan';
+export * from './types/Plan';

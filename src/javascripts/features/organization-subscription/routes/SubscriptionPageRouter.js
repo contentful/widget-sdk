@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { get, isUndefined } from 'lodash';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
@@ -16,13 +15,12 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { LoadingState } from 'features/loading-state';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getOrganization, getSpaces } from 'services/TokenStore';
+import { getOrganization } from 'services/TokenStore';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOrganizationOnTrial } from 'features/trials';
@@ -34,6 +32,8 @@ import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 
+import { findAllPlans } from '../utils';
+
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
 const TiersWithContent = [FREE, SELF_SERVICE, ENTERPRISE, ENTERPRISE_HIGH_DEMAND];
@@ -43,30 +43,6 @@ function isOrganizationEnterprise(organization, basePlan) {
 
   return isLegacyOrg ? isLegacyEnterprise(organization) : isEnterprisePlan(basePlan);
 }
-
-const findBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
-
-const findAddOnPlan = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
-
-const findSpacePlans = (plans, accessibleSpaces) =>
-  plans.items
-    .filter(({ planType }) => ['space', 'free_space'].includes(planType))
-    .sort((plan1, plan2) => {
-      const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
-      return name1.localeCompare(name2);
-    })
-    .map((plan) => {
-      if (plan.space) {
-        const accessibleSpace = accessibleSpaces.find(
-          (space) => space.sys.id === plan.space.sys.id
-        );
-        plan.space.isAccessible = !!accessibleSpace;
-      }
-      if (isUndefined(plan.price)) {
-        plan.price = 0;
-      }
-      return plan;
-    });
 
 async function fetchNumMemberships(organizationId) {
   const resources = createResourceService(organizationId, 'organization');
@@ -90,23 +66,17 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     throw new Error();
   }
 
-  const [plansWithSpaces, productRatePlans, numMemberships] = await Promise.all([
+  const [plansWithSpaces, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
-    getAllProductRatePlans(endpoint),
     fetchNumMemberships(organizationId),
   ]);
 
-  if (!plansWithSpaces || !productRatePlans) {
+  if (!plansWithSpaces) {
     throw new Error();
   }
 
-  // spaces that current user has access to
-  const accessibleSpaces = await getSpaces();
-
   // separating all the different types of plans
-  const basePlan = findBasePlan(plansWithSpaces);
-  const addOnPlan = findAddOnPlan(plansWithSpaces);
-  const spacePlans = findSpacePlans(plansWithSpaces, accessibleSpaces);
+  const { basePlan, addOnPlan, spacePlans } = await findAllPlans(plansWithSpaces.items);
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
@@ -123,7 +93,6 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
     usersMeta,
     numMemberships,
     organization,
-    productRatePlans,
     isSubscriptionPageRebrandingEnabled,
     orgIsEnterprise,
   };

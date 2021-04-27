@@ -17,7 +17,7 @@ export interface Plan {
   customerType: PlanCustomerType;
   gatekeeperKey?: string;
   name: string;
-  planType: 'base' | 'space' | 'free_space';
+  planType: 'base' | 'space' | 'free_space' | 'add_on';
   price: number;
   productName: string;
   productRatePlanId: string;
@@ -30,6 +30,10 @@ export interface Plan {
 
 export interface BasePlan extends Plan {
   planType: 'base';
+}
+
+export interface AddOnPlan extends Plan {
+  planType: 'add_on';
 }
 
 export interface SpacePlan extends Plan {
