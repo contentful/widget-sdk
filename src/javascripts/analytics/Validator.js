@@ -190,7 +190,7 @@ export const validEvents = {
   cta_clicked: CTA_EVENTS,
   targeted_cta_clicked: CTA_EVENTS,
   targeted_cta_impression: CTA_EVENTS,
-  pricing_update: ['communication_seen'],
+  v1_migration_update: ['communication_seen'],
   space_assignment: ['change', 'continue', 'confirm', 'back'],
   space_creation: ['begin', 'continue', 'confirm', 'back', 'get_in_touch'],
   high_value_feature: [
