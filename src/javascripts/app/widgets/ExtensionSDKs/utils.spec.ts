@@ -1,6 +1,6 @@
 import { serializeJSONValue } from './utils';
 
-describe('cleanupJSONValue', () => {
+describe('serializeJSONValue', () => {
   it('cleans primitives', () => {
     expect(serializeJSONValue(42)).toBe(42);
     expect(serializeJSONValue('test string')).toBe('test string');

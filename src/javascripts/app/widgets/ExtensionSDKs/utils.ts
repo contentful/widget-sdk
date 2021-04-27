@@ -50,9 +50,7 @@ export function serializeJSONValue(value: unknown): SerializedJSONValue | undefi
   }
 
   if (Array.isArray(value)) {
-    return value.map(
-      (v) => (typeof v === 'undefined' ? null : (serializeJSONValue(v) as SerializedJSONValue)) // serializeJSONValue returns undefined only if passing undefined
-    );
+    return value.map((v) => serializeJSONValue(v) ?? null);
   } else if (value === null) {
     return null;
   } else if (value instanceof Date) {
@@ -60,9 +58,8 @@ export function serializeJSONValue(value: unknown): SerializedJSONValue | undefi
   } else if (typeof value === 'object' && !!value) {
     return Object.fromEntries(
       Object.entries(value)
+        .map(([key, v]) => [key, serializeJSONValue(v)])
         .filter(([, v]) => v !== undefined)
-        // serializeJSONValue returns undefined only if passing undefined
-        .map(([key, v]) => [key, serializeJSONValue(v) as SerializedJSONValue])
     );
   } else {
     return value as string | number | boolean;
