@@ -154,7 +154,9 @@ const SelectedLanguage = ({ language }) => {
           codeBlockContent={
             <div>
               <div className={styles.codeBlock.language}>bash</div>
-              <div className={styles.codeBlock.line}>php composer.phar contentful/contentful</div>
+              <div className={styles.codeBlock.line}>
+                php composer.phar install contentful/contentful
+              </div>
             </div>
           }
         />
