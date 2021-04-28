@@ -16,7 +16,6 @@
     "@contentful/entity-search": "1.0.2",
     "@contentful/errors": "^1.20.2",
     "@contentful/experience-cma-utils": "^1.1.1",
-    "@contentful/experience-feature-flags": "^1.1.0",
     "@contentful/experience-components": "^1.4.4",
     "@contentful/experience-provisioning": "^0.4.1",
     "@contentful/field-editor-boolean": "0.11.1",

@@ -6,7 +6,6 @@ import { launchDarkly } from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
-import { createLaunchDarklyClient } from '@contentful/experience-feature-flags';
 
 jest.mock('ldclient-js', () => ({
   initialize: jest.fn(),
@@ -47,10 +46,6 @@ jest.mock('debug/EnforceFlags', () => ({
   getFlagOverride: jest.fn(),
 }));
 
-jest.mock('@contentful/experience-feature-flags', () => ({
-  createLaunchDarklyClient: jest.fn(),
-}));
-
 const orgCreationDate = new Date(2018, 12, 25);
 const userCreationDate = new Date(2018, 12, 25);
 
@@ -75,7 +70,6 @@ const space = {
 describe('LaunchDarkly', () => {
   let client;
   let variations;
-  let newClient;
 
   beforeEach(() => {
     variations = {};
@@ -97,20 +91,6 @@ describe('LaunchDarkly', () => {
     };
 
     (ldClient.initialize as jest.Mock).mockReturnValue(client);
-
-    newClient = {
-      initialize: jest.fn(),
-      enforceFlags: jest.fn(),
-      variation: jest.fn((key, fallback) => {
-        if (variations[key]) {
-          return variations[key];
-        } else {
-          return fallback;
-        }
-      }),
-    };
-
-    (createLaunchDarklyClient as jest.Mock).mockReturnValue(newClient);
 
     const user = {
       email: 'a',
@@ -487,22 +467,6 @@ describe('LaunchDarkly', () => {
           currentUserIsFromContentful: false,
         },
       });
-    });
-
-    it('should use the LD Experience package when the user has a contentful email', async () => {
-      const contentfulUser = {
-        email: 'a@contentful.com',
-        organizationMemberships: [organization],
-        signInCount: 10,
-        sys: {
-          createdAt: userCreationDate.toISOString(),
-          id: 'user-id-1',
-        },
-      };
-      (getUser as jest.Mock).mockResolvedValueOnce(contentfulUser);
-      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
-      expect(createLaunchDarklyClient).toHaveBeenCalledTimes(1);
-      expect(newClient.initialize).toHaveBeenCalledTimes(1);
     });
   });
 
