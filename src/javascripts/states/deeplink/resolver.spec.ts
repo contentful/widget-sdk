@@ -472,25 +472,16 @@ describe('states/deeplink/resolver', () => {
         path: ['account', 'organizations', 'users', 'list'],
         params: {
           orgId: 'some',
-          pathSuffix: '',
         },
       });
 
-      expect(await resolveLink(LinkType.Org, {})).toEqual({
-        path: ['account', 'organizations', 'edit'],
-        params: {
-          orgId: 'some',
-          pathSuffix: '',
-        },
-      });
+      expect(await resolveLink(LinkType.Org, {})).toEqual(
+        routes['organizations.edit']({}, { orgId: 'some' })
+      );
 
-      expect(await resolveLink(LinkType.Subscription, {})).toEqual({
-        path: ['account', 'organizations', 'subscription'],
-        params: {
-          orgId: 'some',
-          pathSuffix: '',
-        },
-      });
+      expect(await resolveLink(LinkType.Subscription, {})).toEqual(
+        routes['organizations.subscription_v1']({}, { orgId: 'some' })
+      );
     });
 
     it('should give generic error in case no access', async function () {

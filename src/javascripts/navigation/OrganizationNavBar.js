@@ -14,7 +14,10 @@ import { routes } from 'core/react-routing';
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
   const orgSpacesRoute = routes['organizations.spaces']({}, { orgId });
-  const orgUsageRoute = routes['organizations.usage']({}, { orgId });
+  const usageRoute = routes['organizations.usage']({}, { orgId });
+  const editRoute = routes['organizations.edit']({}, { orgId });
+  const offsiteBackupRoute = routes['organizations.offsitebackup']({}, { orgId });
+  const subscriptionV1Route = routes['organizations.subscription_v1']({}, { orgId });
   const userProvisioning = routes['organizations.userProvisioning']({}, { orgId });
 
   const accessToolsDropdownItems = [
@@ -47,24 +50,24 @@ function getItems(params, { orgId }) {
     {
       if: params.hasSettingsTab,
       title: 'Organization information',
-      sref: 'account.organizations.edit',
-      srefParams: { orgId },
+      sref: editRoute.path,
+      srefParams: editRoute.params,
+      rootSref: editRoute.path,
       srefOptions: {
         inherit: false,
       },
-      rootSref: 'account.organizations.edit',
       navIcon: 'OrgInfo',
       dataViewType: 'organization-information',
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Subscription',
-      sref: 'account.organizations.subscription',
-      srefParams: { orgId },
+      sref: subscriptionV1Route.path,
+      srefParams: subscriptionV1Route.params,
+      rootSref: subscriptionV1Route.path,
       srefOptions: {
         inherit: false,
       },
-      rootSref: 'account.organizations.subscription',
       navIcon: 'Subscription',
       dataViewType: 'subscription',
     },
@@ -97,9 +100,9 @@ function getItems(params, { orgId }) {
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
       title: 'Usage',
-      sref: orgUsageRoute.path,
-      srefParams: orgUsageRoute.params,
-      rootSref: orgUsageRoute.path,
+      sref: usageRoute.path,
+      srefParams: usageRoute.params,
+      rootSref: usageRoute.path,
       srefOptions: {
         inherit: false,
       },
@@ -168,9 +171,9 @@ function getItems(params, { orgId }) {
     {
       if: params.hasOffsiteBackup && params.isOwnerOrAdmin,
       title: 'Offsite backup',
-      sref: 'account.organizations.offsitebackup',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.offsitebackup',
+      sref: offsiteBackupRoute.path,
+      srefParams: offsiteBackupRoute.params,
+      rootSref: offsiteBackupRoute.path,
       srefOptions: {
         inherit: false,
       },

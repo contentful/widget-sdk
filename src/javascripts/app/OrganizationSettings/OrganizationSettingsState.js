@@ -1,28 +1,23 @@
 import React from 'react';
+import { CustomRouter, Route, RouteErrorBoundary, Routes, router } from 'core/react-routing';
 import * as Analytics from 'analytics/Analytics';
+import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { SSOSetupRoutingState } from 'features/sso';
-import {
-  billing,
-  edit,
-  offsitebackup,
-  subscription,
-  subscriptionBilling,
-  userGatekeeper,
-} from './OrganizationSettingsGatekeeperStates';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
-import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import { withOrganizationRoute } from 'states/utils';
+import { GatekeeperView } from 'account/GatekeeperView';
+
 import { managementRoute as appsState } from 'features/apps';
 import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { trialState, isOrganizationOnTrial } from 'features/trials';
-import { GatekeeperView } from 'account/GatekeeperView';
 import { usageState } from 'features/organization-usage';
 import { organizationSpacesState } from 'features/organization-spaces';
 
@@ -58,7 +53,15 @@ export const organizationSettings = {
         // the subscription page is available to users of any role when the org is on trial
         const hasNewPricing = !isLegacyOrganization(organization);
 
-        path = [...path, hasNewPricing ? 'subscription_new' : 'subscription'];
+        if (!hasNewPricing) {
+          router.navigate(
+            { path: 'organizations.subscription_v1', orgId: organization.sys.id },
+            { location: 'replace' }
+          );
+          return;
+        }
+
+        path = [...path, 'subscription_new'];
       } else {
         // They are a member and the member path should go to organization/teams
         path = [...path, 'teams'];
@@ -71,13 +74,6 @@ export const organizationSettings = {
       });
     },
   ],
-};
-
-export const newOrganization = {
-  name: 'new_organization',
-  url: '/organizations/new',
-  navComponent: EmptyNavigationBar,
-  component: () => <GatekeeperView title="Create new organization" />,
 };
 
 export const organization = {
@@ -101,13 +97,104 @@ export const organization = {
     SSOSetupRoutingState,
     accessToolsState,
     billingRoutingState,
-    billing,
-    edit,
-    offsitebackup,
-    organizationSpacesState,
-    subscription,
-    subscriptionBilling,
-    userGatekeeper,
     trialState,
+    organizationSpacesState,
+    {
+      name: 'edit',
+      url: '/edit{pathname:any}',
+      component: withOrganizationRoute(function ComponentRoute() {
+        const [basename] = window.location.pathname.split('edit');
+        return (
+          <CustomRouter splitter={'edit'}>
+            <RouteErrorBoundary>
+              <Routes basename={basename + 'edit'}>
+                <Route
+                  name="account.organizations.edit"
+                  path="/*"
+                  element={
+                    <GatekeeperView
+                      title="Organization information"
+                      icon={<ProductIcon size="large" icon="OrgInfo" />}
+                    />
+                  }
+                />
+              </Routes>
+            </RouteErrorBoundary>
+          </CustomRouter>
+        );
+      }),
+    },
+    {
+      name: 'offsitebackup',
+      url: '/offsite_backup/edit{pathname:any}',
+      component: withOrganizationRoute(function ComponentRoute() {
+        const [basename] = window.location.pathname.split('offsite_backup/edit');
+        return (
+          <CustomRouter splitter={`offsite_backup/edit`}>
+            <RouteErrorBoundary>
+              <Routes basename={basename + 'offsite_backup/edit'}>
+                <Route
+                  name="account.organizations.offsitebackup"
+                  path="/*"
+                  element={<GatekeeperView title="Offsite backup" />}
+                />
+              </Routes>
+            </RouteErrorBoundary>
+          </CustomRouter>
+        );
+      }),
+    },
+
+    {
+      name: 'subscription',
+      url: '/z_subscription{pathname:any}',
+      component: withOrganizationRoute(function ComponentRoute() {
+        const [basename] = window.location.pathname.split('z_subscription');
+        return (
+          <CustomRouter splitter={`z_subscription`}>
+            <RouteErrorBoundary>
+              <Routes basename={basename + 'z_subscription'}>
+                <Route
+                  name="account.organizations.subscription"
+                  path="/*"
+                  element={
+                    <GatekeeperView
+                      title="Subscription"
+                      icon={<ProductIcon size="large" icon="Subscription" />}
+                    />
+                  }
+                />
+              </Routes>
+            </RouteErrorBoundary>
+          </CustomRouter>
+        );
+      }),
+    },
+
+    {
+      name: 'subscription_billing',
+      url: '/subscription{pathname:any}',
+      component: withOrganizationRoute(function ComponentRoute() {
+        const [basename] = window.location.pathname.split('subscription');
+        return (
+          <CustomRouter splitter={`subscription`}>
+            <RouteErrorBoundary>
+              <Routes basename={basename + 'subscription'}>
+                <Route
+                  name="account.organizations.subscription_billing"
+                  path="/*"
+                  element={
+                    <GatekeeperView
+                      title="Subscription"
+                      icon={<ProductIcon size="large" icon="Subscription" />}
+                    />
+                  }
+                />
+              </Routes>
+            </RouteErrorBoundary>
+          </CustomRouter>
+        );
+      }),
+    },
   ],
 };

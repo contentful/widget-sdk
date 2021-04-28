@@ -54,7 +54,7 @@ describe('account/UrlSyncHelper', () => {
 
     it('silently updates URL if state is the same', function () {
       UrlSyncHelper.updateWebappUrl('/account/profile/user/blah/blah');
-      expect($state.transitionTo.mock.calls[0][1].pathSuffix).toBe('/blah/blah');
+      expect($state.transitionTo.mock.calls[0][1].pathname).toBe('/blah/blah');
     });
 
     it('updates location if the state has changed', function () {

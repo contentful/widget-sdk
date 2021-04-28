@@ -18,6 +18,25 @@ const organizationsUsageRoute = {
 };
 
 /**
+ * Organization edit
+ */
+
+type OrganizationEditRouteType = {
+  path: 'organizations.edit';
+  orgId: string;
+};
+
+const organizationsEditRoute = {
+  'organizations.edit': (_, { orgId }: Omit<OrganizationEditRouteType, 'path'>) => ({
+    path: 'account.organizations.edit',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
+/**
  * Organization spaces
  */
 
@@ -31,6 +50,72 @@ const organizationsSpacesRoute = {
     path: 'account.organizations.spaces',
     params: {
       pathname: '/',
+      orgId,
+    },
+  }),
+};
+
+/**
+ * Organization offsite backup
+ */
+
+type OrganizationOffisiteBackupRouteType = {
+  path: 'organizations.offsitebackup';
+  orgId: string;
+};
+
+const organizationsOffisiteBackupRoute = {
+  'organizations.offsitebackup': (
+    _,
+    { orgId }: Omit<OrganizationOffisiteBackupRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.offsitebackup',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
+/**
+ * Organization subscription V1
+ */
+
+type OrganizationSubscriptionV1RouteType = {
+  path: 'organizations.subscription_v1';
+  orgId: string;
+};
+
+const organizationsSubscriptionV1Route = {
+  'organizations.subscription_v1': (
+    _,
+    { orgId }: Omit<OrganizationSubscriptionV1RouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
+/**
+ * Organization subscription billing
+ */
+
+type OrganizationSubscriptionBillingRouteType = {
+  path: 'organizations.subscription_billing';
+  orgId: string;
+};
+
+const organizationsSubscriptionBillingRoute = {
+  'organizations.subscription_billing': (
+    _,
+    { orgId }: Omit<OrganizationSubscriptionBillingRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_billing',
+    params: {
+      pathname: '/billing_address',
       orgId,
     },
   }),
@@ -58,12 +143,20 @@ const organizationUserProvisioning = {
 
 const routes = {
   ...organizationsUsageRoute,
+  ...organizationsEditRoute,
+  ...organizationsOffisiteBackupRoute,
+  ...organizationsSubscriptionV1Route,
+  ...organizationsSubscriptionBillingRoute,
   ...organizationsSpacesRoute,
   ...organizationUserProvisioning,
 };
 
 type OrganizationSettingsRouteType =
   | OrganizationUsageRouteType
+  | OrganizationEditRouteType
+  | OrganizationOffisiteBackupRouteType
+  | OrganizationSubscriptionV1RouteType
+  | OrganizationSubscriptionBillingRouteType
   | OrganizationSpacesRouteType
   | OrganizationUserProvisioningRouteType;
 

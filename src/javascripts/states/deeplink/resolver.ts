@@ -76,7 +76,7 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.AppsContentful]: resolveContentfulApps,
   [LinkType.AppDefinition]: resolveAppDefinition,
   [LinkType.AppDefinitionList]: makeOrgScopedPathResolver({
-    orgScopedPath: ['account', 'organizations', 'apps', 'list'],
+    path: ['account', 'organizations', 'apps', 'list'],
   }),
   [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
@@ -117,20 +117,16 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.OnboardingDeploy]: createOnboardingScreenResolver('deploy'),
   // org scoped deeplinks
   [LinkType.Invite]: makeOrgScopedPathResolver({
-    orgScopedPath: ['account', 'organizations', 'users', 'new'],
+    path: ['account', 'organizations', 'users', 'new'],
   }),
   [LinkType.Users]: makeOrgScopedPathResolver({
-    orgScopedPath: ['account', 'organizations', 'users', 'list'],
-    pathSuffix: '',
+    path: ['account', 'organizations', 'users', 'list'],
   }),
-  [LinkType.Org]: makeOrgScopedPathResolver({
-    orgScopedPath: ['account', 'organizations', 'edit'],
-    pathSuffix: '',
-  }),
+  [LinkType.Org]: makeOrgScopedPathResolver(routes['organizations.edit']({}, { orgId: '' })),
   [LinkType.Subscription]: resolveSubscriptions,
   [LinkType.InvitationAccepted]: resolveSpaceHome,
   [LinkType.StartAppTrial]: makeOrgScopedPathResolver({
-    orgScopedPath: ['account', 'organizations', 'start_trial'],
+    path: ['account', 'organizations', 'start_trial'],
   }),
   [LinkType.Tags]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['tags']({ withEnvironment: false }).path,
@@ -387,27 +383,29 @@ async function resolveAppDefinition({ id, tab, referrer }) {
 }
 
 function makeOrgScopedPathResolver({
-  orgScopedPath,
-  pathSuffix,
+  path,
+  params,
 }: {
-  orgScopedPath: any;
-  pathSuffix?: string;
+  path: string[] | string;
+  params?: { [key: string]: any };
 }) {
-  if (!orgScopedPath || !Array.isArray(orgScopedPath)) {
+  if (!path) {
     throw new Error('A path for a deeplink to resolve to must be provided');
   }
 
-  if (!orgScopedPath.includes('organizations')) {
+  if (!path.includes('organizations')) {
     throw new Error('An org scoped path must contain "organizations"');
   }
 
   return async function () {
     const { orgId } = await getOrg();
-    const params = pathSuffix === undefined ? { orgId } : { orgId, pathSuffix };
 
     return await applyOrgAccess(orgId, {
-      path: orgScopedPath,
-      params,
+      path,
+      params: {
+        ...params,
+        orgId,
+      },
     });
   };
 }
@@ -417,17 +415,14 @@ async function resolveSubscriptions() {
 
   const hasNewPricing = !isLegacyOrganization(org);
 
+  if (!hasNewPricing) {
+    return applyOrgAccess(orgId, routes['organizations.subscription_v1']({}, { orgId }));
+  }
+
   return applyOrgAccess(orgId, {
-    path: [
-      'account',
-      'organizations',
-      hasNewPricing ? 'subscription_new.overview' : 'subscription',
-    ],
+    path: ['account', 'organizations', 'subscription_new.overview'],
     params: {
       orgId,
-      // dummy pathsuffix since we don't want to redirect
-      // to purchase page
-      pathSuffix: '',
     },
   });
 }

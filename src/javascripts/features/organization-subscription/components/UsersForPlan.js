@@ -7,7 +7,7 @@ import { Pluralized, Price } from 'core/components/formatting';
 import StateLink from 'app/common/StateLink';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import * as Config from 'Config';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { links } from '../utils';
 
@@ -26,7 +26,10 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
       organizationId: organizationId,
     });
 
-    go(links.billing(organizationId));
+    router.navigate(
+      { path: 'organizations.subscription_billing', orgId: organizationId },
+      { reload: true }
+    );
   };
 
   const onContactSupport = () => {

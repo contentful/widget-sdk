@@ -45,18 +45,16 @@ export function updateWebappUrl(gkUrl = '') {
 
   gkUrl = endsWith(gkUrl, '/') ? gkUrl.substr(0, gkUrl.length - 1) : gkUrl;
 
-  const baseUrl = decodeURIComponent(
-    $state.href($state.current.name, { pathSuffix: '', pathname: '' })
-  );
+  const baseUrl = decodeURIComponent($state.href($state.current.name, { pathname: '' }));
 
   const isCurrentState = gkUrl.startsWith(baseUrl);
 
   if (isCurrentState) {
-    const pathSuffix = gkUrl.replace(baseUrl, '') || '/';
+    const pathname = gkUrl.replace(baseUrl, '') || '/';
 
     $state.transitionTo(
       $state.current,
-      { ...$state.params, navigationState: null, pathSuffix, pathname: pathSuffix },
+      { ...$state.params, navigationState: null, pathname },
       { reload: false, inherit: true, notify: false, location: 'replace' }
     );
   } else {

@@ -17,6 +17,7 @@ import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { navState$ } from 'navigation/NavState';
 import { isOrganizationOnTrial } from 'features/trials';
+import { router } from 'core/react-routing';
 
 export default class Sidepanel extends React.Component {
   static propTypes = {
@@ -98,20 +99,25 @@ export default class Sidepanel extends React.Component {
 
   gotoOrgSettings = () => {
     this.props.closeSidePanel();
-    const orgSettingsPath = ['account', 'organizations'];
-    if (OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg)) {
-      const hasNewPricing = this.state.currOrg.pricingVersion === 'pricing_version_2';
-      orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
-    } else {
-      orgSettingsPath.push('teams');
-    }
 
     const orgId = this.state.currOrg.sys.id;
 
-    Navigator.go({
-      path: orgSettingsPath,
-      params: { orgId },
-    });
+    if (OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg)) {
+      const hasNewPricing = this.state.currOrg.pricingVersion === 'pricing_version_2';
+      if (hasNewPricing) {
+        Navigator.go({
+          path: 'account.organizations.subscription_new',
+          params: { orgId },
+        });
+      } else {
+        router.navigate({ path: 'organizations.subscription_v1', orgId });
+      }
+    } else {
+      Navigator.go({
+        path: 'account.organizations.teams',
+        params: { orgId },
+      });
+    }
   };
 
   goToSpace = async (spaceId, envId, isMaster) => {

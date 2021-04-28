@@ -5,7 +5,6 @@ import { createApiKeyRepo } from 'features/api-keys-management';
 import { go } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
-
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
 import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
@@ -462,8 +461,8 @@ describe('utils', () => {
       utils.goToBillingPage(mockOrganization, utils.WIZARD_INTENT.CREATE, mockWizardSessionId);
 
       expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_billing'],
-        params: { orgId: mockOrganization.sys.id, pathSuffix: '/billing_address' },
+        path: 'account.organizations.subscription_billing',
+        params: { orgId: mockOrganization.sys.id, pathname: '/billing_address' },
         options: { reload: true },
       });
     });

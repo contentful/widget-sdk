@@ -5,6 +5,7 @@ import { get, forEach } from 'lodash';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { supportUrl } from 'Config';
 import * as Analytics from 'analytics/Analytics';
+import { router } from 'core/react-routing';
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
@@ -121,14 +122,14 @@ export function determineEnforcement(space, reasons, entityType) {
 
   function upgradeAction() {
     trackAction('Quota Increase');
-    const subscriptionState = isLegacyOrganization(organization)
-      ? 'subscription'
-      : 'subscription_new';
-
-    go({
-      path: ['account', 'organizations', subscriptionState],
-      params: { orgId: organization.sys.id },
-    });
+    if (isLegacyOrganization(organization)) {
+      router.navigate({ path: 'organizations.subscription_v1', orgId: organization.sys.id });
+    } else {
+      go({
+        path: ['account', 'organizations', 'subscription_new'],
+        params: { orgId: organization.sys.id },
+      });
+    }
   }
 }
 

@@ -9,6 +9,7 @@ import * as Analytics from 'analytics/Analytics';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { getModule } from 'core/NgRegistry';
 import { canCreate } from 'utils/ResourceUtils';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
@@ -139,11 +140,7 @@ export async function changeSpacePlan({ space, plan, sessionId }) {
 export function goToBillingPage(organization, intent, sessionId, onClose) {
   const orgId = organization.sys.id;
 
-  go({
-    path: ['account', 'organizations', 'subscription_billing'],
-    params: { orgId, pathSuffix: '/billing_address' },
-    options: { reload: true },
-  });
+  router.navigate({ path: 'organizations.subscription_billing', orgId }, { reload: true });
 
   trackWizardEvent(intent, WIZARD_EVENTS.LINK_CLICK, sessionId);
   onClose && onClose();

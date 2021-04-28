@@ -2,9 +2,9 @@ import { spaceSettingsRoutes, accountSettingsRoutes, organizationSettingsRoutes 
 import type {
   SpaceSettingsRouteType,
   AccountSettingsRouteType,
-  OrganizationSettingsRouteType,
   CreateRouteDefinition,
   RouteDefinition,
+  OrganizationSettingsRouteType,
 } from './routes/';
 
 const routes = {

@@ -3,12 +3,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 import { getVariation } from 'LaunchDarkly';
-
-import { go } from 'states/Navigator';
-
+import { router } from 'core/react-routing';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { SubscriptionPage } from './SubscriptionPage';
-import { links } from '../utils';
 
 import * as trackCTA from 'analytics/trackCTA';
 
@@ -25,15 +22,19 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
 }));
 
+jest.mock('core/react-routing/useRouter', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
+}));
+
 jest.mock('../utils', () => ({
   links: {
-    billing: jest.fn(),
     memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
   },
 }));
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
   href: jest.fn(),
   getCurrentStateName: jest.fn(),
 }));
@@ -100,9 +101,6 @@ describe('SubscriptionPage', () => {
   });
 
   it('should show user details and CTA to upgrade for the Community customers', () => {
-    const navigatorObject = { test: true };
-    links.billing.mockReturnValue(navigatorObject);
-
     const usersMeta = {
       numFree: 5,
       numPaid: 2,
@@ -127,8 +125,10 @@ describe('SubscriptionPage', () => {
       organizationId: mockOrganization.sys.id,
     });
 
-    expect(links.billing).toHaveBeenCalledWith(mockOrganization.sys.id);
-    expect(go).toHaveBeenCalledWith(navigatorObject);
+    expect(router.navigate).toHaveBeenCalledWith(
+      { orgId: 'Organization3', path: 'organizations.subscription_billing' },
+      { reload: true }
+    );
   });
 
   it('should show user details and CTA to contact support for the Team users', () => {

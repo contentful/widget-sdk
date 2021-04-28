@@ -19,7 +19,7 @@ const OrganizationUsageRouter = () => {
   const { orgId } = getModule('$stateParams');
 
   return (
-    <CustomRouter splitter={`organizations/${orgId}/usage`}>
+    <CustomRouter splitter={'usage'}>
       <RouteErrorBoundary>
         <Routes basename={basename + 'usage'}>
           <Route
