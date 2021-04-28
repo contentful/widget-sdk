@@ -21,11 +21,13 @@ function getItems(params, { orgId }) {
   const billing = routes['organizations.billing']({}, { orgId });
   const userProvisioning = routes['organizations.userProvisioning']({}, { orgId });
 
+  const orgnaizationSettingsSSORoute = routes['organizations.access-tools.sso']({}, { orgId });
+
   const accessToolsDropdownItems = [
     {
       title: 'Single Sign-On (SSO)',
-      sref: 'account.organizations.access-tools.sso',
-      srefParams: { orgId },
+      sref: orgnaizationSettingsSSORoute.path,
+      srefParams: orgnaizationSettingsSSORoute.params,
       srefOptions: {
         inherit: false,
       },

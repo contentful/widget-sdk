@@ -16,11 +16,12 @@ jest.mock('core/utils/getCurrentOrg', () => ({
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
+  ...(jest.requireActual('data/CMA/ProductCatalog') as any),
   getOrgFeature: jest.fn().mockResolvedValue(true),
 }));
 
 const renderComponent = () => {
-  render(<SSOSetup orgId={mockOrganization.sys.id} />);
+  render(<SSOSetup />);
   return waitFor(() => expect(isOwnerOrAdmin).toHaveBeenCalled());
 };
 
@@ -31,7 +32,7 @@ describe('SSOSetup', () => {
   });
 
   it('should render upsell page if sso feature not enabled', async () => {
-    getOrgFeature.mockResolvedValue(false);
+    (getOrgFeature as jest.Mock).mockResolvedValue(false);
     await renderComponent();
     expect(screen.getByTestId('get-in-touch-btn')).toBeInTheDocument();
   });

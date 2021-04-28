@@ -3,7 +3,6 @@ docs/ @contentful/frontend
 
 
 # Team Extensibility
-
 src/javascripts/features/apps/                  @contentful/extensibility-devs
 src/javascripts/features/apps-core/             @contentful/extensibility-devs
 src/javascripts/features/extensions-management/ @contentful/extensibility-devs
@@ -24,6 +23,7 @@ src/javascripts/features/settings-space-users/          @contentful/team-hejo
 src/javascripts/features/space-teams/                   @contentful/team-hejo
 src/javascripts/features/space-memberships/             @contentful/team-hejo
 src/javascripts/features/roles-permissions-management/  @contentful/team-hejo
+src/javascripts/features/sso                            @contentful/team-hejo
 
 # Team Dante
 src/javascripts/features/locales-management/ @contentful/team-dante

@@ -5,13 +5,13 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { SSOUpsellState } from '../components/SSOUpsellState';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getCurrentOrg } from 'core/utils/getCurrentOrg';
 
 const FeatureFetcher = createFetcherComponent(async () => {
   const org = await getCurrentOrg();
-  const featureEnabled = await getOrgFeature(org.sys.id, 'self_configure_sso');
+  const featureEnabled = await getOrgFeature(org.sys.id, OrganizationFeatures.SELF_CONFIGURE_SSO);
   const hasPerms = isOwnerOrAdmin(org);
   return {
     showUpsellState: hasPerms && !featureEnabled,

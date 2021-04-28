@@ -1,4 +1,4 @@
-import { SSOSetupRoutingState } from 'features/sso';
+import { ssoSetupState } from 'features/sso';
 import userProvisioningState from './UserProvisioning/UserProvisioningState';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 
@@ -7,5 +7,5 @@ export default {
   url: '/access_tools',
   abstract: true,
   navComponent: OrganizationNavBar,
-  children: [SSOSetupRoutingState, userProvisioningState],
+  children: [ssoSetupState, userProvisioningState],
 };

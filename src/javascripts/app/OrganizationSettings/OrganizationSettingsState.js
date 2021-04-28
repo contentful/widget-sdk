@@ -6,7 +6,7 @@ import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
-import { SSOSetupRoutingState } from 'features/sso';
+import { ssoSetupState } from 'features/sso';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from 'states/utils';
@@ -94,7 +94,7 @@ export const organization = {
     subscriptionState,
     teamsState,
     appsState,
-    SSOSetupRoutingState,
+    ssoSetupState,
     accessToolsState,
     billingRoutingState,
     trialState,

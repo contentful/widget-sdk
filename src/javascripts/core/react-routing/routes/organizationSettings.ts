@@ -175,6 +175,28 @@ const organizationUserProvisioning = {
   }),
 };
 
+/**
+ * Organizations access tools sso
+ */
+
+type OrganizationsAccessToolsSSORouteType = {
+  path: 'organizations.access-tools.sso';
+  orgId: string;
+};
+
+const organizationsAccessToolsSSORoute = {
+  'organizations.access-tools.sso': (
+    _,
+    { orgId }: Omit<OrganizationsAccessToolsSSORouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.access-tools.sso',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -184,6 +206,7 @@ const routes = {
   ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
   ...organizationUserProvisioning,
+  ...organizationsAccessToolsSSORoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -195,7 +218,8 @@ type OrganizationSettingsRouteType =
   | OrganizationSpacesRouteType
   | OrganizationUserProvisioningRouteType
   | OrganizationBillingRouteType
-  | OrganizationBillingEditPaymentRouteType;
+  | OrganizationBillingEditPaymentRouteType
+  | OrganizationsAccessToolsSSORouteType;
 
 export type { OrganizationSettingsRouteType };
 
