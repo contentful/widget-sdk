@@ -1,8 +1,7 @@
-import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
-import { noop, isObject, find, includes, isString, get as getAtPath, times } from 'lodash';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { createCmaDoc, createOtDoc } from 'app/entity_editor/Document';
+import { find, get as getAtPath, includes, isObject, isString, noop } from 'lodash';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
-import * as logger from 'services/logger';
 import { createSpaceEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
@@ -80,39 +79,9 @@ export async function create(
         isCmaDocumentEnabled === true ||
         (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
-        // This is a hack that lets us get away with queue any shouts that might take place
-        // in the unlikely event that the update call completes prior to the document
-        // connection opening.
-        // Note that sharejs messages are pooled so this will not trigger multiple requests.
-        let queuedShouts = 0;
-        let shout = () => queuedShouts++;
-        let destroyConnection = noop;
-        docConnection.open(entity).then(
-          (info) => {
-            shout = () => info.doc.shout(['cma-auto-save']);
-            destroyConnection = () => info.destroy();
-            times(queuedShouts, shout);
-          },
-          (error) => {
-            logger.captureError(
-              new Error(
-                "Failed to open ShareJS connection to shout(['cma-auto-save']) required to trigger `auto_save` webhook"
-              ),
-              {
-                originalMessage: error.message,
-              }
-            );
-          }
-        );
-        const triggerCmaAutoSave = () => shout();
-        const entityRepo = createEntityRepo(
-          spaceEndpoint,
-          pubSubClient,
-          triggerCmaAutoSave,
-          entityRepoOptions
-        );
+        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, entityRepoOptions);
         doc = createCmaDoc(entity, contentTypeData, entityRepo, { patchEntryUpdates });
-        cleanup = () => doc.destroy().finally(destroyConnection);
+        cleanup = () => doc.destroy();
       } else {
         const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, entityRepoOptions);
         doc = createOtDoc(docConnection, entity, contentTypeData, user, entityRepo);

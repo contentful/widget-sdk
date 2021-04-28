@@ -18,6 +18,7 @@ import { cloneDeep, set } from 'lodash';
 
 const empty = require('../fixtures/responses/empty.json');
 const contentTypeSingle = require('../fixtures/responses/content-types-single.json');
+const contentTypeSingleWithRefField = require('../fixtures/responses/content-types-single-with-ref-field.json');
 const severalContentTypes = require('../fixtures/responses/content-types-several.json');
 const editorInterfaceWithoutSidebarResponseBody = require('../fixtures/responses/editor-interface-without-sidebar.json');
 const editorInterfaceWithSidebarResponseBody = require('../fixtures/responses/editor-interface-with-sidebar.json');
@@ -37,6 +38,7 @@ enum States {
   UPDATE_CONTENT_TYPE_APP_IMAGE_FOCAL_POINT = 'content_types/update-app-image-focal-point',
   NO_PUBLIC_CONTENT_TYPES = 'content_types/no-public-content-types',
   ONLY_ONE_CONTENT_TYPE_IS_PUBLIC = 'content_types/one-single-content-type',
+  ONLY_ONE_CONTENT_TYPE_WITH_REF_FIELD_IS_PUBLIC = 'content_types/one-single-content-type-with-ref-field',
   ONLY_ONE_CONTENT_TYPE_WITH_VALIDATION_IS_PUBLIC = 'content_types/one-single-content-type-with-validation',
   SEVERAL_CONTENT_TYPES_ARE_PUBLIC = 'content_types/several-public',
 }
@@ -86,6 +88,23 @@ export const getAllPublicContentTypesInDefaultSpace = {
     }).as('getAllPublicContentTypesInDefaultSpace');
 
     return '@getAllPublicContentTypesInDefaultSpace';
+  },
+  willReturnOneWithRefField() {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.ONLY_ONE_CONTENT_TYPE_WITH_REF_FIELD_IS_PUBLIC,
+      uponReceiving: `a request for all public content types in space "${defaultSpaceId}" with a reference field`,
+      withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: contentTypeSingleWithRefField,
+      },
+    }).as('getAllPublicContentTypesInDefaultSpaceWithRefField');
+
+    return '@getAllPublicContentTypesInDefaultSpaceWithRefField';
   },
   willReturnOneWithValidation() {
     cy.addInteraction({

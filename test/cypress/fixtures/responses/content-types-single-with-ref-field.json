@@ -1,0 +1,71 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 1,
+  "skip": 0,
+  "limit": 1000,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "gni2ifncgx0l"
+          }
+        },
+        "id": "testContentType",
+        "type": "ContentType",
+        "createdAt": "2019-04-08T09:12:00.101Z",
+        "updatedAt": "2019-04-08T09:12:00.101Z",
+        "publishedBy": {
+          "sys": {
+            "linkType": "User",
+            "type": "Link",
+            "id": "1AMbGlddLG0ISEoa1I423p"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 1
+      },
+      "displayField": "fieldID",
+      "name": "Test Content Type",
+      "description": "",
+      "fields": [
+        {
+          "id": "fieldID",
+          "apiName": "testFieldName",
+          "name": "Test field name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "arrayOfRefs",
+          "name": "arrayOfRefs",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    }
+  ]
+}

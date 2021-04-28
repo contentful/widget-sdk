@@ -160,7 +160,7 @@ describe('Entries list page', () => {
 
       cy.wait(interactions);
 
-      cy.findByTestId('entity-field-controls').should('be.visible');
+      cy.findAllByTestId('entity-field-controls').should('be.visible');
       cy.findByTestId('entry-editor-sidebar').should('be.visible');
     });
   });

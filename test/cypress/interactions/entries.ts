@@ -24,6 +24,7 @@ import { cloneDeep, set } from 'lodash';
 export enum States {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
+  SEVERAL_WITH_REFERENCE = 'entries/several-with-reference',
   NO_ERRORS = 'releases/no-errors',
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',

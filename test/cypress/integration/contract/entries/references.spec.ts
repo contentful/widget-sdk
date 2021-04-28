@@ -26,7 +26,8 @@ function setupTestServers(): void {
 describe('Entry references', () => {
   const setupInteractions = () => {
     defaultRequestsMock({
-      publicContentTypesResponse: ContentType.getAllPublicContentTypesInDefaultSpace.willReturnOne,
+      publicContentTypesResponse:
+        ContentType.getAllPublicContentTypesInDefaultSpace.willReturnOneWithRefField,
     });
     User.queryFirst100UsersInDefaultSpace.willFindSeveral();
 
