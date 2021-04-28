@@ -61,7 +61,9 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
           <Paragraph className={styles.uiExtensionInfoTitle}>
             Customize or extend the {location.toLowerCase()} by installing apps from the{' '}
             <TextLink
-              href="https://www.contentful.com/marketplace/?utm_campaign=in-app-help"
+              href={withInAppHelpUtmParams(inAppHelpMedium)(
+                'https://www.contentful.com/marketplace/'
+              )}
               target="_blank"
               rel="noopener noreferrer">
               Marketplace
@@ -69,7 +71,7 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
             or{' '}
             <TextLink
               href={withInAppHelpUtmParams(inAppHelpMedium)(
-                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
+                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/'
               )}
               target="_blank"
               rel="noopener noreferrer">

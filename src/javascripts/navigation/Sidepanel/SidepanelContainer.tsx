@@ -6,10 +6,13 @@ import * as Config from 'Config';
 import { SidepanelAppSwitcher } from './SidepanelAppSwitcher';
 import { useAppsList } from './useAppsList';
 import { WhatsNewContextProvider } from '@contentful/experience-components';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
-// we need to pass this utm parameters in the url
-// to make sure that analytics know that the traffic in those pages are coming from the user_interface
-const utmParams = 'utm_source=webapp';
+const urlWithUtm = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'app-switcher',
+  campaign: 'in-app-help',
+});
 
 const SidepanelContainer = () => {
   const [sidePanelIsShown, setSidePanelIsShown] = React.useState(false);
@@ -40,7 +43,7 @@ const SidepanelContainer = () => {
     return () => window.removeEventListener('keyup', handleEsc);
   }, [handleEsc]);
 
-  const changelogUrl = `${Config.developersChangelogUrl}/?${utmParams}`;
+  const changelogUrl = urlWithUtm(Config.developersChangelogUrl);
 
   return (
     <WhatsNewContextProvider changelogUrl={changelogUrl}>
