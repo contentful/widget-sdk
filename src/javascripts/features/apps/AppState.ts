@@ -22,22 +22,16 @@ export const getCurrentState = async (
     if (!contentTypeId) {
       continue;
     }
-    const controlsUsingApp = getControlsUsingApp({ widgetId, widgetNamespace }, editorInterface);
+    const widget = { widgetId, widgetNamespace };
+    const controlsUsingWidget = getControlsUsingWidget(widget, editorInterface);
 
-    const isIncludedInControls = controlsUsingApp.length > 0;
-    const positionInSidebar = getPositionInSidebar({ widgetId, widgetNamespace }, editorInterface);
+    const isIncludedInControls = controlsUsingWidget.length > 0;
+    const positionInSidebar = getPositionInSidebar(widget, editorInterface);
     const isIncludedInSidebar = positionInSidebar > -1;
 
     // If editor is singular, return the legacy boolean value
-    if (editorInterface.editor) {
-      set(
-        CurrentState.EditorInterface,
-        [contentTypeId, 'editor'],
-        areSameApp(editorInterface.editor, {
-          widgetId,
-          widgetNamespace,
-        })
-      );
+    if (editorInterface.editor && areSameApp(editorInterface.editor, widget)) {
+      set(CurrentState.EditorInterface, [contentTypeId, 'editor'], true);
       // if editors is a list, identify the position
     } else if (editorInterface.editors) {
       const positionInEditors = getPositionInEditors(
@@ -57,7 +51,7 @@ export const getCurrentState = async (
       set(
         CurrentState.EditorInterface,
         [contentTypeId, 'controls'],
-        newControls.concat(controlsUsingApp.map((ei) => ({ fieldId: ei.fieldId })))
+        newControls.concat(controlsUsingWidget.map((ei) => ({ fieldId: ei.fieldId })))
       );
     }
 
@@ -146,7 +140,7 @@ const validatePositionalPartialTargetState = (
   }
 };
 
-const getControlsUsingApp = (app, editorInterface): Array<Control> => {
+const getControlsUsingWidget = (app, editorInterface): Array<Control> => {
   if (editorInterface.controls) {
     return editorInterface.controls.filter((control) => areSameApp(control, app));
   }
