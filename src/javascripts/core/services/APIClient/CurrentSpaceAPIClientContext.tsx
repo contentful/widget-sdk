@@ -14,18 +14,22 @@ export const CurrentSpaceAPIClientContext = React.createContext<CurrentSpaceAPIC
 );
 
 export const CurrentSpaceAPIClientProvider: React.FC<{}> = (props) => {
-  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
-  const [client, setClient] = React.useState(createAPIClient(currentSpaceId, currentEnvironmentId));
+  const { currentSpaceId, currentEnvironmentId, currentEnvironmentAliasId } = useSpaceEnvContext();
+  const resolvedEnvironmentId = currentEnvironmentAliasId || currentEnvironmentId;
+
+  const [client, setClient] = React.useState(
+    createAPIClient(currentSpaceId, resolvedEnvironmentId)
+  );
   const [customWidgetClient, setCustomWidgetClient] = React.useState(
-    createAPIClient(currentSpaceId, currentEnvironmentId, Source.CustomWidget)
+    createAPIClient(currentSpaceId, resolvedEnvironmentId, Source.CustomWidget)
   );
 
   React.useEffect(() => {
-    setClient(createAPIClient(currentSpaceId, currentEnvironmentId));
+    setClient(createAPIClient(currentSpaceId, resolvedEnvironmentId));
     setCustomWidgetClient(
-      createAPIClient(currentSpaceId, currentEnvironmentId, Source.CustomWidget)
+      createAPIClient(currentSpaceId, resolvedEnvironmentId, Source.CustomWidget)
     );
-  }, [currentSpaceId, currentEnvironmentId]);
+  }, [currentSpaceId, resolvedEnvironmentId]);
 
   return (
     <CurrentSpaceAPIClientContext.Provider value={{ client, customWidgetClient }}>
