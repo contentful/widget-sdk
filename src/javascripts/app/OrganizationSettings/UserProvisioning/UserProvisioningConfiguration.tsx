@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
-  Workbench,
+  Button,
+  Heading,
+  ModalLauncher,
+  Note,
+  Paragraph,
   TextField,
   TextLink,
-  Heading,
-  Paragraph,
-  Note,
-  Button,
   Typography,
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { css } from 'emotion';
-import { helpCenterUrl, apiUrl } from 'Config';
+import { apiUrl, helpCenterUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { GenerateCMATokenDialog, TokenResourceManager } from 'features/api-keys-management';
 import * as Auth from 'Authentication';
 import UserProvisioningToken from './UserProvisioningToken';
@@ -50,7 +49,7 @@ const styles = {
   }),
 };
 
-export default function UserProvisioningConfiguration({ orgId }) {
+export default function UserProvisioningConfiguration({ orgId }: { orgId: string }) {
   const SCIM_BASE = apiUrl(`scim/v2/organizations/${orgId}`);
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
   const tokenResourceManager = TokenResourceManager.createToken(Auth);
@@ -133,7 +132,3 @@ export default function UserProvisioningConfiguration({ orgId }) {
     </Workbench>
   );
 }
-
-UserProvisioningConfiguration.propTypes = {
-  orgId: PropTypes.string.isRequired,
-};

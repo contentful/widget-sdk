@@ -17,6 +17,7 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
+  ...jest.requireActual('data/CMA/ProductCatalog'),
   getOrgFeature: jest.fn().mockResolvedValue(true),
 }));
 

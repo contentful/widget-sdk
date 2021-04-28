@@ -36,12 +36,36 @@ const organizationsSpacesRoute = {
   }),
 };
 
+/** Organization Access Tools */
+
+type OrganizationUserProvisioningRouteType = {
+  path: 'organizations.userProvisioning';
+  orgId: string;
+};
+
+const organizationUserProvisioning = {
+  'organizations.userProvisioning': (
+    _,
+    { orgId }: Omit<OrganizationUserProvisioningRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.access-tools.user-provisioning',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsSpacesRoute,
+  ...organizationUserProvisioning,
 };
 
-type OrganizationSettingsRouteType = OrganizationUsageRouteType | OrganizationSpacesRouteType;
+type OrganizationSettingsRouteType =
+  | OrganizationUsageRouteType
+  | OrganizationSpacesRouteType
+  | OrganizationUserProvisioningRouteType;
 
 export type { OrganizationSettingsRouteType };
 

@@ -15,6 +15,7 @@ function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
   const orgSpacesRoute = routes['organizations.spaces']({}, { orgId });
   const orgUsageRoute = routes['organizations.usage']({}, { orgId });
+  const userProvisioning = routes['organizations.userProvisioning']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
@@ -28,11 +29,10 @@ function getItems(params, { orgId }) {
     },
     {
       title: 'User provisioning',
-      sref: 'account.organizations.access-tools.user-provisioning',
-      srefParams: { orgId },
-      srefOptions: {
-        inherit: false,
-      },
+      sref: userProvisioning.path,
+      srefParams: userProvisioning.params,
+      rootSref: userProvisioning.path,
+      srefOptions: { inherit: false },
       dataViewType: 'organization-user-provisioning',
     },
   ];

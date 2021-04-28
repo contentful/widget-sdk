@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
@@ -9,11 +8,11 @@ import UserProvisioningUpsellState from './UserProvisioningUpsellState';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
-  const featureEnabled = await getOrgFeature(orgId, 'scim');
+  const featureEnabled = await getOrgFeature(orgId, OrganizationFeatures.SCIM);
   return { featureEnabled };
 });
 
-export default function UserProvisioning({ orgId }) {
+export default function UserProvisioning({ orgId }: { orgId: string }) {
   return (
     <OrgAdminOnly orgId={orgId}>
       <DocumentTitle title="User provisioning" />
@@ -35,7 +34,3 @@ export default function UserProvisioning({ orgId }) {
     </OrgAdminOnly>
   );
 }
-
-UserProvisioning.propTypes = {
-  orgId: PropTypes.string.isRequired,
-};
