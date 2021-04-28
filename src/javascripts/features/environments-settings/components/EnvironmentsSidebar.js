@@ -18,13 +18,17 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
-const ENV_DOC_SIDEBAR_UTM_PARAMS =
-  '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
+const urlWithUtm = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'environments-sidebar',
+  campaign: 'in-app-help',
+});
 
 const docLinks = {
-  domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${ENV_DOC_SIDEBAR_UTM_PARAMS}`,
-  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${ENV_DOC_SIDEBAR_UTM_PARAMS}`,
+  domainModelConcepts: urlWithUtm(`${Config.developerDocsUrl}/concepts/domain-model/`),
+  envAliasesConcepts: urlWithUtm(`${Config.developerDocsUrl}/concepts/environment-aliases/`),
 };
 
 const sidebarStyles = {

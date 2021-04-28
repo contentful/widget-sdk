@@ -7,6 +7,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import * as Config from 'Config';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
   button: css({
@@ -18,7 +19,11 @@ const styles = {
 
 // we need to pass this utm parameters in the url
 // to make sure that analytics know that the traffic in those pages are coming from the user_interface
-const utmParams = 'utm_source=webapp&utm_medium=help-menu&utm_campaign=in-app-help';
+const urlWithUtm = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'help-menu',
+  campaign: 'in-app-help',
+});
 
 function KnowledgeMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +51,7 @@ function KnowledgeMenu() {
       <DropdownList>
         <DropdownListItem
           testId="help-menu-help-center"
-          href={`${Config.helpCenterUrl}/?${utmParams}`}
+          href={urlWithUtm(Config.helpCenterUrl)}
           target="_blank"
           rel="noopener noreferrer">
           Help center
@@ -54,7 +59,7 @@ function KnowledgeMenu() {
 
         <DropdownListItem
           testId="help-menu-docs"
-          href={`${Config.developerDocsUrl}/?${utmParams}`}
+          href={urlWithUtm(Config.developerDocsUrl)}
           target="_blank"
           rel="noopener noreferrer">
           Developer docs
