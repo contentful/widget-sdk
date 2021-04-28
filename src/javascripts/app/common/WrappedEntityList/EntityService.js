@@ -1,7 +1,7 @@
 import { entityHelpers } from '@contentful/field-editor-shared';
 import TheLocaleStore from 'services/localeStore';
 import * as PublicContentType from 'widgets/PublicContentType';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import _ from 'lodash';
 import { getSpaceContext } from 'classes/spaceContext';
 
@@ -14,12 +14,7 @@ function getContentTypeById(contentTypeId) {
 }
 
 export async function getEntityData(entity) {
-  const spaceContext = getSpaceContext();
-
-  const cma = getCMAClient({
-    spaceId: spaceContext.getId(),
-    environmentId: spaceContext.getEnvironmentId(),
-  });
+  const cma = getSpaceEnvCMAClient();
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const status = entityHelpers.getEntryStatus(entity.sys);

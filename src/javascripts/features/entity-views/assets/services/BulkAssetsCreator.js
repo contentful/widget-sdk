@@ -4,8 +4,7 @@ import * as Config from 'Config';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import * as logger from 'services/logger';
-import { getSpaceContext } from 'classes/spaceContext';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 /**
  * @typedef { import("contentful-management").PlainClientAPI }  PlainClientAPI
@@ -26,12 +25,7 @@ export function open(localeCode) {
     throw new TypeError('locale must be a string');
   }
 
-  const spaceContext = getSpaceContext();
-
-  const cma = getCMAClient({
-    spaceId: spaceContext.getId(),
-    environmentId: spaceContext.getEnvironmentId(),
-  });
+  const cma = getSpaceEnvCMAClient();
 
   const { apiKey, policy, signature } = Config.services.filestack;
 
