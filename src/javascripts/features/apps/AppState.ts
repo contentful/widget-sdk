@@ -146,16 +146,6 @@ const validatePositionalPartialTargetState = (
   }
 };
 
-const isIncludedInEditors = (app, editorInterface): boolean => {
-  if (editorInterface.editor) {
-    return areSameApp(editorInterface.editor, app);
-  } else if (editorInterface.editors) {
-    return editorInterface.editors.some((editor) => areSameApp(editor, app));
-  }
-
-  return false;
-};
-
 const getControlsUsingApp = (app, editorInterface): Array<Control> => {
   if (editorInterface.controls) {
     return editorInterface.controls.filter((control) => areSameApp(control, app));
