@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 import { css } from 'emotion';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 
@@ -11,6 +11,7 @@ import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as logger from 'services/logger';
+import { useRouteNavigate } from 'core/react-routing';
 
 import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
 
@@ -34,12 +35,6 @@ const fetch = (organizationId) => async () => {
   return true;
 };
 
-const goToBillingDashboard = () => {
-  return go({
-    path: ['account', 'organizations', 'billing'],
-  });
-};
-
 const handleSuccess = async (organizationId, paymentMethodRefId) => {
   try {
     await setDefaultPaymentMethod(organizationId, paymentMethodRefId);
@@ -49,18 +44,22 @@ const handleSuccess = async (organizationId, paymentMethodRefId) => {
   }
 
   Notification.success('Credit card successfully updated.');
-
-  goToBillingDashboard();
 };
 
-export function EditPaymentMethodRouter({ orgId: organizationId }) {
+export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
+  const navigate = useRouteNavigate();
+
   const [showZuoraIframe, setShowZuoraIframe] = useState(false);
 
-  const { data: shouldShowZuoraIframe } = useAsync(useCallback(fetch(organizationId), []));
+  const { data: shouldShowZuoraIframe } = useAsync(useCallback(fetch(orgId), []));
 
-  const onSuccess = useCallback(({ refId }) => handleSuccess(organizationId, refId), [
-    organizationId,
-  ]);
+  const onSuccess = useCallback(
+    ({ refId }) =>
+      handleSuccess(orgId, refId).then(() => {
+        navigate({ path: 'organizations.billing', orgId });
+      }),
+    [orgId, navigate]
+  );
 
   const onError = useCallback((error) => {
     logger.captureError(new Error('Zuora credit card iframe error'), {
@@ -93,9 +92,11 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
           {showZuoraIframe && (
             <div className={css({ maxWidth: '600px', margin: '0 auto' })}>
               <ZuoraCreditCardIframe
-                organizationId={organizationId}
+                organizationId={orgId}
                 onSuccess={onSuccess}
-                onCancel={goToBillingDashboard}
+                onCancel={() => {
+                  navigate({ path: 'organizations.billing', orgId });
+                }}
                 onError={onError}
               />
             </div>
@@ -105,7 +106,3 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
     </>
   );
 }
-
-EditPaymentMethodRouter.propTypes = {
-  orgId: PropTypes.string.isRequired,
-};

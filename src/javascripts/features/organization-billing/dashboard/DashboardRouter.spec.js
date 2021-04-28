@@ -9,6 +9,7 @@ import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isSelfServicePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
+import { MemoryRouter } from 'core/react-routing';
 import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
@@ -38,6 +39,7 @@ jest.mock('services/OrganizationRoles', () => ({
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+  href: jest.fn(),
 }));
 
 const mockBasePlanSelfService = Fake.Plan({
@@ -199,5 +201,9 @@ describe('DashboardRouter', () => {
 });
 
 function build() {
-  render(<DashboardRouter orgId={mockOrganization.sys.id} />);
+  render(
+    <MemoryRouter>
+      <DashboardRouter orgId={mockOrganization.sys.id} />
+    </MemoryRouter>
+  );
 }

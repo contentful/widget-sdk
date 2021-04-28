@@ -2,16 +2,12 @@ import React from 'react';
 import { render, screen, within, fireEvent, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
-import { go } from 'states/Navigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { MemoryRouter } from 'core/react-routing';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
 import { Dashboard } from './Dashboard';
-
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
-}));
 
 const mockOrganization = Fake.Organization();
 const mockInvoiceData = new ArrayBuffer([1, 2, 3, 4]);
@@ -56,16 +52,6 @@ describe('Dashboard', () => {
       expect(screen.getByTestId('invoices-loading')).toBeVisible();
       expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
       expect(screen.getByTestId('billing-details-loading')).toBeVisible();
-    });
-
-    it('should go to the payment method edit page if the credit card "Edit" link is clicked', () => {
-      build();
-
-      fireEvent.click(screen.getByTestId('edit-payment-method-link'));
-
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'billing', 'edit-payment-method'],
-      });
     });
 
     it('should open a modal if the billing details "Edit" link is clicked', () => {
@@ -250,5 +236,9 @@ function renderDashboard(custom) {
     custom
   );
 
-  render(<Dashboard {...props} />);
+  render(
+    <MemoryRouter>
+      <Dashboard {...props} />
+    </MemoryRouter>
+  );
 }

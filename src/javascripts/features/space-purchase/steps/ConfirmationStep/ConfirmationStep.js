@@ -13,7 +13,7 @@ import {
 import { Grid, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
@@ -84,9 +84,9 @@ export const ConfirmationStep = ({ track, onBack, onSubmit }) => {
                         intent: 'edit_billing',
                       });
 
-                      go({
-                        path: 'account.organizations.billing',
-                        params: { orgId: organization.sys.id },
+                      router.navigate({
+                        path: 'organizations.billing',
+                        orgId: organization.sys.id,
                       });
                     }}>
                     Edit

@@ -1,10 +1,9 @@
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
-import { go } from 'states/Navigator';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { setUser } from 'services/OrganizationRoles';
-
+import { router } from 'core/react-routing';
 import { ConfirmationStep } from './ConfirmationStep';
 import { renderWithProvider } from '../../__tests__/helpers';
 
@@ -34,8 +33,10 @@ const mockPaymentMethod = {
   expirationDate: { month: 3, year: 2021 },
 };
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
+jest.mock('core/react-routing', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 describe('ConfirmationStep', () => {
@@ -83,9 +84,9 @@ describe('ConfirmationStep', () => {
       intent: 'edit_billing',
     });
 
-    expect(go).toHaveBeenCalledWith({
-      path: 'account.organizations.billing',
-      params: { orgId: mockOrganization.sys.id },
+    expect(router.navigate).toHaveBeenCalledWith({
+      path: 'organizations.billing',
+      orgId: mockOrganization.sys.id,
     });
   });
 

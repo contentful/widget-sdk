@@ -121,6 +121,40 @@ const organizationsSubscriptionBillingRoute = {
   }),
 };
 
+/**
+ * Organization subscription billing
+ */
+
+type OrganizationBillingRouteType = {
+  path: 'organizations.billing';
+  orgId: string;
+};
+
+type OrganizationBillingEditPaymentRouteType = {
+  path: 'organizations.billing.edit-payment-method';
+  orgId: string;
+};
+
+const organizationsBillingRoute = {
+  'organizations.billing': (_, { orgId }: Omit<OrganizationBillingRouteType, 'path'>) => ({
+    path: 'account.organizations.billing',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+  'organizations.billing.edit-payment-method': (
+    _,
+    { orgId }: Omit<OrganizationBillingEditPaymentRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.billing',
+    params: {
+      pathname: '/edit_payment_method',
+      orgId,
+    },
+  }),
+};
+
 /** Organization Access Tools */
 
 type OrganizationUserProvisioningRouteType = {
@@ -148,6 +182,7 @@ const routes = {
   ...organizationsSubscriptionV1Route,
   ...organizationsSubscriptionBillingRoute,
   ...organizationsSpacesRoute,
+  ...organizationsBillingRoute,
   ...organizationUserProvisioning,
 };
 
@@ -158,7 +193,9 @@ type OrganizationSettingsRouteType =
   | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
   | OrganizationSpacesRouteType
-  | OrganizationUserProvisioningRouteType;
+  | OrganizationUserProvisioningRouteType
+  | OrganizationBillingRouteType
+  | OrganizationBillingEditPaymentRouteType;
 
 export type { OrganizationSettingsRouteType };
 

@@ -31,8 +31,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
 import { pieces } from 'utils/StringUtils';
 import { toLocaleString } from 'utils/NumberUtils';
-import { go } from 'states/Navigator';
-
+import { RouteLink } from 'core/react-routing';
 import { EditBillingDetailsModal } from '../components/EditBillingDetailsModal';
 import { downloadBlob } from 'core/utils/downloadBlob';
 
@@ -53,7 +52,7 @@ const styles = {
   noInvoices: css({
     columnSpan: 'all',
   }),
-  tableHeading: css({
+  padding: css({
     marginTop: tokens.spacingM,
     marginLeft: tokens.spacingM,
   }),
@@ -117,22 +116,17 @@ export function Dashboard({
                       <GridItem>
                         <div className={styles.billingDetailsHeading}>
                           <strong>Credit card</strong>
-                          <TextLink
+                          <RouteLink
+                            as={TextLink}
+                            route={{
+                              path: 'organizations.billing.edit-payment-method',
+                              orgId: organizationId,
+                            }}
                             testId="edit-payment-method-link"
-                            onClick={() =>
-                              go({
-                                path: [
-                                  'account',
-                                  'organizations',
-                                  'billing',
-                                  'edit-payment-method',
-                                ],
-                              })
-                            }
                             className={styles.editLink}
                             disabled={loading}>
                             Edit
-                          </TextLink>
+                          </RouteLink>
                         </div>
                         {loading && <CreditCardDetailsLoading />}
                         {!loading && (
@@ -176,9 +170,9 @@ export function Dashboard({
               })}>
               <Card padding="none">
                 <Typography>
-                  <Heading className={styles.tableHeading}>Invoices</Heading>
+                  <Heading className={styles.padding}>Invoices</Heading>
                   {!loading && orgIsEnterprise && (
-                    <Paragraph testId="enterprise-ae">
+                    <Paragraph className={styles.padding} testId="enterprise-ae">
                       To update your billing details contact your account executive.
                     </Paragraph>
                   )}

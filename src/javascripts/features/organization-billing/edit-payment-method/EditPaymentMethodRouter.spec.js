@@ -8,6 +8,7 @@ import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import * as logger from 'services/logger';
+import { MemoryRouter } from 'core/react-routing';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
@@ -28,6 +29,7 @@ jest.mock('services/OrganizationRoles', () => ({
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+  href: jest.fn(),
 }));
 
 jest.mock('utils/LazyLoader', () => {
@@ -113,9 +115,6 @@ describe('EditPaymentMethodRouter', () => {
           },
         })
       );
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'billing'],
-      });
     });
 
     it('should log the error and show an error notification if the Zuora iframe errors when rendering', async () => {
@@ -138,7 +137,6 @@ describe('EditPaymentMethodRouter', () => {
       await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
       expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
-      expect(go).not.toBeCalled();
     });
 
     it('should show a success notification if the request succeeds', async () => {
@@ -152,7 +150,11 @@ describe('EditPaymentMethodRouter', () => {
 });
 
 function build() {
-  render(<EditPaymentMethodRouter orgId={mockOrganization.sys.id} />);
+  render(
+    <MemoryRouter>
+      <EditPaymentMethodRouter orgId={mockOrganization.sys.id} />
+    </MemoryRouter>
+  );
 }
 
 async function waitForZuoraToRender() {

@@ -18,6 +18,7 @@ function getItems(params, { orgId }) {
   const editRoute = routes['organizations.edit']({}, { orgId });
   const offsiteBackupRoute = routes['organizations.offsitebackup']({}, { orgId });
   const subscriptionV1Route = routes['organizations.subscription_v1']({}, { orgId });
+  const billing = routes['organizations.billing']({}, { orgId });
   const userProvisioning = routes['organizations.userProvisioning']({}, { orgId });
 
   const accessToolsDropdownItems = [
@@ -88,9 +89,9 @@ function getItems(params, { orgId }) {
     {
       if: params.hasBillingTab,
       title: 'Billing',
-      sref: 'account.organizations.billing',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.billing',
+      sref: billing.path,
+      srefParams: billing.params,
+      rootSref: billing.path,
       srefOptions: {
         inherit: false,
       },
