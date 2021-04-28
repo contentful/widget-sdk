@@ -112,12 +112,17 @@ const createAPIClient = (editorInterfaceResponse) => {
 describe('AppState', () => {
   describe('#getCurrentState', () => {
     it('includes editor', async () => {
-      const contentType = 'ct1';
+      const contentTypeOne = 'ct1';
+      const contentTypeTwo = 'ct1';
 
       const editorInterfaceResponse = createEditorInterfaceResponse(
         createEditorInterface({
-          contentTypeId: contentType,
+          contentTypeId: contentTypeOne,
           editor: makeEditor(),
+        }),
+        createEditorInterface({
+          contentTypeId: contentTypeTwo,
+          editor: makeEditor('anotherId'),
         })
       );
       const apiClient = createAPIClient(editorInterfaceResponse);
@@ -126,7 +131,7 @@ describe('AppState', () => {
 
       expect(result).toEqual({
         EditorInterface: {
-          [contentType]: { editor: true },
+          [contentTypeOne]: { editor: true },
         },
       });
     });
