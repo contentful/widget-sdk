@@ -47,6 +47,7 @@ interface BasePlanCardProps {
   // Community orgs have one community space and we create a link in the card to upgrade them, for that we need that space’s id
   upgradableSpaceId?: GetCustomRenderNodeOptions['upgradableSpaceId'];
   users?: GetCustomRenderNodeOptions['users'];
+  daysOfTrial?: GetCustomRenderNodeOptions['daysOfTrial'];
   loading: boolean;
 }
 
@@ -55,14 +56,15 @@ export function BasePlanCard({
   organizationId,
   upgradableSpaceId,
   users,
+  daysOfTrial,
   loading,
 }: BasePlanCardProps) {
-  const colorAccent = content?.colorAccent.fields.value;
+  const colorAccent = loading ? 'colorElementLight' : content?.colorAccent?.fields.value;
 
   return (
     <Card
       testId="base-plan-card"
-      className={styles.card(colorAccent ?? 'colorElementLight')}
+      className={colorAccent && styles.card(colorAccent)}
       padding="large">
       <Grid columns="3fr 2fr" columnGap="spacingL">
         {(loading || !content) && <LoadingState />}
@@ -77,6 +79,7 @@ export function BasePlanCard({
                   upgradableSpaceId,
                   users,
                   colorAccent,
+                  daysOfTrial,
                 })}
               />
             </Typography>

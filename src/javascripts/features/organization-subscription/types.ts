@@ -2,9 +2,16 @@ import type { Document } from '@contentful/rich-text-types';
 import type { Asset, Entry } from 'contentful';
 import type { Plan } from 'features/pricing-entities';
 
+export enum BasePlanContentEntryIds {
+  ENTERPRISE_TRIAL = '65ZcfrVyOZPGK0L7eSRul2',
+  ENTERPRISE = 'G7TaplIVAIntn3QIDaSCd',
+  FREE = 'iYmIKepKvlhOx78uwCvbi',
+  SELF_SERVICE = '7y4ItLmbvc3ZGl0L8vtRPB',
+}
+
 export interface BasePlanContent {
   title: string;
-  colorAccent: Entry<{ name: string; value: string }>;
+  colorAccent?: Entry<{ name: string; value: string }>;
   description: Document;
   illustration: Asset;
 }

@@ -1,114 +1,117 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
 
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+
+import { mockWebappContent } from './__mocks__/webappContent';
+import { BasePlanContentEntryIds } from '../types';
 import { EnterpriseSubscriptionPage } from './EnterpriseSubscriptionPage';
 
-import * as trackCTA from 'analytics/trackCTA';
-
-import { beginSpaceCreation } from 'services/CreateSpace';
-
-jest.mock('services/CreateSpace', () => ({
-  beginSpaceCreation: jest.fn(),
+jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
+  fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwner: jest.fn(),
   isOwnerOrAdmin: jest.fn(),
 }));
-
-jest.mock('../utils', () => ({
-  links: {
-    billing: jest.fn(),
-    memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
-  },
-}));
-
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
-  href: jest.fn(),
-  getCurrentStateName: jest.fn(),
-}));
-
-const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 
 const mockOrganization = Fake.Organization();
 const mockTrialOrganization = Fake.Organization({
   trialPeriodEndsAt: new Date(),
 });
-
-const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
+const mockFreeSpacePlan = {
+  name: 'Mock free space',
+  planType: 'free_space',
+  space: { sys: { id: 'test' } },
+};
 
 describe('EnterpriseSubscriptionPage', () => {
   beforeEach(() => {
-    isOwner.mockReturnValue(true);
-    getVariation.mockClear().mockResolvedValue(false);
-    isOwnerOrAdmin.mockReturnValue(true);
+    fetchWebappContentByEntryID.mockReset().mockResolvedValue(mockWebappContent);
   });
 
-  it('should show skeletons when initialLoad is true', () => {
-    build({ initialLoad: true });
+  describe('BasePlan section', () => {
+    it('show the BasePlanCard initially loading', async () => {
+      await build();
 
-    screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
-      expect(ele).toBeVisible();
-    });
-  });
+      const basePlanCard = screen.getByTestId('base-plan-card');
+      const skeletons = within(basePlanCard).queryAllByTestId('cf-ui-skeleton-form');
 
-  it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
-    build();
-
-    userEvent.click(screen.getByTestId('subscription-page.create-space'));
-    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
-      organizationId: mockOrganization.sys.id,
-    });
-    expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
-  });
-
-  describe('organization on platform trial', () => {
-    beforeEach(() => {
-      isOwnerOrAdmin.mockReturnValue(true);
+      expect(basePlanCard).toBeVisible();
+      skeletons.forEach((skeleton) => expect(skeleton).toBeVisible());
     });
 
-    it('should show trial info for admins and owners', () => {
-      build({
-        organization: mockTrialOrganization,
+    it('show the BasePlanCard with the fetched content', async () => {
+      await build();
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.ENTERPRISE);
+
+      const basePlanCard = screen.getByTestId('base-plan-card');
+
+      expect(basePlanCard).toBeVisible();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('base-plan-title')).toBeVisible();
       });
+    });
+
+    it('fetches Enterprise content by default', async () => {
+      await build();
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.ENTERPRISE);
+    });
+
+    it('fetches Enterprise trial content when organization has trialPeriodEndsAt', async () => {
+      await build({ organization: mockTrialOrganization });
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(
+        BasePlanContentEntryIds.ENTERPRISE_TRIAL
+      );
+    });
+  });
+
+  describe('Enterprise trial info', () => {
+    it('should show EnterpriseTrialInfo for organizations on Enterprise trial', async () => {
+      await build({ organization: mockTrialOrganization });
 
       expect(screen.getByTestId('platform-trial-info')).toBeVisible();
     });
+  });
 
-    it('should show trial info and spaces section for members', () => {
-      isOwnerOrAdmin.mockReturnValueOnce(false);
-      build({
-        organization: mockTrialOrganization,
-        memberAccessibleSpaces: [],
-      });
+  describe('Spaces section', () => {
+    it('shows the space plans’ table', async () => {
+      await build();
 
-      expect(screen.getByTestId('platform-trial-info')).toBeVisible();
-      expect(screen.getByTestId('subscription-page-trial-members.heading')).toBeVisible();
-      expect(
-        screen.getByTestId('subscription-page-trial-members.no-spaces-placeholder')
-      ).toBeVisible();
+      const spacesTable = screen.getByTestId('subscription-page.table');
+      expect(spacesTable).toBeVisible();
+    });
+
+    it('shows SpacesListForMembers if organization is on trial AND user is not admin or owner', async () => {
+      isOwnerOrAdmin.mockReturnValue(false);
+      await build({ organization: mockTrialOrganization });
+
+      const spacesListForMembers = screen.getByTestId('subscription-page-trial-members.heading');
+      expect(spacesListForMembers).toBeVisible();
     });
   });
 });
 
-function build(custom) {
-  const props = Object.assign(
-    {
-      initialLoad: false,
-      organization: mockOrganization,
-      basePlan: mockBasePlan,
-      spacePlans: [],
-      grandTotal: null,
-      usersMeta: null,
-      onSpacePlansChange: null,
-    },
-    custom
-  );
+async function build(customProps) {
+  const props = {
+    initialLoad: false,
+    memberAccessibleSpaces: [],
+    onSpacePlansChange: jest.fn(),
+    organization: mockOrganization,
+    spacePlans: [mockFreeSpacePlan],
+    usersMeta: null,
+    ...customProps,
+  };
 
   render(<EnterpriseSubscriptionPage {...props} />);
+
+  await waitFor(() => {
+    expect(fetchWebappContentByEntryID).toHaveBeenCalled();
+  });
 }

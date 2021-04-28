@@ -13,3 +13,4 @@ export {
 
 export { useAppsTrial, clearAppsTrialCache } from './hooks/useAppsTrial';
 export { trialState } from './TrialState';
+export { calcTrialDaysLeft } from './utils/utils';

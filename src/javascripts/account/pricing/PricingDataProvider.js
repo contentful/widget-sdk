@@ -2,6 +2,8 @@ import { get, uniqueId, uniq } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 import { getAllPlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
+import isLegacyEnterprise from 'data/isLegacyEnterprise';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
@@ -26,6 +28,11 @@ export function isSelfServicePlan(plan) {
 
 export function isEnterprisePlan(plan) {
   return customerTypes.enterprise.includes(plan.customerType);
+}
+
+export function isLegacyEnterpriseOrEnterprisePlan(organization, plan) {
+  const isLegacyOrg = isLegacyOrganization(organization);
+  return isLegacyOrg ? isLegacyEnterprise(organization) : isEnterprisePlan(plan);
 }
 
 export function isFreePlan(plan) {

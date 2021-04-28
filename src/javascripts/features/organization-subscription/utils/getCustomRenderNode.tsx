@@ -34,6 +34,7 @@ const styles = {
 export interface GetCustomRenderNodeOptions {
   upgradableSpaceId?: string;
   colorAccent?: string;
+  daysOfTrial?: number;
   users?: {
     count: number;
     limit: number;
@@ -106,6 +107,10 @@ export const getCustomRenderNode = (
 
       if (fields.value === InternalVariableValues.LIMIT_OF_USERS) {
         return options.users.limit;
+      }
+
+      if (fields.value === InternalVariableValues.ENTERPRISE_TRIAL_DAYS && options.daysOfTrial) {
+        return options.daysOfTrial;
       }
     }
   },

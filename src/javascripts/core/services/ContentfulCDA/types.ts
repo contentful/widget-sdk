@@ -37,4 +37,5 @@ export enum InternalActionValues {
 export enum InternalVariableValues {
   LIMIT_OF_USERS = 'limit_of_users',
   NUMBER_OF_USERS = 'number_of_users',
+  ENTERPRISE_TRIAL_DAYS = 'enterprise_trial_days',
 }

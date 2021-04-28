@@ -24,6 +24,7 @@ import { hasAnyInaccessibleSpaces } from '../utils/utils';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
+import { BasePlanContentEntryIds } from '../types';
 import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
@@ -46,10 +47,10 @@ const fetchContent = (basePlan: BasePlan) => async (): Promise<{
   try {
     switch (basePlan?.customerType) {
       case PlanCustomerType.FREE:
-        basePlanContent = await fetchWebappContentByEntryID('iYmIKepKvlhOx78uwCvbi');
+        basePlanContent = await fetchWebappContentByEntryID(BasePlanContentEntryIds.FREE);
         break;
       case PlanCustomerType.SELF_SERVICE:
-        basePlanContent = await fetchWebappContentByEntryID('7y4ItLmbvc3ZGl0L8vtRPB');
+        basePlanContent = await fetchWebappContentByEntryID(BasePlanContentEntryIds.SELF_SERVICE);
         break;
       default:
         break;

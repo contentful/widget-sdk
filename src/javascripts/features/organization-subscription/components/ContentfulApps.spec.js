@@ -35,6 +35,7 @@ describe('ContentfulAppTrial', () => {
   it('should display Buy Now button for eligible users', () => {
     useAppsTrial.mockReturnValue({ isAppsTrialActive: true });
     build();
+    expect(screen.getByTestId('apps-trial-header')).toBeVisible();
     expect(screen.getByTestId('buy-now-button')).toBeVisible();
   });
 

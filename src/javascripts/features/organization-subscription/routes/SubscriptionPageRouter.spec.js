@@ -3,7 +3,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 
 import { getOrganization } from 'services/TokenStore';
-import { getPlansWithSpaces, FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+import {
+  getPlansWithSpaces,
+  isLegacyEnterpriseOrEnterprisePlan,
+  FREE,
+  SELF_SERVICE,
+  ENTERPRISE,
+  ENTERPRISE_HIGH_DEMAND,
+} from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { getVariation } from 'LaunchDarkly';
 import { getSpaces } from 'services/TokenStore';
@@ -40,6 +47,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreeSpacePlan: jest.fn().mockReturnValue(true),
   isFreePlan: jest.fn().mockReturnValue(true),
   isPartnerPlan: jest.fn().mockReturnValue(false),
+  isLegacyEnterpriseOrEnterprisePlan: jest.fn().mockReturnValue(false),
 }));
 jest.mock('features/pricing-entities', () => ({
   getAllProductRatePlans: jest.fn().mockReturnValue([]),
@@ -74,7 +82,7 @@ jest.mock('features/trials', () => ({
 }));
 
 // NonEnterprise-, Enterprise-, and SubscriptionPage mocks
-jest.mock('core/services/ContentfulCDA', () => ({
+jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
   fetchWebappContentByEntryID: jest.fn().mockResolvedValue(mockWebappContent),
 }));
 jest.mock('../utils/utils', () => ({
@@ -136,6 +144,24 @@ describe('SubscriptionPageRouter', () => {
     await build();
 
     expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
+  });
+
+  it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise" basePlan ', async () => {
+    const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE };
+    getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
+    isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+    await build();
+
+    expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
+  });
+
+  it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise High Demand" basePlan ', async () => {
+    const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE_HIGH_DEMAND };
+    getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
+    isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+    await build();
+
+    expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
   });
 });
 

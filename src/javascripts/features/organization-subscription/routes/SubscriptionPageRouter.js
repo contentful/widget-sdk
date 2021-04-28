@@ -7,7 +7,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
-  isEnterprisePlan,
+  isLegacyEnterpriseOrEnterprisePlan,
   FREE,
   SELF_SERVICE,
   ENTERPRISE,
@@ -17,13 +17,11 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { LoadingState } from 'features/loading-state';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization, getSpaces } from 'services/TokenStore';
 import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOrganizationOnTrial } from 'features/trials';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -37,12 +35,6 @@ import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscription
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
 const TiersWithContent = [FREE, SELF_SERVICE, ENTERPRISE, ENTERPRISE_HIGH_DEMAND];
-
-function isOrganizationEnterprise(organization, basePlan) {
-  const isLegacyOrg = isLegacyOrganization(organization);
-
-  return isLegacyOrg ? isLegacyEnterprise(organization) : isEnterprisePlan(basePlan);
-}
 
 async function fetchNumMemberships(organizationId) {
   const resources = createResourceService(organizationId, 'organization');
@@ -89,8 +81,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
   const isSubscriptionPageRebrandingEnabled = await getVariation(
     FLAGS.SUBSCRIPTION_PAGE_REBRANDING
   );
-  const orgIsEnterprise = isOrganizationEnterprise(organization, basePlan);
-
+  const orgIsEnterprise = isLegacyEnterpriseOrEnterprisePlan(organization, basePlan);
   return {
     basePlan,
     addOnPlan,
@@ -161,7 +152,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
             <>
               {data.orgIsEnterprise && (
                 <EnterpriseSubscriptionPage
-                  basePlan={data.basePlan}
                   usersMeta={data.usersMeta}
                   organization={data.organization}
                   memberAccessibleSpaces={data.memberAccessibleSpaces}

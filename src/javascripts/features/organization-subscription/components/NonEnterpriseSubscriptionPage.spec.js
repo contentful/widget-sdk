@@ -4,10 +4,10 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 import { FREE } from 'account/pricing/PricingDataProvider';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import { mockWebappContent } from './__mocks__/webappContent';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
-import { useAppsTrial } from 'features/trials';
 
 jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
   fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
@@ -69,21 +69,17 @@ describe('NonEnterpriseSubscriptionPage', () => {
   });
 
   describe('Contentful Apps section', () => {
-    it('shows Contentful Apps trial card for users who have not purchased apps', async () => {
-      useAppsTrial.mockReturnValue({ isAppsTrialActive: true });
-
+    it('render Contentful Apps card for owners and admins', async () => {
       await build();
 
-      expect(screen.getByTestId('apps-trial-header')).toBeVisible();
-      expect(screen.queryByTestId('apps-header')).toBeNull();
+      expect(screen.getByTestId('contentful-apps-card')).toBeVisible();
     });
 
-    it('shows Contentful Apps card for users who have purchased apps', async () => {
-      useAppsTrial.mockReturnValue({ isAppsTrialActive: false });
-      await build({ addOnPlan: { sys: { id: 'addon_id' } } });
+    it('does not render Contentful Apps card for members', async () => {
+      isOwnerOrAdmin.mockReturnValue(false);
+      await build();
 
-      expect(screen.getByTestId('apps-header')).toBeVisible();
-      expect(screen.queryByTestId('apps-trial-header')).toBeNull();
+      expect(screen.queryByTestId('contentful-apps-card')).toBeNull();
     });
   });
 
@@ -97,19 +93,17 @@ describe('NonEnterpriseSubscriptionPage', () => {
   });
 });
 
-async function build(custom) {
-  const props = Object.assign(
-    {
-      initialLoad: false,
-      organization: mockOrganization,
-      basePlan: mockFreeBasePlan,
-      spacePlans: [mockFreeSpacePlan],
-      grandTotal: null,
-      usersMeta: null,
-      onSpacePlansChange: null,
-    },
-    custom
-  );
+async function build(customProps) {
+  const props = {
+    initialLoad: false,
+    organization: mockOrganization,
+    basePlan: mockFreeBasePlan,
+    spacePlans: [mockFreeSpacePlan],
+    grandTotal: null,
+    usersMeta: null,
+    onSpacePlansChange: null,
+    ...customProps,
+  };
 
   render(<NonEnterpriseSubscriptionPage {...props} />);
 
