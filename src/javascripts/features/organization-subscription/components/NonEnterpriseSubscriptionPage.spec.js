@@ -9,7 +9,7 @@ import { mockWebappContent } from './__mocks__/webappContent';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 import { useAppsTrial } from 'features/trials';
 
-jest.mock('core/services/ContentfulCDA', () => ({
+jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
   fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
 }));
 

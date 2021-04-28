@@ -15,9 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import type { BasePlanContent } from '../types';
 
-// When importing from 'core/services/ContentfulCDA' our tests are getting an error about default/named imports
-import { ContentfulRichText } from 'core/services/ContentfulCDA/ContentfulRichText';
-import { ContentfulImage } from 'core/services/ContentfulCDA/ContentfulImage';
+import { ContentfulRichText, ContentfulImage } from 'core/services/ContentfulCDA';
 import { getCustomRenderNode, GetCustomRenderNodeOptions } from '../utils/getCustomRenderNode';
 
 const styles = {
