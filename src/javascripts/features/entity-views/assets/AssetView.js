@@ -44,7 +44,7 @@ const newAsset = (goTo) => async () => {
   Analytics.track('asset_list:add_asset_single');
   try {
     const asset = await entityCreator.newAsset();
-    goTo(asset.getId());
+    goTo(asset.sys.id);
   } catch (err) {
     // Throw err so the UI can also display it
     trackEnforcedButtonClick(err);

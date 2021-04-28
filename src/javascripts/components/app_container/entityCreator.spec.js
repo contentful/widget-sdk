@@ -1,7 +1,20 @@
 import * as entityCreator from './entityCreator';
-import * as spaceContextMocked from 'ng/spaceContext';
 import { Notification as NotificationMocked } from '@contentful/forma-36-react-components';
 import * as EnforcementsMocked from 'access_control/Enforcements';
+
+const mockCreateEntry = jest.fn();
+const mockCreateAsset = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getSpaceEnvCMAClient: () => ({
+    entry: {
+      create: mockCreateEntry,
+    },
+    asset: {
+      create: mockCreateAsset,
+    },
+  }),
+}));
 
 jest.mock('access_control/Enforcements', () => ({
   determineEnforcement: jest.fn(),
@@ -20,8 +33,8 @@ jest.mock('@contentful/forma-36-react-components', () => {
 
 describe('entityCreator', () => {
   beforeEach(() => {
-    spaceContextMocked.space.createEntry.mockClear();
-    spaceContextMocked.space.createAsset.mockClear();
+    mockCreateEntry.mockClear();
+    mockCreateAsset.mockClear();
     NotificationMocked.success.mockClear();
     NotificationMocked.error.mockClear();
     EnforcementsMocked.determineEnforcement.mockClear();
@@ -31,15 +44,15 @@ describe('entityCreator', () => {
     let contentType;
 
     it('calls the space create method', async function () {
-      spaceContextMocked.space.createEntry.mockResolvedValue({ id: '123' });
+      mockCreateEntry.mockResolvedValue({ id: '123' });
       const result = await entityCreator.newEntry(contentType);
-      expect(spaceContextMocked.space.createEntry).toHaveBeenCalledTimes(1);
-      expect(spaceContextMocked.space.createEntry).toHaveBeenCalledWith(contentType, {});
+      expect(mockCreateEntry).toHaveBeenCalledTimes(1);
+      expect(mockCreateEntry).toHaveBeenCalledWith({ contentTypeId: contentType }, {});
       expect(result).toEqual({ id: '123' });
     });
 
     it('creation fails', async () => {
-      spaceContextMocked.space.createEntry.mockRejectedValue({
+      mockCreateEntry.mockRejectedValue({
         body: {
           details: {
             reasons: [],
@@ -59,18 +72,21 @@ describe('entityCreator', () => {
 
   describe('creates an asset', () => {
     it('calls the space create method', async function () {
-      spaceContextMocked.space.createAsset.mockResolvedValue({ id: '123' });
+      mockCreateAsset.mockResolvedValue({ id: '123' });
       const result = await entityCreator.newAsset();
-      expect(spaceContextMocked.space.createAsset).toHaveBeenCalledTimes(1);
-      expect(spaceContextMocked.space.createAsset).toHaveBeenCalledWith({
-        sys: { type: 'Asset' },
-        fields: {},
-      });
+      expect(mockCreateAsset).toHaveBeenCalledTimes(1);
+      expect(mockCreateAsset).toHaveBeenCalledWith(
+        {},
+        {
+          sys: { type: 'Asset' },
+          fields: {},
+        }
+      );
       expect(result).toEqual({ id: '123' });
     });
 
     it('creation fails', async () => {
-      spaceContextMocked.space.createAsset.mockRejectedValue({
+      mockCreateAsset.mockRejectedValue({
         body: {
           details: {
             reasons: [],

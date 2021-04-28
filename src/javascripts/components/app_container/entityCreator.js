@@ -1,18 +1,19 @@
 import { getSpaceContext } from 'classes/spaceContext';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 import * as enforcements from 'access_control/Enforcements';
 
 export function newEntry(contentTypeId) {
-  const spaceContext = getSpaceContext();
-  return spaceContext.space.createEntry(contentTypeId, {}).catch(makeEntityErrorHandler('entry'));
+  return getSpaceEnvCMAClient()
+    .entry.create({ contentTypeId }, {})
+    .catch(makeEntityErrorHandler('entry'));
 }
 
 export function newAsset() {
-  const spaceContext = getSpaceContext();
   const data = { sys: { type: 'Asset' }, fields: {} };
-  return spaceContext.space.createAsset(data).catch(makeEntityErrorHandler('asset'));
+  return getSpaceEnvCMAClient().asset.create({}, data).catch(makeEntityErrorHandler('asset'));
 }
 
 function makeEntityErrorHandler(entityType) {

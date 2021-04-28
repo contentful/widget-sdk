@@ -81,15 +81,10 @@ const makeNavigateToEntity = (cma: any) => {
   };
 
   async function createEntity(options) {
-    // Important note:
-    // `entityCreator` returns legacy client entities, we need to extract `entity.data`.
-
     if (options.entityType === 'Entry' && typeof options.contentTypeId === 'string') {
-      const created = await entityCreator.newEntry(options.contentTypeId);
-      return created.data;
+      return await entityCreator.newEntry(options.contentTypeId);
     } else if (options.entityType === 'Asset') {
-      const created = await entityCreator.newAsset();
-      return created.data;
+      return await entityCreator.newAsset();
     }
 
     throw new Error('Could not determine how to create the requested entity.');

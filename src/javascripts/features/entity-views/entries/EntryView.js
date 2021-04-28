@@ -39,10 +39,10 @@ const newEntry = (goTo, publishedCTs, showNoEntitiesAdvice) => async (contentTyp
     Analytics.track('entry:create', {
       eventOrigin: `content-list${eventOriginFlag}`,
       contentType,
-      response: entry.data,
+      response: entry,
     });
 
-    goTo(entry.getId());
+    goTo(entry.sys.id);
   } catch (err) {
     // Throw err so the UI can also display it
     trackEnforcedButtonClick(err);

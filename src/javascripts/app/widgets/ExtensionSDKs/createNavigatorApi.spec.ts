@@ -149,9 +149,7 @@ describe('createNavigatorApi', () => {
 
     describe('openNewEntry', () => {
       it('calls navigateToContentEntity with correct arguments', async () => {
-        (entityCreator.newEntry as jest.Mock).mockReturnValue({
-          data: mockEntry,
-        });
+        (entityCreator.newEntry as jest.Mock).mockReturnValue(mockEntry);
 
         const navigatorApi = buildApi({
           cma: {
@@ -184,9 +182,7 @@ describe('createNavigatorApi', () => {
 
     describe('openNewAsset', () => {
       it('calls navigateToContentEntity with the correct arguments', async () => {
-        (entityCreator.newAsset as jest.Mock).mockReturnValue({
-          data: mockAsset,
-        });
+        (entityCreator.newAsset as jest.Mock).mockReturnValue(mockAsset);
 
         const navigatorApi = buildApi({
           cma: {

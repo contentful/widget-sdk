@@ -279,7 +279,7 @@ export const createAnEntryInDefaultSpace = {
       uponReceiving: `a request to create an entry in "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/entries`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries`,
         headers: {
           ...defaultHeader,
           'X-Contentful-Content-Type': defaultContentTypeId,
