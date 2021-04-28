@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { get, isUndefined } from 'lodash';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
@@ -30,6 +29,7 @@ import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
+import { findAllPlans } from '../utils';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
@@ -37,30 +37,6 @@ import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscription
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
 const TiersWithContent = [FREE, SELF_SERVICE, ENTERPRISE, ENTERPRISE_HIGH_DEMAND];
-
-const findBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
-
-const findAddOnPlan = (plans) => plans.items.find(({ planType }) => planType === 'add_on');
-
-const findSpacePlans = (plans, accessibleSpaces) =>
-  plans.items
-    .filter(({ planType }) => ['space', 'free_space'].includes(planType))
-    .sort((plan1, plan2) => {
-      const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
-      return name1.localeCompare(name2);
-    })
-    .map((plan) => {
-      if (plan.space) {
-        const accessibleSpace = accessibleSpaces.find(
-          (space) => space.sys.id === plan.space.sys.id
-        );
-        plan.space.isAccessible = !!accessibleSpace;
-      }
-      if (isUndefined(plan.price)) {
-        plan.price = 0;
-      }
-      return plan;
-    });
 
 function isOrganizationEnterprise(organization, basePlan) {
   const isLegacyOrg = isLegacyOrganization(organization);
@@ -104,9 +80,7 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
   const accessibleSpaces = await getSpaces();
 
   // separating all the different types of plans
-  const basePlan = findBasePlan(plansWithSpaces);
-  const addOnPlan = findAddOnPlan(plansWithSpaces);
-  const spacePlans = findSpacePlans(plansWithSpaces, accessibleSpaces);
+  const { basePlan, addOnPlan, spacePlans } = findAllPlans(plansWithSpaces.items, accessibleSpaces);
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 

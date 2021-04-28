@@ -115,7 +115,7 @@ export function NonEnterpriseSubscriptionPage({
           loading={isLoading || !!error}
           content={data?.basePlanContent}
           organizationId={organizationId}
-          upgradableSpaceId={freeSpace?.space.sys.id}
+          upgradableSpaceId={freeSpace?.space?.sys.id}
           users={
             usersMeta && {
               count: usersMeta.numFree + usersMeta.numPaid,

@@ -11,7 +11,7 @@ export interface BasePlanContent {
 
 export interface SpacePlan extends Plan {
   planType: 'space' | 'free_space';
-  space: {
+  space?: {
     name: string;
     isAccessible: boolean;
     sys: {
