@@ -149,8 +149,8 @@ describe('AppState', () => {
 
       expect(result).toEqual({
         EditorInterface: {
-          [contentType]: { editor: true },
-          [anotherContentType]: { editor: true },
+          [contentType]: { editors: { position: 0 } },
+          [anotherContentType]: { editors: { position: 0 } },
         },
       });
     });
@@ -248,7 +248,7 @@ describe('AppState', () => {
           [contentType]: {
             sidebar: { position: 0 },
             controls: [{ fieldId }],
-            editor: true,
+            editors: { position: 0 },
           },
         },
       });
