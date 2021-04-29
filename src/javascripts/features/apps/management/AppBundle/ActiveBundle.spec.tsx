@@ -6,8 +6,10 @@ import {
   HostingStateProviderProps,
 } from '../AppDetails/HostingStateProvider';
 import { appBundleMock } from '../__mocks__/appBundles';
-import { AppDetailsStateProvider } from '../AppDetails/AppDetailsStateContext';
-import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import {
+  AppDetailsStateContextValue,
+  AppDetailsStateContext,
+} from '../AppDetails/AppDetailsStateContext';
 
 jest.mock('data/userCache', () =>
   jest.fn().mockReturnValue({
@@ -32,11 +34,17 @@ const renderInContext = (
 ) => {
   return render(
     <HostingStateProvider {...(contextProps as Omit<HostingStateProviderProps, 'children'>)}>
-      <AppDetailsStateProvider
-        savedDefinition={props.savedDefinition}
-        definition={props.definition as AppDefinitionWithBundle}>
+      <AppDetailsStateContext.Provider
+        value={
+          ({
+            draftDefinition: props.definition,
+            setDraftDefinition: jest.fn(),
+            savedDefinition: props.savedDefinition,
+            resetDefinitionBundle: props.resetDefinitionBundle,
+          } as any) as AppDetailsStateContextValue
+        }>
         <ActiveBundle {...props} />
-      </AppDetailsStateProvider>
+      </AppDetailsStateContext.Provider>
     </HostingStateProvider>
   );
 };

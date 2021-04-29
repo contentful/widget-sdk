@@ -292,11 +292,6 @@ export const AppDetails = (props: Props) => {
     onDirtyChange(newDirty);
   }, [savedDefinition, draftDefinition, savedEvents, draftEvents, onDirtyChange]);
 
-  const resetDefinitionBundle = () => {
-    const originalBundle = savedDefinition.bundle;
-    setDraftDefinition({ ...draftDefinition, bundle: originalBundle });
-  };
-
   return (
     <Workbench>
       <DocumentTitle title="Apps" />
@@ -422,7 +417,7 @@ export const AppDetails = (props: Props) => {
           {hostingEnabled
             ? selectedTab === TAB_PATHS.BUNDLES && (
                 <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
-                  <AppBundles resetDefinitionBundle={resetDefinitionBundle} />
+                  <AppBundles />
                 </TabPanel>
               )
             : null}
