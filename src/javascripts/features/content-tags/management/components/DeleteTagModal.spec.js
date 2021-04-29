@@ -4,7 +4,7 @@ import { render, act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
-import { Notification, HelpText, FormLabel } from '@contentful/forma-36-react-components';
+import { Notification } from '@contentful/forma-36-react-components';
 import { SpaceEnvContext } from '../../../../core/services/SpaceEnvContext/SpaceEnvContext';
 
 const enterpriseSpaceId = 'm8xyo6sh8zj8';
@@ -193,10 +193,14 @@ describe('DeleteTagModal', () => {
 
     expect(deleteTag).toHaveBeenCalledWith('test', 3);
     expect(Notification.error).toBeCalledWith(
-      <React.Fragment>
-        <FormLabel>Can&apos;t delete tag because it is currently in use.</FormLabel>
-        <HelpText>Remove the tag from all entries and assets before deleting it.</HelpText>
-      </React.Fragment>
+      'Remove the tag from all entries and assets before deleting it.',
+      {
+        cta: {
+          label: 'Learn more about this in our help center.',
+          textLinkProps: { href: 'https://www.contentful.com/help/deleting-tags/' },
+        },
+        title: "Can't delete tag because it is currently in use.",
+      }
     );
     expect(Notification.success).not.toBeCalled();
   });
