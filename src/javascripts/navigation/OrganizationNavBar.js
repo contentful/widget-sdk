@@ -19,7 +19,7 @@ function getItems(params, { orgId }) {
   const offsiteBackupRoute = routes['organizations.offsitebackup']({}, { orgId });
   const subscriptionV1Route = routes['organizations.subscription_v1']({}, { orgId });
   const billing = routes['organizations.billing']({}, { orgId });
-  const userProvisioning = routes['organizations.userProvisioning']({}, { orgId });
+  const userProvisioning = routes['organizations.access-tools.user-provisioning']({}, { orgId });
 
   const orgnaizationSettingsSSORoute = routes['organizations.access-tools.sso']({}, { orgId });
 

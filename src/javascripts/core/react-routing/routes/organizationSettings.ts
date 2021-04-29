@@ -157,41 +157,36 @@ const organizationsBillingRoute = {
 
 /** Organization Access Tools */
 
-type OrganizationUserProvisioningRouteType = {
-  path: 'organizations.userProvisioning';
+type OrganizationAccessToolsUserProvisioningRouteType = {
+  path: 'organizations.access-tools.user-provisioning';
   orgId: string;
 };
-
-const organizationUserProvisioning = {
-  'organizations.userProvisioning': (
-    _,
-    { orgId }: Omit<OrganizationUserProvisioningRouteType, 'path'>
-  ) => ({
-    path: 'account.organizations.access-tools.user-provisioning',
-    params: {
-      pathname: '/',
-      orgId,
-    },
-  }),
-};
-
-/**
- * Organizations access tools sso
- */
-
 type OrganizationsAccessToolsSSORouteType = {
   path: 'organizations.access-tools.sso';
   orgId: string;
 };
+type OrganizationsAccessToolsRouteType =
+  | OrganizationAccessToolsUserProvisioningRouteType
+  | OrganizationsAccessToolsSSORouteType;
 
-const organizationsAccessToolsSSORoute = {
+const organizationAccessToolsRoutes = {
+  'organizations.access-tools.user-provisioning': (
+    _,
+    { orgId }: Omit<OrganizationAccessToolsUserProvisioningRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.access-tools',
+    params: {
+      pathname: '/user_provisioning',
+      orgId,
+    },
+  }),
   'organizations.access-tools.sso': (
     _,
     { orgId }: Omit<OrganizationsAccessToolsSSORouteType, 'path'>
   ) => ({
-    path: 'account.organizations.access-tools.sso',
+    path: 'account.organizations.access-tools',
     params: {
-      pathname: '/',
+      pathname: '/sso',
       orgId,
     },
   }),
@@ -205,8 +200,7 @@ const routes = {
   ...organizationsSubscriptionBillingRoute,
   ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
-  ...organizationUserProvisioning,
-  ...organizationsAccessToolsSSORoute,
+  ...organizationAccessToolsRoutes,
 };
 
 type OrganizationSettingsRouteType =
@@ -216,10 +210,9 @@ type OrganizationSettingsRouteType =
   | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
   | OrganizationSpacesRouteType
-  | OrganizationUserProvisioningRouteType
+  | OrganizationsAccessToolsRouteType
   | OrganizationBillingRouteType
-  | OrganizationBillingEditPaymentRouteType
-  | OrganizationsAccessToolsSSORouteType;
+  | OrganizationBillingEditPaymentRouteType;
 
 export type { OrganizationSettingsRouteType };
 

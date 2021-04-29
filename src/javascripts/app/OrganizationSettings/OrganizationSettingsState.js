@@ -1,12 +1,12 @@
 import React from 'react';
-import { CustomRouter, Route, RouteErrorBoundary, Routes, router } from 'core/react-routing';
+import { CustomRouter, Route, RouteErrorBoundary, router, Routes } from 'core/react-routing';
 import * as Analytics from 'analytics/Analytics';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
-import { ssoSetupState } from 'features/sso';
+import { SSOSetup } from 'features/sso';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from 'states/utils';
@@ -17,9 +17,11 @@ import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
-import { trialState, isOrganizationOnTrial } from 'features/trials';
+import { isOrganizationOnTrial, trialState } from 'features/trials';
 import { usageState } from 'features/organization-usage';
 import { organizationSpacesState } from 'features/organization-spaces';
+import { getModule } from 'core/NgRegistry';
+import StateRedirect from '../common/StateRedirect';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -94,11 +96,33 @@ export const organization = {
     subscriptionState,
     teamsState,
     appsState,
-    ssoSetupState,
     accessToolsState,
     billingRoutingState,
     trialState,
     organizationSpacesState,
+    {
+      name: 'sso',
+      url: '/sso{pathname:any}',
+      component: function SSOSetupRouter() {
+        const { orgId } = getModule('$stateParams');
+        const [basename] = window.location.pathname.split('sso');
+        const SSOSetupWithOrg = withOrganizationRoute(SSOSetup);
+        return (
+          <CustomRouter splitter="sso">
+            <RouteErrorBoundary>
+              <Routes basename={basename + 'sso'}>
+                <Route
+                  name="account.organizations.sso"
+                  path="/"
+                  element={<SSOSetupWithOrg orgId={orgId} />}
+                />
+                <Route name={null} path="*" element={<StateRedirect path="home" />} />
+              </Routes>
+            </RouteErrorBoundary>
+          </CustomRouter>
+        );
+      },
+    },
     {
       name: 'edit',
       url: '/edit{pathname:any}',
