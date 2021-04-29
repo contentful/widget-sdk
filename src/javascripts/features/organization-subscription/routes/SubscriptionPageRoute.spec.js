@@ -17,7 +17,7 @@ import { getSpaces } from 'services/TokenStore';
 import { mockWebappContent } from '../components/__mocks__/webappContent';
 import { OrgSubscriptionContextProvider } from '../context';
 
-import { SubscriptionPageRouter } from './SubscriptionPageRouter';
+import { SubscriptionPageRoute } from './SubscriptionPageRoute';
 
 const mockOrganization = Fake.Organization();
 const mockFreeBasePlan = Fake.Plan({
@@ -174,7 +174,7 @@ async function build(customProps) {
 
   render(
     <OrgSubscriptionContextProvider>
-      <SubscriptionPageRouter {...props} />
+      <SubscriptionPageRoute {...props} />
     </OrgSubscriptionContextProvider>
   );
 

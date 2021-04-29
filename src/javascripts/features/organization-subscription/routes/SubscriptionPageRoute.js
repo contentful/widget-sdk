@@ -96,7 +96,7 @@ const fetch = (organizationId, dispatch) => async () => {
   };
 };
 
-export function SubscriptionPageRouter({ orgId: organizationId }) {
+export function SubscriptionPageRoute({ orgId: organizationId }) {
   const {
     state: { spacePlans },
     dispatch,
@@ -195,6 +195,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
   );
 }
 
-SubscriptionPageRouter.propTypes = {
+SubscriptionPageRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
 };

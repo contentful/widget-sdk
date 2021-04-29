@@ -1,7 +1,6 @@
 import React from 'react';
 import { withOrganizationRoute } from 'states/utils';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import { importer } from './importer';
+import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { SpacePurchaseContextProvider } from '../context';
 import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-routing';
 import { getModule } from 'core/NgRegistry';
@@ -24,13 +23,9 @@ export const newSpaceState = {
               name="account.organizations.subscription_new.new_space"
               path="/"
               element={
-                <LazyLoadedComponent importer={importer}>
-                  {({ SpacePurchaseRoute }) => (
-                    <SpacePurchaseContextProvider>
-                      <SpacePurchaseRoute orgId={orgId} />
-                    </SpacePurchaseContextProvider>
-                  )}
-                </LazyLoadedComponent>
+                <SpacePurchaseContextProvider>
+                  <SpacePurchaseRoute orgId={orgId} />
+                </SpacePurchaseContextProvider>
               }
             />
             <Route name={null} path="*" element={<StateRedirect path="home" />} />
