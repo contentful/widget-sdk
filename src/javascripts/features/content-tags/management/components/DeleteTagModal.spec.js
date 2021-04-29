@@ -199,6 +199,7 @@ describe('DeleteTagModal', () => {
           label: 'Learn more about this in our help center.',
           textLinkProps: { href: 'https://www.contentful.com/help/deleting-tags/' },
         },
+        duration: 0,
         title: "Can't delete tag because it is currently in use.",
       }
     );
