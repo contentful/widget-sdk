@@ -11,8 +11,8 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock('core/utils/getCurrentOrg', () => ({
-  getCurrentOrg: jest.fn(async () => mockOrganization),
+jest.mock('services/TokenStore', () => ({
+  getOrganization: jest.fn(async () => mockOrganization),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
@@ -21,7 +21,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 }));
 
 const renderComponent = () => {
-  render(<SSOSetup />);
+  render(<SSOSetup orgId={'orgId'} />);
   return waitFor(() => expect(isOwnerOrAdmin).toHaveBeenCalled());
 };
 

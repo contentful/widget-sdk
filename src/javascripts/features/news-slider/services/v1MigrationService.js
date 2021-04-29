@@ -6,11 +6,27 @@ import { CommunitySlides, TeamSlides } from '../components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
 import { track } from 'analytics/Analytics';
-import { getCurrentOrg } from 'core/utils/getCurrentOrg';
+import { getModule } from 'core/NgRegistry';
+import { getOrganization, getSpace } from 'services/TokenStore';
 import { getBasePlan } from 'features/pricing-entities';
 
 const COMMUNITY_BASE_PLAN_NAME = 'Community Platform';
 const TEAM_BASE_PLAN_NAME = 'Team';
+
+async function getCurrentOrg() {
+  const { orgId, spaceId } = getModule('$stateParams');
+
+  if (orgId) {
+    return getOrganization(orgId);
+  } else if (spaceId) {
+    const space = await getSpace(spaceId);
+    return space.sys.organization;
+  }
+
+  // if the current page is not in the scope of any organization, return null.
+  // i.e. Account settings and Home (for users without org access)
+  return null;
+}
 
 export async function openV1MigrationWarning() {
   const org = await getCurrentOrg();
