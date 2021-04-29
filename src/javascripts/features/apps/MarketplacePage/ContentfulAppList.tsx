@@ -20,6 +20,7 @@ import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
 import { styles } from './styles';
+import { router } from 'core/react-routing';
 
 interface ListProps {
   apps: MarketplaceApp[];
@@ -96,10 +97,10 @@ export const ContentfulAppTile = ({
     });
 
   const handleBuy = () =>
-    go({
-      path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: {
-        orgId: organizationId,
+    router.navigate({
+      path: 'organizations.subscription.newSpace',
+      orgId: organizationId || '',
+      navigationState: {
         preselect: PRESELECT_VALUES.APPS,
         from,
       },

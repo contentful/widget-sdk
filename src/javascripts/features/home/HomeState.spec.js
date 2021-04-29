@@ -9,6 +9,7 @@ import { PRESELECT_VALUES } from 'features/space-purchase';
 import { setQueryParameters } from 'test/helpers/setQueryParameters';
 
 import { EmptyHomeRouter } from './HomeState';
+import { router } from 'core/react-routing';
 
 const mockOrg = Fake.Organization({
   pricingVersion: 'pricing_version_2',
@@ -46,6 +47,13 @@ jest.mock('core/services/BrowserStorage', () => {
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+}));
+
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 describe('EmptyHomeRouter', () => {
@@ -89,39 +97,48 @@ describe('EmptyHomeRouter', () => {
 
       render(<EmptyHomeRouter />);
 
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg2.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-        options: { location: 'replace' },
-      });
+      expect(router.navigate).toBeCalledWith(
+        {
+          path: 'organizations.subscription.newSpace',
+          orgId: mockOrg2.sys.id,
+          navigationState: { from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        },
+        { location: 'replace' }
+      );
     });
 
     it('should redirect to the first available v2 org if the lastUsedOrg is pricing v1', async () => {
       getBrowserStorage().get.mockReturnValueOnce(mockOrgPricingV1_2.sys.id);
 
       render(<EmptyHomeRouter />);
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-        options: { location: 'replace' },
-      });
+      expect(router.navigate).toBeCalledWith(
+        {
+          path: 'organizations.subscription.newSpace',
+          orgId: mockOrg.sys.id,
+          navigationState: { from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        },
+        { location: 'replace' }
+      );
     });
 
     it('should redirect to the first v2 org in the token if the lastUsedOrg does not exist', async () => {
       getBrowserStorage().get.mockReturnValueOnce('unknown-org-id');
 
       render(<EmptyHomeRouter />);
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: mockOrg.sys.id, from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
-        options: { location: 'replace' },
-      });
+      expect(router.navigate).toBeCalledWith(
+        {
+          path: 'organizations.subscription.newSpace',
+          orgId: mockOrg.sys.id,
+          navigationState: { from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS },
+        },
+        { location: 'replace' }
+      );
     });
 
     it('should not redirect and enable onboarding if no pricing v2 org was found', async () => {
@@ -132,6 +149,7 @@ describe('EmptyHomeRouter', () => {
       await waitFor(() => expect(onboarding.init).toBeCalled());
 
       expect(go).not.toBeCalled();
+      expect(router.navigate).not.toBeCalled();
     });
 
     it('should not attempt to redirect and re-enable onboarding if no organization was found', async () => {
@@ -142,6 +160,7 @@ describe('EmptyHomeRouter', () => {
       await waitFor(() => expect(onboarding.init).toBeCalled());
 
       expect(go).not.toBeCalled();
+      expect(router.navigate).not.toBeCalled();
     });
   });
 });

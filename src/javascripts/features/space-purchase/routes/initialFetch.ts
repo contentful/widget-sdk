@@ -1,58 +1,46 @@
-import React, { useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
-
-import { getVariation, FLAGS } from 'LaunchDarkly';
-import { FetcherLoading } from 'app/common/createFetcherComponent';
-import { SpacePurchaseContainer } from '../components/SpacePurchaseContainer';
-import { useAsync } from 'core/hooks/useAsync';
-import DocumentTitle from 'components/shared/DocumentTitle';
-import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import {
-  isSelfServicePlan,
-  getPlansWithSpaces,
-  isFreePlan,
-} from 'account/pricing/PricingDataProvider';
-import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
-import createResourceService from 'services/ResourceService';
-import {
-  fetchSpacePurchaseContent,
-  fetchPlatformPurchaseContent,
-} from '../services/fetchSpacePurchaseContent';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { PLATFORM_CONTENT } from '../utils/platformContent';
-import { alnum } from 'utils/Random';
-import * as TokenStore from 'services/TokenStore';
-import { getOrganizationMembership } from 'services/OrganizationRoles';
-import { go } from 'states/Navigator';
-import ErrorState from 'app/common/ErrorState';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import {
   getAddOnProductRatePlans,
-  getSpaceProductRatePlans,
-  getSpacePlans,
   getBasePlan,
   getSpacePlanForSpace,
-} from 'features/pricing-entities';
-import { useQueryParams } from 'core/hooks/useQueryParams';
-
-import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
-import { actions, SpacePurchaseState } from '../context';
+  getSpacePlans,
+  getSpaceProductRatePlans,
+} from '../../pricing-entities';
+import {
+  getPlansWithSpaces,
+  isFreePlan,
+  isSelfServicePlan,
+} from 'account/pricing/PricingDataProvider';
+import { PLATFORM_CONTENT } from '../utils/platformContent';
+import { getSpace } from 'access_control/OrganizationMembershipRepository';
+import { actions } from '../context';
+import * as TokenStore from 'services/TokenStore';
+import { getOrganizationMembership, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import createResourceService from 'services/ResourceService';
 import { FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
+import { getTemplatesList } from 'services/SpaceTemplateLoader';
+import {
+  fetchPlatformPurchaseContent,
+  fetchSpacePurchaseContent,
+} from '../services/fetchSpacePurchaseContent';
+import { go } from 'states/Navigator';
+import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
+import { alnum } from 'utils/Random';
+import { EVENTS, trackEvent } from '../utils/analyticsTracking';
+import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
+import { FreeSpaceResource } from '../types';
 
 const CREATE_SPACE_SESSION = 'create_space';
 const UPGRADE_SPACE_SESSION = 'upgrade_space';
 
-/**
- * List of possible values for the "preselect" param in this route
- */
-export const PRESELECT_VALUES = {
-  APPS: 'apps',
-};
-
-const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) => async () => {
+export const initialFetch = (
+  organizationId,
+  spaceId,
+  from,
+  preselectApps,
+  dispatch
+) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
@@ -96,8 +84,6 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
     dispatch({ type: actions.SET_CURRENT_SPACE, payload: currentSpace });
   }
 
-  dispatch({ type: actions.SET_PURCHASING_APPS, payload: purchasingApps });
-
   const [
     organization,
     organizationMembership,
@@ -115,7 +101,9 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
     spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
     getSpaceProductRatePlans(endpoint, spaceId),
     getSpacePlans(endpoint),
-    createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER),
+    createResourceService(organizationId, 'organization').get(FREE_SPACE_IDENTIFIER) as Promise<
+      FreeSpaceResource
+    >,
     getTemplatesList(),
     purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
   ]);
@@ -177,76 +165,4 @@ const initialFetch = (organizationId, spaceId, from, preselectApps, dispatch) =>
   return {
     purchasingApps,
   };
-};
-
-export const SpacePurchaseRoute = ({
-  orgId,
-  spaceId,
-  from: fromRouterParam,
-  preselect: preselectRouterParam,
-}) => {
-  const queryParams = useQueryParams();
-
-  // We do this to allow the use of a URL like /new_space?from= from an external place
-  // like the marketing website, while also allowing it to be used internally
-  // via `go(...)`. This should become unnecessary or changed when moving from ui-router.
-  const from = fromRouterParam ? fromRouterParam : queryParams.from;
-  const preselect = preselectRouterParam ? preselectRouterParam : queryParams.preselect;
-
-  const preselectApps = preselect === PRESELECT_VALUES.APPS;
-
-  const {
-    state: { sessionId },
-    dispatch,
-  } = useContext(SpacePurchaseState);
-
-  // We load `purchasingApps` state separately from the other state so that the `SpacePurchaseContainer`
-  // knows which specific first step component to display (with its loading state). Not separating them
-  // will cause an empty screen while all the data loads, which is undesireable.
-  const { data, isLoading, error } = useAsync(
-    useCallback(initialFetch(orgId, spaceId, from, preselectApps, dispatch), [])
-  );
-
-  // Show the generic loading state until we know if we're purchasing apps or not
-  if (isLoading) {
-    return (
-      <EmptyStateContainer>
-        <FetcherLoading />
-      </EmptyStateContainer>
-    );
-  }
-
-  if (error) {
-    return <ErrorState />;
-  }
-
-  const documentTitle = data.purchasingApps ? 'Subscription purchase' : 'Space purchase';
-
-  return (
-    <>
-      <DocumentTitle title={documentTitle} />
-      <SpacePurchaseContainer
-        purchasingApps={data.purchasingApps}
-        preselectApps={preselectApps}
-        track={(eventName, metadata) => {
-          trackEvent(
-            eventName,
-            {
-              organizationId: orgId,
-              spaceId,
-              sessionId,
-            },
-            metadata
-          );
-        }}
-      />
-    </>
-  );
-};
-
-SpacePurchaseRoute.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  spaceId: PropTypes.string,
-  from: PropTypes.string,
-  preselect: PropTypes.string,
 };

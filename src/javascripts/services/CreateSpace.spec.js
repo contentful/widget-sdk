@@ -5,8 +5,9 @@ import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { go } from 'states/Navigator';
 import { getOrganization } from 'services/TokenStore';
-import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getBasePlan, getSpaceProductRatePlans } from 'features/pricing-entities';
+import { router } from 'core/react-routing';
 
 const mockV1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
 const mockV2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
@@ -38,6 +39,12 @@ jest.mock('services/ResourceService', () => ({
 }));
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+}));
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(() => false),
@@ -93,9 +100,10 @@ describe('CreateSpace', () => {
       isSelfServicePlan.mockResolvedValueOnce(true);
       await beginSpaceCreation('v2');
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: 'v2' },
+      expect(router.navigate).toHaveBeenCalledWith({
+        path: 'organizations.subscription.newSpace',
+        orgId: 'v2',
+        navigationState: {},
       });
     });
 
@@ -105,9 +113,12 @@ describe('CreateSpace', () => {
       isSelfServicePlan.mockResolvedValueOnce(true);
       await beginSpaceCreation('v2', { customParam: 'foo' });
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organizations', 'subscription_new', 'new_space'],
-        params: { orgId: 'v2', customParam: 'foo' },
+      expect(router.navigate).toHaveBeenCalledWith({
+        path: 'organizations.subscription.newSpace',
+        orgId: 'v2',
+        navigationState: {
+          customParam: 'foo',
+        },
       });
     });
 

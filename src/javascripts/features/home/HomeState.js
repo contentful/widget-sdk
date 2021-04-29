@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { LoadingState } from 'features/loading-state';
-import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { init as initAutoCreateNewSpace } from 'components/shared/auto_create_new_space';
@@ -9,6 +8,7 @@ import { PRESELECT_VALUES } from 'features/space-purchase';
 import { useQueryParams } from 'core/hooks/useQueryParams';
 
 import { EmptyHome } from './EmptyHome';
+import { router } from 'core/react-routing';
 
 const localStorage = getBrowserStorage();
 
@@ -46,15 +46,17 @@ export function EmptyHomeRouter() {
       }
 
       if (organization) {
-        go({
-          path: ['account', 'organizations', 'subscription_new', 'new_space'],
-          params: {
+        router.navigate(
+          {
+            path: 'organizations.subscription.newSpace',
             orgId: organization.sys.id,
-            from: 'marketing_cta',
-            preselect: PRESELECT_VALUES.APPS,
+            navigationState: {
+              from: 'marketing_cta',
+              preselect: PRESELECT_VALUES.APPS,
+            },
           },
-          options: { location: 'replace' },
-        });
+          { location: 'replace' }
+        );
       } else {
         initAutoCreateNewSpace();
         setLoading(false);
