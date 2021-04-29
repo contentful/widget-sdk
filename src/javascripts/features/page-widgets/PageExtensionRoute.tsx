@@ -12,9 +12,10 @@ import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { PageWidgetRenderer } from 'features/apps';
+import { PageWidgetRenderer } from './PageWidgetRenderer';
 import { getAppsRepo } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useParams } from 'core/react-routing';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -55,16 +56,19 @@ function ErrorMessage() {
   );
 }
 
-interface PageExtensionRouteProps {
-  extensionId: string;
-  path: string;
-}
-
-export default function PageExtensionRoute(props: PageExtensionRouteProps) {
+export function PageExtensionRoute() {
   const { currentOrganizationId } = useSpaceEnvContext();
+  const params = useParams() as { extensionId: string; '*': string };
+  const extensionId = params.extensionId;
+
+  let path = params['*'] || '';
+
+  if (path && !path.startsWith('/')) {
+    path = `/${path}`;
+  }
 
   return (
-    <PageExtensionFetcher extensionId={props.extensionId} orgId={currentOrganizationId}>
+    <PageExtensionFetcher extensionId={extensionId} orgId={currentOrganizationId}>
       {({ isLoading, isError, data: widget }) => {
         if (isLoading) {
           return (
@@ -81,7 +85,7 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
           return <ErrorMessage />;
         }
 
-        return <PageWidgetRenderer widget={widget} path={props.path} repo={getAppsRepo()} />;
+        return <PageWidgetRenderer widget={widget} path={path} repo={getAppsRepo()} />;
       }}
     </PageExtensionFetcher>
   );

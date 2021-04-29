@@ -3,6 +3,7 @@ import { NavigatorAPI, NavigatorPageResponse } from '@contentful/app-sdk';
 import { noop } from 'lodash';
 import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import * as Navigator from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { find } from 'lodash';
 import * as entityCreator from 'components/app_container/entityCreator';
@@ -173,6 +174,26 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
 
     const isNavigatingToNewContext = currentWidgetId !== id;
     const widgetRouting = SUPPORTED_WIDGET_NAMESPACE_ROUTES[currentWidgetNamespace];
+
+    if (currentWidgetNamespace === WidgetNamespace.EXTENSION) {
+      await router.navigate(
+        {
+          path: 'page-extension',
+          spaceId,
+          environmentId,
+          extensionId: id,
+          pathname: path || '',
+        },
+        {
+          // If we are navigating to a new extension page OR we are not on the extension page,
+          // we want to notify a state change of the URL. Otherwise, do NOT notify a state change
+          // to ensure that the iframe on the page extension page doesn't reload.
+          notify: isNavigatingToNewContext || !isOnPageLocation,
+        }
+      );
+
+      return { navigated: true, path } as NavigatorPageResponse;
+    }
 
     await Navigator.go({
       path: ['spaces', 'detail'].concat(isMaster ? [] : ['environment']).concat(widgetRouting.path),

@@ -11,7 +11,7 @@ import {
   OrganizationFeatures,
 } from 'data/CMA/ProductCatalog';
 import { shouldHide, Action } from 'access_control/AccessChecker';
-import { PageWidgetRenderer } from '../PageWidgetRenderer';
+import { PageWidgetRenderer } from 'features/page-widgets';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const DEFAULT_FEATURE_STATUS = true; // Fail open

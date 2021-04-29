@@ -2,6 +2,7 @@ import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigato
 import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import * as Navigator from 'states/Navigator';
+import { router } from 'core/react-routing';
 import * as entityCreator from 'components/app_container/entityCreator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
@@ -9,6 +10,11 @@ jest.mock('navigation/SlideInNavigator/withPromise');
 jest.mock('navigation/SlideInNavigator/index');
 jest.mock('states/Navigator');
 jest.mock('components/app_container/entityCreator');
+jest.mock('core/react-routing', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
+}));
 
 describe('createNavigatorApi', () => {
   let navigatorApi;
@@ -208,18 +214,16 @@ describe('createNavigatorApi', () => {
         const path = '/somewhere';
         await navigatorApi.openPageExtension({ path, id: DEFAULT_WIDGET_ID });
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: false,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            extensionId: DEFAULT_WIDGET_ID,
+            path: 'page-extension',
+            pathname: path,
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
-            extensionId: DEFAULT_WIDGET_ID,
-            path,
           },
-          path: ['spaces', 'detail', 'pageExtensions'],
-        });
+          { notify: false }
+        );
       });
       it('navigates notifies when on page location and different context', async () => {
         const navigatorApi = buildApi({
@@ -230,18 +234,16 @@ describe('createNavigatorApi', () => {
         const id = 'something';
         await navigatorApi.openPageExtension({ path, id });
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: true,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            extensionId: id,
+            path: 'page-extension',
+            pathname: path,
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
-            extensionId: id,
-            path,
           },
-          path: ['spaces', 'detail', 'pageExtensions'],
-        });
+          { notify: true }
+        );
       });
       it('navigates notifies when not on page location', async () => {
         const navigatorApi = buildApi({
@@ -252,18 +254,16 @@ describe('createNavigatorApi', () => {
         const id = 'something';
         await navigatorApi.openPageExtension({ path, id });
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: true,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            extensionId: id,
+            path: 'page-extension',
+            pathname: path,
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
-            extensionId: id,
-            path,
           },
-          path: ['spaces', 'detail', 'pageExtensions'],
-        });
+          { notify: true }
+        );
       });
       it('navigates to self if id is not passed', async () => {
         const navigatorApi = buildApi({
@@ -272,18 +272,16 @@ describe('createNavigatorApi', () => {
         });
         await navigatorApi.openPageExtension();
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: true,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            extensionId: DEFAULT_WIDGET_ID,
+            path: 'page-extension',
+            pathname: '',
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
-            extensionId: DEFAULT_WIDGET_ID,
-            path: '',
           },
-          path: ['spaces', 'detail', 'pageExtensions'],
-        });
+          { notify: true }
+        );
       });
       it('does not navigate with wrong path', async () => {
         const navigatorApi = buildApi({
@@ -293,6 +291,7 @@ describe('createNavigatorApi', () => {
         const path = 'wrong';
         await expect(navigatorApi.openPageExtension({ path })).rejects.toThrowError();
 
+        expect(router.navigate).not.toHaveBeenCalled();
         expect(Navigator.go).not.toHaveBeenCalled();
       });
       it('does not navigate to different type', async () => {
@@ -302,6 +301,7 @@ describe('createNavigatorApi', () => {
         });
         await expect(navigatorApi.openPageExtension()).rejects.toThrowError();
 
+        expect(router.navigate).not.toHaveBeenCalled();
         expect(Navigator.go).not.toHaveBeenCalled();
       });
     });

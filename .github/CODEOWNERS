@@ -3,6 +3,7 @@ docs/ @contentful/frontend
 
 
 # Team Extensibility
+src/javascripts/features/page-widgets           @contentful/extensibility-devs
 src/javascripts/features/apps/                  @contentful/extensibility-devs
 src/javascripts/features/apps-core/             @contentful/extensibility-devs
 src/javascripts/features/extensions-management/ @contentful/extensibility-devs

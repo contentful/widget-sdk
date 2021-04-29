@@ -14,7 +14,7 @@ import stackOnboarding from './stackOnboarding';
 import settings from './settings';
 import scheduledActions from 'app/ScheduledActions/routes';
 import tasks from 'app/TasksPage/routes';
-import pageExtensions from 'app/pageExtensions/routes';
+import { pageExtensionsState } from 'features/page-widgets';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { spaceHomeState } from 'features/space-home';
 
@@ -81,7 +81,7 @@ const spaceEnvironment = {
     settings,
     scheduledActions,
     tasks,
-    pageExtensions,
+    pageExtensionsState,
   ],
 };
 
@@ -133,7 +133,7 @@ const spaceDetail = {
     apps,
     scheduledActions,
     tasks,
-    pageExtensions,
+    pageExtensionsState,
   ],
 };
 

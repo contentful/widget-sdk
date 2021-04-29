@@ -314,6 +314,37 @@ const embargoedAssetsRoutes = {
 };
 
 /**
+ * Page extensions
+ */
+
+type PageExtensionsRouteType = {
+  path: 'page-extension';
+  extensionId: string;
+  spaceId?: string;
+  environmentId?: string;
+  pathname?: string;
+};
+
+const pageExtensionRoute = {
+  'page-extension': (env: EnvironmentParams, params: Omit<PageExtensionsRouteType, 'path'>) => {
+    let pathname = params.pathname;
+
+    if (pathname && !pathname.startsWith('/')) {
+      pathname = `/${pathname}`;
+    }
+
+    return {
+      path: spaceEnvBase(env, 'pageExtensions'),
+      params: {
+        pathname: `/${params.extensionId}${pathname}`,
+        spaceId: params.spaceId,
+        environmentId: params.environmentId,
+      },
+    };
+  },
+};
+
+/**
  * All paths combined together
  */
 
@@ -329,7 +360,8 @@ export type SpaceSettingsRouteType =
   | SpaceUsageRouteType
   | EnvironmentsRouteType
   | SpaceRouteType
-  | EmbargoedAssetsRouteType;
+  | EmbargoedAssetsRouteType
+  | PageExtensionsRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -344,4 +376,5 @@ export const routes = {
   ...spaceUsageRoutes,
   ...spaceRoutes,
   ...embargoedAssetsRoutes,
+  ...pageExtensionRoute,
 };
