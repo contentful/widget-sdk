@@ -24,6 +24,7 @@ import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 const appHostingStyles = {
   hostingSwitch: css({
     marginBottom: tokens.spacingM,
+    fontWeight: tokens.fontWeightMedium,
   }),
   additionalInformation: css({
     marginTop: tokens.spacingXs,
