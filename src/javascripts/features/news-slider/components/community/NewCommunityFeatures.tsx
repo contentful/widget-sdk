@@ -59,9 +59,11 @@ export const NewCommunityFeatures = () => (
         Your Contentful account has been upgraded to our Community tier
       </DisplayText>
       <List className={styles.list}>
-        <ListItem className={styles.listItem}>you have now single Community space </ListItem>
         <ListItem className={styles.listItem}>
-          other spaces will become read-only after 6 months
+          you now have a single permanent Community space{' '}
+        </ListItem>
+        <ListItem className={styles.listItem}>
+          other spaces will be archived after 6 months
         </ListItem>
         <ListItem className={styles.listItem}>
           you get access to{' '}
@@ -77,20 +79,21 @@ export const NewCommunityFeatures = () => (
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/multiple-environments/')}>
             environments
-          </TextLink>
+          </TextLink>{' '}
+          within your space
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get support for{' '}
+          you get access for{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/rich-text/')}>
-            rich text
+            rich text support
           </TextLink>
         </ListItem>
         <ListItem className={styles.listItem}>
-          check out your new{' '}
+          and access to many other of the latest of Contentful - check out{' '}
           <TextLink className={styles.link} href={websiteUrl('/pricing')}>
-            tier details
+            the details of your new plan
           </TextLink>{' '}
         </ListItem>
       </List>
