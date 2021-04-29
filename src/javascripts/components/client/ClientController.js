@@ -2,6 +2,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 import { registerController, appReady } from 'core/NgRegistry';
 import { onValueScope } from 'core/utils/kefir';
 import { isObject } from 'lodash';
+import { setUser } from 'core/monitoring';
 
 // Do not add imports here, or else it may affect Karma tests. You need to import
 // everything using the async method below. See `initialize`.
@@ -13,7 +14,6 @@ export default function register() {
     '$rootScope',
     function ClientController($scope, $state, $rootScope) {
       const spaceContext = getSpaceContext();
-      let logger;
       let SpaceFeatures;
       let getSpaceFeature;
       let EnforcementsService;
@@ -159,8 +159,7 @@ export default function register() {
         $scope.user = user;
 
         initOsano();
-
-        logger.enable(user);
+        setUser(user);
       }
 
       // usage/limits enforcement should happen only
@@ -175,7 +174,6 @@ export default function register() {
 
       async function initialize() {
         [
-          logger,
           { getSpaceFeature, SpaceFeatures },
           EnforcementsService,
           NavState,
@@ -196,7 +194,6 @@ export default function register() {
           { init: initOsano },
           { openV1MigrationWarning },
         ] = await Promise.all([
-          import(/* webpackMode: "eager" */ 'services/logger'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
           import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
           import(/* webpackMode: "eager" */ 'navigation/NavState'),

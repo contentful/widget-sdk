@@ -89,7 +89,9 @@ const installApps = async (
 ) => {
   const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug)).catch((error) => {
     logger.captureError(new Error(`Failed to get app definitions during apps trial`), {
-      originalError: error,
+      extra: {
+        originalError: error,
+      },
     });
     throw new AppInstallationError('all');
   });
@@ -109,7 +111,9 @@ const installApps = async (
         (result as ResultWithAppName).app = appName;
         if (result.status === 'rejected') {
           logger.captureError(new Error(`Failed to install ${appName} during apps trial`), {
-            reason: result.reason,
+            extra: {
+              reason: result.reason,
+            },
           });
         }
       });

@@ -33,6 +33,9 @@ import qs from 'qs';
 
 import { awaitInitReady } from 'core/NgRegistry';
 
+import { initMonitoring } from 'core/monitoring';
+initMonitoring();
+
 // define global method for code splitting with static subdomain
 window.WebpackRequireFrom_getChunkURL = () => settings.assetUrl + '/app/';
 

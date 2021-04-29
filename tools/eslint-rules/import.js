@@ -27,11 +27,15 @@ module.exports = {
       'error',
       {
         name: 'react-router',
-        message: 'Please use import from `core/react-routing` instead.',
+        message: 'Please use import from `core/react-routing` instead',
       },
       {
         name: 'react-router-dom',
-        message: 'Please use import from `core/react-routing` instead.',
+        message: 'Please use import from `core/react-routing` instead',
+      },
+      {
+        name: '@contentful/experience-error-tracking',
+        message: 'Please use import from `core/monitoring` only',
       },
     ],
   },

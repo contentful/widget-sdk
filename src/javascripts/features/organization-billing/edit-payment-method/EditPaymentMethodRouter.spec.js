@@ -123,8 +123,10 @@ describe('EditPaymentMethodRouter', () => {
       await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
       expect(logger.captureError).toBeCalledWith(expect.any(Error), {
-        error: response,
-        location: 'account.organizations.billing.edit-payment-method',
+        extra: {
+          error: response,
+          location: 'account.organizations.billing.edit-payment-method',
+        },
       });
       expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
     });

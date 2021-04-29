@@ -52,8 +52,10 @@ function bufferedCall(fnName) {
         analytics[fnName](...args);
       } catch (err) {
         logger.captureError(err, {
-          analyticsFn: fnName,
-          analyticsFnArgs: args,
+          extra: {
+            analyticsFn: fnName,
+            analyticsFnArgs: args,
+          },
         });
       }
     });

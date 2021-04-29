@@ -157,8 +157,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
         throw err;
       }
       logger.captureWarning(new Error(`Could not find entity for given rule`), {
-        type,
-        id,
+        extra: { type, id },
       });
     }
   }

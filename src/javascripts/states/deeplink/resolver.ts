@@ -56,7 +56,7 @@ export function resolveLink(
 ): Promise<ResolvedLink | { error: Error }> {
   return resolveParams(link, params).catch((error) => {
     logger.captureError(error, {
-      link,
+      extra: { link },
     });
     return { error };
   });

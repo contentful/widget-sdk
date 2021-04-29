@@ -1,0 +1,3 @@
+rules:
+  # disable import restriction
+  no-restricted-imports: 'off'

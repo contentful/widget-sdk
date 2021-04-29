@@ -60,9 +60,11 @@ describe('withTracking() returned hoc', () => {
 
       expect(logger.captureWarning).toHaveBeenCalledTimes(1);
       expect(logger.captureWarning).toBeCalledWith(expect.any(Error), {
-        trackingActionName: 'someUnknownActionFooBar',
-        originalActionName: 'someUnknownAction',
-        originalActionData: data,
+        extra: {
+          trackingActionName: 'someUnknownActionFooBar',
+          originalActionName: 'someUnknownAction',
+          originalActionData: data,
+        },
       });
     });
 

@@ -1,5 +1,5 @@
 import { ACCEPTED_ENTRY_FILES, ABSOLUTE_PATH_REG_EXP, UI_BUNDLE_ERRORS } from './constants';
-import { logException } from 'analytics/Sentry';
+import { captureError } from 'core/monitoring';
 
 // checks the (entry) file if it contains an absolute path. Which is will not work as a bundle upload
 export const fileContainsAbsolutePath = async (file: File) => {
@@ -34,7 +34,7 @@ export const validateBundle = async (files) => {
       // }
     }
   } catch (e) {
-    logException(e);
+    captureError(e);
     return UI_BUNDLE_ERRORS.UNKNOWN;
   }
 

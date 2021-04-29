@@ -90,7 +90,7 @@ export function handleSaveError(response) {
 
   Notification.error('Error saving role. Please try again.');
 
-  logger.captureWarning(new Error('Error saving role'), { errors });
+  logger.captureWarning(new Error('Error saving role'), { extra: { errors } });
 
   return Promise.reject();
 }

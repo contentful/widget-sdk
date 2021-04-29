@@ -116,8 +116,10 @@ export function track(event: string, data?: EventData): void {
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     logger.captureError(error, {
-      event,
-      data,
+      extra: {
+        event,
+        data,
+      },
     });
   }
 }
@@ -144,11 +146,13 @@ function logEventPayloadSize(eventName: string, safePayload: TransformedEventDat
 
       if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
         logger.captureWarning(new Error('Potentially bloated tracking event payload'), {
-          event: eventName,
-          primaryEventSize,
-          contextEventsSize,
-          contextEventsCount: contextEvents.length,
-          hasMethods,
+          extra: {
+            event: eventName,
+            primaryEventSize,
+            contextEventsSize,
+            contextEventsCount: contextEvents.length,
+            hasMethods,
+          },
         });
       }
     } catch (error) {

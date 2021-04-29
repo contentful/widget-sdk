@@ -1,108 +1,66 @@
-import _ from 'lodash';
 import * as logger from './logger';
-import * as Sentry from 'analytics/Sentry';
-import { PreflightRequestError } from 'data/Request';
+// eslint-disable-next-line no-restricted-imports
+import { withScope, captureException } from '@contentful/experience-error-tracking';
+import { getCurrentStateName } from 'states/Navigator';
 
-jest.mock('analytics/Sentry');
+jest.mock('@contentful/experience-error-tracking');
 
-jest.mock('states/Navigator', () => ({
-  getCurrentStateName: jest.fn().mockReturnValue('route'),
-}));
+jest.mock('states/Navigator');
 
 describe('logger service', () => {
-  it('enables', function () {
-    logger.enable('USER');
-    expect(Sentry.enable).toHaveBeenCalledWith('USER');
+  let scope;
+
+  beforeEach(() => {
+    scope = {
+      setLevel: jest.fn(),
+      setTags: jest.fn(),
+      setExtras: jest.fn(),
+    };
+    withScope.mockImplementation((cb) => cb(scope));
+  });
+
+  it(`passes error and context along`, () => {
+    const error = new Error('something bad');
+    const context = {};
+
+    logger.captureError(error, context);
+    expect(captureException).toBeCalledWith(error, context);
   });
 
   it('should send Sentry an error-level error when calling captureError', () => {
     const error = new Error('something bad');
 
-    logger.captureError(error, {
-      specialMeta: 'yes',
-    });
+    logger.captureError(error);
 
-    expect(Sentry.logException).toBeCalledWith(error, {
-      level: 'error',
-      extra: {
-        specialMeta: 'yes',
-      },
-      tags: {
-        route: 'route',
-      },
-    });
+    expect(scope.setLevel).toBeCalledWith('error');
+    expect(captureException).toBeCalledWith(error, undefined);
   });
 
   it('should send Sentry a warning-level error when calling captureWarning', () => {
     const error = new Error('something kind of bad');
 
-    logger.captureWarning(error, {
-      warningMeta: 'data',
-    });
+    logger.captureWarning(error);
 
-    expect(Sentry.logException).toBeCalledWith(error, {
-      level: 'warning',
-      extra: {
-        warningMeta: 'data',
-      },
-      tags: {
-        route: 'route',
-      },
-    });
+    expect(scope.setLevel).toBeCalledWith('warning');
+    expect(captureException).toBeCalledWith(error, undefined);
   });
 
-  it('should augment the given metadata with custom keys on the error', () => {
-    const error = new Error('something happened');
-    Object.assign(error, {
-      customKey1: 'value1',
-      customKey2: 'value2',
-    });
+  it(`adds route name as tag`, () => {
+    getCurrentStateName.mockReturnValue('test-route');
+    logger.captureError(new Error());
 
-    logger.captureError(error, {
-      meta: 'data',
-    });
-
-    expect(Sentry.logException).toHaveBeenNthCalledWith(1, error, {
-      level: 'error',
-      extra: {
-        meta: 'data',
-        customKey1: 'value1',
-        customKey2: 'value2',
-      },
-      tags: {
-        route: 'route',
-      },
-    });
-
-    const warning = new Error('some warning happened');
-
-    Object.assign(warning, {
-      customKey1: 'value1',
-      customKey2: 'value2',
-    });
-
-    logger.captureWarning(warning, {
-      other: 'data',
-    });
-
-    expect(Sentry.logException).toHaveBeenNthCalledWith(2, warning, {
-      level: 'warning',
-      extra: {
-        other: 'data',
-        customKey1: 'value1',
-        customKey2: 'value2',
-      },
-      tags: {
-        route: 'route',
-      },
-    });
+    expect(scope.setTags).toBeCalledWith({ route: 'test-route' });
   });
 
-  it('should ignore errors that are an instance of PreflightRequestError', () => {
-    const error = new PreflightRequestError();
+  it(`adds error properties as extras`, () => {
+    const extras = {
+      customKey1: 'value1',
+      customKey2: 'value2',
+    };
+    const error = Object.assign(new Error('something happened'), extras);
 
     logger.captureError(error);
 
-    expect(Sentry.logException).not.toBeCalled();
+    expect(scope.setExtras).toBeCalledWith(error);
   });
 });

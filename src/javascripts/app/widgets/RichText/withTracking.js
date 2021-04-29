@@ -49,9 +49,11 @@ export default function withTracking(Component) {
         this.trackEntryEditorAction(actionName, data);
       } else {
         logger.captureWarning(new Error(`Unexpected rich text tracking action \`${actionName}\``), {
-          trackingActionName: actionName,
-          originalActionName: name,
-          originalActionData: { origin, ...data },
+          extra: {
+            trackingActionName: actionName,
+            originalActionName: name,
+            originalActionData: { origin, ...data },
+          },
         });
       }
     }

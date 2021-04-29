@@ -111,7 +111,9 @@ describe('states/deeplink/resolver', () => {
     const result = await resolveLink(('' as unknown) as LinkType, {});
     expect(result).toEqual({ error: expect.any(Error) });
     expect(logger.captureError).toHaveBeenCalledWith(expect.any(Error), {
-      link: '',
+      extra: {
+        link: '',
+      },
     });
   });
 

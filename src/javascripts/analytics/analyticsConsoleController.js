@@ -113,7 +113,7 @@ function throwOrLogInvalidEvent(event) {
   if (isEnabled) {
     throw new Error(message);
   } else {
-    logger.captureWarning(new Error(message), { event });
+    logger.captureWarning(new Error(message), { extra: { event } });
   }
 }
 

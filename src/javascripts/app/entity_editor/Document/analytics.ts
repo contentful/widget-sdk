@@ -98,7 +98,9 @@ function stateTrackingString(state) {
       return 'inaccessible';
     default:
       logger.captureError(new Error(`Unhandled entity state ${state}`), {
-        entityState: state,
+        extra: {
+          entityState: state,
+        },
       });
   }
 }

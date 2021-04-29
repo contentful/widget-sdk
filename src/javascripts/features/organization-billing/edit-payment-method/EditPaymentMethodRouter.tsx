@@ -63,8 +63,10 @@ export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
 
   const onError = useCallback((error) => {
     logger.captureError(new Error('Zuora credit card iframe error'), {
-      error,
-      location: 'account.organizations.billing.edit-payment-method',
+      extra: {
+        error,
+        location: 'account.organizations.billing.edit-payment-method',
+      },
     });
 
     Notification.error(
