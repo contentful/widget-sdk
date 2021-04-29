@@ -19,9 +19,7 @@ import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { captureError } from 'services/logger';
 
-import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
-import { useChangedSpace } from '../hooks/useChangedSpace';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
 import { BasePlanContentEntryIds } from '../types';
@@ -67,7 +65,6 @@ interface NonEnterpriseSubscriptionPageProps {
   basePlan: BasePlan;
   grandTotal: number;
   initialLoad: boolean;
-  onSpacePlansChange: () => void;
   organization: Organization;
   spacePlans: SpacePlan[];
   usersMeta: UsersMeta;
@@ -78,16 +75,13 @@ export function NonEnterpriseSubscriptionPage({
   basePlan,
   grandTotal,
   initialLoad = false,
-  onSpacePlansChange,
   organization,
   spacePlans,
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
   const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
-  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const organizationId = organization.sys.id;
-
   const isOrgBillable = organization.isBillable;
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
   const anySpacesInaccessible = hasAnyInaccessibleSpaces(spacePlans);
@@ -99,15 +93,6 @@ export function NonEnterpriseSubscriptionPage({
       params: { orgId: organizationId, existingUsers: true, from: 'subscription' },
     });
   };
-
-  const onCreateSpace = createSpace(organizationId);
-  const onChangeSpace = changeSpace(
-    organizationId,
-    spacePlans,
-    onSpacePlansChange,
-    setChangedSpaceId
-  );
-  const onDeleteSpace = deleteSpace(spacePlans, onSpacePlansChange);
 
   return (
     <Grid testId="non-enterprise-subs-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
@@ -140,12 +125,7 @@ export function NonEnterpriseSubscriptionPage({
       <Flex className={styles.fullRow} flexDirection="column">
         <SpacePlans
           initialLoad={initialLoad}
-          spacePlans={spacePlans}
-          upgradedSpaceId={changedSpaceId}
-          onCreateSpace={onCreateSpace}
-          onChangeSpace={onChangeSpace}
           organizationId={organizationId}
-          onDeleteSpace={onDeleteSpace}
           enterprisePlan={false}
           anySpacesInaccessible={anySpacesInaccessible}
           isOwnerOrAdmin={isOrgOwnerOrAdmin}

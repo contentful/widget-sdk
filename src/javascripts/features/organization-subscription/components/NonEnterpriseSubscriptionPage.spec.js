@@ -6,6 +6,7 @@ import { FREE } from 'account/pricing/PricingDataProvider';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
+import { OrgSubscriptionContextProvider } from '../context';
 import { mockWebappContent } from './__mocks__/webappContent';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 
@@ -105,7 +106,15 @@ async function build(customProps) {
     ...customProps,
   };
 
-  render(<NonEnterpriseSubscriptionPage {...props} />);
+  const state = {
+    spacePlans: [mockFreeSpacePlan],
+  };
+
+  render(
+    <OrgSubscriptionContextProvider initialState={state}>
+      <NonEnterpriseSubscriptionPage {...props} />
+    </OrgSubscriptionContextProvider>
+  );
 
   await waitFor(() => {
     expect(fetchWebappContentByEntryID).toHaveBeenCalled();

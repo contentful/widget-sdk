@@ -133,8 +133,8 @@ export async function openDeleteSpaceDialog({
     <DeleteSpaceModal key={modalKey} isShown={isShown} onClose={onClose} space={space} />
   ));
 
-  if (result) {
-    onSuccess && onSuccess();
+  if (result && onSuccess) {
+    onSuccess();
   }
 }
 

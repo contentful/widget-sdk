@@ -181,7 +181,7 @@ export const SpacePlanRow = ({
               </DropdownListItem>
             )}
             <DropdownListItem
-              onClick={onDeleteSpace(space, plan)}
+              onClick={onDeleteSpace(plan)}
               testId="subscription-page.spaces-list.delete-space-link">
               Delete
             </DropdownListItem>

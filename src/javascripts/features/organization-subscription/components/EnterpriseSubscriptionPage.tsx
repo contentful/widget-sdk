@@ -16,9 +16,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
 import { BasePlanContentEntryIds } from '../types';
-import { createSpace, changeSpace, deleteSpace } from '../utils/spaceUtils';
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
-import { useChangedSpace } from '../hooks/useChangedSpace';
 
 import { BasePlanCard } from './BasePlanCard';
 import { SpacePlans } from './SpacePlans';
@@ -52,7 +50,6 @@ const fetchContent = (isOnTrial: boolean) => async (): Promise<{
 interface EnterpriseSubscriptionPageProps {
   initialLoad: boolean;
   memberAccessibleSpaces: unknown[];
-  onSpacePlansChange: () => void;
   organization: Organization;
   spacePlans: SpacePlan[];
   usersMeta: UsersMeta;
@@ -61,7 +58,6 @@ interface EnterpriseSubscriptionPageProps {
 export function EnterpriseSubscriptionPage({
   initialLoad,
   memberAccessibleSpaces,
-  onSpacePlansChange,
   organization,
   spacePlans,
   usersMeta,
@@ -72,16 +68,6 @@ export function EnterpriseSubscriptionPage({
   const { isLoading, error, data } = useAsync(
     useCallback(fetchContent(isOrgOnEnterpriseTrial), [])
   );
-  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
-
-  const onCreateSpace = createSpace(organizationId);
-  const onChangeSpace = changeSpace(
-    organizationId,
-    spacePlans,
-    onSpacePlansChange,
-    setChangedSpaceId
-  );
-  const onDeleteSpace = deleteSpace(spacePlans, onSpacePlansChange);
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnEnterpriseTrial && !isOrgOwnerOrAdmin;
@@ -122,12 +108,7 @@ export function EnterpriseSubscriptionPage({
         ) : (
           <SpacePlans
             initialLoad={initialLoad}
-            spacePlans={spacePlans}
-            upgradedSpaceId={changedSpaceId}
-            onCreateSpace={onCreateSpace}
-            onChangeSpace={onChangeSpace}
             organizationId={organizationId}
-            onDeleteSpace={onDeleteSpace}
             enterprisePlan={true}
             anySpacesInaccessible={anySpacesInaccessible}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}

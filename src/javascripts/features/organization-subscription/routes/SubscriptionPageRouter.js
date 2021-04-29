@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -31,6 +31,7 @@ import { findAllPlans } from '../utils';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
+import { actions, OrgSubscriptionContext } from '../context';
 
 // List of tiers that already have content entries in Contentful
 // and can already use the rebranded version of our SubscriptionPage
@@ -42,7 +43,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = (organizationId, { setSpacePlans }) => async () => {
+const fetch = (organizationId, dispatch) => async () => {
   const organization = await getOrganization(organizationId);
   const endpoint = createOrganizationEndpoint(organizationId);
 
@@ -76,12 +77,13 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  setSpacePlans(spacePlans);
-
   const isSubscriptionPageRebrandingEnabled = await getVariation(
     FLAGS.SUBSCRIPTION_PAGE_REBRANDING
   );
   const orgIsEnterprise = isLegacyEnterpriseOrEnterprisePlan(organization, basePlan);
+
+  dispatch({ type: actions.SET_SPACE_PLANS, payload: spacePlans });
+
   return {
     basePlan,
     addOnPlan,
@@ -95,11 +97,14 @@ const fetch = (organizationId, { setSpacePlans }) => async () => {
 };
 
 export function SubscriptionPageRouter({ orgId: organizationId }) {
-  const [spacePlans, setSpacePlans] = useState([]);
+  const {
+    state: { spacePlans },
+    dispatch,
+  } = useContext(OrgSubscriptionContext);
   const [grandTotal, setGrandTotal] = useState(0);
 
   const { isLoading, error, data = {} } = useAsync(
-    useCallback(fetch(organizationId, { setSpacePlans }), [])
+    useCallback(fetch(organizationId, dispatch), [])
   );
 
   useEffect(() => {
@@ -158,7 +163,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
                   grandTotal={grandTotal}
                   initialLoad={isLoading}
                   spacePlans={spacePlans}
-                  onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
                 />
               )}
               {!data.orgIsEnterprise && (
@@ -170,7 +174,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
                   grandTotal={grandTotal}
                   initialLoad={isLoading}
                   spacePlans={spacePlans}
-                  onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
                 />
               )}
             </>
@@ -184,7 +187,6 @@ export function SubscriptionPageRouter({ orgId: organizationId }) {
               grandTotal={grandTotal}
               initialLoad={isLoading}
               spacePlans={spacePlans}
-              onSpacePlansChange={(newSpacePlans) => setSpacePlans(newSpacePlans)}
             />
           )}
         </Workbench.Content>

@@ -8,7 +8,6 @@ import {
   Grid,
   Heading,
   Note,
-  Notification,
   Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
@@ -17,22 +16,17 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 
-import { go } from 'states/Navigator';
-
-import { beginSpaceCreation } from 'services/CreateSpace';
-import { beginSpaceChange, getNotificationMessage } from 'services/ChangeSpaceService';
-import { openDeleteSpaceDialog } from 'features/space-settings';
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
+import { isOrganizationOnTrial, EnterpriseTrialInfo, SpacesListForMembers } from 'features/trials';
 import { Price } from 'core/components/formatting';
-import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { go } from 'states/Navigator';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { createSpace } from '../utils/spaceUtils';
 
 import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
-import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
-import { EnterpriseTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
-import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
   fullRow: css({
@@ -49,68 +43,11 @@ export function SubscriptionPage({
   grandTotal,
   initialLoad,
   spacePlans,
-  onSpacePlansChange,
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
-  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
-  const createSpace = () => {
-    trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });
-
-    beginSpaceCreation(organizationId);
-  };
-
-  const deleteSpace = (space, plan) => {
-    return () => {
-      openDeleteSpaceDialog({
-        space,
-        plan,
-        onSuccess: () => {
-          const newSpacePlans = spacePlans.filter((plan) => {
-            return plan.space && plan.space.sys.id !== space.sys.id;
-          });
-
-          onSpacePlansChange(newSpacePlans);
-        },
-      });
-    };
-  };
-
-  const changeSpace = (space) => {
-    return () => {
-      trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, { organizationId, spaceId: space.sys.id });
-
-      beginSpaceChange({
-        organizationId,
-        space,
-        onSubmit: async (productRatePlan) => {
-          // Update current spacePlan for this space with new data
-          const currentSpacePlan = _.cloneDeep(
-            spacePlans.find((sp) => sp.space.sys.id === space.sys.id)
-          );
-
-          const newSpacePlans = spacePlans.map((spacePlan) => {
-            if (spacePlan.space.sys.id !== space.sys.id) {
-              return spacePlan;
-            }
-
-            spacePlan.price = productRatePlan.price;
-            spacePlan.name = productRatePlan.name;
-
-            return spacePlan;
-          });
-
-          const newSpacePlan = spacePlans.find((sp) => sp.space.sys.id === space.sys.id);
-
-          onSpacePlansChange(newSpacePlans);
-          setChangedSpaceId(space.sys.id);
-
-          Notification.success(getNotificationMessage(space, currentSpacePlan, newSpacePlan));
-        },
-      });
-    };
-  };
+  const onCreateSpace = createSpace(organizationId);
 
   const handleStartAppTrial = async () => {
     go({
@@ -210,7 +147,7 @@ export function SubscriptionPage({
               )}
               {showNonPayingOrgCopy && (
                 <Flex flexDirection="column" marginTop="spacingXl">
-                  <NonPayingOrgCopy createSpace={createSpace} />
+                  <NonPayingOrgCopy onCreateSpace={onCreateSpace} />
                 </Flex>
               )}
             </>
@@ -224,12 +161,7 @@ export function SubscriptionPage({
         ) : (
           <SpacePlans
             initialLoad={initialLoad}
-            spacePlans={spacePlans}
-            upgradedSpaceId={changedSpaceId}
-            onCreateSpace={createSpace}
-            onChangeSpace={changeSpace}
             organizationId={organizationId}
-            onDeleteSpace={deleteSpace}
             enterprisePlan={enterprisePlan}
             anySpacesInaccessible={anySpacesInaccessible}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
@@ -248,7 +180,6 @@ SubscriptionPage.propTypes = {
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
   organization: PropTypes.object,
-  onSpacePlansChange: PropTypes.func,
   memberAccessibleSpaces: PropTypes.array,
 };
 
@@ -285,7 +216,7 @@ PayingOnDemandOrgCopy.propTypes = {
   grandTotal: PropTypes.number.isRequired,
 };
 
-function NonPayingOrgCopy({ createSpace }) {
+function NonPayingOrgCopy({ onCreateSpace }) {
   return (
     <Typography testId="subscription-page.non-paying-org-limits">
       <Heading className="section-title">Your organization limits</Heading>
@@ -296,7 +227,7 @@ function NonPayingOrgCopy({ createSpace }) {
       <TextLink
         icon="PlusCircle"
         testId="subscription-page.add-space-free-org-cta"
-        onClick={createSpace}>
+        onClick={onCreateSpace}>
         Create a space
       </TextLink>
     </Typography>
@@ -304,5 +235,5 @@ function NonPayingOrgCopy({ createSpace }) {
 }
 
 NonPayingOrgCopy.propTypes = {
-  createSpace: PropTypes.func.isRequired,
+  onCreateSpace: PropTypes.func.isRequired,
 };

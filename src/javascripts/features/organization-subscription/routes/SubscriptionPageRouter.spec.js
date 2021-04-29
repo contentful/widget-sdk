@@ -15,6 +15,7 @@ import { getAllProductRatePlans } from 'features/pricing-entities';
 import { getVariation } from 'LaunchDarkly';
 import { getSpaces } from 'services/TokenStore';
 import { mockWebappContent } from '../components/__mocks__/webappContent';
+import { OrgSubscriptionContextProvider } from '../context';
 
 import { SubscriptionPageRouter } from './SubscriptionPageRouter';
 
@@ -171,7 +172,11 @@ async function build(customProps) {
     ...customProps,
   };
 
-  render(<SubscriptionPageRouter {...props} />);
+  render(
+    <OrgSubscriptionContextProvider>
+      <SubscriptionPageRouter {...props} />
+    </OrgSubscriptionContextProvider>
+  );
 
   await waitFor(() => expect(screen.queryByTestId('subs-page-loading')).toBeNull());
 }

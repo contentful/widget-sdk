@@ -6,12 +6,14 @@ import { getVariation } from 'LaunchDarkly';
 import { router } from 'core/react-routing';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { SubscriptionPage } from './SubscriptionPage';
+import { links } from '../utils';
+import { OrgSubscriptionContextProvider } from '../context/OrgSubscriptionContext';
 
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
-import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
-import { useAppsTrial } from 'features/trials';
+import { FREE, isFreePlan, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
+import { useAppsTrial, isOrganizationOnTrial } from 'features/trials';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
@@ -31,7 +33,14 @@ jest.mock('core/react-routing/useRouter', () => ({
 jest.mock('../utils', () => ({
   links: {
     memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
+    billing: jest.fn(),
   },
+}));
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  isEnterprisePlan: jest.fn(),
+  isFreePlan: jest.fn(),
+  isPartnerPlan: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -39,8 +48,10 @@ jest.mock('states/Navigator', () => ({
   getCurrentStateName: jest.fn(),
 }));
 
-jest.mock('features/trials', () => ({
-  ...jest.requireActual('features/trials'),
+jest.mock('features/trials/services/TrialService', () => ({
+  isOrganizationOnTrial: jest.fn().mockReturnValue(false),
+}));
+jest.mock('features/trials/hooks/useAppsTrial', () => ({
   useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 
@@ -101,6 +112,10 @@ describe('SubscriptionPage', () => {
   });
 
   it('should show user details and CTA to upgrade for the Community customers', () => {
+    isFreePlan.mockReturnValueOnce(true);
+    const navigatorObject = { test: true };
+    links.billing.mockReturnValue(navigatorObject);
+
     const usersMeta = {
       numFree: 5,
       numPaid: 2,
@@ -109,7 +124,7 @@ describe('SubscriptionPage', () => {
 
     build({ usersMeta, basePlan: mockFreeBasePlan });
 
-    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+    expect(screen.getByTestId('users-for-plan').textContent).toContain(
       `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
         usersMeta.hardLimit
       } users are included free with your subscription.`
@@ -162,6 +177,7 @@ describe('SubscriptionPage', () => {
       numFree: 100,
       hardLimit: null,
     };
+    isOrganizationOnTrial.mockReturnValueOnce(true);
     build({ usersMeta, organization: mockTrialOrganization });
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
@@ -189,14 +205,13 @@ describe('SubscriptionPage', () => {
     isOwner.mockReturnValue(false);
     build({ organization: Fake.Organization({ isBillable: false }) });
 
-    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
   it('should not show the limitations copy if the org is on trial', () => {
+    isOrganizationOnTrial.mockReturnValueOnce(true);
     build({ organization: mockTrialOrganization });
 
-    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
@@ -215,7 +230,6 @@ describe('SubscriptionPage', () => {
       organization: Fake.Organization({ isBillable: false }),
     });
 
-    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
     expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
@@ -232,6 +246,7 @@ describe('SubscriptionPage', () => {
   describe('organization on platform trial', () => {
     beforeEach(() => {
       isOwnerOrAdmin.mockReturnValue(true);
+      isOrganizationOnTrial.mockReturnValue(true);
     });
 
     it('should show trial info for admins and owners', () => {
@@ -244,6 +259,7 @@ describe('SubscriptionPage', () => {
 
     it('should show trial info and spaces section for members', () => {
       isOwnerOrAdmin.mockReturnValueOnce(false);
+
       build({
         organization: mockTrialOrganization,
         memberAccessibleSpaces: [],
@@ -280,19 +296,19 @@ describe('SubscriptionPage', () => {
   });
 });
 
-function build(custom) {
-  const props = Object.assign(
-    {
-      initialLoad: false,
-      organization: mockOrganization,
-      basePlan: mockBasePlan,
-      spacePlans: [],
-      grandTotal: null,
-      usersMeta: null,
-      onSpacePlansChange: null,
-    },
-    custom
-  );
+function build(customProps) {
+  const props = {
+    initialLoad: false,
+    organization: mockOrganization,
+    basePlan: mockBasePlan,
+    grandTotal: null,
+    usersMeta: null,
+    ...customProps,
+  };
 
-  render(<SubscriptionPage {...props} />);
+  render(
+    <OrgSubscriptionContextProvider>
+      <SubscriptionPage {...props} />
+    </OrgSubscriptionContextProvider>
+  );
 }

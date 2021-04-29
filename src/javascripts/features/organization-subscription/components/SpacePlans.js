@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
 import { sortBy } from 'lodash';
-
 import {
   Paragraph,
   Heading,
@@ -17,21 +16,25 @@ import {
   Button,
   Notification,
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import StateLink from 'app/common/StateLink';
-
-import { helpCenterUrl } from 'Config';
-import tokens from '@contentful/forma-36-tokens';
 import { track } from 'analytics/Analytics';
-import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-
-import { calculatePlansCost } from 'utils/SubscriptionUtils';
+import { helpCenterUrl } from 'Config';
 import { Pluralized, Price } from 'core/components/formatting';
+import { openDeleteSpaceDialog } from 'features/space-settings';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
 import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 
 import { downloadSpacesUsage } from '../services/SpacesUsageService';
+import { createSpace, changeSpace } from '../utils/spaceUtils';
+import { OrgSubscriptionContext } from '../context';
+import { actions } from '../context/orgSubscriptionReducer';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
   total: css({
@@ -81,19 +84,18 @@ const withUtmParams = buildUrlWithUtmParams({
 const trackHelpLink = () => track('space_usage_summary:help_link_clicked');
 
 export function SpacePlans({
+  anySpacesInaccessible = false,
+  enterprisePlan = false,
   initialLoad,
-  spacePlans,
-  upgradedSpaceId,
-  onCreateSpace,
-  onChangeSpace,
-  onDeleteSpace,
-  enterprisePlan,
+  isOwnerOrAdmin = false,
   organizationId,
-  anySpacesInaccessible,
-  isOwnerOrAdmin,
 }) {
-  const numSpaces = spacePlans.length;
-  const totalCost = calculatePlansCost({ plans: spacePlans });
+  const {
+    dispatch,
+    state: { spacePlans },
+  } = useContext(OrgSubscriptionContext);
+
+  const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
   const [canManageSpaces, setCanManageSpaces] = useState(false);
   const [isSpaceAssignmentExperimentEnabled, setIsSpaceAssignmentExperimentEnabled] = useState(
@@ -131,6 +133,22 @@ export function SpacePlans({
     fetch();
   }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
 
+  // Spaces CRUD
+  const onCreateSpace = createSpace(organizationId);
+  const onChangeSpace = changeSpace(
+    organizationId,
+    spacePlans,
+    (newSpacePlans) => dispatch({ type: actions.SET_SPACE_PLANS, payload: newSpacePlans }),
+    setChangedSpaceId
+  );
+  const onDeleteSpace = (plan) => () => {
+    openDeleteSpaceDialog({
+      plan,
+      space: plan.space,
+      onSuccess: () => dispatch({ type: actions.DELETE_SPACE, payload: plan.space.sys.id }),
+    });
+  };
+
   const handleExportBtnClick = async () => {
     setIsExportingCSV(true);
     try {
@@ -142,6 +160,8 @@ export function SpacePlans({
     setIsExportingCSV(false);
   };
 
+  const numSpaces = spacePlans.length;
+  const totalCost = calculatePlansCost({ plans: spacePlans });
   const showExportBtn = !initialLoad && assignedSpacePlans?.length > 0;
 
   return (
@@ -264,7 +284,7 @@ export function SpacePlans({
                 plans={assignedSpacePlans}
                 organizationId={organizationId}
                 initialLoad={initialLoad}
-                upgradedSpaceId={upgradedSpaceId}
+                upgradedSpaceId={changedSpaceId}
                 onChangeSpace={onChangeSpace}
                 onDeleteSpace={onDeleteSpace}
                 enterprisePlan={enterprisePlan}
@@ -306,7 +326,7 @@ export function SpacePlans({
               plans={spacePlans}
               organizationId={organizationId}
               initialLoad={initialLoad}
-              upgradedSpaceId={upgradedSpaceId}
+              upgradedSpaceId={changedSpaceId}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
               enterprisePlan={enterprisePlan}
@@ -319,21 +339,9 @@ export function SpacePlans({
 }
 
 SpacePlans.propTypes = {
-  initialLoad: PropTypes.bool,
-  organizationId: PropTypes.string,
-  spacePlans: PropTypes.array.isRequired,
-  onCreateSpace: PropTypes.func.isRequired,
-  onChangeSpace: PropTypes.func.isRequired,
-  onDeleteSpace: PropTypes.func.isRequired,
-  enterprisePlan: PropTypes.bool,
-  upgradedSpaceId: PropTypes.string,
   anySpacesInaccessible: PropTypes.bool,
+  enterprisePlan: PropTypes.bool,
+  initialLoad: PropTypes.bool.isRequired,
   isOwnerOrAdmin: PropTypes.bool,
-};
-
-SpacePlans.defaultProps = {
-  initialLoad: true,
-  enterprisePlan: false,
-  upgradedSpaceId: '',
-  anySpacesInaccessible: false,
+  organizationId: PropTypes.string.isRequired,
 };

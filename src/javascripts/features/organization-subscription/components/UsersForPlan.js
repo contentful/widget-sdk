@@ -40,7 +40,7 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
 
   return (
     <>
-      <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free' : null} with
+      <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free ' : null}with
       your subscription.{' '}
       <StateLink
         {...links.memberships(organizationId)}
@@ -81,9 +81,9 @@ AboveHardLimitWarning.propTypes = {
   isFreePlan: PropTypes.bool,
 };
 
-const EnterpriseTrialWarning = ({ numberUsers }) => {
+const EnterpriseTrialWarning = ({ numberFreeUsers }) => {
   return (
-    numberUsers > ENTERPRISE_FREE_USER_COUNT && (
+    numberFreeUsers > ENTERPRISE_FREE_USER_COUNT && (
       <>
         <Pluralized text="user" count={ENTERPRISE_FREE_USER_COUNT} /> are included free with
         Enterprise tier. Customers on the Enterprise tier can purchase additional users for{' '}
@@ -94,7 +94,7 @@ const EnterpriseTrialWarning = ({ numberUsers }) => {
 };
 
 EnterpriseTrialWarning.propTypes = {
-  numberUsers: PropTypes.number,
+  numberFreeUsers: PropTypes.number,
 };
 
 export function UsersForPlan({
@@ -135,7 +135,7 @@ export function UsersForPlan({
             <strong>${costOfUsers}</strong> per month.{' '}
           </>
         )}
-        {isOnEnterpriseTrial && <EnterpriseTrialWarning numberUsers={numberFreeUsers} />}
+        {isOnEnterpriseTrial && <EnterpriseTrialWarning numberFreeUsers={numberFreeUsers} />}
         {!isAboveHardLimit && (
           <StateLink
             {...links.memberships(organizationId)}

@@ -7,6 +7,7 @@ import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';
 import { go } from 'states/Navigator';
 
 import { importer } from './importer';
+import { OrgSubscriptionContextProvider } from '../context';
 
 const subscriptionPageState = {
   name: 'overview',
@@ -15,7 +16,11 @@ const subscriptionPageState = {
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SubscriptionPageRouter }) => {
-        return <SubscriptionPageRouter {...props} />;
+        return (
+          <OrgSubscriptionContextProvider>
+            <SubscriptionPageRouter {...props} />
+          </OrgSubscriptionContextProvider>
+        );
       }}
     </LazyLoadedComponent>
   ),

@@ -3,12 +3,16 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import * as fake from 'test/helpers/fakeFactory';
+import { beginSpaceCreation } from 'services/CreateSpace';
 
-import { SpacePlans } from './SpacePlans';
+import { OrgSubscriptionContextProvider } from '../context';
+import { useChangedSpace } from '../hooks/useChangedSpace';
 import { getSpacesUsage } from '../services/SpacesUsageService';
+import { SpacePlans } from './SpacePlans';
 
-const fakeSpaceId = 'fake_space_id';
-const mockSpaceForPlanOne = fake.Space({ sys: { id: fakeSpaceId } });
+const mockOrgId = 'random_org_id';
+const mockSpaceId = 'fake_space_id';
+const mockSpaceForPlanOne = fake.Space({ sys: { id: mockSpaceId } });
 const mockSpaceForPlanTwo = fake.Space();
 
 const mockPlanOne = {
@@ -45,7 +49,7 @@ const mockSpaceUsage = {
     id: '123',
     space: {
       sys: {
-        id: fakeSpaceId,
+        id: mockSpaceId,
       },
     },
   },
@@ -62,9 +66,15 @@ jest.mock('../services/SpacesUsageService', () => ({
   getSpacesUsage: jest.fn().mockResolvedValue({ items: [], total: 0 }),
 }));
 
-const mockOnChangeSpace = jest.fn();
-const mockOnDeleteSpace = jest.fn();
-const mockOnCreateSpace = jest.fn();
+jest.mock('services/CreateSpace', () => ({
+  beginSpaceCreation: jest.fn(),
+}));
+
+jest.mock('../hooks/useChangedSpace', () => ({
+  useChangedSpace: jest
+    .fn()
+    .mockReturnValue({ changedSpaceId: 'space_id', setChangedSpaceId: jest.fn() }),
+}));
 
 describe('Space Plan', () => {
   describe('should load correctly', () => {
@@ -86,7 +96,7 @@ describe('Space Plan', () => {
     });
 
     it('should say if an organization has 0 spaces', async () => {
-      build({ spacePlans: [] });
+      build(null, { spacePlans: [] });
       await waitFor(() =>
         expect(screen.getByTestId('subscription-page.organization-information')).toHaveTextContent(
           "Your organization doesn't have any spaces."
@@ -113,12 +123,10 @@ describe('Space Plan', () => {
     });
 
     it('should call onCreateSpace when the create-space button is clicked', async () => {
-      const onCreateSpace = jest.fn();
-
-      build({ onCreateSpace });
+      build();
       userEvent.click(screen.getByTestId('subscription-page.create-space'));
 
-      await waitFor(() => expect(onCreateSpace).toHaveBeenCalled());
+      await waitFor(() => expect(beginSpaceCreation).toHaveBeenCalledWith(mockOrgId));
     });
 
     it('should render SpacePlanRows when there are plans', async () => {
@@ -130,7 +138,7 @@ describe('Space Plan', () => {
     });
 
     it('should not render SpacePlanRows when there are no plans', async () => {
-      build({ spacePlans: [] });
+      build(null, { spacePlans: [] });
       await waitFor(() =>
         expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(0)
       );
@@ -138,7 +146,8 @@ describe('Space Plan', () => {
 
     it('should render an upgraded SpacePlanRow when it has been upgraded', async () => {
       getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
-      build({ upgradedSpaceId: mockSpaceForPlanOne.sys.id });
+      useChangedSpace.mockReturnValue({ changedSpaceId: mockSpaceId });
+      build();
 
       await waitFor(() =>
         expect(
@@ -182,12 +191,14 @@ describe('Space Plan', () => {
 
       const mockedPlansLocal = [mockPlanLocalOne, mockPlanLocalTwo];
 
-      build({
-        enterprisePlan: true,
-        spacePlans: mockedPlansLocal,
-        initialLoad: false,
-        isOwnerOrAdmin: true,
-      });
+      build(
+        {
+          enterprisePlan: true,
+          initialLoad: false,
+          isOwnerOrAdmin: true,
+        },
+        { spacePlans: mockedPlansLocal }
+      );
 
       await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());
       expect(screen.queryByTestId('tab-unusedSpaces')).toBeInTheDocument();
@@ -235,28 +246,30 @@ describe('Space Plan', () => {
         space: null,
         price: 789,
       };
-      build({ spacePlans: [mockUnAssignedSpacePlan] });
+      build(null, { spacePlans: [mockUnAssignedSpacePlan] });
 
       await waitFor(() => expect(screen.queryByTestId('subscription-page.export-csv')).toBeNull());
     });
   });
 });
 
-function build(custom) {
-  const props = Object.assign(
-    {
-      initialLoad: false,
-      spacePlans: mockPlans,
-      upgradedSpaceId: 'string',
-      onCreateSpace: mockOnCreateSpace,
-      onChangeSpace: mockOnChangeSpace,
-      onDeleteSpace: mockOnDeleteSpace,
-      enterprisePlan: false,
-      organizationId: '123',
-      anySpacesInaccessible: false,
-    },
-    custom
-  );
+function build(customProps, customState) {
+  const props = {
+    initialLoad: false,
+    enterprisePlan: false,
+    organizationId: mockOrgId,
+    anySpacesInaccessible: false,
+    ...customProps,
+  };
 
-  render(<SpacePlans {...props} />);
+  const state = {
+    spacePlans: mockPlans,
+    ...customState,
+  };
+
+  render(
+    <OrgSubscriptionContextProvider initialState={state}>
+      <SpacePlans {...props} />
+    </OrgSubscriptionContextProvider>
+  );
 }

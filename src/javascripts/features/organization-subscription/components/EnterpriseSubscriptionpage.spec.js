@@ -7,6 +7,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import { mockWebappContent } from './__mocks__/webappContent';
 import { BasePlanContentEntryIds } from '../types';
+import { OrgSubscriptionContextProvider } from '../context/OrgSubscriptionContext';
 import { EnterpriseSubscriptionPage } from './EnterpriseSubscriptionPage';
 
 jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
@@ -45,8 +46,6 @@ describe('EnterpriseSubscriptionPage', () => {
 
     it('show the BasePlanCard with the fetched content', async () => {
       await build();
-
-      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.ENTERPRISE);
 
       const basePlanCard = screen.getByTestId('base-plan-card');
 
@@ -109,7 +108,15 @@ async function build(customProps) {
     ...customProps,
   };
 
-  render(<EnterpriseSubscriptionPage {...props} />);
+  const state = {
+    spacePlans: [mockFreeSpacePlan],
+  };
+
+  render(
+    <OrgSubscriptionContextProvider initialState={state}>
+      <EnterpriseSubscriptionPage {...props} />
+    </OrgSubscriptionContextProvider>
+  );
 
   await waitFor(() => {
     expect(fetchWebappContentByEntryID).toHaveBeenCalled();
