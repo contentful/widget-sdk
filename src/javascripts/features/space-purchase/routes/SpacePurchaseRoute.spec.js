@@ -1,14 +1,14 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { PRESELECT_VALUES, SpacePurchaseRoute } from './SpacePurchaseRoute';
+import { SpacePurchaseRoute, PRESELECT_VALUES } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import createResourceService from 'services/ResourceService';
 import {
-  fetchPlatformPurchaseContent,
   fetchSpacePurchaseContent,
+  fetchPlatformPurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
-import { EVENTS, trackEvent } from '../utils/analyticsTracking';
-import { getOrganizationMembership, isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+import { getOrganizationMembership, isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
@@ -19,16 +19,14 @@ import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 import {
   getAddOnProductRatePlans,
-  getAllProductRatePlans,
-  getBasePlan,
-  getSpacePlanForSpace,
-  getSpacePlans,
   getSpaceProductRatePlans,
+  getSpacePlans,
+  getSpacePlanForSpace,
+  getBasePlan,
+  getAllProductRatePlans,
 } from 'features/pricing-entities';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { setQueryParameters } from 'test/helpers/setQueryParameters';
-// eslint-disable-next-line no-restricted-imports
-import { MemoryRouter } from 'react-router-dom';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -498,17 +496,10 @@ describe('SpacePurchaseRoute', () => {
 async function build(customProps, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
+    ...customProps,
   };
 
-  renderWithProvider(
-    () => (
-      <MemoryRouter initialEntries={[{ state: customProps }]}>
-        <SpacePurchaseRoute orgId={mockOrganization.sys.id} />
-      </MemoryRouter>
-    ),
-    { sessionId: 'random_id' },
-    props
-  );
+  renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
 
   if (shouldWait) {
     await waitFor(() => expect(screen.queryByTestId('cf-ui-empty-state')).toBeNull());

@@ -10,10 +10,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { appsMarketingUrl } from 'Config';
 import { StartAppTrialModal, useAppsTrial } from 'features/trials';
+import { go } from 'states/Navigator';
 import { PRESELECT_VALUES } from 'features/space-purchase';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { CancelAppsSubscriptionModal } from './CancelAppsSubscriptionModal';
-import { router } from 'core/react-routing';
 
 const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
@@ -56,10 +56,10 @@ export function ContentfulApps({ organizationId, startAppTrial, addOnPlan }) {
   const showBuyButton = isAppsTrialActive || hasAppsTrialExpired;
 
   const showPurchase = () => {
-    router.navigate({
-      path: 'organizations.subscription.newSpace',
-      orgId: organizationId,
-      navigationState: {
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: {
+        orgId: organizationId,
         preselect: PRESELECT_VALUES.APPS,
         from: 'subscription',
       },

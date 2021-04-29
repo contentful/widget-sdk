@@ -18,7 +18,6 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
-import { router } from 'core/react-routing';
 
 /**
  * Starts the space creation flow.
@@ -74,10 +73,9 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
   const spacePurchaseFlowAllowed = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
 
   if (spacePurchaseFlowAllowed) {
-    router.navigate({
-      path: 'organizations.subscription.newSpace',
-      orgId: organizationId,
-      navigationState: { ...customRouteParams },
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
+      params: { orgId: organizationId, ...customRouteParams },
     });
     return;
   }
