@@ -2,7 +2,7 @@ import React from 'react';
 import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
 import { window } from 'core/services/window';
 import * as Navigator from 'states/Navigator';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as accessChecker from 'access_control/AccessChecker';
 import {
   notificationEnvironmentAliasChanged,
@@ -120,7 +120,7 @@ export const triggerAliasChangedToast = async (handleChangeEnvironment, update) 
     );
     Navigator.reload();
   } catch (err) {
-    logger.captureError(err);
+    captureError(err);
     Notification.error(
       <FromTo
         message={`There was an error changing the ${aliasId} alias target from `}
@@ -207,7 +207,7 @@ export const triggerAliasDeletedToast = async (handleDeleteEnvironment, context)
     Notification.success(<Message message={`Environment alias "${aliasId}" deleted`} />);
     Navigator.reload();
   } catch (err) {
-    logger.captureError(err);
+    captureError(err);
     Notification.error(<Message message={`There was an error deleting the ${aliasId} alias`} />);
   }
 };

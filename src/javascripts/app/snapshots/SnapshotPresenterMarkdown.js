@@ -4,7 +4,7 @@ import isHtml from 'is-html';
 import { MarkdownPreview } from '@contentful/field-editor-markdown';
 import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 const SnapshotPresenterMarkdown = ({ className, value, direction }) => {
   const hasHtmlTags = isHtml(value);

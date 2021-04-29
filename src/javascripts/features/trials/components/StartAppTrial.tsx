@@ -10,7 +10,7 @@ import { go } from 'states/Navigator';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { Heading, Typography, Notification } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -88,7 +88,7 @@ const installApps = async (
   cma: unknown
 ) => {
   const appRepos = await Promise.all(apps.map(getAppsRepo().getAppByIdOrSlug)).catch((error) => {
-    logger.captureError(new Error(`Failed to get app definitions during apps trial`), {
+    captureError(new Error(`Failed to get app definitions during apps trial`), {
       extra: {
         originalError: error,
       },
@@ -110,7 +110,7 @@ const installApps = async (
         const appName = apps[i];
         (result as ResultWithAppName).app = appName;
         if (result.status === 'rejected') {
-          logger.captureError(new Error(`Failed to install ${appName} during apps trial`), {
+          captureError(new Error(`Failed to install ${appName} during apps trial`), {
             extra: {
               reason: result.reason,
             },
@@ -172,7 +172,7 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
       goToSpaceHome(spaceContext.getId());
     } else {
       // other errors including TrialSpaceCreation violation and permission errors.
-      logger.captureError(e);
+      captureError(e);
       goToSubscriptionPage(organizationId);
     }
   }

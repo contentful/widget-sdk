@@ -1,4 +1,4 @@
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as accessChecker from 'access_control/AccessChecker';
 import worf from '@contentful/worf';
 
@@ -38,7 +38,7 @@ class Authorization {
     try {
       this.authContext = worf(this._tokenLookup, environment);
     } catch (exp) {
-      logger.captureError(exp, {
+      captureError(exp, {
         tokenLookup,
       });
       return;

@@ -9,7 +9,7 @@ import {
   Notification,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 
 const BATCH_LIMIT = 100;

@@ -9,7 +9,7 @@ import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
 import { spaceCreation, createSpaceWithTemplate } from '../services/SpaceCreationService';
 import { actions, SpaceCreationState } from '../context';
 import * as Navigator from 'states/Navigator';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { track } from 'analytics/Analytics';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';

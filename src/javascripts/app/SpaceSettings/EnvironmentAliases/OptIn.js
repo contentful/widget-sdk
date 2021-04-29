@@ -16,7 +16,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EnvironmentIcon from 'svg/environment.svg';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import StaticDropdown from './StaticDropdown';
 import { handleOptIn, STEPS } from './Utils';
@@ -76,7 +76,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
       setStep(STEPS.THIRD_CHANGE_ENV);
       Notification.success('You have successfully opted-in');
     } catch (err) {
-      logger.captureError(err);
+      captureError(err);
       Notification.error('There was an error opting in - please try again');
     } finally {
       setLoading(false);

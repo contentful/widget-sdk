@@ -3,7 +3,7 @@ import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { mapValues, get } from 'lodash';
 import { isValidResourceId } from 'data/utils';
 import * as EnvironmentAlias from 'data/CMA/SpaceAliasesRepo';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import {
   temporarilyIgnoreAliasChangedToast,
   triggerAliasCreatedToast,
@@ -100,7 +100,7 @@ export const useCreateEnvAliasState = (props) => {
           },
         });
       } else if (result.type === EnvironmentAlias.ServerError) {
-        logger.captureError(result.error);
+        captureError(result.error);
         dispatch({ type: SET_SERVER_FAILURE, value: true });
       }
 

@@ -7,7 +7,7 @@ import { toType, getContentTypeIdFor, isAuthor, shouldPerformNewUsageCheck } fro
 import { capitalize, capitalizeFirst } from 'utils/StringUtils';
 import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import {
   showPersistentNotification,
   hidePersistentNotification,
@@ -613,7 +613,7 @@ function checkIfCanCreateSpace(context) {
   try {
     response = context.can(Action.CREATE, 'Space');
   } catch (e) {
-    logger.captureError(e);
+    captureError(e);
   }
   return response;
 }

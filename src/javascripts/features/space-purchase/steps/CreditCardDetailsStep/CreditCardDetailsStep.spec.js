@@ -4,7 +4,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 import * as TokenStore from 'services/TokenStore';
 import * as LazyLoader from 'utils/LazyLoader';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 import { CreditCardDetailsStep } from './CreditCardDetailsStep';
@@ -120,7 +120,7 @@ describe('steps/CreditCardDetailsStep', () => {
 
     await waitFor(() => expect(mockEndpoint).toBeCalled());
 
-    expect(logger.captureError).toBeCalledWith(error, {
+    expect(captureError).toBeCalledWith(error, {
       organizationId: mockOrganization.sys.id,
     });
 
@@ -134,7 +134,7 @@ describe('steps/CreditCardDetailsStep', () => {
 
     await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
-    expect(logger.captureError).toBeCalledWith(expect.any(Error), {
+    expect(captureError).toBeCalledWith(expect.any(Error), {
       error: response,
       location: 'account.organizations.subscription_new.new_space',
     });

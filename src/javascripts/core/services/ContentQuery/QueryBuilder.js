@@ -2,7 +2,7 @@ import moment from 'moment';
 import { assign } from 'utils/Collections';
 import { buildFilterFieldByQueryKey } from './Filters';
 import { Operator, isValid as isValidOperator } from './Operators';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 /**
  * Takes an object representing the `Search` component's public state object and
@@ -49,7 +49,7 @@ export function buildQuery({
 
 function applyGenericValue(query, [queryKey, operator, value]) {
   if (!isValidOperator(operator)) {
-    logger.captureError(new Error(`invalid operator “${operator}” for search query`), {
+    captureError(new Error(`invalid operator “${operator}” for search query`), {
       queryKey,
       operator,
       value,

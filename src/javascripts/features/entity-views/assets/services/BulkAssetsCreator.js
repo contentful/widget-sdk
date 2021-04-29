@@ -3,7 +3,7 @@ import { FilestackService } from '@contentful/field-editor-file';
 import * as Config from 'Config';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 /**
@@ -63,7 +63,7 @@ export function open(localeCode) {
           });
       },
       (error) => {
-        logger.captureWarning(error);
+        captureWarning(error);
         Notification.error('Some assets failed to upload');
 
         return Promise.reject(error);

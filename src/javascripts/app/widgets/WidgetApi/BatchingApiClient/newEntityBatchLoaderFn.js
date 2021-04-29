@@ -5,7 +5,7 @@ import {
   fetchInChunks,
   RESPONSE_SIZE_EXCEEDED_MAX_RETRIES,
 } from './utils';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 /**
  * Returns a function that can be used with `dataloader` to fetch entities.
@@ -59,7 +59,7 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
       // Though not expected, let's keep an eye on 504s and other potential weird
       // stuff that we don't know about. Ignore -1 as it's about network issues.
       if (error && error.status !== -1) {
-        logger.captureError(new Error('BatchingApiClient: Failed bulk fetching entities'), {
+        captureError(new Error('BatchingApiClient: Failed bulk fetching entities'), {
           error,
           data,
         });

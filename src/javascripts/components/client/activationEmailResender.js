@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import postForm from 'data/Request/PostForm';
 import * as Config from 'Config';
@@ -22,7 +22,7 @@ export async function resendActivationEmail(email) {
   } catch (error) {
     const errorJson = await error.json();
 
-    logger.captureError(new Error('Failed activation email resend attempt'), {
+    captureError(new Error('Failed activation email resend attempt'), {
       email: email,
       response: {
         status: error.status,

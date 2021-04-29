@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { isFunction, get } from 'lodash';
 import { registerDirective } from 'core/NgRegistry';
 import angular from 'angular';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import * as Forma36Components from '@contentful/forma-36-react-components';
 
@@ -20,7 +20,6 @@ import { EntryEditor } from 'app/entry_editor/EntryEditor';
 import { AssetEditor } from 'app/asset_editor/AssetEditor';
 import { SlideInEditor } from 'app/entity_editor/SlideInEditor/SlideInEditor';
 
-// TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container) {
   if (!Component) {
     return;
@@ -40,7 +39,7 @@ function renderComponent(Component, props, scope, container) {
   });
 }
 
-function getReactComponent(name, logger) {
+function getReactComponent(name) {
   // if name is a function assume it is component and return it
   if (isFunction(name)) {
     return name;
@@ -57,7 +56,7 @@ function getReactComponent(name, logger) {
   try {
     reactComponent = requireComponent(name);
   } catch (e) {
-    logger.captureError(e);
+    captureError(e);
   }
 
   if (!reactComponent) {
@@ -181,7 +180,7 @@ export default function register() {
         let ReactComponent;
 
         if (attrs.name) {
-          ReactComponent = getReactComponent(attrs.name, logger);
+          ReactComponent = getReactComponent(attrs.name);
         } else if (attrs.component) {
           ReactComponent = $scope.$eval(attrs.component);
         } else if (attrs.jsx) {

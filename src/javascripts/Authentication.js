@@ -5,7 +5,7 @@ import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'core/NgRegistry';
 import { window } from 'core/services/window';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 /**
  * @name Authentication
@@ -86,7 +86,7 @@ export const refreshToken = createExclusiveTask(async () => {
     try {
       await loginSecureAssets(token);
     } catch (error) {
-      logger.captureWarning(error);
+      captureWarning(error);
     }
 
     tokenStore.set(token);
@@ -154,7 +154,7 @@ export function init() {
       // In development, we use localStorage / login via url hash, which won't
       // trigger the secure assets login unless we do the following:
       loginSecureAssets(previousToken).catch((error) => {
-        logger.captureWarning(error);
+        captureWarning(error);
       });
     }
 
@@ -207,7 +207,7 @@ export async function logout() {
     try {
       await logoutSecureAssets();
     } catch (error) {
-      logger.captureWarning(error);
+      captureWarning(error);
     }
   } finally {
     setLocation(Config.authUrl('logout'));

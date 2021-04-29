@@ -6,7 +6,7 @@ import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import { eventExists, transformEvent } from 'analytics/transform';
 import { TransformedEventData, EventData } from './types';
-import * as logger from 'services/logger';
+import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
 import * as random from '../utils/Random';
 import { clearSequenceContext, initSequenceContext } from './sequenceContext';
@@ -115,7 +115,7 @@ export function track(event: string, data?: EventData): void {
     logEventPayloadSize(event, transformedData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
-    logger.captureError(error, {
+    captureError(error, {
       extra: {
         event,
         data,
@@ -145,7 +145,7 @@ function logEventPayloadSize(eventName: string, safePayload: TransformedEventDat
         .some((v) => _.isFunction(v));
 
       if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
-        logger.captureWarning(new Error('Potentially bloated tracking event payload'), {
+        captureWarning(new Error('Potentially bloated tracking event payload'), {
           extra: {
             event: eventName,
             primaryEventSize,

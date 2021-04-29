@@ -10,7 +10,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { useRouteNavigate } from 'core/react-routing';
 
 import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
@@ -62,7 +62,7 @@ export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
   );
 
   const onError = useCallback((error) => {
-    logger.captureError(new Error('Zuora credit card iframe error'), {
+    captureError(new Error('Zuora credit card iframe error'), {
       extra: {
         error,
         location: 'account.organizations.billing.edit-payment-method',

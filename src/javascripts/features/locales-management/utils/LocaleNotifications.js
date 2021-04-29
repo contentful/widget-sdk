@@ -1,6 +1,6 @@
 import { Notification } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 const NOT_RENAMEABLE_MESSAGE =
   'Cannot change the code of a locale which is fallback of another one';
@@ -42,7 +42,7 @@ export function codeChangeError() {
 
 export function deleteError(err) {
   Notification.error('Locale could not be deleted: ' + err.body.message);
-  logger.captureWarning(err);
+  captureWarning(err);
 }
 
 export function saveError(err) {
@@ -51,7 +51,7 @@ export function saveError(err) {
     Notification.error('Locale could not be saved: ' + message);
   } else {
     Notification.error('Locale could not be saved');
-    logger.captureWarning(err);
+    captureWarning(err);
   }
 }
 

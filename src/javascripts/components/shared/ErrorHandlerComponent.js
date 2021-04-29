@@ -1,5 +1,5 @@
 import React from 'react';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import PropTypes from 'prop-types';
 
 export default class ErrorHandler extends React.Component {
@@ -10,7 +10,7 @@ export default class ErrorHandler extends React.Component {
 
   componentDidCatch(error, info) {
     this.setState({ hasError: true });
-    logger.captureError(error, info);
+    captureError(error, info);
   }
 
   render() {

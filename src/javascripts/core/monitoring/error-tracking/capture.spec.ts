@@ -1,13 +1,15 @@
-import * as logger from './logger';
-// eslint-disable-next-line no-restricted-imports
+import { captureWarning, captureError } from './capture';
 import { withScope, captureException } from '@contentful/experience-error-tracking';
 import { getCurrentStateName } from 'states/Navigator';
 
 jest.mock('@contentful/experience-error-tracking');
-
 jest.mock('states/Navigator');
 
-describe('logger service', () => {
+const withScopeMocked = withScope as jest.Mock<typeof withScope>;
+// @ts-expect-error complaining due to jsdoc
+const getCurrentStateNameMocked = getCurrentStateName as jest.Mock<typeof getCurrentStateName>;
+
+describe('capture errors', () => {
   let scope;
 
   beforeEach(() => {
@@ -16,21 +18,21 @@ describe('logger service', () => {
       setTags: jest.fn(),
       setExtras: jest.fn(),
     };
-    withScope.mockImplementation((cb) => cb(scope));
+    withScopeMocked.mockImplementation((cb) => cb(scope));
   });
 
   it(`passes error and context along`, () => {
     const error = new Error('something bad');
     const context = {};
 
-    logger.captureError(error, context);
+    captureError(error, context);
     expect(captureException).toBeCalledWith(error, context);
   });
 
   it('should send Sentry an error-level error when calling captureError', () => {
     const error = new Error('something bad');
 
-    logger.captureError(error);
+    captureError(error);
 
     expect(scope.setLevel).toBeCalledWith('error');
     expect(captureException).toBeCalledWith(error, undefined);
@@ -39,15 +41,16 @@ describe('logger service', () => {
   it('should send Sentry a warning-level error when calling captureWarning', () => {
     const error = new Error('something kind of bad');
 
-    logger.captureWarning(error);
+    captureWarning(error);
 
     expect(scope.setLevel).toBeCalledWith('warning');
     expect(captureException).toBeCalledWith(error, undefined);
   });
 
   it(`adds route name as tag`, () => {
-    getCurrentStateName.mockReturnValue('test-route');
-    logger.captureError(new Error());
+    // @ts-expect-error complaining due to jsdoc
+    getCurrentStateNameMocked.mockReturnValue('test-route');
+    captureError(new Error());
 
     expect(scope.setTags).toBeCalledWith({ route: 'test-route' });
   });
@@ -59,7 +62,7 @@ describe('logger service', () => {
     };
     const error = Object.assign(new Error('something happened'), extras);
 
-    logger.captureError(error);
+    captureError(error);
 
     expect(scope.setExtras).toBeCalledWith(error);
   });

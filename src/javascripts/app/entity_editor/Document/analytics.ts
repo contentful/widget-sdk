@@ -2,7 +2,7 @@ import { intersection } from 'lodash';
 import { Entity } from './types';
 import * as Analytics from 'analytics/Analytics';
 import { changedEntityFieldPaths, changedEntitytagsPaths } from './changedPaths';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getState, State } from 'data/CMA/EntityState';
 
 export const ConflictType = {
@@ -97,7 +97,7 @@ function stateTrackingString(state) {
     case State.Deleted(): // Might be deleted or just not accessible for the user.
       return 'inaccessible';
     default:
-      logger.captureError(new Error(`Unhandled entity state ${state}`), {
+      captureError(new Error(`Unhandled entity state ${state}`), {
         extra: {
           entityState: state,
         },

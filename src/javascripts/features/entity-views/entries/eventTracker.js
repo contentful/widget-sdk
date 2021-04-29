@@ -1,6 +1,6 @@
 import { getSpaceContext } from 'classes/spaceContext';
 import { track } from 'analytics/Analytics';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 export function onEntryEvent(actionName, { succeeded }) {
   switch (actionName) {

@@ -17,7 +17,7 @@ import tokens from '@contentful/forma-36-tokens';
 import type { UserData } from '../types';
 import { AccountDeletionReasons } from '../types';
 import { deleteUserAccount } from '../services/AccountRepository';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {

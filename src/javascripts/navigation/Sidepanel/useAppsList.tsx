@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Navigator from 'states/Navigator';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { OrganizationFeatures, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -63,7 +63,7 @@ const usePurchasedApps = (organizationId: string | undefined) => {
       getOrgFeature(organizationId, OrganizationFeatures.PC_ORG_LAUNCH_APP, false),
     ])
       .catch((error) => {
-        logger.captureError(error);
+        captureError(error);
         return [false, false];
       })
       .then(([compose, launch]) => {

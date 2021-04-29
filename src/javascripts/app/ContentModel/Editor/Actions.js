@@ -9,7 +9,7 @@ import { trackAddedField, trackEnforcedButtonClick } from './Analytics';
 import { allFieldsInactive, goToDetails, getWidget } from './Utils';
 import * as accessChecker from 'access_control/AccessChecker';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval';
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
@@ -316,7 +316,7 @@ export default function useCreateActions(props) {
     try {
       await spaceContext.publishedCTs.unpublish(state.contentType);
     } catch (error) {
-      logger.captureWarning(error);
+      captureWarning(error);
     }
   };
 

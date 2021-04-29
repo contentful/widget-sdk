@@ -3,7 +3,7 @@ import ldClient from 'ldclient-js';
 import { getVariation, reset, FLAGS, getVariationSync, hasCachedVariation } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 
@@ -152,7 +152,7 @@ describe('LaunchDarkly', () => {
       const variation = await getVariation(('UNKNOWN_FLAG' as unknown) as any);
 
       expect(variation).toBeUndefined();
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
+      expect(captureError).toHaveBeenCalledTimes(1);
     });
 
     it('should return the fallback value if waitForInitialization throws', async () => {
@@ -265,7 +265,7 @@ describe('LaunchDarkly', () => {
       });
 
       expect(variation).toBe('fallback-value');
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
+      expect(captureError).toHaveBeenCalledTimes(1);
     });
 
     it('should log and return the fallback if given invalid org or space id', async () => {
@@ -276,14 +276,14 @@ describe('LaunchDarkly', () => {
       variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
 
       expect(variation).toBe('fallback-value');
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
+      expect(captureError).toHaveBeenCalledTimes(1);
 
       (getSpace as jest.Mock).mockRejectedValueOnce(false);
 
       variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
 
       expect(variation).toBe('fallback-value');
-      expect(logger.captureError).toHaveBeenCalledTimes(2);
+      expect(captureError).toHaveBeenCalledTimes(2);
     });
 
     it('should log and return the fallback value if the flag variation is invalid JSON', async () => {
@@ -292,7 +292,7 @@ describe('LaunchDarkly', () => {
       const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
       expect(variation).toBe('fallback-value');
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
+      expect(captureError).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger the DegradedAppPerformance service if the variation throws', async () => {

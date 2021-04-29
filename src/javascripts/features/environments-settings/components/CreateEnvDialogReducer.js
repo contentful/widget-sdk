@@ -3,7 +3,7 @@ import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { mapValues, get } from 'lodash';
 import { isValidResourceId } from 'data/utils';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 const MAX_ENV_ID_LENGTH = 40;
 
@@ -105,7 +105,7 @@ export const useCreateEnvState = (props) => {
           },
         });
       } else if (result.type === Environment.ServerError) {
-        logger.captureError(result.error);
+        captureError(result.error);
         dispatch({ type: SET_SERVER_FAILURE, value: true });
       }
 

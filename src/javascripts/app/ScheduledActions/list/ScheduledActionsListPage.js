@@ -17,7 +17,7 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import getQueryStringParams from 'utils/getQueryStringParams';
 import * as EndpointFactory from 'data/EndpointFactory';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import ScheduledActionsTable from './ScheduledActionsTable';
 import { getJobsData } from './ScheduledActionsListService';
@@ -194,7 +194,7 @@ class ScheduledActionsListPage extends Component {
         pageNext: getQueryStringParams(nextQuery).pageNext,
       });
     } catch (error) {
-      logger.captureError(error);
+      captureError(error);
       this.setState({
         isError: true,
         isLoading: false,

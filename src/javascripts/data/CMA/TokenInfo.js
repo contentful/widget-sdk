@@ -1,7 +1,7 @@
 import resolveTokenLinks from './resolveTokenLinks';
 import makeFetch from 'data/Request';
 import { apiUrl } from 'Config';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 /**
  * @description
@@ -30,7 +30,7 @@ export default function makeFetchWithAuth(auth) {
       response = await doFetch(request);
     } catch (err) {
       Object.assign(err, { request });
-      logger.captureError(err);
+      captureError(err);
 
       throw new Error('Could not fetch token data');
     }
@@ -47,7 +47,7 @@ export default function makeFetchWithAuth(auth) {
         const resolveLinksError = new Error('Resolving token links threw');
         Object.assign(resolveLinksError, { request, response });
 
-        logger.captureError(resolveLinksError);
+        captureError(resolveLinksError);
 
         throw new Error('Could not fetch token data');
       }
@@ -55,7 +55,7 @@ export default function makeFetchWithAuth(auth) {
       const noDataError = new Error('Obtained /token info without `data`');
       Object.assign(noDataError, { request, response });
 
-      logger.captureError(noDataError);
+      captureError(noDataError);
 
       throw new Error('Could not fetch token data');
     }

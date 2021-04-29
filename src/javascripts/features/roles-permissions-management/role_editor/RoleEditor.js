@@ -15,7 +15,7 @@ import { findIndex, map, remove, set, update } from 'lodash/fp';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TheLocaleStore from 'services/localeStore';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 import * as RoleListHandler from '../components/RoleListHandler';
 import { createRoleRemover } from '../components/RoleRemover';
@@ -90,7 +90,7 @@ export function handleSaveError(response) {
 
   Notification.error('Error saving role. Please try again.');
 
-  logger.captureWarning(new Error('Error saving role'), { extra: { errors } });
+  captureWarning(new Error('Error saving role'), { extra: { errors } });
 
   return Promise.reject();
 }

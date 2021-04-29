@@ -1,7 +1,7 @@
 import { first, get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { truncate } from 'utils/StringUtils';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 /**
  * This module exports functions that trigger notifications regarding the
@@ -33,7 +33,7 @@ export function deleteSuccess() {
 
 export function deleteFail(error) {
   Notification.error('Deleting content type failed: ' + getServerMessage(error));
-  logger.captureWarning(new Error('Error deleting Content Type'), { error });
+  captureWarning(new Error('Error deleting Content Type'), { error });
 }
 
 export function invalidAccordingToScope(errors, fieldNames) {
@@ -83,7 +83,7 @@ export function saveSuccess() {
 
 export function saveInvalidError(error, contentType) {
   Notification.error(messages.save.invalid);
-  logger.captureWarning(new Error('Error saving invalid Content Type'), {
+  captureWarning(new Error('Error saving invalid Content Type'), {
     error,
     contentType: contentType.data,
   });

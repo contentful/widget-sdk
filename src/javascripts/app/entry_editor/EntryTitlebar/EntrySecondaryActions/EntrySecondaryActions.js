@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as K from 'core/utils/kefir';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -75,7 +75,7 @@ export default function EntrySecondaryActions({
           goToCreatedEntry(entry);
           setOpen(false);
         } catch (error) {
-          logger.captureError(error);
+          captureError(error);
           Notification.error('Entry creation failed');
         }
       },
@@ -123,7 +123,7 @@ export default function EntrySecondaryActions({
           goToCreatedEntry(entry);
           setOpen(false);
         } catch (error) {
-          logger.captureError(error);
+          captureError(error);
           Notification.error('Entry duplication failed');
         }
       },

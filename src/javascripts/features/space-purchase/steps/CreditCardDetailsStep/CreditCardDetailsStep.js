@@ -6,7 +6,7 @@ import { Heading, Card, Subheading, Notification } from '@contentful/forma-36-re
 import { Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as TokenStore from 'services/TokenStore';
 import {
   ZuoraCreditCardIframe,
@@ -99,7 +99,7 @@ export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
                   error,
                 });
 
-                logger.captureError(error, {
+                captureError(error, {
                   organizationId: organization.sys.id,
                 });
 
@@ -111,7 +111,7 @@ export const CreditCardDetailsStep = ({ track, onBack, onSubmit }) => {
               onSubmit();
             }}
             onError={(error) => {
-              logger.captureError(new Error('Zuora credit card iframe error'), {
+              captureError(new Error('Zuora credit card iframe error'), {
                 error,
                 location: 'account.organizations.subscription_new.new_space',
               });

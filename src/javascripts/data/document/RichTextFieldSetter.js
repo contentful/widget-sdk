@@ -3,7 +3,7 @@ import { EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 import deepEqual from 'fast-deep-equal';
 import * as ShareJS from 'data/sharejs/utils';
 
-import * as logger from 'services/logger';
+import { captureError, captureWarning } from 'core/monitoring';
 
 const FIELD_LOCALE_PATH_LENGTH = ['fields', 'fieldId', 'localeId'].length;
 
@@ -97,14 +97,14 @@ function setValueViaOps(doc, path, oldValue, newValue) {
   const hasMissingDataFields = ops.some(isAmendingRootNode);
 
   if (hasMissingDataFields) {
-    logger.captureWarning(new Error('Amending RichText document'));
+    captureWarning(new Error('Amending RichText document'));
     return ShareJS.setDeep(doc, path, newValue);
   }
 
   return new Promise((resolve, reject) => {
     doc.submitOp(ops, (e, ...args) => {
       if (e) {
-        logger.captureError(e);
+        captureError(e);
         reject(e);
       } else {
         resolve(...args);

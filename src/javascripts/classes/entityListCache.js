@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import TheLocaleStore from 'services/localeStore';
 
 // params:
@@ -79,7 +79,7 @@ EntityListCache.prototype = {
     const self = this;
     _.forEach(entities, (entity) => {
       if (_.isUndefined(entity.data)) {
-        logger.captureError(new Error('Entity data is undefined'), {
+        captureError(new Error('Entity data is undefined'), {
           data: {
             entities: entities,
           },

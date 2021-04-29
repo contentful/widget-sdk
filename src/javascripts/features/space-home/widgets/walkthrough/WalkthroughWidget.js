@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getReactJoyride } from './utils';
 import { WalkthroughComponent } from './WalkthroughComponent';
 import { Button, IconButton, Subheading, Spinner } from '@contentful/forma-36-react-components';
@@ -47,7 +47,7 @@ export class WalkthroughWidget extends React.Component {
 
       this.props.setWalkthroughState(started);
     } catch (error) {
-      logger.captureError(error);
+      captureError(error);
     }
 
     this.setState({
@@ -72,7 +72,7 @@ export class WalkthroughWidget extends React.Component {
       });
       this.props.setWalkthroughState(started);
     } catch (error) {
-      logger.captureError(error);
+      captureError(error);
     }
   };
 

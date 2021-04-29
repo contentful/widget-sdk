@@ -10,7 +10,7 @@ import { getMembership, getUser } from 'access_control/OrganizationMembershipRep
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import { getUserSync, getOrganization } from 'services/TokenStore';
 
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner } from 'services/OrganizationRoles';
 

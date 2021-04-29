@@ -11,7 +11,7 @@ import {
   SpacesListForMembers,
   calcTrialDaysLeft,
 } from 'features/trials';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';

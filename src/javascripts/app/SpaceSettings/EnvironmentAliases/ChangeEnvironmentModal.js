@@ -15,7 +15,7 @@ import {
   Paragraph,
   Note,
 } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import { handleChangeEnvironment } from './Utils';
 import { aliasStyles } from './SharedStyles';
@@ -111,7 +111,7 @@ export default function ChangeEnvironmentModal({
       changeEnvironmentConfirm();
       setModalOpen(false);
     } catch (err) {
-      logger.captureError(err);
+      captureError(err);
     } finally {
       setLoading(false);
     }

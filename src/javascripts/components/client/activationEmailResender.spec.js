@@ -1,5 +1,5 @@
 import { resendActivationEmail } from './activationEmailResender';
-import * as loggerMocked from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 global.fetch = jest.fn();
 
@@ -44,7 +44,7 @@ describe('activationEmailResender', () => {
     });
   });
 
-  describe('error logging on rejection via `logger.captureError()`', () => {
+  describe('error logging on rejection via `captureError()`', () => {
     it('includes the right message and data', async function () {
       global.fetch.mockResolvedValue({
         ok: false,
@@ -59,7 +59,7 @@ describe('activationEmailResender', () => {
       } catch (e) {
         // do nothing
       }
-      expect(loggerMocked.captureError).toHaveBeenCalledWith(expect.any(Error), {
+      expect(captureError).toHaveBeenCalledWith(expect.any(Error), {
         email: 'user@example.com',
         response: {
           status: 418,

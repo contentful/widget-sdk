@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 import { getCurrentStateName } from 'states/Navigator';
 import { Card, Subheading } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 export class ConceptVideoWidget extends React.Component {
   state = {
@@ -18,7 +18,7 @@ export class ConceptVideoWidget extends React.Component {
     });
   };
 
-  onError = (error) => logger.captureError(error);
+  onError = (error) => captureError(error);
 
   componentDidMount = () => {
     window._wq = window._wq || [];

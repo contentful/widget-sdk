@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as Config from 'Config';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import newContentfulClient from './contentfulClient';
 
 const contentfulConfig = Config.services.contentful;
@@ -237,7 +237,7 @@ function parseAssetFields(fields) {
           };
         }
       } catch (exp) {
-        logger.captureError(exp, {
+        captureError(exp, {
           localizedField,
           field,
           fieldName,

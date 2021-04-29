@@ -12,7 +12,7 @@ import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker/index';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { navState$ } from 'navigation/NavState';
@@ -139,7 +139,7 @@ export default class Sidepanel extends React.Component {
       // Collapse environment list if navigation failed
       // e.g. when environment was deleted
       this.setState({ openedSpaceId: null });
-      logger.captureError(err);
+      captureError(err);
     }
   };
 

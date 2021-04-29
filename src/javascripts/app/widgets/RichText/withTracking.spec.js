@@ -4,7 +4,7 @@ import 'jest-enzyme';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import withTracking from './withTracking';
 import { track } from 'analytics/Analytics';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 const LOC = class extends React.Component {};
 
@@ -54,12 +54,12 @@ describe('withTracking() returned hoc', () => {
       setup();
     });
 
-    it('calls logger.logWarn() for unknown action', () => {
+    it('calls logWarn() for unknown action', () => {
       const data = { origin: 'SOME ORIGIN', foo: 'bar', nodeType: 'foo-bar' };
       locOnAction('someUnknownAction', data);
 
-      expect(logger.captureWarning).toHaveBeenCalledTimes(1);
-      expect(logger.captureWarning).toBeCalledWith(expect.any(Error), {
+      expect(captureWarning).toHaveBeenCalledTimes(1);
+      expect(captureWarning).toBeCalledWith(expect.any(Error), {
         extra: {
           trackingActionName: 'someUnknownActionFooBar',
           originalActionName: 'someUnknownAction',

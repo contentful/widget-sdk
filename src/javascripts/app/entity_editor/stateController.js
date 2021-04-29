@@ -4,7 +4,7 @@ import * as K from 'core/utils/kefir';
 import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action, stateName } from 'data/CMA/EntityState';
 import { Notification, makeNotify } from 'app/entity_editor/Notifications';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import * as trackVersioning from 'analytics/events/versioning';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
@@ -289,7 +289,7 @@ export const initStateController = ({
         notify(Notification.ValidationError());
       }
     } catch (error) {
-      logger.captureError(error);
+      captureError(error);
     }
   }
 

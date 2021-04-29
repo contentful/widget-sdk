@@ -16,7 +16,7 @@ import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContai
 import * as accessChecker from 'access_control/AccessChecker';
 import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import {
@@ -78,7 +78,7 @@ const fetchData = (
     try {
       [key] = await getApiKeyRepo().getAll();
     } catch (e) {
-      logger.captureError(e);
+      captureError(e);
     }
 
     // there might be no keys - it was not created yet, or user explicitly removed them
@@ -93,8 +93,6 @@ const fetchData = (
     }
 
     setLoading(false);
-
-    return;
   } else {
     if (isModernStack) {
       const [credentials, personEntry] = await Promise.all([
@@ -112,7 +110,6 @@ const fetchData = (
       });
     }
     setLoading(false);
-    return;
   }
 };
 

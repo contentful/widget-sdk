@@ -17,7 +17,7 @@ import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { PlanCustomerType, BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import { hasAnyInaccessibleSpaces } from '../utils/utils';
 

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 import { makeSlug, slugify } from '@contentful/field-editor-slug';
@@ -72,7 +72,7 @@ function dataToEntity(data) {
 }
 
 /*
-  Converts an entity fields to their corresponding ones of the 
+  Converts an entity fields to their corresponding ones of the
   private content type
  */
 export function toPrivateEntity(entity) {
@@ -80,7 +80,7 @@ export function toPrivateEntity(entity) {
 }
 
 /*
-  Converts an entity fields to their corresponding ones of the 
+  Converts an entity fields to their corresponding ones of the
   public content type
  */
 export function toPublicEntity(entity) {
@@ -88,7 +88,7 @@ export function toPublicEntity(entity) {
 }
 
 /*
-  Converts an entity fields to their corresponding ones of the 
+  Converts an entity fields to their corresponding ones of the
   private or public content type, depending on the give `toPrivate`
  */
 function convertEntity(entity, toPrivate = true) {
@@ -183,7 +183,7 @@ export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
     return fieldsCopy;
   } catch (error) {
     // TODO: Remove try/catch once we've gained some confidence.
-    logger.captureError(error);
+    captureError(error);
     return fields;
   }
 }

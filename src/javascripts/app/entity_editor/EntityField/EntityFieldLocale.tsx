@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Note } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import { EntityFieldHeading } from './EntityFieldHeading';
 import { EntityFieldControl } from './EntityFieldControl';
@@ -27,7 +27,7 @@ interface EntityFieldLocaleProps {
 
 function ErrorFallback({ error }) {
   React.useEffect(() => {
-    logger.captureError(error);
+    captureError(error);
   }, [error]);
 
   return (

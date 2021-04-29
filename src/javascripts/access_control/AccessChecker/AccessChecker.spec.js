@@ -5,7 +5,7 @@ import * as ac from './index';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as ProductCatalog from 'data/CMA/ProductCatalog';
 import * as LegacyFeatureService from 'services/LegacyFeatureService';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as Service from 'components/shared/persistent-notification/service';
 import * as Enforcements from 'access_control/Enforcements';
 import * as ResponseCache from 'access_control/AccessChecker/ResponseCache';
@@ -773,8 +773,8 @@ describe('Access Checker', () => {
         );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
-        expect(logger.captureError).toHaveBeenCalledTimes(1);
-        expect(logger.captureError).toBeCalledWith(error);
+        expect(captureError).toHaveBeenCalledTimes(1);
+        expect(captureError).toBeCalledWith(error);
       });
     });
 

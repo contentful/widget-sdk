@@ -14,7 +14,7 @@ import {
 import { getFlagOverride, isFlagOverridden } from 'debug/EnforceFlags';
 import * as LDClient from 'ldclient-js';
 import _, { isEqual, endsWith } from 'lodash';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'services/TokenStore';
 import { Organization, SpaceData, User } from 'core/services/SpaceEnvContext/types';
 import PQueue from 'p-queue';
@@ -602,5 +602,5 @@ function logAsyncError(asyncError: Error, message: string, extra: any = {}) {
     message,
   });
 
-  logger.captureError(asyncError, extra);
+  captureError(asyncError, extra);
 }

@@ -1,7 +1,7 @@
 import { reduce, without, camelCase } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 import * as Analytics from 'analytics/Analytics';
 
 const getCountOrNull = (count) => (typeof count === 'number' ? count : null);
@@ -48,7 +48,7 @@ export default function withTracking(Component) {
       } else if (isKnownEntryEditorTrackingAction(actionName)) {
         this.trackEntryEditorAction(actionName, data);
       } else {
-        logger.captureWarning(new Error(`Unexpected rich text tracking action \`${actionName}\``), {
+        captureWarning(new Error(`Unexpected rich text tracking action \`${actionName}\``), {
           extra: {
             trackingActionName: actionName,
             originalActionName: name,

@@ -26,7 +26,7 @@ import * as EndpointFactory from 'data/EndpointFactory';
 
 import { useAsyncFn, usePrevious } from 'core/hooks';
 
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 import ScheduledActionsTimeline from './ScheduledActionsTimeline';
 
@@ -183,7 +183,7 @@ export default function ScheduledActionsWidget({
         Notification.error(`${entityTitle} failed to schedule`);
       }
       setIsCreatingJob(false);
-      logger.captureError(error);
+      captureError(error);
     }
   };
 

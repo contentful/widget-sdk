@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { createClient } from 'contentful-management';
 import type { PlainClientDefaultParams } from 'contentful-management';
 import * as auth from 'Authentication';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
@@ -32,7 +32,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
           return token || '';
         },
         captureException: (error) => {
-          logger.captureError(error);
+          captureError(error);
         },
       }),
     },
@@ -41,7 +41,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
 
   const batchClient = createDefaultBatchClient(client, {
     onError: (error, context) => {
-      logger.captureError(error, context);
+      captureError(error, context);
     },
   });
 

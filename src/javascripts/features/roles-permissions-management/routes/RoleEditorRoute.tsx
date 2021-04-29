@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 import RoleRepository from 'access_control/RoleRepository';
 import noop from 'lodash/noop';
 import StateRedirect from 'app/common/StateRedirect';
@@ -156,7 +156,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
       if (err.code !== 'NotFound') {
         throw err;
       }
-      logger.captureWarning(new Error(`Could not find entity for given rule`), {
+      captureWarning(new Error(`Could not find entity for given rule`), {
         extra: { type, id },
       });
     }

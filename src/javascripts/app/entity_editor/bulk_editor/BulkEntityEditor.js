@@ -6,7 +6,7 @@ import BulkEntityEditorStatusDropdown from './BulkEntityEditorStatusDropdown';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as K from 'core/utils/kefir';
 import * as Navigator from 'states/Navigator';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { localFieldChanges } from 'app/entity_editor/Document';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import Loader from 'ui/Loader';
@@ -126,7 +126,7 @@ export const BulkEntityEditor = ({
           setEditorState(editorState);
         }
       } catch (error) {
-        logger.captureError(error);
+        captureError(error);
       } finally {
         onEditorInitialized();
         setIsLoading(false);

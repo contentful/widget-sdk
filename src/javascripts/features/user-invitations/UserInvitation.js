@@ -16,7 +16,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import StateLink from 'app/common/StateLink';
 
 export function UserInvitation(props) {

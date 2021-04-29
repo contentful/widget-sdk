@@ -1,4 +1,4 @@
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getBrowserStorage as _getBrowserStorage } from 'core/services/BrowserStorage';
 import {
   getSpaceInfo as _getSpaceInfo,
@@ -110,7 +110,7 @@ describe('states/deeplink/resolver', () => {
   it('should give generic error in case no link', async function () {
     const result = await resolveLink(('' as unknown) as LinkType, {});
     expect(result).toEqual({ error: expect.any(Error) });
-    expect(logger.captureError).toHaveBeenCalledWith(expect.any(Error), {
+    expect(captureError).toHaveBeenCalledWith(expect.any(Error), {
       extra: {
         link: '',
       },

@@ -12,7 +12,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 const fakeOrganization = fake.Organization();
 const fakeOrgMemberhip = fake.OrganizationMembership('admin');
@@ -227,7 +227,7 @@ describe('OrganizationRow', () => {
       expect(
         await screen.findByText(`Could not leave organization ${fakeOrganization.name}`)
       ).toBeInTheDocument();
-      expect(logger.captureError).toHaveBeenCalled();
+      expect(captureError).toHaveBeenCalled();
       expect(screen.getByTestId('organization-row.organization-name')).toHaveTextContent(
         fakeOrganization.name
       );

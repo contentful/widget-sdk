@@ -7,7 +7,7 @@ import * as Navigator from 'states/Navigator';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 import { Notification } from '@contentful/forma-36-react-components';
 
 const DEFAULT_ERROR_MESSAGE =
@@ -110,7 +110,7 @@ const createNewSpace = (
       // this means that something went wrong.
       if (!errors || !errors.length) {
         Notification.error(DEFAULT_ERROR_MESSAGE);
-        logger.captureWarning(error);
+        captureWarning(error);
 
         return;
       }
@@ -194,6 +194,6 @@ export const requestSpaceCreation = (
     })
     .catch((error) => {
       Notification.error(DEFAULT_ERROR_MESSAGE);
-      logger.captureWarning(error);
+      captureWarning(error);
     });
 };

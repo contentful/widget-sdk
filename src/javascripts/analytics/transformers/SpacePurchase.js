@@ -1,6 +1,6 @@
 import { addUserOrgSpace } from './Decorators';
 import { pick } from 'lodash';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 const EVENTS = {
   BEGIN: 'begin',
@@ -53,12 +53,12 @@ export default addUserOrgSpace((eventName, data) => {
 
   // The data must always have a sessionId
   if (!data.sessionId) {
-    logger.captureError(new Error('Session ID missing in space purchase event'));
+    captureError(new Error('Session ID missing in space purchase event'));
     return;
   }
 
   if (!transformers[action]) {
-    logger.captureError(new Error(`SpacePurchase transformer for ${action} not found`));
+    captureError(new Error(`SpacePurchase transformer for ${action} not found`));
     return;
   }
 

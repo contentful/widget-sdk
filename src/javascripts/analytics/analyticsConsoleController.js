@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 import { getSegmentSchemaForEvent, getSnowplowSchemaForEvent } from 'analytics/transform';
 import * as Snowplow from 'analytics/snowplow';
@@ -113,7 +113,7 @@ function throwOrLogInvalidEvent(event) {
   if (isEnabled) {
     throw new Error(message);
   } else {
-    logger.captureWarning(new Error(message), { extra: { event } });
+    captureWarning(new Error(message), { extra: { event } });
   }
 }
 

@@ -7,7 +7,7 @@ import { go } from 'states/Navigator';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { MemoryRouter } from 'core/react-routing';
 
 // eslint-disable-next-line
@@ -122,7 +122,7 @@ describe('EditPaymentMethodRouter', () => {
 
       await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
-      expect(logger.captureError).toBeCalledWith(expect.any(Error), {
+      expect(captureError).toBeCalledWith(expect.any(Error), {
         extra: {
           error: response,
           location: 'account.organizations.billing.edit-payment-method',

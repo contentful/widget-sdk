@@ -21,7 +21,7 @@ import { KeyEditorActions } from './KeyEditorActions';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
 import * as Navigator from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
+import { captureWarning } from 'core/monitoring';
 
 const styles = {
   readOnlyNote: css({
@@ -76,7 +76,7 @@ const notify = {
     Notification.error(`“${apiKey.name}” could not be saved`);
     // HTTP 422: Unprocessable entity
     if (get(error, 'statusCode') !== 422) {
-      logger.captureWarning(error);
+      captureWarning(error);
     }
   },
 
@@ -94,7 +94,7 @@ const notify = {
 
   deleteFail: function (error, apiKey) {
     Notification.error(`“${apiKey.name}” could not be deleted`);
-    logger.captureWarning(error);
+    captureWarning(error);
   },
 };
 

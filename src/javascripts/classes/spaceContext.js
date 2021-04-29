@@ -26,7 +26,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import client from 'services/client';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { createPubSubClientForSpace } from 'services/PubSubService';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
@@ -193,7 +193,7 @@ function initSpaceContext() {
         // string is hardcoded because this code _is_ temporary
         getModule('$rootScope').$broadcast('spaceContextUpdated');
       } catch (err) {
-        logger.captureError(err);
+        captureError(err);
       } finally {
         spaceContext.resettingSpace = false;
       }

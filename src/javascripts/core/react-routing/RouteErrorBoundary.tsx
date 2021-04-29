@@ -1,13 +1,13 @@
 import { withErrorBoundary, ErrorBoundary } from 'react-error-boundary';
 import ErrorPage from 'states/ErrorPage';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import React from 'react';
 
 export function withRouteErrorBoundary<P>(ComponentThatMayError: React.ComponentType<P>) {
   return withErrorBoundary(ComponentThatMayError, {
     FallbackComponent: ErrorPage,
     onError(error, info) {
-      logger.captureError(error, { extra: info });
+      captureError(error, { extra: info });
     },
   });
 }
@@ -17,7 +17,7 @@ export function RouteErrorBoundary(props: { children: React.ReactNode }) {
     <ErrorBoundary
       FallbackComponent={ErrorPage}
       onError={(error, { componentStack }) => {
-        logger.captureError(error, {
+        captureError(error, {
           extra: { componentStack },
         });
       }}>

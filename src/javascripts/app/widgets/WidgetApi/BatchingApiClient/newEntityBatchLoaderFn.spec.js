@@ -1,7 +1,7 @@
 import { range } from 'lodash';
 import newEntityBatchLoaderFn from './newEntityBatchLoaderFn';
 import { fetchInChunks as fetchInChunksMocked } from './utils';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 jest.mock('./utils', () => ({
   ...jest.requireActual('./utils'),
@@ -143,11 +143,11 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
       expect(errors).toEqual([CLIENT_ERROR, CLIENT_ERROR, CLIENT_ERROR]);
     });
 
-    it('logs server error to `logger.captureError()`', async () => {
+    it('logs server error to `captureError()`', async () => {
       const validIds = ['ID', 'ANOTHER_ID'];
       await entityBatchLoaderFn([...validIds, INVALID_LONG_ID]);
-      expect(logger.captureError).toHaveBeenCalledTimes(1);
-      expect(logger.captureError).toHaveBeenCalledWith(expect.any(Error), {
+      expect(captureError).toHaveBeenCalledTimes(1);
+      expect(captureError).toHaveBeenCalledWith(expect.any(Error), {
         error: CLIENT_ERROR,
         data: {
           requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.

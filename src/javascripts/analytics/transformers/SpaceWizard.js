@@ -1,6 +1,6 @@
 import { addUserOrgSpace } from './Decorators';
 import { env } from 'Config';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 
 const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
   const action = eventName.split(':')[1];
@@ -10,7 +10,7 @@ const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
     validateSpaceWizardData(wizardData);
   } catch (e) {
     // Always send error to Bugsnag
-    logger.captureError(e);
+    captureError(e);
 
     // If not in prod or unittest environment, also throw
     if (env !== 'production' && env !== 'unittest') {

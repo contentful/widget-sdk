@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer';
 import * as LazyLoader from 'utils/LazyLoader';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
@@ -51,7 +51,7 @@ function bufferedCall(fnName) {
       try {
         analytics[fnName](...args);
       } catch (err) {
-        logger.captureError(err, {
+        captureError(err, {
           extra: {
             analyticsFn: fnName,
             analyticsFnArgs: args,

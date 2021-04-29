@@ -1,6 +1,6 @@
 import * as K from 'core/utils/kefir';
 import DocumentStatusCode from 'data/document/statusCode';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { Error as DocError } from './Error';
 
 /**
@@ -33,7 +33,7 @@ export function create(sys$, docError$, canUpdate) {
       docError instanceof DocError.ShareJsInternalServerError ||
       docError === 'internal-server-error'
     ) {
-      logger.captureError(docError);
+      captureError(docError);
       return DocumentStatusCode.INTERNAL_SERVER_ERROR;
     }
     if (!canUpdate || docError instanceof DocError.OpenForbidden) {
@@ -46,7 +46,7 @@ export function create(sys$, docError$, canUpdate) {
       return DocumentStatusCode.ARCHIVED;
     }
     if (docError) {
-      logger.captureError(docError);
+      captureError(docError);
       return DocumentStatusCode.CONNECTION_ERROR;
     }
     if (sys.archivedVersion) {

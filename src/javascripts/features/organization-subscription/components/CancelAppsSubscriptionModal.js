@@ -17,7 +17,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeAddOnPlanFromSubscription } from 'features/pricing-entities';
 import { uninstalled as trackUninstallationReason } from 'features/apps';
 import { clearCachedProductCatalogFlags } from 'data/CMA/ProductCatalog';
-import { captureError } from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { reload } from 'states/Navigator';
 
 const styles = {

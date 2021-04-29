@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance';
 import { getSpaceContext } from 'classes/spaceContext';
 
@@ -81,7 +81,7 @@ function stateChangeStartHandler(event, toState, toStateParams, fromState, fromS
   }
 
   if (confirmationInProgress) {
-    logger.captureError(new Error('Change state during state change confirmation'), {
+    captureError(new Error('Change state during state change confirmation'), {
       from: fromState.name,
       to: toState.name,
     });

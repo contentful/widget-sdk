@@ -13,7 +13,7 @@ import segment from 'analytics/segment';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getUserSync, refresh as refreshToken } from 'services/TokenStore';
 import { updateUserData } from 'features/user-profile';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { debounce } from 'lodash';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 
@@ -228,7 +228,7 @@ export async function persistConsent(user) {
     });
     await refreshToken();
   } catch (e) {
-    logger.captureError(e);
+    captureError(e);
   }
 
   return migrated;

@@ -5,7 +5,7 @@ import { getStoragePrefix } from 'components/shared/auto_create_new_space/Create
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceContext } from 'classes/spaceContext';
 import { getOrganizationSpaces } from 'services/TokenStore';
-import * as logger from 'services/logger';
+import { captureError } from 'core/monitoring';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { routes } from 'core/react-routing';
 
@@ -55,7 +55,7 @@ export function resolveLink(
   params: Record<string, any>
 ): Promise<ResolvedLink | { error: Error }> {
   return resolveParams(link, params).catch((error) => {
-    logger.captureError(error, {
+    captureError(error, {
       extra: { link },
     });
     return { error };
