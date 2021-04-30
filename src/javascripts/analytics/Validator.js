@@ -88,14 +88,6 @@ export const validEvents = {
     'open_create',
     'delete',
   ],
-  editor_load: [
-    'init',
-    'entity_loaded',
-    'sharejs_connected',
-    'doc_connected',
-    'links_rendered',
-    'fully_interactive',
-  ],
   translation_sidebar: [
     'toggle_widget_mode',
     'deselect_active_locale',

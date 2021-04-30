@@ -1,10 +1,10 @@
 import * as Config from 'Config';
-import segment from 'analytics/segment';
+import segment, { Plan } from 'analytics/segment';
 import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
-import { eventExists, transformEvent } from 'analytics/transform';
+import { eventExists, getSnowplowSchemaForEvent, transformEvent } from 'analytics/transform';
 import { TransformedEventData, EventData } from './types';
 import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
@@ -84,13 +84,10 @@ export function getSessionData(path: string, defaultValue?: unknown): unknown {
 }
 
 /**
- * @ngdoc method
- * @name analytics#track
- * @param {string} event
- * @param {object?} data
- * @description
- * Sends tracking event (with optionally provided data) to Segment and Snowplow
- * if it is on the valid events list.
+ * @deprecated Use `Analytics.tracking.…` methods instead which takes the final event data without
+ *  sending it through the deprecated event transformers.
+ *
+ * Sends tracking event with provided data to Segment and Snowplow if registered properly for the event.
  */
 
 export function track(event: string, data?: EventData): void {
@@ -122,6 +119,60 @@ export function track(event: string, data?: EventData): void {
       },
     });
   }
+}
+
+/**
+ * Exposes all Segment typewriter tracking functions for each Segment plan (schema).
+ * E.g. `Analytics.tracking.editorLoaded(props);`
+ *
+ * Use this instead of `Analytics.track()`. Update event registration and remove
+ * transformation from transform.ts when migrating an event from `Analytics.track() and
+ * use `migratedLegacyEvent()` if the event should still be tracked to Snowplow too.
+ *
+ * TODO: Can we enrich `props` with default props `organization_key`, `space_key` and `environment_key`?
+ *  Obstacles to this approach:
+ *  1. Some events that are org rather than space scoped might only have a `organization_key`
+ *  2. Legacy events from Snowplow -> Segment migration have other default properties,
+ *    `executing_user_id`, `space_id` and `organization_id`
+ *  3. Consider all props being wrapped in `props.data` on at least most legacy events, so default props
+ *     had to be attached to either `props.data` if it exists or `props` otherwise.
+ *  4. Legacy Snowplow migration events use camelCaseKeys like `executingUserId` in their Segment schema
+ *     This should be cleaned up soon as convention for all Segment schemas is also snake_case.
+ */
+export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => {
+  return function (props) {
+    // Track to Segment by using original plan function:
+    planFn(props);
+
+    // Depending on the `data` format we get and the event we're dealing with, we've got to ensure it's
+    // in the right format for Snowplow where we never wrapped { data } while this is done in most
+    // migrated events' Snowplow schemas due to an old tracking bug where data was accidentally wrapped.
+    const likeTransformedData: TransformedEventData = _.isObject(props.data)
+      ? props
+      : { data: props };
+    const snowplowSchema = getSnowplowSchemaForEvent(planKey);
+
+    if (snowplowSchema) {
+      snowplow.track(planKey, likeTransformedData);
+    }
+
+    // TODO: Catch errors via `onViolation` Segment TypeWriter option and display in analytics console.
+    analyticsConsole.add(planKey, likeTransformedData, props);
+  };
+});
+
+/**
+ * Returns props used by all legacy Snowplow events to be used with `Analytics.tracking.` as they have
+ * to be passed manually as there's no more transformers adding them automatically.
+ */
+export function legacyEventProps() {
+  const { userId, organizationId, spaceId } = getBasicPayload();
+  /* eslint-disable @typescript-eslint/camelcase */
+  return {
+    executing_user_id: userId,
+    organization_id: organizationId,
+    space_id: spaceId,
+  };
 }
 
 /**

@@ -1,6 +1,7 @@
 declare global {
   interface Window {
-    analytics: any;
+    // analytics is initialized in src/javascript/analytics/generated/segment.ts
+    // analytics: any;
     GlobalSnowplowNamespace: Array<string>;
   }
 }

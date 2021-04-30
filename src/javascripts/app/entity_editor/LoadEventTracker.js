@@ -1,11 +1,9 @@
 import * as K from 'core/utils/kefir';
-import { track } from 'analytics/Analytics';
+import * as Analytics from 'analytics/Analytics';
 import { isEqual, keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import * as random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
-
-const LOAD_EVENT_CATEGORY = 'editor_load';
 
 export function createLoadEventTracker({
   loadStartMs,
@@ -47,9 +45,9 @@ export function createLoadEventTracker({
       singleReferenceFieldLinkCount + multiReferenceFieldLinkCount + richTextFieldLinkCount;
 
     return {
-      linkCount,
-      richTextEditorInstanceCount,
-      linkFieldEditorInstanceCount,
+      link_count: linkCount,
+      rich_text_editor_instance_count: richTextEditorInstanceCount,
+      link_field_editor_instance_count: linkFieldEditorInstanceCount,
     };
   });
 
@@ -57,16 +55,28 @@ export function createLoadEventTracker({
     const slideStates = getSlideStates();
     const totalSlideCount = keys(slideStates).length;
     const slideLevel = findIndex(slideStates, (state) => isEqual(state.slide, slide));
-    const baseData = { slidesControllerUuid, slideUuid, totalSlideCount, slideLevel };
+    const baseData = {
+      ...Analytics.legacyEventProps(),
+      slides_controller_uuid: slidesControllerUuid,
+      slide_uuid: slideUuid,
+      total_slide_count: totalSlideCount,
+      slide_level: slideLevel,
+    };
     if (eventName === 'init') {
-      return track(`${LOAD_EVENT_CATEGORY}:init`, { ...baseData, loadMs: 0 });
+      Analytics.tracking.editorLoaded({
+        action: 'init',
+        load_ms: 0,
+        ...baseData,
+      });
+    } else {
+      const detailData = getDetailEventData(slideStates);
+      Analytics.tracking.editorLoaded({
+        action: eventName,
+        load_ms: new Date().getTime() - loadStartMs,
+        ...baseData,
+        ...detailData,
+      });
     }
-    const detailData = getDetailEventData(slideStates);
-    track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
-      ...baseData,
-      ...detailData,
-      loadMs: new Date().getTime() - loadStartMs,
-    });
   };
 }
 

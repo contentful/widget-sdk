@@ -16,8 +16,10 @@ export type Schema = {
 const schemas: Record<string, Schema> = {};
 
 registerSchema({ name: 'feature_reference_action', version: '3' });
-registerSchema({ name: 'editor_loaded', version: '1' });
 
+/**
+ * @deprecated Do not add events here, instead use `Analytics.tracking.…` which make use of Segment typewriter.
+ */
 function registerSchema(schema: Schema) {
   schemas[schema.name] = schema;
 }
