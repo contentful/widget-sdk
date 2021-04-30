@@ -5,6 +5,7 @@ export const appBundleMock = {
   limit: 100,
   items: [
     {
+      comment: 'the first bundle',
       sys: {
         id: '3sVMq0Ybqpezvu6M9kcsyG',
         type: 'AppBundle',
@@ -66,6 +67,7 @@ export const appBundleMock = {
       ],
     },
     {
+      comment: 'the second bundle',
       sys: {
         id: '60cjh1eaDHLqonjl40ltd7',
         type: 'AppBundle',
@@ -127,6 +129,7 @@ export const appBundleMock = {
       ],
     },
     {
+      comment: 'the third bundle',
       sys: {
         id: '4kVIVAjYD5QcjaCr4LeGTf',
         type: 'AppBundle',

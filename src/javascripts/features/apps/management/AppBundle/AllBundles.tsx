@@ -41,9 +41,15 @@ export const AllBundles = () => {
   const bundlesToDisplay = React.useMemo(
     () =>
       bundles.filter(
-        // Don't to render the active or staged bundle in this list
-        ({ sys: { id } }) =>
-          id !== draftDefinition.bundle?.sys.id && id !== savedDefinition.bundle?.sys.id
+        // If there is a staged bundle don't render it in the list
+        // otherwise if there is an active bundle don't render it in the list
+        ({ sys: { id } }) => {
+          if (draftDefinition.bundle?.sys.id) {
+            return draftDefinition.bundle?.sys.id !== id;
+          } else {
+            return savedDefinition.bundle?.sys.id !== id;
+          }
+        }
       ),
     [bundles, draftDefinition, savedDefinition]
   );
