@@ -98,7 +98,7 @@ export const useProxyState = <T>(
     return () => {
       unsubscribe();
     };
-  }, [current]);
+  }, [current._proxy]);
 
   return [state, setState];
 };
