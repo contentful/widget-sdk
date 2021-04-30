@@ -243,7 +243,7 @@ const makeNavigateToAppConfig = ({
   }
 };
 
-const navigateToSpaceEnvRoute = ({
+const navigateToSpaceEnvRoute = async ({
   spaceId,
   environmentId,
   route,
@@ -252,7 +252,7 @@ const navigateToSpaceEnvRoute = ({
   environmentId: string;
   route: 'entries' | 'assets';
 }) => {
-  void Navigator.go({
+  await Navigator.go({
     path: ['spaces', 'detail', route, 'list'],
     params: {
       spaceId,
