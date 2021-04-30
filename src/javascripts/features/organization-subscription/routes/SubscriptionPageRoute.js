@@ -154,6 +154,8 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
                   grandTotal={grandTotal}
                   initialLoad={isLoading}
                   spacePlans={spacePlans}
+                  // Currently this is the only way to know if a basePlan is plan used internally at Contentful
+                  isInternalBasePlan={/internal/i.test(data.basePlan.productName)}
                 />
               )}
               {!data.orgIsEnterprise && (

@@ -14,6 +14,7 @@ import {
   isFreePlan,
   isSelfServicePlan,
   isPartnerPlan,
+  isProBonoPlan,
 } from 'account/pricing/PricingDataProvider';
 import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
@@ -55,6 +56,10 @@ const fetchContent = (basePlan: BasePlan) => async (): Promise<BasePlanContent |
 
     if (isPartnerPlan(basePlan)) {
       return await fetchWebappContentByEntryID(BasePlanContentEntryIds.PARTNER);
+    }
+
+    if (isProBonoPlan(basePlan)) {
+      return await fetchWebappContentByEntryID(BasePlanContentEntryIds.PRO_BONO);
     }
   } catch (err) {
     captureError(fetchWebappContentError, err);

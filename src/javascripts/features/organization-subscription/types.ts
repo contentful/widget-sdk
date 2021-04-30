@@ -8,6 +8,8 @@ export enum BasePlanContentEntryIds {
   FREE = 'iYmIKepKvlhOx78uwCvbi',
   SELF_SERVICE = '7y4ItLmbvc3ZGl0L8vtRPB',
   PARTNER = '1yLj8Jf230tq5EeIZTOd2s',
+  CONTENTFUL_INTERNAL = '3YBpWXJz3frEPct4Szjkoc',
+  PRO_BONO = '6l6Ze57xFcDn4gAgYkXdar',
 }
 
 export interface BasePlanContent {

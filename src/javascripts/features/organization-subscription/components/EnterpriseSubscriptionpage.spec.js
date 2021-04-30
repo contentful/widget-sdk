@@ -69,6 +69,14 @@ describe('EnterpriseSubscriptionPage', () => {
         BasePlanContentEntryIds.ENTERPRISE_TRIAL
       );
     });
+
+    it('fetches Internal Sandbox content when basePlan has "Internal" in its name', async () => {
+      await build({ isInternalBasePlan: true });
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(
+        BasePlanContentEntryIds.CONTENTFUL_INTERNAL
+      );
+    });
   });
 
   describe('Enterprise trial info', () => {

@@ -7,6 +7,7 @@ import {
   ENTERPRISE,
   ENTERPRISE_HIGH_DEMAND,
   PARTNER_PLATFORM_BASE_PLAN_NAME,
+  PRO_BONO,
 } from 'account/pricing/PricingDataProvider';
 
 type AnyPlan = BasePlan | AddOnPlan | SpacePlan;
@@ -84,6 +85,7 @@ const basePlansWithContent = [
   ENTERPRISE,
   ENTERPRISE_HIGH_DEMAND,
   PARTNER_PLATFORM_BASE_PLAN_NAME,
+  PRO_BONO,
 ];
 
 /**

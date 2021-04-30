@@ -28,14 +28,22 @@ const styles = {
   }),
 };
 
-const fetchContent = (isOnTrial: boolean) => async (): Promise<BasePlanContent> => {
+const fetchContent = (isOnTrial: boolean, isInternalBasePlan: boolean) => async (): Promise<
+  BasePlanContent
+> => {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
   let basePlanContent;
 
   try {
-    const entryId = BasePlanContentEntryIds[isOnTrial ? 'ENTERPRISE_TRIAL' : 'ENTERPRISE'];
+    let entryId = BasePlanContentEntryIds.ENTERPRISE;
+
+    if (isInternalBasePlan) {
+      entryId = BasePlanContentEntryIds.CONTENTFUL_INTERNAL;
+    } else if (isOnTrial) {
+      entryId = BasePlanContentEntryIds.ENTERPRISE_TRIAL;
+    }
 
     basePlanContent = await fetchWebappContentByEntryID(entryId);
   } catch (err) {
@@ -51,6 +59,7 @@ interface EnterpriseSubscriptionPageProps {
   organization: Organization;
   spacePlans: SpacePlan[];
   usersMeta: UsersMeta;
+  isInternalBasePlan?: boolean;
 }
 
 export function EnterpriseSubscriptionPage({
@@ -59,12 +68,13 @@ export function EnterpriseSubscriptionPage({
   organization,
   spacePlans,
   usersMeta,
+  isInternalBasePlan = false,
 }: EnterpriseSubscriptionPageProps) {
   const organizationId = organization.sys.id;
   const isOrgOnEnterpriseTrial = isOrganizationOnTrial(organization);
 
   const { isLoading, error, data: content } = useAsync(
-    useCallback(fetchContent(isOrgOnEnterpriseTrial), [])
+    useCallback(fetchContent(isOrgOnEnterpriseTrial, isInternalBasePlan), [])
   );
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
@@ -105,9 +115,9 @@ export function EnterpriseSubscriptionPage({
           <SpacesListForMembers spaces={memberAccessibleSpaces} />
         ) : (
           <SpacePlans
+            enterprisePlan
             initialLoad={initialLoad}
             organizationId={organizationId}
-            enterprisePlan={true}
             anySpacesInaccessible={anySpacesInaccessible}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
           />

@@ -6,6 +6,7 @@ import {
   FREE,
   SELF_SERVICE,
   PARTNER_PLATFORM_BASE_PLAN_NAME,
+  PRO_BONO,
 } from 'account/pricing/PricingDataProvider';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -30,6 +31,7 @@ jest.mock('features/trials', () => ({
 const mockOrganization = Fake.Organization();
 const mockFreeBasePlan = Fake.Plan({ name: 'Community Platform', customerType: FREE });
 const mockSelfServiceBasePlan = Fake.Plan({ name: 'Team Platform', customerType: SELF_SERVICE });
+const mockProBonoBasePlan = Fake.Plan({ name: 'Pro Bono Platform', customerType: PRO_BONO });
 const mockPartnerBasePlan = Fake.Plan({ name: PARTNER_PLATFORM_BASE_PLAN_NAME });
 const mockFreeSpacePlan = {
   name: 'Mock free space',
@@ -84,6 +86,12 @@ describe('NonEnterpriseSubscriptionPage', () => {
       await build({ basePlan: mockPartnerBasePlan });
 
       expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.PARTNER);
+    });
+
+    it('fetches content for Pro Bono when basePlan.customerType is "Marketing - NGO"', async () => {
+      await build({ basePlan: mockProBonoBasePlan });
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.PRO_BONO);
     });
   });
 
