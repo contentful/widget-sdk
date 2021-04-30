@@ -26,7 +26,7 @@ const DowngradeLastAdminMembershipConfirmation = ({
     <ModalConfirm
       onCancel={close}
       // TODO: add type declaration in forma for onClose property
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       onClose={close}
       onConfirm={onConfirm}

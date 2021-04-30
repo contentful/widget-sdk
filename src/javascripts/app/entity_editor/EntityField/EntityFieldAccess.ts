@@ -1,7 +1,6 @@
 const DENIED = { type: 'DENIED', denied: true, disabled: true } as const;
 const EDITING_DISABLED = {
   type: 'EDITING_DISABLED',
-  // eslint-disable-next-line @typescript-eslint/camelcase
   editing_disabled: true,
   disabled: true,
 } as const;

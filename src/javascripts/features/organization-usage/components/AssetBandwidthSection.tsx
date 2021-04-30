@@ -63,14 +63,14 @@ export const AssetBandwidthSection = () => {
     <>
       <Paragraph data-test-id="asset-bandwidth-usage" className={styles.usageNumber}>
         {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           withUnit(usage)
         }
       </Paragraph>
       <div className={styles.limit}>
         <strong data-test-id="asset-bandwidth-limit" className={styles.includedLimit}>{
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           `${withUnit(limit)} included`
         }</strong>
@@ -79,7 +79,7 @@ export const AssetBandwidthSection = () => {
             {' '}
             +{' '}
             {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               withUnit(usage - limit)
             }{' '}

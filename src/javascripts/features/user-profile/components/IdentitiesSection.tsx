@@ -57,7 +57,6 @@ const styles = {
       color: tokens.colorTextDark,
     },
   }),
-  // eslint-disable-next-line @typescript-eslint/camelcase
   google_oauth2: css({
     border: `1px solid #E5ADA3`,
     color: tokens.colorRedDark,
@@ -77,7 +76,6 @@ const styles = {
 
 type ProviderHumanNamesMap = { [key in Identity['provider']]: string };
 const providerHumanNames: ProviderHumanNamesMap = {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   google_oauth2: 'Google',
   github: 'Github',
   twitter: 'Twitter',

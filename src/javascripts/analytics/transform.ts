@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { get as getAtPath, snakeCase } from 'lodash';
 import { getSnowplowSchema } from './SchemasSnowplow';
 import * as segmentTypewriterPlans from './events';

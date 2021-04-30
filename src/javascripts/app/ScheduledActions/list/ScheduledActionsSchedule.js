@@ -47,7 +47,14 @@ const styles = {
 };
 
 const jobPropType = PropTypes.shape({
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+  }).isRequired,
   scheduledAt: PropTypes.string,
+  scheduledFor: PropTypes.shape({
+    datetime: PropTypes.string,
+  }),
   action: PropTypes.string,
 });
 

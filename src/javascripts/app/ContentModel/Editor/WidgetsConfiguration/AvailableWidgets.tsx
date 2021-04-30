@@ -42,12 +42,11 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
     <div>
       <Subheading className={styles.availableItemsTitle}>Available items</Subheading>
       <div className={styles.availableItemsList}>
-        {items.map((item, index) => (
+        {items.map((item) => (
           <AvailableWidget
             location={location}
             key={`${item.widgetNamespace},${item.widgetId}`}
             name={item.name}
-            index={index}
             widgetNamespace={item.widgetNamespace}
             availabilityStatus={item.availabilityStatus}
             onClick={() => {

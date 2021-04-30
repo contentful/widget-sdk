@@ -251,7 +251,7 @@ const AddTeamsPageContent = ({
           onChange={(team) => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
           onQueryChange={(value) => dispatch({ type: 'SEARCH', payload: value })}
           items={teamsInAutocomplete}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           dropdownProps={{ isFullWidth: true }}>
           {(items) => items.map((team) => <AutocompleteTeam key={team.sys.id} team={team} />)}

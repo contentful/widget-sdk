@@ -24,7 +24,7 @@ type SpaceTeamsPagePresentationProps = {
   isLoading: boolean;
   teamSpaceMemberships: TeamSpaceMembership[];
   spaceMemberships: SpaceMembership[];
-  teams: [];
+  teams: any[];
   availableRoles: typeof SpaceRole[];
   onUpdateTeamSpaceMembership: (membership: SpaceMembership, selectedRoleIds: string[]) => void;
   onRemoveTeamSpaceMembership: (membership: SpaceMembership) => void;
@@ -103,12 +103,12 @@ const SpaceTeamsPagePresentation = ({
               {!isLoading &&
                 teamSpaceMemberships.map((teamSpaceMembership) => {
                   const {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     sys: { id: membershipId },
                   } = teamSpaceMembership;
                   return (
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     <MembershipRow
                       key={membershipId}

@@ -34,7 +34,6 @@ import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
-import { AppBundleData } from '../AppEditor';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import {
@@ -61,7 +60,6 @@ interface Event {
 
 interface Props {
   definition: AppDefinitionWithBundle;
-  bundles: { items: AppBundleData[] };
   events: Event;
   goToListView: () => void;
   goToTab: (tab: string) => void;

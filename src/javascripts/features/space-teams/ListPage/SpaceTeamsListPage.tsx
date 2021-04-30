@@ -174,7 +174,6 @@ const SpaceTeamsListPage = () => {
   return (
     <>
       <DocumentTitle title="Teams" />
-      {/* @ts-ignore */}
       <SpaceTeamsPagePresentation
         {...{
           teamSpaceMemberships,

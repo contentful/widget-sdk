@@ -10,7 +10,6 @@ type EntitySearchProps = {
   className: string;
   contentTypes: any[];
   entityType: EntityType;
-  isLoading?: boolean;
   withMetadata: boolean;
   onUpdate: ViewCallback;
   listViewContext: ListViewContext;

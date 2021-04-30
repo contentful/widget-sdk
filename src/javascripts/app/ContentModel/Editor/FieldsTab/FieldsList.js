@@ -39,6 +39,7 @@ const FieldType = PropTypes.shape({
   id: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   omitted: PropTypes.bool,
+  type: PropTypes.string.isRequired,
   deleted: PropTypes.bool,
 });
 

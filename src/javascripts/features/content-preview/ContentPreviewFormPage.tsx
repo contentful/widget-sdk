@@ -91,7 +91,7 @@ class ContentPreviewFormPageWithNavigate extends Component<Props, State> {
               ...newState,
               errors: {
                 ...newState.errors,
-                // @ts-expect-error
+                // @ts-expect-error supress contentType is missing in item
                 [`config-${item.contentType}`]: item.error,
               },
             };

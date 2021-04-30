@@ -21,7 +21,6 @@ interface AppListItemProps {
   openDetailModal: (app: MarketplaceApp) => void;
   canManageApps: boolean;
   orgId: string;
-  hasAdvancedAppsFeature: boolean;
 }
 
 export function AppListItem(props: AppListItemProps) {

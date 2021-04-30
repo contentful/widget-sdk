@@ -19,10 +19,12 @@ describe('Segment', () => {
   beforeEach(() => {
     // Special import and treatment to reset globals/singleton:
     jest.resetModules();
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     segment = require('./segment').default;
 
     track = jest.fn();
     window.analytics = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       push: noop,
     };

@@ -286,7 +286,7 @@ export function create(
     // but it's out of scope for now.
     presence: createNoopPresenceHub(),
     permissions,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     reverter: {
       hasChanges: noop,

@@ -207,7 +207,6 @@ export function MarketplacePage(props: MarketplacePageProps) {
             apps={sortPrivateAppsFirst(installedApps, canManageApps)}
             appManager={appManager}
             openDetailModal={openDetailModal}
-            hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
             canManageApps={canManageApps}
             organizationId={organizationId as string}
             title="Installed"
@@ -233,7 +232,6 @@ export function MarketplacePage(props: MarketplacePageProps) {
             apps={sortPrivateAppsFirst(availableApps, canManageApps)}
             appManager={appManager}
             openDetailModal={openDetailModal}
-            hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
             canManageApps={!!canManageApps}
             organizationId={organizationId as string}
             title="Available"

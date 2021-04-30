@@ -134,7 +134,7 @@ describe('Webhook Repo', function () {
     it('is invalid if a non-string value is given', function () {
       const webhook = { transformation: { body: { test: true } } };
       expect(repo.hasValidBodyTransformation(webhook)).toBe(false);
-      // @ts-expect-error
+      // @ts-expect-error mute typescript
       webhook.transformation.body = null;
       expect(repo.hasValidBodyTransformation(webhook)).toBe(false);
     });

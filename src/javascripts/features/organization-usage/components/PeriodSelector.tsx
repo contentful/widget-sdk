@@ -44,12 +44,12 @@ export const PeriodSelector = () => {
     const end = isCurrentPeriod
       ? moment(start).add(1, 'month').subtract(1, 'day')
       : moment(endDate);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return `${formatDate(start)} – ${formatDate(end)} ${cond([
       [constant(isCurrentPeriod), constant('(current)')],
       [constant(end.year() === moment().year()), constant(`(${moment().to(start)})`)],
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       [constant(stubTrue), constant(end.year())],
     ])()}`;

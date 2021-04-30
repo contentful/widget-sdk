@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['plugin:react/recommended', 'prettier/react'],
+  extends: ['plugin:react/recommended'],
   plugins: ['react-hooks'],
   settings: {
     react: {
@@ -8,11 +8,12 @@ module.exports = {
   },
   rules: {
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/display-name': 'off',
     'react/prop-types': ['error', { ignore: ['children'] }],
     'react/no-unused-prop-types': 'error',
     'react/jsx-no-target-blank': ['error', { enforceDynamicLinks: 'always' }],
     'react/self-closing-comp': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
 };

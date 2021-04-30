@@ -167,7 +167,6 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => {
  */
 export function legacyEventProps() {
   const { userId, organizationId, spaceId } = getBasicPayload();
-  /* eslint-disable @typescript-eslint/camelcase */
   return {
     executing_user_id: userId,
     organization_id: organizationId,
@@ -247,7 +246,6 @@ function identify(extension?: object): void {
   if (userId && user) {
     segment.identify(userId, user, {
       integrations: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         Intercom: { user_hash: userSignature }, // for identity verification purpose
       },
     });
@@ -313,7 +311,6 @@ export function trackStateChange(
   sendSessionDataToConsole();
 
   if (state.name === 'spaces.detail.entries.list') {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     initSequenceContext({ sequence_key: random.id() });
   } else {
     clearSequenceContext();

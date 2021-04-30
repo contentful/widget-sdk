@@ -80,7 +80,7 @@ describe('createBundleFromUpload', () => {
   let originalFetch: any;
   beforeEach(() => {
     originalFetch = window.fetch;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.fetch = jest.fn(async () => ({
       ok: true,

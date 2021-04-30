@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer';
 import * as LazyLoader from 'utils/LazyLoader';

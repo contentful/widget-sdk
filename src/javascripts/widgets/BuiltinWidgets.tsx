@@ -160,7 +160,7 @@ export function create() {
         embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
       };
 
-      // @ts-expect-error
+      // @ts-expect-error mute slightly incompatible types
       sdk.dialogs.openCurrent = openMarkdownDialog(sdk, previewComponents);
 
       return (

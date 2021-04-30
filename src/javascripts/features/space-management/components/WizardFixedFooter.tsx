@@ -5,11 +5,9 @@ import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
 import { FlowType } from '../types';
-import { BasePlan } from 'features/pricing-entities';
 
 interface WizardFixedFooterProps {
   spaceId: string;
-  selectedPlan: BasePlan;
   continueBtnDisabled: boolean;
   onNext: () => boolean;
   flowType: FlowType;
@@ -59,7 +57,6 @@ const WizardFixedFooter = ({
               flowType === CREATION_FLOW_TYPE ? 'space_creation:back' : 'space_assignment:back'
             }
             trackParams={{
-              // eslint-disable-next-line @typescript-eslint/camelcase
               space_id: spaceId,
               flow: flowType === CREATION_FLOW_TYPE ? 'space_creation' : 'assign_plan_to_space',
             }}>

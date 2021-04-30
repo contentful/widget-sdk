@@ -52,7 +52,10 @@ const recordEntityEditorLoadTime = (entityType: SlideInEditorType, loadStartMs: 
 export const useEntityLoader = (
   slide: Slide,
   slideStates: SlideState[]
-): [{ editorData: object | null; loadingError: LoadingError | null }, Function] => {
+): [
+  { editorData: Record<string, unknown> | null; loadingError: LoadingError | null },
+  Function
+] => {
   const data: { current: EditorData | null } = useRef(null);
   const [editorData, setEditorData] = useState(null as EditorData | null);
   const [loadingError, setLoadingError] = useState(null as LoadingError | null);

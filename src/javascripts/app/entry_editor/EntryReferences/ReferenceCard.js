@@ -208,6 +208,7 @@ export const ReferencePropType = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
+    linkType: PropTypes.string,
   }),
 });
 

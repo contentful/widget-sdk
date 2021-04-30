@@ -23,7 +23,7 @@ export function useRouteNavigate() {
         const href = router.href(route);
         const optionsWithState = {
           ...options,
-          // @ts-expect-error
+          // @ts-expect-error mute potentially missing route.navigationState
           state: { ...route?.navigationState, ...options?.state },
         };
         navigate(href, optionsWithState);

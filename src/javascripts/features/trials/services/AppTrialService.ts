@@ -5,8 +5,8 @@ import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialErro
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 const FEATURE_TO_APP_NAME = {
-  compose_app: 'compose', // eslint-disable-line @typescript-eslint/camelcase
-  launch_app: 'launch', // eslint-disable-line @typescript-eslint/camelcase
+  compose_app: 'compose',
+  launch_app: 'launch',
 };
 
 const isTrialSpaceServerError = (error) => {

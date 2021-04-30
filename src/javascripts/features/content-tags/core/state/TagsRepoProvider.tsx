@@ -5,7 +5,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
-type Props = React.PropsWithChildren<{}>;
+type Props = React.PropsWithChildren<any>;
 
 const TagsRepoProvider: React.FC<Props> = ({ children }) => {
   const { currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();

@@ -24,7 +24,7 @@ async function install(
   { extension, type, url }: { extension: CreateUIExtensionProps; type?: string; url?: string }
 ): Promise<{ navigate: true; extensionId: string } | { navigate: false }> {
   try {
-    // @ts-expect-error
+    // @ts-expect-error types in cma client are incorrect
     const res = await cma.extension.create({}, { extension });
     const loader = await getCustomWidgetLoader();
     const extensionId = res.sys.id;

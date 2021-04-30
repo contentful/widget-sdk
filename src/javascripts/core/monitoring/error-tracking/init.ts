@@ -9,7 +9,7 @@ export const initErrorTracking = () => {
     environment: Config.env,
     normalizeDepth: 10,
     ignoreErrors: ['Request failure in preflight'],
-    // @ts-expect-error
+    // @ts-expect-error mute Event type is incompatible
     beforeSend: toConsole,
   });
 };

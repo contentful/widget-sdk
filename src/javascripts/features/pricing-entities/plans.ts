@@ -34,7 +34,6 @@ export async function getSpacePlans(endpoint: OrganizationEndpoint) {
     method: 'GET',
     path: ['plans'],
     query: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       plan_type: 'space',
     },
   });
@@ -53,10 +52,7 @@ export async function getSpacePlanForSpace(endpoint: OrganizationEndpoint, space
     method: 'GET',
     path: ['plans'],
     query: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       plan_type: 'space',
-
-      // eslint-disable-next-line @typescript-eslint/camelcase
       gatekeeper_key: spaceId,
     },
   });
@@ -93,7 +89,6 @@ export async function getBasePlan(endpoint: OrganizationEndpoint) {
     method: 'GET',
     path: ['plans'],
     query: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       plan_type: 'base',
     },
   });
