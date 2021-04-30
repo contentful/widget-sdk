@@ -252,7 +252,7 @@ export const AppDetails = (props: Props) => {
 
     try {
       await ManagementApiClient.deleteDef(props.definition);
-      Notification.success(`${props.definition} was deleted!`);
+      Notification.success(`${props.definition.name} was deleted!`);
       props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
