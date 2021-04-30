@@ -10,6 +10,7 @@ import {
   SELF_SERVICE,
   ENTERPRISE,
   ENTERPRISE_HIGH_DEMAND,
+  PARTNER_PLATFORM_BASE_PLAN_NAME,
 } from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { getVariation } from 'LaunchDarkly';
@@ -118,51 +119,65 @@ describe('SubscriptionPageRouter', () => {
     getVariation.mockResolvedValue(true);
   });
 
-  it('renders the SubscriptionPage when the feature flag is OFF ', async () => {
-    getVariation.mockResolvedValue(false);
-    await build();
+  describe('SubscriptionPage (before rebranding)', () => {
+    it('renders the SubscriptionPage when the feature flag is OFF ', async () => {
+      getVariation.mockResolvedValue(false);
+      await build();
 
-    expect(screen.getByTestId('subscription-page')).toBeVisible();
+      expect(screen.getByTestId('subscription-page')).toBeVisible();
+    });
+
+    it('renders the SubscriptionPage when the basePlan is not included in the "basePlansWithContent" list', async () => {
+      const basePlanWithoutContent = { ...mockFreeBasePlan, customerType: 'Not in the list' };
+      getPlansWithSpaces.mockResolvedValue({ items: [basePlanWithoutContent] });
+      await build();
+
+      expect(screen.getByTestId('subscription-page')).toBeVisible();
+    });
   });
 
-  it('renders the SubscriptionPage when the basePlan is not included in the "TiersWithContent" list', async () => {
-    const basePlanWithoutContent = { ...mockFreeBasePlan, customerType: 'Not in the list' };
-    getPlansWithSpaces.mockResolvedValue({ items: [basePlanWithoutContent] });
-    await build();
+  describe('NonEnterpriseSubscriptionPage', () => {
+    it('renders the NonEnterpriseSubscriptionPage for orgs with a "Free" basePlan ', async () => {
+      await build();
 
-    expect(screen.getByTestId('subscription-page')).toBeVisible();
+      expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
+    });
+
+    it('renders the NonEnterpriseSubscriptionPage for orgs with a "Self-service" basePlan ', async () => {
+      const selfServiceBasePlan = { ...mockFreeBasePlan, customerType: SELF_SERVICE };
+      getPlansWithSpaces.mockResolvedValue({ items: [selfServiceBasePlan] });
+      await build();
+
+      expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
+    });
+
+    it('renders the NonEnterpriseSubscriptionPage for orgs with a "Partner" basePlan ', async () => {
+      const partnerBasePlan = { ...mockFreeBasePlan, name: PARTNER_PLATFORM_BASE_PLAN_NAME };
+      getPlansWithSpaces.mockResolvedValue({ items: [partnerBasePlan] });
+      await build();
+
+      expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
+    });
   });
 
-  it('renders the NonEnterpriseSubscriptionPage for orgs with a "Free" basePlan ', async () => {
-    await build();
+  describe('EnterpriseSubscriptionPage', () => {
+    it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise" basePlan ', async () => {
+      const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE };
+      getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
+      isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+      await build();
 
-    expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
-  });
+      expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
+    });
 
-  it('renders the NonEnterpriseSubscriptionPage for orgs with a "Self-service" basePlan ', async () => {
-    const selfServiceBasePlan = { ...mockFreeBasePlan, customerType: SELF_SERVICE };
-    getPlansWithSpaces.mockResolvedValue({ items: [selfServiceBasePlan] });
-    await build();
+    it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise High Demand" basePlan ', async () => {
+      const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE_HIGH_DEMAND };
+      getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
+      isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+      await build();
 
-    expect(screen.getByTestId('non-enterprise-subs-page')).toBeVisible();
-  });
-
-  it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise" basePlan ', async () => {
-    const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE };
-    getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-    isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
-    await build();
-
-    expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
-  });
-
-  it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise High Demand" basePlan ', async () => {
-    const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE_HIGH_DEMAND };
-    getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-    isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
-    await build();
-
-    expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
+      expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
+    });
   });
 });
 

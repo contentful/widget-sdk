@@ -8,10 +8,6 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
   isLegacyEnterpriseOrEnterprisePlan,
-  FREE,
-  SELF_SERVICE,
-  ENTERPRISE,
-  ENTERPRISE_HIGH_DEMAND,
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -27,15 +23,11 @@ import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-import { findAllPlans } from '../utils';
+import { findAllPlans, hasContentForBasePlan } from '../utils';
 import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 import { actions, OrgSubscriptionContext } from '../context';
-
-// List of tiers that already have content entries in Contentful
-// and can already use the rebranded version of our SubscriptionPage
-const TiersWithContent = [FREE, SELF_SERVICE, ENTERPRISE, ENTERPRISE_HIGH_DEMAND];
 
 async function fetchNumMemberships(organizationId) {
   const resources = createResourceService(organizationId, 'organization');
@@ -152,8 +144,7 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
            * if the feature flag is on and the base plan content is already created in Contentful, show one of the rebranded Subscription Pages
            * Otherwise, show the generic Subscription Page
            * */}
-          {data.isSubscriptionPageRebrandingEnabled &&
-          TiersWithContent.includes(data.basePlan.customerType) ? (
+          {data.isSubscriptionPageRebrandingEnabled && hasContentForBasePlan(data.basePlan) ? (
             <>
               {data.orgIsEnterprise && (
                 <EnterpriseSubscriptionPage

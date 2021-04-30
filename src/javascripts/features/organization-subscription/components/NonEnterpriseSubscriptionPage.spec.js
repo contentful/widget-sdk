@@ -2,12 +2,17 @@ import React from 'react';
 import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 
-import { FREE } from 'account/pricing/PricingDataProvider';
+import {
+  FREE,
+  SELF_SERVICE,
+  PARTNER_PLATFORM_BASE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import { OrgSubscriptionContextProvider } from '../context';
 import { mockWebappContent } from './__mocks__/webappContent';
+import { BasePlanContentEntryIds } from '../types';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 
 jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
@@ -24,6 +29,8 @@ jest.mock('features/trials', () => ({
 
 const mockOrganization = Fake.Organization();
 const mockFreeBasePlan = Fake.Plan({ name: 'Community Platform', customerType: FREE });
+const mockSelfServiceBasePlan = Fake.Plan({ name: 'Team Platform', customerType: SELF_SERVICE });
+const mockPartnerBasePlan = Fake.Plan({ name: PARTNER_PLATFORM_BASE_PLAN_NAME });
 const mockFreeSpacePlan = {
   name: 'Mock free space',
   planType: 'free_space',
@@ -57,6 +64,26 @@ describe('NonEnterpriseSubscriptionPage', () => {
       await waitFor(() => {
         expect(screen.getByTestId('base-plan-title')).toBeVisible();
       });
+    });
+
+    it('fetches content for Community tier when basePlan.customerType is "Free"', async () => {
+      await build();
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.FREE);
+    });
+
+    it('fetches content for Team tier when basePlan.customerType is "Self-service"', async () => {
+      await build({ basePlan: mockSelfServiceBasePlan });
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(
+        BasePlanContentEntryIds.SELF_SERVICE
+      );
+    });
+
+    it('fetches content for Partner Sandbox when basePlan.name is "Partner Platform"', async () => {
+      await build({ basePlan: mockPartnerBasePlan });
+
+      expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.PARTNER);
     });
   });
 

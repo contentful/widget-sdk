@@ -9,12 +9,17 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 
-import { isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
+import {
+  isFreeSpacePlan,
+  isFreePlan,
+  isSelfServicePlan,
+  isPartnerPlan,
+} from 'account/pricing/PricingDataProvider';
 import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
 import type { Organization } from 'core/services/SpaceEnvContext/types';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
-import { PlanCustomerType, BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
+import type { BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { captureError } from 'core/monitoring';
@@ -34,30 +39,28 @@ const styles = {
   }),
 };
 
-const fetchContent = (basePlan: BasePlan) => async (): Promise<{
-  basePlanContent: BasePlanContent;
-}> => {
+const fetchContent = (basePlan: BasePlan) => async (): Promise<BasePlanContent | undefined> => {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
-  let basePlanContent;
 
   try {
-    switch (basePlan?.customerType) {
-      case PlanCustomerType.FREE:
-        basePlanContent = await fetchWebappContentByEntryID(BasePlanContentEntryIds.FREE);
-        break;
-      case PlanCustomerType.SELF_SERVICE:
-        basePlanContent = await fetchWebappContentByEntryID(BasePlanContentEntryIds.SELF_SERVICE);
-        break;
-      default:
-        break;
+    if (isFreePlan(basePlan)) {
+      return await fetchWebappContentByEntryID(BasePlanContentEntryIds.FREE);
+    }
+
+    if (isSelfServicePlan(basePlan)) {
+      return await fetchWebappContentByEntryID(BasePlanContentEntryIds.SELF_SERVICE);
+    }
+
+    if (isPartnerPlan(basePlan)) {
+      return await fetchWebappContentByEntryID(BasePlanContentEntryIds.PARTNER);
     }
   } catch (err) {
     captureError(fetchWebappContentError, err);
   }
 
-  return { basePlanContent };
+  return undefined;
 };
 
 interface NonEnterpriseSubscriptionPageProps {
@@ -79,7 +82,9 @@ export function NonEnterpriseSubscriptionPage({
   spacePlans,
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
-  const { isLoading, error, data } = useAsync(useCallback(fetchContent(basePlan), [basePlan]));
+  const { isLoading, error, data: content } = useAsync(
+    useCallback(fetchContent(basePlan), [basePlan])
+  );
 
   const organizationId = organization.sys.id;
   const isOrgBillable = organization.isBillable;
@@ -99,7 +104,7 @@ export function NonEnterpriseSubscriptionPage({
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
           loading={isLoading || !!error}
-          content={data?.basePlanContent}
+          content={content}
           organizationId={organizationId}
           upgradableSpaceId={freeSpace?.space?.sys.id}
           users={

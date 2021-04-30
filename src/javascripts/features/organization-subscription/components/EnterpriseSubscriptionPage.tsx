@@ -28,9 +28,7 @@ const styles = {
   }),
 };
 
-const fetchContent = (isOnTrial: boolean) => async (): Promise<{
-  basePlanContent: BasePlanContent;
-}> => {
+const fetchContent = (isOnTrial: boolean) => async (): Promise<BasePlanContent> => {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
@@ -44,7 +42,7 @@ const fetchContent = (isOnTrial: boolean) => async (): Promise<{
     captureError(fetchWebappContentError, err);
   }
 
-  return { basePlanContent };
+  return basePlanContent;
 };
 
 interface EnterpriseSubscriptionPageProps {
@@ -65,7 +63,7 @@ export function EnterpriseSubscriptionPage({
   const organizationId = organization.sys.id;
   const isOrgOnEnterpriseTrial = isOrganizationOnTrial(organization);
 
-  const { isLoading, error, data } = useAsync(
+  const { isLoading, error, data: content } = useAsync(
     useCallback(fetchContent(isOrgOnEnterpriseTrial), [])
   );
 
@@ -84,7 +82,7 @@ export function EnterpriseSubscriptionPage({
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
           loading={isLoading || !!error}
-          content={data?.basePlanContent}
+          content={content}
           organizationId={organizationId}
           users={
             usersMeta && {
