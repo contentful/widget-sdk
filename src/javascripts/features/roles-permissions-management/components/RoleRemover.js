@@ -48,7 +48,7 @@ export function createRoleRemover(listHandler, role, space) {
   }
 }
 
-export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
+function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
 
   return (

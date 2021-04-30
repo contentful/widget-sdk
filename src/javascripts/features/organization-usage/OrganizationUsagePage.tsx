@@ -62,7 +62,7 @@ export const WorkbenchActions = () => {
   return null;
 };
 
-export const OrganizationUsage = () => {
+const OrganizationUsage = () => {
   const { selectedPeriodIndex, orgId } = useUsageState();
   const dispatch = useUsageDispatch();
 

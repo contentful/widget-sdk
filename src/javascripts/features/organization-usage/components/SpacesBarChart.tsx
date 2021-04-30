@@ -12,7 +12,7 @@ const styles = {
   }),
 };
 
-export const propsToChartOptions = ({ spaceNames, data, period }) => {
+const propsToChartOptions = ({ spaceNames, data, period }) => {
   const series = data.map((item, index) => ({
     name: item.sys.space.sys.id,
     type: 'bar',

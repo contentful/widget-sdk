@@ -22,7 +22,7 @@ export interface State {
   composeAndLaunchProductRatePlan?: ProductRatePlan;
 }
 
-export interface SelectedPlatform {
+interface SelectedPlatform {
   type: string;
   title: string;
   description: string;

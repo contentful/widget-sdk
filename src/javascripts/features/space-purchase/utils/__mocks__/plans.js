@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules */
 export const freeSpace = {
   sys: {
     type: 'ProductRatePlan',

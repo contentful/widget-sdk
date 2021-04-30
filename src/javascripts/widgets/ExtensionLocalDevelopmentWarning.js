@@ -6,7 +6,7 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 const sessionStore = getBrowserStorage('session');
 const FLAG_KEY = 'extensions-development-mode';
 
-export function ExtensionDevelopmentModeWarningBanner() {
+function ExtensionDevelopmentModeWarningBanner() {
   const [showMixedContentInfo, setShowMixedContentInfo] = useState(
     sessionStore.get(FLAG_KEY) !== true
   );

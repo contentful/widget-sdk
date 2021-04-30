@@ -5,7 +5,7 @@ import { applyTemplateToSpace } from 'features/space-purchase';
 import { Notification } from '@contentful/forma-36-react-components';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 
-export async function makeNewSpace(organizationId, selectedPlan, spaceName) {
+async function makeNewSpace(organizationId, selectedPlan, spaceName) {
   const spaceData = {
     defaultLocale: 'en-US',
     name: spaceName,

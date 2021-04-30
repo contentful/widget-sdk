@@ -15,11 +15,6 @@ export const getSpacesUsage = (endpoint, query) => {
   );
 };
 
-export const addMasterEnvironment = ({ usage, limit }) => ({
-  usage: usage + 1,
-  limit: limit + 1,
-});
-
 const exportCSV = (endpoint) => {
   return endpoint(
     {

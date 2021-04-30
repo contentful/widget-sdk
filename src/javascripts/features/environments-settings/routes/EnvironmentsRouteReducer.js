@@ -28,7 +28,7 @@ const SET_HAS_NEXT_SPACE_PLAN = 'SET_HAS_NEXT_SPACE_PLAN';
  * Reducer
  */
 
-export const createEnvReducer = createImmerReducer({
+const createEnvReducer = createImmerReducer({
   [SET_PERMISSIONS]: (
     state,
     { canSelectSource, aliasesEnabled, customAliasesEnabled, canManageAliases }

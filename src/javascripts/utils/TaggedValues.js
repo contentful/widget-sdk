@@ -122,11 +122,7 @@ export function makeCtor(name, fn) {
   return ctor;
 }
 
-export function isTag(value, ctor) {
-  return value.tag === ctor.toString();
-}
-
-export function match(tagged, handlers, ...args) {
+function match(tagged, handlers, ...args) {
   const handler = find(handlers, (_, tag) => {
     return tag === tagged.tag;
   });

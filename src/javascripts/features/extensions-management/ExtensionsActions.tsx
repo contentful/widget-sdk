@@ -59,7 +59,7 @@ function handleInstallError(err) {
   return { navigate: false } as const;
 }
 
-export const openGitHubInstaller = async (
+const openGitHubInstaller = async (
   cma: BatchedPlainCmaClient,
   extensionUrl: string | null = null,
   extensionUrlReferrer: string | null = null
@@ -87,7 +87,7 @@ export const openGitHubInstaller = async (
   }
 };
 
-export function createExtension(cma: BatchedPlainCmaClient) {
+function createExtension(cma: BatchedPlainCmaClient) {
   return install(cma, {
     extension: {
       name: 'New extension',

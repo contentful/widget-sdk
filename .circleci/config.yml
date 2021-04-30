@@ -308,7 +308,7 @@ jobs:
             export PATH_TO_BUILT_ASSETS='../output/files/production/app' # Path is relative to the config file
             npx sniffer-build-tracker version
             npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
-            npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
+            npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js --skip-dirty-check
       - gh-comment:
           file: sniffer-<< pipeline.id >>.md
           reference: sniffer-build-stats

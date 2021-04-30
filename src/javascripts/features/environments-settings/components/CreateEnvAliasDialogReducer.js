@@ -32,7 +32,7 @@ const SET_SERVER_FAILURE = 'SET_SERVER_FAILURE';
  * Reducer
  */
 
-export const createEnvAliasReducer = createImmerReducer({
+const createEnvAliasReducer = createImmerReducer({
   [SET_FIELD_VALUE]: (state, { name, value }) => {
     state.fields[name].value = value;
     state.fields[name].errors = [];

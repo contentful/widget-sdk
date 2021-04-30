@@ -88,7 +88,7 @@ export function isInstallLink(link, id) {
   return isInstallableType && id;
 }
 
-export function InstallHeader(props) {
+function InstallHeader(props) {
   return (
     <div className={styles.installHeader}>
       <SVGIcon name="contentful-logo-light" height={20} className={styles.installHeaderIcon} />
@@ -97,7 +97,7 @@ export function InstallHeader(props) {
   );
 }
 
-export function InstallLogos(props) {
+function InstallLogos(props) {
   return (
     <div className={styles.logos}>
       <SVGIcon name="contentful-logo-light" className={styles.appIcon} />

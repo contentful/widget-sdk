@@ -1,3 +1,3 @@
-import { htmlEncode, htmlDecode } from 'js-htmlencode';
+import { htmlEncode } from 'js-htmlencode';
 
-export { htmlEncode, htmlDecode };
+export { htmlEncode };

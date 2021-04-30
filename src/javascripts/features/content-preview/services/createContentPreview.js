@@ -2,8 +2,8 @@ import _ from 'lodash';
 import { resolveReferences } from './ContentPreviewHelper';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 
-export const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
-export const ENTRY_ENV_PATTERN = /\{\s*env_id\s*\}/g;
+const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
+const ENTRY_ENV_PATTERN = /\{\s*env_id\s*\}/g;
 export const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
 
 export const VALID_URL_PATTERN = /^https?:\/\/.+/;

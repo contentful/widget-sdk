@@ -73,7 +73,7 @@ const getStatusFromError = (error) => {
   return PageStatuses.notExistError;
 };
 
-export function useDeeplinkPage({ searchParams }) {
+function useDeeplinkPage({ searchParams }) {
   const [status, setStatus] = useState(PageStatuses.redirecting);
   const [redirect, setRedirect] = useState(null);
   const [deeplinkOptions, setDeeplinkOptions] = useState({});

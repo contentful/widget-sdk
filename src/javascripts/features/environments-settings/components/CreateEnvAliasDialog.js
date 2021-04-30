@@ -64,7 +64,7 @@ const styles = {
   }),
 };
 
-export function CreateEnvironmentAliasView(props) {
+function CreateEnvironmentAliasView(props) {
   const [state, actions] = useCreateEnvAliasState({
     environments: props.environments,
     createEnvironmentAlias: ({ id, target }) =>

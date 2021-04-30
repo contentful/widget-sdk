@@ -115,4 +115,4 @@ ExtensionParameters.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export { Label, Editor, ExtensionParameters };
+export { Editor, ExtensionParameters };

@@ -1,4 +1,4 @@
-export { actions, spacePurchaseReducer } from './spacePurchaseReducer';
+export { actions } from './spacePurchaseReducer';
 export {
   SpacePurchaseContextProvider,
   SpacePurchaseState,

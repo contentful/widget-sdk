@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import { capitalize, joinWithAnd } from 'utils/StringUtils';
 import createSchema from '@contentful/validation';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import { getErrorMessage } from 'services/validationDialogErrorMessages';
@@ -278,23 +277,6 @@ export function extractFieldValidations(decorated) {
   return _.map(enabled, extractOne);
 }
 
-/**
- * @ngdoc method
- * @name validationDecorator#getExtractedNodesValidation
- * @param {DecoratedNodeValidation[]} decorated
- * @returns {NodeValidation[]}
- */
-export function getExtractedNodesValidation(decorated) {
-  return {
-    nodes: _.chain(decorated)
-      .flatMap('validations')
-      .filter('enabled')
-      .groupBy('nodeType')
-      .mapValues((values) => _.map(values, extractOne))
-      .value(),
-  };
-}
-
 function extractOne(decorated) {
   const extracted = {};
   extracted[decorated.type] = _.cloneDeep(decorated.settings);
@@ -317,82 +299,6 @@ export function validate(validation) {
     path: [],
     message: getErrorMessage(type, error),
   }));
-}
-
-/**
- * @description
- * Set the fields validations by extracting all enabled decorated
- * validations.
- *
- * This is the inverse of `decorateFieldValidations`.
- *
- * @param {ContentType.Field} field
- * @param {DecoratedValdiation[]} validations
- */
-// $scope.field, $scope.validations, $scope.nodeValidations
-export function updateField(field, validations, nodeValidations) {
-  const { true: itemValidations, false: baseValidations } = _.groupBy(validations, 'onItems');
-
-  if (nodeValidations) {
-    field.validations = [
-      ...extractFieldValidations(baseValidations),
-      getExtractedNodesValidation(nodeValidations),
-    ];
-  } else {
-    field.validations = extractFieldValidations(baseValidations);
-  }
-
-  if (!_.isEmpty(itemValidations)) {
-    field.items.validations = extractFieldValidations(itemValidations);
-  }
-  return field;
-}
-
-export function addEnabledRichTextOptions(field, options) {
-  const { enabledNodeTypes, enabledMarks } = options;
-
-  const validationsCopy = field.validations.filter(
-    (validation) => !(validation.enabledMarks || validation.enabledNodeTypes)
-  );
-
-  if (enabledMarks) {
-    validationsCopy.push({
-      enabledMarks: enabledMarks,
-      message: makeMessage('marks', enabledMarks),
-    });
-  }
-  if (enabledNodeTypes) {
-    validationsCopy.push({
-      enabledNodeTypes: enabledNodeTypes,
-      message: makeMessage('nodes', enabledNodeTypes),
-    });
-  }
-  field.validations = validationsCopy;
-
-  function makeMessage(kindPlural, enabledTypes) {
-    const list = joinWithAnd(enabledTypes.map((name) => richTextOptionsLabels[name]));
-    return list.length > 0
-      ? `Only ${list} ${kindPlural} are allowed`
-      : `${capitalize(kindPlural)} are not allowed`;
-  }
-}
-
-export function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
-  const decoratedValidations = decoratedNodeValidations
-    ? [...decoratedFieldValidations, getExtractedNodesValidation(decoratedNodeValidations)]
-    : decoratedFieldValidations;
-  return _.reduce(
-    decoratedValidations,
-    (allErrors, validation, index) => {
-      const errors = validate(validation);
-      const errorsWithIndex = errors.map((error) => ({
-        ...error,
-        path: [index, error.path],
-      }));
-      return [...allErrors, ...errorsWithIndex];
-    },
-    []
-  );
 }
 
 /**

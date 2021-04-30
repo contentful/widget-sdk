@@ -1,4 +1,3 @@
-import qs from 'qs';
 import { getSpaceContext } from 'classes/spaceContext';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { includes, get, orderBy, compact } from 'lodash';
@@ -180,9 +179,4 @@ export const getSearchResults = async (query) => {
   ];
 
   return compact(results);
-};
-
-export const getUrlWithSearchQuery = (baseUrl, searchText) => {
-  const queryString = qs.stringify({ searchText });
-  return `${baseUrl}?${queryString}`;
 };
