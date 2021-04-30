@@ -1,5 +1,11 @@
 export const DEFAULT_EDITOR_ID = 'default-editor';
 
+export interface EntryEditorWidget {
+  name: string;
+  id: string;
+  icon: string;
+}
+
 export default {
   DEFAULT_EDITOR: {
     name: 'Editor',

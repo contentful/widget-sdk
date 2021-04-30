@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { range } from 'lodash';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import * as Config from 'Config';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { RenderRichTextEditor } from 'app/widgets/RichText';
@@ -29,9 +29,44 @@ import {
   MultipleMediaEditorWithTracking,
 } from 'app/widgets/ReferenceEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
-import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
+import EntryEditorTypes, { EntryEditorWidget } from 'app/entry_editor/EntryEditorWidgetTypes';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { CombinedLinkActions } from '@contentful/field-editor-reference';
+import { EntityType, FieldExtensionSDK } from '@contentful/field-editor-reference/dist/types';
+import { InternalSpaceAPI } from '../app/widgets/ExtensionSDKs/createSpaceApi';
+import { DialogsAPI } from '@contentful/app-sdk';
+import { StreamBus } from '../core/utils/kefir';
+import { RenderCustomActions } from '../app/widgets/ReferenceEditor/types';
+
+export interface WidgetApi extends FieldExtensionSDK {
+  space: InternalSpaceAPI;
+  dialogs: DialogsAPI;
+}
+
+export interface FieldEditorParameters {
+  loadEvents: StreamBus<any>;
+  widgetApi: WidgetApi;
+  entityType: EntityType;
+}
+
+interface WidgetDescriptor {
+  fieldTypes?: string[];
+  name?: string;
+  icon?: string;
+  widgetId?: string;
+  notFocusable?: boolean;
+  sidebar?: boolean;
+  isBackground?: boolean;
+  renderFieldEditor?: (params: FieldEditorParameters) => ReactElement | string;
+  parameters?: any;
+  settings?: any;
+  installationParameters?: any;
+}
+
+export interface BuiltinWidget extends WidgetDescriptor {
+  id?: string;
+  namespace?: WidgetNamespace;
+}
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
@@ -42,23 +77,21 @@ const HELP_TEXT_PARAMETER = {
 
 // Returns a list of all builtin widgets.
 export function create() {
-  const widgets = [];
+  const widgets: BuiltinWidget[] = [];
 
-  const registerWidget = (id, widgetDescriptor) => {
+  const registerWidget = (id: string, widgetDescriptor: WidgetDescriptor) => {
     const widgetParameters = widgetDescriptor.parameters || [];
     const hasHelpText = !!widgetParameters.find(({ id }) => id === HELP_TEXT_PARAMETER.id);
     const parameters = (hasHelpText ? [] : [HELP_TEXT_PARAMETER]).concat(widgetParameters);
 
-    Object.assign(widgetDescriptor, { id, namespace: WidgetNamespace.BUILTIN, parameters });
-    widgets.push(widgetDescriptor);
+    widgets.push({ ...widgetDescriptor, id, namespace: WidgetNamespace.BUILTIN, parameters });
   };
 
-  const registerEditorWidget = (editorDescriptor) => {
-    const descriptor = {
+  const registerEditorWidget = (editorDescriptor: EntryEditorWidget) => {
+    widgets.push({
       namespace: WidgetNamespace.EDITOR_BUILTIN,
-    };
-    Object.assign(descriptor, editorDescriptor);
-    widgets.push(descriptor);
+      ...editorDescriptor,
+    });
   };
 
   Object.values(EntryEditorTypes).map(registerEditorWidget);
@@ -69,6 +102,7 @@ export function create() {
     icon: 'singleline',
     renderFieldEditor: ({ widgetApi, entityType }) => (
       <SingleLineEditor
+        isInitiallyDisabled={true}
         field={widgetApi.field}
         locales={widgetApi.locales}
         // we don't want to show default validation for Asset title,
@@ -83,7 +117,11 @@ export function create() {
     name: 'Multiple line',
     icon: 'multipleline',
     renderFieldEditor: ({ widgetApi }) => (
-      <MultipleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
+      <MultipleLineEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        locales={widgetApi.locales}
+      />
     ),
   });
 
@@ -93,7 +131,7 @@ export function create() {
     icon: 'preview',
     renderFieldEditor: ({ widgetApi }) => {
       return (
-        <UrlEditor field={widgetApi.field}>
+        <UrlEditor isInitiallyDisabled={true} field={widgetApi.field}>
           {({ value }) => {
             return <EmbedlyPreview previewUrl={value} />;
           }}
@@ -106,7 +144,9 @@ export function create() {
     fieldTypes: ['Integer', 'Number'],
     name: 'Number editor',
     icon: 'number',
-    renderFieldEditor: ({ widgetApi }) => <NumberEditor field={widgetApi.field} />,
+    renderFieldEditor: ({ widgetApi }) => (
+      <NumberEditor isInitiallyDisabled={true} field={widgetApi.field} />
+    ),
   });
 
   registerWidget('markdown', {
@@ -120,9 +160,16 @@ export function create() {
         embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
       };
 
+      // @ts-expect-error
       sdk.dialogs.openCurrent = openMarkdownDialog(sdk, previewComponents);
 
-      return <MarkdownEditor sdk={sdk} previewComponents={previewComponents} />;
+      return (
+        <MarkdownEditor
+          isInitiallyDisabled={true}
+          sdk={sdk}
+          previewComponents={previewComponents}
+        />
+      );
     },
   });
 
@@ -132,7 +179,11 @@ export function create() {
     icon: 'dropdown',
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
-      <DropdownEditor field={widgetApi.field} locales={widgetApi.locales} />
+      <DropdownEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        locales={widgetApi.locales}
+      />
     ),
   });
 
@@ -142,7 +193,7 @@ export function create() {
     icon: 'radio',
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
-      <RadioEditor field={widgetApi.field} locales={widgetApi.locales} />
+      <RadioEditor isInitiallyDisabled={true} field={widgetApi.field} locales={widgetApi.locales} />
     ),
   });
 
@@ -152,7 +203,11 @@ export function create() {
     icon: 'radio',
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
-      <BooleanEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+      <BooleanEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        parameters={widgetApi.parameters}
+      />
     ),
     parameters: [
       {
@@ -177,7 +232,11 @@ export function create() {
     name: 'Rating',
     icon: 'rating',
     renderFieldEditor: ({ widgetApi }) => (
-      <RatingEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+      <RatingEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        parameters={widgetApi.parameters}
+      />
     ),
     parameters: [
       {
@@ -197,7 +256,11 @@ export function create() {
     name: 'Date picker',
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
-      <DateEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+      <DateEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        parameters={widgetApi.parameters}
+      />
     ),
     parameters: [
       {
@@ -228,8 +291,9 @@ export function create() {
     name: 'Location',
     renderFieldEditor: ({ widgetApi }) => (
       <LocationEditor
+        isInitiallyDisabled={true}
         field={widgetApi.field}
-        parameters={{ instance: { googleMapsKey: Config.services.google.maps_api_key } }}
+        parameters={{ instance: { googleMapsKey: Config.services.google.maps_api_key } } as any}
       />
     ),
   });
@@ -238,7 +302,7 @@ export function create() {
     fieldTypes: ['Object'],
     name: 'Object',
     renderFieldEditor: ({ widgetApi }) => (
-      <JsonEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+      <JsonEditor isInitiallyDisabled={true} field={widgetApi.field} />
     ),
   });
 
@@ -255,7 +319,9 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'Tag',
     icon: 'tags',
-    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />,
+    renderFieldEditor: ({ widgetApi }) => (
+      <TagsEditor isInitiallyDisabled={true} field={widgetApi.field} />
+    ),
   });
 
   registerWidget('listInput', {
@@ -263,7 +329,7 @@ export function create() {
     name: 'List',
     icon: 'singleline',
     renderFieldEditor: ({ widgetApi }) => (
-      <ListEditor field={widgetApi.field} locales={widgetApi.locales} />
+      <ListEditor isInitiallyDisabled={true} field={widgetApi.field} locales={widgetApi.locales} />
     ),
     parameters: [
       {
@@ -278,7 +344,11 @@ export function create() {
     name: 'Checkbox',
     icon: 'checkbox',
     renderFieldEditor: ({ widgetApi }) => (
-      <CheckboxEditor field={widgetApi.field} locales={widgetApi.locales} />
+      <CheckboxEditor
+        isInitiallyDisabled={true}
+        field={widgetApi.field}
+        locales={widgetApi.locales}
+      />
     ),
   });
 
@@ -337,7 +407,7 @@ export function create() {
           viewType="link"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -355,7 +425,7 @@ export function create() {
           viewType="card"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -374,7 +444,7 @@ export function create() {
           viewType="card"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -399,7 +469,7 @@ export function create() {
           viewType="link"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -420,7 +490,7 @@ export function create() {
           viewType="card"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -441,7 +511,7 @@ export function create() {
           viewType="link"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -458,7 +528,7 @@ export function create() {
           viewType="card"
           sdk={widgetApi}
           loadEvents={loadEvents}
-          renderCustomActions={CombinedLinkActions}
+          renderCustomActions={CombinedLinkActions as RenderCustomActions}
         />
       );
     },
@@ -471,7 +541,7 @@ export function create() {
     icon: 'slug',
     isBackground: true,
     renderFieldEditor: ({ widgetApi }) => {
-      return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
+      return <SlugEditor isInitiallyDisabled={true} field={widgetApi.field} baseSdk={widgetApi} />;
     },
   });
 

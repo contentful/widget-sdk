@@ -3,6 +3,8 @@ import { deepFreeze } from 'utils/Freeze';
 import { applyDefaultValues } from './WidgetParametersUtils';
 import { toInternalFieldType } from './FieldTypes';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
+import { Field } from '@contentful/types';
+import { BuiltinWidget } from './BuiltinWidgets';
 
 const EDITOR_NAMESPACES = [
   WidgetNamespace.EDITOR_BUILTIN,
@@ -10,14 +12,35 @@ const EDITOR_NAMESPACES = [
   WidgetNamespace.APP,
 ];
 
+export interface Control {
+  field: Field;
+  fieldId: string;
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+  settings?: any;
+  parameters?: any;
+}
+
+type RenderableItem = BuiltinWidget & { problem?: string };
+
+interface Renderable {
+  sidebar: Array<RenderableItem>;
+  form: Array<RenderableItem>;
+  all: Array<RenderableItem>;
+}
+
 // Given EditorInterface controls and a list of all widgets in a space
 // builds an array of "renderables". A "renderable" is a data structure
 // holding all the information needed to render an editor for a field.
-export function buildRenderables(controls, widgets) {
+export function buildRenderables(
+  controls: Control[],
+  widgets: BuiltinWidget[],
+  options?: { hasServerError: boolean }
+): Renderable {
   return controls.reduce(
-    (acc, control) => {
+    (acc: Renderable, control) => {
       if (control.field) {
-        const renderable = buildOneRenderable(control, widgets);
+        const renderable = buildOneRenderable(control, widgets, options);
         const type = renderable.sidebar ? 'sidebar' : 'form';
         acc[type].push(renderable);
         acc.all.push(renderable);
@@ -28,7 +51,11 @@ export function buildRenderables(controls, widgets) {
   );
 }
 
-function buildOneRenderable(control, widgets) {
+export function buildOneRenderable(
+  control: Control,
+  widgets: BuiltinWidget[],
+  options?: { hasServerError: boolean }
+): RenderableItem {
   const renderable = {
     fieldId: control.fieldId,
     widgetId: control.widgetId,
@@ -43,11 +70,13 @@ function buildOneRenderable(control, widgets) {
   if (descriptor) {
     Object.assign(renderable, { descriptor });
   } else {
-    return Object.assign(renderable, { problem: 'missing' });
+    return Object.assign(renderable, {
+      problem: options?.hasServerError ? 'internal_error' : 'missing',
+    });
   }
 
   const fieldType = toInternalFieldType(control.field);
-  if (!descriptor.fieldTypes.includes(fieldType)) {
+  if (fieldType && !descriptor.fieldTypes?.includes(fieldType)) {
     return Object.assign(renderable, { problem: 'incompatible' });
   }
 

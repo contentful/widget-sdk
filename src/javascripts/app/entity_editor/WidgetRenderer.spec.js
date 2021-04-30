@@ -1,12 +1,8 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 import { WidgetRenderer } from './WidgetRenderer';
 import * as WidgetRendererExternal from '@contentful/widget-renderer';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-
-jest.mock('widgets/WidgetRenderWarning', () => () => (
-  <div data-test-id="widget-renderer-warning" />
-));
 
 jest.mock('widgets/WidgetCompat', () => ({
   toRendererWidget: jest.fn(),
@@ -165,6 +161,25 @@ describe('WidgetRenderer', () => {
 
       expect(trackLinksRendered).toHaveBeenCalledTimes(1);
       expect(handleWidgetLinkRenderEvents).not.toHaveBeenCalled();
+    });
+
+    it('should show a warning when the app couldnt be loaded', () => {
+      const { queryByTestId } = renderComponent((props) => {
+        props.widget.problem = 'missing';
+        return props;
+      });
+
+      expect(queryByTestId('widget-renderer-warning')).toBeTruthy();
+    });
+
+    it('when the server returns an error a cta should be rendered', () => {
+      const { queryByTestId } = renderComponent((props) => {
+        props.widget.problem = 'internal_error';
+        return props;
+      });
+
+      expect(screen.getByText('Use default field editor this time')).toBeTruthy();
+      expect(queryByTestId('widget-renderer-warning')).toBeTruthy();
     });
   });
 });

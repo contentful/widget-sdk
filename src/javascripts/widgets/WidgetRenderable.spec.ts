@@ -1,18 +1,27 @@
-import { buildRenderables, buildEditorsRenderables } from './WidgetRenderable';
+import { buildRenderables, buildEditorsRenderables, Control } from './WidgetRenderable';
 import { cloneDeep } from 'lodash';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { BuiltinWidget, FieldEditorParameters } from './BuiltinWidgets';
+
+const makeControl = (widgetId: string, field: any, rest?: Partial<Control>): Control => {
+  return {
+    widgetId,
+    field,
+    ...rest,
+  } as Control;
+};
 
 describe('WidgetRenderables', () => {
   describe('#buildRenderables()', () => {
     it('returns object with widget arrays', () => {
-      const renderables = buildRenderables([], {});
+      const renderables = buildRenderables([], []);
       expect(renderables.form).toEqual([]);
       expect(renderables.sidebar).toEqual([]);
     });
 
     it('filters widgets without field', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'HAS_FIELD', field: {} }, { widgetId: 'NO_FIELD' }],
+        [makeControl('HAS_FIELD', {}), makeControl('NO_FIELD', undefined)],
         []
       );
       expect(renderables.form).toHaveLength(1);
@@ -22,11 +31,11 @@ describe('WidgetRenderables', () => {
     it('adds sidebar widges to sidebar collection', () => {
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'SIDEBAR',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-          },
+          makeControl(
+            'SIDEBAR',
+            { type: 'Symbol' },
+            { widgetNamespace: WidgetNamespace.EXTENSION }
+          ),
         ],
         [
           {
@@ -34,6 +43,7 @@ describe('WidgetRenderables', () => {
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             sidebar: true,
+            name: 'test',
             parameters: [],
           },
         ]
@@ -45,7 +55,7 @@ describe('WidgetRenderables', () => {
 
     it('sets problem warning flag if widget does not exist', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'foo', widgetNamespace: 'bar', field: { type: 'Symbol' } }],
+        [makeControl('foo', { type: 'Symbol' }, { widgetNamespace: 'bar' as WidgetNamespace })],
         []
       );
       expect(renderables.form[0].problem).toBe('missing');
@@ -53,8 +63,14 @@ describe('WidgetRenderables', () => {
 
     it('sets problem warning flag if widget is incompatible', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'foo', widgetNamespace: WidgetNamespace.BUILTIN, field: { type: 'Symbol' } }],
-        [{ id: 'foo', namespace: WidgetNamespace.BUILTIN, fieldTypes: ['Boolean'] }]
+        [makeControl('foo', { type: 'Symbol' }, { widgetNamespace: WidgetNamespace.BUILTIN })],
+        [
+          {
+            id: 'foo',
+            namespace: WidgetNamespace.BUILTIN,
+            fieldTypes: ['Boolean'],
+          } as BuiltinWidget,
+        ]
       );
       expect(renderables.form[0].problem).toBe('incompatible');
     });
@@ -63,16 +79,20 @@ describe('WidgetRenderables', () => {
       const params = { param: 'MY PARAMS' };
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'foo',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-            settings: params,
-          },
+          makeControl(
+            'foo',
+            { type: 'Symbol' },
+            {
+              fieldId: 'bar',
+              widgetNamespace: WidgetNamespace.EXTENSION,
+              settings: params,
+            }
+          ),
         ],
         [
           {
             id: 'foo',
+            name: 'bar',
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'param' }],
@@ -85,15 +105,16 @@ describe('WidgetRenderables', () => {
     it('adds default parameters if there are no parameters', () => {
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'foo',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-          },
+          makeControl(
+            'foo',
+            { type: 'Symbol' },
+            { widgetId: 'foo', fieldId: 'bar', widgetNamespace: WidgetNamespace.EXTENSION }
+          ),
         ],
         [
           {
             id: 'foo',
+            name: 'bar',
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'bar', default: 'lol' }, { id: 'baz' }],
@@ -106,15 +127,16 @@ describe('WidgetRenderables', () => {
     it('adds default parameters data does not contain an object', () => {
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'foo',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-          },
+          makeControl(
+            'foo',
+            { type: 'Symbol' },
+            { widgetId: 'foo', fieldId: 'bar', widgetNamespace: WidgetNamespace.EXTENSION }
+          ),
         ],
         [
           {
             id: 'foo',
+            name: 'bar',
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'foo', default: 'bar' }],
@@ -127,16 +149,21 @@ describe('WidgetRenderables', () => {
     it('applies default parameters without overiding existing ones', () => {
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'foo',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-            settings: { x: true },
-          },
+          makeControl(
+            'foo',
+            { type: 'Symbol' },
+            {
+              widgetId: 'foo',
+              fieldId: 'bar',
+              widgetNamespace: WidgetNamespace.EXTENSION,
+              settings: { x: true },
+            }
+          ),
         ],
         [
           {
             id: 'foo',
+            name: 'bar',
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [
@@ -155,16 +182,21 @@ describe('WidgetRenderables', () => {
     it('forwards installation parameters', () => {
       const renderables = buildRenderables(
         [
-          {
-            widgetId: 'foo',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            field: { type: 'Symbol' },
-            settings: { x: true },
-          },
+          makeControl(
+            'foo',
+            { type: 'Symbol' },
+            {
+              widgetId: 'foo',
+              fieldId: 'bar',
+              widgetNamespace: WidgetNamespace.EXTENSION,
+              settings: { x: true },
+            }
+          ),
         ],
         [
           {
             id: 'foo',
+            name: 'bar',
             namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'x' }],
@@ -183,19 +215,28 @@ describe('WidgetRenderables', () => {
 
   it('looks up the widget in the right namespace', () => {
     const renderables = buildRenderables(
-      [{ widgetId: 'foo', widgetNamespace: WidgetNamespace.EXTENSION, field: { type: 'Boolean' } }],
+      [
+        makeControl(
+          'foo',
+          { type: 'Boolean' },
+          { widgetId: 'foo', fieldId: 'bar', widgetNamespace: WidgetNamespace.EXTENSION }
+        ),
+      ],
       [
         {
           id: 'foo',
+          name: 'bar',
           namespace: WidgetNamespace.EXTENSION,
-          fieldTypes: 'Boolean',
+          fieldTypes: ['Boolean'],
           renderFieldEditor: () => 'FOO-FROM-EXT',
         },
-        { id: 'foo', namespace: WidgetNamespace.BUILTIN },
+        { id: 'foo', namespace: WidgetNamespace.BUILTIN } as BuiltinWidget,
       ]
     );
 
-    expect(renderables.form[0].renderFieldEditor()).toBe('FOO-FROM-EXT');
+    const renderFunc = renderables.form[0].renderFieldEditor;
+
+    expect(renderFunc && renderFunc({} as FieldEditorParameters)).toBe('FOO-FROM-EXT');
   });
 
   describe('#buildEditorsRenderables', () => {

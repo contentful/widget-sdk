@@ -5,15 +5,18 @@ import {
   SingleEntryReferenceEditor,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference';
-import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { trackReferenceAction, safeNonBlockingTrack } from './utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { StreamBus } from 'core/utils/kefir';
+import { WidgetApi } from 'widgets/BuiltinWidgets';
+import { EditorWithTrackingProps } from './types';
 
 export function getCtId(entry) {
   return get(entry, 'sys.contentType.sys.id');
 }
 
-const onEntryAction = (loadEvents, sdk) => {
+const onEntryAction = (loadEvents: StreamBus<any>, sdk: WidgetApi) => {
   return (action) => {
     switch (action.type) {
       case 'select_and_link':
@@ -54,7 +57,7 @@ const onEntryAction = (loadEvents, sdk) => {
   };
 };
 
-export function SingleEntryReferenceEditorWithTracking(props) {
+export function SingleEntryReferenceEditorWithTracking(props: EditorWithTrackingProps) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk, renderCustomActions } = props;
@@ -64,6 +67,8 @@ export function SingleEntryReferenceEditorWithTracking(props) {
   return (
     <SingleEntryReferenceEditor
       viewType={viewType}
+      hasCardEditActions={false}
+      isInitiallyDisabled={false}
       sdk={sdk}
       getEntityUrl={(entryId) =>
         getEntityLink({ id: entryId, type: 'Entry', isMasterEnvironment }).href
@@ -80,7 +85,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
   );
 }
 
-export function MultipleEntryReferenceEditorWithTracking(props) {
+export function MultipleEntryReferenceEditorWithTracking(props: EditorWithTrackingProps) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk, renderCustomActions } = props;
@@ -103,9 +108,8 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
       }}
       onAction={onAction}
       renderCustomActions={renderCustomActions}
+      hasCardEditActions={false}
+      isInitiallyDisabled={false}
     />
   );
 }
-
-SingleEntryReferenceEditorWithTracking.propTypes = EditorWithTrackingProps;
-MultipleEntryReferenceEditorWithTracking.propTypes = EditorWithTrackingProps;

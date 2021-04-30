@@ -13,6 +13,9 @@ import {
   WidgetRenderer as WidgetRendererExternal,
 } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
+import { buildOneRenderable } from '../../widgets/WidgetRenderable';
+import getDefaultWidgetId from '../../widgets/DefaultWidget';
+import { create as createBuiltinWidgetList } from '../../widgets/BuiltinWidgets';
 
 function newNoopLoadEvents() {
   return {
@@ -41,7 +44,7 @@ function getTrackingEvents({ loadEvents, widget, locale, widgetApi }) {
 }
 
 const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
-  const { problem: hasProblem, widgetNamespace } = widget;
+  const { problem, widgetNamespace } = widget;
   const isCustom = isCustomWidget(widgetNamespace);
   const isBuiltIn = widgetNamespace === WidgetNamespace.BUILTIN;
 
@@ -53,7 +56,7 @@ const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
       locale,
       widgetApi,
     });
-    if (isBuiltIn && !hasProblem) {
+    if (isBuiltIn && !problem) {
       handleWidgetLinkRenderEvents();
     } else {
       // TODO: This is wrong, we have to check whether this is actually a link type field! Perhaps just send the
@@ -65,21 +68,43 @@ const useTrackedRenderingType = ({ locale, loadEvents, widgetApi, widget }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { hasProblem, isCustom, isBuiltIn };
+  return { problem, isCustom, isBuiltIn };
 };
 
 function WidgetRendererInternal(props) {
   const { widget, entityType, locale, loadEvents, onFocus, onBlur, widgetApi } = props;
 
-  const { hasProblem, isBuiltIn, isCustom } = useTrackedRenderingType({
+  const { problem, isBuiltIn, isCustom } = useTrackedRenderingType({
     locale,
     loadEvents,
     widgetApi,
     widget,
   });
 
-  if (hasProblem) {
-    return <WidgetRenderWarning message={widget.problem} />;
+  const [isRenderFallback, setIsRenderFallback] = React.useState(false);
+
+  if (problem && isRenderFallback) {
+    const defaultWidgetId = getDefaultWidgetId(widget.field, widget.field.id);
+
+    const builtinWidgets = [...createBuiltinWidgetList()];
+
+    return buildOneRenderable(
+      {
+        fieldId: widget.fieldId,
+        widgetId: defaultWidgetId,
+        widgetNamespace: WidgetNamespace.BUILTIN,
+        field: widget.field,
+      },
+      builtinWidgets
+    ).renderFieldEditor({
+      loadEvents: loadEvents || newNoopLoadEvents(),
+      widgetApi,
+      entityType,
+    });
+  }
+
+  if (problem) {
+    return <WidgetRenderWarning setRenderFallback={setIsRenderFallback} message={widget.problem} />;
   }
 
   if (isCustom) {

@@ -91,7 +91,11 @@ describe('app/entity_editor/DataLoader', () => {
       const ei = { controls: [] };
       spaceContext.cma.getEditorInterface.mockResolvedValue(ei);
       await loadEntry('EID');
-      expect(stubs.buildRenderables).toHaveBeenCalledWith([], expect.any(Array));
+      expect(stubs.buildRenderables).toHaveBeenCalledWith(
+        [],
+        expect.any(Array),
+        expect.any(Object)
+      );
     });
 
     it('adds the entry’s field controls to the context', async function () {
