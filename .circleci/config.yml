@@ -234,7 +234,7 @@ commands:
       - with-npm-token
       - run:
           command: |
-            if [[ ! -z "$CIRCLE_PULL_REQUEST" ]]
+            if [[ ! -z "$CIRCLE_PULL_REQUEST" && -f "<<parameters.file>>" ]]
             then
               # re-export for BC
               export GH_TOKEN=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
@@ -262,8 +262,8 @@ jobs:
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
       LOG: 'yesplease'
       CYPRESS_INSTALL_BINARY: 0
-      COMMENT_LAMBDA_URL: https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments
       SNIFFER_UPLOAD_URL: https://user-interface-sniffer.herokuapp.com
+      SNIFFER_MARKDOWN_FILE: sniffer-<< pipeline.id >>.md
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
@@ -279,6 +279,9 @@ jobs:
           command: |
             export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
             npx project-sniffer . --config tools/sniffer
+      - gh-comment:
+          file: sniffer-<< pipeline.id >>.md
+          reference: sniffer-react
       - run:
           name: Build production image
           command: |
@@ -306,6 +309,9 @@ jobs:
             npx sniffer-build-tracker version
             npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
             npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
+      - gh-comment:
+          file: sniffer-<< pipeline.id >>.md
+          reference: sniffer-build-stats
       - run:
           name: Deploy micro-backends
           command: |
