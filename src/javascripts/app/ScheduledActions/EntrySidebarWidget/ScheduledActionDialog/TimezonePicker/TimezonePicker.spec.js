@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 
 import * as DateMocks from '../__mocks__/DateMocks';
-import TimezonePicker from '../TimezonePicker';
+import TimezonePicker from './index';
 
 describe('TimezonePicker', () => {
   let dateNowSpy;

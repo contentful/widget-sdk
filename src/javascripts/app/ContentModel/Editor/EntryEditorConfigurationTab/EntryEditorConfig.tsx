@@ -181,7 +181,7 @@ interface DefaultEditorsConfigResult {
   data: any;
 }
 
-export default (props: EditorConfigProps) => {
+export default function EntryEditorConfigContainer(props: EditorConfigProps) {
   const { isLoading, error, data } = useAsync(
     props.getDefaultEntryEditorConfiguration
   ) as DefaultEditorsConfigResult;
@@ -194,4 +194,4 @@ export default (props: EditorConfigProps) => {
   return (
     <EntryEditorConfiguration {...props} customWidgets={customWidgets} defaultWidgets={data} />
   );
-};
+}

@@ -9,7 +9,7 @@ const toDataObject = flow((data) => omitBy(data, isEmpty), toSnakeCase);
 // TODO: Update our snowplow integration to support contexts in a cleaner
 // and more abstracted manner. Basically, move em out from the transformers
 // into something more top level since it's common duplicated behaviour
-export default function (_, eventData) {
+export default function ElementClick(_, eventData) {
   const contexts = [];
   const { data } = addUserOrgSpace((_, { elementId, groupId, fromState, toState }) => ({
     data: toDataObject({

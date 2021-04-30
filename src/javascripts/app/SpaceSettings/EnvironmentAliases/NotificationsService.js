@@ -218,7 +218,7 @@ export const triggerAliasCreatedToast = async (id) => {
 };
 
 // change to named export initEnvAliasChangeHandler
-export default (modalLauncher) => {
+export default function NotificationsService(modalLauncher) {
   return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {
       triggerAliasChangedNotifications({
@@ -227,4 +227,4 @@ export default (modalLauncher) => {
       });
     }
   };
-};
+}

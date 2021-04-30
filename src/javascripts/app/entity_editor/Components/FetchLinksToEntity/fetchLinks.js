@@ -11,7 +11,7 @@ const assertEntityTypeIsValid = (entityType) => {
   }
 };
 
-export default (id, type) => {
+export default function fetchLinks(id, type) {
   const spaceContext = getSpaceContext();
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
@@ -47,4 +47,4 @@ export default (id, type) => {
       })
     );
   });
-};
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import moment from 'moment';
 
-import TimePicker from '../TimePicker';
+import TimePicker from './index';
 
 describe('TimePicker', () => {
   let dateNowSpy;

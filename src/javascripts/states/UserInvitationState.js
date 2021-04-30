@@ -71,8 +71,10 @@ UserInvitationState.propTypes = {
   invitationId: PropTypes.string.isRequired,
 };
 
-export default {
+const userInvitationState = {
   name: 'invitations',
   url: '/invitations/:invitationId',
   component: UserInvitationState,
 };
+
+export default userInvitationState;

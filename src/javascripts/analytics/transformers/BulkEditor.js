@@ -4,7 +4,7 @@
  * @description
  * Exports a function that transforms data for the bulk editor
  */
-export default function (eventName, data) {
+export default function BulkEditor(eventName, data) {
   return {
     data: {
       action: extractAction(eventName),

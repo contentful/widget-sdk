@@ -6,12 +6,18 @@ import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
 import { statusProperty } from './Document';
 
-export default ({ initialValues, entityLabel, shouldHideLocaleErrors, emitter, onUpdate }) => {
+export default function setLocaleData({
+  initialValues,
+  entityLabel,
+  shouldHideLocaleErrors,
+  emitter,
+  onUpdate,
+}) {
   initialValues.localeData = assignLocaleData(initialValues.localeData);
   handleSidebarEvents(initialValues, entityLabel, shouldHideLocaleErrors, emitter, onUpdate);
   handleTopNavErrors(initialValues, entityLabel, shouldHideLocaleErrors, onUpdate);
   onUpdate(initialValues);
-};
+}
 
 export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {}) {
   maybeResetFocusedLocale();

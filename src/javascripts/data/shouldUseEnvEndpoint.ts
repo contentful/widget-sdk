@@ -20,7 +20,7 @@ const PREFIXES = [
 
 // Given a path return `true` if the environment endpoint
 // should be used. Return `false` otherwise.
-export default function (path: string | string[]): boolean {
+export default function shouldUseEnvEndpoint(path: string | string[]): boolean {
   if (typeof path === 'string') {
     path = path.split('/');
   }

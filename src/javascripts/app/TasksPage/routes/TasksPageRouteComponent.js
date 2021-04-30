@@ -2,7 +2,7 @@ import React from 'react';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getSpaceMember, isMasterEnvironmentById } from 'core/services/SpaceEnvContext/utils';
 import TheLocaleStore from 'services/localeStore';
-import TasksPage from './..';
+import { TasksPage } from '../index';
 
 const RouteComponent = () => {
   const {

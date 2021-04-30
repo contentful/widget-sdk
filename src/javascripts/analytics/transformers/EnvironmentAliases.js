@@ -7,7 +7,7 @@ import { last } from 'lodash';
  * Exports a function that transforms data from the Segment based internal analytics
  * format to fit Snowplow's `generic` schema.
  */
-export default function (eventName, data) {
+export default function EnvironmentAliases(eventName, data) {
   return {
     data: transform(eventName, data),
   };

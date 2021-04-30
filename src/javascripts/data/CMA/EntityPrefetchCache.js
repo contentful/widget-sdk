@@ -55,7 +55,7 @@ const IDS_PER_QUERY = 50;
 // here uses the query methods and entity objects from
 // `@contentful/client` while the other service uses the barebone CMA
 // space api.
-export default function (queryEntities) {
+export default function entityPrefetchCache(queryEntities) {
   const entities = {};
 
   return {

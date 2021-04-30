@@ -12,7 +12,6 @@ export {
   updateSpacePlan,
   removeAddOnPlanFromSubscription,
 } from './plans';
-export { PlanCustomerType } from './types/Plan';
 export type {
   ProductRatePlan,
   ProductRatePlanCharge,

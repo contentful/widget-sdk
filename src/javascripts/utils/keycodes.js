@@ -1,4 +1,4 @@
-export default {
+const keycodes = {
   LEFT: 37,
   UP: 38,
   RIGHT: 39,
@@ -11,3 +11,5 @@ export default {
   BACKSPACE: 8,
   SPACE: 32,
 };
+
+export default keycodes;

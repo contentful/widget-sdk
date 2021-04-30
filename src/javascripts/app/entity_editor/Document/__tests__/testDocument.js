@@ -27,7 +27,7 @@ export function expectDocError(docError$, docErrorOrConstructor) {
   }
 }
 
-export default (createDocument) => {
+export default function testDocument(createDocument) {
   describe('Document', () => {
     const { fieldPath, otherLocalePath, anotherFieldPath, tagsPath, listFieldPath } = PATHS;
 
@@ -411,4 +411,4 @@ export default (createDocument) => {
       });
     }
   });
-};
+}

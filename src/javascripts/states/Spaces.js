@@ -146,10 +146,12 @@ function storeCurrentIds(space) {
   store.set('lastUsedOrg', space.organization.sys.id);
 }
 
-export default {
+const spacesState = {
   name: 'spaces',
   url: '/spaces',
   abstract: true,
   navComponent: SpaceNavigationBar,
   children: [spaceDetail],
 };
+
+export default spacesState;

@@ -18,7 +18,7 @@ import { createAPIClient } from '../../core/services/APIClient/utils';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { Source } from '../../i13n/constants';
 
-export default ({
+export default function EntitySidebarBridge({
   localeData,
   editorData,
   editorContext,
@@ -36,7 +36,7 @@ export default ({
   contentTypes,
   pubSubClient,
   cma,
-}) => {
+}) {
   const spaceContext = getSpaceContext();
   const isMasterEnvironment = isMaster(getEnvironment(space));
 
@@ -300,4 +300,4 @@ export default ({
     },
     setIncomingLinks,
   ];
-};
+}

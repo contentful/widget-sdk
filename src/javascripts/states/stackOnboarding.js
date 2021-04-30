@@ -45,10 +45,12 @@ const deploy = {
   ),
 };
 
-export default {
+const stackOnboardingState = {
   name: 'onboarding',
   url: '/onboarding',
   abstract: true,
   component: OnboardingRoute,
   children: [getStarted, copyRepo, explore, deploy],
 };
+
+export default stackOnboardingState;

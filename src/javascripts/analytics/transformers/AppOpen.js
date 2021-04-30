@@ -7,7 +7,7 @@ import { isUndefined, omitBy } from 'lodash';
  * @description
  * Exports a function that transforms data for the app open event
  */
-export default function (_eventName, data) {
+export default function AppOpen(_eventName, data) {
   return {
     data: {},
     contexts: [
