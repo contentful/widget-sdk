@@ -46,6 +46,11 @@ const initializingSpaceContext = [
   },
 ];
 
+const cleanupSpaceContext = () => {
+  const spaceContext = getSpaceContext();
+  return spaceContext.cleanLastResetParams();
+};
+
 const spaceEnvironment = {
   name: 'environment',
   url: '/environments/:environmentId',
@@ -150,6 +155,7 @@ const spacesState = {
   name: 'spaces',
   url: '/spaces',
   abstract: true,
+  onExit: cleanupSpaceContext,
   navComponent: SpaceNavigationBar,
   children: [spaceDetail],
 };

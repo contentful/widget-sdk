@@ -2,13 +2,13 @@ import { FieldExtensionSDK } from '@contentful/app-sdk';
 import { noop } from 'lodash';
 
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { create as createEntityRepo } from 'data/CMA/EntityRepo';
+import { createEntityRepo } from '@contentful/editorial-primitives';
 import { PubSubClient } from 'services/PubSubService';
 import localeStore from 'services/localeStore';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
-import { Document } from 'app/entity_editor/Document/typesDocument';
-import { create } from 'app/entity_editor/Document/CmaDocument';
-import { Entity } from 'app/entity_editor/Document/types';
+import { Document } from '@contentful/editorial-primitives';
+import { createCmaDoc } from '@contentful/editorial-primitives';
+import type { Entity } from '@contentful/editorial-primitives';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
@@ -21,13 +21,13 @@ import { createIdsApi } from '../createIdsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { proxify } from 'core/services/proxy';
-import { EditorInterfaceProps } from 'contentful-management/types';
-import { SpaceEndpoint } from 'data/CMA/types';
+import { EditorInterfaceProps, EnvironmentProps } from 'contentful-management/types';
+import TheLocaleStore from 'services/localeStore';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
   editorInterface: EditorInterfaceProps;
-  endpoint: SpaceEndpoint;
+  plainCmaClient: any;
   entry: Entity;
   publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
@@ -35,7 +35,7 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   internalContentType: InternalContentType;
   publicLocaleCode: Locale['code'];
   spaceId: string;
-  environmentId: string;
+  environment: EnvironmentProps;
   currentEnvironmentAliasId?: string;
   allEnvironmentAliasIds: string[];
   spaceMember: SpaceMember;
@@ -51,15 +51,15 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
 
 export function createReadonlyFieldWidgetSDK({
   cma,
+  plainCmaClient,
   editorInterface,
-  endpoint,
   entry,
   publicFieldId,
   initialContentTypes,
   internalContentType,
   publicLocaleCode,
   spaceId,
-  environmentId,
+  environment,
   currentEnvironmentAliasId,
   allEnvironmentAliasIds,
   spaceMember,
@@ -70,19 +70,28 @@ export function createReadonlyFieldWidgetSDK({
   parameters,
 }: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
-  const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
-    skipDraftValidation: true,
-    skipTransformation: true,
-    indicateAutoSave: false,
+  const readOnlyEntityRepo = createEntityRepo({
+    plainCmaClient,
+    environment,
+    //@ts-expect-error pubsubclient type doesn't come from the same package
+    pubSubClient,
+    options: {
+      skipDraftValidation: true,
+      skipTransformation: true,
+      indicateAutoSave: false,
+    },
   });
-  const doc: Document = create(
-    {
+  const doc: Document = createCmaDoc({
+    initialEntity: {
       data: entry,
       setDeleted: noop,
     },
-    internalContentType,
-    readOnlyEntityRepo
-  );
+    //TODO: validate we can expect the error
+    //@ts-expect-error internalCT can have undefined for some sys fields where ContentType cannot
+    contentType: internalContentType,
+    entityRepo: readOnlyEntityRepo,
+    getLocales: () => TheLocaleStore.getPrivateLocales(),
+  });
 
   const userApi = createUserApi(spaceMember);
 
@@ -136,7 +145,7 @@ export function createReadonlyFieldWidgetSDK({
 
   const idsApi = createIdsApi({
     spaceId,
-    envId: environmentId,
+    envId: environment.sys.id,
     envAliasId: currentEnvironmentAliasId || null,
     contentType: internalContentType,
     entry: entryApi,
@@ -150,7 +159,7 @@ export function createReadonlyFieldWidgetSDK({
     cma: getBatchingApiClient(cma),
     initialContentTypes,
     pubSubClient,
-    environmentIds: [environmentId, ...allEnvironmentAliasIds],
+    environmentIds: [environment.sys.id, ...allEnvironmentAliasIds],
     spaceId,
     tagsRepo,
     usersRepo,

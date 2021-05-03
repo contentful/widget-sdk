@@ -4,18 +4,18 @@
  *
  */
 import { isEqual } from 'lodash';
-import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
+import { localFieldChanges, valuePropertyAt, createStatus } from '@contentful/editorial-primitives';
 
 import * as K from 'core/utils/kefir';
 
-import DocumentStatusCode from 'data/document/statusCode';
-import { statusProperty } from './Document';
+import { DocumentStatus as DocumentStatusCode } from '@contentful/editorial-primitives';
 import { FieldAccess } from './EntityField/EntityFieldAccess';
+import { statusErrorHandler } from 'core/monitoring/error-tracking/capture';
 
 /**
  * @ngdoc method
  * @name app/entity_editor/FieldLocaleDocument#create
- * @param {OtDocument} doc
+ * @param {Document} doc
  * @param {Object} field
  * @param {string} localeCode  Internal locale code
  */
@@ -76,7 +76,9 @@ export const createFieldLocaleDocument = (doc, field, localeCode, canEditLocale)
     })
     .map(() => undefined);
 
-  const documentStatus$ = statusProperty(doc) || K.constant();
+  const documentStatus$ =
+    createStatus(doc.sysProperty, doc.state.error$, doc.state.canEdit$, statusErrorHandler) ||
+    K.constant();
 
   const collaborators = doc.presence.collaboratorsFor(fieldId, localeCode);
 

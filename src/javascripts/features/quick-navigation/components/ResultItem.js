@@ -4,7 +4,7 @@ import { startCase } from 'lodash';
 import { css, cx } from 'emotion';
 import { Tag, Icon } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { stateName, getState } from 'data/CMA/EntityState';
+import { getState } from 'data/CMA/EntityState';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import StateLink from 'app/common/StateLink';
 import { ResultItemIcon } from './ResultItemIcon';
@@ -78,7 +78,7 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
       )}
       {(item.type == 'assets' || item.type == 'entries') && (
         <div className={styles.entityStatusTag}>
-          <EntityStatusTag statusLabel={stateName(getState(item.sys))} />
+          <EntityStatusTag statusLabel={getState(item.sys)} />
         </div>
       )}
       {item.type === 'content_types' && (

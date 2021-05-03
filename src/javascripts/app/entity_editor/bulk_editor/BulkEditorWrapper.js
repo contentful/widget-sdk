@@ -5,7 +5,7 @@ import { deepFreeze } from 'utils/Freeze';
 import cloneDeep from 'lodash/cloneDeep';
 import noop from 'lodash/noop';
 import * as K from 'core/utils/kefir';
-import { valuePropertyAt } from '../Document';
+import { valuePropertyAt } from '@contentful/editorial-primitives';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
 export function createReferenceContext(entityInfo, doc, slide, preferences, cb = noop) {

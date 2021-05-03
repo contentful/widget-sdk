@@ -6,6 +6,7 @@ import { EditorContext } from 'app/entity_editor/EntityField/types';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { createDocumentMock } from 'app/entity_editor/Document/__mocks__/createDocumentMock';
+import { DocumentStatus } from '@contentful/editorial-primitives';
 
 jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
   useContentfulAppsConfig: jest.fn().mockReturnValue({
@@ -109,7 +110,7 @@ describe('When rendering editors page with no editors', () => {
       delete: {},
       current: 'published',
     },
-    statusNotificationProps: { entityLabel: 'entry', status: 'cool' },
+    statusNotificationProps: { entityLabel: 'entry', status: DocumentStatus.OK },
     otDoc: doc,
     editorData: {
       entityInfo: {

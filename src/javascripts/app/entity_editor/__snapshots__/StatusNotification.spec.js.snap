@@ -1,5 +1,695 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`StatusNotification 0 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Asset missing
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This asset is missing a file for the default locale
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 0 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Asset missing
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This asset is missing a file for the default locale
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 2 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Server error
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          Due to a server error, we could not process this 
+          asset
+          . The fields are temporarily locked so that you won’t lose any important changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 2 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Server error
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          Due to a server error, we could not process this 
+          entry
+          . The fields are temporarily locked so that you won’t lose any important changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 3 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Read-only
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          You have read-only access to this 
+          asset
+          . If you need to edit it please contact your administrator.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 3 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Read-only
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          You have read-only access to this 
+          entry
+          . If you need to edit it please contact your administrator.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 4 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Connection error
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 4 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Connection error
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 5 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Archived
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This 
+          asset
+           is archived and cannot be modified. Please unarchive it to make any changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 5 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Archived
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This 
+          entry
+           is archived and cannot be modified. Please unarchive it to make any changes.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 6 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Deleted
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This 
+          asset
+           has been deleted and cannot be modified anymore
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 6 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          Deleted
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          This 
+          entry
+           has been deleted and cannot be modified anymore
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 7 when the entity label is "asset" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          There is a new version of this asset
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          A new version of this 
+          asset
+           was created. To view or edit, refresh your browser or open the 
+          asset
+           in a new tab. Your current changes may be lost.
+          <div>
+            <a
+              class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+              data-test-id="cf-ui-text-link"
+              href="hrefToTheEntityDetailsPage"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty"
+                tabindex="-1"
+              >
+                View 
+                asset
+                 in new tab
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StatusNotification 7 when the entity label is "entry" matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="Note__Note___2eSKN Note__Note--warning___3X53I"
+      data-test-id="cf-ui-note"
+    >
+      <div
+        class="Note__Note__icon___20RqC"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
+          data-test-id="cf-ui-icon"
+          height="1em"
+          viewBox="0 0 24 24"
+          width="1em"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+          />
+        </svg>
+      </div>
+      <div
+        class="Note__Note__info___2m_-K"
+      >
+        <div
+          class="Note__Note__title___2nwpx"
+        >
+          There is a new version of this entry
+        </div>
+        <div
+          class="Note__Note__content___H1pf-"
+        >
+          A new version of this 
+          entry
+           was created. To view or edit, refresh your browser or open the 
+          entry
+           in a new tab. Your current changes may be lost.
+          <div>
+            <a
+              class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+              data-test-id="cf-ui-text-link"
+              href="hrefToTheEntityDetailsPage"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty"
+                tabindex="-1"
+              >
+                View 
+                entry
+                 in new tab
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
 exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 1 matches snapshot 1`] = `
 <body>
   <div>
@@ -223,696 +913,6 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
         >
           The following locales have fields with errors: 
           Spanish (Spain), Arabic (Egypt), German (Germany), and 2 others
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification archived when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Archived
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This 
-          asset
-           is archived and cannot be modified. Please unarchive it to make any changes.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification archived when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Archived
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This 
-          entry
-           is archived and cannot be modified. Please unarchive it to make any changes.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification default-locale-file-error when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Asset missing
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This asset is missing a file for the default locale
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification default-locale-file-error when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Asset missing
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This asset is missing a file for the default locale
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification deleted when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Deleted
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This 
-          asset
-           has been deleted and cannot be modified anymore
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification deleted when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Deleted
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          This 
-          entry
-           has been deleted and cannot be modified anymore
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification edit-conflict when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          There is a new version of this asset
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          A new version of this 
-          asset
-           was created. To view or edit, refresh your browser or open the 
-          asset
-           in a new tab. Your current changes may be lost.
-          <div>
-            <a
-              class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-              data-test-id="cf-ui-text-link"
-              href="hrefToTheEntityDetailsPage"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span
-                class="TabFocusTrap__TabFocusTrap___39Vty"
-                tabindex="-1"
-              >
-                View 
-                asset
-                 in new tab
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification edit-conflict when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          There is a new version of this entry
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          A new version of this 
-          entry
-           was created. To view or edit, refresh your browser or open the 
-          entry
-           in a new tab. Your current changes may be lost.
-          <div>
-            <a
-              class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-              data-test-id="cf-ui-text-link"
-              href="hrefToTheEntityDetailsPage"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span
-                class="TabFocusTrap__TabFocusTrap___39Vty"
-                tabindex="-1"
-              >
-                View 
-                entry
-                 in new tab
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification editing-not-allowed when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Read-only
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          You have read-only access to this 
-          asset
-          . If you need to edit it please contact your administrator.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification editing-not-allowed when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--warning___3X53I"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--warning___39Bnz"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Read-only
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          You have read-only access to this 
-          entry
-          . If you need to edit it please contact your administrator.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification internal-server-error when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Server error
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          Due to a server error, we could not process this 
-          asset
-          . The fields are temporarily locked so that you won’t lose any important changes.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification internal-server-error when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Server error
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          Due to a server error, we could not process this 
-          entry
-          . The fields are temporarily locked so that you won’t lose any important changes.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification ot-connection-error when the entity label is "asset" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Connection error
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-`;
-
-exports[`StatusNotification ot-connection-error when the entity label is "entry" matches snapshot 1`] = `
-<body>
-  <div>
-    <div
-      class="Note__Note___2eSKN Note__Note--negative___3fkwL"
-      data-test-id="cf-ui-note"
-    >
-      <div
-        class="Note__Note__icon___20RqC"
-      >
-        <svg
-          class="Icon__Icon___38Epv Icon__Icon--medium___3Pezi Icon__Icon--negative___1dled"
-          data-test-id="cf-ui-icon"
-          height="1em"
-          viewBox="0 0 24 24"
-          width="1em"
-        >
-          <path
-            d="M0 0h24v24H0z"
-            fill="none"
-          />
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-          />
-        </svg>
-      </div>
-      <div
-        class="Note__Note__info___2m_-K"
-      >
-        <div
-          class="Note__Note__title___2nwpx"
-        >
-          Connection error
-        </div>
-        <div
-          class="Note__Note__content___H1pf-"
-        >
-          It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
         </div>
       </div>
     </div>

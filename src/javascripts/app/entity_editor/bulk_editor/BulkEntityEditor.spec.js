@@ -5,7 +5,7 @@ import * as K from 'core/utils/kefir';
 
 import { initStateController } from '../stateController';
 import { initDocErrorHandler } from 'app/entity_editor/DocumentErrorHandler';
-import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
+import { localFieldChanges, valuePropertyAt } from '@contentful/editorial-primitives';
 
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: jest.fn().mockReturnValue({}),
@@ -35,7 +35,7 @@ jest.mock('../stateController', () => ({
 jest.mock('app/entity_editor/DocumentErrorHandler', () => ({
   initDocErrorHandler: jest.fn(),
 }));
-jest.mock('app/entity_editor/Document', () => ({
+jest.mock('@contentful/editorial-primitives', () => ({
   localFieldChanges: jest.fn(),
   valuePropertyAt: jest.fn(),
 }));

@@ -14,7 +14,7 @@ import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
-import { createAssetFileProcessedHandler } from 'data/CMA/EntityRepo';
+import { createAssetFileProcessedHandler } from './createAssetFileProcessedHandler';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -333,10 +333,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
   function processAsset(asset, version) {
     let destroySubscription;
-    const onAssetFileProcessed = createAssetFileProcessedHandler(
-      spaceContext.endpoint,
-      spaceContext.pubSubClient
-    );
+    const spaceEndpoint = spaceContext.endpoint;
+    const pubSubClient = spaceContext.pubSubClient;
+    const onAssetFileProcessed = createAssetFileProcessedHandler(spaceEndpoint, pubSubClient);
+
     return new Promise((resolve, reject) => {
       const processingTimeout = setTimeout(() => {
         if (destroySubscription) {

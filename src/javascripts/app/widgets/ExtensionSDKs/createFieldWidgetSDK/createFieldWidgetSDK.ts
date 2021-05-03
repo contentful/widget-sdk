@@ -1,5 +1,5 @@
 import { FieldExtensionSDK } from '@contentful/app-sdk';
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';

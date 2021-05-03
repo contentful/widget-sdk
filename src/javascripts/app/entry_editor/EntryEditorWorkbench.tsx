@@ -42,6 +42,7 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
+import { DocumentStatus } from '@contentful/editorial-primitives';
 import {
   REFERENCES_ENTRY_ID,
   FeatureModal,
@@ -66,7 +67,7 @@ interface EntryEditorWorkbenchProps {
     delete: Record<string, any>;
     current: string;
   };
-  statusNotificationProps: { entityLabel: any; status: string };
+  statusNotificationProps: { entityLabel: any; status: DocumentStatus };
   otDoc: any;
   editorData: {
     entityInfo: {

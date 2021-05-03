@@ -6,7 +6,7 @@ import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-rende
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
-import { Entity } from 'app/entity_editor/Document/types';
+import type { Entity } from '@contentful/editorial-primitives';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
@@ -51,9 +51,9 @@ const SnapshotPresenterCustomWidget = ({
     currentSpace,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
-  const { client: spaceApiClient } = useCurrentSpaceAPIClient();
+  const { client: spaceApiClient, plainClient } = useCurrentSpaceAPIClient();
 
-  const sdk: FieldExtensionSDK = useMemo(() => {
+  const sdk: FieldExtensionSDK | undefined = useMemo(() => {
     const spaceId = currentSpaceId as string;
     const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
@@ -62,10 +62,13 @@ const SnapshotPresenterCustomWidget = ({
     const usersEndpoint = createUsersCache(spaceEndpoint);
     const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
 
+    if (!currentEnvironment) {
+      return;
+    }
     return createReadonlyFieldWidgetSDK({
       cma: spaceApiClient,
+      plainCmaClient: plainClient,
       editorInterface: editorData.editorInterface,
-      endpoint: spaceEndpoint,
       entry: entity,
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
@@ -73,7 +76,7 @@ const SnapshotPresenterCustomWidget = ({
       internalContentType: editorData.contentType.data,
       publicLocaleCode: locale.code,
       spaceId,
-      environmentId,
+      environment: currentEnvironment,
       currentEnvironmentAliasId,
       allEnvironmentAliasIds: aliasesId,
       spaceMember,
@@ -98,15 +101,18 @@ const SnapshotPresenterCustomWidget = ({
     currentSpaceContentTypes,
     currentEnvironment,
     currentSpace,
+    plainClient,
   ]);
 
   return (
     <div data-test-id="snapshot-presenter-extension">
-      <WidgetRenderer
-        location={WidgetLocation.ENTRY_FIELD}
-        sdk={(sdk as unknown) as KnownSDK}
-        widget={widget}
-      />
+      {sdk && (
+        <WidgetRenderer
+          location={WidgetLocation.ENTRY_FIELD}
+          sdk={(sdk as unknown) as KnownSDK}
+          widget={widget}
+        />
+      )}
     </div>
   );
 };

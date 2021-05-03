@@ -1,4 +1,4 @@
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';

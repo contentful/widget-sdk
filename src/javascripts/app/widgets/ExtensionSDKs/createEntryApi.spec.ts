@@ -1,6 +1,6 @@
 import { createEntryApi } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import { EntryAPI } from '@contentful/app-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';

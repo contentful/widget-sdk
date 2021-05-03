@@ -1,7 +1,7 @@
 import { partial, size, noop } from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import * as K from 'core/utils/kefir';
-import { stateName, State } from 'data/CMA/EntityState';
+import { State } from 'data/CMA/EntityState';
 
 export function create(parentEntryId, links$) {
   const editedEntries = {};
@@ -70,7 +70,7 @@ export function create(parentEntryId, links$) {
     }
     track('status', {
       entryId: id,
-      status: stateName(state),
+      status: state,
     });
   }
 

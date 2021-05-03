@@ -8,6 +8,7 @@ import { waitFor } from '@testing-library/dom';
 import { makeNotify, Notification as MockedNotification } from 'app/entity_editor/Notifications';
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
+import { makeApply } from 'data/CMA/EntityState';
 
 jest.mock('navigation/SlideInNavigator', () => ({ goToPreviousSlideOrExit: jest.fn() }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
@@ -77,7 +78,7 @@ describe('stateController', () => {
       },
     };
 
-    doc = createDocument(entity, spaceEndpoint);
+    doc = createDocument(entity, spaceEndpoint, makeApply(spaceEndpoint));
     spaceEndpoint.mockResolvedValue(doc.getData());
   });
 
@@ -134,7 +135,7 @@ describe('stateController', () => {
         },
       };
 
-      doc = createDocumentMock().create(entity, spaceEndpoint);
+      doc = createDocumentMock().create(entity, spaceEndpoint, makeApply(spaceEndpoint));
       spaceEndpoint.mockResolvedValue(doc.getData());
     };
 

@@ -1,10 +1,17 @@
-import { createCmaDoc, createOtDoc } from 'app/entity_editor/Document';
-import { find, get as getAtPath, includes, isObject, isString, noop } from 'lodash';
-import { FLAGS, getVariation } from 'LaunchDarkly';
-import { create as createEntityRepo } from 'data/CMA/EntityRepo';
+import { createCmaDoc } from '@contentful/editorial-primitives';
+import { noop, isObject, find, includes, isString, get as getAtPath } from 'lodash';
+import { getVariation, FLAGS } from 'LaunchDarkly';
+import { createEntityRepo } from '@contentful/editorial-primitives';
+
+import { create as createPermissions } from 'access_control/EntityPermissions';
+import { createOtDoc } from 'app/entity_editor/Document';
 import { createSpaceEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
+import TheLocaleStore from 'services/localeStore';
+import { makeApply } from 'data/CMA/EntityState';
+import * as Analytics from 'analytics/Analytics';
+import { captureError } from 'core/monitoring';
 
 /**
  * Creates a store for Document instances. Given an entity it always returns the
@@ -20,22 +27,24 @@ import * as Auth from 'Authentication';
 
 export async function create(
   docConnection,
-  spaceEndpoint,
   pubSubClient,
   organizationId,
   spaceId,
-  environmentId
+  environment,
+  cmaClient,
+  spaceEndpoint
 ) {
   const instances = {};
+
   const isCmaDocumentEnabled = await getVariation(FLAGS.SHAREJS_REMOVAL, {
     organizationId,
     spaceId,
-    environmentId,
+    environmentId: environment.sys.id,
   });
   const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES, {
     organizationId,
     spaceId,
-    environmentId,
+    environmentId: environment.sys.id,
   });
   return { get, destroy, getById };
 
@@ -60,7 +69,6 @@ export async function create(
       instance.count += 1;
     } else {
       let cleanup;
-
       const entityRepoOptions = {
         skipDraftValidation: true,
         skipTransformation: true,
@@ -79,11 +87,48 @@ export async function create(
         isCmaDocumentEnabled === true ||
         (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
-        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, entityRepoOptions);
-        doc = createCmaDoc(entity, contentTypeData, entityRepo, { patchEntryUpdates });
+        const applyAction = makeApply(spaceEndpoint);
+        const entityRepo = createEntityRepo({
+          cmaClient,
+          environment,
+          pubSubClient,
+          triggerCmaAutoSave: noop,
+          applyAction,
+          options: entityRepoOptions,
+        });
+
+        doc = createCmaDoc({
+          initialEntity: entity,
+          contentType: contentTypeData,
+          entityRepo: entityRepo,
+          getLocales: () => TheLocaleStore.getPrivateLocales(),
+          trackEditConflict: (data) => Analytics.track('entity_editor:edit_conflict', data),
+          createPermissions,
+          options: {
+            patchEntryUpdates,
+          },
+          onError: (errorName, data) => {
+            //we track unhandled entity states
+            if (errorName === 'unhandledState') {
+              const state = data;
+              captureError(new Error(`Unhandled entity state ${state}`), {
+                extra: {
+                  entityState: state,
+                },
+              });
+            }
+          },
+        });
         cleanup = () => doc.destroy();
       } else {
-        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, entityRepoOptions);
+        const entityRepo = createEntityRepo({
+          cmaClient,
+          environment,
+          pubSubClient,
+          triggerCmaAutoSave: noop,
+          options: entityRepoOptions,
+          applyAction: (_action, _uiState, entity) => Promise.resolve(entity),
+        });
         doc = createOtDoc(docConnection, entity, contentTypeData, user, entityRepo);
         cleanup = () => doc.destroy();
       }

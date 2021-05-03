@@ -14,7 +14,7 @@ import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
 import { isCustomWidget, WidgetNamespace } from '@contentful/widget-renderer';
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
-import { Entity } from 'app/entity_editor/Document/types';
+import type { Entity } from '@contentful/editorial-primitives';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { EditorInterfaceProps } from 'contentful-management/types';

@@ -2,7 +2,6 @@ import _ from 'lodash';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
 
 import * as LocaleRepo from 'data/CMA/LocaleRepo';
-import * as EntityRepo from 'data/CMA/EntityRepo';
 import * as EnrichTemplate from 'services/SpaceTemplateCreator/enrichTemplate';
 import * as LocaleStore from 'services/localeStore';
 import * as ContentPreview from 'features/content-preview';
@@ -10,7 +9,9 @@ import * as ApiKeysManagement from 'features/api-keys-management';
 
 jest.mock('data/EndpointFactory', () => ({ createSpaceEndpoint: jest.fn() }));
 jest.mock('data/CMA/LocaleRepo');
-jest.mock('data/CMA/EntityRepo');
+jest.mock('./createAssetFileProcessedHandler', () => ({
+  createAssetFileProcessedHandler: jest.fn().mockReturnValue((_, callback) => callback()),
+}));
 jest.mock('analytics/Analytics', () => ({ track: jest.fn() }));
 jest.mock('services/SpaceTemplateCreator/enrichTemplate');
 jest.mock('services/localeStore');
@@ -46,11 +47,9 @@ describe('Space Template creation service', () => {
       createLocaleRepo: jest.fn().mockReturnValue({
         save: jest.fn().mockReturnValue(Promise.resolve({ code: 'something' })),
       }),
-      createAssetFileProcessedHandler: jest.fn().mockReturnValue((_, callback) => callback()),
     };
 
     LocaleRepo.default = stubs.createLocaleRepo;
-    EntityRepo.createAssetFileProcessedHandler = stubs.createAssetFileProcessedHandler;
 
     // we don't care about template info, because we describe enrichTemplate function by ourselves
     EnrichTemplate.enrichTemplate = (_templateInfo, template) => enrichTemplate(template);

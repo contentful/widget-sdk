@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import StatusNotification from './StatusNotification';
-import DocumentStatusCode from 'data/document/statusCode';
+import { DocumentStatus as DocumentStatusCode } from '@contentful/editorial-primitives';
 import { range } from 'lodash';
 
 describe('StatusNotification', () => {

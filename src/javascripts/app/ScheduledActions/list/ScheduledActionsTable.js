@@ -5,7 +5,7 @@ import isHotkey from 'is-hotkey';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
-import { stateName, getState } from 'data/CMA/EntityState';
+import { getState } from 'data/CMA/EntityState';
 import {
   Table,
   TableHead,
@@ -96,7 +96,7 @@ StatusTag.propTypes = {
 function StatusTransition({ entity }) {
   return (
     <span className={styles.statusTransition} color="secondary">
-      <EntityStatusTag statusLabel={stateName(getState(entity.sys))} />
+      <EntityStatusTag statusLabel={getState(entity.sys)} />
       <Icon color="secondary" icon="ChevronRight" />
       <Tag tagType="positive">Published</Tag>
     </span>

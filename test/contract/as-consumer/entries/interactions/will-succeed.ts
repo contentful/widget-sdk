@@ -1,5 +1,10 @@
 import { InteractionObject } from '@pact-foundation/pact';
-import { defaultEntryId, defaultHeader, defaultSpaceId } from '../../../../cypress/util/requests';
+import {
+  defaultEntryId,
+  defaultEnvironmentId,
+  defaultHeader,
+  defaultSpaceId,
+} from '../../../../cypress/util/requests';
 import { severalEntriesResponse } from '../../../../cypress/fixtures/responses/entries-several';
 import { States } from '../../../../cypress/interactions/entries';
 
@@ -13,7 +18,7 @@ export const willSucceedGettingDefaultEntry = (): InteractionObject => ({
   uponReceiving: `a request for the entry "${defaultEntryId}" in space "${defaultSpaceId}" with the EntityRepo`,
   withRequest: {
     method: 'GET',
-    path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}`,
+    path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}`,
     headers: defaultHeader,
   },
   willRespondWith: {
@@ -33,7 +38,7 @@ export const willSucceedPatchingDefaultEntry = (): InteractionObject => {
     uponReceiving: `a request to update the entry "${defaultEntryId}" in space "${defaultSpaceId}" with the EntityRepo`,
     withRequest: {
       method: 'PATCH',
-      path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}`,
       headers: {
         ...defaultHeader,
         'Content-Type': 'application/json-patch+json',

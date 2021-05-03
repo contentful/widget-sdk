@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import SnapshotPresenterWidgets from './SnapshotPresenterWidgets';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { Entity } from '../entity_editor/Document/types';
+import type { Entity } from '@contentful/editorial-primitives';
 import { Field, Locale } from '../entity_editor/EntityField/types';
 import { InternalContentType } from '../widgets/ExtensionSDKs/createContentTypeApi';
 import { LegacyWidget } from '../../widgets/WidgetCompat';

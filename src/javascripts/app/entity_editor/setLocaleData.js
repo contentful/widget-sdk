@@ -1,10 +1,11 @@
 import * as K from 'core/utils/kefir';
 import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
-import DocumentStatusCode from 'data/document/statusCode';
+import { DocumentStatus as DocumentStatusCode } from '@contentful/editorial-primitives';
 import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
-import { statusProperty } from './Document';
+import { createStatus } from '@contentful/editorial-primitives';
+import { statusErrorHandler } from 'core/monitoring/error-tracking/capture';
 
 export default function setLocaleData({
   initialValues,
@@ -35,7 +36,7 @@ export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {})
 
 export function getStatusNotificationPropsDefault(entityLabel) {
   return {
-    status: 'ok',
+    status: DocumentStatusCode.OK,
     entityLabel,
   };
 }
@@ -160,22 +161,30 @@ function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate
     }
   });
 
-  K.onValue(statusProperty(props.otDoc), (status) => {
-    // If there are locales errors (and doc is ok), keep the old notification.
-    if (
-      status === DocumentStatusCode.OK &&
-      !isEmpty(props.localeData.errors) &&
-      !shouldHideLocaleErrors(props.localeData)
-    ) {
-      return;
+  K.onValue(
+    createStatus(
+      props.otDoc.sysProperty,
+      props.otDoc.state.error$,
+      props.otDoc.state.canEdit$,
+      statusErrorHandler
+    ),
+    (status) => {
+      // If there are locales errors (and doc is ok), keep the old notification.
+      if (
+        status === DocumentStatusCode.OK &&
+        !isEmpty(props.localeData.errors) &&
+        !shouldHideLocaleErrors(props.localeData)
+      ) {
+        return;
+      }
+      const entityRef = Navigator.makeEntityRef(props.editorData.entity.data);
+      props.statusNotificationProps = {
+        status,
+        entityLabel,
+        // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
+        entityHref: Navigator.href(entityRef).split('?').shift(),
+      };
+      onUpdate(props);
     }
-    const entityRef = Navigator.makeEntityRef(props.editorData.entity.data);
-    props.statusNotificationProps = {
-      status,
-      entityLabel,
-      // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
-      entityHref: Navigator.href(entityRef).split('?').shift(),
-    };
-    onUpdate(props);
-  });
+  );
 }

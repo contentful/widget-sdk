@@ -6,7 +6,7 @@ import * as Analytics from 'analytics/Analytics';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI } from '@contentful/app-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import { InternalContentTypeField } from './createContentTypeApi';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { serializeJSONValue } from './utils';

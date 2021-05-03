@@ -14,7 +14,7 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { valuePropertyAt } from 'app/entity_editor/Document';
+import { valuePropertyAt } from '@contentful/editorial-primitives';
 import {
   alignSlugWithEntryTitle,
   appendDuplicateIndexToEntryTitle,

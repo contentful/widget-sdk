@@ -3,7 +3,7 @@ import { FieldExtensionSDK } from '@contentful/app-sdk';
 
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
-import { Entity } from 'app/entity_editor/Document/types';
+import type { Entity } from '@contentful/editorial-primitives';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
@@ -34,21 +34,29 @@ const SnapshotPresenterRichText = ({
     currentSpace,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
-  const { client: spaceApiClient } = useCurrentSpaceAPIClient();
+  const { client: spaceApiClient, plainClient } = useCurrentSpaceAPIClient();
 
-  const sdk: FieldExtensionSDK = useMemo(() => {
+  const sdk: FieldExtensionSDK | undefined = useMemo(() => {
     const spaceId = currentSpaceId as string;
-    const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
     const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
-    const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+    const spaceEndpoint = createSpaceEndpoint(
+      spaceId,
+      currentEnvironmentAliasId || currentEnvironmentId
+    );
     const usersEndpoint = createCache(spaceEndpoint);
-    const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);
+    const tagsEndpoint = createTagsRepo(
+      spaceEndpoint,
+      currentEnvironmentAliasId || currentEnvironmentId
+    );
 
+    if (!currentEnvironment) {
+      return;
+    }
     return createReadonlyFieldWidgetSDK({
       cma: spaceApiClient,
+      plainCmaClient: plainClient,
       editorInterface: editorData.editorInterface,
-      endpoint: spaceEndpoint,
       entry: entity,
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
@@ -56,7 +64,7 @@ const SnapshotPresenterRichText = ({
       internalContentType: editorData.contentType.data,
       publicLocaleCode: locale.code,
       spaceId,
-      environmentId,
+      environment: currentEnvironment,
       currentEnvironmentAliasId: currentEnvironmentAliasId,
       allEnvironmentAliasIds: aliasesId,
       spaceMember,
@@ -75,12 +83,13 @@ const SnapshotPresenterRichText = ({
     widget,
     parameters,
     currentSpaceId,
-    currentEnvironment,
     currentEnvironmentId,
+    currentEnvironment,
     currentEnvironmentAliasId,
     currentSpace,
     currentSpaceContentTypes,
     spaceApiClient,
+    plainClient,
   ]);
 
   return (

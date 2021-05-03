@@ -130,8 +130,10 @@ describe('Schedule Publication', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.findByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
-      cy.findByTestId('change-state-published').should('be.enabled');
+      cy.findByTestId('entry-editor-sidebar').within(() => {
+        cy.findByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
+        cy.findByTestId('change-state-published').should('be.enabled');
+      });
     });
   });
 });

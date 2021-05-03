@@ -21,7 +21,7 @@ import { isEdge } from 'utils/browser';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import SecretiveLink from 'components/shared/SecretiveLink';
 import ScheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
-import * as EntityState from 'data/CMA/EntityState';
+import { getState } from 'data/CMA/EntityState';
 import StateLink from 'app/common/StateLink';
 import { useSelectedEntities } from 'core/hooks';
 import { BulkActionsRow } from './BulkActions/BulkActionsRow';
@@ -125,7 +125,7 @@ const StatusCell = ({ href, jobs, entity }) => {
       </ScheduleTooltip>
       <EntityStatusTag
         className={hasJobForEntity ? styles.marginLeftXXS : null}
-        statusLabel={EntityState.stateName(EntityState.getState(entity.data.sys))}
+        statusLabel={getState(entity.data.sys)}
       />
     </SecretiveLink>
   );

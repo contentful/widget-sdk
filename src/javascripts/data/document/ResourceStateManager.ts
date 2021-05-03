@@ -1,7 +1,6 @@
-import { getState, State, EntityState } from 'data/CMA/EntityState';
-import { Entity, EntitySys } from 'app/entity_editor/Document/types';
+import { getState, State } from 'data/CMA/EntityState';
+import type { Entity, EntitySys, EntityState, EntityRepo } from '@contentful/editorial-primitives';
 import { EntityAction } from '../CMA/EntityActions';
-import { EntityRepo } from '../CMA/EntityRepo';
 import * as K from 'core/utils/kefir';
 import type { PropertyBus, Property, Stream } from 'core/utils/kefir';
 

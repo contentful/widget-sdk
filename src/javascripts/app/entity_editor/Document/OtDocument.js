@@ -7,13 +7,13 @@ import * as Permissions from 'access_control/EntityPermissions';
 import { Error as DocError } from 'data/document/Error';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as DocSetters from 'data/document/Setters';
-import DocumentStatusCode from 'data/document/statusCode';
+import { DocumentStatus as DocumentStatusCode } from '@contentful/editorial-primitives';
 import { DocLoad } from 'data/sharejs/Connection';
 import * as Reverter from './Reverter';
 import { track } from 'analytics/Analytics';
 import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
-import { valuePropertyAt } from './documentHelpers';
+import { valuePropertyAt } from '@contentful/editorial-primitives';
 import * as PresenceHub from './PresenceHub';
 import { Normalizer } from '@contentful/editorial-primitives';
 

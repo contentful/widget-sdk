@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import { caseofEq as caseof, otherwise } from 'sum-types';
-import { State, Action, stateName } from 'data/CMA/EntityState';
+import { State, Action } from 'data/CMA/EntityState';
 import { Notification, makeNotify } from 'app/entity_editor/Notifications';
 import { captureError } from 'core/monitoring';
 
@@ -21,9 +21,9 @@ import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceCont
 const MAX_TITLE_LENGTH = 256;
 
 export const state = {
-  ARCHIVED: stateName(State.Archived()),
-  CHANGED: stateName(State.Changed()),
-  DELETED: stateName(State.Deleted()),
+  ARCHIVED: State.Archived(),
+  CHANGED: State.Changed(),
+  DELETED: State.Deleted(),
 };
 
 export const initStateController = ({
@@ -197,7 +197,7 @@ export const initStateController = ({
         State.Archived(),
         (s) =>
           onUpdateState({
-            current: stateName(s),
+            current: s,
             primary: unarchive,
             secondary: [publish],
             allActions: [unarchive, publish],
@@ -207,7 +207,7 @@ export const initStateController = ({
         State.Draft(),
         (s) =>
           onUpdateState({
-            current: stateName(s),
+            current: s,
             primary: publish,
             secondary: [archive],
             allActions: [publish, archive],
@@ -217,7 +217,7 @@ export const initStateController = ({
         State.Published(),
         (s) =>
           onUpdateState({
-            current: stateName(s),
+            current: s,
             primary: noop,
             secondary: [unpublish, archive],
             allActions: [unpublish, archive],
@@ -228,7 +228,7 @@ export const initStateController = ({
         State.Changed(),
         (s) =>
           onUpdateState({
-            current: stateName(s),
+            current: s,
             primary: publishChanges,
             secondary: [unpublish, archive],
             allActions: [publishChanges, unpublish, archive],
@@ -238,7 +238,7 @@ export const initStateController = ({
         State.Deleted(),
         (s) =>
           onUpdateState({
-            current: stateName(s),
+            current: s,
             isDeleted: true,
           }),
       ],

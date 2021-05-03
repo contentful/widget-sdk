@@ -1,6 +1,8 @@
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import * as K from '__mocks__/kefirMock';
-import { createCmaDoc, createOtDoc } from 'app/entity_editor/Document';
+import { createOtDoc } from 'app/entity_editor/Document';
+import { createCmaDoc } from '@contentful/editorial-primitives';
+
 import { create as createPool } from 'data/sharejs/DocumentPool';
 
 // Mock Angular getModule for PresenceHub in OtDocument
@@ -13,9 +15,19 @@ jest.mock('core/NgRegistry', () => ({
   }),
 }));
 
-const mockEntityRepo = { entityRepo: true };
-jest.mock('data/CMA/EntityRepo', () => ({
-  create: jest.fn(() => mockEntityRepo),
+const mockEntityRepo = {
+  entityRepo: true,
+  onContentEntityChanged: () => true,
+};
+jest.mock('@contentful/editorial-primitives', () => ({
+  createCmaDoc: jest.fn(({ initialEntity }) => mockCreateDoc(initialEntity)),
+
+  createEntityRepo: jest.fn().mockImplementation(({ applyAction }) => {
+    return {
+      ...mockEntityRepo,
+      applyAction,
+    };
+  }),
 }));
 
 // We have to provide vales for these because they're overridden as
@@ -26,18 +38,17 @@ FLAGS['PATCH_ENTRY_UPDATES'] = Symbol('PATCH_ENTRY_UPDATES');
 let mockDoc1;
 let mockDoc2;
 
-jest.mock('app/entity_editor/Document', () => {
-  function createDoc(entity) {
-    const sys = entity.data.sys;
-    if (sys.id === 'id' && sys.type === 'Entry') {
-      return mockDoc1;
-    }
-    return mockDoc2;
+function mockCreateDoc(entity) {
+  const sys = entity.data.sys;
+  if (sys.id === 'id' && sys.type === 'Entry') {
+    return mockDoc1;
   }
+  return mockDoc2;
+}
 
+jest.mock('app/entity_editor/Document', () => {
   return {
-    createOtDoc: jest.fn((_conn, entity) => createDoc(entity)),
-    createCmaDoc: jest.fn((entity) => createDoc(entity)),
+    createOtDoc: jest.fn((_conn, entity) => mockCreateDoc(entity)),
   };
 });
 
@@ -74,7 +85,14 @@ describe('DocumentPool', () => {
           return Promise.resolve(false);
       }
     });
-    otDocumentPool = await createPool(connection, spaceEndpoint);
+    otDocumentPool = await createPool(
+      connection,
+      undefined,
+      undefined,
+      undefined,
+      { sys: { id: 'master' } },
+      spaceEndpoint
+    );
   });
 
   describe('instance creation', () => {
@@ -93,7 +111,13 @@ describe('DocumentPool', () => {
     it('creates doc instance if never requested before', function () {
       const ref = get('id');
       expect(ref).toBe(mockDoc1);
-      expect(createOtDoc).toBeCalledWith(connection, entry, ct, user, mockEntityRepo);
+      expect(createOtDoc).toBeCalledWith(
+        connection,
+        entry,
+        ct,
+        user,
+        expect.objectContaining(mockEntityRepo)
+      );
     });
 
     it('uses previously requested doc instance', function () {
@@ -127,17 +151,38 @@ describe('DocumentPool', () => {
             return Promise.resolve(false);
         }
       });
-      cmaDocumentPool = await createPool(connection, spaceEndpoint);
+      cmaDocumentPool = await createPool(
+        connection,
+        undefined,
+        undefined,
+        undefined,
+        { sys: { id: 'master' } },
+        spaceEndpoint
+      );
 
       get('id', 'Entry', cmaDocumentPool);
       expect(createCmaDoc).toBeCalledTimes(1);
-      expect(createCmaDoc).toBeCalledWith(entry, ct, mockEntityRepo, {
-        patchEntryUpdates: false,
-      });
+
+      expect(createCmaDoc).toBeCalledWith(
+        expect.objectContaining({
+          initialEntity: entry,
+          contentType: ct,
+          entityRepo: expect.objectContaining(mockEntityRepo),
+          options: {
+            patchEntryUpdates: false,
+          },
+        })
+      );
 
       get('id', 'Asset', cmaDocumentPool);
       expect(createOtDoc).toBeCalledTimes(1);
-      expect(createOtDoc).toBeCalledWith(connection, asset, ct, user, mockEntityRepo);
+      expect(createOtDoc).toBeCalledWith(
+        connection,
+        asset,
+        ct,
+        user,
+        expect.objectContaining(mockEntityRepo)
+      );
     });
 
     describe('creating the CMA document', () => {
@@ -199,7 +244,14 @@ describe('DocumentPool', () => {
               return Promise.resolve(false);
           }
         });
-        cmaDocumentPool = await createPool(connection, spaceEndpoint);
+        cmaDocumentPool = await createPool(
+          connection,
+          undefined,
+          undefined,
+          undefined,
+          { sys: { id: 'master' } },
+          spaceEndpoint
+        );
       });
 
       describe('preceding shareJS connection', () => {

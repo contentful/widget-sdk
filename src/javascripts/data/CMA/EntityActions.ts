@@ -1,6 +1,6 @@
 import { compact, constant } from 'lodash';
 import { caseof } from 'sum-types/caseof-eq';
-import { Entity } from 'app/entity_editor/Document/types';
+import type { Entity } from '@contentful/editorial-primitives';
 import { RequestMethod, SpaceEndpoint } from './types';
 
 export type EntityAction = 'publish' | 'unpublish' | 'archive' | 'unarchive' | 'delete';

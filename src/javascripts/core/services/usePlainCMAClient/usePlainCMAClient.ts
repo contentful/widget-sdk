@@ -16,7 +16,8 @@ import { getSpaceContext } from 'classes/spaceContext';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
 
-export function getCMAClient(defaults?: PlainClientDefaultParams) {
+type GetCmaClientOptions = { noBatch?: boolean };
+export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
   const client = createClient(
     {
       ...getHostParams(),
@@ -39,11 +40,13 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
     { type: 'plain', defaults }
   );
 
-  const batchClient = createDefaultBatchClient(client, {
-    onError: (error, context) => {
-      captureError(error, { extra: { context } });
-    },
-  });
+  const batchClient = options?.noBatch
+    ? undefined
+    : createDefaultBatchClient(client, {
+        onError: (error, context) => {
+          captureError(error, { extra: { context } });
+        },
+      });
 
   const internal = createInternalMethods(client.raw);
 
@@ -65,13 +68,13 @@ export function useCMAClient() {
   return { CMAClient: getCMAClient() };
 }
 
-export function useSpaceEnvCMAClient() {
+export function useSpaceEnvCMAClient(options?: GetCmaClientOptions) {
   const { currentEnvironmentId, currentSpaceId, currentEnvironmentAliasId } = useSpaceEnvContext();
   const resolvedEnvironmentId = currentEnvironmentAliasId || currentEnvironmentId;
 
   const spaceEnvCMAClient = useMemo(() => {
-    return getCMAClient({ spaceId: currentSpaceId, environmentId: resolvedEnvironmentId });
-  }, [resolvedEnvironmentId, currentSpaceId]);
+    return getCMAClient({ spaceId: currentSpaceId, environmentId: resolvedEnvironmentId }, options);
+  }, [resolvedEnvironmentId, currentSpaceId, options]);
 
   return {
     spaceEnvCMAClient,

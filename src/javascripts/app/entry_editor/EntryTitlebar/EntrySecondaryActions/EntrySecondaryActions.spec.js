@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-
 import * as Navigator from 'states/Navigator';
 import EntrySecondaryActions from './EntrySecondaryActions';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -9,7 +8,7 @@ jest.mock('states/Navigator');
 jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true),
 }));
-jest.mock('app/entity_editor/Document', () => ({
+jest.mock('@contentful/editorial-primitives', () => ({
   valuePropertyAt: jest.fn(),
 }));
 jest.mock('core/utils/kefir', () => ({

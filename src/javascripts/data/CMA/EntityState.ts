@@ -1,34 +1,18 @@
 import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
 import { Action, EntityAction, makePerform } from './EntityActions';
-import { Entity, EntitySys } from 'app/entity_editor/Document/types';
+import type { Entity, EntitySys, EntityState } from '@contentful/editorial-primitives';
 import { SpaceEndpoint } from 'data/CMA/types';
 
-export type EntityState =
-  | '__DELETED__'
-  | '__ARCHIVED__'
-  | '__DRAFT__'
-  | '__CHANGED__'
-  | '__PUBLISHED__';
 export { Action };
 
 export const State = {
-  Deleted: constant<EntityState>('__DELETED__'),
-  Archived: constant<EntityState>('__ARCHIVED__'),
-  Draft: constant<EntityState>('__DRAFT__'),
-  Changed: constant<EntityState>('__CHANGED__'),
-  Published: constant<EntityState>('__PUBLISHED__'),
+  Deleted: constant<EntityState>('deleted'),
+  Archived: constant<EntityState>('archived'),
+  Draft: constant<EntityState>('draft'),
+  Changed: constant<EntityState>('changed'),
+  Published: constant<EntityState>('published'),
 };
-
-export function stateName(state: EntityState): string {
-  return caseof(state, [
-    [State.Deleted(), constant('deleted')],
-    [State.Archived(), constant('archived')],
-    [State.Draft(), constant('draft')],
-    [State.Changed(), constant('changed')],
-    [State.Published(), constant('published')],
-  ]);
-}
 
 /**
  * Return the state of an entity with the given 'sys' property.

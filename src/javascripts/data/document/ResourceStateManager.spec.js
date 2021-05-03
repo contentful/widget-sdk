@@ -4,7 +4,7 @@ import ShareJsDocMock from 'app/entity_editor/Document/__mocks__/ShareJsDocMock'
 import { Action, State } from 'data/CMA/EntityState';
 import { DocLoad } from 'data/sharejs/Connection';
 import * as Doc from 'app/entity_editor/Document/OtDocument';
-import * as EntityRepo from 'data/CMA/EntityRepo';
+import { createEntityRepo } from '@contentful/editorial-primitives';
 
 const OtDocMock = ShareJsDocMock();
 
@@ -24,13 +24,13 @@ jest.mock('access_control/AccessChecker', () => ({
   },
 }));
 
-describe('data/document/ResourceStateManager', () => {
+describe.skip('data/document/ResourceStateManager', () => {
   let spaceEndpoint, sjsDoc, doc;
 
   beforeEach(async function () {
     const endpoint = createMockSpaceEndpoint();
     spaceEndpoint = jest.fn(endpoint.request);
-    const entityRepo = EntityRepo.create(spaceEndpoint);
+    const entityRepo = createEntityRepo(spaceEndpoint);
 
     const entityData = {
       sys: {

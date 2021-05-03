@@ -28,6 +28,7 @@ import * as Config from 'Config';
 import client from 'services/client';
 import { captureError } from 'core/monitoring';
 import { createPubSubClientForSpace } from 'services/PubSubService';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
 const MASTER_ENVIRONMENT_ID = 'master';
@@ -37,6 +38,11 @@ let enforcementsDeInit;
 
 const spaceContext = initSpaceContext();
 export const getSpaceContext = () => spaceContext;
+
+const lastResetWithSpaceParams = {
+  spaceId: undefined,
+  environmentId: undefined,
+};
 
 // Util function to reset the spaceContext with spaceId (and environmentId) params
 export const resetWithSpace = async (params) => {
@@ -83,6 +89,11 @@ function initSpaceContext() {
     purge: function () {
       resetMembers(spaceContext);
     },
+
+    cleanLastResetParams: function () {
+      lastResetWithSpaceParams.spaceId = undefined;
+      lastResetWithSpaceParams.environmentId = undefined;
+    },
     /**
      * @ngdoc method
      * @name spaceContext#resetWithSpace
@@ -99,6 +110,20 @@ function initSpaceContext() {
      * @returns {Promise<self>}
      */
     resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
+      function isLastReset() {
+        return (
+          spaceData.sys.id === lastResetWithSpaceParams.spaceId &&
+          uriEnvOrAliasId === lastResetWithSpaceParams.environmentId
+        );
+      }
+
+      if (isLastReset()) {
+        return;
+      }
+
+      lastResetWithSpaceParams.spaceId = spaceData.sys.id;
+      lastResetWithSpaceParams.environmentId = uriEnvOrAliasId;
+
       spaceContext.resettingSpace = true;
 
       try {
@@ -161,9 +186,37 @@ function initSpaceContext() {
         // and not the user, so the spaceId is required.
         enforcementsDeInit = EnforcementsService.init(spaceId);
 
+        const cmaPlainClient = getCMAClient(
+          {
+            spaceId,
+            environmentId: uriEnvOrAliasId || MASTER_ENVIRONMENT_ID,
+          },
+          {
+            //batch client doesn't support headers param in
+            //entry.get and asset.get, used by EntityRepo
+            noBatch: true,
+          }
+        );
+        spaceContext.pubsubClient = await createPubSubClientForSpace(spaceId);
+
         const start = Date.now();
         await Promise.all([
-          setupEnvironments(spaceContext, uriEnvOrAliasId),
+          setupEnvironments(spaceContext, uriEnvOrAliasId).then(async () => {
+            if (!isLastReset()) {
+              // another reset was issued meanwhile. Skip creating a wrong
+              // docPool
+              return;
+            }
+            spaceContext.docPool = await DocumentPool.create(
+              spaceContext.docConnection,
+              spaceContext.pubsubClient,
+              spaceContext.organization.sys.id,
+              spaceId,
+              spaceContext.space.environment,
+              cmaPlainClient,
+              spaceContext.endpoint
+            );
+          }),
           TheLocaleStore.init(spaceContext.localeRepo),
           setupPublishedCTsBus(spaceContext).then(() => {
             const ctMap = spaceContext.publishedCTs
@@ -176,17 +229,6 @@ function initSpaceContext() {
               createViewMigrator(ctMap)
             );
           }),
-          (async () => {
-            spaceContext.pubsubClient = await createPubSubClientForSpace(spaceId);
-            spaceContext.docPool = await DocumentPool.create(
-              spaceContext.docConnection,
-              spaceContext.endpoint,
-              spaceContext.pubsubClient,
-              spaceContext.organization.sys.id,
-              spaceId,
-              uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
-            );
-          })(),
         ]);
         Telemetry.record('space_context_http_time', Date.now() - start);
         // TODO: remove this after we have store with combined reducers on top level

@@ -1,7 +1,7 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentTypeField } from './createContentTypeApi';
 import { onValueWhile } from 'core/utils/kefir';
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import * as Analytics from 'analytics/Analytics';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';

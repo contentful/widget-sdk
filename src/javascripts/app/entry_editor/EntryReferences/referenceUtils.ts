@@ -1,6 +1,6 @@
-import { EntitySys } from 'app/entity_editor/Document/types';
+import type { EntitySys } from '@contentful/editorial-primitives';
 import { BasicMetaSysProps } from 'contentful-management/types';
-import * as EntityState from 'data/CMA/EntityState';
+import { getState } from 'data/CMA/EntityState';
 
 // If there is a circular reference that is not handled this will keep us from endless.
 const FAILSAFE_LEVEL = 15;
@@ -205,9 +205,8 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
     if (areAllReferencesSelected) {
       selectionMap.set(`${entity.sys.id}-${type}`, entity);
     } else if (selectedStates?.length && isLinkableEntity(entity)) {
-      const stateName = EntityState.stateName(EntityState.getState(entity.sys));
       selectedStates.forEach((entityState) => {
-        if (stateName === entityState) {
+        if (getState(entity.sys) === entityState) {
           selectionMap.set(`${entity.sys.id}-${type}`, entity);
         }
       });

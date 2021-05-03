@@ -26,3 +26,9 @@ const withLevel = (level: Severity) => (error: Error, captureContext?: CaptureCo
 export const captureError = withLevel(Severity.Error);
 
 export const captureWarning = withLevel(Severity.Warning);
+
+export const statusErrorHandler = (errorName, data) => {
+  if (errorName === 'docError') {
+    captureError(data);
+  }
+};

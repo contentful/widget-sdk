@@ -4,6 +4,17 @@ import { createFieldLocaleDocument } from './fieldLocaleDocument';
 const fieldsPath = ['FID', 'LC'];
 const path = ['fields', ...fieldsPath];
 
+jest.mock('@contentful/editorial-primitives', () => ({
+  ...jest.requireActual('@contentful/editorial-primitives'),
+  createCmaDoc: jest.fn(() => ({})),
+
+  createEntityRepo: jest.fn().mockImplementation(({ applyAction }) => {
+    return {
+      applyAction,
+    };
+  }),
+}));
+
 let rootDoc;
 const create = () => {
   rootDoc = createDocumentMock().create();

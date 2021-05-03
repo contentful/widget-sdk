@@ -2,6 +2,16 @@ import * as K from '__mocks__/kefirMock';
 import { createBase } from 'app/entity_editor/Validator';
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 
+jest.mock('@contentful/editorial-primitives', () => ({
+  createCmaDoc: jest.fn(() => ({})),
+
+  createEntityRepo: jest.fn().mockImplementation(({ applyAction }) => {
+    return {
+      applyAction,
+    };
+  }),
+}));
+
 describe('app/entity_editor/Validator', () => {
   let schemaErrors;
   let validator;

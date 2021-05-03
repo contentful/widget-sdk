@@ -12,7 +12,7 @@
   "dependencies": {
     "@contentful/app-sdk": "^3.34.0",
     "@contentful/asn1js": "^2.1.0",
-    "@contentful/editorial-primitives": "1.0.1",
+    "@contentful/editorial-primitives": "^1.2.0",
     "@contentful/entity-search": "1.0.2",
     "@contentful/errors": "^1.20.2",
     "@contentful/experience-cma-utils": "^1.1.1",
@@ -69,7 +69,7 @@
     "color": "^2.0.1",
     "constate": "^3.2.0",
     "contentful": "^7.14.6",
-    "contentful-management": "^7.5.2",
+    "contentful-management": "^7.16.0",
     "contentful-resolve-response": "1.2.2",
     "core-js": "^3.8.3",
     "dataloader": "^2.0.0",

@@ -3,7 +3,7 @@ import { truncate } from 'utils/StringUtils';
 import * as Focus from 'app/entity_editor/Focus';
 import { captureError } from 'core/monitoring';
 import localeStore from 'services/localeStore';
-import { valuePropertyAt } from 'app/entity_editor/Document';
+import { valuePropertyAt } from '@contentful/editorial-primitives';
 import { initDocErrorHandler } from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';

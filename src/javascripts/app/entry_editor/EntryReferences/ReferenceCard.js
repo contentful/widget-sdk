@@ -13,7 +13,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { ReferencesContext } from './ReferencesContext';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
-import * as EntityState from 'data/CMA/EntityState';
+import { getState } from 'data/CMA/EntityState';
 import { getEntityTitle } from './referencesService';
 import { isLinkableEntity } from './referenceUtils';
 import { isLink } from '@contentful/types';
@@ -194,10 +194,7 @@ const ReferenceCard = ({
           <Paragraph className={styles.text} title={title}>
             {title}
           </Paragraph>
-          <EntityStatusTag
-            statusLabel={EntityState.stateName(EntityState.getState(entity.sys))}
-            className={styles.status}
-          />
+          <EntityStatusTag statusLabel={getState(entity.sys)} className={styles.status} />
         </div>
       </Card>
     </ListItem>

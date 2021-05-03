@@ -1,6 +1,6 @@
 import { EditorExtensionSDK } from '@contentful/app-sdk';
 import { createContentTypeApi, InternalContentType } from '../createContentTypeApi';
-import { Document } from 'app/entity_editor/Document/typesDocument';
+import type { Document } from '@contentful/editorial-primitives';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { createUserApi } from '../createUserApi';
 import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';

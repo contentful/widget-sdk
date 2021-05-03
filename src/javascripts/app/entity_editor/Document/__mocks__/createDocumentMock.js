@@ -1,11 +1,26 @@
 import * as K from '__mocks__/kefirMock';
 import _ from 'lodash';
 import { create as createResourceState } from 'data/document/ResourceStateManager';
-import { create as createEntityRepo } from 'data/CMA/EntityRepo';
+import { createEntityRepo } from '@contentful/editorial-primitives';
+
+jest.mock('@contentful/editorial-primitives', () => ({
+  ...jest.requireActual('@contentful/editorial-primitives'),
+  createCmaDoc: jest.fn(() => ({})),
+
+  createEntityRepo: jest.fn().mockImplementation((params) => {
+    if (!params) {
+      return;
+    }
+    const { applyAction } = params;
+    return {
+      applyAction,
+    };
+  }),
+}));
 
 export const createDocumentMock = () => {
   return {
-    create(initialData, spaceEndpoint) {
+    create(initialData, _spaceEndpoint, applyAction) {
       let currentData;
       const data$ = K.createMockProperty(
         initialData || {
@@ -32,7 +47,7 @@ export const createDocumentMock = () => {
       const sysProperty = valuePropertyAt(['sys']);
       const changesStream = K.createMockStream();
 
-      const entityRepo = createEntityRepo(spaceEndpoint);
+      const entityRepo = createEntityRepo({ applyAction });
       const resourceState = createResourceState({
         sys$: sysProperty,
         setSys,

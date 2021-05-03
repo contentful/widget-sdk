@@ -17,6 +17,7 @@ const VALID_DEFINITION_PROPS = [
   'template',
   'resolve',
   'onEnter',
+  'onExit',
   'params',
   'controller',
   'redirectTo',
@@ -62,6 +63,7 @@ export default function register() {
             abstract: state.abstract,
             resolve: state.resolve,
             onEnter: state.onEnter,
+            onExit: state.onExit,
             // Our own props (they have no meaning to UI Router):
             params: state.params,
             redirectTo: state.redirectTo,
