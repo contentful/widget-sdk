@@ -243,6 +243,27 @@ const makeNavigateToAppConfig = ({
   }
 };
 
+const navigateToSpaceEnvRoute = async ({
+  spaceId,
+  environmentId,
+  route,
+}: {
+  spaceId: string;
+  environmentId: string;
+  route: 'entries' | 'assets';
+}) => {
+  await Navigator.go({
+    path: ['spaces', 'detail', route, 'list'],
+    params: {
+      spaceId,
+      environmentId,
+    },
+    options: {
+      notify: true,
+    },
+  });
+};
+
 export function createReadOnlyNavigatorApi() {
   return {
     onSlideInNavigation: () => noop,
@@ -254,6 +275,8 @@ export function createReadOnlyNavigatorApi() {
     openNewEntry: denyNavigate,
     openPageExtension: denyNavigate,
     openAppConfig: denyNavigate,
+    openEntriesList: denyNavigate,
+    openAssetsList: denyNavigate,
   };
 }
 
@@ -320,5 +343,11 @@ export function createNavigatorApi({
     },
     onSlideInNavigation: onSlideLevelChanged,
     openAppConfig,
+    openEntriesList: () => {
+      return navigateToSpaceEnvRoute({ spaceId, environmentId, route: 'entries' });
+    },
+    openAssetsList: () => {
+      return navigateToSpaceEnvRoute({ spaceId, environmentId, route: 'assets' });
+    },
   };
 }
