@@ -60,8 +60,10 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
       // stuff that we don't know about. Ignore -1 as it's about network issues.
       if (error && error.status !== -1) {
         captureError(new Error('BatchingApiClient: Failed bulk fetching entities'), {
-          error,
-          data,
+          extra: {
+            error,
+            data,
+          },
         });
       }
     }

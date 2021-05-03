@@ -60,11 +60,13 @@ describe('activationEmailResender', () => {
         // do nothing
       }
       expect(captureError).toHaveBeenCalledWith(expect.any(Error), {
-        email: 'user@example.com',
-        response: {
-          status: 418,
-          statusText: "I'm a teapot",
-          data: 'tea',
+        extra: {
+          email: 'user@example.com',
+          response: {
+            status: 418,
+            statusText: "I'm a teapot",
+            data: 'tea',
+          },
         },
       });
     });

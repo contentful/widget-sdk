@@ -602,5 +602,5 @@ function logAsyncError(asyncError: Error, message: string, extra: any = {}) {
     message,
   });
 
-  captureError(asyncError, extra);
+  captureError(asyncError, { extra });
 }

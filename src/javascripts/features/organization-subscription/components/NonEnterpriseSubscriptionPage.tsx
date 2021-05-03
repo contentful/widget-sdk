@@ -62,7 +62,7 @@ const fetchContent = (basePlan: BasePlan) => async (): Promise<BasePlanContent |
       return await fetchWebappContentByEntryID(BasePlanContentEntryIds.PRO_BONO);
     }
   } catch (err) {
-    captureError(fetchWebappContentError, err);
+    captureError(fetchWebappContentError, { extra: { err } });
   }
 
   return undefined;

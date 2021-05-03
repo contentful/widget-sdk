@@ -33,7 +33,7 @@ export function deleteSuccess() {
 
 export function deleteFail(error) {
   Notification.error('Deleting content type failed: ' + getServerMessage(error));
-  captureWarning(new Error('Error deleting Content Type'), { error });
+  captureWarning(new Error('Error deleting Content Type'), { extra: { error } });
 }
 
 export function invalidAccordingToScope(errors, fieldNames) {
@@ -84,8 +84,10 @@ export function saveSuccess() {
 export function saveInvalidError(error, contentType) {
   Notification.error(messages.save.invalid);
   captureWarning(new Error('Error saving invalid Content Type'), {
-    error,
-    contentType: contentType.data,
+    extra: {
+      error,
+      contentType: contentType.data,
+    },
   });
 }
 

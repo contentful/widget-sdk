@@ -236,6 +236,8 @@ export async function reinvite(orgMembership) {
       `There was a problem sending an invitation to ${getFullNameOrEmail(orgMembership.sys.user)}`
     );
 
-    captureError(e, { email: orgMembership.sys.user.email });
+    captureError(e, {
+      extra: { email: orgMembership.sys.user.email },
+    });
   }
 }

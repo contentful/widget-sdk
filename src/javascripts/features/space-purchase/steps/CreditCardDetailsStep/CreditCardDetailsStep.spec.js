@@ -121,7 +121,9 @@ describe('steps/CreditCardDetailsStep', () => {
     await waitFor(() => expect(mockEndpoint).toBeCalled());
 
     expect(captureError).toBeCalledWith(error, {
-      organizationId: mockOrganization.sys.id,
+      extra: {
+        organizationId: mockOrganization.sys.id,
+      },
     });
 
     expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
@@ -135,8 +137,10 @@ describe('steps/CreditCardDetailsStep', () => {
     await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
     expect(captureError).toBeCalledWith(expect.any(Error), {
-      error: response,
-      location: 'account.organizations.subscription_new.new_space',
+      extra: {
+        error: response,
+        location: 'account.organizations.subscription_new.new_space',
+      },
     });
 
     expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');

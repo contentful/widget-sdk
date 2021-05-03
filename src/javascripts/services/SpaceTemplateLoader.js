@@ -238,9 +238,11 @@ function parseAssetFields(fields) {
         }
       } catch (exp) {
         captureError(exp, {
-          localizedField,
-          field,
-          fieldName,
+          extra: {
+            localizedField,
+            field,
+            fieldName,
+          },
         });
       }
       return localizedField;

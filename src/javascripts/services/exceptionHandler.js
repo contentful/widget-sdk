@@ -16,7 +16,7 @@ export default function register() {
       return (exception) => {
         const metaData = _.extend({ promptedReload: true }, exception.metaData);
 
-        captureError(exception, metaData);
+        captureError(exception, { extra: { metaData } });
         ReloadNotification.trigger();
       };
     },

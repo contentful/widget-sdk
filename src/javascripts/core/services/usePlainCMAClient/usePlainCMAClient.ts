@@ -41,7 +41,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams) {
 
   const batchClient = createDefaultBatchClient(client, {
     onError: (error, context) => {
-      captureError(error, context);
+      captureError(error, { extra: { context } });
     },
   });
 

@@ -148,11 +148,13 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
       await entityBatchLoaderFn([...validIds, INVALID_LONG_ID]);
       expect(captureError).toHaveBeenCalledTimes(1);
       expect(captureError).toHaveBeenCalledWith(expect.any(Error), {
-        error: CLIENT_ERROR,
-        data: {
-          requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.
-          requestedIdsCount: 2,
-          requestedIdsCharacterCount: 12,
+        extra: {
+          error: CLIENT_ERROR,
+          data: {
+            requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.
+            requestedIdsCount: 2,
+            requestedIdsCharacterCount: 12,
+          },
         },
       });
     });

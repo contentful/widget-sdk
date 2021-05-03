@@ -39,7 +39,9 @@ class Authorization {
       this.authContext = worf(this._tokenLookup, environment);
     } catch (exp) {
       captureError(exp, {
-        tokenLookup,
+        extra: {
+          tokenLookup,
+        },
       });
       return;
     }

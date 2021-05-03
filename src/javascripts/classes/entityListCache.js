@@ -80,8 +80,10 @@ EntityListCache.prototype = {
     _.forEach(entities, (entity) => {
       if (_.isUndefined(entity.data)) {
         captureError(new Error('Entity data is undefined'), {
-          data: {
-            entities: entities,
+          extra: {
+            data: {
+              entities: entities,
+            },
           },
         });
       } else {

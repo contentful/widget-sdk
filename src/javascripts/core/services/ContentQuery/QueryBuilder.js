@@ -50,9 +50,11 @@ export function buildQuery({
 function applyGenericValue(query, [queryKey, operator, value]) {
   if (!isValidOperator(operator)) {
     captureError(new Error(`invalid operator “${operator}” for search query`), {
-      queryKey,
-      operator,
-      value,
+      extra: {
+        queryKey,
+        operator,
+        value,
+      },
     });
     return query;
   }

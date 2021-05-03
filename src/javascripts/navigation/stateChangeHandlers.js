@@ -82,8 +82,10 @@ function stateChangeStartHandler(event, toState, toStateParams, fromState, fromS
 
   if (confirmationInProgress) {
     captureError(new Error('Change state during state change confirmation'), {
-      from: fromState.name,
-      to: toState.name,
+      extra: {
+        from: fromState.name,
+        to: toState.name,
+      },
     });
   }
 

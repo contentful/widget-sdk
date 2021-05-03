@@ -23,11 +23,13 @@ export async function resendActivationEmail(email) {
     const errorJson = await error.json();
 
     captureError(new Error('Failed activation email resend attempt'), {
-      email: email,
-      response: {
-        status: error.status,
-        statusText: error.statusText,
-        data: errorJson,
+      extra: {
+        email: email,
+        response: {
+          status: error.status,
+          statusText: error.statusText,
+          data: errorJson,
+        },
       },
     });
 
