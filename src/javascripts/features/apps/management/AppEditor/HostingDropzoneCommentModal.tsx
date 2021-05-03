@@ -57,7 +57,13 @@ const AppUploadCommentModal: React.FC<AppUploadCommentModalProps> = ({
   const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {
-    addProgressListener(setProgress);
+    addProgressListener((progress: number) => {
+      if (progress === 100) {
+        setProgress(99);
+      } else {
+        setProgress(progress);
+      }
+    });
   }, [setProgress, addProgressListener]);
 
   const [comment, setComment] = React.useState('');
