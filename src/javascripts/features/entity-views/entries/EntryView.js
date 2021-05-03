@@ -59,13 +59,18 @@ export const EntryView = () => {
     currentSpaceData,
     currentSpaceId,
   } = useSpaceEnvContext();
-  const listViewContext = useListView({ entityType, onUpdate });
   const fetchEntries = useCallback((query) => currentSpace.getEntries(query), [currentSpace]);
   const [jobs, setJobs] = useState([]);
 
-  const [suggestedContentTypeId, setSuggestedContentTypeId] = useState(
-    listViewContext.getView().contentTypeId
-  );
+  const [suggestedContentTypeId, setSuggestedContentTypeId] = useState();
+  const onUpdate = useCallback(({ contentTypeId }) => {
+    setSuggestedContentTypeId(contentTypeId);
+  }, []);
+  const listViewContext = useListView({ entityType, onUpdate });
+
+  useEffect(() => {
+    setSuggestedContentTypeId(listViewContext.getView().contentTypeId);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     const init = async () => {
@@ -86,10 +91,6 @@ export const EntryView = () => {
   }, [currentSpaceId, currentEnvironmentId]);
 
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-
-  function onUpdate({ contentTypeId }) {
-    setSuggestedContentTypeId(contentTypeId);
-  }
 
   function goTo(entryId) {
     return go({ path: '^.detail', params: { entryId } });
