@@ -37,7 +37,7 @@ export async function openV1MigrationWarning() {
 
   const endpoint = createOrganizationEndpoint(org.sys.id);
   const basePlan = await getBasePlan(endpoint);
-  const v1migrationDestination = org.sys._v1Migration.destination;
+  const v1migrationDestination = org.sys?._v1Migration?.destination;
 
   const isCommunity = isFreePlan(basePlan) && v1migrationDestination === V1_DESTINATION_COMMUNITY;
   const isTeam = isSelfServicePlan(basePlan) && v1migrationDestination === V1_DESTINATION_TEAM;
@@ -70,7 +70,7 @@ async function shouldDisplay(org) {
   if (!isEnabled || hasSeen(org.sys.id)) return false;
 
   // check for the status of the migration
-  const v1migrationSucceeded = org.sys._v1Migration.status === 'succeeded';
+  const v1migrationSucceeded = org?.sys?._v1Migration?.status === 'succeeded';
   const isTargetUser = isOwnerOrAdmin(org);
 
   return isTargetUser && v1migrationSucceeded;
