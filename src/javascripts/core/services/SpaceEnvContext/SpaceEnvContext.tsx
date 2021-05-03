@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import deepEqual from 'fast-deep-equal';
 import * as K from 'core/utils/kefir';
 import { setTags } from 'core/monitoring';
@@ -25,10 +25,10 @@ export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
-  const angularSpaceContext = useMemo(() => getSpaceContext(), []);
   const [contentTypes, setContentTypes] = useState<ContentType[]>(() => getContentTypes());
 
   useEffect(() => {
+    const angularSpaceContext = getSpaceContext();
     if (!angularSpaceContext?.publishedCTs?.items$) return;
 
     const deregister = K.onValue(
@@ -48,25 +48,25 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
 
   // TODO: Methods depending on the angular space context directly, they should be refactored
   function getSpace(): SpaceEnv {
-    return angularSpaceContext?.getSpace();
+    return getSpaceContext()?.getSpace();
   }
 
   function getEnvironments(): Environment[] {
-    return angularSpaceContext?.environments ?? [];
+    return getSpaceContext()?.environments ?? [];
   }
 
   function getContentTypes(): ContentType[] {
+    const angularSpaceContext = getSpaceContext();
     if (!angularSpaceContext?.publishedCTs?.items$) return [];
-
     return K.getValue(angularSpaceContext.publishedCTs.items$) || [];
   }
 
   function getUsers(): SpaceEnvUsers {
-    return angularSpaceContext?.users;
+    return getSpaceContext()?.users;
   }
 
   function getDocPool() {
-    return angularSpaceContext?.docPool;
+    return getSpaceContext()?.docPool;
   }
 
   const space = getSpace();
