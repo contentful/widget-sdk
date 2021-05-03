@@ -9,6 +9,7 @@ import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   appIcon: css({
@@ -70,13 +71,12 @@ class FieldDialogWidgetItem extends Component {
           <div className="field-dialog__widget-item-header">
             <span>UI Extension</span>
             {isAdmin && (
-              <StateLink
-                path="^.^.^.settings.extensions.detail"
-                params={{ extensionId: widget.id }}
+              <ReactRouterLink
+                route={{ path: 'extensions.detail', extensionsId: widget.id }}
                 target="_blank"
                 rel="noopener noreferrer">
                 <Icon name="edit" scale="0.9" />
-              </StateLink>
+              </ReactRouterLink>
             )}
           </div>
         )}
