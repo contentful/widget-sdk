@@ -124,6 +124,8 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
   };
 }
 
+let hasServerError = false;
+
 /**
  * Loads all the resources from the loader and builds the editor data.
  *
@@ -134,8 +136,6 @@ async function loadEditorData(loader, id) {
 
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
   const environmentId = get(entity, ['data', 'sys', 'environment', 'sys', 'id']);
-
-  let hasServerError = false;
 
   function onWarning(warning) {
     const error = JSON.parse(warning.err.message);
@@ -154,7 +154,7 @@ async function loadEditorData(loader, id) {
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
-    getCustomWidgetLoader(onWarning),
+    getCustomWidgetLoader({ onWarning, hasServerError }),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);

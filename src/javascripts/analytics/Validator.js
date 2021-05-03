@@ -234,6 +234,7 @@ export const validEvents = {
     'help_link_clicked',
     'export',
   ],
+  widget_renderer: ['fallback_rendered', 'fallback_warning_shown'],
 };
 
 export const validateEvent = (eventName) => {

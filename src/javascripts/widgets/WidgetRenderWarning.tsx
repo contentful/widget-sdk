@@ -1,14 +1,22 @@
 import React from 'react';
 import { Note, TextLink, Paragraph } from '@contentful/forma-36-react-components';
 import * as accessChecker from 'access_control/AccessChecker';
+import { track } from '../analytics/Analytics';
+
+import { Control } from './WidgetRenderable';
+
+import { getSpaceContext } from '../classes/spaceContext';
+import { getUser } from '../services/TokenStore';
+import { getOrg } from '../states/deeplink/utils';
 
 interface WidgetRenderWarningProps {
   message: string;
+  widget: Control;
   setRenderFallback: (val: boolean) => void;
 }
 
 export default function WidgetRenderWarning(props: WidgetRenderWarningProps) {
-  const { message } = props;
+  const { message, widget } = props;
   const canUpdateContentTypes = !accessChecker.shouldHide('update', 'contentType');
 
   let title = '';
@@ -33,13 +41,43 @@ export default function WidgetRenderWarning(props: WidgetRenderWarningProps) {
       'Please contact your Contenful administrator to update the settings in the Content Model section.';
   }
 
+  const getEventData = React.useCallback(async () => {
+    const [{ orgId }, currentUser] = await Promise.all([getOrg(), getUser()]);
+    const spaceContext = getSpaceContext();
+    return {
+      appDefinitionId: widget.widgetId,
+      organizationId: orgId,
+      spaceId: spaceContext.getId(),
+      environment: spaceContext.getEnvironmentId(),
+      userId: currentUser.sys.id,
+    };
+  }, [widget.widgetId]);
+
+  React.useEffect(() => {
+    const trackWarningShown = async () => {
+      const data = await getEventData();
+      track('widget_renderer:fallback_warning_shown', {
+        data,
+      });
+    };
+    if (message === 'internal_error') {
+      trackWarningShown();
+    }
+  }, [message, getEventData]);
+
+  const onCTAClick = async () => {
+    props.setRenderFallback(true);
+    const data = await getEventData();
+    track('widget_renderer:fallback_rendered', {
+      data,
+    });
+  };
+
   return (
     <Note noteType="warning" title={title}>
       <Paragraph data-test-id="widget-renderer-warning">{noteBody}</Paragraph>
       {message === 'internal_error' && (
-        <TextLink onClick={() => props.setRenderFallback(true)}>
-          Use default field editor this time
-        </TextLink>
+        <TextLink onClick={onCTAClick}>Use default field editor this time</TextLink>
       )}
     </Note>
   );

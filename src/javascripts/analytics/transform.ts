@@ -403,6 +403,9 @@ registerGenericEvent('app_management:created');
 registerGenericEvent('app_management:deleted');
 registerGenericEvent('app_management:updated');
 
+registerGenericEvent('widget_renderer:fallback_warning_shown');
+registerGenericEvent('widget_renderer:fallback_rendered');
+
 registerGenericEvent('tracking:invalid_event');
 registerGenericEvent('entry_references:dialog_open');
 registerGenericEvent('entry_references:publish');

@@ -104,7 +104,13 @@ function WidgetRendererInternal(props) {
   }
 
   if (problem) {
-    return <WidgetRenderWarning setRenderFallback={setIsRenderFallback} message={widget.problem} />;
+    return (
+      <WidgetRenderWarning
+        widget={widget}
+        setRenderFallback={setIsRenderFallback}
+        message={widget.problem}
+      />
+    );
   }
 
   if (isCustom) {

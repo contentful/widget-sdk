@@ -46,7 +46,10 @@ export interface WidgetLoadWarning {
   err: any;
 }
 
-export async function getCustomWidgetLoader(onWarning?: (warning: WidgetLoadWarning) => void) {
+export async function getCustomWidgetLoader(options?: {
+  onWarning?: (warning: WidgetLoadWarning) => void;
+  hasServerError: boolean;
+}) {
   const accessToken = await getToken();
   const spaceContext = getSpaceContext();
   const spaceId = spaceContext.getId();
@@ -55,8 +58,13 @@ export async function getCustomWidgetLoader(onWarning?: (warning: WidgetLoadWarn
 
   let loader: WidgetLoader = get(cache, cachePath);
 
-  if (!loader || (onWarning && !hasOnWarning)) {
-    if (onWarning) {
+  if (loader && options?.hasServerError) {
+    // clean cache when it there was a server error
+    loader.purge();
+  }
+
+  if (!loader || (options?.onWarning && !hasOnWarning)) {
+    if (options?.onWarning) {
       hasOnWarning = true;
     }
     const [proto, host] = Config.apiUrl().split('://');
@@ -75,7 +83,7 @@ export async function getCustomWidgetLoader(onWarning?: (warning: WidgetLoadWarn
       getMarketplaceDataProvider(),
       spaceId,
       aliasOrEnvId,
-      onWarning
+      options?.onWarning
     );
 
     set(cache, cachePath, loader);

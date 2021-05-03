@@ -8,6 +8,14 @@ jest.mock('widgets/WidgetCompat', () => ({
   toRendererWidget: jest.fn(),
 }));
 
+jest.mock('states/deeplink/utils', () => ({
+  getOrg: () => ({ orgId: 'test' }),
+}));
+
+jest.mock('services/TokenStore', () => ({
+  getUser: () => ({ sys: { id: 'test' } }),
+}));
+
 jest.mock('app/entity_editor/LoadEventTracker');
 const trackLinksRendered = jest.fn();
 LoadEventTracker.createLinksRenderedEvent = jest.fn().mockReturnValue(trackLinksRendered);
