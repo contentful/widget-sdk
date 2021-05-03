@@ -6,6 +6,7 @@ import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
 import { createStatus } from '@contentful/editorial-primitives';
 import { statusErrorHandler } from 'core/monitoring/error-tracking/capture';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default function setLocaleData({
   initialValues,
@@ -160,12 +161,12 @@ function handleTopNavErrors(props, entityLabel, shouldHideLocaleErrors, onUpdate
       );
     }
   });
-
+  const canUpdate = accessChecker.canUpdateEntity({ data: props.otDoc.getValueAt([]) });
   K.onValue(
     createStatus(
       props.otDoc.sysProperty,
       props.otDoc.state.error$,
-      props.otDoc.state.canEdit$,
+      K.constant(canUpdate),
       statusErrorHandler
     ),
     (status) => {

@@ -11,6 +11,7 @@ import * as K from 'core/utils/kefir';
 import { DocumentStatus as DocumentStatusCode } from '@contentful/editorial-primitives';
 import { FieldAccess } from './EntityField/EntityFieldAccess';
 import { statusErrorHandler } from 'core/monitoring/error-tracking/capture';
+import * as accessChecker from 'access_control/AccessChecker';
 
 /**
  * @ngdoc method
@@ -76,8 +77,10 @@ export const createFieldLocaleDocument = (doc, field, localeCode, canEditLocale)
     })
     .map(() => undefined);
 
+  const canUpdate = accessChecker.canUpdateEntity({ data: doc.getValueAt([]) });
+
   const documentStatus$ =
-    createStatus(doc.sysProperty, doc.state.error$, doc.state.canEdit$, statusErrorHandler) ||
+    createStatus(doc.sysProperty, doc.state.error$, K.constant(canUpdate), statusErrorHandler) ||
     K.constant();
 
   const collaborators = doc.presence.collaboratorsFor(fieldId, localeCode);
