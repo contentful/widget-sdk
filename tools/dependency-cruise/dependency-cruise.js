@@ -34,17 +34,6 @@ module.exports = {
         pathNot: '^src/javascripts/features/$1/.+|^src/javascripts/features/([^/]+)/index',
       },
     },
-    // {
-    //   name: 'no-dependent-features',
-    //   comment: `Ideally we should avoid dependecies between features.
-    //   Please, reconsider this dependency if possible.`,
-    //   severity: 'warn',
-    //   from: { path: '^src/javascripts/features/([^/]+)/.+' },
-    //   to: {
-    //     path: '^src/javascripts/features/([^/]+)/.+',
-    //     pathNot: '^src/javascripts/features/$1/.+',
-    //   },
-    // },
     {
       name: 'no-unreachable-from-root',
       severity: 'error',
