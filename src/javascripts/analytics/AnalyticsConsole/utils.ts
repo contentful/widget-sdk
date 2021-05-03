@@ -15,7 +15,8 @@ export const getFilteredEvents = (
 
   const isSearchResultEvent = (event) => {
     if (!filterText) return true;
-    const isMatch = (text: string) => text.includes(filterText);
+    const isMatch = (text: unknown) =>
+      typeof text === 'string' && text.toLowerCase().includes(filterText.toLowerCase());
     return (
       isMatch(event.raw.name) ||
       (event.snowplow && isMatch(event.snowplow.name)) ||

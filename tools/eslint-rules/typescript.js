@@ -5,7 +5,6 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'prettier/@typescript-eslint',
   ],
   parserOptions: {
     ecmaVersion: 6,
@@ -18,5 +17,6 @@ module.exports = {
     'rulesdir/enforce-getModule-call-inside-fn': 'error',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/ban-types': 'warn',
   },
 };

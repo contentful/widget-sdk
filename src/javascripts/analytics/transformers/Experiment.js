@@ -2,7 +2,7 @@ import { omitBy } from 'lodash';
 import { addUserOrgSpace } from './Decorators';
 import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
-export default function (action) {
+export default function Experiment(action) {
   return (_, data) => {
     const experiment = addUserOrgSpace((_, data) => {
       return {

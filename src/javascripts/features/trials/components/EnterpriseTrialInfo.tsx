@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Card,
   Heading,
   List,
   ListItem,
@@ -15,10 +16,8 @@ import { EVENTS, trackEvent, withInAppHelpUtmParamsSubscription } from '../utils
 const styles = {
   list: css({
     color: tokens.colorTextMid,
-  }),
-  listItem: css({
-    listStyleType: 'disc',
-    marginLeft: tokens.spacingL,
+    paddingLeft: tokens.spacingM,
+    '& li': { listStyleType: 'disc' },
   }),
 };
 
@@ -35,48 +34,52 @@ export const EnterpriseTrialInfo = () => {
   );
 
   return (
-    <Typography testId="platform-trial-info">
-      <Heading className="section-title">Trial resources</Heading>
-      <List className={styles.list}>
-        <ListItem className={styles.listItem}>
-          First steps{' '}
-          <TextLink
-            href={contentful123Link}
-            onClick={trackHelpLinkClick(contentful123Link)}
-            rel="noopener noreferrer"
-            target="_blank">
-            Contentful 1-2-3
-          </TextLink>
-        </ListItem>
-        <ListItem className={styles.listItem}>
-          Contentful{' '}
-          <TextLink
-            href={learningCenterLink}
-            onClick={trackHelpLinkClick(learningCenterLink)}
-            rel="noopener noreferrer"
-            target="_blank">
-            Learning Center
-          </TextLink>
-        </ListItem>
-        <ListItem className={styles.listItem}>
-          <TextLink
-            href={helpCenterLink}
-            onClick={trackHelpLinkClick(helpCenterLink)}
-            rel="noopener noreferrer"
-            target="_blank">
-            Help center
-          </TextLink>
-        </ListItem>
-        <ListItem className={styles.listItem}>
-          <TextLink
-            href={developerDocsLink}
-            onClick={trackHelpLinkClick(developerDocsLink)}
-            rel="noopener noreferrer"
-            target="_blank">
-            Developer portal
-          </TextLink>
-        </ListItem>
-      </List>
-    </Typography>
+    <Card testId="platform-trial-info" padding="large">
+      <Typography>
+        <Heading>Trial resources</Heading>
+        <List className={styles.list}>
+          <ListItem>
+            Start with{' '}
+            <TextLink
+              href={contentful123Link}
+              onClick={trackHelpLinkClick(contentful123Link)}
+              rel="noopener noreferrer"
+              target="_blank">
+              Contentful 1-2-3
+            </TextLink>
+          </ListItem>
+          <ListItem>
+            Continue learning through courses in our{' '}
+            <TextLink
+              href={learningCenterLink}
+              onClick={trackHelpLinkClick(learningCenterLink)}
+              rel="noopener noreferrer"
+              target="_blank">
+              learning center
+            </TextLink>
+          </ListItem>
+          <ListItem>
+            Get tips and advice from our articles in the{' '}
+            <TextLink
+              href={helpCenterLink}
+              onClick={trackHelpLinkClick(helpCenterLink)}
+              rel="noopener noreferrer"
+              target="_blank">
+              help center
+            </TextLink>
+          </ListItem>
+          <ListItem>
+            Access developer content in our{' '}
+            <TextLink
+              href={developerDocsLink}
+              onClick={trackHelpLinkClick(developerDocsLink)}
+              rel="noopener noreferrer"
+              target="_blank">
+              developer documentation
+            </TextLink>
+          </ListItem>
+        </List>
+      </Typography>
+    </Card>
   );
 };

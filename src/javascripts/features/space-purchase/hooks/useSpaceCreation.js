@@ -9,7 +9,7 @@ import { SpacePurchaseState } from '../context';
 import { useSessionMetadata } from './useSessionMetadata';
 import * as TokenStore from 'services/TokenStore';
 
-export const SPACE_CREATION_ERROR = 'CreateSpaceError';
+const SPACE_CREATION_ERROR = 'CreateSpaceError';
 
 export class SpaceCreationError extends Error {
   constructor(...params) {

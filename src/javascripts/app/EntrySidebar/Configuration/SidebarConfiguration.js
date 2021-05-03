@@ -60,7 +60,7 @@ SidebarConfiguration.propTypes = {
   defaultAvailableItems: PropTypes.array.isRequired,
 };
 
-export default (props) => {
+export default function SidebarConfigurationFn(props) {
   const {
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
@@ -78,4 +78,4 @@ export default (props) => {
   }
 
   return <SidebarConfiguration {...props} defaultAvailableItems={data} />;
-};
+}

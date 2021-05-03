@@ -131,8 +131,19 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
  */
 async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
+
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
   const environmentId = get(entity, ['data', 'sys', 'environment', 'sys', 'id']);
+
+  let hasServerError = false;
+
+  function onWarning(warning) {
+    const error = JSON.parse(warning.err.message);
+
+    if (error.status >= 500) {
+      hasServerError = true;
+    }
+  }
 
   const [
     contentType,
@@ -143,7 +154,7 @@ async function loadEditorData(loader, id) {
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
-    getCustomWidgetLoader(),
+    getCustomWidgetLoader(onWarning),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -162,7 +173,7 @@ async function loadEditorData(loader, id) {
     ...(await customWidgetLoader.getWithEditorInterface(editorInterface)).map(toLegacyWidget),
   ];
 
-  const fieldControls = buildRenderables(controls, widgets);
+  const fieldControls = buildRenderables(controls, widgets, { hasServerError });
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
   const editorsExtensions = buildEditorsRenderables(editorsConfig || [], widgets);
   const customEditor = editorsExtensions.find((e) => isCustomWidget(e.widgetNamespace));

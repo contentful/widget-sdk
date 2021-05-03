@@ -15,7 +15,7 @@ import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
 import ExplainRecommendation from './ExplainRecommendation';
 
-import { getHighestPlan } from '../shared/utils';
+import { getHighestPlan } from './utils';
 
 const styles = {
   textCenter: css({

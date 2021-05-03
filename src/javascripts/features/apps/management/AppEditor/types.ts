@@ -48,6 +48,16 @@ export interface AppBundleData {
   };
   comment?: string;
 }
+export interface AppUploadData {
+  sys: {
+    createdAt: string;
+    createdBy: DataLink;
+    expiresAt: string;
+    id: string;
+    organization: DataLink;
+    type: 'AppUpload';
+  };
+}
 
 export type AppBundleDataWithCreator = AppBundleData & {
   sys: {

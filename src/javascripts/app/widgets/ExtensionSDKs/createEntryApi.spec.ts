@@ -17,7 +17,7 @@ jest.mock('services/localeStore', () => {
 
   return {
     ...originalModule.default,
-    getDefaultLocale: () => ({ internal_code: 'internalCode', code: 'en-US' }), // eslint-disable-line @typescript-eslint/camelcase
+    getDefaultLocale: () => ({ internal_code: 'internalCode', code: 'en-US' }),
   };
 });
 

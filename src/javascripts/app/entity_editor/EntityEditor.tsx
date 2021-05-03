@@ -37,8 +37,11 @@ export const EntityEditor: FunctionComponent<EntityEditorProps> = (props) => {
     links: [],
     state: RequestState.PENDING,
   });
-  //@ts-expect-error
-  const { id: entityId, type: entityType } = editorData?.entityInfo || {};
+  const { id: entityId, type: entityType } = (editorData?.entityInfo || {}) as {
+    id?: string;
+    type?: string;
+  };
+
   useEffect(
     once(() => {
       if (!entityId || !entityType) {

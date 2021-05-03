@@ -32,7 +32,6 @@ export async function getAddOnProductRatePlans(endpoint: OrganizationEndpoint) {
     method: 'GET',
     path: ['product_rate_plans'],
     query: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       plan_type: 'add-on',
     },
   });
@@ -57,12 +56,10 @@ export async function getSpaceProductRatePlans(endpoint: OrganizationEndpoint, s
   }
 
   const query: Query = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     plan_type: 'space',
   };
 
   if (spaceId) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     query.space_id = spaceId;
   }
 

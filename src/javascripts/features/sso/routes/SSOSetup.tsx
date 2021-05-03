@@ -7,10 +7,10 @@ import { SSOUpsellState } from '../components/SSOUpsellState';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getCurrentOrg } from 'core/utils/getCurrentOrg';
+import { getOrganization } from 'services/TokenStore';
 
-const FeatureFetcher = createFetcherComponent(async () => {
-  const org = await getCurrentOrg();
+const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
+  const org = await getOrganization(orgId);
   const featureEnabled = await getOrgFeature(org.sys.id, OrganizationFeatures.SELF_CONFIGURE_SSO);
   const hasPerms = isOwnerOrAdmin(org);
   return {
@@ -20,11 +20,11 @@ const FeatureFetcher = createFetcherComponent(async () => {
   };
 });
 
-export function SSOSetup() {
+export function SSOSetup(props: { orgId: string }) {
   return (
     <>
       <DocumentTitle title="SSO" />
-      <FeatureFetcher>
+      <FeatureFetcher orgId={props.orgId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <FetcherLoading />;

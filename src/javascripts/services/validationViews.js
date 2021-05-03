@@ -73,14 +73,6 @@ const views = {
   ],
 };
 
-export default {
-  get: function (type) {
-    return views[type];
-  },
-  updateSettings: updateSettings,
-  getInitial: getInitialView,
-};
-
 function findViewByName(views, name) {
   return find(views, (v) => v.name === name);
 }
@@ -139,3 +131,13 @@ function getInitialView(validation) {
 
   return validation.currentView;
 }
+
+const validationViews = {
+  get: function (type) {
+    return views[type];
+  },
+  updateSettings: updateSettings,
+  getInitial: getInitialView,
+};
+
+export default validationViews;

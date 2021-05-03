@@ -1,1 +1,3 @@
-export default 'svg-component';
+import svgmock from 'svg-component';
+
+export default svgmock;

@@ -54,7 +54,6 @@ import { isOrganizationOnTrial } from 'features/trials';
 const trackTabOpen = (tab, isOrgOnTrial) => {
   isOrgOnTrial && handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, true);
   track('editor_workbench:tab_open', {
-    /* eslint-disable-next-line @typescript-eslint/camelcase */
     tab_name: tab,
   });
 };

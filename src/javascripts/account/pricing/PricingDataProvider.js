@@ -12,6 +12,7 @@ export const ENTERPRISE = 'Enterprise';
 const ENTERPRISE_TRIAL = 'Enterprise Trial';
 export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
 export const FREE = 'Free';
+export const PRO_BONO = 'Marketing - NGO';
 export const PARTNER_PLATFORM_BASE_PLAN_NAME = 'Partner Platform';
 export const TRIAL_SPACE_FREE_SPACE_PLAN_NAME = 'Trial Space';
 export const POC_FREE_SPACE_PLAN_NAME = 'Proof of Concept';
@@ -45,6 +46,10 @@ export function isHighDemandEnterprisePlan(plan) {
 
 export function isPartnerPlan(plan) {
   return plan.name === PARTNER_PLATFORM_BASE_PLAN_NAME;
+}
+
+export function isProBonoPlan(plan) {
+  return plan.customerType === PRO_BONO;
 }
 
 export function isFreeSpacePlan(plan) {

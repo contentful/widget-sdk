@@ -2,11 +2,10 @@ import React from 'react';
 import { withOrganizationRoute } from 'states/utils';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import { spaceCreationState } from 'features/space-creation';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';
 import { go } from 'states/Navigator';
+import { SubscriptionPageRoute } from './SubscriptionPageRoute';
 
-import { importer } from './importer';
 import { OrgSubscriptionContextProvider } from '../context';
 
 const subscriptionPageState = {
@@ -14,15 +13,9 @@ const subscriptionPageState = {
   url: '/subscription_overview',
   children: [spacePlanAssignmentState, spaceCreationState],
   component: (props) => (
-    <LazyLoadedComponent importer={importer}>
-      {({ SubscriptionPageRouter }) => {
-        return (
-          <OrgSubscriptionContextProvider>
-            <SubscriptionPageRouter {...props} />
-          </OrgSubscriptionContextProvider>
-        );
-      }}
-    </LazyLoadedComponent>
+    <OrgSubscriptionContextProvider>
+      <SubscriptionPageRoute {...props} />
+    </OrgSubscriptionContextProvider>
   ),
 };
 

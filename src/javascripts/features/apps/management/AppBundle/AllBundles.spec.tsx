@@ -67,11 +67,27 @@ describe('AllBundles', () => {
       await waitFor(() => {
         expect(screen.getAllByTestId('app-bundle.card')).toHaveLength(2);
       });
-      expect(screen.queryByText(bundleId)).toBeNull();
+      expect(screen.queryByText(appBundleMock.items[0].comment)).toBeNull();
     });
   });
   describe('when savedDefinition also contains a bundle that exists in context', () => {
     it('does not render that bundle in the list either', async () => {
+      const definition = {};
+      const otherBundleId = appBundleMock.items[1].sys.id;
+      const savedDefinition = {
+        bundle: {
+          sys: { id: otherBundleId },
+        },
+      };
+      renderInContext({ definition, savedDefinition, onChange: jest.fn() });
+      await waitFor(() => {
+        expect(screen.getAllByTestId('app-bundle.card')).toHaveLength(2);
+      });
+      expect(screen.queryByText(appBundleMock.items[1].comment)).toBeNull();
+    });
+  });
+  describe('when both draft and savedDefinition contain a bundle that exists in context', () => {
+    it('renders the saved bundle in the list', async () => {
       const bundleId = appBundleMock.items[0].sys.id;
       const definition = {
         bundle: {
@@ -86,10 +102,10 @@ describe('AllBundles', () => {
       };
       renderInContext({ definition, savedDefinition, onChange: jest.fn() });
       await waitFor(() => {
-        expect(screen.getAllByTestId('app-bundle.card')).toHaveLength(1);
+        expect(screen.getAllByTestId('app-bundle.card')).toHaveLength(2);
       });
-      expect(screen.queryByText(bundleId)).toBeNull();
-      expect(screen.queryByText(otherBundleId)).toBeNull();
+      expect(screen.queryByText(appBundleMock.items[0].comment)).toBeNull();
+      expect(screen.queryByText(appBundleMock.items[1].comment)).not.toBeNull();
     });
   });
 });

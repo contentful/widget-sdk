@@ -18,15 +18,15 @@ export const ACTIONS = [
 ];
 const aliasActionIndex = ACTIONS.indexOf('change_target');
 
-export const DISABLED = {
+const DISABLED = {
   ContentType: ['auto_save', 'archive', 'unarchive', 'change_target'],
   Asset: ['change_target'],
   Entry: ['change_target'],
   EnvironmentAlias: ACTIONS.slice(0, aliasActionIndex),
 };
 
-export const HIDDEN_ENTITY_TYPES = ['EnvironmentAlias'];
-export const HIDDEN_ACTIONS = ['change_target', 'Change Target'];
+const HIDDEN_ENTITY_TYPES = ['EnvironmentAlias'];
+const HIDDEN_ACTIONS = ['change_target', 'Change Target'];
 
 export const TYPE_LABELS = {
   ContentType: 'Content type',
@@ -94,7 +94,7 @@ export function changeAction(map, entityType, action, checked) {
 
 // Change value of all actions matching given entity type.
 // This function is pure and returns a new object
-export function changeAllActionsByEntityType(map, entityType, value) {
+function changeAllActionsByEntityType(map, entityType, value) {
   const result = cloneDeep(map);
   ACTIONS.filter((a) => !isActionDisabled(entityType, a)).forEach((a) => {
     result[entityType][a] = value;
@@ -104,7 +104,7 @@ export function changeAllActionsByEntityType(map, entityType, value) {
 
 // Change specific action under all types.
 // This function is pure and returns a new object
-export function changeAllTypesByAction(map, action, value) {
+function changeAllTypesByAction(map, action, value) {
   const result = cloneDeep(map);
   ENTITY_TYPES.filter((t) => !isActionDisabled(t, action)).forEach((t) => {
     result[t][action] = value;
@@ -130,12 +130,12 @@ export function isActionDisabled(type, action) {
 }
 
 // Is all actions *under given entity type* checked ?
-export function areAllActionsChecked(map, entityType) {
+function areAllActionsChecked(map, entityType) {
   return ACTIONS.filter((a) => !isActionDisabled(entityType, a)).every((a) => map[entityType][a]);
 }
 
 // Is all types *matching given action* checked ?
-export function areAllEntityTypesChecked(map, action) {
+function areAllEntityTypesChecked(map, action) {
   return ENTITY_TYPES.filter((t) => !isActionDisabled(t, action)).every((t) => map[t][action]);
 }
 

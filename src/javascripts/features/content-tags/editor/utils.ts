@@ -4,11 +4,12 @@ import { TagOption, TagSearchOption } from '../types';
 import { LinkSys } from 'core/services/SpaceEnvContext/types';
 import * as stringUtils from 'utils/StringUtils';
 
-export const tagPayloadToOption = (tag: Tag): TagOption => ({
+const tagPayloadToOption = (tag: Tag): TagOption => ({
   value: tag.sys.id,
   label: tag.name,
   visibility: tag.sys.visibility,
 });
+
 export const tagsPayloadToOptions = (tags: Tag[]): TagOption[] => tags.map(tagPayloadToOption);
 
 export const orderByLabel = <T extends TagSearchOption>(tags: T[]): T[] => {
@@ -52,7 +53,7 @@ export const groupByField = <T extends Record<string, any>>(
   delimiters: string[]
 ) => groupBy(tags, (tag) => groupForLabel(tag[field], delimiters));
 
-export const applyMinimumGroupSize = (groups, minGroupLength = 2) => {
+const applyMinimumGroupSize = (groups, minGroupLength = 2) => {
   if (!Array.isArray(groups[DEFAULT_GROUP])) {
     groups[DEFAULT_GROUP] = [];
   }

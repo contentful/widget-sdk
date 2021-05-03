@@ -127,6 +127,16 @@ describe('account/pricing/PricingDataProvider', () => {
     });
   });
 
+  describe('#isProBonoPlan', () => {
+    it('should return true for customer type "Marketing - NGO"', function () {
+      const plan = {
+        customerType: 'Marketing - NGO',
+      };
+
+      expect(PricingDataProvider.isProBonoPlan(plan)).toBe(true);
+    });
+  });
+
   describe('#isEnterprisePlan', () => {
     it('should return true for customer type "Enterprise"', function () {
       const plan = {

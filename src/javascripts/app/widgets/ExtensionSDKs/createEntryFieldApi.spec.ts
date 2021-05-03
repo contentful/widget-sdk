@@ -21,10 +21,10 @@ jest.mock('services/localeStore', () => {
 
   return {
     ...originalModule.default,
-    getDefaultLocale: jest.fn(() => ({ internal_code: 'internalCode', code: 'en-US' })), // eslint-disable-line @typescript-eslint/camelcase
+    getDefaultLocale: jest.fn(() => ({ internal_code: 'internalCode', code: 'en-US' })),
     getPrivateLocales: jest.fn(() => [
-      { internal_code: 'internalCode', code: 'en-US' }, // eslint-disable-line @typescript-eslint/camelcase
-      { internal_code: 'anotherInternalCode', code: 'en-GB' }, // eslint-disable-line @typescript-eslint/camelcase
+      { internal_code: 'internalCode', code: 'en-US' },
+      { internal_code: 'anotherInternalCode', code: 'en-GB' },
     ]),
   };
 });
@@ -169,7 +169,6 @@ describe('createEntryFieldApi', () => {
       const currentValue = 'this is the current value';
       (defaultDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
             internalCode: currentValue,
           },
@@ -275,7 +274,6 @@ describe('createEntryFieldApi', () => {
       const currentValue = 'value';
       (defaultDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
             internalCode: currentValue,
           },

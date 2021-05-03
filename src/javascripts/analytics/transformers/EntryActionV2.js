@@ -1,7 +1,7 @@
 import EntityAction from './EntityAction';
 import { get, upperFirst } from 'lodash';
 
-export default function (eventName, eventData) {
+export default function EntryActionV2(eventName, eventData) {
   const [downcaseEntity, action] = eventName.split(':');
   const entity = upperFirst(downcaseEntity);
   const fullEventData = { ...eventData, actionData: { entity, action } };

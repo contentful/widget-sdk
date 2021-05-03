@@ -192,36 +192,6 @@ const organizationAccessToolsRoutes = {
   }),
 };
 
-/** Organization subscription */
-
-type OrganizationsNewSpaceRoute = {
-  path: 'organizations.subscription.newSpace';
-  orgId: string;
-  navigationState?: {
-    from?: string;
-    preselect?: string;
-    spaceId?: string;
-  };
-};
-
-type OrganizationsSubscriptionRouteType = OrganizationsNewSpaceRoute;
-
-const organizationsSubscriptionRoutes = {
-  'organizations.subscription.newSpace': (
-    _,
-    { orgId, navigationState }: Omit<OrganizationsNewSpaceRoute, 'path'>
-  ) => ({
-    path: 'account.organizations.subscription_new.new_space',
-    params: {
-      pathname: '/',
-      orgId,
-      navigationState,
-    },
-  }),
-};
-
-/** Exports */
-
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -230,7 +200,6 @@ const routes = {
   ...organizationsSubscriptionBillingRoute,
   ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
-  ...organizationsSubscriptionRoutes,
   ...organizationAccessToolsRoutes,
 };
 
@@ -241,7 +210,6 @@ type OrganizationSettingsRouteType =
   | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
   | OrganizationSpacesRouteType
-  | OrganizationsSubscriptionRouteType
   | OrganizationsAccessToolsRouteType
   | OrganizationBillingRouteType
   | OrganizationBillingEditPaymentRouteType;

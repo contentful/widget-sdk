@@ -12,21 +12,23 @@ It's worth noting early: **error tracking is not informational logging**. To log
 
 We use Sentry as our error tracking tool across the entire organization, and the web app is no exception (you may see references to Bugsnag but this tool isn't used anymore). You can access Sentry via Okta (using SSO); if you don't have access you can contact IT to get an account.
 
-To track an error, you can use the logger service located at [`services/logger`](../../src/javascripts/services/logger.ts). It provides two methods: `captureError` and `captureWarning`. They function exactly the same, the difference being that in the Sentry UI, errors appear red while warnings appear yellow.
+To track an error, you can use the exported `capture*` functions from [`core/monitoring`](../../src/javascripts/core/monitoring/index.ts). There are two of them: `captureError` and `captureWarning`. They function exactly the same, the difference being that in the Sentry UI, errors appear red while warnings appear yellow.
 
 You can capture error instances, and any additional metadata using the provided functions:
 
 ```javascript
 // Assume `error` is an Error instance
-logger.captureError(error, {
-  organizationId,
-  spaceId,
+captureError(error, {
+  extra: {
+    otherInfo: 'Should not happen',
+  }
 });
 
 // `captureWarning` works the same way
-logger.captureWarning(error, {
-  organizationId,
-  spaceId,
+captureWarning(error, {
+  extra: {
+    otherInfo: 'Should not happen',
+  }
 });
 ```
 
@@ -54,7 +56,7 @@ It's recommended that you **capture caught errors "raw"**, in an untransformed w
 try {
   somethingThatThrows();
 } catch (err) {
-  logger.captureError(new Error('an error message'), {
+  captureError(new Error('an error message'), {
     message: err.message,
   });
 }
@@ -63,7 +65,7 @@ try {
 try {
   somethingThatThrows();
 } catch (err) {
-  logger.captureError(err);
+  captureError(err);
 }
 ```
 
@@ -75,23 +77,23 @@ If you used our Bugsnag setup before, you may remember that you could log both m
 
 ```javascript
 // Bad
-logger.captureError('oops something bad happened');
+captureError('oops something bad happened');
 
 // Also bad
 try {
   somethingThatThrowsAnObj();
 } catch (obj) {
-  logger.captureError(obj);
+  captureError(obj);
 }
 
 // Good
-logger.captureError(new Error('oops something bad happened'));
+captureError(new Error('oops something bad happened'));
 
 // Also good
 try {
   somethingThatThrowsAnObj();
 } catch (obj) {
-  logger.captureError(
+  captureError(
     new Error('Unexpected error when caling somethingThatThrowsAnObj', {
       capturedObject: obj,
     })
@@ -108,7 +110,7 @@ You may sometimes need to capture an error that happens after you're dealing wit
 try {
   await somethingAsync();
 } catch (err) {
-  logger.captureError(err);
+  captureError(err);
 }
 
 // To preserve the stack, instantiate the error earlier
@@ -117,10 +119,16 @@ const asyncError = new Error('Something went wrong while making this API call');
 try {
   await somethingAsync();
 } catch (err) {
-  logger.captureError(asyncError, {
-    message: err.message,
+  captureError(asyncError, {
+    extra: {
+      message: err.message,
+    }
   });
 }
 ```
 
 It's worth noting that you _will not_ capture the stack after the error instantiation. Keep this in mind as the stack trace may look a bit strange in the Sentry UI.
+
+## Don't capture global information again and again
+
+If you are tempted to add information about the global context of the application, don't do that while you capture the actual error at hand. There are builtin ways to our error tracking that can do that for you. For example: We do add organization, space and environment id to every error we send to Sentry.

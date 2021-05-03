@@ -9,7 +9,6 @@
  *
  * Persistence methods on resources are described by
  * - `describeResource`
- * - `describeVersionedResource`
  */
 
 import { cloneDeep } from 'lodash';
@@ -336,61 +335,6 @@ export const describeResource = entityDescription('resource', (names, descriptio
     });
   });
 });
-
-/**
- * Describe versioned resource persistence methods `save` and `delete`.
- *
- * The same as `describeResource` except that it checks for version
- * headers.
- */
-export const describeVersionedResource = entityDescription(
-  'resource',
-  (names, description, context) => {
-    const serverData = Object.freeze({
-      name: 'my resource',
-      sys: {
-        id: '43',
-        type: 'resource',
-        version: 123,
-      },
-    });
-
-    beforeEach(async function () {
-      context.request.respond(serverData);
-      context.resource = await context.space[names.getOne](serverData);
-      context[names.singular] = context.resource;
-      context.request.reset();
-    });
-
-    if (description) {
-      description(serverData);
-    }
-
-    it('#delete() ', async function () {
-      context.request.respond(null);
-      await context.resource.delete();
-      expect(context.request).toHaveBeenCalledWith({
-        method: 'DELETE',
-        url: `/spaces/42/${names.plural}/43`,
-      });
-    });
-
-    describe('#save()', function () {
-      it('sends put request with id', async function () {
-        context.resource.data.name = 'my new resource';
-        const resourceData = cloneDeep(context.resource.data);
-        context.request.respond(resourceData);
-        await context.resource.save();
-        expect(context.request).toHaveBeenCalledWith({
-          method: 'PUT',
-          url: `/spaces/42/${names.plural}/43`,
-          data: resourceData,
-          headers: { 'X-Contentful-Version': 123 },
-        });
-      });
-    });
-  }
-);
 
 function entityDescription(label, descriptor) {
   return function (names, extendedDescriptor, context) {

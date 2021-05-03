@@ -314,7 +314,7 @@ export function combinePropertiesObject<T>(props: {
     assertIsProperty(prop);
     return prop;
   });
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return combineProperties<T>(values$).map((values) => zipObject(keys, values));
 }

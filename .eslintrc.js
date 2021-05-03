@@ -73,6 +73,9 @@ module.exports = {
         'test/contract/**/*.spec.{js,ts,tsx}',
       ],
       extends: [require.resolve('./tools/eslint-rules/jest.js')],
+      rules: {
+        'no-import-assign': 'off',
+      },
     },
     /**
      * SVG files

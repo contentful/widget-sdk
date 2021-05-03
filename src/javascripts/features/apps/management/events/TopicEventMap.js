@@ -71,7 +71,7 @@ export function changeAction(map, entityType, action, checked) {
 
 // Change value of all actions matching given entity type.
 // This function is pure and returns a new object
-export function changeAllActionsByEntityType(map, entityType, value) {
+function changeAllActionsByEntityType(map, entityType, value) {
   const result = cloneDeep(map);
   ACTIONS.filter((a) => !isActionDisabled(entityType, a)).forEach((a) => {
     result[entityType][a] = value;
@@ -81,7 +81,7 @@ export function changeAllActionsByEntityType(map, entityType, value) {
 
 // Change specific action under all types.
 // This function is pure and returns a new object
-export function changeAllTypesByAction(map, action, value) {
+function changeAllTypesByAction(map, action, value) {
   const result = cloneDeep(map);
   ENTITY_TYPES.filter((t) => !isActionDisabled(t, action)).forEach((t) => {
     result[t][action] = value;

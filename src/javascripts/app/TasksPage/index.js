@@ -41,7 +41,7 @@ const styles = {
   }),
 };
 
-export default class TasksPage extends Component {
+export class TasksPage extends Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string.isRequired,

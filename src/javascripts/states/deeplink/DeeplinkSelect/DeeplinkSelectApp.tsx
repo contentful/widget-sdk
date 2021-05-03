@@ -6,8 +6,8 @@ import { styles } from './styles';
 
 interface DeeplinkSelectAppProps {
   redirect: { params: { orgId: string } };
-  onContinue: (definitionId) => {};
-  onCancel: () => {};
+  onContinue: (definitionId) => void;
+  onCancel: () => void;
 }
 
 export default function DeeplinkSelectApp(props: DeeplinkSelectAppProps) {

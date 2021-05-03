@@ -63,7 +63,6 @@ describe('When rendering editors page with no editors', () => {
     errors: {},
     focusedLocale: {
       name: 'locale name',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       internal_code: 'en',
       code: 'en',
       fallbackCode: 'en',
@@ -78,7 +77,6 @@ describe('When rendering editors page with no editors', () => {
     isSingleLocaleModeOn: true,
     defaultLocale: {
       name: 'locale name',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       internal_code: 'en',
       code: 'en',
       fallbackCode: 'en',

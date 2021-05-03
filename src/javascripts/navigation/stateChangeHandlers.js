@@ -156,7 +156,3 @@ function onlyAddToContextParamChanged(to, toParams, from, fromParams) {
     _.isEqual(_.omit(toParams, ['addToContext']), _.omit(fromParams, ['addToContext']))
   );
 }
-
-export function setNavigationConfirmed(isConfirmed) {
-  navigationConfirmed = isConfirmed;
-}

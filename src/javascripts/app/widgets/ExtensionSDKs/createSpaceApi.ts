@@ -32,7 +32,7 @@ interface EntityLink {
 
 // TODO: some of methods are only available in the Web App, not in the public SDK.
 // In a long run all methods should be typed in the SDK and made public.
-type InternalSpaceAPI = SpaceAPI & {
+export type InternalSpaceAPI = SpaceAPI & {
   getEntryReferences: (entryId: string) => Promise<any>;
   executeRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;
   validateRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;

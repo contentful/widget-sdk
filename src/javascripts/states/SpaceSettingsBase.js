@@ -1,7 +1,7 @@
 import { go } from 'states/Navigator';
 import { spaceResolver } from 'states/Resolvers';
 
-export function redirectReadOnlySpace(space) {
+function redirectReadOnlySpace(space) {
   if (space.readOnlyAt) {
     go({
       path: ['spaces', 'detail', 'home'],

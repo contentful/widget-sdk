@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
-import RecordsResourceUsage from './';
+import RecordsResourceUsage from './index';
 import createResourceService from 'services/ResourceService';
 
 jest.mock('services/ResourceService', () => {

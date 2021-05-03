@@ -6,7 +6,6 @@ import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
-import { SSOSetup } from 'features/sso';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from 'states/utils';
@@ -20,8 +19,6 @@ import { go } from 'states/Navigator';
 import { isOrganizationOnTrial, trialState } from 'features/trials';
 import { usageState } from 'features/organization-usage';
 import { organizationSpacesState } from 'features/organization-spaces';
-import { getModule } from 'core/NgRegistry';
-import StateRedirect from '../common/StateRedirect';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -100,29 +97,6 @@ export const organization = {
     billingRoutingState,
     trialState,
     organizationSpacesState,
-    {
-      name: 'sso',
-      url: '/sso{pathname:any}',
-      component: function SSOSetupRouter() {
-        const { orgId } = getModule('$stateParams');
-        const [basename] = window.location.pathname.split('sso');
-        const SSOSetupWithOrg = withOrganizationRoute(SSOSetup);
-        return (
-          <CustomRouter splitter="sso">
-            <RouteErrorBoundary>
-              <Routes basename={basename + 'sso'}>
-                <Route
-                  name="account.organizations.sso"
-                  path="/"
-                  element={<SSOSetupWithOrg orgId={orgId} />}
-                />
-                <Route name={null} path="*" element={<StateRedirect path="home" />} />
-              </Routes>
-            </RouteErrorBoundary>
-          </CustomRouter>
-        );
-      },
-    },
     {
       name: 'edit',
       url: '/edit{pathname:any}',

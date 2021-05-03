@@ -60,13 +60,13 @@ export const NewCommunityFeatures = () => (
       </DisplayText>
       <List className={styles.list}>
         <ListItem className={styles.listItem}>
-          you now have a single permanent Community space{' '}
+          You now have a single permanent Community space{' '}
         </ListItem>
         <ListItem className={styles.listItem}>
-          other spaces will be archived after 6 months
+          Other spaces will be archived after 6 months
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get access to{' '}
+          You get access to{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/tutorials/general/graphql/')}>
@@ -74,7 +74,7 @@ export const NewCommunityFeatures = () => (
           </TextLink>
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get access to{' '}
+          You get access to{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/multiple-environments/')}>
@@ -83,15 +83,15 @@ export const NewCommunityFeatures = () => (
           within your space
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get access for{' '}
+          You get support for{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/rich-text/')}>
-            rich text support
+            rich text
           </TextLink>
         </ListItem>
         <ListItem className={styles.listItem}>
-          and access to many other of the latest of Contentful - check out{' '}
+          And more! Check out{' '}
           <TextLink className={styles.link} href={websiteUrl('/pricing')}>
             the details of your new plan
           </TextLink>{' '}

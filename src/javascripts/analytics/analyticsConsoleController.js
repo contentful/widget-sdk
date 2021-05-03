@@ -72,9 +72,13 @@ function show(overrideScopeOptions) {
  * Adds an event to the console.
  */
 export function add(name, transformedData, rawData) {
+  const segmentSchema = getSegmentSchemaForEvent(name);
+  // Segment schemas registration with transformers is no longer required for `Analytics.tracking.xxx()` calls.
+  const isLegacyEventCall = !!segmentSchema;
+
   const event = {
     time: moment().format('HH:mm:ss'),
-    isValid: validateEvent(name),
+    isValid: isLegacyEventCall ? validateEvent(name) : true,
     raw: {
       name: name,
       data: rawData,
@@ -93,12 +97,14 @@ export function add(name, transformedData, rawData) {
     };
   }
 
-  const segmentSchema = getSegmentSchemaForEvent(name);
-  event.segment = {
-    name: segmentSchema.name,
-    version: segmentSchema.version,
-    data: buildPayload(segmentSchema, transformedData),
-  };
+  event.segment = isLegacyEventCall
+    ? {
+        name: segmentSchema.name,
+        data: buildPayload(segmentSchema, transformedData),
+      }
+    : {
+        data: rawData,
+      };
 
   eventsBus.emit(event);
   throwOrLogInvalidEvent(event);

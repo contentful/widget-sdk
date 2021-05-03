@@ -29,7 +29,7 @@ type Props = React.PropsWithChildren<{
   getEntity: <T extends EntityProps>(
     id: string,
     type: EntityType
-  ) => Promise<{ entity: { data: T } }>;
+  ) => Promise<{ entity: { data: T } } | void>;
 }>;
 
 type Action =
@@ -79,11 +79,15 @@ export const EntitiesProvider: React.FC<Props> = ({ children, getEntities, getEn
       switch (type) {
         case 'entry':
           result = await getEntity<EntryProps>(id, type);
-          dispatch({ type: 'addEntry', value: result });
+          if (result) {
+            dispatch({ type: 'addEntry', value: result });
+          }
           break;
         case 'asset':
           result = await getEntity<AssetProps>(id, type);
-          dispatch({ type: 'addAsset', value: result });
+          if (result) {
+            dispatch({ type: 'addAsset', value: result });
+          }
           break;
       }
     },

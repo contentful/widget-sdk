@@ -6,7 +6,7 @@ import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Tag } from '@contentful/types';
 
-type Props = PropsWithChildren<{}>;
+type Props = PropsWithChildren<any>;
 
 const ReadTagsProvider: React.FC<Props> = ({ children }) => {
   const tagsRepo = useTagsRepo();

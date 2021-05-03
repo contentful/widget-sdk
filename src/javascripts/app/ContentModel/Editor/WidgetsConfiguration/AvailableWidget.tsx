@@ -43,7 +43,6 @@ interface AvailableWidgetProps {
   name?: string;
   widgetNamespace: string;
   onClick: () => void;
-  index: number;
   availabilityStatus?: AvailabilityStatus;
   location: string;
 }

@@ -13,7 +13,7 @@ const initialState = {
   slides: [],
 };
 
-export enum actions {
+enum actions {
   NEXT = 'NEXT',
   PREV = 'PREV',
   GOTO = 'GOTO',

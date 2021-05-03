@@ -9,7 +9,7 @@ const styles = {
   }),
 };
 
-export interface StartAppTrialModalProps {
+interface StartAppTrialModalProps {
   isShown: boolean;
   onClose: () => void;
   onConfirm: () => void;

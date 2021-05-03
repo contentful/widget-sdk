@@ -20,7 +20,6 @@ const renderComponent = (override = (props) => props) => {
     },
     locale: {
       name: 'de-DE',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       internal_code: 'de-DE',
       code: 'de-DE',
       default: true,

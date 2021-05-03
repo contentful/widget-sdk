@@ -1,13 +1,12 @@
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import React from 'react';
-import { AppBundlesProps } from './AppBundles';
 
 async function importer() {
   return await import(/* webpackChunkName: "app-bundles" */ './AppBundles');
 }
 
-export const LazyLoadedAppBundles = (props: AppBundlesProps) => (
+export const LazyLoadedAppBundles = () => (
   <LazyLoadedComponent importer={importer}>
-    {({ AppBundles }) => <AppBundles {...props} />}
+    {({ AppBundles }) => <AppBundles />}
   </LazyLoadedComponent>
 );

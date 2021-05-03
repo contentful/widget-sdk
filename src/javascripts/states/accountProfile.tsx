@@ -60,9 +60,11 @@ function AccountProfileRouter() {
   );
 }
 
-export default {
+const accountProfileState = {
   name: 'profile',
   url: '/profile{pathname:any}',
   navComponent: ProfileNavigationBar,
   component: AccountProfileRouter,
 };
+
+export default accountProfileState;

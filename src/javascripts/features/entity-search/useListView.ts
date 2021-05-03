@@ -4,7 +4,7 @@ import { assign, noop } from 'lodash';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getAvailableDisplayFields } from 'features/entity-views';
 
-export type View = Record<string, any>;
+type View = Record<string, any>;
 export type ViewCallback = (view: View) => void;
 
 export const useListView = ({

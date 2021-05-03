@@ -13,7 +13,7 @@ interface Event {
   topics: unknown[];
 }
 
-interface AppDetailsStateContextValue {
+export interface AppDetailsStateContextValue {
   draftDefinition: AppDefinitionWithBundle;
   setDraftDefinition: (definition: AppDefinitionWithBundle) => void;
   setDraftEvents: (event: Event) => void;
@@ -22,6 +22,7 @@ interface AppDetailsStateContextValue {
   savedDefinition: AppDefinitionWithBundle;
   setSavedDefinition: (definition: AppDefinitionWithBundle) => void;
   draftEvents: Event;
+  resetDefinitionBundle: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -105,6 +106,14 @@ export const AppDetailsStateProvider = (props: AppDetailsStateProviderProps) => 
     }
   };
 
+  const resetDefinitionBundle = () => {
+    setDraftDefinition({
+      ...draftDefinition,
+      src: savedDefinition.src,
+      bundle: savedDefinition.bundle,
+    });
+  };
+
   return (
     <AppDetailsStateContext.Provider
       value={{
@@ -116,6 +125,7 @@ export const AppDetailsStateProvider = (props: AppDetailsStateProviderProps) => 
         setDraftDefinition,
         saveEvents,
         saveDefinition,
+        resetDefinitionBundle,
       }}>
       {props.children}
     </AppDetailsStateContext.Provider>

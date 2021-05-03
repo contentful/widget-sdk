@@ -25,10 +25,6 @@ const styles = {
   }),
 };
 
-export interface AppBundlesProps {
-  resetDefinitionBundle: () => void;
-}
-
 const NotHosted: React.FC = () => {
   return (
     <div className={styles.notHostedInfo}>
@@ -43,7 +39,7 @@ const NotHosted: React.FC = () => {
   );
 };
 
-export const AppBundles: React.FC<AppBundlesProps> = ({ resetDefinitionBundle }) => {
+export const AppBundles: React.FC = () => {
   const { bundles } = React.useContext(HostingStateContext);
   const hasExistingBundles = bundles.length > 0;
   return (
@@ -53,7 +49,7 @@ export const AppBundles: React.FC<AppBundlesProps> = ({ resetDefinitionBundle })
       ) : (
         <NotHosted />
       )}
-      <ActiveBundle resetDefinitionBundle={resetDefinitionBundle} />
+      <ActiveBundle />
       <AllBundles />
     </>
   );

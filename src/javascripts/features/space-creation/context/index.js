@@ -1,2 +1,2 @@
-export { actions, spaceCreationReducer } from './spaceCreationReducer';
+export { actions } from './spaceCreationReducer';
 export { SpaceCreationContextProvider, SpaceCreationState } from './SpaceCreationContext';

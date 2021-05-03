@@ -24,7 +24,7 @@ async function install(
   { extension, type, url }: { extension: CreateUIExtensionProps; type?: string; url?: string }
 ): Promise<{ navigate: true; extensionId: string } | { navigate: false }> {
   try {
-    // @ts-expect-error
+    // @ts-expect-error types in cma client are incorrect
     const res = await cma.extension.create({}, { extension });
     const loader = await getCustomWidgetLoader();
     const extensionId = res.sys.id;
@@ -59,7 +59,7 @@ function handleInstallError(err) {
   return { navigate: false } as const;
 }
 
-export const openGitHubInstaller = async (
+const openGitHubInstaller = async (
   cma: BatchedPlainCmaClient,
   extensionUrl: string | null = null,
   extensionUrlReferrer: string | null = null
@@ -87,7 +87,7 @@ export const openGitHubInstaller = async (
   }
 };
 
-export function createExtension(cma: BatchedPlainCmaClient) {
+function createExtension(cma: BatchedPlainCmaClient) {
   return install(cma, {
     extension: {
       name: 'New extension',

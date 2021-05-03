@@ -8,7 +8,7 @@ import { getSpaceWizardData } from './SpaceWizard';
  * Exports a function that transforms data for the `space:create`
  * event into Snowplow's format
  */
-export default function (_eventName, data) {
+export default function SpaceCreate(_eventName, data) {
   const baseData = getBaseData(data);
   const contexts = [
     {

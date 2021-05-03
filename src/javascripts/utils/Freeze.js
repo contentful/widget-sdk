@@ -40,8 +40,6 @@ export function deepFreeze(o) {
   return o;
 }
 
-export { deepFreeze as freeze };
-
 export function shallowFreeze(o) {
   if (isFrozen(o)) {
     return o;

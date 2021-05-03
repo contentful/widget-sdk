@@ -18,7 +18,6 @@ export function makeEventFromWidget(
   environmentId: string
 ) {
   return {
-    /* eslint-disable @typescript-eslint/camelcase */
     location,
     extension_id: get(widget, ['descriptor', 'id']),
     // TODO: rename property in v2 of the schema.
@@ -28,6 +27,5 @@ export function makeEventFromWidget(
     installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
     instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
     environment_id: environmentId,
-    /* eslint-enable @typescript-eslint/camelcase */
   };
 }

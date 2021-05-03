@@ -24,6 +24,7 @@ import { AppDetailsStateContext } from '../AppDetails/AppDetailsStateContext';
 const appHostingStyles = {
   hostingSwitch: css({
     marginBottom: tokens.spacingM,
+    fontWeight: tokens.fontWeightMedium,
   }),
   additionalInformation: css({
     marginTop: tokens.spacingXs,
@@ -50,9 +51,7 @@ export function AppHosting({
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
-  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
-    AppDetailsStateContext
-  );
+  const { draftDefinition, setDraftDefinition } = React.useContext(AppDetailsStateContext);
 
   React.useEffect(() => {
     getVariation(FLAGS.APP_HOSTING_UI, {
@@ -70,14 +69,6 @@ export function AppHosting({
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     clearErrorForField([...errorPath, 'src']);
     setDraftDefinition({ ...draftDefinition, src: e.target.value.trim() });
-  };
-
-  const onResetBundle = () => {
-    setDraftDefinition({
-      ...draftDefinition,
-      src: savedDefinition.src,
-      bundle: savedDefinition.bundle,
-    });
   };
 
   const renderSwitch = () => (
@@ -125,7 +116,6 @@ export function AppHosting({
                     ? { title: 'View all bundles', onLinkClick: () => goToTab('bundles') }
                     : undefined
                 }
-                resetDefinitionBundle={onResetBundle}
               />
             </>
           ) : (

@@ -1,7 +1,7 @@
 import { first, last, merge } from 'lodash';
 import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
-export default function (eventName, data) {
+export default function InviteUserExperiment(eventName, data) {
   const experiment = {
     data: merge(
       {

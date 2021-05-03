@@ -2,11 +2,14 @@ import React from 'react';
 import { get } from 'lodash';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
-import { trackReferenceAction, safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { trackReferenceAction, safeNonBlockingTrack } from './utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
+import { StreamBus } from 'core/utils/kefir';
+import { WidgetApi } from 'widgets/BuiltinWidgets';
+import { EditorWithTrackingProps } from './types';
 
-const onMediaAction = (loadEvents, sdk) => (action) => {
+const onMediaAction = (loadEvents: StreamBus<any>, sdk: WidgetApi) => (action) => {
   switch (action.type) {
     case 'select_and_link':
       trackReferenceAction('reference_editor_action:link', action, sdk);
@@ -40,13 +43,14 @@ const onMediaAction = (loadEvents, sdk) => (action) => {
   }
 };
 
-export function SingleMediaEditorWithTracking(props) {
+export function SingleMediaEditorWithTracking(props: EditorWithTrackingProps) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk, renderCustomActions } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <SingleMediaEditor
+      isInitiallyDisabled={false}
       viewType={viewType}
       sdk={sdk}
       getEntityUrl={(assetId) =>
@@ -64,13 +68,14 @@ export function SingleMediaEditorWithTracking(props) {
   );
 }
 
-export function MultipleMediaEditorWithTracking(props) {
+export function MultipleMediaEditorWithTracking(props: EditorWithTrackingProps) {
   const { currentSpace } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk, renderCustomActions } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <MultipleMediaEditor
+      isInitiallyDisabled={false}
       viewType={viewType}
       sdk={sdk}
       getEntityUrl={(assetId) =>
@@ -87,6 +92,3 @@ export function MultipleMediaEditorWithTracking(props) {
     />
   );
 }
-
-SingleMediaEditorWithTracking.propTypes = EditorWithTrackingProps;
-MultipleMediaEditorWithTracking.propTypes = EditorWithTrackingProps;

@@ -30,7 +30,6 @@ const getLocale = (overrides = {} as any) => {
   const name = overrides.name || 'de-DE';
   return {
     name,
-    // eslint-disable-next-line @typescript-eslint/camelcase
     internal_code: name,
     code: name,
     fallbackCode: overrides.name ? 'de-DE' : undefined,
@@ -82,10 +81,8 @@ const renderComponent = (override = (props) => props) => {
     editorContext: {
       hasInitialFocus: true,
       validator: {
-        /* eslint-disable @typescript-eslint/camelcase */
         hasFieldLocaleError: jest.fn((_, { internal_code }) => internal_code == 'fr'),
         hasFieldError: jest.fn().mockReturnValue(false),
-        /* eslint-enable @typescript-eslint/camelcase */
       },
       entityInfo: {
         type: 'Entry' as EntityType,

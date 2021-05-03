@@ -5,7 +5,7 @@ import { css, cx } from 'emotion';
 import { Grid, Tooltip, Icon, Card, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import PlanFeatures from '../shared/PlanFeatures';
+import PlanFeatures from './PlanFeatures';
 import { Pluralized, Price } from 'core/components/formatting';
 
 const styles = {

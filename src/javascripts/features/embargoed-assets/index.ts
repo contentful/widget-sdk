@@ -1,3 +1,3 @@
 export { EmbargoedAssetsRoute } from './management/routes/EmbargoedAssetsRoute';
 
-export type { EmbargoedAsset, EmbargoedAssetApi } from './management/types';
+export type { EmbargoedAssetApi } from './management/types';

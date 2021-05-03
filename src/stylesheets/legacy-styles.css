@@ -889,41 +889,7 @@ pre,
     display: block;
     margin: 8px 0;
   }
-  /* forms */
-  .settings-form__section {
-    margin-top: 1.285714285714286em;
-    padding-top: 0;
-    padding-right: 3.214285714285714em;
-    padding-bottom: 1.285714285714286em;
-    border-top: 1px solid var(--color-element-light);
-  }
-  .settings-form__header {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    margin: -13px 0 0.9em 1.285714285714286em;
-  }
-  .settings-form__header > h1,
-  .settings-form__header h2,
-  .settings-form__header h3,
-  .settings-form__header button {
-    margin: 0;
-    margin-right: 10px;
-    padding: 0.257142857142857em;
-    background-color: var(--color-white);
-  }
-  .settings-form__header > button:hover {
-    background-color: var(--color-white);
-  }
-  .settings-form__header > button i {
-    margin-right: 10px;
-  }
-  .settings-form__content {
-    margin-left: 2.571428571428572em;
-  }
+
   /* Webhooks */
   .webhook-call__header {
     padding: 1.285714285714286em;

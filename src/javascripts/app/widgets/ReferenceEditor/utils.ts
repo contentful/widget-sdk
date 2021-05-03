@@ -1,10 +1,11 @@
 import noop from 'lodash/noop';
 import get from 'lodash/get';
-import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics';
+import { WidgetApi } from 'widgets/BuiltinWidgets';
+import { EventData } from 'analytics/types';
 
-export function trackReferenceAction(eventName, action, sdk) {
-  const eventData = {
+export function trackReferenceAction(eventName: string, action: any, sdk: WidgetApi) {
+  const eventData: EventData = {
     parentEntryId: sdk.entry.getSys().id,
     parentFieldPath: [sdk.field.id, sdk.field.locale],
     entityType: action.entity,
@@ -15,21 +16,14 @@ export function trackReferenceAction(eventName, action, sdk) {
   safeNonBlockingTrack(eventName, eventData);
 }
 
-export function safeNonBlockingTrack(...args) {
+export function safeNonBlockingTrack(eventName: string, eventData: EventData) {
+  // @ts-expect-error requestIdleCallback was added to window object
   const queueFn = window.requestIdleCallback || window.requestAnimationFrame || noop;
   queueFn(() => {
     try {
-      track(...args);
+      track(eventName, eventData);
     } catch (e) {
       // do nothing
     }
   });
 }
-
-export const EditorWithTrackingProps = {
-  viewType: PropTypes.string.isRequired,
-  sdk: PropTypes.object.isRequired,
-  loadEvents: PropTypes.shape({
-    emit: PropTypes.func.isRequired,
-  }).isRequired,
-};

@@ -11,7 +11,7 @@ import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
  * on the user's behalf. For example, during auto space creation or when a space is
  * created using an example space template.
  */
-export default function (_eventName, eventData) {
+export default function EntityAction(_eventName, eventData) {
   const contexts = [getEntityContext(eventData)];
 
   if (eventData.template) {

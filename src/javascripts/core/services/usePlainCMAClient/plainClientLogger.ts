@@ -23,7 +23,8 @@ export const responseLogger: ClientParams['responseLogger'] = (result) => {
   if (!(result instanceof Error)) {
     return;
   }
-  //@ts-expect-error
+
+  //@ts-expect-error mute missing result.response on Error
   const response = result.response as Response;
 
   if (response.status === 429 && response.request?.responseURL) {

@@ -37,7 +37,7 @@ const styles = {
   }),
 };
 
-export interface SpaceTrialWidgetProps {
+interface SpaceTrialWidgetProps {
   spaceId: string;
   hasActiveAppTrial?: boolean;
 }

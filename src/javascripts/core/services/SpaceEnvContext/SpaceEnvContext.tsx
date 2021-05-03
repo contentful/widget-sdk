@@ -1,6 +1,7 @@
 import React, { createContext, useMemo, useState, useEffect } from 'react';
 import deepEqual from 'fast-deep-equal';
 import * as K from 'core/utils/kefir';
+import { setTags } from 'core/monitoring';
 
 import {
   getSpaceId,
@@ -69,20 +70,31 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   }
 
   const space = getSpace();
+  const currentOrganizationId = getOrganizationId(space);
+  const currentSpaceId = getSpaceId(space);
+  const currentEnvironmentId = getEnvironmentId(space);
+  const currentEnvironmentAliasId = getEnvironmentAliasId(space);
+
+  // set tags to global scope, will be added to error-tracking automagically
+  setTags({
+    organizationId: currentOrganizationId,
+    spaceId: currentSpaceId,
+    environmentId: currentEnvironmentAliasId || currentEnvironmentId,
+  });
 
   // Most common values are exported as property values
   const value: SpaceEnvContextValue = {
     currentEnvironment: getEnvironment(space),
-    currentEnvironmentId: getEnvironmentId(space),
-    currentEnvironmentAliasId: getEnvironmentAliasId(space),
+    currentEnvironmentId,
+    currentEnvironmentAliasId,
     currentEnvironmentName: getEnvironmentName(space),
     currentOrganization: getOrganization(space),
-    currentOrganizationId: getOrganizationId(space),
+    currentOrganizationId,
     currentOrganizationName: getOrganizationName(space),
     currentSpace: space,
     currentSpaceData: getSpaceData(space),
     currentSpaceEnvironments: getEnvironments(),
-    currentSpaceId: getSpaceId(space),
+    currentSpaceId,
     currentSpaceName: getSpaceName(space),
     currentSpaceContentTypes: contentTypes,
     currentUsers: getUsers(),

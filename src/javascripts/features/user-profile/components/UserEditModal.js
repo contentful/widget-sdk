@@ -375,6 +375,7 @@ const UserPropType = PropTypes.shape({
   confirmed: PropTypes.bool,
   mfaEligible: PropTypes.bool,
   mfaEnabled: PropTypes.bool,
+  ssoLoginOnly: PropTypes.bool,
   sys: PropTypes.shape({ version: PropTypes.number }),
 });
 

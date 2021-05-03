@@ -1,6 +1,6 @@
 import { fromArray } from 'utils/Random';
 
-export const messages: string[] = [
+const messages: string[] = [
   'Good things take time',
   'Take a moment to relax',
   'Building your page',

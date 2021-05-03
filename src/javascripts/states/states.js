@@ -57,7 +57,8 @@ export function loadAll() {
 /**
  * Load only the given states. Used for testing
  */
-export function load(states) {
+
+function load(states) {
   const config = getModule('states/config');
   (states || []).forEach((state) => config.add(state));
   config.init();

@@ -34,7 +34,6 @@ import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
-import { AppBundleData } from '../AppEditor';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import {
@@ -61,7 +60,6 @@ interface Event {
 
 interface Props {
   definition: AppDefinitionWithBundle;
-  bundles: { items: AppBundleData[] };
   events: Event;
   goToListView: () => void;
   goToTab: (tab: string) => void;
@@ -254,7 +252,7 @@ export const AppDetails = (props: Props) => {
 
     try {
       await ManagementApiClient.deleteDef(props.definition);
-      Notification.success(`${props.definition} was deleted!`);
+      Notification.success(`${props.definition.name} was deleted!`);
       props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
@@ -291,11 +289,6 @@ export const AppDetails = (props: Props) => {
     setDirty(newDirty);
     onDirtyChange(newDirty);
   }, [savedDefinition, draftDefinition, savedEvents, draftEvents, onDirtyChange]);
-
-  const resetDefinitionBundle = () => {
-    const originalBundle = savedDefinition.bundle;
-    setDraftDefinition({ ...draftDefinition, bundle: originalBundle });
-  };
 
   return (
     <Workbench>
@@ -422,7 +415,7 @@ export const AppDetails = (props: Props) => {
           {hostingEnabled
             ? selectedTab === TAB_PATHS.BUNDLES && (
                 <TabPanel id={TAB_PATHS.BUNDLES} className={styles.tabPanel}>
-                  <AppBundles resetDefinitionBundle={resetDefinitionBundle} />
+                  <AppBundles />
                 </TabPanel>
               )
             : null}

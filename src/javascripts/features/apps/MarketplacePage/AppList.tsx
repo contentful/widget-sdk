@@ -14,7 +14,6 @@ interface AppListProps {
   title: string;
   info?: string;
   testId?: string;
-  hasAdvancedAppsFeature: boolean;
 }
 
 export const AppList = ({
@@ -26,7 +25,6 @@ export const AppList = ({
   title,
   info,
   testId,
-  hasAdvancedAppsFeature,
 }: AppListProps) => {
   return (
     <>
@@ -43,7 +41,6 @@ export const AppList = ({
               appManager={appManager}
               key={app.id}
               app={app}
-              hasAdvancedAppsFeature={hasAdvancedAppsFeature}
               canManageApps={canManageApps}
               openDetailModal={openDetailModal}
               orgId={organizationId}

@@ -101,7 +101,6 @@ export function AppDetailsRoute(props: Props) {
         <AppDetails
           {...props}
           definition={definition}
-          bundles={props.bundles}
           events={events}
           goToTab={goToTab}
           goToListView={goToListView}

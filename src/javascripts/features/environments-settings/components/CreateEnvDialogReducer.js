@@ -28,7 +28,7 @@ const SET_SERVER_FAILURE = 'SET_SERVER_FAILURE';
  * Reducer
  */
 
-export const createEnvReducer = createImmerReducer({
+const createEnvReducer = createImmerReducer({
   [SET_FIELD_VALUE]: (state, { name, value }) => {
     state.fields[name].value = value;
     state.fields[name].errors = [];
@@ -134,7 +134,7 @@ export const useCreateEnvState = (props) => {
  * functions that take the field value and return an error if the field
  * value is invalid.
  */
-export const validations = {
+const validations = {
   id: (value) => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;

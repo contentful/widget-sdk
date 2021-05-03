@@ -25,12 +25,6 @@ import { usePubSubClient } from 'core/hooks';
 import { LoadingState } from 'features/loading-state';
 import { MarketplaceApp } from 'features/apps-core';
 
-export interface PageWidgetParameters {
-  instance: Record<string, any>;
-  invocation: { path: string };
-  installation: Record<string, any>;
-}
-
 interface PageWidgetRendererProps {
   path: string;
   repo: {

@@ -1,5 +1,6 @@
 import { noop } from 'lodash';
 import { getSegmentSchemaForEvent } from './transform';
+import { Schema } from './SchemasSegment';
 
 let mockAnalytics;
 
@@ -9,6 +10,8 @@ jest.mock('utils/LazyLoader', () => ({
 
 const wait = noop;
 
+const someEventName = 'element:click';
+
 describe('Segment', () => {
   let segment;
   let track;
@@ -16,10 +19,13 @@ describe('Segment', () => {
   beforeEach(() => {
     // Special import and treatment to reset globals/singleton:
     jest.resetModules();
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     segment = require('./segment').default;
 
     track = jest.fn();
     window.analytics = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       push: noop,
     };
     mockAnalytics = {
@@ -31,20 +37,20 @@ describe('Segment', () => {
   describe('#enable()', () => {
     it('enables tracking', async () => {
       segment.enable();
-      segment.track('editor_load:init', { data: {} });
+      segment.track(someEventName, { data: {} });
       await wait();
       expect(track).toHaveBeenCalledTimes(1);
     });
 
     it('tracks events tracked before .enable() was called', async () => {
-      segment.track('editor_load:init', { data: {} });
+      segment.track(someEventName, { data: {} });
       segment.enable();
       await wait();
       expect(track).toHaveBeenCalledTimes(1);
     });
 
     it('does not enable tracking if not called', async () => {
-      segment.track('editor_load:init', { data: {} });
+      segment.track(someEventName, { data: {} });
       await wait();
       expect(track).toHaveBeenCalledTimes(0);
     });
@@ -61,7 +67,7 @@ describe('Segment', () => {
       // Use arbitrary legacy event name from Snowplow -> Segment migration. Can be replaced with any other
       // event if this one gets removed in the future or if the `wrapPayloadInData` gets removed from it.
       const legacyEventName = 'entry:create';
-      const schema = getSegmentSchemaForEvent('entry:create');
+      const schema = getSegmentSchemaForEvent('entry:create') as Schema;
       // Sanity check to ensure above event falls into the right category:
       expect(schema.wrapPayloadInData).toBe(true);
 
@@ -78,8 +84,8 @@ describe('Segment', () => {
     });
 
     it('tracks passed `data` directly for events not using `wrapPayloadInData` legacy option', () => {
-      const nonLegacyEventName = 'editor_load:init';
-      const schema = getSegmentSchemaForEvent(nonLegacyEventName);
+      const nonLegacyEventName = 'reference_editor_action:create';
+      const schema = getSegmentSchemaForEvent(nonLegacyEventName) as Schema;
       expect(schema.wrapPayloadInData).toBeFalsy();
 
       segment.track(nonLegacyEventName, { data });

@@ -30,7 +30,7 @@ const styles = {
   }),
 };
 
-export interface SpacesListForMembersProps {
+interface SpacesListForMembersProps {
   spaces: any[];
 }
 

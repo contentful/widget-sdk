@@ -55,13 +55,6 @@ const detail = editorBase(
   false
 );
 
-export default {
-  name: 'content_types',
-  url: '/content_types',
-  abstract: true,
-  children: [list, newState, detail],
-};
-
 function editorBase(options) {
   return {
     redirectTo: '.fields',
@@ -70,3 +63,12 @@ function editorBase(options) {
     ...options,
   };
 }
+
+const contentTypesState = {
+  name: 'content_types',
+  url: '/content_types',
+  abstract: true,
+  children: [list, newState, detail],
+};
+
+export default contentTypesState;

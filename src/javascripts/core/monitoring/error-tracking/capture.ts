@@ -12,13 +12,13 @@ const getTags = () => ({
 });
 
 const withLevel = (level: Severity) => (error: Error, captureContext?: CaptureContext) => {
-  // @ts-expect-error
+  // @ts-expect-error mute Scope type is incompatible
   withScope((scope: Scope) => {
     scope.setLevel(level);
     scope.setTags(getTags());
     scope.setExtras(error as Record<string, any>);
 
-    // @ts-expect-error
+    // @ts-expect-error mute captureContext
     captureException(error, captureContext);
   });
 };

@@ -193,7 +193,6 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   }
 
   return (
-    // @ts-expect-error
     <EntitiesProvider getEntities={getEntities} getEntity={getEntity}>
       <EntitiesContext.Consumer>
         {({ entities, fetchEntities, fetchEntity }) => {

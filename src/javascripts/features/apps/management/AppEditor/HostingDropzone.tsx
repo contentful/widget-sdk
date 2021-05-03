@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 import { styles } from './hostingDropzoneStyles';
 import { styles as appEditorStyles } from './styles';
-import { createBundle } from './appHostingApi';
+import { createUpload, createBundleFromUpload } from './appHostingApi';
 import { AppDefinitionWithBundle } from './AppHosting';
 import { css } from 'emotion';
 import { HostingStateContext } from '../AppDetails/HostingStateProvider';
@@ -17,6 +17,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { validateBundle } from './bundleValidation';
+import { openCommentModal } from './HostingDropzoneCommentModal';
 
 enum DropZoneStatus {
   ACTIVE,
@@ -49,11 +50,41 @@ export function HostingDropzone({
     if (errorMessage) {
       Notification.error(errorMessage, { title: 'Invalid bundle' });
     } else {
-      setDropzoneStatus(DropZoneStatus.LOADING);
-      const bundle = await createBundle(acceptedFiles, definition);
-      if (bundle) {
-        onAppBundleCreated(bundle);
-        addBundle(bundle);
+      const { uploadRequest, addProgressListener, cancelUploadRequest } = createUpload(
+        acceptedFiles,
+        definition
+      );
+
+      const commentModalResult = await openCommentModal(addProgressListener, uploadRequest);
+
+      if (commentModalResult.kind === 'cancel') {
+        cancelUploadRequest();
+      } else {
+        setDropzoneStatus(DropZoneStatus.LOADING);
+        try {
+          const upload = await uploadRequest;
+
+          // If upload was cancelled, then the result could be void.
+          // This isn't going to be happen, because we only cancel in the other
+          // branch of this if.
+          if (upload) {
+            const bundle = await createBundleFromUpload(
+              definition,
+              upload,
+              commentModalResult.comment
+            );
+            if (bundle) {
+              onAppBundleCreated(bundle);
+              addBundle(bundle);
+            }
+          }
+        } catch (e) {
+          Notification.error(
+            e.data?.message ||
+              'Something went wrong while uploading your deploy. Please try again.',
+            { title: e.data?.message ? 'Invalid bundle' : undefined }
+          );
+        }
       }
     }
 

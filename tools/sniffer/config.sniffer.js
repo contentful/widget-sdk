@@ -1,8 +1,8 @@
 const analyzers = require('./analyzers');
 const attributes = require('./attributes');
-const fetch = require('node-fetch');
 const createMigrationMessage = require('./createMigrationMessage');
 const { createApolloFetch } = require('apollo-fetch');
+const fs = require('fs').promises;
 
 const uri = process.env.SNIFFER_UPLOAD_URL;
 const apolloFetch = createApolloFetch({ uri });
@@ -81,40 +81,15 @@ module.exports = {
       return true;
     }
 
-    try {
-      const diffJson = JSON.parse(diff);
-      const postMessage = [
-        '## React migration',
-        markdown,
-        createMigrationMessage(diffJson),
-        '[Sniffer](https://contentful-sniffer.netlify.com/pr-log)',
-      ].join('\n\n');
+    const diffJson = JSON.parse(diff);
+    const postMessage = [
+      '## React migration',
+      markdown,
+      createMigrationMessage(diffJson),
+      '[Sniffer](https://contentful-sniffer.netlify.com/pr-log)',
+    ].join('\n\n');
 
-      const { requestId, statusCode, message } = await fetch(process.env.COMMENT_LAMBDA_URL, {
-        method: 'post',
-        body: JSON.stringify({
-          issue: Number.parseInt(pr, 10),
-          message: postMessage,
-          type: 'migration',
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`,
-        },
-      }).then((res) => res.json());
-
-      if (statusCode >= 400) {
-        const error = new Error(message);
-        error.statusCode = statusCode;
-        error.requestId = requestId;
-
-        throw error;
-      }
-
-      console.log(`Migration comment posted to PR#${pr} ->`, { requestId, statusCode, message });
-    } catch (err) {
-      console.error('Migration comment upload failed ->', err);
-      console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
-    }
+    // will be used in a subsequent CircleCI step
+    await fs.writeFile(process.env.SNIFFER_MARKDOWN_FILE, postMessage);
   },
 };

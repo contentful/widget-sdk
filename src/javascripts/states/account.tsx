@@ -9,7 +9,7 @@ import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
 const NewOrganizationRoute = () => <GatekeeperView title="Create new organization" />;
 
-export default {
+const accountState = {
   name: 'account',
   url: '/account',
   abstract: true,
@@ -26,3 +26,5 @@ export default {
     accountProfileState,
   ],
 };
+
+export default accountState;

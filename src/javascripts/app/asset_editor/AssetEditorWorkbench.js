@@ -20,7 +20,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { useFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
-import { styles as editorStyles } from './../entry_editor/styles';
+import { styles as editorStyles } from '../entry_editor/styles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
 import { getModule } from 'core/NgRegistry';

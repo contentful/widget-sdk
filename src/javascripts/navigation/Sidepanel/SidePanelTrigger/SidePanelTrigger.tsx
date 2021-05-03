@@ -17,7 +17,6 @@ interface Props {
   onClickOrganization: React.MouseEventHandler;
   openAppSwitcher?: () => void;
   testId?: string;
-  showIcon?: boolean;
 }
 
 type OrganizationProps = {

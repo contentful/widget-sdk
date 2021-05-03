@@ -32,38 +32,7 @@ if (tests.ios || /mac(68k|ppc|intel)/i.test(platform)) {
 
 /**
  * @ngdoc method
- * @name userAgent#getUserAgent
- * @description Returns navigator.userAgent string
- */
-export const getUserAgent = _.constant(userAgent);
-/**
- * @ngdoc method
- * @name userAgent#getPlatform
- * @description Returns navigator.platform string
- */
-export const getPlatform = _.constant(platform);
-/**
- * @ngdoc method
  * @name userAgent#getCtrlKey
  * @description Returns modifier key as string ("Ctrl" or "Cmd")
  */
 export const getCtrlKey = _.constant(ctrlKey);
-
-/**
- * @ngdoc method
- * @name userAgent#isIOS
- * @description Returns true if user is using IOS
- */
-export const isIOS = _.constant(tests.ios);
-/**
- * @ngdoc method
- * @name userAgent#isApple
- * @description Returns true if user is using Apple device
- */
-export const isApple = _.constant(tests.apple);
-/**
- * @ngdoc method
- * @name userAgent#isSafari
- * @description Returns true if user is using Safari
- */
-export const isSafari = _.constant(tests.safari);
