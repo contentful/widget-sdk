@@ -9,9 +9,10 @@ import { track } from 'analytics/Analytics';
 import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { getBasePlan } from 'features/pricing-entities';
+import { isFreePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 
-const COMMUNITY_BASE_PLAN_NAME = 'Community Platform';
-const TEAM_BASE_PLAN_NAME = 'Team';
+const V1_DESTINATION_COMMUNITY = 'community';
+const V1_DESTINATION_TEAM = 'team';
 
 async function getCurrentOrg() {
   const { orgId, spaceId } = getModule('$stateParams');
@@ -36,8 +37,10 @@ export async function openV1MigrationWarning() {
 
   const endpoint = createOrganizationEndpoint(org.sys.id);
   const basePlan = await getBasePlan(endpoint);
-  const isCommunity = basePlan.name === COMMUNITY_BASE_PLAN_NAME; // TODO and check the additional v1 indicator
-  const isTeam = basePlan.name === TEAM_BASE_PLAN_NAME; // TODO and check the additional v1 indicator
+  const v1migrationDestination = org.sys._v1Migration.destination;
+
+  const isCommunity = isFreePlan(basePlan) && v1migrationDestination === V1_DESTINATION_COMMUNITY;
+  const isTeam = isSelfServicePlan(basePlan) && v1migrationDestination === V1_DESTINATION_TEAM;
 
   if (isCommunity || isTeam) {
     const key = getStorageKey(org.sys.id);
@@ -60,13 +63,17 @@ export async function openV1MigrationWarning() {
 async function shouldDisplay(org) {
   if (!org) return false;
 
-  if (hasSeen(org.sys.id)) return false;
   const isEnabled = await getVariation(FLAGS.V1_MIGRATION_2021_WARNING, {
     organizationId: org.sys.id,
   });
+
+  if (!isEnabled || hasSeen(org.sys.id)) return false;
+
+  // check for the status of the migration
+  const v1migrationSucceeded = org.sys._v1Migration.status === 'succeeded';
   const isTargetUser = isOwnerOrAdmin(org);
 
-  return isEnabled && isTargetUser;
+  return isTargetUser && v1migrationSucceeded;
 }
 
 function hasSeen(orgId) {

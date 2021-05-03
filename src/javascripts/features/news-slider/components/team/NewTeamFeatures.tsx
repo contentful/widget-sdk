@@ -60,16 +60,14 @@ export const NewTeamFeatures = () => (
       </DisplayText>
       <List className={styles.list}>
         <ListItem className={styles.listItem}>
-          each of your spaces is now mapped to a Medium or Large space, as available on the{' '}
+          Each of your spaces is now mapped to a Medium or Large space on our{' '}
           <TextLink className={styles.link} href={websiteUrl('/pricing')}>
             Team tier
           </TextLink>
         </ListItem>
+        <ListItem className={styles.listItem}>No change to pricing</ListItem>
         <ListItem className={styles.listItem}>
-          the price your are currently paying will not change
-        </ListItem>
-        <ListItem className={styles.listItem}>
-          you get access to{' '}
+          You get access to{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/tutorials/general/graphql/')}>
@@ -77,7 +75,7 @@ export const NewTeamFeatures = () => (
           </TextLink>
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get access to{' '}
+          You get access to{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/multiple-environments/')}>
@@ -85,12 +83,18 @@ export const NewTeamFeatures = () => (
           </TextLink>
         </ListItem>
         <ListItem className={styles.listItem}>
-          you get support for{' '}
+          You get support for{' '}
           <TextLink
             className={styles.link}
             href={websiteUrl('developers/docs/concepts/rich-text/')}>
             rich text
           </TextLink>
+        </ListItem>
+        <ListItem className={styles.listItem}>
+          And more! Check out{' '}
+          <TextLink className={styles.link} href={websiteUrl('/pricing')}>
+            the details of your new plan
+          </TextLink>{' '}
         </ListItem>
       </List>
     </div>

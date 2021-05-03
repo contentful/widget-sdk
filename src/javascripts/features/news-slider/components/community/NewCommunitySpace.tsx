@@ -42,7 +42,7 @@ export const NewCommunitySpace = ({ onNext }: NewCommunitySpaceProps) => (
         <DisplayText size="large">We&apos;ve upgraded your organization!</DisplayText>
         <DisplayText className={styles.text}>
           To give you access to the latest and greatest Contentful has to offer, we’ve upgraded your
-          account to the Community tier
+          account to our Community tier.
         </DisplayText>
       </Typography>
       <Button size="large" onClick={onNext}>

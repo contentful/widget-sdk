@@ -42,7 +42,7 @@ export const NewTeamSpace = ({ onNext }: NewTeamSpaceProps) => (
         <DisplayText size="large">We&apos;ve upgraded your organization!</DisplayText>
         <DisplayText className={styles.text}>
           To give you access to the latest and greatest Contentful has to offer, we’ve upgraded your
-          account to our Team tier
+          account to our Team tier.
         </DisplayText>
       </Typography>
       <Button size="large" onClick={onNext}>
