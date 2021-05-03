@@ -23,8 +23,15 @@ src/javascripts/features/user-profile/               @contentful/team-ahoy
 src/javascripts/features/settings-space-users/          @contentful/team-hejo
 src/javascripts/features/space-teams/                   @contentful/team-hejo
 src/javascripts/features/space-memberships/             @contentful/team-hejo
+src/javascripts/features/space-plan-assignment/         @contentful/team-hejo
+src/javascripts/features/space-management/              @contentful/team-hejo
+src/javascripts/features/space-creation/                @contentful/team-hejo
+src/javascripts/features/teams/                         @contentful/team-hejo
+src/javascripts/features/high-value-modal/              @contentful/team-hejo
+src/javascripts/features/user-invitations/              @contentful/team-hejo
 src/javascripts/features/roles-permissions-management/  @contentful/team-hejo
 src/javascripts/features/sso                            @contentful/team-hejo
+src/javascripts/features/news-slider                    @contentful/team-hejo
 
 # Team Dante
 src/javascripts/features/locales-management/ @contentful/team-dante
