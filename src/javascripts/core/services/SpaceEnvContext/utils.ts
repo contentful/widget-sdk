@@ -1,3 +1,4 @@
+import { getModule } from 'core/NgRegistry';
 import {
   SpaceEnv,
   Environment,
@@ -92,7 +93,9 @@ export function getEnvironment(space?: SpaceEnv): Environment | undefined {
 }
 
 export function getEnvironmentId(space?: SpaceEnv): string {
-  return getEnvironment(space)?.sys.id ?? 'master';
+  // todo: this is a temporary fix to fallback to `$stateParams.environmentId` if environment information is missing
+  const $stateParams = getModule('$stateParams');
+  return getEnvironment(space)?.sys.id ?? $stateParams.environmentId ?? 'master';
 }
 
 export function getEnvironmentAliasId(space?: SpaceEnv): string | undefined {
