@@ -36,7 +36,6 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   publicLocaleCode: Locale['code'];
   spaceId: string;
   environment: EnvironmentProps;
-  currentEnvironmentAliasId?: string;
   allEnvironmentAliasIds: string[];
   spaceMember: SpaceMember;
   tagsRepo: any;
@@ -60,7 +59,6 @@ export function createReadonlyFieldWidgetSDK({
   publicLocaleCode,
   spaceId,
   environment,
-  currentEnvironmentAliasId,
   allEnvironmentAliasIds,
   spaceMember,
   tagsRepo,
@@ -146,7 +144,7 @@ export function createReadonlyFieldWidgetSDK({
   const idsApi = createIdsApi({
     spaceId,
     envId: environment.sys.id,
-    envAliasId: currentEnvironmentAliasId || null,
+    envAliasId: environment.sys.aliasedEnvironment?.sys.id,
     contentType: internalContentType,
     entry: entryApi,
     field: fieldApi,

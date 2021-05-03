@@ -58,7 +58,7 @@ describe('createIdsApi', () => {
       const result = createIdsApi({
         spaceId,
         envId,
-        envAliasId: null,
+        envAliasId: undefined,
         contentType,
         entry,
         field: ({ id: fieldId } as unknown) as FieldAPI,

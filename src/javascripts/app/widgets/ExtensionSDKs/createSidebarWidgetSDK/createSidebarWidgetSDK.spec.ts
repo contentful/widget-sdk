@@ -20,6 +20,7 @@ jest.mock('../utils', () => ({
     app: 'an-app',
     space: 'a-space',
     environment: 'an-env',
+    environmentAlias: 'an-env-alias',
     entry: 'an-entry',
     contentType: 'a-contentType',
   }),
@@ -45,6 +46,7 @@ describe('createSidebarWidgetSDK', () => {
         publishedCTs: { getAllBare: noop },
         getId: () => 'a-space-id',
         getEnvironmentId: () => 'an-env-id',
+        getAliasId: () => 'an-alias-id',
         getAliasesIds: () => [],
         isMasterEnvironment: () => true,
         cma: {},
@@ -60,6 +62,7 @@ describe('createSidebarWidgetSDK', () => {
         app: 'an-app',
         space: 'a-space',
         environment: 'an-env',
+        environmentAlias: 'an-env-alias',
       },
       window: expect.any(Object),
     });

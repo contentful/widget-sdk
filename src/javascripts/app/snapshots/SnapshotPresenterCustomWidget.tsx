@@ -47,7 +47,6 @@ const SnapshotPresenterCustomWidget = ({
     currentSpaceId,
     currentEnvironment,
     currentEnvironmentId,
-    currentEnvironmentAliasId,
     currentSpace,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
@@ -77,7 +76,6 @@ const SnapshotPresenterCustomWidget = ({
       publicLocaleCode: locale.code,
       spaceId,
       environment: currentEnvironment,
-      currentEnvironmentAliasId,
       allEnvironmentAliasIds: aliasesId,
       spaceMember,
       tagsRepo: tagsEndpoint,
@@ -97,7 +95,6 @@ const SnapshotPresenterCustomWidget = ({
     spaceApiClient,
     currentSpaceId,
     currentEnvironmentId,
-    currentEnvironmentAliasId,
     currentSpaceContentTypes,
     currentEnvironment,
     currentSpace,

@@ -65,7 +65,6 @@ const SnapshotPresenterRichText = ({
       publicLocaleCode: locale.code,
       spaceId,
       environment: currentEnvironment,
-      currentEnvironmentAliasId: currentEnvironmentAliasId,
       allEnvironmentAliasIds: aliasesId,
       spaceMember,
       tagsRepo: tagsEndpoint,

@@ -4,6 +4,7 @@ import { WidgetNamespace } from '@contentful/widget-renderer';
 interface CreateIdsApiProps {
   spaceId: string;
   envId: string;
+  envAliasId: string | undefined;
   contentType: ContentType;
   entry: EntryAPI;
   user: User;
@@ -14,6 +15,7 @@ interface CreateIdsApiProps {
 export const createIdsApiWithoutField = ({
   spaceId,
   envId,
+  envAliasId,
   contentType,
   entry,
   user,
@@ -23,6 +25,7 @@ export const createIdsApiWithoutField = ({
   return {
     space: spaceId,
     environment: envId,
+    ...(typeof envAliasId === 'string' ? { environmentAlias: envAliasId } : {}),
     contentType: contentType.sys.id,
     entry: entry.getSys().id,
     user: user.sys.id,

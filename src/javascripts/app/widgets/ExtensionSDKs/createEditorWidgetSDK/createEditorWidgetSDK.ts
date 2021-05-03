@@ -43,6 +43,7 @@ interface CreateEditorExtensionSDKOptions {
   contentTypes: InternalContentType[];
   environment: Environment;
   environmentId: string;
+  environmentAliasId?: string;
   space: SpaceEnv;
   spaceId: string;
   pubSubClient?: PubSubClient;
@@ -60,6 +61,7 @@ export const createEditorWidgetSDK = ({
   fieldLocaleListeners,
   spaceId,
   environmentId,
+  environmentAliasId,
   space,
   environment,
   contentTypes,
@@ -98,6 +100,7 @@ export const createEditorWidgetSDK = ({
   const idsApi = createIdsApiWithoutField({
     spaceId: spaceId,
     envId: environmentId,
+    envAliasId: environmentAliasId,
     contentType: contentTypeApi,
     entry: entryApi,
     user: userApi,

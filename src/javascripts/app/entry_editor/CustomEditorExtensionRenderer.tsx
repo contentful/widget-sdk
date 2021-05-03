@@ -46,6 +46,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
   const {
     currentEnvironment,
     currentEnvironmentId,
+    currentEnvironmentAliasId,
     currentSpace,
     currentSpaceContentTypes,
     currentSpaceId,
@@ -78,6 +79,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
     contentTypes: currentSpaceContentTypes,
     environment: currentEnvironment,
     environmentId: currentEnvironmentId,
+    environmentAliasId: currentEnvironmentAliasId,
     space: currentSpace,
     spaceId: currentSpaceId,
     pubSubClient,

@@ -16,7 +16,7 @@ import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { EditorInterface } from 'contentful-management/types';
-import { getModule } from 'core/NgRegistry';
+import { getSpaceContext } from 'classes/spaceContext';
 import { Proxy } from 'core/services/proxy';
 import APIClient from 'data/APIClient';
 
@@ -32,7 +32,7 @@ interface CreateSidebarWidgetSDKOptions {
   };
   localeData: Proxy<LocaleData>;
   preferences: Proxy<Preferences>;
-  spaceContext: ReturnType<typeof getModule>;
+  spaceContext: ReturnType<typeof getSpaceContext>;
   cma: APIClient;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
@@ -79,6 +79,7 @@ export const createSidebarWidgetSDK = ({
   const idsApi = createIdsApiWithoutField({
     spaceId: spaceContext.getId(),
     envId: spaceContext.getEnvironmentId(),
+    envAliasId: spaceContext.getAliasId(),
     contentType: contentTypeApi,
     entry: entryApi,
     user: userApi,

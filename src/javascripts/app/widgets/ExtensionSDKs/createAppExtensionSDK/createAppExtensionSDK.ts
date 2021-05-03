@@ -36,6 +36,7 @@ export const createAppExtensionSDK = ({
     user: userApi.sys.id,
     space: spaceContext.getId(),
     environment: spaceContext.getEnvironmentId(),
+    environmentAlias: spaceContext.getAliasId(),
     app: widgetId,
   };
 
