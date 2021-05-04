@@ -31,7 +31,7 @@ import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { track } from 'analytics/Analytics';
+import * as Analytics from 'analytics/Analytics';
 import { useAppsTrial } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
@@ -65,11 +65,11 @@ const fetchData = (
     organizationId: currentOrganizationId,
   });
   if (testExperimentVariation !== null) {
-    track('experiment:start', {
-      experiment: {
-        id: FLAGS.EXPERIMENT_A_A,
-        variation: testExperimentVariation,
-      },
+    Analytics.tracking.experimentStart({
+      experiment_id: FLAGS.EXPERIMENT_A_A,
+      experiment_variation: testExperimentVariation,
+      space_id: currentSpaceId,
+      organization_id: currentOrganizationId,
     });
   }
 

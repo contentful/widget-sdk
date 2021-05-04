@@ -29,7 +29,7 @@ instructions on adding and modifying events.
 After changing events, call `TYPEWRITER_TOKEN=token_from_1password npm run segment`
 to use [typewriter][typewriter] to generate typed methods for the tracking
 plan's events. You can find the `TYPEWRITER_TOKEN` in 1Password by searching for
-"typewriter".
+"user_interface typewriter segment-staging protocols token".
 
 [segment-prod]: https://app.segment.com/contentful
 [segment-first-steps]: https://contentful.atlassian.net/wiki/spaces/ENG/pages/2038071636/Segment+First+Steps#Required-Permissions

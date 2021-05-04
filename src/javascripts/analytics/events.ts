@@ -23,6 +23,7 @@ export {
   entryReferencesDialogOpen,
   entryReferencesPublish,
   entryReferencesValidate,
+  experimentStart,
   featureReferenceAction,
   globalAppLoaded,
   globalDialog,

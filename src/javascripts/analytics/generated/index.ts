@@ -405,6 +405,28 @@ export interface Data22 {
 export interface EntryReferencesValidate {
   data?: Data22;
 }
+export interface ExperimentStart {
+  /**
+   * The experiment name the current user is part of
+   */
+  experiment_id?: string;
+  /**
+   * The experiment variation the current user is assigned to
+   */
+  experiment_variation?: string;
+  /**
+   * Current organization key
+   */
+  organization_id?: string;
+  /**
+   * Current space key
+   */
+  space_id?: string;
+  /**
+   * Curent user key
+   */
+  user_id?: string;
+}
 export interface Data23 {
   action?: string;
   executingUserId?: string;
@@ -1182,6 +1204,26 @@ export interface Data67 {
 export interface TranslationSidebarUpdateActiveLocales {
   data?: Data67;
 }
+export interface Data68 {
+  appDefinitionId?: string;
+  environment?: string;
+  organizationId?: string;
+  spaceId?: string;
+  userId?: string;
+}
+export interface WidgetRendererFallbackRendered {
+  data?: Data68;
+}
+export interface Data69 {
+  appDefinitionId?: string;
+  environment?: string;
+  organizationId?: string;
+  spaceId?: string;
+  userId?: string;
+}
+export interface WidgetRendererFallbackWarningShown {
+  data?: Data69;
+}
 
 export type ViolationHandler = (
   message: Record<string, any>,
@@ -1702,6 +1744,14 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
 /**
  * @typedef EntryReferencesValidate
  * @property {Data22} [data] -
+ */
+/**
+ * @typedef ExperimentStart
+ * @property {string} [experiment_id] - The experiment name the current user is part of
+ * @property {string} [experiment_variation] - The experiment variation the current user is assigned to
+ * @property {string} [organization_id] - Current organization key
+ * @property {string} [space_id] - Current space key
+ * @property {string} [user_id] - Curent user key
  */
 /**
  * @typedef Data23
@@ -2591,6 +2641,30 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
 /**
  * @typedef TranslationSidebarUpdateActiveLocales
  * @property {Data67} [data] -
+ */
+/**
+ * @typedef Data68
+ * @property {string} [appDefinitionId] -
+ * @property {string} [environment] -
+ * @property {string} [organizationId] -
+ * @property {string} [spaceId] -
+ * @property {string} [userId] -
+ */
+/**
+ * @typedef WidgetRendererFallbackRendered
+ * @property {Data68} [data] -
+ */
+/**
+ * @typedef Data69
+ * @property {string} [appDefinitionId] -
+ * @property {string} [environment] -
+ * @property {string} [organizationId] -
+ * @property {string} [spaceId] -
+ * @property {string} [userId] -
+ */
+/**
+ * @typedef WidgetRendererFallbackWarningShown
+ * @property {Data69} [data] -
  */
 
 /**
@@ -4383,6 +4457,70 @@ export function entryReferencesValidate(
   const a = analytics();
   if (a) {
     a.track('entry_references:validate', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Fires a 'experiment_start' track call.
+ *
+ * @param {ExperimentStart} props - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function experimentStart(
+  props: ExperimentStart,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    labels: {},
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          experiment_id: {
+            description: 'The experiment name the current user is part of',
+            type: 'string',
+          },
+          experiment_variation: {
+            description: 'The experiment variation the current user is assigned to',
+            type: 'string',
+          },
+          organization_id: {
+            description: 'Current organization key',
+            type: 'string',
+          },
+          space_id: {
+            description: 'Current space key',
+            type: 'string',
+          },
+          user_id: {
+            description: 'Curent user key',
+            type: 'string',
+          },
+        },
+        required: ['experimentId', 'experimentVariation'],
+        type: 'object',
+      },
+      traits: {
+        type: 'object',
+      },
+    },
+    required: ['properties'],
+    title: 'experiment_start',
+    type: 'object',
+  };
+  const message = {
+    event: 'experiment_start',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('experiment_start', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -8300,6 +8438,154 @@ export function translationSidebarUpdateActiveLocales(
     );
   }
 }
+/**
+ * Fires a 'widget_renderer:fallback_rendered' track call.
+ *
+ * @param {WidgetRendererFallbackRendered} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function widgetRendererFallbackRendered(
+  props?: WidgetRendererFallbackRendered,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    labels: {},
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          data: {
+            description: '',
+            properties: {
+              appDefinitionId: {
+                description: '',
+                type: 'string',
+              },
+              environment: {
+                description: '',
+                type: 'string',
+              },
+              organizationId: {
+                description: '',
+                type: 'string',
+              },
+              spaceId: {
+                description: '',
+                type: 'string',
+              },
+              userId: {
+                description: '',
+                type: 'string',
+              },
+            },
+            required: [],
+            type: 'object',
+          },
+        },
+        type: 'object',
+      },
+      traits: {
+        type: 'object',
+      },
+    },
+    title: 'widget_renderer:fallback_rendered',
+    type: 'object',
+  };
+  const message = {
+    event: 'widget_renderer:fallback_rendered',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track(
+      'widget_renderer:fallback_rendered',
+      props || {},
+      withTypewriterContext(options),
+      callback
+    );
+  }
+}
+/**
+ * Fires a 'widget_renderer:fallback_warning_shown' track call.
+ *
+ * @param {WidgetRendererFallbackWarningShown} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function widgetRendererFallbackWarningShown(
+  props?: WidgetRendererFallbackWarningShown,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    labels: {},
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          data: {
+            description: '',
+            properties: {
+              appDefinitionId: {
+                description: '',
+                type: 'string',
+              },
+              environment: {
+                description: '',
+                type: 'string',
+              },
+              organizationId: {
+                description: '',
+                type: 'string',
+              },
+              spaceId: {
+                description: '',
+                type: 'string',
+              },
+              userId: {
+                description: '',
+                type: 'string',
+              },
+            },
+            required: [],
+            type: 'object',
+          },
+        },
+        type: 'object',
+      },
+      traits: {
+        type: 'object',
+      },
+    },
+    title: 'widget_renderer:fallback_warning_shown',
+    type: 'object',
+  };
+  const message = {
+    event: 'widget_renderer:fallback_warning_shown',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track(
+      'widget_renderer:fallback_warning_shown',
+      props || {},
+      withTypewriterContext(options),
+      callback
+    );
+  }
+}
 
 const clientAPI = {
   /**
@@ -8532,6 +8818,15 @@ const clientAPI = {
    * 		call is fired.
    */
   entryReferencesValidate,
+  /**
+   * Fires a 'experiment_start' track call.
+   *
+   * @param {ExperimentStart} props - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  experimentStart,
   /**
    * Fires a 'feature_reference_action' track call.
    *
@@ -9018,6 +9313,24 @@ const clientAPI = {
    * 		call is fired.
    */
   translationSidebarUpdateActiveLocales,
+  /**
+   * Fires a 'widget_renderer:fallback_rendered' track call.
+   *
+   * @param {WidgetRendererFallbackRendered} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  widgetRendererFallbackRendered,
+  /**
+   * Fires a 'widget_renderer:fallback_warning_shown' track call.
+   *
+   * @param {WidgetRendererFallbackWarningShown} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  widgetRendererFallbackWarningShown,
 };
 
 export default new Proxy<typeof clientAPI>(clientAPI, {
@@ -9029,7 +9342,7 @@ export default new Proxy<typeof clientAPI>(clientAPI, {
     return () => {
       console.warn(`⚠️  You made an analytics call (${String(method)}) that can't be found. Either:
     a) Re-generate your typewriter client: \`npx typewriter\`
-    b) Add it to your Tracking Plan: https://app.segment.com/contentful/protocols/tracking-plans/rs_1crHn74jVn5FkduxG4nRt1sNwO9`);
+    b) Add it to your Tracking Plan: https://app.segment.com/contentful-staging/protocols/tracking-plans/rs_1YwenhuqVMybvb7zC1c0OEAP6Cj`);
       const a = analytics();
       if (a) {
         a.track(

@@ -1,7 +1,7 @@
 {
-  "create_time": "2020-06-04T14:12:35.000Z",
+  "create_time": "2020-03-10T16:37:32.000Z",
   "display_name": "userInterface",
-  "name": "workspaces/contentful/tracking-plans/rs_1crHn74jVn5FkduxG4nRt1sNwO9",
+  "name": "workspaces/contentful-staging/tracking-plans/rs_1YwenhuqVMybvb7zC1c0OEAP6Cj",
   "rules": {
     "events": [
       {
@@ -1222,6 +1222,47 @@
             },
             "traits": {}
           },
+          "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "name": "experiment_start",
+        "rules": {
+          "labels": {},
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "experiment_id": {
+                  "description": "The experiment name the current user is part of",
+                  "type": "string"
+                },
+                "experiment_variation": {
+                  "description": "The experiment variation the current user is assigned to",
+                  "type": "string"
+                },
+                "organization_id": {
+                  "description": "Current organization key",
+                  "type": "string"
+                },
+                "space_id": {
+                  "description": "Current space key",
+                  "type": "string"
+                },
+                "user_id": {
+                  "description": "Curent user key",
+                  "type": "string"
+                }
+              },
+              "required": ["experimentId", "experimentVariation"],
+              "type": "object"
+            },
+            "traits": {
+              "type": "object"
+            }
+          },
+          "required": ["properties"],
           "type": "object"
         },
         "version": 1
@@ -3871,6 +3912,98 @@
           "type": "object"
         },
         "version": 1
+      },
+      {
+        "name": "widget_renderer:fallback_rendered",
+        "rules": {
+          "labels": {},
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "data": {
+                  "description": "",
+                  "properties": {
+                    "appDefinitionId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "environment": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "spaceId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "userId": {
+                      "description": "",
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "traits": {
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "name": "widget_renderer:fallback_warning_shown",
+        "rules": {
+          "labels": {},
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "data": {
+                  "description": "",
+                  "properties": {
+                    "appDefinitionId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "environment": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "spaceId": {
+                      "description": "",
+                      "type": "string"
+                    },
+                    "userId": {
+                      "description": "",
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "traits": {
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "version": 1
       }
     ],
     "global": {
@@ -3891,5 +4024,5 @@
     "group_traits": [],
     "identify_traits": []
   },
-  "update_time": "2021-04-14T12:44:42.000Z"
+  "update_time": "2021-05-03T13:00:18.000Z"
 }

@@ -9,7 +9,7 @@ client:
 
 trackingPlans:
   # Tracking Plan: userInterface
-  # https://app.segment.com/contentful/protocols/tracking-plans/rs_1crHn74jVn5FkduxG4nRt1sNwO9
-  - id: rs_1crHn74jVn5FkduxG4nRt1sNwO9
-    workspaceSlug: contentful
+  # https://app.segment.com/contentful-staging/protocols/tracking-plans/rs_1YwenhuqVMybvb7zC1c0OEAP6Cj
+  - id: rs_1YwenhuqVMybvb7zC1c0OEAP6Cj
+    workspaceSlug: contentful-staging
     path: src/javascripts/analytics/generated
