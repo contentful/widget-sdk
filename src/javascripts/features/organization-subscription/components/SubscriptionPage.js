@@ -19,7 +19,7 @@ import {
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial, EnterpriseTrialInfo, SpacesListForMembers } from 'features/trials';
 import { Price } from 'core/components/formatting';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { createSpace } from '../utils/spaceUtils';
 
@@ -50,9 +50,13 @@ export function SubscriptionPage({
   const onCreateSpace = createSpace(organizationId);
 
   const handleStartAppTrial = async () => {
-    go({
-      path: ['account', 'organizations', 'start_trial'],
-      params: { orgId: organizationId, existingUsers: true, from: 'subscription' },
+    router.navigate({
+      path: 'account.organizations.start_trial',
+      orgId: organizationId,
+      navigationState: {
+        existingUsers: true,
+        from: 'subscription',
+      },
     });
   };
 

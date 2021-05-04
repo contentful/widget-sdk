@@ -189,7 +189,11 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
   });
 };
 
-export function StartAppTrial({ orgId, existingUsers, from: fromRouterParam }: StartAppTrialProps) {
+export function StartAppTrial({
+  orgId,
+  existingUsers = false,
+  from: fromRouterParam,
+}: StartAppTrialProps) {
   const queryParams = useQueryParams();
   // if /start_trial is called without ?from=, assume the origin is the marketing website CTA
   const from = fromRouterParam ? fromRouterParam : queryParams.from?.toString() ?? 'marketing';

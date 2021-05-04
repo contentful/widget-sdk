@@ -13,7 +13,7 @@ import {
   isUserOrgCreator,
 } from 'data/User';
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 let creatingSampleSpace = false;
 
@@ -94,11 +94,15 @@ function attemptedSpaceAutoCreation(user, store) {
 }
 
 function startAppsTrial(orgId) {
-  go({
-    path: ['account', 'organizations', 'start_trial'],
-    params: { orgId, existingUsers: false, from: 'content_choice_path' },
-    options: {
-      location: 'replace',
+  router.navigate(
+    {
+      path: 'account.organizations.start_trial',
+      orgId,
+      navigationState: {
+        existingUsers: false,
+        from: 'content_choice_path',
+      },
     },
-  });
+    { location: 'replace' }
+  );
 }

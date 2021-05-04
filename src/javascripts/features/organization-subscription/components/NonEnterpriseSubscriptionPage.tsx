@@ -21,7 +21,6 @@ import { Price } from 'core/components/formatting';
 import type { Organization } from 'core/services/SpaceEnvContext/types';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import type { BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
-import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { captureError } from 'core/monitoring';
 
@@ -32,6 +31,7 @@ import { BasePlanContentEntryIds } from '../types';
 import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
+import { router } from 'core/react-routing';
 
 const styles = {
   fullRow: css({
@@ -98,9 +98,13 @@ export function NonEnterpriseSubscriptionPage({
   const freeSpace = spacePlans.find(isFreeSpacePlan);
 
   const onStartAppTrial = async () => {
-    go({
-      path: ['account', 'organizations', 'start_trial'],
-      params: { orgId: organizationId, existingUsers: true, from: 'subscription' },
+    router.navigate({
+      path: 'account.organizations.start_trial',
+      orgId: organizationId,
+      navigationState: {
+        existingUsers: true,
+        from: 'subscription',
+      },
     });
   };
 

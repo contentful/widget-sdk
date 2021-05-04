@@ -14,12 +14,13 @@ import { PRESELECT_VALUES } from 'features/space-purchase';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import CombinedIcon from 'svg/illustrations/launch-compose-combined.svg';
 import { appsMarketingUrl } from 'Config';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { getContentfulAppUrl } from '../utils';
 import { styles } from './styles';
+import { go } from 'states/Navigator';
 
 interface ListProps {
   apps: MarketplaceApp[];
@@ -86,10 +87,11 @@ export const ContentfulAppTile = ({
   };
 
   const handleStartAppTrial = () =>
-    go({
-      path: ['account', 'organizations', 'start_trial'],
-      params: {
-        orgId: organizationId,
+    organizationId &&
+    router.navigate({
+      path: 'account.organizations.start_trial',
+      orgId: organizationId,
+      navigationState: {
         existingUsers: true,
         from,
       },
