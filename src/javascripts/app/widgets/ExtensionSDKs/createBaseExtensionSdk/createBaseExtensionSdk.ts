@@ -6,9 +6,9 @@ import {
   NavigatorAPI,
 } from '@contentful/app-sdk';
 import { createAccessApi } from '../createAccessApi';
-import { Notification } from '@contentful/forma-36-react-components';
 import { createLocalesApi } from '../createLocalesApi';
 import { createUserApi, SpaceMember } from '../createUserApi';
+import { createNotifierApi } from '../createNotifierApi';
 
 interface SharedBasedWidgetSDK {
   spaceApi: SpaceAPI;
@@ -27,7 +27,7 @@ export const createBaseExtensionSdk = ({
 }: SharedBasedWidgetSDK): Omit<BaseExtensionSDK, 'dialogs' | 'ids'> => {
   const accessApi = createAccessApi(spaceApi);
   const localesApi = createLocalesApi();
-  const notifierApi = Notification;
+  const notifierApi = createNotifierApi();
   const userApi = createUserApi(spaceMember);
 
   return {
