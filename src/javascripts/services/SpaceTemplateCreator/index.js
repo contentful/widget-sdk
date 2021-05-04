@@ -14,6 +14,7 @@ import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import { createAssetFileProcessedHandler } from './createAssetFileProcessedHandler';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
@@ -105,7 +106,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
             // function to validate matching content type and editor interface
             const validateCT = (contentType) => {
               const editorInterfaceId = _.get(editorInterface, 'sys.contentType.sys.id');
-              const contentTypeId = _.get(contentType, 'data.sys.id');
+              const contentTypeId = _.get(contentType, 'sys.id');
 
               // we need to ensure that ids are truthy
               return editorInterfaceId && editorInterfaceId === contentTypeId;
@@ -260,7 +261,6 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
   function makeHandlers(item, action, entity) {
     const data = { action, entity };
-    item = item.data || item;
     return {
       success: makeItemSuccessHandler(item, data),
       error: makeItemErrorHandler(item, data),
@@ -270,30 +270,46 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function createEditorInterface(editorInterface) {
+    const cmaClient = getSpaceEnvCMAClient();
     const handlers = makeHandlers(editorInterface, 'create', 'EditorInterface');
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
     // The content type has a default editor interface with version 1.
     editorInterface.sys.version = 1;
-    return spaceContext.cma
-      .updateEditorInterface(editorInterface)
+    return cmaClient.editorInterface
+      .update(
+        {
+          contentTypeId: editorInterface.sys.contentType.sys.id,
+        },
+        editorInterface
+      )
       .then(handlers.success)
       .catch(handlers.error);
   }
 
   function createContentType(contentType) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     const handlers = makeHandlers(contentType, 'create', 'ContentType');
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    return spaceContext.space
-      .createContentType(contentType)
+
+    return cmaClient.contentType
+      .update(
+        {
+          contentTypeId: contentType.sys.id,
+        },
+        contentType
+      )
       .then(handlers.success)
       .catch(handlers.error);
   }
 
   function publishContentTypes(contentTypes) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     return Promise.all(
       contentTypes.map((contentType) => {
         if (contentType) {
@@ -301,19 +317,25 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           if (handlers.itemWasHandled) {
             return Promise.resolve();
           }
-          const version = _.get(contentType, 'data.sys.version');
-          return contentType.publish(version).then(handlers.success).catch(handlers.error);
+          return cmaClient.contentType
+            .publish({ contentTypeId: contentType.sys.id }, contentType)
+            .then(handlers.success)
+            .catch(handlers.error);
         }
       })
     );
   }
 
   function createAsset(asset) {
+    const cmaClient = getSpaceEnvCMAClient();
     const handlers = makeHandlers(asset, 'create', 'Asset');
     if (handlers.itemWasHandled) {
       return Promise.resolve();
     }
-    return spaceContext.space.createAsset(asset).then(handlers.success).catch(handlers.error);
+    return cmaClient.asset
+      .update({ assetId: asset.sys.id }, asset)
+      .then(handlers.success)
+      .catch(handlers.error);
   }
 
   function processAssets(assets) {
@@ -324,14 +346,15 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           if (handlers.itemWasHandled) {
             return Promise.resolve();
           }
-          const version = _.get(asset, 'data.sys.version');
-          return processAsset(asset, version).then(handlers.success).catch(handlers.error);
+          return processAsset(asset).then(handlers.success).catch(handlers.error);
         }
       })
     );
   }
 
-  function processAsset(asset, version) {
+  function processAsset(asset) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     let destroySubscription;
     const spaceEndpoint = spaceContext.endpoint;
     const pubSubClient = spaceContext.pubSubClient;
@@ -346,8 +369,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
         reject({ error: 'timeout processing' });
       }, ASSET_PROCESSING_TIMEOUT);
 
-      asset.process(version, selectedLocaleCode);
-      destroySubscription = onAssetFileProcessed(_.get(asset, 'data.sys'), () => {
+      cmaClient.asset.processForLocale({}, asset, selectedLocaleCode);
+
+      destroySubscription = onAssetFileProcessed(_.get(asset, 'sys'), () => {
         const $rootScope = getModule('$rootScope');
         $rootScope.$apply(() => {
           clearTimeout(processingTimeout);
@@ -359,6 +383,8 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function publishAssets(assets) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     return Promise.all(
       assets.map((asset) => {
         if (asset) {
@@ -366,9 +392,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           if (handlers.itemWasHandled) {
             return Promise.resolve();
           }
-          const version = _.get(asset, 'data.sys.version');
-          return asset
-            .publish(version + 1)
+
+          return cmaClient.asset
+            .publish({ assetId: asset.sys.id }, asset)
             .then(handlers.success)
             .catch(handlers.error);
         }
@@ -377,19 +403,25 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function createEntry(entry) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     const handlers = makeHandlers(entry, 'create', 'Entry');
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
+
     const contentTypeId = _.get(entry, 'sys.contentType.sys.id');
     delete entry.contentType;
-    return spaceContext.space
-      .createEntry(contentTypeId, entry)
+
+    return cmaClient.entry
+      .update({ entryId: entry.sys.id }, entry, { 'X-Contentful-Content-Type': contentTypeId })
       .then(handlers.success)
       .catch(handlers.error);
   }
 
   function publishEntries(entries) {
+    const cmaClient = getSpaceEnvCMAClient();
+
     // we wait until the first item is published (using Promise.race)
     // since it is the last operation before we resolve this promise
     // so other items publishing time won't be different
@@ -398,8 +430,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       if (handlers.itemWasHandled) {
         return Promise.resolve();
       }
-      const version = _.get(entry, 'data.sys.version');
-      return entry.publish(version).then(handlers.success).catch(handlers.error);
+      return cmaClient.entry
+        .publish({ entryId: entry.sys.id }, entry)
+        .then(handlers.success)
+        .catch(handlers.error);
     });
 
     // if an array is empty, Promise.race() will never resolve

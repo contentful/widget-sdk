@@ -18,6 +18,36 @@ jest.mock('services/localeStore');
 jest.mock('features/content-preview');
 jest.mock('features/api-keys-management');
 
+const mockUpdateContentType = jest.fn();
+const mockPublishContentType = jest.fn();
+const mockUpdateEntry = jest.fn();
+const mockPublishEntry = jest.fn();
+const mockUpdateAsset = jest.fn();
+const mockPublishAsset = jest.fn();
+const mockProcessAsset = jest.fn();
+const mockUpdateEditorInterface = jest.fn();
+
+jest.mock('core/services/usePlainCMAClient', () => ({
+  getSpaceEnvCMAClient: () => ({
+    contentType: {
+      update: mockUpdateContentType,
+      publish: mockPublishContentType,
+    },
+    editorInterface: {
+      update: mockUpdateEditorInterface,
+    },
+    entry: {
+      update: mockUpdateEntry,
+      publish: mockPublishEntry,
+    },
+    asset: {
+      update: mockUpdateAsset,
+      processForLocale: mockProcessAsset,
+      publish: mockPublishAsset,
+    },
+  }),
+}));
+
 jest.mock('core/NgRegistry', () => ({
   getModule: () => ({
     $apply: (fn) => fn(),
@@ -29,10 +59,6 @@ describe('Space Template creation service', () => {
 
   beforeEach(async function () {
     stubs = {
-      ctPublish: jest.fn(),
-      assetPublish: jest.fn(),
-      assetProcess: jest.fn(),
-      entryPublish: jest.fn(),
       progressSuccess: jest.fn(),
       progressError: jest.fn(),
       success: jest.fn(),
@@ -102,46 +128,33 @@ describe('Space Template creation service', () => {
       stubs.getContentPreview.mockReturnValue(Promise.resolve([]));
       stubs.createContentPreview.mockReturnValue(Promise.resolve({ sys: { id: 1 }, name: 'test' }));
       template = {
-        contentTypes: [
-          { sys: { id: 'ct1' }, publish: stubs.ctPublish },
-          { sys: { id: 'ct2' }, publish: stubs.ctPublish },
-          { sys: { id: 'ct3' }, publish: stubs.ctPublish },
-        ],
+        contentTypes: [{ sys: { id: 'ct1' } }, { sys: { id: 'ct2' } }, { sys: { id: 'ct3' } }],
         assets: [
           {
             sys: { id: 'a1' },
             fields: { file: { 'en-US': 'val' } },
-            process: stubs.assetProcess,
-            publish: stubs.assetPublish,
           },
           {
             sys: { id: 'a2' },
             fields: { file: { 'en-US': 'val' } },
-            process: stubs.assetProcess,
-            publish: stubs.assetPublish,
           },
           {
             sys: { id: 'a3' },
             fields: { file: { 'en-US': 'val' } },
-            process: stubs.assetProcess,
-            publish: stubs.assetPublish,
           },
         ],
         entries: [
           {
             sys: { id: 'e1', contentType: { sys: { id: 'ct1' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish,
           },
           {
             sys: { id: 'e2', contentType: { sys: { id: 'ct2' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish,
           },
           {
             sys: { id: 'e3', contentType: { sys: { id: 'ct3' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish,
           },
         ],
         apiKeys: [{ sys: { id: 'ak1' } }, { sys: { id: 'ak2' } }],
@@ -157,36 +170,28 @@ describe('Space Template creation service', () => {
       spaceContext = {
         getEnvironmentId: _.constant('master'),
         getId: _.constant('123'),
-        space: {
-          getId: _.constant('123'),
-          createContentType: jest.fn(),
-          createEntry: jest.fn(),
-          createAsset: jest.fn(),
-          getContentType: jest.fn().mockResolvedValue(),
-        },
-        cma: {
-          updateEditorInterface: jest.fn().mockResolvedValue(),
-        },
       };
 
-      spaceContext.space.createContentType
+      mockUpdateContentType
         .mockResolvedValueOnce(template.contentTypes[0])
         .mockResolvedValueOnce(template.contentTypes[1])
-        .mockRejectedValueOnce(new Error('can not create a content type'));
-      stubs.ctPublish.mockReturnValue(Promise.resolve({ data: { sys: { id: 'ct1' } } }));
+        .mockRejectedValueOnce(new Error('cannot create a content type'));
+      mockPublishContentType.mockReturnValue(Promise.resolve({ sys: { id: 'ct1' } }));
 
-      spaceContext.space.createAsset
+      mockUpdateEditorInterface.mockResolvedValue();
+
+      mockUpdateAsset
         .mockResolvedValueOnce(template.assets[0])
         .mockResolvedValueOnce(template.assets[1])
-        .mockRejectedValueOnce(new Error('can not create an asset'));
-      stubs.assetProcess.mockReturnValue(Promise.resolve());
-      stubs.assetPublish.mockReturnValue(Promise.resolve());
+        .mockRejectedValueOnce(new Error('cannot create an asset'));
+      mockProcessAsset.mockReturnValue(Promise.resolve());
+      mockPublishAsset.mockReturnValue(Promise.resolve());
 
-      spaceContext.space.createEntry
+      mockUpdateEntry
         .mockResolvedValueOnce(template.entries[0])
         .mockResolvedValueOnce(template.entries[1])
-        .mockRejectedValueOnce(new Error('can not create an entry'));
-      stubs.entryPublish.mockReturnValue(Promise.resolve());
+        .mockRejectedValueOnce(new Error('cannot create an entry'));
+      mockPublishEntry.mockReturnValue(Promise.resolve());
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
@@ -206,65 +211,54 @@ describe('Space Template creation service', () => {
     });
 
     it('attempts to create 3 content types', () => {
-      expect(spaceContext.space.createContentType).toHaveBeenCalledTimes(3);
+      expect(mockUpdateContentType).toHaveBeenCalledTimes(3);
     });
 
     it('publishes 2 content types', () => {
-      expect(stubs.ctPublish).toHaveBeenCalledTimes(2);
+      expect(mockPublishContentType).toHaveBeenCalledTimes(2);
     });
 
     it('creates 1 editor interface', () => {
-      expect(spaceContext.cma.updateEditorInterface).toHaveBeenCalledTimes(1);
+      expect(mockUpdateEditorInterface).toHaveBeenCalledTimes(1);
     });
 
     it('attempts to create 3 assets', () => {
-      expect(spaceContext.space.createAsset).toHaveBeenCalledTimes(3);
+      expect(mockUpdateAsset).toHaveBeenCalledTimes(3);
     });
 
     it('transforms assets locale', () => {
-      expect(_.keys(spaceContext.space.createAsset.mock.calls[0][0].fields.file)[0]).toEqual(
-        'de-DE'
-      );
-      expect(_.keys(spaceContext.space.createAsset.mock.calls[1][0].fields.file)[0]).toEqual(
-        'de-DE'
-      );
-      expect(_.keys(spaceContext.space.createAsset.mock.calls[2][0].fields.file)[0]).toEqual(
-        'de-DE'
-      );
+      expect(_.keys(mockUpdateAsset.mock.calls[0][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(mockUpdateAsset.mock.calls[1][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(mockUpdateAsset.mock.calls[2][1].fields.file)[0]).toEqual('de-DE');
     });
 
     it('processes 2 assets', () => {
-      expect(stubs.assetProcess).toHaveBeenCalledTimes(2);
+      expect(mockProcessAsset).toHaveBeenCalledTimes(2);
     });
 
     it('publishes 2 assets', () => {
-      expect(stubs.assetPublish).toHaveBeenCalledTimes(2);
+      expect(mockPublishAsset).toHaveBeenCalledTimes(2);
     });
 
     it('attempts to create 3 entries', () => {
-      expect(spaceContext.space.createEntry).toHaveBeenCalledTimes(3);
+      expect(mockUpdateEntry).toHaveBeenCalledTimes(3);
     });
 
     it('calls entry with content type id', () => {
-      expect(spaceContext.space.createEntry.mock.calls[0][0]).toEqual('ct1');
-      expect(spaceContext.space.createEntry.mock.calls[1][0]).toEqual('ct2');
-      expect(spaceContext.space.createEntry.mock.calls[2][0]).toEqual('ct3');
+      const ctHeader = (contentTypeId) => ({ 'X-Contentful-Content-Type': contentTypeId });
+      expect(mockUpdateEntry.mock.calls[0][2]).toEqual(ctHeader('ct1'));
+      expect(mockUpdateEntry.mock.calls[1][2]).toEqual(ctHeader('ct2'));
+      expect(mockUpdateEntry.mock.calls[2][2]).toEqual(ctHeader('ct3'));
     });
 
     it('transforms entries locale', () => {
-      expect(_.keys(spaceContext.space.createEntry.mock.calls[0][1].fields.file)[0]).toEqual(
-        'de-DE'
-      );
-      expect(_.keys(spaceContext.space.createEntry.mock.calls[1][1].fields.file)[0]).toEqual(
-        'de-DE'
-      );
-      expect(_.keys(spaceContext.space.createEntry.mock.calls[2][1].fields.file)[0]).toEqual(
-        'de-DE'
-      );
+      expect(_.keys(mockUpdateEntry.mock.calls[0][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(mockUpdateEntry.mock.calls[1][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(mockUpdateEntry.mock.calls[2][1].fields.file)[0]).toEqual('de-DE');
     });
 
     it('publishes 2 entries', () => {
-      expect(stubs.entryPublish).toHaveBeenCalledTimes(2);
+      expect(mockPublishEntry).toHaveBeenCalledTimes(2);
     });
 
     it('creates 2 apikeys', () => {
@@ -290,7 +284,7 @@ describe('Space Template creation service', () => {
       expect(stubs.progressSuccess).toHaveBeenCalledTimes(17);
     });
 
-    it('updates error progress 4 times', () => {
+    it('updates error progress 3 times', () => {
       expect(stubs.progressError).toHaveBeenCalledTimes(3);
     });
 
@@ -300,47 +294,38 @@ describe('Space Template creation service', () => {
 
     describe('retries creating the failed entities', () => {
       beforeEach(async function () {
+        mockUpdateContentType.mockReset();
+        mockUpdateEntry.mockReset();
+        mockUpdateAsset.mockReset();
+
         const template = {
-          contentTypes: [
-            { sys: { id: 'ct1' }, publish: stubs.ctPublish },
-            { sys: { id: 'ct2' }, publish: stubs.ctPublish },
-            { sys: { id: 'ct3' }, publish: stubs.ctPublish },
-          ],
+          contentTypes: [{ sys: { id: 'ct1' } }, { sys: { id: 'ct2' } }, { sys: { id: 'ct3' } }],
           assets: [
             {
               sys: { id: 'a1' },
               fields: { file: { 'en-US': 'val' } },
-              process: stubs.assetProcess,
-              publish: stubs.assetPublish,
             },
             {
               sys: { id: 'a2' },
               fields: { file: { 'en-US': 'val' } },
-              process: stubs.assetProcess,
-              publish: stubs.assetPublish,
             },
             {
               sys: { id: 'a3' },
               fields: { file: { 'en-US': 'val' } },
-              process: stubs.assetProcess,
-              publish: stubs.assetPublish,
             },
           ],
           entries: [
             {
               sys: { id: 'e1', contentType: { sys: { id: 'ct1' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish,
             },
             {
               sys: { id: 'e2', contentType: { sys: { id: 'ct2' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish,
             },
             {
               sys: { id: 'e3', contentType: { sys: { id: 'ct3' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish,
             },
           ],
           apiKeys: [{ sys: { id: 'ak1' } }, { sys: { id: 'ak2' } }],
@@ -348,59 +333,46 @@ describe('Space Template creation service', () => {
             locales: [],
           },
         };
-        spaceContext.space.createContentType = jest.fn();
-        spaceContext.space.createEntry = jest.fn();
-        spaceContext.space.createAsset = jest.fn();
 
-        spaceContext.space.createContentType.mockReturnValue(
-          Promise.resolve({ sys: { id: 'ct3' }, publish: stubs.ctPublish })
-        );
-        stubs.ctPublish.mockReturnValue(Promise.resolve());
+        mockUpdateContentType.mockReturnValue(Promise.resolve({ sys: { id: 'ct3' } }));
+        mockPublishContentType.mockReturnValue(Promise.resolve());
 
-        spaceContext.space.createAsset.mockReturnValue(
-          Promise.resolve({
-            sys: { id: 'a3' },
-            process: stubs.assetProcess,
-            publish: stubs.assetPublish,
-          })
-        );
-        stubs.assetProcess.mockReturnValue(Promise.resolve());
-        stubs.assetPublish.mockReturnValue(Promise.resolve());
+        mockUpdateAsset.mockReturnValue(Promise.resolve({ sys: { id: 'a3' } }));
+        mockProcessAsset.mockReturnValue(Promise.resolve());
+        mockPublishAsset.mockReturnValue(Promise.resolve());
 
-        spaceContext.space.createEntry.mockReturnValue(
-          Promise.resolve({ sys: { id: 'e3' }, publish: stubs.entryPublish })
-        );
-        stubs.entryPublish.mockReturnValue(Promise.resolve());
+        mockUpdateEntry.mockReturnValue(Promise.resolve({ sys: { id: 'e3' } }));
+        mockPublishEntry.mockReturnValue(Promise.resolve());
 
         await creator.create(template).spaceSetup.catch(stubs.retrySuccess);
       });
 
       it('creates 1 content type', () => {
-        expect(spaceContext.space.createContentType).toHaveBeenCalledTimes(1);
+        expect(mockUpdateContentType).toHaveBeenCalledTimes(1);
       });
 
       it('has published all 3 content types', () => {
-        expect(stubs.ctPublish).toHaveBeenCalledTimes(3);
+        expect(mockPublishContentType).toHaveBeenCalledTimes(3);
       });
 
       it('creates 1 asset', () => {
-        expect(spaceContext.space.createAsset).toHaveBeenCalledTimes(1);
+        expect(mockUpdateAsset).toHaveBeenCalledTimes(1);
       });
 
       it('has processed all 3 assets', () => {
-        expect(stubs.assetProcess).toHaveBeenCalledTimes(3);
+        expect(mockProcessAsset).toHaveBeenCalledTimes(3);
       });
 
       it('has published all 3 assets', () => {
-        expect(stubs.assetPublish).toHaveBeenCalledTimes(3);
+        expect(mockPublishAsset).toHaveBeenCalledTimes(3);
       });
 
       it('creates 1 entry', () => {
-        expect(spaceContext.space.createEntry).toHaveBeenCalledTimes(1);
+        expect(mockUpdateEntry).toHaveBeenCalledTimes(1);
       });
 
       it('has published all 3 entries', () => {
-        expect(stubs.entryPublish).toHaveBeenCalledTimes(3);
+        expect(mockPublishEntry).toHaveBeenCalledTimes(3);
       });
 
       it('updates success progress 24 times in total', () => {
