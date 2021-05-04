@@ -69,7 +69,7 @@
     "color": "^2.0.1",
     "constate": "^3.2.0",
     "contentful": "^8.3.2",
-    "contentful-management": "^7.16.0",
+    "contentful-management": "^7.17.6",
     "contentful-resolve-response": "1.2.2",
     "core-js": "^3.8.3",
     "dataloader": "^2.0.0",

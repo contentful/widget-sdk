@@ -1,31 +1,35 @@
 import {
-  createOnErrorWithInterceptor,
   createDefaultBatchClient,
   createInternalMethods,
+  createOnErrorWithInterceptor,
 } from '@contentful/experience-cma-utils';
 import { useMemo } from 'react';
-import { createClient } from 'contentful-management';
 import type { PlainClientDefaultParams } from 'contentful-management';
+import { createClient } from 'contentful-management';
 import * as auth from 'Authentication';
 import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
-import { requestLogger, responseLogger } from './plainClientLogger';
+import makeRequest from 'data/Request';
 import { getSpaceContext } from 'classes/spaceContext';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
-
 type GetCmaClientOptions = { noBatch?: boolean };
+
 export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
+  const request = makeRequest(auth, undefined, undefined);
+
+  /*
+   `accessToken` and `refreshToken` is only for interface completeness,
+   the accessToken is always set inside the adapter
+   */
   const client = createClient(
     {
       ...getHostParams(),
       accessToken: () => {
         return auth.getToken();
       },
-      requestLogger,
-      responseLogger,
       headers: getDefaultHeaders(),
       onError: createOnErrorWithInterceptor({
         refreshToken: async () => {
@@ -36,10 +40,28 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
           captureError(error);
         },
       }),
+      adapter: async (config) => {
+        let body;
+
+        if (config.data) {
+          try {
+            body = JSON.parse(config.data);
+          } catch (error) {
+            captureError(error);
+          }
+        }
+
+        return request({
+          headers: config.headers,
+          method: config.method?.toUpperCase(),
+          body: body,
+          url: `${config.baseURL}${config.url}`,
+          query: config.params,
+        });
+      },
     },
     { type: 'plain', defaults }
   );
-
   const batchClient = options?.noBatch
     ? undefined
     : createDefaultBatchClient(client, {

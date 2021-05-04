@@ -18,11 +18,22 @@ import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultCli
  * See the wrapper documentation for details.
  */
 
+type RequestConfig = {
+  headers?: string;
+  method?: string;
+  body?: unknown;
+  url: string;
+  query: Record<string, any>;
+};
+
+type RetryFunc = (requestFunc: Function, version?: number) => (...args: any[]) => Promise<any>;
+type ResponseTransform = (config: RequestConfig, rawResponse: Response) => any;
+
 let withRetry;
 let withRetryVersion = 1;
 let currentSource;
 
-const RETRY_VERSION = {
+const RETRY_VERSION: Record<number, RetryFunc> = {
   0: wrapWithRetry,
   1: wrapWithRetry,
   2: wrapWithRetryWithQueue,
@@ -42,11 +53,18 @@ function getRetryVersion() {
   return variation ? 2 : 1;
 }
 
-export default function makeRequest(auth, source) {
+export default function makeRequest(
+  auth,
+  source: string | undefined = undefined,
+  responseTransform = defaultTransformResponse
+) {
   const version = getRetryVersion();
 
   if (version !== withRetryVersion || currentSource !== source || !withRetry) {
-    withRetry = RETRY_VERSION[version]((config) => fetchFn(config, source), version);
+    withRetry = RETRY_VERSION[version](
+      (config) => fetchFn(config, source, responseTransform),
+      version
+    );
     withRetryVersion = version;
     currentSource = source;
   }
@@ -54,18 +72,8 @@ export default function makeRequest(auth, source) {
   return wrapWithCounter(wrapWithAuth(auth, withRetry), source);
 }
 
-async function fetchFn(config, source) {
-  const args = buildRequestArguments(config, source);
-  let rawResponse;
-
+async function defaultTransformResponse(config: RequestConfig, rawResponse: Response) {
   const asyncError = new Error('API request failed');
-
-  try {
-    rawResponse = await window.fetch(...args);
-  } catch {
-    throw new PreflightRequestError();
-  }
-
   const response = {
     // matching AngularJS's $http response object
     // https://docs.angularjs.org/api/ng/service/$http#$http-returns
@@ -101,6 +109,21 @@ async function fetchFn(config, source) {
   }
 }
 
+async function fetchFn(
+  config: RequestConfig,
+  source?: string,
+  transformResponse?: ResponseTransform
+) {
+  const args = buildRequestArguments(config, source);
+  let rawResponse;
+  try {
+    rawResponse = await window.fetch(...args);
+  } catch {
+    throw new PreflightRequestError();
+  }
+  return transformResponse ? transformResponse(config, rawResponse) : rawResponse;
+}
+
 /**
  * Get the response data.
  *
@@ -113,7 +136,7 @@ async function fetchFn(config, source) {
  * If the response cannot be parsed (i.e. if it's not valid JSON), the error will be thrown,
  * rather than gracefully handled.
  *
- * @param  {Response} response       window.fetch response
+ * @param  {Response} response window.fetch response
  */
 async function getResponseBody(response) {
   const contentType = response.headers.get('Content-Type');
@@ -134,7 +157,7 @@ async function getResponseBody(response) {
 // fetch requires the url as the first argument.
 // we require `body` to be a JSON string
 // we also send a special X-Contentful-User-Agent header
-function buildRequestArguments(data, source) {
+function buildRequestArguments(data, source?: string): [string, RequestInit | undefined] {
   const url = withQuery(data.url, data.query);
   const requestData = {
     ...data,

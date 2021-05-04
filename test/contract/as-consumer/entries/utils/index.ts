@@ -6,7 +6,6 @@ import { createPubSubClientForSpace } from '../../../../../src/javascripts/__moc
 import constants from '../../../../constants';
 import fetch from 'node-fetch';
 import { createClient } from 'contentful-management';
-import { requestLogger } from '../../../../../src/javascripts/core/services/usePlainCMAClient/plainClientLogger';
 
 // TODO: This is a hack to ensure the underlying window.fetch is actually called.
 global.fetch = fetch;
@@ -24,7 +23,6 @@ export const getServerAndClient = async () => {
         baseURL: 'http://' + server.host + ':' + server.port,
         host: 'http://' + server.host + ':' + server.port,
         accessToken: constants.token,
-        requestLogger,
       },
       {
         type: 'plain',
