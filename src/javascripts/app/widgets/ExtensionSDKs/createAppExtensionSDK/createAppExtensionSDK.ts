@@ -85,6 +85,7 @@ export const createAppExtensionSDK = ({
       user: idsApi.user,
       space: idsApi.space,
       environment: idsApi.environment,
+      environmentAlias: idsApi.environmentAlias,
       app: widgetId,
     },
     app: appApi,
