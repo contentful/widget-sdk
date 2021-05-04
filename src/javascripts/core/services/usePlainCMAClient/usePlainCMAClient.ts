@@ -31,6 +31,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
         return auth.getToken();
       },
       headers: getDefaultHeaders(),
+      retryOnError: false,
       onError: createOnErrorWithInterceptor({
         refreshToken: async () => {
           const token = await auth.refreshToken();
