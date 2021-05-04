@@ -22,6 +22,8 @@ describe('data/Request/Utils', () => {
       '/content_types': [
         'http://foo/spaces/space-id/content_types',
         'http://api.flinkly.com/spaces/space-id/environments/id/content_types',
+        'https://api.contentful.com/spaces/some-id/public/content_types?limit=1000', // Do NOT track as `/public/:id`
+        'https://api.foo.com/spaces/some-id/environments/foo/public/content_types',
       ],
       '/content_types/:id': [
         'http://foo/spaces/space-id/content_types/some-id',

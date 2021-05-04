@@ -59,10 +59,16 @@ export function getEndpoint(urlOrPath) {
   }
   const allSegments = path.replace(/^\//, '').split('/');
 
-  const segments =
-    allSegments.length > 4 && allSegments[2] === 'environments'
-      ? [...allSegments.slice(0, 2), ...allSegments.slice(4)] // Remove /environments/:id part.
-      : allSegments;
+  const withoutEnvironment = (segments) =>
+    segments.length > 4 && segments[2] === 'environments'
+      ? [...segments.slice(0, 2), ...segments.slice(4)] // Remove /environments/:id part.
+      : segments;
+  const withoutPublic = (segments) =>
+    segments.length > 3 && segments[0] === 'spaces' && segments[2] === 'public'
+      ? [...segments.slice(0, 2), ...segments.slice(3)] // Remove /public part. Relevant for some of /content_types
+      : segments;
+
+  const segments = withoutPublic(withoutEnvironment(allSegments));
 
   if (
     segments.length > 2 &&
