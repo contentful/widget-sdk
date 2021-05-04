@@ -90,10 +90,10 @@ function DeleteTagModal({ tag, isShown, onClose }) {
         deleteTagError.data?.details?.errors?.some((error) => error.name === 'reference')
       ) {
         Notification.error('Remove the tag from all entries and assets before deleting it.', {
-          title: "Can't delete tag because it is currently in use.",
+          title: "Can't delete tag because it is currently in use",
           duration: 0,
           cta: {
-            label: 'Learn more about this in our help center.',
+            label: 'Learn about deleting tags in the help center.',
             textLinkProps: {
               href: 'https://www.contentful.com/help/deleting-tags/',
             },
