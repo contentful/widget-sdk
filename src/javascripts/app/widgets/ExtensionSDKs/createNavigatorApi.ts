@@ -247,13 +247,15 @@ const navigateToSpaceEnvRoute = async ({
   spaceId,
   environmentId,
   route,
+  isMaster,
 }: {
   spaceId: string;
   environmentId: string;
   route: 'entries' | 'assets';
+  isMaster: boolean;
 }) => {
   await Navigator.go({
-    path: ['spaces', 'detail', route, 'list'],
+    path: ['spaces', 'detail'].concat(isMaster ? [] : ['environment']).concat(route, 'list'),
     params: {
       spaceId,
       environmentId,
@@ -344,10 +346,10 @@ export function createNavigatorApi({
     onSlideInNavigation: onSlideLevelChanged,
     openAppConfig,
     openEntriesList: () => {
-      return navigateToSpaceEnvRoute({ spaceId, environmentId, route: 'entries' });
+      return navigateToSpaceEnvRoute({ spaceId, environmentId, isMaster, route: 'entries' });
     },
     openAssetsList: () => {
-      return navigateToSpaceEnvRoute({ spaceId, environmentId, route: 'assets' });
+      return navigateToSpaceEnvRoute({ spaceId, environmentId, isMaster, route: 'assets' });
     },
   };
 }
