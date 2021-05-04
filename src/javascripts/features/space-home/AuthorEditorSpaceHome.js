@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { WidgetContainer } from './widgets/WidgetContainer';
 import { GreetingWidget } from './widgets/GreetingWidget';
-import { ConceptVideoWidget } from './widgets/ConceptVideoWidget';
 import { WalkthroughWidget } from './widgets/walkthrough/WalkthroughWidget';
 import { SpaceTrialWidget } from 'features/trials';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
@@ -45,10 +44,6 @@ export const AuthorEditorSpaceHome = ({
 
       <WidgetContainer.Row>
         <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
-      </WidgetContainer.Row>
-
-      <WidgetContainer.Row>
-        <ConceptVideoWidget />
       </WidgetContainer.Row>
     </WidgetContainer>
   );
