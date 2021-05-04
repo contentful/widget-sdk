@@ -109,7 +109,9 @@ jest.mock('services/ChangeSpaceService', () => ({
 jest.mock('features/space-settings', () => ({
   openDeleteSpaceDialog: jest.fn(),
 }));
-
+jest.mock('../utils/generateBasePlanName', () => ({
+  generateBasePlanName: jest.fn(),
+}));
 describe('SubscriptionPageRouter', () => {
   beforeEach(() => {
     getOrganization.mockResolvedValue(mockOrganization);

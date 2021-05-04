@@ -15,6 +15,10 @@ import { beginSpaceCreation } from 'services/CreateSpace';
 import { FREE, isFreePlan, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 import { useAppsTrial, isOrganizationOnTrial } from 'features/trials';
 
+jest.mock('../utils/generateBasePlanName', () => ({
+  generateBasePlanName: jest.fn(),
+}));
+
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
 }));
@@ -58,7 +62,11 @@ jest.mock('features/trials/hooks/useAppsTrial', () => ({
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
-const mockOrganization = Fake.Organization();
+const mockOrganization = Fake.Organization({
+  _v1Migration: {
+    status: 'failed',
+  },
+});
 const mockTrialOrganization = Fake.Organization({
   trialPeriodEndsAt: new Date(),
 });

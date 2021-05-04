@@ -32,6 +32,8 @@ import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
 import { router } from 'core/react-routing';
+import { V1MigrationNote } from './V1MigrationNote';
+import { generateBasePlanName } from '../utils/generateBasePlanName';
 
 const styles = {
   fullRow: css({
@@ -96,6 +98,11 @@ export function NonEnterpriseSubscriptionPage({
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
   const anySpacesInaccessible = hasAnyInaccessibleSpaces(spacePlans);
   const freeSpace = spacePlans.find(isFreeSpacePlan);
+  // TODO: cleanup after 6 months from v1 migration
+  const isV1MigrationSucceeded = organization.sys?._v1Migration?.status === 'succeeded';
+  const v1migrationDestination = organization.sys?._v1Migration?.destination;
+
+  const basePlanName = generateBasePlanName(basePlan, v1migrationDestination);
 
   const onStartAppTrial = async () => {
     router.navigate({
@@ -110,6 +117,9 @@ export function NonEnterpriseSubscriptionPage({
 
   return (
     <Grid testId="non-enterprise-subs-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
+      {isV1MigrationSucceeded && (
+        <V1MigrationNote basePlanName={basePlanName} className={styles.fullRow} />
+      )}
       <Flex flexDirection="column" className={styles.fullRow}>
         <BasePlanCard
           loading={isLoading || !!error}

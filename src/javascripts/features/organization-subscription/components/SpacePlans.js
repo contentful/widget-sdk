@@ -9,7 +9,6 @@ import {
   TextLink,
   Tooltip,
   Icon,
-  Note,
   Tabs,
   Tab,
   TabPanel,
@@ -21,10 +20,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
-import { helpCenterUrl } from 'Config';
 import { Pluralized, Price } from 'core/components/formatting';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
 import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
@@ -74,14 +71,6 @@ const styles = {
 
 const USED_SPACES = 'usedSpaces';
 const UNUSED_SPACES = 'unusedSpaces';
-
-const withUtmParams = buildUrlWithUtmParams({
-  source: 'webapp',
-  medium: 'subscription-space-table',
-  campaign: 'in-app-help',
-});
-
-const trackHelpLink = () => track('space_usage_summary:help_link_clicked');
 
 export function SpacePlans({
   anySpacesInaccessible = false,
@@ -223,20 +212,6 @@ export function SpacePlans({
           </TextLink>
         )}
       </Paragraph>
-
-      {numSpaces > 0 && (
-        <Note className={styles.note}>
-          {'Check out your space usage in our new overview below! Got Questions? See '}
-          <TextLink
-            href={withUtmParams(`${helpCenterUrl}/subscription-plan/`)}
-            onClick={trackHelpLink}
-            target="_blank"
-            rel="noopener noreferrer">
-            this article
-          </TextLink>
-          {'.'}
-        </Note>
-      )}
 
       {(initialLoad || numSpaces > 0) &&
         (canManageSpaces ? (

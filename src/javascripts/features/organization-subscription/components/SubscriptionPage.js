@@ -27,6 +27,8 @@ import { BasePlan } from './BasePlan';
 import { ContentfulApps } from './ContentfulApps';
 import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
+import { V1MigrationNote } from './V1MigrationNote';
+import { generateBasePlanName } from '../utils/generateBasePlanName';
 
 const styles = {
   fullRow: css({
@@ -78,14 +80,22 @@ export function SubscriptionPage({
   const rightColumnHasContent =
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
 
+  // TODO: cleanup after 6 months from v1 migration
+  const isV1MigrationSucceeded = organization.sys._v1Migration?.status === 'succeeded';
+  const v1migrationDestination = organization.sys._v1Migration?.destination;
+
+  const basePlanName = generateBasePlanName(basePlan, v1migrationDestination);
+
   return (
     <Grid testId="subscription-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
+      {isV1MigrationSucceeded && (
+        <V1MigrationNote basePlanName={basePlanName} className={styles.fullRow} />
+      )}
       {organization && isOrgOnTrial && (
         <Flex className={styles.fullRow} flexDirection="column">
           <EnterpriseTrialInfo organization={organization} />
         </Flex>
       )}
-
       {!isNotAdminOrOwnerOfTrialOrg && (
         <Flex flexDirection="column">
           {initialLoad ? (

@@ -87,6 +87,20 @@ export interface Sys {
   createdAt: string;
   updatedBy: UpdatedBy;
   updatedAt: string;
+  _v1Migration?: V1Migration;
+}
+
+export enum v1migrationDestinationNames {
+  V1_DESTINATION_COMMUNITY = 'community',
+  V1_DESTINATION_TEAM = 'team',
+  V1_DESTINATION_PRO_BONO = 'pro_bono',
+  V1_DESTINATION_PARTNER = 'partner',
+}
+
+export interface V1Migration {
+  destination: v1migrationDestinationNames;
+  status: string;
+  plannedMigrationDate: string;
 }
 
 export interface LinkSys {
