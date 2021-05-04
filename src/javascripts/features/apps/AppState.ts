@@ -159,7 +159,7 @@ const maybeGetWidgetInList = (
 ): { position: number; eiItem: EditorInterfaceItem | null } => {
   if (list && list.length) {
     const position = list.findIndex((item) => areSameApp(item, widget));
-    return { position, eiItem: list[position] };
+    return { position, eiItem: list[position] ?? null };
   }
   return { position: -1, eiItem: null };
 };
