@@ -41,15 +41,22 @@ const isTEASpace = (contentTypes, currentSpace) => {
   );
 };
 
+const isEmptySpace = async (contentTypes, currentSpace) => {
+  const assets = await currentSpace.getAssets();
+  return assets.length == 0 && contentTypes.length == 0;
+};
+
 const fetchData = (
   setLoading,
   setState,
+  setIsSpaceEmpty,
   isSpaceAdmin,
   isTEA,
   isModernStack,
   currentSpaceId,
   currentSpace,
-  currentOrganizationId
+  currentOrganizationId,
+  currentSpaceContentTypes
 ) => async () => {
   setLoading(true);
 
@@ -67,6 +74,9 @@ const fetchData = (
   }
 
   const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
+
+  const isSpaceEmpty = await isEmptySpace(currentSpaceContentTypes, currentSpace);
+  setIsSpaceEmpty(isSpaceEmpty);
 
   if (!currentSpaceId || !isSpaceAdmin) {
     setLoading(false);
@@ -128,6 +138,7 @@ export const SpaceHome = () => {
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
   const [spaceTemplateCreated, setSpaceTemplateCreated] = useState(false);
+  const [isSpaceEmpty, setIsSpaceEmpty] = useState(false);
   const { isAppsTrialActive } = useAppsTrial(currentOrganizationId);
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
@@ -161,12 +172,14 @@ export const SpaceHome = () => {
       fetchData(
         setLoading,
         setState,
+        setIsSpaceEmpty,
         isSpaceAdmin,
         isTEA,
         isModernStack,
         currentSpaceId,
         currentSpace,
-        currentOrganizationId
+        currentOrganizationId,
+        currentSpaceContentTypes
       ),
       [
         spaceTemplateCreated,
@@ -176,6 +189,7 @@ export const SpaceHome = () => {
         currentSpaceId,
         currentSpace,
         currentOrganizationId,
+        currentSpaceContentTypes,
       ]
     )
   );
@@ -216,6 +230,7 @@ export const SpaceHome = () => {
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isEnterpriseTrialSpace}
           hasActiveAppTrial={isAppsTrialActive}
+          isEmptySpace={isSpaceEmpty}
         />
       );
     }

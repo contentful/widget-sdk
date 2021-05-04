@@ -14,6 +14,7 @@ import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { trackClickCTA } from './tracking';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { WidgetContainer } from './widgets/WidgetContainer';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -71,51 +72,53 @@ export class UpgradePricing extends React.Component {
     }
 
     return (
-      <Card padding="large" className="upgrade-space--container">
-        <div className="upgrade-space--content">
-          <Typography>
-            <Heading testId="greeting">Upgrade your Space to access our latest feature</Heading>
-            <Paragraph>
-              We made it easier to update and manage content models with our new{' '}
-              <TextLink
-                href={withInAppHelpUtmParams(
-                  websiteUrl('/developers/docs/concepts/multiple-environments/')
-                )}
-                rel="noopener noreferrer"
-                target="_blank">
-                Space environments feature
-              </TextLink>{' '}
-              and migration CLI tool. To access this feature, submit a request to begin the process
-              of upgrading your space.
-              <br />
-              To learn more, read about our{' '}
-              <TextLink
-                href={withInAppHelpUtmParams(
-                  websiteUrl(
-                    '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
-                  )
-                )}
-                rel="noopener noreferrer"
-                target="_blank">
-                Space types and pricing
-              </TextLink>
-              .
-            </Paragraph>
-          </Typography>
+      <WidgetContainer.Col>
+        <Card padding="large" className="upgrade-space--container">
+          <div className="upgrade-space--content">
+            <Typography>
+              <Heading testId="greeting">Upgrade your Space to access our latest feature</Heading>
+              <Paragraph>
+                We made it easier to update and manage content models with our new{' '}
+                <TextLink
+                  href={withInAppHelpUtmParams(
+                    websiteUrl('/developers/docs/concepts/multiple-environments/')
+                  )}
+                  rel="noopener noreferrer"
+                  target="_blank">
+                  Space environments feature
+                </TextLink>{' '}
+                and migration CLI tool. To access this feature, submit a request to begin the
+                process of upgrading your space.
+                <br />
+                To learn more, read about our{' '}
+                <TextLink
+                  href={withInAppHelpUtmParams(
+                    websiteUrl(
+                      '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+                    )
+                  )}
+                  rel="noopener noreferrer"
+                  target="_blank">
+                  Space types and pricing
+                </TextLink>
+                .
+              </Paragraph>
+            </Typography>
 
-          <Button
-            buttonType="muted"
-            onClick={this.onUpgradeClick}
-            href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
-            rel="noopener noreferrer"
-            target="_blank">
-            Submit a request
-          </Button>
-        </div>
-        <div className="upgrade-space--graphics">
-          <Icon height={145} name={'space-diagram'} />
-        </div>
-      </Card>
+            <Button
+              buttonType="muted"
+              onClick={this.onUpgradeClick}
+              href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
+              rel="noopener noreferrer"
+              target="_blank">
+              Submit a request
+            </Button>
+          </div>
+          <div className="upgrade-space--graphics">
+            <Icon height={145} name={'space-diagram'} />
+          </div>
+        </Card>
+      </WidgetContainer.Col>
     );
   }
 }

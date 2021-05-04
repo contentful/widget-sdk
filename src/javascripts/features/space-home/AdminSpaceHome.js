@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { styles } from './styles';
 import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
@@ -12,6 +12,9 @@ import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
+import { NewOnboardingCTA } from './components/NewOnboardingCTA';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 export const AdminSpaceHome = ({
   spaceName,
@@ -21,7 +24,23 @@ export const AdminSpaceHome = ({
   hasTeamsEnabled,
   isTrialSpace,
   hasActiveAppTrial,
+  isEmptySpace,
 }) => {
+  const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
+  const spaceContext = useSpaceEnvContext();
+
+  useEffect(() => {
+    (async function () {
+      const newOnboardingEnabled = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+        spaceId: spaceContext.currentSpaceId,
+        organizationId: spaceContext.currentOrganizationId,
+        environmentId: spaceContext.currentEnvironmentId,
+      });
+
+      setIsNewOnboardingEnabled(newOnboardingEnabled);
+    })();
+  }, [spaceContext]);
+
   return (
     <WidgetContainer testId="admin-space-home">
       <WidgetContainer.Row>
@@ -39,10 +58,14 @@ export const AdminSpaceHome = ({
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
+      {isNewOnboardingEnabled && isEmptySpace && (
+        <WidgetContainer.Row>
+          <NewOnboardingCTA />
+        </WidgetContainer.Row>
+      )}
+
       <WidgetContainer.Row>
-        <WidgetContainer.Col>
-          <UpgradePricing />
-        </WidgetContainer.Col>
+        <UpgradePricing />
       </WidgetContainer.Row>
 
       <ContentfulAppsCTA />
@@ -95,4 +118,5 @@ AdminSpaceHome.propTypes = {
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
   hasActiveAppTrial: PropTypes.bool,
+  isEmptySpace: PropTypes.bool,
 };
