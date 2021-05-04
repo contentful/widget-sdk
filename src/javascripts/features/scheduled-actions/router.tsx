@@ -1,11 +1,12 @@
 import React from 'react';
-import ScheduledActionsListPage from '../list/ScheduledActionsListPage';
+import { ScheduledActionsListPage } from './page/ScheduledActionsListPage';
 import TheLocaleStore from 'services/localeStore';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 import StateRedirect from 'app/common/StateRedirect';
 
-import ScheduledActionsFeatureFlag from '../ScheduledActionsFeatureFlag';
+import { ScheduledActionsFeatureFlag } from './ScheduledActionsFeatureFlag';
+import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-routing';
 
 const ScheduledActionsListRoute = () => {
   const defaultLocale = TheLocaleStore.getDefaultLocale();
@@ -21,7 +22,7 @@ const ScheduledActionsListRoute = () => {
         if (currentVariation === true) {
           return (
             <ScheduledActionsListPage
-              spaceId={spaceId}
+              spaceId={spaceId as string}
               environmentId={environmentId}
               defaultLocale={defaultLocale}
               contentTypes={contentTypes}
@@ -29,12 +30,35 @@ const ScheduledActionsListRoute = () => {
           );
         } else if (currentVariation === false) {
           return <StateRedirect path="spaces.detail.entries.list" />;
-        } else {
-          return null;
         }
+        return null;
       }}
     </ScheduledActionsFeatureFlag>
   );
 };
 
-export default ScheduledActionsListRoute;
+const ScheduledActionsListRouter = () => {
+  const [basename] = window.location.pathname.split('jobs');
+
+  return (
+    <CustomRouter splitter="jobs">
+      <RouteErrorBoundary>
+        <Routes basename={basename + 'jobs'}>
+          <Route name={'spaces.details.jobs'} path="/" element={<ScheduledActionsListRoute />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
+        </Routes>
+      </RouteErrorBoundary>
+    </CustomRouter>
+  );
+};
+
+const scheduledActionsState = {
+  name: 'jobs',
+  url: '/jobs{pathname:any}',
+  params: {
+    navigationState: null,
+  },
+  component: ScheduledActionsListRouter,
+};
+
+export { scheduledActionsState };

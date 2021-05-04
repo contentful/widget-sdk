@@ -345,6 +345,29 @@ const pageExtensionRoute = {
 };
 
 /**
+ * Scheduled actions
+ */
+
+type ScheduledActionsRouteType = {
+  path: 'spaces.details.jobs';
+  spaceId?: string;
+  environmentId?: string;
+};
+
+const scheduledActionsRoute = {
+  'spaces.details.jobs': (
+    env: EnvironmentParams,
+    params: Omit<ScheduledActionsRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'jobs'),
+    params: {
+      spaceId: params.spaceId,
+      environmentId: params.environmentId,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -361,7 +384,8 @@ export type SpaceSettingsRouteType =
   | EnvironmentsRouteType
   | SpaceRouteType
   | EmbargoedAssetsRouteType
-  | PageExtensionsRouteType;
+  | PageExtensionsRouteType
+  | ScheduledActionsRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -377,4 +401,5 @@ export const routes = {
   ...spaceRoutes,
   ...embargoedAssetsRoutes,
   ...pageExtensionRoute,
+  ...scheduledActionsRoute,
 };

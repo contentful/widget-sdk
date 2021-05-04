@@ -1,18 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 import BooleanSpaceFeature from 'utils/ProductCatalog/BooleanSpaceFeature';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
-import { trackAlphaEligibilityToIntercom } from './Analytics/ScheduledActionsAnalytics';
+import { trackAlphaEligibilityToIntercom } from '../../app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 
-export function getScheduledActionsFeatureVariation({ spaceId }) {
+const getScheduledActionsFeatureVariation = ({ spaceId }: { spaceId: string }) => {
   return getSpaceFeature(spaceId, SpaceFeatures.SCHEDULED_PUBLISHING);
-}
+};
 
 /**
  * The facade for jobs feature flag. Tracks feature eligibility to intercom.
  * @param {Function} children
  */
-export default function ScheduledActionsFeatureFlag({ children }) {
+const ScheduledActionsFeatureFlag = ({
+  children,
+}: {
+  children: ({ currentVariation: boolean }) => ReactNode;
+}) => {
   return (
     <BooleanSpaceFeature spaceFeatureKey={SpaceFeatures.SCHEDULED_PUBLISHING}>
       {({ currentVariation }) => {
@@ -23,8 +26,6 @@ export default function ScheduledActionsFeatureFlag({ children }) {
       }}
     </BooleanSpaceFeature>
   );
-}
-
-ScheduledActionsFeatureFlag.propTypes = {
-  children: PropTypes.func.isRequired,
 };
+
+export { getScheduledActionsFeatureVariation, ScheduledActionsFeatureFlag };

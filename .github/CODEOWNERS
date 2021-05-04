@@ -40,6 +40,9 @@ src/javascripts/features/trials/                     @contentful/team-moi
 src/javascripts/features/space-usage/                @contentful/team-moi
 src/javascripts/features/space-home/                 @contentful/team-moi
 
+# Team Sparks
+src/javascripts/features/scheduled-actions/   @contentful/team-sparks
+
 # Team Dante
 src/javascripts/features/locales-management/ @contentful/team-dante
 

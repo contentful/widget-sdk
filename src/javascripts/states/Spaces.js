@@ -12,7 +12,7 @@ import { apiKeysState } from './settingsApiKeys';
 import { assetViewState, entryViewState } from 'features/entity-views';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
-import scheduledActions from 'app/ScheduledActions/routes';
+import { scheduledActionsState } from 'features/scheduled-actions';
 import tasks from 'app/TasksPage/routes';
 import { pageExtensionsState } from 'features/page-widgets';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -83,7 +83,7 @@ const spaceEnvironment = {
     // conceptually. However, we want to prevent users going to space
     // settings and switching to the master environment in the process.
     settings,
-    scheduledActions,
+    scheduledActionsState,
     tasks,
     pageExtensionsState,
   ],
@@ -142,7 +142,7 @@ const spaceDetail = {
     spaceEnvironment,
     stackOnboarding,
     apps,
-    scheduledActions,
+    scheduledActionsState,
     tasks,
     pageExtensionsState,
   ],

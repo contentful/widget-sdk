@@ -5,7 +5,7 @@ import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import PublicationWidget from './PublicationWidget';
 import { ScheduledActionsWidget } from 'app/ScheduledActions';
-import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
+import { ScheduledActionsFeatureFlag } from 'features/scheduled-actions';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 

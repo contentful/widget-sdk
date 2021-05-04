@@ -5,7 +5,7 @@ import { css } from 'emotion';
 import StateLink from 'app/common/StateLink';
 
 import tokens from '@contentful/forma-36-tokens';
-import ScheduledActionsFeatureFlag from './ScheduledActionsFeatureFlag';
+import { ScheduledActionsFeatureFlag } from 'features/scheduled-actions';
 
 const styles = {
   linkContainer: css({
@@ -20,7 +20,7 @@ const styles = {
 };
 
 export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
-  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs.list`;
+  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs`;
   return <StateLink path={path}>{children}</StateLink>;
 }
 

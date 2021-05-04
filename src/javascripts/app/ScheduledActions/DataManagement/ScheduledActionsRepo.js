@@ -1,9 +1,9 @@
 import { getSpaceContext } from 'classes/spaceContext';
 import _ from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
+import { getJobs } from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
-import { getScheduledActionsFeatureVariation } from '../ScheduledActionsFeatureFlag';
+import { getScheduledActionsFeatureVariation } from 'features/scheduled-actions';
 
 // We expire the ScheduledActions cache every 5s
 // Right now it's being used to display "scheduled icons" for all references of an Entity.
@@ -19,7 +19,7 @@ const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
     batchedScheduleActionsLoader.cache.clear();
   }, DEFAULT_CACHE_TIMEOUT_MS);
 
-  return ScheduledActionsService.getJobs(spaceEndpoint, {
+  return getJobs(spaceEndpoint, {
     order: 'scheduledFor.datetime',
     'sys.status': 'scheduled',
     'environment.sys.id': environmentId,

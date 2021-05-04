@@ -1,10 +1,12 @@
 import { uniq } from 'lodash';
-import * as ScheduledActionsService from '../DataManagement/ScheduledActionsService';
+import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import _ from 'lodash';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { getReleases } from 'app/Releases/releasesService';
 
 const defaultEntityTypes = ['Entry', 'Asset'];
+
+// TODO: replace with the cma sdk
 
 function getUsers(endpoint, ids) {
   return endpoint({
