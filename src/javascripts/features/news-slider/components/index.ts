@@ -1,2 +1,2 @@
-export { CommunitySlides } from './CommunitySlides';
-export { TeamSlides } from './TeamSlides';
+export { GenericCustomerSlides } from './GenericCustomerSlides';
+export { BasePlanNames } from './GenericCustomerSlides';

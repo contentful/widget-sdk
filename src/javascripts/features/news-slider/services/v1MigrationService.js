@@ -2,7 +2,7 @@ import React from 'react';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { CommunitySlides, TeamSlides } from '../components';
+import { GenericCustomerSlides } from '../components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
 import { track } from 'analytics/Analytics';
@@ -10,9 +10,13 @@ import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { getBasePlan } from 'features/pricing-entities';
 import { isFreePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
+import { isPartnerPlan, isProBonoPlan } from 'account/pricing/PricingDataProvider';
+import { generateBasePlanName } from 'features/organization-subscription';
 
 const V1_DESTINATION_COMMUNITY = 'community';
 const V1_DESTINATION_TEAM = 'team';
+const V1_DESTINATION_PRO_BONO = 'pro_bono';
+const V1_DESTINATION_PARTNER = 'partner';
 
 async function getCurrentOrg() {
   const { orgId, spaceId } = getModule('$stateParams');
@@ -41,21 +45,21 @@ export async function openV1MigrationWarning() {
 
   const isCommunity = isFreePlan(basePlan) && v1migrationDestination === V1_DESTINATION_COMMUNITY;
   const isTeam = isSelfServicePlan(basePlan) && v1migrationDestination === V1_DESTINATION_TEAM;
+  const isProBono = isProBonoPlan(basePlan) && v1migrationDestination === V1_DESTINATION_PRO_BONO;
+  const isPartner = isPartnerPlan(basePlan) && v1migrationDestination === V1_DESTINATION_PARTNER;
 
-  if (isCommunity || isTeam) {
+  if (isCommunity || isTeam || isProBono || isPartner) {
     const key = getStorageKey(org.sys.id);
     const storage = createClientStorage('local');
     storage.set(key, 'true');
     track('v1_migration_update:communication_seen', { basePlanName: basePlan.name });
   }
 
-  if (isCommunity) {
+  const basePlanName = generateBasePlanName(basePlan, v1migrationDestination);
+
+  if (isCommunity || isTeam || isProBono || isPartner) {
     ModalLauncher.open(({ isShown, onClose }) => (
-      <CommunitySlides isShown={isShown} onClose={onClose} />
-    ));
-  } else if (isTeam) {
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <TeamSlides isShown={isShown} onClose={onClose} />
+      <GenericCustomerSlides isShown={isShown} onClose={onClose} basePlanName={basePlanName} />
     ));
   }
 }

@@ -6,6 +6,7 @@ import { NewCommunityFeaturesImage } from '../illustrations';
 import { DisplayText, List, ListItem, TextLink } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { websiteUrl } from 'Config';
+import { BasePlanNames } from '../GenericCustomerSlides';
 
 const styles = {
   grid: css({
@@ -52,19 +53,35 @@ const styles = {
   }),
 };
 
-export const NewCommunityFeatures = () => (
+interface NewFeaturesProps {
+  basePlanName: string;
+}
+
+export const NewFeatures = ({ basePlanName }: NewFeaturesProps) => (
   <Grid columns={2} rows={1} columnGap="spacingXl" flow="row" className={styles.grid}>
     <div className={styles.content}>
       <DisplayText size="large">
-        Your Contentful account has been upgraded to our Community tier
+        {`Your Contentful account has been upgraded to our ${basePlanName} tier`}
       </DisplayText>
       <List className={styles.list}>
-        <ListItem className={styles.listItem}>
-          You now have a single permanent Community space{' '}
-        </ListItem>
-        <ListItem className={styles.listItem}>
-          Other spaces will be archived after 6 months
-        </ListItem>
+        {basePlanName === BasePlanNames.COMMUNITY && (
+          <>
+            <ListItem className={styles.listItem}>
+              You now have a single permanent Community space{' '}
+            </ListItem>
+            <ListItem className={styles.listItem}>
+              Other spaces will be archived after 6 months
+            </ListItem>
+          </>
+        )}
+        {basePlanName === BasePlanNames.TEAM && (
+          <ListItem className={styles.listItem}>
+            Each of your spaces is now mapped to a Medium or Large space on our{' '}
+            <TextLink className={styles.link} href={websiteUrl('/pricing')}>
+              Team tier
+            </TextLink>
+          </ListItem>
+        )}
         <ListItem className={styles.listItem}>
           You get access to{' '}
           <TextLink
