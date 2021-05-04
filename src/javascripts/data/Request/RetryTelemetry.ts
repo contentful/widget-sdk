@@ -1,10 +1,9 @@
 import * as Telemetry from 'i13n/Telemetry';
 import { getCurrentState, getEndpoint } from './Utils';
 import { DEFAULT_TTL } from './RetryConstants';
+import { RequestConfig } from 'data/Request';
 
 const REPORTING_TIMEOUT = 60 * 1000;
-
-type RecordPayload = { url?: string; method?: string };
 
 /**
  * @description
@@ -18,8 +17,11 @@ export function recordResponseTime(
   { status },
   startTime: number,
   version: number,
-  { url, method }: RecordPayload = {}
+  client: string,
+  config: RequestConfig
 ) {
+  const url = config?.url;
+  const method = config?.method;
   const duration = Date.now() - startTime;
   try {
     if (duration < REPORTING_TIMEOUT) {
@@ -28,6 +30,7 @@ export function recordResponseTime(
         status,
         method,
         version,
+        client,
       });
     }
   } catch {
@@ -40,8 +43,11 @@ export function recordQueueTime(
   queuedAt: number,
   version: number,
   ttl: number,
-  { url, method }: RecordPayload = {}
+  client: string,
+  config: RequestConfig
 ) {
+  const url = config?.url;
+  const method = config?.method;
   const duration = Date.now() - queuedAt;
   try {
     if (duration < REPORTING_TIMEOUT) {
@@ -51,6 +57,7 @@ export function recordQueueTime(
         method,
         version,
         retries: DEFAULT_TTL - ttl,
+        client,
       });
     }
   } catch {
@@ -58,13 +65,14 @@ export function recordQueueTime(
   }
 }
 
-export function recordRateLimitExceeded(version: number, url: string, ttl: number) {
+export function recordRateLimitExceeded(version: number, url: string, ttl: number, client: string) {
   try {
     Telemetry.count('cma-rate-limit-exceeded', {
       endpoint: getEndpoint(url),
       state: getCurrentState(),
       version,
       retries: DEFAULT_TTL - ttl,
+      client,
     });
   } catch {
     // no-op

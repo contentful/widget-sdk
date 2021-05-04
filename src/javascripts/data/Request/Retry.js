@@ -16,7 +16,7 @@ import { delay } from './Utils';
 const PERIOD = 1000;
 const CLIENT_VERSION = 1;
 
-export default function withRetry(requestFn, version = CLIENT_VERSION) {
+export default function withRetry(requestFn, version = CLIENT_VERSION, clientName) {
   const queue = [];
   let inFlight = 0;
 
@@ -59,12 +59,12 @@ export default function withRetry(requestFn, version = CLIENT_VERSION) {
 
     try {
       const response = await requestFn(...call.args);
-      recordResponseTime({ status: 200 }, startTime + call.wait, version, ...call.args);
-      recordQueueTime({ status: 200 }, call.queuedAt, version, call.ttl, ...call.args);
+      recordResponseTime({ status: 200 }, startTime + call.wait, version, clientName, call.args[0]);
+      recordQueueTime({ status: 200 }, call.queuedAt, version, call.ttl, clientName, call.args[0]);
       call.resolve(response);
     } catch (e) {
       handleError(call, e);
-      recordResponseTime(e, startTime + call.wait, version, ...call.args);
+      recordResponseTime(e, startTime + call.wait, version, clientName, call.args[0]);
     } finally {
       inFlight--;
     }
@@ -79,7 +79,7 @@ export default function withRetry(requestFn, version = CLIENT_VERSION) {
 
   function handleError(call, err) {
     if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
-      recordRateLimitExceeded(version, call.args[0]?.url, call.ttl);
+      recordRateLimitExceeded(version, call.args[0]?.url, call.ttl, clientName);
       queue.unshift(backOff(call));
       attemptImmediate();
     } else if (
@@ -90,7 +90,14 @@ export default function withRetry(requestFn, version = CLIENT_VERSION) {
       queue.unshift(call);
       attemptImmediate();
     } else {
-      recordQueueTime({ status: err.status }, call.queuedAt, version, call.ttl, ...call.args);
+      recordQueueTime(
+        { status: err.status },
+        call.queuedAt,
+        version,
+        call.ttl,
+        clientName,
+        ...call.args
+      );
       call.reject(err);
     }
   }

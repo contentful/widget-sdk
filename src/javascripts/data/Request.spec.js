@@ -2,7 +2,7 @@
 
 import * as Telemetry from 'i13n/Telemetry';
 import { getVariationSync } from 'LaunchDarkly';
-import makeRequest from './Request';
+import { makeRequest } from './Request';
 import wrapWithAuth from 'data/Request/Auth';
 import { tracingHeaders } from 'i13n/BackendTracing';
 
@@ -36,7 +36,7 @@ describe('Request', () => {
   });
 
   beforeEach(() => {
-    request = makeRequest(mockAuth);
+    request = makeRequest({ auth: mockAuth });
   });
 
   it('enhances the request', async () => {
@@ -352,7 +352,7 @@ describe('Request', () => {
 
   it('tracks cma-req with version explicitly set to 2', async () => {
     getVariationSync.mockReturnValue(2);
-    request = makeRequest(mockAuth);
+    request = makeRequest({ auth: mockAuth });
     await request({ url: 'http://foo.com/spaces/hello-world/entries' });
     expect(Telemetry.count).toHaveBeenCalledTimes(1);
     expect(Telemetry.count).toHaveBeenCalledWith(

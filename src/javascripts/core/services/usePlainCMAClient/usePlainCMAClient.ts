@@ -7,14 +7,18 @@ import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
-import makeRequest from 'data/Request';
+import { makeRequest } from 'data/Request';
 import { getSpaceContext } from 'classes/spaceContext';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
 type GetCmaClientOptions = { noBatch?: boolean };
 
 export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
-  const request = makeRequest(auth, undefined, undefined);
+  const request = makeRequest({
+    auth,
+    clientName: 'cma',
+    overrideDefaultResponseTransform: undefined,
+  });
 
   /*
    `accessToken` and `refreshToken` is only for interface completeness,

@@ -1,7 +1,7 @@
-import resolveTokenLinks from './resolveTokenLinks';
-import makeFetch from 'data/Request';
 import { apiUrl } from 'Config';
 import { captureError } from 'core/monitoring';
+import { makeRequest } from 'data/Request';
+import resolveTokenLinks from './resolveTokenLinks';
 
 /**
  * @description
@@ -14,7 +14,10 @@ import { captureError } from 'core/monitoring';
  * Tested as part of the 'TokenStore` module.
  */
 export default function makeFetchWithAuth(auth) {
-  const doFetch = makeFetch(auth);
+  const doFetch = makeRequest({
+    auth,
+    clientName: 'token',
+  });
   const request = {
     method: 'GET',
     url: apiUrl('token'),

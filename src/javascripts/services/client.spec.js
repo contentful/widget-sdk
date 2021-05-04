@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import client from './client';
-import makeRequest from 'data/Request';
+import { makeRequest } from 'data/Request';
 
-jest.mock('data/Request', () => jest.fn());
+jest.mock('data/Request', () => ({ makeRequest: jest.fn() }));
 
 describe('Client', () => {
   describe('#request', () => {

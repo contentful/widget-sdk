@@ -1,4 +1,4 @@
-import makeRequest from 'data/Request';
+import { makeRequest } from 'data/Request';
 import { extend, filter, get } from 'lodash';
 import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
 import {
@@ -197,7 +197,11 @@ export function create<Scope>(
   auth: AuthParamsType,
   source?: string
 ): BaseEndpoint<Scope> {
-  const baseRequest = makeRequest(auth, source);
+  const baseRequest = makeRequest({
+    auth,
+    source,
+    clientName: 'endpoint',
+  });
   let withBaseUrl;
   if (typeof baseUrl === 'string') {
     withBaseUrl = (path: string) => joinPath([baseUrl].concat(path));
