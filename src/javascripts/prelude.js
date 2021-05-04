@@ -239,9 +239,6 @@ angular
         /* webpackMode: "eager" */ 'core/services/DegradedAppPerformance'
       );
 
-      // import space context so initialization happens before navigation kicks in
-      await import(/* webpackMode: "eager" */ 'classes/spaceContext');
-
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {

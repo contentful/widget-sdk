@@ -36,16 +36,6 @@ const resolveSpaceData = [
   ($stateParams) => TokenStore.getSpace($stateParams.spaceId),
 ];
 
-const initializingSpaceContext = [
-  'spaceData',
-  '$stateParams',
-  '$rootScope',
-  (spaceData, $stateParams) => {
-    const spaceContext = getSpaceContext();
-    return spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
-  },
-];
-
 const cleanupSpaceContext = () => {
   const spaceContext = getSpaceContext();
   return spaceContext.cleanLastResetParams();
@@ -56,11 +46,20 @@ const spaceEnvironment = {
   url: '/environments/:environmentId',
   resolve: {
     spaceData: resolveSpaceData,
-    initializingSpaceContext,
+    initializingSpaceEnvContext: [
+      'spaceData',
+      '$stateParams',
+      'initializingSpaceContext',
+      async (spaceData, $stateParams) => {
+        const spaceContext = getSpaceContext();
+        const result = await spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
+        return result;
+      },
+    ],
   },
   template: '<div />',
   controller: [
-    'initializingSpaceContext',
+    'initializingSpaceEnvContext',
     'spaceData',
     '$state',
     (_, spaceData, $state) => {
@@ -95,7 +94,14 @@ const spaceDetail = {
   url: '/:spaceId',
   resolve: {
     spaceData: resolveSpaceData,
-    initializingSpaceContext,
+    initializingSpaceContext: [
+      'spaceData',
+      async (spaceData) => {
+        const spaceContext = getSpaceContext();
+        const result = await spaceContext.resetWithSpace(spaceData, undefined);
+        return result;
+      },
+    ],
   },
   onEnter: [
     'spaceData',
