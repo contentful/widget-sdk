@@ -33,6 +33,13 @@ src/javascripts/features/roles-permissions-management/  @contentful/team-hejo
 src/javascripts/features/sso                            @contentful/team-hejo
 src/javascripts/features/news-slider                    @contentful/team-hejo
 
+# Team Moi
+src/javascripts/features/organization-subscription/  @contentful/team-moi
+src/javascripts/features/organization-usage/         @contentful/team-moi
+src/javascripts/features/trials/                     @contentful/team-moi
+src/javascripts/features/space-usage/                @contentful/team-moi
+src/javascripts/features/space-home/                 @contentful/team-moi
+
 # Team Dante
 src/javascripts/features/locales-management/ @contentful/team-dante
 
