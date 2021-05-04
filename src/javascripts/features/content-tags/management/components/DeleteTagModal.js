@@ -8,8 +8,6 @@ import {
   Note,
   Notification,
   Paragraph,
-  FormLabel,
-  HelpText,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -91,12 +89,16 @@ function DeleteTagModal({ tag, isShown, onClose }) {
         deleteTagError.code === 'ActionPreconditionsFailed' &&
         deleteTagError.data?.details?.errors?.some((error) => error.name === 'reference')
       ) {
-        Notification.error(
-          <>
-            <FormLabel>Can&apos;t delete tag because it is currently in use.</FormLabel>
-            <HelpText>Remove the tag from all entries and assets before deleting it.</HelpText>
-          </>
-        );
+        Notification.error('Remove the tag from all entries and assets before deleting it.', {
+          title: "Can't delete tag because it is currently in use",
+          duration: 0,
+          cta: {
+            label: 'Learn about deleting tags in the help center.',
+            textLinkProps: {
+              href: 'https://www.contentful.com/help/deleting-tags/',
+            },
+          },
+        });
       } else {
         Notification.error(`Error deleting tag.`);
       }
