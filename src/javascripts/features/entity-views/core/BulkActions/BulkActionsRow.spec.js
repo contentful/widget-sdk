@@ -69,9 +69,6 @@ jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
-jest.mock('features/trials', () => ({
-  isTrialSpaceType: jest.fn(),
-}));
 jest.mock('data/CMA/ProductCatalog', () => ({
   SpaceFeatures: { PC_CONTENT_TAGS: 'content_tags' },
   getSpaceFeature: jest.fn().mockResolvedValue(false),

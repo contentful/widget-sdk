@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isOrganizationOnTrial, isTrialSpaceType } from './TrialService';
+import { isOrganizationOnTrial } from './TrialService';
 import * as fake from 'test/helpers/fakeFactory';
 
 const today = '2019-10-01T03:00:00.000Z';
@@ -13,16 +13,6 @@ const mockTrialOrganization = fake.Organization({
 }) as any;
 
 const trialExpiredOrganization = fake.Organization({
-  trialPeriodEndsAt: trialEndedAt,
-}) as any;
-
-const mockSpace = fake.Space() as any;
-
-const mockTrialSpace = fake.Space({
-  trialPeriodEndsAt: trialEndsAt,
-}) as any;
-
-const trialExpiredSpace = fake.Space({
   trialPeriodEndsAt: trialEndedAt,
 }) as any;
 
@@ -43,16 +33,6 @@ describe('TrialService', () => {
 
     it('should return False if the organization has never been on trial', () => {
       expect(isOrganizationOnTrial(mockOrganization)).toBe(false);
-    });
-  });
-
-  describe('isTrialSpaceType', () => {
-    it('should return false if the space is not Trial Space type', () => {
-      expect(isTrialSpaceType(mockSpace)).toBe(false);
-    });
-    it('should return true if the space has been on trial before or is on an active trial', () => {
-      expect(isTrialSpaceType(trialExpiredSpace)).toBe(true);
-      expect(isTrialSpaceType(mockTrialSpace)).toBe(true);
     });
   });
 });

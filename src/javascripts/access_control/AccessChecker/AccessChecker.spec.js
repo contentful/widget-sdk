@@ -11,7 +11,6 @@ import * as Enforcements from 'access_control/Enforcements';
 import * as ResponseCache from 'access_control/AccessChecker/ResponseCache';
 import * as PolicyChecker from 'access_control/AccessChecker/PolicyChecker';
 import * as TokenStore from 'services/TokenStore';
-import * as Trials from 'features/trials';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 
 jest.mock('data/EndpointFactory');
@@ -35,8 +34,7 @@ describe('Access Checker', () => {
     mockSpaceEndpoint,
     isPermissionDeniedStub,
     feature,
-    getSpaceFeature,
-    isTrialSpaceType;
+    getSpaceFeature;
 
   function init() {
     ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
@@ -101,7 +99,6 @@ describe('Access Checker', () => {
     hidePersistentNotification = jest.fn();
     getResStub = jest.fn().mockReturnValue(false);
     getSpaceFeature = jest.fn();
-    isTrialSpaceType = jest.fn().mockReturnValue(false);
 
     EndpointFactory.createOrganizationEndpoint = jest.fn().mockReturnValue(mockOrgEndpoint);
     EndpointFactory.createSpaceEndpoint = jest.fn().mockReturnValue(mockSpaceEndpoint);
@@ -123,7 +120,6 @@ describe('Access Checker', () => {
     PolicyChecker.canUpdateOwnAssets = stubs.canUpdateOwnAssets;
     TokenStore.organizations$ = stubs.organizations$;
     TokenStore.user$ = stubs.user$;
-    Trials.isTrialSpaceType = isTrialSpaceType;
 
     reasonsDeniedStub = jest.fn().mockReturnValue([]);
     isPermissionDeniedStub = jest.fn().mockReturnValue(false);
@@ -353,11 +349,6 @@ describe('Access Checker', () => {
       it('should return "false" for spaceHome if user is not an admin, editor or author', () => {
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
         expect(ac.getSectionVisibility().spaceHome).toBe(false);
-      });
-      it('should return "true" for spaceHome if the space is a Trial Space if user is not an admin, editor or author', () => {
-        isTrialSpaceType.mockReturnValue(true);
-        changeSpace({ hasFeature: true, isSpaceAdmin: false });
-        expect(ac.getSectionVisibility().spaceHome).toBe(true);
       });
     });
 

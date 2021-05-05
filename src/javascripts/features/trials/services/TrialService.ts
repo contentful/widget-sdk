@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { memoize } from 'lodash';
 
-import { Organization, SpaceData } from 'core/services/SpaceEnvContext/types';
+import { Organization } from 'core/services/SpaceEnvContext/types';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 /**
@@ -13,16 +13,6 @@ export const isOrganizationOnTrial = (organization?: Organization): boolean => {
   }
   const endDate = organization.trialPeriodEndsAt;
   return endDate ? moment().isSameOrBefore(moment(endDate), 'date') : false;
-};
-
-/**
- * Return True if a space is a Trial Space type.
- */
-export const isTrialSpaceType = (space?: SpaceData): boolean => {
-  if (!space) {
-    return false;
-  }
-  return 'trialPeriodEndsAt' in space;
 };
 
 export const getTrialsWithCache = memoize(async (organizationId: string) => {

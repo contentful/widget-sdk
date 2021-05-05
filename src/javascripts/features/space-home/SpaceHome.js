@@ -26,7 +26,6 @@ import {
   getOrganizationName,
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
-import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -256,13 +255,6 @@ export const SpaceHome = () => {
       {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}
       {!isLoading && readOnlySpace && <ReadOnlySpaceHome isAdmin={isSpaceAdmin} />}
       {!isLoading && <ExpiredTrialSpaceHome />}
-      {!isLoading &&
-        !isSpaceAdmin &&
-        !isAuthorOrEditor &&
-        isEnterpriseTrialSpace &&
-        !readOnlySpace && (
-          <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
-        )}
     </div>
   );
 };

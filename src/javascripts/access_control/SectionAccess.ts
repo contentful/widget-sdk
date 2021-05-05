@@ -1,6 +1,5 @@
 import * as accessChecker from './AccessChecker';
 import { isAdmin, getSpaceRoles, getSpaceData } from 'core/services/SpaceEnvContext/utils';
-import { isTrialSpaceType } from 'features/trials';
 import { routes } from 'core/react-routing';
 import type { RouteDefinition, CreateRouteDefinition } from 'core/react-routing';
 
@@ -34,9 +33,8 @@ export function getFirstAccessibleSref(space) {
   const userIsAdmin = isAdmin(space);
   const userIsAuthorOrEditor = accessChecker.isAuthorOrEditor(getSpaceRoles(space));
   const notActivated = !getSpaceData(space)?.activatedAt;
-  const isTrialSpace = isTrialSpaceType(getSpaceData(space));
 
-  return (notActivated && userIsAdmin) || userIsAuthorOrEditor || isTrialSpace
+  return (notActivated && userIsAdmin) || userIsAuthorOrEditor
     ? { path: '.home' }
     : firstAccessible;
 }
