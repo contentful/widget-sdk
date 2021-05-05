@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { css, cx } from 'emotion';
+import React, { useCallback, useState, useEffect, useContext } from 'react';
+import { css } from 'emotion';
 import {
   Paragraph,
+  Flex,
   Heading,
   TextLink,
   Tooltip,
   Icon,
-  Tabs,
-  Tab,
-  TabPanel,
   Button,
   Notification,
 } from '@contentful/forma-36-react-components';
@@ -18,57 +16,53 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
 import { Pluralized, Price } from 'core/components/formatting';
+import { useAsync } from 'core/hooks';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
-import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
+import { UsedAndUnusedSpacePlans } from './UsedAndUnusedSpacePlans';
 
 import { OrgSubscriptionContext } from '../context';
 import { actions } from '../context/orgSubscriptionReducer';
-import type { SpacePlan } from '../types';
 import { createSpace, changeSpace } from '../utils/spaceUtils';
 import { downloadSpacesUsage } from '../services/SpacesUsageService';
+import type { SpacePlan } from '../types';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
-  total: css({
-    marginBottom: '1.5em',
-  }),
-  planChangingCard: css({
-    padding: '20px',
-    marginBottom: '30px',
-  }),
-  cardTitle: css({
-    marginBottom: '8px',
-    fontWeight: 'bold',
-    color: tokens.colorTextMid,
-  }),
   inaccessibleHelpIcon: css({
     fill: tokens.colorElementDarkest,
     marginBottom: '-3px',
     marginLeft: tokens.spacingXs,
   }),
-  note: css({
-    marginBottom: tokens.spacingM,
-  }),
-  tabPanel: css({
-    display: 'none',
-    height: '100%',
-  }),
-  isVisible: css({
-    display: 'block',
-    padding: `${tokens.spacingM} 0 0 0`,
-  }),
   exportButton: css({
     marginLeft: 'auto',
-    float: 'right',
-    marginBottom: tokens.spacingM,
   }),
 };
 
-const USED_SPACES = 'usedSpaces';
-const UNUSED_SPACES = 'unusedSpaces';
+async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: string) {
+  // we only need the flags for organizations with Enterprise basePlan
+  if (!isEnterprisePlan) {
+    return undefined;
+  }
+
+  const [
+    isSpacePlanAssignmentEnabled,
+    isCreateSpaceForSpacePlanEnabled,
+    isSpacePlanAssignmentExperimentEnabled,
+  ] = await Promise.all([
+    getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId }),
+    getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN),
+    getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT, { organizationId }),
+  ]);
+
+  return {
+    isSpacePlanAssignmentEnabled,
+    isCreateSpaceForSpacePlanEnabled,
+    isSpacePlanAssignmentExperimentEnabled,
+  };
+}
 
 interface SpacePlansProps {
   enterprisePlan?: boolean;
@@ -90,44 +84,36 @@ export function SpacePlans({
 
   const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
 
-  const [canManageSpaces, setCanManageSpaces] = useState(false);
-  const [isSpaceAssignmentExperimentEnabled, setIsSpaceAssignmentExperimentEnabled] = useState(
-    false
-  );
-  const [isSpaceCreateForSpacePlanEnabled, setIsSpaceCreateForSpacePlanEnabled] = useState(false);
-  const [unassignedSpacePlans, setUnassignedSpacePlans] = useState<SpacePlan[]>([]);
-  const [assignedSpacePlans, setAssignedSpacePlans] = useState<SpacePlan[]>([]);
-  const [selectedTab, setSelectedTab] = useState('usedSpaces');
+  const [usedSpacePlans, setUsedSpacePlans] = useState<SpacePlan[]>([]);
+  const [unusedSpacePlans, setUnusedSpacePlans] = useState<SpacePlan[]>([]);
+
   const [isExportingCSV, setIsExportingCSV] = useState(false);
 
-  useEffect(() => {
-    async function fetch() {
-      const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId });
-      const isSpaceCreateForSpacePlanEnabled = await getVariation(
-        FLAGS.CREATE_SPACE_FOR_SPACE_PLAN
-      );
-      const isExperimentFeatureFlagEnabled = await getVariation(
-        FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
-        { organizationId }
-      );
+  // fetch feature flags
+  const { isLoading, data } = useAsync(
+    useCallback(() => fetchFeatureFlags(enterprisePlan, organizationId), [
+      enterprisePlan,
+      organizationId,
+    ])
+  );
 
+  // Enterprise admin or owners can manage used and unused spaces
+  const userCanManageSpaces =
+    data?.isSpacePlanAssignmentEnabled && enterprisePlan && isOwnerOrAdmin;
+
+  useEffect(() => {
+    if (userCanManageSpaces) {
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
       const unassignedSpacePlans = spacePlans
         .filter((plan) => plan.gatekeeperKey === null)
         .sort((plan1, plan2) => plan1.price - plan2.price);
 
-      setAssignedSpacePlans(assignedSpacePlans);
-      setUnassignedSpacePlans(unassignedSpacePlans);
-
-      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
-      setCanManageSpaces(canManageSpaces);
-      setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
-      setIsSpaceCreateForSpacePlanEnabled(isSpaceCreateForSpacePlanEnabled);
+      setUsedSpacePlans(assignedSpacePlans);
+      setUnusedSpacePlans(unassignedSpacePlans);
     }
-    fetch();
-  }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
+  }, [userCanManageSpaces, spacePlans]);
 
-  // Spaces CRUD
+  // Space CRUD functions
   const onCreateSpace = createSpace(organizationId);
   const onChangeSpace = changeSpace(
     organizationId,
@@ -143,6 +129,7 @@ export function SpacePlans({
     });
   };
 
+  // Export CSV
   const handleExportBtnClick = async () => {
     setIsExportingCSV(true);
     try {
@@ -154,10 +141,10 @@ export function SpacePlans({
     setIsExportingCSV(false);
   };
 
-  const hasAnySpacesInaccessible = spacePlans.some((plan) => !plan.space?.isAccessible);
   const numSpaces = spacePlans.length;
+  const hasAnySpacesInaccessible = spacePlans.some((plan) => !plan.space?.isAccessible);
+  const showExportBtn = !isLoading && spacePlans.length > 0;
   const totalCost = calculatePlansCost({ plans: spacePlans });
-  const showExportBtn = !initialLoad && assignedSpacePlans?.length > 0;
 
   return (
     <>
@@ -181,139 +168,88 @@ export function SpacePlans({
         )}
       </Heading>
 
-      <Paragraph className={styles.total} testId="subscription-page.organization-information">
-        {numSpaces > 0 ? (
-          <>
-            Your organization has{' '}
-            <b>
-              <Pluralized text="space" count={numSpaces} />
-            </b>
-            {'. '}
-          </>
-        ) : (
-          "Your organization doesn't have any spaces. "
-        )}
-        {!enterprisePlan && totalCost > 0 && (
-          <span data-test-id="subscription-page.non-enterprise-price-information">
-            The total for your spaces is{' '}
-            <b>
-              <Price value={totalCost} />
-            </b>{' '}
-            per month.{' '}
-          </span>
-        )}
-        {enterprisePlan && isSpaceCreateForSpacePlanEnabled ? (
-          <StateLink
-            component={TextLink}
-            path=".space_create"
-            trackingEvent={'space_creation:begin'}
-            trackParams={{
-              flow: 'space_creation',
-            }}>
-            Create Space
-          </StateLink>
-        ) : (
-          <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
-            Create Space
-          </TextLink>
-        )}
-      </Paragraph>
+      <Flex alignItems="center" marginBottom="spacingM">
+        <Paragraph testId="subscription-page.organization-information">
+          {numSpaces > 0 ? (
+            <>
+              Your organization has{' '}
+              <b>
+                <Pluralized text="space" count={numSpaces} />
+              </b>
+              {'. '}
+            </>
+          ) : (
+            "Your organization doesn't have any spaces. "
+          )}
 
-      {(initialLoad || numSpaces > 0) &&
-        (canManageSpaces ? (
-          <>
-            <Tabs withDivider>
-              {unassignedSpacePlans.length > 0 && (
-                <>
-                  <Tab
-                    key={USED_SPACES}
-                    id={USED_SPACES}
-                    testId={`tab-${USED_SPACES}`}
-                    selected={selectedTab === USED_SPACES}
-                    onSelect={() => setSelectedTab(USED_SPACES)}>
-                    Used spaces
-                  </Tab>
-                  <Tab
-                    key={UNUSED_SPACES}
-                    id={UNUSED_SPACES}
-                    testId={`tab-${UNUSED_SPACES}`}
-                    selected={selectedTab === UNUSED_SPACES}
-                    onSelect={() => setSelectedTab(UNUSED_SPACES)}>
-                    Unused spaces{' '}
-                    {unassignedSpacePlans.length > 0 && `(${unassignedSpacePlans.length})`}
-                  </Tab>
-                </>
-              )}
-              {showExportBtn && (
-                <Button
-                  testId="subscription-page.export-csv"
-                  className={styles.exportButton}
-                  disabled={isExportingCSV}
-                  loading={isExportingCSV}
-                  buttonType="muted"
-                  onClick={handleExportBtnClick}>
-                  Export
-                </Button>
-              )}
-            </Tabs>
-            <TabPanel
-              id={USED_SPACES}
-              className={cx(styles.tabPanel, {
-                [styles.isVisible]: selectedTab === USED_SPACES,
-              })}>
-              <SpacePlansTable
-                plans={assignedSpacePlans}
-                organizationId={organizationId}
-                initialLoad={initialLoad}
-                upgradedSpaceId={changedSpaceId}
-                onChangeSpace={onChangeSpace}
-                onDeleteSpace={onDeleteSpace}
-                enterprisePlan={enterprisePlan}
-                showSpacePlanChangeBtn={canManageSpaces}
-              />
-            </TabPanel>
-            {unassignedSpacePlans.length > 0 && (
-              <TabPanel
-                id={UNUSED_SPACES}
-                className={cx(styles.tabPanel, {
-                  [styles.isVisible]: selectedTab === UNUSED_SPACES,
-                })}>
-                {unassignedSpacePlans && (
-                  <UnassignedPlansTable
-                    plans={unassignedSpacePlans}
-                    initialLoad={initialLoad}
-                    spaceAssignmentExperiment={isSpaceAssignmentExperimentEnabled}
-                    canCreateSpaceWithPlan={isSpaceCreateForSpacePlanEnabled}
-                  />
-                )}
-              </TabPanel>
-            )}
-          </>
-        ) : (
-          <>
-            {showExportBtn && (
-              <Button
-                testId="subscription-page.export-csv"
-                className={styles.exportButton}
-                disabled={isExportingCSV}
-                loading={isExportingCSV}
-                buttonType="muted"
-                onClick={handleExportBtnClick}>
-                Export
-              </Button>
-            )}
+          {!enterprisePlan && totalCost > 0 && (
+            <span data-test-id="subscription-page.non-enterprise-price-information">
+              The total for your spaces is{' '}
+              <b>
+                <Price value={totalCost} />
+              </b>{' '}
+              per month.{' '}
+            </span>
+          )}
+          {enterprisePlan && data?.isCreateSpaceForSpacePlanEnabled ? (
+            <StateLink
+              component={TextLink}
+              path=".space_create"
+              trackingEvent={'space_creation:begin'}
+              trackParams={{
+                flow: 'space_creation',
+              }}>
+              Create Space
+            </StateLink>
+          ) : (
+            <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
+              Create Space
+            </TextLink>
+          )}
+        </Paragraph>
+        {showExportBtn && (
+          <Button
+            testId="subscription-page.export-csv"
+            className={styles.exportButton}
+            disabled={isExportingCSV}
+            loading={isExportingCSV}
+            buttonType="muted"
+            onClick={handleExportBtnClick}>
+            Export
+          </Button>
+        )}
+      </Flex>
+
+      {numSpaces > 0 && (
+        <>
+          {!userCanManageSpaces && (
             <SpacePlansTable
-              plans={spacePlans}
-              organizationId={organizationId}
-              initialLoad={initialLoad}
-              upgradedSpaceId={changedSpaceId}
+              enterprisePlan={enterprisePlan}
+              initialLoad={initialLoad || isLoading}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
-              enterprisePlan={enterprisePlan}
-              showSpacePlanChangeBtn={canManageSpaces}
+              organizationId={organizationId}
+              plans={spacePlans}
+              upgradedSpaceId={changedSpaceId}
             />
-          </>
-        ))}
+          )}
+
+          {!isLoading && userCanManageSpaces && (
+            <UsedAndUnusedSpacePlans
+              initialLoad={initialLoad}
+              usedSpacePlans={usedSpacePlans}
+              unusedSpacePlans={unusedSpacePlans}
+              organizationId={organizationId}
+              changedSpaceId={changedSpaceId}
+              onDeleteSpace={onDeleteSpace}
+              onChangeSpace={onChangeSpace}
+              enterprisePlan={enterprisePlan}
+              isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
+              isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
+            />
+          )}
+        </>
+      )}
     </>
   );
 }

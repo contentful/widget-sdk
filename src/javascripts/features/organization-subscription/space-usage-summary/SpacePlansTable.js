@@ -68,7 +68,7 @@ export const SpacePlansTable = ({
   onChangeSpace,
   onDeleteSpace,
   enterprisePlan,
-  showSpacePlanChangeBtn,
+  showSpacePlanChangeBtn = false,
   initialLoad,
   upgradedSpaceId,
   organizationId,
