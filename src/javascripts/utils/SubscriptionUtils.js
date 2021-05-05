@@ -85,7 +85,7 @@ export function getEnabledFeatures({ ratePlanCharges = [] }) {
 
 /**
  * Calculates the cost of the given plans
- * @param  {Array} options.plans
+ * @param  {object} options.plans is an array of spacePlans
  * @return {Number}               Total cost
  */
 export function calculatePlansCost({ plans }) {

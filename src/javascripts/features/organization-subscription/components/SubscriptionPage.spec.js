@@ -82,14 +82,6 @@ describe('SubscriptionPage', () => {
     isOwnerOrAdmin.mockReturnValue(true);
   });
 
-  it('should show skeletons when initialLoad is true', () => {
-    build({ initialLoad: true });
-
-    screen.getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
-      expect(ele).toBeVisible();
-    });
-  });
-
   it('should display the base name', () => {
     build();
 
@@ -306,7 +298,6 @@ describe('SubscriptionPage', () => {
 
 function build(customProps) {
   const props = {
-    initialLoad: false,
     organization: mockOrganization,
     basePlan: mockBasePlan,
     grandTotal: null,

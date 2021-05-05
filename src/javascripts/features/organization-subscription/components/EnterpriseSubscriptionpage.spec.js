@@ -107,7 +107,6 @@ describe('EnterpriseSubscriptionPage', () => {
 
 async function build(customProps) {
   const props = {
-    initialLoad: false,
     memberAccessibleSpaces: [],
     onSpacePlansChange: jest.fn(),
     organization: mockOrganization,

@@ -131,7 +131,7 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
           icon={<ProductIcon icon="Subscription" size="large" />}
           title="Subscription"
           actions={
-            <ContactUsButton testId="contact-us" disabled={isLoading} isLink>
+            <ContactUsButton testId="contact-us" isLink>
               Questions or feedback? Contact us
             </ContactUsButton>
           }
@@ -153,7 +153,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
                   organization={data.organization}
                   memberAccessibleSpaces={data.memberAccessibleSpaces}
                   grandTotal={grandTotal}
-                  initialLoad={isLoading}
                   // Currently this is the only way to know if a basePlan is plan used internally at Contentful
                   isInternalBasePlan={/internal/i.test(data.basePlan.productName)}
                 />
@@ -165,7 +164,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
                   usersMeta={data.usersMeta}
                   organization={data.organization}
                   grandTotal={grandTotal}
-                  initialLoad={isLoading}
                 />
               )}
             </>
@@ -177,7 +175,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
               organization={data.organization}
               memberAccessibleSpaces={data.memberAccessibleSpaces}
               grandTotal={grandTotal}
-              initialLoad={isLoading}
             />
           )}
         </Workbench.Content>

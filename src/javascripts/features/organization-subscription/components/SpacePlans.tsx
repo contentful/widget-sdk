@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import cn from 'classnames';
+import { css, cx } from 'emotion';
 import {
   Paragraph,
   Heading,
@@ -28,6 +26,7 @@ import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 
 import { OrgSubscriptionContext } from '../context';
 import { actions } from '../context/orgSubscriptionReducer';
+import type { SpacePlan } from '../types';
 import { createSpace, changeSpace } from '../utils/spaceUtils';
 import { downloadSpacesUsage } from '../services/SpacesUsageService';
 import { useChangedSpace } from '../hooks/useChangedSpace';
@@ -71,12 +70,19 @@ const styles = {
 const USED_SPACES = 'usedSpaces';
 const UNUSED_SPACES = 'unusedSpaces';
 
+interface SpacePlansProps {
+  enterprisePlan?: boolean;
+  initialLoad?: boolean;
+  isOwnerOrAdmin?: boolean;
+  organizationId: string;
+}
+
 export function SpacePlans({
   enterprisePlan = false,
-  initialLoad,
+  initialLoad = false,
   isOwnerOrAdmin = false,
   organizationId,
-}) {
+}: SpacePlansProps) {
   const {
     dispatch,
     state: { spacePlans },
@@ -89,8 +95,8 @@ export function SpacePlans({
     false
   );
   const [isSpaceCreateForSpacePlanEnabled, setIsSpaceCreateForSpacePlanEnabled] = useState(false);
-  const [unassignedSpacePlans, setUnassignedSpacePlans] = useState(null);
-  const [assignedSpacePlans, setAssignedSpacePlans] = useState(null);
+  const [unassignedSpacePlans, setUnassignedSpacePlans] = useState<SpacePlan[]>([]);
+  const [assignedSpacePlans, setAssignedSpacePlans] = useState<SpacePlan[]>([]);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
   const [isExportingCSV, setIsExportingCSV] = useState(false);
 
@@ -216,7 +222,7 @@ export function SpacePlans({
       {(initialLoad || numSpaces > 0) &&
         (canManageSpaces ? (
           <>
-            <Tabs className={styles.tabs} withDivider>
+            <Tabs withDivider>
               {unassignedSpacePlans.length > 0 && (
                 <>
                   <Tab
@@ -252,7 +258,7 @@ export function SpacePlans({
             </Tabs>
             <TabPanel
               id={USED_SPACES}
-              className={cn(styles.tabPanel, {
+              className={cx(styles.tabPanel, {
                 [styles.isVisible]: selectedTab === USED_SPACES,
               })}>
               <SpacePlansTable
@@ -269,14 +275,13 @@ export function SpacePlans({
             {unassignedSpacePlans.length > 0 && (
               <TabPanel
                 id={UNUSED_SPACES}
-                className={cn(styles.tabPanel, {
+                className={cx(styles.tabPanel, {
                   [styles.isVisible]: selectedTab === UNUSED_SPACES,
                 })}>
                 {unassignedSpacePlans && (
                   <UnassignedPlansTable
                     plans={unassignedSpacePlans}
                     initialLoad={initialLoad}
-                    showSpacePlanChangeBtn={canManageSpaces}
                     spaceAssignmentExperiment={isSpaceAssignmentExperimentEnabled}
                     canCreateSpaceWithPlan={isSpaceCreateForSpacePlanEnabled}
                   />
@@ -312,10 +317,3 @@ export function SpacePlans({
     </>
   );
 }
-
-SpacePlans.propTypes = {
-  enterprisePlan: PropTypes.bool,
-  initialLoad: PropTypes.bool.isRequired,
-  isOwnerOrAdmin: PropTypes.bool,
-  organizationId: PropTypes.string.isRequired,
-};

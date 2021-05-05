@@ -5,16 +5,16 @@ import { orgSubscriptionReducer, Action } from './orgSubscriptionReducer';
 
 interface OrgSubscriptionContext {
   state: OrgSubscriptionState;
-  dispatch?: React.Dispatch<Action>;
+  dispatch: React.Dispatch<Action>;
 }
 
 const contextInitialState: OrgSubscriptionState = {
   spacePlans: [],
 };
 
-export const OrgSubscriptionContext = createContext<OrgSubscriptionContext>({
+export const OrgSubscriptionContext = createContext({
   state: contextInitialState,
-});
+} as OrgSubscriptionContext);
 
 interface OrgSubscriptionContextProviderProps {
   initialState?: OrgSubscriptionState;

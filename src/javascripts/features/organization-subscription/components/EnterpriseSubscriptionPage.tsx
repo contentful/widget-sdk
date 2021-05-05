@@ -54,7 +54,6 @@ async function fetchContent(
 }
 
 interface EnterpriseSubscriptionPageProps {
-  initialLoad: boolean;
   memberAccessibleSpaces: unknown[];
   organization: Organization;
   usersMeta: UsersMeta;
@@ -62,7 +61,6 @@ interface EnterpriseSubscriptionPageProps {
 }
 
 export function EnterpriseSubscriptionPage({
-  initialLoad,
   memberAccessibleSpaces,
   organization,
   usersMeta,
@@ -114,7 +112,6 @@ export function EnterpriseSubscriptionPage({
         ) : (
           <SpacePlans
             enterprisePlan
-            initialLoad={initialLoad}
             organizationId={organizationId}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
           />

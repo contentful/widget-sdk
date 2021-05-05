@@ -131,7 +131,6 @@ describe('NonEnterpriseSubscriptionPage', () => {
 
 async function build(customProps) {
   const props = {
-    initialLoad: false,
     organization: mockOrganization,
     basePlan: mockFreeBasePlan,
     grandTotal: null,

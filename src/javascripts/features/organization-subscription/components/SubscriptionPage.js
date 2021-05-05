@@ -9,9 +9,6 @@ import {
   Heading,
   Note,
   Paragraph,
-  SkeletonBodyText,
-  SkeletonContainer,
-  SkeletonDisplayText,
   TextLink,
   Typography,
 } from '@contentful/forma-36-react-components';
@@ -43,7 +40,6 @@ export function SubscriptionPage({
   usersMeta,
   organization,
   grandTotal,
-  initialLoad,
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
@@ -95,14 +91,7 @@ export function SubscriptionPage({
       )}
       {!isNotAdminOrOwnerOfTrialOrg && (
         <Flex flexDirection="column">
-          {initialLoad ? (
-            <SkeletonContainer svgHeight={117}>
-              <SkeletonDisplayText />
-              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-            </SkeletonContainer>
-          ) : (
-            <BasePlan basePlan={basePlan} />
-          )}
+          <BasePlan basePlan={basePlan} />
           {rightColumnHasContent && (
             <Flex flexDirection="column" marginTop="spacingXl">
               <UsersForPlan
@@ -121,47 +110,38 @@ export function SubscriptionPage({
       )}
       {!isNotAdminOrOwnerOfTrialOrg && (
         <Flex flexDirection="column">
-          {initialLoad ? (
-            <SkeletonContainer svgHeight={117}>
-              <SkeletonDisplayText />
-              <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-            </SkeletonContainer>
-          ) : (
-            <>
-              {!rightColumnHasContent && (
-                <Flex flexDirection="column" marginBottom="spacingXl">
-                  <UsersForPlan
-                    organizationId={organizationId}
-                    numberFreeUsers={usersMeta && usersMeta.numFree}
-                    numberPaidUsers={usersMeta && usersMeta.numPaid}
-                    costOfUsers={usersMeta && usersMeta.cost}
-                    unitPrice={usersMeta && usersMeta.unitPrice}
-                    hardLimit={usersMeta && usersMeta.hardLimit}
-                    isFreePlan={isFreePlan(basePlan)}
-                    isOnEnterpriseTrial={isOrgOnTrial}
-                  />
-                </Flex>
-              )}
-              {showPayingOnDemandCopy && (
-                <Flex flexDirection="column" marginBottom="spacingXl">
-                  <PayingOnDemandOrgCopy grandTotal={grandTotal} />
-                </Flex>
-              )}
-              {showContentfulAppsCard && (
-                <Flex flexDirection="column">
-                  <ContentfulApps
-                    organizationId={organizationId}
-                    startAppTrial={handleStartAppTrial}
-                    addOnPlan={addOnPlan}
-                  />
-                </Flex>
-              )}
-              {showNonPayingOrgCopy && (
-                <Flex flexDirection="column" marginTop="spacingXl">
-                  <NonPayingOrgCopy onCreateSpace={onCreateSpace} />
-                </Flex>
-              )}
-            </>
+          {!rightColumnHasContent && (
+            <Flex flexDirection="column" marginBottom="spacingXl">
+              <UsersForPlan
+                organizationId={organizationId}
+                numberFreeUsers={usersMeta && usersMeta.numFree}
+                numberPaidUsers={usersMeta && usersMeta.numPaid}
+                costOfUsers={usersMeta && usersMeta.cost}
+                unitPrice={usersMeta && usersMeta.unitPrice}
+                hardLimit={usersMeta && usersMeta.hardLimit}
+                isFreePlan={isFreePlan(basePlan)}
+                isOnEnterpriseTrial={isOrgOnTrial}
+              />
+            </Flex>
+          )}
+          {showPayingOnDemandCopy && (
+            <Flex flexDirection="column" marginBottom="spacingXl">
+              <PayingOnDemandOrgCopy grandTotal={grandTotal} />
+            </Flex>
+          )}
+          {showContentfulAppsCard && (
+            <Flex flexDirection="column">
+              <ContentfulApps
+                organizationId={organizationId}
+                startAppTrial={handleStartAppTrial}
+                addOnPlan={addOnPlan}
+              />
+            </Flex>
+          )}
+          {showNonPayingOrgCopy && (
+            <Flex flexDirection="column" marginTop="spacingXl">
+              <NonPayingOrgCopy onCreateSpace={onCreateSpace} />
+            </Flex>
           )}
         </Flex>
       )}
@@ -171,7 +151,6 @@ export function SubscriptionPage({
           <SpacesListForMembers spaces={memberAccessibleSpaces} />
         ) : (
           <SpacePlans
-            initialLoad={initialLoad}
             organizationId={organizationId}
             enterprisePlan={enterprisePlan}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
@@ -183,7 +162,6 @@ export function SubscriptionPage({
 }
 
 SubscriptionPage.propTypes = {
-  initialLoad: PropTypes.bool.isRequired,
   basePlan: PropTypes.object,
   addOnPlan: PropTypes.object,
   grandTotal: PropTypes.number,

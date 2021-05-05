@@ -73,7 +73,6 @@ interface NonEnterpriseSubscriptionPageProps {
   addOnPlan: AddOnProductRatePlan;
   basePlan: BasePlan;
   grandTotal: number;
-  initialLoad: boolean;
   organization: Organization;
   usersMeta: UsersMeta;
 }
@@ -82,7 +81,6 @@ export function NonEnterpriseSubscriptionPage({
   addOnPlan,
   basePlan,
   grandTotal,
-  initialLoad = false,
   organization,
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
@@ -147,11 +145,7 @@ export function NonEnterpriseSubscriptionPage({
       )}
 
       <Flex className={styles.fullRow} flexDirection="column">
-        <SpacePlans
-          initialLoad={initialLoad}
-          organizationId={organizationId}
-          isOwnerOrAdmin={isOrgOwnerOrAdmin}
-        />
+        <SpacePlans organizationId={organizationId} isOwnerOrAdmin={isOrgOwnerOrAdmin} />
       </Flex>
     </Grid>
   );
