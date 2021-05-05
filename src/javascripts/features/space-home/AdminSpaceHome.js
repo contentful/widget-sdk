@@ -12,7 +12,7 @@ import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
-import { NewOnboardingCTA } from './components/NewOnboardingCTA';
+import { NewOnboardingCTA } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
@@ -60,7 +60,7 @@ export const AdminSpaceHome = ({
 
       {isNewOnboardingEnabled && isEmptySpace && (
         <WidgetContainer.Row>
-          <NewOnboardingCTA />
+          <NewOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
       )}
 
