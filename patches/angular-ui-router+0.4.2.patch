@@ -1,0 +1,17 @@
+diff --git a/node_modules/angular-ui-router/release/angular-ui-router.js b/node_modules/angular-ui-router/release/angular-ui-router.js
+index d977aa9..96a7802 100644
+--- a/node_modules/angular-ui-router/release/angular-ui-router.js
++++ b/node_modules/angular-ui-router/release/angular-ui-router.js
+@@ -1096,7 +1096,11 @@ UrlMatcher.prototype.format = function (values) {
+           if (isArray(encoded)) {
+             result += map(encoded, encodeDashes).join("-");
+           } else {
+-            result += encodeURIComponent(encoded);
++            if (param.id === 'pathname' && param.type.name === 'any') {
++              result += encoded;
++            } else {
++              result += encodeURIComponent(encoded);
++            }
+           }
+         }
+         result += nextSegment;

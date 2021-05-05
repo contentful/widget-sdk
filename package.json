@@ -248,6 +248,7 @@
     "node-fetch": "^2.6.1",
     "node-jsx": "^0.13.3",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "patch-package": "^6.4.7",
     "postcss-svgo": "^4.0.3",
     "prettier": "2.0.5",
     "react-refresh": "^0.9.0",
@@ -274,6 +275,7 @@
     "yargs": "^15.3.1"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "prepare": "relative-deps",
     "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "NODE_ENV=development webpack serve",
