@@ -1,4 +1,4 @@
-import { getCurrentState, validateState } from './AppState';
+import { getCurrentState, Settings, validateState } from './AppState';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { Control, Editor, SidebarItem } from 'contentful-management/types';
 import APIClient from 'data/APIClient';
@@ -6,26 +6,28 @@ import APIClient from 'data/APIClient';
 const DEFAULT_WIDGET_ID = 'widgetId';
 const DEFAULT_WIDGET_NAMESPACE = WidgetNamespace.APP;
 
-const makeEditor = (widgetId = DEFAULT_WIDGET_ID): Editor => {
+const makeEditor = (widgetId = DEFAULT_WIDGET_ID, settings?: Settings): Editor => {
   return {
-    settings: {},
+    ...(settings ? { settings } : {}),
     widgetId,
     widgetNamespace: WidgetNamespace.APP,
   };
 };
-const makeControl = (fieldId): Control => {
+const makeControl = (fieldId, settings?: Settings): Control => {
   return {
     fieldId,
     widgetId: DEFAULT_WIDGET_ID,
     widgetNamespace: WidgetNamespace.APP,
+    ...(settings ? { settings } : {}),
   };
 };
 const makeSidebarItem = (
   widgetId = DEFAULT_WIDGET_ID,
-  widgetNamespace = WidgetNamespace.APP
+  widgetNamespace = WidgetNamespace.APP,
+  settings?: Settings
 ): SidebarItem => {
   return {
-    settings: {},
+    ...(settings ? { settings } : {}),
     widgetId,
     widgetNamespace,
   };
@@ -145,7 +147,10 @@ describe('AppState', () => {
         }),
         createEditorInterface({
           contentTypeId: anotherContentType,
-          editors: [makeEditor(), makeEditor('another-widget-id')],
+          editors: [
+            makeEditor(DEFAULT_WIDGET_ID, { instance: 'parameter' }),
+            makeEditor('another-widget-id'),
+          ],
         })
       );
       const apiClient = createAPIClient(editorInterfaceResponse);
@@ -155,7 +160,7 @@ describe('AppState', () => {
       expect(result).toEqual({
         EditorInterface: {
           [contentType]: { editors: { position: 0 } },
-          [anotherContentType]: { editors: { position: 0 } },
+          [anotherContentType]: { editors: { position: 0, settings: { instance: 'parameter' } } },
         },
       });
     });
@@ -166,7 +171,7 @@ describe('AppState', () => {
       const editorInterfaceResponse = createEditorInterfaceResponse(
         createEditorInterface({
           contentTypeId: contentType,
-          controls: [makeControl(fieldId), makeControl(anotherFieldId)],
+          controls: [makeControl(fieldId), makeControl(anotherFieldId, { instance: 'parameter' })],
         }),
         createEditorInterface({
           contentTypeId: anotherContentType,
@@ -180,7 +185,10 @@ describe('AppState', () => {
       expect(result).toEqual({
         EditorInterface: {
           [contentType]: {
-            controls: [{ fieldId: fieldId }, { fieldId: anotherFieldId }],
+            controls: [
+              { fieldId: fieldId },
+              { fieldId: anotherFieldId, settings: { instance: 'parameter' } },
+            ],
           },
           [anotherContentType]: {
             controls: [{ fieldId: yetAnotherFieldId }],
@@ -196,7 +204,7 @@ describe('AppState', () => {
           contentTypeId: contentType,
           sidebar: [
             makeSidebarItem('something', WidgetNamespace.SIDEBAR_BUILTIN),
-            makeSidebarItem(),
+            makeSidebarItem(DEFAULT_WIDGET_ID, WidgetNamespace.APP, { instance: 'parameter' }),
           ],
         }),
         createEditorInterface({
@@ -211,7 +219,7 @@ describe('AppState', () => {
       expect(result).toEqual({
         EditorInterface: {
           [contentType]: {
-            sidebar: { position: 1 },
+            sidebar: { position: 1, settings: { instance: 'parameter' } },
           },
           [anotherContentType]: {
             sidebar: { position: 0 },

@@ -4,9 +4,10 @@ import { AppState } from '@contentful/app-sdk';
 import { Control, Editor, SidebarItem } from 'contentful-management/types';
 import APIClient from 'data/APIClient';
 
-export type PartialTargetState =
-  | boolean
-  | { position: number; settings?: Record<string, string | number | boolean> };
+export type Settings = Record<string, string | number | boolean>;
+export type PartialTargetState = boolean | { position: number; settings?: Settings };
+
+type EditorInterfaceItem = Editor | SidebarItem | Control;
 
 export const getCurrentState = async (
   cma: APIClient,
@@ -24,24 +25,19 @@ export const getCurrentState = async (
     }
     const widget = { widgetId, widgetNamespace };
     const controlsUsingWidget = getControlsUsingWidget(widget, editorInterface);
-
     const isIncludedInControls = controlsUsingWidget.length > 0;
-    const positionInSidebar = getPositionInSidebar(widget, editorInterface);
-    const isIncludedInSidebar = positionInSidebar > -1;
 
     // If editor is singular, return the legacy boolean value
     if (editorInterface.editor && areSameApp(editorInterface.editor, widget)) {
       set(CurrentState.EditorInterface, [contentTypeId, 'editor'], true);
       // if editors is a list, identify the position
     } else if (editorInterface.editors) {
-      const positionInEditors = getPositionInEditors(
-        { widgetId, widgetNamespace },
-        editorInterface
-      );
+      const { position, eiItem } = maybeGetWidgetInList(widget, editorInterface.editors);
 
-      if (positionInEditors > -1) {
+      if (position > -1 && eiItem) {
         set(CurrentState.EditorInterface, [contentTypeId, 'editors'], {
-          position: positionInEditors,
+          position,
+          ...(eiItem.settings ? { settings: eiItem.settings } : {}),
         });
       }
     }
@@ -51,14 +47,24 @@ export const getCurrentState = async (
       set(
         CurrentState.EditorInterface,
         [contentTypeId, 'controls'],
-        newControls.concat(controlsUsingWidget.map((ei) => ({ fieldId: ei.fieldId })))
+        newControls.concat(
+          controlsUsingWidget.map((ei) => ({
+            fieldId: ei.fieldId,
+            ...(ei.settings ? { settings: ei.settings } : {}),
+          }))
+        )
       );
     }
 
-    if (isIncludedInSidebar) {
-      set(CurrentState.EditorInterface, [contentTypeId, 'sidebar'], {
-        position: positionInSidebar,
-      });
+    if (editorInterface.sidebar) {
+      const { position, eiItem } = maybeGetWidgetInList(widget, editorInterface.sidebar);
+
+      if (position > -1 && eiItem) {
+        set(CurrentState.EditorInterface, [contentTypeId, 'sidebar'], {
+          position,
+          ...(eiItem.settings ? { settings: eiItem.settings } : {}),
+        });
+      }
     }
   }
 
@@ -147,18 +153,15 @@ const getControlsUsingWidget = (app, editorInterface): Array<Control> => {
   return [];
 };
 
-const getPositionInSidebar = (app, editorInterface) => {
-  if (editorInterface.sidebar) {
-    return editorInterface.sidebar.findIndex((sidebarItem) => areSameApp(sidebarItem, app));
+const maybeGetWidgetInList = (
+  widget: EditorInterfaceItem,
+  list: EditorInterfaceItem[]
+): { position: number; eiItem: EditorInterfaceItem | null } => {
+  if (list && list.length) {
+    const position = list.findIndex((item) => areSameApp(item, widget));
+    return { position, eiItem: list[position] ?? null };
   }
-  return -1;
-};
-
-const getPositionInEditors = (app, editorInterface) => {
-  if (editorInterface.editors) {
-    return editorInterface.editors.findIndex((editor) => areSameApp(editor, app));
-  }
-  return -1;
+  return { position: -1, eiItem: null };
 };
 
 const areSameApp = (
