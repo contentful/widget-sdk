@@ -4500,7 +4500,7 @@ export function experimentStart(
             type: 'string',
           },
         },
-        required: ['experimentId', 'experimentVariation'],
+        required: ['experiment_id', 'experiment_variation'],
         type: 'object',
       },
       traits: {

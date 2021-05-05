@@ -65,7 +65,7 @@ const fetchData = (
   if (testExperimentVariation !== null) {
     Analytics.tracking.experimentStart({
       experiment_id: FLAGS.EXPERIMENT_A_A,
-      experiment_variation: testExperimentVariation,
+      experiment_variation: testExperimentVariation ? 'treatment' : 'control',
       space_id: currentSpaceId,
       organization_id: currentOrganizationId,
     });
