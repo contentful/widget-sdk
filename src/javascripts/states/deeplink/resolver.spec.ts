@@ -296,10 +296,10 @@ describe('states/deeplink/resolver', () => {
       it('should redirect the user to the appDefinition management screen for the app id', async () => {
         const result = await resolveLink(LinkType.AppDefinition, { id });
         expect(result).toEqual({
-          path: ['account', 'organizations', 'apps', 'definitions'],
+          path: 'account.organizations.apps',
           params: {
+            pathname: '/definitions/my-app-id/general',
             orgId: 'some',
-            definitionId: 'my-app-id',
           },
           referrer: 'deeplink',
         });
@@ -309,11 +309,10 @@ describe('states/deeplink/resolver', () => {
         ['events', 'security'].forEach(async (tab) => {
           const result = await resolveLink(LinkType.AppDefinition, { id, tab });
           expect(result).toEqual({
-            path: ['account', 'organizations', 'apps', 'definitions'],
+            path: 'account.organizations.apps',
             params: {
+              pathname: `/definitions/my-app-id/${tab}`,
               orgId: 'some',
-              definitionId: 'my-app-id',
-              tab,
             },
             referrer: 'deeplink',
           });
@@ -328,10 +327,10 @@ describe('states/deeplink/resolver', () => {
             deeplinkOptions: {
               selectApp: true,
             },
-            path: ['account', 'organizations', 'apps', 'definitions'],
+            path: 'account.organizations.apps',
             params: {
+              pathname: `/definitions//${tab}`,
               orgId: 'some',
-              tab,
             },
             referrer: 'deeplink',
           });
@@ -349,7 +348,7 @@ describe('states/deeplink/resolver', () => {
     it('should redirect the user to the appDefinition list for the current org id', async () => {
       const result = await resolveLink(LinkType.AppDefinitionList, {});
       expect(result).toEqual({
-        path: ['account', 'organizations', 'apps', 'list'],
+        path: 'account.organizations.apps',
         params: {
           orgId: 'some',
         },

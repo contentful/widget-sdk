@@ -232,7 +232,10 @@ Object {
                         class="emotion-1"
                       >
                         <a
-                          href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
+                          href="/account.organizations.apps?pathname=/definitions/3AjEyjWz5tRouW4cVOF9la/general&orgId=my-org-123"
+                          route="[object Object]"
+                          state="[object Object]"
+                          to="account.organizations.apps?pathname=/definitions/3AjEyjWz5tRouW4cVOF9la/general&orgId=my-org-123"
                         >
                           <span
                             class="emotion-0"
@@ -398,7 +401,10 @@ Object {
                         class="emotion-1"
                       >
                         <a
-                          href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
+                          href="/account.organizations.apps?pathname=/definitions/2WoMzSs2fRJx79JeVvqdGR/general&orgId=my-org-123"
+                          route="[object Object]"
+                          state="[object Object]"
+                          to="account.organizations.apps?pathname=/definitions/2WoMzSs2fRJx79JeVvqdGR/general&orgId=my-org-123"
                         >
                           <span
                             class="emotion-0"
@@ -564,7 +570,10 @@ Object {
                         class="emotion-1"
                       >
                         <a
-                          href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
+                          href="/account.organizations.apps?pathname=/definitions/3cG9ueyzkY0GCndLiQzmZ0/general&orgId=my-org-123"
+                          route="[object Object]"
+                          state="[object Object]"
+                          to="account.organizations.apps?pathname=/definitions/3cG9ueyzkY0GCndLiQzmZ0/general&orgId=my-org-123"
                         >
                           <span
                             class="emotion-0"
@@ -1009,7 +1018,10 @@ Object {
                       class="emotion-1"
                     >
                       <a
-                        href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
+                        href="/account.organizations.apps?pathname=/definitions/3AjEyjWz5tRouW4cVOF9la/general&orgId=my-org-123"
+                        route="[object Object]"
+                        state="[object Object]"
+                        to="account.organizations.apps?pathname=/definitions/3AjEyjWz5tRouW4cVOF9la/general&orgId=my-org-123"
                       >
                         <span
                           class="emotion-0"
@@ -1175,7 +1187,10 @@ Object {
                       class="emotion-1"
                     >
                       <a
-                        href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
+                        href="/account.organizations.apps?pathname=/definitions/2WoMzSs2fRJx79JeVvqdGR/general&orgId=my-org-123"
+                        route="[object Object]"
+                        state="[object Object]"
+                        to="account.organizations.apps?pathname=/definitions/2WoMzSs2fRJx79JeVvqdGR/general&orgId=my-org-123"
                       >
                         <span
                           class="emotion-0"
@@ -1341,7 +1356,10 @@ Object {
                       class="emotion-1"
                     >
                       <a
-                        href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
+                        href="/account.organizations.apps?pathname=/definitions/3cG9ueyzkY0GCndLiQzmZ0/general&orgId=my-org-123"
+                        route="[object Object]"
+                        state="[object Object]"
+                        to="account.organizations.apps?pathname=/definitions/3cG9ueyzkY0GCndLiQzmZ0/general&orgId=my-org-123"
                       >
                         <span
                           class="emotion-0"

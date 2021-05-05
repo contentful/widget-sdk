@@ -14,6 +14,7 @@ import { AppIcon } from '../AppIcon';
 import { hasConfigLocation } from '../utils';
 import { MarketplaceApp } from 'features/apps-core';
 import { AppManager } from '../AppOperations';
+import { ReactRouterLink } from 'core/react-routing';
 
 interface AppListItemProps {
   app: MarketplaceApp;
@@ -101,13 +102,16 @@ export function AppListItem(props: AppListItemProps) {
                 </DropdownListItem>
               )}
               {canManageApps && app.isPrivateApp && (
-                <StateLink
-                  path="account.organizations.apps.definitions"
-                  params={{ orgId, definitionId: app.appDefinition.sys.id }}>
+                <ReactRouterLink
+                  route={{
+                    path: 'organizations.apps.definition',
+                    orgId,
+                    definitionId: app.appDefinition.sys.id,
+                  }}>
                   {({ onClick }) => (
                     <DropdownListItem onClick={onClick}>Edit app definition</DropdownListItem>
                   )}
-                </StateLink>
+                </ReactRouterLink>
               )}
             </DropdownList>
           </CardActions>

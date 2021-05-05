@@ -6,6 +6,7 @@ import { AppDetails } from './AppDetails';
 import { HostingStateProvider } from './HostingStateProvider';
 import { AppDetailsStateProvider } from './AppDetailsStateContext';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
+import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('../ManagementApiClient');
 
@@ -29,11 +30,13 @@ const props = {
 
 const renderInContext = (props) =>
   render(
-    <HostingStateProvider orgId="myOrg" defaultValue={false} bundles={{ items: [] }}>
-      <AppDetailsStateProvider definition={props.definition as AppDefinitionWithBundle}>
-        <AppDetails {...props} />
-      </AppDetailsStateProvider>
-    </HostingStateProvider>
+    <MemoryRouter>
+      <HostingStateProvider orgId="myOrg" defaultValue={false} bundles={{ items: [] }}>
+        <AppDetailsStateProvider definition={props.definition as AppDefinitionWithBundle}>
+          <AppDetails {...props} />
+        </AppDetailsStateProvider>
+      </HostingStateProvider>
+    </MemoryRouter>
   );
 
 describe('AppDetails', () => {
@@ -54,7 +57,7 @@ describe('AppDetails', () => {
       renderInContext({ ...localProps });
 
       await waitFor(() => {
-        expect(localProps.goToTab).toHaveBeenCalledWith('');
+        expect(localProps.goToTab).toHaveBeenCalledWith('general');
       });
     });
   });

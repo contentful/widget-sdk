@@ -76,7 +76,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.AppsContentful]: resolveContentfulApps,
   [LinkType.AppDefinition]: resolveAppDefinition,
   [LinkType.AppDefinitionList]: makeOrgScopedPathResolver({
-    path: ['account', 'organizations', 'apps', 'list'],
+    // orgId will be resolved in makeOrgScopedPathResolver and added as a parameter
+    path: routes['organizations.apps.list']({}, { orgId: '' }).path,
   }),
   [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
@@ -362,19 +363,25 @@ async function resolveApps(params: { id?: string; referrer?: string }) {
 async function resolveAppDefinition({ id, tab, referrer }) {
   if (id) {
     const { orgId } = await getOrg();
-    const params = tab ? { definitionId: id, orgId, tab } : { definitionId: id, orgId };
+    const definitionsRoute = routes['organizations.apps.definition'](
+      {},
+      { orgId, tab, definitionId: id }
+    );
     return {
-      path: ['account', 'organizations', 'apps', 'definitions'],
+      path: definitionsRoute.path,
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      params,
+      params: definitionsRoute.params,
     };
   } else {
     const { orgId } = await getOrg();
-    const params = tab ? { orgId, tab } : { orgId };
+    const definitionsRoute = routes['organizations.apps.definition'](
+      {},
+      { orgId, tab, definitionId: '' }
+    );
     return {
-      path: ['account', 'organizations', 'apps', 'definitions'],
+      path: definitionsRoute.path,
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      params,
+      params: definitionsRoute.params,
       deeplinkOptions: {
         selectApp: true,
       },

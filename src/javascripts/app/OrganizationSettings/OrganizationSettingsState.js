@@ -11,7 +11,7 @@ import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from 'states/utils';
 import { GatekeeperView } from 'account/GatekeeperView';
 
-import { managementRoute as appsState } from 'features/apps';
+import { orgAppsRoute } from 'features/apps';
 import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
@@ -47,7 +47,11 @@ export const organizationSettings = {
       let path = ['account', 'organizations'];
 
       if (isDeveloper(organization)) {
-        path = [...path, 'apps', 'list'];
+        router.navigate(
+          { path: 'organizations.apps.list', orgId: organization.sys.id },
+          { location: 'replace' }
+        );
+        return;
       } else if (isOwnerOrAdmin(organization) || isOrganizationOnTrial(organization)) {
         // the subscription page is available to users of any role when the org is on trial
         const hasNewPricing = !isLegacyOrganization(organization);
@@ -92,11 +96,11 @@ export const organization = {
     usersAndInvitationsState,
     subscriptionState,
     teamsState,
-    appsState,
     accessToolsState,
     billingRoutingState,
     trialState,
     organizationSpacesState,
+    orgAppsRoute,
     {
       name: 'edit',
       url: '/edit{pathname:any}',

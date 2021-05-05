@@ -20,8 +20,8 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import StateLink from 'app/common/StateLink';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { RouteLink } from 'core/react-routing';
 import PropTypes from 'prop-types';
 import React from 'react';
 import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
@@ -67,7 +67,7 @@ function buildRenderedAppURL(url) {
   return `${urlObj.hostname}${port}${path}`;
 }
 
-export function AppListing({ definitions, canManageApps, definitionLimit }) {
+export function AppListing({ definitions, canManageApps, definitionLimit, orgId }) {
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -100,13 +100,13 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
             </Paragraph>
             {learnMoreParagraph}
           </Typography>
-          <StateLink path="^.new_definition">
+          <RouteLink route={{ path: 'organizations.apps.new_definition', orgId }}>
             {({ onClick }) => (
               <Button disabled={!canManageApps} onClick={onClick}>
                 Create an app
               </Button>
             )}
-          </StateLink>
+          </RouteLink>
         </div>
         {!canManageApps && (
           <Note noteType="primary">
@@ -134,7 +134,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
         title={<Heading>Apps</Heading>}
         icon={<ProductIcon icon="Apps" size="large" />}
         actions={
-          <StateLink path="^.new_definition">
+          <RouteLink route={{ path: 'organizations.apps.new_definition', orgId }}>
             {({ onClick }) => (
               <CreateAppButton
                 onClick={onClick}
@@ -142,7 +142,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
                 disabled={definitions.length >= definitionLimit}
               />
             )}
-          </StateLink>
+          </RouteLink>
         }
       />
       <Workbench.Content>
@@ -163,12 +163,17 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
                 <TableRow key={def.sys.id}>
                   <TableCell>
                     <div className={styles.cell}>
-                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                      <RouteLink
+                        route={{
+                          path: 'organizations.apps.definition',
+                          orgId,
+                          definitionId: def.sys.id,
+                        }}>
                         <span className={styles.miniIcon}>
                           <ProductIcon icon="Apps" size="small" />
                         </span>{' '}
                         <b>{def.name}</b>
-                      </StateLink>
+                      </RouteLink>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -184,7 +189,12 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
                   </TableCell>
                   <TableCell className={styles.appActions} align="right">
                     <div className={styles.menuCell}>
-                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                      <RouteLink
+                        route={{
+                          path: 'organizations.apps.definition',
+                          definitionId: def.sys.id,
+                          orgId,
+                        }}>
                         {({ onClick }) => (
                           <CardActions iconButtonProps={{ buttonType: 'primary' }}>
                             <DropdownList>
@@ -197,7 +207,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
                             </DropdownList>
                           </CardActions>
                         )}
-                      </StateLink>
+                      </RouteLink>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -221,6 +231,7 @@ export function AppListing({ definitions, canManageApps, definitionLimit }) {
 }
 
 AppListing.propTypes = {
+  orgId: PropTypes.string.isRequired,
   definitions: PropTypes.arrayOf(PropTypes.object).isRequired,
   canManageApps: PropTypes.bool.isRequired,
   definitionLimit: PropTypes.number.isRequired,

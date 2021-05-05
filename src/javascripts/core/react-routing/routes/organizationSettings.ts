@@ -192,6 +192,57 @@ const organizationAccessToolsRoutes = {
   }),
 };
 
+/**
+ * Organization Apps
+ */
+
+type OrganizationAppsListRouteType = {
+  path: 'organizations.apps.list';
+  orgId: string;
+};
+
+type OrganizationAppsNewDefinitionRouteType = {
+  path: 'organizations.apps.new_definition';
+  orgId: string;
+};
+
+type OrganizationAppsDefinitionRouteType = {
+  path: 'organizations.apps.definition';
+  orgId: string;
+  definitionId: string;
+  tab?: string;
+};
+
+const organizationAppsRoute = {
+  'organizations.apps.list': (_, { orgId }: Omit<OrganizationAppsListRouteType, 'path'>) => ({
+    path: 'account.organizations.apps',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+  'organizations.apps.new_definition': (
+    _,
+    { orgId }: Omit<OrganizationAppsNewDefinitionRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.apps',
+    params: {
+      pathname: '/new_definition',
+      orgId,
+    },
+  }),
+  'organizations.apps.definition': (
+    _,
+    { orgId, definitionId, tab = 'general' }: Omit<OrganizationAppsDefinitionRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.apps',
+    params: {
+      pathname: `/definitions/${definitionId}/${tab}`,
+      orgId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -201,6 +252,7 @@ const routes = {
   ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
   ...organizationAccessToolsRoutes,
+  ...organizationAppsRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -212,7 +264,10 @@ type OrganizationSettingsRouteType =
   | OrganizationSpacesRouteType
   | OrganizationsAccessToolsRouteType
   | OrganizationBillingRouteType
-  | OrganizationBillingEditPaymentRouteType;
+  | OrganizationBillingEditPaymentRouteType
+  | OrganizationAppsListRouteType
+  | OrganizationAppsNewDefinitionRouteType
+  | OrganizationAppsDefinitionRouteType;
 
 export type { OrganizationSettingsRouteType };
 

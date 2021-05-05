@@ -9,10 +9,10 @@ import {
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { websiteUrl } from 'Config';
-import StateLink from 'app/common/StateLink';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 import { styles } from './styles';
+import { ReactRouterLink } from 'core/react-routing';
 
 const externalLinkProps = {
   target: '_blank',
@@ -61,12 +61,11 @@ export const AppsListShell = (props: AppsListShellProps) => (
       title={<Header />}
       icon={<ProductIcon icon="Apps" size="large" />}
       actions={
-        <StateLink
-          path="account.organizations.apps.list"
-          component={TextLink}
-          params={{ orgId: props.organizationId }}>
+        <ReactRouterLink
+          route={{ path: 'organizations.apps.list', orgId: props.organizationId }}
+          component={TextLink}>
           Manage private apps
-        </StateLink>
+        </ReactRouterLink>
       }
     />
     <Workbench.Content type="text">

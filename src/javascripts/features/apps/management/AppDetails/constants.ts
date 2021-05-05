@@ -1,5 +1,5 @@
 export const TAB_PATHS = {
-  GENERAL: '',
+  GENERAL: 'general',
   BUNDLES: 'bundles',
   SECURITY: 'security',
   EVENTS: 'events',

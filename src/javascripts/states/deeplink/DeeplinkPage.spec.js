@@ -133,7 +133,7 @@ describe('deeplink/DeeplinkPage', () => {
   it('should show app selection form if resolver returned deeplinkOptions including selectApp', async function () {
     const orgId = 'my_org';
     resolveLink.mockResolvedValue({
-      path: ['account', 'organizations', 'apps', 'definitions'],
+      path: 'account.organizations.apps.definition',
       params: { orgId },
       deeplinkOptions: {
         selectApp: true,
@@ -146,7 +146,7 @@ describe('deeplink/DeeplinkPage', () => {
     ];
     getOrgApps.mockResolvedValue(apps);
 
-    render(
+    const { getByText } = render(
       <DeeplinkPage
         href="https://app.contentful.com"
         searchParams={{
@@ -177,11 +177,11 @@ describe('deeplink/DeeplinkPage', () => {
 
     fireEvent.click($proceedButton);
 
-    screen.findByText('Redirecting…');
+    await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
-      'account.organizations.apps.definitions',
-      { definitionId: apps[1].sys.id, orgId },
+      'account.organizations.apps.definition',
+      { id: apps[1].sys.id, orgId },
       { location: 'replace' }
     );
   });

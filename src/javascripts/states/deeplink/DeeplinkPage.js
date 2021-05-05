@@ -78,47 +78,46 @@ function useDeeplinkPage({ searchParams }) {
   const [redirect, setRedirect] = useState(null);
   const [deeplinkOptions, setDeeplinkOptions] = useState({});
 
-  const resolveDeeplink = useCallback(async () => {
-    const { link, ...otherParams } = searchParams;
-    const result = await resolveLink(link, otherParams);
+  const resolveDeeplink = useCallback(
+    async (updates = {}) => {
+      const { link, ...otherParams } = searchParams;
+      const result = await resolveLink(link, { ...otherParams, ...updates });
 
-    if (result.error) {
-      setStatus(getStatusFromError(result.error));
-    } else {
-      if (result.deeplinkOptions?.selectSpace || result.deeplinkOptions?.selectEnvironment) {
-        setDeeplinkOptions(result.deeplinkOptions);
-        setStatus(PageStatuses.selectSpaceEnv);
-      } else if (result.deeplinkOptions?.selectApp) {
-        setDeeplinkOptions(result.deeplinkOptions);
-        setStatus(PageStatuses.selectApp);
+      if (result.error) {
+        setStatus(getStatusFromError(result.error));
+      } else {
+        if (result.deeplinkOptions?.selectSpace || result.deeplinkOptions?.selectEnvironment) {
+          setDeeplinkOptions(result.deeplinkOptions);
+          setStatus(PageStatuses.selectSpaceEnv);
+        } else if (result.deeplinkOptions?.selectApp) {
+          setDeeplinkOptions(result.deeplinkOptions);
+          setStatus(PageStatuses.selectApp);
+        }
+        setRedirect({
+          path: isArray(result.path) ? result.path.join('.') : result.path,
+          params: {
+            ...result.params,
+            ...updates,
+          },
+          options: { location: 'replace' },
+        });
       }
-      setRedirect({
-        path: isArray(result.path) ? result.path.join('.') : result.path,
-        params: result.params,
-        options: { location: 'replace' },
-      });
-    }
-  }, [searchParams]);
+    },
+    [searchParams]
+  );
 
   const abort = () => {
     window.location.href = window.location.origin;
   };
 
-  const updateRedirectLink = useCallback(
-    ({ spaceId, environmentId, definitionId }) => {
-      setRedirect({
-        ...redirect,
-        params: {
-          ...redirect.params,
-          spaceId,
-          environmentId,
-          definitionId,
-        },
-      });
-      setStatus(PageStatuses.redirecting);
-    },
-    [redirect]
-  );
+  const updateRedirectLink = async ({ spaceId, environmentId, id }) => {
+    await resolveDeeplink({
+      spaceId,
+      environmentId,
+      id,
+    });
+    setStatus(PageStatuses.redirecting);
+  };
 
   useEffect(() => {
     resolveDeeplink();
@@ -173,8 +172,8 @@ export default function DeeplinkPage({ searchParams, href, marketplaceApps }) {
             onCancel={() => {
               abort();
             }}
-            onContinue={(definitionId) => {
-              updateRedirectLink({ definitionId });
+            onContinue={async (definitionId) => {
+              await updateRedirectLink({ id: definitionId });
             }}
           />
         )}
@@ -184,8 +183,8 @@ export default function DeeplinkPage({ searchParams, href, marketplaceApps }) {
             href={href}
             searchParams={searchParams}
             marketplaceApps={marketplaceApps}
-            onContinue={({ spaceId, environmentId }) => {
-              updateRedirectLink({ spaceId, environmentId });
+            onContinue={async ({ spaceId, environmentId }) => {
+              await updateRedirectLink({ spaceId, environmentId });
             }}
             onCancel={() => {
               abort();

@@ -1,18 +1,20 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { NewApp } from './NewApp';
-import { go } from 'states/Navigator';
 import { ManagementApiClient } from './ManagementApiClient';
 import { AppDefinition } from 'contentful-management/types';
 import { AppDetailsStateProvider } from './AppDetails/AppDetailsStateContext';
+import { useRouteNavigate } from 'core/react-routing';
 
 export function NewAppRoute(props) {
+  const navigate = useRouteNavigate();
+
   function goToDefinition(definitionId) {
-    return go({ path: '^.definitions', params: { definitionId } });
+    return navigate({ path: 'organizations.apps.definition', definitionId, orgId: props.orgId });
   }
 
   function goToListView() {
-    return go({ path: '^.list' });
+    return navigate({ path: 'organizations.apps.list', orgId: props.orgId });
   }
 
   return (

@@ -20,8 +20,8 @@ function getItems(params, { orgId }) {
   const subscriptionV1Route = routes['organizations.subscription_v1']({}, { orgId });
   const billing = routes['organizations.billing']({}, { orgId });
   const userProvisioning = routes['organizations.access-tools.user-provisioning']({}, { orgId });
-
   const orgnaizationSettingsSSORoute = routes['organizations.access-tools.sso']({}, { orgId });
+  const orgAppsList = routes['organizations.apps.list']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
@@ -141,9 +141,9 @@ function getItems(params, { orgId }) {
     {
       if: params.hasAdvancedExtensibility,
       title: 'Apps',
-      sref: 'account.organizations.apps.list',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.apps',
+      sref: orgAppsList.path,
+      srefParams: orgAppsList.params,
+      rootSref: orgAppsList.path,
       srefOptions: {
         inherit: false,
       },

@@ -41,6 +41,7 @@ import {
   ERROR_PATH_DEFINITION,
   ERROR_PATH_EVENTS,
 } from './AppDetailsStateContext';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 function formatDate(date: string) {
   return new Date(date).toLocaleString('en-US', {
@@ -293,6 +294,7 @@ export const AppDetails = (props: Props) => {
   return (
     <Workbench>
       <DocumentTitle title="Apps" />
+      {dirty ? <UnsavedChangesBlocker save={save} when /> : null}
       <Workbench.Header
         title="App details"
         actions={

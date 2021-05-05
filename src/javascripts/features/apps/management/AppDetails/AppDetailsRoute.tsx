@@ -11,6 +11,7 @@ import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { AppBundleData } from '../AppEditor';
 import { ManagementApiClient } from '../ManagementApiClient';
 import { useUnsavedChangesModal } from 'core/hooks';
+import { useParams, useRouteNavigate } from 'core/react-routing';
 
 interface Event {
   enabled: boolean;
@@ -21,19 +22,19 @@ interface Event {
 interface Props {
   definitions: AppDefinition[];
   bundles: { items: AppBundleData[] };
-  definitionId: string;
   orgId: string;
-  tab: string;
   isLoadingCanManageApps: boolean;
   isLoadingDefinitions: boolean;
   isLoadingBundles: boolean;
 }
 
 export function AppDetailsRoute(props: Props) {
+  const { definitionId, tab } = useParams();
   const [events, setEvents] = React.useState<Event | null>(null);
+  const navigate = useRouteNavigate();
   const definition = React.useMemo<AppDefinitionWithBundle | undefined>(
-    () => props.definitions.find((d) => d.sys.id === props.definitionId),
-    [props.definitions, props.definitionId]
+    () => props.definitions.find((d) => d.sys.id === definitionId),
+    [props.definitions, definitionId]
   );
 
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
@@ -49,7 +50,7 @@ export function AppDetailsRoute(props: Props) {
       try {
         const { targetUrl, topics } = await ManagementApiClient.getAppEvents(
           props.orgId,
-          props.definitionId
+          definitionId
         );
 
         setEvents({ enabled: true, targetUrl, topics });
@@ -63,7 +64,7 @@ export function AppDetailsRoute(props: Props) {
     }
 
     getEvents();
-  }, [props.orgId, props.definitionId]);
+  }, [props.orgId, definitionId]);
 
   React.useEffect(() => {
     if (props.definitions.length > 0 && !definition) {
@@ -72,15 +73,19 @@ export function AppDetailsRoute(props: Props) {
   }, [props.definitions, definition]);
 
   function goToTab(tab) {
-    go({
-      path: '^.definitions',
-      params: { ...props, tab },
-      options: { location: 'replace', notify: false },
-    });
+    navigate(
+      {
+        path: 'organizations.apps.definition',
+        ...props,
+        definitionId,
+        tab,
+      },
+      { replace: true, state: { ignoreLeaveConfirmation: true } }
+    );
   }
 
   function goToListView() {
-    go({ path: '^.list' });
+    navigate({ path: 'organizations.apps.list', orgId: props.orgId });
   }
 
   if (isLoading || !definition || !events || !props.bundles)
@@ -100,6 +105,7 @@ export function AppDetailsRoute(props: Props) {
       <AppDetailsStateProvider definition={definition} events={events}>
         <AppDetails
           {...props}
+          tab={tab}
           definition={definition}
           events={events}
           goToTab={goToTab}
