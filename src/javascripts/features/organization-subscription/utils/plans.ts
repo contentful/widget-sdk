@@ -41,6 +41,16 @@ export function findAllPlans(
           return { ...acc, addOnPlan: plan as AddOnPlan };
         case 'space':
         case 'free_space':
+          // add to them 0 price if they don't have one yet
+          plan.price = plan.price ?? 0;
+
+          // add isAccessible property
+          if (plan.space) {
+            plan.space.isAccessible = !!accessibleSpaces.find(
+              (space) => space.sys.id === plan.space?.sys.id
+            );
+          }
+
           return { ...acc, spacePlans: [...acc['spacePlans'], plan as SpacePlan] };
         default:
           return acc;
@@ -50,29 +60,13 @@ export function findAllPlans(
   );
 
   // sort spacePlans alphabetically
-  reducedPlans.spacePlans
-    .sort((plan1, plan2) => {
-      const [name1, name2] = [plan1, plan2].map((plan) => {
-        // It is possible that some spacePlans won't have the property 'space'
-        return plan.space?.name ?? '';
-      });
-      return name1.localeCompare(name2);
-    })
-    .map((spacePlan) => {
-      // add to the spacePlan if they are accessible
-      if (spacePlan.space) {
-        spacePlan.space.isAccessible = !!accessibleSpaces.find(
-          (space) => space.sys.id === spacePlan.space?.sys.id
-        );
-      }
-
-      // add them 0 price if they don't have one yet
-      if (!spacePlan.price) {
-        spacePlan.price = 0;
-      }
-
-      return spacePlan;
+  reducedPlans.spacePlans.sort((plan1, plan2) => {
+    const [name1, name2] = [plan1, plan2].map((plan) => {
+      // It is possible that some spacePlans won't have the property 'space'
+      return plan.space?.name ?? '';
     });
+    return name1.localeCompare(name2);
+  });
 
   return reducedPlans;
 }

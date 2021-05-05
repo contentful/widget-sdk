@@ -14,9 +14,8 @@ import {
 import { captureError } from 'core/monitoring';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
-import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
+import type { BasePlanContent, UsersMeta } from '../types';
 import { BasePlanContentEntryIds } from '../types';
-import { hasAnyInaccessibleSpaces } from '../utils/utils';
 
 import { BasePlanCard } from './BasePlanCard';
 import { SpacePlans } from './SpacePlans';
@@ -28,9 +27,10 @@ const styles = {
   }),
 };
 
-const fetchContent = (isOnTrial: boolean, isInternalBasePlan: boolean) => async (): Promise<
-  BasePlanContent
-> => {
+async function fetchContent(
+  isOnTrial: boolean,
+  isInternalBasePlan: boolean
+): Promise<BasePlanContent> {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
@@ -47,17 +47,16 @@ const fetchContent = (isOnTrial: boolean, isInternalBasePlan: boolean) => async 
 
     basePlanContent = await fetchWebappContentByEntryID(entryId);
   } catch (err) {
-    captureError(fetchWebappContentError, err);
+    captureError(fetchWebappContentError, { extra: err });
   }
 
   return basePlanContent;
-};
+}
 
 interface EnterpriseSubscriptionPageProps {
   initialLoad: boolean;
   memberAccessibleSpaces: unknown[];
   organization: Organization;
-  spacePlans: SpacePlan[];
   usersMeta: UsersMeta;
   isInternalBasePlan?: boolean;
 }
@@ -66,7 +65,6 @@ export function EnterpriseSubscriptionPage({
   initialLoad,
   memberAccessibleSpaces,
   organization,
-  spacePlans,
   usersMeta,
   isInternalBasePlan = false,
 }: EnterpriseSubscriptionPageProps) {
@@ -74,12 +72,12 @@ export function EnterpriseSubscriptionPage({
   const isOrgOnEnterpriseTrial = isOrganizationOnTrial(organization);
 
   const { isLoading, error, data: content } = useAsync(
-    useCallback(fetchContent(isOrgOnEnterpriseTrial, isInternalBasePlan), [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useCallback(() => fetchContent(isOrgOnEnterpriseTrial, isInternalBasePlan), [])
   );
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
   const isNotAdminOrOwnerOfTrialOrg = isOrgOnEnterpriseTrial && !isOrgOwnerOrAdmin;
-  const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
   // if this is an org on Enterprise trial we show how many days of trial the user has
   let daysOfTrial;
@@ -118,7 +116,6 @@ export function EnterpriseSubscriptionPage({
             enterprisePlan
             initialLoad={initialLoad}
             organizationId={organizationId}
-            anySpacesInaccessible={anySpacesInaccessible}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
           />
         )}

@@ -87,9 +87,6 @@ jest.mock('features/trials', () => ({
 jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
   fetchWebappContentByEntryID: jest.fn().mockResolvedValue(mockWebappContent),
 }));
-jest.mock('../utils/utils', () => ({
-  hasAnyInaccessibleSpaces: jest.fn().mockReturnValue(false),
-}));
 jest.mock('../hooks/useChangedSpace', () => ({
   useChangedSpace: jest
     .fn()

@@ -35,7 +35,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = (organizationId, dispatch) => async () => {
+async function fetch(organizationId, dispatch) {
   const organization = await getOrganization(organizationId);
   const endpoint = createOrganizationEndpoint(organizationId);
 
@@ -86,7 +86,7 @@ const fetch = (organizationId, dispatch) => async () => {
     isSubscriptionPageRebrandingEnabled,
     orgIsEnterprise,
   };
-};
+}
 
 export function SubscriptionPageRoute({ orgId: organizationId }) {
   const {
@@ -96,7 +96,8 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
   const [grandTotal, setGrandTotal] = useState(0);
 
   const { isLoading, error, data = {} } = useAsync(
-    useCallback(fetch(organizationId, dispatch), [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useCallback(() => fetch(organizationId, dispatch), [])
   );
 
   useEffect(() => {
@@ -153,7 +154,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
                   memberAccessibleSpaces={data.memberAccessibleSpaces}
                   grandTotal={grandTotal}
                   initialLoad={isLoading}
-                  spacePlans={spacePlans}
                   // Currently this is the only way to know if a basePlan is plan used internally at Contentful
                   isInternalBasePlan={/internal/i.test(data.basePlan.productName)}
                 />
@@ -166,7 +166,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
                   organization={data.organization}
                   grandTotal={grandTotal}
                   initialLoad={isLoading}
-                  spacePlans={spacePlans}
                 />
               )}
             </>
@@ -179,7 +178,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
               memberAccessibleSpaces={data.memberAccessibleSpaces}
               grandTotal={grandTotal}
               initialLoad={isLoading}
-              spacePlans={spacePlans}
             />
           )}
         </Workbench.Content>

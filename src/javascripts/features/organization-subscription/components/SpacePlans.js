@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
-import { sortBy } from 'lodash';
 import {
   Paragraph,
   Heading,
@@ -27,10 +26,10 @@ import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { UnassignedPlansTable } from '../space-usage-summary/UnassignedPlansTable';
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 
-import { downloadSpacesUsage } from '../services/SpacesUsageService';
-import { createSpace, changeSpace } from '../utils/spaceUtils';
 import { OrgSubscriptionContext } from '../context';
 import { actions } from '../context/orgSubscriptionReducer';
+import { createSpace, changeSpace } from '../utils/spaceUtils';
+import { downloadSpacesUsage } from '../services/SpacesUsageService';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 
 const styles = {
@@ -73,7 +72,6 @@ const USED_SPACES = 'usedSpaces';
 const UNUSED_SPACES = 'unusedSpaces';
 
 export function SpacePlans({
-  anySpacesInaccessible = false,
   enterprisePlan = false,
   initialLoad,
   isOwnerOrAdmin = false,
@@ -107,12 +105,13 @@ export function SpacePlans({
         { organizationId }
       );
 
-      const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
-      const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
+      const unassignedSpacePlans = spacePlans
+        .filter((plan) => plan.gatekeeperKey === null)
+        .sort((plan1, plan2) => plan1.price - plan2.price);
 
-      setUnassignedSpacePlans(sortedUnassignedPlans);
       setAssignedSpacePlans(assignedSpacePlans);
+      setUnassignedSpacePlans(unassignedSpacePlans);
 
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);
@@ -149,6 +148,7 @@ export function SpacePlans({
     setIsExportingCSV(false);
   };
 
+  const hasAnySpacesInaccessible = spacePlans.some((plan) => !plan.space?.isAccessible);
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
   const showExportBtn = !initialLoad && assignedSpacePlans?.length > 0;
@@ -157,7 +157,7 @@ export function SpacePlans({
     <>
       <Heading className="section-title">
         Spaces
-        {anySpacesInaccessible && (
+        {hasAnySpacesInaccessible && (
           <Tooltip
             testId="inaccessible-help-tooltip"
             content={
@@ -314,7 +314,6 @@ export function SpacePlans({
 }
 
 SpacePlans.propTypes = {
-  anySpacesInaccessible: PropTypes.bool,
   enterprisePlan: PropTypes.bool,
   initialLoad: PropTypes.bool.isRequired,
   isOwnerOrAdmin: PropTypes.bool,

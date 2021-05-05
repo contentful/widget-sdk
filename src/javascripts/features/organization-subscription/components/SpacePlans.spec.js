@@ -158,8 +158,13 @@ describe('Space Plan', () => {
       );
     });
 
-    it('should render a help icon and tooltip when anySpacesInaccessible is true', async () => {
-      build({ anySpacesInaccessible: true });
+    it('should render a help icon and tooltip when at least one spacePlan does not have space or space.isAccessible is false', async () => {
+      build(null, {
+        spacePlans: [
+          { ...mockPlanOne, space: undefined },
+          { ...mockPlanTwo, space: { ...mockPlanTwo.space, isAccessible: false } },
+        ],
+      });
 
       const helpIcon = screen.getByTestId('inaccessible-help-icon');
 
@@ -173,23 +178,13 @@ describe('Space Plan', () => {
 
     it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
       const mockPlanLocalOne = {
-        sys: { id: 'random_id_1' },
-        name: 'random_name_1',
+        ...mockPlanOne,
         gatekeeperKey: null,
-        planType: 'space',
-        space: null,
-        price: 789,
       };
       const mockPlanLocalTwo = {
-        sys: { id: 'random_id_2' },
-        name: 'random_name_2',
+        ...mockPlanTwo,
         gatekeeperKey: 'randomKey',
-        planType: 'space',
-        space: fake.Space(),
-        price: 456,
       };
-
-      const mockedPlansLocal = [mockPlanLocalOne, mockPlanLocalTwo];
 
       build(
         {
@@ -197,7 +192,7 @@ describe('Space Plan', () => {
           initialLoad: false,
           isOwnerOrAdmin: true,
         },
-        { spacePlans: mockedPlansLocal }
+        { spacePlans: [mockPlanLocalOne, mockPlanLocalTwo] }
       );
 
       await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());

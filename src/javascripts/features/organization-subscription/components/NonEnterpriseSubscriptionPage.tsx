@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { css, cx } from 'emotion';
 import {
   DisplayText,
@@ -24,10 +24,9 @@ import type { BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { captureError } from 'core/monitoring';
 
-import { hasAnyInaccessibleSpaces } from '../utils/utils';
-
-import type { BasePlanContent, SpacePlan, UsersMeta } from '../types';
+import type { BasePlanContent, UsersMeta } from '../types';
 import { BasePlanContentEntryIds } from '../types';
+import { OrgSubscriptionContext } from '../context';
 import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
@@ -42,7 +41,7 @@ const styles = {
   }),
 };
 
-const fetchContent = (basePlan: BasePlan) => async (): Promise<BasePlanContent | undefined> => {
+async function fetchContent(basePlan: BasePlan): Promise<BasePlanContent | undefined> {
   const fetchWebappContentError = new Error(
     'Something went wrong while fetching content from Contentful'
   );
@@ -68,7 +67,7 @@ const fetchContent = (basePlan: BasePlan) => async (): Promise<BasePlanContent |
   }
 
   return undefined;
-};
+}
 
 interface NonEnterpriseSubscriptionPageProps {
   addOnPlan: AddOnProductRatePlan;
@@ -76,7 +75,6 @@ interface NonEnterpriseSubscriptionPageProps {
   grandTotal: number;
   initialLoad: boolean;
   organization: Organization;
-  spacePlans: SpacePlan[];
   usersMeta: UsersMeta;
 }
 
@@ -86,17 +84,19 @@ export function NonEnterpriseSubscriptionPage({
   grandTotal,
   initialLoad = false,
   organization,
-  spacePlans,
   usersMeta,
 }: NonEnterpriseSubscriptionPageProps) {
+  const {
+    state: { spacePlans },
+  } = useContext(OrgSubscriptionContext);
+
   const { isLoading, error, data: content } = useAsync(
-    useCallback(fetchContent(basePlan), [basePlan])
+    useCallback(() => fetchContent(basePlan), [basePlan])
   );
 
   const organizationId = organization.sys.id;
   const isOrgBillable = organization.isBillable;
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
-  const anySpacesInaccessible = hasAnyInaccessibleSpaces(spacePlans);
   const freeSpace = spacePlans.find(isFreeSpacePlan);
   // TODO: cleanup after 6 months from v1 migration
   const isV1MigrationSucceeded = organization.sys?._v1Migration?.status === 'succeeded';
@@ -150,8 +150,6 @@ export function NonEnterpriseSubscriptionPage({
         <SpacePlans
           initialLoad={initialLoad}
           organizationId={organizationId}
-          enterprisePlan={false}
-          anySpacesInaccessible={anySpacesInaccessible}
           isOwnerOrAdmin={isOrgOwnerOrAdmin}
         />
       </Flex>

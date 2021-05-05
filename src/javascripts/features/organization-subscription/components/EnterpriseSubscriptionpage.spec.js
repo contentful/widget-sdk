@@ -111,7 +111,6 @@ async function build(customProps) {
     memberAccessibleSpaces: [],
     onSpacePlansChange: jest.fn(),
     organization: mockOrganization,
-    spacePlans: [mockFreeSpacePlan],
     usersMeta: null,
     ...customProps,
   };

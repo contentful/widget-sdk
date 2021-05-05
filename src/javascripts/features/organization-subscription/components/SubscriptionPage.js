@@ -44,7 +44,6 @@ export function SubscriptionPage({
   organization,
   grandTotal,
   initialLoad,
-  spacePlans,
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
@@ -74,8 +73,6 @@ export function SubscriptionPage({
 
   // Contentful Apps card should not show to Enterprise orgs and user is not Admin/Owner
   const showContentfulAppsCard = !enterprisePlan && isOrgOwnerOrAdmin;
-
-  const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
   const rightColumnHasContent =
     showPayingOnDemandCopy || showNonPayingOrgCopy || showContentfulAppsCard;
@@ -177,7 +174,6 @@ export function SubscriptionPage({
             initialLoad={initialLoad}
             organizationId={organizationId}
             enterprisePlan={enterprisePlan}
-            anySpacesInaccessible={anySpacesInaccessible}
             isOwnerOrAdmin={isOrgOwnerOrAdmin}
           />
         )}
@@ -190,7 +186,6 @@ SubscriptionPage.propTypes = {
   initialLoad: PropTypes.bool.isRequired,
   basePlan: PropTypes.object,
   addOnPlan: PropTypes.object,
-  spacePlans: PropTypes.array,
   grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
   organization: PropTypes.object,
@@ -200,13 +195,6 @@ SubscriptionPage.propTypes = {
 SubscriptionPage.defaultProps = {
   initialLoad: true,
 };
-
-function hasAnyInaccessibleSpaces(plans) {
-  return plans.some((plan) => {
-    const space = plan.space;
-    return space && !space.isAccessible;
-  });
-}
 
 function PayingOnDemandOrgCopy({ grandTotal }) {
   return (

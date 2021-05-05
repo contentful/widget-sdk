@@ -16,6 +16,7 @@ const mockAddOnPlan = Fake.Plan({
 
 const mockSpaceForPlanA = Fake.Space({ name: 'Space A', sys: { id: 'space_A' } });
 const mockSpaceForPlanB = Fake.Space({ name: 'Space B', sys: { id: 'space_B' } });
+const mockSpaceForPlanWithoutPrice = Fake.Space({ name: 'Space C', sys: { id: 'space_C' } });
 
 const mockSpacePlanA = Fake.Plan({
   sys: { id: 'random_id_1' },
@@ -31,6 +32,13 @@ const mockSpacePlanB = Fake.Plan({
   planType: 'space',
   space: mockSpaceForPlanB,
   price: 456,
+});
+
+const mockSpacePlanWithoutPrice = Fake.Plan({
+  sys: { id: 'random_id_3' },
+  name: 'random_plan_C',
+  planType: 'space',
+  space: mockSpaceForPlanWithoutPrice,
 });
 
 describe('findAllPlans', () => {
@@ -54,12 +62,23 @@ describe('findAllPlans', () => {
     expect(allPlans.spacePlans).toEqual([mockSpacePlanA, mockSpacePlanB]);
   });
 
-  it('makes isAccessible true for spacePlans that have correspondent spaces in accessibleSpaces', () => {
+  it('separates spacePlans depending on their accessibility - if the plan has correspondent spaces in accessibleSpaces or not', () => {
     const allPlans = findAllPlans([mockSpacePlanA, mockSpacePlanB], [mockSpaceForPlanA]);
 
     expect(allPlans.spacePlans).toEqual([mockSpacePlanA, mockSpacePlanB]);
     expect(allPlans.spacePlans[0].space?.isAccessible).toBe(true);
     expect(allPlans.spacePlans[1].space?.isAccessible).toBe(false);
+  });
+
+  it('adds price 0 to spaces that do not have a price', () => {
+    const allPlans = findAllPlans(
+      [mockSpacePlanB, mockSpacePlanWithoutPrice],
+      [mockSpaceForPlanB, mockSpaceForPlanWithoutPrice]
+    );
+
+    expect(allPlans.spacePlans).toEqual([mockSpacePlanB, mockSpacePlanWithoutPrice]);
+    expect(allPlans.spacePlans[0].price).toBe(mockSpacePlanB.price);
+    expect(allPlans.spacePlans[1].price).toBe(0);
   });
 });
 

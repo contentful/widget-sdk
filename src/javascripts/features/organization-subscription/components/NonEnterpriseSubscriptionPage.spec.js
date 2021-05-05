@@ -134,7 +134,6 @@ async function build(customProps) {
     initialLoad: false,
     organization: mockOrganization,
     basePlan: mockFreeBasePlan,
-    spacePlans: [mockFreeSpacePlan],
     grandTotal: null,
     usersMeta: null,
     onSpacePlansChange: null,
