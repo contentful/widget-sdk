@@ -36,7 +36,16 @@ export const AdminSpaceHome = ({
         environmentId: spaceContext.currentEnvironmentId,
       });
 
-      setIsNewOnboardingEnabled(newOnboardingEnabled);
+      const newOnboardingExperimentVariation = await getVariation(
+        FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        {
+          spaceId: spaceContext.currentSpaceId,
+          organizationId: spaceContext.currentOrganizationId,
+          environmentId: spaceContext.currentEnvironmentId,
+        }
+      );
+
+      setIsNewOnboardingEnabled(newOnboardingEnabled && newOnboardingExperimentVariation);
     })();
   }, [spaceContext]);
 

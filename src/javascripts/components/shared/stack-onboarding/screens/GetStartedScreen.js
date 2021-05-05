@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 import Button from 'components/shared/stack-onboarding/components/Button';
 import Skip from 'components/shared/stack-onboarding/components/Skip';
 import Icon from 'ui/Components/Icon';
+import { useAsync } from 'core/hooks';
+import { getVariation, FLAGS } from 'LaunchDarkly';
+import { track } from 'analytics/Analytics';
+import { go } from 'states/Navigator';
+import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
+import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import { FlexibleOnboardingDialog } from 'features/onboarding';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const icons = [
   'aws',
@@ -21,6 +29,28 @@ const icons = [
 ];
 
 const GetStarted = () => {
+  const spaceContext = useSpaceEnvContext();
+
+  const { data: showFlexibleOnboarding } = useAsync(
+    useCallback(async () => {
+      const newOnboardingEnabled = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+        spaceId: spaceContext.currentSpaceId,
+        organizationId: spaceContext.currentOrganizationId,
+        environmentId: spaceContext.currentEnvironmentId,
+      });
+
+      const newOnboardingExperimentVariation = await getVariation(
+        FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        {
+          spaceId: spaceContext.currentSpaceId,
+          organizationId: spaceContext.currentOrganizationId,
+          environmentId: spaceContext.currentEnvironmentId,
+        }
+      );
+      return newOnboardingEnabled && newOnboardingExperimentVariation;
+    }, [spaceContext])
+  );
+
   const logos = (
     <div className={'modern-stack-onboarding--logogrid-grid'}>
       {icons.map((icon) => (
@@ -41,19 +71,43 @@ const GetStarted = () => {
       <div className={'modern-stack-onboarding--logogrid-wrapper'}>
         {logos}
         <Icon className={'modern-stack-onboarding--logogrid-image'} name={'stack-overview'} />
-        <WithLink
-          intercomKey="onboardingStackOverviewCompleted"
-          trackingElementId="get_started_screen_completed"
-          link="copy">
-          {(move) => (
+        <Flex justifyContent="space-between">
+          {showFlexibleOnboarding === true && (
             <Button
-              onClick={move}
+              buttonType="muted"
               className="modern-stack-onboarding--next-button"
-              data-test-id="onboarding-get-started-cta">
-              Get started
+              onClick={() => {
+                track('onboarding_gatsby_blog:back');
+                unmarkSpace();
+                go({ path: 'spaces.detail.home' });
+                ModalLauncher.open(({ isShown, onClose }) => {
+                  return (
+                    <FlexibleOnboardingDialog
+                      isShown={isShown}
+                      onClose={onClose}
+                      spaceId={spaceContext.currentSpaceId}
+                    />
+                  );
+                });
+              }}
+              testId="back-btn">
+              Back
             </Button>
           )}
-        </WithLink>
+          <WithLink
+            intercomKey="onboardingStackOverviewCompleted"
+            trackingElementId="get_started_screen_completed"
+            link="copy">
+            {(move) => (
+              <Button
+                onClick={move}
+                className="modern-stack-onboarding--next-button"
+                data-test-id="onboarding-get-started-cta">
+                Get started
+              </Button>
+            )}
+          </WithLink>
+        </Flex>
       </div>
     </FullScreen>
   );

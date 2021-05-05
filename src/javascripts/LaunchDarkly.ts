@@ -58,6 +58,7 @@ export enum FLAGS {
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
   ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
   NEW_ONBOARDING_FLOW = 'feature-growth-04-2021-new-onboarding-flow',
+  EXPERIMENT_ONBOARDING_MODAL = 'test-growth-05-2021-onboarding-modal',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -97,6 +98,7 @@ const FALLBACK_VALUES = {
   [FLAGS.REQUEST_RETRY_EXPERIMENT]: false,
 
   [FLAGS.EXPERIMENT_A_A]: null,
+  [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

@@ -70,6 +70,10 @@ export const getPerson = async (currentSpace) => {
 export const markSpace = (spaceId) => {
   store.set(getMSOnboardingSpaceKey(), spaceId);
 };
+export const unmarkSpace = () => {
+  store.remove(getMSOnboardingSpaceKey());
+};
+
 export const checkSpace = (spaceId) => store.get(getMSOnboardingSpaceKey()) === spaceId;
 
 // used for grouping all related analytics events
