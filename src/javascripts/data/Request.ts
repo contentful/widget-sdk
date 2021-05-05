@@ -7,6 +7,7 @@ import { FLAGS, getVariationSync, hasCachedVariation } from 'LaunchDarkly';
 import queryString from 'query-string';
 import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
 import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';
+import { AuthParamsType } from 'data/CMA/types';
 
 /**
  * @description
@@ -18,7 +19,7 @@ import { defaultTransformResponse, ResponseTransform } from 'data/responseTransf
  * See the wrapper documentation for details.
  */
 type MakeRequestConfig = {
-  auth: any;
+  auth: AuthParamsType;
   source?: string;
   clientName?: string;
   overrideDefaultResponseTransform?: ResponseTransform;
@@ -32,10 +33,14 @@ export type RequestConfig = {
   query: Record<string, any>;
 };
 
-type RequestFunc = (...args: any[]) => Promise<any>;
-type RetryFunc = (requestFunc: Function, version?: number, clientName?: string) => RequestFunc;
+export type RequestFunc = (...args: any[]) => Promise<any>;
+export type RetryFunc = (
+  requestFunc: Function,
+  version?: number,
+  clientName?: string
+) => RequestFunc;
 
-let withRetry;
+let withRetry: RequestFunc;
 let withRetryVersion = 1;
 let currentSource;
 
@@ -61,7 +66,7 @@ function getRetryVersion() {
 
 /**
  * creates a request function.
- * @param {Auth} auth - authentication object.
+ * @param {AuthParamsType} auth - authentication object.
  * @param {string} source - initiator id.
  * @param {string} clientName - tag for our different client implementations.
  * @param {ResponseTransform} overrideDefaultResponseTransform - override default response transform behaviour.
@@ -121,7 +126,7 @@ function buildRequestArguments(data, source?: string): [string, RequestInit | un
 }
 
 // convert request params to a query string and append it to the request url
-function withQuery(url, query) {
+function withQuery(url: string, query: any) {
   if (query) {
     // Our contract tests assert the queries as strings with keys in alphabetical order
     // Ideally our test should not care about the order
@@ -131,7 +136,7 @@ function withQuery(url, query) {
   return url;
 }
 
-function wrapWithCounter(request, source, clientName) {
+function wrapWithCounter(request: RequestFunc, source?: string, clientName?: string) {
   return async (args) => {
     Telemetry.count('cma-req', {
       endpoint: getEndpoint(args.url),

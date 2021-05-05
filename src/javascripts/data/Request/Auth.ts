@@ -1,4 +1,6 @@
+import { AuthParamsType } from 'data/CMA/types';
 import { assign } from 'lodash';
+import { RequestConfig, RequestFunc } from 'data/Request';
 
 const UNAUTHORIZED = 401;
 
@@ -16,20 +18,20 @@ const UNAUTHORIZED = 401;
  * @param {object} auth - Authentication object exposing the two methods:
  *        {function(): Promise<string>} getToken,
  *        {function(): Promise<string>} refreshToken
- * @param {function(object): Promise} request
+ * @param {function(object): Promise} requestFn
  */
-export default function wrapWithAuth(auth, request) {
+export default function wrapWithAuth(auth: AuthParamsType, requestFn: RequestFunc) {
   return (params) => {
     return auth.getToken().then((token) => {
       return requestWithToken(params, token, 1);
     });
   };
 
-  function requestWithToken(params, token, retry) {
+  function requestWithToken(params: RequestConfig, token: string, retry: number) {
     params.headers = assign({}, params.headers, {
       Authorization: `Bearer ${token}`,
     });
-    return request(params).catch((err) => {
+    return requestFn(params).catch((err) => {
       if (err.status === UNAUTHORIZED && retry > 0) {
         return ensureNewToken(token).then((token) => {
           return requestWithToken(params, token, retry - 1);
@@ -42,7 +44,7 @@ export default function wrapWithAuth(auth, request) {
 
   // Instead of retrying immediately we get the current token again in
   // case some other thread has refreshed it in the mean time.
-  function ensureNewToken(oldToken) {
+  function ensureNewToken(oldToken: string) {
     return auth.getToken().then((newToken) => {
       if (newToken === oldToken) {
         return auth.refreshToken();
