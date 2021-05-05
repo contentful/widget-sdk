@@ -5,7 +5,7 @@ import { styles } from './styles';
 import { WidgetContainer } from './widgets/WidgetContainer';
 import { SpaceTrialWidget } from 'features/trials';
 
-export const TrialSpaceHome = ({ spaceName, spaceId }) => {
+export const TrialSpaceHome = ({ spaceName }) => {
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
@@ -23,7 +23,7 @@ export const TrialSpaceHome = ({ spaceName, spaceId }) => {
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
-        <SpaceTrialWidget spaceId={spaceId} />
+        <SpaceTrialWidget />
       </WidgetContainer.Row>
     </WidgetContainer>
   );
@@ -31,5 +31,4 @@ export const TrialSpaceHome = ({ spaceName, spaceId }) => {
 
 TrialSpaceHome.propTypes = {
   spaceName: PropTypes.string,
-  spaceId: PropTypes.string,
 };

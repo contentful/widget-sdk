@@ -18,6 +18,7 @@ import { keyBy } from 'lodash';
 import createResourceService from 'services/ResourceService';
 import { LoadingCard } from 'features/space-creation';
 import { EmptyState } from './EmptyState';
+import { clearTrialsCache } from 'features/trials';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Space', isActive: true },
@@ -124,6 +125,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         data.plansBySpace[selectedSpace.sys.id],
         data.freePlan
       );
+      clearTrialsCache();
       Notification.success(`${selectedSpace.name} was successfully changed to ${data.plan.name}`);
       go({ path: '^' });
     } catch (e) {

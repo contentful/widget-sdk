@@ -1,40 +1,40 @@
 import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react';
-import * as fake from 'test/helpers/fakeFactory';
 import { SpaceTrialWidget } from './SpaceTrialWidget';
-import { getSpace } from 'services/TokenStore';
-import { isSpaceOnTrial } from '../services/TrialService';
+import { useTrialSpace as _useTrialSpace } from '../hooks/useTrialSpace';
 import { track } from 'analytics/Analytics';
 
 // Needed for ContactUsButton
 global.open = jest.fn();
 
-const mockedSpace = fake.Space();
-
-const build = (props?: unknown) => {
-  return render(<SpaceTrialWidget spaceId={mockedSpace.sys.id} {...props} />);
-};
+const build = () => render(<SpaceTrialWidget />);
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
 }));
 
-jest.mock('services/TokenStore', () => ({
-  getSpace: jest.fn(),
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn().mockReturnValue({
+    currentSpaceId: '123',
+    currentOrganizationId: '123',
+  }),
 }));
 
-jest.mock('../services/TrialService', () => ({
-  isSpaceOnTrial: jest.fn(),
+jest.mock('../hooks/useTrialSpace', () => ({
+  useTrialSpace: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
   getCurrentStateName: jest.fn().mockReturnValue('current.state.name'),
 }));
 
+const useTrialSpace = _useTrialSpace as jest.Mock;
+
 describe('SpaceTrialWidget', () => {
   beforeEach(() => {
-    (getSpace as jest.Mock).mockResolvedValue(mockedSpace);
-    (isSpaceOnTrial as jest.Mock).mockReturnValue(true);
+    useTrialSpace.mockReturnValue({
+      isActiveTrialSpace: true,
+    });
   });
 
   it('renders correctly when the space is on trial', async () => {
@@ -44,7 +44,9 @@ describe('SpaceTrialWidget', () => {
   });
 
   it('does not render when the space is not on trial', async () => {
-    (isSpaceOnTrial as jest.Mock).mockReturnValue(false);
+    useTrialSpace.mockReturnValue({
+      isActiveTrialSpace: false,
+    });
 
     build();
 
@@ -52,9 +54,12 @@ describe('SpaceTrialWidget', () => {
   });
 
   it('does not render when the space is App Trial Space', async () => {
-    (isSpaceOnTrial as jest.Mock).mockReturnValue(false);
+    useTrialSpace.mockReturnValue({
+      isActiveTrialSpace: true,
+      matchesAppsTrialSpaceKey: true,
+    });
 
-    build({ hasActiveAppTrial: true });
+    build();
 
     await waitFor(() => expect(screen.queryByTestId('space-trial-widget')).not.toBeInTheDocument());
   });

@@ -25,6 +25,7 @@ import { WizardFixedFooter } from 'features/space-management';
 import * as Intercom from 'services/intercom';
 import { salesUrl } from 'Config';
 import { StepStatus, LoadingStateIllustrated } from 'features/space-management';
+import { clearTrialsCache } from 'features/trials';
 
 const styles = {
   workbenchContent: css({
@@ -115,6 +116,7 @@ export const SpaceCreation = ({ orgId }) => {
         });
       }
       setStatus(StepStatus.COMPLETED);
+      clearTrialsCache();
       // to avoid ui flashes for the second step in the LoadingStateIllustrated we expect
       // the loading screen to remain for a minimum amount of time
       await wait(LOADING_SCREEN_COMPLETED_TIME);

@@ -23,7 +23,6 @@ export const AdminSpaceHome = ({
   isSupportEnabled,
   hasTeamsEnabled,
   isTrialSpace,
-  hasActiveAppTrial,
   isEmptySpace,
 }) => {
   const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
@@ -72,7 +71,7 @@ export const AdminSpaceHome = ({
       <ComposeAndLaunchCTA />
 
       <WidgetContainer.Row>
-        <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
+        <SpaceTrialWidget />
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
@@ -117,6 +116,5 @@ AdminSpaceHome.propTypes = {
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
-  hasActiveAppTrial: PropTypes.bool,
   isEmptySpace: PropTypes.bool,
 };

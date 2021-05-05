@@ -8,11 +8,7 @@ import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { calcTrialDaysLeft, isSpaceAccessible } from '../utils/utils';
 import { getOrganization } from 'services/TokenStore';
-import {
-  isOrganizationOnTrial,
-  isSpaceOnTrial,
-  isExpiredTrialSpace,
-} from '../services/TrialService';
+import { isOrganizationOnTrial } from '../services/TrialService';
 import { CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
@@ -20,6 +16,7 @@ import { EVENTS } from '../utils/analyticsTracking';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { Organization } from 'core/services/SpaceEnvContext/types';
 import { useAppsTrial } from '../hooks/useAppsTrial';
+import { useTrialSpace } from '../hooks/useTrialSpace';
 
 const styles = {
   tag: css({
@@ -50,12 +47,23 @@ type TrialData = {
 
 export const TrialTag = ({ organizationId }: TrialTagProps) => {
   const { currentSpaceData: space } = useSpaceEnvContext();
+
+  const orgId = organizationId ?? space?.organization.sys.id;
+
   const {
     appsTrialSpaceKey,
     isAppsTrialActive,
     hasAppsTrialExpired,
     appsTrialEndsAt,
-  } = useAppsTrial(organizationId ?? (space?.organization.sys.id as string));
+  } = useAppsTrial(orgId);
+
+  const {
+    isActiveTrialSpace,
+    hasTrialSpaceExpired,
+    hasTrialSpaceConverted,
+    trialSpaceExpiresAt,
+    matchesAppsTrialSpaceKey,
+  } = useTrialSpace(orgId, space?.sys.id);
 
   const fetchData = useCallback(async () => {
     const organization = organizationId
@@ -74,8 +82,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
   >(fetchData);
 
   const isEnterpriseTrial = isOrganizationOnTrial(organization);
-  const isTrialSpace = isSpaceOnTrial(space);
-  const isTrialSpaceExpired = isExpiredTrialSpace(space);
+  const isTrialSpaceExpired = hasTrialSpaceExpired && !hasTrialSpaceConverted;
 
   if (isLoading || space?.readOnlyAt) {
     return null;
@@ -83,7 +90,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
   if (
     !isEnterpriseTrial &&
-    !isTrialSpace &&
+    !isActiveTrialSpace &&
     !isAppsTrialActive &&
     !isTrialSpaceExpired &&
     !hasAppsTrialExpired
@@ -105,7 +112,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
   } else if (isAppsTrialActive || hasAppsTrialExpired) {
     if (
       hasAppsTrialExpired &&
-      (Navigator.isOrgRoute() || space?.sys.id !== appsTrialSpaceKey || !space?.trialPeriodEndsAt)
+      (Navigator.isOrgRoute() || !matchesAppsTrialSpaceKey || hasTrialSpaceConverted)
     ) {
       return null;
     }
@@ -120,8 +127,8 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
           params: { spaceId: appsTrialSpaceKey },
         }
       : undefined;
-  } else if (isTrialSpace || isTrialSpaceExpired) {
-    daysLeft = calcTrialDaysLeft(space?.trialPeriodEndsAt);
+  } else if (isActiveTrialSpace || isTrialSpaceExpired) {
+    daysLeft = calcTrialDaysLeft(trialSpaceExpiresAt);
     ctaType = CTA_EVENTS.TRIAL_SPACE_TAG;
     pathParamsObj = {
       path: 'spaces.detail.home',
@@ -145,7 +152,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
           testId="trial_tag-tooltip"
           place="bottom"
           content={
-            hasAppsTrialExpired || isTrialSpaceExpired ? (
+            !isEnterpriseTrial && (hasAppsTrialExpired || isTrialSpaceExpired) ? (
               'EXPIRED'
             ) : (
               <Pluralized text="DAY" count={daysLeft} />

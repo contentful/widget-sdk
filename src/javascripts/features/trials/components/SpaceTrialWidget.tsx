@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import {
   Heading,
   Card,
@@ -14,11 +14,10 @@ import tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
 import SpaceTrialIllustration from 'svg/illustrations/space-trial-illustration.svg';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { useAsync } from 'core/hooks';
-import { isSpaceOnTrial } from '../services/TrialService';
-import { getSpace } from 'services/TokenStore';
 import { websiteUrl, helpCenterUrl, developerDocsUrl } from 'Config';
 import { trackEvent, EVENTS, withInAppHelpUtmParamsSpaceHome } from '../utils/analyticsTracking';
+import { useTrialSpace } from '../hooks/useTrialSpace';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   flexContainer: css({
@@ -37,11 +36,6 @@ const styles = {
   }),
 };
 
-interface SpaceTrialWidgetProps {
-  spaceId: string;
-  hasActiveAppTrial?: boolean;
-}
-
 const FairUsePolicyLink = () => (
   <TextLink
     href="https://www.contentful.com/r/knowledgebase/fair-use/#trial-space-limited-use-case"
@@ -55,19 +49,14 @@ const FairUsePolicyLink = () => (
 
 const trackHelpLinkClick = (href: string) => () => trackEvent(EVENTS.HELP_LINK, { href });
 
-export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }: SpaceTrialWidgetProps) => {
-  const [isTrialSpace, setIsTrialSpace] = useState(false);
-  const [trialExpiresAt, setTrialExpiresAt] = useState();
+export const SpaceTrialWidget = () => {
+  const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
+  const { isActiveTrialSpace, matchesAppsTrialSpaceKey, trialSpaceExpiresAt } = useTrialSpace(
+    currentOrganizationId,
+    currentSpaceId
+  );
 
-  const fetchSpace = useCallback(async () => {
-    await getSpace(spaceId).then((space) => {
-      setIsTrialSpace(isSpaceOnTrial(space));
-      setTrialExpiresAt(space.trialPeriodEndsAt);
-    });
-  }, [spaceId]);
-
-  const { isLoading } = useAsync(fetchSpace);
-  if (isLoading || !isTrialSpace || hasActiveAppTrial) {
+  if (!isActiveTrialSpace || matchesAppsTrialSpaceKey) {
     return null;
   }
 
@@ -90,7 +79,7 @@ export const SpaceTrialWidget = ({ spaceId, hasActiveAppTrial = false }: SpaceTr
             Intended for non-production development and testing purposes only
           </ListItem>
           <ListItem className={styles.listItem}>
-            Available until <strong>{moment(trialExpiresAt).format('D MMMM YYYY')}</strong>
+            Available until <strong>{moment(trialSpaceExpiresAt).format('D MMMM YYYY')}</strong>
             {` (Want to keep it after and push to production? No problem, talk to your admin to buy a subscription)`}
           </ListItem>
         </List>

@@ -2,7 +2,7 @@ import React from 'react';
 import DataLoader from 'dataloader';
 import { get, isUndefined, memoize, uniq } from 'lodash';
 import * as Config from 'Config';
-import { clearAppsTrialCache } from 'features/trials';
+import { clearTrialsCache } from 'features/trials';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 import { Endpoint } from 'data/CMA/types';
@@ -183,7 +183,7 @@ export const getSpaceFeature = async (
 export const clearCachedProductCatalogFlags = () => {
   getLoaderForOrg.cache.clear?.();
   getLoaderForSpace.cache.clear?.();
-  clearAppsTrialCache();
+  clearTrialsCache();
 };
 
 type FeatureGetter<TFeatures> = (

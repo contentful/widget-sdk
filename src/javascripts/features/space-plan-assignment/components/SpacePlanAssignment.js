@@ -21,6 +21,7 @@ import { ASSIGNMENT_FLOW_TYPE } from '../utils/utils';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WizardFixedFooter } from 'features/space-management';
+import { clearTrialsCache } from 'features/trials';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Space type', isActive: true },
@@ -152,6 +153,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         data.currentPlan,
         data.freePlan
       );
+      clearTrialsCache();
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
       go({ path: '^' });
     } catch (e) {

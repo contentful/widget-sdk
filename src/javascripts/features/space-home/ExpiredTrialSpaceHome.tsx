@@ -7,7 +7,7 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/expired-trial-space-home-ill.svg';
-import { useAppsTrial, isExpiredTrialSpace } from 'features/trials';
+import { useAppsTrial, useTrialSpace } from 'features/trials';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -27,12 +27,22 @@ const styles = {
 
 export const ExpiredTrialSpaceHome = () => {
   const [composeAndLaunchProductPrice, setComposeAndLaunchProductPrice] = useState<number>(0);
-  const { currentSpaceData, currentOrganizationId, currentOrganization } = useSpaceEnvContext();
-  const { appsTrialEndsAt, appsTrialSpaceKey } = useAppsTrial(currentOrganizationId);
+  const {
+    currentSpaceData,
+    currentOrganizationId,
+    currentOrganization,
+    currentSpaceId,
+  } = useSpaceEnvContext();
+  const { appsTrialEndsAt } = useAppsTrial(currentOrganizationId);
+  const {
+    matchesAppsTrialSpaceKey: isAppsTrialSpace,
+    hasTrialSpaceExpired,
+    hasTrialSpaceConverted,
+    trialSpaceExpiresAt,
+  } = useTrialSpace(currentOrganizationId, currentSpaceId);
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(currentOrganization);
-  const isExpiredSpace = isExpiredTrialSpace(currentSpaceData);
-  const isAppsTrialSpace = currentSpaceData?.sys.id === appsTrialSpaceKey;
+  const isExpiredSpace = hasTrialSpaceExpired && !hasTrialSpaceConverted;
 
   useEffect(() => {
     if (!currentOrganizationId || !isExpiredSpace) {
@@ -55,7 +65,7 @@ export const ExpiredTrialSpaceHome = () => {
     return null;
   }
 
-  const isTrialSpace = isExpiredSpace && !isAppsTrialSpace;
+  const isEnterpriseTrialSpace = isExpiredSpace && !isAppsTrialSpace;
   const showAppsTrialSpaceAdminActions = isAppsTrialSpace && isOrgOwnerOrAdmin;
 
   const handlePurchase = () => {
@@ -87,10 +97,8 @@ export const ExpiredTrialSpaceHome = () => {
       <Illustration className={defaultSVGStyle} />
       <Typography>
         <Heading>
-          {isTrialSpace &&
-            `Your trial space expired on ${moment(currentSpaceData?.trialPeriodEndsAt).format(
-              'D MMMM YYYY'
-            )}`}
+          {isEnterpriseTrialSpace &&
+            `Your trial space expired on ${moment(trialSpaceExpiresAt).format('D MMMM YYYY')}`}
           {isAppsTrialSpace &&
             `Your Contentful Apps trial expired on ${moment(appsTrialEndsAt).format(
               'D MMMM YYYY'
@@ -99,7 +107,7 @@ export const ExpiredTrialSpaceHome = () => {
         <Paragraph>
           All of your content is saved, but you can’t create or edit anymore.
           <br />
-          {isTrialSpace && 'Contact us to upgrade and unlock this space again.'}
+          {isEnterpriseTrialSpace && 'Contact us to upgrade and unlock this space again.'}
           {isAppsTrialSpace &&
             isOrgOwnerOrAdmin &&
             `Buy Compose + Launch for $${composeAndLaunchProductPrice}/month to continue using them across your spaces.`}

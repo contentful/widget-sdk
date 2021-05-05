@@ -7,13 +7,7 @@ import { SpaceTrialWidget } from 'features/trials';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 
-export const AuthorEditorSpaceHome = ({
-  spaceName,
-  orgName,
-  spaceId,
-  isTrialSpace,
-  hasActiveAppTrial,
-}) => {
+export const AuthorEditorSpaceHome = ({ spaceName, orgName, isTrialSpace }) => {
   const [walkthroughStarted, setWalkthroughState] = useState(false);
 
   return (
@@ -43,7 +37,7 @@ export const AuthorEditorSpaceHome = ({
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
-        <SpaceTrialWidget spaceId={spaceId} hasActiveAppTrial={hasActiveAppTrial} />
+        <SpaceTrialWidget />
       </WidgetContainer.Row>
     </WidgetContainer>
   );
@@ -52,7 +46,5 @@ export const AuthorEditorSpaceHome = ({
 AuthorEditorSpaceHome.propTypes = {
   spaceName: PropTypes.string,
   orgName: PropTypes.string,
-  spaceId: PropTypes.string,
   isTrialSpace: PropTypes.bool,
-  hasActiveAppTrial: PropTypes.bool,
 };

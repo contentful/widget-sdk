@@ -26,13 +26,12 @@ import {
   getOrganizationName,
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
-import { isSpaceOnTrial, isExpiredTrialSpace } from 'features/trials';
 import { TrialSpaceHome } from './TrialSpaceHome';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import * as Analytics from 'analytics/Analytics';
-import { useAppsTrial } from 'features/trials';
+import { useTrialSpace } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
   return (
@@ -127,7 +126,6 @@ export const SpaceHome = () => {
   const {
     currentSpaceId,
     currentSpace,
-    currentSpaceData,
     currentSpaceName,
     currentSpaceContentTypes,
     currentOrganizationId,
@@ -139,17 +137,22 @@ export const SpaceHome = () => {
   const [isLoading, setLoading] = useState(true);
   const [spaceTemplateCreated, setSpaceTemplateCreated] = useState(false);
   const [isSpaceEmpty, setIsSpaceEmpty] = useState(false);
-  const { isAppsTrialActive } = useAppsTrial(currentOrganizationId);
+  const {
+    isActiveTrialSpace,
+    hasTrialSpaceExpired,
+    hasTrialSpaceConverted,
+    matchesAppsTrialSpaceKey,
+  } = useTrialSpace(currentOrganizationId, currentSpaceId, 'spaceHome');
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
   const isSpaceAdmin = isAdmin(currentSpace);
   const readOnlySpace = isSpaceReadyOnly(currentSpace);
-  const expiredTrialSpace = isExpiredTrialSpace(currentSpaceData);
+  const expiredTrialSpace = hasTrialSpaceExpired && !hasTrialSpaceConverted;
   const isAuthorOrEditor = accessChecker.isAuthorOrEditor(spaceRoles ?? false);
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(currentSpaceContentTypes, currentSpace);
-  const isEnterpriseTrialSpace = isSpaceOnTrial(currentSpaceData) && !isAppsTrialActive;
+  const isEnterpriseTrialSpace = isActiveTrialSpace && !matchesAppsTrialSpaceKey;
 
   const spaceHomeProps = {
     orgId: currentOrganizationId,
@@ -206,7 +209,6 @@ export const SpaceHome = () => {
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isEnterpriseTrialSpace}
-          hasActiveAppTrial={isAppsTrialActive}
         />
       );
     } else if (isModernStack) {
@@ -229,7 +231,6 @@ export const SpaceHome = () => {
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isEnterpriseTrialSpace}
-          hasActiveAppTrial={isAppsTrialActive}
           isEmptySpace={isSpaceEmpty}
         />
       );
@@ -250,7 +251,6 @@ export const SpaceHome = () => {
           orgName={spaceHomeProps.orgName}
           spaceId={spaceHomeProps.spaceId}
           isTrialSpace={isEnterpriseTrialSpace}
-          hasActiveAppTrial={isAppsTrialActive}
         />
       )}
       {!isLoading && isSpaceAdmin && !readOnlySpace && !expiredTrialSpace && adminSpaceHomePage}
