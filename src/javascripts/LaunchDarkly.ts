@@ -89,6 +89,7 @@ const FALLBACK_VALUES = {
   [FLAGS.ENVIRONMENT_POLICIES]: false,
   [FLAGS.V1_MIGRATION_2021_WARNING]: false,
   [FLAGS.NEW_ONBOARDING_FLOW]: false,
+  [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,

@@ -4,7 +4,11 @@ import FullScreen from 'components/shared/stack-onboarding/components/FullScreen
 import Button from '../components/Button';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { updateUserInSegment } from 'analytics/Analytics';
+import { updateUserInSegment, tracking } from 'analytics/Analytics';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { go } from 'states/Navigator';
+import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { FlexibleOnboardingDialog } from 'features/onboarding';
 
 const store = getBrowserStorage();
 
@@ -17,6 +21,7 @@ export default class ChoiceScreen extends React.Component {
   state = {
     isDevPathPending: false,
     isDefaultPathPending: false,
+    isGrowthExperiment: false,
   };
 
   renderBlock = ({ title, text, button }) => {
@@ -44,12 +49,21 @@ export default class ChoiceScreen extends React.Component {
       isDevPathPending: true,
     });
     const newSpace = await this.props.onDevChoice();
-    store.set(`${getStoragePrefix()}:currentStep`, {
-      path: 'spaces.detail.onboarding.getStarted',
-      params: {
-        spaceId: newSpace.sys.id,
-      },
-    });
+    if (this.state.isGrowthExperiment) {
+      go({ path: 'spaces.detail.home' });
+      ModalLauncher.open(({ isShown, onClose }) => {
+        return (
+          <FlexibleOnboardingDialog isShown={isShown} onClose={onClose} spaceId={newSpace.sys.id} />
+        );
+      });
+    } else {
+      store.set(`${getStoragePrefix()}:currentStep`, {
+        path: 'spaces.detail.onboarding.getStarted',
+        params: {
+          spaceId: newSpace.sys.id,
+        },
+      });
+    }
   };
 
   setChoiceInIntercom = (choice) => {
@@ -58,11 +72,28 @@ export default class ChoiceScreen extends React.Component {
     });
   };
 
+  async componentDidMount() {
+    const newOnboardingFlag = await getVariation(FLAGS.NEW_ONBOARDING_FLOW);
+    const newOnboardingExperimentVariation = await getVariation(FLAGS.EXPERIMENT_ONBOARDING_MODAL);
+    const newOnboardingEnabled = newOnboardingFlag && newOnboardingExperimentVariation !== null;
+    if (newOnboardingEnabled) {
+      this.setState({ isGrowthExperiment: newOnboardingExperimentVariation });
+      tracking.experimentStart({
+        experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        experiment_variation: newOnboardingExperimentVariation ? 'flexible-onboarding' : 'control',
+      });
+    }
+  }
+
   render() {
     const { isDefaultPathPending, isDevPathPending } = this.state;
     const { onContentChoice } = this.props;
 
     const isButtonDisabled = isDefaultPathPending || isDevPathPending;
+
+    const buttonCopy = this.state.isGrowthExperiment
+      ? 'Explore developer options'
+      : 'Deploy a website in 3 steps';
 
     const contentChoice = this.renderBlock({
       title: 'I create content',
@@ -88,7 +119,7 @@ export default class ChoiceScreen extends React.Component {
           this.setChoiceInIntercom('developer');
           this.onDevChoice();
         },
-        text: 'Deploy a website in 3 steps',
+        text: buttonCopy,
         disabled: isButtonDisabled,
         isLoading: isDevPathPending,
         'data-test-id': 'onboarding-developer-choice-btn',

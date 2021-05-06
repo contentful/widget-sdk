@@ -11,7 +11,7 @@ import { track } from 'analytics/Analytics';
 import TemplatesList from 'app/SpaceWizards/shared/TemplatesList';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { useAsync } from 'core/hooks/useAsync';
-import { LoadingCard } from 'features/space-creation';
+import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
 import { getSpace } from 'services/TokenStore';
 import { SpaceData } from 'core/services/SpaceEnvContext/types';
