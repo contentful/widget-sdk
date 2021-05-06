@@ -42,39 +42,41 @@ export default function ContentTypePageActions(props) {
               Cancel
             </Button>
           )}
-          <Dropdown
-            onClose={() => setOpenActions(false)}
-            isOpen={openActions}
-            toggleElement={
-              <Button
-                indicateDropdown
-                testId="content-type-actions"
-                onClick={() => {
-                  setOpenActions(!openActions);
-                }}
-                buttonType="muted">
-                Actions
-              </Button>
-            }>
-            <DropdownList className={styles.dropdownContainer}>
-              <DropdownListItem
-                onClick={() => {
-                  setOpenActions(false);
-                  props.duplicate.execute();
-                }}
-                testId="duplicate-content-type">
-                Duplicate
-              </DropdownListItem>
-              <DropdownListItem
-                onClick={() => {
-                  setOpenActions(false);
-                  props.delete.execute();
-                }}
-                testId="delete-content-type">
-                Delete
-              </DropdownListItem>
-            </DropdownList>
-          </Dropdown>
+          {!props.isNew && (
+            <Dropdown
+              onClose={() => setOpenActions(false)}
+              isOpen={openActions}
+              toggleElement={
+                <Button
+                  indicateDropdown
+                  testId="content-type-actions"
+                  onClick={() => {
+                    setOpenActions(!openActions);
+                  }}
+                  buttonType="muted">
+                  Actions
+                </Button>
+              }>
+              <DropdownList className={styles.dropdownContainer}>
+                <DropdownListItem
+                  onClick={() => {
+                    setOpenActions(false);
+                    props.duplicate.execute();
+                  }}
+                  testId="duplicate-content-type">
+                  Duplicate
+                </DropdownListItem>
+                <DropdownListItem
+                  onClick={() => {
+                    setOpenActions(false);
+                    props.delete.execute();
+                  }}
+                  testId="delete-content-type">
+                  Delete
+                </DropdownListItem>
+              </DropdownList>
+            </Dropdown>
+          )}
           <Button
             testId="save-content-type"
             buttonType="positive"

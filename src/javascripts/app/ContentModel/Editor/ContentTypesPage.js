@@ -166,8 +166,8 @@ export default function ContentTypesPage(props) {
               showNewFieldDialog={actions.showNewFieldDialog}
               fieldsUsed={state.contentType.data.fields.length}
             />
-            <EntryEditorSection />
-            <ContentTypeIdSection contentTypeId={state.contentType.data.sys.id} />
+            {!props.isNew && <EntryEditorSection />}
+            {!props.isNew && <ContentTypeIdSection contentTypeId={state.contentType.data.sys.id} />}
             <DocumentationSection />
           </div>
         </Workbench.Sidebar>

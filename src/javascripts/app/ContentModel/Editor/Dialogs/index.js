@@ -18,8 +18,8 @@ export function openCreateContentTypeDialog(contentTypeIds) {
       onConfirm={({ contentTypeId, name, description }) => {
         props.onClose({
           contentTypeId,
-          name,
-          description,
+          name: (name || '').trim(),
+          description: (description || '').trim(),
         });
       }}
     />
@@ -40,8 +40,8 @@ export function openEditContentTypeDialog(contentType) {
       }}
       onConfirm={({ name, description }) => {
         props.onClose({
-          name,
-          description,
+          name: (name || '').trim(),
+          description: (description || '').trim(),
         });
       }}
     />
