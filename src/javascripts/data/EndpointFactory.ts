@@ -2,6 +2,7 @@ import * as EndpointImpl from 'data/Endpoint';
 import * as auth from 'Authentication';
 import { apiUrl } from 'Config';
 import { ApiEndpoint, OrganizationEndpoint, SpaceEndpoint, UserEndpoint } from 'data/CMA/types';
+import { Source } from 'i13n/constants';
 
 /**
  * Wrapper for data/Endpoint to create space and organization endpoints with
@@ -41,7 +42,7 @@ export function createOrganizationEndpoint(orgId: string): OrganizationEndpoint 
 export function createSpaceEndpoint(
   spaceId: string,
   envId?: string | null,
-  source?: string
+  source?: Source
 ): SpaceEndpoint {
   return EndpointImpl.createSpaceEndpoint(apiUrl(), spaceId, auth, envId, source);
 }

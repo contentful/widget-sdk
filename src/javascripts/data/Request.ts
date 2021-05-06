@@ -8,7 +8,7 @@ import queryString from 'query-string';
 import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
 import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';
 import { AuthParamsType } from 'data/CMA/types';
-
+import { Source } from 'i13n/constants';
 /**
  * @description
  * Create a HTTP request function that handles authentication and
@@ -18,10 +18,12 @@ import { AuthParamsType } from 'data/CMA/types';
  *
  * See the wrapper documentation for details.
  */
+type ClientName = 'contentful-management' | 'endpoint' | 'legacy' | 'token';
+
 type MakeRequestConfig = {
   auth: AuthParamsType;
-  source?: string;
-  clientName?: string;
+  source?: Source;
+  clientName?: ClientName;
   overrideDefaultResponseTransform?: ResponseTransform;
 };
 
@@ -37,7 +39,7 @@ export type RequestFunc = (...args: any[]) => Promise<any>;
 export type RetryFunc = (
   requestFunc: Function,
   version?: number,
-  clientName?: string
+  clientName?: ClientName
 ) => RequestFunc;
 
 let withRetry: RequestFunc;

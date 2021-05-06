@@ -16,7 +16,7 @@ type GetCmaClientOptions = { noBatch?: boolean };
 export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
   const request = makeRequest({
     auth,
-    clientName: 'cma',
+    clientName: 'contentful-management',
     overrideDefaultResponseTransform: undefined,
   });
 

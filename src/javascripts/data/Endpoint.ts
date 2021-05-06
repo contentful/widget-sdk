@@ -12,6 +12,7 @@ import {
   SpaceEndpoint,
   UserEndpoint,
 } from 'data/CMA/types';
+import { Source } from 'i13n/constants';
 
 /**
  * @module
@@ -69,7 +70,7 @@ export function createSpaceEndpoint(
   spaceId: string,
   auth: AuthParamsType,
   envId?: string | null,
-  source?: string
+  source?: Source
 ): SpaceEndpoint {
   const spaceEndpoint = create<'Space'>(withBaseUrl, auth, source) as SpaceEndpoint;
 
@@ -195,7 +196,7 @@ export function createAppDefinitionsEndpoint(
 export function create<Scope>(
   baseUrl: BaseUrlParam,
   auth: AuthParamsType,
-  source?: string
+  source?: Source
 ): BaseEndpoint<Scope> {
   const baseRequest = makeRequest({
     auth,
