@@ -202,11 +202,6 @@ function initSpaceContext() {
         const start = Date.now();
         await Promise.all([
           setupEnvironments(spaceContext, uriEnvOrAliasId).then(async () => {
-            if (!isLastReset()) {
-              // another reset was issued meanwhile. Skip creating a wrong
-              // docPool
-              return;
-            }
             spaceContext.docPool = await DocumentPool.create(
               spaceContext.docConnection,
               spaceContext.pubsubClient,

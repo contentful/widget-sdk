@@ -196,7 +196,7 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
     }
 
     await Navigator.go({
-      path: ['spaces', 'detail'].concat(isMaster ? [] : ['environment']).concat(widgetRouting.path),
+      path: ['spaces', isMaster ? 'detail' : 'environment'].concat(widgetRouting.path),
       params: {
         spaceId,
         environmentId,
@@ -228,7 +228,7 @@ const makeNavigateToAppConfig = ({
 }) => () => {
   if (widgetNamespace === WidgetNamespace.APP) {
     return Navigator.go({
-      path: ['spaces', 'detail', 'environment', 'apps', 'detail'],
+      path: ['spaces', 'environment', 'apps', 'detail'],
       params: {
         spaceId,
         environmentId,
@@ -255,7 +255,7 @@ const navigateToSpaceEnvRoute = async ({
   isMaster: boolean;
 }) => {
   await Navigator.go({
-    path: ['spaces', 'detail'].concat(isMaster ? [] : ['environment']).concat(route, 'list'),
+    path: ['spaces', isMaster ? 'detail' : 'environment', route, 'list'],
     params: {
       spaceId,
       environmentId,

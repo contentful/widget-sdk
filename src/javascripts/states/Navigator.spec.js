@@ -68,8 +68,8 @@ describe('Navigator', () => {
       expect(broadcastMock).toHaveBeenCalledWith('$stateChangeSuccess', { name: 'spaces.detail' });
     });
 
-    it('should trigger state change for spaces.detail.environment with no env id given', async () => {
-      current = { name: 'spaces.detail.environment' };
+    it('should trigger state change for spaces.environment with no env id given', async () => {
+      current = { name: 'spaces.environment' };
       when(getModule)
         .calledWith('$state')
         .mockReturnValue({
@@ -92,7 +92,7 @@ describe('Navigator', () => {
         .mockReturnValue({ go: goMock, reload: reloadMock, current, params: {} });
       await reloadWithEnvironment('123');
       expect(goMock).toHaveBeenCalledWith(
-        'spaces.detail.environment',
+        'spaces.environment',
         { environmentId: '123' },
         {
           inherit: false,
@@ -101,18 +101,18 @@ describe('Navigator', () => {
       );
       expect(broadcastMock).toHaveBeenCalledWith('$locationChangeSuccess');
       expect(broadcastMock).toHaveBeenCalledWith('$stateChangeSuccess', {
-        name: 'spaces.detail.environment',
+        name: 'spaces.environment',
       });
     });
 
-    it('should trigger state change for spaces.detail.environment with env id given', async () => {
-      current = { name: 'spaces.detail.environment' };
+    it('should trigger state change for spaces.environment with env id given', async () => {
+      current = { name: 'spaces.environment' };
       when(getModule)
         .calledWith('$state')
         .mockReturnValue({ go: goMock, reload: reloadMock, current, params: {} });
       await reloadWithEnvironment('123');
       expect(goMock).toHaveBeenCalledWith(
-        'spaces.detail.environment',
+        'spaces.environment',
         { environmentId: '123' },
         {
           inherit: false,
@@ -121,7 +121,7 @@ describe('Navigator', () => {
       );
       expect(broadcastMock).toHaveBeenCalledWith('$locationChangeSuccess');
       expect(broadcastMock).toHaveBeenCalledWith('$stateChangeSuccess', {
-        name: 'spaces.detail.environment',
+        name: 'spaces.environment',
       });
       expect(getModule('$state').params).toEqual({
         environmentId: '123',

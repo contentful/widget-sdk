@@ -177,8 +177,8 @@ parts of the application.
 Find all links in the applications that were referring to the previous route configuration:
 
 - relative links links `^.list`, `^.details`
-- or absolute links like `['spaces', 'detail', 'environment', 'locales', 'list']`
-  or `spaces.detail.environment.locales.list`
+- or absolute links like `['spaces', 'environment', 'locales', 'list']`
+  or `spaces.environment.locales.list`
 
 Replace these links with our functions created on the previous step and their alternatives that wraps our existing ways
 of navigation:
@@ -224,8 +224,8 @@ router.navigate({ path: 'locale.detail', localeId: locale.sys.id });
 Find all links in the applications that were referring to the previous route configuration:
 
 - relative links links `^.list`, `^.details`
-- or absolute links like `['spaces', 'detail', 'environment', 'locales', 'list']`
-  or `spaces.detail.environment.locales.list`
+- or absolute links like `['spaces', 'environment', 'locales', 'list']`
+  or `spaces.environment.locales.list`
 
 Replace these links with our functions created on the previous step and their alternatives that wraps our existing ways
 of navigation. You can refer

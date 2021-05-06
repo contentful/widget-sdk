@@ -19,7 +19,7 @@ jest.mock('./resolver', () => ({
 describe('deeplink/DeeplinkPage', () => {
   it('should redirect user accoring to resolver response', async () => {
     resolveLink.mockResolvedValue({
-      path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+      path: ['spaces', 'environment', 'apps', 'list'],
       params: {
         spaceId: '1234',
       },
@@ -45,7 +45,7 @@ describe('deeplink/DeeplinkPage', () => {
     await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
-      'spaces.detail.environment.apps.list',
+      'spaces.environment.apps.list',
       {
         spaceId: '1234',
       },
@@ -55,7 +55,7 @@ describe('deeplink/DeeplinkPage', () => {
 
   it('should show space selection form if resolver returned deeplinkOptions including selectSpace or selectEnv', async function () {
     resolveLink.mockResolvedValue({
-      path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+      path: ['spaces', 'environment', 'apps', 'list'],
       params: {
         spaceId: '1234',
       },
@@ -124,7 +124,7 @@ describe('deeplink/DeeplinkPage', () => {
     await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
-      'spaces.detail.environment.apps.list',
+      'spaces.environment.apps.list',
       { environmentId: 'test', spaceId: 'current-space' },
       { location: 'replace' }
     );

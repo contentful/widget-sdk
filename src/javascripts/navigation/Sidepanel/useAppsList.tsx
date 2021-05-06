@@ -20,7 +20,7 @@ const getAppInstallRouteProps = ({
   isMasterEnvironment: boolean;
 }) => {
   return {
-    path: isMasterEnvironment ? 'spaces.detail.apps.list' : 'spaces.detail.environment.apps.list',
+    path: isMasterEnvironment ? 'spaces.detail.apps.list' : 'spaces.environment.apps.list',
     params: { environmentId, app: app.slug || app.id },
   };
 };

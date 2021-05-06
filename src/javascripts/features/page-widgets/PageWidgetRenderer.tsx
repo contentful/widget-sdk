@@ -160,7 +160,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
       const slug = app.id;
       // Add environment path portion if we're not on master
       const spaceDetailPagePath = !isMasterEnvironment
-        ? 'spaces.detail.environment.apps.page'
+        ? 'spaces.environment.apps.page'
         : 'spaces.detail.apps.page';
 
       go({ path: spaceDetailPagePath, params: { appId: slug }, options: { replace: true } });

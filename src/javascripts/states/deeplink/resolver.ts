@@ -332,7 +332,7 @@ async function resolveContentfulApps(params: {
   const environmentId = params.environmentId ? params.environmentId : 'master';
 
   return {
-    path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+    path: ['spaces', 'environment', 'apps', 'list'],
     params: {
       spaceId,
       environmentId,
@@ -346,7 +346,7 @@ async function resolveApps(params: { id?: string; referrer?: string }) {
   const { spaceId } = await getSpaceInfo();
 
   return {
-    path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+    path: ['spaces', 'environment', 'apps', 'list'],
     params: {
       spaceId,
       environmentId: 'master',

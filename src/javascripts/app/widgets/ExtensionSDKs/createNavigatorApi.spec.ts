@@ -405,7 +405,7 @@ describe('createNavigatorApi', () => {
             spaceId: DEFAULT_SPACE_ID,
             appId: DEFAULT_WIDGET_ID,
           },
-          path: ['spaces', 'detail', 'environment', 'apps', 'detail'],
+          path: ['spaces', 'environment', 'apps', 'detail'],
         });
       });
     });

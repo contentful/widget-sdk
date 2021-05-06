@@ -43,13 +43,12 @@ const cleanupSpaceContext = () => {
 
 const spaceEnvironment = {
   name: 'environment',
-  url: '/environments/:environmentId',
+  url: '/:spaceId/environments/:environmentId',
   resolve: {
     spaceData: resolveSpaceData,
     initializingSpaceEnvContext: [
       'spaceData',
       '$stateParams',
-      'initializingSpaceContext',
       async (spaceData, $stateParams) => {
         const spaceContext = getSpaceContext();
         const result = await spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
@@ -57,7 +56,14 @@ const spaceEnvironment = {
       },
     ],
   },
-  template: '<div />',
+  onEnter: [
+    'spaceData',
+    (spaceData) => {
+      const organizationData = spaceData.organization;
+      Analytics.trackContextChange(spaceData, organizationData);
+    },
+  ],
+  template: '<react-component component="component" props="props"></react-component>',
   controller: [
     'initializingSpaceEnvContext',
     'spaceData',
@@ -139,7 +145,6 @@ const spaceDetail = {
     apiKeysState,
     settings,
     spaceHomeState,
-    spaceEnvironment,
     stackOnboarding,
     apps,
     scheduledActionsState,
@@ -163,7 +168,7 @@ const spacesState = {
   abstract: true,
   onExit: cleanupSpaceContext,
   navComponent: SpaceNavigationBar,
-  children: [spaceDetail],
+  children: [spaceDetail, spaceEnvironment],
 };
 
 export default spacesState;

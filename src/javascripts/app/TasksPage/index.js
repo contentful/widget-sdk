@@ -132,7 +132,7 @@ export class TasksPage extends Component {
         {this.state.tasks.map((task, index) => {
           const linkPath = this.props.isMasterEnvironmentById(task.environmentId)
             ? 'spaces.detail.entries.detail'
-            : 'spaces.detail.environment.entries.detail';
+            : 'spaces.environment.entries.detail';
 
           return (
             <TableRow key={index}>

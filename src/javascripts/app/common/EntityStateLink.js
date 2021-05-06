@@ -21,10 +21,13 @@ const entityTypeToPathParams = {
 };
 
 export function getEntityLink({ id, type, isMasterEnvironment = true }) {
-  const path = ['spaces', 'detail', entityTypeToPathParams[type].path, 'detail'];
-  if (!isMasterEnvironment) {
-    path.splice(2, 0, 'environment');
-  }
+  const path = [
+    'spaces',
+    isMasterEnvironment ? 'detail' : 'environment',
+    entityTypeToPathParams[type].path,
+    'detail',
+  ];
+
   const params = { [entityTypeToPathParams[type].entityId]: id };
 
   return {

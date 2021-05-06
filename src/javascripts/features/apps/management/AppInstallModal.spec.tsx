@@ -55,7 +55,7 @@ describe('AppInstallModal', () => {
         referrer: 'app-management',
         spaceId: 'my-space-123',
       },
-      path: 'spaces.detail.environment.apps.detail',
+      path: 'spaces.environment.apps.detail',
     });
   });
 
@@ -82,7 +82,7 @@ describe('AppInstallModal', () => {
         referrer: 'app-management',
         spaceId: 'my-other-space-123',
       },
-      path: 'spaces.detail.environment.apps.detail',
+      path: 'spaces.environment.apps.detail',
     });
   });
 });

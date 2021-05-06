@@ -2,7 +2,7 @@ import { renderAppsNavigationItem } from 'features/apps';
 import { routes } from 'core/react-routing';
 
 const makeRef = (ref, isMaster) =>
-  isMaster ? `spaces.detail.${ref}` : `spaces.detail.environment.${ref}`;
+  isMaster ? `spaces.detail.${ref}` : `spaces.environment.${ref}`;
 
 const makeReactRouterRef = (route: keyof typeof routes, withEnvironment: boolean) => {
   // @ts-expect-error ignore "params" arg, we expect only .list routes

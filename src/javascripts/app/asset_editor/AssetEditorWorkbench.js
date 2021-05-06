@@ -78,7 +78,7 @@ const AssetEditorWorkbench = ({
   const $state = getModule('$state');
   const setTabInUrl = (tab) =>
     $state.transitionTo(
-      routeIsUnscoped ? 'spaces.detail.assets.detail' : 'spaces.detail.environment.assets.detail',
+      routeIsUnscoped ? 'spaces.detail.assets.detail' : 'spaces.environment.assets.detail',
       { tab: tab === 'Editor' ? null : tab },
       {
         location: true, // This makes it update URL

@@ -75,21 +75,20 @@ export async function reloadWithEnvironment(environmentId) {
     $rootScope.$broadcast('$stateChangeSuccess', { name: path });
   };
 
-  if (name.includes('spaces.detail')) {
+  if (name.includes('spaces')) {
     let path = name;
     try {
       if (environmentId) {
-        if (!name.includes('.environment')) {
+        if (!name.includes('spaces.environment')) {
           // add environment path
-          const newPath = name.split('.');
-          newPath.splice(2, 0, 'environment');
-          path = newPath.join('.');
+          const newPath = name.replace('spaces.detail', 'spaces.environment');
+          path = newPath;
         }
         // and param
         params.environmentId = environmentId;
-      } else if (!environmentId && name.includes('.environment')) {
+      } else if (!environmentId && name.includes('spaces.environment')) {
         // remove environment param and path
-        path = name.replace('.environment', '');
+        path = name.replace('spaces.environment', 'spaces.detail');
         delete params.environmentId;
       }
       delete params.addToContext;
@@ -168,7 +167,18 @@ export function makeEntityRef(entity) {
 export function getCurrentStateName() {
   const $state = getModule('$state');
   const currentReactRouteName = RouteNameCursor.getCurrentReactRouteName();
-  return currentReactRouteName || get($state, ['current', 'name']);
+  let currentAngularStateName = get($state, ['current', 'name']);
+
+  // convert for backward compatibility
+  // todo: remove when we don't have Angular
+  if (currentAngularStateName && currentAngularStateName.startsWith('spaces.environment')) {
+    currentAngularStateName = currentAngularStateName.replace(
+      'spaces.environment',
+      'spaces.detail.environment'
+    );
+  }
+
+  return currentReactRouteName || currentAngularStateName;
 }
 
 // todo: replace it with window.location.pathname check
@@ -181,7 +191,7 @@ function makeEntityPath(entity) {
   const typePlural = ENTITY_PLURALS[type];
 
   if (isNonMasterEnv(entity)) {
-    return ['spaces', 'detail', 'environment', typePlural, 'detail'];
+    return ['spaces', 'environment', typePlural, 'detail'];
   } else {
     return ['spaces', 'detail', typePlural, 'detail'];
   }

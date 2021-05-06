@@ -270,7 +270,7 @@ describe('states/deeplink/resolver', () => {
       });
 
       expect(result).toEqual({
-        path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+        path: ['spaces', 'environment', 'apps', 'list'],
         params: {
           spaceId: 'test-space-id',
           environmentId: 'master',

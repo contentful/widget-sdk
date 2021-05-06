@@ -217,7 +217,7 @@ export function AppRoute(props: Props) {
     let absoluteListPath = 'spaces.detail.apps.list';
     if (!isMasterEnvironment) {
       params.environmentId = environmentId;
-      absoluteListPath = 'spaces.detail.environment.apps.list';
+      absoluteListPath = 'spaces.environment.apps.list';
     }
 
     // No need to consent for private apps.

@@ -18,7 +18,7 @@ const makeRef = (ref, isMaster) => {
   if (isMaster) {
     return `spaces.detail.${ref}`;
   } else {
-    return `spaces.detail.environment.${ref}`;
+    return `spaces.environment.${ref}`;
   }
 };
 

@@ -122,7 +122,7 @@ export default class Sidepanel extends React.Component {
 
   goToSpace = async (spaceId, envId, isMaster) => {
     envId = isMaster ? undefined : envId;
-    const path = ['spaces', 'detail'].concat(envId ? ['environment'] : []);
+    const path = ['spaces', envId ? 'environment' : 'detail'];
 
     this.props.closeSidePanel();
 

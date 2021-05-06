@@ -8,7 +8,7 @@ import { AppDefinition, Space, Environment } from 'contentful-management/types';
 
 function goToInstallation(spaceId, environmentId, appId, onClose) {
   Navigator.go({
-    path: 'spaces.detail.environment.apps.detail',
+    path: 'spaces.environment.apps.detail',
     params: {
       spaceId,
       environmentId,
