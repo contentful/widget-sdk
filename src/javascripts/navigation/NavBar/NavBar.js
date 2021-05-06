@@ -51,7 +51,7 @@ NavigationList.propTypes = {
 export default class NavBar extends React.Component {
   render() {
     return (
-      <div className="app-top-bar__child app-top-bar__child-wide">
+      <div className="app-top-bar__child app-top-bar__child-wide" data-test-id="navbar-top">
         <div className="app-top-bar__inner-wrapper">
           <div className="app-top-bar__child app-top-bar__main-nav">
             <nav className={styles.navBar} aria-label="Main Navigation">

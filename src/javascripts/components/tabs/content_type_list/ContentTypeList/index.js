@@ -97,6 +97,7 @@ class ContentTypeList extends Component {
                     <TableRow
                       className="ctf-ui-cursor--pointer"
                       data-test-id="content-type-item"
+                      data-content-type-name={contentType.name}
                       onClick={onClick}>
                       <TableCell className="x--medium-cell" data-test-id="cell-name">
                         <SecretiveLink href={getHref()}>
