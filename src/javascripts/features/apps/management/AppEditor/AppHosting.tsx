@@ -51,7 +51,9 @@ export function AppHosting({
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
-  const { draftDefinition, setDraftDefinition } = React.useContext(AppDetailsStateContext);
+  const { draftDefinition, setDraftDefinition, resetDefinitionBundle } = React.useContext(
+    AppDetailsStateContext
+  );
 
   React.useEffect(() => {
     getVariation(FLAGS.APP_HOSTING_UI, {
@@ -78,14 +80,7 @@ export function AppHosting({
       isChecked={hostingState.isAppHosting}
       onToggle={(value) => {
         hostingState.setIsAppHosting(value);
-
-        if (!value && !draftDefinition.src) {
-          // This allows us to save when turning off app hosting with no src set
-          setDraftDefinition({
-            ...draftDefinition,
-            src: '',
-          });
-        }
+        resetDefinitionBundle();
       }}
       labelText="Hosted by Contentful"
       id="app-hosting"
