@@ -138,6 +138,14 @@ function stateChangeErrorHandler(event, toState, toParams, _fromState, _fromPara
     // TODO we should provide some feedback to the user
     $state.go('spaces.detail.' + matchedSection[1] + '.list', { spaceId: toParams.spaceId });
   } else {
+    captureError(new Error('Navigation to a state that does not exist'), {
+      extra: {
+        toState,
+        toParams,
+        _fromParams,
+        _fromState,
+      },
+    });
     // Otherwise we redirect the user to the homepage
     $state.go('error');
   }
