@@ -1,8 +1,4 @@
-import {
-  createDefaultBatchClient,
-  createInternalMethods,
-  createOnErrorWithInterceptor,
-} from '@contentful/experience-cma-utils';
+import { createDefaultBatchClient, createInternalMethods } from '@contentful/experience-cma-utils';
 import { useMemo } from 'react';
 import type { PlainClientDefaultParams } from 'contentful-management';
 import { createClient } from 'contentful-management';
@@ -32,15 +28,10 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
       },
       headers: getDefaultHeaders(),
       retryOnError: false,
-      onError: createOnErrorWithInterceptor({
-        refreshToken: async () => {
-          const token = await auth.refreshToken();
-          return token || '';
-        },
-        captureException: (error) => {
-          captureError(error);
-        },
-      }),
+      onError: (error) => {
+        captureError(error);
+        throw error;
+      },
       adapter: async (config) => {
         let body;
 
