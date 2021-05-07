@@ -46,7 +46,6 @@ const angular = (node) => {
     '$exceptionHandler',
     'core/NgRegistry',
     '$interval',
-    'logger',
     'spaceContext',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
@@ -61,14 +60,7 @@ const react = (node) => {
   if (test(node)) {
     return false;
   }
-  const attributes = [
-    'react',
-    'prop-types',
-    'react-dom',
-    'react-router-dom',
-    'react-animate-height',
-    '<react-component>',
-  ];
+  const attributes = ['react', 'prop-types', 'react-dom', 'react-router-dom'];
 
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   if (intersection.length > 0) {
@@ -95,6 +87,7 @@ const needsRefactoring = (node) => {
     'services/client',
     'libs/legacy_client/client',
     'classes/spaceContext',
+    'states/Navigator',
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
