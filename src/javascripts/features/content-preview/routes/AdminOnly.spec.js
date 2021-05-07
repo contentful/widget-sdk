@@ -7,6 +7,8 @@ import * as $stateMocked from 'ng/$state';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { space } from '__mocks__/ng/spaceContext';
 
+const flush = () => new Promise((resolve) => setImmediate(resolve));
+
 describe('AdminOnly', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
@@ -36,7 +38,7 @@ describe('AdminOnly', () => {
   });
 
   describe('if isAdmin is false', () => {
-    it('should render StateRedirect', () => {
+    it('should render StateRedirect', async () => {
       expect.assertions(2);
       setAdmin(false);
       const { container } = render(
@@ -46,6 +48,7 @@ describe('AdminOnly', () => {
           </AdminOnly>
         </SpaceEnvContextProvider>
       );
+      await flush();
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect($stateMocked.go).toHaveBeenCalledWith(
         'spaces.detail.entries.list',
@@ -54,7 +57,7 @@ describe('AdminOnly', () => {
       );
     });
 
-    it('should render StateRedirect with custom "to" if "redirect" is passed', () => {
+    it('should render StateRedirect with custom "to" if "redirect" is passed', async () => {
       expect.assertions(2);
       setAdmin(false);
       const { container } = render(
@@ -64,6 +67,7 @@ describe('AdminOnly', () => {
           </AdminOnly>
         </SpaceEnvContextProvider>
       );
+      await flush();
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect($stateMocked.go).toHaveBeenCalledWith('^.home', undefined, undefined);
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 
 import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-routing';
 import StateRedirect from 'app/common/StateRedirect';

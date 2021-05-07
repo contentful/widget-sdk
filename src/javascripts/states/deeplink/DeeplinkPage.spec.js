@@ -16,6 +16,8 @@ jest.mock('./resolver', () => ({
   resolveLink: jest.fn(),
 }));
 
+const flush = () => new Promise((resolve) => setImmediate(resolve));
+
 describe('deeplink/DeeplinkPage', () => {
   it('should redirect user accoring to resolver response', async () => {
     resolveLink.mockResolvedValue({
@@ -43,6 +45,7 @@ describe('deeplink/DeeplinkPage', () => {
     });
 
     await waitFor(() => getByText('Redirecting'));
+    await flush();
 
     expect($state.go).toHaveBeenCalledWith(
       'spaces.environment.apps.list',
@@ -178,6 +181,7 @@ describe('deeplink/DeeplinkPage', () => {
     fireEvent.click($proceedButton);
 
     await waitFor(() => getByText('Redirecting'));
+    await flush();
 
     expect($state.go).toHaveBeenCalledWith(
       'account.organizations.apps.definition',

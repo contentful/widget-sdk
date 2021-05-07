@@ -50,7 +50,7 @@ const styles = {
 
 export interface StartAppTrialProps {
   orgId: string;
-  existingUsers: boolean;
+  existingUsers?: boolean;
   from?: string;
 }
 

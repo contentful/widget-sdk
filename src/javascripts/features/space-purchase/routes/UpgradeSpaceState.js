@@ -1,5 +1,5 @@
 import React from 'react';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import { SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { SpacePurchaseContextProvider } from '../context';
 

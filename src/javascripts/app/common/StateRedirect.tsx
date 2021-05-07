@@ -6,7 +6,14 @@ export type StateRedirectProps = Pick<StateLinkProps, 'path' | 'params' | 'optio
 
 export class StateRedirect extends React.Component<StateRedirectProps> {
   componentDidMount() {
-    Navigator.go({ path: this.props.path, params: this.props.params, options: this.props.options });
+    // This allows to avoid interference with React Router
+    setImmediate(() =>
+      Navigator.go({
+        path: this.props.path,
+        params: this.props.params,
+        options: this.props.options,
+      })
+    );
   }
 
   render() {

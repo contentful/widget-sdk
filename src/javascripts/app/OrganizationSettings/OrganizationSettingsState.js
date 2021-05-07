@@ -8,7 +8,7 @@ import { inviteUsersState, userDetailState, usersListState } from './Users/Users
 import accessToolsState from './AccessToolsState';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import { GatekeeperView } from 'account/GatekeeperView';
 
 import { orgAppsRoute } from 'features/apps';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import { SpacePlanAssignmentRoute } from 'features/space-plan-assignment';
 
 export const spacePlanAssignmentState = {

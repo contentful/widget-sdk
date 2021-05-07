@@ -1,5 +1,5 @@
 import React from 'react';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import { spaceCreationState } from 'features/space-creation';
 import { newSpaceState, upgradeSpaceState } from 'features/space-purchase';

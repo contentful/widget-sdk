@@ -2,7 +2,7 @@ import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-rout
 import StateRedirect from '../common/StateRedirect';
 import React from 'react';
 import { SSOSetup } from 'features/sso';
-import { withOrganizationRoute } from '../../states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import UserProvisioning from './UserProvisioning/UserProvisioning';
 
 function AccessToolsRouter(props) {

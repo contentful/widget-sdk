@@ -7,6 +7,8 @@ import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { MemoryRouter } from 'core/react-routing';
 
+const flush = () => new Promise((resolve) => setImmediate(resolve));
+
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([]),
 };
@@ -57,10 +59,11 @@ describe('WebhookListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));
   };
 
-  it('should be resticted for non-admins and redirect should be called', () => {
+  it('should be resticted for non-admins and redirect should be called', async () => {
     expect.assertions(3);
     setSectionVisibility(false);
     build();
+    await flush();
     expect($stateMocked.go).toHaveBeenCalledTimes(1);
     expect($stateMocked.go).toHaveBeenCalledWith(
       'spaces.detail.entries.list',

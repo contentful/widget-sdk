@@ -2,12 +2,10 @@ import StateRedirect from 'app/common/StateRedirect';
 import { getModule } from 'core/NgRegistry';
 import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-routing';
 import React from 'react';
-import { withOrganizationRoute } from 'states/utils';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 import { OrganizationSpacesV1Page } from './OrganizationSpacesV1Page';
 
-const OrganizationSpacesV1Route = withOrganizationRoute((props) => (
-  <OrganizationSpacesV1Page {...props} />
-));
+const OrganizationSpacesV1Route = withOrganizationRoute(OrganizationSpacesV1Page);
 
 const OrganizationSpacesV1Router = () => {
   const [basename] = window.location.pathname.split('spaces');

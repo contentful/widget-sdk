@@ -15,8 +15,8 @@ import {
   useParams,
 } from 'core/react-routing';
 import StateRedirect from 'app/common/StateRedirect';
-import { withOrganizationRoute } from 'states/utils';
 import { getModule } from 'core/NgRegistry';
+import { withOrganizationRoute } from 'states/withOrganizationRoute';
 
 type OrganizationAppsRouteCommonProps = {
   orgId: string;
