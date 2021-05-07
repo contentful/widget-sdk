@@ -562,12 +562,17 @@ export function transformEvent(event: string, data: EventData): TransformedEvent
 }
 
 export function getSnowplowSchemaForEvent(event: string) {
-  const schemaName = _events[event].snowplowSchema;
-  return schemaName && getSnowplowSchema(schemaName);
+  const schemaName = _events[event]?.snowplowSchema;
+  if (!schemaName) {
+    // Event is already tracked via `Analytics.tracking.` and without a `migratedLegacyEvent()`
+    // Snowplow fallback, e.g. because it's a new Segment only event or no longer needed in Snowplow.
+    return null;
+  }
+  return getSnowplowSchema(schemaName);
 }
 
 export function getSegmentSchemaForEvent(event: string) {
-  const schemaName = _events[event].segmentSchema;
+  const schemaName = _events[event]?.segmentSchema;
   if (!schemaName) {
     // Event is already tracked via `Analytics.tracking.` so it's no longer registered here.
     return null;

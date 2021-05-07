@@ -85,9 +85,9 @@ export function add(name, transformedData, rawData) {
     },
   };
 
-  const snowplowEvent = buildSnowplowEvent(name, transformedData);
-  if (snowplowEvent) {
-    const snowplowSchema = getSnowplowSchemaForEvent(name);
+  const snowplowSchema = getSnowplowSchemaForEvent(name);
+  if (snowplowSchema) {
+    const snowplowEvent = buildSnowplowEvent(name, transformedData);
 
     event.snowplow = {
       name: snowplowSchema.name,
