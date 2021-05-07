@@ -261,7 +261,10 @@ export default function EntitySidebarBridge({
     (widgetNamespace, widgetId, parameters) => {
       const source =
         widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN ? undefined : Source.CustomWidget;
-      const cma = createAPIClient(spaceContext.getId(), spaceContext.getEnvironmentId(), source);
+
+      const resolvedEnvironmentId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
+
+      const cma = createAPIClient(spaceContext.getId(), resolvedEnvironmentId, source);
 
       return createSidebarWidgetSDK({
         internalContentType: entityInfo.contentType,
