@@ -5,6 +5,8 @@ import { render, waitFor, screen } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { TeamDetails } from './TeamDetails';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
+// eslint-disable-next-line no-restricted-imports
+import { MemoryRouter } from 'react-router-dom';
 
 const activeOrgId = 'testOrgId';
 
@@ -17,7 +19,9 @@ describe('TeamDetails', () => {
     const createdBy = fake.User();
     const team = fake.Team();
     team.sys.createdBy = createdBy;
-    render(<TeamDetails orgId={activeOrgId} team={team} readOnlyPermission={false} {...props} />);
+    render(<TeamDetails orgId={activeOrgId} team={team} readOnlyPermission={false} {...props} />, {
+      wrapper: MemoryRouter,
+    });
     return waitFor(() => expect(getUser).toHaveBeenCalled());
   };
 

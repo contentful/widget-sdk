@@ -1,26 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Modal, Button, Paragraph, Notification } from '@contentful/forma-36-react-components';
+import { Button, Modal, Notification, Paragraph } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { removeTeam } from '../services/TeamRepository';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import * as Navigator from 'states/Navigator';
+import { Team } from '../types';
+import { router } from 'core/react-routing';
 
-DeleteTeamDialog.propTypes = {
-  isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  initialTeam: TeamPropType,
-};
-
-export function DeleteTeamDialog({ onClose, isShown, initialTeam }) {
-  const path = ['account', 'organizations', 'teams'];
-
+export function DeleteTeamDialog({
+  onClose,
+  isShown,
+  initialTeam,
+}: {
+  onClose: VoidFunction;
+  isShown: boolean;
+  initialTeam: Team;
+}) {
   const onConfirm = async () => {
-    const endpoint = createOrganizationEndpoint(initialTeam.sys.organization.sys.id);
+    const orgId = initialTeam.sys.organization.sys.id;
+    const endpoint = createOrganizationEndpoint(orgId);
     try {
       await removeTeam(endpoint, initialTeam.sys.id);
       Notification.success(`Successfully removed team ${initialTeam.name}`);
-      Navigator.go({ path });
+      router.navigate({ path: 'organizations.teams', orgId });
     } catch {
       Notification.error(`Could not remove team ${initialTeam.name}`);
     }

@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
+  Grid,
+  ModalConfirm,
+  Paragraph,
   TableCell,
   TableRow,
   Tooltip,
-  ModalConfirm,
-  Paragraph,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components';
 import pluralize from 'pluralize';
-import { truncate, map, intersection, isEmpty, filter, some } from 'lodash';
+import { filter, intersection, isEmpty, map, some, truncate } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import {
@@ -19,14 +19,14 @@ import {
   TeamSpaceMembership as TeamSpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { ADMIN_ROLE } from 'access_control/constants';
-import { href } from 'states/Navigator';
 
 import { RowMenu } from './RowMenu';
 import { styles } from '../styles';
 import { DowngradeLastAdminMembershipConfirmation } from './DowngradeLastAdminMembershipConfirmation';
 import { RemoveLastAdminMembershipConfirmation } from './RemoveLastAdminMembershipConfirmation';
+import * as Navigator from 'states/Navigator';
 
-const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
+const navigateToDefaultLocation = () => Navigator.go({ path: 'home', options: { replace: true } });
 
 const getRoleNames = ({ roles, admin }) => {
   if (admin) {

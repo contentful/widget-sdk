@@ -67,7 +67,11 @@ export const organizationSettings = {
         path = [...path, 'subscription_new'];
       } else {
         // They are a member and the member path should go to organization/teams
-        path = [...path, 'teams'];
+        router.navigate(
+          { path: 'organizations.teams', orgId: organization.sys.id },
+          { location: 'replace' }
+        );
+        return;
       }
 
       go({

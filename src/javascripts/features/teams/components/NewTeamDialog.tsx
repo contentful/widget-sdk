@@ -1,37 +1,36 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useForm } from 'core/hooks';
 import {
+  Button,
   Modal,
+  Notification,
   Paragraph,
   TextField,
-  Button,
   Typography,
-  Notification,
 } from '@contentful/forma-36-react-components';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createTeam } from '../services/TeamRepository';
 import { captureError } from 'core/monitoring';
 import { isTaken } from 'utils/ServerErrorUtils';
-import * as Navigator from 'states/Navigator';
+import { router } from 'core/react-routing';
+import { Team } from '../types';
 
-NewTeamDialog.propTypes = {
-  isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired,
-  allTeams: PropTypes.arrayOf(TeamPropType),
-};
-
-function createNewTeam({ name, description }, orgId) {
+function createNewTeam(
+  { name, description }: { name: string; description: string },
+  orgId: string
+) {
   const endpoint = createOrganizationEndpoint(orgId);
-  return createTeam(endpoint, {
-    name,
-    description,
-  });
+  return createTeam(endpoint, { name, description });
 }
 
-export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
+type Props = {
+  orgId: string;
+  isShown: boolean;
+  onClose: VoidFunction;
+  allTeams: Team[];
+};
+
+export function NewTeamDialog({ isShown, onClose, allTeams, orgId }: Props) {
   const { onChange, onSubmit, fields, form } = useForm({
     fields: {
       name: {
@@ -54,10 +53,7 @@ export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
       try {
         const newTeam = await createFn({ name, description }, orgId);
         onClose();
-        Navigator.go({
-          path: ['account', 'organizations', 'teams', 'detail'],
-          params: { teamId: newTeam.sys.id },
-        });
+        router.navigate({ path: 'organizations.teams.detail', orgId, teamId: newTeam.sys.id });
         Notification.success(`Team ${name} created successfully`);
       } catch (e) {
         if (isTaken(e)) {
@@ -96,7 +92,7 @@ export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
                 maxLength: 120,
                 autoFocus: true,
               }}
-              onChange={(e) => onChange('name', e.target.value)}
+              onChange={(e) => onChange('name', e.currentTarget.value)}
             />
             <TextField
               name="teamDescription"
@@ -112,7 +108,7 @@ export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
                 maxLength: 800,
                 rows: 4,
               }}
-              onChange={(e) => onChange('description', e.target.value)}
+              onChange={(e) => onChange('description', e.currentTarget.value)}
             />
           </Modal.Content>
           <Modal.Controls>

@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import pluralize from 'pluralize';
 import { css } from 'emotion';
-import StateLink from 'app/common/StateLink';
 import {
-  TextLink,
-  TableRow,
-  TableCell,
-  Spinner,
   CardActions,
   DropdownList,
   DropdownListItem,
+  Spinner,
+  TableCell,
+  TableRow,
+  TextLink,
 } from '@contentful/forma-36-react-components';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { TeamDialog } from './TeamDialog';
 import { DeleteTeamDialog } from './DeleteTeamDialog';
+import { Team } from '../types';
+import { Interpolation } from '@emotion/serialize';
+import { RouteLink } from 'core/react-routing';
 
-const ellipsisStyle = {
+const ellipsisStyle: Interpolation = {
   overflowX: 'hidden',
   textOverflow: 'ellipsis',
   lineHeight: '1.2em',
@@ -34,13 +34,15 @@ const styles = {
   }),
 };
 
-TeamListRow.propTypes = {
-  team: TeamPropType.isRequired,
-  readOnlyPermission: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
-
-export function TeamListRow({ team, onClose, readOnlyPermission }) {
+export function TeamListRow({
+  team,
+  onClose,
+  readOnlyPermission,
+}: {
+  team: Team;
+  onClose: VoidFunction;
+  readOnlyPermission: boolean;
+}) {
   const [showTeamDialog, setShowTeamDialog] = useState(false);
   const [showDeleteTeamDialog, setShowDeleteTeamDialog] = useState(false);
   const teamId = get(team, 'sys.id');
@@ -50,14 +52,17 @@ export function TeamListRow({ team, onClose, readOnlyPermission }) {
       <TableCell>
         <div className={styles.name}>
           {teamId !== 'placeholder' ? (
-            <StateLink
-              component={TextLink}
-              path="account.organizations.teams.detail"
+            <RouteLink
+              route={{
+                path: 'organizations.teams.detail',
+                orgId: team.sys.organization.sys.id,
+                teamId: teamId,
+              }}
+              as={TextLink}
               key={teamId}
-              params={{ teamId }}
               data-test-id="team-name">
               {team.name}
-            </StateLink>
+            </RouteLink>
           ) : (
             <span data-test-id="team-name">
               {team.name} <Spinner size="small" />
@@ -95,14 +100,12 @@ export function TeamListRow({ team, onClose, readOnlyPermission }) {
         </TableCell>
       )}
       <TeamDialog
-        testId="team-edit-dialog"
         isShown={showTeamDialog}
         updateTeamDetailsValues={onClose}
         onClose={() => setShowTeamDialog(false)}
         initialTeam={team}
       />
       <DeleteTeamDialog
-        testId="delete-team-dialog"
         onClose={() => {
           setShowDeleteTeamDialog(false);
           onClose();

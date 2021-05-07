@@ -1,20 +1,17 @@
-import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
 import moment from 'moment';
 import Placeholder from 'app/common/Placeholder';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import {
   Button,
-  Tooltip,
-  Paragraph,
+  Grid,
   Heading,
+  Paragraph,
+  Tooltip,
   Typography,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import * as Navigator from 'states/Navigator';
 import { TeamDialog } from './TeamDialog';
 import { DeleteTeamDialog } from './DeleteTeamDialog';
 import { DeleteButton } from './TeamDetailsDeleteButton';
@@ -23,8 +20,11 @@ import { TeamDetailsContent } from './TeamDetailsContent';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
 import { useAsync } from 'core/hooks';
+import { Team } from '../types';
+import { Interpolation } from '@emotion/serialize';
+import { RouteLink, useRouteNavigate } from 'core/react-routing';
 
-const ellipsisStyle = {
+const ellipsisStyle: Interpolation = {
   overflowX: 'hidden',
   textOverflow: 'ellipsis',
   lineHeight: '1.2em',
@@ -70,27 +70,24 @@ const styles = {
   description: css(ellipsisStyle),
 };
 
-TeamDetails.propTypes = {
-  team: TeamPropType.isRequired,
-  orgId: PropTypes.string.isRequired,
-  readOnlyPermission: PropTypes.bool.isRequired,
-  allTeams: PropTypes.arrayOf(TeamPropType),
+type Props = {
+  team: Team;
+  orgId: string;
+  readOnlyPermission: boolean;
 };
 
-export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
+export function TeamDetails({ team, orgId, readOnlyPermission }: Props) {
   const [showTeamDialog, setShowTeamDialog] = useState(false);
   const [showDeleteTeamDialog, setShowDeleteTeamDialog] = useState(false);
   const [teamName, setTeamName] = useState(team.name);
   const [teamDescription, setTeamDescription] = useState(team.description);
-  const path = ['account', 'organizations', 'teams'];
+  const navigate = useRouteNavigate();
 
+  const createdById = team.sys.createdBy?.sys.id;
   const getCreatorName = useCallback(async () => {
-    const { firstName, lastName } = await getUser(
-      createOrganizationEndpoint(orgId),
-      team.sys.createdBy.sys.id
-    );
+    const { firstName, lastName } = await getUser(createOrganizationEndpoint(orgId), createdById);
     return `${firstName} ${lastName}`;
-  }, [team.sys.createdBy.sys.id, orgId]);
+  }, [createdById, orgId]);
 
   const { data: teamCreator } = useAsync(getCreatorName);
 
@@ -103,9 +100,7 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
     <Workbench testId="organization-team-page">
       <Workbench.Header
         testId="link-to-list"
-        onBack={() => {
-          Navigator.go({ path });
-        }}
+        onBack={() => navigate({ path: 'organizations.teams', orgId })}
         title="Teams"
       />
       <Workbench.Content>
@@ -131,7 +126,7 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
                           return [...acc, cur];
                         }
                         return [...acc, <br key={idx} />, cur];
-                      }, [])}
+                      }, [] as React.ReactNodeArray)}
                     </Paragraph>
                   )}
                 </Typography>
@@ -202,30 +197,22 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
             title="The team you were looking for was not found 🔎"
             text="It might have been deleted or you lost permission to see it"
             button={
-              <Button
-                href={() => {
-                  Navigator.go({ path });
-                }}>
+              <RouteLink route={{ path: 'organizations.teams', orgId }} as={Button}>
                 Go to team list
-              </Button>
+              </RouteLink>
             }
           />
         )}
         <TeamDialog
-          testId="edit-team-dialog"
           onClose={() => setShowTeamDialog(false)}
           isShown={showTeamDialog}
           initialTeam={team}
-          allTeams={allTeams}
           updateTeamDetailsValues={onUpdateTeamDetailsValues}
         />
         <DeleteTeamDialog
-          testId="edit-team-dialog"
           onClose={() => setShowDeleteTeamDialog(false)}
           isShown={showDeleteTeamDialog}
           initialTeam={team}
-          allTeams={allTeams}
-          updateTeamDetailsValues={onUpdateTeamDetailsValues}
         />
       </Workbench.Content>
     </Workbench>

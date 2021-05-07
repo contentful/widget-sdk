@@ -6,6 +6,8 @@ import * as fake from 'test/helpers/fakeFactory';
 import { TeamList } from './TeamList';
 import { getAllTeams } from 'features/teams/services/TeamRepository';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
+// eslint-disable-next-line no-restricted-imports
+import { MemoryRouter } from 'react-router-dom';
 
 const teamA = fake.Team('Team A', 'the awesome team');
 const teamB = fake.Team('Team B', 'the brave team');
@@ -20,7 +22,8 @@ jest.mock('features/teams/services/TeamRepository', () => ({
 describe('TeamList', () => {
   const renderComponent = (props) => {
     render(
-      <TeamList orgId={teamA.sys.organization.sys.id} readOnlyPermission={false} {...props} />
+      <TeamList orgId={teamA.sys.organization.sys.id} readOnlyPermission={false} {...props} />,
+      { wrapper: MemoryRouter }
     );
 
     // the component makes getAllTeams request on mount

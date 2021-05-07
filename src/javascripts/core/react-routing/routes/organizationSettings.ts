@@ -157,7 +157,7 @@ const organizationsBillingRoute = {
 
 /** Organization Access Tools */
 
-type OrganizationAccessToolsUserProvisioningRouteType = {
+type OrganizationsAccessToolsUserProvisioningRouteType = {
   path: 'organizations.access-tools.user-provisioning';
   orgId: string;
 };
@@ -166,13 +166,13 @@ type OrganizationsAccessToolsSSORouteType = {
   orgId: string;
 };
 type OrganizationsAccessToolsRouteType =
-  | OrganizationAccessToolsUserProvisioningRouteType
+  | OrganizationsAccessToolsUserProvisioningRouteType
   | OrganizationsAccessToolsSSORouteType;
 
-const organizationAccessToolsRoutes = {
+const organizationsAccessToolsRoutes = {
   'organizations.access-tools.user-provisioning': (
     _,
-    { orgId }: Omit<OrganizationAccessToolsUserProvisioningRouteType, 'path'>
+    { orgId }: Omit<OrganizationsAccessToolsUserProvisioningRouteType, 'path'>
   ) => ({
     path: 'account.organizations.access-tools',
     params: {
@@ -187,6 +187,41 @@ const organizationAccessToolsRoutes = {
     path: 'account.organizations.access-tools',
     params: {
       pathname: '/sso',
+      orgId,
+    },
+  }),
+};
+
+/** Organization Teams */
+
+type OrganizationsTeamsListRouteType = {
+  path: 'organizations.teams';
+  orgId: string;
+};
+type OrganizationsTeamsDetailRouteType = {
+  path: 'organizations.teams.detail';
+  orgId: string;
+  teamId: string;
+};
+type OrganizationsTeamsRouteType =
+  | OrganizationsTeamsListRouteType
+  | OrganizationsTeamsDetailRouteType;
+
+const organizationsTeamsRoutes = {
+  'organizations.teams': (_, { orgId }: Omit<OrganizationsTeamsListRouteType, 'path'>) => ({
+    path: 'account.organizations.teams',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+  'organizations.teams.detail': (
+    _,
+    { orgId, teamId }: Omit<OrganizationsTeamsDetailRouteType, 'path'>
+  ) => ({
+    path: 'account.organizations.teams',
+    params: {
+      pathname: `/${teamId}`,
       orgId,
     },
   }),
@@ -289,7 +324,8 @@ const routes = {
   ...organizationsSubscriptionBillingRoute,
   ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
-  ...organizationAccessToolsRoutes,
+  ...organizationsAccessToolsRoutes,
+  ...organizationsTeamsRoutes,
   ...organizationAppsRoute,
   ...organizationMembershipsListRoute,
   ...organisationInvitationRoute,
@@ -308,6 +344,7 @@ type OrganizationSettingsRouteType =
   | OrganizationAppsListRouteType
   | OrganizationAppsNewDefinitionRouteType
   | OrganizationAppsDefinitionRouteType
+  | OrganizationsTeamsRouteType
   | OrganizationMembershipsListType
   | OrganisationInvitationType;
 

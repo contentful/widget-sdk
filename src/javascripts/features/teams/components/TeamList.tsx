@@ -1,16 +1,16 @@
-import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
 import pluralize from 'pluralize';
 import {
   Button,
+  ModalLauncher,
+  SkeletonRow,
   Table,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
+  TableHead,
+  TableRow,
   Tooltip,
   Workbench,
-  SkeletonRow,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -22,7 +22,7 @@ import { getAllTeams } from '../services/TeamRepository';
 import { NewTeamDialog } from './NewTeamDialog';
 import { TeamListRow } from './TeamListRow';
 import { TeamsEmptyState } from './TeamsEmptyState';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { Team } from '../types';
 
 const styles = {
   section: css({
@@ -52,33 +52,28 @@ const styles = {
   }),
 };
 
-TeamList.propTypes = {
-  readOnlyPermission: PropTypes.bool.isRequired,
-  orgId: PropTypes.string.isRequired,
-};
-
 //fetch Teams data
 const fetchTeamsData = (orgId, setData) => async () => {
   const orgEndpoint = createOrganizationEndpoint(orgId);
-  const teams = await getAllTeams(orgEndpoint);
+  const teams = await getAllTeams(orgEndpoint, undefined);
   setData(orderBy(teams.items, ['name']));
 };
 
-export function TeamList({ readOnlyPermission, orgId }) {
-  const [teams, setTeams] = useState([]);
+export function TeamList({
+  readOnlyPermission,
+  orgId,
+}: {
+  readOnlyPermission: boolean;
+  orgId: string;
+}) {
+  const [teams, setTeams] = useState<Team[]>([]);
 
   const boundFetch = fetchTeamsData(orgId, setTeams);
   const { isLoading } = useAsync(useCallback(boundFetch, []));
 
   const showNewTeamDialog = () => {
     ModalLauncher.open(({ isShown, onClose }) => (
-      <NewTeamDialog
-        testId="create-team-dialog"
-        isShown={isShown}
-        onClose={onClose}
-        allTeams={teams}
-        orgId={orgId}
-      />
+      <NewTeamDialog isShown={isShown} onClose={onClose} allTeams={teams} orgId={orgId} />
     ));
   };
 
@@ -133,13 +128,7 @@ export function TeamList({ readOnlyPermission, orgId }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {isLoading && (
-                <SkeletonRow
-                  testId="team-list.skeleton"
-                  columnCount={readOnlyPermission ? 3 : 4}
-                  rowCount={5}
-                />
-              )}
+              {isLoading && <SkeletonRow columnCount={readOnlyPermission ? 3 : 4} rowCount={5} />}
               {!isLoading &&
                 teams.map((team, index) => {
                   const teamId = team.sys.id;

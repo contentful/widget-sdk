@@ -3,44 +3,43 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { getOrgFeature } from '../data/CMA/ProductCatalog';
+import { getOrgFeature, OrganizationFeatures } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
 import { routes } from 'core/react-routing';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
-  const orgSpacesRoute = routes['organizations.spaces']({}, { orgId });
-  const usageRoute = routes['organizations.usage']({}, { orgId });
-  const editRoute = routes['organizations.edit']({}, { orgId });
-  const offsiteBackupRoute = routes['organizations.offsitebackup']({}, { orgId });
-  const subscriptionV1Route = routes['organizations.subscription_v1']({}, { orgId });
-  const billing = routes['organizations.billing']({}, { orgId });
-  const userProvisioning = routes['organizations.access-tools.user-provisioning']({}, { orgId });
-  const orgnaizationSettingsSSORoute = routes['organizations.access-tools.sso']({}, { orgId });
+
+  const makeReactRouterRef = (route: keyof typeof routes) => {
+    // @ts-expect-error ignore "params" arg, we expect only .list routes
+    const state = routes[route]({}, { orgId });
+    return {
+      sref: state.path,
+      srefParams: state.params,
+      rootSref: state.path,
+    };
+  };
   const orgAppsList = routes['organizations.apps.list']({}, { orgId });
   const orgnaizationUsersListRoute = routes['organizations.users.list']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
       title: 'Single Sign-On (SSO)',
-      sref: orgnaizationSettingsSSORoute.path,
-      srefParams: orgnaizationSettingsSSORoute.params,
       srefOptions: {
         inherit: false,
       },
       dataViewType: 'organization-sso',
+      ...makeReactRouterRef('organizations.access-tools.sso'),
     },
     {
       title: 'User provisioning',
-      sref: userProvisioning.path,
-      srefParams: userProvisioning.params,
-      rootSref: userProvisioning.path,
       srefOptions: { inherit: false },
       dataViewType: 'organization-user-provisioning',
+      ...makeReactRouterRef('organizations.access-tools.user-provisioning'),
     },
   ];
 
@@ -54,26 +53,22 @@ function getItems(params, { orgId }) {
     {
       if: params.hasSettingsTab,
       title: 'Organization information',
-      sref: editRoute.path,
-      srefParams: editRoute.params,
-      rootSref: editRoute.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'OrgInfo',
       dataViewType: 'organization-information',
+      ...makeReactRouterRef('organizations.edit'),
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Subscription',
-      sref: subscriptionV1Route.path,
-      srefParams: subscriptionV1Route.params,
-      rootSref: subscriptionV1Route.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Subscription',
       dataViewType: 'subscription',
+      ...makeReactRouterRef('organizations.subscription_v1'),
     },
     {
       if:
@@ -92,26 +87,22 @@ function getItems(params, { orgId }) {
     {
       if: params.hasBillingTab,
       title: 'Billing',
-      sref: billing.path,
-      srefParams: billing.params,
-      rootSref: billing.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Billing',
       dataViewType: 'billing',
+      ...makeReactRouterRef('organizations.billing'),
     },
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
       title: 'Usage',
-      sref: usageRoute.path,
-      srefParams: usageRoute.params,
-      rootSref: usageRoute.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Usage',
       dataViewType: 'platform-usage',
+      ...makeReactRouterRef('organizations.usage'),
     },
     {
       if: params.isOwnerOrAdmin,
@@ -127,17 +118,15 @@ function getItems(params, { orgId }) {
     },
     {
       title: 'Teams',
-      sref: 'account.organizations.teams',
       highValueLabel: params.highValueLabelEnabled,
       isOrganizationOnTrial: params.isOrganizationOnTrial,
-      srefParams: { orgId },
-      rootSref: 'account.organizations.teams',
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Teams',
       dataViewType: 'organization-teams',
       tooltip: teamsTooltip,
+      ...makeReactRouterRef('organizations.teams'),
     },
     {
       if: params.hasAdvancedExtensibility,
@@ -163,30 +152,34 @@ function getItems(params, { orgId }) {
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
-      sref: orgSpacesRoute.path,
-      srefParams: orgSpacesRoute.params,
-      rootSref: orgSpacesRoute.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Spaces',
       dataViewType: 'organization-spaces',
+      ...makeReactRouterRef('organizations.spaces'),
     },
     {
       if: params.hasOffsiteBackup && params.isOwnerOrAdmin,
       title: 'Offsite backup',
-      sref: offsiteBackupRoute.path,
-      srefParams: offsiteBackupRoute.params,
-      rootSref: offsiteBackupRoute.path,
       srefOptions: {
         inherit: false,
       },
       dataViewType: 'offsite-backup',
+      ...makeReactRouterRef('organizations.offsitebackup'),
     },
   ].filter((item) => item.if !== false);
 }
 
-export default class OrganizationNavigationBar extends React.Component {
+type Props = {
+  stateParams: { orgId: string };
+  navVersion: string;
+};
+type State = {
+  items: any[];
+};
+
+export default class OrganizationNavigationBar extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
@@ -215,8 +208,8 @@ export default class OrganizationNavigationBar extends React.Component {
     const organization = await TokenStore.getOrganization(orgId);
 
     const promises = [
-      getOrgFeature(orgId, 'self_configure_sso'),
-      getOrgFeature(orgId, 'scim'),
+      getOrgFeature(orgId, OrganizationFeatures.SELF_CONFIGURE_SSO),
+      getOrgFeature(orgId, OrganizationFeatures.SCIM),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
       getVariation(FLAGS.HIGH_VALUE_LABEL, { organizationId: orgId }),
@@ -262,9 +255,3 @@ export default class OrganizationNavigationBar extends React.Component {
     );
   }
 }
-
-OrganizationNavigationBar.propTypes = {
-  stateParams: PropTypes.shape({
-    orgId: PropTypes.string.isRequired,
-  }).isRequired,
-};

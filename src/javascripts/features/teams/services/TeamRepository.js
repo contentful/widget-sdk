@@ -104,8 +104,7 @@ export function getTeam(endpoint, teamId) {
 /**
  * Create team in the organization
  * @param {endpoint} endpoint organization endpoint
- * @param {string} params.name new team name
- * @param {string} params.description new team description
+ * @param {{name: string, description: string}} params new team props
  */
 export function createTeam(endpoint, { name, description }) {
   return endpoint({
