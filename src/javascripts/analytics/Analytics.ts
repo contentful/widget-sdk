@@ -139,8 +139,8 @@ export function track(event: string, data?: EventData): void {
  *  4. Legacy Snowplow migration events use camelCaseKeys like `executingUserId` in their Segment schema
  *     This should be cleaned up soon as convention for all Segment schemas is also snake_case.
  */
-export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => {
-  return function (props) {
+export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => (props) => {
+  try {
     // Track to Segment by using original plan function:
     planFn(props);
 
@@ -158,7 +158,15 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => {
 
     // TODO: Catch errors via `onViolation` Segment TypeWriter option and display in analytics console.
     analyticsConsole.add(planKey, likeTransformedData, props);
-  };
+  } catch (error) {
+    // ensure no errors caused by analytics will break business logic
+    captureError(error, {
+      extra: {
+        planKey,
+        data: props,
+      },
+    });
+  }
 });
 
 /**
