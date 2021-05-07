@@ -22,6 +22,7 @@ function getItems(params, { orgId }) {
   const userProvisioning = routes['organizations.access-tools.user-provisioning']({}, { orgId });
   const orgnaizationSettingsSSORoute = routes['organizations.access-tools.sso']({}, { orgId });
   const orgAppsList = routes['organizations.apps.list']({}, { orgId });
+  const orgnaizationUsersListRoute = routes['organizations.users.list']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
@@ -115,8 +116,8 @@ function getItems(params, { orgId }) {
     {
       if: params.isOwnerOrAdmin,
       title: 'Users',
-      sref: 'account.organizations.users.list',
-      srefParams: { orgId },
+      sref: orgnaizationUsersListRoute.path,
+      srefParams: orgnaizationUsersListRoute.params,
       rootSref: 'account.organizations.users',
       srefOptions: {
         inherit: false,

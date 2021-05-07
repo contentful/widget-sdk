@@ -120,9 +120,9 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.Invite]: makeOrgScopedPathResolver({
     path: ['account', 'organizations', 'users', 'new'],
   }),
-  [LinkType.Users]: makeOrgScopedPathResolver({
-    path: ['account', 'organizations', 'users', 'list'],
-  }),
+  [LinkType.Users]: makeOrgScopedPathResolver(
+    routes['organizations.users.list']({}, { orgId: '' })
+  ),
   [LinkType.Org]: makeOrgScopedPathResolver(routes['organizations.edit']({}, { orgId: '' })),
   [LinkType.Subscription]: resolveSubscriptions,
   [LinkType.InvitationAccepted]: resolveSpaceHome,

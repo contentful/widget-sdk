@@ -4,12 +4,11 @@ import PropTypes from 'prop-types';
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { Pluralized, Price } from 'core/components/formatting';
-import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import * as Config from 'Config';
 import { router } from 'core/react-routing';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { links } from '../utils';
 
 const ENTERPRISE_FREE_USER_COUNT = 10;
 const ENTERPRISE_ADDITIONAL_USER_COST = 15;
@@ -42,12 +41,13 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
     <>
       <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free ' : null}with
       your subscription.{' '}
-      <StateLink
-        {...links.memberships(organizationId)}
+      <ReactRouterLink
+        route={{ path: 'organizations.users.list', orgId: organizationId }}
+        options={{ reload: true }}
         component={TextLink}
         testId="subscription-page.org-memberships-link">
         Manage users
-      </StateLink>{' '}
+      </ReactRouterLink>{' '}
       or{' '}
       {isFreePlan ? (
         <TrackTargetedCTAImpression
@@ -137,12 +137,13 @@ export function UsersForPlan({
         )}
         {isOnEnterpriseTrial && <EnterpriseTrialWarning numberFreeUsers={numberFreeUsers} />}
         {!isAboveHardLimit && (
-          <StateLink
-            {...links.memberships(organizationId)}
+          <ReactRouterLink
+            route={{ path: 'organizations.users.list', orgId: organizationId }}
+            options={{ reload: true }}
             component={TextLink}
             testId="subscription-page.org-memberships-link">
             Manage users
-          </StateLink>
+          </ReactRouterLink>
         )}
       </Paragraph>
     </div>

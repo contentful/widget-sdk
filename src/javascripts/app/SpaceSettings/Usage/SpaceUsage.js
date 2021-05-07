@@ -15,6 +15,7 @@ import { can } from 'access_control/AccessChecker';
 import { go } from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
+import { router } from 'core/react-routing';
 
 const addMasterEnvironment = flow(
   update('limits', flow(update('included', add(1)), update('maximum', add(1)))),
@@ -61,11 +62,10 @@ export default function SpaceUsage() {
           label: 'Update your role',
           textLinkProps: {
             onClick: () =>
-              go({
-                path: ['account', 'organizations', 'users', 'list'],
-                params: { orgId: currentOrganizationId },
-                options: { reload: true },
-              }),
+              router.navigate(
+                { path: 'organizations.users.list', orgId: currentOrganizationId },
+                { reload: true }
+              ),
           },
         },
       });

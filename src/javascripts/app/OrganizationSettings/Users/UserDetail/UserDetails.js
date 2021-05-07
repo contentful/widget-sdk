@@ -11,7 +11,7 @@ import { useAsyncFn } from 'core/hooks';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import UserCard from '../UserCard';
 import UserSpaceList from './UserSpaceList';
 import UserTeamList from './UserTeamList';
@@ -186,9 +186,7 @@ export default function UserDetails({
   };
 
   const handleBackButtonClicked = () => {
-    go({
-      path: ['account', 'organizations', 'users', 'list'],
-    });
+    router.navigate({ path: 'organizations.users.list', orgId });
   };
 
   return (

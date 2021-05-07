@@ -32,6 +32,9 @@ jest.mock('core/react-routing/useRouter', () => ({
   router: {
     navigate: jest.fn(),
   },
+  useRouteState: () => {
+    return { state: { params: {} } };
+  },
 }));
 
 jest.mock('../utils', () => ({

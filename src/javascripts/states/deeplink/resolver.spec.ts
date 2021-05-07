@@ -469,12 +469,9 @@ describe('states/deeplink/resolver', () => {
       getOrg.mockResolvedValue({ orgId: 'some' });
       checkOrgAccess.mockResolvedValue(true);
 
-      expect(await resolveLink(LinkType.Users, {})).toEqual({
-        path: ['account', 'organizations', 'users', 'list'],
-        params: {
-          orgId: 'some',
-        },
-      });
+      expect(await resolveLink(LinkType.Users, {})).toEqual(
+        routes['organizations.users.list']({}, { orgId: 'some' })
+      );
 
       expect(await resolveLink(LinkType.Org, {})).toEqual(
         routes['organizations.edit']({}, { orgId: 'some' })

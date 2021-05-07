@@ -27,12 +27,9 @@ export const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) 
       {isOwnerOrAdmin && (
         <span>
           . Invite new users and teams to the organization from the{' '}
-          <StateLink
-            component={TextLink}
-            path="account.organizations.users.list"
-            params={{ orgId }}>
+          <ReactRouterLink component={TextLink} route={{ path: 'organizations.users.list', orgId }}>
             organization settings
-          </StateLink>
+          </ReactRouterLink>
         </span>
       )}
       .

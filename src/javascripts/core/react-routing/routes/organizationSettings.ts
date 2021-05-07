@@ -243,6 +243,21 @@ const organizationAppsRoute = {
   }),
 };
 
+type OrganizationMembershipsListType = {
+  path: 'organizations.users.list';
+  orgId: string;
+};
+
+const organizationMembershipsListRoute = {
+  'organizations.users.list': (_, { orgId }: Omit<OrganizationMembershipsListType, 'path'>) => ({
+    path: 'account.organizations.users.list',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -253,6 +268,7 @@ const routes = {
   ...organizationsBillingRoute,
   ...organizationAccessToolsRoutes,
   ...organizationAppsRoute,
+  ...organizationMembershipsListRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -267,7 +283,8 @@ type OrganizationSettingsRouteType =
   | OrganizationBillingEditPaymentRouteType
   | OrganizationAppsListRouteType
   | OrganizationAppsNewDefinitionRouteType
-  | OrganizationAppsDefinitionRouteType;
+  | OrganizationAppsDefinitionRouteType
+  | OrganizationMembershipsListType;
 
 export type { OrganizationSettingsRouteType };
 

@@ -12,6 +12,7 @@ import {
   InternalVariableValues,
 } from 'core/services/ContentfulCDA';
 import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   list: css({
@@ -90,7 +91,11 @@ export const getCustomRenderNode = (
       }
 
       if (fields.action === InternalActionValues.MANAGE_USERS) {
-        path = ['account', 'organizations', 'users', 'list'];
+        return (
+          <ReactRouterLink component={TextLink} route={{ path: 'organizations.users.list', orgId }}>
+            {fields.label}
+          </ReactRouterLink>
+        );
       }
 
       return (

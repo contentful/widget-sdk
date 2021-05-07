@@ -24,7 +24,7 @@ import {
   reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import RemoveUserConfirmation from '../RemoveUserDialog';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 const styles = {
   row: css({
@@ -112,7 +112,7 @@ export default function UserAttributes({ membership, isSelf, isOwner, onRoleChan
     if (isSelf) {
       window.location.reload();
     } else {
-      go({ path: ['account', 'organizations', 'users', 'list'] });
+      router.navigate({ path: 'organizations.users.list', orgId });
     }
 
     const message = user.firstName
