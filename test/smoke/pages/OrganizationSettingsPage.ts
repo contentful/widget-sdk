@@ -23,11 +23,7 @@ export class OrganizationSettingsPage {
 }
 
 class SpaceTableRow {
-  private spaceName: string;
-
-  constructor(spaceName: string) {
-    this.spaceName = spaceName;
-  }
+  constructor(private spaceName: string) {}
 
   private get row() {
     return cy

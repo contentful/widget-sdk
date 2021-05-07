@@ -17,9 +17,9 @@ test('login', () => {
     return spaceHome;
   });
 
-  spaceHome.navBar.accountMenu.open();
+  spaceHome.accountMenu.open();
 
-  const accountSettings = spaceHome.navBar.accountMenu.goToAccountSettings();
+  const accountSettings = spaceHome.accountMenu.goToAccountSettings();
 
   accountSettings.accountDetailsSection.should('be.visible');
 });

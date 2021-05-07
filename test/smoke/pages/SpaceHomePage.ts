@@ -1,6 +1,6 @@
-import { NavBar } from './NavBar';
+import { AbstractPage } from './AbstractPage';
 
-export class SpaceHomePage {
+export class SpaceHomePage extends AbstractPage {
   constructor() {
     try {
       cy.findByTestId('admin-space-home', { timeout: 20000 });
@@ -13,9 +13,5 @@ export class SpaceHomePage {
 
   get container() {
     return cy.findByTestId('admin-space-home');
-  }
-
-  get navBar() {
-    return new NavBar();
   }
 }

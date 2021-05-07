@@ -22,9 +22,9 @@ test('space-creation', () => {
 
   spaceHome.container.should('be.visible');
 
-  spaceHome.navBar.sidePanel.open();
+  spaceHome.sidePanel.open();
 
-  let orgSettingsPage = spaceHome.navBar.sidePanel.goToOrganizationSettings();
+  let orgSettingsPage = spaceHome.sidePanel.goToOrganizationSettings();
   orgSettingsPage.spacesTable.scrollIntoView();
 
   orgSettingsPage.spaceTableRows.count().then((numSpaces) => {
