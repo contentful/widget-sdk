@@ -20,12 +20,17 @@ const mockSelectedPlatform = {
 };
 
 const mockComposeLaunchPlatform = { type: PlatformKind.WEB_APP_COMPOSE_LAUNCH };
-const mockCurrentSpaceRatePlan = { planType: SpacePlanKind.COMMUNITY, name: 'Community', price: 0 };
+const mockCurrentSpaceRatePlan = {
+  planType: SpacePlanKind.COMMUNITY,
+  name: 'Community',
+  price: 0,
+  sys: { id: 'free' },
+};
 
 const mockProductRatePlans = [
-  { name: 'Community', price: 0 },
-  { name: 'Medium', price: 489 },
-  { name: 'Large', price: 889 },
+  { name: 'Community', price: 0, sys: { id: 'free' } },
+  { name: 'Medium', price: 489, sys: { id: 'random_unique_string' } },
+  { name: 'Large', price: 889, sys: { id: 'random_unique_string_2' } },
 ];
 
 jest.mock('account/pricing/PricingDataProvider', () => ({

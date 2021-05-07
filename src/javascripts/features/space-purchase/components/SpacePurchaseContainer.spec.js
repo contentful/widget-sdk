@@ -62,6 +62,7 @@ const mockSpaceRatePlans = [
     productPlanType: 'free_space',
     productType: 'on_demand',
     price: 0,
+    sys: { id: 'free' },
     productRatePlanCharges: mockPlanCharges,
   },
   {
@@ -69,12 +70,14 @@ const mockSpaceRatePlans = [
     productPlanType: 'space',
     productType: 'on_demand',
     price: 489,
+    sys: { id: 'random_medium_string' },
     productRatePlanCharges: mockPlanCharges,
   },
   {
     name: 'Large',
     productPlanType: 'space',
     productType: 'on_demand',
+    sys: { id: 'random_large_string' },
     price: 879,
     productRatePlanCharges: mockPlanCharges,
   },

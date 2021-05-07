@@ -6,7 +6,7 @@ import { SPACE_PLANS_CONTENT, SpacePlanKind } from '../utils/spacePurchaseConten
 import { ProductCard } from './ProductCard';
 
 export const SpacePlanCards = ({
-  disabled,
+  spaceCardsDisabled,
   spaceRatePlans,
   selectedPlatform,
   selectedSpacePlanName,
@@ -37,7 +37,7 @@ export const SpacePlanCards = ({
               key={idx}
               cardType="space"
               loading={!spaceRatePlans || spaceRatePlans.length === 0}
-              disabled={disabled || plan.currentPlan || !!tooltipText}
+              disabled={spaceCardsDisabled || plan.disabled || !!tooltipText}
               selected={!!plan.name && plan.name === selectedSpacePlanName}
               current={plan.currentPlan}
               tooltipText={tooltipText}
@@ -53,7 +53,7 @@ export const SpacePlanCards = ({
 };
 
 SpacePlanCards.propTypes = {
-  disabled: PropTypes.bool,
+  spaceCardsDisabled: PropTypes.bool,
   spaceRatePlans: PropTypes.arrayOf(PropTypes.object),
   selectedPlatform: PropTypes.object,
   selectedSpacePlanName: PropTypes.string,

@@ -2,7 +2,15 @@ import React, { useContext, useCallback, createRef } from 'react';
 import { cx, css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Card, Flex, Grid, Heading, Paragraph, Icon } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Paragraph,
+  Icon,
+  Note,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
@@ -51,6 +59,10 @@ const styles = {
       marginLeft: tokens.spacingXs,
     },
   }),
+  limitsNote: css({
+    marginTop: `-${tokens.spacingM}`,
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 // TODO: this is a placeholder url, update with link to packages comparison
@@ -83,6 +95,19 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
   const spaceCardsDisabled = showPlatformsAboveSpaces && !selectedPlatform;
   const platformCardsDisabled = !showPlatformsAboveSpaces && !selectedPlan;
+
+  // Only check for unavailbity reasons if the user is changing a space
+  const largestSpacePlanWithUnavailabityReasons =
+    currentSpaceRatePlan &&
+    spaceRatePlans
+      .filter((plan) => plan.sys.id !== currentSpaceRatePlan.sys.id)
+      .sort((a, b) => b.price - a.price)
+      .find((plan) =>
+        plan.unavailabilityReasons?.find(
+          (reason) =>
+            reason.type !== 'currentPlan' && reason.type !== 'freeSpacesMaximumLimitReached'
+        )
+      );
 
   const orgHasPaidSpaces = subscriptionPlans?.length > 0;
   /**
@@ -204,8 +229,13 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
             )}
           </span>
 
+          {largestSpacePlanWithUnavailabityReasons && (
+            <NoteOfUnavailityReasons
+              largestSpacePlanWithUnavailabityReasons={largestSpacePlanWithUnavailabityReasons}
+            />
+          )}
           <SpacePlanCards
-            disabled={spaceCardsDisabled}
+            spaceCardsDisabled={spaceCardsDisabled}
             spaceRatePlans={spaceRatePlans}
             selectedPlatform={selectedPlatform}
             spacePlanIsTrial={spacePlanIsTrial}
@@ -252,4 +282,35 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
 PlatformSelectionStep.propTypes = {
   track: PropTypes.func.isRequired,
   showPlatformsAboveSpaces: PropTypes.bool,
+};
+
+const NoteOfUnavailityReasons = ({ largestSpacePlanWithUnavailabityReasons }) => {
+  const limitExplanations = largestSpacePlanWithUnavailabityReasons.unavailabilityReasons.reduce(
+    (explaintions, reason) => {
+      switch (reason.type) {
+        case 'maximumLimitExceeded':
+          return [...explaintions, `You are using ${reason.usage} ${reason.additionalInfo}`];
+        case 'roleIncompatibility':
+          return [
+            ...explaintions,
+            `The role ${reason.additionalInfo} is not available in this space size`,
+          ];
+        default:
+          return explaintions;
+      }
+    },
+    []
+  );
+
+  return (
+    <Note
+      className={cx(styles.limitsNote, styles.fullRow)}
+      title="You can't change to a smaller space because you are exceeding their limits.">
+      {limitExplanations.join('. ')}.
+    </Note>
+  );
+};
+
+NoteOfUnavailityReasons.propTypes = {
+  largestSpacePlanWithUnavailabityReasons: PropTypes.object.isRequired,
 };

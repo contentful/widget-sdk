@@ -24,7 +24,7 @@ describe('SpacePlanCards', () => {
   let spacePlanCards;
 
   it('should render three cards for the space plans as disabled if the disabled prop is given', () => {
-    build({ disabled: true });
+    build({ spaceCardsDisabled: true });
     spacePlanCards = screen.getAllByTestId('space-plan-card');
 
     expect(spacePlanCards).toHaveLength(3);
