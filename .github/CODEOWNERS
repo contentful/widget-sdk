@@ -43,6 +43,9 @@ src/javascripts/features/space-home/                 @contentful/team-moi
 # Team Sparks
 src/javascripts/features/scheduled-actions/   @contentful/team-sparks
 
+# Team Homer
+src/javascripts/features/tasks  @contentful/team-homer
+
 # Team Dante
 src/javascripts/features/locales-management/ @contentful/team-dante
 

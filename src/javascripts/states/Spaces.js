@@ -13,7 +13,7 @@ import { assetViewState, entryViewState } from 'features/entity-views';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
 import { scheduledActionsState } from 'features/scheduled-actions';
-import tasks from 'app/TasksPage/routes';
+import { tasksRouteState } from 'features/tasks';
 import { pageExtensionsState } from 'features/page-widgets';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { spaceHomeState } from 'features/space-home';
@@ -90,7 +90,7 @@ const spaceEnvironment = {
     // settings and switching to the master environment in the process.
     settings,
     scheduledActionsState,
-    tasks,
+    tasksRouteState,
     pageExtensionsState,
   ],
 };
@@ -148,7 +148,7 @@ const spaceDetail = {
     stackOnboarding,
     apps,
     scheduledActionsState,
-    tasks,
+    tasksRouteState,
     pageExtensionsState,
   ],
 };

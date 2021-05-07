@@ -7,9 +7,8 @@ import * as Intercom from 'services/intercom';
 import * as Config from 'Config';
 import { getUser } from 'services/TokenStore';
 import { getCurrentStateName } from 'states/Navigator';
-import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
+import { getOpenAssignedTasksAndEntries } from 'features/tasks';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
-import StateLink from 'app/common/StateLink';
 import { ReactRouterLink } from 'core/react-routing';
 
 import {
@@ -233,7 +232,13 @@ export default class AccountDropdown extends Component {
             )}
           </ReactRouterLink>
           {this.state.shouldShowPendingTasks && (
-            <StateLink path="spaces.detail.tasks.list">
+            <ReactRouterLink
+              route={{
+                path: 'tasks',
+                spaceId: this.context.currentSpaceId,
+                environmentId:
+                  this.context.currentEnvironmentAliasId || this.context.currentEnvironmentId,
+              }}>
               {({ getHref, onClick }) => (
                 <DropdownListItem
                   testId="nav.account.pendingTasks"
@@ -247,7 +252,7 @@ export default class AccountDropdown extends Component {
                   </span>
                 </DropdownListItem>
               )}
-            </StateLink>
+            </ReactRouterLink>
           )}
         </DropdownList>
 

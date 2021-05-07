@@ -368,6 +368,26 @@ const scheduledActionsRoute = {
 };
 
 /**
+ * Tasks
+ */
+
+type TasksRouteType = {
+  path: 'tasks';
+  spaceId?: string;
+  environmentId?: string;
+};
+
+const tasksRoute = {
+  tasks: (env: EnvironmentParams, params: Omit<TasksRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'tasks'),
+    params: {
+      spaceId: params.spaceId,
+      environmentId: params.environmentId,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -385,7 +405,8 @@ export type SpaceSettingsRouteType =
   | SpaceRouteType
   | EmbargoedAssetsRouteType
   | PageExtensionsRouteType
-  | ScheduledActionsRouteType;
+  | ScheduledActionsRouteType
+  | TasksRouteType;
 
 export const routes = {
   ...webhookRoutes,
@@ -402,4 +423,5 @@ export const routes = {
   ...embargoedAssetsRoutes,
   ...pageExtensionRoute,
   ...scheduledActionsRoute,
+  ...tasksRoute,
 };

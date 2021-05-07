@@ -41,7 +41,7 @@ const styles = {
   }),
 };
 
-export class TasksPage extends Component {
+class TasksPage extends Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string.isRequired,
@@ -223,3 +223,5 @@ function TableHeader() {
     </TableHead>
   );
 }
+
+export { TasksPage };

@@ -3,7 +3,7 @@ import { render, fireEvent, wait, screen, waitForElement } from '@testing-librar
 
 import AccountDropdown from './AccountDropdown';
 import { getUser } from 'services/TokenStore';
-import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
+import { getOpenAssignedTasksAndEntries } from 'features/tasks';
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication';
 import * as Intercom from 'services/intercom';
@@ -32,7 +32,8 @@ jest.mock('states/Navigator', () => ({
   href: jest.fn(),
 }));
 
-jest.mock('app/TasksPage/helpers', () => ({
+jest.mock('features/tasks', () => ({
+  ...jest.requireActual('features/tasks'),
   getOpenAssignedTasksAndEntries: jest.fn(),
 }));
 
