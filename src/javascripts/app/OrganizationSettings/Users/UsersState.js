@@ -5,10 +5,30 @@ import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-rout
 import StateRedirect from 'app/common/StateRedirect';
 import { getModule } from 'core/NgRegistry';
 
+const WithOrgUserInvite = withOrganizationRoute((props) => <NewUserRoute {...props} />);
+
 export const inviteUsersState = {
   name: 'new',
-  url: '/invite',
-  component: withOrganizationRoute((props) => <NewUserRoute {...props} />),
+  url: '/invite{pathname:any}',
+  component: () => {
+    const [basename] = window.location.pathname.split('invite');
+    const { orgId } = getModule('$stateParams');
+
+    return (
+      <CustomRouter splitter={'invite'}>
+        <RouteErrorBoundary>
+          <Routes basename={basename + 'invite'}>
+            <Route
+              name="account.organizations.users.new"
+              path="/"
+              element={<WithOrgUserInvite orgId={orgId} />}
+            />
+            <Route name={null} path="*" element={<StateRedirect path="home" />} />
+          </Routes>
+        </RouteErrorBoundary>
+      </CustomRouter>
+    );
+  },
 };
 
 export const userDetailState = {

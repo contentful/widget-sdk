@@ -117,9 +117,9 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.OnboardingExplore]: createOnboardingScreenResolver('explore'),
   [LinkType.OnboardingDeploy]: createOnboardingScreenResolver('deploy'),
   // org scoped deeplinks
-  [LinkType.Invite]: makeOrgScopedPathResolver({
-    path: ['account', 'organizations', 'users', 'new'],
-  }),
+  [LinkType.Invite]: makeOrgScopedPathResolver(
+    routes['organizations.users.invite']({}, { orgId: '' })
+  ),
   [LinkType.Users]: makeOrgScopedPathResolver(
     routes['organizations.users.list']({}, { orgId: '' })
   ),

@@ -19,7 +19,6 @@ import {
   SkeletonImage,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import { formatQuery, formatFilterValues } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
 import { UserListFilters } from './UserListFilters';
@@ -47,6 +46,7 @@ import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { UserLimitBanner } from './UserLimitBanner';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import qs from 'qs';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   search: css({
@@ -154,13 +154,6 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
     updateUsers();
   }, [updateUsers]);
 
-  const getLinkToInvitation = () => {
-    return {
-      path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId },
-    };
-  };
-
   const handleFiltersChanged = (newFilters) => {
     let newFilterValues = formatQuery(newFilters.map((item) => item.filter));
     if (searchTerm !== '') {
@@ -248,9 +241,11 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
               value={searchTerm}
             />
             <div className={styles.ctaWrapper}>
-              <StateLink component={Button} {...getLinkToInvitation()}>
+              <ReactRouterLink
+                component={Button}
+                route={{ path: 'organizations.users.invite', orgId }}>
                 Invite users
-              </StateLink>
+              </ReactRouterLink>
             </div>
           </div>
         }

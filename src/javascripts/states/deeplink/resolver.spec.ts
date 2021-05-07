@@ -446,12 +446,7 @@ describe('states/deeplink/resolver', () => {
       checkOrgAccess.mockResolvedValue(true);
 
       const result = await resolveLink(LinkType.Invite, {});
-      expect(result).toEqual({
-        path: ['account', 'organizations', 'users', 'new'],
-        params: {
-          orgId: 'some',
-        },
-      });
+      expect(result).toEqual(routes['organizations.users.invite']({}, { orgId: 'some' }));
     });
 
     it('should give generic error in case no access', async function () {

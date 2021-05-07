@@ -243,6 +243,29 @@ const organizationAppsRoute = {
   }),
 };
 
+/*
+ * Invite users to organisation
+ */
+
+type OrganisationInvitationType = {
+  path: 'organizations.users.invite';
+  orgId: string;
+};
+
+const organisationInvitationRoute = {
+  'organizations.users.invite': (_, { orgId }: Omit<OrganisationInvitationType, 'path'>) => ({
+    path: 'account.organizations.users.new',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+};
+
+/**
+ * Organization users
+ */
+
 type OrganizationMembershipsListType = {
   path: 'organizations.users.list';
   orgId: string;
@@ -269,6 +292,7 @@ const routes = {
   ...organizationAccessToolsRoutes,
   ...organizationAppsRoute,
   ...organizationMembershipsListRoute,
+  ...organisationInvitationRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -284,7 +308,8 @@ type OrganizationSettingsRouteType =
   | OrganizationAppsListRouteType
   | OrganizationAppsNewDefinitionRouteType
   | OrganizationAppsDefinitionRouteType
-  | OrganizationMembershipsListType;
+  | OrganizationMembershipsListType
+  | OrganisationInvitationType;
 
 export type { OrganizationSettingsRouteType };
 
