@@ -69,7 +69,7 @@ export const SpacePlansTable = ({
   onDeleteSpace,
   enterprisePlan,
   showSpacePlanChangeBtn = false,
-  initialLoad,
+  featureFlagLoading = false,
   upgradedSpaceId,
   organizationId,
 }) => {
@@ -105,7 +105,9 @@ export const SpacePlansTable = ({
     });
   }, [organizationId, pagination.skip, pagination.limit, sortState]);
 
-  const { isLoading, error, data = { total: 0, items: [] } } = useAsync(fetchSpacesUsage);
+  const { isLoading: spacesUsageLoading, error, data = { total: 0, items: [] } } = useAsync(
+    fetchSpacesUsage
+  );
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
 
@@ -170,7 +172,7 @@ export const SpacePlansTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {initialLoad || isLoading || !!error ? (
+          {featureFlagLoading || spacesUsageLoading || !!error ? (
             <SkeletonRow columnCount={12} rowCount={pagination.limit} />
           ) : (
             data.items.map((spaceUsage) => {
@@ -195,7 +197,7 @@ export const SpacePlansTable = ({
       <Pagination
         {...pagination}
         total={data.total}
-        loading={isLoading}
+        loading={spacesUsageLoading}
         onChange={handlePaginationChange}
       />
     </>
@@ -209,6 +211,6 @@ SpacePlansTable.propTypes = {
   onDeleteSpace: PropTypes.func.isRequired,
   enterprisePlan: PropTypes.bool,
   showSpacePlanChangeBtn: PropTypes.bool,
-  initialLoad: PropTypes.bool,
+  featureFlagLoading: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
 };

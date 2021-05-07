@@ -1,79 +1,56 @@
-import React, { useCallback, useState, useEffect, useContext } from 'react';
-import { css } from 'emotion';
-import {
-  Paragraph,
-  Flex,
-  Heading,
-  TextLink,
-  Tooltip,
-  Icon,
-  Button,
-  Notification,
-} from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
+import React, { useCallback, useContext } from 'react';
 
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import StateLink from 'app/common/StateLink';
-import { track } from 'analytics/Analytics';
-import { Pluralized, Price } from 'core/components/formatting';
 import { useAsync } from 'core/hooks';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
+import { SpaceSectionHeader } from './SpaceSectionHeader';
 import { UsedAndUnusedSpacePlans } from './UsedAndUnusedSpacePlans';
 
 import { OrgSubscriptionContext } from '../context';
 import { actions } from '../context/orgSubscriptionReducer';
-import { createSpace, changeSpace } from '../utils/spaceUtils';
-import { downloadSpacesUsage } from '../services/SpacesUsageService';
-import type { SpacePlan } from '../types';
+import { changeSpace } from '../utils/spaceUtils';
 import { useChangedSpace } from '../hooks/useChangedSpace';
-
-const styles = {
-  inaccessibleHelpIcon: css({
-    fill: tokens.colorElementDarkest,
-    marginBottom: '-3px',
-    marginLeft: tokens.spacingXs,
-  }),
-  exportButton: css({
-    marginLeft: 'auto',
-  }),
-};
+import { Paragraph } from '@contentful/forma-36-react-components';
 
 async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: string) {
-  // we only need the flags for organizations with Enterprise basePlan
-  if (!isEnterprisePlan) {
-    return undefined;
+  const isSpaceSectionRebrandingEnabled = await getVariation(FLAGS.SPACE_SECTION_REBRANDING, {
+    organizationId,
+  });
+  let enterpriseFeatureFlags;
+
+  // we only need these flags for organizations with Enterprise basePlan
+  if (isEnterprisePlan) {
+    enterpriseFeatureFlags = await Promise.all([
+      getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId }),
+      getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN),
+      getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT, { organizationId }),
+    ]);
   }
 
-  const [
-    isSpacePlanAssignmentEnabled,
-    isCreateSpaceForSpacePlanEnabled,
-    isSpacePlanAssignmentExperimentEnabled,
-  ] = await Promise.all([
-    getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId }),
-    getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN),
-    getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT, { organizationId }),
-  ]);
-
   return {
-    isSpacePlanAssignmentEnabled,
-    isCreateSpaceForSpacePlanEnabled,
-    isSpacePlanAssignmentExperimentEnabled,
+    isSpaceSectionRebrandingEnabled,
+    ...(enterpriseFeatureFlags && {
+      isSpacePlanAssignmentEnabled: enterpriseFeatureFlags[0],
+      isCreateSpaceForSpacePlanEnabled: enterpriseFeatureFlags[1],
+      isSpacePlanAssignmentExperimentEnabled: enterpriseFeatureFlags[2],
+    }),
   };
 }
 
 interface SpacePlansProps {
+  // It tells the header if the user is in an Enterprise plan or not
   enterprisePlan?: boolean;
-  initialLoad?: boolean;
+  // It tells if the user is an admin or org owner
   isOwnerOrAdmin?: boolean;
+  // The id of the current organization
   organizationId: string;
 }
 
 export function SpacePlans({
   enterprisePlan = false,
-  initialLoad = false,
   isOwnerOrAdmin = false,
   organizationId,
 }: SpacePlansProps) {
@@ -83,11 +60,6 @@ export function SpacePlans({
   } = useContext(OrgSubscriptionContext);
 
   const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
-
-  const [usedSpacePlans, setUsedSpacePlans] = useState<SpacePlan[]>([]);
-  const [unusedSpacePlans, setUnusedSpacePlans] = useState<SpacePlan[]>([]);
-
-  const [isExportingCSV, setIsExportingCSV] = useState(false);
 
   // fetch feature flags
   const { isLoading, data } = useAsync(
@@ -101,20 +73,7 @@ export function SpacePlans({
   const userCanManageSpaces =
     data?.isSpacePlanAssignmentEnabled && enterprisePlan && isOwnerOrAdmin;
 
-  useEffect(() => {
-    if (userCanManageSpaces) {
-      const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
-      const unassignedSpacePlans = spacePlans
-        .filter((plan) => plan.gatekeeperKey === null)
-        .sort((plan1, plan2) => plan1.price - plan2.price);
-
-      setUsedSpacePlans(assignedSpacePlans);
-      setUnusedSpacePlans(unassignedSpacePlans);
-    }
-  }, [userCanManageSpaces, spacePlans]);
-
   // Space CRUD functions
-  const onCreateSpace = createSpace(organizationId);
   const onChangeSpace = changeSpace(
     organizationId,
     spacePlans,
@@ -129,103 +88,34 @@ export function SpacePlans({
     });
   };
 
-  // Export CSV
-  const handleExportBtnClick = async () => {
-    setIsExportingCSV(true);
-    try {
-      track('space_usage_summary:export');
-      await downloadSpacesUsage(organizationId);
-    } catch {
-      Notification.error('Could not export the space usage.');
-    }
-    setIsExportingCSV(false);
-  };
-
-  const numSpaces = spacePlans.length;
+  const numberOfSpaces = spacePlans.length;
   const hasAnySpacesInaccessible = spacePlans.some((plan) => !plan.space?.isAccessible);
-  const showExportBtn = !isLoading && spacePlans.length > 0;
-  const totalCost = calculatePlansCost({ plans: spacePlans });
+  // TODO: this will become unnecessary once "isSpaceSectionRebrandingEnabled" flag is removed
+  const selfServiceTotalCost = calculatePlansCost({ plans: spacePlans });
 
   return (
     <>
-      <Heading className="section-title">
-        Spaces
-        {hasAnySpacesInaccessible && (
-          <Tooltip
-            testId="inaccessible-help-tooltip"
-            content={
-              <>
-                You can’t see usage or content for spaces you’re not a member of. You can add
-                yourself to these spaces in the organization users settings.
-              </>
-            }>
-            <Icon
-              testId="inaccessible-help-icon"
-              icon="HelpCircle"
-              className={styles.inaccessibleHelpIcon}
-            />
-          </Tooltip>
-        )}
-      </Heading>
+      <SpaceSectionHeader
+        isLoading={isLoading}
+        enterprisePlan={enterprisePlan}
+        selServiceTotalCost={selfServiceTotalCost}
+        hasAnySpacesInaccessible={hasAnySpacesInaccessible}
+        isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
+        isSpaceSectionRebrandingEnabled={data?.isSpaceSectionRebrandingEnabled}
+        numberOfSpaces={numberOfSpaces}
+        organizationId={organizationId}
+      />
 
-      <Flex alignItems="center" marginBottom="spacingM">
-        <Paragraph testId="subscription-page.organization-information">
-          {numSpaces > 0 ? (
-            <>
-              Your organization has{' '}
-              <b>
-                <Pluralized text="space" count={numSpaces} />
-              </b>
-              {'. '}
-            </>
-          ) : (
-            "Your organization doesn't have any spaces. "
-          )}
+      {data?.isSpaceSectionRebrandingEnabled && numberOfSpaces === 0 && (
+        <Paragraph>Add a space to start using Contentful.</Paragraph>
+      )}
 
-          {!enterprisePlan && totalCost > 0 && (
-            <span data-test-id="subscription-page.non-enterprise-price-information">
-              The total for your spaces is{' '}
-              <b>
-                <Price value={totalCost} />
-              </b>{' '}
-              per month.{' '}
-            </span>
-          )}
-          {enterprisePlan && data?.isCreateSpaceForSpacePlanEnabled ? (
-            <StateLink
-              component={TextLink}
-              path=".space_create"
-              trackingEvent={'space_creation:begin'}
-              trackParams={{
-                flow: 'space_creation',
-              }}>
-              Create Space
-            </StateLink>
-          ) : (
-            <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
-              Create Space
-            </TextLink>
-          )}
-        </Paragraph>
-        {showExportBtn && (
-          <Button
-            testId="subscription-page.export-csv"
-            className={styles.exportButton}
-            disabled={isExportingCSV}
-            loading={isExportingCSV}
-            buttonType="muted"
-            onClick={handleExportBtnClick}>
-            Export
-          </Button>
-        )}
-      </Flex>
-
-      {numSpaces > 0 && (
+      {numberOfSpaces > 0 && (
         <>
           {!userCanManageSpaces && (
             <SpacePlansTable
               enterprisePlan={enterprisePlan}
-              initialLoad={initialLoad || isLoading}
+              featureFlagLoading={isLoading}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
               organizationId={organizationId}
@@ -234,18 +124,17 @@ export function SpacePlans({
             />
           )}
 
+          {/* This will only be rendered for Enterprise organizations */}
           {!isLoading && userCanManageSpaces && (
             <UsedAndUnusedSpacePlans
-              initialLoad={initialLoad}
-              usedSpacePlans={usedSpacePlans}
-              unusedSpacePlans={unusedSpacePlans}
-              organizationId={organizationId}
               changedSpaceId={changedSpaceId}
-              onDeleteSpace={onDeleteSpace}
-              onChangeSpace={onChangeSpace}
-              enterprisePlan={enterprisePlan}
-              isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
               isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
+              isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
+              onChangeSpace={onChangeSpace}
+              onDeleteSpace={onDeleteSpace}
+              organizationId={organizationId}
+              spacePlans={spacePlans}
+              userCanManageSpaces={userCanManageSpaces}
             />
           )}
         </>

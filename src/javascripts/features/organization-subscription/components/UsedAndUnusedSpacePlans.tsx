@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { css, cx } from 'emotion';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -24,40 +24,59 @@ enum EnterpriseSpacesTabs {
 }
 
 interface UsedAndUnusedSpacePlansProps {
-  initialLoad?: boolean;
-  usedSpacePlans: SpacePlan[];
-  unusedSpacePlans: SpacePlan[];
-  organizationId: string;
+  // Id of a space plan that got deleted, upgraded, or downgraded
   changedSpaceId?: string;
-  onDeleteSpace: (plan: SpacePlan) => () => void;
-  onChangeSpace: () => void;
-  enterprisePlan: boolean;
+  // Feature flag that enables space creation for Enterprise customers
+  isCreateSpaceForSpacePlanEnabled?: boolean;
+  // Feature flag that enables space plan assignment experiment
   isSpacePlanAssignmentExperimentEnabled: boolean;
-  isCreateSpaceForSpacePlanEnabled: boolean;
+  // Function to be called when space plan changes (upgrade or downgrade)
+  onChangeSpace: () => void;
+  // Function to be called when space plan is deleted
+  onDeleteSpace: (plan: SpacePlan) => () => void;
+  // The id of the current organization
+  organizationId: string;
+  // Array of space plans, it's used by the component to create the space plans’ table
+  spacePlans: SpacePlan[];
+  // It tells the component if this user can see the UI with "Used Spaces/Unused Spaces" tabs
+  userCanManageSpaces: boolean;
 }
 
 export function UsedAndUnusedSpacePlans({
-  initialLoad = false,
-  usedSpacePlans,
-  unusedSpacePlans,
-  organizationId,
   changedSpaceId,
-  onDeleteSpace,
-  onChangeSpace,
-  enterprisePlan,
-  isSpacePlanAssignmentExperimentEnabled,
   isCreateSpaceForSpacePlanEnabled,
+  isSpacePlanAssignmentExperimentEnabled,
+  onChangeSpace,
+  onDeleteSpace,
+  organizationId,
+  spacePlans,
+  userCanManageSpaces,
 }: UsedAndUnusedSpacePlansProps) {
   const [selectedTab, setSelectedTab] = useState<EnterpriseSpacesTabs>(
     EnterpriseSpacesTabs.USED_SPACES
   );
 
+  // Enterprise admin or owners can manage used and unused spaces
+  const [usedSpacePlans, setUsedSpacePlans] = useState<SpacePlan[]>([]);
+  const [unusedSpacePlans, setUnusedSpacePlans] = useState<SpacePlan[]>([]);
+
+  useEffect(() => {
+    if (userCanManageSpaces) {
+      const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
+      const unassignedSpacePlans = spacePlans
+        .filter((plan) => plan.gatekeeperKey === null)
+        .sort((plan1, plan2) => plan1.price - plan2.price);
+
+      setUsedSpacePlans(assignedSpacePlans);
+      setUnusedSpacePlans(unassignedSpacePlans);
+    }
+  }, [userCanManageSpaces, spacePlans]);
+
   // If the org has no unused spaces, we do not need the tabs UI
   if (unusedSpacePlans.length === 0) {
     return (
       <SpacePlansTable
-        enterprisePlan={enterprisePlan}
-        initialLoad={initialLoad}
+        enterprisePlan
         onChangeSpace={onChangeSpace}
         onDeleteSpace={onDeleteSpace}
         organizationId={organizationId}
@@ -95,13 +114,12 @@ export function UsedAndUnusedSpacePlans({
           [styles.isVisible]: selectedTab === EnterpriseSpacesTabs.USED_SPACES,
         })}>
         <SpacePlansTable
+          enterprisePlan
           plans={usedSpacePlans}
           organizationId={organizationId}
-          initialLoad={initialLoad}
           upgradedSpaceId={changedSpaceId}
           onChangeSpace={onChangeSpace}
           onDeleteSpace={onDeleteSpace}
-          enterprisePlan={enterprisePlan}
           showSpacePlanChangeBtn
         />
       </TabPanel>
@@ -113,7 +131,6 @@ export function UsedAndUnusedSpacePlans({
         })}>
         <UnassignedPlansTable
           plans={unusedSpacePlans}
-          initialLoad={initialLoad}
           spaceAssignmentExperiment={isSpacePlanAssignmentExperimentEnabled}
           canCreateSpaceWithPlan={isCreateSpaceForSpacePlanEnabled}
         />
