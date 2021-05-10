@@ -44,7 +44,7 @@ const WithOrgUsersList = withOrganizationRoute((props) => <UserListRoute {...pro
 
 export const usersListState = {
   name: 'list',
-  url: '/organization_memberships{pathname:any}',
+  url: '/organization_memberships',
   component: () => {
     const [basename] = window.location.pathname.split('organization_memberships');
     const { orgId } = getModule('$stateParams');
