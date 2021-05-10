@@ -9,6 +9,7 @@ import {
   getDeploymentProvider,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { Icon, Spinner, Flex } from '@contentful/forma-36-react-components';
 
 class DeploymentStrategies extends React.Component {
   constructor(props) {
@@ -129,10 +130,10 @@ class DeploymentStrategies extends React.Component {
           className="modern-stack-onboarding--deployment-strategy-expand-text"
           onClick={() => this.setState({ showOriginalHerokuSteps: !showOriginalHerokuSteps })}>
           {showOriginalHerokuSteps ? 'Hide' : 'Show'}
-          <i
-            className={`modern-stack-onboarding--deployment-strategy-expand-icon fa ${
-              showOriginalHerokuSteps ? 'fa-angle-down' : 'fa-angle-right'
-            }`}
+          <Icon
+            className={`modern-stack-onboarding--deployment-strategy-expand-icon`}
+            icon={showOriginalHerokuSteps ? 'ChevronDown' : 'ChevronRight'}
+            color="muted"
           />
         </div>
       </div>
@@ -153,10 +154,10 @@ class DeploymentStrategies extends React.Component {
           className="modern-stack-onboarding--deployment-strategy-expand-text"
           onClick={() => this.setState({ showRedeployHerokuSteps: !showRedeployHerokuSteps })}>
           {showRedeployHerokuSteps ? 'Hide' : 'Show'}
-          <i
-            className={`modern-stack-onboarding--deployment-strategy-expand-icon fa ${
-              showRedeployHerokuSteps ? 'fa-angle-down' : 'fa-angle-right'
-            }`}
+          <Icon
+            className={`modern-stack-onboarding--deployment-strategy-expand-icon`}
+            icon={showOriginalHerokuSteps ? 'ChevronDown' : 'ChevronRight'}
+            color="muted"
           />
         </div>
       </div>
@@ -165,8 +166,10 @@ class DeploymentStrategies extends React.Component {
     if (!spaceId || !deliveryToken) {
       return (
         <div className="loader__container u-separator--small" style={{ background: 'transparent' }}>
-          <div className="loading-box__spinner" />
           <div className="loader_message">Loading Heroku deployment steps</div>
+          <Flex marginLeft="spacingS">
+            <Spinner size="small" />
+          </Flex>
         </div>
       );
     } else {

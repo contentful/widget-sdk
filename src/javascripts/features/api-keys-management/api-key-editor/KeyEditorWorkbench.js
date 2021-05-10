@@ -19,6 +19,7 @@ const styles = {
     marginLeft: tokens.spacing2Xs,
     padding: `0 ${tokens.spacing2Xs}`,
     fontSize: tokens.fontSizeXl,
+    display: 'flex',
   }),
 };
 
@@ -35,7 +36,7 @@ export function KeyEditorWorkbench(props) {
               </SkeletonContainer>
             )}
             <div className={styles.knowledgeBaseIcon}>
-              <KnowledgeBase target="api_key" />
+              <KnowledgeBase target="api_key" asIcon />
             </div>
           </>
         }

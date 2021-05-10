@@ -189,7 +189,7 @@ export class LocalesListPricingOne extends React.PureComponent {
             <>
               <Heading>Locales</Heading>
               <span className={styles.knowledgeBaseIcon}>
-                <KnowledgeBase target="locale" />
+                <KnowledgeBase target="locale" asIcon />
               </span>
             </>
           }

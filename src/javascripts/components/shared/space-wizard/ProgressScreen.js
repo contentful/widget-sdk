@@ -1,11 +1,11 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import CheckmarkIcon from 'svg/checkmark.svg';
 import ContentTypeIcon from 'svg/page-ct.svg';
 import ContentIcon from 'svg/page-content.svg';
 import MediaIcon from 'svg/page-media.svg';
 import APIsIcon from 'svg/page-apis.svg';
+import { Spinner, Icon, Heading, Paragraph } from '@contentful/forma-36-react-components';
 
 const infoItems = [
   {
@@ -45,18 +45,16 @@ class ProgressScreen extends React.Component {
 
     return (
       <div>
-        <div className="create-new-space__templates__status" data-test-id="create-space-progress">
-          {!done && <div className="spinner" />}
-          {done && (
-            <div style={{ transform: 'scale(2)' }} data-test-id="create-space-create-done">
-              <CheckmarkIcon />
-            </div>
-          )}
-        </div>
-        <h2 className="create-space-wizard__heading">Hang on, we’re preparing your space</h2>
-        <p className="create-space-wizard__subheading">
+        {!done && <Spinner />}
+        {done && (
+          <div data-test-id="create-space-progress">
+            <Icon icon="CheckCircle" size="large" color="positive" />
+          </div>
+        )}
+        <Heading>Hang on, we’re preparing your space</Heading>
+        <Paragraph>
           In the meantime, let us quickly explain the kind of things you’ll find in your space
-        </p>
+        </Paragraph>
         <div className="create-new-space__templates__entities">
           {infoItems.map(({ Icon, title, description }) => (
             <div key={title} className="create-new-space__templates__entity">

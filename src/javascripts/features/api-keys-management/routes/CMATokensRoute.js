@@ -20,14 +20,10 @@ export function CMATokensRoute() {
           </Typography>
           <List>
             <ListItem>
-              <KnowledgeBase
-                inlineText
-                text="Content Management API reference"
-                target="management_api"
-              />
+              <KnowledgeBase text="Content Management API reference" target="management_api" />
             </ListItem>
             <ListItem>
-              <KnowledgeBase inlineText text="Other Contentful APIs" target="content_apis" />
+              <KnowledgeBase text="Other Contentful APIs" target="content_apis" />
             </ListItem>
           </List>
         </WorkbenchSidebarItem>

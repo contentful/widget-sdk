@@ -9,6 +9,7 @@ import {
   DropdownListItem,
   Icon,
   Subheading,
+  Spinner,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime';
@@ -207,13 +208,16 @@ class StatusWidget extends React.PureComponent {
         <div className="entity-sidebar__status-more">
           {updatedAt && (
             <div className="entity-sidebar__save-status">
-              <i
-                className={cx('entity-sidebar__saving-spinner', {
-                  'x--active': isSaving,
-                })}
-              />
               <span className="entity-sidebar__last-saved" data-test-id="last-saved">
-                Last saved <RelativeTimeData value={updatedAt} />
+                {isSaving ? (
+                  <>
+                    Saving <Spinner size="small" />
+                  </>
+                ) : (
+                  <>
+                    Last saved <RelativeTimeData value={updatedAt} />
+                  </>
+                )}
               </span>
             </div>
           )}

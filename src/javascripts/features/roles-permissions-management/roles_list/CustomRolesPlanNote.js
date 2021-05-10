@@ -22,9 +22,8 @@ export function CustomRolesPlanNote(props) {
           <Paragraph>
             {' '}
             To learn more about what’s possible check out{' '}
-            <KnowledgeBase target="roles" inlineText icon={false} text="this guide" /> or{' '}
-            <KnowledgeBase target="sales" inlineText icon={false} text="get in touch" /> with our
-            Enterprise team.
+            <KnowledgeBase target="roles" text="this guide" /> or{' '}
+            <KnowledgeBase target="sales" text="get in touch" /> with our Enterprise team.
           </Paragraph>
         </React.Fragment>
       ) : (
@@ -39,13 +38,7 @@ export function CustomRolesPlanNote(props) {
           </Paragraph>
           <Paragraph>
             To learn more about what{"'"}s possible, check out{' '}
-            <KnowledgeBase
-              target="roles"
-              inlineText
-              icon={false}
-              text="our guide to Roles and Permissions"
-            />
-            .
+            <KnowledgeBase target="roles" text="our guide to Roles and Permissions" />.
           </Paragraph>
         </React.Fragment>
       )}

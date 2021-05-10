@@ -9,6 +9,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { isMasterEnvironment, getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
+import { Spinner, Flex } from '@contentful/forma-36-react-components';
 
 function EnvironmentList({
   environments = [],
@@ -239,14 +240,14 @@ export default class SpaceWithEnvironments extends React.Component {
           <div className="nav-sidepanel__space-icon">
             <FolderIcon />
           </div>
-          <span className={spaceNameClassNames}>{space.name}</span>
-          <span
-            className={
-              this.state.loading
-                ? 'nav-sidepanel__space-spinner'
-                : 'nav-sidepanel__space-open-indicator'
-            }
-          />
+          <span className={spaceNameClassNames}>{space.name} </span>
+          {this.state.loading ? (
+            <Flex marginRight="spacingM">
+              <Spinner size="small" />
+            </Flex>
+          ) : (
+            <span className="nav-sidepanel__space-open-indicator" />
+          )}
         </div>
         <AnimateHeight height={isOpened ? 'auto' : 0}>
           <EnvironmentList

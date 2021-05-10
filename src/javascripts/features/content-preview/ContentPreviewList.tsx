@@ -13,7 +13,9 @@ import {
   TableRow,
 } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/illustrations/content-preview-empty-state.svg';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import KnowledgeBase, {
+  KnowledgeBaseItems,
+} from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { RouteLink } from 'core/react-routing';
 import { ContentPreview } from './types';
 
@@ -66,7 +68,7 @@ export class ContentPreviewList extends Component<{ contentPreviews: ContentPrev
         <Paragraph>
           To view your content in a live environment, set up content preview. Learn how to set up a
           custom content preview for this space in{' '}
-          <KnowledgeBase target="content_preview" text="our guide" inlineText />.
+          <KnowledgeBase target={KnowledgeBaseItems.content_preview} text="our guide" />.
         </Paragraph>
         <RouteLink route={{ path: 'content_preview.new' }}>
           {({ onClick }) => (

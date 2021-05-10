@@ -1,24 +1,21 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import KnowledgeBase from './KnowledgeBase';
 
 describe('<KnowledgeBase />', () => {
-  it('renders an anchor to the dev knowledge base', () => {
-    const props = { target: 'entry', text: 'Sample text' };
+  it('renders IconButton with link to the dev knowledge base', () => {
+    const props = { target: 'entry', asIcon: true };
+    renderLink(props);
 
-    const { getByTestId } = renderLink(props);
-
-    expect(getByTestId('knowledge-base-link')).toHaveTextContent(props.text);
-    expect(getByTestId('icon')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-base-icon')).toBeInTheDocument();
   });
 
-  it('renders no icon if requested', () => {
-    const props = { target: 'entry', text: 'Sample text', icon: false };
+  it('renders TextLink to the dev knowledge base', () => {
+    const props = { target: 'entry', text: 'Sample text', asIcon: false };
+    renderLink(props);
 
-    const { queryAllByTestId } = renderLink(props);
-
-    expect(queryAllByTestId('icon')).toHaveLength(0);
+    expect(screen.getByTestId('knowledge-base-link')).toHaveTextContent(props.text);
   });
 });
 

@@ -163,11 +163,7 @@ export function UserInvitation(props) {
                   <ListItem> Last time that you were active within the organization</ListItem>
                   <ListItem>
                     Your{' '}
-                    <KnowledgeBase
-                      target="spacesAndOrganizations"
-                      text="roles and permissions"
-                      icon={false}
-                    />{' '}
+                    <KnowledgeBase target="spacesAndOrganizations" text="roles and permissions" />{' '}
                     in spaces within the organization
                   </ListItem>
                 </List>

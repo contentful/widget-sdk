@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { websiteUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { IconButton, TextLink } from '@contentful/forma-36-react-components';
 
 const items = {
   sales: 'contact/sales/',
@@ -45,30 +45,64 @@ function getKnowledgeBaseUrl(name) {
   throw new Error('Incorrect Knowledge Base item "' + name + '".');
 }
 
-function KnowledgeBase({ target, text = '', inlineText, className = '', icon = true }) {
-  const hasText = !text.length ? 'x--no-text' : '';
-  const isInline = inlineText ? 'x--inline' : '';
+export enum KnowledgeBaseItems {
+  sales = 'sales',
+  space = 'space',
+  content_model = 'content_model',
+  content_type = 'content_type',
+  space_creation = 'space_creation',
+  hibernation = 'hibernation',
+  entry = 'entry',
+  asset = 'asset',
+  api_key = 'api_key',
+  predefined_value = 'predefined_value',
+  locale = 'locale',
+  space_template = 'space_template',
+  id_change = 'id_change',
+  roles = 'roles',
+  field_lifecycle = 'field_lifecycle',
+  content_apis = 'content_apis',
+  delivery_api = 'delivery_api',
+  management_api = 'management_api',
+  cma_key = 'cma_key',
+  content_preview = 'content_preview',
+  content_modelling_basics = 'content_modelling_basics',
+  createOAuthApp = 'createOAuthApp',
+  spaceEnvironments = 'spaceEnvironments',
+  spacesAndOrganizations = 'spacesAndOrganizations',
+}
 
-  return (
-    // eslint-disable-next-line rulesdir/restrict-non-f36-components
-    <a
+interface KnowledgeBaseProps {
+  target: KnowledgeBaseItems;
+  text?: string;
+  className?: string;
+  asIcon?: boolean;
+}
+
+const KnowledgeBase = ({ target, text = '', className = '', asIcon }: KnowledgeBaseProps) => {
+  return asIcon ? (
+    <IconButton
+      iconProps={{
+        icon: 'HelpCircle',
+        size: 'tiny',
+      }}
+      buttonType="muted"
+      data-test-id="knowledge-base-icon"
+      href={getKnowledgeBaseUrl(target)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+    />
+  ) : (
+    <TextLink
       data-test-id="knowledge-base-link"
-      className={`knowledge-base-link ${hasText} ${isInline} ${className}`}
+      className={className}
       href={getKnowledgeBaseUrl(target)}
       target="_blank"
       rel="noopener noreferrer">
       {text}
-      {icon && <i className="fa fa-question-circle" data-test-id="icon" />}
-    </a>
+    </TextLink>
   );
-}
-
-KnowledgeBase.propTypes = {
-  className: PropTypes.string,
-  target: PropTypes.oneOf(Object.keys(items)).isRequired,
-  text: PropTypes.string,
-  inlineText: PropTypes.any,
-  icon: PropTypes.bool,
 };
 
 export default KnowledgeBase;

@@ -42,6 +42,7 @@ const styles = {
     marginLeft: tokens.spacing2Xs,
     padding: `0 ${tokens.spacing2Xs}`,
     fontSize: tokens.fontSizeXl,
+    display: 'flex',
   }),
 };
 
@@ -157,7 +158,7 @@ export function ContentTypeListPage({
           <>
             <Heading>Content Model</Heading>
             <div className={styles.knowledgeBaseIcon}>
-              <KnowledgeBase target="content_model" />
+              <KnowledgeBase target="content_model" asIcon />
             </div>
           </>
         }

@@ -5,10 +5,9 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
-import { Tooltip, Icon as F36Icon, ModalLauncher } from '@contentful/forma-36-react-components';
+import { Tooltip, Icon, ModalLauncher } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
-import Icon from 'ui/Components/Icon'; // TODO: remove this component and replace with Icon from F36
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
@@ -215,20 +214,18 @@ export default function NavigationItem(props) {
           placement="bottom"
           highValueLabel={item.highValueLabel}
           isOrganizationOnTrial={item.isOrganizationOnTrial}>
-          {item.navIcon ? (
+          {item.navIcon && (
             <ProductIcon
               icon={item.navIcon}
               size="medium"
               color="white"
               className={styles.navIcon}
             />
-          ) : (
-            <Icon name={item.icon} />
           )}
           {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
           {item.title}
           {item.highValueLabel && (
-            <F36Icon
+            <Icon
               icon="InfoCircle"
               color="white"
               className={cn(styles.navHighValueIcon, {

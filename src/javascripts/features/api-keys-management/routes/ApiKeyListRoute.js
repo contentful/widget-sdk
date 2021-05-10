@@ -43,55 +43,23 @@ const EmptyState = () => (
     <Heading>Add the first API key to start delivering content</Heading>
     <Paragraph>
       To learn more about delivering content, read about{' '}
-      <KnowledgeBase target="content_apis" text="four content APIs" inlineText /> or{' '}
-      <KnowledgeBase
-        target="delivery_api"
-        text="content delivery API reference documentation"
-        inlineText
-      />
-      . If you are delivering content to multiple platforms, consider adding multiple API keys.
+      <KnowledgeBase target="content_apis" text="four content APIs" /> or{' '}
+      <KnowledgeBase target="delivery_api" text="content delivery API reference documentation" />.
+      If you are delivering content to multiple platforms, consider adding multiple API keys.
     </Paragraph>
   </EmptyStateContainer>
 );
-
-function StaffHint() {
-  return (
-    <WorkbenchSidebarItem title="A hint from our staff">
-      <div className="staff-hint">
-        <i className="fa fa-quote-left" />
-        <div className="staff-hint__quote">
-          <div className="staff-hint__content">
-            Create separate API keys if you have multiple platforms you need to deliver content to.
-          </div>
-          <div className="staff-hint__author">
-            <div className="staff-hint__author-photo x--herve" />
-            <div className="staff-hint__author-name">
-              <strong>Herve Labas</strong>
-              {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
-              <p>Product Manager at Contentful</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </WorkbenchSidebarItem>
-  );
-}
 
 function Documentation() {
   return (
     <WorkbenchSidebarItem title="Documentation">
       <List>
         <ListItem>
-          Learn more about the{' '}
-          <KnowledgeBase target="content_apis" text="four content APIs" inlineText />.
+          Learn more about the <KnowledgeBase target="content_apis" text="four content APIs" />.
         </ListItem>
         <ListItem>
           Read the{' '}
-          <KnowledgeBase
-            target="delivery_api"
-            text="reference docs for the content delivery API"
-            inlineText
-          />
+          <KnowledgeBase target="delivery_api" text="reference docs for the content delivery API" />
           .
         </ListItem>
       </List>
@@ -196,7 +164,6 @@ export function ApiKeyListRoute() {
       }
       sidebar={
         <React.Fragment>
-          <StaffHint />
           <Documentation />
         </React.Fragment>
       }>

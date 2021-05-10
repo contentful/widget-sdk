@@ -14,6 +14,7 @@ const styles = {
     marginLeft: tokens.spacing2Xs,
     padding: `0 ${tokens.spacing2Xs}`,
     fontSize: tokens.fontSizeXl,
+    display: 'flex',
   }),
 };
 
@@ -22,7 +23,7 @@ function LocalesTitle() {
     <>
       <Heading>Locales</Heading>
       <span className={styles.knowledgeBaseIcon}>
-        <KnowledgeBase target="locale" />
+        <KnowledgeBase target="locale" asIcon />
       </span>
     </>
   );

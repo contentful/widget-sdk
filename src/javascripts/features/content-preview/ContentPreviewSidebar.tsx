@@ -2,7 +2,9 @@ import React from 'react';
 import StateLink from 'app/common/StateLink';
 import { Typography, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import KnowledgeBase, {
+  KnowledgeBaseItems,
+} from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 export const WhatIsContentPreview = () => (
   <WorkbenchSidebarItem title="What‘s content preview?">
@@ -12,8 +14,8 @@ export const WhatIsContentPreview = () => (
         preview environment.
       </Paragraph>
       <Paragraph>
-        <KnowledgeBase target="content_preview" text="Read the guide" inlineText /> before setting
-        up a custom content preview.
+        <KnowledgeBase target={KnowledgeBaseItems.content_preview} text="Read the guide" /> before
+        setting up a custom content preview.
       </Paragraph>
     </Typography>
   </WorkbenchSidebarItem>

@@ -110,7 +110,7 @@ function ValidationHint(props) {
       )}
       <br />
       To select either, go to the “Appearance” tab.&#x20; Learn more about&#x20;{' '}
-      <KnowledgeBase target="predefined_value" text="predefined values" inlineText />.
+      <KnowledgeBase target="predefined_value" text="predefined values" />.
     </div>
   );
 }

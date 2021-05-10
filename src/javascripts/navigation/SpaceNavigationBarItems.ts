@@ -221,7 +221,6 @@ export function getSpaceNavigationItems({
       dataViewType: 'space-settings',
       rootSref: makeRef('settings', isUnscopedRoute),
       navIcon: 'Settings',
-      icon: 'nav-settings',
       title: 'Settings',
       children: useSpaceEnvironment ? envSettingsDropdown : spaceSettingsDropdown,
     },

@@ -1,9 +1,8 @@
 /* eslint-disable rulesdir/restrict-non-f36-components */
 
 import React, { useState } from 'react';
-import cn from 'classnames';
 import keycodes from 'utils/keycodes';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Dropdown,
@@ -11,11 +10,11 @@ import {
   DropdownListItem,
   Tooltip,
   Tag,
+  Icon,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
-import Icon from 'ui/Components/Icon';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { noop } from 'lodash';
 
@@ -31,17 +30,25 @@ const styles = {
     borderBottomColor: 'transparent',
     transition: 'border-top-color 0.1s ease-in-out',
   }),
-  tooltip: css({ textTransform: 'none', fontWeight: tokens.fontWeightNormal }),
+  tooltip: css({
+    textTransform: 'none',
+    fontWeight: tokens.fontWeightNormal,
+    marginLeft: tokens.spacing2Xs,
+  }),
   dropdownList: css({
     minWidth: 250,
   }),
   question: css({
-    marginLeft: '10px',
+    marginLeft: tokens.spacingXs,
     color: tokens.colorElementMid,
     cursor: 'pointer',
   }),
+  dropdownItem: css({
+    display: 'flex',
+  }),
   separator: css({
     marginTop: tokens.spacingXs,
+    display: 'flex',
   }),
   appTopBarAction: css({
     display: 'flex',
@@ -135,16 +142,16 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
   };
 
   return (
-    <li className={cn(styles.appTopBarAction, styles.navBarListItem)}>
+    <li className={cx(styles.appTopBarAction, styles.navBarListItem)}>
       <Dropdown
         isOpen={isOpen}
         onClose={onClose}
         isAutoalignmentEnabled={false}
-        className={cn('app-top-bar__action', styles.dropdown)}
+        className={cx('app-top-bar__action', styles.dropdown)}
         position="bottom-left"
         toggleElement={
           <a
-            className={cn(styles.navBarLink, styles.appTopBarMenuTrigger, {
+            className={cx(styles.navBarLink, styles.appTopBarMenuTrigger, {
               'is-active': Navigator.includes({ path: item.rootSref || item.sref }),
             })}
             role="button"
@@ -157,20 +164,18 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
               }
             }}>
             <span className={styles.navBarListLabel}>
-              {item.navIcon ? (
+              {item.navIcon && (
                 <ProductIcon
                   icon={item.navIcon}
                   size="medium"
                   color="white"
                   className={styles.navBarProductIcon}
                 />
-              ) : (
-                <Icon name={item.icon} />
               )}
               {item.title}
               {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
             </span>
-            <span className={cn(styles.triangleArrow, 'border-color')} />
+            <span className={cx(styles.triangleArrow, 'border-color')} />
           </a>
         }>
         <DropdownList className={styles.dropdownList} testId="navbar-dropdown-menu">
@@ -180,11 +185,11 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
                 <DropdownListItem
                   key={subitem.label}
                   isTitle={subitem.isTitle !== false}
-                  className={index !== 0 ? styles.separator : ''}>
+                  className={index !== 0 ? styles.separator : styles.dropdownItem}>
                   {subitem.render ? subitem.render(subitem) : subitem.label}
                   {subitem.tooltip && (
                     <Tooltip place="bottom" content={subitem.tooltip} className={styles.tooltip}>
-                      <i className={cn('fa', 'fa-question-circle', styles.question)} />
+                      <Icon icon="InfoCircle" color="muted" className={styles.question} />
                     </Tooltip>
                   )}
                 </DropdownListItem>

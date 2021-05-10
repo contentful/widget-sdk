@@ -138,7 +138,6 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       navIcon: 'Apps',
-      icon: 'nav-apps',
       dataViewType: 'organization-apps',
     },
     {

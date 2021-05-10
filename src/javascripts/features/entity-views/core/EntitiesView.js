@@ -156,7 +156,7 @@ export const EntitiesView = ({
         <Workbench testId={`${entityType}-view`}>
           <Workbench.Header
             title={title}
-            description={<KnowledgeBase target={entityType} className={styles.info} />}
+            description={<KnowledgeBase target={entityType} className={styles.info} asIcon />}
             icon={<ProductIcon icon={title} size="large" />}
             actions={
               <div className={styles.header}>

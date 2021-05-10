@@ -246,7 +246,7 @@ function UsageTooltip({ resource }) {
       className={css({
         color: tokens.colorElementDarkest,
       })}>
-      <Icon icon="HelpCircle" color="muted" testId="environments-usage-tooltip" />
+      <Icon icon="InfoCircle" color="muted" testId="environments-usage-tooltip" />
     </Tooltip>
   );
 }
