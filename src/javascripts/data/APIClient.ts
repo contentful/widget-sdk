@@ -182,12 +182,8 @@ export default class APIClient {
     return this.updateResource('assets', data);
   };
 
-  signAssetUrls = (data) => {
-    return this.request({
-      method: 'POST',
-      path: 'management/sign-url',
-      data,
-    });
+  createAssetKey = (data) => {
+    return this.createResource('asset_keys', data);
   };
 
   updateAppInstallation = (
