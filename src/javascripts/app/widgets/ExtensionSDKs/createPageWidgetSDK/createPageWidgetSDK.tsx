@@ -46,7 +46,7 @@ export const createPageWidgetSDK = ({
   const userApi = createUserApi(space.data.spaceMember);
   const environment = getEnvironment(space);
   const source = widgetNamespace === WidgetNamespace.BUILTIN ? undefined : Source.CustomWidget;
-  const cma = createAPIClient(spaceId, environmentId, source);
+  const cma = createAPIClient(spaceId, environmentAliasId ?? environmentId, source);
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const isMaster = isMasterEnvironment(environment);

@@ -70,7 +70,7 @@ export const createEditorWidgetSDK = ({
   const contentTypeApi = createContentTypeApi(internalContentType);
   const source =
     widgetNamespace === WidgetNamespace.EDITOR_BUILTIN ? undefined : Source.CustomWidget;
-  const cma = createAPIClient(spaceId, environmentId, source);
+  const cma = createAPIClient(spaceId, environmentAliasId ?? environmentId, source);
   const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
   const usersRepo = createUserCache(spaceEndpoint);
   const aliasesId = getEnvironmentAliasesIds(environment);
