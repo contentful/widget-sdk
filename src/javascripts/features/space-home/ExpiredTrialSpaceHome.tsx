@@ -45,21 +45,18 @@ export const ExpiredTrialSpaceHome = () => {
   const isExpiredSpace = hasTrialSpaceExpired && !hasTrialSpaceConverted;
 
   useEffect(() => {
-    if (!currentOrganizationId || !isExpiredSpace) {
+    if (!currentOrganizationId || !isExpiredSpace || !isAppsTrialSpace || !isOrgOwnerOrAdmin) {
       return;
     }
 
-    const fetchData = async () => {
-      if (isOrgOwnerOrAdmin && isAppsTrialSpace) {
-        const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
-        const addOnProductRatePlans = await getAddOnProductRatePlans(orgEndpoint);
-        setComposeAndLaunchProductPrice(addOnProductRatePlans[0].price);
-      }
+    const fetchComposeAndLaunchProductPrice = async () => {
+      const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
+      const [addOnProductRatePlan] = await getAddOnProductRatePlans(orgEndpoint);
+      setComposeAndLaunchProductPrice(addOnProductRatePlan?.price);
     };
 
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    fetchComposeAndLaunchProductPrice();
+  }, [currentOrganizationId, isExpiredSpace, isAppsTrialSpace, isOrgOwnerOrAdmin]);
 
   if (currentSpaceData?.readOnlyAt || !isExpiredSpace) {
     return null;
