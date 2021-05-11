@@ -56,6 +56,7 @@ export const DeveloperChoiceDialog = ({ onContinue }) => {
           <Card
             testId={Choices.EMPTY_SPACE_OPTION}
             padding="large"
+            selected={choice == Choices.EMPTY_SPACE_OPTION}
             onClick={() => setChoice(Choices.EMPTY_SPACE_OPTION)}>
             <Tag tagType="primary" className={styles.tag}>
               NO CODE
@@ -66,6 +67,7 @@ export const DeveloperChoiceDialog = ({ onContinue }) => {
           <Card
             testId={Choices.SAMPLE_SPACE_OPTION}
             padding="large"
+            selected={choice == Choices.SAMPLE_SPACE_OPTION}
             onClick={() => setChoice(Choices.SAMPLE_SPACE_OPTION)}>
             <Tag tagType="primary" className={styles.tag}>
               NO CODE
@@ -76,6 +78,7 @@ export const DeveloperChoiceDialog = ({ onContinue }) => {
           <Card
             testId={Choices.GATSBY_BLOG_OPTION}
             padding="large"
+            selected={choice == Choices.GATSBY_BLOG_OPTION}
             onClick={() => setChoice(Choices.GATSBY_BLOG_OPTION)}>
             <Tag tagType="secondary" className={styles.tag}>
               CODE

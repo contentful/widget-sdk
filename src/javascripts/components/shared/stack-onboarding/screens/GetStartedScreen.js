@@ -12,6 +12,8 @@ import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 const icons = [
   'aws',
@@ -27,6 +29,12 @@ const icons = [
   'gitbook',
   'brunch',
 ];
+
+const styles = {
+  backButton: css({
+    marginRight: tokens.spacingL,
+  }),
+};
 
 const GetStarted = () => {
   const spaceContext = useSpaceEnvContext();
@@ -71,11 +79,11 @@ const GetStarted = () => {
       <div className={'modern-stack-onboarding--logogrid-wrapper'}>
         {logos}
         <Icon className={'modern-stack-onboarding--logogrid-image'} name={'stack-overview'} />
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="center">
           {showFlexibleOnboarding === true && (
             <Button
               buttonType="muted"
-              className="modern-stack-onboarding--next-button"
+              className={styles.backButton}
               onClick={() => {
                 track('onboarding_gatsby_blog:back');
                 unmarkSpace();
@@ -99,10 +107,7 @@ const GetStarted = () => {
             trackingElementId="get_started_screen_completed"
             link="copy">
             {(move) => (
-              <Button
-                onClick={move}
-                className="modern-stack-onboarding--next-button"
-                data-test-id="onboarding-get-started-cta">
+              <Button onClick={move} data-test-id="onboarding-get-started-cta">
                 Get started
               </Button>
             )}

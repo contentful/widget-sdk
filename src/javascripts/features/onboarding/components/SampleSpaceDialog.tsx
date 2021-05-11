@@ -68,10 +68,10 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
       {isLoading && <LoadingCard />}
       {!isLoading && data?.templatesList && (
         <>
-          <Flex marginBottom="spacing3Xl">
+          <Flex marginBottom="spacing3Xl" paddingLeft="spacing2Xl">
             <DisplayText>Choose and create a space</DisplayText>
           </Flex>
-          <Flex marginBottom="spacing3Xl">
+          <Flex marginBottom="spacing3Xl" paddingLeft="spacing3Xl" paddingRight="spacing3Xl">
             <TemplatesList
               templates={data?.templatesList}
               selectedTemplate={selectedTemplate}
@@ -79,7 +79,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
               isNewSpacePurchaseFlow={true}
             />
           </Flex>
-          <Flex justifyContent="flex-end" marginBottom="spacingM">
+          <Flex justifyContent="flex-end" marginBottom="spacingM" paddingRight="spacing2Xl">
             <Flex flexDirection="column" marginRight="spacingM">
               <Button
                 buttonType="muted"
