@@ -194,12 +194,14 @@ export const SpacePlansTable = ({
           )}
         </TableBody>
       </Table>
-      <Pagination
-        {...pagination}
-        total={data.total}
-        loading={spacesUsageLoading}
-        onChange={handlePaginationChange}
-      />
+      {plans.length >= 10 && (
+        <Pagination
+          {...pagination}
+          total={data.total}
+          loading={spacesUsageLoading}
+          onChange={handlePaginationChange}
+        />
+      )}
     </>
   );
 };
