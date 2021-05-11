@@ -1,43 +1,53 @@
 import { RequestConfig } from 'data/Request';
 import { fromPairs } from 'lodash';
+import createError from 'axios/lib/core/createError';
 
 export type ResponseTransform = (config: RequestConfig, rawResponse: Response) => Promise<any>;
 
-export async function defaultTransformResponse(config: RequestConfig, rawResponse: Response) {
-  const asyncError = new Error('API request failed');
-  const response = {
-    // matching AngularJS's $http response object
-    // https://docs.angularjs.org/api/ng/service/$http#$http-returns
+export const axiosTransformResponse = makeTransformResponse((config, response) => {
+  return createError(
+    'Request failed with status code ' + response.status,
     config,
-    data: null,
-    headers: fromPairs([...rawResponse.headers.entries()]),
-    status: rawResponse.status,
-    statusText: rawResponse.statusText,
+    null,
+    null,
+    response
+  );
+});
 
-    // Non-AngularJS
-    rawResponse,
-  };
+export const defaultTransformResponse = makeTransformResponse((_, response) => {
+  const asyncError = new Error('API request failed');
+  return Object.assign(asyncError, {
+    message: 'API request failed',
+    ...response,
+  });
+});
 
-  // 204 statuses are empty, so don't attempt to get the response body
-  if (rawResponse.status !== 204) {
-    try {
-      response.data = await getResponseBody(rawResponse);
-    } catch (err) {
-      // Make sure we capture both the original error and the response information
-      Object.assign(err, response);
+type TransformError = (config: RequestConfig, response: any) => Error;
 
-      throw err;
+function makeTransformResponse(transformError: TransformError) {
+  return async (config: RequestConfig, rawResponse: Response) => {
+    const response = {
+      config,
+      data: null,
+      headers: fromPairs([...rawResponse.headers.entries()]),
+      status: rawResponse.status,
+      statusText: rawResponse.statusText,
+      rawResponse,
+    };
+    if (rawResponse.status !== 204) {
+      try {
+        response.data = await getResponseBody(rawResponse);
+      } catch (err) {
+        Object.assign(err, response);
+        throw err;
+      }
     }
-  }
 
-  if (rawResponse.ok) {
+    if (!rawResponse.ok) {
+      throw transformError(config, response);
+    }
     return response;
-  } else {
-    throw Object.assign(asyncError, {
-      message: 'API request failed',
-      ...response,
-    });
-  }
+  };
 }
 
 /**

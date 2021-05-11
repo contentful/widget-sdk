@@ -9,6 +9,7 @@ import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultCli
 import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';
 import { AuthParamsType } from 'data/CMA/types';
 import { Source } from 'i13n/constants';
+
 /**
  * @description
  * Create a HTTP request function that handles authentication and
@@ -28,11 +29,11 @@ type MakeRequestConfig = {
 };
 
 export type RequestConfig = {
-  headers?: string;
+  headers?: Record<string, string>;
   method: string;
   body?: unknown;
   url: string;
-  query: Record<string, any>;
+  query?: Record<string, any>;
 };
 
 export type RequestFunc = (...args: any[]) => Promise<any>;
@@ -82,49 +83,56 @@ export function makeRequest({
   const version = getRetryVersion();
 
   if (version !== withRetryVersion || currentSource !== source || !withRetry) {
-    withRetry = RETRY_VERSION[version](
-      (config) =>
-        fetchFn(config, source, overrideDefaultResponseTransform || defaultTransformResponse),
-      version,
-      clientName
-    );
+    withRetry = RETRY_VERSION[version]((config) => fetchFn(config, source), version, clientName);
     withRetryVersion = version;
     currentSource = source;
   }
 
-  return wrapWithCounter(wrapWithAuth(auth, withRetry), source, clientName);
+  const transformFunc = overrideDefaultResponseTransform || defaultTransformResponse;
+
+  const retryFunc = async (config: RequestConfig) => {
+    const response = await withRetry(config);
+    if (transformFunc) {
+      return transformFunc(config, response);
+    } else {
+      return response;
+    }
+  };
+
+  return wrapWithCounter(wrapWithAuth(auth, retryFunc), source, clientName);
 }
 
-async function fetchFn(
-  config: RequestConfig,
-  source?: string,
-  responseTransform?: ResponseTransform
-) {
-  const args = buildRequestArguments(config, source);
+async function fetchFn(config: RequestConfig, source?: Source) {
+  const requestData = buildRequestArguments(config, source);
   let rawResponse;
   try {
-    rawResponse = await window.fetch(...args);
+    rawResponse = await window.fetch(requestData.url, requestData.data);
   } catch {
     throw new PreflightRequestError();
   }
-  return responseTransform ? responseTransform(config, rawResponse) : rawResponse;
+  return rawResponse;
 }
+
+type RequestArguments = {
+  url: string;
+  data?: RequestInit;
+};
 
 // fetch requires the url as the first argument.
 // we require `body` to be a JSON string
 // we also send a special X-Contentful-User-Agent header
-function buildRequestArguments(data, source?: string): [string, RequestInit | undefined] {
-  const url = withQuery(data.url, data.query);
+function buildRequestArguments(config: RequestConfig, source?: string): RequestArguments {
+  const url = withQuery(config.url, config.query);
   const requestData = {
-    ...data,
-    body: data.body ? JSON.stringify(data.body) : null,
+    ...config,
+    body: config.body ? JSON.stringify(config.body) : null,
     headers: {
       ...getDefaultHeaders(source),
-      ...data.headers,
+      ...config.headers,
     },
   };
 
-  return [url, requestData];
+  return { url, data: requestData };
 }
 
 // convert request params to a query string and append it to the request url
