@@ -21,8 +21,7 @@ import { useFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListene
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { styles as editorStyles } from '../entry_editor/styles';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { isUnscopedRoute } from 'core/services/SpaceEnvContext/utils';
+import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 import { getModule } from 'core/NgRegistry';
 import { EntityField } from 'app/entity_editor/EntityField/EntityField';
 
@@ -73,12 +72,12 @@ const AssetEditorWorkbench = ({
 
   // angular url updates to persist tab selection on reload
   // kill this with fire when react migration allows it
-  const { currentSpace } = useSpaceEnvContext();
-  const routeIsUnscoped = isUnscopedRoute(currentSpace);
   const $state = getModule('$state');
   const setTabInUrl = (tab) =>
     $state.transitionTo(
-      routeIsUnscoped ? 'spaces.detail.assets.detail' : 'spaces.environment.assets.detail',
+      hasEnvironmentSectionInUrl()
+        ? 'spaces.environment.assets.detail'
+        : 'spaces.detail.assets.detail',
       { tab: tab === 'Editor' ? null : tab },
       {
         location: true, // This makes it update URL

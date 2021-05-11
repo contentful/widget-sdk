@@ -16,8 +16,8 @@ import {
   getOrganizationId,
   getSpaceEnforcements,
   isCurrentEnvironmentMaster,
-  isUnscopedRoute,
 } from 'core/services/SpaceEnvContext/utils';
+import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -97,7 +97,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
       usageEnabled,
       hasOrgTeamFeature,
       useSpaceEnvironment: canManageEnvironments && environmentsEnabled,
-      isUnscopedRoute: isUnscopedRoute(currentSpace),
+      isUnscopedRoute: !hasEnvironmentSectionInUrl(),
       contentTagsEnabled,
       canManageSpace,
     });

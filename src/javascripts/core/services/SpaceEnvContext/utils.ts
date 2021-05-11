@@ -80,13 +80,6 @@ export function isMasterEnvironmentById(environments: Environment[], envId) {
   return isMasterEnvironment(envOrAlias);
 }
 
-export function isUnscopedRoute(space?: SpaceEnv): boolean {
-  return (
-    space?.environmentMeta?.aliasId === 'master' ||
-    space?.environmentMeta?.environmentId === 'master'
-  );
-}
-
 export function getEnvironment(space?: SpaceEnv): Environment | undefined {
   return space?.environment;
 }
