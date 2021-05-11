@@ -2,7 +2,7 @@ import * as Endpoint from './Endpoint';
 import { RequestConfig, RequestHeaders } from 'data/CMA/types';
 
 const mockRequest = jest.fn(async () => ({ data: '' }));
-jest.mock('data/Request', () => jest.fn(() => mockRequest));
+jest.mock('data/Request', () => ({ makeRequest: jest.fn(() => mockRequest) }));
 
 const auth = {
   getToken: jest.fn(),

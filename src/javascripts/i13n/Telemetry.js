@@ -57,7 +57,6 @@ export function countImmediate(name, tags) {
 
 export function recordImmediate(name, value, tags) {
   const measurement = makeMeasurement(name, value, tags);
-
   withState((state) => {
     const body = JSON.stringify([measurement]);
     callBackend(state.client, body).catch((err) => {
@@ -90,7 +89,6 @@ function withState(cb) {
     state.measurements = [];
     state.client = createMicroBackendsClient({ backendName: 'telemetry' });
   }
-
   cb(state);
 }
 

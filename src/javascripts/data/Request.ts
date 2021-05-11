@@ -5,8 +5,10 @@ import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
 import { FLAGS, getVariationSync, hasCachedVariation } from 'LaunchDarkly';
 import queryString from 'query-string';
-import { fromPairs } from 'lodash';
 import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
+import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';
+import { AuthParamsType } from 'data/CMA/types';
+import { Source } from 'i13n/constants';
 
 /**
  * @description
@@ -17,19 +19,31 @@ import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultCli
  *
  * See the wrapper documentation for details.
  */
+type ClientName = 'contentful-management' | 'endpoint' | 'legacy' | 'token';
 
-type RequestConfig = {
-  headers?: string;
-  method?: string;
-  body?: unknown;
-  url: string;
-  query: Record<string, any>;
+type MakeRequestConfig = {
+  auth: AuthParamsType;
+  source?: Source;
+  clientName?: ClientName;
+  overrideDefaultResponseTransform?: ResponseTransform;
 };
 
-type RetryFunc = (requestFunc: Function, version?: number) => (...args: any[]) => Promise<any>;
-type ResponseTransform = (config: RequestConfig, rawResponse: Response) => any;
+export type RequestConfig = {
+  headers?: Record<string, string>;
+  method: string;
+  body?: unknown;
+  url: string;
+  query?: Record<string, any>;
+};
 
-let withRetry;
+export type RequestFunc = (...args: any[]) => Promise<any>;
+export type RetryFunc = (
+  requestFunc: Function,
+  version?: number,
+  clientName?: ClientName
+) => RequestFunc;
+
+let withRetry: RequestFunc;
 let withRetryVersion = 1;
 let currentSource;
 
@@ -53,126 +67,76 @@ function getRetryVersion() {
   return variation ? 2 : 1;
 }
 
-export default function makeRequest(
+/**
+ * creates a request function.
+ * @param {AuthParamsType} auth - authentication object.
+ * @param {string} source - initiator id.
+ * @param {string} clientName - tag for our different client implementations.
+ * @param {ResponseTransform} overrideDefaultResponseTransform - override default response transform behaviour.
+ */
+export function makeRequest({
   auth,
-  source: string | undefined = undefined,
-  responseTransform = defaultTransformResponse
-) {
+  source,
+  clientName,
+  overrideDefaultResponseTransform,
+}: MakeRequestConfig): RequestFunc {
   const version = getRetryVersion();
 
   if (version !== withRetryVersion || currentSource !== source || !withRetry) {
-    withRetry = RETRY_VERSION[version](
-      (config) => fetchFn(config, source, responseTransform),
-      version
-    );
+    withRetry = RETRY_VERSION[version]((config) => fetchFn(config, source), version, clientName);
     withRetryVersion = version;
     currentSource = source;
   }
 
-  return wrapWithCounter(wrapWithAuth(auth, withRetry), source);
-}
+  const transformFunc = overrideDefaultResponseTransform || defaultTransformResponse;
 
-async function defaultTransformResponse(config: RequestConfig, rawResponse: Response) {
-  const asyncError = new Error('API request failed');
-  const response = {
-    // matching AngularJS's $http response object
-    // https://docs.angularjs.org/api/ng/service/$http#$http-returns
-    config,
-    data: null,
-    headers: fromPairs([...rawResponse.headers.entries()]),
-    status: rawResponse.status,
-    statusText: rawResponse.statusText,
-
-    // Non-AngularJS
-    rawResponse,
+  const retryFunc = async (config: RequestConfig) => {
+    const response = await withRetry(config);
+    if (transformFunc) {
+      return transformFunc(config, response);
+    } else {
+      return response;
+    }
   };
 
-  // 204 statuses are empty, so don't attempt to get the response body
-  if (rawResponse.status !== 204) {
-    try {
-      response.data = await getResponseBody(rawResponse);
-    } catch (err) {
-      // Make sure we capture both the original error and the response information
-      Object.assign(err, response);
-
-      throw err;
-    }
-  }
-
-  if (rawResponse.ok) {
-    return response;
-  } else {
-    throw Object.assign(asyncError, {
-      message: 'API request failed',
-      ...response,
-    });
-  }
+  return wrapWithCounter(wrapWithAuth(auth, retryFunc), source, clientName);
 }
 
-async function fetchFn(
-  config: RequestConfig,
-  source?: string,
-  transformResponse?: ResponseTransform
-) {
-  const args = buildRequestArguments(config, source);
+async function fetchFn(config: RequestConfig, source?: Source) {
+  const requestData = buildRequestArguments(config, source);
   let rawResponse;
   try {
-    rawResponse = await window.fetch(...args);
+    rawResponse = await window.fetch(requestData.url, requestData.data);
   } catch {
     throw new PreflightRequestError();
   }
-  return transformResponse ? transformResponse(config, rawResponse) : rawResponse;
+  return rawResponse;
 }
 
-/**
- * Get the response data.
- *
- * If the response content type is JSON-like (e.g. application/vnd.contentful.management.v1+json),
- * the body is checked for truthy-ness. If the body is truthy, it will be attempted to be parsed,
- * and if it is falsy, `null` will be returned.
- *
- * If the response content type is not JSON-like, the result will be an `ArrayBuffer` instance.
- *
- * If the response cannot be parsed (i.e. if it's not valid JSON), the error will be thrown,
- * rather than gracefully handled.
- *
- * @param  {Response} response window.fetch response
- */
-async function getResponseBody(response) {
-  const contentType = response.headers.get('Content-Type');
-
-  if (contentType.match(/json/)) {
-    const body = await response.text();
-
-    if (body) {
-      return JSON.parse(body);
-    } else {
-      return null;
-    }
-  } else {
-    return await response.arrayBuffer();
-  }
-}
+type RequestArguments = {
+  url: string;
+  data?: RequestInit;
+};
 
 // fetch requires the url as the first argument.
 // we require `body` to be a JSON string
 // we also send a special X-Contentful-User-Agent header
-function buildRequestArguments(data, source?: string): [string, RequestInit | undefined] {
-  const url = withQuery(data.url, data.query);
+function buildRequestArguments(config: RequestConfig, source?: string): RequestArguments {
+  const url = withQuery(config.url, config.query);
   const requestData = {
-    ...data,
-    body: data.body ? JSON.stringify(data.body) : null,
+    ...config,
+    body: config.body ? JSON.stringify(config.body) : null,
     headers: {
       ...getDefaultHeaders(source),
-      ...data.headers,
+      ...config.headers,
     },
   };
 
-  return [url, requestData];
+  return { url, data: requestData };
 }
 
 // convert request params to a query string and append it to the request url
-function withQuery(url, query) {
+function withQuery(url: string, query: any) {
   if (query) {
     // Our contract tests assert the queries as strings with keys in alphabetical order
     // Ideally our test should not care about the order
@@ -182,13 +146,14 @@ function withQuery(url, query) {
   return url;
 }
 
-function wrapWithCounter(request, source) {
+function wrapWithCounter(request: RequestFunc, source?: string, clientName?: string) {
   return async (args) => {
     Telemetry.count('cma-req', {
       endpoint: getEndpoint(args.url),
       state: getCurrentState(),
       version: withRetryVersion,
       source: source,
+      client: clientName,
     });
 
     return request(args);

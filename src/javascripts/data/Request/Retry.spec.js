@@ -115,6 +115,7 @@ describe.each([
         state: 'STATE',
         retries: 4,
         version: version,
+        client: undefined,
       });
     });
 
@@ -127,6 +128,7 @@ describe.each([
         status: 200,
         method: 'POST',
         version: version,
+        client: undefined,
       });
     });
 
@@ -141,6 +143,7 @@ describe.each([
         status: 404,
         method: 'DELETE',
         version: version,
+        client: undefined,
       });
     });
 
@@ -153,6 +156,7 @@ describe.each([
         method: 'POST',
         version: version,
         retries: 0,
+        client: undefined,
       });
     });
 
@@ -168,6 +172,7 @@ describe.each([
         method: 'DELETE',
         version: version,
         retries: 0,
+        client: undefined,
       });
     });
   });

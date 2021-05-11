@@ -2,20 +2,28 @@ import { createDefaultBatchClient, createInternalMethods } from '@contentful/exp
 import { useMemo } from 'react';
 import type { PlainClientDefaultParams } from 'contentful-management';
 import { createClient } from 'contentful-management';
-import * as auth from 'Authentication';
+import { getToken, refreshToken } from 'Authentication';
 import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getDefaultHeaders } from './getDefaultClientHeaders';
 import { getHostParams } from './getHostParams';
-import makeRequest from 'data/Request';
+import { makeRequest } from 'data/Request';
 import { getSpaceContext } from 'classes/spaceContext';
+import { axiosTransformResponse } from 'data/responseTransform';
+import { createAdapter } from './adapter';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
 type GetCmaClientOptions = { noBatch?: boolean };
 
 export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
-  const request = makeRequest(auth, undefined, undefined);
-
+  const request = makeRequest({
+    auth: {
+      getToken,
+      refreshToken,
+    },
+    clientName: 'contentful-management',
+    overrideDefaultResponseTransform: axiosTransformResponse,
+  });
   /*
    `accessToken` and `refreshToken` is only for interface completeness,
    the accessToken is always set inside the adapter
@@ -23,37 +31,18 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
   const client = createClient(
     {
       ...getHostParams(),
-      accessToken: () => {
-        return auth.getToken();
-      },
+      accessToken: () => getToken(),
       headers: getDefaultHeaders(),
+      adapter: createAdapter(request),
       retryOnError: false,
       onError: (error) => {
         captureError(error);
         throw error;
       },
-      adapter: async (config) => {
-        let body;
-
-        if (config.data) {
-          try {
-            body = JSON.parse(config.data);
-          } catch (error) {
-            captureError(error);
-          }
-        }
-
-        return request({
-          headers: config.headers,
-          method: config.method?.toUpperCase(),
-          body: body,
-          url: `${config.baseURL}${config.url}`,
-          query: config.params,
-        });
-      },
     },
     { type: 'plain', defaults }
   );
+
   const batchClient = options?.noBatch
     ? undefined
     : createDefaultBatchClient(client, {

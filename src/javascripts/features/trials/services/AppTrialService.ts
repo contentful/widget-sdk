@@ -9,11 +9,6 @@ const FEATURE_TO_APP_NAME = {
   launch_app: 'launch',
 };
 
-const isTrialSpaceServerError = (error) => {
-  const errorStatus = error?.message && JSON.parse(error?.message).status;
-  return errorStatus !== 422 && errorStatus !== 403;
-};
-
 export const startAppTrial = async (organizationId: string) => {
   try {
     const trialsClient = getCMAClient({ organizationId }).internal.trials;
@@ -31,7 +26,9 @@ export const startAppTrial = async (organizationId: string) => {
       trialSpace: space,
     };
   } catch (e) {
-    if (isTrialSpaceServerError(e)) {
+    const { status } = e;
+
+    if (status !== 422 && status !== 403) {
       throw new TrialSpaceServerError();
     }
     throw e;

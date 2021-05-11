@@ -1,7 +1,7 @@
-import LegacyClient from 'libs/legacy_client/client';
-import { apiUrl } from 'Config';
 import * as Auth from 'Authentication';
-import makeRequest from 'data/Request';
+import { apiUrl } from 'Config';
+import { makeRequest } from 'data/Request';
+import LegacyClient from 'libs/legacy_client/client';
 
 const defaultHeaders = {
   'X-Contentful-Skip-Transformation': true,
@@ -10,7 +10,10 @@ const defaultHeaders = {
 
 async function request(req) {
   const request = await buildRequest(req);
-  const baseRequest = makeRequest(Auth);
+  const baseRequest = makeRequest({
+    auth: Auth,
+    clientName: 'legacy',
+  });
 
   try {
     const response = await baseRequest(request);
