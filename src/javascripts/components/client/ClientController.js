@@ -34,11 +34,6 @@ export default function register() {
       let openV1MigrationWarning;
       let pubSubClientRef;
 
-      // TODO remove this eventually. All components should access it as a service
-
-      $scope.spaceContext = spaceContext;
-      // end TODO
-
       $scope.preferences = {
         showDisabledFields: false,
       };

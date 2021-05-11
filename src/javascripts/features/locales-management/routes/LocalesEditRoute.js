@@ -13,10 +13,9 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import TheLocaleStore from 'services/localeStore';
-import createLocaleRepo from 'data/CMA/LocaleRepo';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import { useParams, RouteNavigate } from 'core/react-routing';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 const LocalesFetcher = createFetcherComponent(({ localeRepo }) => {
   return localeRepo.getAll();
@@ -182,12 +181,8 @@ class EditLocaleForm extends Component {
 
 export function LocalesEditRoute(props) {
   const params = useParams();
-  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
-  const spaceEndpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
-    currentSpaceId,
-    currentEnvironmentId,
-  ]);
-  const localeRepo = useMemo(() => createLocaleRepo(spaceEndpoint), [spaceEndpoint]);
+  const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
+  const localeRepo = useMemo(() => createLocaleRepo(spaceEnvCMAClient), [spaceEnvCMAClient]);
 
   async function save(locale) {
     const savedLocale = await localeRepo.save(locale);

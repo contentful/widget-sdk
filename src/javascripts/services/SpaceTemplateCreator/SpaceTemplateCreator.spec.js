@@ -1,14 +1,12 @@
 import _ from 'lodash';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
 
-import * as LocaleRepo from 'data/CMA/LocaleRepo';
 import * as EnrichTemplate from 'services/SpaceTemplateCreator/enrichTemplate';
 import * as LocaleStore from 'services/localeStore';
 import * as ContentPreview from 'features/content-preview';
 import * as ApiKeysManagement from 'features/api-keys-management';
 
 jest.mock('data/EndpointFactory', () => ({ createSpaceEndpoint: jest.fn() }));
-jest.mock('data/CMA/LocaleRepo');
 jest.mock('./createAssetFileProcessedHandler', () => ({
   createAssetFileProcessedHandler: jest.fn().mockReturnValue((_, callback) => callback()),
 }));
@@ -45,6 +43,10 @@ jest.mock('core/services/usePlainCMAClient', () => ({
       processForLocale: mockProcessAsset,
       publish: mockPublishAsset,
     },
+    locale: {
+      create: jest.fn().mockReturnValue(Promise.resolve({ code: 'something' })),
+      update: jest.fn().mockReturnValue(Promise.resolve({ code: 'something' })),
+    },
   }),
 }));
 
@@ -70,12 +72,7 @@ describe('Space Template creation service', () => {
       setActiveLocales: jest.fn(),
       createApiKey: jest.fn().mockReturnValue(Promise.resolve()),
       getAllApiKeys: jest.fn().mockReturnValue(Promise.resolve([{ accessToken: 'mock-token' }])),
-      createLocaleRepo: jest.fn().mockReturnValue({
-        save: jest.fn().mockReturnValue(Promise.resolve({ code: 'something' })),
-      }),
     };
-
-    LocaleRepo.default = stubs.createLocaleRepo;
 
     // we don't care about template info, because we describe enrichTemplate function by ourselves
     EnrichTemplate.enrichTemplate = (_templateInfo, template) => enrichTemplate(template);

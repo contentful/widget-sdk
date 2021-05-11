@@ -12,8 +12,7 @@ import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import { createAssetFileProcessedHandler } from './createAssetFileProcessedHandler';
 
@@ -43,8 +42,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   const templateName = templateInfo.name;
   const creationErrors = [];
   const handledItems = {};
-  const spaceEndpoint = createSpaceEndpoint(spaceContext.getId(), spaceContext.getEnvironmentId());
-  const localeRepo = createLocaleRepo(spaceEndpoint);
+
+  const localeRepo = createLocaleRepo(getSpaceEnvCMAClient());
+
   return {
     create,
   };

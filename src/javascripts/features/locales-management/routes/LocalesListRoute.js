@@ -17,12 +17,12 @@ import createResourceService from 'services/ResourceService';
 import * as PricingService from 'services/PricingService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import { generateMessage } from 'utils/ResourceUtils';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceEntitlementSet } from 'features/space-usage';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
 
 const fetch = async ({
   organization,
@@ -33,8 +33,8 @@ const fetch = async ({
 }) => {
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(organization);
   const orgIsLegacy = isLegacyOrganization(organization);
-  const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
-  const localeRepo = createLocaleRepo(spaceEndpoint);
+  const cma = getCMAClient({ spaceId, environmentId, organizationId });
+  const localeRepo = createLocaleRepo(cma);
 
   const promisesArray = [
     localeRepo.getAll(),
@@ -89,6 +89,7 @@ export const LocalesListRoute = () => {
     currentOrganizationId,
     currentSpaceId,
     currentEnvironmentId,
+    currentEnvironmentAliasId,
     currentSpace,
     currentSpaceData,
   } = useSpaceEnvContext();
@@ -103,7 +104,7 @@ export const LocalesListRoute = () => {
           organization: currentOrganization,
           organizationId: currentOrganizationId,
           spaceId: currentSpaceId,
-          environmentId: currentEnvironmentId,
+          environmentId: currentEnvironmentAliasId || currentEnvironmentId,
           isMasterEnvironment,
         }),
       [
@@ -111,6 +112,7 @@ export const LocalesListRoute = () => {
         currentOrganizationId,
         currentSpaceId,
         currentEnvironmentId,
+        currentEnvironmentAliasId,
         isMasterEnvironment,
       ]
     )

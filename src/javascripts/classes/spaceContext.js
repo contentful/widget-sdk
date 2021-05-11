@@ -14,7 +14,7 @@ import createUserCache from 'data/userCache';
 import TheLocaleStore from 'services/localeStore';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo';
-import createLocaleRepo from 'data/CMA/LocaleRepo';
+import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import createUiConfigStore from 'data/UiConfig/Store';
 import { createSpaceEndpoint } from 'data/Endpoint';
 import * as PublishedCTRepo from 'data/ContentTypeRepo/Published';
@@ -158,13 +158,19 @@ function initSpaceContext() {
         spaceContext.users = createUserCache(spaceContext.endpoint);
         spaceContext.organization = deepFreezeClone(spaceContext.getData('organization'));
 
-        const localeRepoSpaceEndpoint = createSpaceEndpoint(
-          Config.apiUrl(),
-          spaceId,
-          Auth,
-          uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
+        const cmaPlainClient = getCMAClient(
+          {
+            spaceId,
+            environmentId: uriEnvOrAliasId || MASTER_ENVIRONMENT_ID,
+          },
+          {
+            //batch client doesn't support headers param in
+            //entry.get and asset.get, used by EntityRepo
+            noBatch: true,
+          }
         );
-        spaceContext.localeRepo = createLocaleRepo(localeRepoSpaceEndpoint);
+
+        const localeRepo = createLocaleRepo(cmaPlainClient);
 
         // TODO: publicly accessible docConnection is
         // used only in a process of creating space out
@@ -186,17 +192,6 @@ function initSpaceContext() {
         // and not the user, so the spaceId is required.
         enforcementsDeInit = EnforcementsService.init(spaceId);
 
-        const cmaPlainClient = getCMAClient(
-          {
-            spaceId,
-            environmentId: uriEnvOrAliasId || MASTER_ENVIRONMENT_ID,
-          },
-          {
-            //batch client doesn't support headers param in
-            //entry.get and asset.get, used by EntityRepo
-            noBatch: true,
-          }
-        );
         spaceContext.pubsubClient = await createPubSubClientForSpace(spaceId);
 
         const start = Date.now();
@@ -212,7 +207,7 @@ function initSpaceContext() {
               spaceContext.endpoint
             );
           }),
-          TheLocaleStore.init(spaceContext.localeRepo),
+          TheLocaleStore.init(localeRepo),
           setupPublishedCTsBus(spaceContext).then(() => {
             const ctMap = spaceContext.publishedCTs
               .getAllBare()
