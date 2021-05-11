@@ -47,7 +47,9 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
     ? undefined
     : createDefaultBatchClient(client, {
         onError: (error, context) => {
-          captureError(error, { extra: { context } });
+          if (error['status'] !== 429) {
+            captureError(error, { extra: { context } });
+          }
         },
       });
 
