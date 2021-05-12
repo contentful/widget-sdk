@@ -12,7 +12,8 @@ import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { AddTeamsPageContent } from './AddTeamsPageContent';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { TeamProps, TeamSpaceMembership } from 'contentful-management/types';
-import { Role, SpaceEnv } from 'core/services/SpaceEnvContext/types';
+import { Role } from 'core/services/SpaceEnvContext/types';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 type FetchResponseProps = {
   teams: TeamProps[];
@@ -20,12 +21,13 @@ type FetchResponseProps = {
   roles: Role[];
 };
 
-const fetch = (spaceId: string, organizationId: string, space: SpaceEnv) => async (): Promise<
+const fetch = (spaceId: string, organizationId: string) => async (): Promise<
   FetchResponseProps
 > => {
+  const cmaClient = getSpaceEnvCMAClient();
   const orgEndpoint = createOrganizationEndpoint(organizationId);
   const spaceEndpoint = createSpaceEndpoint(spaceId);
-  const roleRepo = createRoleRepo(space);
+  const roleRepo = createRoleRepo(cmaClient);
 
   const [roles, teams, teamSpaceMemberships] = await Promise.all([
     roleRepo.getAll(),
@@ -37,12 +39,12 @@ const fetch = (spaceId: string, organizationId: string, space: SpaceEnv) => asyn
 };
 
 const AddTeamsPage = () => {
-  const { currentSpaceId, currentOrganizationId, currentSpace } = useSpaceEnvContext();
+  const { currentSpaceId, currentOrganizationId } = useSpaceEnvContext();
   const { isLoading, error, data } = useAsync(
-    useCallback(
-      fetch(currentSpaceId as string, currentOrganizationId as string, currentSpace as SpaceEnv),
-      [currentSpaceId, currentOrganizationId, currentSpace]
-    )
+    useCallback(fetch(currentSpaceId as string, currentOrganizationId as string), [
+      currentSpaceId,
+      currentOrganizationId,
+    ])
   );
 
   const hasAccess = getSectionVisibility().teams;
