@@ -5,13 +5,16 @@ import createError from 'axios/lib/core/createError';
 export type ResponseTransform = (config: RequestConfig, rawResponse: Response) => Promise<any>;
 
 export const axiosTransformResponse = makeTransformResponse((config, response) => {
-  return createError(
+  const error = createError(
     'Request failed with status code ' + response.status,
     config,
     null,
     null,
     response
   );
+  return Object.assign(error, {
+    ...response,
+  });
 });
 
 export const defaultTransformResponse = makeTransformResponse((_, response) => {

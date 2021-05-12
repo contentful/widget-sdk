@@ -91,26 +91,31 @@ export function makeRequest({
   const transformFunc = overrideDefaultResponseTransform || defaultTransformResponse;
 
   const retryFunc = async (config: RequestConfig) => {
-    const response = await withRetry(config, (c) => fetchFn(c, source), clientName);
-    if (transformFunc) {
-      return transformFunc(config, response);
-    } else {
-      return response;
-    }
+    const func = (requestConfig) =>
+      fetchFn({ config: requestConfig, source, responseTransform: transformFunc });
+    return withRetry(config, func, clientName);
   };
 
   return wrapWithCounter(wrapWithAuth(auth, retryFunc), source, clientName);
 }
 
-async function fetchFn(config: RequestConfig, source?: Source) {
-  const requestData = buildRequestArguments(config, source);
+async function fetchFn(args: {
+  config: RequestConfig;
+  responseTransform?: ResponseTransform;
+  source?: Source;
+}) {
+  const requestData = buildRequestArguments(args.config, args.source);
   let rawResponse;
   try {
     rawResponse = await window.fetch(requestData.url, requestData.data);
   } catch {
     throw new PreflightRequestError();
   }
-  return rawResponse;
+  if (args.responseTransform) {
+    return args.responseTransform(args.config, rawResponse);
+  } else {
+    return rawResponse;
+  }
 }
 
 type RequestArguments = {
