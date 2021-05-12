@@ -26,7 +26,7 @@ export const startAppTrial = async (organizationId: string) => {
       trialSpace: space,
     };
   } catch (e) {
-    const { status } = e;
+    const { status } = JSON.parse(e.message);
 
     if (status !== 422 && status !== 403) {
       throw new TrialSpaceServerError();

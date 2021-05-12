@@ -15,6 +15,14 @@ import { createAdapter } from './adapter';
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
 type GetCmaClientOptions = { noBatch?: boolean };
 
+const handleError = (error: Error, context?: any) => {
+  const { status } = error['response'];
+  if (status !== 429) {
+    captureError(error, { extra: { context } });
+  }
+  throw error;
+};
+
 export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetCmaClientOptions) {
   const request = makeRequest({
     auth: {
@@ -35,23 +43,12 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
       headers: getDefaultHeaders(),
       adapter: createAdapter(request),
       retryOnError: false,
-      onError: (error) => {
-        captureError(error);
-        throw error;
-      },
+      onError: handleError,
     },
     { type: 'plain', defaults }
   );
 
-  const batchClient = options?.noBatch
-    ? undefined
-    : createDefaultBatchClient(client, {
-        onError: (error, context) => {
-          if (error['status'] !== 429) {
-            captureError(error, { extra: { context } });
-          }
-        },
-      });
+  const batchClient = options?.noBatch ? undefined : createDefaultBatchClient(client);
 
   const internal = createInternalMethods(client.raw);
 

@@ -1,5 +1,4 @@
 import { getCMAClient } from 'core/services/usePlainCMAClient/usePlainCMAClient';
-
 /*
  * recreate behaviour as described here:
  * {@link} https://github.com/contentful/contentful-management.js/blob/master/test/unit/error-handler-test.js
@@ -27,34 +26,5 @@ describe('A plain cma client instance', () => {
     const result = await getCMAClient().raw.get(url);
     expect(result).toBe('ResponseData');
     expect(mockRequest).toHaveBeenCalledWith(expect.objectContaining({ url, method: 'GET' }));
-  });
-
-  it('throws expected error', async () => {
-    const response = {
-      status: 500,
-      statusText: '',
-      data: {
-        message: 'failed',
-      },
-    };
-
-    const responseError = Object.assign(
-      new Error('Request failed with status code ' + response.status),
-      response
-    );
-
-    mockRequest.mockRejectedValueOnce(responseError);
-
-    let error;
-    try {
-      await getCMAClient().raw.get('https://my.url');
-    } catch (e) {
-      error = e;
-    }
-
-    expect(error).toEqual(responseError);
-    expect(error instanceof Error).toBe(true);
-    expect(error.status).toEqual(500);
-    expect(error.message).toEqual('Request failed with status code 500');
   });
 });
