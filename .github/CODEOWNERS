@@ -3,7 +3,7 @@ docs/ @contentful/frontend
 
 
 # Team Extensibility
-src/javascripts/features/page-widgets           @contentful/extensibility-devs
+src/javascripts/features/page-widgets/           @contentful/extensibility-devs
 src/javascripts/features/apps/                  @contentful/extensibility-devs
 src/javascripts/features/apps-core/             @contentful/extensibility-devs
 src/javascripts/features/extensions-management/ @contentful/extensibility-devs
@@ -30,8 +30,8 @@ src/javascripts/features/teams/                         @contentful/team-hejo
 src/javascripts/features/high-value-modal/              @contentful/team-hejo
 src/javascripts/features/user-invitations/              @contentful/team-hejo
 src/javascripts/features/roles-permissions-management/  @contentful/team-hejo
-src/javascripts/features/sso                            @contentful/team-hejo
-src/javascripts/features/news-slider                    @contentful/team-hejo
+src/javascripts/features/sso/                            @contentful/team-hejo
+src/javascripts/features/news-slider/                    @contentful/team-hejo
 
 # Team Moi
 src/javascripts/features/organization-subscription/  @contentful/team-moi
@@ -40,14 +40,22 @@ src/javascripts/features/trials/                     @contentful/team-moi
 src/javascripts/features/space-usage/                @contentful/team-moi
 src/javascripts/features/space-home/                 @contentful/team-moi
 
+# Team Shelley
+src/javascripts/features/assembly-types/      @contentful/team-shelley
+
 # Team Sparks
 src/javascripts/features/scheduled-actions/   @contentful/team-sparks
+src/javascripts/features/content-preview/     @contentful/team-sparks
+src/javascripts/features/releases/            @contentful/team-sparks
 
 # Team Homer
-src/javascripts/features/tasks  @contentful/team-homer
+src/javascripts/features/tasks/             @contentful/team-homer
+src/javascripts/features/entity-search/     @contentful/team-homer
+src/javascripts/features/entity-views/      @contentful/team-homer
 
 # Team Dante
-src/javascripts/features/locales-management/ @contentful/team-dante
+src/javascripts/features/locales-management/      @contentful/team-dante
+src/javascripts/features/content-model-editor/    @contentful/team-dante
 
 # Team Dev Velocity
 src/javascripts/features/embargoed-assets/  @team-dev-velocity

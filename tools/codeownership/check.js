@@ -22,6 +22,22 @@ async function check() {
     getSubdirectories
   ).filter((subDir) => !hasOwner(subDir, codeownersRepos));
 
+  const codeownerDefinitionsWithoutTrailingSlash = codeownersRepos.ownerEntries
+    .filter((item) => !item.path.endsWith('/'))
+    .map((item) => item.path);
+
+  if (codeownerDefinitionsWithoutTrailingSlash.length > 0) {
+    console.error("WARNING: Some code owner rules don't end with trailing slash:\n");
+
+    codeownerDefinitionsWithoutTrailingSlash.forEach((dir) => console.log(`• ${dir}`));
+
+    console.error(
+      '\nPlease add trailing slashes to make sure code review assignment works properly.\n'
+    );
+
+    process.exit(1);
+  }
+
   if (subDirectoriesWithoutOwners.length > 0) {
     console.error("WARNING: Some code directories don't have declared owners:\n");
 
