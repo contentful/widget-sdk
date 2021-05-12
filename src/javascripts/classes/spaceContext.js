@@ -39,11 +39,6 @@ let enforcementsDeInit;
 const spaceContext = initSpaceContext();
 export const getSpaceContext = () => spaceContext;
 
-const lastResetWithSpaceParams = {
-  spaceId: undefined,
-  environmentId: undefined,
-};
-
 // Util function to reset the spaceContext with spaceId (and environmentId) params
 export const resetWithSpace = async (params) => {
   const spaceData = await TokenStore.getSpace(params.spaceId);
@@ -90,10 +85,6 @@ function initSpaceContext() {
       resetMembers(spaceContext);
     },
 
-    cleanLastResetParams: function () {
-      lastResetWithSpaceParams.spaceId = undefined;
-      lastResetWithSpaceParams.environmentId = undefined;
-    },
     /**
      * @ngdoc method
      * @name spaceContext#resetWithSpace
@@ -110,20 +101,6 @@ function initSpaceContext() {
      * @returns {Promise<self>}
      */
     resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
-      function isLastReset() {
-        return (
-          spaceData.sys.id === lastResetWithSpaceParams.spaceId &&
-          uriEnvOrAliasId === lastResetWithSpaceParams.environmentId
-        );
-      }
-
-      if (isLastReset()) {
-        return;
-      }
-
-      lastResetWithSpaceParams.spaceId = spaceData.sys.id;
-      lastResetWithSpaceParams.environmentId = uriEnvOrAliasId;
-
       spaceContext.resettingSpace = true;
 
       try {

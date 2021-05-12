@@ -96,6 +96,21 @@ export const reset = () => {
 
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
+export const waitToBeInitialized = () => {
+  return new Promise((resolve) => {
+    function check() {
+      if (K.getValue(isInitialized$)) {
+        resolve(true);
+      } else {
+        setTimeout(() => {
+          check();
+        }, 50);
+      }
+    }
+    check();
+  });
+};
+
 /**
  * @name accessChecker#shouldHide
  * @param {string} actionName

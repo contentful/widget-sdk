@@ -36,11 +36,6 @@ const resolveSpaceData = [
   ($stateParams) => TokenStore.getSpace($stateParams.spaceId),
 ];
 
-const cleanupSpaceContext = () => {
-  const spaceContext = getSpaceContext();
-  return spaceContext.cleanLastResetParams();
-};
-
 const spaceEnvironment = {
   name: 'environment',
   url: '/:spaceId/environments/:environmentId',
@@ -58,9 +53,20 @@ const spaceEnvironment = {
   },
   onEnter: [
     'spaceData',
-    (spaceData) => {
+    '$state',
+    '$stateParams',
+    (spaceData, $state, $stateParams) => {
       const organizationData = spaceData.organization;
       Analytics.trackContextChange(spaceData, organizationData);
+
+      // if there's empty environment id, for example "/environments//"
+      // redirect to master environment
+      if (!$stateParams.environmentId) {
+        $state.go('spaces.detail', $stateParams, { reload: true });
+        return;
+      }
+
+      storeCurrentIds(spaceData);
     },
   ],
   template: '<react-component component="component" props="props"></react-component>',
@@ -68,13 +74,13 @@ const spaceEnvironment = {
     'initializingSpaceEnvContext',
     'spaceData',
     '$state',
-    (_, spaceData, $state) => {
+    '$stateParams',
+    (_, spaceData, $state, $stateParams) => {
       if (!accessChecker.can('manage', 'Environments')) {
-        $state.go('spaces.detail', null, { reload: true });
+        $state.go('spaces.detail', $stateParams, { reload: true });
       } else if (isHibernated(spaceData)) {
-        $state.go('spaces.detail.hibernation', null, { reload: true });
+        $state.go('spaces.detail.hibernation', $stateParams, { reload: true });
       } else {
-        storeCurrentIds(spaceData);
         $state.go('.entries.list');
       }
     },
@@ -114,6 +120,7 @@ const spaceDetail = {
     (spaceData) => {
       const organizationData = spaceData.organization;
       Analytics.trackContextChange(spaceData, organizationData);
+      storeCurrentIds(spaceData);
     },
   ],
   template: '<react-component component="component" props="props"></react-component>',
@@ -130,7 +137,6 @@ const spaceDetail = {
       if (isHibernated(spaceData)) {
         $state.go('.hibernation');
       } else if (accessibleSref) {
-        storeCurrentIds(spaceData);
         $state.go(accessibleSref.path, accessibleSref.params || null, { location: 'replace' });
       } else {
         $scope.component = AccessForbidden;
@@ -166,9 +172,8 @@ const spacesState = {
   name: 'spaces',
   url: '/spaces',
   abstract: true,
-  onExit: cleanupSpaceContext,
   navComponent: SpaceNavigationBar,
-  children: [spaceDetail, spaceEnvironment],
+  children: [spaceEnvironment, spaceDetail],
 };
 
 export default spacesState;

@@ -70,6 +70,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
       }),
       getOrgFeature(organizationId, OrganizationFeatures.TEAMS, false),
       getSpaceFeature(currentSpaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
+      accessChecker.waitToBeInitialized(),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
