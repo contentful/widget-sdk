@@ -243,11 +243,11 @@ class RoleEditorWithNavigator extends React.Component {
 
   delete = () => {
     const { role } = this.props;
-    const { currentSpace, currentSpaceId, currentEnvironmentId } = this.context;
+    const { currentSpaceId, currentEnvironmentId } = this.context;
 
     const listHandler = RoleListHandler.create(currentSpaceId, currentEnvironmentId);
     listHandler.reset().then(() => {
-      createRoleRemover(listHandler, role, currentSpace).then((removed) => {
+      createRoleRemover(listHandler, role).then((removed) => {
         if (removed) {
           this.setDirty(false);
           this.props.navigate({ path: 'roles.list' });

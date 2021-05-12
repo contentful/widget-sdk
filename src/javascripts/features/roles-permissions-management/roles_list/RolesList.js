@@ -19,7 +19,6 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
 import { CustomRolesPlanNote } from './CustomRolesPlanNote';
 import { createRoleRemover } from '../components/RoleRemover';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import {
   CUSTOM_ROLES_CONTENT_ENTRY_ID,
   FeatureModal,
@@ -148,10 +147,9 @@ RoleListActions.propTypes = {
 export function RolesList(props) {
   const hasReachedLimit = !ResourceUtils.canCreate(props.rolesResource);
   const limit = ResourceUtils.getResourceLimits(props.rolesResource).maximum;
-  const { currentSpace } = useSpaceEnvContext();
 
   const removeRole = (role) =>
-    createRoleRemover(props.listHandler, role, currentSpace).then((removed) => {
+    createRoleRemover(props.listHandler, role).then((removed) => {
       if (removed) {
         props.refetch();
       }

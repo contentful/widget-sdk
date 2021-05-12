@@ -24,12 +24,13 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { useNavigationState } from 'core/react-routing';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
-const fetch = (orgId, endpoint, space, setData) => async () => {
+const fetch = (orgId, endpoint, setData, cmaClient) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
     createSpaceMembersRepo(endpoint).getAll(),
     createMembershipRepo(endpoint).getAll(),
-    RoleRepository.getInstance(space).getAll(),
+    RoleRepository.getInstance(cmaClient).getAll(),
     getAllUsers(endpoint),
     getOrgFeature(orgId, 'teams', false),
   ]);
@@ -51,9 +52,10 @@ export function UserListRoute() {
   const organizationId = getOrganizationId(currentSpace);
   const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
   const memberships = createMembershipRepo(endpoint);
+  const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
   const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const [data, setData] = useState(null);
-  const boundFetch = fetch(organizationId, endpoint, currentSpace, setData);
+  const boundFetch = fetch(organizationId, endpoint, setData, cmaClient);
   const { isLoading, error } = useAsync(useCallback(boundFetch, []));
   const resolvedMembers = get(data, 'resolvedMembers', []);
   const roles = get(data, 'roles', []);

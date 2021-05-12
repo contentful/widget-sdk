@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { useReducer, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
@@ -16,6 +16,7 @@ import { AddUsersError } from './AddUsersError';
 import { isTaken } from 'utils/ServerErrorUtils';
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { getSpaceId, getEnvironmentId } from 'core/services/SpaceEnvContext/utils';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 const steps = {
   USERS: 1,
@@ -63,7 +64,7 @@ export function AddUsers({ unavailableUserIds, orgId, isShown, onClose, space })
     initialState
   );
   const { data: availableUsers } = useFetchAvailableOrgMemberships(orgId, unavailableUserIds);
-  const { data: spaceRoles } = useFetchSpaceRoles(space);
+  const { data: spaceRoles } = useFetchSpaceRoles();
   const spaceId = getSpaceId(space);
   const environmentId = getEnvironmentId(space);
 
@@ -154,10 +155,11 @@ function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
   return useAsync(fetchAvailableOrgMemberships);
 }
 
-function useFetchSpaceRoles(space) {
+function useFetchSpaceRoles() {
+  const spaceEnvCMAClient = useMemo(() => getSpaceEnvCMAClient(), []);
   const fetchSpaceRoles = useCallback(async () => {
-    return RoleRepository.getInstance(space).getAll();
-  }, [space]);
+    return RoleRepository.getInstance(spaceEnvCMAClient).getAll();
+  }, [spaceEnvCMAClient]);
 
   return useAsync(fetchSpaceRoles);
 }

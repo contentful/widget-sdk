@@ -18,7 +18,7 @@ const PERMISSION_GROUP_NAME_MAP = {
   Tags: 'tags',
 };
 
-export function getInstance(space) {
+export function getInstance(cmaClient) {
   return {
     getAll,
     get,
@@ -28,46 +28,31 @@ export function getInstance(space) {
   };
 
   function getAll() {
-    return getBaseCall()
-      .payload({ limit: 100 })
-      .get()
-      .then((res) => res.items);
+    return cmaClient.role
+      .getMany({
+        query: {
+          limit: 100,
+        },
+      })
+      .then((res) => {
+        return res.items;
+      });
   }
 
   function get(id) {
-    return getBaseCall({ id }).get().then(handleRole);
+    return cmaClient.role.get({ roleId: id }).then(handleRole);
   }
 
   function create(role) {
-    return getBaseCall().payload(map(role)).post().then(handleRole);
+    return cmaClient.role.create({}, map(role)).then(handleRole);
   }
 
   function save(role) {
-    return getBaseCall({
-      id: role.sys.id,
-      version: role.sys.version,
-    })
-      .payload(map(role))
-      .put()
-      .then(handleRole);
+    return cmaClient.role.update({ roleId: role.sys.id }, map(role), {}).then(handleRole);
   }
 
   function remove(role) {
-    return getBaseCall({
-      id: role.sys.id,
-      rejectEmpty: false,
-    }).delete();
-  }
-
-  function getBaseCall(config) {
-    const headers = {};
-    config = config || {};
-    if (config.version) {
-      headers['X-Contentful-Version'] = config.version;
-    }
-
-    const call = space.endpoint('roles', config.id).headers(headers);
-    return config.rejectEmpty ? call.rejectEmpty() : call;
+    return cmaClient.role.delete({ roleId: role.sys.id });
   }
 }
 
@@ -90,7 +75,6 @@ function handleRole(role) {
 }
 
 function map(role) {
-  role = _.omit(role, ['sys']);
   role.permissions = flattenPermissions(role.permissions);
   return role;
 }

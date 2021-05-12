@@ -10,9 +10,11 @@ import {
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
 import { router } from 'core/react-routing';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
-export function createRoleRemover(listHandler, role, space) {
-  const roleRepo = getInstance(space);
+export function createRoleRemover(listHandler, role) {
+  const cmaClient = getSpaceEnvCMAClient();
+  const roleRepo = getInstance(cmaClient);
 
   const uniqueModalKey = 'remove-role-' + Date.now();
   return ModalLauncher.open(({ isShown, onClose }) => {

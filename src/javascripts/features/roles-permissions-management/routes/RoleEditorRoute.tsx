@@ -22,6 +22,7 @@ import { createAPIClient } from 'core/services/APIClient/utils';
 import type { Role } from 'core/services/SpaceEnvContext/types';
 import { useNavigationState, useParams } from 'core/react-routing';
 import { useUnsavedChangesModal } from 'core/hooks';
+import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
 export const RoleEditRoutes = {
   Details: {
@@ -103,13 +104,13 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
 
   const entitySelectorSdk = useEntitySelectorSdk();
   const {
-    currentSpace,
     currentSpaceContentTypes,
     currentOrganization,
     currentEnvironmentId,
     currentSpaceId,
   } = useSpaceEnvContext();
-  const roleRepo = React.useMemo(() => RoleRepository.getInstance(currentSpace), [currentSpace]);
+  const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
+  const roleRepo = React.useMemo(() => RoleRepository.getInstance(cmaClient), [cmaClient]);
   const [role, setRole] = React.useState<Role | null>(null);
   const [baseRole, setBaseRole] = React.useState(null);
   const isLegacyOrganization = ResourceUtils.isLegacyOrganization(currentOrganization);
