@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { isEqual, uniqWith } from 'lodash';
+import { isEqual, uniqWith, get as getAtPath } from 'lodash';
 import pluralize from 'pluralize';
 import {
   Notification,
@@ -45,6 +45,7 @@ const TrackingEvents = {
   ENTITY_ADDED: 'release:entity_added',
 };
 
+const RELEASE_ENTITIES_LIMIT = 200;
 export default class ReleasesWidgetDialog extends Component {
   constructor(props) {
     super(props);
@@ -187,7 +188,25 @@ export default class ReleasesWidgetDialog extends Component {
 
       this.handleSuccess(release);
     } catch (error) {
-      Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+      const errorId = getAtPath(error, 'data.sys.id');
+      if (errorId === 'ValidationFailed') {
+        const validationErrors = getAtPath(error, 'data.details.errors');
+        if (validationErrors.length && validationErrors[0].name === 'size') {
+          Notification.error(
+            `Sorry, we couldn’t add any more entities to this release as it exceeds the limit of
+            ${RELEASE_ENTITIES_LIMIT}. You might consider creating a new release to accommodate the additional entities.`,
+            {
+              title: 'Entity limit reached',
+            }
+          );
+        } else {
+          Notification.error(
+            `Failed adding ${releaseContentTitle} to ${release.title}: Some content did not pass validation`
+          );
+        }
+      } else {
+        Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+      }
     }
 
     this.onClose(true);
