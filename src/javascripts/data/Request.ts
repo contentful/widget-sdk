@@ -29,23 +29,24 @@ type MakeRequestConfig = {
 };
 
 export type RequestConfig = {
-  headers?: Record<string, string>;
+  headers?: Record<string, string | number | boolean>;
   method: string;
   body?: unknown;
   url: string;
   query?: Record<string, any>;
 };
 
-export type RequestFunc = (...args: any[]) => Promise<any>;
-export type RetryFunc = (
-  requestFunc: Function,
-  version?: number,
+type InternalRequestFunc = (
+  config: RequestConfig,
+  requestFunc: RequestFunc,
   clientName?: ClientName
-) => RequestFunc;
+) => Promise<any>;
 
-let withRetry: RequestFunc;
+export type RequestFunc = (config: RequestConfig) => Promise<any>;
+export type RetryFunc = (version?: number) => InternalRequestFunc;
+
+let withRetry: InternalRequestFunc;
 let withRetryVersion = 1;
-let currentSource;
 
 const RETRY_VERSION: Record<number, RetryFunc> = {
   0: wrapWithRetry,
@@ -82,16 +83,15 @@ export function makeRequest({
 }: MakeRequestConfig): RequestFunc {
   const version = getRetryVersion();
 
-  if (version !== withRetryVersion || currentSource !== source || !withRetry) {
-    withRetry = RETRY_VERSION[version]((config) => fetchFn(config, source), version, clientName);
+  if (version !== withRetryVersion || !withRetry) {
+    withRetry = RETRY_VERSION[version](version);
     withRetryVersion = version;
-    currentSource = source;
   }
 
   const transformFunc = overrideDefaultResponseTransform || defaultTransformResponse;
 
   const retryFunc = async (config: RequestConfig) => {
-    const response = await withRetry(config);
+    const response = await withRetry(config, (c) => fetchFn(c, source), clientName);
     if (transformFunc) {
       return transformFunc(config, response);
     } else {

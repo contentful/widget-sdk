@@ -16,19 +16,20 @@ import { delay } from './Utils';
 const PERIOD = 1000;
 const CLIENT_VERSION = 1;
 
-export default function withRetry(requestFn, version = CLIENT_VERSION, clientName) {
+export default function withRetry(version = CLIENT_VERSION) {
   const queue = [];
   let inFlight = 0;
 
   setInterval(consumeQueue, PERIOD);
 
-  return function addToQueue(...args) {
+  return function addToQueue(config, requestFn, clientName) {
     return new Promise((resolve, reject) => {
       queue.push({
+        requestFn,
         resolve,
         reject,
         // original request arguments
-        args,
+        config,
         // time to live
         // how many times we retry before giving up
         ttl: DEFAULT_TTL,
@@ -36,6 +37,7 @@ export default function withRetry(requestFn, version = CLIENT_VERSION, clientNam
         // some errors cause longer waits before retries
         wait: 0,
         queuedAt: Date.now(),
+        clientName,
       });
       attemptImmediate();
     });
@@ -58,13 +60,26 @@ export default function withRetry(requestFn, version = CLIENT_VERSION, clientNam
     await delay(call.wait);
 
     try {
-      const response = await requestFn(...call.args);
-      recordResponseTime({ status: 200 }, startTime + call.wait, version, clientName, call.args[0]);
-      recordQueueTime({ status: 200 }, call.queuedAt, version, call.ttl, clientName, call.args[0]);
+      const response = await call.requestFn(call.config);
+      recordResponseTime(
+        { status: 200 },
+        startTime + call.wait,
+        version,
+        call.clientName,
+        call.config
+      );
+      recordQueueTime(
+        { status: 200 },
+        call.queuedAt,
+        version,
+        call.ttl,
+        call.clientName,
+        call.config
+      );
       call.resolve(response);
     } catch (e) {
       handleError(call, e);
-      recordResponseTime(e, startTime + call.wait, version, clientName, call.args[0]);
+      recordResponseTime(e, startTime + call.wait, version, call.clientName, call.config);
     } finally {
       inFlight--;
     }
@@ -79,7 +94,7 @@ export default function withRetry(requestFn, version = CLIENT_VERSION, clientNam
 
   function handleError(call, err) {
     if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
-      recordRateLimitExceeded(version, call.args[0]?.url, call.ttl, clientName);
+      recordRateLimitExceeded(version, call.config?.url, call.ttl, call.clientName);
       queue.unshift(backOff(call));
       attemptImmediate();
     } else if (
@@ -95,8 +110,8 @@ export default function withRetry(requestFn, version = CLIENT_VERSION, clientNam
         call.queuedAt,
         version,
         call.ttl,
-        clientName,
-        ...call.args
+        call.clientName,
+        call.config
       );
       call.reject(err);
     }

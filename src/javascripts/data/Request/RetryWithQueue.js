@@ -14,29 +14,29 @@ import PQueue from 'p-queue';
 const PERIOD = 1010;
 const CLIENT_VERSION = 2;
 
-export default function withRetry(requestFn, _, clientName) {
+export default function withRetry() {
   const queue = new PQueue({ intervalCap: CALLS_IN_PERIOD, interval: PERIOD });
 
-  return async function addToQueue(...args) {
-    return doRequest({ args, ttl: DEFAULT_TTL, queuedAt: Date.now() });
+  return async function addToQueue(config, requestFn, clientName) {
+    return doRequest({ requestFn, config, ttl: DEFAULT_TTL, queuedAt: Date.now(), clientName });
   };
 
   async function doRequest(call, priority = 0) {
     const startTime = Date.now();
     try {
-      const response = await queue.add(() => requestFn(...call.args), { priority });
-      recordResponseTime({ status: 200 }, startTime, CLIENT_VERSION, clientName, ...call.args);
+      const response = await queue.add(() => call.requestFn(call.config), { priority });
+      recordResponseTime({ status: 200 }, startTime, CLIENT_VERSION, call.clientName, call.config);
       recordQueueTime(
         { status: 200 },
         call.queuedAt,
         CLIENT_VERSION,
         call.ttl,
-        clientName,
-        ...call.args
+        call.clientName,
+        call.config
       );
       return response;
     } catch (e) {
-      recordResponseTime(e, startTime, CLIENT_VERSION, clientName, ...call.args);
+      recordResponseTime(e, startTime, CLIENT_VERSION, call.clientName, call.config);
       return handleError(call, e);
     }
   }
@@ -47,7 +47,7 @@ export default function withRetry(requestFn, _, clientName) {
 
   async function handleError(call, error) {
     if (call.ttl > 0 && error.status === RATE_LIMIT_EXCEEDED) {
-      recordRateLimitExceeded(CLIENT_VERSION, call.args[0]?.url, call.ttl, clientName);
+      recordRateLimitExceeded(CLIENT_VERSION, call.config?.url, call.ttl, call.clientName);
     }
     if (call.ttl > 0 && ACCEPTED_STATUS.includes(error.status)) {
       return reQueue(call);
@@ -57,8 +57,8 @@ export default function withRetry(requestFn, _, clientName) {
         call.queuedAt,
         CLIENT_VERSION,
         call.ttl,
-        clientName,
-        ...call.args
+        call.clientName,
+        call.config
       );
       throw error;
     }

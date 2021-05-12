@@ -22,9 +22,9 @@ export function createAdapter(requestFunc: RequestFunc) {
 
     return requestFunc({
       headers: config.headers,
-      method: config.method?.toUpperCase(),
+      method: config.method!.toUpperCase(),
       body: body,
-      url: absoluteUrl,
+      url: absoluteUrl!,
       query: config.params,
     });
   };

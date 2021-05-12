@@ -28,7 +28,7 @@ describe.each([
   beforeEach(() => {
     requestFn.mockReset();
     jest.useFakeTimers();
-    wrappedFn = retryFn(requestFn);
+    wrappedFn = retryFn(version);
   });
 
   afterEach(() => {
@@ -37,7 +37,7 @@ describe.each([
 
   it('executes a request', async () => {
     requestFn.mockResolvedValueOnce('bar');
-    const response = await wrappedFn('foo');
+    const response = await wrappedFn('foo', requestFn);
 
     expect(requestFn).toHaveBeenCalledWith('foo');
     expect(response).toBe('bar');
@@ -46,7 +46,7 @@ describe.each([
   it('consumes requests in a specific rate (7 per second)', async () => {
     Array(15)
       .fill()
-      .forEach(() => wrappedFn());
+      .forEach(() => wrappedFn(null, requestFn));
 
     // immediately calls 7
     await Promise.resolve();
@@ -68,7 +68,7 @@ describe.each([
     let err;
 
     try {
-      await wrappedFn('foo');
+      await wrappedFn('foo', requestFn);
     } catch (e) {
       err = e;
     }
@@ -84,7 +84,7 @@ describe.each([
     let err;
 
     try {
-      await wrappedFn('foo');
+      await wrappedFn('foo', requestFn);
     } catch (e) {
       err = e;
     }
@@ -97,7 +97,7 @@ describe.each([
     const error = { status: 502 };
     requestFn.mockRejectedValueOnce(error).mockResolvedValueOnce('success');
 
-    const result = await wrappedFn();
+    const result = await wrappedFn(null, requestFn);
 
     expect(requestFn).toHaveBeenCalledTimes(2);
     expect(result).toEqual('success');
@@ -107,7 +107,7 @@ describe.each([
     it('tracks 429s', async () => {
       requestFn.mockRejectedValue({ status: 429 });
 
-      await wrappedFn({ url: 'foo/bar' }).catch(() => {});
+      await wrappedFn({ url: 'foo/bar' }, requestFn).catch(() => {});
 
       expect(Telemetry.count).toHaveBeenCalledTimes(5);
       expect(Telemetry.count).toHaveBeenLastCalledWith('cma-rate-limit-exceeded', {
@@ -120,7 +120,7 @@ describe.each([
     });
 
     it('tracks response time os successful calls', async () => {
-      await wrappedFn({ url: 'bar/foo', method: 'POST' });
+      await wrappedFn({ url: 'bar/foo', method: 'POST' }, requestFn);
 
       expect(Telemetry.record).toHaveBeenCalledTimes(2);
       expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
@@ -135,7 +135,7 @@ describe.each([
     it('tracks response time of rejected calls', async () => {
       requestFn.mockRejectedValue({ status: 404 });
 
-      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
+      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }, requestFn).catch(() => {});
 
       expect(Telemetry.record).toHaveBeenCalledTimes(2);
       expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
@@ -148,7 +148,7 @@ describe.each([
     });
 
     it('tracks queue time of successful calls', async () => {
-      await wrappedFn({ url: 'bar/foo', method: 'POST' });
+      await wrappedFn({ url: 'bar/foo', method: 'POST' }, requestFn);
 
       expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
         endpoint: 'bar/foo',
@@ -163,7 +163,7 @@ describe.each([
     it('tracks queue time of rejected calls', async () => {
       requestFn.mockRejectedValue({ status: 404 });
 
-      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
+      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }, requestFn).catch(() => {});
 
       expect(Telemetry.record).toHaveBeenCalledTimes(2);
       expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
@@ -182,7 +182,7 @@ describe('Retry', () => {
   beforeEach(() => {
     requestFn.mockReset();
     jest.useFakeTimers();
-    wrappedFn = withRetry(requestFn);
+    wrappedFn = withRetry();
   });
 
   afterEach(() => {
@@ -193,7 +193,7 @@ describe('Retry', () => {
     const error = { status: 429 };
     requestFn.mockRejectedValue(error);
 
-    wrappedFn('foo').catch(() => {});
+    wrappedFn('foo', requestFn).catch(() => {});
     expect(requestFn).not.toHaveBeenCalled();
     expect(delay).toHaveBeenCalledTimes(1);
     await flush();
@@ -214,7 +214,7 @@ describe('Retry', () => {
     let err;
 
     try {
-      await wrappedFn('foo');
+      await wrappedFn('foo', requestFn);
     } catch (e) {
       err = e;
     }

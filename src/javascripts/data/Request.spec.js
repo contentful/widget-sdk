@@ -9,7 +9,7 @@ import { tracingHeaders } from 'i13n/BackendTracing';
 const mockAuth = {};
 const mockWithAuth = (_, fn) => (...args) => fn(...args);
 
-jest.mock('data/Request/Retry', () => jest.fn((fn) => (...args) => fn(...args)));
+jest.mock('data/Request/Retry', () => jest.fn(() => (config, fn) => fn(config)));
 jest.mock('data/Request/Auth', () => jest.fn());
 jest.mock('data/Request/Utils', () => ({
   getEndpoint: jest.fn(),
