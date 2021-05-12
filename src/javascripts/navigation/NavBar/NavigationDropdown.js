@@ -47,8 +47,7 @@ const styles = {
     display: 'flex',
   }),
   separator: css({
-    marginTop: tokens.spacingXs,
-    display: 'flex',
+    margin: `${tokens.spacingXs} ${tokens.spacing2Xs} 0`,
   }),
   appTopBarAction: css({
     display: 'flex',
