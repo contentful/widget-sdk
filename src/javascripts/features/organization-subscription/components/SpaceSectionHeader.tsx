@@ -11,11 +11,10 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { RouteLink } from 'core/react-routing';
 
-import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
 import { Pluralized, Price } from 'core/components/formatting';
-import { go } from 'states/Navigator';
 
 import { createSpace } from '../utils/spaceUtils';
 import { downloadSpacesUsage } from '../services/SpacesUsageService';
@@ -110,15 +109,19 @@ export function SpaceSectionHeader({
               </span>
             )}
             {enterprisePlan && isCreateSpaceForSpacePlanEnabled ? (
-              <StateLink
-                component={TextLink}
-                path=".space_create"
-                trackingEvent={'space_creation:begin'}
-                trackParams={{
-                  flow: 'space_creation',
+              <RouteLink
+                as={TextLink}
+                route={{
+                  path: 'organizations.subscription.overview.create-space',
+                  orgId: organizationId,
+                }}
+                onClick={() => {
+                  track('space_creation:begin', {
+                    flow: 'space_creation',
+                  });
                 }}>
                 Create Space
-              </StateLink>
+              </RouteLink>
             ) : (
               <TextLink testId="subscription-page.create-space" onClick={onCreateSpace}>
                 Create Space
@@ -161,21 +164,30 @@ export function SpaceSectionHeader({
             Export
           </Button>
         )}
-        <Button
-          testId="subscription-page.create-space"
-          className={styles.marginLeftXs}
-          onClick={
-            enterprisePlan && isCreateSpaceForSpacePlanEnabled
-              ? () => {
-                  track('space_creation:begin', {
-                    flow: 'space_creation',
-                  });
-                  go({ path: '^.space_create' });
-                }
-              : onCreateSpace
-          }>
-          Add space
-        </Button>
+        {enterprisePlan && isCreateSpaceForSpacePlanEnabled ? (
+          <RouteLink
+            as={Button}
+            testId="subscription-page.create-space"
+            className={styles.marginLeftXs}
+            route={{
+              path: 'organizations.subscription.overview.create-space',
+              orgId: organizationId,
+            }}
+            onClick={() => {
+              track('space_creation:begin', {
+                flow: 'space_creation',
+              });
+            }}>
+            Add space
+          </RouteLink>
+        ) : (
+          <Button
+            testId="subscription-page.create-space"
+            className={styles.marginLeftXs}
+            onClick={onCreateSpace}>
+            Add space
+          </Button>
+        )}
       </span>
     </Flex>
   );

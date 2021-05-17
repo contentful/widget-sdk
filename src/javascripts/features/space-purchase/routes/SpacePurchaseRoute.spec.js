@@ -1,16 +1,15 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { SpacePurchaseRoute, PRESELECT_VALUES } from './SpacePurchaseRoute';
+import { PRESELECT_VALUES, SpacePurchaseRoute } from './SpacePurchaseRoute';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import createResourceService from 'services/ResourceService';
 import {
-  fetchSpacePurchaseContent,
   fetchPlatformPurchaseContent,
+  fetchSpacePurchaseContent,
 } from '../services/fetchSpacePurchaseContent';
-import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { getOrganizationMembership, isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
+import { EVENTS, trackEvent } from '../utils/analyticsTracking';
+import { getOrganizationMembership, isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { transformSpaceRatePlans } from '../utils/transformSpaceRatePlans';
-import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
@@ -19,14 +18,16 @@ import { getVariation } from 'LaunchDarkly';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 import {
   getAddOnProductRatePlans,
-  getSpaceProductRatePlans,
-  getSpacePlans,
-  getSpacePlanForSpace,
-  getBasePlan,
   getAllProductRatePlans,
+  getBasePlan,
+  getSpacePlanForSpace,
+  getSpacePlans,
+  getSpaceProductRatePlans,
 } from 'features/pricing-entities';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
-import { setQueryParameters } from 'test/helpers/setQueryParameters';
+// eslint-disable-next-line no-restricted-imports
+import { MemoryRouter } from 'react-router-dom';
+import { router } from 'core/react-routing';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();
@@ -45,6 +46,13 @@ const mockComposeAndLaunchPlan = {
   ...mockComposeAndLaunchProductRatePlan,
   productRatePlanId: mockComposeAndLaunchProductRatePlan.sys.id,
 };
+
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn(),
@@ -101,10 +109,6 @@ jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
 }));
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
-}));
-
 // Mock SpacePurchaseContainer in order to not have to mock the imports/on render effects it has
 jest.mock('../components/SpacePurchaseContainer', () => ({
   SpacePurchaseContainer: jest
@@ -131,12 +135,8 @@ describe('SpacePurchaseRoute', () => {
     getSpace.mockResolvedValue({ name: 'Space' });
   });
 
-  afterEach(() => {
-    setQueryParameters({});
-  });
-
   it('should render the generic loading component until the apps purchase state is loaded', async () => {
-    build(null, false);
+    build({ navigationState: null }, false);
 
     expect(screen.getByTestId('cf-ui-empty-state')).toBeVisible();
 
@@ -157,9 +157,9 @@ describe('SpacePurchaseRoute', () => {
     await build();
 
     await waitFor(() => {
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: mockOrganization.sys.id },
+      expect(router.navigate).toBeCalledWith({
+        orgId: 'Organization2',
+        path: 'organizations.subscription.overview',
       });
     });
   });
@@ -170,9 +170,9 @@ describe('SpacePurchaseRoute', () => {
     await build();
 
     await waitFor(() => {
-      expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: mockOrganization.sys.id },
+      expect(router.navigate).toBeCalledWith({
+        orgId: mockOrganization.sys.id,
+        path: 'organizations.subscription.overview',
       });
     });
   });
@@ -203,8 +203,7 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should track if the user got to the flow through a CTA', async () => {
-    setQueryParameters({ from: 'other_place' });
-    await build();
+    await build({ search: '?from=other_place' });
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -229,9 +228,10 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should preferentially use from if provided via UI router', async () => {
-    setQueryParameters({ from: 'a_query_param_place' });
-
-    await build({ from: 'a_ui_router_place' });
+    await build({
+      navigationState: { from: 'a_ui_router_place' },
+      search: '?from=a_query_param_place',
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -256,9 +256,7 @@ describe('SpacePurchaseRoute', () => {
   });
 
   it('should track if the performance package is pre-selected using "preselect" param and the origin of the purchase by using "from" param', async () => {
-    setQueryParameters({ from: 'marketing_cta', preselect: PRESELECT_VALUES.APPS });
-
-    await build();
+    await build({ search: `?from=marketing_cta&preselect=${PRESELECT_VALUES.APPS}` });
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -457,7 +455,7 @@ describe('SpacePurchaseRoute', () => {
     getSpacePlanForSpace.mockResolvedValue(mockSpaceRatePlan);
     transformSpaceRatePlans.mockReturnValue(mockUpgradeSpaceRatePlans);
 
-    await build({ spaceId: mockSpace.sys.id });
+    await build({ componentProps: { spaceId: mockSpace.sys.id } });
 
     await waitFor(() => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
@@ -493,13 +491,20 @@ describe('SpacePurchaseRoute', () => {
   });
 });
 
-async function build(customProps, shouldWait = true) {
+async function build({ componentProps, navigationState, search } = {}, shouldWait = true) {
   const props = {
     orgId: mockOrganization.sys.id,
-    ...customProps,
   };
 
-  renderWithProvider(SpacePurchaseRoute, { sessionId: 'random_id' }, props);
+  renderWithProvider(
+    () => (
+      <MemoryRouter initialEntries={[{ state: navigationState || {}, search: search || '' }]}>
+        <SpacePurchaseRoute orgId={mockOrganization.sys.id} {...(componentProps || {})} />
+      </MemoryRouter>
+    ),
+    { sessionId: 'random_id' },
+    props
+  );
 
   if (shouldWait) {
     await waitFor(() => expect(screen.queryByTestId('cf-ui-empty-state')).toBeNull());

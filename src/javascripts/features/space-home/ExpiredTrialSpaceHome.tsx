@@ -15,9 +15,9 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
-import { go } from 'states/Navigator';
 import { getAddOnProductRatePlans } from 'features/pricing-entities';
 import { SpaceData } from 'core/services/SpaceEnvContext/types';
+import { router } from 'core/react-routing';
 
 const styles = {
   buyButton: css({
@@ -80,11 +80,13 @@ export const ExpiredTrialSpaceHome = () => {
       space: currentSpaceData as SpaceData,
       plan: undefined,
       onSuccess: () => {
-        go({
-          path: ['account', 'organizations', 'subscription_new'],
-          params: { orgId: currentOrganizationId },
-          options: { reload: true },
-        });
+        router.navigate(
+          {
+            path: 'organizations.subscription.overview',
+            orgId: currentOrganizationId as string,
+          },
+          { reload: true }
+        );
       },
     });
   };

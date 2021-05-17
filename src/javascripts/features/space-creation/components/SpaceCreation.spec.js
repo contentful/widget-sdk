@@ -7,6 +7,7 @@ import createResourceService from 'services/ResourceService';
 import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { Notification } from '@contentful/forma-36-react-components';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockCreateSpace = jest.fn();
 
@@ -146,9 +147,11 @@ const initialState = {
 describe('SpaceCreation', () => {
   const build = (state = initialState, props) => {
     render(
-      <SpaceCreationState.Provider value={{ state, dispatch: () => {} }}>
-        <SpaceCreation orgId={mockOrg.sys.id} {...props} />
-      </SpaceCreationState.Provider>
+      <MemoryRouter>
+        <SpaceCreationState.Provider value={{ state, dispatch: () => {} }}>
+          <SpaceCreation orgId={mockOrg.sys.id} {...props} />
+        </SpaceCreationState.Provider>
+      </MemoryRouter>
     );
     return waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));
   };

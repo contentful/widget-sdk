@@ -15,6 +15,7 @@ import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialErro
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { track } from 'analytics/Analytics';
 import { getQueryString } from 'utils/location';
+import { router } from 'core/react-routing';
 
 const mockedOrg = fake.Organization();
 const mockedTrialSpace = fake.Space();
@@ -37,6 +38,14 @@ jest.mock('components/shared/auto_create_new_space/getSpaceAutoCreatedKey', () =
 }));
 
 const mockedStorageSet = jest.fn();
+
+jest.mock('core/react-routing', () => ({
+  // @ts-expect-error mute in tests
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
 
 jest.mock('core/services/BrowserStorage', () => ({
   getBrowserStorage: jest.fn().mockImplementation(() => ({
@@ -146,13 +155,14 @@ describe('StartAppTrial', () => {
       build();
 
       await waitFor(() => expect(startAppTrial).toHaveBeenCalledTimes(1));
-      expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organizations', 'subscription_new'],
-        params: {
+
+      expect(router.navigate).toHaveBeenCalledWith(
+        {
           orgId: mockedOrg.sys.id,
+          path: 'organizations.subscription.overview',
         },
-        options: { location: 'replace' },
-      });
+        { location: 'replace' }
+      );
     });
 
     it('should show an error notification on 5XX errors', async () => {

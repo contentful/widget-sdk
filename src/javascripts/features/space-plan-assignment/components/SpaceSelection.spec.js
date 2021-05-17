@@ -65,7 +65,8 @@ describe('SpaceSelection', () => {
         spaceResourcesBySpace={mockSpaceResources}
         selectedSpace={mockSpace1}
         onSpaceSelected={mockOnSpaceSelected}
-        handleNavigationNext={mockHandleNavigationNext}
+        onNext={mockHandleNavigationNext}
+        onBack={() => {}}
         {...props}
       />
     );

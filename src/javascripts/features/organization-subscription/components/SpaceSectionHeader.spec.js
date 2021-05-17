@@ -5,7 +5,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { track } from 'analytics/Analytics';
-import { go } from 'states/Navigator';
+import { MemoryRouter } from 'core/react-routing';
 
 import { SpaceSectionHeader } from './SpaceSectionHeader';
 
@@ -24,10 +24,6 @@ jest.mock('analytics/trackCTA', () => ({
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
-}));
-
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
 }));
 
 describe('SpaceSectionHeader', () => {
@@ -156,9 +152,6 @@ describe('SpaceSectionHeader', () => {
 
       expect(addSpaceButton).toBeVisible();
       fireEvent.click(addSpaceButton);
-      expect(go).toHaveBeenCalledWith({
-        path: '^.space_create',
-      });
       expect(track).toHaveBeenCalledWith('space_creation:begin', { flow: 'space_creation' });
     });
   });
@@ -177,5 +170,9 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<SpaceSectionHeader {...props} />);
+  render(
+    <MemoryRouter>
+      <SpaceSectionHeader {...props} />
+    </MemoryRouter>
+  );
 }

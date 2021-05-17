@@ -35,7 +35,6 @@ export const LocalesListPricingTwo = ({
   localeResource,
   allowedToEnforceLimits,
   isOrgOwnerOrAdmin,
-  subscriptionState,
   upgradeSpace,
   hasNextSpacePlan,
   newApiLocalesLimit,
@@ -55,7 +54,6 @@ export const LocalesListPricingTwo = ({
           localeResource={localeResource}
           allowedToEnforceLimits={allowedToEnforceLimits}
           isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
-          subscriptionState={subscriptionState}
           upgradeSpace={upgradeSpace}
           hasNextSpacePlan={hasNextSpacePlan}
           newApiLocalesLimit={newApiLocalesLimit}
@@ -71,7 +69,6 @@ LocalesListPricingTwo.propTypes = {
   localeResource: PropTypes.object,
   allowedToEnforceLimits: PropTypes.bool,
   isOrgOwnerOrAdmin: PropTypes.bool,
-  subscriptionState: PropTypes.object,
   upgradeSpace: PropTypes.func.isRequired,
   hasNextSpacePlan: PropTypes.bool,
   newApiLocalesLimit: PropTypes.number,

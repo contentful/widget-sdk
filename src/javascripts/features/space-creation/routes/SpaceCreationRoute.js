@@ -6,7 +6,7 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { useAsync } from 'core/hooks';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Spinner } from '@contentful/forma-36-react-components';
-import StateRedirect from 'app/common/StateRedirect';
+import { RouteNavigate } from 'core/react-routing';
 import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { actions, SpaceCreationState } from '../context';
@@ -68,12 +68,10 @@ export const SpaceCreationRoute = ({ orgId }) => {
 
   // redirect when data, but flag is disabled
   if (data && !data.canCreateSpaceWithPlan) {
-    return <StateRedirect path="^" />;
+    return <RouteNavigate route={{ path: 'organizations.subscription.overview', orgId }} replace />;
   }
 
-  if (!isLoading) {
-    return <SpaceCreation orgId={orgId} />;
-  }
+  return <SpaceCreation orgId={orgId} />;
 };
 
 SpaceCreationRoute.propTypes = {

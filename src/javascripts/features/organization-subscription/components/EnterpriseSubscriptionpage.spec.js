@@ -9,6 +9,7 @@ import { mockWebappContent } from './__mocks__/webappContent';
 import { BasePlanContentEntryIds } from '../types';
 import { OrgSubscriptionContextProvider } from '../context/OrgSubscriptionContext';
 import { EnterpriseSubscriptionPage } from './EnterpriseSubscriptionPage';
+import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('core/services/ContentfulCDA/fetchWebappContentByEntryID', () => ({
   fetchWebappContentByEntryID: jest.fn((_entryId, _query) => Promise.resolve({})),
@@ -119,9 +120,11 @@ async function build(customProps) {
   };
 
   render(
-    <OrgSubscriptionContextProvider initialState={state}>
-      <EnterpriseSubscriptionPage {...props} />
-    </OrgSubscriptionContextProvider>
+    <MemoryRouter>
+      <OrgSubscriptionContextProvider initialState={state}>
+        <EnterpriseSubscriptionPage {...props} />
+      </OrgSubscriptionContextProvider>
+    </MemoryRouter>
   );
 
   await waitFor(() => {

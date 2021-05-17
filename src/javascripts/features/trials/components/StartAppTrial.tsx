@@ -25,6 +25,7 @@ import {
 import { capitalizeFirst } from 'utils/StringUtils';
 import { useQueryParams } from 'core/hooks/useQueryParams';
 import { getSpaceContext } from 'classes/spaceContext';
+import { router } from 'core/react-routing';
 
 const styles = {
   emptyContainer: css({
@@ -71,14 +72,9 @@ const goToSpaceHome = (spaceId: string) =>
     options: { location: 'replace' },
   });
 
-const goToSubscriptionPage = (orgId: string) =>
-  go({
-    path: ['account', 'organizations', 'subscription_new'],
-    params: {
-      orgId,
-    },
-    options: { location: 'replace' },
-  });
+const goToSubscriptionPage = (orgId: string) => {
+  router.navigate({ path: 'organizations.subscription.overview', orgId }, { location: 'replace' });
+};
 
 const installApps = async (
   apps: string[] = [],

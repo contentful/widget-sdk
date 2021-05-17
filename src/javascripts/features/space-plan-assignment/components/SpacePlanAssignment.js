@@ -10,7 +10,6 @@ import { SpacePlanSelection } from './SpacePlanSelection';
 import createResourceService from 'services/ResourceService';
 import { sortBy, keyBy, filter } from 'lodash';
 import { Breadcrumbs } from 'features/breadcrumbs';
-import { go } from 'states/Navigator';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
 import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
@@ -22,6 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WizardFixedFooter } from 'features/space-management';
 import { clearTrialsCache } from 'features/trials';
+import { useRouteNavigate } from 'core/react-routing';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Space type', isActive: true },
@@ -51,9 +51,14 @@ const styles = {
 };
 
 export function SpacePlanAssignment({ orgId, spaceId }) {
+  const routeNavigate = useRouteNavigate();
   const [selectedPlan, setSelectedPlan] = useState();
   const [steps, setSteps] = useState(ASSIGNMENT_STEPS);
   const [inProgress, setInProgress] = useState(false);
+
+  const goToSubscriptionView = () => {
+    routeNavigate({ path: 'organizations.subscription.overview', orgId });
+  };
 
   const currentStep = steps.find((item) => item.isActive);
 
@@ -155,7 +160,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       );
       clearTrialsCache();
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
-      go({ path: '^' });
+      goToSubscriptionView();
     } catch (e) {
       Notification.error(formatError(e));
     } finally {
@@ -171,7 +176,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       />
       <Workbench.Content type="full" className={styles.workbenchContent}>
         {isLoading && <LoadingCard />}
-        {!isLoading && data?.plans.length === 0 && <EmptyState />}
+        {!isLoading && data?.plans.length === 0 && <EmptyState onBack={goToSubscriptionView} />}
         {!isLoading && data?.plans.length > 0 && (
           <Grid
             columns={1}
@@ -209,6 +214,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
           <WizardFixedFooter
             continueBtnDisabled={!selectedPlan}
             onNext={navigateToNextStep}
+            onCancel={goToSubscriptionView}
             flowType={ASSIGNMENT_FLOW_TYPE}
             spaceId={data.space?.sys.id}
           />

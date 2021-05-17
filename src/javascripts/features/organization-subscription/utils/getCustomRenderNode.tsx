@@ -11,7 +11,6 @@ import {
   InternalActionValues,
   InternalVariableValues,
 } from 'core/services/ContentfulCDA';
-import StateLink from 'app/common/StateLink';
 import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
@@ -73,21 +72,23 @@ export const getCustomRenderNode = (
     } = node.data.target;
 
     if (id === WebappContentTypes.INTERNAL_ACTION) {
-      let path: string[] = [];
-      let params: Record<string, string> = { orgId };
-
       // If the internal action is to change a space and we do not have a spaceId, return the copy as plain text
       if (fields.action === InternalActionValues.CHANGE_SPACE && !options?.upgradableSpaceId) {
         return fields.label;
       }
 
       if (fields.action === InternalActionValues.CHANGE_SPACE && options?.upgradableSpaceId) {
-        path = ['account', 'organizations', 'subscription_new', 'upgrade_space'];
-        params = { ...params, spaceId: options.upgradableSpaceId };
-      }
-
-      if (fields.action === InternalActionValues.ADD_SPACE) {
-        path = ['account', 'organizations', 'subscription_new', 'new_space'];
+        return (
+          <ReactRouterLink
+            route={{
+              path: 'organizations.subscription.upgrade_space',
+              orgId,
+              spaceId: options.upgradableSpaceId,
+            }}
+            component={TextLink}>
+            {fields.label}
+          </ReactRouterLink>
+        );
       }
 
       if (fields.action === InternalActionValues.MANAGE_USERS) {
@@ -98,11 +99,17 @@ export const getCustomRenderNode = (
         );
       }
 
-      return (
-        <StateLink component={TextLink} path={path} params={params}>
-          {fields.label}
-        </StateLink>
-      );
+      if (fields.action === InternalActionValues.ADD_SPACE) {
+        return (
+          <ReactRouterLink
+            route={{ path: 'organizations.subscription.new_space', orgId }}
+            component={TextLink}>
+            {fields.label}
+          </ReactRouterLink>
+        );
+      }
+
+      return null;
     }
 
     if (id === WebappContentTypes.INTERNAL_VARIABLE && options?.users) {

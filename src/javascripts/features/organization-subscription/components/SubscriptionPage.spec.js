@@ -8,7 +8,7 @@ import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { SubscriptionPage } from './SubscriptionPage';
 import { links } from '../utils';
 import { OrgSubscriptionContextProvider } from '../context/OrgSubscriptionContext';
-
+import { MemoryRouter } from 'core/react-routing';
 import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
@@ -309,8 +309,10 @@ function build(customProps) {
   };
 
   render(
-    <OrgSubscriptionContextProvider>
-      <SubscriptionPage {...props} />
-    </OrgSubscriptionContextProvider>
+    <MemoryRouter>
+      <OrgSubscriptionContextProvider>
+        <SubscriptionPage {...props} />
+      </OrgSubscriptionContextProvider>
+    </MemoryRouter>
   );
 }

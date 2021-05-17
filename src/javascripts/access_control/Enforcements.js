@@ -1,6 +1,5 @@
 import { uncapitalize } from 'utils/StringUtils';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import { go } from 'states/Navigator';
 import { get, forEach } from 'lodash';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { supportUrl } from 'Config';
@@ -125,10 +124,7 @@ export function determineEnforcement(space, reasons, entityType) {
     if (isLegacyOrganization(organization)) {
       router.navigate({ path: 'organizations.subscription_v1', orgId: organization.sys.id });
     } else {
-      go({
-        path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: organization.sys.id },
-      });
+      router.navigate({ path: 'organizations.subscription.overview', orgId: organization.sys.id });
     }
   }
 }

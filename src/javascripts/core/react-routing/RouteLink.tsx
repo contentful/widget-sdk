@@ -26,6 +26,7 @@ export const RouteLink = (
     route: RouteType | string;
     as?: any;
     children: React.ReactNode | RouteLinkChildrenFn;
+    testId?: string;
   }
 ) => {
   const { children } = props;

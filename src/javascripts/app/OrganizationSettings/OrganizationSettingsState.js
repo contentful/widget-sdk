@@ -15,7 +15,6 @@ import { orgAppsRoute } from 'features/apps';
 import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { go } from 'states/Navigator';
 import { isOrganizationOnTrial, trialState } from 'features/trials';
 import { usageState } from 'features/organization-usage';
 import { organizationSpacesState } from 'features/organization-spaces';
@@ -44,14 +43,11 @@ export const organizationSettings = {
     async ({ orgId }) => {
       const organization = await TokenStore.getOrganization(orgId);
 
-      let path = ['account', 'organizations'];
-
       if (isDeveloper(organization)) {
         router.navigate(
           { path: 'organizations.apps.list', orgId: organization.sys.id },
           { location: 'replace' }
         );
-        return;
       } else if (isOwnerOrAdmin(organization) || isOrganizationOnTrial(organization)) {
         // the subscription page is available to users of any role when the org is on trial
         const hasNewPricing = !isLegacyOrganization(organization);
@@ -61,24 +57,19 @@ export const organizationSettings = {
             { path: 'organizations.subscription_v1', orgId: organization.sys.id },
             { location: 'replace' }
           );
-          return;
+        } else {
+          router.navigate(
+            { path: 'organizations.subscription.overview', orgId: organization.sys.id },
+            { location: 'replace' }
+          );
         }
-
-        path = [...path, 'subscription_new'];
       } else {
         // They are a member and the member path should go to organization/teams
         router.navigate(
           { path: 'organizations.teams', orgId: organization.sys.id },
           { location: 'replace' }
         );
-        return;
       }
-
-      go({
-        path: path,
-        params: { orgId: organization.sys.id },
-        options: { location: 'replace' },
-      });
     },
   ],
 };

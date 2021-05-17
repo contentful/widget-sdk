@@ -16,12 +16,12 @@ import {
   ListItem,
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
 import { SpacePlanComparison } from './SpacePlanComparison';
 import { ExpandableElement } from './ExpandableElement';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { canPlanBeAssigned } from '../utils/utils';
+import { track } from 'analytics/Analytics';
 
 export function SpaceSelection({
   spaces,
@@ -31,6 +31,7 @@ export function SpaceSelection({
   selectedSpace,
   onSpaceSelected,
   onNext,
+  onBack,
 }) {
   return (
     <>
@@ -123,18 +124,18 @@ export function SpaceSelection({
         })}
       </List>
       <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-        <StateLink
-          component={Button}
+        <Button
           buttonType="muted"
-          path={'^'}
           icon="ChevronLeft"
-          trackingEvent={'space_assignment:back'}
-          trackParams={{
-            plan_id: plan.sys.id,
-            flow: 'assign_space_to_plan',
+          onClick={() => {
+            track('space_assignment:back', {
+              plan_id: plan.sys.id,
+              flow: 'assign_space_to_plan',
+            });
+            onBack();
           }}>
           Go back
-        </StateLink>
+        </Button>
         <Button buttonType="primary" onClick={onNext}>
           Continue
         </Button>
@@ -151,4 +152,5 @@ SpaceSelection.propTypes = {
   selectedSpace: SpacePropType,
   onSpaceSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,
+  onBack: PropTypes.func.isRequired,
 };

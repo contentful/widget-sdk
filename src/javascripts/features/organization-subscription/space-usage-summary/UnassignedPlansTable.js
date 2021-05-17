@@ -10,7 +10,8 @@ import {
   SkeletonRow,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { RouteLink } from 'core/react-routing';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   nameCol: css({
@@ -19,6 +20,7 @@ const styles = {
 };
 
 export function UnassignedPlansTable({
+  organizationId,
   plans,
   initialLoad,
   spaceAssignmentExperiment,
@@ -48,35 +50,43 @@ export function UnassignedPlansTable({
                   {spaceAssignmentExperiment && (
                     <>
                       -{' '}
-                      <StateLink
+                      <RouteLink
+                        as={TextLink}
                         testId="subscription-page.spaces-list.change-plan-link"
-                        component={TextLink}
-                        path=".space_plans"
-                        params={{ planId: plan.sys.id }}
-                        trackingEvent={'space_assignment:change'}
-                        trackParams={{
-                          plan_id: plan.sys.id,
-                          flow: 'assign_space_to_plan',
+                        route={{
+                          path: 'organizations.subscription.overview.space-plans',
+                          planId: plan.sys.id,
+                          orgId: organizationId,
+                        }}
+                        onClick={() => {
+                          track('space_assignment:change', {
+                            plan_id: plan.sys.id,
+                            flow: 'assign_space_to_plan',
+                          });
                         }}>
                         use space
-                      </StateLink>
+                      </RouteLink>
                     </>
                   )}
                   {canCreateSpaceWithPlan && (
                     <>
                       -{' '}
-                      <StateLink
+                      <RouteLink
                         testId="subscription-page.spaces-list.create-with-plan"
-                        component={TextLink}
-                        path=".space_create"
-                        params={{ planId: plan.sys.id }}
-                        trackingEvent={'space_creation:begin'}
-                        trackParams={{
-                          plan_id: plan.sys.id,
-                          flow: 'space_creation_for_plan',
+                        as={TextLink}
+                        route={{
+                          path: 'organizations.subscription.overview.create-space',
+                          planId: plan.sys.id,
+                          orgId: organizationId,
+                        }}
+                        onClick={() => {
+                          track('space_creation:begin', {
+                            plan_id: plan.sys.id,
+                            flow: 'space_creation_for_plan',
+                          });
                         }}>
                         new space
-                      </StateLink>
+                      </RouteLink>
                     </>
                   )}
                 </TableCell>
@@ -90,6 +100,7 @@ export function UnassignedPlansTable({
 }
 
 UnassignedPlansTable.propTypes = {
+  organizationId: PropTypes.string.isRequired,
   plans: PropTypes.array.isRequired,
   initialLoad: PropTypes.bool,
   spaceAssignmentExperiment: PropTypes.bool,

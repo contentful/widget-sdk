@@ -4,6 +4,7 @@ import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
+
 import {
   Button,
   Notification,
@@ -13,7 +14,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { LocalesTable } from './LocalesTable';
-import StateLink from 'app/common/StateLink';
 import { LocalesUsageStatus, getLocalesUsageStatus } from './utils/LocalesUsageStatus';
 import { useRouteNavigate } from 'core/react-routing';
 
@@ -23,7 +23,6 @@ const LocalesListPropTypes = {
   isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
   localeResource: PropTypes.object.isRequired,
   insideMasterEnv: PropTypes.bool.isRequired,
-  subscriptionState: PropTypes.object,
   subscriptionPlanName: PropTypes.string.isRequired,
 };
 
@@ -66,7 +65,6 @@ export const LocalesAdvice = (props) => {
     insideMasterEnv,
     subscriptionPlanName,
     isOrgOwnerOrAdmin,
-    subscriptionState,
     locales,
     canCreateMultipleLocales,
   } = props;
@@ -78,19 +76,6 @@ export const LocalesAdvice = (props) => {
   });
 
   let advice = '';
-
-  const upgradeLink =
-    subscriptionState && subscriptionState.path ? (
-      <StateLink
-        path={subscriptionState.path.join('.')}
-        params={subscriptionState.params}
-        options={subscriptionState.options}
-        className="text-link upgrade-link">
-        upgrade
-      </StateLink>
-    ) : (
-      <span>upgrade</span>
-    );
 
   if (status === LocalesUsageStatus.MORE_THAN_ONE_LOCALE_USED || !insideMasterEnv) {
     advice = (
@@ -135,7 +120,7 @@ export const LocalesAdvice = (props) => {
         </Paragraph>
         {isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
-            Please {upgradeLink} if you need more locales or delete some of the existing ones
+            Please upgrade if you need more locales or delete some of the existing ones
           </Paragraph>
         )}
         {!isOrgOwnerOrAdmin && (
@@ -156,7 +141,7 @@ export const LocalesAdvice = (props) => {
         </Paragraph>
         {isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
-            Please {upgradeLink} to a plan that includes locales to benefit from this feature
+            Please upgrade to a plan that includes locales to benefit from this feature
           </Paragraph>
         )}
         {!isOrgOwnerOrAdmin && (

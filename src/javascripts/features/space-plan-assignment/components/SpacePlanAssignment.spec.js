@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { track } from 'analytics/Analytics';
 import { Notification } from '@contentful/forma-36-react-components';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockSpace = Fake.Space({ name: 'Test Space' });
 
@@ -169,11 +170,13 @@ jest.mock('../services/SpacePlanAssignmentService', () => ({
 describe('SpacePlanAssignment', () => {
   const build = (props) => {
     render(
-      <SpacePlanAssignment
-        orgId={mockSpace.organization.sys.id}
-        spaceId={mockSpace.sys.id}
-        {...props}
-      />
+      <MemoryRouter>
+        <SpacePlanAssignment
+          orgId={mockSpace.organization.sys.id}
+          spaceId={mockSpace.sys.id}
+          {...props}
+        />
+      </MemoryRouter>
     );
 
     return waitForElementToBeRemoved(() => screen.getAllByTestId('cf-ui-skeleton-form'));

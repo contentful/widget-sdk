@@ -86,6 +86,7 @@ const build = (input = {}) => {
     <table>
       <tbody>
         <SpacePlanRow
+          organizationId="orgId"
           plan={options.plan}
           spaceUsage={options.spaceUsage}
           onChangeSpace={mockOnChangeSpace}

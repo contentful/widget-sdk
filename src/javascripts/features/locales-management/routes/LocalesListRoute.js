@@ -9,7 +9,6 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getSubscriptionState } from './utils/getSubscriptionState';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
 import * as OrganizationRoles from 'services/OrganizationRoles';
@@ -187,7 +186,6 @@ export const LocalesListRoute = () => {
           canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
           isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
           localeResource={localeResource}
-          subscriptionState={getSubscriptionState()}
           insideMasterEnv={insideMasterEnv}
           subscriptionPlanName={subscriptionPlanName}
           getComputeLocalesUsageForOrganization={getComputeLocalesUsageForOrganization}
@@ -198,7 +196,6 @@ export const LocalesListRoute = () => {
           allowedToEnforceLimits={allowedToEnforceLimits}
           isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
           localeResource={localeResource}
-          subscriptionState={getSubscriptionState()}
           insideMasterEnv={insideMasterEnv}
           upgradeSpace={handleShowUpgradeSpaceDialog}
           hasNextSpacePlan={hasNextSpacePlan}

@@ -5,6 +5,7 @@ import * as React from 'react';
 
 function SyncState({ splitter }: { splitter: string }) {
   const location = useLocation();
+  const path = location.pathname + location.search;
 
   React.useEffect(() => {
     const $state = getModule('$state');
@@ -12,10 +13,10 @@ function SyncState({ splitter }: { splitter: string }) {
 
     $state.transitionTo(
       $state.current,
-      { ...$stateParams, navigationState: null, pathname: location.pathname.split(splitter)[1] },
+      { ...$stateParams, navigationState: null, pathname: path.split(splitter)[1] },
       { reload: false, inherit: true, notify: false, location: true }
     );
-  }, [location.pathname, splitter]);
+  }, [path, splitter]);
 
   return null;
 }

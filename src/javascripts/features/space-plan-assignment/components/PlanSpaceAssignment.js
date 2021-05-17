@@ -11,7 +11,6 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SpaceSelection } from './SpaceSelection';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
-import { go } from 'states/Navigator';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
 import { formatError } from '../utils/errors';
 import { keyBy } from 'lodash';
@@ -19,6 +18,7 @@ import createResourceService from 'services/ResourceService';
 import { LoadingCard } from 'features/space-creation';
 import { EmptyState } from './EmptyState';
 import { clearTrialsCache } from 'features/trials';
+import { useRouteNavigate } from 'core/react-routing';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.Space', isActive: true },
@@ -29,6 +29,12 @@ export function PlanSpaceAssignment({ orgId, planId }) {
   const [selectedSpace, setSelectedSpace] = useState();
   const [steps, setSteps] = useState(ASSIGNMENT_STEPS);
   const [inProgress, setInProgress] = useState(false);
+
+  const routeNavigate = useRouteNavigate();
+
+  const goToSubscriptionView = () => {
+    routeNavigate({ path: 'organizations.subscription.overview', orgId });
+  };
 
   const currentStep = steps.find((item) => item.isActive);
 
@@ -127,7 +133,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
       );
       clearTrialsCache();
       Notification.success(`${selectedSpace.name} was successfully changed to ${data.plan.name}`);
-      go({ path: '^' });
+      goToSubscriptionView();
     } catch (e) {
       Notification.error(formatError(e));
     } finally {
@@ -143,7 +149,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
       />
       <Workbench.Content>
         {isLoading && <LoadingCard />}
-        {!isLoading && data?.spaces.length === 0 && <EmptyState />}
+        {!isLoading && data?.spaces.length === 0 && <EmptyState onBack={goToSubscriptionView} />}
         {!isLoading && data && (
           <Grid columns={1} rowGap="spacingM">
             <Breadcrumbs items={steps} isActive={steps} />
@@ -156,6 +162,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
                 selectedSpace={selectedSpace}
                 onSpaceSelected={setSelectedSpace}
                 onNext={navigateToNextStep}
+                onBack={goToSubscriptionView}
               />
             )}
             {steps.indexOf(currentStep) === 1 && (

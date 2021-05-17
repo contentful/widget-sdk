@@ -130,8 +130,12 @@ describe('TrialTag', () => {
       await waitFor(() => fireEvent.click(screen.queryByTestId('enterprise_trial_tag-link')!));
 
       expect(href).toHaveBeenCalledWith({
-        path: 'account.organizations.subscription_new',
-        params: { orgId: trialOrganization.sys.id },
+        path: 'account.organizations.subscription_new.overview',
+        params: {
+          orgId: trialOrganization.sys.id,
+          navigationState: null,
+          pathname: '/',
+        },
       });
 
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {

@@ -1,3 +1,5 @@
+import { withQueryParams } from './withQueryParams';
+
 /**
  * Organization usage
  */
@@ -316,6 +318,107 @@ const organizationMembershipsListRoute = {
   }),
 };
 
+/** Organization subscription */
+
+type OrganizationsSubscriptionNewSpaceRoute = {
+  path: 'organizations.subscription.new_space';
+  orgId: string;
+  navigationState?: {
+    from?: string;
+    preselect?: string;
+  };
+};
+
+type OrganizationsSubscriptionUpgradeSpaceRoute = {
+  path: 'organizations.subscription.upgrade_space';
+  orgId: string;
+  spaceId: string;
+  navigationState?: {
+    from?: string;
+    preselect?: string;
+  };
+};
+
+type OrganizationsSubscriptionOverviewRoute = {
+  path: 'organizations.subscription.overview';
+  orgId: string;
+};
+
+type OrganizationsSubscriptionOverviewCreateSpaceRoute = {
+  path: 'organizations.subscription.overview.create-space';
+  orgId: string;
+  planId?: string;
+};
+
+type OrganizationsSubscriptionOverviewSpacePlansRoute = {
+  path: 'organizations.subscription.overview.space-plans';
+  orgId: string;
+  planId: string;
+  spaceId: string;
+};
+
+type OrganizationsSubscriptionRouteType =
+  | OrganizationsSubscriptionNewSpaceRoute
+  | OrganizationsSubscriptionUpgradeSpaceRoute
+  | OrganizationsSubscriptionOverviewRoute
+  | OrganizationsSubscriptionOverviewCreateSpaceRoute
+  | OrganizationsSubscriptionOverviewSpacePlansRoute;
+
+const organizationsSubscriptionRoutes = {
+  'organizations.subscription.new_space': (
+    _,
+    { orgId, navigationState }: Omit<OrganizationsSubscriptionNewSpaceRoute, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_new.new_space',
+    params: {
+      pathname: '/',
+      orgId,
+      navigationState,
+    },
+  }),
+  'organizations.subscription.upgrade_space': (
+    _,
+    { orgId, spaceId, navigationState }: Omit<OrganizationsSubscriptionUpgradeSpaceRoute, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_new.upgrade_space',
+    params: {
+      pathname: `/${spaceId}`,
+      orgId,
+      navigationState,
+    },
+  }),
+  'organizations.subscription.overview': (
+    _,
+    { orgId }: Omit<OrganizationsSubscriptionOverviewRoute, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_new.overview',
+    params: {
+      pathname: '/',
+      orgId,
+    },
+  }),
+  'organizations.subscription.overview.create-space': (
+    _,
+    { orgId, planId }: Omit<OrganizationsSubscriptionOverviewCreateSpaceRoute, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_new.overview',
+    params: {
+      pathname: withQueryParams('/space_create', { planId }),
+      orgId,
+    },
+  }),
+  'organizations.subscription.overview.space-plans': (
+    _,
+    { orgId, planId, spaceId }: Omit<OrganizationsSubscriptionOverviewSpacePlansRoute, 'path'>
+  ) => ({
+    path: 'account.organizations.subscription_new.overview',
+    params: {
+      pathname: withQueryParams(`/space_plans`, { planId, spaceId }),
+      orgId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -329,6 +432,7 @@ const routes = {
   ...organizationAppsRoute,
   ...organizationMembershipsListRoute,
   ...organisationInvitationRoute,
+  ...organizationsSubscriptionRoutes,
 };
 
 type OrganizationSettingsRouteType =
@@ -346,7 +450,8 @@ type OrganizationSettingsRouteType =
   | OrganizationAppsDefinitionRouteType
   | OrganizationsTeamsRouteType
   | OrganizationMembershipsListType
-  | OrganisationInvitationType;
+  | OrganisationInvitationType
+  | OrganizationsSubscriptionRouteType;
 
 export type { OrganizationSettingsRouteType };
 

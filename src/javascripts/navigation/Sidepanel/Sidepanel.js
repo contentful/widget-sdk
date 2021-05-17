@@ -105,10 +105,7 @@ export default class Sidepanel extends React.Component {
     if (OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg)) {
       const hasNewPricing = this.state.currOrg.pricingVersion === 'pricing_version_2';
       if (hasNewPricing) {
-        Navigator.go({
-          path: 'account.organizations.subscription_new',
-          params: { orgId },
-        });
+        router.navigate({ path: 'organizations.subscription.overview', orgId });
       } else {
         router.navigate({ path: 'organizations.subscription_v1', orgId });
       }

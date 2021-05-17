@@ -1,4 +1,11 @@
-export { useParams, Routes, useLocation, useBlocker, MemoryRouter } from 'react-router-dom';
+export {
+  useParams,
+  Routes,
+  useLocation,
+  useBlocker,
+  MemoryRouter,
+  useSearchParams,
+} from 'react-router-dom';
 export { ReactRouterLink } from './ReactRouterLink';
 export { ReactRouterRedirect } from './ReactRouterRedirect';
 export { RouteNameCursor } from './RouteNameCursor';

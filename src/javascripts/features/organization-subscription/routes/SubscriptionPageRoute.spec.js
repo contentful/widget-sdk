@@ -17,7 +17,7 @@ import { getVariation } from 'LaunchDarkly';
 import { getSpaces } from 'services/TokenStore';
 import { mockWebappContent } from '../components/__mocks__/webappContent';
 import { OrgSubscriptionContextProvider } from '../context';
-
+import { MemoryRouter } from 'core/react-routing';
 import { SubscriptionPageRoute } from './SubscriptionPageRoute';
 
 const mockOrganization = Fake.Organization();
@@ -187,9 +187,11 @@ async function build(customProps) {
   };
 
   render(
-    <OrgSubscriptionContextProvider>
-      <SubscriptionPageRoute {...props} />
-    </OrgSubscriptionContextProvider>
+    <MemoryRouter>
+      <OrgSubscriptionContextProvider>
+        <SubscriptionPageRoute {...props} />
+      </OrgSubscriptionContextProvider>
+    </MemoryRouter>
   );
 
   await waitFor(() => expect(screen.queryByTestId('subs-page-loading')).toBeNull());

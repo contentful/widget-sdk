@@ -17,6 +17,8 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { Organization } from 'core/services/SpaceEnvContext/types';
 import { useAppsTrial } from '../hooks/useAppsTrial';
 import { useTrialSpace } from '../hooks/useTrialSpace';
+import { ReactRouterLink } from 'core/react-routing';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   tag: css({
@@ -100,15 +102,35 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
   let daysLeft = -1;
   let ctaType = '';
-  let pathParamsObj: { path: string; params: { [key: string]: unknown } } | undefined;
+
+  let trialLink: React.ReactNode = <>TRIAL</>;
+
+  const getTracking = () => ({
+    trackingEvent: `trial:${EVENTS.TRIAL_TAG}`,
+    trackParams: {
+      type: ctaType,
+      numTrialDaysLeft: daysLeft,
+      isOwnerOrAdmin: isOwnerOrAdmin(organization),
+    },
+  });
 
   if (isEnterpriseTrial) {
     daysLeft = calcTrialDaysLeft(organization?.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.ENTERPRISE_TRIAL_TAG;
-    pathParamsObj = {
-      path: 'account.organizations.subscription_new',
-      params: { orgId: organization?.sys.id },
-    };
+    trialLink = (
+      <ReactRouterLink
+        route={{
+          path: 'organizations.subscription.overview',
+          orgId: organization?.sys.id as string,
+        }}
+        data-test-id={`${ctaType}-link`}
+        onClick={() => {
+          const data = getTracking();
+          track(data.trackingEvent, data.trackParams);
+        }}>
+        TRIAL
+      </ReactRouterLink>
+    );
   } else if (isAppsTrialActive || hasAppsTrialExpired) {
     if (
       hasAppsTrialExpired &&
@@ -121,29 +143,33 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
     daysLeft = calcTrialDaysLeft(appsTrialEndsAt);
     ctaType = CTA_EVENTS.APP_TRIAL_TAG;
-    pathParamsObj = isAppsTrialSpaceAccessible
-      ? {
-          path: 'spaces.detail.home',
-          params: { spaceId: appsTrialSpaceKey },
-        }
-      : undefined;
+    if (isAppsTrialSpaceAccessible) {
+      const tracking = getTracking();
+      trialLink = (
+        <StateLink
+          data-test-id={`${ctaType}-link`}
+          path="spaces.detail.home"
+          params={{ spaceId: appsTrialSpaceKey }}
+          {...tracking}>
+          TRIAL
+        </StateLink>
+      );
+    }
   } else if (isActiveTrialSpace || isTrialSpaceExpired) {
     daysLeft = calcTrialDaysLeft(trialSpaceExpiresAt);
     ctaType = CTA_EVENTS.TRIAL_SPACE_TAG;
-    pathParamsObj = {
-      path: 'spaces.detail.home',
-      params: { spaceId: space?.sys.id },
-    };
-  }
 
-  const tracking = {
-    trackingEvent: `trial:${EVENTS.TRIAL_TAG}`,
-    trackParams: {
-      type: ctaType,
-      numTrialDaysLeft: daysLeft,
-      isOwnerOrAdmin: isOwnerOrAdmin(organization),
-    },
-  };
+    const tracking = getTracking();
+    trialLink = (
+      <StateLink
+        data-test-id={`${ctaType}-link`}
+        path="spaces.detail.home"
+        params={{ spaceId: space?.sys.id }}
+        {...tracking}>
+        TRIAL
+      </StateLink>
+    );
+  }
 
   return (
     <Tag className={styles.tag} tagType="featured" testId={`${ctaType}`}>
@@ -158,13 +184,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
               <Pluralized text="DAY" count={daysLeft} />
             )
           }>
-          {pathParamsObj ? (
-            <StateLink data-test-id={`${ctaType}-link`} {...pathParamsObj} {...tracking}>
-              TRIAL
-            </StateLink>
-          ) : (
-            <>TRIAL</>
-          )}
+          {trialLink}
         </Tooltip>
       </TrackTargetedCTAImpression>
     </Tag>

@@ -4,11 +4,10 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import { EmptyStateIllu } from './EmptyStateIllu';
-import StateLink from 'app/common/StateLink';
 import { salesUrl } from 'Config';
 import { Flex } from '@contentful/forma-36-react-components';
 
-export function EmptyState() {
+export function EmptyState(props: { onBack: () => void }) {
   return (
     <EmptyStateContainer data-test-id="cf-ui-empty-state">
       <EmptyStateIllu className={defaultSVGStyle} />
@@ -20,9 +19,14 @@ export function EmptyState() {
         </Paragraph>
         <Flex alignItems="center" justifyContent="center">
           <Flex marginRight="spacingM">
-            <StateLink component={Button} buttonType="muted" path={'^'} icon="ChevronLeft">
+            <Button
+              buttonType="muted"
+              icon="ChevronLeft"
+              onClick={() => {
+                props.onBack();
+              }}>
               Go back
-            </StateLink>
+            </Button>
           </Flex>
           <Flex>
             <Button

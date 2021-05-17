@@ -1,7 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'core/react-routing';
 import { render, fireEvent } from '@testing-library/react';
-import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
 import { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne';
 
@@ -16,7 +15,6 @@ describe('features/locales-management/LocalesListPricingOne', () => {
       );
       fireEvent.click(container.querySelector('button'));
       expect(Notification.error).toHaveBeenCalledWith(true);
-      expect($stateMocked.go).not.toHaveBeenCalled();
       notificationSpy.mockRestore();
     });
 
@@ -35,16 +33,12 @@ describe('features/locales-management/LocalesListPricingOne', () => {
   });
 
   describe('LocalesAdvice', () => {
-    beforeEach(() => {
-      $stateMocked.href.mockClear();
-    });
     const renderComponent = (props) => {
       return render(
         <LocalesAdvice
           canCreateMultipleLocales={true}
           isOrgOwnerOrAdmin={true}
           insideMasterEnv={true}
-          subscriptionState={null}
           subscriptionPlanName="some subscription plan name"
           getComputeLocalesUsageForOrganization={() => false}
           {...props}
@@ -137,11 +131,6 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         expect(getByTestId('locales-advice')).toHaveTextContent(
           'Please upgrade if you need more locales or delete some of the existing ones'
         );
-        expect($stateMocked.href).toHaveBeenCalledTimes(1);
-        expect($stateMocked.href).toHaveBeenCalledWith(
-          'account.organization.subscription',
-          undefined
-        );
       });
 
       it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
@@ -156,12 +145,6 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         });
         expect(getByTestId('locales-advice')).toHaveTextContent(
           'Please upgrade to a plan that includes locales to benefit from this feature'
-        );
-
-        expect($stateMocked.href).toHaveBeenCalledTimes(1);
-        expect($stateMocked.href).toHaveBeenCalledWith(
-          'account.organization.subscription',
-          undefined
         );
       });
     });
@@ -178,7 +161,6 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         expect(getByTestId('locales-advice')).toHaveTextContent(
           'Please ask your organization owner to upgrade if you need more locales or delete some of the existing ones'
         );
-        expect($stateMocked.href).toHaveBeenCalledTimes(0);
       });
 
       it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
@@ -192,7 +174,6 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         expect(getByTestId('locales-advice')).toHaveTextContent(
           'Please ask your organization owner to upgrade to a plan that includes locales to benefit from this feature'
         );
-        expect($stateMocked.href).toHaveBeenCalledTimes(0);
       });
     });
   });

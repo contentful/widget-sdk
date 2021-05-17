@@ -5,7 +5,8 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { getSpaceContext } from 'classes/spaceContext';
 import { getOrganization } from 'services/TokenStore';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
+
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -73,9 +74,10 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
   const spacePurchaseFlowAllowed = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
 
   if (spacePurchaseFlowAllowed) {
-    go({
-      path: ['account', 'organizations', 'subscription_new', 'new_space'],
-      params: { orgId: organizationId, ...customRouteParams },
+    router.navigate({
+      path: 'organizations.subscription.new_space',
+      orgId: organizationId,
+      navigationState: { ...customRouteParams },
     });
     return;
   }
@@ -85,9 +87,9 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
   const hasEnterprisePlan = basePlan && isEnterprisePlan(basePlan);
 
   if (isSpaceCreateForSpacePlanEnabled && hasEnterprisePlan) {
-    go({
-      path: ['account', 'organizations', 'subscription_new', 'overview', 'space_create'],
-      params: { orgId: organizationId },
+    router.navigate({
+      path: 'organizations.subscription.overview.create-space',
+      orgId: organizationId,
     });
     return;
   }

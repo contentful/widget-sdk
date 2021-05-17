@@ -2,14 +2,15 @@ import React from 'react';
 import { Flex, Button, TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import { CREATION_FLOW_TYPE } from 'features/space-creation';
 import { FlowType } from '../types';
+import { track } from 'analytics/Analytics';
 
 interface WizardFixedFooterProps {
   spaceId: string;
   continueBtnDisabled: boolean;
   onNext: () => boolean;
+  onCancel: () => void;
   flowType: FlowType;
   handleGetInTouchClick?: () => void;
 }
@@ -29,6 +30,7 @@ const WizardFixedFooter = ({
   spaceId,
   continueBtnDisabled,
   onNext,
+  onCancel,
   flowType,
   handleGetInTouchClick,
 }: WizardFixedFooterProps) => {
@@ -50,22 +52,21 @@ const WizardFixedFooter = ({
         )}
 
         <Flex flexDirection="row" justifyContent="flex-end" alignItems="center" fullWidth>
-          <StateLink
-            component={Button}
-            path={'^'}
-            trackingEvent={
-              flowType === CREATION_FLOW_TYPE ? 'space_creation:back' : 'space_assignment:back'
-            }
-            trackParams={{
-              space_id: spaceId,
-              flow: flowType === CREATION_FLOW_TYPE ? 'space_creation' : 'assign_plan_to_space',
+          <Button
+            testId="go-back-btn"
+            buttonType="muted"
+            onClick={() => {
+              track(
+                flowType === CREATION_FLOW_TYPE ? 'space_creation:back' : 'space_assignment:back',
+                {
+                  space_id: spaceId,
+                  flow: flowType === CREATION_FLOW_TYPE ? 'space_creation' : 'assign_plan_to_space',
+                }
+              );
+              onCancel();
             }}>
-            {({ onClick }) => (
-              <Button buttonType="muted" testId="go-back-btn" onClick={onClick}>
-                Cancel
-              </Button>
-            )}
-          </StateLink>
+            Cancel
+          </Button>
           <Flex marginLeft="spacingM">
             <Button
               buttonType="primary"

@@ -8,6 +8,7 @@ import { useChangedSpace } from '../hooks/useChangedSpace';
 import { getSpacesUsage } from '../services/SpacesUsageService';
 import { SpacePlans } from './SpacePlans';
 import { getVariation } from 'LaunchDarkly';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockOrgId = 'random_org_id';
 const mockSpaceId = 'fake_space_id';
@@ -192,8 +193,10 @@ function build(customProps, customState) {
   };
 
   render(
-    <OrgSubscriptionContextProvider initialState={state}>
-      <SpacePlans {...props} />
-    </OrgSubscriptionContextProvider>
+    <MemoryRouter>
+      <OrgSubscriptionContextProvider initialState={state}>
+        <SpacePlans {...props} />
+      </OrgSubscriptionContextProvider>
+    </MemoryRouter>
   );
 }

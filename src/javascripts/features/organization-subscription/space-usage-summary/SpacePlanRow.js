@@ -15,7 +15,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
-import { router } from 'core/react-routing';
+import { router, RouteLink } from 'core/react-routing';
 
 import { SpaceUsageTableCell } from './SpaceUsageTableCell';
 import { track } from 'analytics/Analytics';
@@ -37,6 +37,7 @@ const styles = {
 };
 
 export const SpacePlanRow = ({
+  organizationId,
   plan,
   spaceUsage,
   onChangeSpace,
@@ -104,20 +105,24 @@ export const SpacePlanRow = ({
         {showSpacePlanChangeBtn && (
           <>
             -{' '}
-            <StateLink
+            <RouteLink
               testId="subscription-page.spaces-list.change-plan-link"
-              component={TextLink}
-              path=".space_plans"
-              params={{ spaceId: space.sys.id }}
-              trackingEvent={'space_assignment:change'}
-              trackParams={{
-                space_id: space.sys.id,
-                current_plan_id: plan.sys.id,
-                current_plan_name: plan.name,
-                flow: 'assign_plan_to_space',
-              }}>
+              route={{
+                path: 'organizations.subscription.overview.space-plans',
+                spaceId: space.sys.id,
+                orgId: organizationId,
+              }}
+              onClick={() => {
+                track('space_assignment:change', {
+                  space_id: space.sys.id,
+                  current_plan_id: plan.sys.id,
+                  current_plan_name: plan.name,
+                  flow: 'assign_plan_to_space',
+                });
+              }}
+              as={TextLink}>
               change
-            </StateLink>
+            </RouteLink>
           </>
         )}
         {!enterprisePlan && (
@@ -193,6 +198,7 @@ export const SpacePlanRow = ({
 };
 
 SpacePlanRow.propTypes = {
+  organizationId: PropTypes.string.isRequired,
   plan: PropTypes.object.isRequired,
   spaceUsage: PropTypes.object,
   onChangeSpace: PropTypes.func.isRequired,

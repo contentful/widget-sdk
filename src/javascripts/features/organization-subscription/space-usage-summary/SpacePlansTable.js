@@ -181,6 +181,7 @@ export const SpacePlansTable = ({
               return plan ? (
                 <SpacePlanRow
                   key={spaceUsage.sys.id}
+                  organizationId={organizationId}
                   plan={plansLookup[spaceId]}
                   spaceUsage={spaceUsage}
                   onChangeSpace={onChangeSpace}

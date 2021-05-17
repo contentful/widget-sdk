@@ -114,11 +114,11 @@ export function SpacePlans({
         <>
           {!userCanManageSpaces && (
             <SpacePlansTable
+              organizationId={organizationId}
               enterprisePlan={enterprisePlan}
               featureFlagLoading={isLoading}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
-              organizationId={organizationId}
               plans={spacePlans}
               upgradedSpaceId={changedSpaceId}
             />
@@ -127,12 +127,12 @@ export function SpacePlans({
           {/* This will only be rendered for Enterprise organizations */}
           {!isLoading && userCanManageSpaces && (
             <UsedAndUnusedSpacePlans
+              organizationId={organizationId}
               changedSpaceId={changedSpaceId}
               isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
               isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
-              organizationId={organizationId}
               spacePlans={spacePlans}
               userCanManageSpaces={userCanManageSpaces}
             />

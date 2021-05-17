@@ -13,8 +13,8 @@ import { getSpacePlanForSpace, getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
-import { go } from 'states/Navigator';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { router } from 'core/react-routing';
 
 /**
  * Creates a string to be passed to the notification
@@ -62,16 +62,18 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
   });
 
   if (isEnterpriseSpaceChangeAllowed && isEnterprisePlan(spacePlan)) {
-    go({
-      path: ['account', 'organizations', 'subscription_new', 'overview', 'space_plans'],
-      params: { orgId: organizationId, spaceId: space.sys.id },
+    router.navigate({
+      path: 'organizations.subscription.overview.space-plans',
+      orgId: organizationId,
+      spaceId: space.sys.id,
     });
   } else if (isEnterprisePlan(spacePlan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
   } else if (spacePurchaseFlowAllowedForPlanChange) {
-    go({
-      path: ['account', 'organizations', 'subscription_new', 'upgrade_space'],
-      params: { orgId: organizationId, spaceId: space.sys.id },
+    router.navigate({
+      path: 'organizations.subscription.upgrade_space',
+      orgId: organizationId,
+      spaceId: space.sys.id,
     });
     return;
   } else {

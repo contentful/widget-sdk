@@ -130,6 +130,7 @@ export function UsedAndUnusedSpacePlans({
           [styles.isVisible]: selectedTab === EnterpriseSpacesTabs.UNUSED_SPACES,
         })}>
         <UnassignedPlansTable
+          organizationId={organizationId}
           plans={unusedSpacePlans}
           spaceAssignmentExperiment={isSpacePlanAssignmentExperimentEnabled}
           canCreateSpaceWithPlan={isCreateSpaceForSpacePlanEnabled}

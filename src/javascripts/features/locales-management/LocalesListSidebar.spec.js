@@ -23,11 +23,6 @@ describe('features/locales-management/LocalesListSidebar', () => {
           <LocalesListSidebar
             allowedToEnforceLimits={false}
             upgradeSpace={stubs.upgradeSpace}
-            subscriptionState={{
-              path: ['account', 'organizations', 'subscription_new'],
-              params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
-              options: { replace: true },
-            }}
             {...props}
           />
         </SpaceEnvContextProvider>

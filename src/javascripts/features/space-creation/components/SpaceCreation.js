@@ -8,7 +8,6 @@ import { SpaceCreationConfirm } from './SpaceCreationConfirm';
 import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';
 import { spaceCreation, createSpaceWithTemplate } from '../services/SpaceCreationService';
 import { actions, SpaceCreationState } from '../context';
-import * as Navigator from 'states/Navigator';
 import { captureError } from 'core/monitoring';
 import { track } from 'analytics/Analytics';
 import tokens from '@contentful/forma-36-tokens';
@@ -26,6 +25,7 @@ import * as Intercom from 'services/intercom';
 import { salesUrl } from 'Config';
 import { StepStatus, LoadingStateIllustrated } from 'features/space-management';
 import { clearTrialsCache } from 'features/trials';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   workbenchContent: css({
@@ -40,6 +40,7 @@ const styles = {
 };
 
 export const SpaceCreation = ({ orgId }) => {
+  const routeNavigate = useRouteNavigate();
   const {
     state: { selectedPlan, spaceName, selectedTemplate },
     dispatch,
@@ -50,6 +51,10 @@ export const SpaceCreation = ({ orgId }) => {
     { text: '2.Space details', isActive: selectedPlan ? true : false },
     { text: '3.Confirmation', isActive: false },
   ];
+
+  const goToSubscriptionOverview = () => {
+    routeNavigate({ path: 'organizations.subscription.overview', orgId });
+  };
 
   const [steps, setSteps] = useState(CREATE_SPACE_STEPS);
   const [status, setStatus] = useState(null);
@@ -120,7 +125,7 @@ export const SpaceCreation = ({ orgId }) => {
       // to avoid ui flashes for the second step in the LoadingStateIllustrated we expect
       // the loading screen to remain for a minimum amount of time
       await wait(LOADING_SCREEN_COMPLETED_TIME);
-      Navigator.go({ path: ['account', 'organizations', 'subscription_new', 'overview'] });
+      goToSubscriptionOverview();
       Notification.success(`${spaceName} was created successfully`);
     } catch (error) {
       setStatus(StepStatus.FAILED);
@@ -206,6 +211,7 @@ export const SpaceCreation = ({ orgId }) => {
                   data?.freeSpaceResource?.limits?.maximum - data.freeSpaceResource?.usage === 0)
               }
               onNext={navigateToNextStep}
+              onCancel={goToSubscriptionOverview}
               flowType={CREATION_FLOW_TYPE}
               handleGetInTouchClick={handleGetInTouchClick}
               spaceId={data.space?.sys?.id}

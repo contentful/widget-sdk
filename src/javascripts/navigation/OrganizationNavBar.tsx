@@ -75,14 +75,12 @@ function getItems(params, { orgId }) {
         params.pricingVersion == 'pricing_version_2' &&
         (params.isOwnerOrAdmin || params.isOrganizationOnTrial),
       title: 'Subscription',
-      sref: 'account.organizations.subscription_new',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.subscription_new',
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Subscription',
       dataViewType: 'subscription-new',
+      ...makeReactRouterRef('organizations.subscription.overview'),
     },
     {
       if: params.hasBillingTab,

@@ -10,6 +10,9 @@ COPY package.json package-lock.json ./
 
 ARG NPM_TOKEN
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+RUN npm set unsafe-perm true
+
+COPY ./ ./
 
 ARG SSH_KEY
 RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
@@ -19,7 +22,6 @@ RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
   npm ci && \
   rm -f ~/.ssh/id_rsa
 
-COPY ./ ./
 
 #--
 
