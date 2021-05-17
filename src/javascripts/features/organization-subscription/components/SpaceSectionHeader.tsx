@@ -21,7 +21,6 @@ import { downloadSpacesUsage } from '../services/SpacesUsageService';
 
 const styles = {
   inaccessibleHelpIcon: css({
-    fill: tokens.colorElementDarkest,
     marginBottom: '-3px',
     marginLeft: tokens.spacingXs,
   }),
@@ -201,7 +200,8 @@ function InaccessibleHelpIcon() {
       You can add yourself to these spaces in the organization users settings.`}>
       <Icon
         testId="inaccessible-help-icon"
-        icon="HelpCircle"
+        icon="InfoCircle"
+        color="muted"
         className={styles.inaccessibleHelpIcon}
       />
     </Tooltip>

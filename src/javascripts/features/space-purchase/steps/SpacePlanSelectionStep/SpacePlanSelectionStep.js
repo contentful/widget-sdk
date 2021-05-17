@@ -272,7 +272,7 @@ function LegacySpaceWarning({ spaceName, spacePlan }) {
       <Tooltip
         content="We no longer sell these spaces, for more information see our FAQ"
         maxWidth="200px">
-        <Icon icon="HelpCircleTrimmed" color="muted" className={styles.helpIcon} />
+        <Icon icon="InfoCircleTrimmed" color="muted" className={styles.helpIcon} />
       </Tooltip>
       {/* eslint-disable-next-line */}
       <ul className={styles.legacyResourcesList}>

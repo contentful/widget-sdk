@@ -10,7 +10,6 @@ import { Pluralized, Price } from 'core/components/formatting';
 
 const styles = {
   helpIcon: css({
-    fill: tokens.colorElementDarkest,
     marginBottom: '-3px',
     marginLeft: tokens.spacingXs,
   }),
@@ -121,7 +120,7 @@ export default function SpacePlanItem(props) {
                       for your organization.
                     </>
                   }>
-                  <Icon icon="HelpCircle" className={styles.helpIcon} />
+                  <Icon icon="InfoCircle" color="muted" className={styles.helpIcon} />
                 </Tooltip>
               </>
             )}

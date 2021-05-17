@@ -8,7 +8,6 @@ import { Notification } from '@contentful/forma-36-react-components';
 export const createSpace = (organizationId) => {
   return () => {
     trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });
-
     beginSpaceCreation(organizationId);
   };
 };

@@ -94,7 +94,7 @@ export const SpacePlanRow = ({
             content={expiresAtTooltipContent}
             testId="subscription-page.spaces-list.trial-space-tooltip">
             <Icon
-              icon="HelpCircle"
+              icon="InfoCircle"
               color="muted"
               className={styles.helpIcon}
               testId="subscription-page.spaces-list.trial-space-tooltip-trigger"

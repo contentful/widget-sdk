@@ -12,7 +12,6 @@ const styles = {
     marginBottom: '30px',
   }),
   helpIcon: css({
-    fill: tokens.colorElementDarkest,
     marginBottom: '-3px',
     marginLeft: tokens.spacingXs,
   }),
@@ -54,7 +53,8 @@ export default function Plan(props) {
               </>
             }>
             <Icon
-              icon="HelpCircle"
+              icon="InfoCircle"
+              color="muted"
               className={styles.helpIcon}
               testId="space-plan-tooltip-trigger"
             />

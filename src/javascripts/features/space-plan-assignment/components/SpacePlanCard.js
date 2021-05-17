@@ -78,7 +78,6 @@ export function SpacePlanCard({
       color: `${tokens.colorTextLightest}`,
     }),
     helpIcon: css({
-      fill: tokens.colorElementDarkest,
       marginRight: tokens.spacingXs,
       display: 'flex',
     }),
@@ -127,7 +126,8 @@ export function SpacePlanCard({
                   </>
                 }>
                 <Icon
-                  icon="HelpCircle"
+                  icon="InfoCircle"
+                  color="muted"
                   className={styles.helpIcon}
                   testId="space-plan-tooltip-trigger"
                 />
