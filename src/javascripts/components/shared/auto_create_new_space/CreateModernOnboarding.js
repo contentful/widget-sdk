@@ -38,8 +38,31 @@ export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
     return newSpace;
   };
 
+  const onExperimentChoice = async ({ closeModal }) => {
+    track('dev_path_selected');
+
+    const orgId = org.sys.id;
+
+    const newSpace = await createBlankSpace({
+      closeModal,
+      orgId,
+      markOnboarding,
+    });
+
+    createDeliveryToken();
+    createManagementToken();
+
+    return newSpace;
+  };
+
   ModalLauncher.open(() => {
-    return <OnboardingModal onContentChoice={onContentChoice} onDevChoice={onDevChoice} />;
+    return (
+      <OnboardingModal
+        onContentChoice={onContentChoice}
+        onDevChoice={onDevChoice}
+        onExperimentChoice={onExperimentChoice}
+      />
+    );
   });
 };
 
@@ -60,6 +83,32 @@ async function createSpace({ closeModal, org, markOnboarding, markSpace, userId 
   // because otherwise it won't let us do that
   // all onboarding steps are guarded by space id
   markSpace(newSpaceId, userId);
+  markOnboarding();
+
+  await refresh();
+  await go({
+    path: ['spaces', 'detail', 'onboarding', 'getStarted'],
+    params: { spaceId: newSpaceId },
+  });
+  // if we need to close modal, we need to do it after redirect
+  closeModal && closeModal();
+
+  return newSpace;
+}
+
+async function createBlankSpace({ closeModal, orgId, markOnboarding }) {
+  const client = getCMAClient();
+  const newSpace = await client.space.create(
+    {
+      organizationId: orgId,
+    },
+    {
+      name: 'Blank space',
+      defaultLocale: DEFAULT_LOCALE,
+    }
+  );
+
+  const newSpaceId = newSpace.sys.id;
   markOnboarding();
 
   await refresh();

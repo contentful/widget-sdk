@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import ChoiceScreen from 'components/shared/stack-onboarding/screens/ChoiceScreen';
 
-const OnboardingModal = ({ onContentChoice, onDevChoice }) => {
+const OnboardingModal = ({ onContentChoice, onDevChoice, onExperimentChoice }) => {
   const [isOpen, setOpen] = useState(true);
 
   const closeModal = () => setOpen(false);
@@ -20,6 +20,7 @@ const OnboardingModal = ({ onContentChoice, onDevChoice }) => {
       <ChoiceScreen
         onContentChoice={() => onContentChoice({ closeModal })}
         onDevChoice={() => onDevChoice({ closeModal })}
+        onExperimentChoice={() => onExperimentChoice({ closeModal })}
       />
     </Modal>
   );
@@ -28,6 +29,7 @@ const OnboardingModal = ({ onContentChoice, onDevChoice }) => {
 OnboardingModal.propTypes = {
   onContentChoice: PropTypes.func.isRequired,
   onDevChoice: PropTypes.func.isRequired,
+  onExperimentChoice: PropTypes.func.isRequired,
 };
 
 export default OnboardingModal;

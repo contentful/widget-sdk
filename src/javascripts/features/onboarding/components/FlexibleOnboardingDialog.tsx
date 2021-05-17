@@ -4,7 +4,15 @@ import { Choices, DeveloperChoiceDialog } from './DeveloperChoiceDialog';
 import { track } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
 import { go } from 'states/Navigator';
-import { markSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import {
+  markSpace,
+  MODERN_STACK_ONBOARDING_SPACE_NAME,
+  unmarkSpace,
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import { getSpaceContext } from 'classes/spaceContext';
+import * as TokenStore from 'services/TokenStore';
+import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { captureWarning } from 'core/monitoring';
 
 enum Views {
   DEVELOPER_CHOICE_MODAL = 'developerChoice',
@@ -15,6 +23,30 @@ interface Props {
   onClose: () => void;
   spaceId: string;
 }
+
+const renameSpace = async (newName, spaceId) => {
+  const spaceContext = getSpaceContext();
+  const currentSpace = await TokenStore.getSpace(spaceId);
+  const updatedSpace = { sys: currentSpace.sys, name: newName };
+  const cma = getCMAClient({ spaceId });
+
+  const asyncError = new Error('Something went wrong while updating space');
+  try {
+    await cma.space.update({}, updatedSpace);
+  } catch (err) {
+    captureWarning(asyncError, {
+      extra: {
+        message: err.message,
+      },
+    });
+  }
+
+  await TokenStore.refresh();
+  const newSpace = await TokenStore.getSpace(spaceId);
+  await spaceContext.resetWithSpace(newSpace);
+
+  return newSpace;
+};
 
 export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) => {
   const [modalShown, setModalShown] = useState<Views>(Views.DEVELOPER_CHOICE_MODAL);
@@ -29,6 +61,7 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
       case Choices.GATSBY_BLOG_OPTION:
         onClose();
         markSpace(spaceId);
+        renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
         await go({
           path: ['spaces', 'detail', 'onboarding', 'getStarted'],
           params: { spaceId },
@@ -39,6 +72,8 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
         return;
       case Choices.EMPTY_SPACE_OPTION:
         onClose();
+        unmarkSpace();
+        renameSpace('Blank space', spaceId);
         go({ path: 'spaces.detail.content_types.list' });
         return;
       default:

@@ -16,6 +16,7 @@ export default class ChoiceScreen extends React.Component {
   static propTypes = {
     onContentChoice: PropTypes.func.isRequired,
     onDevChoice: PropTypes.func,
+    onExperimentChoice: PropTypes.func,
   };
 
   state = {
@@ -48,8 +49,8 @@ export default class ChoiceScreen extends React.Component {
     this.setState({
       isDevPathPending: true,
     });
-    const newSpace = await this.props.onDevChoice();
     if (this.state.isGrowthExperiment) {
+      const newSpace = await this.props.onExperimentChoice();
       go({ path: 'spaces.detail.home' });
       ModalLauncher.open(({ isShown, onClose }) => {
         return (
@@ -57,6 +58,7 @@ export default class ChoiceScreen extends React.Component {
         );
       });
     } else {
+      const newSpace = await this.props.onDevChoice();
       store.set(`${getStoragePrefix()}:currentStep`, {
         path: 'spaces.detail.onboarding.getStarted',
         params: {
