@@ -139,9 +139,7 @@ export const AssetView = () => {
           />
         );
       }}
-      renderSavedViewsActions={() => (
-        <ScheduledActionsPageLink isMasterEnvironment={isMasterEnvironment} />
-      )}
+      renderSavedViewsActions={() => <ScheduledActionsPageLink />}
       renderEmptyState={({ updateEntities }, className) => (
         <AssetsEmptyState
           className={className}

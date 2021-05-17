@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import StateLink from 'app/common/StateLink';
 
 import tokens from '@contentful/forma-36-tokens';
 import { ScheduledActionsFeatureFlag } from 'features/scheduled-actions';
+import { ReactRouterLink } from 'core/react-routing';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   linkContainer: css({
@@ -19,23 +20,31 @@ const styles = {
   }),
 };
 
-export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
-  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs`;
-  return <StateLink path={path}>{children}</StateLink>;
+export function ScheduledActionsStateLink({ children }) {
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  return (
+    <ReactRouterLink
+      route={{
+        path: 'spaces.details.jobs',
+        spaceId: currentSpaceId,
+        environmentId: currentEnvironmentId,
+      }}>
+      {children}
+    </ReactRouterLink>
+  );
 }
 
 ScheduledActionsStateLink.propTypes = {
-  isMasterEnvironment: PropTypes.bool,
   children: PropTypes.func.isRequired,
 };
 
-export default function ScheduledActionsPageLink({ isMasterEnvironment }) {
+export default function ScheduledActionsPageLink() {
   return (
     <ScheduledActionsFeatureFlag>
       {({ currentVariation }) => {
         return currentVariation ? (
           <div className={styles.linkContainer}>
-            <ScheduledActionsStateLink isMasterEnvironment={isMasterEnvironment}>
+            <ScheduledActionsStateLink>
               {({ getHref, onClick }) => (
                 <TextLink href={getHref()} onClick={onClick} icon="Clock">
                   Scheduled Content
@@ -48,7 +57,3 @@ export default function ScheduledActionsPageLink({ isMasterEnvironment }) {
     </ScheduledActionsFeatureFlag>
   );
 }
-
-ScheduledActionsPageLink.propTypes = {
-  isMasterEnvironment: PropTypes.bool,
-};

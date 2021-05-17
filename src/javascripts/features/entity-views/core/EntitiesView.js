@@ -193,11 +193,7 @@ export const EntitiesView = ({
             ) : (
               <Fragment>
                 {renderTopContent(renderPropArgs)}
-                <UpgradeBanner
-                  space={space}
-                  environmentId={environmentId}
-                  isMasterEnvironment={isMasterEnvironment}
-                />
+                <UpgradeBanner />
                 {hasEntities && (
                   <Fragment>
                     <PluralizeEntityMessage
