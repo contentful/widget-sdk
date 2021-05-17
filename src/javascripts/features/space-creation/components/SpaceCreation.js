@@ -2,7 +2,7 @@ import React, { useState, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Grid, Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { Breadcrumbs } from 'features/breadcrumbs';
+import { Breadcrumbs } from 'core/components/Breadcrumbs';
 import { LoadingCard } from './LoadingCard';
 import { SpaceCreationConfirm } from './SpaceCreationConfirm';
 import { SpaceDetailsSetupStep } from './SpaceDetailsSetupStep';

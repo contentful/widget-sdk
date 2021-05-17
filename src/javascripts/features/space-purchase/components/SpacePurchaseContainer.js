@@ -22,7 +22,7 @@ import { useTrackCancelEvent } from '../hooks/useTrackCancelEvent';
 import { Price } from 'core/components/formatting';
 import { actions, SpacePurchaseState, NO_SPACE_PLAN } from '../context';
 
-import { Breadcrumbs } from 'features/breadcrumbs';
+import { Breadcrumbs } from 'core/components/Breadcrumbs';
 import {
   BillingDetailsStep,
   CreditCardDetailsStep,

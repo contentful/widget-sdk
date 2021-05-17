@@ -47,7 +47,7 @@ async function check() {
       '\nPlease declare owners for these directories, by adding them to `/.github/CODEOWNERS`.\nVisit https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax for more information.\n\n'
     );
 
-    process.exit(0);
+    process.exit(1);
   } else {
     console.log(
       'All specified code directories are covered by the CODEOWNERS file, which declares their respective owners.'

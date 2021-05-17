@@ -4,7 +4,7 @@ import { track } from 'analytics/Analytics';
 
 import { Grid, Workbench, Notification } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { Breadcrumbs } from 'features/breadcrumbs';
+import { Breadcrumbs } from 'core/components/Breadcrumbs';
 import { useAsync } from 'core/hooks';
 import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';

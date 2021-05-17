@@ -1,7 +1,6 @@
 # By default, everything is owned by the frontend chapter
 docs/ @contentful/frontend
 
-
 # Team Extensibility
 src/javascripts/features/page-widgets/           @contentful/extensibility-devs
 src/javascripts/features/apps/                  @contentful/extensibility-devs
@@ -12,12 +11,17 @@ src/javascripts/features/webhooks/              @contentful/extensibility-devs
 # Team Dev Workflows
 src/javascripts/features/content-tags/            @contentful/team-dev-workflows
 src/javascripts/features/environments-settings/   @contentful/team-dev-workflows
+src/javascripts/features/api-keys-management/     @contentful/team-dev-workflows
 
 # Team Ahoy
 src/javascripts/features/organization-subscription/  @contentful/team-ahoy
 src/javascripts/features/organization-billing/       @contentful/team-ahoy
 src/javascripts/features/space-purchase/             @contentful/team-ahoy
 src/javascripts/features/user-profile/               @contentful/team-ahoy
+src/javascripts/features/pricing-entities/           @contentful/team-ahoy
+
+# Team Growth
+src/javascripts/features/onboarding/                 @contentful/team-growth
 
 # Team Hejo
 src/javascripts/features/settings-space-users/          @contentful/team-hejo
@@ -39,6 +43,12 @@ src/javascripts/features/organization-usage/         @contentful/team-moi
 src/javascripts/features/trials/                     @contentful/team-moi
 src/javascripts/features/space-usage/                @contentful/team-moi
 src/javascripts/features/space-home/                 @contentful/team-moi
+src/javascripts/features/home/                       @contentful/team-moi
+src/javascripts/features/space-settings/             @contentful/team-moi
+src/javascripts/features/organization-spaces/        @contentful/team-moi
+
+# Shared by CO Group
+src/javascripts/features/contentful-apps/     @contentful/team-shelley @contentful/team-sparks
 
 # Team Shelley
 src/javascripts/features/assembly-types/      @contentful/team-shelley
@@ -59,3 +69,7 @@ src/javascripts/features/content-model-editor/    @contentful/team-dante
 
 # Team Dev Velocity
 src/javascripts/features/embargoed-assets/  @team-dev-velocity
+
+# Team React Migration
+src/javascripts/features/quick-navigation/  @team-react
+src/javascripts/features/loading-state/     @team-react

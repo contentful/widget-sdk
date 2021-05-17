@@ -9,7 +9,7 @@ import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
 import createResourceService from 'services/ResourceService';
 import { sortBy, keyBy, filter } from 'lodash';
-import { Breadcrumbs } from 'features/breadcrumbs';
+import { Breadcrumbs } from 'core/components/Breadcrumbs';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
 import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
