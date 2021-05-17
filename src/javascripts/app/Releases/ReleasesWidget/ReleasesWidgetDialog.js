@@ -191,7 +191,8 @@ export default class ReleasesWidgetDialog extends Component {
       const errorId = getAtPath(error, 'data.sys.id');
       if (errorId === 'ValidationFailed') {
         const validationErrors = getAtPath(error, 'data.details.errors');
-        if (validationErrors.length && validationErrors[0].name === 'size') {
+        const validationErrorDetails = validationErrors.find((err) => err.name === 'size');
+        if (validationErrors.length && validationErrorDetails) {
           Notification.error(
             `Sorry, we couldn’t add any more entities to this release as it exceeds the limit of
             ${RELEASE_ENTITIES_LIMIT}. You might consider creating a new release to accommodate the additional entities.`,
@@ -201,7 +202,7 @@ export default class ReleasesWidgetDialog extends Component {
           );
         } else {
           Notification.error(
-            `Failed adding ${releaseContentTitle} to ${release.title}: Some content did not pass validation`
+            `Failed adding ${releaseContentTitle} to ${release.title}: Some entities did not pass validation`
           );
         }
       } else {
