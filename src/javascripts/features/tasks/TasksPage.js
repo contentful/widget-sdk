@@ -25,6 +25,7 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
 import StateLink from 'app/common/StateLink';
+import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 
 const styles = {
   workbenchContent: css({
@@ -46,7 +47,6 @@ class TasksPage extends Component {
     spaceId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
-    isMasterEnvironmentById: PropTypes.func.isRequired,
     users: PropTypes.object.isRequired,
     getContentType: PropTypes.func.isRequired,
     defaultLocaleCode: PropTypes.string.isRequired,
@@ -130,9 +130,9 @@ class TasksPage extends Component {
       <TableHeader />
       <TableBody>
         {this.state.tasks.map((task, index) => {
-          const linkPath = this.props.isMasterEnvironmentById(task.environmentId)
-            ? 'spaces.detail.entries.detail'
-            : 'spaces.environment.entries.detail';
+          const linkPath = hasEnvironmentSectionInUrl()
+            ? 'spaces.environment.entries.detail'
+            : 'spaces.detail.entries.detail';
 
           return (
             <TableRow key={index}>
