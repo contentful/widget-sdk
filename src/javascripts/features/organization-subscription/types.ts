@@ -38,3 +38,43 @@ export interface UsersMeta {
   hardLimit: number;
   unitPrice: number;
 }
+
+export interface SpaceUsage {
+  locales: {
+    usage: number;
+    limit: number;
+    utilization: number;
+  };
+  roles: {
+    usage: number;
+    limit: number;
+    utilization: number;
+  };
+  environments: {
+    usage: number;
+    limit: number;
+    utilization: number;
+  };
+  records: {
+    usage: number;
+    limit: number;
+    utilization: number;
+  };
+  contentTypes: {
+    usage: number;
+    limit: number;
+    utilization: number;
+  };
+  spaceTrialPeriodEndsAt: null;
+  sys: {
+    type: 'SpaceUsage';
+    id: string;
+    space: {
+      sys: {
+        type: 'Link';
+        linkType: 'Space';
+        id: string;
+      };
+    };
+  };
+}

@@ -4,7 +4,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 
 import { OrgSubscriptionContextProvider } from '../context';
-import { useChangedSpace } from '../hooks/useChangedSpace';
 import { getSpacesUsage } from '../services/SpacesUsageService';
 import { SpacePlans } from './SpacePlans';
 import { getVariation } from 'LaunchDarkly';
@@ -73,108 +72,94 @@ jest.mock('../hooks/useChangedSpace', () => ({
 }));
 
 describe('Space Plan', () => {
-  it('renders the rebranded space section header if flag is ON', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    build();
+  describe('SpaceSectionHeader', () => {
+    it('renders the rebranded space section header if flag is ON', async () => {
+      getVariation.mockResolvedValueOnce(true);
+      build();
 
-    await waitFor(() => expect(screen.getByTestId('space-section-header')).toBeVisible());
-    expect(screen.queryByTestId('space-section-header-previous-version')).toBeNull();
-  });
-
-  it('renders the old space section header if flag is OFF', async () => {
-    getVariation.mockResolvedValueOnce(false);
-    build();
-
-    await waitFor(() =>
-      expect(screen.getByTestId('space-section-header-previous-version')).toBeVisible()
-    );
-    expect(screen.queryByTestId('space-section-header')).toBeNull();
-  });
-
-  it('should render SpacePlanRows when there are plans', async () => {
-    getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
-    build();
-    await waitFor(() =>
-      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1)
-    );
-  });
-
-  it('should tell the user to add a space if they have 0 space plans, if feature flag is ON', async () => {
-    getVariation.mockResolvedValueOnce(true);
-    build(null, { spacePlans: [] });
-
-    await waitFor(() =>
-      expect(screen.getByText('Add a space to start using Contentful.')).toBeVisible()
-    );
-  });
-
-  it('should not render SpacePlanRows when there are no plans', async () => {
-    build(null, { spacePlans: [] });
-    await waitFor(() =>
-      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(0)
-    );
-  });
-
-  it('should render an upgraded SpacePlanRow when it has been upgraded', async () => {
-    getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
-    useChangedSpace.mockReturnValue({ changedSpaceId: mockSpaceId });
-    build();
-
-    await waitFor(() =>
-      expect(
-        screen
-          .queryAllByTestId('subscription-page.spaces-list.table-row')[0]
-          .className.includes('hasUpgraded')
-      ).toBeTrue()
-    );
-  });
-
-  it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
-    const mockPlanLocalOne = {
-      ...mockPlanOne,
-      gatekeeperKey: null,
-    };
-    const mockPlanLocalTwo = {
-      ...mockPlanTwo,
-      gatekeeperKey: 'randomKey',
-    };
-
-    build(
-      {
-        enterprisePlan: true,
-        initialLoad: false,
-        isOwnerOrAdmin: true,
-      },
-      { spacePlans: [mockPlanLocalOne, mockPlanLocalTwo] }
-    );
-
-    await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());
-    expect(screen.queryByTestId('tab-unusedSpaces')).toBeInTheDocument();
-
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(2);
-
-    fireEvent.click(screen.getByTestId('tab-unusedSpaces'));
-    expect(screen.getByTestId('subscription-page.unassigned-plans-table')).toBeVisible();
-    expect(
-      screen.queryAllByTestId('subscription-page.spaces-list.unassigned-plans-table-row')
-    ).toHaveLength(1);
-  });
-
-  it('should display not display tabs for enterprise organization if there are no plans unassigned.', async () => {
-    getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
-
-    build({
-      enterprisePlan: true,
-      initialLoad: false,
-      isOwnerOrAdmin: true,
+      await waitFor(() => expect(screen.getByTestId('space-section-header')).toBeVisible());
+      expect(screen.queryByTestId('space-section-header-previous-version')).toBeNull();
     });
 
-    await waitFor(() =>
-      expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(1)
-    );
-    const tabs = screen.queryAllByRole('tab');
-    expect(tabs).toHaveLength(0);
+    it('renders the old space section header if flag is OFF', async () => {
+      getVariation.mockResolvedValueOnce(false);
+      build();
+
+      await waitFor(() =>
+        expect(screen.getByTestId('space-section-header-previous-version')).toBeVisible()
+      );
+      expect(screen.queryByTestId('space-section-header')).toBeNull();
+    });
+  });
+
+  describe('SpacePlansTable', () => {
+    it('should tell the user to add a space if they have 0 space plans, if feature flag is ON', async () => {
+      getVariation.mockResolvedValueOnce(true);
+      build(null, { spacePlans: [] });
+
+      await waitFor(() =>
+        expect(screen.getByText('Add a space to start using Contentful.')).toBeVisible()
+      );
+    });
+
+    it('should not render SpacePlansTable when there are no plans, if the feature flag is OFF', async () => {
+      build(null, { spacePlans: [] });
+
+      await waitFor(() => expect(screen.queryByTestId('subscription-page.table')).toBeNull());
+    });
+
+    it('should render the SpacePlansTable when user has at least 1 plan', async () => {
+      build();
+
+      await waitFor(() => expect(screen.getByTestId('subscription-page.table')).toBeVisible());
+    });
+  });
+
+  describe('UsedAndUnusedSpacePlans', () => {
+    it('should display 2 tabs for enterprise organization if there are plans unassigned.', async () => {
+      const mockPlanLocalOne = {
+        ...mockPlanOne,
+        gatekeeperKey: null,
+      };
+      const mockPlanLocalTwo = {
+        ...mockPlanTwo,
+        gatekeeperKey: 'randomKey',
+      };
+
+      build(
+        {
+          enterprisePlan: true,
+          initialLoad: false,
+          isOwnerOrAdmin: true,
+        },
+        { spacePlans: [mockPlanLocalOne, mockPlanLocalTwo] }
+      );
+
+      await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeVisible());
+      expect(screen.queryByTestId('tab-unusedSpaces')).toBeInTheDocument();
+
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs).toHaveLength(2);
+
+      fireEvent.click(screen.getByTestId('tab-unusedSpaces'));
+      expect(screen.getByTestId('subscription-page.unassigned-plans-table')).toBeVisible();
+      expect(
+        screen.queryAllByTestId('subscription-page.spaces-list.unassigned-plans-table-row')
+      ).toHaveLength(1);
+    });
+
+    it('should not display tabs for enterprise organization if there are no plans unassigned.', async () => {
+      getSpacesUsage.mockResolvedValue({ items: [mockSpaceUsage], total: 1 });
+
+      build({
+        enterprisePlan: true,
+        isOwnerOrAdmin: true,
+      });
+
+      await waitFor(() => expect(screen.getByTestId('subscription-page.table')).toBeVisible());
+      const tabs = screen.queryAllByRole('tab');
+      expect(tabs).toHaveLength(0);
+    });
   });
 });
 

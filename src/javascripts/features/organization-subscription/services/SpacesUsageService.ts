@@ -1,11 +1,34 @@
 import moment from 'moment';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
+import type { OrganizationEndpoint } from 'data/CMA/types';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { downloadBlob } from 'core/utils/downloadBlob';
+
+import type { SpaceUsage } from '../types';
+
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
-export const getSpacesUsage = (endpoint, query) => {
-  return endpoint(
+interface GetSpaceUsageQuery {
+  order: string;
+  skip: number;
+  limit: number;
+}
+
+interface GetSpaceUsageResponse {
+  limit: number;
+  skip: number;
+  total: number;
+  sys: {
+    type: 'Array';
+  };
+  items: SpaceUsage[];
+}
+
+export function getSpacesUsage(
+  endpoint: OrganizationEndpoint,
+  query: GetSpaceUsageQuery
+): Promise<GetSpaceUsageResponse> {
+  return endpoint<GetSpaceUsageResponse>(
     {
       method: 'GET',
       path: ['spaces_usage'],
@@ -13,7 +36,7 @@ export const getSpacesUsage = (endpoint, query) => {
     },
     alphaHeader
   );
-};
+}
 
 const exportCSV = (endpoint) => {
   return endpoint(

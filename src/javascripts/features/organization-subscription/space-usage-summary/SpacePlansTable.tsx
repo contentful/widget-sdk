@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useAsync } from 'core/hooks';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { keyBy } from 'lodash';
 import {
@@ -11,12 +10,15 @@ import {
   TableBody,
   SkeletonRow,
 } from '@contentful/forma-36-react-components';
-import Pagination from 'app/common/Pagination';
-import { SpacePlanRow } from './SpacePlanRow';
-import { getSpacesUsage } from '../services/SpacesUsageService';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { SortableHeaderCell } from './SortableHeaderCell';
+
 import { track } from 'analytics/Analytics';
+import Pagination from 'app/common/Pagination';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+
+import { getSpacesUsage } from '../services/SpacesUsageService';
+import type { SpacePlan } from '../types';
+import { SpacePlanRow } from './SpacePlanRow';
+import { SortableHeaderCell, ColumnId, SortOrder } from './SortableHeaderCell';
 
 const styles = {
   usageTable: css({
@@ -51,62 +53,77 @@ const styles = {
   }),
 };
 
-const buildSortParam = (sortState) => {
-  const [columnNameAndOrder = []] = Object.entries(sortState);
-  const [name, sortOrder] = columnNameAndOrder;
-  const firstLevelSortDirection = sortOrder === 'DESC' ? '-' : '';
-  const secondLevelSortDirection = sortOrder === 'DESC' ? '' : '-';
-  return `${firstLevelSortDirection}${name}${
-    name === 'spaceName' || name === 'planName'
-      ? ''
-      : `.utilization,${secondLevelSortDirection}${name}.limit`
-  }`;
-};
+async function fetchSpacesUsage(organizationId: string, sortParam: string, pagination) {
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
+
+  return await getSpacesUsage(orgEndpoint, {
+    order: sortParam,
+    skip: pagination.skip,
+    limit: pagination.limit,
+  });
+}
+interface SpacePlansTableProps {
+  // It tells if thise table is for an Enterprise customer or not
+  enterprisePlan?: boolean;
+  // It tells the component that SpacePlans is fetching some feature flags
+  featureFlagLoading?: boolean;
+  // function to be called when user clicks on "upgrade" link, "change" link, or "change plan type" button
+  onChangeSpace: () => void;
+  // function to be called when user deletes a space
+  onDeleteSpace: (plan: SpacePlan) => () => void;
+  // Id of the current organization
+  organizationId: string;
+  // Array of space plans, the table will render one row for each item of this array
+  plans: SpacePlan[];
+  // It tells the table row to render the "change" link
+  // TODO: remove "upgrade" link so we do not need this prop
+  showSpacePlanChangeBtn?: boolean;
+  // Id of the space that has been upgraded
+  upgradedSpaceId?: string;
+}
 
 export const SpacePlansTable = ({
   plans,
   onChangeSpace,
   onDeleteSpace,
-  enterprisePlan,
+  enterprisePlan = false,
   showSpacePlanChangeBtn = false,
   featureFlagLoading = false,
   upgradedSpaceId,
   organizationId,
-}) => {
+}: SpacePlansTableProps) => {
   const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const [plansLookup, setPlansLookup] = useState({});
-  const [sortState, setSortState] = useState({ spaceName: 'ASC' });
 
-  const handleSort = (columnName) => {
-    setSortState({ [columnName]: sortState[columnName] === 'DESC' ? 'ASC' : 'DESC' });
+  const [sortOrder, setSortOrder] = useState<SortOrder>('ASC');
+  const [sortColumn, setSortColumn] = useState<ColumnId>(ColumnId.SPACE_NAME);
+
+  const handleSort = (columnName: ColumnId) => {
     // Goto page zero on User sort
     setPagination({ ...pagination, skip: 0 });
     track('space_usage_summary:column_sorted', { sortBy: columnName });
+
+    if (columnName === sortColumn) {
+      setSortOrder((prevState) => (prevState === 'ASC' ? 'DESC' : 'ASC'));
+    } else {
+      setSortOrder('ASC');
+      setSortColumn(columnName);
+    }
   };
 
   const handlePaginationChange = (newPagination) => {
-    setPagination({
-      ...newPagination,
-      ...(newPagination.limit !== pagination.limit && { skip: 0 }),
-    });
+    setPagination(newPagination);
     track('space_usage_summary:pagination_changed');
   };
 
-  const fetchSpacesUsage = useCallback(() => {
-    if (!organizationId) {
-      throw new Error('Organization id needs to be defined');
-    }
+  const sortParam = buildSortParam(sortColumn, sortOrder);
 
-    const orgEndpoint = createOrganizationEndpoint(organizationId);
-    return getSpacesUsage(orgEndpoint, {
-      order: buildSortParam(sortState),
-      skip: pagination.skip,
-      limit: pagination.limit,
-    });
-  }, [organizationId, pagination.skip, pagination.limit, sortState]);
-
-  const { isLoading: spacesUsageLoading, error, data = { total: 0, items: [] } } = useAsync(
-    fetchSpacesUsage
+  const { isLoading: spacesUsageLoading, error, data } = useAsync(
+    useCallback(() => fetchSpacesUsage(organizationId, sortParam, pagination), [
+      organizationId,
+      sortParam,
+      pagination,
+    ])
   );
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
@@ -127,46 +144,53 @@ export const SpacePlansTable = ({
         <TableHead>
           <TableRow>
             <SortableHeaderCell
-              id="spaceName"
+              columnId={ColumnId.SPACE_NAME}
               displayName="Name"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.SPACE_NAME}
             />
             <SortableHeaderCell
-              id="planName"
+              columnId={ColumnId.PLAN_NAME}
               displayName="Space type"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.PLAN_NAME}
             />
             <SortableHeaderCell
-              id="environments"
+              columnId={ColumnId.ENVIRONMENTS}
               displayName="Environments"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.ENVIRONMENTS}
             />
             <SortableHeaderCell
-              id="roles"
+              columnId={ColumnId.ROLES}
               displayName="Roles"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.ROLES}
             />
             <SortableHeaderCell
-              id="locales"
+              columnId={ColumnId.LOCALES}
               displayName="Locales"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.LOCALES}
             />
             <SortableHeaderCell
-              id="contentTypes"
+              columnId={ColumnId.CONTENT_TYPES}
               displayName="Content types"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.CONTENT_TYPES}
             />
             <SortableHeaderCell
-              id="records"
+              columnId={ColumnId.RECORDS}
               displayName="Records"
               onSort={handleSort}
-              sortOrder={sortState}
+              sortOrder={sortOrder}
+              isActiveSort={sortColumn === ColumnId.RECORDS}
             />
             <TableCell />
           </TableRow>
@@ -175,7 +199,7 @@ export const SpacePlansTable = ({
           {featureFlagLoading || spacesUsageLoading || !!error ? (
             <SkeletonRow columnCount={12} rowCount={pagination.limit} />
           ) : (
-            data.items.map((spaceUsage) => {
+            data?.items.map((spaceUsage) => {
               const spaceId = spaceUsage.sys.space.sys.id;
               const plan = plansLookup[spaceId];
               return plan ? (
@@ -195,10 +219,11 @@ export const SpacePlansTable = ({
           )}
         </TableBody>
       </Table>
+
       {plans.length >= 10 && (
         <Pagination
           {...pagination}
-          total={data.total}
+          total={data?.total ?? 0}
           loading={spacesUsageLoading}
           onChange={handlePaginationChange}
         />
@@ -207,13 +232,13 @@ export const SpacePlansTable = ({
   );
 };
 
-SpacePlansTable.propTypes = {
-  plans: PropTypes.array.isRequired,
-  organizationId: PropTypes.string,
-  onChangeSpace: PropTypes.func.isRequired,
-  onDeleteSpace: PropTypes.func.isRequired,
-  enterprisePlan: PropTypes.bool,
-  showSpacePlanChangeBtn: PropTypes.bool,
-  featureFlagLoading: PropTypes.bool,
-  upgradedSpaceId: PropTypes.string,
-};
+function buildSortParam(sortColumn: ColumnId, sortOrder: SortOrder) {
+  const firstLevelSortDirection = sortOrder === 'DESC' ? '-' : '';
+  const secondLevelSortDirection = sortOrder === 'DESC' ? '' : '-';
+
+  return `${firstLevelSortDirection}${sortColumn}${
+    sortColumn === ColumnId.SPACE_NAME || sortColumn === ColumnId.PLAN_NAME
+      ? ''
+      : `.utilization,${secondLevelSortDirection}${sortColumn}.limit`
+  }`;
+}
