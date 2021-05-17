@@ -5,6 +5,9 @@ import { create } from 'data/streamHashSet';
 
 describe('data/StreamHashSet', () => {
   let store, itemValues;
+
+  const makeItem = (id) => ({ sys: { id } });
+
   beforeEach(async function () {
     store = create();
 
@@ -70,11 +73,4 @@ describe('data/StreamHashSet', () => {
       expect(store.get('old')).toBeUndefined();
     });
   });
-
-  function makeItem(id) {
-    return {
-      id: id,
-      getId: _.constant(id),
-    };
-  }
 });

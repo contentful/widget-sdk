@@ -23,7 +23,7 @@ interface SnapshotPresenterCustomWIdgetProps {
   };
   entity: Entity;
   editorData: {
-    contentType: { data: InternalContentType };
+    contentType: InternalContentType;
     editorInterface: EditorInterfaceProps;
   };
   value: any;
@@ -72,7 +72,7 @@ const SnapshotPresenterCustomWidget = ({
       publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
       initialContentTypes: currentSpaceContentTypes,
-      internalContentType: editorData.contentType.data,
+      internalContentType: editorData.contentType,
       publicLocaleCode: locale.code,
       spaceId,
       environment: currentEnvironment,

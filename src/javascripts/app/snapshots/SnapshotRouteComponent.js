@@ -113,7 +113,7 @@ const SnapshotComparator = (props) => {
   const onSave = useCallback(
     async (redirect) => {
       function prepareRestoredEntry() {
-        const ctData = get(editorData, 'contentType.data', {});
+        const ctData = get(editorData, 'contentType', {});
         const restoredSnapshot = Entries.internalToExternal(snapshot.snapshot || {}, ctData);
         const restoredResult = Entries.internalToExternal(entry.data, ctData);
 
@@ -183,7 +183,7 @@ const SnapshotComparator = (props) => {
 
         setSnapshot(
           extend(snapshot, {
-            snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data),
+            snapshot: Entries.externalToInternal(snapshot.snapshot, contentType),
           })
         );
       } catch (err) {

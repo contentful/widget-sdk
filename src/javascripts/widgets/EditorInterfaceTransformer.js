@@ -110,7 +110,7 @@ function makeSys(ct, ei = {}) {
     type: 'EditorInterface',
     contentType: {
       sys: {
-        id: ct.sys.id,
+        id: ct?.sys.id,
         type: 'Link',
         linkType: 'ContentType',
       },

@@ -51,7 +51,7 @@ describe('app/entity_editor/DataLoader', () => {
       },
       publishedCTs: {
         fetch: function (id) {
-          return $q.resolve({ data: makeCt(id) });
+          return $q.resolve(makeCt(id));
         },
       },
       cma: {
@@ -79,7 +79,7 @@ describe('app/entity_editor/DataLoader', () => {
 
     it('adds the entry’s content type to the context', async function () {
       const editorData = await loadEntry('EID');
-      expect(editorData.contentType.data.sys.id).toEqual('CTID');
+      expect(editorData.contentType.sys.id).toEqual('CTID');
     });
 
     it('requests the editor interface', async function () {
@@ -191,15 +191,16 @@ describe('app/entity_editor/DataLoader', () => {
     it('builds field controls from asset editor interface', async function () {
       await loadAsset('EID');
 
-      const matchArrayItems = (props, item) => {
-        Object.entries(props).forEach(([key, value]) => {
-          expect(item[key]).toBe(value);
+      const matchArrayItems = (eiField, control) => {
+        Object.entries(eiField).forEach(([key, value]) => {
+          expect(control[key]).toBe(value);
         });
-        expect(item.field).toHaveProperty('id');
+        expect(control.field).toHaveProperty('id');
       };
 
-      const [arg1, arg2] = stubs.buildRenderables.mock.calls[0];
-      expect(arg2).toEqual(expect.any(Array));
+      const [controls, widgets] = stubs.buildRenderables.mock.calls[0];
+      expect(widgets).toEqual(expect.any(Array));
+
       [
         {
           fieldId: 'title',
@@ -216,7 +217,7 @@ describe('app/entity_editor/DataLoader', () => {
           widgetNamespace: 'builtin',
           widgetId: 'fileEditor',
         },
-      ].forEach((props, i) => matchArrayItems(props, arg1[i]));
+      ].forEach((eiField, index) => matchArrayItems(eiField, controls[index]));
     });
 
     it('only adds specified properties', async function () {
@@ -246,7 +247,7 @@ describe('app/entity_editor/DataLoader', () => {
       const editorData = await load('EID');
 
       expect(editorData.entity.data.sys.id).toEqual('EID');
-      expect(editorData.contentType.data.sys.id).toEqual('CTID');
+      expect(editorData.contentType.sys.id).toEqual('CTID');
       expect(editorData.fieldControls).toBe(controls);
       expect(editorData.entityInfo.id).toBe('EID');
       expect(editorData.entityInfo.type).toBe('Entry');
@@ -256,16 +257,14 @@ describe('app/entity_editor/DataLoader', () => {
     });
   });
 
-  function makeEntity(id, ctid) {
-    const type = ctid ? 'Entry' : 'Asset';
-    const ct = ctid && {
-      sys: { id: ctid },
-    };
+  function makeEntity(id, ctId) {
+    const type = ctId ? 'Entry' : 'Asset';
+    const contentType = ctId && makeCt(ctId);
     return {
       sys: {
-        id: id,
-        type: type,
-        contentType: ct,
+        id,
+        type,
+        contentType,
       },
     };
   }
@@ -273,7 +272,7 @@ describe('app/entity_editor/DataLoader', () => {
   function makeCt(id) {
     return {
       sys: {
-        id: id,
+        id,
       },
     };
   }

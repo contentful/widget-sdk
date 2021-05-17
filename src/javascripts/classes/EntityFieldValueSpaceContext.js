@@ -21,7 +21,7 @@ export function getContentTypeById(contentTypeId) {
  */
 export function displayFieldForType(contentTypeId) {
   const ct = getContentTypeById(contentTypeId);
-  return ct && _.find(ct.data.fields, { id: ct.data.displayField });
+  return ct && _.find(ct.fields, { id: ct.displayField });
 }
 
 /**
@@ -44,7 +44,7 @@ export function entryTitle(entry, localeCode, modelValue) {
   return contentType
     ? EntityFieldValueHelpers.getEntryTitle({
         entry: entry.data,
-        contentType: contentType.data,
+        contentType,
         internalLocaleCode: localeCode,
         defaultInternalLocaleCode,
         defaultTitle,
@@ -112,12 +112,12 @@ export function entityDescription(entity, localeCode) {
     return undefined;
   }
   const isTextField = (field) => ['Symbol', 'Text'].includes(field.type);
-  const isDisplayField = (field) => field.id === contentType.data.displayField;
+  const isDisplayField = (field) => field.id === contentType.displayField;
   const isMaybeSlugField = (field) => /\bslug\b/.test(field.name);
   const isDescriptionField = (field) =>
     isTextField(field) && !isDisplayField(field) && !isMaybeSlugField(field);
 
-  const descriptionField = contentType.data.fields.find(isDescriptionField);
+  const descriptionField = contentType.fields.find(isDescriptionField);
   return descriptionField ? getFieldValue(entity, descriptionField.id, localeCode) : undefined;
 }
 

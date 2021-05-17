@@ -16,7 +16,7 @@ export function createLoadEventTracker({
 
   const getDetailEventData = once(() => {
     const editorData = getEditorData();
-    const { fields: fieldTypes } = editorData.contentType.data;
+    const { fields: fieldTypes } = editorData.contentType;
     const { fields } = editorData.entity.data;
     const enabledFieldTypes = fieldTypes.filter((field) => !field.disabled);
     const richTextFieldTypes = enabledFieldTypes.filter(isRichTextField);
@@ -86,7 +86,7 @@ export function bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, tr
   let loadLinksRendered = false;
   let loadShareJSConnected = false;
 
-  const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
+  const linkFieldTypes = editorData.contentType.fields.filter(isLinkField);
   const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
 
   K.onValue(otDoc.state.isConnected$, (status) => {

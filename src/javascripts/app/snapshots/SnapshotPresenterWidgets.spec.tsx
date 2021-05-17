@@ -58,7 +58,7 @@ const getMockedProps = ({
       },
     },
     editorData: {
-      contentType: { data: {} as InternalContentType },
+      contentType: {} as InternalContentType,
       editorInterface: {} as EditorInterfaceProps,
     },
     entity: {} as Entity,

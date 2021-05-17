@@ -33,8 +33,8 @@ export function openEditContentTypeDialog(contentType) {
     <EditContentTypeDialog
       key={modalKey}
       isShown={props.isShown}
-      originalName={contentType.data.name}
-      originalDescription={contentType.data.description}
+      originalName={contentType.name}
+      originalDescription={contentType.description}
       onClose={() => {
         props.onClose(false);
       }}
@@ -55,8 +55,8 @@ export const openDuplicateContentTypeDialog = async (contentType, duplicate, con
     <DuplicateContentTypeDialog
       key={modalKey}
       isShown={props.isShown}
-      originalName={contentType.data.name}
-      originalDescription={contentType.data.description}
+      originalName={contentType.name}
+      originalDescription={contentType.description}
       existingContentTypeIds={contentTypeIds}
       onCancel={() => {
         props.onClose(false);

@@ -27,7 +27,7 @@ const styles = {
 
 interface SnapshotPresenterWidgetsProps {
   editorData: {
-    contentType: { data: InternalContentType };
+    contentType: InternalContentType;
     editorInterface: EditorInterfaceProps;
   };
   entity: Entity;

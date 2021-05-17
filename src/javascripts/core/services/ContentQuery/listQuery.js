@@ -47,7 +47,7 @@ function prepareEntityListQuery(contentType, opts) {
     'sys.archivedAt[exists]': 'false', // By default, don't get archived entries.
   };
   const searchQuery = buildQueryFromUISearch({
-    contentType: _.get(contentType, 'data'),
+    contentType,
     search: opts,
   });
   return _.assign(queryObject, searchQuery);
@@ -92,6 +92,6 @@ function isSystemField(id) {
 }
 
 function getCtField(id, ct) {
-  const ctFields = _.get(ct, 'data.fields', []);
+  const ctFields = ct?.fields ?? [];
   return _.find(ctFields, { id: id });
 }

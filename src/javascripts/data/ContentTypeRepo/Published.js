@@ -13,13 +13,13 @@ import * as Store from 'data/streamHashSet';
  *
  * @usage[js]
  * var Repo = require('data/ContentTypeRepo/Published');
- * var repo = Repo.create(space);
+ * var repo = Repo.create(cmaClient);
  */
 
 /**
- * @param {Client.Space} space  Space instance from the client.
+ * @param {CmaClient} cmaClient  flat CMA client instance
  */
-export function create(space) {
+export function create(cmaClient) {
   const store = Store.create();
 
   /**
@@ -33,7 +33,7 @@ export function create(space) {
    */
   const items$ = store.items$.map((cts) =>
     sortBy(
-      cts.map((ct) => deepFreeze(cloneDeep(ct.data))),
+      cts.map((ct) => deepFreeze(cloneDeep(ct))),
       (ct) => ct.name && ct.name.toLowerCase()
     )
   );
@@ -121,10 +121,23 @@ export function create(space) {
    * @returns {Promise<Client.ContentType>}
    */
   function publish(contentType) {
-    return contentType.publish().then((published) => {
-      store.add(published);
-      return published;
-    });
+    const { spaceId, environmentId } = cmaClient.raw.getDefaultParams();
+    // TODO: cmaClient.contentType.publish should accept headers, until then we use .raw
+    return cmaClient.raw
+      .put(
+        `/spaces/${spaceId}/environments/${environmentId}/content_types/${contentType.sys.id}/published`,
+        contentType,
+        {
+          headers: {
+            'x-contentful-skip-transformation': true,
+            'x-contentful-version': contentType.sys.version,
+          },
+        }
+      )
+      .then((published) => {
+        store.add(published);
+        return published;
+      });
   }
 
   /**
@@ -137,7 +150,9 @@ export function create(space) {
    * @returns {Promise<void>}
    */
   function unpublish(contentType) {
-    return contentType.unpublish().then(store.remove);
+    return cmaClient.contentType
+      .unpublish({ contentTypeId: contentType.sys.id })
+      .then(store.remove);
   }
 
   /**
@@ -152,7 +167,7 @@ export function create(space) {
    * @returns {Promise<API.ContentType[]>}
    */
   function refreshBare() {
-    return refresh().then((cts) => cts.map((ct) => deepFreeze(cloneDeep(ct.data))));
+    return refresh().then((cts) => cts.map((ct) => deepFreeze(cloneDeep(ct))));
   }
 
   /**
@@ -169,16 +184,21 @@ export function create(space) {
   // TODO we should throttle this function so that multiple
   // subsequent calls to `fetch()` do not trigger multiple requests.
   function refresh() {
-    return space.getPublishedContentTypes({ limit: 1000 }).then((contentTypes) => {
-      contentTypes = removeDeleted(contentTypes);
-      store.reset(contentTypes);
-      return contentTypes;
-    }, handleReloadError);
+    const { spaceId, environmentId } = cmaClient.raw.getDefaultParams();
+    return cmaClient.raw
+      .get(`/spaces/${spaceId}/environments/${environmentId}/public/content_types?limit=1000`, {
+        headers: { 'x-contentful-skip-transformation': true },
+      })
+      .then(({ items: contentTypes }) => {
+        contentTypes = removeDeleted(contentTypes);
+        store.reset(contentTypes);
+        return contentTypes;
+      }, handleReloadError);
   }
 }
 
 function removeDeleted(contentTypes) {
-  return contentTypes.filter((ct) => !ct.isDeleted());
+  return contentTypes.filter((ct) => ct && !ct.sys.deletedAtVersion);
 }
 
 function handleReloadError(err) {

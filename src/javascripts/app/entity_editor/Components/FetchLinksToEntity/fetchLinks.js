@@ -41,7 +41,7 @@ export default function fetchLinks(id, type) {
         return entityHelpers.entityTitle(entry).then((title) => ({
           id,
           title,
-          contentTypeName: contentType.data.name,
+          contentTypeName: contentType.name,
           url: href(makeEntityRef(entry)).split('?').shift(),
         }));
       })

@@ -72,7 +72,7 @@ const SettingsTabComponent = ({
           id="content-type-field-id"
           onChange={(value) => onChange('apiName', value)}
           onBlur={() => onBlur('apiName')}
-          isDisabled={!!contentTypes.find((ct) => ct.sys.id === contentType.data.sys.id)}
+          isDisabled={!!contentTypes.find((ct) => ct.sys.id === contentType.sys.id)}
           validationMessage={fields.apiName.error ? fields.apiName.error : ''}
           required
         />

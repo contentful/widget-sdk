@@ -1,5 +1,5 @@
 import { EditorialConstants } from '@contentful/editorial-primitives';
-import { get, find, isPlainObject, cloneDeep, memoize, constant } from 'lodash';
+import { get, find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
@@ -17,11 +17,6 @@ import {
 } from 'widgets/WidgetRenderable';
 import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-
-const assetContentType = {
-  getId: constant(undefined),
-  data: EditorialConstants.assetContentType,
-};
 
 /**
  * @ngdoc service
@@ -157,7 +152,7 @@ async function loadEditorData(loader, id) {
     getCustomWidgetLoader({ onWarning, hasServerError }),
   ]);
 
-  const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
+  const editorInterface = EditorInterfaceTransformer.fromAPI(contentType, apiEditorInterface);
 
   const { controls, sidebar, editors } = editorInterface;
 
@@ -233,7 +228,7 @@ function makeAssetLoader(spaceContext) {
     // If we would have an endpoint with this data
     // (/spaces/:sid/environments/:eid/asset_content_type(/editor_interface))
     // we could potentially enable UI Extensions for assets.
-    getContentType: () => assetContentType,
+    getContentType: () => EditorialConstants.assetContentType,
     getEditorInterface: () => EditorialConstants.assetEditorInterface,
   };
 }
@@ -249,18 +244,18 @@ function makeDocOpener(spaceContext) {
 function makeEntityInfo(entity, contentType) {
   const { type } = entity.data.sys;
   if (type === 'Asset') {
-    contentType = assetContentType;
+    contentType = EditorialConstants.assetContentType;
   }
 
   return deepFreeze({
     id: entity.data.sys.id,
     type,
-    contentTypeId: contentType ? contentType.data.sys.id : null,
+    contentTypeId: contentType?.sys.id ?? null, //get(contentType, ['sys', 'id'], null),
     // TODO Normalize CT data if this property is used by more advanced
     // services like the 'Document' controller and the 'cfEntityField'
     // directive. Normalizing means that we set external field IDs from
     // internal ones, etc.
-    contentType: contentType ? cloneDeep(contentType.data) : null,
+    contentType: contentType ? cloneDeep(contentType) : null,
   });
 }
 

@@ -4,7 +4,7 @@ import { syncControls } from 'widgets/EditorInterfaceTransformer';
 export const initActionsReducer = ({ isNew, editorInterface, contentTypeData }) => {
   return {
     editorInterface,
-    contentType: { data: contentTypeData },
+    contentType: contentTypeData,
     contextState: { isNew, dirty: false },
   };
 };
@@ -21,7 +21,7 @@ export const reducerActions = {
 
 const updateFields = (state, { fields }) => {
   const clonedState = _.cloneDeep(state);
-  clonedState.contentType.data = { ...clonedState.contentType.data, fields };
+  clonedState.contentType = { ...clonedState.contentType, fields };
   clonedState.contextState.dirty = true;
   return clonedState;
 };
@@ -53,9 +53,9 @@ const setFieldAsTitle = (state, { field }) => {
 
 const addField = (state, { field }) => {
   const clonedState = _.cloneDeep(state);
-  clonedState.contentType.data.fields = [...clonedState.contentType.data.fields, field];
+  clonedState.contentType.fields = [...clonedState.contentType.fields, field];
   clonedState.editorInterface.controls = syncControls(
-    clonedState.contentType.data,
+    clonedState.contentType,
     clonedState.editorInterface.controls
   );
   clonedState.contextState.dirty = true;
@@ -64,11 +64,11 @@ const addField = (state, { field }) => {
 
 const removeField = (state, { id }) => {
   const clonedState = _.cloneDeep(state);
-  const fields = clonedState.contentType.data.fields;
+  const fields = clonedState.contentType.fields;
   _.remove(fields, { id: id });
-  clonedState.contentType.data.fields = fields;
+  clonedState.contentType.fields = fields;
   clonedState.editorInterface.controls = syncControls(
-    clonedState.contentType.data,
+    clonedState.contentType,
     clonedState.editorInterface.controls
   );
   clonedState.contextState.dirty = true;
@@ -77,8 +77,8 @@ const removeField = (state, { id }) => {
 
 const updateCTMetadata = (state, { name, description }) => {
   const clonedState = _.cloneDeep(state);
-  clonedState.contentType.data.name = name;
-  clonedState.contentType.data.description = description;
+  clonedState.contentType.name = name;
+  clonedState.contentType.description = description;
   clonedState.contextState.dirty = true;
   return clonedState;
 };

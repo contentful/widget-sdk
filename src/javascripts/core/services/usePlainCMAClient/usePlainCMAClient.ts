@@ -63,7 +63,7 @@ export function getSpaceEnvCMAClient() {
   const spaceContext = getSpaceContext();
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
-  return getCMAClient({ environmentId: environmentId, spaceId });
+  return getCMAClient({ environmentId, spaceId });
 }
 
 export function useCMAClient() {

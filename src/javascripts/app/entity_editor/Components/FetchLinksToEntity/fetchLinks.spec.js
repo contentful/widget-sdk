@@ -14,7 +14,7 @@ jest.mock('ng/spaceContext', () => ({
     getEntries: jest.fn(),
   },
   publishedCTs: {
-    get: jest.fn().mockReturnValue({ data: { name: 'CT' } }),
+    get: jest.fn().mockReturnValue({ name: 'CT' }),
   },
 }));
 

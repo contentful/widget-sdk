@@ -28,7 +28,7 @@ import * as Config from 'Config';
 import client from 'services/client';
 import { captureError } from 'core/monitoring';
 import { createPubSubClientForSpace } from 'services/PubSubService';
-import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { getSpaceEnvCMAClient, getCMAClient } from 'core/services/usePlainCMAClient';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
 const MASTER_ENVIRONMENT_ID = 'master';
@@ -172,31 +172,36 @@ function initSpaceContext() {
         spaceContext.pubsubClient = await createPubSubClientForSpace(spaceId);
 
         const start = Date.now();
-        await Promise.all([
-          setupEnvironments(spaceContext, uriEnvOrAliasId).then(async () => {
-            spaceContext.docPool = await DocumentPool.create(
-              spaceContext.docConnection,
-              spaceContext.pubsubClient,
-              spaceContext.organization.sys.id,
-              spaceId,
-              spaceContext.space.environment,
-              cmaPlainClient,
-              spaceContext.endpoint
-            );
-          }),
-          TheLocaleStore.init(localeRepo),
-          setupPublishedCTsBus(spaceContext).then(() => {
-            const ctMap = spaceContext.publishedCTs
-              .getAllBare()
-              .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
-            spaceContext.uiConfig = createUiConfigStore(
-              space,
-              spaceContext.endpoint,
-              spaceContext.publishedCTs,
-              createViewMigrator(ctMap)
-            );
-          }),
-        ]);
+
+        await setupEnvironments(spaceContext, uriEnvOrAliasId);
+
+        spaceContext.docPool = await DocumentPool.create(
+          spaceContext.docConnection,
+          spaceContext.pubsubClient,
+          spaceContext.organization.sys.id,
+          spaceId,
+          spaceContext.space.environment,
+          cmaPlainClient,
+          spaceContext.endpoint
+        );
+
+        await TheLocaleStore.init(localeRepo);
+
+        // This has to be called after `setupEnvironments`, so that
+        // the environment is properly set on spaceContext.space
+        await setupPublishedCTsBus(spaceContext);
+
+        const ctMap = spaceContext.publishedCTs
+          .getAllBare()
+          .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
+
+        spaceContext.uiConfig = createUiConfigStore(
+          space,
+          spaceContext.endpoint,
+          spaceContext.publishedCTs,
+          createViewMigrator(ctMap)
+        );
+
         Telemetry.record('space_context_http_time', Date.now() - start);
         // TODO: remove this after we have store with combined reducers on top level
         // string is hardcoded because this code _is_ temporary
@@ -335,8 +340,11 @@ function initSpaceContext() {
    * So the additional listener on values changes is required to keep (self.publishedCTs.items$ = publishedCTsBus$) bus up-to-date.
    */
   async function setupPublishedCTsBus(spaceContext) {
+    const cma = getSpaceEnvCMAClient();
+
     /** @type {Published} */
-    const publishedCTsForSpace = PublishedCTRepo.create(spaceContext.space);
+    const publishedCTsForSpace = PublishedCTRepo.create(cma);
+
     _.assign(spaceContext.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
     await spaceContext.publishedCTs.refresh();
     // Synchronous first update since there's a current value now.

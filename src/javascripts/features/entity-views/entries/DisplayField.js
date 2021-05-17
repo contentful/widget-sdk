@@ -222,10 +222,9 @@ export function DisplayField({ entity, field, entryCache, assetCache }) {
       const contentType = EntityFieldValueSpaceContext.getContentTypeById(contentTypeId);
 
       if (contentType) {
-        const contentTypeName = contentType.getName();
         result = (
-          <span className={styles.textOverflow} title={contentTypeName}>
-            {contentTypeName}
+          <span className={styles.textOverflow} title={contentType.name}>
+            {contentType.name}
           </span>
         );
       }

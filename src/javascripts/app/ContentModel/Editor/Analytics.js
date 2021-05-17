@@ -3,8 +3,8 @@ import { get } from 'lodash';
 
 export const trackAddedField = (contentType, field) => {
   Analytics.track('content_modelling:field_added', {
-    contentTypeId: contentType.getId(),
-    contentTypeName: contentType.getName(),
+    contentTypeId: contentType.sys.id,
+    contentTypeName: contentType.name,
     fieldId: field.id,
     fieldName: field.name,
     fieldType: field.type,

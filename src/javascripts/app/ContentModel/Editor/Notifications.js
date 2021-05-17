@@ -67,7 +67,7 @@ export function saveFailure(errData, contentType) {
   if (errorId === 'ValidationFailed') {
     saveInvalidError(errData, contentType);
   } else if (errorId === 'VersionMismatch') {
-    if (contentType.getVersion()) {
+    if (contentType.sys?.version) {
       saveOutdatedError(errData, contentType);
     } else {
       saveIdExists();
@@ -86,7 +86,7 @@ export function saveInvalidError(error, contentType) {
   captureWarning(new Error('Error saving invalid Content Type'), {
     extra: {
       error,
-      contentType: contentType.data,
+      contentType,
     },
   });
 }

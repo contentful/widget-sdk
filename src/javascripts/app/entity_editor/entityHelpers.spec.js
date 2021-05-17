@@ -87,7 +87,7 @@ describe('EntityHelpers', () => {
       };
 
       beforeEach(function () {
-        spaceContextMocked.publishedCTs.get.mockReturnValue({ data: contentType });
+        spaceContextMocked.publishedCTs.get.mockReturnValue(contentType);
       });
 
       it(`converts data to entry and calls EntityFieldValueSpaceContext.${spaceContextMethodName}()`, async function () {
@@ -580,7 +580,7 @@ describe('EntityHelpers', () => {
       };
 
       beforeAll(() => {
-        spaceContextMocked.publishedCTs.get.mockReturnValue({ data: contentType });
+        spaceContextMocked.publishedCTs.get.mockReturnValue(contentType);
       });
 
       describe('toPrivateEntity', () => {

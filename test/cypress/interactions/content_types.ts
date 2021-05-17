@@ -8,13 +8,13 @@ import {
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 import {
-  createReguestWithNewField,
+  createRequestWithNewField,
   createResponseWithNewField,
   createEditorInterfaceRequestWithNewField,
 } from '../fixtures/requests/content-types';
 import { editorInterfaceResponseWithApp } from '../fixtures/responses/editor-interface-with-app';
 import { severalPublicContentTypes } from '../fixtures/responses/content-types-several-public';
-import { cloneDeep, set } from 'lodash';
+import { omit, cloneDeep, set } from 'lodash';
 
 const empty = require('../fixtures/responses/empty.json');
 const contentTypeSingle = require('../fixtures/responses/content-types-single.json');
@@ -45,7 +45,7 @@ enum States {
 
 const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
   method: 'GET',
-  path: `/spaces/${defaultSpaceId}/public/content_types`,
+  path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/public/content_types`,
   headers: defaultHeader,
   query: {
     limit: '1000',
@@ -378,9 +378,9 @@ export const saveDefaultContentTypeWithCustomSidebar = {
       uponReceiving: `a request to save content type "${defaultContentTypeId}" with custom sidebar`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types/${defaultContentTypeId}`,
         headers: defaultHeader,
-        body: contentTypeWithCustomSidebarRequestBody,
+        body: omit(contentTypeWithCustomSidebarRequestBody, 'sys'),
       },
       willRespondWith: {
         status: 200,
@@ -415,9 +415,12 @@ export const saveDefaultContentTypeWithNewField = {
       uponReceiving: `a request to save content type "${defaultContentTypeId}" with a new field "${apiName}"`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types/${defaultContentTypeId}`,
         headers: defaultHeader,
-        body: createReguestWithNewField({ name, apiName, type, linkType, validations }),
+        body: omit(
+          createRequestWithNewField({ name, apiName, type, linkType, validations }),
+          'sys'
+        ),
       },
       willRespondWith: {
         status: 200,
@@ -452,7 +455,7 @@ export const publishDefaultContentTypeWithNewField = {
       uponReceiving: `a request to publish content type  "${defaultContentTypeId}" with a new field "${apiName}"`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/published`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types/${defaultContentTypeId}/published`,
         headers: defaultHeader,
       },
       willRespondWith: {
@@ -501,7 +504,7 @@ export const publishDefaultContentType = {
       uponReceiving: `a request to publish content type "${defaultContentTypeId}"`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/published`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/content_types/${defaultContentTypeId}/published`,
         headers: defaultHeader,
       },
       willRespondWith: {

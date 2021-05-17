@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useBlocker, useLocation } from 'core/react-routing';
-
-import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { ModalLauncher, Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
 
 export default function createUnsavedChangesDialogOpener(save) {
   return () =>

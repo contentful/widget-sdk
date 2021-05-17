@@ -16,12 +16,14 @@ import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
 import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
+import { isDraft, isPublished } from 'contentful-management';
 import { go } from 'states/Navigator';
 import { openFieldModalDialog, getUpdatedField } from 'features/content-model-editor';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { openEditContentTypeDialog } from './Dialogs';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
@@ -34,7 +36,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 export default function useCreateActions(props) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
   const [hasAdvancedExtensibility, setAdvancedExtensibility] = useState(false);
-  const [extensions, setExtentions] = useState([]);
+  const [extensions, setExtensions] = useState([]);
   const [state, dispatch] = useReducer(
     reducer,
     {
@@ -47,12 +49,7 @@ export default function useCreateActions(props) {
   // TODO: remove 'spaceContext'
   const spaceContext = getSpaceContext();
 
-  const {
-    currentSpace,
-    currentSpaceContentTypes,
-    currentSpaceId: spaceId,
-    currentOrganizationId,
-  } = useSpaceEnvContext();
+  const { currentSpace, currentSpaceContentTypes, currentOrganizationId } = useSpaceEnvContext();
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
 
@@ -71,17 +68,16 @@ export default function useCreateActions(props) {
 
   useEffect(() => {
     async function initContentType() {
-      const contentType = props.contentTypeId
+      const contentTypeWithData = props.contentTypeId
         ? await currentSpace.getContentType(props.contentTypeId)
         : await currentSpace.newContentType({
             sys: { type: 'ContentType' },
             fields: [],
           });
-      const editorInterfaceFromApi = await spaceContext.cma.getEditorInterface(
-        contentType.data.sys.id
-      );
+      const contentType = contentTypeWithData.data;
+      const editorInterfaceFromApi = await spaceContext.cma.getEditorInterface(contentType.sys.id);
       const editorInterface = EditorInterfaceTransformer.fromAPI(
-        contentType.data,
+        contentType,
         editorInterfaceFromApi
       );
       const advancedExtensibility = await AdvancedExtensibilityFeature.isEnabled(
@@ -90,7 +86,7 @@ export default function useCreateActions(props) {
       const loader = await getCustomWidgetLoader();
       const widgets = await loader.getUncachedForListing();
       const extensions = widgets.map(toLegacyWidget);
-      setExtentions(extensions);
+      setExtensions(extensions);
       setAdvancedExtensibility(advancedExtensibility);
       setEditorInterface(editorInterface);
       setContentType(contentType);
@@ -147,13 +143,11 @@ export default function useCreateActions(props) {
         state.contentType
       );
 
-      const updatedCTfields = state.contentType.data.fields.find(
-        (field) => field.id === updatedField.id
-      )
-        ? state.contentType.data.fields.map((field) =>
+      const updatedCTfields = state.contentType.fields.find((field) => field.id === updatedField.id)
+        ? state.contentType.fields.map((field) =>
             field.id === updatedField.id ? updatedField : field
           )
-        : state.contentType.data.fields.concat([updatedField]);
+        : state.contentType.fields.concat([updatedField]);
 
       updateFields(updatedCTfields);
 
@@ -171,7 +165,7 @@ export default function useCreateActions(props) {
   };
 
   const updateField = (id, update) => {
-    const updatedFields = state.contentType.data.fields.map((field) => {
+    const updatedFields = state.contentType.fields.map((field) => {
       if (field.id === id) {
         return {
           ...field,
@@ -226,7 +220,7 @@ export default function useCreateActions(props) {
 
   const showNewFieldDialog = createCommand(
     () => {
-      const existingApiNames = state.contentType.data.fields.map(({ apiName }) => apiName);
+      const existingApiNames = state.contentType.fields.map(({ apiName }) => apiName);
       ModalLauncher.open(({ isShown, onClose }) => (
         <AddFieldDialogModal
           isShown={isShown}
@@ -251,14 +245,14 @@ export default function useCreateActions(props) {
   );
 
   const checkRemovable = async () => {
-    const isPublished = state.contentType.isPublished();
-    const canRead = accessChecker.canPerformActionOnEntryOfType('read', state.contentType.getId());
+    const isPublishedCT = isPublished(state.contentType);
+    const canRead = accessChecker.canPerformActionOnEntryOfType('read', state.contentType.sys.id);
     try {
-      if (!isPublished) {
+      if (!isPublishedCT) {
         return Promise.resolve(createStatusObject(true));
       }
       const res = await currentSpace.getEntries({
-        content_type: state.contentType.getId(),
+        content_type: state.contentType.sys.id,
         limit: 0,
       });
 
@@ -274,7 +268,7 @@ export default function useCreateActions(props) {
 
     function createStatusObject(isRemovable, entryCount) {
       return {
-        isPublished,
+        isPublished: isPublishedCT,
         isRemovable,
         entryCount,
       };
@@ -296,9 +290,7 @@ export default function useCreateActions(props) {
 
   const deleteContentType = createCommand(startDeleteFlow, {
     available: function () {
-      const deletableState =
-        !state.contextState.isNew &&
-        (state.contentType.canUnpublish() || !state.contentType.isPublished());
+      const deletableState = !state.contextState.isNew;
       const denied =
         accessChecker.shouldHide('delete', 'contentType') ||
         accessChecker.shouldHide('unpublish', 'contentType');
@@ -322,7 +314,8 @@ export default function useCreateActions(props) {
 
   const sendDeleteRequest = async () => {
     try {
-      await state.contentType.delete();
+      const cmaClient = getSpaceEnvCMAClient();
+      await cmaClient.contentType.delete({ contentTypeId: state.contentType.sys.id });
       notify.deleteSuccess();
       go({ path: '^.^.list' });
     } catch (error) {
@@ -342,7 +335,7 @@ export default function useCreateActions(props) {
         isShown={isShown}
         onClose={onClose}
         entriesCount={count}
-        contentTypeName={state.contentType.data.name}
+        contentTypeName={state.contentType.name}
       />
     ));
   }
@@ -352,7 +345,7 @@ export default function useCreateActions(props) {
     return ModalLauncher.open(({ isShown, onClose }) => (
       <DeleteContentTypeDialog
         key={key}
-        contentTypeName={state.contentType.data.name}
+        contentTypeName={state.contentType.name}
         isShown={isShown}
         onConfirm={async () => {
           try {
@@ -399,40 +392,50 @@ export default function useCreateActions(props) {
   const saveContentType = async () => {
     try {
       setContextDirty(false);
-      assureDisplayField(state.contentType.data);
+      assureDisplayField(state.contentType);
 
       const buildMessage = errorMessageBuilder.forContentType;
       const schema = validation.schemas.ContentType;
 
-      if (!schema.validate(state.contentType.data)) {
-        const fieldNames = _.map(state.contentType.data.fields, 'name');
-        const errors = schema.errors(state.contentType.data);
+      if (!schema.validate(state.contentType)) {
+        const fieldNames = _.map(state.contentType.fields, 'name');
+        const errors = schema.errors(state.contentType);
         const errorsWithMessages = errors.map((error) => buildMessage(error));
         notify.invalidAccordingToScope(errorsWithMessages, fieldNames);
         return Promise.reject();
       }
 
-      if ((state.contentType.data.fields || []).length < 1) {
+      if ((state.contentType.fields || []).length < 1) {
         notify.saveNoFields();
         return Promise.reject();
       }
 
-      const updatedContentType = await state.contentType.save({}, spaceId);
-      setContentType(updatedContentType);
-      const published = await spaceContext.publishedCTs.publish(state.contentType);
+      const cmaClient = getSpaceEnvCMAClient();
+      const updatedContentType = await cmaClient.contentType.update(
+        {
+          contentTypeId: state.contentType.sys.id,
+        },
+        state.contentType,
+        {
+          // `X-Contentful-Skip-Transformation` needed here as the old code was relying on it.
+          // This header makes the operation work with the internal ids for content type fields
+          // instead of using their human-readable format
+          'x-contentful-skip-transformation': true,
+        }
+      );
+      const published = await spaceContext.publishedCTs.publish(updatedContentType);
+      setContentType(published);
       // When a Content Type is published the CMA automatically
       // updates the Editor Interface. We need to fetch and update
       // the sys of a local entity so we can override it.
-      const remoteEditorInterface = await spaceContext.cma.getEditorInterface(
-        published.data.sys.id
-      );
+      const remoteEditorInterface = await spaceContext.cma.getEditorInterface(published.sys.id);
       const localEditorInterface = _.cloneDeep(state.editorInterface);
       localEditorInterface.sys = remoteEditorInterface.sys;
       const updatedEditorInterface = await spaceContext.cma.updateEditorInterface(
-        EditorInterfaceTransformer.toAPI(published.data, localEditorInterface)
+        EditorInterfaceTransformer.toAPI(published, localEditorInterface)
       );
       const editorInterfaceFromAPI = EditorInterfaceTransformer.fromAPI(
-        published.data,
+        published,
         updatedEditorInterface
       );
       dispatch({
@@ -440,7 +443,7 @@ export default function useCreateActions(props) {
         payload: { editorInterface: editorInterfaceFromAPI },
       });
       getContentPreview().clearCache();
-      spaceContext.uiConfig.addOrEditCt(state.contentType.data).catch(() => {});
+      spaceContext.uiConfig.addOrEditCt(state.contentType).catch(() => {});
       notify.saveSuccess();
     } catch (error) {
       setContextDirty(true);
@@ -462,12 +465,12 @@ export default function useCreateActions(props) {
 
   const save = createCommand(saveContentType, {
     disabled: function () {
-      const dirty =
-        state.contextState.dirty ||
-        (_.isFunction(state.contentType.hasUnpublishedChanges) &&
-          state.contentType.hasUnpublishedChanges()) ||
-        (_.isFunction(state.contentType.getPublishedVersion) &&
-          !state.contentType.getPublishedVersion());
+      const hasUnpublishedChanges =
+        isDraft(state.contentType) ||
+        state.contentType.sys.version > state.contentType.sys.publishedVersion + 1;
+
+      const dirty = state.contextState.dirty || hasUnpublishedChanges;
+
       const valid = !allFieldsInactive(state.contentType);
       const denied =
         accessChecker.shouldDisable('update', 'contentType') ||
@@ -495,11 +498,11 @@ export default function useCreateActions(props) {
 
   const getPublishedField = (id) => {
     const publishedFields = _.get(
-      spaceContext.publishedCTs.get(state.contentType.data.sys.id),
-      'data.fields',
+      spaceContext.publishedCTs.get(state.contentType.sys.id),
+      'fields',
       []
     );
-    return _.cloneDeep(_.find(publishedFields, { id: id }));
+    return _.cloneDeep(_.find(publishedFields, { id }));
   };
 
   const deleteField = async (field, isTitle) => {
@@ -550,14 +553,18 @@ export default function useCreateActions(props) {
 
   const createDuplicate = async ({ contentTypeId, name, description }) => {
     try {
-      const data = state.contentType.data;
-      const duplicate = currentSpace.newContentType({
-        sys: { type: 'ContentType', id: contentTypeId },
-        name: name,
-        description: description || '',
-        fields: _.cloneDeep(data.fields),
-        displayField: data.displayField,
-      });
+      const data = { ...state.contentType, name, description };
+
+      const cmaClient = getSpaceEnvCMAClient();
+      const duplicatedContentType = await cmaClient.contentType.update(
+        {
+          contentTypeId,
+        },
+        data,
+        {
+          'x-contentful-skip-transformation': true,
+        }
+      );
 
       const editorInterfaceDuplicate = {
         ..._.cloneDeep(state.editorInterface),
@@ -569,12 +576,13 @@ export default function useCreateActions(props) {
         },
       };
 
-      await duplicate.save();
-      const published = await spaceContext.publishedCTs.publish(duplicate);
+      const published = await spaceContext.publishedCTs.publish(duplicatedContentType);
+
       spaceContext.cma.updateEditorInterface(
-        EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate)
+        EditorInterfaceTransformer.toAPI(published, editorInterfaceDuplicate)
       );
-      return duplicate;
+
+      return duplicatedContentType;
     } catch (err) {
       notify.duplicateError();
     }
@@ -601,10 +609,10 @@ export default function useCreateActions(props) {
         const isDenied =
           accessChecker.shouldDisable('update', 'contentType') ||
           accessChecker.shouldDisable('publish', 'contentType');
-        const isDirty = state.contextState.dirty || !state.contentType.getPublishedVersion();
-        const isPublished = state.contentType.isPublished();
+        const isPublishedCT = isPublished(state.contentType);
+        const isDirty = state.contextState.dirty || !isPublishedCT;
 
-        return isNew || isDenied || isDirty || !isPublished;
+        return isNew || isDenied || isDirty;
       },
     }
   );

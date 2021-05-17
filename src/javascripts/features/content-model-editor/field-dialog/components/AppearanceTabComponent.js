@@ -7,7 +7,7 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const getDefaultWidget = (ctField, contentType, availableWidgets) => {
-  const defaultWidgetId = getDefaultWidgetId(ctField, contentType.data.displayField);
+  const defaultWidgetId = getDefaultWidgetId(ctField, contentType.displayField);
   return availableWidgets.find((w) => {
     return w.namespace === WidgetNamespace.BUILTIN && w.id === defaultWidgetId;
   });

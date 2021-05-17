@@ -101,7 +101,7 @@ function convertEntity(entity, toPrivate = true) {
 
     if (contentType) {
       preparedFields = _.transform(
-        contentType.data.fields,
+        contentType.fields,
         (acc, ctField) => {
           const [from, to] = toPrivate
             ? [ctField.apiName, ctField.id]

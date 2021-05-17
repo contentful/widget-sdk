@@ -7,7 +7,7 @@ import * as K from 'core/utils/kefir';
  * A data structure that works like a Set and provides access to the
  * items as a property.
  *
- * The `#add(item)` and `#remove(item)` use `item.getId()` to obtain
+ * The `#add(item)` and `#remove(item)` use `item.sys.id` to obtain
  * the key that is used to store the item. That key can be used to
  * obtain an item with `#get(key)`.
  *
@@ -42,7 +42,7 @@ export function create() {
   }
 
   function remove(item) {
-    const id = item.getId();
+    const id = item.sys.id;
     if (byId[id] === item) {
       delete byId[id];
       updateItems();
@@ -52,7 +52,7 @@ export function create() {
 
   function addMultiple(items) {
     items.forEach((item) => {
-      const id = item.getId();
+      const id = item.sys.id;
       if (byId[id] !== item) {
         byId[id] = item;
       }

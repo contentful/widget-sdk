@@ -21,7 +21,7 @@ function entryEventTracker(action, origin) {
     try {
       const event = `entry:${action}`; // entry:create, entry:publish
       const contentTypeId = data.sys.contentType.sys.id;
-      const contentType = spaceContext.publishedCTs.get(contentTypeId).data;
+      const contentType = spaceContext.publishedCTs.get(contentTypeId);
       track(event, {
         eventOrigin: origin,
         contentType,

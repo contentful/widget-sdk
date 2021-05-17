@@ -29,7 +29,7 @@ export function getUpdatedField(updatedFieldOptions, field, contentType) {
   const { itemValidations, baseValidations } = groupValidations(validationFields);
 
   if (isTitle) {
-    contentType.data.displayField = field.id;
+    contentType.displayField = field.id;
   }
 
   const isRichText = field.type === 'RichText';

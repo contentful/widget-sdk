@@ -74,9 +74,8 @@ export function createBatchPerformer(config) {
       const ctId = _.get(sys, 'contentType.sys.id');
       const contentType = spaceContext.publishedCTs.get(ctId);
       const editorData = await getEditorData(spaceContext, ctId);
-      const entryTitleId = _.get(contentType, 'data.displayField');
-      const entryTitleField =
-        contentType.data.fields.find((field) => field.id === entryTitleId) || {};
+      const entryTitleId = _.get(contentType, 'displayField');
+      const entryTitleField = contentType.fields.find((field) => field.id === entryTitleId) || {};
       const currentFieldsWithIndexedDisplayField = appendDuplicateIndexToEntryTitle(
         entity.data.fields,
         entryTitleId
@@ -87,7 +86,7 @@ export function createBatchPerformer(config) {
         editorData.controls.find((control) => control.widgetId === 'slugEditor');
       // [PUL-809] We update the slug with the same index that was set on the displayField
       if (slugControl) {
-        const slugField = contentType.data.fields.find((field) =>
+        const slugField = contentType.fields.find((field) =>
           [field.apiName, field.id].includes(slugControl.fieldId)
         );
         if (slugField) {

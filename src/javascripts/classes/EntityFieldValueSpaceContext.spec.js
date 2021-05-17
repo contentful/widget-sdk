@@ -17,14 +17,9 @@ jest.mock('services/localeStore', () => ({
 
 function makeCtMock(id, opts = {}) {
   return {
-    data: {
-      sys: { id },
-      displayField: opts.displayField,
-      fields: opts.fields || [],
-    },
-    getId: _.constant(id),
-    isDeleted: _.constant(opts.isDeleted === true),
-    getName: _.constant(id),
+    sys: { id },
+    displayField: opts.displayField,
+    fields: opts.fields || [],
   };
 }
 
@@ -81,9 +76,7 @@ describe('EntityFieldValueSpaceContext', () => {
     });
 
     it('gets no title, falls back to default', function () {
-      spaceContextMocked.publishedCTs.get.mockReturnValue({
-        data: {},
-      });
+      spaceContextMocked.publishedCTs.get.mockReturnValue({});
 
       expect(entryTitle(entry)).toBe('Untitled');
       expect(entryTitle(entry, 'en-US', true)).toBeNull();
@@ -168,10 +161,8 @@ describe('EntityFieldValueSpaceContext', () => {
     it('returns the field', function () {
       const field = { id: 'name' };
       spaceContextMocked.publishedCTs.get.mockReturnValue({
-        data: {
-          displayField: 'name',
-          fields: [field],
-        },
+        displayField: 'name',
+        fields: [field],
       });
       expect(displayFieldForType('type')).toBe(field);
     });
@@ -179,10 +170,8 @@ describe('EntityFieldValueSpaceContext', () => {
     it('returns nothing', function () {
       const field = { id: 'name' };
       spaceContextMocked.publishedCTs.get.mockReturnValue({
-        data: {
-          displayField: 'othername',
-          fields: [field],
-        },
+        displayField: 'othername',
+        fields: [field],
       });
       expect(displayFieldForType('type')).toBeUndefined();
     });
@@ -207,9 +196,7 @@ describe('EntityFieldValueSpaceContext', () => {
         { type: 'Link', linkType: 'Asset', id: 'ASSET' },
       ];
       ct = {
-        data: {
-          fields,
-        },
+        fields,
       };
       entry = {
         getContentTypeId: _.constant('CTID'),
@@ -242,9 +229,9 @@ describe('EntityFieldValueSpaceContext', () => {
       describe('skips potential slug fields', function () {
         beforeEach(function () {
           _.remove(fields, (field) => ['Text', 'Symbol'].includes(field.type));
-          ct.data.fields.push({ type: 'Symbol', id: 'SLUG', name: 'slug' });
+          ct.fields.push({ type: 'Symbol', id: 'SLUG', name: 'slug' });
           entry.data.fields.SLUG = { xx: 'SLUG 1' };
-          ct.data.fields.push({ type: 'Text', id: 'SLUG_2', name: 'Another slug-field' });
+          ct.fields.push({ type: 'Text', id: 'SLUG_2', name: 'Another slug-field' });
           entry.data.fields.SLUG_2 = { xx: 'SLUG 2' };
         });
         it('returns undefined if there is only slug text fields', function () {
@@ -252,7 +239,7 @@ describe('EntityFieldValueSpaceContext', () => {
           expect(desc).toBeUndefined();
         });
         it('returns a field containing name containing "slug" without word boundary', function () {
-          ct.data.fields.push({
+          ct.fields.push({
             type: 'Symbol',
             id: 'SLUG_3',
             name: 'sluggish',
@@ -270,14 +257,14 @@ describe('EntityFieldValueSpaceContext', () => {
         beforeEach(function () {
           _.remove(fields, (field) => field.id === 'TEXT');
           delete entry.data.fields.TEXT;
-          ct.data.displayField = 'SYMBOL';
+          ct.displayField = 'SYMBOL';
         });
         it('returns undefined if there is no other field', function () {
           const desc = entityDescription(entry);
           expect(desc).toBeUndefined();
         });
         it('returns value of the next text field', function () {
-          ct.data.fields.push({ type: 'Text', id: 'TEXT_2' });
+          ct.fields.push({ type: 'Text', id: 'TEXT_2' });
           entry.data.fields.TEXT_2 = { xx: 'VAL 2', de: 'VAL 2 DE' };
           const desc = entityDescription(entry);
           expect(desc).toBe('VAL 2');

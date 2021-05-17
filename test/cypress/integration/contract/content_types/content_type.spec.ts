@@ -54,7 +54,6 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Text').click();
@@ -68,6 +67,7 @@ describe('Content type page', () => {
       cy.findByLabelText('Maximum size').type(validations[0].size.max.toString());
       cy.findByLabelText('Custom error message').type(validations[0].message);
       cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -102,7 +102,6 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Number').click();
@@ -114,6 +113,7 @@ describe('Content type page', () => {
       cy.findByLabelText('Accept only specified values').check();
       cy.findByLabelText('addPredefinedValue').type('1{enter}2{enter}3{enter}');
       cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -141,13 +141,13 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Date and time').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
@@ -174,13 +174,13 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Location').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -217,7 +217,6 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Media').click();
@@ -228,6 +227,7 @@ describe('Content type page', () => {
       cy.findByLabelText('Accept only specified file types').check();
       cy.findByLabelText('Attachment').check();
       cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -255,13 +255,13 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Boolean').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -289,13 +289,13 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('JSON object').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -325,13 +325,13 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Reference').click();
       cy.get('[name=fieldName]').type(fieldName);
       cy.get('[name=apiName]').should('have.value', fieldId);
       cy.findByText('Create').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 
@@ -393,7 +393,6 @@ describe('Content type page', () => {
       ];
 
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.findByTestId('save-content-type').should('be.enabled');
       cy.findByTestId('add-field-button').should('be.enabled');
       cy.findByTestId('add-field-button').click();
       cy.findByLabelText('Rich text').click();
@@ -412,6 +411,7 @@ describe('Content type page', () => {
       cy.findByLabelText('Minimum size').type('1');
       cy.findByLabelText('Maximum size').type('5');
       cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
 

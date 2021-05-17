@@ -5,7 +5,7 @@ const editorInterfaceWithoutSidebarResponseBody = require('../responses/editor-i
 
 const defaultContentType = severalContentTypesBody.items[0];
 
-export const createReguestWithNewField = ({ name, apiName, type, linkType, validations }) => {
+export const createRequestWithNewField = ({ name, apiName, type, linkType, validations }) => {
   const newField = {
     name,
     apiName,

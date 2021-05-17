@@ -60,11 +60,11 @@ export default function ContentTypesPage(props) {
   const customWidgets = extensions.filter(isEntryEditorWidget);
 
   useEffect(() => {
-    if (props.isNew && state.contentType.handleUpdate && actions.setContentType) {
+    if (props.isNew && state.contentType && actions.setContentType) {
       openCreateDialog(contentTypeIds, state.contentType, actions.setContentType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.contentType.handleUpdate]);
+  }, []);
 
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
   const onUpdateConfiguration = (sidebar) => {
@@ -81,12 +81,12 @@ export default function ContentTypesPage(props) {
 
   if (!state.contentType) return null;
 
-  return state.contentType.data.fields ? (
+  return state.contentType.fields ? (
     <Workbench>
       <Workbench.Header
-        title={state.contentType.data.name}
+        title={state.contentType.name}
         icon={<ProductIcon icon="ContentModel" size="large" color="positive" />}
-        description={state.contentType.data.description}
+        description={state.contentType.description}
         actions={
           <ContentTypePageActions
             isNew={props.isNew}
@@ -101,7 +101,7 @@ export default function ContentTypesPage(props) {
       />
       <Workbench.Content type="text">
         <EditorFieldTabs
-          fieldsCount={state.contentType.data.fields.length}
+          fieldsCount={state.contentType.fields.length}
           currentTab={props.currentTab}
           setCurrentTab={props.setCurrentTab}
           hasAdvancedExtensibility={hasAdvancedExtensibility}
@@ -109,28 +109,28 @@ export default function ContentTypesPage(props) {
         <form name="contentTypeForm">
           {props.currentTab === 'fields' && (
             <React.Fragment>
-              <DocumentTitle title={[state.contentType.data.name, 'Content Model']} />
+              <DocumentTitle title={[state.contentType.name, 'Content Model']} />
               <FieldsList
-                displayField={state.contentType.data.displayField}
+                displayField={state.contentType.displayField}
                 canEdit={canEdit}
-                fields={state.contentType.data.fields}
+                fields={state.contentType.fields}
                 actions={actions}
               />
             </React.Fragment>
           )}
           {props.currentTab === 'preview' && (
             <React.Fragment>
-              <DocumentTitle title={['Preview', state.contentType.data.name, 'Content Model']} />
+              <DocumentTitle title={['Preview', state.contentType.name, 'Content Model']} />
               <ContentTypePreview
                 isDirty={state.contextState.dirty}
-                contentTypeData={state.contentType.data}
+                contentTypeData={state.contentType}
               />
             </React.Fragment>
           )}
           {hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
             <React.Fragment>
               <DocumentTitle
-                title={['Sidebar Configuration', state.contentType.data.name, 'Content Model']}
+                title={['Sidebar Configuration', state.contentType.name, 'Content Model']}
               />
               <div>
                 <SidebarConfiguration
@@ -143,9 +143,7 @@ export default function ContentTypesPage(props) {
           )}
           {hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
-              <DocumentTitle
-                title={['Entry editors', state.contentType.data.name, 'Content Model']}
-              />
+              <DocumentTitle title={['Entry editors', state.contentType.name, 'Content Model']} />
               <div>
                 <EntryEditorConfiguration
                   configuration={state.editorInterface.editors}
@@ -164,10 +162,10 @@ export default function ContentTypesPage(props) {
             <FieldsSection
               canEdit={canEdit}
               showNewFieldDialog={actions.showNewFieldDialog}
-              fieldsUsed={state.contentType.data.fields.length}
+              fieldsUsed={state.contentType.fields.length}
             />
             {!props.isNew && <EntryEditorSection />}
-            {!props.isNew && <ContentTypeIdSection contentTypeId={state.contentType.data.sys.id} />}
+            {!props.isNew && <ContentTypeIdSection contentTypeId={state.contentType.sys.id} />}
             <DocumentationSection />
           </div>
         </Workbench.Sidebar>

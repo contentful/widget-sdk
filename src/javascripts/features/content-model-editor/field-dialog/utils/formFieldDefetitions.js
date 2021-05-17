@@ -30,7 +30,7 @@ export const getSettingsFormFields = (ctField, contentType) => {
       },
     },
     localized: { value: ctField.localized },
-    isTitle: { value: contentType.data.displayField === ctField.id },
+    isTitle: { value: contentType.displayField === ctField.id },
     required: { value: ctField.required },
   };
 };
