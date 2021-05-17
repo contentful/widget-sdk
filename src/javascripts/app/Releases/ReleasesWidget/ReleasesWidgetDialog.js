@@ -15,7 +15,7 @@ import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { css } from 'emotion';
 import { fetchReleases } from '../common/utils';
-import { RELEASE_ENTITIES_LIMIT } from 'features/releases/constants';
+import { RELEASE_ENTITIES_LIMIT } from 'features/releases';
 import { track } from 'analytics/Analytics';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { getLaunchAppDeepLink, LaunchAppDeepLinkRaw } from 'features/contentful-apps';
