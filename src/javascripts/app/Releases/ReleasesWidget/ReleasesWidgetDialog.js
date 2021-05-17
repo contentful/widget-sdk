@@ -15,6 +15,7 @@ import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { css } from 'emotion';
 import { fetchReleases } from '../common/utils';
+import { RELEASE_ENTITIES_LIMIT } from '../common/constants';
 import { track } from 'analytics/Analytics';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { getLaunchAppDeepLink, LaunchAppDeepLinkRaw } from 'features/contentful-apps';
@@ -45,7 +46,6 @@ const TrackingEvents = {
   ENTITY_ADDED: 'release:entity_added',
 };
 
-const RELEASE_ENTITIES_LIMIT = 200;
 export default class ReleasesWidgetDialog extends Component {
   constructor(props) {
     super(props);
