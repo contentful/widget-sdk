@@ -240,7 +240,7 @@
     "jest-junit": "^10.0.0",
     "jest-kefir": "^2.2.0",
     "jest-when": "^2.7.2",
-    "lint-staged": "^10.2.2",
+    "lint-staged": "^11.0.0",
     "loose-envify": "^1.4.0",
     "marked": "^1.0.0",
     "merge-stream": "^2.0.0",
