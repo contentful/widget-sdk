@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { noop } from 'lodash';
+import pluralize from 'pluralize';
 import tokens from '@contentful/forma-36-tokens';
 import { Spinner, TableCell, TableRow, Flex } from '@contentful/forma-36-react-components';
 import { canUserReadEntities } from 'access_control/AccessChecker';
@@ -194,7 +195,10 @@ export const BulkActionsRow = ({
               <ReleaseDialog
                 selectedEntities={selectedEntities.map((entry) => entry.data)}
                 onCancel={() => openReleaseDialog(false)}
-                releaseContentTitle={`${selectedEntities.length} selected entities`}
+                releaseContentTitle={`${selectedEntities.length} selected ${pluralize(
+                  'entity',
+                  selectedEntities.length
+                )}`}
               />
             ) : null}
           </Fragment>

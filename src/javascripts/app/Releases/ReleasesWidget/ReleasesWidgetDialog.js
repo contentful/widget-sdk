@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { isEqual, uniqWith } from 'lodash';
+import { isEqual, uniqWith, get as getAtPath } from 'lodash';
 import pluralize from 'pluralize';
 import {
   Notification,
@@ -15,6 +15,7 @@ import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { css } from 'emotion';
 import { fetchReleases } from '../common/utils';
+import { RELEASE_ENTITIES_LIMIT } from 'features/releases';
 import { track } from 'analytics/Analytics';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { getLaunchAppDeepLink, LaunchAppDeepLinkRaw } from 'features/contentful-apps';
@@ -187,7 +188,26 @@ export default class ReleasesWidgetDialog extends Component {
 
       this.handleSuccess(release);
     } catch (error) {
-      Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+      const errorId = getAtPath(error, 'data.sys.id');
+      if (errorId === 'ValidationFailed') {
+        const validationErrors = getAtPath(error, 'data.details.errors');
+        const validationErrorDetails = validationErrors.find((err) => err.name === 'size');
+        if (validationErrors.length && validationErrorDetails) {
+          Notification.error(
+            `Sorry, we couldn’t add any more entities to this release as it exceeds the limit of
+            ${RELEASE_ENTITIES_LIMIT}. You might consider creating a new release to accommodate the additional entities.`,
+            {
+              title: 'Entity limit reached',
+            }
+          );
+        } else {
+          Notification.error(
+            `Failed adding ${releaseContentTitle} to ${release.title}: Some entities did not pass validation`
+          );
+        }
+      } else {
+        Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+      }
     }
 
     this.onClose(true);
