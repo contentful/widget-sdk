@@ -209,7 +209,7 @@
     "dependency-cruiser": "^9.26.0",
     "diff": "4.0.2",
     "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.5",
+    "enzyme-adapter-react-16": "1.15.6",
     "eslint": "7.25.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-import-resolver-webpack": "0.13.0",
