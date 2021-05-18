@@ -1,15 +1,17 @@
 import React, { useReducer, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
+import {
+  widgetsConfigReducer,
+  WidgetsConfiguration,
+  WidgetParametersConfiguration,
+} from 'features/content-model-editor';
 import { useAsync } from 'core/hooks';
 import {
   convertInternalStateToConfiguration,
   convertConfigurationToInternalState,
 } from './service/SidebarSync';
-import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
-import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
@@ -23,7 +25,7 @@ function SidebarConfiguration(props) {
   const { onUpdateConfiguration, defaultAvailableItems, extensions, configuration } = props;
 
   const [state, dispatch] = useReducer(
-    reducer,
+    widgetsConfigReducer,
     convertConfigurationToInternalState(configuration, extensions, defaultAvailableItems)
   );
 

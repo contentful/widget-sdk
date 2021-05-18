@@ -1,10 +1,5 @@
 import type { EnvironmentParams } from './types';
-
-const spaceEnvBase = (params: EnvironmentParams, appendix: string) => {
-  return [params.withEnvironment ? 'spaces.environment' : 'spaces.detail', appendix]
-    .filter(Boolean)
-    .join('.');
-};
+import { spaceEnvBase } from './utils';
 
 /** Webhooks */
 

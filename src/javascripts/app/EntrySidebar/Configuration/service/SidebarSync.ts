@@ -2,14 +2,14 @@ import { pick, difference, isEqual } from 'lodash';
 
 import { defaultWidgetsMap } from '../defaults';
 
-import { State } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
-import {
+import type {
+  State,
   ConfigurationItem,
   DefaultWidget,
   SavedConfigItem,
-} from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
+} from 'features/content-model-editor';
+import { isSameWidget } from 'features/content-model-editor';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
-import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
 /**
  * Converts internal state of configuration reducer

@@ -1,5 +1,5 @@
 import { ContentTypesPage } from 'components/tabs/content_type_list/ContentTypesPage';
-import ContentTypePageContainer from 'app/ContentModel/Editor/ContentTypePageContainer';
+import { ContentTypePageContainer } from 'features/content-model-editor';
 
 const list = {
   name: 'list',
@@ -39,21 +39,15 @@ const entryEditorConfiguration = {
   },
 };
 
-const newState = editorBase(
-  {
-    name: 'new',
-    url: '_new',
-  },
-  true
-);
+const newState = editorBase({
+  name: 'new',
+  url: '_new',
+});
 
-const detail = editorBase(
-  {
-    name: 'detail',
-    url: '/:contentTypeId',
-  },
-  false
-);
+const detail = editorBase({
+  name: 'detail',
+  url: '/:contentTypeId',
+});
 
 function editorBase(options) {
   return {

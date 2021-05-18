@@ -1,0 +1,150 @@
+import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import PropTypes from 'prop-types';
+import { SortableElement } from 'react-sortable-hoc';
+import { IconButton, Icon, Note, Tag } from '@contentful/forma-36-react-components';
+
+const styles = {
+  closeButton: css({
+    cursor: 'pointer',
+    marginLeft: tokens.spacingXs,
+  }),
+  itemHeader: css({
+    display: 'flex',
+    flexGrow: 1,
+    fontSize: tokens.fontSizeS,
+    fontWeight: tokens.fontWeightNormal,
+    textTransform: 'uppercase',
+    color: tokens.colorTextLight,
+    lineHeight: '2',
+    borderBottom: `1px solid ${tokens.colorElementDark}`,
+    letterSpacing: '1px',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    marginBottom: tokens.spacingS,
+  }),
+  itemName: css({
+    flex: '1 1 auto',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  }),
+  itemDrag: css({
+    position: 'absolute',
+    left: tokens.spacingXs,
+    top: tokens.spacingS,
+    fill: tokens.colorTextLight,
+  }),
+  problemItem: css`
+    position: relative;
+    margin: 0;
+    margin-bottom: ${tokens.spacingM};
+    user-select: none;
+
+    & > div > div {
+      display: flex;
+    }
+  `,
+  problemItemText: css({
+    paddingRight: tokens.spacingM,
+  }),
+  item: css({
+    border: `1px solid ${tokens.colorElementMid}`,
+    backgroundColor: tokens.colorElementLightest,
+    borderRadius: tokens.borderRadiusMedium,
+    marginBottom: tokens.spacingM,
+    padding: `${tokens.spacingXs} ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingXl}`,
+    position: 'relative',
+  }),
+  draggable: css({
+    userSelect: 'none',
+    marginBottom: tokens.spacingM,
+    borderRadius: tokens.borderRadiusMedium,
+    cursor: 'grab',
+    '&:focus': {
+      outline: 'none',
+      boxShadow: tokens.glowPrimary,
+    },
+  }),
+};
+
+const SortableItem = SortableElement(({ children }) => (
+  <div data-test-id="selected-widget-item-draggable" tabIndex={0} className={styles.draggable}>
+    {children}
+  </div>
+));
+
+export function WidgetItem({
+  id,
+  index,
+  name,
+  isDraggable,
+  isRemovable,
+  isProblem,
+  onRemoveClick,
+  children,
+  availabilityStatus,
+}) {
+  const removeBtn = (
+    <IconButton
+      iconProps={{ icon: 'Close' }}
+      buttonType="muted"
+      className={styles.closeButton}
+      onClick={onRemoveClick}
+      label={`Remove ${name} from your selected options`}
+      data-test-id={'remove-selected-widget'}
+    />
+  );
+
+  const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
+
+  if (isProblem) {
+    return (
+      <Note noteType="warning" className={styles.problemItem}>
+        <div className={styles.problemItemText}>
+          <code>{name || id}</code> is saved in configuration, but not installed in this
+          environment.
+        </div>
+        {removeBtn}
+      </Note>
+    );
+  }
+
+  const content = (
+    <div className={styles.item} data-test-id="selected-widget-item">
+      {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
+      <div className={styles.itemHeader}>
+        <div className={styles.itemName} data-test-id="selected-widget-name">
+          {name}
+        </div>
+        {availabilityStatus && renderAvailabilityStatus()}
+        {isRemovable && removeBtn}
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+
+  if (isDraggable) {
+    return <SortableItem index={index}>{content}</SortableItem>;
+  }
+
+  return content;
+}
+
+WidgetItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  isDraggable: PropTypes.bool.isRequired,
+  isRemovable: PropTypes.bool.isRequired,
+  isProblem: PropTypes.bool.isRequired,
+  onRemoveClick: PropTypes.func,
+  index: PropTypes.number,
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
+};
+
+WidgetItem.defaultProps = {
+  isDraggable: false,
+  isRemovable: false,
+  isProblem: false,
+};
