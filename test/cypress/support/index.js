@@ -56,7 +56,7 @@ beforeEach(() => {
   cy.disableDegradedAppPerformance();
 
   // set default feature flags enabled on LaunchDarkly
-  cy.enableFeatureFlags([FeatureFlag.DEFAULT, FeatureFlag.SHAREJS_REMOVAL]);
+  cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
   cy.disableFeatureFlags([FeatureFlag.PRICING_IN_APP_COMMS]);
 
   // Hide UIVersionSwitcher notification during the test run

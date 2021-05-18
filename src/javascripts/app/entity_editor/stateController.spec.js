@@ -1,5 +1,4 @@
 import { initStateController } from './stateController';
-
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
@@ -9,6 +8,7 @@ import { makeNotify, Notification as MockedNotification } from 'app/entity_edito
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 import { makeApply } from 'data/CMA/EntityState';
+import * as K from 'core/utils/kefir';
 
 jest.mock('navigation/SlideInNavigator', () => ({ goToPreviousSlideOrExit: jest.fn() }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
@@ -44,14 +44,13 @@ describe('stateController', () => {
   let spaceEndpoint;
   let validator;
   let bulkEditorContext;
+  const createDocument = createDocumentMock().create;
 
   beforeEach(() => {
     spaceContext.getId = () => 'spaceid';
     spaceContext.getEnvironmentId = () => 'envid';
 
     jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
-
-    const createDocument = createDocumentMock().create;
 
     editorContext = createEditorContextMock().create();
     entityInfo = {};
@@ -79,7 +78,7 @@ describe('stateController', () => {
     };
 
     doc = createDocument(entity, spaceEndpoint, makeApply(spaceEndpoint));
-    spaceEndpoint.mockResolvedValue(doc.getData());
+    spaceEndpoint.mockResolvedValue(K.getValue(doc.data$));
   });
 
   const init = async (onUpdateCount = 2) => {
@@ -136,7 +135,7 @@ describe('stateController', () => {
       };
 
       doc = createDocumentMock().create(entity, spaceEndpoint, makeApply(spaceEndpoint));
-      spaceEndpoint.mockResolvedValue(doc.getData());
+      spaceEndpoint.mockResolvedValue(K.getValue(doc.data$));
     };
 
     beforeEach(() => {
@@ -234,12 +233,16 @@ describe('stateController', () => {
 
   describe('in published state without changes', () => {
     beforeEach(async () => {
-      doc.setValueAt(['sys'], {
-        id: 'EID',
-        type: 'Entry',
-        version: 42,
-        publishedVersion: 43,
-      });
+      entity = {
+        sys: {
+          id: 'EID',
+          type: 'Entry',
+          version: 42,
+          publishedVersion: 43,
+        },
+        fields: {},
+      };
+      doc = createDocument(entity, spaceEndpoint, makeApply(spaceEndpoint));
     });
 
     it('sets current state to "published"', async () => {
@@ -457,18 +460,22 @@ describe('stateController', () => {
   });
 
   describe('#revertToPrevious command', () => {
+    beforeEach(() => {
+      doc.reverter.hasChanges = jest.fn();
+    });
+
     it('is available if document has changes and the document is editable', async () => {
       doc.reverter.hasChanges.mockReturnValue(true);
-      doc.state.canEdit$.set(true);
+      doc.permissions.can.mockReturnValue(true);
       const controller = await init();
       expect(controller.revertToPrevious.isAvailable()).toBe(true);
 
       doc.reverter.hasChanges.mockReturnValue(true);
-      doc.state.canEdit$.set(false);
+      doc.permissions.can.mockReturnValue(false);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
 
       doc.reverter.hasChanges.mockReturnValue(false);
-      doc.state.canEdit$.set(true);
+      doc.permissions.can.mockReturnValue(true);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
     });
 

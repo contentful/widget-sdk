@@ -264,8 +264,6 @@ registerGenericEvent('teams_in_space:users_to_teams_page_navigation');
 
 registerGenericEvent('account_dropdown:pending_tasks_fetched');
 
-registerGenericEvent('sharejs:cma_entity_version_mismatch');
-
 registerGenericEvent('content_preview:created');
 registerGenericEvent('content_preview:updated');
 registerGenericEvent('content_preview:deleted');

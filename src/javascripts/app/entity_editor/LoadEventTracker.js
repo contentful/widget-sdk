@@ -84,19 +84,18 @@ export function createLoadEventTracker({
 //  the fields report, otherwise the info gets lost and the event is never tracked.
 export function bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, trackLoadEvent) {
   let loadLinksRendered = false;
-  let loadShareJSConnected = false;
+  let docConnected = false;
 
   const linkFieldTypes = editorData.contentType.fields.filter(isLinkField);
   const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
 
   K.onValue(otDoc.state.isConnected$, (status) => {
-    if (loadShareJSConnected || status === false) {
+    if (docConnected || status === false) {
       return;
     }
-    const connectedEvent = otDoc.isOtDocument ? 'sharejs_connected' : 'doc_connected';
-    trackLoadEvent(connectedEvent);
+    trackLoadEvent('doc_connected');
 
-    loadShareJSConnected = true;
+    docConnected = true;
     if (loadLinksRendered) {
       trackLoadEvent('fully_interactive');
     }
@@ -106,7 +105,7 @@ export function bootstrapEntryEditorLoadEvents(otDoc, loadEvents, editorData, tr
   const trackLinksRenderedEvent = once(() => {
     trackLoadEvent('links_rendered');
     loadLinksRendered = true;
-    if (loadShareJSConnected) {
+    if (docConnected) {
       trackLoadEvent('fully_interactive');
     }
   });

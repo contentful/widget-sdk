@@ -1,16 +1,7 @@
 import * as K from '__mocks__/kefirMock';
 import { createBase } from 'app/entity_editor/Validator';
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
-
-jest.mock('@contentful/editorial-primitives', () => ({
-  createCmaDoc: jest.fn(() => ({})),
-
-  createEntityRepo: jest.fn().mockImplementation(({ applyAction }) => {
-    return {
-      applyAction,
-    };
-  }),
-}));
+import noop from 'lodash/noop';
 
 describe('app/entity_editor/Validator', () => {
   let schemaErrors;
@@ -21,8 +12,26 @@ describe('app/entity_editor/Validator', () => {
     return K.getValue(validator.errors$).map((e) => e.id);
   };
   beforeEach(async function () {
-    schemaErrors = jest.fn();
-    validator = createBase((_error) => '', { errors: schemaErrors }, createDocument());
+    const entity = {
+      sys: {
+        id: 'EID',
+        type: 'Entry',
+        version: 42,
+      },
+      fields: { 'FID-1': { LOCALE: '' }, 'FID-2': { LOCALE: '' } },
+    };
+    schemaErrors = jest.fn().mockReturnValue([]);
+    validator = createBase(
+      (_error) => '',
+      { errors: schemaErrors },
+      createDocument(
+        entity,
+        {},
+        noop,
+        [{ id: 'FID-1' }, { id: 'FID-2' }],
+        [{ internal_code: 'LOCALE' }]
+      )
+    );
   });
 
   describe('#setApiResponseErrors', () => {

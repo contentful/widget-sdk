@@ -27,7 +27,6 @@ export function readInjectedConfig() {
       marketingUrl: 'https://www.contentful.com/',
       apiUrl: 'https://api.contentful.com/',
       uploadApiUrl: 'https://upload.contentful.com/',
-      otUrl: 'https://ot.contentful.com/',
       main_domain: 'contentful.com',
     },
   };

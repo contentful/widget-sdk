@@ -91,7 +91,7 @@ export const createFieldLocaleDocument = (doc, field, localeCode, canEditLocale)
    * The object has a number of boolean properties that are set
    * according to the connection state and editing permissions.
    *
-   * - `disconnected` No ShareJS connection
+   * - `disconnected` No connection
    * - `denied` The user does not have permission to edit the field
    * - `editing_disabled` The field is disabled at the content type level
    * - `disabled` Is true if one of the above is true
@@ -113,7 +113,7 @@ export const createFieldLocaleDocument = (doc, field, localeCode, canEditLocale)
         return FieldAccess.OCCUPIED;
       } else if (isConnected) {
         // CmaDocument is always "connected" by design (unless internet down)
-        // so we need to be more granular than in case of `OtDocument`.
+        // so we need to be more granular
         return [
           DocumentStatusCode.INTERNAL_SERVER_ERROR,
           DocumentStatusCode.EDIT_CONFLICT,

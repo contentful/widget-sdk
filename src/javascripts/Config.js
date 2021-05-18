@@ -1,7 +1,6 @@
 /* global ENV_CONFIG */
 import qs from 'qs';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import { sample } from 'lodash';
 
 // Config object for the current UI_VERSION injected through webpack.DefinePlugin
 // or injected into index.html by tools/lib/index-page.js during build
@@ -96,13 +95,6 @@ export function websiteUrl(path) {
 export function accountUrl(path) {
   return authUrl('/account' + ensureLeadingSlash(path));
 }
-
-/**
- * URL for ShareJS connection.
- *
- * In production this is `//ot.contentful.com/`.
- */
-export const otUrl = sample(settings.otUrl);
 
 /**
  * URL which allows the user to get in touch with us.

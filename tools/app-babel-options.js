@@ -6,7 +6,7 @@ const isTest = process.env.NODE_ENV === 'test';
  *
  * NOTE We use absolute paths to reference the babel plugins and
  * presets. This is required so that we can transpile code in packages
- * that are sym-linked locally (e.g. the ShareJS client).
+ * that are sym-linked locally.
  *
  * @param {object?} opts
  *   Additional options to be merged into the base options.

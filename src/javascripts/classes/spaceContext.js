@@ -6,7 +6,6 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
 import { purgeContentPreviewCache } from 'features/content-preview';
 import { purgeApiKeyRepoCache } from 'features/api-keys-management';
 
-import * as ShareJSConnection from 'data/sharejs/Connection';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint';
 import APIClient from 'data/APIClient';
 import * as Telemetry from 'i13n/Telemetry';
@@ -20,7 +19,7 @@ import { createSpaceEndpoint } from 'data/Endpoint';
 import * as PublishedCTRepo from 'data/ContentTypeRepo/Published';
 import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as DocumentPool from 'data/sharejs/DocumentPool';
+import * as DocumentPool from 'data/DocumentPool/DocumentPool';
 import * as EnforcementsService from 'services/EnforcementsService';
 import * as TokenStore from 'services/TokenStore';
 import * as Auth from 'Authentication';
@@ -149,18 +148,6 @@ function initSpaceContext() {
 
         const localeRepo = createLocaleRepo(cmaPlainClient);
 
-        // TODO: publicly accessible docConnection is
-        // used only in a process of creating space out
-        // of a template. We shouldn't use it in newly
-        // created code.
-
-        spaceContext.docConnection = ShareJSConnection.create(
-          Config.otUrl,
-          Auth,
-          spaceId,
-          uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
-        );
-
         spaceContext.memberships = MembershipRepo.create(spaceContext.endpoint);
         spaceContext.members = createSpaceMembersRepo(spaceContext.endpoint);
         spaceContext.user = K.getValue(TokenStore.user$);
@@ -174,9 +161,7 @@ function initSpaceContext() {
         const start = Date.now();
 
         await setupEnvironments(spaceContext, uriEnvOrAliasId);
-
         spaceContext.docPool = await DocumentPool.create(
-          spaceContext.docConnection,
           spaceContext.pubsubClient,
           spaceContext.organization.sys.id,
           spaceId,
@@ -201,7 +186,6 @@ function initSpaceContext() {
           spaceContext.publishedCTs,
           createViewMigrator(ctMap)
         );
-
         Telemetry.record('space_context_http_time', Date.now() - start);
         // TODO: remove this after we have store with combined reducers on top level
         // string is hardcoded because this code _is_ temporary
@@ -368,10 +352,6 @@ function initSpaceContext() {
     if (spaceContext.docPool) {
       spaceContext.docPool.destroy();
       spaceContext.docPool = null;
-    }
-    if (spaceContext.docConnection) {
-      spaceContext.docConnection.close();
-      spaceContext.docConnection = null;
     }
   }
 

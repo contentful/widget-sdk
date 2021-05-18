@@ -29,8 +29,8 @@ We track all of the following cases using the "`editor_load`" event:
   * `link_field_editor_instance_count`: refers to reference and media fields
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
-* ShareJS connects, or we run in a ShareJS-less editor
-  * `action`: `"sharejs_connected" | "doc_connected"`
+* Document is opened
+  * `action`: `"doc_connected"`
   * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
@@ -49,7 +49,7 @@ We track all of the following cases using the "`editor_load`" event:
   * `link_field_editor_instance_count`: refers to reference and media fields
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
-* Page is fully interactive (shareJS is connected, all links are rendered and
+* Page is fully interactive (all links are rendered and
   all field editors are present on the page)
   * `action`: `"fully_interactive"`
   * `slides_controller_uuid`
@@ -62,8 +62,7 @@ We track all of the following cases using the "`editor_load`" event:
   * `load_ms`: number of ms since initial load
 
 *Notes:*
- - Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
- - `doc_connected` - in case ShareJS is disabled - is expected to finish together or just the fraction of a second after `entity_loaded`.
+ - `doc_connected` is expected to finish together or just the fraction of a second after `entity_loaded`.
  - We currently only trigger this event for entry editor slides, not for asset and bulk editor slides.
 
 ## Change-log

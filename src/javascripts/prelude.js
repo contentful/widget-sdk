@@ -1,16 +1,5 @@
 import 'react-app-polyfill/stable';
-import text from '@contentful/sharejs/lib/types/text';
-import '@contentful/sharejs/lib/types/text-api';
-import json from '@contentful/sharejs/lib/types/json';
-import '@contentful/sharejs/lib/types/json-api';
 import { settings } from 'Config';
-
-window.sharejs = {
-  types: {
-    text,
-    json,
-  },
-};
 
 import angular from 'angular';
 import AngularInit from 'AngularInit';

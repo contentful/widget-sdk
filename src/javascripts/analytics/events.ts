@@ -55,7 +55,6 @@ export {
   searchViewCreated,
   searchViewDeleted,
   searchViewLoaded,
-  sharejsCmaEntityVersionMismatch,
   slideInEditorArrowBack,
   slideInEditorDelete,
   slideInEditorOpen,

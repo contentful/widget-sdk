@@ -53,7 +53,6 @@ describe('App Installation', () => {
       beforeEach(() => {
         interactions.push(appInstallation.willListNone());
         cy.server();
-        cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -144,7 +143,6 @@ describe('App Installation', () => {
       beforeEach(() => {
         interactions.push(appInstallation.willListSome());
         cy.server();
-        cy.route('**/channel/**', []).as('shareJS');
         cy.visit(`/spaces/${defaultSpaceId}/apps`);
         cy.wait(interactions, { timeout: 8000 });
       });

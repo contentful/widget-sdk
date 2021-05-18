@@ -1,10 +1,8 @@
-import { createCmaDoc } from '@contentful/editorial-primitives';
-import { noop, isObject, find, includes, isString, get as getAtPath } from 'lodash';
-import { getVariation, FLAGS } from 'LaunchDarkly';
-import { createEntityRepo } from '@contentful/editorial-primitives';
+import { createCmaDoc, createEntityRepo } from '@contentful/editorial-primitives';
+import { find, get as getAtPath, includes, isString, noop } from 'lodash';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 import { create as createPermissions } from 'access_control/EntityPermissions';
-import { createOtDoc } from 'app/entity_editor/Document';
 import { createSpaceEndpoint } from 'data/Endpoint';
 import * as Config from 'Config';
 import * as Auth from 'Authentication';
@@ -18,7 +16,6 @@ import { captureError } from 'core/monitoring';
  * same instance. Obtained references are counted and when the last is disposed, an
  * instance is destroyed.
  *
- * @param {data/sharejs/Connection} docConnection
  * @param {data/Endpoint} spaceEndpoint
  * @param {string} organizationId
  * @param {string} spaceId
@@ -26,7 +23,6 @@ import { captureError } from 'core/monitoring';
  */
 
 export async function create(
-  docConnection,
   pubSubClient,
   organizationId,
   spaceId,
@@ -36,11 +32,6 @@ export async function create(
 ) {
   const instances = {};
 
-  const isCmaDocumentEnabled = await getVariation(FLAGS.SHAREJS_REMOVAL, {
-    organizationId,
-    spaceId,
-    environmentId: environment.sys.id,
-  });
   const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES, {
     organizationId,
     spaceId,
@@ -54,11 +45,10 @@ export async function create(
    * @method DocumentPool#get
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
-   * @param {API.User} user
    * @param {K.Poperty<void>} lifeline$ Deference the document when this property ends.
    * @returns {Document}
    */
-  function get(entity, contentType, user, lifeline$) {
+  function get(entity, contentType, lifeline$) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
     const contentTypeData = 'data' in contentType ? contentType.data : contentType;
@@ -68,7 +58,6 @@ export async function create(
       doc = instance.doc;
       instance.count += 1;
     } else {
-      let cleanup;
       const entityRepoOptions = {
         skipDraftValidation: true,
         skipTransformation: true,
@@ -82,56 +71,39 @@ export async function create(
           ),
       };
 
-      // This flag is an object, but check for `true` to use with `?ui_enable_flags=`
-      if (
-        isCmaDocumentEnabled === true ||
-        (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
-      ) {
-        const applyAction = makeApply(spaceEndpoint);
-        const entityRepo = createEntityRepo({
-          cmaClient,
-          environment,
-          pubSubClient,
-          triggerCmaAutoSave: noop,
-          applyAction,
-          options: entityRepoOptions,
-        });
+      const applyAction = makeApply(spaceEndpoint);
+      const entityRepo = createEntityRepo({
+        cmaClient,
+        environment,
+        pubSubClient,
+        triggerCmaAutoSave: noop,
+        applyAction,
+        options: entityRepoOptions,
+      });
 
-        doc = createCmaDoc({
-          initialEntity: entity,
-          contentType: contentTypeData,
-          entityRepo: entityRepo,
-          getLocales: () => TheLocaleStore.getPrivateLocales(),
-          trackEditConflict: (data) => Analytics.track('entity_editor:edit_conflict', data),
-          createPermissions,
-          options: {
-            patchEntryUpdates,
-          },
-          onError: (errorName, data) => {
-            //we track unhandled entity states
-            if (errorName === 'unhandledState') {
-              const state = data;
-              captureError(new Error(`Unhandled entity state ${state}`), {
-                extra: {
-                  entityState: state,
-                },
-              });
-            }
-          },
-        });
-        cleanup = () => doc.destroy();
-      } else {
-        const entityRepo = createEntityRepo({
-          cmaClient,
-          environment,
-          pubSubClient,
-          triggerCmaAutoSave: noop,
-          options: entityRepoOptions,
-          applyAction: (_action, _uiState, entity) => Promise.resolve(entity),
-        });
-        doc = createOtDoc(docConnection, entity, contentTypeData, user, entityRepo);
-        cleanup = () => doc.destroy();
-      }
+      doc = createCmaDoc({
+        initialEntity: entity,
+        contentType: contentTypeData,
+        entityRepo: entityRepo,
+        getLocales: () => TheLocaleStore.getPrivateLocales(),
+        trackEditConflict: (data) => Analytics.track('entity_editor:edit_conflict', data),
+        createPermissions,
+        options: {
+          patchEntryUpdates,
+        },
+        onError: (errorName, data) => {
+          //we track unhandled entity states
+          if (errorName === 'unhandledState') {
+            const state = data;
+            captureError(new Error(`Unhandled entity state ${state}`), {
+              extra: {
+                entityState: state,
+              },
+            });
+          }
+        },
+      });
+      const cleanup = () => doc.destroy();
 
       instances[key] = { key, doc, cleanup, count: 1 };
     }

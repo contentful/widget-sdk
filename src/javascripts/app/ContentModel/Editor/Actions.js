@@ -29,9 +29,8 @@ import { useUnsavedChangesModal } from 'core/hooks';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-
-import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
 import { getSpaceContext } from 'classes/spaceContext';
+import { errorMessageBuilder } from '@contentful/editorial-primitives';
 
 export default function useCreateActions(props) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();

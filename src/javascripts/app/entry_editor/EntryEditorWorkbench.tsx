@@ -28,7 +28,6 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { useTagsFeatureEnabled } from 'features/content-tags';
-import * as Config from 'Config';
 import { DefaultEntryEditorTab, DefaultReferenceTab, DefaultTagsTab } from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { EditorContext, LocaleData } from 'app/entity_editor/EntityField/types';
@@ -266,13 +265,6 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
       if (!tagsEnabled) {
         isTabVisible = false;
         isTabEnabled = false;
-      }
-
-      if (otDoc.isOtDocument && Config.env !== 'production') {
-        isTabVisible = false;
-        isTabEnabled = false;
-        // eslint-disable-next-line
-        console.log(`enable "${FLAGS.SHAREJS_REMOVAL}" feature flag to show content tags`);
       }
     }
 

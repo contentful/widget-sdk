@@ -8,7 +8,6 @@ import { makeSum } from 'sum-types';
  *  OpenForbidden: ErrorConstructor,
  *  SetValueForbidden: ErrorConstructor,
  *  VersionMismatch: ErrorConstructor,
- *  ShareJsInternalServerError: ErrorConstructor,
  *  CmaInternalServerError: ErrorConstructor,
  *  Archived: ErrorConstructor,
  * }}
@@ -20,7 +19,6 @@ export const Error = makeSum({
   // `doc.set(path)` responds with a 'forbidden' error.
   SetValueForbidden: ['path'],
   VersionMismatch: [],
-  ShareJsInternalServerError: ['error'],
   CmaInternalServerError: ['error'],
   Archived: [],
 });

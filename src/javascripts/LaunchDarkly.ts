@@ -34,9 +34,7 @@ let initialized = false;
 export enum FLAGS {
   ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
-  ENTITY_EDITOR_CMA_EXPERIMENT = 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
-  SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
   NEW_FIELD_DIALOG = 'react-migration-new-content-type-field-dialog',
   SSO_SETUP_NO_REDUX = 'feature-hejo-08-2020-sso-setup-no-redux',
   ENTITLEMENTS_API = 'feature-hejo-11-2020-entitlements-api',
@@ -70,9 +68,7 @@ export enum FLAGS {
 const FALLBACK_VALUES = {
   [FLAGS.ENVIRONMENTS_FLAG]: true,
   [FLAGS.ENTRY_COMMENTS]: true,
-  [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
   [FLAGS.ADD_TO_RELEASE]: false,
-  [FLAGS.SHAREJS_REMOVAL]: { Asset: true, Entry: true },
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.ENTITLEMENTS_API]: false,

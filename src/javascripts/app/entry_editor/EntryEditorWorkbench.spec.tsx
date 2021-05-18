@@ -7,6 +7,7 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { createEditorContextMock } from '__mocks__/createEditorContextMock';
 import { createDocumentMock } from 'app/entity_editor/Document/__mocks__/createDocumentMock';
 import { DocumentStatus } from '@contentful/editorial-primitives';
+import noop from 'lodash/noop';
 
 jest.mock('features/contentful-apps/hooks/useContentfulAppConfig', () => ({
   useContentfulAppsConfig: jest.fn().mockReturnValue({
@@ -56,8 +57,8 @@ const entity = {
   },
 };
 
-const doc = createDocument(entity, spaceEndpoint);
-spaceEndpoint.mockResolvedValue(doc.getData());
+const doc = createDocument(entity, spaceEndpoint, noop);
+spaceEndpoint.mockResolvedValue(entity);
 
 describe('When rendering editors page with no editors', () => {
   const localeData = {

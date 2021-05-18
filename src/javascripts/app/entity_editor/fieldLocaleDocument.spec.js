@@ -1,23 +1,32 @@
 import { createDocumentMock } from './Document/__mocks__/createDocumentMock';
 import { createFieldLocaleDocument } from './fieldLocaleDocument';
+import noop from 'lodash/noop';
 
 const fieldsPath = ['FID', 'LC'];
 const path = ['fields', ...fieldsPath];
 
-jest.mock('@contentful/editorial-primitives', () => ({
-  ...jest.requireActual('@contentful/editorial-primitives'),
-  createCmaDoc: jest.fn(() => ({})),
-
-  createEntityRepo: jest.fn().mockImplementation(({ applyAction }) => {
-    return {
-      applyAction,
-    };
-  }),
-}));
-
 let rootDoc;
 const create = () => {
-  rootDoc = createDocumentMock().create();
+  const entity = {
+    sys: {
+      id: 'EID',
+      type: 'Entry',
+      version: 42,
+    },
+    fields: { FID: { LC: undefined } },
+  };
+  rootDoc = createDocumentMock().create(
+    entity,
+    {},
+    noop,
+    [{ id: 'FID' }, { id: 'FID-other' }],
+    [{ internal_code: 'LC' }, { internal_code: 'LC-other' }]
+  );
+  jest.spyOn(rootDoc, 'getValueAt');
+  jest.spyOn(rootDoc, 'setValueAt');
+  jest.spyOn(rootDoc, 'removeValueAt');
+  jest.spyOn(rootDoc, 'pushValueAt');
+  jest.spyOn(rootDoc, 'insertValueAt');
   return createFieldLocaleDocument(rootDoc, { id: fieldsPath[0] }, fieldsPath[1], false);
 };
 
@@ -27,7 +36,6 @@ describe('fieldLocaleDocument', () => {
       it(`delegates calls to ${method} ${withArrayValue ? 'with array value' : ''}`, () => {
         const doc = create();
         withArrayValue && doc.set(['A', 'B']);
-        rootDoc[target].mockClear();
         doc[method].apply(null, args);
         const targetArgs = [path].concat(args);
         expect(rootDoc[target]).toHaveBeenCalledWith(...targetArgs);
@@ -103,10 +111,10 @@ describe('fieldLocaleDocument', () => {
         const emitted = jest.fn();
         const doc = create();
         doc.localChanges$.onValue(emitted);
-        rootDoc.changes.emit(['fields', 'FID', 'LC-other']);
-        rootDoc.changes.emit(['fields', 'FID-other', 'LC']);
+        rootDoc.setValueAt(['fields', 'FID', 'LC-other'], '');
+        rootDoc.setValueAt(['fields', 'FID-other', 'LC'], '');
         expect(emitted).not.toHaveBeenCalled();
-        rootDoc.changes.emit(['fields', ...fieldsPath]);
+        rootDoc.setValueAt(['fields', ...fieldsPath]);
         expect(emitted).toHaveBeenCalledTimes(1);
       });
     });

@@ -49,7 +49,6 @@ describe('Tasks entry editor sidebar', () => {
 
   function basicServerSetUpWithEntry(): string[] {
     cy.server();
-    cy.route('**/channel/**', []).as('shareJS');
 
     return [
       ProductCatalog.queryForReferencesTreeInDefaultSpace.willFindFeatureDisabled(),

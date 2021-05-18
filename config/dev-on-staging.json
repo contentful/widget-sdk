@@ -5,13 +5,6 @@
   "uploadApiUrl": "https://upload.flinkly.com",
   "assetUrl": "http://localhost:3001",
   "secureAssetsUrl": "https://secure.flinkly.com",
-  "otUrl": [
-    "https://ot.flinkly.com",
-    "https://ot1.flinkly.com",
-    "https://ot2.flinkly.com",
-    "https://ot3.flinkly.com",
-    "https://ot4.flinkly.com"
-  ],
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",

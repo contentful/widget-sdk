@@ -3,7 +3,6 @@
   "authUrl": "http://localhost:5000",
   "apiUrl": "http://localhost:5000",
   "uploadApiUrl": "http://localhost:5000",
-  "otUrl": ["http://ot.localhost:5000"],
   "assetUrl": "http://localhost:3001",
   "marketingUrl": "http://localhost:5000",
   "main_domain": "localhost.com:5000",

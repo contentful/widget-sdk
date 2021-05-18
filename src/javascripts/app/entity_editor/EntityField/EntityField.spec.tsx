@@ -2,9 +2,10 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { EntityField } from './EntityField';
 import { EntityType } from '@contentful/app-sdk';
-import ShareJsDocMock from '../Document/__mocks__/ShareJsDocMock';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
+import { createDocumentMock } from '../Document/__mocks__/createDocumentMock';
+import noop from 'lodash/noop';
 
 jest.mock('app/entity_editor/fieldLocaleController', () => ({
   createFieldLocaleController: jest.fn().mockReturnValue({
@@ -45,8 +46,22 @@ const getLocale = (overrides = {} as any) => {
 };
 
 const renderComponent = (override = (props) => props) => {
+  const entity = {
+    sys: {
+      type: 'Entry' as EntityType,
+      version: 1,
+      contentType: {
+        name: 'ct-1',
+        sys: {
+          id: 'ct-1',
+        },
+      },
+    },
+    fields: {},
+  };
+
   const defaultProps = {
-    doc: ShareJsDocMock(),
+    doc: createDocumentMock().create(entity, {}, noop),
     widget: {
       fieldId: 'widget-field-id',
       isVisible: true,
@@ -84,26 +99,10 @@ const renderComponent = (override = (props) => props) => {
         hasFieldLocaleError: jest.fn((_, { internal_code }) => internal_code == 'fr'),
         hasFieldError: jest.fn().mockReturnValue(false),
       },
-      entityInfo: {
-        type: 'Entry' as EntityType,
-        contentType: {
-          name: 'ct-1',
-          sys: {
-            id: 'ct-1',
-          },
-        },
-      },
+      entityInfo: entity.sys,
     },
     editorData: {
-      entityInfo: {
-        type: 'Entry' as EntityType,
-        contentType: {
-          name: 'ct-1',
-          sys: {
-            id: 'ct-1',
-          },
-        },
-      },
+      entityInfo: entity.sys,
     },
     fieldLocaleListeners: {
       lookup: {},

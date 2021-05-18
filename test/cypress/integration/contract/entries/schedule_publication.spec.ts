@@ -151,7 +151,6 @@ function basicServerSetUp(): string[] {
   });
 
   cy.server();
-  cy.route('**/channel/**', []).as('shareJS');
 
   return [
     ...defaultRequestsMock({

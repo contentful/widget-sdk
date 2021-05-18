@@ -177,7 +177,6 @@ export const validEvents = {
   telemetry: ['measurement'],
   app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],
-  sharejs: ['cma_entity_version_mismatch'],
   feedback: ['give'],
   cta_clicked: CTA_EVENTS,
   targeted_cta_clicked: CTA_EVENTS,

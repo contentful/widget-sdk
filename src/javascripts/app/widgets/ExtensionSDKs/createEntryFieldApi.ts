@@ -27,9 +27,8 @@ export function makePermissionError() {
   return Object.assign(error, { code: ERROR_CODES.NO_PERMISSIONS });
 }
 
-export function makeShareJSError(shareJSError: { message: any }, message: string | undefined) {
-  const data = shareJSError && shareJSError.message ? { shareJSCode: shareJSError.message } : {};
-
+export function makeDocumentError(docError: { message: any }, message: string | undefined) {
+  const data = docError && docError.message ? { code: docError.message } : {};
   const error = new Error(message);
   return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
@@ -139,7 +138,7 @@ export function createEntryFieldApi({
 
         return cleanedValue;
       } catch (err) {
-        throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+        throw makeDocumentError(err, ERROR_MESSAGES.MFAILUPDATE);
       }
     }
   );
@@ -154,8 +153,9 @@ export function createEntryFieldApi({
     try {
       await doc.removeValueAt(currentPath);
     } catch (err) {
-      throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+      throw makeDocumentError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
+    await doc.removeValueAt(currentPath);
   });
 
   function onValueChanged(callback: (value: any) => void): () => () => void;

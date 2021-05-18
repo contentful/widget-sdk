@@ -31,7 +31,7 @@ describe.skip('Entry validations', () => {
         cy.findAllByTestId('single-line-editor').should('have.length', 2);
         cy.findByText('Invalid field value from cypress').should('exist');
         // TODO: Ideally we should be testing to make sure the French locale
-        // is editable but Cypress isn't configured to work without ShareJS yet.
+        // is editable
       });
     });
   });
@@ -49,7 +49,6 @@ function basicServerSetUp(): string[] {
   });
 
   cy.server();
-  cy.route('**/channel/**', []).as('shareJS');
 
   return [
     ...defaultRequestsMock({

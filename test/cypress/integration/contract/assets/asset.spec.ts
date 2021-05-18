@@ -28,7 +28,6 @@ describe('Asset Page', () => {
       ];
 
       cy.server();
-      cy.route('**/channel/**', []).as('shareJS');
 
       cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);
 

@@ -23,10 +23,7 @@ module.exports = () => {
   return {
     ...envConfig,
     entry: {
-      app: [
-        require.resolve('./vendor/bcsocket-shim'),
-        require.resolve('./src/javascripts/prelude'),
-      ],
+      app: [require.resolve('./src/javascripts/prelude')],
       styles: require.resolve('./src/stylesheets/main.css', { extensions: ['.css'] }),
       favicons: [
         './src/images/favicons/favicon32x32.png',

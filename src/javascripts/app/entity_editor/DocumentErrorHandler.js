@@ -12,10 +12,7 @@ const getForbidden = (docError$) =>
   });
 
 const onValue = ({ error }) => {
-  if (
-    error instanceof Error.ShareJsInternalServerError ||
-    error instanceof Error.CmaInternalServerError
-  ) {
+  if (error instanceof Error.CmaInternalServerError) {
     ReloadNotification.trigger('Due to a server error, we could not process this document');
   } else {
     ReloadNotification.trigger(

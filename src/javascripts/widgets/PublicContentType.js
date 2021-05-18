@@ -5,7 +5,7 @@ import { pick } from 'lodash';
  * internal one.
  *
  * The internal represenation is received from the API when the
- * 'X-Contentful-Skip-Transformation' header is set or from ShareJS.
+ * 'X-Contentful-Skip-Transformation' header is set.
  * The public one is received from the API without the header.
  */
 export function fromInternal(data) {

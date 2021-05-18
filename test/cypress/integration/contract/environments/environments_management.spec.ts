@@ -102,7 +102,6 @@ function basicServerSetUp(customHandlers: {}): string[] {
   });
 
   cy.server();
-  cy.route('**/channel/**', []).as('shareJS');
 
   return [...defaultRequestsMock(customHandlers), getResourcesWithEnvironment.willReturnSeveral()];
 }

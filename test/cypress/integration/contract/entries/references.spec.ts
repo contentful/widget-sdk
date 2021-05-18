@@ -20,7 +20,6 @@ function setupTestServers(): void {
 
   cy.verifyAndResetAllFakeServers;
   cy.server();
-  cy.route('**/channel/**', []).as('shareJS');
 }
 
 describe('Entry references', () => {

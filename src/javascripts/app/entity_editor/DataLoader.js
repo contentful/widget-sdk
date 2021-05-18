@@ -236,7 +236,7 @@ function makeAssetLoader(spaceContext) {
 function makeDocOpener(spaceContext) {
   return function getOpenDoc(entity, contentType) {
     return function open(lifeline) {
-      return spaceContext.docPool.get(entity, contentType, spaceContext.user, lifeline);
+      return spaceContext.docPool.get(entity, contentType, lifeline);
     };
   };
 }

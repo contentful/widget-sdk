@@ -175,7 +175,6 @@ describe('app/entity_editor/DataLoader', () => {
       expect(spaceContext.docPool.get).toHaveBeenCalledWith(
         editorData.entity,
         editorData.contentType,
-        undefined,
         undefined
       );
     });

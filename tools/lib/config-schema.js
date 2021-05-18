@@ -25,11 +25,6 @@ const urlSchema = {
   format: 'uri-reference',
 };
 
-const urlsArraySchema = {
-  type: 'array',
-  items: urlSchema,
-};
-
 // For each item 'x' we require a property 'xUrl' that has a URL format.
 const URL_KEYS = [
   'auth',
@@ -75,7 +70,6 @@ function hosts() {
   for (const key of URL_KEYS) {
     props[`${key}Url`] = urlSchema;
   }
-  props['otUrl'] = urlsArraySchema;
 
   return props;
 }
