@@ -20,4 +20,14 @@ export class SidePanel {
 
     return new OrganizationSettingsPage();
   }
+
+  goToEnvironment(spaceName: string, envId: string) {
+    this.open();
+    cy.findByTestId('sidepanel').findByTestId('cf-ui-list').findByText(spaceName).click();
+    cy.get(`a[href*="${envId}"]`).click();
+  }
+
+  get environmentInfo() {
+    return cy.findByTestId('envoralias.wrapper-active');
+  }
 }

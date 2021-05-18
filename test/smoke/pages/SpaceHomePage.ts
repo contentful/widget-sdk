@@ -2,6 +2,7 @@ import { AbstractPage } from './AbstractPage';
 
 export class SpaceHomePage extends AbstractPage {
   constructor() {
+    super();
     try {
       cy.findByTestId('admin-space-home', { timeout: 20000 });
     } catch {

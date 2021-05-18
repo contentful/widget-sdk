@@ -10,7 +10,7 @@ export class ContentTypeListPage extends AbstractPage {
   }
 
   goToContentModel() {
-    this.navBar.goTo('content-model');
+    this.navBar.goToTab('content-model');
   }
 
   openCreateContentTypeModal() {
