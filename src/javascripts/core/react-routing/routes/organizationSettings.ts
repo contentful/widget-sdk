@@ -291,7 +291,7 @@ type OrganisationInvitationType = {
 
 const organisationInvitationRoute = {
   'organizations.users.invite': (_, { orgId }: Omit<OrganisationInvitationType, 'path'>) => ({
-    path: 'account.organizations.users.new',
+    path: 'account.organizations.invite',
     params: {
       pathname: '/',
       orgId,
