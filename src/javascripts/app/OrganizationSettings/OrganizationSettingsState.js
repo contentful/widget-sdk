@@ -4,7 +4,7 @@ import * as Analytics from 'analytics/Analytics';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
-import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
+import { usersState, inviteUsersState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
@@ -23,15 +23,6 @@ const resolveOrganizationData = [
   '$stateParams',
   ($stateParams) => TokenStore.getOrganization($stateParams.orgId),
 ];
-
-const usersAndInvitationsState = {
-  name: 'users',
-  abstract: true,
-  params: {
-    orgId: '',
-  },
-  children: [inviteUsersState, userDetailState, usersListState],
-};
 
 // Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.
 export const organizationSettings = {
@@ -88,7 +79,8 @@ export const organization = {
   navComponent: OrganizationNavBar,
   children: [
     usageState,
-    usersAndInvitationsState,
+    usersState,
+    inviteUsersState,
     subscriptionState,
     teamsState,
     accessToolsState,

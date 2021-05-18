@@ -309,6 +309,7 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
               <TabPanel id={id}>
                 {selectedTab.id === 'teamMembers' && (
                   <TeamMembershipList
+                    orgId={orgId}
                     team={team}
                     items={teamMembers}
                     removeFromTeam={removeFromTeam}

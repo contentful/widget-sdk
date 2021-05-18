@@ -10,7 +10,7 @@ import {
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { TeamMembershipRow } from './TeamMembershipRow';
 
-export const TeamMembershipList = ({ removeFromTeam, items, readOnlyPermission }) => {
+export const TeamMembershipList = ({ removeFromTeam, items, readOnlyPermission, orgId }) => {
   return (
     <>
       <Table testId="team-members-table">
@@ -30,6 +30,7 @@ export const TeamMembershipList = ({ removeFromTeam, items, readOnlyPermission }
           {items.map((membership) => (
             <TeamMembershipRow
               key={membership.sys.id}
+              orgId={orgId}
               membership={membership}
               removeFromTeam={removeFromTeam}
               readOnlyPermission={readOnlyPermission}
@@ -42,6 +43,7 @@ export const TeamMembershipList = ({ removeFromTeam, items, readOnlyPermission }
 };
 
 TeamMembershipList.propTypes = {
+  orgId: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(TeamMembershipPropType),
   removeFromTeam: PropTypes.func.isRequired,
   readOnlyPermission: PropTypes.bool,

@@ -310,7 +310,7 @@ type OrganizationMembershipsListType = {
 
 const organizationMembershipsListRoute = {
   'organizations.users.list': (_, { orgId }: Omit<OrganizationMembershipsListType, 'path'>) => ({
-    path: 'account.organizations.users.list',
+    path: 'account.organizations.users',
     params: {
       pathname: '/',
       orgId,
@@ -419,6 +419,30 @@ const organizationsSubscriptionRoutes = {
   }),
 };
 
+/**
+ * Organization user details
+ */
+
+type OrganizationUserDetailsListType = {
+  path: 'organizations.users.detail';
+  orgId: string;
+  userId: string;
+};
+
+const organizationUserDetailsRoute = {
+  'organizations.users.detail': (
+    _,
+    { orgId, userId }: Omit<OrganizationUserDetailsListType, 'path'>
+  ) => ({
+    path: 'account.organizations.users',
+    params: {
+      pathname: `/${userId}`,
+      orgId,
+      userId,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -433,6 +457,7 @@ const routes = {
   ...organizationMembershipsListRoute,
   ...organisationInvitationRoute,
   ...organizationsSubscriptionRoutes,
+  ...organizationUserDetailsRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -451,7 +476,8 @@ type OrganizationSettingsRouteType =
   | OrganizationsTeamsRouteType
   | OrganizationMembershipsListType
   | OrganisationInvitationType
-  | OrganizationsSubscriptionRouteType;
+  | OrganizationsSubscriptionRouteType
+  | OrganizationUserDetailsListType;
 
 export type { OrganizationSettingsRouteType };
 

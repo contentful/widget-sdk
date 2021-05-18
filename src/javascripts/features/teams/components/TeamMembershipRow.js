@@ -5,9 +5,9 @@ import UserCard from 'app/OrganizationSettings/Users/UserCard';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { TableCell, TableRow, Button, TextLink } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
-export function TeamMembershipRow({ membership, removeFromTeam, readOnlyPermission }) {
+export function TeamMembershipRow({ membership, removeFromTeam, readOnlyPermission, orgId }) {
   const {
     sys: { organizationMembership, user, createdAt, createdBy },
   } = membership;
@@ -16,15 +16,16 @@ export function TeamMembershipRow({ membership, removeFromTeam, readOnlyPermissi
     <TableRow className="membership-list__item">
       <TableCell>
         {!readOnlyPermission && organizationMembership ? (
-          <StateLink
+          <ReactRouterLink
             component={TextLink}
             testId="user-text-link"
-            path="account.organizations.users.detail"
-            params={{
+            route={{
+              path: 'organizations.users.detail',
               userId: organizationMembership.sys.id,
+              orgId,
             }}>
             <UserCard testId="user-card" user={user} />
-          </StateLink>
+          </ReactRouterLink>
         ) : (
           <UserCard testId="user-card" user={user} />
         )}
@@ -52,6 +53,7 @@ export function TeamMembershipRow({ membership, removeFromTeam, readOnlyPermissi
 }
 
 TeamMembershipRow.propTypes = {
+  orgId: PropTypes.string.isRequired,
   membership: TeamMembershipPropType.isRequired,
   removeFromTeam: PropTypes.func.isRequired,
   readOnlyPermission: PropTypes.bool.isRequired,

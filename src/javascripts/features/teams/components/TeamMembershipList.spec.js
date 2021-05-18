@@ -18,6 +18,7 @@ describe('TeamMembershipList', () => {
   const build = (props) => {
     return render(
       <TeamMembershipList
+        orgId={'orgId'}
         items={teamMembers}
         readOnlyPermission={true}
         removeFromTeam={removeFromTeamCB}

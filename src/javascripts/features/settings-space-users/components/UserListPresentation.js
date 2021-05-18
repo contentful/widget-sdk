@@ -120,6 +120,7 @@ export const UserListPresentation = ({
                 {members.map((member) => (
                   <UserListRow
                     key={member.sys.id}
+                    orgId={orgId}
                     member={member}
                     openRoleChangeDialog={() => openRoleChangeDialog(member, adminCount)}
                     openRemovalConfirmationDialog={() =>

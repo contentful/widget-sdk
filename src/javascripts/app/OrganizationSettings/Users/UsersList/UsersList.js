@@ -294,6 +294,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
                     users.items.map((membership) => (
                       <UserListRow
                         key={membership.sys.id}
+                        orgId={orgId}
                         membership={membership}
                         onMembershipRemove={handleMembershipRemove}
                         onReinvite={() => reinvite(membership)}

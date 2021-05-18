@@ -11,12 +11,11 @@ import {
   TableRow,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
 import UserCard from '../UserCard';
 import { getLastActivityDate, get2FAStatus, getFullNameOrEmail } from '../UserUtils';
 import { OrganizationMembership as OrgMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { isPendingMember } from 'utils/MembershipUtils';
-import { href } from 'states/Navigator';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   membershipLink: css({
@@ -29,39 +28,32 @@ const styles = {
 };
 
 UserListRow.propTypes = {
+  orgId: PropTypes.string.isRequired,
   membership: OrgMembershipPropType.isRequired,
   onMembershipRemove: PropTypes.func.isRequired,
   onReinvite: PropTypes.func.isRequired,
 };
 
-const getLinkToMembership = (membership) => {
-  return {
-    path: 'account.organizations.users.detail',
-    params: {
-      userId: membership.sys.id,
-    },
-  };
-};
-
-export function UserListRow({ membership, onMembershipRemove, onReinvite }) {
+export function UserListRow({ membership, onMembershipRemove, onReinvite, orgId }) {
   return (
     <TableRow
       key={membership.sys.id}
       className="membership-list__item"
       data-test-id="organization-membership-list-row">
       <TableCell>
-        <StateLink
+        <ReactRouterLink
+          route={{ path: 'organizations.users.detail', userId: membership.sys.id, orgId }}
           component={TextLink}
-          {...getLinkToMembership(membership)}
           className={styles.membershipLink}>
           <UserCard user={membership.sys.user} status={membership.sys.status} />
-        </StateLink>
+        </ReactRouterLink>
       </TableCell>
       <TableCell>{startCase(membership.role)}</TableCell>
       <TableCell>{getLastActivityDate(membership)}</TableCell>
       <TableCell>{get2FAStatus(membership)}</TableCell>
       <TableCell align="right">
         <UserActions
+          orgId={orgId}
           membership={membership}
           onRemove={onMembershipRemove}
           onReinvite={onReinvite}
@@ -71,7 +63,7 @@ export function UserListRow({ membership, onMembershipRemove, onReinvite }) {
   );
 }
 
-function UserActions({ membership, onRemove, onReinvite }) {
+function UserActions({ membership, onRemove, onReinvite, orgId }) {
   const [isOpen, setOpen] = React.useState(false);
   const userName = getFullNameOrEmail(membership.sys.user);
 
@@ -103,11 +95,17 @@ function UserActions({ membership, onRemove, onReinvite }) {
           onClick={() => handleAction(onRemove(membership))}>
           {isPendingMember(membership) ? 'Remove user' : `Remove ${userName}`}
         </DropdownListItem>
-        <DropdownListItem
+        <ReactRouterLink
           testId="userlist.row.actions.navigate"
-          href={href(getLinkToMembership(membership))}>
+          route={{
+            path: 'organizations.users.detail',
+            userId: membership.sys.id,
+            orgId,
+          }}
+          component={DropdownListItem}
+          className={styles.membershipLink}>
           Edit
-        </DropdownListItem>
+        </ReactRouterLink>
         {canBeReinvited && (
           <DropdownListItem
             testId="userlist.row.actions.reinvite"
@@ -120,6 +118,7 @@ function UserActions({ membership, onRemove, onReinvite }) {
   );
 }
 UserActions.propTypes = {
+  orgId: PropTypes.string.isRequired,
   membership: OrgMembershipPropType.isRequired,
   onRemove: PropTypes.func.isRequired,
   onReinvite: PropTypes.func.isRequired,
