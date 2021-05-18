@@ -7,6 +7,7 @@ import React, { useReducer, useEffect } from 'react';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {
+  CheckboxField,
   Notification,
   SkeletonContainer,
   SkeletonBodyText,
@@ -15,6 +16,7 @@ import {
   TextLink,
   Note,
   Modal,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll';
 
@@ -65,6 +67,18 @@ const styles = {
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM,
   }),
+  roleCheckbox: css({
+    marginBottom: tokens.spacingM,
+    '&:last-child': {
+      marginBottom: 0,
+    },
+    // Forma styles are getting mishandled and vertical alignment
+    // doesn't work as expect for the labels next to the checkboxes
+    // without this hack
+    '&>div:first-child': {
+      marginTop: `0.125rem !important`,
+    },
+  }),
   rolesContainer: css({
     // We want to show half of a role if the container scrolls
     maxHeight: '157px',
@@ -73,19 +87,7 @@ const styles = {
     overflowY: 'auto',
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM,
-  }),
-  role: css({
-    display: 'flex',
-    padding: `${tokens.spacingS} ${tokens.spacingM}`,
-    userSelect: 'none',
-    cursor: 'pointer',
-  }),
-  roleDisabled: css({
-    cursor: 'not-allowed',
-    color: tokens.colorTextLight,
-  }),
-  roleSelected: css({
-    backgroundColor: tokens.colorElementLightest,
+    paddingLeft: tokens.spacingXs,
   }),
   viewWrapper: css({
     maxWidth: '42em',
@@ -296,28 +298,19 @@ function renderRolesContainer(state, actions) {
 function RolesList({ roles, toggleSelection }) {
   return (
     <div className={styles.rolesContainer}>
-      {roles.map(({ id, name, selected, disabled }, i) => {
-        return (
-          <div
-            key={`role-${id}`}
-            className={[
-              styles.role,
-              selected ? styles.roleSelected : '',
-              disabled ? styles.roleDisabled : '',
-            ].join(' ')}
+      <Flex flexDirection="column">
+        {roles.map(({ id, name, selected, disabled }, i) => (
+          <CheckboxField
+            key={`role=${id}`}
+            labelText={name}
+            className={styles.roleCheckbox}
             data-test-id={testId(`roles.${id}`)}
-            role="button"
-            aria-disabled={String(!!disabled)}
-            aria-checked={String(!!selected)}
-            onClick={() => !disabled && toggleSelection(i)}>
-            {name}
-            <div className={styles.selectWrapper} />
-            <div className={cx(styles.selection, selected && styles.selected)}>
-              {selected ? '\uf058' : '\uf055'}
-            </div>
-          </div>
-        );
-      })}
+            disabled={disabled}
+            checked={selected}
+            onClick={() => !disabled && toggleSelection(i)}
+          />
+        ))}
+      </Flex>
     </div>
   );
 }
