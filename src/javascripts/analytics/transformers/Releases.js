@@ -1,4 +1,3 @@
-import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 import { getSpaceContext } from 'classes/spaceContext';
 
 const Actions = {
@@ -20,7 +19,6 @@ const commonParams = (data) => ({
 });
 
 const getReleaseDialog = (action) => (_eventName, data) => ({
-  schema: getSnowplowSchema('release_dialog_box').path,
   data: {
     action,
     purpose: data.purpose,
@@ -28,8 +26,7 @@ const getReleaseDialog = (action) => (_eventName, data) => ({
   },
 });
 
-const getReleaseId = (schema) => (_eventName, data) => ({
-  schema: getSnowplowSchema(schema).path,
+const getReleaseId = () => (_eventName, data) => ({
   data: {
     release_id: data.releaseId,
     ...commonParams(data),
@@ -37,7 +34,6 @@ const getReleaseId = (schema) => (_eventName, data) => ({
 });
 
 export const releaseEntityAdded = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_entity_added').path,
   data: {
     asset_count: data.assetCount,
     entry_count: data.entryCount,
@@ -47,7 +43,6 @@ export const releaseEntityAdded = (_eventName, data) => ({
 });
 
 export const releaseEntityRemoved = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_entity_removed').path,
   data: {
     release_id: data.releaseId,
     entity_id: data.entityId,
@@ -59,12 +54,11 @@ export const releaseEntityRemoved = (_eventName, data) => ({
 export const releaseDialogOpen = getReleaseDialog(Actions.OPEN);
 export const releaseDialogClose = getReleaseDialog(Actions.CLOSE);
 
-export const releaseCreated = getReleaseId('release_created');
-export const releaseTrashed = getReleaseId('release_trashed');
-export const releaseUnpublished = getReleaseId('release_unpublished');
+export const releaseCreated = getReleaseId();
+export const releaseTrashed = getReleaseId();
+export const releaseUnpublished = getReleaseId();
 
 export const releaseValidated = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_validated').path,
   data: {
     release_id: data.releaseId,
     is_validated: data.isValidated,
@@ -74,7 +68,6 @@ export const releaseValidated = (_eventName, data) => ({
 });
 
 export const releasePublished = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_published').path,
   data: {
     release_id: data.releaseId,
     asset_count: data.assetCount,
@@ -84,7 +77,6 @@ export const releasePublished = (_eventName, data) => ({
 });
 
 export const releaseScheduleCreated = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_schedule_created').path,
   data: {
     action: data.action,
     scheduled_for: data.scheduledFor,
@@ -97,7 +89,6 @@ export const releaseScheduleCreated = (_eventName, data) => ({
 });
 
 export const releaseScheduleCanceled = (_eventName, data) => ({
-  schema: getSnowplowSchema('release_schedule_canceled').path,
   data: {
     release_id: data.releaseId,
     job_id: data.jobId,
