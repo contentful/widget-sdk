@@ -126,9 +126,7 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.Org]: makeOrgScopedPathResolver(routes['organizations.edit']({}, { orgId: '' })),
   [LinkType.Subscription]: resolveSubscriptions,
   [LinkType.InvitationAccepted]: resolveSpaceHome,
-  [LinkType.StartAppTrial]: makeOrgScopedPathResolver({
-    path: ['account', 'organizations', 'start_trial'],
-  }),
+  [LinkType.StartAppTrial]: resolveAppsTrial,
   [LinkType.Tags]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['tags']({ withEnvironment: false }).path,
     params: routes['tags']({ withEnvironment: false }).params,
@@ -432,6 +430,23 @@ async function resolveSubscriptions() {
       orgId,
     },
   });
+}
+
+async function resolveAppsTrial({ referrer }) {
+  const { orgId } = await getOrg();
+
+  return applyOrgAccess(
+    orgId,
+    routes['account.organizations.start_trial'](
+      {},
+      {
+        orgId,
+        navigationState: {
+          from: referrer ? `deeplink-${referrer}` : 'deeplink',
+        },
+      }
+    )
+  );
 }
 
 async function resolveSpaceHome({ orgId }) {

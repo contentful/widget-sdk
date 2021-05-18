@@ -14,8 +14,7 @@ import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { track } from 'analytics/Analytics';
-import { getQueryString } from 'utils/location';
-import { router } from 'core/react-routing';
+import { router, useSearchParams } from 'core/react-routing';
 
 const mockedOrg = fake.Organization();
 const mockedTrialSpace = fake.Space();
@@ -42,6 +41,7 @@ const mockedStorageSet = jest.fn();
 jest.mock('core/react-routing', () => ({
   // @ts-expect-error mute in tests
   ...jest.requireActual('core/react-routing'),
+  useSearchParams: jest.fn().mockReturnValue([new URLSearchParams()]),
   router: {
     navigate: jest.fn(),
   },
@@ -55,6 +55,7 @@ jest.mock('core/services/BrowserStorage', () => ({
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
+  getCurrentStateName: jest.fn(),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
@@ -95,10 +96,6 @@ jest.mock('features/apps-core', () => ({
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
-}));
-
-jest.mock('utils/location', () => ({
-  getQueryString: jest.fn().mockReturnValue({}),
 }));
 
 jest.spyOn(TokenStore, 'getSpace').mockResolvedValue(mockedTrialSpace);
@@ -271,7 +268,9 @@ describe('StartAppTrial', () => {
 
   it('track the app_trial_started event with query string params', async () => {
     startAppTrial.mockResolvedValueOnce(mockedAppsTrial);
-    (getQueryString as jest.Mock).mockReturnValue({ from: 'from_query_params' });
+    (useSearchParams as jest.Mock).mockReturnValue([
+      new URLSearchParams('?referrer=from_query_params'),
+    ]);
 
     build({ existingUsers: false });
 
