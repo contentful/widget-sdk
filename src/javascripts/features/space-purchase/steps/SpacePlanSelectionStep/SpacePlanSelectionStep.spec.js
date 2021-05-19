@@ -126,8 +126,7 @@ describe('SpacePlanSelectionStep', () => {
     userEvent.click(screen.getAllByTestId('select-space-cta')[2]);
 
     expect(track).toHaveBeenCalledWith(EVENTS.EXTERNAL_LINK_CLICKED, {
-      href:
-        'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us',
+      href: 'https://www.contentful.com/contact/sales/?utm_medium=webapp&utm_source=purchase-space-page&utm_campaign=cta-enterprise-space&utm_content=contact-us',
       intent: 'upgrade_to_enterprise',
     });
 

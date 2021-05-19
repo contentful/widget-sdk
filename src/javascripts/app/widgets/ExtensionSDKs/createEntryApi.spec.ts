@@ -30,13 +30,13 @@ jest.mock('core/utils/kefir', () => {
   };
 });
 
-const cma = ({
+const cma = {
   getTasks: jest.fn(),
   getTask: jest.fn(),
   createTask: jest.fn(),
   updateTask: jest.fn(),
   deleteTask: jest.fn(),
-} as any) as APIClient;
+} as any as APIClient;
 
 const mockField = {
   disabled: false,
@@ -63,11 +63,11 @@ describe('createEntryApi', () => {
     displayField: '',
   } as InternalContentType;
   const docData = kefirHelpers.stream();
-  const doc = ({
+  const doc = {
     data$: docData,
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),
-  } as unknown) as Document;
+  } as unknown as Document;
   const setInvalid = noop;
   beforeEach(() => {
     entryApi = createEntryApi({

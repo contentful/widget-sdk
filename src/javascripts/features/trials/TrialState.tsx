@@ -17,10 +17,11 @@ async function importer() {
 }
 
 const StartAppTrialWrapper = withOrganizationRoute((props: StartAppTrialProps) => {
-  const navigationState = useNavigationState<{
-    from?: string;
-    existingUsers: boolean;
-  }>();
+  const navigationState =
+    useNavigationState<{
+      from?: string;
+      existingUsers: boolean;
+    }>();
   return (
     <LazyLoadedComponent importer={importer}>
       {({ StartAppTrial }) => {

@@ -190,8 +190,7 @@ describe('Authentication', function () {
         expect(window.fetch.mock.calls[0]).toEqual([
           'https://be.contentful.com/oauth/revoke',
           {
-            body:
-              'token=STORED_TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            body: 'token=STORED_TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
             headers: {
               Authorization: 'Bearer STORED_TOKEN',
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -207,8 +206,7 @@ describe('Authentication', function () {
         expect(window.fetch.mock.calls[1]).toEqual([
           'https://be.contentful.com/oauth/token',
           {
-            body:
-              'grant_type=password&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&scope=content_management_manage',
+            body: 'grant_type=password&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&scope=content_management_manage',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
@@ -240,8 +238,7 @@ describe('Authentication', function () {
       expect(removeMock).toHaveBeenCalledWith('token');
       expect(setMock).toHaveBeenCalledWith('loggedOut', 'true');
       expect(window.fetch).toHaveBeenCalledWith('https://be.contentful.com/oauth/revoke', {
-        body:
-          'token=NEW%20TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        body: 'token=NEW%20TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         headers: {
           Authorization: 'Bearer NEW TOKEN',
           'Content-Type': 'application/x-www-form-urlencoded',

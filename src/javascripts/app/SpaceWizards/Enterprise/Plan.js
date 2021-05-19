@@ -18,16 +18,8 @@ const styles = {
 };
 
 export default function Plan(props) {
-  const {
-    resources,
-    roleSet,
-    usage,
-    limit,
-    disabled,
-    reachedLimit,
-    name,
-    showTrialSpaceInfo,
-  } = props;
+  const { resources, roleSet, usage, limit, disabled, reachedLimit, name, showTrialSpaceInfo } =
+    props;
 
   return (
     <div

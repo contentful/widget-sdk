@@ -76,8 +76,13 @@ export function UserListRoute() {
 
   const usersByName = useMemo(
     () =>
-      groupBy(sortedMembers, ({ sys: { user: { firstName, email } } }) =>
-        first((firstName || email).toUpperCase())
+      groupBy(
+        sortedMembers,
+        ({
+          sys: {
+            user: { firstName, email },
+          },
+        }) => first((firstName || email).toUpperCase())
       ),
     [sortedMembers]
   );

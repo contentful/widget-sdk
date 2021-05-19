@@ -136,13 +136,8 @@ const makeNavigateToEntity = (cma: any) => {
 };
 
 const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
-  const {
-    spaceId,
-    environmentId,
-    isMaster,
-    currentWidgetId,
-    currentWidgetNamespace,
-  } = dependencies;
+  const { spaceId, environmentId, isMaster, currentWidgetId, currentWidgetNamespace } =
+    dependencies;
 
   return async (
     options: { id?: string; path?: string; type: WidgetNamespace } = {
@@ -215,33 +210,35 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
   };
 };
 
-const makeNavigateToAppConfig = ({
-  widgetNamespace,
-  spaceId,
-  environmentId,
-  widgetId,
-}: {
-  widgetNamespace: string;
-  spaceId: string;
-  environmentId: string;
-  widgetId: string;
-}) => () => {
-  if (widgetNamespace === WidgetNamespace.APP) {
-    return Navigator.go({
-      path: ['spaces', 'environment', 'apps', 'detail'],
-      params: {
-        spaceId,
-        environmentId,
-        appId: widgetId,
-      },
-      options: {
-        notify: true,
-      },
-    });
-  } else {
-    throw new Error('Only apps can use the openAppConfig method');
-  }
-};
+const makeNavigateToAppConfig =
+  ({
+    widgetNamespace,
+    spaceId,
+    environmentId,
+    widgetId,
+  }: {
+    widgetNamespace: string;
+    spaceId: string;
+    environmentId: string;
+    widgetId: string;
+  }) =>
+  () => {
+    if (widgetNamespace === WidgetNamespace.APP) {
+      return Navigator.go({
+        path: ['spaces', 'environment', 'apps', 'detail'],
+        params: {
+          spaceId,
+          environmentId,
+          appId: widgetId,
+        },
+        options: {
+          notify: true,
+        },
+      });
+    } else {
+      throw new Error('Only apps can use the openAppConfig method');
+    }
+  };
 
 const navigateToSpaceEnvRoute = async ({
   spaceId,

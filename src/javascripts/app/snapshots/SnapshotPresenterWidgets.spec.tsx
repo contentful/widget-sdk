@@ -43,12 +43,12 @@ const getMockedProps = ({
   return {
     widget: {
       widgetNamespace,
-      descriptor: ({
+      descriptor: {
         locations: [],
         installationParameters: {
           definitions: {},
         },
-      } as unknown) as LegacyWidget,
+      } as unknown as LegacyWidget,
       field: {} as Field,
       settings: {},
       widgetId,

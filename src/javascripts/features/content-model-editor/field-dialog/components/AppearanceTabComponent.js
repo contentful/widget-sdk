@@ -21,11 +21,10 @@ const AppearanceTabComponent = ({
   editorInterface,
   availableWidgets,
 }) => {
-  const defaultWidget = useMemo(() => getDefaultWidget(ctField, contentType, availableWidgets), [
-    ctField,
-    contentType,
-    availableWidgets,
-  ]);
+  const defaultWidget = useMemo(
+    () => getDefaultWidget(ctField, contentType, availableWidgets),
+    [ctField, contentType, availableWidgets]
+  );
   const { currentSpace } = useSpaceEnvContext();
   const hasCustomEditor = (editorInterface.editors || []).some((editor) => {
     return isCustomWidget(editor.widgetNamespace);

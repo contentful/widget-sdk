@@ -192,23 +192,21 @@ type FeatureGetter<TFeatures> = (
   defaultValue?: boolean
 ) => Promise<boolean>;
 
-const createFeatureHook = <TFeatures>(getFeature: FeatureGetter<TFeatures>) => (
-  scopeId: string | undefined,
-  featureId: TFeatures,
-  defaultValue: boolean
-) => {
-  const [isEnabled, setIsEnabled] = React.useState<boolean | null>(null);
+const createFeatureHook =
+  <TFeatures>(getFeature: FeatureGetter<TFeatures>) =>
+  (scopeId: string | undefined, featureId: TFeatures, defaultValue: boolean) => {
+    const [isEnabled, setIsEnabled] = React.useState<boolean | null>(null);
 
-  React.useEffect(() => {
-    if (!scopeId) return;
+    React.useEffect(() => {
+      if (!scopeId) return;
 
-    getFeature(scopeId, featureId, defaultValue).then(setIsEnabled);
+      getFeature(scopeId, featureId, defaultValue).then(setIsEnabled);
 
-    return () => setIsEnabled(null);
-  }, [defaultValue, featureId, scopeId]);
+      return () => setIsEnabled(null);
+    }, [defaultValue, featureId, scopeId]);
 
-  return isEnabled;
-};
+    return isEnabled;
+  };
 
 export const useSpaceFeature = createFeatureHook(getSpaceFeature);
 export const useOrgFeature = createFeatureHook(getOrgFeature);

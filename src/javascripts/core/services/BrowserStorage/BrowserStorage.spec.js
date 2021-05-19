@@ -27,8 +27,8 @@ describe('TheStore', () => {
 
   beforeEach(() => {
     primatives = {
-      '1': 1,
-      '1.1': 1.1,
+      1: 1,
+      1.1: 1.1,
       true: true,
       null: null,
     };

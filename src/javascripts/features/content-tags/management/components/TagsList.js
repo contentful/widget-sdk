@@ -42,12 +42,10 @@ const styles = {
 };
 
 function TagsList({ tags, isLoading }) {
-  const { modalComponent: deleteTagComponent, showModal: showDeleteModal } = useF36Modal(
-    DeleteTagModal
-  );
-  const { modalComponent: updateTagComponent, showModal: showUpdateModal } = useF36Modal(
-    UpdateTagModal
-  );
+  const { modalComponent: deleteTagComponent, showModal: showDeleteModal } =
+    useF36Modal(DeleteTagModal);
+  const { modalComponent: updateTagComponent, showModal: showUpdateModal } =
+    useF36Modal(UpdateTagModal);
 
   const onDelete = useCallback((tag) => showDeleteModal({ tag }), [showDeleteModal]);
   const onEdit = useCallback((tag) => showUpdateModal({ tag }), [showUpdateModal]);

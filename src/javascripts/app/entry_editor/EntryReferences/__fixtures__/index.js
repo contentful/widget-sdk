@@ -1984,8 +1984,7 @@ export const richTextSimpleReferences = {
           },
           file: {
             'en-US': {
-              url:
-                '//images.flinkly.com/uxn1u7m0txgd/1TW36Lhg6vjjiOwnS4pK6f/7963059fc276dee74e3bf6921d907b86/parrot.jpg',
+              url: '//images.flinkly.com/uxn1u7m0txgd/1TW36Lhg6vjjiOwnS4pK6f/7963059fc276dee74e3bf6921d907b86/parrot.jpg',
               details: {
                 size: 76313,
                 image: {
@@ -2260,8 +2259,7 @@ export const simpleReferences = {
           },
           file: {
             'en-US': {
-              url:
-                '//images.flinkly.com/uxn1u7m0txgd/1RuPXX12mNeIzKQIcuOWQW/0879b108af6582e87a24f6be7255a6ff/parrot.jpg',
+              url: '//images.flinkly.com/uxn1u7m0txgd/1RuPXX12mNeIzKQIcuOWQW/0879b108af6582e87a24f6be7255a6ff/parrot.jpg',
               details: {
                 size: 90059,
                 image: {

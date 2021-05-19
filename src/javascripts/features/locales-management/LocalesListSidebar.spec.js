@@ -44,21 +44,17 @@ describe('features/locales-management/LocalesListSidebar', () => {
     describe('if environment usage enforcement is not enabled', () => {
       it('add button and documentation are shown', () => {
         expect.assertions(4);
-        const {
-          addLocaleButton,
-          documentationSection,
-          usagesSection,
-          upgradeSpaceButton,
-        } = renderComponent({
-          insideMasterEnv: false,
-          isOrgOwnerOrAdmin: false,
-          localeResource: {
-            usage: 1,
-            limits: {
-              maximum: 2,
+        const { addLocaleButton, documentationSection, usagesSection, upgradeSpaceButton } =
+          renderComponent({
+            insideMasterEnv: false,
+            isOrgOwnerOrAdmin: false,
+            localeResource: {
+              usage: 1,
+              limits: {
+                maximum: 2,
+              },
             },
-          },
-        });
+          });
         expect(addLocaleButton).toHaveTextContent('Add Locale');
 
         expect(documentationSection).toBeInTheDocument();
@@ -71,23 +67,19 @@ describe('features/locales-management/LocalesListSidebar', () => {
       it('shows all sections and buttons correctly', () => {
         expect.assertions(5);
 
-        const {
-          documentationSection,
-          addLocaleButton,
-          upgradeSpaceButton,
-          usagesSection,
-        } = renderComponent({
-          allowedToEnforceLimits: true,
-          insideMasterEnv: false,
-          isOrgOwnerOrAdmin: true,
-          hasNextSpacePlan: true,
-          localeResource: {
-            usage: 2,
-            limits: {
-              maximum: 2,
+        const { documentationSection, addLocaleButton, upgradeSpaceButton, usagesSection } =
+          renderComponent({
+            allowedToEnforceLimits: true,
+            insideMasterEnv: false,
+            isOrgOwnerOrAdmin: true,
+            hasNextSpacePlan: true,
+            localeResource: {
+              usage: 2,
+              limits: {
+                maximum: 2,
+              },
             },
-          },
-        });
+          });
 
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -99,23 +91,19 @@ describe('features/locales-management/LocalesListSidebar', () => {
       });
 
       it('shows CTA button to talk to support about upgrading to enterprise when there are no more space plans and limit is reached', () => {
-        const {
-          documentationSection,
-          addLocaleButton,
-          upgradeSpaceButton,
-          usagesSection,
-        } = renderComponent({
-          allowedToEnforceLimits: true,
-          insideMasterEnv: false,
-          isOrgOwnerOrAdmin: true,
-          hasNextSpacePlan: false,
-          localeResource: {
-            usage: 2,
-            limits: {
-              maximum: 2,
+        const { documentationSection, addLocaleButton, upgradeSpaceButton, usagesSection } =
+          renderComponent({
+            allowedToEnforceLimits: true,
+            insideMasterEnv: false,
+            isOrgOwnerOrAdmin: true,
+            hasNextSpacePlan: false,
+            localeResource: {
+              usage: 2,
+              limits: {
+                maximum: 2,
+              },
             },
-          },
-        });
+          });
         const contactSalesButton = screen.getByTestId('link-to-sales-button');
         expect(contactSalesButton).toBeInTheDocument();
         expect(contactSalesButton.getAttribute('href')).toMatch(
@@ -216,21 +204,17 @@ describe('features/locales-management/LocalesListSidebar', () => {
     describe('if limit is reached and user cannot change space', () => {
       it('all sections and texts are shown correctly if limit is more than 1', () => {
         expect.assertions(5);
-        const {
-          documentationSection,
-          addLocaleButton,
-          upgradeSpaceButton,
-          usagesSection,
-        } = renderComponent({
-          insideMasterEnv: true,
-          isOrgOwnerOrAdmin: false,
-          localeResource: {
-            usage: 2,
-            limits: {
-              maximum: 2,
+        const { documentationSection, addLocaleButton, upgradeSpaceButton, usagesSection } =
+          renderComponent({
+            insideMasterEnv: true,
+            isOrgOwnerOrAdmin: false,
+            localeResource: {
+              usage: 2,
+              limits: {
+                maximum: 2,
+              },
             },
-          },
-        });
+          });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
         expect(upgradeSpaceButton).not.toBeInTheDocument();
@@ -244,21 +228,17 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
       it('all sections and texts are shown correctly if limit is 1', () => {
         expect.assertions(5);
-        const {
-          documentationSection,
-          addLocaleButton,
-          upgradeSpaceButton,
-          usagesSection,
-        } = renderComponent({
-          insideMasterEnv: true,
-          isOrgOwnerOrAdmin: false,
-          localeResource: {
-            usage: 1,
-            limits: {
-              maximum: 1,
+        const { documentationSection, addLocaleButton, upgradeSpaceButton, usagesSection } =
+          renderComponent({
+            insideMasterEnv: true,
+            isOrgOwnerOrAdmin: false,
+            localeResource: {
+              usage: 1,
+              limits: {
+                maximum: 1,
+              },
             },
-          },
-        });
+          });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
         expect(upgradeSpaceButton).not.toBeInTheDocument();

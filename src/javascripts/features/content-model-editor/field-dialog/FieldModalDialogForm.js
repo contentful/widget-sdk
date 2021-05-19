@@ -87,10 +87,10 @@ const FieldModalDialogForm = ({
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
   const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
 
-  const availableWidgets = useMemo(() => getAvailableWidgets(customWidgets, ctField), [
-    customWidgets,
-    ctField,
-  ]);
+  const availableWidgets = useMemo(
+    () => getAvailableWidgets(customWidgets, ctField),
+    [customWidgets, ctField]
+  );
 
   const submitForm = (values, richTextOptions, widgetSettings) => {
     updateFieldOnScope(values, richTextOptions, widgetSettings);

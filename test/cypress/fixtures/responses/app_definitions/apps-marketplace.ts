@@ -1948,8 +1948,7 @@ export const marketplaceEntryList = {
         },
         fields: {
           negative: true,
-          info:
-            'If you want the content type we created during installation removed, you will have to delete it manually',
+          info: 'If you want the content type we created during installation removed, you will have to delete it manually',
         },
       },
       {
@@ -3173,8 +3172,7 @@ export const marketplaceEntryList = {
         },
         fields: {
           negative: true,
-          info:
-            'This will not remove the variation container content type or any created entries. Please remove them manually if they are no longer needed.',
+          info: 'This will not remove the variation container content type or any created entries. Please remove them manually if they are no longer needed.',
         },
       },
       {
@@ -3349,8 +3347,7 @@ export const marketplaceEntryList = {
         },
         fields: {
           title: 'Smartling Connector for Contentful',
-          url:
-            'https://help.smartling.com/hc/en-us/articles/360000546974-Contentful-Connector-Overview',
+          url: 'https://help.smartling.com/hc/en-us/articles/360000546974-Contentful-Connector-Overview',
         },
       },
       {
@@ -3603,8 +3600,7 @@ export const marketplaceEntryList = {
         },
         fields: {
           title: 'Contentful app in the Atlassian marketplace',
-          url:
-            'https://marketplace.atlassian.com/apps/1221865/contentful?hosting=cloud&tab=overview',
+          url: 'https://marketplace.atlassian.com/apps/1221865/contentful?hosting=cloud&tab=overview',
         },
       },
       {
@@ -4065,8 +4061,7 @@ export const marketplaceEntryList = {
         },
         fields: {
           negative: false,
-          info:
-            'This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site.',
+          info: 'This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site.',
         },
       },
       {
@@ -4773,8 +4768,7 @@ export const marketplaceEntryList = {
           title: 'Gatsby Logo',
           description: 'Gatsby Monogram',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg',
             details: {
               size: 810,
               image: {
@@ -4814,8 +4808,7 @@ export const marketplaceEntryList = {
           title: 'Netlify Logo',
           description: 'Netlify logomark',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg',
             details: {
               size: 4081,
               image: {
@@ -4854,8 +4847,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Commercetools logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/2kGcCBLObHIGu5WHpG82hW/a9f4cfc72bc289824d9122f10af0703e/logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/2kGcCBLObHIGu5WHpG82hW/a9f4cfc72bc289824d9122f10af0703e/logo.svg',
             details: {
               size: 1002,
               image: {
@@ -4894,8 +4886,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Frontify logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg',
             details: {
               size: 1312,
               image: {
@@ -4935,8 +4926,7 @@ export const marketplaceEntryList = {
           title: 'Brandfolder',
           description: 'Brandfolder icon',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/38mNiKvgas9Tn4ypxnYiCB/0bdc049fd46eabcea9e88ef89a6040e5/Artboard_Copy.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/38mNiKvgas9Tn4ypxnYiCB/0bdc049fd46eabcea9e88ef89a6040e5/Artboard_Copy.svg',
             details: {
               size: 2392,
               image: {
@@ -4976,8 +4966,7 @@ export const marketplaceEntryList = {
           title: 'Cloudinary Logo',
           description: 'cloudinary icon for white bg',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg',
             details: {
               size: 7491,
               image: {
@@ -5017,8 +5006,7 @@ export const marketplaceEntryList = {
           title: 'Bynder Logo',
           description: 'Large-Bynder Blue Logo Vertical',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg',
             details: {
               size: 991,
               image: {
@@ -5057,8 +5045,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Commerce Layer logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/46RbUtpdcShgeokAsyElwH/e228c6dc9bbf6620fdad4ca53fbfbc1f/logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/46RbUtpdcShgeokAsyElwH/e228c6dc9bbf6620fdad4ca53fbfbc1f/logo.svg',
             details: {
               size: 3045,
               image: {
@@ -5097,8 +5084,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Contentful Logo Square',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
             details: {
               size: 11294,
               image: {
@@ -5138,8 +5124,7 @@ export const marketplaceEntryList = {
           title: 'Optimizely Logo',
           description: 'Optimizely Logo Secondary Full Color Light',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
             details: {
               size: 1444,
               image: {
@@ -5178,8 +5163,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Jira Logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/5DOrJZ55ibRc7WxGlfwUBT/76d4ece64fd28a86fd56128a4aa75dc6/jira.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/5DOrJZ55ibRc7WxGlfwUBT/76d4ece64fd28a86fd56128a4aa75dc6/jira.svg',
             details: {
               size: 1184,
               image: {
@@ -5218,8 +5202,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Smartling Logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/5KzYgOFSSKVxhzFky3zTxz/c2afb640f130a01e90e2f91b47791150/smartling-icon.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/5KzYgOFSSKVxhzFky3zTxz/c2afb640f130a01e90e2f91b47791150/smartling-icon.svg',
             details: {
               size: 2546,
               image: {
@@ -5258,8 +5241,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Typeform logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/6TFC6qGkkxgMe0QlQ72Lid/45bd015f693a58c71a5642c2280596a4/typeform-logo-symbol-1585307156_1.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/6TFC6qGkkxgMe0QlQ72Lid/45bd015f693a58c71a5642c2280596a4/typeform-logo-symbol-1585307156_1.svg',
             details: {
               size: 607,
               image: {
@@ -5298,8 +5280,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Mux logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/706BJGh12LJu0GyKNP4VxH/0f3cca422c169ec01593174116c27e16/mux.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/706BJGh12LJu0GyKNP4VxH/0f3cca422c169ec01593174116c27e16/mux.svg',
             details: {
               size: 3524,
               image: {
@@ -5338,8 +5319,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Shopify logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/7AY4BEF4GFBmKY88sKmrye/bc076b943096b37a1ca935343cb271dc/logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/7AY4BEF4GFBmKY88sKmrye/bc076b943096b37a1ca935343cb271dc/logo.svg',
             details: {
               size: 1139,
               image: {
@@ -5378,8 +5358,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Dropbox logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg',
             details: {
               size: 434,
               image: {
@@ -5418,8 +5397,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'Google Analytics Icon',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/7m5CCbqhAPqxdVHbtS311s/0504764691bda415935a0a62efa84ca9/Icon.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/7m5CCbqhAPqxdVHbtS311s/0504764691bda415935a0a62efa84ca9/Icon.svg',
             details: {
               size: 824,
               image: {
@@ -5459,8 +5437,7 @@ export const marketplaceEntryList = {
           title: 'Image Focal Point logo',
           description: 'Logo of the Image Focal Point app',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg',
             details: {
               size: 862,
               image: {
@@ -5499,8 +5476,7 @@ export const marketplaceEntryList = {
         fields: {
           title: 'app-logo',
           file: {
-            url:
-              '//images.ctfassets.net/lpjm8d10rkpy/7ybwSTa9vxAL2yHUc7KfOs/5e6270efe884f2ab0d9cdd6f05eb53e3/ai-image-tagging.svg',
+            url: '//images.ctfassets.net/lpjm8d10rkpy/7ybwSTa9vxAL2yHUc7KfOs/5e6270efe884f2ab0d9cdd6f05eb53e3/ai-image-tagging.svg',
             details: {
               size: 2229,
               image: {

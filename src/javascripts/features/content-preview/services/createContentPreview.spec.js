@@ -65,8 +65,7 @@ describe('features/content-preview/createContentPreview', () => {
           enabled: true,
         },
         {
-          url:
-            'https://www.test.com/{entry.linkedBy.linkedBy.fields.name}/some/{entry.linkedBy.fields.slug}',
+          url: 'https://www.test.com/{entry.linkedBy.linkedBy.fields.name}/some/{entry.linkedBy.fields.slug}',
           contentType: 'ct-5',
           enabled: true,
         },

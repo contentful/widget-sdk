@@ -106,7 +106,7 @@ const SnapshotPresenterCustomWidget = ({
       {sdk && (
         <WidgetRenderer
           location={WidgetLocation.ENTRY_FIELD}
-          sdk={(sdk as unknown) as KnownSDK}
+          sdk={sdk as unknown as KnownSDK}
           widget={widget}
         />
       )}

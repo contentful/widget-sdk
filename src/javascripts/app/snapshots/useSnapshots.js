@@ -15,10 +15,10 @@ const useSnapshots = ({ editorData }) => {
   const [isLoading, setLoading] = useState(true);
   const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
   const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
-  const spaceEndpoint = useMemo(() => createSpaceEndpoint(currentSpaceId, currentEnvironmentId), [
-    currentSpaceId,
-    currentEnvironmentId,
-  ]);
+  const spaceEndpoint = useMemo(
+    () => createSpaceEndpoint(currentSpaceId, currentEnvironmentId),
+    [currentSpaceId, currentEnvironmentId]
+  );
   const usersRepo = useMemo(() => createCache(spaceEndpoint), [spaceEndpoint]);
 
   const load = async () => {

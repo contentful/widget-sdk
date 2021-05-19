@@ -39,7 +39,8 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnNone();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature =
+          ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -58,7 +59,8 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature =
+          ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -100,7 +102,8 @@ describe.skip('Releases', () => {
         getReleaseActionInteraction = publishRelease.willSucceed();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature =
+          ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });
@@ -126,7 +129,8 @@ describe.skip('Releases', () => {
         getReleasesInteraction = getReleasesList.willReturnSeveral();
 
         cy.visit(`/spaces/${defaultSpaceId}/releases`);
-        const getLaunchAppFeature = ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
+        const getLaunchAppFeature =
+          ProductCatalog.getLaunchAppFeatureInDefaultOrg.willFindFeatureEnabled();
         cy.wait(getLaunchAppFeature);
         cy.wait(interactions, { timeout: 20000 });
       });

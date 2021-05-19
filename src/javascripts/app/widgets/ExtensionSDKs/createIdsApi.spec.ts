@@ -6,9 +6,9 @@ describe('createIdsApi', () => {
   const spaceId = 'space_id';
   const envId = 'env_id';
   const envAliasId = 'some_alias';
-  const entry = ({
+  const entry = {
     getSys: jest.fn(() => ({ id: 'entry_id' })),
-  } as unknown) as EntryAPI;
+  } as unknown as EntryAPI;
   const fieldId = 'field_id';
   const user = {
     sys: {
@@ -36,7 +36,7 @@ describe('createIdsApi', () => {
         envAliasId,
         contentType,
         entry,
-        field: ({ id: fieldId } as unknown) as FieldAPI,
+        field: { id: fieldId } as unknown as FieldAPI,
         user: user as User,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
@@ -61,7 +61,7 @@ describe('createIdsApi', () => {
         envAliasId: undefined,
         contentType,
         entry,
-        field: ({ id: fieldId } as unknown) as FieldAPI,
+        field: { id: fieldId } as unknown as FieldAPI,
         user: user as User,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,

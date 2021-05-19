@@ -86,13 +86,8 @@ function CreateTagModal({ isShown, onClose, isInline, inlineData }) {
   const isConfirmEnabled = name && id && hasAnyValidationErrors === false;
   const limitsReached = total >= TAGS_PER_SPACE;
 
-  const {
-    createTag,
-    createTagIsLoading,
-    resetCreateTag,
-    createTagData,
-    createTagError,
-  } = useCreateTag();
+  const { createTag, createTagIsLoading, resetCreateTag, createTagData, createTagError } =
+    useCreateTag();
 
   const resetForm = useCallback(() => {
     resetCreateTag();

@@ -140,17 +140,13 @@ async function loadEditorData(loader, id) {
     }
   }
 
-  const [
-    contentType,
-    apiEditorInterface,
-    hasAdvancedExtensibility,
-    customWidgetLoader,
-  ] = await Promise.all([
-    loader.getContentType(contentTypeId),
-    loader.getEditorInterface(contentTypeId),
-    loader.hasAdvancedExtensibility(),
-    getCustomWidgetLoader({ onWarning, hasServerError }),
-  ]);
+  const [contentType, apiEditorInterface, hasAdvancedExtensibility, customWidgetLoader] =
+    await Promise.all([
+      loader.getContentType(contentTypeId),
+      loader.getEditorInterface(contentTypeId),
+      loader.hasAdvancedExtensibility(),
+      getCustomWidgetLoader({ onWarning, hasServerError }),
+    ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType, apiEditorInterface);
 

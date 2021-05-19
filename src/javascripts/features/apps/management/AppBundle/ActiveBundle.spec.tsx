@@ -36,12 +36,12 @@ const renderInContext = (
     <HostingStateProvider {...(contextProps as Omit<HostingStateProviderProps, 'children'>)}>
       <AppDetailsStateContext.Provider
         value={
-          ({
+          {
             draftDefinition: props.definition,
             setDraftDefinition: jest.fn(),
             savedDefinition: props.savedDefinition,
             resetDefinitionBundle: props.resetDefinitionBundle,
-          } as any) as AppDetailsStateContextValue
+          } as any as AppDetailsStateContextValue
         }>
         <ActiveBundle {...props} />
       </AppDetailsStateContext.Provider>

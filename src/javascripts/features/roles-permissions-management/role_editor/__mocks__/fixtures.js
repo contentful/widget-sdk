@@ -847,8 +847,7 @@ export const fixtures = {
                       },
                       file: {
                         'en-US': {
-                          url:
-                            '//images.contentful.com/m8xyo6sh8zj8/2x32KnbRR5pBLXcAHETvQv/64b86217a24d3a33df1b02d5581e5477/Panthera_tigris_corbetti__Tierpark_Berlin__832-714-_118_.jpg',
+                          url: '//images.contentful.com/m8xyo6sh8zj8/2x32KnbRR5pBLXcAHETvQv/64b86217a24d3a33df1b02d5581e5477/Panthera_tigris_corbetti__Tierpark_Berlin__832-714-_118_.jpg',
                           details: { size: 2479715, image: { width: 3648, height: 2736 } },
                           fileName: 'Panthera_tigris_corbetti_(Tierpark_Berlin)_832-714-(118).jpg',
                           contentType: 'image/jpeg',
@@ -896,8 +895,7 @@ export const fixtures = {
                       description: { 'en-US': 'asdfasdfasdfasdfasfasfasdf' },
                       file: {
                         'en-US': {
-                          url:
-                            '//images.contentful.com/m8xyo6sh8zj8/BsLDVhZSsxbbcgVwBa6lK/7032ecc5431bdbfe7737b01f21556716/orangutan.jpg',
+                          url: '//images.contentful.com/m8xyo6sh8zj8/BsLDVhZSsxbbcgVwBa6lK/7032ecc5431bdbfe7737b01f21556716/orangutan.jpg',
                           details: { size: 1443340, image: { width: 1558, height: 2251 } },
                           fileName:
                             'Orang_Utan_Semenggok_Forest_Reserve_Sarawak_Borneo_Malaysia.JPG',

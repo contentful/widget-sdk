@@ -250,7 +250,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "patch-package": "^6.4.7",
     "postcss-svgo": "^4.0.3",
-    "prettier": "2.0.5",
+    "prettier": "2.3.0",
     "react-refresh": "^0.9.0",
     "relative-deps": "1.0.1",
     "rework": "^1.0.1",

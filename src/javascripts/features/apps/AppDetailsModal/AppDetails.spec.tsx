@@ -19,8 +19,7 @@ describe('AppDetails', () => {
     author: {
       name: 'Contentful',
       url: 'https://www.contentful.com',
-      icon:
-        '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
+      icon: '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
     },
     links: [
       {
@@ -29,8 +28,7 @@ describe('AppDetails', () => {
         url: 'https://www.contentful.com/developers/docs/extensibility/apps/optimizely/',
       },
     ],
-    icon:
-      '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
+    icon: '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
     categories: ['Featured', 'Personalization'],
     description: `# header
 

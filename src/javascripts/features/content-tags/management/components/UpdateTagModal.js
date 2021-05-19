@@ -59,13 +59,8 @@ function UpdateTagModal({ isShown, onClose, tag }) {
   const hasAnyValidationErrors = Object.values(errors).some((item) => Boolean(item));
   const isConfirmEnabled = name && confirm && !hasAnyValidationErrors;
 
-  const {
-    updateTag,
-    updateTagData,
-    updateTagError,
-    updateTagIsLoading,
-    resetUpdateTag,
-  } = useUpdateTag();
+  const { updateTag, updateTagData, updateTagError, updateTagIsLoading, resetUpdateTag } =
+    useUpdateTag();
 
   const close = useCallback(() => {
     onClose();

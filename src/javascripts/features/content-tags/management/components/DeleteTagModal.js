@@ -60,13 +60,8 @@ function DeleteTagModal({ tag, isShown, onClose }) {
 
   const { data: hasCustomRolesFeature } = useAsync(hasCustomRolesFeatureCheck);
 
-  const {
-    deleteTag,
-    deleteTagIsLoading,
-    deleteTagData,
-    deleteTagError,
-    resetDeleteTag,
-  } = useDeleteTag();
+  const { deleteTag, deleteTagIsLoading, deleteTagData, deleteTagError, resetDeleteTag } =
+    useDeleteTag();
 
   const close = useCallback(async () => {
     onClose();

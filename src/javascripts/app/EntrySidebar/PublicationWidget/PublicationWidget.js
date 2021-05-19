@@ -76,14 +76,8 @@ export default class PublicationWidget extends React.PureComponent {
   };
 
   render() {
-    const {
-      primary,
-      status,
-      secondary,
-      isSaving,
-      updatedAt,
-      publicationBlockedReason,
-    } = this.props;
+    const { primary, status, secondary, isSaving, updatedAt, publicationBlockedReason } =
+      this.props;
     const secondaryActionsDisabled = every(secondary || [], (action) => action.isDisabled());
     const isPrimaryPublishBlocked =
       primary && primary.targetStateId === 'published' && !!publicationBlockedReason;

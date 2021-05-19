@@ -100,9 +100,8 @@ describe('EntityHelpers', () => {
 
         expect(EntityFieldValueSpaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
 
-        const [entity, locale] = EntityFieldValueSpaceContextMocked[
-          spaceContextMethodName
-        ].mock.calls[0];
+        const [entity, locale] =
+          EntityFieldValueSpaceContextMocked[spaceContextMethodName].mock.calls[0];
 
         expect(entity.data.fields).toEqual(transformedFields);
         expect(entity.getType()).toBe('Entry');
@@ -131,9 +130,8 @@ describe('EntityHelpers', () => {
 
       expect(EntityFieldValueSpaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
 
-      const [asset, locale] = EntityFieldValueSpaceContextMocked[
-        spaceContextMethodName
-      ].mock.calls[0];
+      const [asset, locale] =
+        EntityFieldValueSpaceContextMocked[spaceContextMethodName].mock.calls[0];
 
       expect(asset.getType()).toBe('Asset');
       expect(locale).toBe('en-US');

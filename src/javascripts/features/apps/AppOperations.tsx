@@ -13,9 +13,7 @@ import { UninstallModal } from './UninstallModal';
 import { MarketplaceApp, getAppsRepo } from 'features/apps-core';
 import APIClient from 'data/APIClient';
 
-export type AppStatusCheck = (
-  app: MarketplaceApp
-) => Promise<{
+export type AppStatusCheck = (app: MarketplaceApp) => Promise<{
   appDefinition: MarketplaceApp['appDefinition'];
   appInstallation?: MarketplaceApp['appInstallation'];
   isMarketplaceInstallation: boolean;

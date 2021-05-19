@@ -117,14 +117,8 @@ export function DashboardRouter({ orgId: organizationId }) {
     invoices: null,
   });
 
-  const {
-    loading,
-    orgIsSelfService,
-    orgIsEnterprise,
-    billingDetails,
-    paymentDetails,
-    invoices,
-  } = state;
+  const { loading, orgIsSelfService, orgIsEnterprise, billingDetails, paymentDetails, invoices } =
+    state;
 
   useAsync(useCallback(fetch(organizationId, dispatch), []));
 

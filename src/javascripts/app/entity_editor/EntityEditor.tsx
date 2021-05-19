@@ -23,14 +23,8 @@ interface EntityEditorProps {
 }
 
 export const EntityEditor: FunctionComponent<EntityEditorProps> = (props) => {
-  const {
-    slide,
-    hasInitialFocus,
-    slideStates,
-    updateSlideStateByKey,
-    fieldController,
-    fields,
-  } = props;
+  const { slide, hasInitialFocus, slideStates, updateSlideStateByKey, fieldController, fields } =
+    props;
 
   const [{ editorData, loadingError }, trackLoadEvent] = useEntityLoader(slide, slideStates);
   const [incomingLinksResponse, setIncomingLinksResponse] = useState({

@@ -23,12 +23,10 @@ export function createLoadEventTracker({
     const singleReferenceFieldTypes = enabledFieldTypes.filter(isSingleReferenceField);
     const multiReferenceFieldTypes = enabledFieldTypes.filter(isMultiReferenceField);
     const richTextEditorInstanceCount = getRenderableLinkFieldInstanceCount(richTextFieldTypes);
-    const singleLinkFieldEditorInstanceCount = getRenderableLinkFieldInstanceCount(
-      singleReferenceFieldTypes
-    );
-    const multiLinkFieldEditorInstanceCount = getRenderableLinkFieldInstanceCount(
-      multiReferenceFieldTypes
-    );
+    const singleLinkFieldEditorInstanceCount =
+      getRenderableLinkFieldInstanceCount(singleReferenceFieldTypes);
+    const multiLinkFieldEditorInstanceCount =
+      getRenderableLinkFieldInstanceCount(multiReferenceFieldTypes);
     const linkFieldEditorInstanceCount =
       singleLinkFieldEditorInstanceCount + multiLinkFieldEditorInstanceCount;
 

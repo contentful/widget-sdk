@@ -124,70 +124,68 @@ const styles = {
 
 const makeLink = (id) => ({ sys: { id, type: 'Link', linkType: 'Role' } });
 
-const submit = (spaceId, teams, dispatch, navigate) => async ({
-  selectedTeamIds,
-  selectedRoleIds,
-  adminSelected,
-}) => {
-  const endpoint = createSpaceEndpoint(spaceId);
+const submit =
+  (spaceId, teams, dispatch, navigate) =>
+  async ({ selectedTeamIds, selectedRoleIds, adminSelected }) => {
+    const endpoint = createSpaceEndpoint(spaceId);
 
-  dispatch({ type: 'SUBMIT', payload: true });
+    dispatch({ type: 'SUBMIT', payload: true });
 
-  const erredTeams: string[] = [];
-  const promises = selectedTeamIds.map((teamId) =>
-    createTeamSpaceMembership(endpoint, teamId, {
-      admin: adminSelected,
-      roles: selectedRoleIds.map(makeLink),
-    }).catch(() => erredTeams.push(teamId))
-  );
+    const erredTeams: string[] = [];
+    const promises = selectedTeamIds.map((teamId) =>
+      createTeamSpaceMembership(endpoint, teamId, {
+        admin: adminSelected,
+        roles: selectedRoleIds.map(makeLink),
+      }).catch(() => erredTeams.push(teamId))
+    );
 
-  await Promise.all(promises);
+    await Promise.all(promises);
 
-  // We keep the user on this page and show a notification telling them all the
-  // teams erred
-  if (erredTeams.length > 0 && erredTeams.length === promises.length) {
-    Notification.error(`Could not add ${pluralize('team', erredTeams.length)} to the space.`);
+    // We keep the user on this page and show a notification telling them all the
+    // teams erred
+    if (erredTeams.length > 0 && erredTeams.length === promises.length) {
+      Notification.error(`Could not add ${pluralize('team', erredTeams.length)} to the space.`);
 
-    dispatch({ type: 'SUBMIT', payload: false });
+      dispatch({ type: 'SUBMIT', payload: false });
+
+      track('teams_in_space:teams_added', {
+        numErr: erredTeams.length,
+        numSuccess: 0,
+        numRoles: selectedRoleIds.length,
+        adminSelected,
+      });
+
+      return;
+    }
+
+    // If any teams were successfully added, we show a success message with the number
+    // of teams added
+    Notification.success(
+      `${pluralize(
+        'team',
+        selectedTeamIds.length - erredTeams.length,
+        true
+      )} successfully added to space`
+    );
+
+    // Show an error notification for any erred teams as well
+    erredTeams.forEach((teamId) => {
+      const team = teams.find((team) => team.sys.id === teamId);
+
+      Notification.error(`Could not add ${team.name} to the space.`);
+    });
 
     track('teams_in_space:teams_added', {
       numErr: erredTeams.length,
-      numSuccess: 0,
+      numSuccess: selectedTeamIds.length - erredTeams.length,
       numRoles: selectedRoleIds.length,
       adminSelected,
     });
 
-    return;
-  }
-
-  // If any teams were successfully added, we show a success message with the number
-  // of teams added
-  Notification.success(
-    `${pluralize(
-      'team',
-      selectedTeamIds.length - erredTeams.length,
-      true
-    )} successfully added to space`
-  );
-
-  // Show an error notification for any erred teams as well
-  erredTeams.forEach((teamId) => {
-    const team = teams.find((team) => team.sys.id === teamId);
-
-    Notification.error(`Could not add ${team.name} to the space.`);
-  });
-
-  track('teams_in_space:teams_added', {
-    numErr: erredTeams.length,
-    numSuccess: selectedTeamIds.length - erredTeams.length,
-    numRoles: selectedRoleIds.length,
-    adminSelected,
-  });
-
-  navigate({
-    path: 'teams.list',
-  });
-};
+    navigate({
+      path: 'teams.list',
+    });
+  };
 
 type AddTeamsPageContentProps = {
   teams: TeamProps[];

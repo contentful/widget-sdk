@@ -8,12 +8,8 @@ import { useContentfulAppsConfig } from 'features/contentful-apps';
 import { useAppsTrial } from 'features/trials';
 
 export const ComposeAndLaunchCTA = (): ReactElement => {
-  const {
-    currentSpaceId,
-    currentSpaceName,
-    currentEnvironmentId,
-    currentOrganizationId,
-  } = useSpaceEnvContext();
+  const { currentSpaceId, currentSpaceName, currentEnvironmentId, currentOrganizationId } =
+    useSpaceEnvContext();
 
   const config = {
     organizationId: currentOrganizationId,
@@ -42,9 +38,8 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
 
   const canManage = canUserManageApps();
 
-  const { canStartTrial: isAppsTrialAvailable, isAppsTrialActive } = useAppsTrial(
-    currentOrganizationId
-  );
+  const { canStartTrial: isAppsTrialAvailable, isAppsTrialActive } =
+    useAppsTrial(currentOrganizationId);
 
   const appsEnabled = compose.isEnabled && launch.isEnabled;
   const appsPurchased = compose.isPurchased && launch.isPurchased;
@@ -65,8 +60,7 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
     },
     install: {
       title: 'Install Compose + Launch: powerful tools to deliver content faster',
-      text:
-        'Compose + Launch are included with your plan. Give your content teams powerful new tools that allow them to work faster and collaborate more effectively.',
+      text: 'Compose + Launch are included with your plan. Give your content teams powerful new tools that allow them to work faster and collaborate more effectively.',
     },
   };
 

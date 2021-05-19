@@ -35,7 +35,7 @@ jest.mock('analytics/Analytics', () => {
   };
 });
 
-const defaultDoc = ({
+const defaultDoc = {
   changes: {
     filter: jest.fn(),
   },
@@ -49,16 +49,16 @@ const defaultDoc = ({
     contentType: { sys: { id: 'content-type-id' } },
     id: 'entry-id',
   },
-} as unknown) as jest.Mocked<Document>;
+} as unknown as jest.Mocked<Document>;
 
-const defaultInternalField = ({
+const defaultInternalField = {
   apiName: 'apiname',
   id: 'internal_id',
   localized: false,
   required: false,
   validations: [],
   type: 'Symbol',
-} as unknown) as InternalContentTypeField;
+} as unknown as InternalContentTypeField;
 
 const buildEntryFieldApi = ({
   internalField = defaultInternalField,

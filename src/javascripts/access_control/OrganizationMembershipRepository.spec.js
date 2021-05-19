@@ -9,13 +9,15 @@ describe('access_control/OrganizationMembershipRepository', () => {
       OrganizationMembershipRepository.getUsersByIds(endpointMock, ids);
 
     it('loads users by id in batches', async function () {
-      const buildMockImplementation = (result) => ({ method, path, query }) => {
-        if (method === 'GET' && isEqual(path, ['users']) && typeof query['sys.id'] === 'string') {
-          return result;
-        } else {
-          throw new Error('Arguments to api seemed wrong');
-        }
-      };
+      const buildMockImplementation =
+        (result) =>
+        ({ method, path, query }) => {
+          if (method === 'GET' && isEqual(path, ['users']) && typeof query['sys.id'] === 'string') {
+            return result;
+          } else {
+            throw new Error('Arguments to api seemed wrong');
+          }
+        };
 
       const userIds = times(100, (i) => `user${i}`);
 

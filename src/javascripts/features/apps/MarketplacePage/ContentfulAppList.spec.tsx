@@ -15,8 +15,7 @@ const defaultValues = {
   title: 'Compose + Launch',
   organizationId: '4wduOvOvkiyZ2XnDewhIu2',
   image: '<SvgLaunchComposeCombined />',
-  text:
-    'Compose and Launch will elevate the experience of your content team, while creating and publishing all your best content.',
+  text: 'Compose and Launch will elevate the experience of your content team, while creating and publishing all your best content.',
   canManage: true,
   spaceInformation: {
     spaceId: 'yg2xm8i0xdnu',

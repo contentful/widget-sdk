@@ -25,9 +25,8 @@ enum States {
 
 export const AllBundles = () => {
   const { bundles, setIsAppHosting, removeBundle } = React.useContext(HostingStateContext);
-  const { draftDefinition, setDraftDefinition, savedDefinition } = React.useContext(
-    AppDetailsStateContext
-  );
+  const { draftDefinition, setDraftDefinition, savedDefinition } =
+    React.useContext(AppDetailsStateContext);
 
   const setNewAppBundle = (bundle: AppBundleData) => {
     setIsAppHosting(true);

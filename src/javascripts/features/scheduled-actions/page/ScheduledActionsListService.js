@@ -67,17 +67,13 @@ export async function getJobsData({ environmentId }, spaceEndpoint, query) {
 
   const userIds = scheduledActions.map((j) => j.sys.createdBy.sys.id);
 
-  const [
-    entriesCollection,
-    assetCollection,
-    releasesCollection,
-    usersCollection,
-  ] = await Promise.all([
-    getEntities('Entry', idsByEntityType.Entry),
-    getEntities('Asset', idsByEntityType.Asset),
-    getEntities('Release', idsByEntityType.Release),
-    getUsers(spaceEndpoint, userIds),
-  ]);
+  const [entriesCollection, assetCollection, releasesCollection, usersCollection] =
+    await Promise.all([
+      getEntities('Entry', idsByEntityType.Entry),
+      getEntities('Asset', idsByEntityType.Asset),
+      getEntities('Release', idsByEntityType.Release),
+      getUsers(spaceEndpoint, userIds),
+    ]);
 
   return {
     jobs: scheduledActions,

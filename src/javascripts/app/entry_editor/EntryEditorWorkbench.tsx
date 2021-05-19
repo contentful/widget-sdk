@@ -137,12 +137,8 @@ const openDialog = (modalData, helpCenterUrl) => {
 };
 
 const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
-  const {
-    currentSpaceId,
-    currentEnvironmentId,
-    currentOrganizationId,
-    currentOrganization,
-  } = useSpaceEnvContext();
+  const { currentSpaceId, currentEnvironmentId, currentOrganizationId, currentOrganization } =
+    useSpaceEnvContext();
   const {
     editorContext,
     editorData,
@@ -157,7 +153,7 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
     incomingLinks,
   } = props;
   const { entityInfo } = editorData;
-  const { state: referencesState } = (useContext(ReferencesContext) as unknown) as {
+  const { state: referencesState } = useContext(ReferencesContext) as unknown as {
     state: ReferencesState;
     dispatch: React.Dispatch<Action>;
   };

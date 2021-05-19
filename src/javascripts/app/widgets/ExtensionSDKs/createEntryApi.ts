@@ -57,7 +57,7 @@ export function createEntryApi({
   return {
     getSys: () => {
       // TODO: the EntitySys type in doc doesn't match EntrySys from UIESDK
-      return (K.getValue(doc.sysProperty) as unknown) as EntrySys;
+      return K.getValue(doc.sysProperty) as unknown as EntrySys;
     },
     onSysChanged: (cb) => {
       return K.onValue(doc.sysProperty, cb as (value: unknown) => void);

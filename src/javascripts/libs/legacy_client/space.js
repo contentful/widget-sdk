@@ -14,10 +14,13 @@ const Space = function Space(data, persistenceContext) {
 
 Space.prototype = Object.create(Entity.prototype);
 
-Space.prototype.update = Space.prototype.save = Space.prototype.delete = function () {
-  // Disable `update`, `save` and `delete` methods, use new CMA client instead
-  throw new Error('Cannot update/save/delete a space');
-};
+Space.prototype.update =
+  Space.prototype.save =
+  Space.prototype.delete =
+    function () {
+      // Disable `update`, `save` and `delete` methods, use new CMA client instead
+      throw new Error('Cannot update/save/delete a space');
+    };
 
 Space.prototype.isOwner = function (user) {
   return user && this.data.organization.sys.createdBy.sys.id === user.sys.id;

@@ -58,7 +58,8 @@ describe('Schedule Publication', () => {
     });
     it('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
-      const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
+      const scheduledPubinteraction =
+        createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
 
       cy.findByTestId('change-state-menu-trigger').click();
       cy.findByTestId('schedule-publication').click();

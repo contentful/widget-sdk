@@ -141,10 +141,9 @@ export class AppsRepo {
       this.getMarketplaceAppDefinitions(),
       this.getContentfulAppListsings(),
     ]);
-    const availableApps = (marketplaceApps as (
-      | MarketplaceApp
-      | NonInstallableMarketplaceApp
-    )[]).concat(contentfulApps);
+    const availableApps = (
+      marketplaceApps as (MarketplaceApp | NonInstallableMarketplaceApp)[]
+    ).concat(contentfulApps);
 
     return appInstallations.items.map((appInstallation) => {
       const definitionId = appInstallation.sys.appDefinition.sys.id;

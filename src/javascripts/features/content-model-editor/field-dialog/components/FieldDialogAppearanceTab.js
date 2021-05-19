@@ -58,13 +58,8 @@ class FieldDialogAppearanceTab extends React.Component {
   };
 
   render() {
-    const {
-      availableWidgets,
-      widgetSettings,
-      defaultWidget,
-      isAdmin,
-      hasCustomEditor,
-    } = this.props;
+    const { availableWidgets, widgetSettings, defaultWidget, isAdmin, hasCustomEditor } =
+      this.props;
     const widgetsCount = availableWidgets.length;
     const selectedWidget = availableWidgets.find((widget) => {
       return widget.namespace === widgetSettings.namespace && widget.id === widgetSettings.id;

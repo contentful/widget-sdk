@@ -7,10 +7,10 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { openBatchErrorsModal } from './components/BatchErrorsModal';
 
 export const useBulkActions = ({ entityType, entities, updateEntities }) => {
-  const performer = useMemo(() => createBatchPerformer({ entityType, entities }), [
-    entityType,
-    entities,
-  ]);
+  const performer = useMemo(
+    () => createBatchPerformer({ entityType, entities }),
+    [entityType, entities]
+  );
 
   const isActionVisible = useCallback((entities, action, predicate) => {
     return (

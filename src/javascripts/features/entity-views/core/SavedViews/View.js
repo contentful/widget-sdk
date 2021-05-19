@@ -137,12 +137,8 @@ export const View = React.memo(
       );
     }
 
-    const {
-      resetScopedFolders,
-      createScopedFolder,
-      canEditScopedFolders,
-      fetchFolders,
-    } = savedViewsActions;
+    const { resetScopedFolders, createScopedFolder, canEditScopedFolders, fetchFolders } =
+      savedViewsActions;
 
     const canEdit = canEditScopedFolders();
 

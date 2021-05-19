@@ -134,14 +134,12 @@ export function AppEditor({
     const fieldTypeIndex = getFieldTypeIndex(internalFieldType);
 
     if (fieldTypeIndex > -1) {
-      (entryFieldLocation as EntryFieldLocation).fieldTypes = ('fieldTypes' in entryFieldLocation
-        ? entryFieldLocation.fieldTypes
-        : []
+      (entryFieldLocation as EntryFieldLocation).fieldTypes = (
+        'fieldTypes' in entryFieldLocation ? entryFieldLocation.fieldTypes : []
       ).filter((_, i) => i !== fieldTypeIndex);
     } else {
-      (entryFieldLocation as EntryFieldLocation).fieldTypes = ('fieldTypes' in entryFieldLocation
-        ? entryFieldLocation.fieldTypes
-        : []
+      (entryFieldLocation as EntryFieldLocation).fieldTypes = (
+        'fieldTypes' in entryFieldLocation ? entryFieldLocation.fieldTypes : []
       ).concat([toApiFieldType(internalFieldType)]);
     }
 

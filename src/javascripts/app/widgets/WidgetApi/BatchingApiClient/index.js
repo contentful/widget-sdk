@@ -20,8 +20,11 @@ export const getBatchingApiClient = (cma) => {
   const { spaceId, envId } = cma;
   const newResourceContext = (type) => ({ type, spaceId, envId });
   // Allow to call all - not just overwritten - functions directly, out of context:
-  const cmaFunctions = mapValues(toPlainObject(cma), (_fn, name) => (...args) =>
-    cma[name](...args)
+  const cmaFunctions = mapValues(
+    toPlainObject(cma),
+    (_fn, name) =>
+      (...args) =>
+        cma[name](...args)
   );
   const instance = {
     ...cmaFunctions,

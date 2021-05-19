@@ -14,12 +14,8 @@ import {
  *
  */
 export default function DocumentTitle({ title }) {
-  const {
-    currentSpaceName,
-    currentEnvironmentId,
-    currentEnvironment,
-    currentSpace,
-  } = useSpaceEnvContext();
+  const { currentSpaceName, currentEnvironmentId, currentEnvironment, currentSpace } =
+    useSpaceEnvContext();
   const isMaster = isCurrentEnvironmentMaster(currentSpace);
   const hasEnvironmentAliases = !!getEnvironmentAliasesIds(currentEnvironment).length;
   const hasEnvironmentTitle = !isMaster || hasEnvironmentAliases;

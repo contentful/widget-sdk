@@ -323,57 +323,61 @@ class RoleEditorWithNavigator extends React.Component {
       })
     );
 
-  updateRuleAttribute = (entities) => (rulesKey, id) => (attribute) => ({ target: { value } }) => {
-    if (attribute === 'entityId') {
-      const isEntityAvailable = (entityId, entityType) => {
-        return Object.keys(this.props.entities[entityType]).includes(entityId);
-      };
-      switch (entities) {
-        case 'entries':
-          if (!isEntityAvailable(value, 'Entry')) {
-            this.props.fetchEntity(value, 'entry');
-          }
-          break;
-        case 'assets':
-          if (!isEntityAvailable(value, 'Asset')) {
-            this.props.fetchEntity(value, 'asset');
-          }
-          break;
-      }
-    }
-
-    const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.NO_PATH_CONSTRAINT;
-    const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
-
-    const rules = this.state.internal[entities][rulesKey];
-    const index = findIndex({ id }, rules);
-    const rule = rules[index];
-    let updatedRule = { ...rule, [attribute]: value };
-
-    switch (attribute) {
-      case 'action': {
-        switch (value) {
-          case 'update':
-            updatedRule = { ...updatedRule, field: DEFAULT_FIELD, locale: DEFAULT_LOCALE };
-            break;
-          case 'create':
-            updatedRule = { ...updatedRule, scope: 'any', field: null, locale: null };
-            break;
-          default:
-            updatedRule = { ...updatedRule, field: null, locale: null };
-        }
-        break;
-      }
-      case 'contentType':
-        updatedRule = {
-          ...updatedRule,
-          field: updatedRule.action === 'update' ? DEFAULT_FIELD : null,
+  updateRuleAttribute =
+    (entities) =>
+    (rulesKey, id) =>
+    (attribute) =>
+    ({ target: { value } }) => {
+      if (attribute === 'entityId') {
+        const isEntityAvailable = (entityId, entityType) => {
+          return Object.keys(this.props.entities[entityType]).includes(entityId);
         };
-        break;
-    }
+        switch (entities) {
+          case 'entries':
+            if (!isEntityAvailable(value, 'Entry')) {
+              this.props.fetchEntity(value, 'entry');
+            }
+            break;
+          case 'assets':
+            if (!isEntityAvailable(value, 'Asset')) {
+              this.props.fetchEntity(value, 'asset');
+            }
+            break;
+        }
+      }
 
-    this.updateInternal(set([entities, rulesKey, index], updatedRule));
-  };
+      const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.NO_PATH_CONSTRAINT;
+      const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
+
+      const rules = this.state.internal[entities][rulesKey];
+      const index = findIndex({ id }, rules);
+      const rule = rules[index];
+      let updatedRule = { ...rule, [attribute]: value };
+
+      switch (attribute) {
+        case 'action': {
+          switch (value) {
+            case 'update':
+              updatedRule = { ...updatedRule, field: DEFAULT_FIELD, locale: DEFAULT_LOCALE };
+              break;
+            case 'create':
+              updatedRule = { ...updatedRule, scope: 'any', field: null, locale: null };
+              break;
+            default:
+              updatedRule = { ...updatedRule, field: null, locale: null };
+          }
+          break;
+        }
+        case 'contentType':
+          updatedRule = {
+            ...updatedRule,
+            field: updatedRule.action === 'update' ? DEFAULT_FIELD : null,
+          };
+          break;
+      }
+
+      this.updateInternal(set([entities, rulesKey, index], updatedRule));
+    };
 
   addRule = (entity, entities) => (rulesKey) => () => {
     const getDefaultRule = PolicyBuilder.DefaultRule.getDefaultRuleGetterFor(entity);
@@ -386,22 +390,26 @@ class RoleEditorWithNavigator extends React.Component {
     this.updateInternal(update([entities, rulesKey], remove({ id })));
   };
 
-  updateRoleFromTextInput = (property) => ({ target: { value } }) => {
-    this.updateInternal(set([property].join('.'), value));
-  };
+  updateRoleFromTextInput =
+    (property) =>
+    ({ target: { value } }) => {
+      this.updateInternal(set([property].join('.'), value));
+    };
 
-  updateRoleFromCheckbox = (property) => ({ target: { checked } }) => {
-    let update = set(property, checked);
-    if (property === 'contentDelivery.manage' && checked === true) {
-      update = flow(update, set('contentDelivery.read', true));
-    }
+  updateRoleFromCheckbox =
+    (property) =>
+    ({ target: { checked } }) => {
+      let update = set(property, checked);
+      if (property === 'contentDelivery.manage' && checked === true) {
+        update = flow(update, set('contentDelivery.read', true));
+      }
 
-    if (property === 'environments.manage' && checked === false) {
-      update = flow(update, set('environmentAliases.manage', false));
-    }
+      if (property === 'environments.manage' && checked === false) {
+        update = flow(update, set('environmentAliases.manage', false));
+      }
 
-    this.updateInternal(update);
-  };
+      this.updateInternal(update);
+    };
 
   updateLocale = ({ target: { value: newLocale } }) => {
     const mapPolicies = map((policy) =>

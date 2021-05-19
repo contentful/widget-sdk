@@ -112,9 +112,12 @@ export const initStateController = ({
     controller.isDeleted = isDeleted;
     controller.hidePrimary = hidePrimary;
 
-    const secondaryActionsDisabled = _.every(controller.secondary, (
-      cmd // TODO this uses the private API
-    ) => cmd._isDisabled());
+    const secondaryActionsDisabled = _.every(
+      controller.secondary,
+      (
+        cmd // TODO this uses the private API
+      ) => cmd._isDisabled()
+    );
     controller.secondaryActionsDisabled = secondaryActionsDisabled;
 
     onUpdate(controller);

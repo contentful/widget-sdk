@@ -96,7 +96,11 @@ export const LocalesListRoute = () => {
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
   const [entitlementsSet, setEntitlementsSet] = useState();
 
-  const { isLoading, error, data = {} } = useAsync(
+  const {
+    isLoading,
+    error,
+    data = {},
+  } = useAsync(
     useCallback(
       () =>
         fetch({

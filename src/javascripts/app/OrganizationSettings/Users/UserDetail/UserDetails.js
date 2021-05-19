@@ -108,13 +108,11 @@ export default function UserDetails({
     return data;
   }, [initialMembership, orgId, hasTeamsFeature]);
 
-  const [{ isLoading: isLoadingSpaceMemberships }, updateSpaceMemberships] = useAsyncFn(
-    fetchSpaceMemberships
-  );
+  const [{ isLoading: isLoadingSpaceMemberships }, updateSpaceMemberships] =
+    useAsyncFn(fetchSpaceMemberships);
 
-  const [{ isLoading: isLoadingTeamMemberships }, updateTeamMemberships] = useAsyncFn(
-    fetchTeamMemberships
-  );
+  const [{ isLoading: isLoadingTeamMemberships }, updateTeamMemberships] =
+    useAsyncFn(fetchTeamMemberships);
 
   useEffect(() => {
     updateSpaceMemberships();

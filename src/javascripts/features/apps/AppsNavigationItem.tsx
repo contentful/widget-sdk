@@ -32,12 +32,14 @@ const hasNavigationItem = (widget) => {
   return pageLocation && pageLocation.navigationItem;
 };
 
-const buildAppListingChildren = (title) => ({ isUnscopedRoute }) => ({
-  title,
-  dataViewType: 'apps-listing',
-  sref: makeRef('apps.list', isUnscopedRoute),
-  rootSref: makeRef('apps', isUnscopedRoute),
-});
+const buildAppListingChildren =
+  (title) =>
+  ({ isUnscopedRoute }) => ({
+    title,
+    dataViewType: 'apps-listing',
+    sref: makeRef('apps.list', isUnscopedRoute),
+    rootSref: makeRef('apps', isUnscopedRoute),
+  });
 
 export const EXPLORE_APPS_TITLE = 'Explore more apps';
 const buildExploreAppsChild = buildAppListingChildren(EXPLORE_APPS_TITLE);
