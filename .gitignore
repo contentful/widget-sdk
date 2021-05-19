@@ -12,6 +12,7 @@ run_vagrant_build.sh
 karma-specs.json
 .coverage/
 junit.xml
+stats.json
 
 
 # Install artifacts

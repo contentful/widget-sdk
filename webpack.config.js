@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const { createBabelOptions } = require('./tools/app-babel-options');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /**
  * @description webpack's configuration factory
@@ -12,6 +13,7 @@ const { createBabelOptions } = require('./tools/app-babel-options');
  */
 module.exports = () => {
   const nodeEnv = process.env.NODE_ENV;
+  const withAnalyzer = process.env.WITH_ANALYZER;
   const isProd = nodeEnv === 'production';
 
   const { rules: envRules, ...envConfig } = isProd
@@ -173,6 +175,7 @@ module.exports = () => {
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // or google `moment webpack locales`
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      withAnalyzer ? new BundleAnalyzerPlugin() : false,
     ].filter(Boolean),
     stats: 'minimal',
   };
