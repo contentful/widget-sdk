@@ -33,13 +33,13 @@ jest.mock('states/Navigator', () => ({
 describe('CancelAppsSubscriptionModal', () => {
   it('should initially render with the confirm button disabled', () => {
     build();
-    const confirmButton = screen.getByTestId('cf-ui-modal-confirm-confirm-button');
+    const confirmButton = screen.getByTestId('cancel-apps-confirm-button');
     expect(confirmButton).toHaveAttribute('disabled');
   });
 
   it('should enable the confirm button when any checkbox is checked', () => {
     build();
-    const confirmButton = screen.getByTestId('cf-ui-modal-confirm-confirm-button');
+    const confirmButton = screen.getByTestId('cancel-apps-confirm-button');
     const randomIndex = getRandomInt(5);
     const checkbox = screen.getByTestId(`reason-${randomIndex}`);
     userEvent.click(within(checkbox).getByTestId('cf-ui-controlled-input'));
@@ -50,14 +50,14 @@ describe('CancelAppsSubscriptionModal', () => {
     const onClose = jest.fn();
 
     build({ onClose });
-    const cancelButton = screen.getByTestId('cf-ui-modal-confirm-cancel-button');
+    const cancelButton = screen.getByTestId('cancel-button');
     userEvent.click(cancelButton);
     expect(onClose).toBeCalled();
   });
 
   it('should make a request and fire an analytics event when the confirm button is clicked', async () => {
     build();
-    const confirmButton = screen.getByTestId('cf-ui-modal-confirm-confirm-button');
+    const confirmButton = screen.getByTestId('cancel-apps-confirm-button');
     const checkbox = screen.getByTestId('reason-0');
     const checkboxValue = within(checkbox)
       .getByTestId('cf-ui-controlled-input')
