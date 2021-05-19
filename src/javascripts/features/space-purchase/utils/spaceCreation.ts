@@ -1,5 +1,5 @@
 import type { Asset, Entry, ContentType } from '@contentful/types';
-import type { SpaceData } from 'core/services/SpaceEnvContext/types';
+import type { SpaceData } from 'classes/spaceContextTypes';
 import type { SelectedTemplate } from '../context/types';
 
 import { getCMAClient } from 'core/services/usePlainCMAClient';

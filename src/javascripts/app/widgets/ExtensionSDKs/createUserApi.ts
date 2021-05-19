@@ -1,21 +1,5 @@
 import { User } from '@contentful/app-sdk';
-
-export interface SpaceMember {
-  admin: boolean;
-  roles: { name: string; description: string | null }[];
-  sys: {
-    id: string;
-    user: {
-      sys: {
-        id: string;
-      };
-      firstName: string;
-      lastName: string;
-      email: string;
-      avatarUrl: string;
-    };
-  };
-}
+import { SpaceMember } from 'classes/spaceContextTypes';
 
 export const createUserApi = (spaceMember: SpaceMember): User => {
   return {

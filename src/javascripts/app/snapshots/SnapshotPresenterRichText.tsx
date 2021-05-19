@@ -13,7 +13,7 @@ import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnv
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import createCache from 'data/userCache';
-import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
+import { SpaceMember } from 'classes/spaceContextTypes';
 import { EditorInterfaceProps } from 'contentful-management/types';
 
 const SnapshotPresenterRichText = ({

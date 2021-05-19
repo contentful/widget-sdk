@@ -5,7 +5,7 @@ import {
   isProBonoPlan,
 } from 'account/pricing/PricingDataProvider';
 import type { BasePlan } from 'features/pricing-entities';
-import { v1migrationDestinationNames } from 'core/services/SpaceEnvContext/types';
+import { v1migrationDestinationNames } from 'classes/spaceContextTypes';
 import { BasePlanNames } from '../components/V1MigrationNote';
 
 export function generateBasePlanName(

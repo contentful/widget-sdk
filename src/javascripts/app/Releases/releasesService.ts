@@ -21,7 +21,7 @@ function getContextIds() {
   const spaceContext = getSpaceContext();
 
   return {
-    spaceId: spaceContext.getId(),
+    spaceId: spaceContext.getId() as string,
     environmentId: spaceContext.space.environment.sys.id,
   };
 }

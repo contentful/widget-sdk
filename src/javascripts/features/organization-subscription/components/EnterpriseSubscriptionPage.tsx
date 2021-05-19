@@ -4,7 +4,7 @@ import { Flex, Grid } from '@contentful/forma-36-react-components';
 
 import { useAsync } from 'core/hooks';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import {
   EnterpriseTrialInfo,
   isOrganizationOnTrial,

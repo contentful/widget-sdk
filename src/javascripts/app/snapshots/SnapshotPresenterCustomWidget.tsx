@@ -11,7 +11,6 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { getEnvironmentAliasesIds, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { SpaceMember } from 'app/widgets/ExtensionSDKs/createUserApi';
 import createUsersCache from 'data/userCache';
 import { EditorInterfaceProps } from 'contentful-management/types';
 
@@ -56,7 +55,7 @@ const SnapshotPresenterCustomWidget = ({
     const spaceId = currentSpaceId as string;
     const environmentId = currentEnvironmentId as string;
     const aliasesId = getEnvironmentAliasesIds(currentEnvironment);
-    const spaceMember = getSpaceMember(currentSpace) as SpaceMember;
+    const spaceMember = getSpaceMember(currentSpace)!;
     const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
     const usersEndpoint = createUsersCache(spaceEndpoint);
     const tagsEndpoint = createTagsRepo(spaceEndpoint, environmentId);

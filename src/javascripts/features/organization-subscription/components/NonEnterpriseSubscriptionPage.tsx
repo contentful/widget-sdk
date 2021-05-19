@@ -18,7 +18,7 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import type { BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';

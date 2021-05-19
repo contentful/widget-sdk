@@ -21,15 +21,15 @@ import createUserCache from 'data/userCache';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { PubSubClient } from 'services/PubSubService';
 import { Source } from 'i13n/constants';
-import { EditorInterface } from 'contentful-management/types';
+import { EditorInterfaceProps, EnvironmentProps } from 'contentful-management/types';
 import { Proxy } from 'core/services/proxy';
-import { Environment, SpaceEnv } from 'core/services/SpaceEnvContext/types';
+import { SpaceObject } from 'classes/spaceContextTypes';
 
 interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
   doc: Document;
   editorData: {
-    editorInterface: EditorInterface;
+    editorInterface: EditorInterfaceProps;
   };
   localeData: Proxy<LocaleData>;
   preferences: Proxy<Preferences>;
@@ -41,10 +41,10 @@ interface CreateEditorExtensionSDKOptions {
   widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
   contentTypes: InternalContentType[];
-  environment: Environment;
+  environment: EnvironmentProps;
   environmentId: string;
   environmentAliasId?: string;
-  space: SpaceEnv;
+  space: SpaceObject;
   spaceId: string;
   pubSubClient?: PubSubClient;
 }

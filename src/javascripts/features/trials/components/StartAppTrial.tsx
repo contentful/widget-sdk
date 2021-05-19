@@ -134,8 +134,8 @@ const trialBootstrap = async (organizationId: string, existingUsers: boolean, fr
       .then(() => TokenStore.getSpace(trialSpace?.sys.id as string))
       .then((space) => spaceContext.resetWithSpace(space));
 
-    const environmentId = spaceContext.getEnvironmentId();
-    const spaceId = spaceContext.getId();
+    const environmentId = spaceContext.getEnvironmentId() as string;
+    const spaceId = spaceContext.getId() as string;
     const cma = spaceContext.cma;
 
     await installApps(apps, organizationId, spaceId, environmentId, cma);
@@ -161,9 +161,9 @@ const trialBootstrap = async (organizationId: string, existingUsers: boolean, fr
         e.message === 'all' ? 'them' : 'it'
       } manually.`;
       Notification.error(message, { title });
-      goToSpaceHome(spaceContext.getId());
+      goToSpaceHome(spaceContext.getId() as string);
     } else if (e instanceof ContentImportError) {
-      goToSpaceHome(spaceContext.getId());
+      goToSpaceHome(spaceContext.getId() as string);
     } else {
       // other errors including TrialSpaceCreation violation and permission errors.
       captureError(e);

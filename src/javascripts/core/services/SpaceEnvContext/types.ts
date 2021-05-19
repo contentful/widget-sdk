@@ -1,3 +1,6 @@
+import { EnvironmentProps as Environment, MetaLinkProps } from 'contentful-management/types';
+import type { Organization, SpaceObject, SpaceData } from 'classes/spaceContextTypes';
+
 export interface SpaceEnvContextValue {
   currentEnvironment?: Environment;
   currentEnvironmentAliasId?: string;
@@ -6,18 +9,18 @@ export interface SpaceEnvContextValue {
   currentOrganization?: Organization;
   currentOrganizationId?: string;
   currentOrganizationName?: string;
-  currentSpace?: SpaceEnv;
+  currentSpace?: SpaceObject;
   currentSpaceData?: SpaceData;
   currentSpaceEnvironments?: Environment[];
   currentSpaceId?: string;
   currentSpaceName?: string;
   currentSpaceContentTypes: ContentType[];
-  currentUsers?: SpaceEnvUsers;
+  currentUsers?: SpaceEnvUsers | null;
   documentPool?: any;
 }
 
 export interface SpaceEnvUsers {
-  get: () => unknown;
+  get: (id: string) => unknown;
   getAll: () => unknown;
 }
 
@@ -57,27 +60,6 @@ export interface ContentTypeSys {
   };
 }
 
-export interface SpaceEnv {
-  data: SpaceData;
-  environment: Environment;
-  environmentMeta: EnvironmentMeta;
-  enforcements: Enforcements[];
-}
-
-export type Enforcements = unknown; // TODO: Confirm type
-
-export interface SpaceData {
-  name: string;
-  activatedAt: unknown; // TODO: Confirm type
-  readOnlyAt: string;
-  sys: SpaceDataSys;
-  currentShard: CurrentShard;
-  spaceMembership: SpaceMembership;
-  spaceMember: SpaceMember;
-  shards: Shard[];
-  organization: Organization;
-}
-
 export interface Sys {
   type: string;
   id: string;
@@ -86,20 +68,6 @@ export interface Sys {
   createdAt: string;
   updatedBy: UpdatedBy;
   updatedAt: string;
-  _v1Migration?: V1Migration;
-}
-
-export enum v1migrationDestinationNames {
-  V1_DESTINATION_COMMUNITY = 'community',
-  V1_DESTINATION_TEAM = 'team',
-  V1_DESTINATION_PRO_BONO = 'pro_bono',
-  V1_DESTINATION_PARTNER = 'partner',
-}
-
-export interface V1Migration {
-  destination: v1migrationDestinationNames;
-  status: string;
-  plannedMigrationDate: string;
 }
 
 export interface LinkSys {
@@ -108,28 +76,12 @@ export interface LinkSys {
   linkType: string;
 }
 
-export interface SpaceDataSys extends Sys {
-  organization: Organization;
-}
-
 export interface CreatedBy {
   sys: LinkSys;
 }
 
 export interface UpdatedBy {
   sys: LinkSys;
-}
-
-export interface Organization {
-  name: string;
-  subscriptionState: unknown; // TODO: Confirm type
-  isBillable: boolean;
-  trialPeriodEndsAt: string | null;
-  cancellationActiveAt: unknown; // TODO: Confirm type
-  hasSsoEnabled: boolean;
-  sys: Sys;
-  disableAnalytics: boolean;
-  pricingVersion: string;
 }
 
 export interface CurrentShard {
@@ -142,7 +94,7 @@ export interface CurrentShardSys extends Sys {
   type: string;
   id: string;
   version: number;
-  space: SpaceData;
+  space: MetaLinkProps;
   createdAt: string;
   updatedAt: string;
 }
@@ -155,7 +107,7 @@ export interface SpaceMembership {
 }
 
 export interface SpaceMembershipSys extends Sys {
-  space: SpaceData;
+  space: any;
   user: User;
 }
 
@@ -181,11 +133,7 @@ export interface Role {
   description: string | null;
   policies: unknown[]; // TODO: Confirm type
   permissions: Permissions;
-  sys: RoleSys;
-}
-
-export interface RoleSys extends Sys {
-  space: SpaceData;
+  sys: any;
 }
 
 export interface Permissions {
@@ -226,7 +174,7 @@ export interface SpaceMemberSys {
   id: string;
   createdAt: string;
   updatedAt: string;
-  space: SpaceData;
+  space: any;
   user: User;
   relatedMemberships: RelatedMembership[];
 }
@@ -239,7 +187,7 @@ export interface RelatedMembership {
 }
 
 export interface RelatedMembershipSys extends Sys {
-  space: SpaceData;
+  space: any;
   user: User;
 }
 
@@ -253,7 +201,7 @@ export interface ShardSys {
   type: string;
   id: string;
   version: number;
-  space: SpaceData;
+  space: any;
   createdAt: string;
   updatedAt: string;
 }
@@ -265,21 +213,6 @@ export interface EnvironmentMeta {
   aliasId?: string;
 }
 
-export interface Environment {
-  name: string;
-  sys: EnvironmentSys;
-}
-
 export interface Alias {
   sys: LinkSys;
-}
-
-export interface EnvironmentSys extends Sys {
-  aliases: Alias[];
-  space: {
-    sys: LinkSys;
-  };
-  status: {
-    sys: LinkSys;
-  };
 }

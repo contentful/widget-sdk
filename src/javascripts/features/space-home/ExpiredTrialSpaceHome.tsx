@@ -16,7 +16,6 @@ import { openDeleteSpaceDialog } from 'features/space-settings';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { getAddOnProductRatePlans } from 'features/pricing-entities';
-import { SpaceData } from 'core/services/SpaceEnvContext/types';
 import { router } from 'core/react-routing';
 
 const styles = {
@@ -73,7 +72,7 @@ export const ExpiredTrialSpaceHome = () => {
   const handleDelete = () => {
     trackTargetedCTAClick(CTA_EVENTS.DELETE_APP_TRIAL_SPACE);
     openDeleteSpaceDialog({
-      space: currentSpaceData as SpaceData,
+      space: currentSpaceData!,
       plan: undefined,
       onSuccess: () => {
         router.navigate(

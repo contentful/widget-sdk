@@ -52,8 +52,8 @@ export async function getCustomWidgetLoader(options?: {
 }) {
   const accessToken = await getToken();
   const spaceContext = getSpaceContext();
-  const spaceId = spaceContext.getId();
-  const aliasOrEnvId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
+  const spaceId = spaceContext.getId() as string;
+  const aliasOrEnvId = (spaceContext.getAliasId() || spaceContext.getEnvironmentId()) as string;
   const cachePath = [accessToken, spaceId, aliasOrEnvId] as const;
 
   let loader: WidgetLoader = get(cache, cachePath);

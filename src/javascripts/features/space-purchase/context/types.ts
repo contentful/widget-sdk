@@ -1,6 +1,6 @@
 import { Asset } from '@contentful/types';
 
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import type { ProductRatePlan } from 'features/pricing-entities';
 import type { BillingDetails, PaymentDetails, SpaceProductRatePlan } from '../types';
 

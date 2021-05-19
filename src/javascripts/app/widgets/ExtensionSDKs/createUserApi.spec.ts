@@ -1,4 +1,5 @@
-import { createUserApi, SpaceMember } from './createUserApi';
+import { createUserApi } from './createUserApi';
+import { SpaceMember } from 'classes/spaceContextTypes';
 
 describe('createUserApi', () => {
   const spaceMember: SpaceMember = {
@@ -6,6 +7,10 @@ describe('createUserApi', () => {
     roles: [{ name: 'dev', description: 'thing' }],
     sys: {
       id: 'member_id',
+      type: 'SpaceMember',
+      version: 1,
+      createdAt: '',
+      updatedAt: '',
       user: {
         sys: {
           id: 'user_id',

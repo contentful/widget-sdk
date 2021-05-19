@@ -16,7 +16,7 @@ import * as LDClient from 'ldclient-js';
 import _, { isEqual, endsWith } from 'lodash';
 import { captureError } from 'core/monitoring';
 import { getOrganization, getSpace, getSpacesByOrganization, getUser } from 'services/TokenStore';
-import { Organization, SpaceData, User } from 'core/services/SpaceEnvContext/types';
+import { Organization, SpaceData, User } from 'classes/spaceContextTypes';
 import PQueue from 'p-queue';
 
 const flagPromiseQueue = new PQueue({ concurrency: 1 });

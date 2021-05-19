@@ -28,7 +28,7 @@ export const EntityEditor: FunctionComponent<EntityEditorProps> = (props) => {
 
   const [{ editorData, loadingError }, trackLoadEvent] = useEntityLoader(slide, slideStates);
   const [incomingLinksResponse, setIncomingLinksResponse] = useState({
-    links: [],
+    links: [] as unknown,
     state: RequestState.PENDING,
   });
   const { id: entityId, type: entityType } = (editorData?.entityInfo || {}) as {

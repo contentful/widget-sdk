@@ -14,7 +14,7 @@ import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as Navigator from 'states/Navigator';
 import { EVENTS } from '../utils/analyticsTracking';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { Organization } from 'core/services/SpaceEnvContext/types';
+import type { OrganizationProp } from 'contentful-management/types';
 import { useAppsTrial } from '../hooks/useAppsTrial';
 import { useTrialSpace } from '../hooks/useTrialSpace';
 import { ReactRouterLink } from 'core/react-routing';
@@ -43,7 +43,7 @@ export interface TrialTagProps {
 }
 
 type TrialData = {
-  organization: Organization | undefined;
+  organization: OrganizationProp | undefined;
   isAppsTrialSpaceAccessible?: boolean;
 };
 
@@ -110,6 +110,7 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
   });
 
   if (isEnterpriseTrial) {
+    // @ts-expect-error expect TrialPeriodEndsAt
     daysLeft = calcTrialDaysLeft(organization?.trialPeriodEndsAt);
     ctaType = CTA_EVENTS.ENTERPRISE_TRIAL_TAG;
     trialLink = (

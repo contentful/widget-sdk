@@ -106,7 +106,7 @@ function batchApiClient(): APIClient {
 
   const spaceContext = getSpaceContext();
   const endpoint = EndpointFactory.createSpaceEndpoint(
-    spaceContext.getId(),
+    spaceContext.getId() as string,
     spaceContext.getAliasId() || spaceContext.getEnvironmentId()
   );
 

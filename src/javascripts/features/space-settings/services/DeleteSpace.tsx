@@ -20,7 +20,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import ReloadNotification from 'app/common/ReloadNotification';
 import type { SpacePlan } from 'features/organization-subscription';
-import { SpaceData } from 'core/services/SpaceEnvContext/types';
+import type { SpaceData } from 'classes/spaceContextTypes';
 
 export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
   const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');

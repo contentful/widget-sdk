@@ -1,6 +1,7 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import { SpaceData, User } from 'core/services/SpaceEnvContext/types';
+import { UserProps } from 'contentful-management/types';
+import { SpaceData } from 'classes/spaceContextTypes';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getValue, onValue } from 'core/utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -12,19 +13,19 @@ import {
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { fetchMarketplaceApps, getAppDefinitionLoader } from 'features/apps-core';
 
-function getUser(): Promise<User> {
+function getUser(): Promise<UserProps> {
   // user$ is a property which starts with `null`
   // so it will never throw an error
   const user = getValue(user$);
 
   if (user) {
-    return Promise.resolve(user as User);
+    return Promise.resolve(user as UserProps);
   }
 
   return new Promise((resolve) => {
     const off = onValue(user$, (user) => {
       if (user) {
-        resolve(user as User);
+        resolve(user as UserProps);
         off();
       }
     });
@@ -34,7 +35,7 @@ function getUser(): Promise<User> {
 export async function getOnboardingSpaceId() {
   const store = getBrowserStorage();
 
-  const [user, spaces]: [User, SpaceData[]] = await Promise.all([getUser(), getSpaces()]);
+  const [user, spaces]: [UserProps, SpaceData[]] = await Promise.all([getUser(), getSpaces()]);
   const prefix = getStoragePrefix();
 
   const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;

@@ -9,8 +9,8 @@ const perSpaceEnvCache = {};
 
 export function getAppsRepo() {
   const spaceContext = getSpaceContext();
-  const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.getEnvironmentId();
+  const spaceId = spaceContext.getId() as string;
+  const environmentId = spaceContext.getEnvironmentId() as string;
 
   let repo: AppsRepo = get(perSpaceEnvCache, [spaceId, environmentId]);
 
