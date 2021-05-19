@@ -264,7 +264,7 @@
     "ts-node": "^9.1.1",
     "typescript": "3.9.7",
     "typewriter": "^7.4.1",
-    "wait-on": "^5.2.1",
+    "wait-on": "^5.3.0",
     "webpack": "^5.22.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.5.0",
