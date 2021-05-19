@@ -41,7 +41,6 @@ module.exports = () => {
         'saved-views-migrator': path.resolve('src/javascripts/libs/saved-views-migrator'),
       },
       fallback: {
-        crypto: require.resolve('crypto-browserify'),
         vm: require.resolve('vm-browserify'),
         stream: require.resolve('stream-browserify'),
         events: require.resolve('events/'),
