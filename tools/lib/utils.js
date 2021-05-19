@@ -1,7 +1,12 @@
-const B = require('bluebird');
 const CP = require('child_process');
 
-const FS = B.promisifyAll(require('fs-extra'));
+const promisifyAll = (module) =>
+  Object.keys(module).reduce((promisified, k) => {
+    promisified[`${k}Async`] = module[k];
+    return promisified;
+  }, module);
+
+const FS = promisifyAll(require('fs-extra'));
 module.exports.FS = FS;
 
 const mkdirp = FS.mkdirsAsync.bind(FS);
@@ -16,7 +21,7 @@ module.exports.readJSON = readJSON;
  * Read and parse multiple JSON files and merge the objects.
  */
 module.exports.readMergeJSON = function readMergeJSON(paths) {
-  return B.all(paths.map(readJSON)).then((manifests) => {
+  return Promise.all(paths.map(readJSON)).then((manifests) => {
     return Object.assign({}, ...manifests);
   });
 };
@@ -25,7 +30,7 @@ module.exports.readMergeJSON = function readMergeJSON(paths) {
  * Run a command and get the contents of `stdout`.
  */
 module.exports.exec = function exec(cmd, opts) {
-  return new B.Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     CP.exec(cmd, opts, function (error, stdout, stderr) {
       if (error) {
         error.stderr = stderr;

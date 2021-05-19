@@ -12,8 +12,6 @@ jest.mock('widgets/WidgetRenderable');
 jest.mock('services/localeStore');
 jest.mock('widgets/CustomWidgetLoaderInstance');
 
-const $q = { resolve: jest.fn().mockImplementation((...args) => Promise.resolve(...args)) };
-
 describe('app/entity_editor/DataLoader', () => {
   let stubs, spaceContext, loadEntry, loadAsset, makePrefetchEntryLoader;
   beforeEach(async function () {
@@ -41,17 +39,17 @@ describe('app/entity_editor/DataLoader', () => {
       space: {
         getEntry: jest
           .fn()
-          .mockImplementation((id) => $q.resolve({ data: makeEntity(id, 'CTID') })),
+          .mockImplementation((id) => Promise.resolve({ data: makeEntity(id, 'CTID') })),
         getEntries: function (query) {
           const ids = query['sys.id[in]'].split(',');
           const items = ids.map((id) => ({ data: makeEntity(id, 'CTID') }));
-          return $q.resolve(items);
+          return Promise.resolve(items);
         },
-        getAsset: jest.fn().mockImplementation((id) => $q.resolve({ data: makeEntity(id) })),
+        getAsset: jest.fn().mockImplementation((id) => Promise.resolve({ data: makeEntity(id) })),
       },
       publishedCTs: {
         fetch: function (id) {
-          return $q.resolve(makeCt(id));
+          return Promise.resolve(makeCt(id));
         },
       },
       cma: {

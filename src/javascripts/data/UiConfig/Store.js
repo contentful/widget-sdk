@@ -19,23 +19,16 @@ const ALPHA_HEADER = getAlphaHeader(USER_UI_CONFIG);
  * on the space context reset and available as `spaceContext.uiConfig`.
  *
  * @param {Space} space
- * @param {Endpoint} spaceEndpoint
+ * @param {Promise<Endpoint>} spaceEndpointPromise
  * @param {ContentTypeRepo} publishedCTs
  * @param {ViewMigrator} viewMigrator
  * @returns {Promise<UIConfigStore>}
  */
-export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrator) {
+export default function create(space, spaceEndpoint, publishedCTs, viewMigrator) {
   const membership = space.data.spaceMember;
   const userId = membership.sys.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
   const getEntryViewsDefaults = () => Defaults.getEntryViews(publishedCTs.getAllBare());
-
-  // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
-  // on it. Wrapping with a native `Promise` for the time being.
-  const spaceEndpoint = (...args) =>
-    new Promise((resolve, reject) => {
-      spaceEndpoint$q(...args).then(resolve, reject);
-    });
 
   // State has two properties: [SHARED_VIEWS] and [PRIVATE_VIEWS].
   // Each property holds the server resource or `{}` if the resource

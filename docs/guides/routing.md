@@ -76,5 +76,3 @@ const states = {
   ]
 };
 ```
-
-Services used in `resolve` **do not** have to use `$q` for promises.

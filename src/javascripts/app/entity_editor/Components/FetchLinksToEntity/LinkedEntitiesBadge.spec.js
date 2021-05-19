@@ -2,7 +2,6 @@ import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
 
 import LinkedEntitiesBadge from './LinkedEntitiesBadge';
-import { Promise } from 'bluebird';
 import * as slideInNavigator from 'navigation/SlideInNavigator';
 
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
