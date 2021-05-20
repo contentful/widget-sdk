@@ -270,49 +270,49 @@ registerGenericEvent('content_preview:deleted');
 
 registerGenericEvent('launch_app:link_clicked');
 
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:dialog_box_open',
-  'release_dialog_box',
+  'release:dialog_box_open', // Should actually be 'release_dialog_box' but we were tracking to wrong table all along.
   ReleasesTransformer.releaseDialogOpen
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:dialog_box_close',
-  'release_dialog_box',
+  'release:dialog_box_close', // Should actually be 'release_dialog_box' but we were tracking to wrong table all along.
   ReleasesTransformer.releaseDialogClose
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:entity_added',
   'release_entity_added',
   ReleasesTransformer.releaseEntityAdded
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:entity_removed',
   'release_entity_removed',
   ReleasesTransformer.releaseEntityRemoved
 );
-registerSnowplowEvent('release:created', 'release_created', ReleasesTransformer.releaseCreated);
-registerSnowplowEvent('release:trashed', 'release_trashed', ReleasesTransformer.releaseTrashed);
-registerSnowplowEvent(
+registerSegmentEvent('release:created', 'release_created', ReleasesTransformer.releaseCreated);
+registerSegmentEvent('release:trashed', 'release_trashed', ReleasesTransformer.releaseTrashed);
+registerSegmentEvent(
   'release:validated',
   'release_validated',
   ReleasesTransformer.releaseValidated
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:published',
   'release_published',
   ReleasesTransformer.releasePublished
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:unpublished',
   'release_unpublished',
   ReleasesTransformer.releaseUnpublished
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:schedule_created',
   'release_schedule_created',
   ReleasesTransformer.releaseScheduleCreated
 );
-registerSnowplowEvent(
+registerSegmentEvent(
   'release:schedule_canceled',
   'release_schedule_canceled',
   ReleasesTransformer.releaseScheduleCanceled
