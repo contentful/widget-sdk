@@ -113,7 +113,7 @@
     "qrcode": "^1.4.4",
     "qs": "6.9.4",
     "query-string": "^6.12.1",
-    "randexp": "0.4.6",
+    "randexp": "0.5.3",
     "react": "16.13.1",
     "react-animate-height": "^2.0.15",
     "react-app-polyfill": "^2.0.0",
