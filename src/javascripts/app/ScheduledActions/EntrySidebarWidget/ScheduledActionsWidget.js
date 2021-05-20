@@ -160,7 +160,7 @@ export default function ScheduledActionsWidget({
     fetchJobs();
   }, [fetchJobs, publishedAt]);
 
-  const createJob = async ({ scheduledAt, action }) => {
+  const createJob = async ({ scheduledAt, action, timezone }) => {
     try {
       const job = await ScheduledActionsService.createJob(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
@@ -170,6 +170,7 @@ export default function ScheduledActionsWidget({
           action: action,
           linkType: entityType,
           scheduledAt,
+          timezone,
         }),
         { 'environment.sys.id': environmentId }
       );
@@ -189,7 +190,7 @@ export default function ScheduledActionsWidget({
 
   const handleCreate = async ({ scheduledAt, action }, timezone) => {
     setIsCreatingJob(true);
-    const job = await createJob({ scheduledAt, action });
+    const job = await createJob({ scheduledAt, action, timezone });
     if (job && job.sys) {
       Notification.success(`${entityTitle} was scheduled successfully`);
       setIsCreatingJob(false);
