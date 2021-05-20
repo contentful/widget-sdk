@@ -28,7 +28,7 @@ export const ExpiredTrialSpaceHome = () => {
   const [composeAndLaunchProductPrice, setComposeAndLaunchProductPrice] = useState<number>(0);
   const { currentSpaceData, currentOrganizationId, currentOrganization, currentSpaceId } =
     useSpaceEnvContext();
-  const { appsTrialEndsAt } = useAppsTrial(currentOrganizationId);
+  const { appsTrialEndsAt, hasAppsTrialPurchased } = useAppsTrial(currentOrganizationId);
   const {
     matchesAppsTrialSpaceKey: isAppsTrialSpace,
     hasTrialSpaceExpired,
@@ -40,7 +40,13 @@ export const ExpiredTrialSpaceHome = () => {
   const isExpiredSpace = hasTrialSpaceExpired && !hasTrialSpaceConverted;
 
   useEffect(() => {
-    if (!currentOrganizationId || !isExpiredSpace || !isAppsTrialSpace || !isOrgOwnerOrAdmin) {
+    if (
+      !currentOrganizationId ||
+      !isExpiredSpace ||
+      !isAppsTrialSpace ||
+      !isOrgOwnerOrAdmin ||
+      hasAppsTrialPurchased
+    ) {
       return;
     }
 
@@ -51,7 +57,13 @@ export const ExpiredTrialSpaceHome = () => {
     };
 
     fetchComposeAndLaunchProductPrice();
-  }, [currentOrganizationId, isExpiredSpace, isAppsTrialSpace, isOrgOwnerOrAdmin]);
+  }, [
+    currentOrganizationId,
+    isExpiredSpace,
+    isAppsTrialSpace,
+    isOrgOwnerOrAdmin,
+    hasAppsTrialPurchased,
+  ]);
 
   if (currentSpaceData?.readOnlyAt || !isExpiredSpace) {
     return null;
@@ -94,7 +106,7 @@ export const ExpiredTrialSpaceHome = () => {
           {isEnterpriseTrialSpace &&
             `Your trial space expired on ${moment(trialSpaceExpiresAt).format('D MMMM YYYY')}`}
           {isAppsTrialSpace &&
-            `Your Contentful Apps trial expired on ${moment(appsTrialEndsAt).format(
+            `Your Contentful Apps trial space expired on ${moment(appsTrialEndsAt).format(
               'D MMMM YYYY'
             )}`}
         </Heading>
@@ -102,12 +114,15 @@ export const ExpiredTrialSpaceHome = () => {
           All of your content is saved, but you can’t create or edit anymore.
           <br />
           {isEnterpriseTrialSpace && 'Contact us to upgrade and unlock this space again.'}
-          {isAppsTrialSpace &&
-            isOrgOwnerOrAdmin &&
-            `Buy Compose + Launch for $${composeAndLaunchProductPrice}/month to continue using them across your spaces.`}
+          {showAppsTrialSpaceAdminActions &&
+            (hasAppsTrialPurchased
+              ? 'Upgrade now and unlock this space again.'
+              : `Buy Compose + Launch for $${composeAndLaunchProductPrice}/month to continue using them across your spaces.`)}
           {isAppsTrialSpace &&
             !isOrgOwnerOrAdmin &&
-            'Talk to your admin to buy the Contentful Apps now and unlock this space again.'}
+            `Talk to your admin to ${
+              hasAppsTrialPurchased ? 'upgrade' : 'buy the Contentful Apps'
+            } now and unlock this space again.`}
         </Paragraph>
       </Typography>
       {showAppsTrialSpaceAdminActions && (
@@ -117,7 +132,7 @@ export const ExpiredTrialSpaceHome = () => {
               onClick={handlePurchase}
               testId="expired-trial-space-home.buy-now"
               className={styles.buyButton}>
-              Buy now
+              {hasAppsTrialPurchased ? 'Upgrade now' : 'Buy now'}
             </Button>
           </TrackTargetedCTAImpression>
           <TrackTargetedCTAImpression impressionType={CTA_EVENTS.PURCHASE_APP_VIA_TRIAL}>

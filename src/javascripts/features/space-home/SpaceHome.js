@@ -141,7 +141,7 @@ export const SpaceHome = () => {
     hasTrialSpaceExpired,
     hasTrialSpaceConverted,
     matchesAppsTrialSpaceKey,
-  } = useTrialSpace(currentOrganizationId, currentSpaceId, 'spaceHome');
+  } = useTrialSpace(currentOrganizationId, currentSpaceId);
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationName = getOrganizationName(currentSpace);
   const isSpaceAdmin = isAdmin(currentSpace);

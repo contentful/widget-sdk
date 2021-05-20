@@ -9,12 +9,26 @@ const isAppsTrial = (trial: Trial) => trial.productId === 'add_on_compose_launch
 
 const isAppsTrialSpace = (trial: Trial) => trial.sys.parent && trial.productId === 'space_size_3';
 
+type AppsTrialState = {
+  canStartTrial: boolean;
+  isAppsTrialActive: boolean;
+  hasAppsTrialExpired: boolean;
+  hasAppsTrialPurchased: boolean;
+  appsTrialSpaceKey: string | undefined;
+  appsTrialEndsAt: string | undefined;
+};
+
+const initialState = {
+  canStartTrial: false,
+  isAppsTrialActive: false,
+  hasAppsTrialExpired: false,
+  hasAppsTrialPurchased: false,
+  appsTrialSpaceKey: undefined,
+  appsTrialEndsAt: undefined,
+};
+
 export function useAppsTrial(organizationId?: string) {
-  const [canStartTrial, setCanStartTrial] = useState<boolean>(false);
-  const [isAppsTrialActive, setIsAppsTrialActive] = useState<boolean>(false);
-  const [hasAppsTrialExpired, setHasAppsTrialExpired] = useState<boolean>(false);
-  const [appsTrialSpaceKey, setAppsTrialSpaceKey] = useState<string>();
-  const [appsTrialEndsAt, setAppsTrialEndsAt] = useState<string>();
+  const [appsTrialState, setAppsTrialState] = useState<AppsTrialState>(initialState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,21 +44,18 @@ export function useAppsTrial(organizationId?: string) {
       const [appsTrial] = trials.filter(isAppsTrial);
       const [appsTrialSpace] = trials.filter(isAppsTrialSpace);
 
-      setCanStartTrial(!appsTrial && !hasAppsFeature);
-      setAppsTrialSpaceKey(appsTrialSpace?.sys.space?.sys.id);
-      setIsAppsTrialActive(isActive(appsTrial));
-      setHasAppsTrialExpired(hasExpired(appsTrial));
-      setAppsTrialEndsAt(appsTrial && appsTrial.endsAt);
+      setAppsTrialState({
+        canStartTrial: !appsTrial && !hasAppsFeature,
+        isAppsTrialActive: isActive(appsTrial),
+        hasAppsTrialExpired: hasExpired(appsTrial),
+        hasAppsTrialPurchased: Boolean(appsTrial?.convertedAt),
+        appsTrialSpaceKey: appsTrialSpace?.sys.space?.sys.id,
+        appsTrialEndsAt: appsTrial?.endsAt,
+      });
     };
 
     fetchData();
   }, [organizationId]);
 
-  return {
-    canStartTrial,
-    appsTrialSpaceKey,
-    isAppsTrialActive,
-    hasAppsTrialExpired,
-    appsTrialEndsAt,
-  };
+  return appsTrialState;
 }

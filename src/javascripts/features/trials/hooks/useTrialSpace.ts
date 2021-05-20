@@ -7,12 +7,24 @@ import { useAppsTrial } from './useAppsTrial';
 const isTrialSpace = (trial: Trial) =>
   trial.productId === 'space_size_5' || trial.productId === 'space_size_3';
 
+type TrialSpaceSpace = {
+  isActiveTrialSpace: boolean;
+  hasTrialSpaceExpired: boolean;
+  hasTrialSpaceConverted: boolean;
+  trialSpaceExpiresAt: string | undefined;
+  matchesAppsTrialSpaceKey: boolean;
+};
+
+const initialState = {
+  isActiveTrialSpace: false,
+  hasTrialSpaceExpired: false,
+  hasTrialSpaceConverted: false,
+  trialSpaceExpiresAt: undefined,
+  matchesAppsTrialSpaceKey: false,
+};
+
 export const useTrialSpace = (organizationId?: string, spaceId?: string) => {
-  const [isActiveTrialSpace, setIsActiveTrialSpace] = useState<boolean>(false);
-  const [hasTrialSpaceExpired, setHasTrialSpaceExpired] = useState<boolean>(false);
-  const [hasTrialSpaceConverted, setHasTrialSpaceConverted] = useState<boolean>(false);
-  const [trialSpaceExpiresAt, setTrialSpaceExpiresAt] = useState<string | undefined>();
-  const [matchesAppsTrialSpaceKey, setMatchesAppsTrialSpaceKey] = useState<boolean>(false);
+  const [trialSpaceState, setTrialSpaceState] = useState<TrialSpaceSpace>(initialState);
 
   const { appsTrialSpaceKey } = useAppsTrial(organizationId);
 
@@ -28,21 +40,17 @@ export const useTrialSpace = (organizationId?: string, spaceId?: string) => {
         (trial) => trial.sys.space?.sys.id === spaceId && isTrialSpace(trial)
       );
 
-      setIsActiveTrialSpace(isActive(trial));
-      setMatchesAppsTrialSpaceKey(spaceId === appsTrialSpaceKey);
-      setHasTrialSpaceExpired(hasExpired(trial));
-      setHasTrialSpaceConverted(Boolean(trial?.convertedAt));
-      setTrialSpaceExpiresAt(trial?.endsAt);
+      setTrialSpaceState({
+        isActiveTrialSpace: isActive(trial),
+        hasTrialSpaceExpired: hasExpired(trial),
+        hasTrialSpaceConverted: Boolean(trial?.convertedAt),
+        trialSpaceExpiresAt: trial?.endsAt,
+        matchesAppsTrialSpaceKey: spaceId === appsTrialSpaceKey,
+      });
     };
 
     fetchData();
   }, [organizationId, spaceId, appsTrialSpaceKey]);
 
-  return {
-    isActiveTrialSpace,
-    hasTrialSpaceConverted,
-    hasTrialSpaceExpired,
-    matchesAppsTrialSpaceKey,
-    trialSpaceExpiresAt,
-  };
+  return trialSpaceState;
 };
