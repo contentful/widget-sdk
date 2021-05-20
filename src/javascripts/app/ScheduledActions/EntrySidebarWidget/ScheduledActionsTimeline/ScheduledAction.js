@@ -74,7 +74,7 @@ class Job extends Component {
     const {
       sys: { id },
       action,
-      scheduledFor: { datetime: scheduledAt },
+      scheduledFor: { datetime },
     } = job;
 
     // Do not render the dropdown for the read only small view (e.g. in the Schedule Action dialog)
@@ -120,7 +120,7 @@ class Job extends Component {
               this.toggleCancelDialog();
               onCancel(id);
             }}>
-            This {this.props.linkType} is scheduled to {action} on <DateTime date={scheduledAt} />.{' '}
+            This {this.props.linkType} is scheduled to {action} on <DateTime date={datetime} />.{' '}
             <br />
             Are you sure you want to cancel?
           </CancellationModal>
@@ -133,7 +133,7 @@ class Job extends Component {
     const { job, size } = this.props;
     const {
       action,
-      scheduledFor: { datetime: scheduledAt },
+      scheduledFor: { datetime },
     } = job;
 
     return (
@@ -150,7 +150,7 @@ class Job extends Component {
           {this.renderDropdown()}
         </div>
         <DateTime
-          date={scheduledAt}
+          date={datetime}
           className={cn(styles.date, size === 'small' ? styles.dateSmall : '')}
           short={size === 'small'}
         />

@@ -133,14 +133,14 @@ async function fetchReleaseJobs(releaseId: string) {
 interface CreateReleaseJobParams {
   releaseId: string;
   action: ReleaseActionType;
-  scheduledAt: Date;
+  scheduledFor: Date;
   timezone: string;
 }
 
 async function createReleaseJob({
   releaseId,
   action,
-  scheduledAt,
+  scheduledFor,
   timezone,
 }: CreateReleaseJobParams) {
   const { environmentId } = getContextIds();
@@ -151,7 +151,7 @@ async function createReleaseJob({
       entityId: releaseId,
       action,
       linkType: 'Release',
-      scheduledAt,
+      scheduledFor,
       timezone,
     }),
     { 'environment.sys.id': environmentId }

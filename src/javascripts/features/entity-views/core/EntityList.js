@@ -136,7 +136,10 @@ StatusCell.propTypes = {
   jobs: PropTypes.arrayOf(
     PropTypes.shape({
       action: PropTypes.string.isRequired,
-      scheduledAt: PropTypes.string.isRequired,
+      scheduledFor: PropTypes.shape({
+        datetime: PropTypes.string.isRequired,
+        timezone: PropTypes.string,
+      }),
       sys: PropTypes.shape({
         id: PropTypes.string.isRequired,
       }).isRequired,
@@ -167,22 +170,18 @@ CheckboxCell.propTypes = {
 
 const isTargetInput = ({ target }) => target.tagName === 'INPUT' || target.tagName === 'LABEL';
 
-const onKeyDownEvent =
-  (onClick, preventDefault = true) =>
-  (e) => {
-    if (isTargetInput(e)) return;
-    if (isHotkey(['enter', 'space'], e)) {
-      onClick(e);
-      preventDefault && e.preventDefault();
-    }
-  };
-
-const onClickEvent =
-  (onClick, preventDefault = true) =>
-  (e) => {
+const onKeyDownEvent = (onClick, preventDefault = true) => (e) => {
+  if (isTargetInput(e)) return;
+  if (isHotkey(['enter', 'space'], e)) {
     onClick(e);
     preventDefault && e.preventDefault();
-  };
+  }
+};
+
+const onClickEvent = (onClick, preventDefault = true) => (e) => {
+  onClick(e);
+  preventDefault && e.preventDefault();
+};
 
 function SortableTableCell({
   children,
