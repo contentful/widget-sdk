@@ -5,6 +5,7 @@ import {
   defaultUserId,
   defaultJobId,
   defaultEnvironmentId,
+  defaultTimezone,
 } from '../../util/requests';
 
 export const severalPendingJobsResponse = (limit: number = 40) => ({
@@ -132,6 +133,7 @@ export function job({ sys: jobPayloadSys, linkType, entityId }: jobPayload) {
     environment,
     scheduledFor: {
       datetime: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z'),
+      timezone: defaultTimezone,
     },
     action: 'publish',
   };
