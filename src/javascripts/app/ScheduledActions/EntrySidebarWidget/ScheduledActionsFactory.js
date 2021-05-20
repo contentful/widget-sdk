@@ -1,4 +1,4 @@
-export function create({ environmentId, entityId, action, scheduledAt, linkType }) {
+export function create({ environmentId, entityId, action, scheduledAt, linkType, timezone }) {
   return {
     entity: {
       sys: {
@@ -16,6 +16,7 @@ export function create({ environmentId, entityId, action, scheduledAt, linkType 
     },
     scheduledFor: {
       datetime: scheduledAt,
+      timezone,
     },
     action,
   };

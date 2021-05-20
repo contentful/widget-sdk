@@ -20,6 +20,7 @@ export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 export const defaultReleaseId = 'releaseId';
 export const defaultReleaseActionId = 'releaseActionId';
+export const defaultTimezone = 'Europe/Berlin';
 export const defaultAppId = '6YdAwxoPHopeTeuwh43UJu';
 export const appContentTypeId = 'dropboxTest';
 export const entryIdWithApp = 'entryIdWithApp';

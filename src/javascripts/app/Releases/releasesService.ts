@@ -134,9 +134,15 @@ interface CreateReleaseJobParams {
   releaseId: string;
   action: ReleaseActionType;
   scheduledAt: Date;
+  timezone: string;
 }
 
-async function createReleaseJob({ releaseId, action, scheduledAt }: CreateReleaseJobParams) {
+async function createReleaseJob({
+  releaseId,
+  action,
+  scheduledAt,
+  timezone,
+}: CreateReleaseJobParams) {
   const { environmentId } = getContextIds();
   const job = await ScheduledActionsService.createJob(
     createEndpoint(),
@@ -146,6 +152,7 @@ async function createReleaseJob({ releaseId, action, scheduledAt }: CreateReleas
       action,
       linkType: 'Release',
       scheduledAt,
+      timezone,
     }),
     { 'environment.sys.id': environmentId }
   );
