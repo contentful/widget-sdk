@@ -1,6 +1,23 @@
 import type { EnvironmentParams } from './types';
 import { spaceEnvBase } from './utils';
 
+/** Hibernation */
+
+type HibernationRouteType = {
+  path: 'hibernation';
+  spaceId?: string;
+};
+
+const hibernationRoutes = {
+  hibernation: (_, params?: Omit<HibernationRouteType, 'path'>) => ({
+    path: spaceEnvBase({ withEnvironment: false }, 'hibernation'),
+    params: {
+      pathname: '/',
+      ...params,
+    },
+  }),
+};
+
 /** Webhooks */
 
 type WebhookListRouteType = {
@@ -387,6 +404,7 @@ const tasksRoute = {
  */
 
 export type SpaceSettingsRouteType =
+  | HibernationRouteType
   | WebhookRouteType
   | LocalesRouteType
   | UsersListRouteType
@@ -404,6 +422,7 @@ export type SpaceSettingsRouteType =
   | TasksRouteType;
 
 export const routes = {
+  ...hibernationRoutes,
   ...webhookRoutes,
   ...localesRoutes,
   ...usersListRoutes,
