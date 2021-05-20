@@ -56,7 +56,7 @@ class DeleteEnvironmentModal {
 class EnvironmentsTableRow {
   constructor(private envId: string) {}
 
-  private get row() {
+  get row() {
     return cy.findByTestId(`environment.${this.envId}`);
   }
 

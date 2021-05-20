@@ -16,9 +16,7 @@ test('environment-switching', () => {
   addEnvironmentModal.submit();
 
   const newEnvRow = envSettings.getEnvironmentsTableRow(envId);
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(2000); // necessary because the status sometimes needs some time to change from "In Progress" to "Ready"
-  newEnvRow.status.should('have.text', 'Ready');
+  newEnvRow.row.should('be.visible');
 
   cy.reload();
 
