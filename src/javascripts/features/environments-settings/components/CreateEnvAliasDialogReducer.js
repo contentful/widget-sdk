@@ -143,7 +143,7 @@ export const environmentValidations = {
       return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
 
-    if (state.environments.some(({ id }) => id === value)) {
+    if (state?.environments?.some(({ id }) => id === value)) {
       return DUPLICATE_ID_ERROR_MESSAGE;
     }
   },
@@ -158,7 +158,6 @@ export const environmentValidations = {
 function validate(state) {
   const { fields } = state;
   let hasErrors = false;
-
 
   const errors = mapValues(fields, (field, name) => {
     const validateField = environmentValidations[name];
