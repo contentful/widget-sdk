@@ -25,6 +25,7 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
 import StateLink from 'app/common/StateLink';
+import { getSpaceContext } from 'classes/spaceContext';
 import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 
 const styles = {
@@ -47,7 +48,6 @@ class TasksPage extends Component {
     spaceId: PropTypes.string.isRequired,
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
-    users: PropTypes.object.isRequired,
     getContentType: PropTypes.func.isRequired,
     defaultLocaleCode: PropTypes.string.isRequired,
   };
@@ -61,8 +61,9 @@ class TasksPage extends Component {
     const { spaceId, environmentId, currentUserId } = this.props;
     const [[tasks, entries], spaceUsers] = await Promise.all([
       getOpenAssignedTasksAndEntries(spaceId, environmentId, currentUserId),
-      this.props.users.getAll(),
+      getSpaceContext().users?.getAll(),
     ]);
+
     const entryTitles = this.getEntryTitles(entries);
     const taskState = tasks.reduce((tasks, task) => {
       if (!entryTitles[task.sys.parentEntity.sys.id]) {

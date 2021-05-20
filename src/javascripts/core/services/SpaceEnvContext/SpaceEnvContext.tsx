@@ -60,10 +60,6 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     return K.getValue(angularSpaceContext.publishedCTs.items$) || [];
   }
 
-  function getUsers() {
-    return getSpaceContext()?.users;
-  }
-
   function getDocPool() {
     return getSpaceContext()?.docPool;
   }
@@ -96,7 +92,6 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceId,
     currentSpaceName: getSpaceName(space),
     currentSpaceContentTypes: contentTypes,
-    currentUsers: getUsers(),
     documentPool: getDocPool(),
   };
 

@@ -15,15 +15,8 @@ export interface SpaceEnvContextValue {
   currentSpaceId?: string;
   currentSpaceName?: string;
   currentSpaceContentTypes: ContentType[];
-  currentUsers?: SpaceEnvUsers | null;
   documentPool?: any;
 }
-
-export interface SpaceEnvUsers {
-  get: (id: string) => unknown;
-  getAll: () => unknown;
-}
-
 export interface ContentType {
   description: string;
   displayField: string;
