@@ -133,7 +133,7 @@ export function job({ sys: jobPayloadSys, linkType, entityId }: jobPayload) {
     environment,
     scheduledFor: {
       datetime: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z'),
-      timezone: defaultTimezone,
+      timezone: Matchers.somethingLike(defaultTimezone),
     },
     action: 'publish',
   };
