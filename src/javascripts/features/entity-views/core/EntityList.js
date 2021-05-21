@@ -178,14 +178,14 @@ const onKeyDownEvent =
       onClick(e);
       preventDefault && e.preventDefault();
     }
-};
+  };
 
 const onClickEvent =
   (onClick, preventDefault = true) =>
   (e) => {
     onClick(e);
     preventDefault && e.preventDefault();
-};
+  };
 
 function SortableTableCell({
   children,
