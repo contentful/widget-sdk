@@ -157,6 +157,7 @@ const AnalyticsConsole: React.FunctionComponent<AnalyticsConsoleProps> = ({
             <Option value="raw">Untransformed</Option>
             <Option value="snowplow">Snowplow</Option>
             <Option value="segment">Segment</Option>
+            <Option value="segmentExperiment">Segment (experiment)</Option>
           </Select>
 
           <CheckboxField
@@ -223,7 +224,9 @@ function PrettyEvent({ showData, event, eventSource }: PrettyEventProps) {
     <div className={styles.event}>
       <div>
         #{index + 1} - {time} <strong>{event.raw.name}</strong>
-        {eventSource === 'raw' && event.segment && <Info type="positive" value="Segment" />}
+        {eventSource === 'raw' && event.segment && (
+          <Info type="positive" value={`Segment${event.segmentExperiment ? '+Experiment' : ''}`} />
+        )}
         {eventSource === 'raw' && event.snowplow && <Info type="warning" value="Snowplow" />}
         {current.name && current.name !== event.raw.name && (
           <Info type="primary" isLowerCase={true} value={current.name} />

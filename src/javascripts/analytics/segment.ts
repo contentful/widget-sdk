@@ -7,7 +7,7 @@ import { captureError } from 'core/monitoring';
 import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
-import { getSegmentSchemaForEvent } from './transform';
+import { getSegmentSchemaForEvent, getSegmentExperimentSchemaForEvent } from './transform';
 import { TransformedEventData } from './types';
 import { Schema } from './SchemasSegment';
 import * as plan from './events';
@@ -173,6 +173,8 @@ export default {
     const eventPayload = buildPayload(schema, data);
 
     bufferedTrack(schema.name, eventPayload, { integrations: TRACK_INTEGRATIONS });
+
+    experimentalTrack(event, data);
   },
   /**
    * Sets current page.
@@ -189,4 +191,64 @@ export function buildPayload(schema: Schema, data: TransformedEventData): object
   return schema.wrapPayloadInData
     ? data // `data` might contain other legacy props `schema` and `contexts` next to `data.data`
     : data.data;
+}
+
+/**
+ * This is tracking some legacy events a new way to avoid certain issues with the Snowplow -> Segment
+ * migration so far.
+ * Currently we're only tracking a few events this way (see transform.ts for a list) while also tracking
+ * all events the old way until we're certain we don't wan't to iterate further on this approach and
+ * switch to it for all events.
+ * In the long term, all events should be migrated to Typewriter (Analytics.tracking. functions).
+ */
+function experimentalTrack(event: string, data: TransformedEventData) {
+  const schema = getSegmentExperimentSchemaForEvent(event) as Schema;
+  if (schema) {
+    const eventPayload = buildExperimentPayload(data);
+    bufferedTrack(schema.name, eventPayload, {
+      integrations: { All: false }, // Do not track to any integrations for this experiment.
+    });
+  }
+}
+
+export function buildExperimentPayload(data: TransformedEventData): object {
+  const payload = {
+    // There might be some events with transformers not sticking to returning a `TransformedEventData` object.
+    // E.g. `space_purchase:...` events. For these, also include all unexpected props into the event payload.
+    ..._.omit(data, ['contexts', 'data', 'schema']),
+    // Do NOT wrap as { data }. This would result in `data_` prefixes for all fields, which was a bug/behavior previously:
+    // https://contentful.atlassian.net/wiki/spaces/ENG/pages/3037626506/2021-04-30+Web+app+Segment+migration+issues#1.-data_-prefixes-on-migrated-schema-fields
+    ...data.data,
+  } as any;
+  delete payload.executing_user_id; // We have Segment's `user_id` which is added for us.
+
+  if (data.contexts && !payload.contexts) {
+    // "contexts" is a Snowplow concept, we store them as JSON blob. They were only used in a meaningful way for the
+    // `entry_editor:view`, `element:click`, `entry:publish` and `space:create` events.
+    // It is also used in a trivial way for `global:app_loaded` and `entry:create` where the
+    // "contexts" data should probably just be added to the main event.
+    payload.contexts = JSON.stringify(data.contexts, null, 0);
+  }
+  // TODO: There's a HUGE opportunity to improve "generic" events in Segment. Roughly like this:
+  // if (schema.isGenericEvent) { // A.isGenericEvent could be easily added in `transform.ts`'s `registerSnowplowEvent()`.
+  //   // Context: In Snowplow, the "payload" was a JSON blob for arbitrary schemaless tracking data as a means for
+  //   //  product teams to quickly add new events without the overhead of defining a schema first.
+  //   delete payload.payload;
+  //   Object.assign(payload, data.data.payload);
+  // }
+
+  // TODO: Enrich all events with `environment_key` if possible.
+
+  const RENAME_PROPS = {
+    space_id: 'space_key',
+    environment_id: 'environment_key',
+    organization_id: 'organization_key',
+  };
+  _.forEach(RENAME_PROPS, (renamed, original) => {
+    if (payload[original]) {
+      payload[renamed] = payload[original];
+      delete payload[original];
+    }
+  });
+  return payload;
 }

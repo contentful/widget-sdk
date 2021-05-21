@@ -22,6 +22,10 @@ export interface Event {
     data?: object;
     context?: object;
   };
+  segmentExperiment: {
+    name?: string;
+    data?: object;
+  };
 }
 
 export interface FilteredEvent extends Event {

@@ -48,6 +48,7 @@ type Transformer = Function | { (event: string, data: EventData): TransformedEve
 type EventMeta = {
   transformer: Transformer;
   segmentSchema?: string;
+  segmentExperimentSchema?: string;
   snowplowSchema?: string;
 };
 
@@ -169,12 +170,12 @@ registerBulkEditorEvent('bulk_editor:open_slide_in');
 registerBulkEditorEvent('bulk_editor:close');
 registerBulkEditorEvent('bulk_editor:status');
 
-registerSlideInEditorEvent('slide_in_editor:peek_click');
-registerSlideInEditorEvent('slide_in_editor:arrow_back');
-registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
-registerSlideInEditorEvent('slide_in_editor:open');
-registerSlideInEditorEvent('slide_in_editor:open_create');
-registerSlideInEditorEvent('slide_in_editor:delete');
+registerSlideInEditorEvent('slide_in_editor:peek_click').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:arrow_back').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:bulk_editor_close').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:open').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:open_create').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:delete').enableSegmentExperiment();
 
 registerTranslationSidebarEvent('translation_sidebar:toggle_widget_mode');
 registerTranslationSidebarEvent('translation_sidebar:deselect_active_locale');
@@ -356,7 +357,11 @@ registerSnowplowEvent('search:filter_added', 'ui_click', SearchAndViewsWithSeque
 registerSnowplowEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
 registerSnowplowEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
 
-registerSnowplowEvent('entry_editor:view', 'entry_view', EntryViewTransform);
+registerSnowplowEvent(
+  'entry_editor:view',
+  'entry_view',
+  EntryViewTransform
+).enableSegmentExperiment();
 registerGenericEvent('entry_editor:disabled_fields_visibility_toggled');
 registerGenericEvent('entry_editor:created_with_same_ct');
 
@@ -364,7 +369,7 @@ registerSnowplowEvent(
   'entity_editor:edit_conflict',
   'entity_editor_edit_conflict',
   EntityEditorConflictTransform
-);
+).enableSegmentExperiment('entity_editor_edit_conflict_2');
 
 registerSegmentEvent(
   'reference_editor_action:create',
@@ -445,7 +450,7 @@ registerGenericEvent('space_usage_summary:export');
  * @deprecated We're migrating away from Snowplow to Segment
  */
 function registerSnowplowEvent(event: string, schema: string, transformer: Transformer) {
-  registerEvent(event, { snowplow: schema, segment: event }, transformer);
+  return registerEvent(event, { snowplow: schema, segment: event }, transformer);
 }
 
 /**
@@ -454,7 +459,7 @@ function registerSnowplowEvent(event: string, schema: string, transformer: Trans
  *  segment-schema-registry and after `npm run segment`.
  */
 function registerSegmentEvent(event: string, schema: string, transformer: Transformer) {
-  registerEvent(event, { segment: schema }, transformer);
+  return registerEvent(event, { segment: schema }, transformer);
 }
 
 /**
@@ -481,18 +486,9 @@ function migratedLegacyEvent(
 
 /**
  * Registers an event to be tracked by snowplow.
- * @param event
- *   Name passed to `analytics.track()`
- * @param schema
- *   Name of the schemas to put the data into. Snowplow schema must be registered in `analytics/snowplow/Schemas`.
- *   Omitting the `snowplow` param stops the event tracking to Snowplow.
- * @param transformer
- *   A function to transform the parameters passed to `analytics.track()` to the
- *   data send to snowplow.
- *   Accepts two arguments, the event name and the tracking data. The tracking
- *   data is the second argument of `analytics.track()` merged with common
- *   payload defined in `analytics/Analytics`.
- *   Returns an object with a `data` and optional `context` property.
+ * @param {strong} event Name passed to `analytics.track()`
+ * @param {string} schema Name of the Snowplow/Segment schemas. Snowplow is optional as we're deprecating the service.
+ * @param {Transformer} transformer
  */
 function registerEvent(
   event: string,
@@ -503,6 +499,29 @@ function registerEvent(
     segmentSchema: schema.segment,
     snowplowSchema: schema.snowplow,
     transformer,
+  };
+  return {
+    /**
+     * When enabled, `Analytics.track()` for the event will result in two segment.track() calls. The additional call
+     * will include an experimental event payload that should solve our main Segment migration issues for legacy
+     * web app events.
+     *
+     * @param customSchemaName? Allows to define a custom schema that the experimental tracking payload should
+     *  be tracked for. By default, this is the Segment schema name unless it is a "generic" event in which case
+     *  it is the web app's `event` ID, e.g. `global:space_changed` instead of `generic`.
+     * In case the experiment schema.
+     */
+    enableSegmentExperiment: (customSchemaName?: string) => {
+      const defaultExperimentSchema = schema.snowplow === 'generic' ? event : schema.snowplow;
+      const experimentSchema = customSchemaName || defaultExperimentSchema;
+      if (snakeCase(experimentSchema) === snakeCase(schema.segment)) {
+        throw new Error(
+          'Can not use segment experiment schema equal to default segment tracking schema. This ' +
+            'would result in both segment.track() calls ending up in the same table. Provide a `customSchemaName`'
+        );
+      }
+      _events[event].segmentExperimentSchema = experimentSchema;
+    },
   };
 }
 
@@ -520,7 +539,7 @@ function registerBulkEditorEvent(event) {
 }
 
 function registerSlideInEditorEvent(event) {
-  registerSnowplowEvent(event, 'slide_in_editor', SlideInEditor);
+  return registerSnowplowEvent(event, 'slide_in_editor', SlideInEditor);
 }
 
 function registerTranslationSidebarEvent(event) {
@@ -577,11 +596,18 @@ export function getSegmentSchemaForEvent(event: string) {
   }
   const schema = getSegmentSchema(schemaName);
   if (schema) {
-    return schema;
+    return schema; // schema defined in SchemasSegment.ts
   }
   // Segment schemas that aren't registered explicitly are assumed to exist due to the Segment -> Snowplow migration.
   // Schemas were auto generated and named after the internal web app event names. Due to a previous tracking bug
   // their data is required to be wrapped in an additional `{ data }`.
-  // TODO: Register all schemas explicitly, note which ones were migrated.
   return { name: schemaName, version: '1', wrapPayloadInData: true };
+}
+
+export function getSegmentExperimentSchemaForEvent(event: string) {
+  const schemaName = _events[event]?.segmentExperimentSchema;
+  if (!schemaName) {
+    return null;
+  }
+  return { name: schemaName, version: '1', wrapPayloadInData: false };
 }
