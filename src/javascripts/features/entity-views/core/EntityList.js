@@ -136,7 +136,10 @@ StatusCell.propTypes = {
   jobs: PropTypes.arrayOf(
     PropTypes.shape({
       action: PropTypes.string.isRequired,
-      scheduledAt: PropTypes.string.isRequired,
+      scheduledFor: PropTypes.shape({
+        datetime: PropTypes.string.isRequired,
+        timezone: PropTypes.string,
+      }),
       sys: PropTypes.shape({
         id: PropTypes.string.isRequired,
       }).isRequired,

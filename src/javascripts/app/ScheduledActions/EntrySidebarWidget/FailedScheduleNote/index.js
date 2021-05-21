@@ -18,11 +18,13 @@ export class FailedScheduleNote extends Component {
   };
 
   render() {
-    const scheduledAt = this.props.job.scheduledFor.datetime;
+    const {
+      scheduledFor: { datetime },
+    } = this.props.job;
 
     return (
       <Note className={styles.note} noteType="negative" testId="failed-job-note">
-        {this.props.failedScheduleNote(scheduledAt)}
+        {this.props.failedScheduleNote(datetime)}
       </Note>
     );
   }
