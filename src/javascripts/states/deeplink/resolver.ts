@@ -221,17 +221,23 @@ async function resolveApi() {
   const apiKeys = await getApiKeyRepo().getAll();
 
   if (!apiKeys || apiKeys.length === 0) {
+    const route = routes['api.keys.list']({ withEnvironment: false }, { spaceId });
+
     return {
-      path: ['spaces', 'detail', 'api', 'keys', 'list'],
-      params: { spaceId },
+      path: route.path,
+      params: { ...route.params },
     };
   }
 
+  const route = routes['api.keys.detail'](
+    { withEnvironment: false },
+    { apiKeyId: apiKeys[0].sys.id, spaceId }
+  );
+
   return {
-    path: ['spaces', 'detail', 'api', 'keys', 'detail'],
+    path: route.path,
     params: {
-      spaceId,
-      apiKeyId: apiKeys[0].sys.id,
+      ...route.params,
     },
   };
 }

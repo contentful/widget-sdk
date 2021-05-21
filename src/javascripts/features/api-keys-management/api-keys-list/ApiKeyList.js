@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import StateLink from 'app/common/StateLink';
+import { RouteLink } from 'core/react-routing';
 import {
   Table,
   TableBody,
@@ -22,9 +22,11 @@ export function ApiKeyList({ apiKeys }) {
         {apiKeys.map((key) => (
           <TableRow key={key.sys.id}>
             <TableCell>
-              <StateLink path="^.detail" params={{ apiKeyId: key.sys.id }} data-test-id="api-link">
+              <RouteLink
+                route={{ path: 'api.keys.detail', apiKeyId: key.sys.id }}
+                data-test-id="api-link">
                 {key.name}
-              </StateLink>
+              </RouteLink>
             </TableCell>
             <TableCell>{key.description}</TableCell>
           </TableRow>

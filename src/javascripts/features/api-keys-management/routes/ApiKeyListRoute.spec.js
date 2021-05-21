@@ -1,6 +1,7 @@
 import React from 'react';
 import { ApiKeyListRoute } from './ApiKeyListRoute';
 import { render, waitForElement } from '@testing-library/react';
+import { MemoryRouter } from 'core/react-routing';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -67,7 +68,10 @@ describe('ApiKeyListRoute', () => {
     const { getByTestId, getByText } = render(
       <SpaceEnvContextProvider>
         <ApiKeyListRoute />
-      </SpaceEnvContextProvider>
+      </SpaceEnvContextProvider>,
+      {
+        wrapper: MemoryRouter,
+      }
     );
 
     await waitForElement(() => {
@@ -85,7 +89,10 @@ describe('ApiKeyListRoute', () => {
     const { getByTestId, getByText } = render(
       <SpaceEnvContextProvider>
         <ApiKeyListRoute />
-      </SpaceEnvContextProvider>
+      </SpaceEnvContextProvider>,
+      {
+        wrapper: MemoryRouter,
+      }
     );
 
     await waitForElement(() => {
@@ -115,7 +122,10 @@ describe('ApiKeyListRoute', () => {
       const { getByTestId, getByText } = render(
         <SpaceEnvContextProvider>
           <ApiKeyListRoute />
-        </SpaceEnvContextProvider>
+        </SpaceEnvContextProvider>,
+        {
+          wrapper: MemoryRouter,
+        }
       );
 
       await waitForElement(() => {

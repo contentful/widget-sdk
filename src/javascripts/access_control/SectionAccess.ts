@@ -13,7 +13,7 @@ const SECTION_ACCESS_ORDER: [string, RouteDefinition | CreateRouteDefinition][] 
   ['entry', { path: '.entries.list' }],
   ['contentType', { path: '.content_types.list' }],
   ['asset', { path: '.assets.list' }],
-  ['apiKey', { path: '.api.keys.list' }],
+  ['apiKey', routes['api.keys.list']],
   ['settings', routes['users.list']],
 ];
 

@@ -400,6 +400,75 @@ const tasksRoute = {
 };
 
 /**
+ * API keys
+ */
+
+type ApiKeyListRouteType = {
+  path: 'api.keys.list';
+  spaceId?: string;
+};
+
+type ApiKeyEditorRouteType = {
+  path: 'api.keys.detail';
+  apiKeyId: string;
+  spaceId?: string;
+};
+
+type CMATokensType = {
+  path: 'api.cma_tokens';
+  spaceId?: string;
+};
+
+// Legacy routes
+type CMAKeysType = {
+  path: 'api.cma_keys';
+  spaceId?: string;
+};
+
+type APIContentModelType = {
+  path: 'api.content_model';
+  spaceId?: string;
+};
+
+const apiKeyListRoute = {
+  'api.keys.list': (env: EnvironmentParams, params: Omit<ApiKeyListRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'api'),
+    params: {
+      pathname: '/keys',
+      ...params,
+    },
+  }),
+  'api.keys.detail': (env: EnvironmentParams, params: Omit<ApiKeyEditorRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'api'),
+    params: {
+      pathname: `/keys/${params.apiKeyId}`,
+      ...params,
+    },
+  }),
+  'api.cma_tokens': (env: EnvironmentParams, params: Omit<CMATokensType, 'path'>) => ({
+    path: spaceEnvBase(env, 'api'),
+    params: {
+      pathname: '/cma_tokens',
+      ...params,
+    },
+  }),
+  'api.cma_keys': (env: EnvironmentParams, params: Omit<CMAKeysType, 'path'>) => ({
+    path: spaceEnvBase(env, 'api'),
+    params: {
+      pathname: '/cma_keys',
+      ...params,
+    },
+  }),
+  'api.content_model': (env: EnvironmentParams, params: Omit<APIContentModelType, 'path'>) => ({
+    path: spaceEnvBase(env, 'api'),
+    params: {
+      pathname: '/content_model',
+      ...params,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -419,7 +488,12 @@ export type SpaceSettingsRouteType =
   | EmbargoedAssetsRouteType
   | PageExtensionsRouteType
   | ScheduledActionsRouteType
-  | TasksRouteType;
+  | TasksRouteType
+  | ApiKeyListRouteType
+  | ApiKeyEditorRouteType
+  | CMATokensType
+  | CMAKeysType
+  | APIContentModelType;
 
 export const routes = {
   ...hibernationRoutes,
@@ -438,4 +512,5 @@ export const routes = {
   ...pageExtensionRoute,
   ...scheduledActionsRoute,
   ...tasksRoute,
+  ...apiKeyListRoute,
 };

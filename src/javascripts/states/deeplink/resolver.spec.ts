@@ -134,12 +134,9 @@ describe('states/deeplink/resolver', () => {
       const result = await resolveLink(LinkType.API, {});
 
       expect(spaceContextMock.resetWithSpace).toHaveBeenCalledWith(space);
-      expect(result).toEqual({
-        path: ['spaces', 'detail', 'api', 'keys', 'list'],
-        params: {
-          spaceId: 'test2',
-        },
-      });
+      expect(result).toEqual(
+        routes['api.keys.list']({ withEnvironment: false }, { spaceId: 'test2' })
+      );
     });
 
     it('should give generic error in case no access', async function () {
@@ -172,13 +169,12 @@ describe('states/deeplink/resolver', () => {
       const result = await resolveLink(LinkType.API, {});
 
       expect(spaceContextMock.resetWithSpace).toHaveBeenCalledWith(space);
-      expect(result).toEqual({
-        path: ['spaces', 'detail', 'api', 'keys', 'detail'],
-        params: {
-          spaceId: 'test2',
-          apiKeyId: 'api-key-id',
-        },
-      });
+      expect(result).toEqual(
+        routes['api.keys.detail'](
+          { withEnvironment: false },
+          { apiKeyId: 'api-key-id', spaceId: 'test2' }
+        )
+      );
     });
   });
 

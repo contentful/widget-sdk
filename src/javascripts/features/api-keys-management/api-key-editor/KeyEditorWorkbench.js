@@ -10,8 +10,8 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import * as Navigator from 'states/Navigator';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   knowledgeBaseIcon: css({
@@ -24,6 +24,8 @@ const styles = {
 };
 
 export function KeyEditorWorkbench(props) {
+  const navigate = useRouteNavigate();
+
   return (
     <Workbench>
       <Workbench.Header
@@ -42,7 +44,7 @@ export function KeyEditorWorkbench(props) {
         }
         icon={<ProductIcon icon="Apis" size="large" />}
         onBack={() => {
-          Navigator.go({ path: '^.list' });
+          navigate({ path: 'api.keys.list' });
         }}
         actions={props.actions}
       />
