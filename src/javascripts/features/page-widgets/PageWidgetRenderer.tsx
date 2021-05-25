@@ -32,6 +32,7 @@ import LocaleStore from 'services/localeStore';
 import { getUserSync } from '../../services/TokenStore';
 import { FLAGS, getVariation } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
+import { createNavigatorCallbacks } from '../../app/widgets/ExtensionSDKs/callbacks/navigator';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -139,8 +140,18 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           callbacks: {
             space: {},
             dialog: createDialogCallbacks(),
-            // @ts-expect-error TODO
-            navigator: {},
+            navigator: createNavigatorCallbacks({
+              spaceContext: {
+                spaceId: currentSpaceId,
+                environmentId: currentEnvironmentId,
+                isMaster: isMasterEnvironment,
+              },
+              widgetRef: {
+                widgetId: widget.id,
+                widgetNamespace: widget.namespace,
+              },
+              isOnPageLocation: true,
+            }),
           },
         }) as unknown) as PageExtensionSDK) //TODO
       : localCreatePageWidgetSDK({
@@ -170,6 +181,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     customWidgetPlainClient,
     useExperienceSDK,
     widgetLoader,
+    isMasterEnvironment,
   ]);
 
   React.useEffect(() => {
