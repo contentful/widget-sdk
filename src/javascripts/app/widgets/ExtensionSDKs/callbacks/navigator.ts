@@ -44,6 +44,40 @@ interface MakeNavigateToPageProps {
   isOnPageLocation?: boolean;
 }
 
+async function navigateToAppConfig({ widgetRef, spaceContext }: MakeNavigateToPageProps) {
+  if (widgetRef.widgetNamespace === WidgetNamespace.APP) {
+    await Navigator.go({
+      path: ['spaces', 'environment', 'apps', 'detail'],
+      params: {
+        spaceId: spaceContext.spaceId,
+        environmentId: spaceContext.environmentId,
+        appId: widgetRef.widgetId,
+      },
+      options: {
+        notify: true,
+      },
+    });
+  } else {
+    throw new Error('Only apps can use the openAppConfig method');
+  }
+}
+
+async function navigateToSpaceEnvRoute(
+  route: 'entries' | 'assets',
+  { spaceContext }: MakeNavigateToPageProps
+) {
+  await Navigator.go({
+    path: ['spaces', spaceContext.isMaster ? 'detail' : 'environment', route, 'list'],
+    params: {
+      spaceId: spaceContext.spaceId,
+      environmentId: spaceContext.environmentId,
+    },
+    options: {
+      notify: true,
+    },
+  });
+}
+
 function onSlideInNavigation(fn) {
   const funcWrapper = ({ newSlideLevel, oldSlideLevel }) => {
     fn({ newSlideLevel, oldSlideLevel });
@@ -203,12 +237,8 @@ export function createNavigatorCallbacks(
   const navigateTo = makeNavigateToPage(options);
 
   return {
-    openAssetsList(): Promise<void> {
-      return Promise.resolve(undefined);
-    },
-    openEntriesList(): Promise<void> {
-      return Promise.resolve(undefined);
-    },
+    openAssetsList: () => navigateToSpaceEnvRoute('assets', options),
+    openEntriesList: () => navigateToSpaceEnvRoute('entries', options),
     handleNewAsset(asset: AssetProps, options?: NavigatorAPIOptions) {
       return openEntity({ entity: asset, options });
     },
@@ -216,14 +246,12 @@ export function createNavigatorCallbacks(
       return openEntity({ entity: entry, options });
     },
 
-    openAppConfig(): Promise<void> {
-      return Promise.resolve(undefined);
-    },
     openAsset(asset: AssetProps, options?: NavigatorAPIOptions) {
       return openEntity({ entity: asset, options });
     },
     onSlideInNavigation,
     openBulkEditor,
+    openAppConfig: () => navigateToAppConfig(options),
     openCurrentAppPage(options?: AppPageLocationOptions) {
       return navigateTo({ ...options, type: WidgetNamespace.EXTENSION });
     },
