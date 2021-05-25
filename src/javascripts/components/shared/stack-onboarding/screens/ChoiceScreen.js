@@ -9,6 +9,7 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
+import { getOrganizations } from 'services/TokenStore';
 
 const store = getBrowserStorage();
 
@@ -84,8 +85,14 @@ export default class ChoiceScreen extends React.Component {
   };
 
   async componentDidMount() {
-    const newOnboardingFlag = await getVariation(FLAGS.NEW_ONBOARDING_FLOW);
-    const newOnboardingExperimentVariation = await getVariation(FLAGS.EXPERIMENT_ONBOARDING_MODAL);
+    const orgs = await getOrganizations();
+    const org = orgs[0];
+    const newOnboardingFlag = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+      organizationId: org.sys.id,
+    });
+    const newOnboardingExperimentVariation = await getVariation(FLAGS.EXPERIMENT_ONBOARDING_MODAL, {
+      organizationId: org.sys.id,
+    });
     this.setState({ growthExperimentVariant: newOnboardingExperimentVariation });
     const newOnboardingEnabled = newOnboardingFlag && newOnboardingExperimentVariation !== null;
     if (newOnboardingEnabled) {
