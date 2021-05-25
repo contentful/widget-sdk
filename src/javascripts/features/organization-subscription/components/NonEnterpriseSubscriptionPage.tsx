@@ -147,7 +147,11 @@ export function NonEnterpriseSubscriptionPage({
       )}
 
       <Flex className={styles.fullRow} flexDirection="column">
-        <SpacePlans organizationId={organizationId} isOwnerOrAdmin={isOrgOwnerOrAdmin} />
+        <SpacePlans
+          organizationId={organizationId}
+          isOwnerOrAdmin={isOrgOwnerOrAdmin}
+          showV1MigrationCommunication={isV1MigrationSucceeded && v1migrationDestination === 'team'}
+        />
       </Flex>
     </Grid>
   );

@@ -47,12 +47,14 @@ interface SpacePlansProps {
   isOwnerOrAdmin?: boolean;
   // The id of the current organization
   organizationId: string;
+  showV1MigrationCommunication?: boolean;
 }
 
 export function SpacePlans({
   enterprisePlan = false,
   isOwnerOrAdmin = false,
   organizationId,
+  showV1MigrationCommunication,
 }: SpacePlansProps) {
   const {
     dispatch,
@@ -121,6 +123,7 @@ export function SpacePlans({
               onDeleteSpace={onDeleteSpace}
               plans={spacePlans}
               upgradedSpaceId={changedSpaceId}
+              showV1MigrationCommunication={showV1MigrationCommunication}
             />
           )}
 

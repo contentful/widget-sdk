@@ -81,16 +81,6 @@ export const SpaceUsageTableCell = ({
         [styles.negative]: ['EXCEEDED'].includes(state),
       })}>
       <Flex fullWidth justifyContent="flex-start" alignItems="center">
-        {icon && (
-          <Flex marginRight="spacing2Xs" className={styles.iconContainer}>
-            <Tooltip
-              content={label}
-              onMouseOver={trackClickEvent('usage_tooltip_hovered')}
-              testId="subscription-page.spaces-list.usage-tooltip">
-              <Icon testId="subscription-page.spaces-list.usage-tooltip-trigger" {...icon} />
-            </Tooltip>
-          </Flex>
-        )}
         <span
           className={cx({
             [styles.emphasized]: ['APPROACHING', 'REACHED', 'EXCEEDED'].includes(state),
@@ -98,6 +88,17 @@ export const SpaceUsageTableCell = ({
           {usage}
         </span>
         /{limit}
+        {icon && (
+          <Flex marginLeft="spacing2Xs" className={styles.iconContainer}>
+            <Tooltip
+              content={label}
+              onMouseOver={trackClickEvent('usage_tooltip_hovered')}
+              testId="subscription-page.spaces-list.usage-tooltip"
+              place="right">
+              <Icon testId="subscription-page.spaces-list.usage-tooltip-trigger" {...icon} />
+            </Tooltip>
+          </Flex>
+        )}
       </Flex>
     </TableCell>
   );
