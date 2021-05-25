@@ -110,12 +110,8 @@ function useDeeplinkPage({ searchParams }) {
     window.location.href = window.location.origin;
   };
 
-  const updateRedirectLink = async ({ spaceId, environmentId, id }) => {
-    await resolveDeeplink({
-      spaceId,
-      environmentId,
-      id,
-    });
+  const updateRedirectLink = async (updates) => {
+    await resolveDeeplink(updates);
     setStatus(PageStatuses.redirecting);
   };
 
