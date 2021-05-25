@@ -132,8 +132,8 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           // @ts-expect-error TODO
           contentTypes: currentSpaceContentTypes.map((ct) => createPublicContentType(ct)),
           environment: currentEnvironment,
-          // @ts-expect-error TODO: active locale (singular) seems unneeded here
           locales: {
+            activeLocaleCode: LocaleStore.getDefaultLocale().code,
             defaultLocaleCode: LocaleStore.getDefaultLocale().code,
             list: LocaleStore.getLocales(),
           },
