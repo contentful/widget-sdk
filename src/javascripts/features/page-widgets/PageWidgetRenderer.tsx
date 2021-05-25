@@ -32,6 +32,7 @@ import LocaleStore from 'services/localeStore';
 import { getUserSync } from '../../services/TokenStore';
 import { FLAGS, getVariation } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
+import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -129,7 +130,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           widgetLoader,
           user: getUserSync(),
           // @ts-expect-error TODO
-          contentTypes: currentSpaceContentTypes,
+          contentTypes: currentSpaceContentTypes.map((ct) => createPublicContentType(ct)),
           environment: currentEnvironment,
           // @ts-expect-error TODO: active locale (singular) seems unneeded here
           locales: {
