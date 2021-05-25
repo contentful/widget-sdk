@@ -3,7 +3,7 @@ import { useSpacePurchaseState, State } from '../context';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { addProductRatePlanToSubscription, ProductRatePlan } from 'features/pricing-entities';
 import { useAsyncFn } from 'core/hooks/useAsync';
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import type { SetRequired } from '../types';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useSessionMetadata } from './useSessionMetadata';

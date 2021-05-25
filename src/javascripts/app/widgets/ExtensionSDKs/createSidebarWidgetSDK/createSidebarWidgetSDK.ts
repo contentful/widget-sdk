@@ -5,7 +5,7 @@ import { createEditorApi, LocaleData, Preferences } from '../createEditorApi';
 import { createEntryApi } from '../createEntryApi';
 import { createIdsApiWithoutField } from '../utils';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { createUserApi, SpaceMember } from '../createUserApi';
+import { createUserApi } from '../createUserApi';
 import { createNavigatorApi } from '../createNavigatorApi';
 import { noop, omit } from 'lodash';
 import { createSpaceApi } from '../createSpaceApi';
@@ -77,8 +77,8 @@ export const createSidebarWidgetSDK = ({
   const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
   const idsApi = createIdsApiWithoutField({
-    spaceId: spaceContext.getId(),
-    envId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId() as string,
+    envId: spaceContext.getEnvironmentId() as string,
     envAliasId: spaceContext.getAliasId(),
     contentType: contentTypeApi,
     entry: entryApi,
@@ -95,16 +95,16 @@ export const createSidebarWidgetSDK = ({
     cma: apiClient,
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-    spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+    environmentIds: [spaceContext.getEnvironmentId() as string, ...spaceContext.getAliasesIds()],
+    spaceId: spaceContext.getId() as string,
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId() as string),
     usersRepo: spaceContext.users,
     appId: idsApi.app,
   });
 
   const navigatorApi = createNavigatorApi({
-    environmentId: spaceContext.getEnvironmentId(),
-    spaceId: spaceContext.getId(),
+    environmentId: spaceContext.getEnvironmentId() as string,
+    spaceId: spaceContext.getId() as string,
     cma: apiClient,
     isMaster: spaceContext.isMasterEnvironment(),
     widgetNamespace,
@@ -113,7 +113,7 @@ export const createSidebarWidgetSDK = ({
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,
-    spaceMember: spaceContext.space.data.spaceMember as SpaceMember,
+    spaceMember: spaceContext.space.data.spaceMember,
     locationApi,
     navigatorApi,
     spaceApi,

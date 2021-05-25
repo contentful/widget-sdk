@@ -18,12 +18,12 @@ import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { ApiKeyList } from '../api-keys-list/ApiKeyList';
 import { useApiKeysState } from '../api-keys-list/ApiKeyListState';
-import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import ApiKeysEmptyIllustration from '../svg/api-keys-empty-illustation.svg';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   actions: css({
@@ -89,13 +89,14 @@ UsageInformation.propTypes = {
 
 function AddApiKeys(props) {
   const [creating, setCreating] = useState(false);
+  const navigate = useRouteNavigate();
 
   const onCreateClick = () => {
     setCreating(true);
     props
       .createAPIKey()
       .then((apiKey) => {
-        Navigator.go({ path: '^.detail', params: { apiKeyId: apiKey.sys.id } });
+        navigate({ path: 'api.keys.detail', apiKeyId: apiKey.sys.id });
       })
       .catch((err) => {
         Notification.error(err.data.message);

@@ -18,7 +18,7 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { useAsync } from 'core/hooks';
 import { Price } from 'core/components/formatting';
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import type { BasePlan, AddOnProductRatePlan } from 'features/pricing-entities';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -145,7 +145,11 @@ export function NonEnterpriseSubscriptionPage({
       )}
 
       <Flex className={styles.fullRow} flexDirection="column">
-        <SpacePlans organizationId={organizationId} isOwnerOrAdmin={isOrgOwnerOrAdmin} />
+        <SpacePlans
+          organizationId={organizationId}
+          isOwnerOrAdmin={isOrgOwnerOrAdmin}
+          showV1MigrationCommunication={isV1MigrationSucceeded && v1migrationDestination === 'team'}
+        />
       </Flex>
     </Grid>
   );

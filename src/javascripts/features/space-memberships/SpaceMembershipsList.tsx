@@ -13,9 +13,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import moment from 'moment';
 import { css } from 'emotion';
-
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { SpaceData } from 'core/services/SpaceEnvContext/types';
+import { SpaceData } from 'classes/spaceContextTypes';
 
 const styles = {
   dotsRow: css({

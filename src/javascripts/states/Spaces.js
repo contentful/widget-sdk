@@ -17,10 +17,10 @@ import { tasksRouteState } from 'features/tasks';
 import { pageExtensionsState } from 'features/page-widgets';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { spaceHomeState } from 'features/space-home';
-
-import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
+import { SpaceHibernationRoute, isHibernated } from 'features/space-hibernation';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
 import { getSpaceContext } from 'classes/spaceContext';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
 
@@ -28,7 +28,7 @@ const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
   navComponent: EmptyNavigationBar,
-  component: SpaceHibernationAdvice,
+  component: SpaceHibernationRoute,
 };
 
 const resolveSpaceData = [
@@ -79,7 +79,7 @@ const spaceEnvironment = {
       if (!accessChecker.can('manage', 'Environments')) {
         $state.go('spaces.detail', $stateParams, { reload: true });
       } else if (isHibernated(spaceData)) {
-        $state.go('spaces.detail.hibernation', $stateParams, { reload: true });
+        router.navigate({ path: 'hibernation', spaceId: $stateParams.spaceId }, { reload: true });
       } else {
         $state.go('.entries.list');
       }
@@ -129,13 +129,14 @@ const spaceDetail = {
     '$scope',
     '$state',
     'spaceData',
-    (_, $scope, $state, spaceData) => {
+    '$stateParams',
+    (_, $scope, $state, spaceData, $stateParams) => {
       const spaceContext = getSpaceContext();
 
       const accessibleSref = getFirstAccessibleSref(spaceContext.space);
 
       if (isHibernated(spaceData)) {
-        $state.go('.hibernation');
+        router.navigate({ path: 'hibernation', spaceId: $stateParams.spaceId });
       } else if (accessibleSref) {
         $state.go(accessibleSref.path, accessibleSref.params || null, { location: 'replace' });
       } else {
@@ -158,10 +159,6 @@ const spaceDetail = {
     pageExtensionsState,
   ],
 };
-
-function isHibernated(space) {
-  return (space.enforcements || []).some((e) => e.reason === 'hibernated');
-}
 
 function storeCurrentIds(space) {
   store.set('lastUsedSpace', space.sys.id);

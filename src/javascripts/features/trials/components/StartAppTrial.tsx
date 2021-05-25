@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { css, cx } from 'emotion';
-import { useAsync } from 'core/hooks';
 import { contentImport, startAppTrial } from '../services/AppTrialService';
 import { getAppsRepo } from 'features/apps-core';
 import { AppManager } from 'features/apps';
@@ -23,9 +22,8 @@ import {
   TrialSpaceServerError,
 } from '../utils/AppTrialError';
 import { capitalizeFirst } from 'utils/StringUtils';
-import { useQueryParams } from 'core/hooks/useQueryParams';
 import { getSpaceContext } from 'classes/spaceContext';
-import { router } from 'core/react-routing';
+import { router, useSearchParams } from 'core/react-routing';
 
 const styles = {
   emptyContainer: css({
@@ -119,7 +117,7 @@ const installApps = async (
   );
 };
 
-const initialFetch = (organizationId: string, existingUsers: boolean, from: string) => async () => {
+const trialBootstrap = async (organizationId: string, existingUsers: boolean, from: string) => {
   const startTimeTracker = window.performance.now();
 
   let isSuccessful = false;
@@ -136,8 +134,8 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
       .then(() => TokenStore.getSpace(trialSpace?.sys.id as string))
       .then((space) => spaceContext.resetWithSpace(space));
 
-    const environmentId = spaceContext.getEnvironmentId();
-    const spaceId = spaceContext.getId();
+    const environmentId = spaceContext.getEnvironmentId() as string;
+    const spaceId = spaceContext.getId() as string;
     const cma = spaceContext.cma;
 
     await installApps(apps, organizationId, spaceId, environmentId, cma);
@@ -163,9 +161,9 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
         e.message === 'all' ? 'them' : 'it'
       } manually.`;
       Notification.error(message, { title });
-      goToSpaceHome(spaceContext.getId());
+      goToSpaceHome(spaceContext.getId() as string);
     } else if (e instanceof ContentImportError) {
-      goToSpaceHome(spaceContext.getId());
+      goToSpaceHome(spaceContext.getId() as string);
     } else {
       // other errors including TrialSpaceCreation violation and permission errors.
       captureError(e);
@@ -188,15 +186,14 @@ const initialFetch = (organizationId: string, existingUsers: boolean, from: stri
 export function StartAppTrial({
   orgId,
   existingUsers = false,
-  from: fromRouterParam,
+  from: fromNavigationState,
 }: StartAppTrialProps) {
-  const queryParams = useQueryParams();
-  // if /start_trial is called without ?from=, assume the origin is the marketing website CTA
-  const from = fromRouterParam ? fromRouterParam : queryParams.from?.toString() ?? 'marketing';
+  const [searchParams] = useSearchParams();
+  const from = fromNavigationState || searchParams.get('referrer') || 'marketing';
 
-  const trialBootstrap = useCallback(initialFetch(orgId, existingUsers, from), []);
-
-  useAsync(trialBootstrap);
+  useEffect(() => {
+    trialBootstrap(orgId, existingUsers, from);
+  }, []);
 
   return (
     <div className={cx('home', styles.fullScreen)} data-testid="start-app-trial">

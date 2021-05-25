@@ -7,7 +7,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { getAddOnProductRatePlans } from 'features/pricing-entities';
-import { useTrialSpace as _useTrialSpace } from 'features/trials';
+import { useAppsTrial, useTrialSpace as _useTrialSpace } from 'features/trials';
 
 const mockedSpace = fake.Space();
 
@@ -29,7 +29,6 @@ const build = () => {
 };
 
 jest.mock('features/trials', () => ({
-  isExpiredTrialSpace: jest.fn(),
   useAppsTrial: jest.fn().mockResolvedValue({}),
   useTrialSpace: jest.fn(),
 }));
@@ -80,7 +79,9 @@ describe('ExpiredTrialSpaceHome', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('trial space')
+        expect(screen.getByTestId('expired-trial-space-home')).not.toHaveTextContent(
+          'Contentful Apps trial space'
+        )
       );
       expect(screen.getByTestId('expired-trial-space-home')).not.toHaveTextContent(
         'Contentful Apps'
@@ -125,12 +126,13 @@ describe('ExpiredTrialSpaceHome', () => {
       build();
 
       await waitFor(() =>
-        expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('Contentful Apps')
+        expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent(
+          'Contentful Apps trial space'
+        )
       );
       expect(screen.getByTestId('expired-trial-space-home')).toHaveTextContent('$100/month');
-      expect(screen.getByTestId('expired-trial-space-home')).not.toHaveTextContent('trial space');
       expect(screen.queryByTestId('expired-trial-space-home.delete-space')).toBeInTheDocument();
-      expect(screen.queryByTestId('expired-trial-space-home.buy-now')).toBeInTheDocument();
+      expect(screen.queryByTestId('expired-trial-space-home.buy-now')).toHaveTextContent('Buy now');
     });
 
     it('navigates to the upgrade flow when clicked', async () => {
@@ -152,6 +154,19 @@ describe('ExpiredTrialSpaceHome', () => {
         space: mockedSpace,
         onSuccess: expect.any(Function),
       });
+    });
+
+    it('has the upgrade now CTA if the add-on has been purchased', async () => {
+      (useAppsTrial as jest.Mock).mockReturnValue({
+        hasAppsTrialPurchased: true,
+      });
+      build();
+
+      await waitFor(() =>
+        expect(screen.queryByTestId('expired-trial-space-home.buy-now')).toHaveTextContent(
+          'Upgrade now'
+        )
+      );
     });
 
     it('does not render the CTA buttons when the user is not an org admin or owner', async () => {

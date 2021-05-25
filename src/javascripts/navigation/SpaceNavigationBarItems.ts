@@ -94,10 +94,9 @@ export function getSpaceNavigationItems({
     },
     keys: {
       if: canNavigateTo('apiKey'),
-      sref: makeRef('api.keys.list', isUnscopedRoute),
-      rootSref: makeRef('api', isUnscopedRoute),
       dataViewType: 'spaces-settings-api',
       title: 'API keys',
+      ...makeReactRouterRef('api.keys.list', withEnvironment),
     },
     webhooks: {
       if: canNavigateTo('webhooks'),

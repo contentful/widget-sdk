@@ -11,7 +11,6 @@ const TasksPageRoute = () => {
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
     currentSpace,
-    currentUsers: users,
     currentSpaceContentTypes,
   } = useSpaceEnvContext();
   const currentUserId = getSpaceMember(currentSpace)?.sys.user.sys.id;
@@ -24,7 +23,6 @@ const TasksPageRoute = () => {
       spaceId={spaceId}
       environmentId={environmentId}
       currentUserId={currentUserId}
-      users={users}
       defaultLocaleCode={defaultLocaleCode}
       getContentType={getContentType}
     />

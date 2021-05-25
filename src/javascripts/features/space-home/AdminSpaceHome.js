@@ -15,6 +15,7 @@ import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
 import { NewOnboardingCTA } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { tracking } from 'analytics/Analytics';
 
 export const AdminSpaceHome = ({
   spaceName,
@@ -24,6 +25,7 @@ export const AdminSpaceHome = ({
   hasTeamsEnabled,
   isTrialSpace,
   isEmptySpace,
+  inviteCardExperimentEnabled,
 }) => {
   const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
   const spaceContext = useSpaceEnvContext();
@@ -44,6 +46,15 @@ export const AdminSpaceHome = ({
           environmentId: spaceContext.currentEnvironmentId,
         }
       );
+
+      if (newOnboardingExperimentVariation !== null) {
+        tracking.experimentStart({
+          experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+          experiment_variation: newOnboardingExperimentVariation
+            ? 'flexible-onboarding'
+            : 'control',
+        });
+      }
 
       setIsNewOnboardingEnabled(newOnboardingEnabled && newOnboardingExperimentVariation);
     })();
@@ -94,7 +105,12 @@ export const AdminSpaceHome = ({
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <AddCoworkerCTA orgId={orgId} spaceId={spaceId} hasTeamsEnabled={hasTeamsEnabled} />
+          <AddCoworkerCTA
+            orgId={orgId}
+            spaceId={spaceId}
+            hasTeamsEnabled={hasTeamsEnabled}
+            inviteCardExperimentEnabled={inviteCardExperimentEnabled}
+          />
         </WidgetContainer.Col>
         {isSupportEnabled && (
           <WidgetContainer.Col>
@@ -126,4 +142,5 @@ AdminSpaceHome.propTypes = {
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
   isEmptySpace: PropTypes.bool,
+  inviteCardExperimentEnabled: PropTypes.bool,
 };

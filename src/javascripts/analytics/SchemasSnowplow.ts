@@ -291,57 +291,6 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'release_dialog_box',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'release_entity_added',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'release_entity_removed',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'release_created',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'release_trashed',
-  version: '1-0-0',
-});
-// This schema is not created in the Segment yet, uncomment once done.
-// registerSchema({
-//   name: 'release_validated',
-//   version: '1-0-0',
-// });
-
-registerSchema({
-  name: 'release_published',
-  version: '1-0-0',
-});
-
-// This schema is not created in segment yet, uncomment once done.
-// registerSchema({
-//   name: 'release_unpublished',
-//   version: '1-0-0',
-// });
-
-registerSchema({
-  name: 'release_schedule_created',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'release_schedule_canceled',
-  version: '1-0-0',
-});
-
-registerSchema({
   name: 'entity_editor_edit_conflict',
   version: '2-0-0',
 });

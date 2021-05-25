@@ -21,7 +21,7 @@ function getContextIds() {
   const spaceContext = getSpaceContext();
 
   return {
-    spaceId: spaceContext.getId(),
+    spaceId: spaceContext.getId() as string,
     environmentId: spaceContext.space.environment.sys.id,
   };
 }
@@ -133,10 +133,16 @@ async function fetchReleaseJobs(releaseId: string) {
 interface CreateReleaseJobParams {
   releaseId: string;
   action: ReleaseActionType;
-  scheduledAt: Date;
+  scheduledFor: Date;
+  timezone: string;
 }
 
-async function createReleaseJob({ releaseId, action, scheduledAt }: CreateReleaseJobParams) {
+async function createReleaseJob({
+  releaseId,
+  action,
+  scheduledFor,
+  timezone,
+}: CreateReleaseJobParams) {
   const { environmentId } = getContextIds();
   const job = await ScheduledActionsService.createJob(
     createEndpoint(),
@@ -145,7 +151,8 @@ async function createReleaseJob({ releaseId, action, scheduledAt }: CreateReleas
       entityId: releaseId,
       action,
       linkType: 'Release',
-      scheduledAt,
+      scheduledFor,
+      timezone,
     }),
     { 'environment.sys.id': environmentId }
   );

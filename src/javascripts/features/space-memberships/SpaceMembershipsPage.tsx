@@ -15,7 +15,7 @@ import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { go } from 'states/Navigator';
 
 import { SpaceMembershipsList } from './SpaceMembershipsList';
-import { SpaceData } from 'core/services/SpaceEnvContext/types';
+import type { SpaceData } from 'classes/spaceContextTypes';
 
 const SpaceMembershipsPage = () => {
   const [spaces, setSpaces] = useState<SpaceData[] | null>(null);

@@ -9,6 +9,7 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
+import { getOrganizations } from 'services/TokenStore';
 
 const store = getBrowserStorage();
 
@@ -22,7 +23,8 @@ export default class ChoiceScreen extends React.Component {
   state = {
     isDevPathPending: false,
     isDefaultPathPending: false,
-    isGrowthExperiment: false,
+    isGrowthExperimentEnabled: false,
+    growthExperimentVariant: null,
   };
 
   renderBlock = ({ title, text, button }) => {
@@ -49,7 +51,15 @@ export default class ChoiceScreen extends React.Component {
     this.setState({
       isDevPathPending: true,
     });
-    if (this.state.isGrowthExperiment) {
+    if (this.state.growthExperimentVariant !== null) {
+      tracking.experimentStart({
+        experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        experiment_variation: this.state.growthExperimentVariant
+          ? 'flexible-onboarding'
+          : 'control',
+      });
+    }
+    if (this.state.isGrowthExperimentEnabled) {
       const newSpace = await this.props.onExperimentChoice();
       go({ path: 'spaces.detail.home' });
       ModalLauncher.open(({ isShown, onClose }) => {
@@ -75,15 +85,18 @@ export default class ChoiceScreen extends React.Component {
   };
 
   async componentDidMount() {
-    const newOnboardingFlag = await getVariation(FLAGS.NEW_ONBOARDING_FLOW);
-    const newOnboardingExperimentVariation = await getVariation(FLAGS.EXPERIMENT_ONBOARDING_MODAL);
+    const orgs = await getOrganizations();
+    const org = orgs[0];
+    const newOnboardingFlag = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+      organizationId: org.sys.id,
+    });
+    const newOnboardingExperimentVariation = await getVariation(FLAGS.EXPERIMENT_ONBOARDING_MODAL, {
+      organizationId: org.sys.id,
+    });
+    this.setState({ growthExperimentVariant: newOnboardingExperimentVariation });
     const newOnboardingEnabled = newOnboardingFlag && newOnboardingExperimentVariation !== null;
     if (newOnboardingEnabled) {
-      this.setState({ isGrowthExperiment: newOnboardingExperimentVariation });
-      tracking.experimentStart({
-        experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
-        experiment_variation: newOnboardingExperimentVariation ? 'flexible-onboarding' : 'control',
-      });
+      this.setState({ isGrowthExperimentEnabled: newOnboardingExperimentVariation });
     }
   }
 
@@ -93,7 +106,7 @@ export default class ChoiceScreen extends React.Component {
 
     const isButtonDisabled = isDefaultPathPending || isDevPathPending;
 
-    const buttonCopy = this.state.isGrowthExperiment
+    const buttonCopy = this.state.isGrowthExperimentEnabled
       ? 'Explore developer options'
       : 'Deploy a website in 3 steps';
 

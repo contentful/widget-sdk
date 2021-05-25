@@ -1,5 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
+// @ts-expect-error missing type declarations
 import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'core/utils/kefir';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
@@ -29,6 +30,12 @@ import { captureError } from 'core/monitoring';
 import { createPubSubClientForSpace } from 'services/PubSubService';
 import { getSpaceEnvCMAClient, getCMAClient } from 'core/services/usePlainCMAClient';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
+import {
+  EnvironmentProps as Environment,
+  EnvironmentAliasProps as EnvironmentAlias,
+  EnvironmentProps,
+} from 'contentful-management/types';
+import { SpaceContextType } from './spaceContextTypes';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 
@@ -36,24 +43,20 @@ const MASTER_ENVIRONMENT_ID = 'master';
 let enforcementsDeInit;
 
 const spaceContext = initSpaceContext();
-export const getSpaceContext = () => spaceContext;
+export const getSpaceContext = (): SpaceContextType => spaceContext;
 
 // Util function to reset the spaceContext with spaceId (and environmentId) params
-export const resetWithSpace = async (params) => {
+export const resetWithSpace = async (params: { spaceId: string; environmentId?: string }) => {
   const spaceData = await TokenStore.getSpace(params.spaceId);
   return spaceContext.resetWithSpace(spaceData, params.environmentId);
 };
 
 /**
- * @ngdoc service
- * @name spaceContext
- *
- * @description
  * This service holds all context related to a space, including
  * contentTypes, users, and helper methods.
  */
-function initSpaceContext() {
-  const publishedCTsBus$ = K.createPropertyBus([]);
+function initSpaceContext(): SpaceContextType {
+  const publishedCTsBus$ = K.createPropertyBus<any>([]);
 
   GlobalEventBus.on(GlobalEvents.RefreshPublishedContentTypes, () => {
     if (spaceContext?.publishedCTs?.refresh) {
@@ -61,7 +64,20 @@ function initSpaceContext() {
     }
   });
 
-  const context = {
+  const context: SpaceContextType = {
+    cma: (null as unknown) as SpaceContextType['cma'],
+    endpoint: (null as unknown) as SpaceContextType['endpoint'],
+    memberships: (null as unknown) as SpaceContextType['memberships'],
+    members: (null as unknown) as SpaceContextType['members'],
+    pubsubClient: (null as unknown) as SpaceContextType['pubsubClient'],
+    user: (null as unknown) as SpaceContextType['user'],
+    organization: (null as unknown) as SpaceContextType['organization'],
+    aliases: [],
+    environments: [],
+    docPool: null,
+    users: null,
+    uiConfig: null,
+    space: (null as unknown) as SpaceContextType['space'],
     resettingSpace: false,
 
     /**
@@ -73,32 +89,14 @@ function initSpaceContext() {
      */
     publishedCTs: {
       items$: publishedCTsBus$.property,
+      refresh: () => Promise.resolve(undefined),
+      getAllBare: () => [],
     },
-    /**
-     * @ngdoc method
-     * @name spaceContext#purge
-     * @description
-     * This method purges a space context, so it doesn't contain space any longer
-     */
+
     purge: function () {
       resetMembers(spaceContext);
     },
 
-    /**
-     * @ngdoc method
-     * @name spaceContext#resetWithSpace
-     * @description
-     * This method resets a space context with a given space.
-     * It requires an API space object. Internally we create
-     * @contentful/client instance.
-     *
-     * The returned promise resolves when all additional space
-     * resources have been fetched (environments, locales, content types).
-     *
-     * @param {API.Space} spaceData
-     * @param {string?} [uriEnvOrAliasId] environment id based on the uri
-     * @returns {Promise<self>}
-     */
     resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
       spaceContext.resettingSpace = true;
 
@@ -111,6 +109,7 @@ function initSpaceContext() {
          * `X-Contentful-Skip-Transformation` for CMA requests which exposes internal IDs.
          * Use e.g. `spaceContext.cma` or `sdk.space`  instead wherever possible.
          */
+        // @ts-expect-error missing newSpace type declarations
         let space = client.newSpace(spaceData);
 
         if (uriEnvOrAliasId) {
@@ -156,6 +155,7 @@ function initSpaceContext() {
         // and not the user, so the spaceId is required.
         enforcementsDeInit = EnforcementsService.init(spaceId);
 
+        // @ts-expect-error supress error
         spaceContext.pubsubClient = await createPubSubClientForSpace(spaceId);
 
         const start = Date.now();
@@ -198,11 +198,6 @@ function initSpaceContext() {
       return spaceContext;
     },
 
-    /**
-     * @description
-     * Returns ID of current space, if set
-     * @returns String
-     */
     getId: function () {
       return this.space && this.space.getId();
     },
@@ -220,44 +215,24 @@ function initSpaceContext() {
       return this.space;
     },
 
-    /**
-     * @name spaceContext#getEnvironmentId
-     * @description
-     * Returns the current environment ID, defaulting to `master`.
-     * Returns `undefined` if no space is set.
-     * @returns string
-     */
     getEnvironmentId: function () {
       if (this.space) {
         return _.get(this, ['space', 'environment', 'sys', 'id'], MASTER_ENVIRONMENT_ID);
       }
     },
 
-    /**
-     * @name spaceContext#getAliasId
-     * @description
-     * Returns the current alias ID, if the user is accessing an alias
-     * @returns string
-     */
     getAliasId: function () {
       if (this.space) {
-        return _.get(this, ['space', 'environmentMeta', 'aliasId'], null);
+        return _.get(this, ['space', 'environmentMeta', 'aliasId'], undefined);
       }
     },
 
-    /**
-     * @name spaceContext#isMasterEnvironment
-     * @param {envOrAlias} Environment or Alias
-     * @description
-     * Returns whether the current environment is aliased to 'master'
-     * or is 'master'
-     * Returns true for an environment object with a re-written sys.id of
-     * 'master' (aka the environment as accessed via it's alias)
-     * @returns boolean
-     */
-    isMasterEnvironment: function (
-      envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
-    ) {
+    isMasterEnvironment: function (environment) {
+      // @ts-expect-error ignore
+      const envOrAlias: Pick<Environment, 'sys'> =
+        environment ||
+        _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } });
+
       if (
         envOrAlias.sys.id === MASTER_ENVIRONMENT_ID ||
         _.find(envOrAlias.sys.aliases, (alias) => alias.sys.id === MASTER_ENVIRONMENT_ID)
@@ -273,41 +248,23 @@ function initSpaceContext() {
         ['environments'],
         [{ sys: { id: MASTER_ENVIRONMENT_ID } }]
       ).find(({ sys }) => sys.id === envId);
-      return this.isMasterEnvironment(envOrAlias);
+      return this.isMasterEnvironment(envOrAlias as any);
     },
-    /**
-     * @name spaceContext#getAliasesIds
-     * @description
-     * Returns the ids of the environments aliases referencing the current environment
-     * @returns array<string>
-     */
-    getAliasesIds: function (
-      env = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
-    ) {
+
+    getAliasesIds: function (environment) {
+      // @ts-expect-error ignore
+      const env: Pick<Environment, 'sys'> =
+        environment ||
+        _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } });
       if (!env.sys.aliases) return [];
       return env.sys.aliases.map(({ sys }) => sys.id);
     },
 
-    /**
-     * @name spaceContext#hasOptedIntoAliases
-     * @description
-     * Checks if the space is opted in to the environment alias feature
-     * @returns boolean
-     */
-    hasOptedIntoAliases: function (environments = _.get(this, ['environments'], [])) {
+    hasOptedIntoAliases: function (envs) {
+      const environments = envs || _.get(this, ['environments'], []);
       return environments.some(({ sys: { aliases = [] } }) => aliases.length > 0);
     },
 
-    /**
-     * @ngdoc method
-     * @name spaceContext#getData
-     * @param {string} path
-     * @param {*} defaultValue
-     * @description
-     * Returns nested value stored under `path` in current `space.data`.
-     * If not found, returns `defaultValue` (`undefined` when not provided)
-     * @returns *
-     */
     getData: function (path, defaultValue) {
       const data = _.get(this, 'space.data', {});
       return _.get(data, path, defaultValue);
@@ -335,7 +292,7 @@ function initSpaceContext() {
     K.onValue(publishedCTsForSpace.items$, (items) => publishedCTsBus$.set(items));
   }
 
-  function resetMembers(spaceContext) {
+  function resetMembers(spaceContext: SpaceContextType) {
     // Deinit the enforcement refreshing on space ID change, so that
     // the previous space ID enforcement information isn't queried
     if (enforcementsDeInit) {
@@ -343,6 +300,7 @@ function initSpaceContext() {
     }
 
     spaceContext.uiConfig = null;
+    // @ts-expect-error can be nullable
     spaceContext.space = null;
     spaceContext.users = null;
 
@@ -362,37 +320,49 @@ function initSpaceContext() {
    * @param {string} uriEnvOrAliasId
    * @returns {Promise}
    */
-  function setupEnvironments(spaceContext, uriEnvOrAliasId = MASTER_ENVIRONMENT_ID) {
+  function setupEnvironments(
+    spaceContext: SpaceContextType,
+    uriEnvOrAliasId: string = MASTER_ENVIRONMENT_ID
+  ) {
     return createEnvironmentsRepo(spaceContext.endpoint)
       .getAll()
-      .then(({ environments, aliases = [] }) => {
-        spaceContext.environments = deepFreeze(
-          environments.sort(
-            (envA, envB) =>
-              spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
-          )
-        );
-        spaceContext.aliases = deepFreeze(aliases);
-      })
+      .then(
+        ({
+          environments,
+          aliases = [],
+        }: {
+          environments: Environment[];
+          aliases: EnvironmentAlias[];
+        }) => {
+          spaceContext.environments = deepFreeze(
+            environments.sort((envA, envB) => {
+              return spaceContext.isMasterEnvironment(envB) > spaceContext.isMasterEnvironment(envA)
+                ? 1
+                : -1;
+            })
+          );
+          spaceContext.aliases = deepFreeze(aliases);
+        }
+      )
       .then(() => {
         spaceContext.space.environment = spaceContext.environments.find(
           ({ sys }) => sys.id === uriEnvOrAliasId
-        );
+        ) as EnvironmentProps;
 
         if (!spaceContext.space.environment) {
           // the current environment is aliased
           spaceContext.space.environment = spaceContext.environments.find(
             ({ sys: { aliases = [] } }) => aliases.some(({ sys }) => sys.id === uriEnvOrAliasId)
-          );
+          ) as EnvironmentProps;
           spaceContext.space.environmentMeta = {
-            environmentId: spaceContext.getEnvironmentId(),
+            environmentId: spaceContext.getEnvironmentId() as string,
             isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
             optedIn: spaceContext.hasOptedIntoAliases(),
             aliasId: uriEnvOrAliasId,
           };
         } else {
           spaceContext.space.environmentMeta = {
-            environmentId: spaceContext.getEnvironmentId(),
+            environmentId: spaceContext.getEnvironmentId() as string,
             isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
             optedIn: spaceContext.hasOptedIntoAliases(),
           };

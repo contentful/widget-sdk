@@ -30,6 +30,8 @@ import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getSpaceContext } from 'classes/spaceContext';
 import { openDuplicateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
 import { errorMessageBuilder } from '@contentful/editorial-primitives';
+import { checkComposeIsInstalled } from 'features/assembly-types';
+import { getAlphaHeader, ASSEMBLY_TYPES } from 'alphaHeaders';
 
 export function useCreateActions(props) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
@@ -409,12 +411,18 @@ export function useCreateActions(props) {
       }
 
       const cmaClient = getSpaceEnvCMAClient();
+
+      // Enable Assembly Types feature if Compose is installed
+      const isAssemblyEnabled = await checkComposeIsInstalled(spaceContext.getId());
+      const assemblyHeaders = isAssemblyEnabled ? getAlphaHeader(ASSEMBLY_TYPES) : {};
+
       const updatedContentType = await cmaClient.contentType.update(
         {
           contentTypeId: state.contentType.sys.id,
         },
         state.contentType,
         {
+          ...assemblyHeaders,
           // `X-Contentful-Skip-Transformation` needed here as the old code was relying on it.
           // This header makes the operation work with the internal ids for content type fields
           // instead of using their human-readable format

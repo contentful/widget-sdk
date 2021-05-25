@@ -160,7 +160,7 @@ export default function ScheduledActionsWidget({
     fetchJobs();
   }, [fetchJobs, publishedAt]);
 
-  const createJob = async ({ scheduledAt, action }) => {
+  const createJob = async ({ scheduledFor, action, timezone }) => {
     try {
       const job = await ScheduledActionsService.createJob(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
@@ -169,7 +169,8 @@ export default function ScheduledActionsWidget({
           entityId: entity.sys.id,
           action: action,
           linkType: entityType,
-          scheduledAt,
+          scheduledFor,
+          timezone,
         }),
         { 'environment.sys.id': environmentId }
       );
@@ -187,9 +188,9 @@ export default function ScheduledActionsWidget({
     }
   };
 
-  const handleCreate = async ({ scheduledAt, action }, timezone) => {
+  const handleCreate = async ({ scheduledFor, action }, timezone) => {
     setIsCreatingJob(true);
-    const job = await createJob({ scheduledAt, action });
+    const job = await createJob({ scheduledFor, action, timezone });
     if (job && job.sys) {
       Notification.success(`${entityTitle} was scheduled successfully`);
       setIsCreatingJob(false);
@@ -229,11 +230,11 @@ export default function ScheduledActionsWidget({
     }
   }, [showToast, entityType]);
 
-  const failedScheduleNote = (scheduledAt) => {
+  const failedScheduleNote = (scheduledFor) => {
     return (
       <>
         Due to validation errors this {entityType.toLowerCase()} failed to {lastJob.action} on{' '}
-        <DateTime date={scheduledAt} />. Please check individual fields and try your action again.
+        <DateTime date={scheduledFor} />. Please check individual fields and try your action again.
       </>
     );
   };

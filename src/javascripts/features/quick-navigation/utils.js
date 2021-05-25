@@ -3,6 +3,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
+import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 
 const RESULTS_LIMIT = 20;
 export const MIN_QUERY_LENGTH = 2;
@@ -20,10 +21,12 @@ const buildPathParams = (id, type) => {
   } else {
     params.contentTypeId = id;
   }
-  return {
-    path: ['spaces', 'detail', type, 'detail'],
-    params,
-  };
+
+  const path = hasEnvironmentSectionInUrl()
+    ? ['spaces', 'environment', type, 'detail']
+    : ['spaces', 'detail', type, 'detail'];
+
+  return { path, params };
 };
 
 const queryEntries = async (query) => {

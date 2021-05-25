@@ -80,6 +80,8 @@ interface SpacePlansTableProps {
   showSpacePlanChangeBtn?: boolean;
   // Id of the space that has been upgraded
   upgradedSpaceId?: string;
+  // optional v1 migration success indicator
+  showV1MigrationCommunication?: boolean;
 }
 
 export const SpacePlansTable = ({
@@ -91,6 +93,7 @@ export const SpacePlansTable = ({
   featureFlagLoading = false,
   upgradedSpaceId,
   organizationId,
+  showV1MigrationCommunication,
 }: SpacePlansTableProps) => {
   const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const [plansLookup, setPlansLookup] = useState({});
@@ -213,6 +216,9 @@ export const SpacePlansTable = ({
                   hasUpgraded={spaceId === upgradedSpaceId}
                   enterprisePlan={enterprisePlan}
                   showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                  showV1MigrationCommunication={
+                    showV1MigrationCommunication && plan?.legacyVersion === 'V1Migration'
+                  }
                 />
               ) : null;
             })

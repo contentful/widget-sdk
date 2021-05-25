@@ -10,6 +10,7 @@ import {
   Paragraph,
   Icon,
   Note,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -95,6 +96,13 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const canCreatePaidSpace = canUserCreatePaidSpace(organization);
   const spaceCardsDisabled = showPlatformsAboveSpaces && !selectedPlatform;
   const platformCardsDisabled = !showPlatformsAboveSpaces && !selectedPlan;
+  // V1 migration communication for team customers
+  const isV1MigrationSucceeded = organization.sys?._v1Migration?.status === 'succeeded';
+  const v1migrationDestination = organization.sys?._v1Migration?.destination;
+  const showV1MigrationNote =
+    isV1MigrationSucceeded &&
+    v1migrationDestination === 'team' &&
+    currentSpaceRatePlan?.legacyVersion === 'V1Migration';
 
   // Only check for unavailbity reasons if the user is changing a space
   const largestSpacePlanWithUnavailabityReasons =
@@ -208,6 +216,26 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
                 ? `Upgrade your ${spacePlanIsTrial ? 'trial' : ''} space to`
                 : 'Choose the space size that’s right for your project'}
             </Heading>
+
+            {showV1MigrationNote && (
+              <Note
+                className={styles.fullRow}
+                title={
+                  <div>
+                    Your space <strong>{currentSpace.name}</strong> was part of a legacy plan now
+                    with special pricing
+                  </div>
+                }>
+                Please take a look at the current prices below. As soon as you upgrade your space,
+                the old price will not be available. Got questions?{' '}
+                <TextLink
+                  href="https://www.contentful.com/support/"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  Contact us
+                </TextLink>
+              </Note>
+            )}
 
             {orgHasPaidSpaces &&
               selectedPlatform?.type === PlatformKind.WEB_APP_COMPOSE_LAUNCH &&

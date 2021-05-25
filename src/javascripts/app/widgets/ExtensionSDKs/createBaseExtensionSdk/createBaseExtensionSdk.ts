@@ -7,7 +7,8 @@ import {
 } from '@contentful/app-sdk';
 import { createAccessApi } from '../createAccessApi';
 import { createLocalesApi } from '../createLocalesApi';
-import { createUserApi, SpaceMember } from '../createUserApi';
+import { createUserApi } from '../createUserApi';
+import { SpaceMember } from 'classes/spaceContextTypes';
 import { createNotifierApi } from '../createNotifierApi';
 
 interface SharedBasedWidgetSDK {

@@ -14,7 +14,7 @@ import { useAsync } from 'core/hooks/useAsync';
 import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
 import { getSpace } from 'services/TokenStore';
-import { SpaceData } from 'core/services/SpaceEnvContext/types';
+import { SpaceData } from 'classes/spaceContextTypes';
 import { go } from 'states/Navigator';
 
 const styles = {

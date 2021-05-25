@@ -12,6 +12,7 @@ import {
   CardActions,
   DropdownList,
   DropdownListItem,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
@@ -34,6 +35,9 @@ const styles = {
   tableCellAlignedMiddle: css({
     verticalAlign: 'middle',
   }),
+  iconContainer: css({
+    maxHeight: '18px',
+  }),
 };
 
 export const SpacePlanRow = ({
@@ -45,6 +49,7 @@ export const SpacePlanRow = ({
   hasUpgraded,
   enterprisePlan,
   showSpacePlanChangeBtn,
+  showV1MigrationCommunication,
 }) => {
   const { space } = plan;
   const { isAccessible } = space;
@@ -134,11 +139,22 @@ export const SpacePlanRow = ({
               upgrade
             </TextLink>
             <br />
-            <Price
-              testId="subscription-page.spaces-list.plan-price"
-              value={plan.price}
-              unit="month"
-            />
+            <Flex alignItems="center">
+              <Price
+                testId="subscription-page.spaces-list.plan-price"
+                value={plan.price}
+                unit="month"
+              />
+              {showV1MigrationCommunication && (
+                <Flex marginLeft="spacing2Xs" className={styles.iconContainer}>
+                  <Tooltip
+                    containerElement="span"
+                    content="This space was part of a legacy plan now with special pricing">
+                    <Icon icon="InfoCircle" color="muted" />
+                  </Tooltip>
+                </Flex>
+              )}
+            </Flex>
           </>
         )}{' '}
       </TableCell>
@@ -206,6 +222,7 @@ SpacePlanRow.propTypes = {
   enterprisePlan: PropTypes.bool,
   hasUpgraded: PropTypes.bool,
   showSpacePlanChangeBtn: PropTypes.bool,
+  showV1MigrationCommunication: PropTypes.bool,
 };
 
 SpacePlanRow.defaultProps = {

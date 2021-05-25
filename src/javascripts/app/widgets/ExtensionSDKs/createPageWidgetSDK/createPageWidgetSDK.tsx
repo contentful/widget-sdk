@@ -1,6 +1,7 @@
 import { PageExtensionSDK } from '@contentful/app-sdk';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { createUserApi, SpaceMember } from '../createUserApi';
+import { createUserApi } from '../createUserApi';
+import { SpaceMember } from 'classes/spaceContextTypes';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
 import { createSpaceApi } from '../createSpaceApi';

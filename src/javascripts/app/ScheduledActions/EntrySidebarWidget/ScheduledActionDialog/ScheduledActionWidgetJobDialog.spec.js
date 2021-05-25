@@ -82,7 +82,7 @@ describe('ScheduledActionDialog', () => {
 
     expect(props.onCreate).toHaveBeenCalledWith(
       {
-        scheduledAt: expected,
+        scheduledFor: expected,
         action: 'publish',
       },
       'Africa/Abidjan'
@@ -120,7 +120,7 @@ describe('ScheduledActionDialog', () => {
     await schedulePublication(renderResult);
     expect(props.onCreate).toHaveBeenCalledWith(
       {
-        scheduledAt: expected,
+        scheduledFor: expected,
         action: 'publish',
       },
       timezone

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
-import StateRedirect from 'app/common/StateRedirect';
+import { RouteNavigate, useParams } from 'core/react-routing';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
@@ -43,19 +43,20 @@ export function KeyEditorRoute(props) {
     currentSpace,
   } = useSpaceEnvContext();
   const isSpaceAdmin = isAdmin(currentSpace);
+  const { apiKeyId } = useParams();
 
   return (
     <ApiKeyFetcher
       spaceId={spaceId}
       organizationId={organizationId}
-      apiKeyId={props.apiKeyId}
+      apiKeyId={apiKeyId}
       spaceEnvironmentsRepo={props.spaceEnvironmentsRepo}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <KeyEditorWorkbench />;
         }
         if (isError) {
-          return <StateRedirect path="^.list" />;
+          return <RouteNavigate replace route={{ path: 'api.keys.list' }} />;
         }
         return (
           <KeyEditor
@@ -77,7 +78,6 @@ export function KeyEditorRoute(props) {
 }
 
 KeyEditorRoute.propTypes = {
-  apiKeyId: PropTypes.string.isRequired,
   registerSaveAction: PropTypes.func.isRequired,
   setDirty: PropTypes.func.isRequired,
   spaceEnvironmentsRepo: PropTypes.object.isRequired,

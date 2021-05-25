@@ -71,5 +71,6 @@ src/javascripts/features/content-model-editor/    @contentful/team-dante
 src/javascripts/features/embargoed-assets/  @team-dev-velocity
 
 # Team React Migration
-src/javascripts/features/quick-navigation/  @team-react
-src/javascripts/features/loading-state/     @team-react
+src/javascripts/features/quick-navigation/      @team-react
+src/javascripts/features/loading-state/         @team-react
+src/javascripts/features/space-hibernation/     @team-react

@@ -60,7 +60,7 @@ function ScheduledActionWidgetJobDialog({
 
     onCreate(
       {
-        scheduledAt: formatScheduledAtDate({ date, time, timezone }),
+        scheduledFor: formatScheduledAtDate({ date, time, timezone }),
         action,
       },
       timezone

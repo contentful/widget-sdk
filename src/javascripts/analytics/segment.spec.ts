@@ -1,6 +1,7 @@
 import { noop } from 'lodash';
 import { getSegmentSchemaForEvent } from './transform';
 import { Schema } from './SchemasSegment';
+import { TransformedEventData } from './types';
 
 let mockAnalytics;
 
@@ -74,12 +75,14 @@ describe('Segment', () => {
       it('tracks passed `data` as `{data}', () => {
         segment.track(legacyEventName, { data });
         expect(track).toHaveBeenCalledWith(schema.name, { data }, expect.any(Object));
+        expect(track).toHaveBeenCalledTimes(1);
       });
 
       it('it passes other props next to `data`', () => {
         const dataWithMoreProps = { data, more: 'data', contexts: { ...data } };
         segment.track(legacyEventName, { ...dataWithMoreProps });
         expect(track).toHaveBeenCalledWith(schema.name, dataWithMoreProps, expect.any(Object));
+        expect(track).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -90,6 +93,41 @@ describe('Segment', () => {
 
       segment.track(nonLegacyEventName, { data });
       expect(track).toHaveBeenCalledWith(schema.name, data, expect.any(Object));
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    describe('Snowplow -> Segment new way of tracking experiment', () => {
+      const NO_INTEGRACTIONS = { integrations: { All: false } };
+
+      it('transformed data against Snowplow schema ID instead of internal web app event ID', () => {
+        const eventData = {
+          data: {
+            action: 'open',
+            organization_id: 'org-id',
+            space_id: 'space-id',
+            executing_user_id: 'user-id',
+          },
+          schema: 'snowplow-schema',
+          contexts: {
+            foo: 'bar',
+          },
+        } as TransformedEventData;
+        const expectedPayload = {
+          action: 'open',
+          organization_key: 'org-id', // id -> key
+          space_key: 'space-id', // id -> key
+          // removed `executing_user_id`
+          contexts: '{"foo":"bar"}', // serialized contexts JSON blob on main event data
+        };
+        const event = 'slide_in_editor:open';
+
+        segment.track(event, eventData);
+        expect(track).toHaveBeenCalledWith('slide_in_editor', expectedPayload, NO_INTEGRACTIONS);
+
+        // We still track "the old way" as well as this is just an experiment for a few events:
+        expect(track).toHaveBeenCalledTimes(2);
+        expect(track).toHaveBeenCalledWith('slide_in_editor:open', eventData, expect.any(Object));
+      });
     });
   });
 });

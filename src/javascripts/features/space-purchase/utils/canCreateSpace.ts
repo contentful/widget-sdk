@@ -1,4 +1,4 @@
-import type { Organization } from 'core/services/SpaceEnvContext/types';
+import type { Organization } from 'classes/spaceContextTypes';
 import type { FreeSpaceResource } from '../types';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';

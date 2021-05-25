@@ -23,6 +23,7 @@ export const TEAAdminSpaceHome = ({
   isSupportEnabled,
   hasTeamsEnabled,
   isTrialSpace,
+  inviteCardExperimentEnabled,
 }) => {
   return (
     <WidgetContainer>
@@ -69,7 +70,12 @@ export const TEAAdminSpaceHome = ({
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <AddCoworkerCTA spaceId={spaceId} orgId={orgId} hasTeamsEnabled={hasTeamsEnabled} />
+          <AddCoworkerCTA
+            spaceId={spaceId}
+            orgId={orgId}
+            hasTeamsEnabled={hasTeamsEnabled}
+            inviteCardExperimentEnabled={inviteCardExperimentEnabled}
+          />
         </WidgetContainer.Col>
         {isSupportEnabled && (
           <WidgetContainer.Col>
@@ -104,4 +110,5 @@ TEAAdminSpaceHome.propTypes = {
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
+  inviteCardExperimentEnabled: PropTypes.bool,
 };

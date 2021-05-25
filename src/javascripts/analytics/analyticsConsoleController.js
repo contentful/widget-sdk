@@ -5,10 +5,14 @@ import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
 import { captureWarning } from 'core/monitoring';
 
-import { getSegmentSchemaForEvent, getSnowplowSchemaForEvent } from 'analytics/transform';
+import {
+  getSegmentSchemaForEvent,
+  getSegmentExperimentSchemaForEvent,
+  getSnowplowSchemaForEvent,
+} from 'analytics/transform';
 import * as Snowplow from 'analytics/snowplow';
 import { render } from 'analytics/AnalyticsConsole';
-import { buildPayload } from './segment';
+import { buildPayload, buildExperimentPayload } from './segment';
 
 /**
  * @description
@@ -105,6 +109,14 @@ export function add(name, transformedData, rawData) {
     : {
         data: rawData,
       };
+
+  const experimentSchema = getSegmentExperimentSchemaForEvent(name);
+  if (experimentSchema) {
+    event.segmentExperiment = {
+      name: experimentSchema.name,
+      data: buildExperimentPayload(transformedData),
+    };
+  }
 
   eventsBus.emit(event);
   throwOrLogInvalidEvent(event);

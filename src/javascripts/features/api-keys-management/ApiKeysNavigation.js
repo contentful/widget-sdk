@@ -2,8 +2,8 @@ import React from 'react';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { go } from 'states/Navigator';
 import { Tabs, Tab } from '@contentful/forma-36-react-components';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   container: css({
@@ -16,13 +16,14 @@ const styles = {
 };
 
 export function ApiKeysNavigation(props) {
+  const navigate = useRouteNavigate();
   return (
     <div className={cx('workbench-nav', styles.container)}>
       <Tabs>
         <Tab
           id="cda-tokens"
           onSelect={() => {
-            go({ path: 'spaces.detail.api.keys.list' });
+            navigate({ path: 'api.keys.list' });
           }}
           selected={props.currentTab === 'cda-tokens'}
           testId="api-keys-cda-tokens-tab">
@@ -33,7 +34,7 @@ export function ApiKeysNavigation(props) {
           id="cma-tokens"
           selected={props.currentTab === 'cma-tokens'}
           onSelect={() => {
-            go({ path: 'spaces.detail.api.cma_tokens' });
+            navigate({ path: 'api.cma_tokens' });
           }}
           testId="api-keys-cma-tokens-tab">
           Content management tokens

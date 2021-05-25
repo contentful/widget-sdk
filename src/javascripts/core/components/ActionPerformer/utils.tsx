@@ -10,7 +10,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 
 export async function getUser(id: string) {
   const spaceContext = getSpaceContext();
-  const user = await spaceContext.users.get(id);
+  const user = await spaceContext.users?.get(id);
   if (!user) {
     return '';
   }

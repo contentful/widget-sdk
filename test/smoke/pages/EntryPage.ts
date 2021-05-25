@@ -8,6 +8,6 @@ export class EntryPage extends AbstractPage {
   }
 
   get container() {
-    return cy.findByTestId('entry-view');
+    return cy.findByTestId('entry-view', { timeout: 20000 });
   }
 }

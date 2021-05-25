@@ -7,8 +7,8 @@ import { captureError } from 'core/monitoring';
 
 const MAX_ENV_ID_LENGTH = 40;
 
-const ID_EXISTS_ERROR_MESSAGE =
-  'This ID already exists in your space. Please make sure it’s unique.';
+const DUPLICATE_ID_ERROR_MESSAGE =
+  'An environment or alias with the same ID already exists in your space. Make sure to use a unique ID.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
   'Please use only letters, numbers, underscores, dashes and dots for the ID.';
 const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
@@ -79,7 +79,7 @@ export const useCreateEnvState = (props) => {
   const [state, dispatch] = useReducer(createEnvReducer, initialState);
 
   const Submit = async () => {
-    const errors = validate(state.fields);
+    const errors = validate(state);
     if (errors) {
       dispatch({ type: SET_ERRORS, errors });
     } else {
@@ -99,7 +99,7 @@ export const useCreateEnvState = (props) => {
           errors: {
             id: [
               {
-                message: ID_EXISTS_ERROR_MESSAGE,
+                message: DUPLICATE_ID_ERROR_MESSAGE,
               },
             ],
           },
@@ -135,7 +135,7 @@ export const useCreateEnvState = (props) => {
  * value is invalid.
  */
 const validations = {
-  id: (value) => {
+  id: (value, state) => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
     }
@@ -147,6 +147,10 @@ const validations = {
     if (!isValidResourceId(value)) {
       return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
+
+    if (state?.environments?.some(({ id }) => id === value)) {
+      return DUPLICATE_ID_ERROR_MESSAGE;
+    }
   },
 };
 
@@ -156,12 +160,13 @@ const validations = {
  * Returns the fields with the errors set if any of the values is
  * invalid and returns `undefined` otherwise.
  */
-function validate(fields) {
+function validate(state) {
+  const { fields } = state;
   let hasErrors = false;
 
   const errors = mapValues(fields, (field, name) => {
     const validateField = validations[name];
-    const errorMessage = validateField(field.value);
+    const errorMessage = validateField(field.value, state);
     if (errorMessage) {
       hasErrors = true;
       return [

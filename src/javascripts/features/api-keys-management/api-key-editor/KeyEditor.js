@@ -19,9 +19,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { KeyEditorActions } from './KeyEditorActions';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
-import * as Navigator from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
 import { captureWarning } from 'core/monitoring';
+import { useRouteNavigate } from 'core/react-routing';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 const styles = {
   readOnlyNote: css({
@@ -111,6 +112,7 @@ export function KeyEditor({
   ...restProps
 }) {
   const [apiKey, setApiKey] = useState(restProps.apiKey);
+  const navigate = useRouteNavigate();
 
   const pristineModel = {
     name: {
@@ -150,9 +152,7 @@ export function KeyEditor({
     try {
       await getApiKeyRepo().remove(apiKey.sys.id);
       setDirty(false);
-      await Navigator.go({
-        path: '^.list',
-      });
+      navigate({ path: 'api.keys.list' });
       notify.deleteSuccess(apiKey);
     } catch (err) {
       notify.deleteFail(err, apiKey);
@@ -202,6 +202,7 @@ export function KeyEditor({
           />
         ) : null
       }>
+      {dirty && <UnsavedChangesBlocker when save={onSave} />}
       {!canEdit && (
         <Note noteType="warning" className={styles.readOnlyNote}>
           You have read-only access to this API key. If you need to edit it please contact your

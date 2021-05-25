@@ -15,7 +15,7 @@ import {
   getOrganizationName,
   getOrganization,
 } from './utils';
-import { SpaceEnv, SpaceEnvContextValue, Environment, SpaceEnvUsers } from './types';
+import { SpaceEnvContextValue } from './types';
 import { getSpaceContext } from 'classes/spaceContext';
 import { ContentType } from './types';
 
@@ -46,12 +46,11 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     return deregister;
   }, []); // eslint-disable-line
 
-  // TODO: Methods depending on the angular space context directly, they should be refactored
-  function getSpace(): SpaceEnv {
+  function getSpace() {
     return getSpaceContext()?.getSpace();
   }
 
-  function getEnvironments(): Environment[] {
+  function getEnvironments() {
     return getSpaceContext()?.environments ?? [];
   }
 
@@ -59,10 +58,6 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     const angularSpaceContext = getSpaceContext();
     if (!angularSpaceContext?.publishedCTs?.items$) return [];
     return K.getValue(angularSpaceContext.publishedCTs.items$) || [];
-  }
-
-  function getUsers(): SpaceEnvUsers {
-    return getSpaceContext()?.users;
   }
 
   function getDocPool() {
@@ -97,7 +92,6 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceId,
     currentSpaceName: getSpaceName(space),
     currentSpaceContentTypes: contentTypes,
-    currentUsers: getUsers(),
     documentPool: getDocPool(),
   };
 

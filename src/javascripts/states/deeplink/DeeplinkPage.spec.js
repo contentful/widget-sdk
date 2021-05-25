@@ -61,6 +61,7 @@ describe('deeplink/DeeplinkPage', () => {
       path: ['spaces', 'environment', 'apps', 'list'],
       params: {
         spaceId: '1234',
+        app: 'test-app',
       },
       deeplinkOptions: {
         selectSpace: true,
@@ -128,7 +129,7 @@ describe('deeplink/DeeplinkPage', () => {
 
     expect($state.go).toHaveBeenCalledWith(
       'spaces.environment.apps.list',
-      { environmentId: 'test', spaceId: 'current-space' },
+      { environmentId: 'test', spaceId: 'current-space', app: 'test-app' },
       { location: 'replace' }
     );
   });
