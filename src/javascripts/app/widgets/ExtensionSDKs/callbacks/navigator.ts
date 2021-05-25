@@ -12,6 +12,7 @@ import * as Navigator from 'states/Navigator';
 import { AssetProps, EntryProps } from 'contentful-management/types';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { router } from 'core/react-routing';
+import localeStore from 'services/localeStore';
 
 const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
   [WidgetNamespace.EXTENSION]: {
@@ -41,6 +42,49 @@ interface MakeNavigateToPageProps {
     widgetNamespace: WidgetNamespace;
   };
   isOnPageLocation?: boolean;
+}
+
+function onSlideInNavigation(fn) {
+  const funcWrapper = ({ newSlideLevel, oldSlideLevel }) => {
+    fn({ newSlideLevel, oldSlideLevel });
+  };
+  SlideInNavigator.slideInStackEmitter.on(
+    SlideInNavigator.SlideEventTypes.SLIDE_LEVEL_CHANGED,
+    funcWrapper
+  );
+  return () => {
+    SlideInNavigator.slideInStackEmitter.off(
+      SlideInNavigator.SlideEventTypes.SLIDE_LEVEL_CHANGED,
+      funcWrapper
+    );
+  };
+}
+
+async function openBulkEditor(
+  entryId: string,
+  options: {
+    fieldId: string;
+    locale: string;
+    index: number;
+  }
+) {
+  const { fieldId, locale, index } = options;
+  const isAnotherBulkEditorOpen = SlideInNavigator.getSlideInEntities().find(
+    (i) => i.type === 'BulkEditor'
+  );
+
+  if (isAnotherBulkEditorOpen) {
+    throw new Error(`Can't open bulk editor when there is another bulk editor open`);
+  }
+
+  const path = [entryId, fieldId, localeStore.toInternalCode(locale), index];
+
+  const slide = SlideInNavigator.goToSlideInEntity({
+    type: 'BulkEditor',
+    path,
+  });
+
+  return { navigated: true, slide };
 }
 
 function makeNavigateToPage(props: MakeNavigateToPageProps) {
@@ -172,21 +216,14 @@ export function createNavigatorCallbacks(
       return openEntity({ entity: entry, options });
     },
 
-    // @ts-expect-error todo
-    onSlideInNavigation(fn) {
-      return undefined;
-    },
     openAppConfig(): Promise<void> {
       return Promise.resolve(undefined);
     },
     openAsset(asset: AssetProps, options?: NavigatorAPIOptions) {
       return openEntity({ entity: asset, options });
     },
-
-    // @ts-expect-error todo
-    openBulkEditor(entryId: string, options) {
-      return Promise.resolve({ navigated: false });
-    },
+    onSlideInNavigation,
+    openBulkEditor,
     openCurrentAppPage(options?: AppPageLocationOptions) {
       return navigateTo({ ...options, type: WidgetNamespace.EXTENSION });
     },
