@@ -1,3 +1,5 @@
+import { ContentTypeProps } from 'contentful-management/types';
+
 export interface SpaceEnvContextValue {
   currentEnvironment?: Environment;
   currentEnvironmentAliasId?: string;
@@ -43,19 +45,7 @@ export interface ContentTypeField {
 
 export type ContentTypeValidation = Record<string, unknown>;
 
-export interface ContentTypeSys {
-  type: string;
-  id: string;
-  revision: number;
-  createdAt: string;
-  updatedAt: string;
-  environment: {
-    sys: LinkSys;
-  };
-  space: {
-    sys: LinkSys;
-  };
-}
+export type ContentTypeSys = ContentTypeProps['sys'];
 
 export interface SpaceEnv {
   data: SpaceData;

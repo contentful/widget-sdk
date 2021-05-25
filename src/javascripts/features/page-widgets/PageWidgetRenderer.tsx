@@ -33,6 +33,7 @@ import { getUserSync } from '../../services/TokenStore';
 import { FLAGS, getVariation } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
 import { createNavigatorCallbacks } from '../../app/widgets/ExtensionSDKs/callbacks/navigator';
+import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -120,8 +121,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
       return null;
 
     return useExperienceSDK
-      ? ((createPageWidgetSDK({
-          // @ts-expect-error TODO
+      ? (createPageWidgetSDK({
           cma: customWidgetPlainClient,
           widgetId: widget.id,
           widgetNamespace: widget.namespace,
@@ -129,11 +129,10 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           space: currentSpaceData,
           widgetLoader,
           user: getUserSync(),
-          // @ts-expect-error TODO
-          contentTypes: currentSpaceContentTypes,
+          contentTypes: currentSpaceContentTypes.map((ct) => createPublicContentType(ct)),
           environment: currentEnvironment,
-          // @ts-expect-error TODO: active locale (singular) seems unneeded here
           locales: {
+            activeLocaleCode: LocaleStore.getFocusedLocale().code,
             defaultLocaleCode: LocaleStore.getDefaultLocale().code,
             list: LocaleStore.getLocales(),
           },
@@ -153,7 +152,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
               isOnPageLocation: true,
             }),
           },
-        }) as unknown) as PageExtensionSDK) //TODO
+        }) as PageExtensionSDK)
       : localCreatePageWidgetSDK({
           widgetNamespace: widget.namespace,
           widgetId: widget.id,

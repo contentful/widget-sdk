@@ -50,7 +50,9 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
     { type: 'plain', defaults }
   );
 
-  const batchClient = options?.noBatch ? undefined : createDefaultBatchClient(client);
+  const batchClient = options?.noBatch
+    ? undefined
+    : (createDefaultBatchClient(client) as typeof client);
 
   const internal = createInternalMethods(client.raw);
 
