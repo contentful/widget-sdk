@@ -25,6 +25,7 @@ export const AdminSpaceHome = ({
   hasTeamsEnabled,
   isTrialSpace,
   isEmptySpace,
+  inviteCardExperimentEnabled,
 }) => {
   const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
   const spaceContext = useSpaceEnvContext();
@@ -104,7 +105,12 @@ export const AdminSpaceHome = ({
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <AddCoworkerCTA orgId={orgId} spaceId={spaceId} hasTeamsEnabled={hasTeamsEnabled} />
+          <AddCoworkerCTA
+            orgId={orgId}
+            spaceId={spaceId}
+            hasTeamsEnabled={hasTeamsEnabled}
+            inviteCardExperimentEnabled={inviteCardExperimentEnabled}
+          />
         </WidgetContainer.Col>
         {isSupportEnabled && (
           <WidgetContainer.Col>
@@ -136,4 +142,5 @@ AdminSpaceHome.propTypes = {
   hasTeamsEnabled: PropTypes.bool.isRequired,
   isTrialSpace: PropTypes.bool,
   isEmptySpace: PropTypes.bool,
+  inviteCardExperimentEnabled: PropTypes.bool,
 };

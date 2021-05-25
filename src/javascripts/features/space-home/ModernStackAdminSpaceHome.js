@@ -23,6 +23,7 @@ export const ModernStackAdminSpaceHome = ({
   entry,
   isSupportEnabled,
   hasTeamsEnabled,
+  inviteCardExperimentEnabled,
 }) => {
   const prefix = getStoragePrefix();
   const deploymentProvider = store.get(`${prefix}:deploymentProvider`);
@@ -73,7 +74,12 @@ export const ModernStackAdminSpaceHome = ({
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <AddCoworkerCTA spaceId={spaceId} orgId={orgId} hasTeamsEnabled={hasTeamsEnabled} />
+          <AddCoworkerCTA
+            spaceId={spaceId}
+            orgId={orgId}
+            hasTeamsEnabled={hasTeamsEnabled}
+            inviteCardExperimentEnabled={inviteCardExperimentEnabled}
+          />
         </WidgetContainer.Col>
         {isSupportEnabled && (
           <WidgetContainer.Col>
@@ -107,4 +113,5 @@ ModernStackAdminSpaceHome.propTypes = {
   entry: PropTypes.object,
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
+  inviteCardExperimentEnabled: PropTypes.bool,
 };

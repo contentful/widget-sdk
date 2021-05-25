@@ -73,6 +73,10 @@ const fetchData =
       });
     }
 
+    const inviteCardExperimentEnabled = await getVariation(FLAGS.NEW_COWORKER_INVITE_CARD, {
+      organizationId: currentOrganizationId,
+    });
+
     const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
 
     const isSpaceEmpty = await isEmptySpace(currentSpaceContentTypes, currentSpace);
@@ -99,6 +103,7 @@ const fetchData =
           hasTeamsEnabled,
           cdaToken: key.accessToken,
           cpaToken: keyWithPreview.preview_api_key.accessToken,
+          inviteCardExperimentEnabled,
         });
       }
 
@@ -113,10 +118,12 @@ const fetchData =
           hasTeamsEnabled,
           managementToken: credentials && credentials.managementToken,
           personEntry,
+          inviteCardExperimentEnabled,
         });
       } else {
         setState({
           hasTeamsEnabled,
+          inviteCardExperimentEnabled,
         });
       }
       setLoading(false);
@@ -131,8 +138,17 @@ export const SpaceHome = () => {
     currentSpaceContentTypes,
     currentOrganizationId,
   } = useSpaceEnvContext();
-  const [{ managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled }, setState] =
-    useState({});
+  const [
+    {
+      managementToken,
+      personEntry,
+      cdaToken,
+      cpaToken,
+      hasTeamsEnabled,
+      inviteCardExperimentEnabled,
+    },
+    setState,
+  ] = useState({});
   const [isLoading, setLoading] = useState(true);
   const [spaceTemplateCreated, setSpaceTemplateCreated] = useState(false);
   const [isSpaceEmpty, setIsSpaceEmpty] = useState(false);
@@ -195,7 +211,6 @@ export const SpaceHome = () => {
       ]
     )
   );
-
   if (!isLoading && isSpaceAdmin) {
     if (isTEA && cdaToken && cpaToken) {
       adminSpaceHomePage = (
@@ -208,6 +223,7 @@ export const SpaceHome = () => {
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isEnterpriseTrialSpace}
+          inviteCardExperimentEnabled={inviteCardExperimentEnabled}
         />
       );
     } else if (isModernStack) {
@@ -219,6 +235,7 @@ export const SpaceHome = () => {
           entry={personEntry}
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
+          inviteCardExperimentEnabled={inviteCardExperimentEnabled}
         />
       );
     } else {
@@ -231,6 +248,7 @@ export const SpaceHome = () => {
           hasTeamsEnabled={hasTeamsEnabled}
           isTrialSpace={isEnterpriseTrialSpace}
           isEmptySpace={isSpaceEmpty}
+          inviteCardExperimentEnabled={inviteCardExperimentEnabled}
         />
       );
     }
