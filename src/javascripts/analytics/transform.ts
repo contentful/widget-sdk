@@ -1,4 +1,4 @@
-import { get as getAtPath, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { getSnowplowSchema } from './SchemasSnowplow';
 import * as segmentTypewriterPlans from './events';
 import { getSegmentSchema } from './SchemasSegment';
@@ -354,9 +354,9 @@ registerSnowplowEvent('search:search_terms_migrated', 'ui_config_migrate', Searc
 
 // TODO Remove ":" from Segment schema names.
 registerSegmentEvent('search:entry_clicked', 'search:entry_clicked', SearchAndViewsWithSequence);
-// TODO: Re-implement tracking or remove:
 registerSegmentEvent('search:filter_added', 'search:filter_added', SearchAndViewsWithSequence);
 registerSegmentEvent('search:filter_removed', 'search:filter_removed', SearchAndViewsWithSequence);
+// TODO: Re-implement tracking or remove:
 registerSegmentEvent('search:query_changed', 'search:query_changed', SearchAndViewsWithSequence);
 
 registerSnowplowEvent(
@@ -568,8 +568,8 @@ function registerEnvironmentAliasesEvent(event) {
   registerSnowplowEvent(event, 'environment_aliases', EnvironmentAliases);
 }
 
-export function eventExists(eventName) {
-  return !!getAtPath(_events, [eventName]);
+export function eventExists(event) {
+  return !!_events[event];
 }
 
 /**
