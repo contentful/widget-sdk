@@ -1,14 +1,14 @@
-import { get, noop } from 'lodash';
-import * as K from 'core/utils/kefir';
-import * as PathUtils from 'utils/Path';
+import { EntryFieldAPI } from '@contentful/app-sdk';
+import { Document } from '@contentful/editorial-primitives';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import * as Analytics from 'analytics/Analytics';
-import localeStore from 'services/localeStore';
-import { EntryFieldAPI } from '@contentful/app-sdk';
-import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
-import type { Document } from '@contentful/editorial-primitives';
-import { InternalContentTypeField } from './createContentTypeApi';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
+import * as K from 'core/utils/kefir';
+import { get, noop } from 'lodash';
+import localeStore from 'services/localeStore';
+import * as PathUtils from 'utils/Path';
+import { InternalContentTypeField } from './createContentTypeApi';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { serializeJSONValue } from './utils';
 
 const ERROR_CODES = {

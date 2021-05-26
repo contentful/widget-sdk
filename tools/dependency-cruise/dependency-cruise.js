@@ -51,8 +51,11 @@ module.exports = {
             might typically want to exclude these from reachability rules.
             The same goes for typescript definition files:
            */
+        /**
+         * Files in `ExtensionsSDK` are only ignored temporarily as part of the App Compatibility epic (https://contentful.atlassian.net/browse/EXT-2680).
+         */
         pathNot:
-          'unused__|__mocks__|__tests__|__fixtures__|node_modules|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts|tsx)$|\\.d\\.ts$',
+          'unused__|__mocks__|__tests__|__fixtures__|node_modules|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts|tsx)$|\\.d\\.ts|src\\/javascripts\\/app\\/widgets\\/ExtensionSDKs\\/(trackingClient|createPublicContentType|createCmaDocumentWithApiNames)\\.ts||$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the

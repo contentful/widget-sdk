@@ -65,10 +65,10 @@ export function SpacePlans({
 
   // fetch feature flags
   const { isLoading, data } = useAsync(
-    useCallback(() => fetchFeatureFlags(enterprisePlan, organizationId), [
-      enterprisePlan,
-      organizationId,
-    ])
+    useCallback(
+      () => fetchFeatureFlags(enterprisePlan, organizationId),
+      [enterprisePlan, organizationId]
+    )
   );
 
   // Enterprise admin or owners can manage used and unused spaces
@@ -137,7 +137,6 @@ export function SpacePlans({
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
               spacePlans={spacePlans}
-              userCanManageSpaces={userCanManageSpaces}
             />
           )}
         </>

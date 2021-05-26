@@ -14,8 +14,8 @@ interface CreateEntryApiOptions {
   setInvalid: (localeCode: string, value: boolean) => void;
   fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
-  widgetNamespace: string;
   widgetId: string;
+  widgetNamespace: string;
 }
 
 export function createEntryApi({
@@ -35,8 +35,8 @@ export function createEntryApi({
       setInvalid,
       fieldLocaleListeners,
       readOnly,
-      widgetNamespace,
       widgetId,
+      widgetNamespace,
     });
   });
 

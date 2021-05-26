@@ -34,9 +34,9 @@ interface CreateSidebarWidgetSDKOptions {
   preferences: Proxy<Preferences>;
   spaceContext: ReturnType<typeof getSpaceContext>;
   cma: APIClient;
-  widgetNamespace: WidgetNamespace;
-  widgetId: string;
   fieldLocaleListeners: { lookup: FieldLocaleLookup };
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
 }
 
 export const createSidebarWidgetSDK = ({
@@ -48,9 +48,9 @@ export const createSidebarWidgetSDK = ({
   parameters,
   spaceContext,
   cma,
-  widgetNamespace,
-  widgetId,
   fieldLocaleListeners,
+  widgetId,
+  widgetNamespace,
 }: CreateSidebarWidgetSDKOptions): SidebarExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
   const apiClient = getBatchingApiClient(cma);
@@ -70,8 +70,8 @@ export const createSidebarWidgetSDK = ({
     // field, but in context of sidebar there is no current field. We should move
     // it to field-locale level in a long run.
     setInvalid: noop,
-    widgetNamespace,
     widgetId,
+    widgetNamespace,
   });
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember);

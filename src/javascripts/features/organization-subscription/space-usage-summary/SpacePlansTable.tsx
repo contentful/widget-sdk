@@ -121,12 +121,16 @@ export const SpacePlansTable = ({
 
   const sortParam = buildSortParam(sortColumn, sortOrder);
 
-  const { isLoading: spacesUsageLoading, error, data } = useAsync(
-    useCallback(() => fetchSpacesUsage(organizationId, sortParam, pagination), [
-      organizationId,
-      sortParam,
-      pagination,
-    ])
+  const {
+    isLoading: spacesUsageLoading,
+    error,
+    data,
+  } = useAsync(
+    useCallback(async () => {
+      if (!featureFlagLoading) {
+        return fetchSpacesUsage(organizationId, sortParam, pagination);
+      }
+    }, [organizationId, sortParam, pagination, featureFlagLoading])
   );
 
   useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
