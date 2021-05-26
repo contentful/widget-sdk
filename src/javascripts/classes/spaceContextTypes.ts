@@ -11,6 +11,7 @@ import {
   EnvironmentAliasProps,
   SpaceMembershipProps,
   MetaSysProps,
+  Space,
 } from 'contentful-management/types';
 
 export type SpaceMember = {
@@ -40,7 +41,7 @@ export interface SpaceData {
   name: string;
   activatedAt: string;
   readOnlyAt: string;
-  sys: BasicMetaSysProps;
+  sys: Space['sys'];
   currentShard: any;
   spaceMembership: SpaceMembershipProps;
   spaceMember: SpaceMember;

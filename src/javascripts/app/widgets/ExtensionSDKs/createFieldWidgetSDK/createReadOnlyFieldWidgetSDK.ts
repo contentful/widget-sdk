@@ -85,8 +85,6 @@ export function createReadonlyFieldWidgetSDK({
       data: entry,
       setDeleted: noop,
     },
-    //TODO: validate we can expect the error
-    //@ts-expect-error internalCT can have undefined for some sys fields where ContentType cannot
     contentType: internalContentType,
     entityRepo: readOnlyEntityRepo,
     getLocales: () => TheLocaleStore.getPrivateLocales(),

@@ -32,9 +32,8 @@ import { SlugEditor } from '@contentful/field-editor-slug';
 import EntryEditorTypes, { EntryEditorWidget } from 'app/entry_editor/EntryEditorWidgetTypes';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { CombinedLinkActions } from '@contentful/field-editor-reference';
-import { EntityType, FieldExtensionSDK } from '@contentful/field-editor-reference/dist/types';
 import { InternalSpaceAPI } from '../app/widgets/ExtensionSDKs/createSpaceApi';
-import { DialogsAPI } from '@contentful/app-sdk';
+import { DialogsAPI, ContentEntityType, FieldExtensionSDK } from '@contentful/app-sdk';
 import { StreamBus } from '../core/utils/kefir';
 import { RenderCustomActions } from '../app/widgets/ReferenceEditor/types';
 
@@ -46,7 +45,7 @@ export interface WidgetApi extends FieldExtensionSDK {
 export interface FieldEditorParameters {
   loadEvents: StreamBus<any>;
   widgetApi: WidgetApi;
-  entityType: EntityType;
+  entityType: ContentEntityType;
 }
 
 interface WidgetDescriptor {

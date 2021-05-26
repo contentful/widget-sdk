@@ -10,7 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
-    "@contentful/app-sdk": "^4.0.0-alpha.6",
+    "@contentful/app-sdk": "^4.0.0-alpha.7",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/editorial-primitives": "^1.3.2",
     "@contentful/entity-search": "^1.2.0",
@@ -246,6 +246,7 @@
     "mini-css-extract-plugin": "^1.3.9",
     "node-fetch": "^2.6.1",
     "node-jsx": "^0.13.3",
+    "npm-force-resolutions": "0.0.10",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "patch-package": "^6.4.7",
     "postcss-svgo": "^4.0.3",
@@ -275,6 +276,7 @@
   },
   "scripts": {
     "postinstall": "patch-package",
+    "preinstall": "npx npm-force-resolutions",
     "prepare": "relative-deps",
     "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "NODE_ENV=development webpack serve",
@@ -339,5 +341,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "resolutions": {
+    "@contentful/app-sdk": "4.0.0-alpha.7"
   }
 }

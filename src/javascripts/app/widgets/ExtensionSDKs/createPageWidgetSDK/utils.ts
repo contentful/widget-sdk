@@ -1,11 +1,11 @@
-import { IdsAPI, User } from '@contentful/app-sdk';
+import { IdsAPI, UserAPI } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 interface CreateIdsOptions {
   spaceId: string;
   envId: string;
   envAliasId: string | null;
-  user: User;
+  user: UserAPI;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
 }

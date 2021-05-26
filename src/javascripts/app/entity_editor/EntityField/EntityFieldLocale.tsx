@@ -81,7 +81,7 @@ export function EntityFieldLocale({
         field={widget.field}
         locale={locale}
         access={fieldLocale.access}
-        entityType={editorContext.entityInfo.type}
+        entityType={editorContext.entityInfo.type as 'Entry' | 'Asset'}
         withLocaleName={withLocaleName}
       />
       <ErrorBoundary FallbackComponent={ErrorFallback}>

@@ -6,7 +6,7 @@ describe('createContentTypeApi', () => {
     const internalContentType = {
       name: 'content type',
       description: 'a type of content',
-      sys: { id: 'something', type: 'ContentType' },
+      sys: { id: 'something', type: 'ContentType' } as ContentType['sys'],
       displayField: 'title',
       fields: [
         {

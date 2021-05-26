@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { EntityField } from './EntityField';
-import { EntityType } from '@contentful/app-sdk';
+import { ContentEntityType } from '@contentful/app-sdk';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { createDocumentMock } from '../Document/__mocks__/createDocumentMock';
@@ -48,7 +48,7 @@ const getLocale = (overrides = {} as any) => {
 const renderComponent = (override = (props) => props) => {
   const entity = {
     sys: {
-      type: 'Entry' as EntityType,
+      type: 'Entry' as ContentEntityType,
       version: 1,
       contentType: {
         name: 'ct-1',
