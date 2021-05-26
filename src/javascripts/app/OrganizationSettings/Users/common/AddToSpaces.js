@@ -97,16 +97,17 @@ export default function AddToSpaces({
     dispatch({ type: 'SPACE_REMOVED', payload: spaceId });
   };
 
-  const selectedSpaces = useMemo(() => spaceMemberships.map((membership) => membership.space), [
-    spaceMemberships,
-  ]);
+  const selectedSpaces = useMemo(
+    () => spaceMemberships.map((membership) => membership.space),
+    [spaceMemberships]
+  );
 
   // Create a list composed of `ignoredSpaces` and `selectedSpaces` and pass it down
   // as value. These spaces will not be displayed by SpacesAutocomplete
-  const autoCompleteValue = useMemo(() => [...ignoredSpaces, ...selectedSpaces], [
-    selectedSpaces,
-    ignoredSpaces,
-  ]);
+  const autoCompleteValue = useMemo(
+    () => [...ignoredSpaces, ...selectedSpaces],
+    [selectedSpaces, ignoredSpaces]
+  );
 
   useEffect(() => {
     data && setAllRoles(groupBy(data, 'sys.space.sys.id'));

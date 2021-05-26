@@ -106,9 +106,9 @@ const createEditorInterfaceResponse = (...editorInterfaces) => {
 };
 
 const createAPIClient = (editorInterfaceResponse) => {
-  return ({
+  return {
     getEditorInterfaces: jest.fn().mockResolvedValueOnce(editorInterfaceResponse),
-  } as unknown) as APIClient;
+  } as unknown as APIClient;
 };
 
 describe('AppState', () => {

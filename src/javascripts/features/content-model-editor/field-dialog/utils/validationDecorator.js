@@ -61,8 +61,7 @@ const validationHelpText = {
     'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)',
   unique:
     "You won't be able to publish an entry if there is an existing entry with identical content",
-  in:
-    "You won't be able to publish an entry if the field value is not in the list of specified values",
+  in: "You won't be able to publish an entry if the field value is not in the list of specified values",
   linkContentType: 'Make this field only accept entries from specified content type(s)',
   linkMimetypeGroup: 'Make this field only accept specified file types',
   relationshipType:

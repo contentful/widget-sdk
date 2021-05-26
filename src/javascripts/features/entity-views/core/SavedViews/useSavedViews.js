@@ -25,11 +25,10 @@ export const useSavedViews = ({ entityType, viewType }) => {
     }
   }, [savedViewsPersistor]);
 
-  const actions = useMemo(() => ({ ...savedViewsPersistor, fetchFolders, setFolders }), [
-    savedViewsPersistor,
-    fetchFolders,
-    setFolders,
-  ]);
+  const actions = useMemo(
+    () => ({ ...savedViewsPersistor, fetchFolders, setFolders }),
+    [savedViewsPersistor, fetchFolders, setFolders]
+  );
 
   useEffect(() => {
     fetchFolders();

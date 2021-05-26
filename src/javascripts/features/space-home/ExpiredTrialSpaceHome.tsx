@@ -26,12 +26,8 @@ const styles = {
 
 export const ExpiredTrialSpaceHome = () => {
   const [composeAndLaunchProductPrice, setComposeAndLaunchProductPrice] = useState<number>(0);
-  const {
-    currentSpaceData,
-    currentOrganizationId,
-    currentOrganization,
-    currentSpaceId,
-  } = useSpaceEnvContext();
+  const { currentSpaceData, currentOrganizationId, currentOrganization, currentSpaceId } =
+    useSpaceEnvContext();
   const { appsTrialEndsAt, hasAppsTrialPurchased } = useAppsTrial(currentOrganizationId);
   const {
     matchesAppsTrialSpaceKey: isAppsTrialSpace,

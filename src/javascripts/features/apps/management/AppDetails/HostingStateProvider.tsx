@@ -33,10 +33,10 @@ export const HostingStateProvider = ({
   const [isAppHosting, setIsAppHosting] = React.useState<boolean>(!!defaultValue);
   const [savedBundles, setBundle] = React.useState<AppBundleData[]>(bundles.items);
   const [resolvedBundles, setResolvedBundles] = React.useState<AppBundleDataWithCreator[]>([]);
-  const addBundle = React.useCallback((newBundle) => setBundle(savedBundles.concat(newBundle)), [
-    savedBundles,
-    setBundle,
-  ]);
+  const addBundle = React.useCallback(
+    (newBundle) => setBundle(savedBundles.concat(newBundle)),
+    [savedBundles, setBundle]
+  );
 
   const removeBundle = React.useCallback(
     (bundleToRemove) => {

@@ -24,7 +24,7 @@ jest.mock('../utils');
 
 const appManager = {} as AppManager;
 const props = {
-  app: ({
+  app: {
     id: 'optimizely',
     title: 'Optimizely',
     appDefinition: {
@@ -33,10 +33,9 @@ const props = {
         id: 'optimizely-app-id',
       },
     },
-    icon:
-      '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
+    icon: '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
     categories: ['Featured', 'Personalization'],
-  } as unknown) as MarketplaceApp,
+  } as unknown as MarketplaceApp,
   appManager,
   openDetailModal: jest.fn(),
   orgId: 'an-org',

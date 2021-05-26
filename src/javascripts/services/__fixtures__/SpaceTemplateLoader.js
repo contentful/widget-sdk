@@ -968,8 +968,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/Xc0ny7GWsMEMCeASWO2um/7f77503e0b29ca95e308b09f266a694e/jqvtazcyfwseah9fmysz.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/Xc0ny7GWsMEMCeASWO2um/7f77503e0b29ca95e308b09f266a694e/jqvtazcyfwseah9fmysz.jpg',
           details: {
             size: 48751,
             image: {
@@ -1014,8 +1013,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/4zj1ZOfHgQ8oqgaSKm4Qo2/15823b4af955910282bad4052d62d597/playsam.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/4zj1ZOfHgQ8oqgaSKm4Qo2/15823b4af955910282bad4052d62d597/playsam.jpg',
           details: {
             size: 7003,
             image: {
@@ -1060,8 +1058,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/KTRF62Q4gg60q6WCsWKw8/a39ad069279a4a36e364f2e5df577aa5/soso.clock.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/KTRF62Q4gg60q6WCsWKw8/a39ad069279a4a36e364f2e5df577aa5/soso.clock.jpg',
           details: {
             size: 66927,
             image: {
@@ -1106,8 +1103,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/2Y8LhXLnYAYqKCGEWG4EKI/3bab5dd0660644e6848bbcab32f20b1a/lemnos-logo.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/2Y8LhXLnYAYqKCGEWG4EKI/3bab5dd0660644e6848bbcab32f20b1a/lemnos-logo.jpg',
           details: {
             size: 7149,
             image: {
@@ -1152,8 +1148,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/1MgbdJNTsMWKI0W68oYqkU/6cf40f2ef04a3d50d3e5768f3da790ce/9ef190c59f0d375c0dea58b58a4bc1f0.jpeg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/1MgbdJNTsMWKI0W68oYqkU/6cf40f2ef04a3d50d3e5768f3da790ce/9ef190c59f0d375c0dea58b58a4bc1f0.jpeg',
           details: {
             size: 44089,
             image: {
@@ -1198,8 +1193,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/10TkaLheGeQG6qQGqWYqUI/ae0b7669f45556d16ce627b589cbd6ce/ryugj83mqwa1asojwtwb.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/10TkaLheGeQG6qQGqWYqUI/ae0b7669f45556d16ce627b589cbd6ce/ryugj83mqwa1asojwtwb.jpg',
           details: {
             size: 28435,
             image: {
@@ -1244,8 +1238,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/wtrHxeu3zEoEce2MokCSi/63f9fe1bbc51ea842c133d6e08621776/quwowooybuqbl6ntboz3.jpg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/wtrHxeu3zEoEce2MokCSi/63f9fe1bbc51ea842c133d6e08621776/quwowooybuqbl6ntboz3.jpg',
           details: {
             size: 27187,
             image: {
@@ -1290,8 +1283,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/6t4HKjytPi0mYgs240wkG/cadf96ee42020f49d009f06366500fcc/toys_512pxGREY.png',
+          url: '//images.ctfassets.net/bkp1t915hkvx/6t4HKjytPi0mYgs240wkG/cadf96ee42020f49d009f06366500fcc/toys_512pxGREY.png',
           details: {
             size: 6744,
             image: {
@@ -1336,8 +1328,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/3wtvPBbBjiMKqKKga8I2Cu/8a83fa4fdc507e9fa2204c2dde371b64/zJYzDlGk.jpeg',
+          url: '//images.ctfassets.net/bkp1t915hkvx/3wtvPBbBjiMKqKKga8I2Cu/8a83fa4fdc507e9fa2204c2dde371b64/zJYzDlGk.jpeg',
           details: {
             size: 12302,
             image: {
@@ -1382,8 +1373,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/6s3iG2OVmoUcosmA8ocqsG/8088579989b15fa5ed664e2048b61bc9/1418244847_Streamline-18-256__1_.png',
+          url: '//images.ctfassets.net/bkp1t915hkvx/6s3iG2OVmoUcosmA8ocqsG/8088579989b15fa5ed664e2048b61bc9/1418244847_Streamline-18-256__1_.png',
           details: {
             size: 4244,
             image: {
@@ -1428,8 +1418,7 @@ export const assetsCDA = [
       },
       file: {
         'en-US': {
-          url:
-            '//images.ctfassets.net/bkp1t915hkvx/6m5AJ9vMPKc8OUoQeoCS4o/6ca853eb9ab928a7e6d1228de728a942/1418244847_Streamline-18-256.png',
+          url: '//images.ctfassets.net/bkp1t915hkvx/6m5AJ9vMPKc8OUoQeoCS4o/6ca853eb9ab928a7e6d1228de728a942/1418244847_Streamline-18-256.png',
           details: {
             size: 2977,
             image: {

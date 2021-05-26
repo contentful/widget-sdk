@@ -36,6 +36,7 @@ import {
   createNavigatorCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
+import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -131,7 +132,9 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           space: currentSpaceData,
           widgetLoader,
           user: getUserSync(),
-          contentTypes: currentSpaceContentTypes.map((ct) => createPublicContentType(ct)),
+          contentTypes: currentSpaceContentTypes.map((ct) =>
+            createPublicContentType(ct as InternalContentType)
+          ),
           environment: currentEnvironment,
           locales: {
             activeLocaleCode: LocaleStore.getFocusedLocale().code,

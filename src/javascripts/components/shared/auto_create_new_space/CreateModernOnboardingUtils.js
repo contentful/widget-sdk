@@ -135,7 +135,6 @@ export const track = (elementId, toState) => {
 };
 
 export const getCredentials = () =>
-  Promise.all([
-    getDeliveryToken(),
-    getManagementToken(),
-  ]).then(([deliveryToken, managementToken]) => ({ managementToken, deliveryToken }));
+  Promise.all([getDeliveryToken(), getManagementToken()]).then(
+    ([deliveryToken, managementToken]) => ({ managementToken, deliveryToken })
+  );

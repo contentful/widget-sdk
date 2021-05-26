@@ -68,14 +68,8 @@ export default class TasksWidget extends React.PureComponent {
 
   render() {
     const { viewData, tasksInteractor } = this.props;
-    const {
-      statusText,
-      errorMessage,
-      tasks,
-      hasCreateAction,
-      isLoading,
-      taskCreationBlocked,
-    } = viewData;
+    const { statusText, errorMessage, tasks, hasCreateAction, isLoading, taskCreationBlocked } =
+      viewData;
 
     return (
       <React.Fragment>

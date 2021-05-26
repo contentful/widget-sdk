@@ -65,19 +65,19 @@ function initSpaceContext(): SpaceContextType {
   });
 
   const context: SpaceContextType = {
-    cma: (null as unknown) as SpaceContextType['cma'],
-    endpoint: (null as unknown) as SpaceContextType['endpoint'],
-    memberships: (null as unknown) as SpaceContextType['memberships'],
-    members: (null as unknown) as SpaceContextType['members'],
-    pubsubClient: (null as unknown) as SpaceContextType['pubsubClient'],
-    user: (null as unknown) as SpaceContextType['user'],
-    organization: (null as unknown) as SpaceContextType['organization'],
+    cma: null as unknown as SpaceContextType['cma'],
+    endpoint: null as unknown as SpaceContextType['endpoint'],
+    memberships: null as unknown as SpaceContextType['memberships'],
+    members: null as unknown as SpaceContextType['members'],
+    pubsubClient: null as unknown as SpaceContextType['pubsubClient'],
+    user: null as unknown as SpaceContextType['user'],
+    organization: null as unknown as SpaceContextType['organization'],
     aliases: [],
     environments: [],
     docPool: null,
     users: null,
     uiConfig: null,
-    space: (null as unknown) as SpaceContextType['space'],
+    space: null as unknown as SpaceContextType['space'],
     resettingSpace: false,
 
     /**

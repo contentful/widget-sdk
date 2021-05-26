@@ -52,19 +52,14 @@ const initialFetch = (organization, space) => async () => {
   const orgResources = createResourceService(organizationId, 'organization');
   const spaceResourceService = createResourceService(space.sys.id);
 
-  const [
-    spaceResources,
-    freeSpaceResource,
-    plans,
-    rawSpaceProductRatePlans,
-    recommendedPlan,
-  ] = await Promise.all([
-    spaceResourceService.getAll(),
-    orgResources.get(FREE_SPACE_IDENTIFIER),
-    getAllPlans(orgEndpoint),
-    getSpaceProductRatePlans(orgEndpoint, space.sys.id),
-    PricingService.recommendedSpacePlan(organizationId, space.sys.id),
-  ]);
+  const [spaceResources, freeSpaceResource, plans, rawSpaceProductRatePlans, recommendedPlan] =
+    await Promise.all([
+      spaceResourceService.getAll(),
+      orgResources.get(FREE_SPACE_IDENTIFIER),
+      getAllPlans(orgEndpoint),
+      getSpaceProductRatePlans(orgEndpoint, space.sys.id),
+      PricingService.recommendedSpacePlan(organizationId, space.sys.id),
+    ]);
 
   const spaceRatePlans = transformSpaceProductRatePlans({
     organization,

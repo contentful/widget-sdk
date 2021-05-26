@@ -57,9 +57,10 @@ const ReadTagsProvider: React.FC<Props> = ({ children }) => {
     console.error(error);
   }
 
-  const nameExists = useCallback((name) => cachedData.some((tag) => tag.name === name), [
-    cachedData,
-  ]);
+  const nameExists = useCallback(
+    (name) => cachedData.some((tag) => tag.name === name),
+    [cachedData]
+  );
 
   const idExists = useCallback((id) => cachedData.some((tag) => tag.sys.id === id), [cachedData]);
 

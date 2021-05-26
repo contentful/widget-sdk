@@ -51,9 +51,8 @@ export function AppHosting({
 }: AppHostingProps) {
   const [hostingEnabled, setHostingEnabled] = React.useState(false);
 
-  const { draftDefinition, setDraftDefinition, resetDefinitionBundle } = React.useContext(
-    AppDetailsStateContext
-  );
+  const { draftDefinition, setDraftDefinition, resetDefinitionBundle } =
+    React.useContext(AppDetailsStateContext);
 
   React.useEffect(() => {
     getVariation(FLAGS.APP_HOSTING_UI, {

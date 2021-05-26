@@ -8,23 +8,17 @@ import { useContentfulAppsConfig } from 'features/contentful-apps';
 const PROMO_TEXT = {
   compose: {
     title: 'Compose',
-    text:
-      'Enables editors to easily create and manage web content in pages, built with structured content.',
+    text: 'Enables editors to easily create and manage web content in pages, built with structured content.',
   },
   launch: {
     title: 'Launch',
-    text:
-      'Brings the visibility and confidence to build and deliver major content releases faster.',
+    text: 'Brings the visibility and confidence to build and deliver major content releases faster.',
   },
 };
 
 export const ContentfulAppsCTA = (): ReactElement => {
-  const {
-    currentSpaceId,
-    currentSpaceName,
-    currentEnvironmentId,
-    currentOrganizationId,
-  } = useSpaceEnvContext();
+  const { currentSpaceId, currentSpaceName, currentEnvironmentId, currentOrganizationId } =
+    useSpaceEnvContext();
 
   const config = {
     organizationId: currentOrganizationId,

@@ -17,9 +17,9 @@ jest.mock('core/NgRegistry', () => ({
 describe('createAppApi', () => {
   const widgetId = 'w-id';
   const widgetNamespace = WidgetNamespace.APP;
-  const cma = ({
+  const cma = {
     getEditorInterfaces: jest.fn(),
-  } as unknown) as APIClient;
+  } as unknown as APIClient;
 
   const buildApi = (appHookBus = makeAppHookBus()) => ({
     result: createAppApi({ widgetId, widgetNamespace, cma, appHookBus }),

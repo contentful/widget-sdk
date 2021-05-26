@@ -276,7 +276,7 @@
   },
   "scripts": {
     "postinstall": "patch-package",
-    "preinstall": "npx npm-force-resolutions",
+    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
     "prepare": "relative-deps",
     "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "NODE_ENV=development webpack serve",
@@ -302,7 +302,7 @@
     "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "prettier": "prettier --config .prettierrc --no-editorconfig --write ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "prettier:check": "prettier --config .prettierrc --no-editorconfig --check ./src/javascripts ./tools ./bin ./micro-backends ./test",
-    "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
+    "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi && npx --quiet npm-force-resolutions && npm install --no-package-lock --no-audit --no-fund --no-progress --silent",
     "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts",
     "check-types": "tsc",
     "check-code-ownership": "node ./tools/codeownership/check.js",

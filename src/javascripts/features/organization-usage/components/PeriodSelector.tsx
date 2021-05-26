@@ -10,13 +10,8 @@ import { loadPeriodData } from '../services/UsageService';
 const formatDate = (date) => moment(date).format('DD MMM');
 
 export const PeriodSelector = () => {
-  const {
-    periods,
-    selectedPeriodIndex,
-    orgId,
-    isTeamOrEnterpriseCustomer,
-    isAssetBandwidthTab,
-  } = useUsageState();
+  const { periods, selectedPeriodIndex, orgId, isTeamOrEnterpriseCustomer, isAssetBandwidthTab } =
+    useUsageState();
   const dispatch = useUsageDispatch();
 
   const handleChange = async (e) => {

@@ -30,17 +30,13 @@ const fetch = (spaceId, organizationId, dispatch) => async () => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
   const orgEndpoint = createOrganizationEndpoint(organizationId);
 
-  const [
-    teamSpaceMemberships,
-    spaceMemberships,
-    { items: availableRoles },
-    teams,
-  ] = await Promise.all([
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
-    SpaceMembershipRepository.create(spaceEndpoint).getAll(),
-    fetchAllWithIncludes(spaceEndpoint, ['roles'], 100),
-    getAllTeams(orgEndpoint),
-  ]);
+  const [teamSpaceMemberships, spaceMemberships, { items: availableRoles }, teams] =
+    await Promise.all([
+      getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
+      SpaceMembershipRepository.create(spaceEndpoint).getAll(),
+      fetchAllWithIncludes(spaceEndpoint, ['roles'], 100),
+      getAllTeams(orgEndpoint),
+    ]);
   dispatch({
     type: SpaceTeamsReducerActionType.INITIAL_FETCH_SUCCESS,
     payload: { teamSpaceMemberships, availableRoles, teams, spaceMemberships },

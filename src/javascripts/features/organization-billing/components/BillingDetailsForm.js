@@ -53,7 +53,13 @@ export function BillingDetailsForm({
   const [showState, setShouldShowState] = useState(!!billingDetails.state);
   const [countryName, setCountryName] = useState(billingDetails.country);
 
-  const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
+  const {
+    onChange,
+    onBlur,
+    onSubmit: onFormSubmit,
+    fields,
+    form,
+  } = useForm({
     fields: {
       firstName: {
         value: billingDetails.firstName ?? '',

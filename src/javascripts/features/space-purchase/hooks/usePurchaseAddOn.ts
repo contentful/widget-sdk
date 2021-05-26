@@ -25,33 +25,35 @@ export class AddOnPurchaseError extends Error {
 
 type ContextState = SetRequired<State, 'organization' | 'composeAndLaunchProductRatePlan'>;
 
-const purchaseComposeLaunch = (
-  organization: Organization,
-  composeAndLaunchProductRatePlan: ProductRatePlan,
-  sessionMetadata: unknown,
-  selectedPlan: State['selectedPlan']
-) => async () => {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
+const purchaseComposeLaunch =
+  (
+    organization: Organization,
+    composeAndLaunchProductRatePlan: ProductRatePlan,
+    sessionMetadata: unknown,
+    selectedPlan: State['selectedPlan']
+  ) =>
+  async () => {
+    const endpoint = createOrganizationEndpoint(organization.sys.id);
 
-  try {
-    await addProductRatePlanToSubscription(endpoint, composeAndLaunchProductRatePlan.sys.id);
+    try {
+      await addProductRatePlanToSubscription(endpoint, composeAndLaunchProductRatePlan.sys.id);
 
-    trackEvent(EVENTS.PERFORMANCE_PACKAGE_PURCHASED, sessionMetadata, {
-      selectedPlan,
-    });
+      trackEvent(EVENTS.PERFORMANCE_PACKAGE_PURCHASED, sessionMetadata, {
+        selectedPlan,
+      });
 
-    clearCachedProductCatalogFlags();
-    await TokenStore.refresh();
-    return true;
-  } catch (error) {
-    trackEvent(EVENTS.ERROR, sessionMetadata, {
-      errorType: 'PurchaseComposeAndLaunchError',
-      error,
-    });
+      clearCachedProductCatalogFlags();
+      await TokenStore.refresh();
+      return true;
+    } catch (error) {
+      trackEvent(EVENTS.ERROR, sessionMetadata, {
+        errorType: 'PurchaseComposeAndLaunchError',
+        error,
+      });
 
-    throw new AddOnPurchaseError(error);
-  }
-};
+      throw new AddOnPurchaseError(error);
+    }
+  };
 
 /**
  * Purchases the compose + launch product for the current organization.

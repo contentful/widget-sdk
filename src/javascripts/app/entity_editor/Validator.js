@@ -226,12 +226,13 @@ export function createBase(buildMessage, schema, doc) {
   function processErrors(errors) {
     return errors
       .filter((error) => error && error.path)
-      .map((
-        error // TODO we should freeze this but duplicate errors modify this.
-      ) =>
-        assign({}, error, {
-          message: buildMessage(error),
-        })
+      .map(
+        (
+          error // TODO we should freeze this but duplicate errors modify this.
+        ) =>
+          assign({}, error, {
+            message: buildMessage(error),
+          })
       );
   }
 }

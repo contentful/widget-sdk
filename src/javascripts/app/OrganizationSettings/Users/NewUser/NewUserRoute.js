@@ -26,7 +26,11 @@ const styles = {
 };
 
 export default function NewUserRoute({ orgId }) {
-  const { isLoading, error, data: componentProps } = useAsync(
+  const {
+    isLoading,
+    error,
+    data: componentProps,
+  } = useAsync(
     useCallback(async () => {
       const [org, hasTeamsFeature] = await Promise.all([
         getOrganization(orgId),

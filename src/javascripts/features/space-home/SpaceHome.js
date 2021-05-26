@@ -44,89 +44,91 @@ const isEmptySpace = async (contentTypes, currentSpace) => {
   return assets.length == 0 && contentTypes.length == 0;
 };
 
-const fetchData = (
-  setLoading,
-  setState,
-  setIsSpaceEmpty,
-  isSpaceAdmin,
-  isTEA,
-  isModernStack,
-  currentSpaceId,
-  currentSpace,
-  currentOrganizationId,
-  currentSpaceContentTypes
-) => async () => {
-  setLoading(true);
+const fetchData =
+  (
+    setLoading,
+    setState,
+    setIsSpaceEmpty,
+    isSpaceAdmin,
+    isTEA,
+    isModernStack,
+    currentSpaceId,
+    currentSpace,
+    currentOrganizationId,
+    currentSpaceContentTypes
+  ) =>
+  async () => {
+    setLoading(true);
 
-  // this is a test A/A experiment which will be removed shortly
-  const testExperimentVariation = await getVariation(FLAGS.EXPERIMENT_A_A, {
-    organizationId: currentOrganizationId,
-  });
-  if (testExperimentVariation !== null) {
-    Analytics.tracking.experimentStart({
-      experiment_id: FLAGS.EXPERIMENT_A_A,
-      experiment_variation: testExperimentVariation ? 'treatment' : 'control',
-      space_id: currentSpaceId,
-      organization_id: currentOrganizationId,
+    // this is a test A/A experiment which will be removed shortly
+    const testExperimentVariation = await getVariation(FLAGS.EXPERIMENT_A_A, {
+      organizationId: currentOrganizationId,
     });
-  }
-
-  const inviteCardExperimentEnabled = await getVariation(FLAGS.NEW_COWORKER_INVITE_CARD, {
-    organizationId: currentOrganizationId,
-  });
-
-  const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
-
-  const isSpaceEmpty = await isEmptySpace(currentSpaceContentTypes, currentSpace);
-  setIsSpaceEmpty(isSpaceEmpty);
-
-  if (!currentSpaceId || !isSpaceAdmin) {
-    setLoading(false);
-    return;
-  }
-
-  if (isTEA) {
-    let key;
-    try {
-      [key] = await getApiKeyRepo().getAll();
-    } catch (e) {
-      captureError(e);
-    }
-
-    // there might be no keys - it was not created yet, or user explicitly removed them
-    if (key) {
-      const keyWithPreview = await getApiKeyRepo().get(key.sys.id);
-
-      setState({
-        hasTeamsEnabled,
-        cdaToken: key.accessToken,
-        cpaToken: keyWithPreview.preview_api_key.accessToken,
-        inviteCardExperimentEnabled,
+    if (testExperimentVariation !== null) {
+      Analytics.tracking.experimentStart({
+        experiment_id: FLAGS.EXPERIMENT_A_A,
+        experiment_variation: testExperimentVariation ? 'treatment' : 'control',
+        space_id: currentSpaceId,
+        organization_id: currentOrganizationId,
       });
     }
 
-    setLoading(false);
-  } else {
-    if (isModernStack) {
-      const [credentials, personEntry] = await Promise.all([
-        getCredentials(),
-        getPerson(currentSpace),
-      ]);
-      setState({
-        hasTeamsEnabled,
-        managementToken: credentials && credentials.managementToken,
-        personEntry,
-        inviteCardExperimentEnabled,
-      });
+    const inviteCardExperimentEnabled = await getVariation(FLAGS.NEW_COWORKER_INVITE_CARD, {
+      organizationId: currentOrganizationId,
+    });
+
+    const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
+
+    const isSpaceEmpty = await isEmptySpace(currentSpaceContentTypes, currentSpace);
+    setIsSpaceEmpty(isSpaceEmpty);
+
+    if (!currentSpaceId || !isSpaceAdmin) {
+      setLoading(false);
+      return;
+    }
+
+    if (isTEA) {
+      let key;
+      try {
+        [key] = await getApiKeyRepo().getAll();
+      } catch (e) {
+        captureError(e);
+      }
+
+      // there might be no keys - it was not created yet, or user explicitly removed them
+      if (key) {
+        const keyWithPreview = await getApiKeyRepo().get(key.sys.id);
+
+        setState({
+          hasTeamsEnabled,
+          cdaToken: key.accessToken,
+          cpaToken: keyWithPreview.preview_api_key.accessToken,
+          inviteCardExperimentEnabled,
+        });
+      }
+
+      setLoading(false);
     } else {
-      setState({
-        hasTeamsEnabled,
-        inviteCardExperimentEnabled,
-      });
+      if (isModernStack) {
+        const [credentials, personEntry] = await Promise.all([
+          getCredentials(),
+          getPerson(currentSpace),
+        ]);
+        setState({
+          hasTeamsEnabled,
+          managementToken: credentials && credentials.managementToken,
+          personEntry,
+          inviteCardExperimentEnabled,
+        });
+      } else {
+        setState({
+          hasTeamsEnabled,
+          inviteCardExperimentEnabled,
+        });
+      }
+      setLoading(false);
     }
-    setLoading(false);
-  }
-};
+  };
 
 export const SpaceHome = () => {
   const {

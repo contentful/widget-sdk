@@ -330,6 +330,7 @@ jobs:
     executor: node-base
     environment:
       CYPRESS_INSTALL_BINARY: 0
+      CI: 'true'
     steps:
       - checkout
       - with-npm-token
@@ -359,7 +360,7 @@ jobs:
       # Jest tests
       - run:
           name: Run Jest tests
-          command: NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          command: npm i && NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
 
   publish-pact-contracts:
     docker:

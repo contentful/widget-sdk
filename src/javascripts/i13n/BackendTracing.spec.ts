@@ -4,7 +4,7 @@ import { getQueryString } from 'utils/location';
 
 jest.mock('utils/location', () => ({ getQueryString: jest.fn() }));
 
-const mockedGetQueryString = (getQueryString as unknown) as jest.Mock<{ [key: string]: string }>;
+const mockedGetQueryString = getQueryString as unknown as jest.Mock<{ [key: string]: string }>;
 
 describe('BackendTracing', function () {
   let store;

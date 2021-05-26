@@ -88,9 +88,11 @@ export function NonEnterpriseSubscriptionPage({
     state: { spacePlans },
   } = useContext(OrgSubscriptionContext);
 
-  const { isLoading, error, data: content } = useAsync(
-    useCallback(() => fetchContent(basePlan), [basePlan])
-  );
+  const {
+    isLoading,
+    error,
+    data: content,
+  } = useAsync(useCallback(() => fetchContent(basePlan), [basePlan]));
 
   const organizationId = organization.sys.id;
   const isOrgBillable = organization.isBillable;

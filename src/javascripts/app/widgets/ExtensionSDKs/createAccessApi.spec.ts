@@ -4,10 +4,10 @@ import * as AccessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker');
 
-const mockSpaceApi = ({
+const mockSpaceApi = {
   getEntry: jest.fn().mockResolvedValue({}),
   getAsset: jest.fn().mockResolvedValue({}),
-} as unknown) as SpaceAPI;
+} as unknown as SpaceAPI;
 
 describe('createAccessApi', () => {
   describe('can', () => {
@@ -60,10 +60,10 @@ describe('createAccessApi', () => {
         sys: { type: 'Entry', id: 'random-id' },
         fields: { title: 'my title', body: 'new body' },
       };
-      const mockSpaceApi = ({
+      const mockSpaceApi = {
         getEntry: jest.fn().mockResolvedValue(entity),
         getAsset: jest.fn().mockResolvedValue({}),
-      } as unknown) as SpaceAPI;
+      } as unknown as SpaceAPI;
       const accessApi = createAccessApi(mockSpaceApi);
 
       it('should resolve true when action is allowed', async () => {

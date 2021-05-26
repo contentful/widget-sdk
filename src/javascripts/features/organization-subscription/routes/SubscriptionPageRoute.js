@@ -95,7 +95,11 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
   } = useContext(OrgSubscriptionContext);
   const [grandTotal, setGrandTotal] = useState(0);
 
-  const { isLoading, error, data = {} } = useAsync(
+  const {
+    isLoading,
+    error,
+    data = {},
+  } = useAsync(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => fetch(organizationId, dispatch), [])
   );

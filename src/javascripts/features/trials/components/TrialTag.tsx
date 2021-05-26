@@ -52,12 +52,8 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
   const orgId = organizationId ?? space?.organization.sys.id;
 
-  const {
-    appsTrialSpaceKey,
-    isAppsTrialActive,
-    hasAppsTrialExpired,
-    appsTrialEndsAt,
-  } = useAppsTrial(orgId);
+  const { appsTrialSpaceKey, isAppsTrialActive, hasAppsTrialExpired, appsTrialEndsAt } =
+    useAppsTrial(orgId);
 
   const {
     isActiveTrialSpace,
@@ -79,9 +75,8 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
     };
   }, [space, organizationId, appsTrialSpaceKey]);
 
-  const { isLoading, data: { isAppsTrialSpaceAccessible, organization } = {} } = useAsync<
-    TrialData
-  >(fetchData);
+  const { isLoading, data: { isAppsTrialSpaceAccessible, organization } = {} } =
+    useAsync<TrialData>(fetchData);
 
   const isEnterpriseTrial = isOrganizationOnTrial(organization);
   const isTrialSpaceExpired = hasTrialSpaceExpired && !hasTrialSpaceConverted;

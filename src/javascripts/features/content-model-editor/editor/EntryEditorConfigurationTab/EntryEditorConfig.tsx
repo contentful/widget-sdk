@@ -48,14 +48,13 @@ const isWidgetEnabled = (widget: SavedConfigItem) => !widget.disabled;
 const isWidgetBuiltIn = (widget: { widgetNamespace: WidgetNamespace }) =>
   widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN;
 
-const enrichWidgetData = (defaultWidgets: Widget[], customWidgets: Widget[]) => (
-  item: SavedConfigItem
-) => ({
-  ...item,
-  ...(isWidgetBuiltIn(item)
-    ? defaultWidgets.find((widget) => isSameWidget(item, widget))
-    : customWidgets.find((widget) => isSameWidget(item, widget))),
-});
+const enrichWidgetData =
+  (defaultWidgets: Widget[], customWidgets: Widget[]) => (item: SavedConfigItem) => ({
+    ...item,
+    ...(isWidgetBuiltIn(item)
+      ? defaultWidgets.find((widget) => isSameWidget(item, widget))
+      : customWidgets.find((widget) => isSameWidget(item, widget))),
+  });
 
 function createStateFromConfiguration(
   configuration: SavedConfigItem[],

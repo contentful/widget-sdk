@@ -171,13 +171,13 @@ const RuleList: React.FunctionComponent<RuleListProps> = (props) => {
   );
 
   const updateRuleAttribute = useCallback(
-    (ruleType: RuleType, ruleId) => (field, initialValue) => (
-      event: React.ChangeEvent<{ value: string }>
-    ) => {
-      onUpdateRuleAttribute(ruleType, ruleId)(field)(event);
-      addEditedRule(ruleId, field, initialValue, event.target.value);
-      setScroll(false);
-    },
+    (ruleType: RuleType, ruleId) =>
+      (field, initialValue) =>
+      (event: React.ChangeEvent<{ value: string }>) => {
+        onUpdateRuleAttribute(ruleType, ruleId)(field)(event);
+        addEditedRule(ruleId, field, initialValue, event.target.value);
+        setScroll(false);
+      },
     [onUpdateRuleAttribute, addEditedRule]
   );
 

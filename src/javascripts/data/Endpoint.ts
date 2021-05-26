@@ -227,7 +227,7 @@ export function create<Scope>(
 
     try {
       const response = await baseRequest(req);
-      return (response.data as unknown) as T;
+      return response.data as unknown as T;
     } catch (res) {
       const error = extend(asyncError, {
         status: res.status,

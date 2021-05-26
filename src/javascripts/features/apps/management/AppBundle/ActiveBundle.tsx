@@ -32,12 +32,8 @@ interface ActiveBundleProps {
 
 export const ActiveBundle: React.FC<ActiveBundleProps> = ({ link }) => {
   const { bundles, setIsAppHosting } = React.useContext(HostingStateContext);
-  const {
-    draftDefinition,
-    setDraftDefinition,
-    savedDefinition,
-    resetDefinitionBundle,
-  } = React.useContext(AppDetailsStateContext);
+  const { draftDefinition, setDraftDefinition, savedDefinition, resetDefinitionBundle } =
+    React.useContext(AppDetailsStateContext);
   const setNewAppBundle = (bundle: AppBundleData) => {
     setIsAppHosting(true);
     setDraftDefinition({

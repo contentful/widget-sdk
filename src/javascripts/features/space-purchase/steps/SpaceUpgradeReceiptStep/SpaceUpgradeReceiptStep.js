@@ -19,9 +19,11 @@ export const SpaceUpgradeReceiptStep = () => {
     data: shouldActivateSpaceUpgrade,
     retry: retryAddOnPurchase,
   } = usePurchaseAddOn();
-  const { isUpgradingSpace, error: upgradeError, buttonAction } = useSpaceUpgrade(
-    shouldActivateSpaceUpgrade
-  );
+  const {
+    isUpgradingSpace,
+    error: upgradeError,
+    buttonAction,
+  } = useSpaceUpgrade(shouldActivateSpaceUpgrade);
 
   const pending = isUpgradingSpace || isPurchasingAddOn;
 

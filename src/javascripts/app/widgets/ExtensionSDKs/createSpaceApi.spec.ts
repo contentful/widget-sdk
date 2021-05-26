@@ -3,6 +3,7 @@ import { createContentTypeApi } from './createContentTypeApi';
 import { CONTENT_ENTITY_UPDATED_EVENT } from 'services/PubSubService';
 import { InternalContentType } from './createContentTypeApi';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { ContentType } from '@contentful/app-sdk';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
@@ -115,7 +116,7 @@ describe('createSpaceApi', () => {
             sys: {
               type: 'something',
               id: 'conte_type_id',
-            },
+            } as ContentType['sys'],
             fields: [],
             displayField: 'title',
             description: 'my content type',

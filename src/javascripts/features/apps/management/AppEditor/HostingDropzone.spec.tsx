@@ -11,9 +11,9 @@ describe('HostingDropzone', () => {
         <HostingDropzone
           onAppBundleCreated={jest.fn()}
           definition={
-            ({
+            {
               sys: { id: 'test-id', organization: { sys: 'test-id' } },
-            } as unknown) as AppDefinitionWithBundle
+            } as unknown as AppDefinitionWithBundle
           }
         />
       </HostingStateProvider>

@@ -21,22 +21,21 @@ type FetchResponseProps = {
   roles: Role[];
 };
 
-const fetch = (spaceId: string, organizationId: string) => async (): Promise<
-  FetchResponseProps
-> => {
-  const cmaClient = getSpaceEnvCMAClient();
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
-  const spaceEndpoint = createSpaceEndpoint(spaceId);
-  const roleRepo = createRoleRepo(cmaClient);
+const fetch =
+  (spaceId: string, organizationId: string) => async (): Promise<FetchResponseProps> => {
+    const cmaClient = getSpaceEnvCMAClient();
+    const orgEndpoint = createOrganizationEndpoint(organizationId);
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
+    const roleRepo = createRoleRepo(cmaClient);
 
-  const [roles, teams, teamSpaceMemberships] = await Promise.all([
-    roleRepo.getAll(),
-    getAllTeams(orgEndpoint),
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
-  ]);
+    const [roles, teams, teamSpaceMemberships] = await Promise.all([
+      roleRepo.getAll(),
+      getAllTeams(orgEndpoint),
+      getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
+    ]);
 
-  return { teams, teamSpaceMemberships, roles };
-};
+    return { teams, teamSpaceMemberships, roles };
+  };
 
 const AddTeamsPage = () => {
   const { currentSpaceId, currentOrganizationId } = useSpaceEnvContext();

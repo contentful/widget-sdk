@@ -126,5 +126,7 @@ function getFieldId(contentType: InternalContentType, fieldApiName: string): str
 
 function getFieldApiName(contentType: InternalContentType, fieldId: string): string {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return contentType.fields.find((field) => field.id === fieldId)!.apiName;
+  const field = contentType.fields.find((field) => field.id === fieldId)!;
+
+  return field.apiName ?? fieldId;
 }

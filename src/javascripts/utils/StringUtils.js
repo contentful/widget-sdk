@@ -217,11 +217,11 @@ export function normalizeWhiteSpace(string) {
 // and use it instead.
 export const emailRegex = RegExp(
   '(?!.{255})' + // Lookahead assertion limiting length of email address to under 255 chars
-  '(^\\s*' + // Start of string and arbitrary amount of whitespace
-  '([^@\\s]{1,64})' + // Part of address before @, limited to under 64 chars
-  '@' + // The @ symbol itself
-  '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
-  '+[a-z]{2,}' + // The TLD
+    '(^\\s*' + // Start of string and arbitrary amount of whitespace
+    '([^@\\s]{1,64})' + // Part of address before @, limited to under 64 chars
+    '@' + // The @ symbol itself
+    '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
+    '+[a-z]{2,}' + // The TLD
     ')\\s*$)', // Arbitrary whitespace and end of string
   'i'
 );
@@ -245,7 +245,8 @@ export function parseList(phrase = '') {
   return _.uniq(list);
 }
 
-export const urlRegex = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?$/;
+export const urlRegex =
+  /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?$/;
 
 export function isValidUrl(value) {
   return urlRegex.test(value);

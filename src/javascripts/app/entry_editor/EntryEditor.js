@@ -36,7 +36,12 @@ export const EntryEditor = (props) => {
 
   const [preferences] = useProxyState({ ...viewProps.preferences });
 
-  const { doc: otDoc, editorContext, state, title } = useEditorState({
+  const {
+    doc: otDoc,
+    editorContext,
+    state,
+    title,
+  } = useEditorState({
     editorData,
     preferences,
     trackView: (args) => {

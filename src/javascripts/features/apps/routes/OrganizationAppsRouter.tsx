@@ -55,10 +55,10 @@ function withBundles(Component) {
   function WithBundles(props: OrganizationAppsRouteCommonProps) {
     const { definitionId } = useParams();
     const { isLoading, data: bundles } = useAsync(
-      useCallback(() => ManagementApiClient.getAppBundles(props.orgId, definitionId), [
-        props.orgId,
-        definitionId,
-      ])
+      useCallback(
+        () => ManagementApiClient.getAppBundles(props.orgId, definitionId),
+        [props.orgId, definitionId]
+      )
     );
 
     return <Component {...props} isLoadingBundles={isLoading} bundles={bundles} />;

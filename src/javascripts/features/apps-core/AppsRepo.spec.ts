@@ -94,13 +94,13 @@ describe('AppsRepo', () => {
     }),
   };
 
-  const cma = ({
+  const cma = {
     getAppInstallations: jest.fn(() => {
       return Promise.resolve({
         items: [netlifyInstallation, firstPartyInstallation],
       });
     }),
-  } as unknown) as APIClient;
+  } as unknown as APIClient;
 
   describe('getAllApps', () => {
     it('should return only private apps if the marketplace endpoint returns no data', async () => {
@@ -111,23 +111,17 @@ describe('AppsRepo', () => {
       const repo = new AppsRepo(cma, loader);
       const result = await repo.getAllApps();
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=contentfulApp',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
@@ -178,23 +172,17 @@ describe('AppsRepo', () => {
       const repo = new AppsRepo(cma, loader);
       const result = await repo.getAllApps();
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(
-        window.fetch
-      ).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=contentfulApp',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
@@ -253,9 +241,9 @@ describe('AppsRepo', () => {
     });
 
     it('fails if API call fails', async () => {
-      const cma = ({
+      const cma = {
         getAppInstallations: () => Promise.reject(new Error('api error')),
-      } as unknown) as APIClient;
+      } as unknown as APIClient;
 
       const repo = new AppsRepo(cma, loader);
 

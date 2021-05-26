@@ -69,7 +69,11 @@ export function EnterpriseSubscriptionPage({
   const organizationId = organization.sys.id;
   const isOrgOnEnterpriseTrial = isOrganizationOnTrial(organization);
 
-  const { isLoading, error, data: content } = useAsync(
+  const {
+    isLoading,
+    error,
+    data: content,
+  } = useAsync(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => fetchContent(isOrgOnEnterpriseTrial, isInternalBasePlan), [])
   );

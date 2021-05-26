@@ -138,13 +138,8 @@ describe('SnapshotSelector', () => {
   describe('pagination', () => {
     it('should load on scroll to bottom of list (if more snapshots are available)', async () => {
       let skip = 0;
-      const {
-        scrollTable,
-        initFirstLoad,
-        getByTestId,
-        queryByTestId,
-        findByTestId,
-      } = renderComponent();
+      const { scrollTable, initFirstLoad, getByTestId, queryByTestId, findByTestId } =
+        renderComponent();
       await initFirstLoad();
       expect(getByTestId(`snapshot-selector-table-row-${getSnapshotId(skip)}`)).toBeInTheDocument();
       expect(

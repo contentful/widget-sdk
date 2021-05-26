@@ -13,9 +13,9 @@ const initialState: State = {
   spaceName: 'New space',
 };
 
-export const SpacePurchaseState = createContext<SpacePurchaseContext>(({
+export const SpacePurchaseState = createContext<SpacePurchaseContext>({
   state: initialState,
-} as unknown) as SpacePurchaseContext);
+} as unknown as SpacePurchaseContext);
 
 export function useSpacePurchaseState<StateType = State>() {
   return useContext(SpacePurchaseState) as SpacePurchaseContext<StateType>;

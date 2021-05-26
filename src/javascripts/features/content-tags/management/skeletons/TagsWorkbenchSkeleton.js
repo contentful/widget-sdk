@@ -24,9 +24,8 @@ import { TagListHeader } from 'features/content-tags/management/components/TagLi
 
 function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, className }) {
   const scrollToTop = useScrollToTop('.tags-workbench-content');
-  const { modalComponent: createTagComponent, showModal: showCreateTagModal } = useF36Modal(
-    CreateTagModal
-  );
+  const { modalComponent: createTagComponent, showModal: showCreateTagModal } =
+    useF36Modal(CreateTagModal);
   const isInitialLoad = useIsInitialLoadingOfTags();
 
   const onCreate = useCallback(() => {

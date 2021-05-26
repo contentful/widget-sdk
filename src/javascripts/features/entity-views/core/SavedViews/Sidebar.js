@@ -30,10 +30,8 @@ const styles = {
 };
 
 export const Sidebar = ({ entityType, onSelectSavedView, listViewContext }) => {
-  const [
-    selectedView,
-    { setSharedViewSelected, setPrivateViewSelected, setSelectedView },
-  ] = useView(VIEWS_SHARED);
+  const [selectedView, { setSharedViewSelected, setPrivateViewSelected, setSelectedView }] =
+    useView(VIEWS_SHARED);
 
   return (
     <div className={styles.wrapper}>

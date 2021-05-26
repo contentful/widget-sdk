@@ -45,10 +45,8 @@ const webApp: NavigationSwitcherAppProps = {
 };
 
 const usePurchasedApps = (organizationId: string | undefined) => {
-  const [purchasedApps, setPurchasedApps] = React.useState<Record<
-    'compose' | 'launch',
-    boolean
-  > | null>(null);
+  const [purchasedApps, setPurchasedApps] =
+    React.useState<Record<'compose' | 'launch', boolean> | null>(null);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -118,43 +116,41 @@ export const useAppsList = () => {
       // filter based on both PD and LD feature flags
       const enabledApps = (
         await Promise.all(
-          contentfulApps.map(
-            async (app): Promise<NavigationSwitcherAppProps | null> => {
-              if (!purchasedApps[app.id]) return null;
+          contentfulApps.map(async (app): Promise<NavigationSwitcherAppProps | null> => {
+            if (!purchasedApps[app.id]) return null;
 
-              const featureFlagId = app.featureFlagName ? FLAGS[app.featureFlagName] : null;
-              const appFlagIsEnabled = featureFlagId
-                ? await getVariation(featureFlagId, ldContext)
-                : true;
-              const isInstalled = installedAppIds.has(app.id);
-              const installRouteProps = getAppInstallRouteProps({
-                app,
-                environmentId,
-                isMasterEnvironment: envIsMaster,
-              });
+            const featureFlagId = app.featureFlagName ? FLAGS[app.featureFlagName] : null;
+            const appFlagIsEnabled = featureFlagId
+              ? await getVariation(featureFlagId, ldContext)
+              : true;
+            const isInstalled = installedAppIds.has(app.id);
+            const installRouteProps = getAppInstallRouteProps({
+              app,
+              environmentId,
+              isMasterEnvironment: envIsMaster,
+            });
 
-              const spaceInformation = {
-                spaceId: spaceId as string,
-                spaceName: '', // not necessary downstream
-                envMeta: { environmentId, isMasterEnvironment: envIsMaster },
-              };
-              const appUrl = getContentfulAppUrl(app.id, spaceInformation);
+            const spaceInformation = {
+              spaceId: spaceId as string,
+              spaceName: '', // not necessary downstream
+              envMeta: { environmentId, isMasterEnvironment: envIsMaster },
+            };
+            const appUrl = getContentfulAppUrl(app.id, spaceInformation);
 
-              // Remove long description for showing in AppSwitcher
-              delete app.description;
+            // Remove long description for showing in AppSwitcher
+            delete app.description;
 
-              return appFlagIsEnabled
-                ? {
-                    ...app,
-                    type: app.id as AppsListProps['type'],
-                    installRouteProps,
-                    href: isInstalled && appUrl ? appUrl : Navigator.href(installRouteProps),
-                    active: false,
-                    isInstalled,
-                  }
-                : null;
-            }
-          )
+            return appFlagIsEnabled
+              ? {
+                  ...app,
+                  type: app.id as AppsListProps['type'],
+                  installRouteProps,
+                  href: isInstalled && appUrl ? appUrl : Navigator.href(installRouteProps),
+                  active: false,
+                  isInstalled,
+                }
+              : null;
+          })
         )
       ).filter((app): app is NonNullable<typeof app> => app !== null);
 

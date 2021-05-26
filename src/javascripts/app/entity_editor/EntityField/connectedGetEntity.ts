@@ -13,7 +13,7 @@ export function connectGetEntity(
   const getEntry = <T extends unknown>(id: string) => {
     const doc = documentPool?.getById(id, 'Entry', lifeline.stream);
     if (doc) {
-      const entity = (toPublicEntity(doc.getValueAt([])) as unknown) as T;
+      const entity = toPublicEntity(doc.getValueAt([])) as unknown as T;
       return Promise.resolve(entity);
     }
     return baseGetEntry(id);
@@ -22,7 +22,7 @@ export function connectGetEntity(
   const getAsset = <T extends unknown>(id: string) => {
     const doc = documentPool?.getById(id, 'Asset', lifeline.stream);
     if (doc) {
-      const entity = (toPublicEntity(doc.getValueAt([])) as unknown) as T;
+      const entity = toPublicEntity(doc.getValueAt([])) as unknown as T;
       return Promise.resolve(entity);
     }
     return baseGetAsset(id);

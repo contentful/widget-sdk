@@ -6,7 +6,7 @@ export function createPublicContentType(contentType: InternalContentType): Conte
     ...contentType,
     fields: contentType.fields.map(({ apiName, ...publicField }) => ({
       ...publicField,
-      id: apiName,
+      id: apiName ?? publicField.id,
     })),
   };
 }

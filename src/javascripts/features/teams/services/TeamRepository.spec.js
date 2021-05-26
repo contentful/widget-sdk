@@ -17,10 +17,12 @@ describe('TeamRepository', () => {
     const getTeam = (teamId) => TeamRepository.getTeam(endpointMock, teamId);
 
     it('loads team by id', async function () {
-      const buildMockImplementation = (result) => ({ method, path }) => {
-        assertEndpointCall({ method, path }, 'GET', ['teams', team.sys.id]);
-        return result;
-      };
+      const buildMockImplementation =
+        (result) =>
+        ({ method, path }) => {
+          assertEndpointCall({ method, path }, 'GET', ['teams', team.sys.id]);
+          return result;
+        };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
 
@@ -41,10 +43,12 @@ describe('TeamRepository', () => {
       TeamRepository.createTeam(endpointMock, { name, description });
 
     it('creates team with given name and description', async function () {
-      const buildMockImplementation = (result) => ({ method, path }) => {
-        assertEndpointCall({ method, path }, 'POST', ['teams']);
-        return result;
-      };
+      const buildMockImplementation =
+        (result) =>
+        ({ method, path }) => {
+          assertEndpointCall({ method, path }, 'POST', ['teams']);
+          return result;
+        };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
 
@@ -66,10 +70,12 @@ describe('TeamRepository', () => {
       TeamRepository.updateTeam(endpointMock, { name, description, sys });
 
     it('updates team with given name and description by teamId', async function () {
-      const buildMockImplementation = (result) => ({ method, path }) => {
-        assertEndpointCall({ method, path }, 'PUT', ['teams', team.sys.id]);
-        return result;
-      };
+      const buildMockImplementation =
+        (result) =>
+        ({ method, path }) => {
+          assertEndpointCall({ method, path }, 'PUT', ['teams', team.sys.id]);
+          return result;
+        };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
 
@@ -88,10 +94,12 @@ describe('TeamRepository', () => {
     const removeTeam = (teamId) => TeamRepository.removeTeam(endpointMock, teamId);
 
     it('removes team with given id from org', async function () {
-      const buildMockImplementation = (result) => ({ method, path }) => {
-        assertEndpointCall({ method, path }, 'DELETE', ['teams', team.sys.id]);
-        return result;
-      };
+      const buildMockImplementation =
+        (result) =>
+        ({ method, path }) => {
+          assertEndpointCall({ method, path }, 'DELETE', ['teams', team.sys.id]);
+          return result;
+        };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(null));
 

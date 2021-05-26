@@ -23,10 +23,11 @@ type Props = {
 };
 
 export function SpacePurchaseRoute({ orgId, spaceId }: Props) {
-  const navigationState = useNavigationState<{
-    from?: string;
-    preselect?: string;
-  }>();
+  const navigationState =
+    useNavigationState<{
+      from?: string;
+      preselect?: string;
+    }>();
 
   const [searchParams] = useSearchParams();
 

@@ -44,12 +44,8 @@ export const BulkEntityEditor = ({
   onRemove,
   hasInitialFocus,
 }) => {
-  const {
-    currentSpaceContentTypes,
-    currentEnvironmentId,
-    currentSpace,
-    currentSpaceId,
-  } = useSpaceEnvContext();
+  const { currentSpaceContentTypes, currentEnvironmentId, currentSpace, currentSpaceId } =
+    useSpaceEnvContext();
   const { client: cma } = useCurrentSpaceAPIClient();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 

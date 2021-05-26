@@ -86,9 +86,10 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
     }
   }, [linkCount, extendedField, addLinks, track, entitySelectorSdk]);
 
-  const getAllContentTypeIds = useCallback(() => currentSpaceContentTypes.map((ct) => ct.sys.id), [
-    currentSpaceContentTypes,
-  ]);
+  const getAllContentTypeIds = useCallback(
+    () => currentSpaceContentTypes.map((ct) => ct.sys.id),
+    [currentSpaceContentTypes]
+  );
 
   /**
    * Returns a list of content types that the user can add to this field.

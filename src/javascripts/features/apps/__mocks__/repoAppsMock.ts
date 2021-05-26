@@ -8,14 +8,12 @@ export const apps: MarketplaceApp[] = [
     author: {
       name: 'Contentful',
       url: 'https://www.contentful.com/',
-      icon:
-        '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
+      icon: '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
     },
     categories: ['Featured', 'Deployment & Delivery'],
     description:
       "### About the app\n\nThe Netlify app makes creating and updating content on your site easier. The app removes the need to navigate between platforms, giving editors full control of everything from previewing to deploying changes. Content writers and editors can trigger Netlify builds with one click in the sidebar. \n\nSee build status in real-time, track progress and view recent changes all from within the web app. \n\n---\n\n### What you can do with the Netlify app: \n\n- Trigger Netlify builds with one click in the sidebar\n- Display build status so editors don't preview outdated sites\n- Bring Netlify functionality into the Contentful web app\n- Configure on a per-content-type level \n\n### Requirements:\n\n- A static site based on a static site generator such as Gatsby, Middleman or Hugo\n- Your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- A Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/52de9067736f37aaf4d178b5b4367a69/apps-netlify-sidebar.png) \n",
-    icon:
-      '//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg',
+    icon: '//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg',
     documentationLink: {
       title: 'Documentation for the Netlify app',
       shortTitle: 'Documentation',
@@ -51,8 +49,7 @@ export const apps: MarketplaceApp[] = [
       },
       {
         negative: false,
-        info:
-          'This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site.',
+        info: 'This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site.',
       },
     ],
     featureFlagName: null,
