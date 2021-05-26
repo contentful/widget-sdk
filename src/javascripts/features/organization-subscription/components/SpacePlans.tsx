@@ -137,7 +137,6 @@ export function SpacePlans({
               onChangeSpace={onChangeSpace}
               onDeleteSpace={onDeleteSpace}
               spacePlans={spacePlans}
-              userCanManageSpaces={userCanManageSpaces}
             />
           )}
         </>
