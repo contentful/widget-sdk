@@ -27,12 +27,14 @@ import { LoadingState } from 'features/loading-state';
 import { MarketplaceApp } from 'features/apps-core';
 import { createPageWidgetSDK } from '@contentful/experience-sdk';
 import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
-import { createDialogCallbacks } from '../../app/widgets/ExtensionSDKs/callbacks/dialog';
 import LocaleStore from 'services/localeStore';
 import { getUserSync } from '../../services/TokenStore';
 import { FLAGS, getVariation } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
-import { createNavigatorCallbacks } from '../../app/widgets/ExtensionSDKs/callbacks/navigator';
+import {
+  createDialogCallbacks,
+  createNavigatorCallbacks,
+} from 'app/widgets/ExtensionSDKs/callbacks';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 
 interface PageWidgetRendererProps {
@@ -152,6 +154,16 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
               isOnPageLocation: true,
             }),
           },
+          spaceMembership: {
+            sys: {
+              id: currentSpaceData.spaceMembership.sys.id,
+            },
+            admin: currentSpaceData.spaceMembership.admin,
+          },
+          roles: currentSpaceData.spaceMember.roles.map(({ name, description }) => ({
+            name,
+            description: description ?? '',
+          })),
         }) as PageExtensionSDK)
       : localCreatePageWidgetSDK({
           widgetNamespace: widget.namespace,
