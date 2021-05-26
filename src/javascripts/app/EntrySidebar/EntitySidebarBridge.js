@@ -275,8 +275,6 @@ export default function EntitySidebarBridge({
         parameters,
         cma,
         spaceContext,
-        widgetNamespace,
-        widgetId,
         fieldLocaleListeners: makeFieldLocaleListeners(
           editorData.fieldControls.all,
           editorContext,
@@ -284,6 +282,8 @@ export default function EntitySidebarBridge({
           localeData.defaultLocale,
           otDoc
         ),
+        widgetId,
+        widgetNamespace,
       });
     },
     (ns, id, params) => [ns, id, JSON.stringify(params)].join(',')

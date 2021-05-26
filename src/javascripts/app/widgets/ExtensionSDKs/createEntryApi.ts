@@ -6,6 +6,7 @@ import type { Document } from '@contentful/editorial-primitives';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { isEqual } from 'lodash';
 import APIClient from 'data/APIClient';
+
 interface CreateEntryApiOptions {
   cma: APIClient;
   internalContentType: InternalContentType;
@@ -13,8 +14,8 @@ interface CreateEntryApiOptions {
   setInvalid: (localeCode: string, value: boolean) => void;
   fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
-  widgetNamespace: string;
   widgetId: string;
+  widgetNamespace: string;
 }
 
 export function createEntryApi({
@@ -34,8 +35,8 @@ export function createEntryApi({
       setInvalid,
       fieldLocaleListeners,
       readOnly,
-      widgetNamespace,
       widgetId,
+      widgetNamespace,
     });
   });
 

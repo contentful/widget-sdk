@@ -142,7 +142,6 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
   if (!widgetApi) {
     return null;
   }
-
   return (
     <>
       <div className="entity-editor__control-group">
