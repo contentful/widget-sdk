@@ -352,10 +352,12 @@ registerSnowplowEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerSnowplowEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
 registerSnowplowEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
-registerSnowplowEvent('search:entry_clicked', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:filter_added', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
+// TODO Remove ":" from Segment schema names.
+registerSegmentEvent('search:entry_clicked', 'search:entry_clicked', SearchAndViewsWithSequence);
+// TODO: Re-implement tracking or remove:
+registerSegmentEvent('search:filter_added', 'search:filter_added', SearchAndViewsWithSequence);
+registerSegmentEvent('search:filter_removed', 'search:filter_removed', SearchAndViewsWithSequence);
+registerSegmentEvent('search:query_changed', 'search:query_changed', SearchAndViewsWithSequence);
 
 registerSnowplowEvent(
   'entry_editor:view',
