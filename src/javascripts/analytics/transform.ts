@@ -350,7 +350,6 @@ registerSnowplowEvent('search:view_created', 'view_create', SearchAndViews);
 registerSnowplowEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerSnowplowEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerSnowplowEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
 // TODO Remove ":" from Segment schema names.
 registerSegmentEvent('search:entry_clicked', 'search:entry_clicked', SearchAndViewsWithSequence);
