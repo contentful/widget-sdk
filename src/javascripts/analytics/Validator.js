@@ -56,7 +56,6 @@ export const validEvents = {
     'view_edited',
     'view_deleted',
     'view_loaded',
-    'search_terms_migrated',
     'entry_clicked',
     'filter_added',
     'filter_removed',

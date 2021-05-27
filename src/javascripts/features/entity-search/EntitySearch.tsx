@@ -4,6 +4,7 @@ import { upperFirst } from 'lodash';
 import { CustomInputRenderers, Search, SearchFeatures } from '@contentful/entity-search';
 import { useSearchSdk } from './useSearchSdk';
 import { MetadataTagBridge } from './ValueInput/MetadataTagBridge';
+import * as Analytics from 'analytics/Analytics';
 import type { ListViewContext, ViewCallback } from './useListView';
 
 type EntitySearchProps = {
@@ -77,6 +78,13 @@ export function EntitySearch(props: EntitySearchProps) {
     },
   });
 
+  const onTrack = ({ type, filter }: { type: string; filter?: { name: string } }) => {
+    if (['filter_added', 'filter_removed'].includes(type)) {
+      // `search:filter_added` and `search:filter_removed`
+      Analytics.track(`search:${type}`, { filter: filter?.name });
+    }
+  };
+
   return (
     <Search
       key={key}
@@ -87,6 +95,7 @@ export function EntitySearch(props: EntitySearchProps) {
       features={features}
       onChange={onChange}
       onChangeDebounce={200}
+      onTrack={onTrack}
       sdk={searchSdk}
     />
   );
