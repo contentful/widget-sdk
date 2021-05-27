@@ -32,7 +32,7 @@ interface UsedAndUnusedSpacePlansProps {
   isSpacePlanAssignmentExperimentEnabled: boolean;
   // Function to be called when space plan changes (upgrade or downgrade)
   onChangeSpace: () => void;
-  // Function to be called when space plan is deleted
+  // function to generate the the correct onDelete function for each SpacePlanRow
   onDeleteSpace: (plan: SpacePlan) => () => void;
   // The id of the current organization
   organizationId: string;

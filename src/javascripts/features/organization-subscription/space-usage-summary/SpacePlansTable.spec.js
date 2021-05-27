@@ -105,7 +105,7 @@ describe('SpacePlansTable', () => {
   });
 
   it('should not render SpacePlanRows when there are no plans', async () => {
-    build(null, { spacePlans: [] });
+    build({ plans: [] });
 
     await waitFor(() =>
       expect(screen.queryAllByTestId('subscription-page.spaces-list.table-row')).toHaveLength(0)

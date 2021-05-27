@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within, act } from '@testing-library/react';
+import { render, screen, fireEvent, within, act, waitFor } from '@testing-library/react';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
@@ -14,22 +14,6 @@ import {
 
 const TODAY = '2019-10-01T03:00:00.000Z';
 const YESTERDAY = '2019-09-30T03:00:00.000Z';
-
-const mockTrialPlan = {
-  sys: { id: 'random_id' },
-  name: TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
-  planType: 'free_space',
-  space: fake.Space(),
-  price: 1337,
-};
-
-const mockSelfServicePlan = {
-  sys: { id: 'random_id' },
-  name: SELF_SERVICE,
-  planType: 'free_space',
-  space: fake.Space(),
-  price: 1337,
-};
 
 const mockUsage = {
   limit: 10,
@@ -46,6 +30,24 @@ const mockSpaceUsage = {
   sys: { id: 'random_id' },
 };
 
+const mockSelfServicePlan = {
+  sys: { id: 'random_id' },
+  name: SELF_SERVICE,
+  planType: 'free_space',
+  space: fake.Space(),
+  price: 1337,
+  usage: mockSpaceUsage,
+};
+
+const mockTrialPlan = {
+  sys: { id: 'random_id' },
+  name: TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+  planType: 'free_space',
+  space: fake.Space(),
+  price: 1337,
+  usage: { ...mockSpaceUsage, spaceTrialPeriodEndsAt: TODAY },
+};
+
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
@@ -60,45 +62,34 @@ jest.mock('core/react-routing', () => ({
 const mockOnChangeSpace = jest.fn();
 const mockOnDeleteSpace = jest.fn();
 
-const build = (input = {}) => {
-  const options = {
-    plan: mockTrialPlan,
-    spaceUsage: mockSpaceUsage,
-    hasUpgraded: false,
+function build(customProps = {}) {
+  const props = {
     enterprisePlan: false,
+    hasUpgraded: false,
+    onChangeSpace: mockOnChangeSpace,
+    onDeleteSpace: mockOnDeleteSpace,
+    organizationId: 'orgId',
+    plan: mockTrialPlan,
     showSpacePlanChangeBtn: false,
-    ...input,
+    ...customProps,
   };
 
-  if ('isAccessible' in input) {
-    options.plan.space.isAccessible = options.isAccessible;
-  } else {
-    options.plan.space.isAccessible = true;
+  if (customProps.isAccessible !== undefined) {
+    props.plan.space.isAccessible = customProps.isAccessible;
   }
 
-  if ('expiresAt' in options) {
-    options.spaceUsage.spaceTrialPeriodEndsAt = options.expiresAt;
-  } else {
-    delete options.spaceUsage.spaceTrialPeriodEndsAt;
+  if (customProps.expiresAt) {
+    props.plan.usage.spaceTrialPeriodEndsAt = customProps.expiresAt;
   }
 
   render(
     <table>
       <tbody>
-        <SpacePlanRow
-          organizationId="orgId"
-          plan={options.plan}
-          spaceUsage={options.spaceUsage}
-          onChangeSpace={mockOnChangeSpace}
-          onDeleteSpace={mockOnDeleteSpace}
-          hasUpgraded={options.hasUpgraded}
-          enterprisePlan={options.enterprisePlan}
-          showSpacePlanChangeBtn={options.showSpacePlanChangeBtn}
-        />
+        <SpacePlanRow {...props} />
       </tbody>
     </table>
   );
-};
+}
 
 describe('Space Plan Row', () => {
   beforeEach(() => {
@@ -263,14 +254,18 @@ describe('Space Plan Row', () => {
 
   describe('drop down menu options', () => {
     it('should call onChangeSpace when change-space-link is clicked', async () => {
-      build({ enterprisePlan: true });
+      build();
 
-      await act(async () => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      });
+      const dropdownButton = screen.getByTestId(
+        'subscription-page.spaces-list.dropdown-menu.trigger'
+      );
+      fireEvent.click(dropdownButton);
 
-      await act(async () => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.change-space-link'));
+      await waitFor(() => {
+        const changeSpaceButtonContainer = screen.getByTestId(
+          'subscription-page.spaces-list.change-space-link'
+        );
+        fireEvent.click(changeSpaceButtonContainer);
       });
 
       expect(mockOnChangeSpace).toHaveBeenCalled();
@@ -278,32 +273,35 @@ describe('Space Plan Row', () => {
 
     it('the view space-usage button should be disabled when it is not accessible', async () => {
       build({ isAccessible: false });
-      await act(async () => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+
+      const dropdownButton = screen.getByTestId(
+        'subscription-page.spaces-list.dropdown-menu.trigger'
+      );
+      fireEvent.click(dropdownButton);
+
+      await waitFor(() => {
+        const spaceUsageLinkButtonContainer = screen.getByTestId(
+          'subscription-page.spaces-list.space-usage-link'
+        );
+        const spaceUsageLinkButton = within(spaceUsageLinkButtonContainer).getByTestId(
+          FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
+        );
+        expect(spaceUsageLinkButton.hasAttribute('disabled')).toBeTruthy();
       });
-
-      const spaceUsageLinkButtonContainer = screen.getByTestId(
-        'subscription-page.spaces-list.space-usage-link'
-      );
-      const spaceUsageLinkButton = within(spaceUsageLinkButtonContainer).getByTestId(
-        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
-      );
-
-      expect(spaceUsageLinkButton.hasAttribute('disabled')).toBeTruthy();
     });
 
     it('should navigate to space-usage when space-usage-link is clicked', async () => {
       build({ isAccessible: true });
 
-      await act(async () => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      });
-
-      const spaceUsageLinkButtonContainer = screen.getByTestId(
-        'subscription-page.spaces-list.space-usage-link'
+      const dropdownButton = screen.getByTestId(
+        'subscription-page.spaces-list.dropdown-menu.trigger'
       );
+      fireEvent.click(dropdownButton);
 
-      await act(async () => {
+      await waitFor(() => {
+        const spaceUsageLinkButtonContainer = screen.getByTestId(
+          'subscription-page.spaces-list.space-usage-link'
+        );
         fireEvent.click(
           within(spaceUsageLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
@@ -318,12 +316,18 @@ describe('Space Plan Row', () => {
     it('should call onDeleteSpace when delete-space-link is clicked', async () => {
       build();
 
-      await act(async () => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      });
+      const dropdownButton = screen.getByTestId(
+        'subscription-page.spaces-list.dropdown-menu.trigger'
+      );
+      fireEvent.click(dropdownButton);
 
-      await act(() => {
-        fireEvent.click(screen.getByTestId('subscription-page.spaces-list.delete-space-link'));
+      await waitFor(() => {
+        const deleteButtonContainer = screen.getByTestId(
+          'subscription-page.spaces-list.delete-space-link'
+        );
+        fireEvent.click(
+          within(deleteButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+        );
       });
 
       expect(mockOnDeleteSpace).toHaveBeenCalled();
