@@ -359,7 +359,7 @@ jobs:
       # Jest tests
       - run:
           name: Run Jest tests
-          command: npm i && NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          command: NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
 
   publish-pact-contracts:
     docker:
