@@ -207,16 +207,38 @@ describe('utils/SubscriptionUtils', () => {
     });
   });
 
-  describe('#calculateSubscriptionTotal', () => {
+  describe('#calculateSubscriptionCosts', () => {
     it('should be able to calculate the price based on just the base tier with given users', function () {
-      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 3)).toBe(0);
-      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 7)).toBe(0);
-      expect(SubscriptionUtils.calculateSubscriptionTotal([basePlan], 12)).toBe(20);
+      expect(SubscriptionUtils.calculateSubscriptionCosts(basePlan, [], [], 3)).toMatchObject({
+        lineItems: [],
+        total: 0,
+      });
+      expect(SubscriptionUtils.calculateSubscriptionCosts(basePlan, [], [], 7)).toMatchObject({
+        lineItems: [],
+        total: 0,
+      });
+      expect(SubscriptionUtils.calculateSubscriptionCosts(basePlan, [], [], 12)).toMatchObject({
+        lineItems: [{ name: 'Additional users', price: 20 }],
+        total: 20,
+      });
     });
 
     it('should calculate the cost of all spaces and users together', function () {
-      expect(SubscriptionUtils.calculateSubscriptionTotal(allPlans, 3)).toBe(113);
-      expect(SubscriptionUtils.calculateSubscriptionTotal(allPlans, 12)).toBe(133);
+      expect(
+        SubscriptionUtils.calculateSubscriptionCosts(basePlan, [microPlan, macroPlan], [], 3)
+      ).toMatchObject({
+        lineItems: [{ name: 'Spaces', price: 113 }],
+        total: 113,
+      });
+      expect(
+        SubscriptionUtils.calculateSubscriptionCosts(basePlan, [microPlan, macroPlan], [], 12)
+      ).toMatchObject({
+        lineItems: [
+          { name: 'Spaces', price: 113 },
+          { name: 'Additional users', price: 20 },
+        ],
+        total: 133,
+      });
     });
   });
 

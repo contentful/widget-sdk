@@ -14,7 +14,7 @@ type AnyPlan = BasePlan | AddOnPlan | SpacePlan;
 
 interface AllPlans {
   basePlan?: BasePlan;
-  addOnPlan?: AddOnPlan;
+  addOnPlans: AddOnPlan[];
   spacePlans: SpacePlan[];
 }
 
@@ -26,7 +26,7 @@ interface AllPlans {
  *
  * @param plans - array of plans
  * @param accessibleSpaces - array of spaces that current user has access to (use `getSpaces` from the TokenStore to get it)
- * @returns {AllPlans} a map with basePlan, addOnPlan, and spacePlans
+ * @returns {AllPlans} a map with basePlan, addOnPlans, and spacePlans
  */
 export function findAllPlans(
   plans: AnyPlan[],
@@ -38,7 +38,7 @@ export function findAllPlans(
         case 'base':
           return { ...acc, basePlan: plan as BasePlan };
         case 'add_on':
-          return { ...acc, addOnPlan: plan as AddOnPlan };
+          return { ...acc, addOnPlans: [...acc['addOnPlans'], plan as AddOnPlan] };
         case 'space':
         case 'free_space':
           // add to them 0 price if they don't have one yet
@@ -56,7 +56,7 @@ export function findAllPlans(
           return acc;
       }
     },
-    { spacePlans: [] } as AllPlans
+    { spacePlans: [], addOnPlans: [] } as AllPlans
   );
 
   // sort spacePlans alphabetically

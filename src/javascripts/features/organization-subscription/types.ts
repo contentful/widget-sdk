@@ -31,6 +31,16 @@ export interface SpacePlan extends Plan {
   };
 }
 
+export interface LineItem {
+  name: string;
+  price: number;
+}
+
+export interface SubscriptionCosts {
+  total: number;
+  lineItems: LineItem[];
+}
+
 export interface UsersMeta {
   numFree: number;
   numPaid: number;

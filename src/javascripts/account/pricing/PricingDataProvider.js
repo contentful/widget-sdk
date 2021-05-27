@@ -17,6 +17,9 @@ export const PARTNER_PLATFORM_BASE_PLAN_NAME = 'Partner Platform';
 export const TRIAL_SPACE_FREE_SPACE_PLAN_NAME = 'Trial Space';
 export const POC_FREE_SPACE_PLAN_NAME = 'Proof of Concept';
 
+export const ADD_ON_PLAN_TYPE = 'add_on';
+export const COMPOSE_AND_LAUNCH_PLAN_NAME = 'Contentful Compose + Contentful Launch';
+
 export const customerTypes = {
   free: [FREE],
   selfService: [SELF_SERVICE],
@@ -78,6 +81,10 @@ export function isFreeProductPlan(plan) {
 
 export function isPOCSpacePlan(plan) {
   return isEnterprisePlan(plan) && isFreeSpacePlan(plan);
+}
+
+export function isComposeAndLaunchPlan(plan) {
+  return plan.planType === ADD_ON_PLAN_TYPE && plan.name === COMPOSE_AND_LAUNCH_PLAN_NAME;
 }
 
 /**

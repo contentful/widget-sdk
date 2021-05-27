@@ -14,6 +14,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { OrgSubscriptionContextProvider } from '../context';
 import { mockWebappContent } from './__mocks__/webappContent';
 import { BasePlanContentEntryIds } from '../types';
+import { calculateSubscriptionCosts } from 'utils/SubscriptionUtils';
 import { NonEnterpriseSubscriptionPage } from './NonEnterpriseSubscriptionPage';
 import { MemoryRouter } from 'core/react-routing';
 
@@ -29,6 +30,11 @@ jest.mock('features/trials', () => ({
   useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 
+jest.mock('utils/SubscriptionUtils', () => ({
+  ...jest.requireActual('utils/SubscriptionUtils'),
+  calculateSubscriptionCosts: jest.fn(),
+}));
+
 const mockOrganization = Fake.Organization();
 const mockFreeBasePlan = Fake.Plan({ name: 'Community Platform', customerType: FREE });
 const mockSelfServiceBasePlan = Fake.Plan({ name: 'Team Platform', customerType: SELF_SERVICE });
@@ -38,6 +44,10 @@ const mockFreeSpacePlan = {
   name: 'Mock free space',
   planType: 'free_space',
   space: { sys: { id: 'test' } },
+};
+const mockSubscriptionCosts = {
+  lineItems: [{ name: 'First Item', price: 3000 }],
+  total: 3000,
 };
 
 describe('NonEnterpriseSubscriptionPage', () => {
@@ -76,7 +86,7 @@ describe('NonEnterpriseSubscriptionPage', () => {
     });
 
     it('fetches content for Team tier when basePlan.customerType is "Self-service"', async () => {
-      await build({ basePlan: mockSelfServiceBasePlan });
+      await build(null, { basePlan: mockSelfServiceBasePlan });
 
       expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(
         BasePlanContentEntryIds.SELF_SERVICE
@@ -84,13 +94,13 @@ describe('NonEnterpriseSubscriptionPage', () => {
     });
 
     it('fetches content for Partner Sandbox when basePlan.name is "Partner Platform"', async () => {
-      await build({ basePlan: mockPartnerBasePlan });
+      await build(null, { basePlan: mockPartnerBasePlan });
 
       expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.PARTNER);
     });
 
     it('fetches content for Pro Bono when basePlan.customerType is "Marketing - NGO"', async () => {
-      await build({ basePlan: mockProBonoBasePlan });
+      await build(null, { basePlan: mockProBonoBasePlan });
 
       expect(fetchWebappContentByEntryID).toHaveBeenCalledWith(BasePlanContentEntryIds.PRO_BONO);
     });
@@ -98,10 +108,20 @@ describe('NonEnterpriseSubscriptionPage', () => {
 
   describe('Monthly Total section', () => {
     it('should show the monthly cost for on demand users', async () => {
-      await build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
+      calculateSubscriptionCosts.mockReturnValue(mockSubscriptionCosts);
+      await build({
+        organization: Fake.Organization({ isBillable: true }),
+      });
 
-      expect(screen.getByText('Monthly total')).toBeVisible();
-      expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
+      expect(screen.getByTestId('monthly-total-card')).toBeVisible();
+
+      const listItems = screen.getAllByTestId('subscription-page.monthly-total.list-item');
+      // First line item in mock
+      expect(listItems[0]).toHaveTextContent(
+        `${mockSubscriptionCosts.lineItems[0].name}` + '$3,000'
+      );
+      // Last line is the total, no space between the two spans as they spaced apart with CSS
+      expect(listItems[listItems.length - 1]).toHaveTextContent('Monthly total$3,000');
     });
   });
 
@@ -130,11 +150,9 @@ describe('NonEnterpriseSubscriptionPage', () => {
   });
 });
 
-async function build(customProps) {
+async function build(customProps, customState) {
   const props = {
     organization: mockOrganization,
-    basePlan: mockFreeBasePlan,
-    grandTotal: null,
     usersMeta: null,
     onSpacePlansChange: null,
     ...customProps,
@@ -142,6 +160,10 @@ async function build(customProps) {
 
   const state = {
     spacePlans: [mockFreeSpacePlan],
+    basePlan: mockFreeBasePlan,
+    addOnPlans: [],
+    numMemberships: 2,
+    ...customState,
   };
 
   render(
