@@ -12,10 +12,12 @@ import {
   Heading,
   DisplayText,
   IconButton,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { SettingsTabComponent } from './components/SettingsTabComponent';
 import { ValidationTabComponent } from './components/ValidationTabComponent';
+import { InitialValueTabComponent } from './components/InitialValueTabComponent';
 import { AppearanceTabComponent } from './components/AppearanceTabComponent';
 import {
   getSettingsFormFields,
@@ -58,11 +60,15 @@ const styles = {
     fontWeight: tokens.fontWeightNormal,
     color: tokens.colorTextLightest,
   }),
+  promotionTag: css({
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 const formTabs = {
   SETTINGS: 'settings-tab',
   VALIDATION: 'validation-tab',
+  INITIAL_VALUE: 'initial-values-tab',
   APPEARANCE: 'appearance-tab',
 };
 
@@ -133,6 +139,16 @@ const FieldModalDialogForm = ({
               Validation
             </Tab>
             <Tab
+              testId={formTabs.INITIAL_VALUE}
+              id={formTabs.INITIAL_VALUE}
+              selected={selectedTab === formTabs.INITIAL_VALUE}
+              onSelect={setSelectedTab}>
+              Initial value
+              <Tag className={styles.promotionTag} tagType="primary-filled" size="small">
+                new
+              </Tag>
+            </Tab>
+            <Tab
               testId={formTabs.APPEARANCE}
               id={formTabs.APPEARANCE}
               selected={selectedTab === formTabs.APPEARANCE}
@@ -171,6 +187,20 @@ const FieldModalDialogForm = ({
           {selectedTab === formTabs.VALIDATION && (
             <TabPanel id="validation-tab-panel">
               <ValidationTabComponent
+                onBlur={onBlur}
+                onChange={onChange}
+                fields={fields}
+                form={form}
+                ctField={ctField}
+                contentTypes={currentSpaceContentTypes}
+                widgetSettings={widgetSettings}
+                availableWidgets={availableWidgets}
+              />
+            </TabPanel>
+          )}
+          {selectedTab === formTabs.INITIAL_VALUE && (
+            <TabPanel id="initial-value-tab-panel">
+              <InitialValueTabComponent
                 onBlur={onBlur}
                 onChange={onChange}
                 fields={fields}
