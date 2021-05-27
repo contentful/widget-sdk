@@ -1,8 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
 import moment from 'moment';
-import tokens from '@contentful/forma-36-tokens';
 import {
   Icon,
   TextLink,
@@ -14,12 +12,15 @@ import {
   DropdownListItem,
   Flex,
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import { track } from 'analytics/Analytics';
 import StateLink from 'app/common/StateLink';
 import { Price } from 'core/components/formatting';
 import { router, RouteLink } from 'core/react-routing';
 
+import type { SpacePlanWithUsage } from '../types';
 import { SpaceUsageTableCell } from './SpaceUsageTableCell';
-import { track } from 'analytics/Analytics';
 
 const styles = {
   hasUpgraded: css({ backgroundColor: tokens.colorMintMid }),
@@ -40,24 +41,31 @@ const styles = {
   }),
 };
 
-export const SpacePlanRow = ({
-  organizationId,
-  plan,
-  spaceUsage,
+interface SpacePlanRow {
+  enterprisePlan?: boolean;
+  hasUpgraded?: boolean;
+  onChangeSpace: () => void;
+  onDeleteSpace: () => void;
+  organizationId: string;
+  plan: SpacePlanWithUsage;
+  showSpacePlanChangeBtn?: boolean;
+}
+
+export function SpacePlanRow({
+  enterprisePlan = false,
+  hasUpgraded = false,
   onChangeSpace,
   onDeleteSpace,
-  hasUpgraded,
-  enterprisePlan,
-  showSpacePlanChangeBtn,
+  organizationId,
+  plan,
+  showSpacePlanChangeBtn = false,
   showV1MigrationCommunication,
-}) => {
-  const { space } = plan;
-  const { isAccessible } = space;
-  const { spaceTrialPeriodEndsAt } = spaceUsage;
-  const expiresAtTooltipContent = spaceTrialPeriodEndsAt
+}) {
+  const { space, usage: spaceUsage } = plan;
+  const expiresAtTooltipContent = spaceUsage.spaceTrialPeriodEndsAt
     ? `${
-        moment().isAfter(moment(spaceTrialPeriodEndsAt), 'date') ? 'Expired' : 'Expires'
-      } on ${moment(spaceTrialPeriodEndsAt).format('DD/MM/YYYY')}`
+        moment().isAfter(moment(spaceUsage.spaceTrialPeriodEndsAt), 'date') ? 'Expired' : 'Expires'
+      } on ${moment(spaceUsage.spaceTrialPeriodEndsAt).format('DD/MM/YYYY')}`
     : '';
 
   const onViewUsage = () => {
@@ -75,7 +83,7 @@ export const SpacePlanRow = ({
       <TableCell
         testId="subscription-page.spaces-list.space-name"
         className={styles.tableCellAlignedMiddle}>
-        {isAccessible ? (
+        {space.isAccessible ? (
           <StateLink
             testId="subscription-page.spaces-list.space-link"
             component={TextLink}
@@ -94,7 +102,7 @@ export const SpacePlanRow = ({
         testId="subscription-page.spaces-list.space-type"
         className={styles.tableCellAlignedMiddle}>
         <strong>{plan.name}</strong>&nbsp;
-        {spaceTrialPeriodEndsAt && (
+        {spaceUsage.spaceTrialPeriodEndsAt && (
           <Tooltip
             content={expiresAtTooltipContent}
             testId="subscription-page.spaces-list.trial-space-tooltip">
@@ -158,6 +166,7 @@ export const SpacePlanRow = ({
           </>
         )}{' '}
       </TableCell>
+
       <SpaceUsageTableCell
         testId="subscription-page.spaces-list.usage.environments"
         {...spaceUsage.environments}
@@ -190,7 +199,7 @@ export const SpacePlanRow = ({
           <DropdownList>
             <DropdownListItem
               onClick={onViewUsage}
-              isDisabled={!isAccessible}
+              isDisabled={!space.isAccessible}
               testId="subscription-page.spaces-list.space-usage-link">
               Detailed usage
             </DropdownListItem>
@@ -202,7 +211,7 @@ export const SpacePlanRow = ({
               </DropdownListItem>
             )}
             <DropdownListItem
-              onClick={onDeleteSpace(plan)}
+              onClick={onDeleteSpace}
               testId="subscription-page.spaces-list.delete-space-link">
               Delete
             </DropdownListItem>
@@ -211,22 +220,4 @@ export const SpacePlanRow = ({
       </TableCell>
     </TableRow>
   );
-};
-
-SpacePlanRow.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  plan: PropTypes.object.isRequired,
-  spaceUsage: PropTypes.object,
-  onChangeSpace: PropTypes.func.isRequired,
-  onDeleteSpace: PropTypes.func.isRequired,
-  enterprisePlan: PropTypes.bool,
-  hasUpgraded: PropTypes.bool,
-  showSpacePlanChangeBtn: PropTypes.bool,
-  showV1MigrationCommunication: PropTypes.bool,
-};
-
-SpacePlanRow.defaultProps = {
-  enterprisePlan: false,
-  hasUpgraded: false,
-  showSpacePlanChangeBtn: false,
-};
+}

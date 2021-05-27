@@ -82,7 +82,7 @@ export function SpacePlans({
     (newSpacePlans) => dispatch({ type: actions.SET_SPACE_PLANS, payload: newSpacePlans }),
     setChangedSpaceId
   );
-  const onDeleteSpace = (plan) => () => {
+  const getOnDeleteSpace = (plan) => () => {
     openDeleteSpaceDialog({
       plan,
       space: plan.space,
@@ -120,7 +120,7 @@ export function SpacePlans({
               enterprisePlan={enterprisePlan}
               featureFlagLoading={isLoading}
               onChangeSpace={onChangeSpace}
-              onDeleteSpace={onDeleteSpace}
+              onDeleteSpace={getOnDeleteSpace}
               plans={spacePlans}
               upgradedSpaceId={changedSpaceId}
               showV1MigrationCommunication={showV1MigrationCommunication}
@@ -135,7 +135,7 @@ export function SpacePlans({
               isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
               isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
               onChangeSpace={onChangeSpace}
-              onDeleteSpace={onDeleteSpace}
+              onDeleteSpace={getOnDeleteSpace}
               spacePlans={spacePlans}
             />
           )}

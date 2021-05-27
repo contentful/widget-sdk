@@ -19,6 +19,7 @@ export type StateLinkProps = {
   trackParams?: EventData;
   target?: '_blank';
   rel?: string;
+  testId?: string;
 };
 
 export const StateLink = ({
