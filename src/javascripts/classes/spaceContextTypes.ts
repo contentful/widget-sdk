@@ -5,12 +5,13 @@ import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
 import { PubSubClient } from 'services/PubSubService';
 import createUiConfigStore from 'data/UiConfig/Store';
 import {
-  EnvironmentProps as Environment,
   BasicMetaSysProps,
-  OrganizationMembershipProps,
+  ContentTypeProps,
   EnvironmentAliasProps,
-  SpaceMembershipProps,
+  EnvironmentProps as Environment,
   MetaSysProps,
+  OrganizationMembershipProps,
+  SpaceMembershipProps,
 } from 'contentful-management/types';
 
 export type SpaceMember = {
@@ -47,6 +48,7 @@ export interface SpaceData {
   shards: any[];
   organization: Organization;
 }
+
 interface EnvironmentMeta {
   environmentId: string;
   isMasterEnvironment: boolean;
@@ -60,7 +62,16 @@ export interface SpaceObject {
   environmentMeta: EnvironmentMeta;
   persistenceContext: any;
   enforcements: any;
+
   getId(): string;
+
+  getContentType(contentTypeId: string): Promise<{ data: ContentTypeProps }>;
+  newContentType(contentType: {
+    sys: Partial<ContentTypeProps['sys']>;
+    fields: ContentTypeProps['fields'];
+  }): Promise<{ data: ContentTypeProps }>;
+
+  getEntries(query: { content_type?: string; limit?: number }): Promise<{ total: number }>;
 }
 
 export type Enforcements = unknown; // TODO: Confirm type
@@ -92,6 +103,9 @@ export type SpaceContextType = {
     items$: any;
     refresh: () => Promise<void>;
     getAllBare: () => any[];
+    get: (contentTypeId: string) => ContentTypeProps | null;
+    publish: (contentType: ContentTypeProps) => Promise<ContentTypeProps>;
+    unpublish: (contentType: ContentTypeProps) => Promise<ContentTypeProps>;
   };
 
   /**

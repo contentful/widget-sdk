@@ -1,8 +1,8 @@
 import React from 'react';
 import { css } from 'emotion';
-import StateLink from 'app/common/StateLink';
-import { TextLink, Note } from '@contentful/forma-36-react-components';
+import { Note, TextLink } from '@contentful/forma-36-react-components';
 import * as accessChecker from 'access_control/AccessChecker';
+import { ReactRouterLink } from 'core/react-routing';
 
 const NoEditorsWarning = ({ contentTypeId }: { contentTypeId: string | undefined }) => {
   const canUpdateContentTypes = accessChecker.can('update', 'contentType');
@@ -11,11 +11,14 @@ const NoEditorsWarning = ({ contentTypeId }: { contentTypeId: string | undefined
     <Note className={css({ margin: '20px' })}>
       Editing is disabled for entries of this content type.{' '}
       {canUpdateContentTypes && contentTypeId !== undefined ? (
-        <StateLink
-          path="spaces.detail.content_types.detail.entry_editor_configuration"
-          params={{ contentTypeId }}>
+        <ReactRouterLink
+          route={{
+            path: 'content_types.detail',
+            tab: 'entry_editor_configuration',
+            contentTypeId,
+          }}>
           <TextLink>Change entry editor settings</TextLink>
-        </StateLink>
+        </ReactRouterLink>
       ) : null}
     </Note>
   );

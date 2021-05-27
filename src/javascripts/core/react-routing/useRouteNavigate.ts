@@ -5,7 +5,7 @@ import { RouteType } from './routes';
 import { router } from './useRouter';
 
 export type RouteNavigateFn = (
-  route: RouteType | 'string',
+  route: RouteType | string,
   options?: {
     replace?: boolean;
     state?: object | null;

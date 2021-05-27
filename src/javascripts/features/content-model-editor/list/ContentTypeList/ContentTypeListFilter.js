@@ -27,7 +27,7 @@ ListItem.propTypes = {
   onClick: PropTypes.func,
 };
 
-export default function ContentTypeListFilter({ status, onChange }) {
+export function ContentTypeListFilter({ status, onChange }) {
   return (
     <div className="view-folder" data-test-id="status-filter">
       <div className="view-folder__title view-folder__header">Filter by status</div>

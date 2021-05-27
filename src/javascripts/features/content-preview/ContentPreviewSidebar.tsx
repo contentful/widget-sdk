@@ -1,10 +1,10 @@
 import React from 'react';
-import StateLink from 'app/common/StateLink';
-import { Typography, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import { Paragraph, TextLink, Typography } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase, {
   KnowledgeBaseItems,
 } from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { ReactRouterLink } from 'core/react-routing';
 
 export const WhatIsContentPreview = () => (
   <WorkbenchSidebarItem title="What‘s content preview?">
@@ -111,8 +111,10 @@ export const LegacyTokens = () => (
       </Paragraph>
       <Paragraph>
         Use the{' '}
-        <StateLink path="spaces.detail.content_types.list">content model explorer</StateLink> to
-        retreive the ID of the field(s) you want to use.
+        <ReactRouterLink route={{ path: 'content_types.list' }}>
+          content model explorer
+        </ReactRouterLink>{' '}
+        to retreive the ID of the field(s) you want to use.
       </Paragraph>
     </Typography>
   </WorkbenchSidebarItem>

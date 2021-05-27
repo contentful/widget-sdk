@@ -1,18 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { Button } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink';
+import { Button, ButtonProps } from '@contentful/forma-36-react-components';
 import * as accessChecker from 'access_control/AccessChecker';
+import { RouteLink } from 'core/react-routing';
 
 const styles = {
   button: css({
     marginLeft: 'auto',
-    flexShrink: '0',
+    flexShrink: 0,
   }),
 };
 
-export default function CreateContentTypeCta({ size = null, testId }) {
+export function CreateContentTypeCta({
+  size,
+  testId,
+}: {
+  size?: ButtonProps['size'];
+  testId: string;
+}) {
   const canCreateContentTypes = !accessChecker.shouldDisable(
     accessChecker.Action.CREATE,
     'contentType'
@@ -26,7 +31,7 @@ export default function CreateContentTypeCta({ size = null, testId }) {
     return null;
   }
   return (
-    <StateLink path="^.new">
+    <RouteLink route={{ path: 'content_types.new' }}>
       {({ onClick }) => (
         <Button
           className={styles.button}
@@ -37,11 +42,6 @@ export default function CreateContentTypeCta({ size = null, testId }) {
           Add content type
         </Button>
       )}
-    </StateLink>
+    </RouteLink>
   );
 }
-
-CreateContentTypeCta.propTypes = {
-  size: PropTypes.oneOf(['large', null]),
-  testId: PropTypes.string,
-};

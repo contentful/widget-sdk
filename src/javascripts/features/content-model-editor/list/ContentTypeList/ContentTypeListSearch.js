@@ -12,7 +12,7 @@ const styles = {
   }),
 };
 
-export default class ContentTypeListSearch extends React.Component {
+export class ContentTypeListSearch extends React.Component {
   static propTypes = {
     searchTerm: PropTypes.string,
     onChange: PropTypes.func,

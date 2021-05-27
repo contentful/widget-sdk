@@ -185,11 +185,10 @@ export function getSpaceNavigationItems({
         },
     {
       if: canNavigateTo('contentType'),
-      sref: makeRef('content_types.list', isUnscopedRoute),
-      rootSref: makeRef('content_types', isUnscopedRoute),
       dataViewType: 'content-type-list',
       navIcon: 'ContentModel',
       title: 'Content model',
+      ...makeReactRouterRef('content_types.list', withEnvironment),
     },
     {
       if: canNavigateTo('entry'),

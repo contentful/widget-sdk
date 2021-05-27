@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Paragraph, Subheading, Typography } from '@contentful/forma-36-react-components';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -10,7 +9,16 @@ const styles = {
   }),
 };
 
-export function FieldsSection(props) {
+type Props = {
+  canEdit: boolean;
+  showNewFieldDialog: {
+    isDisabled: () => boolean;
+    execute: VoidFunction;
+  };
+  fieldsUsed: number;
+};
+
+export function FieldsSection(props: Props) {
   return (
     <React.Fragment>
       <Subheading className="entity-sidebar__heading">Fields</Subheading>
@@ -33,12 +41,3 @@ export function FieldsSection(props) {
     </React.Fragment>
   );
 }
-
-FieldsSection.propTypes = {
-  canEdit: PropTypes.bool.isRequired,
-  showNewFieldDialog: PropTypes.shape({
-    isDisabled: PropTypes.func.isRequired,
-    execute: PropTypes.func.isRequired,
-  }).isRequired,
-  fieldsUsed: PropTypes.number.isRequired,
-};

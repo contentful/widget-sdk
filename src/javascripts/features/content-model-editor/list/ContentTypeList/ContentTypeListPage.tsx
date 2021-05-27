@@ -1,27 +1,28 @@
-import React, { useCallback, useState, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useState } from 'react';
 import {
-  SkeletonContainer,
-  SkeletonBodyText,
   Heading,
-  Workbench,
   Note,
   Paragraph,
+  SkeletonBodyText,
+  SkeletonContainer,
+  Workbench,
 } from '@contentful/forma-36-react-components';
-import ContentTypeList from './ContentTypeList';
+import { ContentTypeList } from './ContentTypeList';
 import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
 import { NoContentTypeAdvice } from 'core/components/NoContentTypeAdvice';
-import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import ContentTypeListSearch from './ContentTypeListSearch';
-import ContentTypeListFilter from './ContentTypeListFilter';
+import { CreateContentTypeCta } from '../CreateContentTypeCta';
+import KnowledgeBase, {
+  KnowledgeBaseItems,
+} from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { ContentTypeListSearch } from './ContentTypeListSearch';
+import { ContentTypeListFilter } from './ContentTypeListFilter';
 import * as service from './ContentTypeListService';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { isLegacyOrganization, getResourceLimits } from 'utils/ResourceUtils';
-import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
+import { CTA_EVENTS, trackTargetedCTAClick } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
@@ -29,9 +30,9 @@ import createResourceService from 'services/ResourceService';
 import { useAsync } from 'core/hooks';
 import { debounce } from 'lodash';
 import qs from 'qs';
-import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
-import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import { LocationDispatchContext, LocationStateContext } from 'core/services/LocationContext';
 import tokens from '@contentful/forma-36-tokens';
+import type { Organization } from 'classes/spaceContextTypes';
 
 const styles = {
   banner: css({
@@ -45,13 +46,19 @@ const styles = {
     display: 'flex',
   }),
 };
+type Props = {
+  spaceId: string;
+  environmentId: string;
+  currentOrganization: Organization;
+  currentOrganizationId: string;
+};
 
 export function ContentTypeListPage({
   spaceId,
   environmentId,
   currentOrganization,
   currentOrganizationId,
-}) {
+}: Props) {
   const updateLocation = useContext(LocationDispatchContext);
   const locationValue = useContext(LocationStateContext);
   const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
@@ -110,7 +117,7 @@ export function ContentTypeListPage({
 
   const { isLoading, data } = useAsync(getData);
   const debouncedSearch = useCallback(
-    debounce((searchTerm) => {
+    debounce<(term: string) => void>((searchTerm) => {
       setSearchTerm(searchTerm);
       updateLocation({ searchTerm });
     }, 200),
@@ -129,7 +136,7 @@ export function ContentTypeListPage({
   };
 
   const renderSidebar = () => {
-    if (!isLoading && data.contentTypes.length === 0) {
+    if (!isLoading && data?.contentTypes.length === 0) {
       return null;
     }
 
@@ -144,7 +151,7 @@ export function ContentTypeListPage({
 
   let filteredContentTypes = [];
   if (!isLoading) {
-    filteredContentTypes = service.filterContentTypes(data.contentTypes, {
+    filteredContentTypes = service.filterContentTypes(data?.contentTypes || [], {
       searchTerm,
       status,
     });
@@ -158,16 +165,16 @@ export function ContentTypeListPage({
           <>
             <Heading>Content Model</Heading>
             <div className={styles.knowledgeBaseIcon}>
-              <KnowledgeBase target="content_model" asIcon />
+              <KnowledgeBase target={KnowledgeBaseItems.content_model} asIcon />
             </div>
           </>
         }
         actions={
           <>
-            {!isLoading && data.contentTypes.length > 0 && (
+            {!isLoading && data?.contentTypes.length > 0 && (
               <ContentTypeListSearch searchTerm={searchTerm} onChange={(value) => search(value)} />
             )}
-            {!isLoading && data.contentTypes.length > 0 && (
+            {!isLoading && data?.contentTypes.length > 0 && (
               <CreateContentTypeCta testId="create-content-type" />
             )}
           </>
@@ -191,7 +198,7 @@ export function ContentTypeListPage({
           </SkeletonContainer>
         ) : (
           <React.Fragment>
-            {data.showContentTypeLimitBanner && (
+            {data?.showContentTypeLimitBanner && (
               <Note noteType="primary" className={styles.banner} testId="content-type-limit-banner">
                 <Paragraph>
                   You’ve used {data.usage} of {data.limit} content types.
@@ -218,12 +225,12 @@ export function ContentTypeListPage({
                 <ContentTypeList contentTypes={filteredContentTypes} />
               </div>
             )}
-            {data.contentTypes.length > 0 && filteredContentTypes.length === 0 && (
+            {data?.contentTypes.length > 0 && filteredContentTypes.length === 0 && (
               <div data-test-id="no-search-results">
                 <NoSearchResultsAdvice />
               </div>
             )}
-            {data.contentTypes.length === 0 && (
+            {data?.contentTypes.length === 0 && (
               <div data-test-id="empty-state">
                 <NoContentTypeAdvice />
               </div>
@@ -234,10 +241,3 @@ export function ContentTypeListPage({
     </Workbench>
   );
 }
-
-ContentTypeListPage.propTypes = {
-  spaceId: PropTypes.string,
-  environmentId: PropTypes.string,
-  currentOrganization: OrganizationPropType,
-  currentOrganizationId: PropTypes.string,
-};

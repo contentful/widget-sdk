@@ -1,16 +1,11 @@
 import { cloneDeep } from 'lodash';
-import { go } from 'states/Navigator';
 import { syncControls } from 'widgets/EditorInterfaceTransformer';
 import { openCreateContentTypeDialog } from './Dialogs';
+import { router } from 'core/react-routing';
 
 export const allFieldsInactive = (contentType) => {
   const fields = contentType.fields || [];
   return fields.every((field) => field.disabled || field.omitted);
-};
-
-export const goToDetails = (contentType) => {
-  // X.detail.fields -> X.detail.fields with altered contentTypeId param
-  return go({ path: '^.^.detail.fields', params: { contentTypeId: contentType.sys.id } });
 };
 
 export const getWidget = (field, contentType, controls) => {
@@ -36,8 +31,7 @@ export const openCreateDialog = async (contentTypeIds, contentType, setContentTy
         }
         setContentType(clonedCT);
       } else {
-        // X.detail.fields -> X.list
-        go({ path: 'spaces.detail.content_types.list' });
+        router.navigate({ path: 'content_types.list' });
       }
     },
     () => {}

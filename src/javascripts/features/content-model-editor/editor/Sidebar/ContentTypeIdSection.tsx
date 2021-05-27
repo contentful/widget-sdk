@@ -5,9 +5,8 @@ import {
   TextInput,
   Typography,
 } from '@contentful/forma-36-react-components';
-import PropTypes from 'prop-types';
 
-export function ContentTypeIdSection(props) {
+export function ContentTypeIdSection({ contentTypeId }: { contentTypeId: string }) {
   return (
     <React.Fragment>
       <Subheading className="entity-sidebar__heading">Content type ID</Subheading>
@@ -17,7 +16,7 @@ export function ContentTypeIdSection(props) {
         </Paragraph>
       </Typography>
       <TextInput
-        value={props.contentTypeId || ''}
+        value={contentTypeId}
         name="contentTypeIdInput"
         id="contentTypeIdInput"
         testId="contentTypeIdInput"
@@ -27,7 +26,3 @@ export function ContentTypeIdSection(props) {
     </React.Fragment>
   );
 }
-
-ContentTypeIdSection.propTypes = {
-  contentTypeId: PropTypes.string,
-};
