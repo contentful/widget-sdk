@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { Reducer, useEffect, useReducer, useState } from 'react';
 import _ from 'lodash';
 import validation from '@contentful/validation';
-import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { ModalConfirm, ModalLauncher, Paragraph } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as notify from './Notifications';
 import { trackAddedField, trackEnforcedButtonClick } from './Analytics';
-import { allFieldsInactive, goToDetails, getWidget } from './Utils';
+import { allFieldsInactive, getWidget } from './Utils';
 import * as accessChecker from 'access_control/AccessChecker';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField';
 import { captureWarning } from 'core/monitoring';
@@ -16,35 +15,37 @@ import { DeleteContentTypeDialog } from './Dialogs/DeleteContentTypeDialog';
 import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
 import { isDraft, isPublished } from 'contentful-management';
-import { go } from 'states/Navigator';
-import { openFieldModalDialog, getUpdatedField } from 'features/content-model-editor';
+import { getUpdatedField, openFieldModalDialog } from 'features/content-model-editor';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
-import { reducer, reducerActions, initActionsReducer } from './ActionsReducer';
+import type { ActionsState, ReducerAction } from './ActionsReducer';
+import { initActionsReducer, reducer, reducerActions } from './ActionsReducer';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { toLegacyWidget } from 'widgets/WidgetCompat';
+import { LegacyWidget, toLegacyWidget } from 'widgets/WidgetCompat';
 import { getSpaceContext } from 'classes/spaceContext';
 import { openDuplicateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
 import { errorMessageBuilder } from '@contentful/editorial-primitives';
 import { checkComposeIsInstalled } from 'features/assembly-types';
-import { getAlphaHeader, ASSEMBLY_TYPES } from 'alphaHeaders';
+import { ASSEMBLY_TYPES, getAlphaHeader } from 'alphaHeaders';
+import { router, useRouteNavigate } from 'core/react-routing';
+import { TABS } from './EditorFieldTabs';
 
-export function useCreateActions(props) {
+export function useCreateActions(props: { isNew?: boolean; contentTypeId?: string }) {
+  const navigate = useRouteNavigate();
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
   const [hasAdvancedExtensibility, setAdvancedExtensibility] = useState(false);
-  const [extensions, setExtensions] = useState([]);
-  const [state, dispatch] = useReducer(
+  const [extensions, setExtensions] = useState<LegacyWidget[]>([]);
+  const [state, dispatch] = useReducer<Reducer<ActionsState, ReducerAction>>(
     reducer,
-    {
-      isNew: props.isNew,
+    initActionsReducer({
+      isNew: props.isNew || false,
       editorInterface: {},
       contentTypeData: {},
-    },
-    initActionsReducer
+    })
   );
   // TODO: remove 'spaceContext'
   const spaceContext = getSpaceContext();
@@ -52,6 +53,14 @@ export function useCreateActions(props) {
   const { currentSpace, currentSpaceContentTypes, currentOrganizationId } = useSpaceEnvContext();
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
+
+  const goToDetails = (contentType) => {
+    return navigate({
+      path: 'content_types.detail',
+      contentTypeId: contentType.sys.id,
+      tab: TABS.fields,
+    });
+  };
 
   const setContextDirty = (dirty) => {
     setDirty(dirty);
@@ -68,6 +77,8 @@ export function useCreateActions(props) {
 
   useEffect(() => {
     async function initContentType() {
+      if (!currentSpace) return;
+
       const contentTypeWithData = props.contentTypeId
         ? await currentSpace.getContentType(props.contentTypeId)
         : await currentSpace.newContentType({
@@ -91,11 +102,12 @@ export function useCreateActions(props) {
       setEditorInterface(editorInterface);
       setContentType(contentType);
     }
+
     initContentType();
     // We only need to get this information once - of content type ID is changed,
     // it means the whole page is re-rendered anyway
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentSpace]);
 
   const updateFields = (fields) => {
     dispatch({ type: reducerActions.UPDATE_FIELDS, payload: { fields } });
@@ -116,7 +128,7 @@ export function useCreateActions(props) {
         widgetId: widget.id,
         widgetNamespace: widget.namespace,
       };
-      const controls = state.editorInterface.controls.some(
+      const controls = state.editorInterface.controls?.some(
         (control) => control.fieldId === field.apiName
       )
         ? state.editorInterface.controls.map((control) => {
@@ -125,7 +137,7 @@ export function useCreateActions(props) {
             }
             return control;
           })
-        : [...state.editorInterface.controls, updatedControl];
+        : [...(state.editorInterface.controls || []), updatedControl];
 
       dispatch({
         type: reducerActions.UPDATE_EDITOR_INTERFACE,
@@ -219,8 +231,8 @@ export function useCreateActions(props) {
   };
 
   const showNewFieldDialog = createCommand(
-    () => {
-      const existingApiNames = state.contentType.fields.map(({ apiName }) => apiName);
+    async () => {
+      const existingApiNames = state.contentType.fields.map(({ apiName }) => apiName || null);
       ModalLauncher.open(({ isShown, onClose }) => (
         <AddFieldDialogModal
           isShown={isShown}
@@ -236,10 +248,8 @@ export function useCreateActions(props) {
     },
     {
       disabled: function () {
-        return (
-          accessChecker.shouldDisable('update', 'contentType') ||
-          accessChecker.shouldDisable('publish', 'contentType')
-        );
+        return (accessChecker.shouldDisable('update', 'contentType') ||
+          accessChecker.shouldDisable('publish', 'contentType')) as boolean;
       },
     }
   );
@@ -248,7 +258,7 @@ export function useCreateActions(props) {
     const isPublishedCT = isPublished(state.contentType);
     const canRead = accessChecker.canPerformActionOnEntryOfType('read', state.contentType.sys.id);
     try {
-      if (!isPublishedCT) {
+      if (!isPublishedCT || !currentSpace) {
         return Promise.resolve(createStatusObject(true));
       }
       const res = await currentSpace.getEntries({
@@ -266,7 +276,7 @@ export function useCreateActions(props) {
       }
     }
 
-    function createStatusObject(isRemovable, entryCount) {
+    function createStatusObject(isRemovable, entryCount = 0) {
       return {
         isPublished: isPublishedCT,
         isRemovable,
@@ -277,14 +287,14 @@ export function useCreateActions(props) {
 
   const startDeleteFlow = async () => {
     try {
-      const status = await checkRemovable(state.contentType, currentSpace);
+      const status = await checkRemovable();
       if (status.isRemovable) {
         return confirmRemoval(status.isPublished);
       } else {
         forbidRemoval(status.entryCount);
       }
     } catch (error) {
-      ReloadNotification.basicErrorHandler(error);
+      ReloadNotification.basicErrorHandler();
     }
   };
 
@@ -317,16 +327,15 @@ export function useCreateActions(props) {
       const cmaClient = getSpaceEnvCMAClient();
       await cmaClient.contentType.delete({ contentTypeId: state.contentType.sys.id });
       notify.deleteSuccess();
-      go({ path: '^.^.list' });
+      navigate({ path: 'content_types.list' });
     } catch (error) {
       notify.deleteFail(error);
     }
   };
 
   const remove = async (isPublished) => {
-    const unpub = isPublished ? unpublish() : Promise.resolve();
-    const res = await unpub;
-    return sendDeleteRequest(res);
+    await (isPublished ? unpublish() : Promise.resolve());
+    return sendDeleteRequest();
   };
 
   function forbidRemoval(count) {
@@ -378,16 +387,11 @@ export function useCreateActions(props) {
     }
   );
 
-  const cancel = createCommand(
-    () =>
-      // X.detail.fields -> X.list
-      go({ path: '^.^.list' }),
-    {
-      available: () => {
-        return state.contextState.isNew;
-      },
-    }
-  );
+  const cancel = createCommand(async () => navigate({ path: 'content_types.list' }), {
+    available: () => {
+      return state.contextState.isNew;
+    },
+  });
 
   const saveContentType = async () => {
     try {
@@ -413,7 +417,7 @@ export function useCreateActions(props) {
       const cmaClient = getSpaceEnvCMAClient();
 
       // Enable Assembly Types feature if Compose is installed
-      const isAssemblyEnabled = await checkComposeIsInstalled(spaceContext.getId());
+      const isAssemblyEnabled = await checkComposeIsInstalled(spaceContext.getId() as string);
       const assemblyHeaders = isAssemblyEnabled ? getAlphaHeader(ASSEMBLY_TYPES) : {};
 
       const updatedContentType = await cmaClient.contentType.update(
@@ -449,7 +453,7 @@ export function useCreateActions(props) {
         payload: { editorInterface: editorInterfaceFromAPI },
       });
       getContentPreview().clearCache();
-      spaceContext.uiConfig.addOrEditCt(state.contentType).catch(() => {});
+      spaceContext.uiConfig!.addOrEditCt(state.contentType).catch(_.noop);
       notify.saveSuccess();
     } catch (error) {
       setContextDirty(true);
@@ -473,7 +477,7 @@ export function useCreateActions(props) {
     disabled: function () {
       const hasUnpublishedChanges =
         isDraft(state.contentType) ||
-        state.contentType.sys.version > state.contentType.sys.publishedVersion + 1;
+        state.contentType.sys.version > (state.contentType.sys.publishedVersion || 0) + 1;
 
       const dirty = state.contextState.dirty || hasUnpublishedChanges;
 
@@ -490,7 +494,7 @@ export function useCreateActions(props) {
   // Content Type editor without saving. We do not redirect in that
   // case.
 
-  const saveAndClose = () => saveContentType(false);
+  const saveAndClose = () => saveContentType();
 
   function triggerApiErrorNotification(errOrErrContainer) {
     const reasons = _.get(errOrErrContainer, 'data.details.errors', []);
@@ -546,14 +550,18 @@ export function useCreateActions(props) {
         title="Duplicated content type"
         confirmLabel="Go to the duplicated content type."
         confirmTestId="go-to-duplicated-content-type"
-        cancelLabel={null}>
+        cancelLabel={false}>
         <Paragraph>Content type was successfully duplicated.</Paragraph>
       </ModalConfirm>
     ));
     if (confirmed) {
       // mark the form as pristine so we can navigate without confirmation dialog
       setContextDirty(false);
-      return goToDetails(duplicated);
+      return router.navigate({
+        path: 'content_types.detail',
+        contentTypeId: duplicated.sys.id,
+        tab: TABS.fields,
+      });
     }
   };
 

@@ -106,7 +106,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     spaceScopedPath: ['spaces', 'detail', 'assets', 'list'],
   }),
   [LinkType.ContentModel]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
+    spaceScopedPath: routes['content_types.list']({ withEnvironment: false }).path,
+    params: routes['content_types.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Extensions]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['extensions.list']({ withEnvironment: false }).path,

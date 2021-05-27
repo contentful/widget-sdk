@@ -34,6 +34,7 @@ import {
   EnvironmentProps as Environment,
   EnvironmentAliasProps as EnvironmentAlias,
   EnvironmentProps,
+  ContentTypeProps,
 } from 'contentful-management/types';
 import { SpaceContextType } from './spaceContextTypes';
 
@@ -91,6 +92,9 @@ function initSpaceContext(): SpaceContextType {
       items$: publishedCTsBus$.property,
       refresh: () => Promise.resolve(undefined),
       getAllBare: () => [],
+      get: () => null,
+      publish: () => Promise.resolve({} as ContentTypeProps),
+      unpublish: () => Promise.resolve({} as ContentTypeProps),
     },
 
     purge: function () {

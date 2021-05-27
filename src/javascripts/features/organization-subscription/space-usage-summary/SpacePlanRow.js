@@ -149,7 +149,7 @@ export const SpacePlanRow = ({
                 <Flex marginLeft="spacing2Xs" className={styles.iconContainer}>
                   <Tooltip
                     containerElement="span"
-                    content="This space was part of a legacy plan now with special pricing">
+                    content="This space is assigned to a legacy subscription plan, which includes custom pricing">
                     <Icon icon="InfoCircle" color="muted" />
                   </Tooltip>
                 </Flex>

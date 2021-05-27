@@ -4,11 +4,11 @@ import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 interface EntryEditorWidget {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
-  name?: string;
+  name: string;
   description?: string;
 }
 
-interface SpaceData {
+export interface SpaceData {
   spaceId: string;
   environmentId: string;
   organizationId: string;

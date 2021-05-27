@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   DisplayText,
-  Modal,
   Flex,
+  Modal,
   Notification,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
@@ -15,7 +15,7 @@ import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
 import { getSpace } from 'services/TokenStore';
 import { SpaceData } from 'classes/spaceContextTypes';
-import { go } from 'states/Navigator';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   container: css({
@@ -30,6 +30,7 @@ const fetchData = (spaceId) => async () => {
 };
 
 export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
+  const navigate = useRouteNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState<SelectedTemplate>();
   const [space, setSpace] = useState<SpaceData>();
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
         Notification.success('You have successfully created a pre-built space.');
         setLoading(false);
         onClose();
-        go({ path: 'spaces.detail.content_types.list' });
+        navigate({ path: 'content_types.list' });
       }
     }
   };

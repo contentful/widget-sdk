@@ -235,9 +235,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#content-model', () => {
     it('should redirect the user to content model page', async function () {
-      await testSpaceScopedPathDeeplinks('content-model', {
-        path: ['spaces', 'detail', 'content_types', 'list'],
-      });
+      await testSpaceScopedPathDeeplinks(
+        'content-model',
+        routes['content_types.list']({ withEnvironment: false })
+      );
     });
   });
 

@@ -17,7 +17,7 @@ export const V1MigrationNote = ({ basePlanName, className }: V1MigrationNoteProp
   return (
     <Note
       className={className}
-      title={`Your Contentful account has been upgraded to our ${basePlanName} tier`}>
+      title={`Your Contentful account has been upgraded to our ${basePlanName} tier.`}>
       {'Check out your new plan in the overview below! Got questions? Visit our '}
       <TextLink
         href="https://www.contentful.com/faq/legacy-spaces/"

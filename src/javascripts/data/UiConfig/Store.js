@@ -22,7 +22,7 @@ const ALPHA_HEADER = getAlphaHeader(USER_UI_CONFIG);
  * @param {Promise<Endpoint>} spaceEndpointPromise
  * @param {ContentTypeRepo} publishedCTs
  * @param {ViewMigrator} viewMigrator
- * @returns {Promise<UIConfigStore>}
+ * @returns {{addOrEditCt, addToDefault, entries: {shared, private}, assets: {shared, private}}}
  */
 export default function create(space, spaceEndpoint, publishedCTs, viewMigrator) {
   const membership = space.data.spaceMember;

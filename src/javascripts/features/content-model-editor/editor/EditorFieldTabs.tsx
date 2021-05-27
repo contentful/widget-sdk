@@ -1,9 +1,14 @@
 import React from 'react';
 import { css } from 'emotion';
-import { go } from 'states/Navigator';
-import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import { Tabs, Tab, Tag } from '@contentful/forma-36-react-components';
+import { Tab, Tabs, Tag } from '@contentful/forma-36-react-components';
+
+export const TABS = {
+  fields: 'fields',
+  preview: 'preview',
+  sidebarConfiguration: 'sidebar_configuration',
+  entryEditorConfiguration: 'entry_editor_configuration',
+};
 
 const styles = {
   editorFieldTabs: css({
@@ -19,37 +24,35 @@ const styles = {
   }),
 };
 
-export function EditorFieldTabs(props) {
+type Props = {
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+  fieldsCount: number;
+  hasAdvancedExtensibility: boolean;
+};
+
+export function EditorFieldTabs(props: Props) {
   return (
     <div className={styles.editorFieldTabs}>
       <Tabs withDivider>
         <Tab
           id="fields"
-          onSelect={() => {
-            props.setCurrentTab('fields');
-            go({ path: '^.fields' });
-          }}
-          selected={props.currentTab === 'fields'}>
+          onSelect={() => props.setCurrentTab(TABS.fields)}
+          selected={props.currentTab === TABS.fields}>
           Fields
           {props.fieldsCount > 0 ? ` (${props.fieldsCount})` : ''}
         </Tab>
         <Tab
           id="preview"
-          selected={props.currentTab === 'preview'}
-          onSelect={() => {
-            props.setCurrentTab('preview');
-            go({ path: '^.preview' });
-          }}>
+          selected={props.currentTab === TABS.preview}
+          onSelect={() => props.setCurrentTab(TABS.preview)}>
           JSON preview
         </Tab>
         {props.hasAdvancedExtensibility && (
           <Tab
             id="sidebar_configuration"
-            selected={props.currentTab === 'sidebar_configuration'}
-            onSelect={() => {
-              props.setCurrentTab('sidebar_configuration');
-              go({ path: '^.sidebar_configuration' });
-            }}
+            selected={props.currentTab === TABS.sidebarConfiguration}
+            onSelect={() => props.setCurrentTab(TABS.sidebarConfiguration)}
             testId="sidebar-config-tab">
             Sidebar
           </Tab>
@@ -57,11 +60,8 @@ export function EditorFieldTabs(props) {
         {props.hasAdvancedExtensibility && (
           <Tab
             id="entry_editor_configuration"
-            selected={props.currentTab === 'entry_editor_configuration'}
-            onSelect={() => {
-              props.setCurrentTab('entry_editor_configuration');
-              go({ path: '^.entry_editor_configuration' });
-            }}
+            selected={props.currentTab === TABS.entryEditorConfiguration}
+            onSelect={() => props.setCurrentTab(TABS.entryEditorConfiguration)}
             className={styles.tabWithTag}
             testId="entry-editor-config-tab">
             Entry editors
@@ -74,10 +74,3 @@ export function EditorFieldTabs(props) {
     </div>
   );
 }
-
-EditorFieldTabs.propTypes = {
-  currentTab: PropTypes.string.isRequired,
-  setCurrentTab: PropTypes.func.isRequired,
-  fieldsCount: PropTypes.number.isRequired,
-  hasAdvancedExtensibility: PropTypes.bool.isRequired,
-};

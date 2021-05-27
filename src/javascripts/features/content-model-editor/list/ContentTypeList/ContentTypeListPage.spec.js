@@ -21,6 +21,8 @@ import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import * as Fake from 'test/helpers/fakeFactory';
+// eslint-disable-next-line no-restricted-imports
+import { MemoryRouter } from 'react-router';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
@@ -48,7 +50,7 @@ jest.mock('services/ResourceService', () => {
 });
 
 jest.mock('./ContentTypeList', () => {
-  return (props) => props.contentTypes.map((item) => item.sys.id).join(',');
+  return { ContentTypeList: (props) => props.contentTypes.map((item) => item.sys.id).join(',') };
 });
 
 jest.mock('access_control/AccessChecker', () => ({
@@ -86,7 +88,8 @@ function renderComponent({ props = {}, locationValue = {} }) {
       <LocationDispatchContext.Provider value={updateLocation}>
         <Page {...props} />
       </LocationDispatchContext.Provider>
-    </LocationStateContext.Provider>
+    </LocationStateContext.Provider>,
+    { wrapper: MemoryRouter }
   );
   return waitForElementToBeRemoved(() => screen.getByTestId(testIds.contentLoader));
 }

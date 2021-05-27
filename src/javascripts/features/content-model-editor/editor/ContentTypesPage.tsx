@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { css } from 'emotion';
 import { isEqual } from 'lodash';
-import { Workbench, Flex } from '@contentful/forma-36-react-components';
+import { Flex, Workbench } from '@contentful/forma-36-react-components';
 import { ContentTypePageActions } from './ContentTypePageActions';
-import PropTypes from 'prop-types';
-import { EditorFieldTabs } from './EditorFieldTabs';
+import { EditorFieldTabs, TABS } from './EditorFieldTabs';
 import { FieldsList } from './FieldsTab/FieldsList';
 import { ContentTypePreview } from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
 import { EntryEditorConfig } from './EntryEditorConfigurationTab/EntryEditorConfig';
 import { getEntryConfiguration } from 'app/entry_editor/DefaultConfiguration';
+import type { SpaceData } from 'app/entry_editor/DefaultConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -21,9 +21,10 @@ import { LoadingState } from 'features/loading-state';
 import {
   ContentTypeIdSection,
   DocumentationSection,
-  FieldsSection,
   EntryEditorSection,
+  FieldsSection,
 } from './Sidebar';
+import { UnsavedChangesBlocker } from 'app/common/UnsavedChangesDialog';
 
 const styles = {
   loaderWrapper: css({
@@ -35,14 +36,21 @@ function isEntryEditorWidget(widget) {
   return widget.locations?.includes(WidgetLocation.ENTRY_EDITOR);
 }
 
-export function ContentTypesPage(props) {
+type Props = {
+  isNew?: boolean;
+  contentTypeId?: string;
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+};
+
+export function ContentTypesPage(props: Props) {
   const {
     currentOrganizationId: organizationId,
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
   } = useSpaceEnvContext();
 
-  const spaceData = { organizationId, spaceId, environmentId };
+  const spaceData = { organizationId, spaceId, environmentId } as SpaceData;
   const canEdit = accessChecker.can('update', 'ContentType');
   const {
     actions,
@@ -81,7 +89,15 @@ export function ContentTypesPage(props) {
 
   if (!state.contentType) return null;
 
-  return state.contentType.fields ? (
+  if (!state.contentType.fields) {
+    return (
+      <Flex className={styles.loaderWrapper}>
+        <LoadingState />
+      </Flex>
+    );
+  }
+
+  return (
     <Workbench>
       <Workbench.Header
         title={state.contentType.name}
@@ -107,7 +123,7 @@ export function ContentTypesPage(props) {
           hasAdvancedExtensibility={hasAdvancedExtensibility}
         />
         <form name="contentTypeForm">
-          {props.currentTab === 'fields' && (
+          {props.currentTab === TABS.fields && (
             <React.Fragment>
               <DocumentTitle title={[state.contentType.name, 'Content Model']} />
               <FieldsList
@@ -118,7 +134,7 @@ export function ContentTypesPage(props) {
               />
             </React.Fragment>
           )}
-          {props.currentTab === 'preview' && (
+          {props.currentTab === TABS.preview && (
             <React.Fragment>
               <DocumentTitle title={['Preview', state.contentType.name, 'Content Model']} />
               <ContentTypePreview
@@ -127,7 +143,7 @@ export function ContentTypesPage(props) {
               />
             </React.Fragment>
           )}
-          {hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
+          {hasAdvancedExtensibility && props.currentTab === TABS.sidebarConfiguration && (
             <React.Fragment>
               <DocumentTitle
                 title={['Sidebar Configuration', state.contentType.name, 'Content Model']}
@@ -141,12 +157,13 @@ export function ContentTypesPage(props) {
               </div>
             </React.Fragment>
           )}
-          {hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
+          {hasAdvancedExtensibility && props.currentTab === TABS.entryEditorConfiguration && (
             <>
               <DocumentTitle title={['Entry editors', state.contentType.name, 'Content Model']} />
               <div>
                 <EntryEditorConfig
-                  configuration={state.editorInterface.editors}
+                  // @ts-expect-error widgetNamespace type mismatch
+                  configuration={state.editorInterface.editors || []}
                   customWidgets={customWidgets}
                   getDefaultEntryEditorConfiguration={getEntryConfiguration.bind(null, spaceData)}
                   onUpdateConfiguration={onEntryEditorUpdateConfiguration}
@@ -164,23 +181,14 @@ export function ContentTypesPage(props) {
               showNewFieldDialog={actions.showNewFieldDialog}
               fieldsUsed={state.contentType.fields.length}
             />
-            {!props.isNew && <EntryEditorSection />}
+            {!props.isNew && <EntryEditorSection contentTypeId={state.contentType.sys.id} />}
             {!props.isNew && <ContentTypeIdSection contentTypeId={state.contentType.sys.id} />}
             <DocumentationSection />
           </div>
         </Workbench.Sidebar>
       )}
+
+      {state.contextState.dirty && <UnsavedChangesBlocker save={actions.saveAndClose} when />}
     </Workbench>
-  ) : (
-    <Flex className={styles.loaderWrapper}>
-      <LoadingState />
-    </Flex>
   );
 }
-
-ContentTypesPage.propTypes = {
-  isNew: PropTypes.bool,
-  contentTypeId: PropTypes.string,
-  currentTab: PropTypes.string.isRequired,
-  setCurrentTab: PropTypes.func.isRequired,
-};

@@ -72,7 +72,9 @@ describe('#getFirstAccessibleSref', () => {
       ...mockAllTrue,
       entry: false,
     }));
-    expect(getFirstAccessibleSref(customRoleSpace).path).toBe('.content_types.list');
+    const sref = getFirstAccessibleSref(customRoleSpace);
+    expect(sref.path).toBe('spaces.detail.content_types');
+    expect(sref.params).toEqual({ pathname: '/' });
   });
 
   it('handles all-false scenario', () => {

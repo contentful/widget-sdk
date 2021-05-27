@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { TextLink, TextLinkProps } from '@contentful/forma-36-react-components';
 import cn from 'classnames';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -33,11 +32,17 @@ const styles = {
 /**
  * Provides right click => open in a new tab flow
  */
-const SecretiveLink = ({ href, className, children, ...rest }) => {
+const SecretiveLink = ({
+  href,
+  className,
+  children,
+  ...rest
+}: TextLinkProps & { href: string }) => {
   return (
     <TextLink
-      className={cn(styles.secretiveLink, className)}
+      // @ts-expect-error tabIndex is not listed in props
       tabIndex="-1"
+      className={cn(styles.secretiveLink, className)}
       href={href}
       rel="noopener noreferrer"
       linkType="secondary"
@@ -47,11 +52,6 @@ const SecretiveLink = ({ href, className, children, ...rest }) => {
       {children}
     </TextLink>
   );
-};
-
-SecretiveLink.propTypes = {
-  href: PropTypes.string.isRequired,
-  className: PropTypes.string,
 };
 
 export default SecretiveLink;

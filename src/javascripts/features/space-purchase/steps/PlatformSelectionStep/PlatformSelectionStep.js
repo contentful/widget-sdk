@@ -222,12 +222,11 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
                 className={styles.fullRow}
                 title={
                   <div>
-                    Your space <strong>{currentSpace.name}</strong> was part of a legacy plan now
-                    with special pricing
+                    Your space <strong>{currentSpace.name}</strong> is assigned to a legacy
+                    subscription plan, which includes custom pricing.
                   </div>
                 }>
-                Please take a look at the current prices below. As soon as you upgrade your space,
-                the old price will not be available. Got questions?{' '}
+                If you modify this space, you will lose access to this custom price. Got questions?{' '}
                 <TextLink
                   href="https://www.contentful.com/support/"
                   target="_blank"

@@ -3,8 +3,10 @@ import _ from 'lodash';
 /**
  * @param {() => Promise<void>} run
  * @param {object} options
- * @param {() => boolean} options.available
- * @param {object} extension
+ * @param {() => boolean=} options.available
+ * @param {() => boolean=} options.disabled
+ * @param {() => restricted=} options.disabled
+ * @param {object=} extension
  *
  * @returns {Command}
  */
