@@ -3,7 +3,7 @@ import { EditorInterface } from '@contentful/app-sdk';
 
 describe('createEditorApi', () => {
   const editorInterface: EditorInterface = {
-    sys: {},
+    sys: {} as EditorInterface['sys'],
   };
   let watchers: any[] = [];
   const unsubscribe = jest.fn();

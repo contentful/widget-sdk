@@ -1,4 +1,4 @@
-import { EntityType } from '@contentful/app-sdk';
+import { ContentEntityType } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export type Doc = {};
@@ -26,7 +26,7 @@ export type EditorContext = {
     hasFieldError: (...args: any) => boolean;
   };
   entityInfo: {
-    type: EntityType;
+    type: ContentEntityType;
     contentType?: {
       name: string;
       sys: {

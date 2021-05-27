@@ -62,7 +62,7 @@ describe('createEntryApi', () => {
     name: 'content_type',
     description: 'a content type',
     displayField: '',
-  } as InternalContentType;
+  } as unknown as InternalContentType;
   const docData = kefirHelpers.stream();
   const doc = {
     data$: docData,

@@ -4,6 +4,7 @@ import {
   WidgetLocation,
   WidgetRenderer,
   WidgetNamespace,
+  WidgetLoader,
 } from '@contentful/widget-renderer';
 import noop from 'lodash/noop';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -20,10 +21,22 @@ import {
   getEnvironmentAliasId,
 } from 'core/services/SpaceEnvContext/utils';
 import { go } from 'states/Navigator';
-import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs';
+import { createPageWidgetSDK as localCreatePageWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { usePubSubClient } from 'core/hooks';
 import { LoadingState } from 'features/loading-state';
 import { MarketplaceApp } from 'features/apps-core';
+import { createPageWidgetSDK } from '@contentful/experience-sdk';
+import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
+import LocaleStore from 'services/localeStore';
+import { getUserSync } from '../../services/TokenStore';
+import { FLAGS, getVariation } from '../../LaunchDarkly';
+import { PageExtensionSDK } from '@contentful/app-sdk';
+import {
+  createDialogCallbacks,
+  createNavigatorCallbacks,
+} from 'app/widgets/ExtensionSDKs/callbacks';
+import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
+import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -61,13 +74,25 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     currentSpaceContentTypes,
     currentEnvironmentId,
     currentEnvironment,
+    currentSpaceData,
   } = useSpaceEnvContext();
   const aliasesIds = getEnvironmentAliasesIds(currentEnvironment);
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const [widget, setWidget] = React.useState<Widget | null>(props.widget ?? null);
   const [app, setApp] = React.useState<MarketplaceApp | undefined>(undefined);
+  const { customWidgetPlainClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
+
+  const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION).then(setUseExperienceSDK);
+  }, []);
+
+  const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
+  React.useEffect(() => {
+    getCustomWidgetLoader().then(setWidgetLoader);
+  }, []);
 
   const parameters = React.useMemo(() => {
     if (!widget) return null;
@@ -86,20 +111,75 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   }, [widget, props.path]);
 
   const sdk = React.useMemo(() => {
-    if (!widget || !parameters || !currentSpaceId || !pubSubClient) return null;
+    if (
+      !widget ||
+      !parameters ||
+      !currentSpaceData ||
+      !currentSpaceId ||
+      !currentEnvironment ||
+      !pubSubClient ||
+      !customWidgetPlainClient ||
+      !widgetLoader
+    )
+      return null;
 
-    return createPageWidgetSDK({
-      widgetNamespace: widget.namespace,
-      widgetId: widget.id,
-      parameters,
-      spaceId: currentSpaceId,
-      contentTypes: currentSpaceContentTypes,
-      environmentId: currentEnvironmentId,
-      aliasesIds,
-      space: currentSpace,
-      pubSubClient: pubSubClient,
-      environmentAliasId: environmentAliasId ?? null,
-    });
+    return useExperienceSDK
+      ? (createPageWidgetSDK({
+          cma: customWidgetPlainClient,
+          widgetId: widget.id,
+          widgetNamespace: widget.namespace,
+          widgetParameters: widget.parameters,
+          space: currentSpaceData,
+          widgetLoader,
+          user: getUserSync(),
+          contentTypes: currentSpaceContentTypes.map((ct) =>
+            createPublicContentType(ct as InternalContentType)
+          ),
+          environment: currentEnvironment,
+          locales: {
+            activeLocaleCode: LocaleStore.getFocusedLocale().code,
+            defaultLocaleCode: LocaleStore.getDefaultLocale().code,
+            list: LocaleStore.getLocales(),
+          },
+          callbacks: {
+            space: {},
+            dialog: createDialogCallbacks(),
+            navigator: createNavigatorCallbacks({
+              spaceContext: {
+                spaceId: currentSpaceId,
+                environmentId: currentEnvironmentId,
+                isMaster: isMasterEnvironment,
+              },
+              widgetRef: {
+                widgetId: widget.id,
+                widgetNamespace: widget.namespace,
+              },
+              isOnPageLocation: true,
+            }),
+          },
+          spaceMembership: {
+            sys: {
+              id: currentSpaceData.spaceMembership.sys.id,
+            },
+            admin: currentSpaceData.spaceMembership.admin,
+          },
+          roles: currentSpaceData.spaceMember.roles.map(({ name, description }) => ({
+            name,
+            description: description ?? '',
+          })),
+        }) as PageExtensionSDK)
+      : localCreatePageWidgetSDK({
+          widgetNamespace: widget.namespace,
+          widgetId: widget.id,
+          parameters,
+          spaceId: currentSpaceId,
+          contentTypes: currentSpaceContentTypes,
+          environmentId: currentEnvironmentId,
+          aliasesIds,
+          space: currentSpace,
+          pubSubClient: pubSubClient,
+          environmentAliasId: environmentAliasId ?? null,
+        });
   }, [
     aliasesIds,
     currentEnvironmentId,
@@ -110,6 +190,12 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     parameters,
     pubSubClient,
     widget,
+    currentEnvironment,
+    currentSpaceData,
+    customWidgetPlainClient,
+    useExperienceSDK,
+    widgetLoader,
+    isMasterEnvironment,
   ]);
 
   React.useEffect(() => {

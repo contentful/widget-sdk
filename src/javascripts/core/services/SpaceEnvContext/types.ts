@@ -1,5 +1,11 @@
-import { EnvironmentProps as Environment, MetaLinkProps } from 'contentful-management/types';
+import {
+  EnvironmentProps as Environment,
+  MetaLinkProps,
+  ContentTypeProps,
+} from 'contentful-management/types';
 import type { Organization, SpaceObject, SpaceData } from 'classes/spaceContextTypes';
+
+export type ContentType = ContentTypeProps;
 
 export interface SpaceEnvContextValue {
   currentEnvironment?: Environment;
@@ -17,13 +23,6 @@ export interface SpaceEnvContextValue {
   currentSpaceContentTypes: ContentType[];
   documentPool?: any;
 }
-export interface ContentType {
-  description: string;
-  displayField: string;
-  fields: ContentTypeField[];
-  name: string;
-  sys: ContentTypeSys;
-}
 
 export interface ContentTypeField {
   apiName: string;
@@ -39,19 +38,7 @@ export interface ContentTypeField {
 
 export type ContentTypeValidation = Record<string, unknown>;
 
-export interface ContentTypeSys {
-  type: string;
-  id: string;
-  revision: number;
-  createdAt: string;
-  updatedAt: string;
-  environment: {
-    sys: LinkSys;
-  };
-  space: {
-    sys: LinkSys;
-  };
-}
+export type ContentTypeSys = ContentType['sys'];
 
 export interface Sys {
   type: string;

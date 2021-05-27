@@ -1,6 +1,6 @@
 import { createIdsApi } from './createIdsApi';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { EntryAPI, FieldAPI, User } from '@contentful/app-sdk';
+import { ContentType, EntryAPI, FieldAPI, UserAPI } from '@contentful/app-sdk';
 
 describe('createIdsApi', () => {
   const spaceId = 'space_id';
@@ -34,10 +34,10 @@ describe('createIdsApi', () => {
         spaceId,
         envId,
         envAliasId,
-        contentType,
+        contentType: contentType as unknown as ContentType,
         entry,
         field: { id: fieldId } as unknown as FieldAPI,
-        user: user as User,
+        user: user as UserAPI,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       });
@@ -59,10 +59,10 @@ describe('createIdsApi', () => {
         spaceId,
         envId,
         envAliasId: undefined,
-        contentType,
+        contentType: contentType as unknown as ContentType,
         entry,
         field: { id: fieldId } as unknown as FieldAPI,
-        user: user as User,
+        user: user as UserAPI,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       });
@@ -85,10 +85,10 @@ describe('createIdsApi', () => {
         spaceId,
         envId,
         envAliasId,
-        contentType,
+        contentType: contentType as unknown as ContentType,
         entry,
         field: { id: fieldId } as FieldAPI,
-        user: user as User,
+        user: user as UserAPI,
         widgetNamespace: WidgetNamespace.EXTENSION,
         widgetId,
       });

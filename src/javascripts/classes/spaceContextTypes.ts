@@ -5,11 +5,12 @@ import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
 import { PubSubClient } from 'services/PubSubService';
 import createUiConfigStore from 'data/UiConfig/Store';
 import {
-  BasicMetaSysProps,
-  ContentTypeProps,
-  EnvironmentAliasProps,
   EnvironmentProps as Environment,
+  ContentTypeProps,
+  BasicMetaSysProps,
+  EnvironmentAliasProps,
   MetaSysProps,
+  Space,
   OrganizationMembershipProps,
   SpaceMembershipProps,
 } from 'contentful-management/types';
@@ -41,7 +42,7 @@ export interface SpaceData {
   name: string;
   activatedAt: string;
   readOnlyAt: string;
-  sys: BasicMetaSysProps;
+  sys: Space['sys'];
   currentShard: any;
   spaceMembership: SpaceMembershipProps;
   spaceMember: SpaceMember;

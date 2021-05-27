@@ -1,5 +1,5 @@
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
-import { EntityType } from '@contentful/app-sdk';
+import { ContentEntityType } from '@contentful/app-sdk';
 import { EditorData } from '../EntityField/types';
 
 export interface BulkEditorParams {
@@ -10,7 +10,7 @@ export interface BulkEditorParams {
 
 export type PreviousEntryId = string;
 
-export type SlideInEditorType = 'BulkEditor' | EntityType;
+export type SlideInEditorType = 'BulkEditor' | ContentEntityType;
 
 interface SlideBase {
   type: SlideInEditorType;
