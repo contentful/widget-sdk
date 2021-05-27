@@ -24,7 +24,6 @@ const LaunchAppDeepLinkCard = ({ className, eventOrigin }: LaunchAppDeepLinkCard
   return (
     <IfAppInstalled appId="launch">
       <div className={cx(className, styles.noteWrapper)} data-test-id="launch-app-deep-link">
-        <div className={styles.pill}>New</div>
         <Paragraph>
           Plan and schedule releases in the new Contentful{' '}
           <LaunchAppDeepLinkRaw
