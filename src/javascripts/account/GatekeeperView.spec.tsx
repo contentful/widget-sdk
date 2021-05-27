@@ -34,10 +34,8 @@ describe('GatekeeperView', () => {
     const loadingState = screen.getByTestId('cf-loading-state');
     await waitFor(() => expect(loadingState).toBeVisible());
 
+    const waitForRemoval = waitForElementToBeRemoved(screen.queryByTestId('cf-loading-state'));
     fireEvent.load(iframe);
-
-    process.nextTick(async () => {
-      await waitForElementToBeRemoved(() => loadingState);
-    });
+    await waitForRemoval;
   });
 });

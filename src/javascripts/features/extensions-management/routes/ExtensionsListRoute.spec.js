@@ -63,7 +63,7 @@ describe('features/extensions-management/ExtensionsListRoute', () => {
   it('should fetch extensions if access and reaches page', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(2);
-    const getExtensionsForListing = jest.fn();
+    const getExtensionsForListing = jest.fn().mockImplementation(() => ({ items: [] }));
     useCurrentSpaceAPIClient.mockReturnValue({ client: { getExtensionsForListing } });
     render(
       <MemoryRouter>

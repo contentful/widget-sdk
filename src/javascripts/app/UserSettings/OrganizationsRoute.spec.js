@@ -33,7 +33,7 @@ describe('OrganizationsRoute', () => {
   });
 
   it('should render a loading state while the data is loading', async () => {
-    build({ withoutWaiting: true });
+    await build({ withoutWaiting: true });
 
     expect(screen.queryByTestId('cf-ui-loading-state')).toBeVisible();
 
@@ -45,7 +45,7 @@ describe('OrganizationsRoute', () => {
   it('should render an error if the data fails to load', async () => {
     getOrganizations.mockReset().mockRejectedValue(new Error());
 
-    build({ withoutWaiting: true });
+    await build({ withoutWaiting: true });
 
     await wait();
 
@@ -53,7 +53,7 @@ describe('OrganizationsRoute', () => {
   });
 
   it('should fetch user data when the component renders', async () => {
-    build();
+    await build();
 
     expect(getOrganizations).toHaveBeenCalled();
   });
@@ -61,13 +61,13 @@ describe('OrganizationsRoute', () => {
   describe('it renders correctly', () => {
     describe('the workbench header', () => {
       it('should render the title', async () => {
-        build();
+        await build();
 
         expect(screen.getByTestId('organizations-list.title')).toHaveTextContent(TITLE);
       });
 
       it('should render the "New Organization" button', async () => {
-        build();
+        await build();
 
         expect(screen.getByTestId('organizations-list.new-org-button')).toHaveTextContent(
           'New Organization'
