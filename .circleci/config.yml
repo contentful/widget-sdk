@@ -330,22 +330,21 @@ jobs:
     executor: node-base
     environment:
       CYPRESS_INSTALL_BINARY: 0
-      CI: 'true'
     steps:
       - checkout
       - with-npm-token
       - run: npm ci
       - run: tools/bin/validate-config.js config/*.json
-      - run:
-          name: Check OSS licenses
-          command: |
-            npm install --no-save --no-shrinkwrap license-checker
-            bin/oss-license-check
       - run: npm run check-code-ownership
       - run: npm run check-types
       - run: npm run lint
       - run: npm run prettier:check
       - run: npm run cruise
+      - run:
+          name: Check OSS licenses
+          command: |
+            npm install --no-save --no-shrinkwrap license-checker
+            bin/oss-license-check
 
   run-unit-tests:
     executor: node-browsers
