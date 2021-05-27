@@ -61,7 +61,7 @@ export const NewFeatures = ({ basePlanName }: NewFeaturesProps) => (
   <Grid columns={2} rows={1} columnGap="spacingXl" flow="row" className={styles.grid}>
     <div className={styles.content}>
       <DisplayText size="large">
-        {`Your Contentful account has been upgraded to our ${basePlanName} tier`}
+        {`Your Contentful account has been upgraded to our ${basePlanName} tier.`}
       </DisplayText>
       <List className={styles.list}>
         {basePlanName === BasePlanNames.COMMUNITY && (
@@ -75,12 +75,21 @@ export const NewFeatures = ({ basePlanName }: NewFeaturesProps) => (
           </>
         )}
         {basePlanName === BasePlanNames.TEAM && (
-          <ListItem className={styles.listItem}>
-            Each of your spaces is now mapped to a Medium or Large space on our{' '}
-            <TextLink className={styles.link} href={websiteUrl('/pricing')}>
-              Team tier
-            </TextLink>
-          </ListItem>
+          <>
+            <ListItem className={styles.listItem}>
+              Each of your existing spaces is now mapped to a Medium or Large space on our{' '}
+              <TextLink className={styles.link} href={websiteUrl('/pricing')}>
+                Team tier
+              </TextLink>
+            </ListItem>
+            <ListItem className={styles.listItem}>
+              You&apos;ll pay the same monthly price as you did before the upgrade. In some cases,
+              the amount you pay for overages may change.{' '}
+              <TextLink className={styles.link} href={websiteUrl('/r/knowledgebase/fair-use')}>
+                Learn more
+              </TextLink>
+            </ListItem>
+          </>
         )}
         <ListItem className={styles.listItem}>
           You get access to{' '}
@@ -111,6 +120,12 @@ export const NewFeatures = ({ basePlanName }: NewFeaturesProps) => (
           And more! Check out{' '}
           <TextLink className={styles.link} href={websiteUrl('/pricing')}>
             the details of your new plan
+          </TextLink>{' '}
+        </ListItem>
+        <ListItem className={styles.listItem}>
+          Got questions? Visit our{' '}
+          <TextLink className={styles.link} href={websiteUrl('/support')}>
+            FAQ page
           </TextLink>{' '}
         </ListItem>
       </List>
