@@ -17,7 +17,7 @@ export const AddCoworkerCTA = ({
         heading="Add a coworker to your space"
         description="Anyone that is already part of your organization can be added to your space."
         ctaLabel="Add a coworker"
-        href={'/account/organizations/' + orgId + '/invite'}
+        href={'/account/organizations/' + orgId + '/invite/' + spaceId}
         illustration={<AddUserIllustration className={styles.svgContainerAddUser} />}
       />
     );

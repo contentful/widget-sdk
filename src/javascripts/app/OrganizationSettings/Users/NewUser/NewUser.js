@@ -69,7 +69,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
+export default function NewUser({ orgId, spaceId, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -253,6 +253,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
             </Subheading>
             <AddToSpaces
               orgId={orgId}
+              spaceId={spaceId}
               onChange={handleSpaceSelected}
               submitted={submitted}
               inputWidth="large"
@@ -287,6 +288,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
+  spaceId: PropTypes.string,
   hasTeamsFeature: PropTypes.bool,
   isOwner: PropTypes.bool,
 };

@@ -34,6 +34,7 @@ jest.mock('data/EndpointFactory', () => ({
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllRoles: jest.fn(async () => [mockEditorRole, mockAuthorRole]),
   getAllSpaces: jest.fn(async () => [mockFooSpace, mockBarSpace]),
+  getSpace: jest.fn(async () => mockFooSpace),
   invite: jest.fn(async () => mockInvitation),
 }));
 
@@ -64,6 +65,20 @@ describe('NewUser', () => {
     build(true);
     await wait();
     expect(screen.getByLabelText('Owner')).toBeVisible();
+  });
+
+  it('should not autofill space', async () => {
+    build();
+    await wait();
+    const spaceMemberships = screen.queryByTestId('add-to-spaces.list.item');
+    expect(spaceMemberships).toBeNull();
+  });
+
+  it('should autofill space when spaceid passed in', async () => {
+    build(false, false, mockFooSpace.sys.id);
+    await wait();
+    const spaceMemberships = screen.getAllByTestId('add-to-spaces.list.item');
+    expect(spaceMemberships).toHaveLength(1);
   });
 
   describe('validation fails', () => {
@@ -314,10 +329,11 @@ describe('NewUser', () => {
   });
 });
 
-async function build(isOwner = true, hasTeamsFeature = false) {
+async function build(isOwner = true, hasTeamsFeature = false, preselectedSpaceId) {
   render(
     <NewUser
       orgId="myorg"
+      spaceId={preselectedSpaceId}
       onReady={mockOnReady}
       isOwner={isOwner}
       hasTeamsFeature={hasTeamsFeature}

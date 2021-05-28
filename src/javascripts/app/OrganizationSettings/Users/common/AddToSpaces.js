@@ -3,8 +3,8 @@ import { css } from 'emotion';
 import { groupBy } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getAllRoles } from 'access_control/OrganizationMembershipRepository';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
+import { getAllRoles, getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SectionHeading, Icon } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import SpacesAutoComplete from 'app/common/SpacesAutocomplete';
@@ -70,6 +70,7 @@ const reducer = createImmerReducer({
  */
 export default function AddToSpaces({
   orgId,
+  spaceId = null,
   submitted = false,
   ignoredSpaces = [],
   onChange,
@@ -83,7 +84,19 @@ export default function AddToSpaces({
     return getAllRoles(endpoint);
   }, [orgId]);
 
-  const { isLoading, data } = useAsync(getRoles);
+  const { isLoading, data: roles } = useAsync(getRoles);
+
+  const getPreselectedSpace = useCallback(async () => {
+    if (spaceId) {
+      const spaceEndpoint = createSpaceEndpoint(spaceId);
+      const space = await getSpace(spaceEndpoint);
+      return { space };
+    } else {
+      return;
+    }
+  }, [spaceId]);
+
+  const { data: preselectedSpace } = useAsync(getPreselectedSpace);
 
   const handleSpaceSelected = (space) => {
     dispatch({ type: 'SPACE_ADDED', payload: space });
@@ -110,8 +123,12 @@ export default function AddToSpaces({
   );
 
   useEffect(() => {
-    data && setAllRoles(groupBy(data, 'sys.space.sys.id'));
-  }, [data]);
+    roles && setAllRoles(groupBy(roles, 'sys.space.sys.id'));
+  }, [roles]);
+
+  useEffect(() => {
+    preselectedSpace && handleSpaceSelected(preselectedSpace.space);
+  }, [preselectedSpace]);
 
   useEffect(() => {
     onChange(spaceMemberships);
@@ -160,6 +177,7 @@ export default function AddToSpaces({
 
 AddToSpaces.propTypes = {
   orgId: PropTypes.string.isRequired,
+  spaceId: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   ignoredSpaces: PropTypes.arrayOf(SpacePropType),
   submitted: PropTypes.bool,
