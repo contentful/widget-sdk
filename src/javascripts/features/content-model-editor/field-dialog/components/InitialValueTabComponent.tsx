@@ -1,6 +1,5 @@
 import React, { Fragment, useMemo } from 'react';
 import { Flex, Grid, GridItem } from '@contentful/forma-36-react-components';
-import { BooleanEditor } from '@contentful/field-editor-boolean';
 import { Field } from '@contentful/default-field-editors';
 import type { FieldExtensionSDK } from '@contentful/app-sdk';
 import noop from 'lodash/noop';
