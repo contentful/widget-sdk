@@ -1,5 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
-import { Flex, Grid, GridItem } from '@contentful/forma-36-react-components';
+import React, { Fragment } from 'react';
 import { Field } from '@contentful/default-field-editors';
 import type { FieldExtensionSDK } from '@contentful/app-sdk';
 import noop from 'lodash/noop';
@@ -41,21 +40,10 @@ const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: a
       isEqualValues: noop,
     },
     parameters: {
-      installation: {},
       instance: settings,
     },
     contentType,
-
     locales,
-
-    space: {},
-    user: {},
-    dialogs: {},
-    navigator: {},
-    notifier: {},
-    location: {},
-    access: {},
-    ids: {},
   } as FieldExtensionSDK;
 };
 
@@ -63,7 +51,7 @@ const FieldWithSdk = ({ contentType, locale, locales }) => {
   const fieldContext = useFieldDialogContext();
   const sdk = createFakeFieldAPI({ ...fieldContext, contentType, locale, locales });
 
-  // return <Field field={field} isInitiallyDisabled={false} parameters={parameters} />;
+  console.dir(sdk);
 
   return <Field sdk={sdk} />;
 };

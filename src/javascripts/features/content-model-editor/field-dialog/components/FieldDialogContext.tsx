@@ -8,13 +8,15 @@ type FieldDialogProps = {
 
 const useFieldDialog = (props: FieldDialogProps) => {
   const { field, contentType, editorInterface } = props;
-  const settings = editorInterface.controls.find(c => c.fieldId === field.apiName)?.settings;
+  const settings = editorInterface.controls.find(
+    (c) => c.field.apiName === field.apiName
+  )?.settings;
 
   return {
     field,
     settings,
     contentType,
-    editorInterface
+    editorInterface,
   };
 };
 
