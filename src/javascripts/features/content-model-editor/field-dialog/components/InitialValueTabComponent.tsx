@@ -1,16 +1,17 @@
 import React, { Fragment, useMemo } from 'react';
 import { Flex, Grid, GridItem } from '@contentful/forma-36-react-components';
 import { BooleanEditor } from '@contentful/field-editor-boolean';
+import { Field } from '@contentful/default-field-editors';
+import type { FieldExtensionSDK } from '@contentful/app-sdk';
+import noop from 'lodash/noop';
 
 import TheLocaleStore from 'services/localeStore';
-import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
 import type { Widget } from 'app/entity_editor/EntityField/types';
 import { useFieldDialogContext } from './FieldDialogContext';
-import noop from 'lodash/noop';
 
 export const SUPPORTED_FIELD_TYPES = [
   // 'Array',
-  'Boolean'
+  'Boolean',
   // 'Date',
   // 'Integer',
   // 'Number',
@@ -19,19 +20,18 @@ export const SUPPORTED_FIELD_TYPES = [
 ];
 
 export interface InitialValueTabComponentProps {
+  contentType: any;
   ctField: { localized: boolean; type: string };
   availableWidgets: Widget[];
 }
 
-const createFakeFieldAPI = ({ field, settings, locale }: any) => {
-
+const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: any) => {
   return {
     field: {
       ...field,
       locale,
       getValue: () => Promise.resolve(false),
-      removeValue: () => {
-      },
+      removeValue: () => {},
       setValue: async (value: any) => {
         console.log(value);
         // contentType.fields['blabla'].initialValue['en-US'] = value
@@ -39,33 +39,46 @@ const createFakeFieldAPI = ({ field, settings, locale }: any) => {
       onSchemaErrorsChanged: noop,
       onIsDisabledChanged: noop,
       onValueChanged: noop,
-      isEqualValues: noop
+      isEqualValues: noop,
     },
     parameters: {
       installation: {},
-      instance: settings
-    }
-  };
+      instance: settings,
+    },
+    contentType,
+
+    locales,
+
+    space: {},
+    user: {},
+    dialogs: {},
+    navigator: {},
+    notifier: {},
+    location: {},
+    access: {},
+    ids: {},
+  } as FieldExtensionSDK;
 };
 
-const FieldWithSdk = ({ locale }: any) => {
+const FieldWithSdk = ({ contentType, locale, locales }) => {
   const fieldContext = useFieldDialogContext();
-  const { field, parameters } = createFakeFieldAPI({ ...fieldContext, locale });
+  const sdk = createFakeFieldAPI({ ...fieldContext, contentType, locale, locales });
 
-  return <BooleanEditor field={field} isInitiallyDisabled={false} parameters={parameters}/>;
+  // return <Field field={field} isInitiallyDisabled={false} parameters={parameters} />;
+
+  return <Field sdk={sdk} />;
 };
 
-const LocalisedField = ({ locale }: any) => {
-
+const LocalisedField = ({ contentType, locale, locales }) => {
   return (
     <>
       <div>{locale}</div>
-      <FieldWithSdk locale={locale}/>
+      <FieldWithSdk contentType={contentType} locale={locale} locales={locales} />
     </>
   );
 };
 
-const InitialValueTabComponent = ({ ctField, availableWidgets }: InitialValueTabComponentProps) => {
+const InitialValueTabComponent = ({ contentType, ctField }: InitialValueTabComponentProps) => {
   const { fieldSdk, fieldParameters } = useFieldDialogContext();
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
 
@@ -78,57 +91,30 @@ const InitialValueTabComponent = ({ ctField, availableWidgets }: InitialValueTab
     );
   }
 
-  if (!ctField.localized) {
-    return <FieldWithSdk locale={TheLocaleStore.getDefaultLocale()}/>;
-  }
+  const locales = TheLocaleStore.getPrivateLocales();
 
-  const locales = TheLocaleStore.getPrivateLocales(); //.map((locale) => locale.name);
-  const widgets = availableWidgets;
+  if (!ctField.localized) {
+    return (
+      <FieldWithSdk
+        contentType={contentType}
+        locale={TheLocaleStore.getDefaultLocale()}
+        locales={locales}
+      />
+    );
+  }
 
   return (
     <>
-      {locales.map((locale) => <LocalisedField locale={locale.code}/>)}
+      {locales.map((locale) => (
+        <LocalisedField
+          contentType={contentType}
+          key={locale.code}
+          locale={locale.code}
+          locales={locales}
+        />
+      ))}
     </>
   );
-
-
-  // return (
-  //   <Fragment>
-  //     {locales.map((locale) => {
-  //       return (
-  //         <EntityFieldControl
-  //           hasInitialFocus={false}
-  //           doc
-  //           editorData
-  //           fieldLocale
-  //           fieldLocaleListeners
-  //           loadEvents={undefined}
-  //           locale={locale}
-  //           localeData
-  //           onBlur={() => {
-  //           }}
-  //           onFocus={() => {
-  //           }}
-  //           preferences={{}}
-  //           setInvalid={() => {
-  //           }}
-  //           widget={widgets[0]}
-  //         />
-  //       );
-  //     })}
-  //   </Fragment>
-  // );
 };
-
-// InitialValueTabComponent.propTypes = {
-//   editorInterface: PropTypes.object.isRequired,
-//   contentType: PropTypes.object.isRequired,
-//   widgetSettings: PropTypes.shape({
-//     namespace: PropTypes.string.isRequired,
-//     id: PropTypes.string.isRequired,
-//     params: PropTypes.object,
-//   }).isRequired,
-//   setWidgetSettings: PropTypes.func.isRequired,
-// };
 
 export { InitialValueTabComponent };
