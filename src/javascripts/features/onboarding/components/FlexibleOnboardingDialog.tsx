@@ -13,7 +13,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 import * as TokenStore from 'services/TokenStore';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { captureWarning } from 'core/monitoring';
-import { useRouteNavigate } from 'core/react-routing';
+import { router } from 'core/react-routing';
 
 enum Views {
   DEVELOPER_CHOICE_MODAL = 'developerChoice',
@@ -51,7 +51,6 @@ const renameSpace = async (newName, spaceId) => {
 
 export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) => {
   const [modalShown, setModalShown] = useState<Views>(Views.DEVELOPER_CHOICE_MODAL);
-  const navigate = useRouteNavigate();
 
   const handleBack = () => {
     setModalShown(Views.DEVELOPER_CHOICE_MODAL);
@@ -76,7 +75,7 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
         onClose();
         unmarkSpace();
         renameSpace('Blank space', spaceId);
-        navigate({ path: 'content_types.list' });
+        router.navigate({ path: 'content_types.list' });
         return;
       default:
         return;
