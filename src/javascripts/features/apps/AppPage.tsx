@@ -15,7 +15,7 @@ import {
   HelpText,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
@@ -41,10 +41,16 @@ import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
+import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { createAppConfigWidgetSDK } from '@contentful/experience-sdk';
+import {
+  createDialogCallbacks,
+  createNavigatorCallbacks,
+} from 'app/widgets/ExtensionSDKs/callbacks';
 
 enum InstallationState {
   Installation = 'installation',
@@ -92,11 +98,12 @@ export function AppRoute(props: Props) {
   const { customWidgetClient, client: cma } = useCurrentSpaceAPIClient();
 
   const {
-    currentSpaceId: spaceId,
-    currentOrganizationId: organizationId,
-    currentEnvironmentId: environmentId,
     currentOrganization: organization,
+    currentOrganizationId: organizationId,
     currentSpace,
+    currentSpaceId: spaceId,
+    currentEnvironment,
+    currentEnvironmentId: environmentId,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const appManager = React.useMemo<AppManager>(
@@ -122,20 +129,66 @@ export function AppRoute(props: Props) {
     );
   }, [app]);
 
+  const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    getVariation(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION).then(setUseExperienceSDK);
+  }, []);
+
   const sdkInstance = React.useMemo(() => {
-    if (!widget || !app || !customWidgetClient) return null;
+    if (!widget || !app || !customWidgetClient || !spaceId) return null;
 
     const spaceContext = getSpaceContext();
 
-    return createAppExtensionSDK({
-      spaceContext,
-      cma: customWidgetClient,
-      widgetNamespace: WidgetNamespace.APP,
-      widgetId: app.appDefinition.sys.id,
-      appHookBus: props.appHookBus,
-      currentAppWidget: widget,
-    });
-  }, [widget, app, customWidgetClient, props.appHookBus]);
+    if (useExperienceSDK) {
+      return {
+        sdk: createAppConfigWidgetSDK({
+          cma: customWidgetClient,
+          user: spaceContext.user,
+          environment: currentEnvironment,
+          space: spaceContext.space,
+          widgetId: app.appDefinition.sys.id,
+          WidgetNamespace: WidgetNamespace.APP,
+          widgetLoader: undefined,
+          spaceMembership: undefined,
+          roles: undefined,
+          callbacks: {
+            navigator: createNavigatorCallbacks({
+              spaceContext: {
+                environmentId,
+                spaceId,
+                isMaster: isMasterEnvironment,
+              },
+              widgetRef: {
+                widgetId: app.appDefinition.sys.id,
+                widgetNamespace: WidgetNamespace.APP,
+              },
+            }),
+            dialog: createDialogCallbacks(),
+          },
+        }),
+        onAppHook: noop,
+      };
+    } else {
+      return localCreateAppConfigWidgetSDK({
+        spaceContext,
+        cma: customWidgetClient,
+        widgetNamespace: WidgetNamespace.APP,
+        widgetId: app.appDefinition.sys.id,
+        appHookBus: props.appHookBus,
+        currentAppWidget: widget,
+      });
+    }
+  }, [
+    widget,
+    app,
+    environmentId,
+    currentEnvironment,
+    isMasterEnvironment,
+    spaceId,
+    customWidgetClient,
+    props.appHookBus,
+    useExperienceSDK,
+  ]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
   const appIcon: string = get(app, ['icon'], '');
