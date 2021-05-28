@@ -57,6 +57,7 @@ export enum FLAGS {
   REQUEST_RETRY_EXPERIMENT = 'dev-workflows-02-2021-request-retry-experiment',
   ENVIRONMENT_POLICIES = 'feature-dev-workflows-04-2021-environment-policies',
   NEW_ONBOARDING_FLOW = 'feature-growth-04-2021-new-onboarding-flow',
+  RECOVERABLE_ONBOARDING_FLOW = 'feature-growth-04-2021-recoverable-onboarding-flow',
   EXPERIMENT_ONBOARDING_MODAL = 'test-growth-05-2021-onboarding-modal',
   NEW_COWORKER_INVITE_CARD = 'feature-growth-05-2021-new-coworker-invite-card',
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
@@ -89,6 +90,7 @@ const FALLBACK_VALUES = {
   [FLAGS.ENVIRONMENT_POLICIES]: false,
   [FLAGS.V1_MIGRATION_2021_WARNING]: false,
   [FLAGS.NEW_ONBOARDING_FLOW]: false,
+  [FLAGS.RECOVERABLE_ONBOARDING_FLOW]: false,
   [FLAGS.NEW_COWORKER_INVITE_CARD]: false,
   [FLAGS.EXPERIENCE_SDK_PAGE_LOCATION]: false,
 

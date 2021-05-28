@@ -15,25 +15,25 @@ const styles = {
   card: css({ width: '100%' }),
 };
 
-export const NewOnboardingCTA = ({ spaceId }) => {
+export const DiscoverOnboardingCTA = ({ spaceId }) => {
   return (
     <Card padding="large" className={styles.card}>
       <Flex justifyContent="space-between" alignItems="center">
         <div>
-          <Heading>How would you like to start with Contentful?</Heading>
-          <Paragraph>Choose how you want to get started with Contentful.</Paragraph>
+          <Heading>Do you want to discover Contentful in a different way?</Heading>
+          <Paragraph>Choose from different ways to get started with Contentful.</Paragraph>
         </div>
         <Button
-          testId="explore-onboarding-btn"
+          testId="discover-onboarding-btn"
           onClick={() => {
-            track('space_home:onboarding_explore');
+            track('space_home:onboarding_discover');
             ModalLauncher.open(({ isShown, onClose }) => {
               return (
                 <FlexibleOnboardingDialog isShown={isShown} onClose={onClose} spaceId={spaceId} />
               );
             });
           }}>
-          Explore
+          Discover
         </Button>
       </Flex>
     </Card>

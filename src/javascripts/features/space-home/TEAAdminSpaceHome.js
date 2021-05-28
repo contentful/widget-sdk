@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { styles } from './styles';
 import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
@@ -13,6 +13,8 @@ import { ExampleProjectOverview } from './components/ExampleProjectOverview';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { DiscoverOnboardingCTA } from 'features/onboarding';
 
 export const TEAAdminSpaceHome = ({
   spaceName,
@@ -25,6 +27,29 @@ export const TEAAdminSpaceHome = ({
   isTrialSpace,
   inviteCardExperimentEnabled,
 }) => {
+  const [isRecoverableOnboardingEnabled, setIsRecoverableOnboardingEnabled] = useState(false);
+
+  useEffect(() => {
+    (async function () {
+      const recoverableOnboardingEnabled = await getVariation(FLAGS.RECOVERABLE_ONBOARDING_FLOW, {
+        spaceId: spaceId,
+        organizationId: orgId,
+      });
+
+      const newOnboardingExperimentVariation = await getVariation(
+        FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        {
+          spaceId: spaceId,
+          organizationId: orgId,
+        }
+      );
+
+      setIsRecoverableOnboardingEnabled(
+        recoverableOnboardingEnabled && newOnboardingExperimentVariation
+      );
+    })();
+  }, [spaceId, orgId]);
+
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
@@ -41,6 +66,12 @@ export const TEAAdminSpaceHome = ({
           )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      {isRecoverableOnboardingEnabled && (
+        <WidgetContainer.Row>
+          <DiscoverOnboardingCTA spaceId={spaceId} />
+        </WidgetContainer.Row>
+      )}
 
       <ComposeAndLaunchCTA />
       <ContentfulAppsCTA />
