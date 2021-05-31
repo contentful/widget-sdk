@@ -23,7 +23,9 @@ export interface InitialValueTabComponentProps {
   availableWidgets: Widget[];
 }
 
-const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: any) => {
+const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }) => {
+  const fieldIndex = contentType.fields.findIndex((fieldElement) => fieldElement.id === field.id);
+
   return {
     field: {
       ...field,
@@ -31,8 +33,15 @@ const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: a
       getValue: () => Promise.resolve(false),
       removeValue: () => {},
       setValue: async (value: any) => {
-        console.log(value);
-        // contentType.fields['blabla'].initialValue['en-US'] = value
+        const newContentType = Object.assign({}, contentType);
+        newContentType.fields[fieldIndex] = {
+          ...newContentType.fields[fieldIndex],
+          initialValue: {
+            [locale.code]: value,
+          },
+        };
+
+        // do something with newContentType
       },
       onSchemaErrorsChanged: noop,
       onIsDisabledChanged: noop,
@@ -40,6 +49,7 @@ const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: a
       isEqualValues: noop,
     },
     parameters: {
+      installation: {},
       instance: settings,
     },
     contentType,
@@ -50,8 +60,6 @@ const createFakeFieldAPI = ({ contentType, field, settings, locale, locales }: a
 const FieldWithSdk = ({ contentType, locale, locales }) => {
   const fieldContext = useFieldDialogContext();
   const sdk = createFakeFieldAPI({ ...fieldContext, contentType, locale, locales });
-
-  console.dir(sdk);
 
   return <Field sdk={sdk} />;
 };
