@@ -135,7 +135,7 @@ export function AppRoute(props: Props) {
 
   const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
   React.useEffect(() => {
-    getVariation(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION).then(setUseExperienceSDK);
+    getVariation(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, { organizationId }).then(setUseExperienceSDK);
     getCustomWidgetLoader().then(setWidgetLoader);
   }, []);
 
