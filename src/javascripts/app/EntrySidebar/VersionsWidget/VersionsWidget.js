@@ -9,6 +9,7 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const styles = {
   list: css({
@@ -25,22 +26,31 @@ export const noSnapshotsText =
 export const compareHelpText =
   'Select a previous version to compare it with the current version of this entry.';
 
-const CompareButton = (props) => (
-  <StateLink
-    path="spaces.detail.entries.detail.compare.withCurrent"
-    params={{ entryId: props.entryId, snapshotId: props.selectedId }}>
-    {({ onClick }) => (
-      <Button
-        buttonType="muted"
-        isFullWidth
-        testId="compare-versions"
-        disabled={!props.selectedId}
-        onClick={onClick}>
-        Compare with current version
-      </Button>
-    )}
-  </StateLink>
-);
+const CompareButton = (props) => {
+  const spaceContext = useSpaceEnvContext();
+
+  return (
+    <StateLink
+      path="spaces.detail.entries.detail.compare.withCurrent"
+      params={{
+        spaceId: spaceContext.currentSpaceId,
+        entryId: props.entryId,
+        snapshotId: props.selectedId,
+      }}>
+      {({ onClick }) => (
+        <Button
+          buttonType="muted"
+          isFullWidth
+          testId="compare-versions"
+          disabled={!props.selectedId}
+          onClick={onClick}>
+          Compare with current version
+        </Button>
+      )}
+    </StateLink>
+  );
+};
+
 CompareButton.propTypes = {
   entryId: PropTypes.string,
   selectedId: PropTypes.string,
