@@ -76,6 +76,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     currentEnvironmentId,
     currentEnvironment,
     currentSpaceData,
+    currentOrganizationId,
   } = useSpaceEnvContext();
   const aliasesIds = getEnvironmentAliasesIds(currentEnvironment);
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
@@ -87,7 +88,11 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
 
   const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
   React.useEffect(() => {
-    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION).then(setUseExperienceSDK);
+    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, {
+      organizationId: currentOrganizationId,
+      spaceId: currentSpaceId,
+      environmentId: currentEnvironmentId,
+    }).then(setUseExperienceSDK);
   }, []);
 
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
