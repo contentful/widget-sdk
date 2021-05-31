@@ -172,9 +172,9 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           },
           spaceMembership: {
             sys: {
-              id: currentSpaceData.spaceMembership.sys.id,
+              id: currentSpaceData.spaceMember.sys.id,
             },
-            admin: currentSpaceData.spaceMembership.admin,
+            admin: currentSpaceData.spaceMember.admin,
           },
           roles: currentSpaceData.spaceMember.roles.map(({ name, description }) => ({
             name,
