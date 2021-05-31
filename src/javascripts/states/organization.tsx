@@ -4,8 +4,8 @@ import * as Analytics from 'analytics/Analytics';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { subscriptionState } from 'features/organization-subscription';
 import { teamsState } from 'features/teams';
-import { usersState, inviteUsersState } from './Users/UsersState';
-import accessToolsState from './AccessToolsState';
+import { usersState, inviteUsersState } from 'app/OrganizationSettings/Users/UsersState';
+import accessToolsState from 'app/OrganizationSettings/AccessToolsState';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from 'states/withOrganizationRoute';
@@ -74,7 +74,7 @@ export const organization = {
   },
   onEnter: [
     'organizationData',
-    (organizationData) => Analytics.trackContextChange(undefined, organizationData),
+    (organizationData) => Analytics.trackContextChange(null, organizationData),
   ],
   navComponent: OrganizationNavBar,
   children: [

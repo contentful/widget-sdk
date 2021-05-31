@@ -1,9 +1,6 @@
 import React from 'react';
 import accountProfileState from './accountProfile';
-import {
-  organizationSettings,
-  organization,
-} from 'app/OrganizationSettings/OrganizationSettingsState';
+import { organizationSettings, organization } from './organization';
 import { GatekeeperView } from 'account/GatekeeperView';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
