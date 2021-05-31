@@ -2,11 +2,11 @@
 docs/ @contentful/frontend
 
 # Team Extensibility
-src/javascripts/features/page-widgets/           @contentful/extensibility-devs
-src/javascripts/features/apps/                  @contentful/extensibility-devs
-src/javascripts/features/apps-core/             @contentful/extensibility-devs
-src/javascripts/features/extensions-management/ @contentful/extensibility-devs
-src/javascripts/features/webhooks/              @contentful/extensibility-devs
+src/javascripts/features/page-widgets/           @contentful/team-extensibility
+src/javascripts/features/apps/                  @contentful/team-extensibility
+src/javascripts/features/apps-core/             @contentful/team-extensibility
+src/javascripts/features/extensions-management/ @contentful/team-extensibility
+src/javascripts/features/webhooks/              @contentful/team-extensibility
 
 # Team Dev Workflows
 src/javascripts/features/content-tags/            @contentful/team-dev-workflows

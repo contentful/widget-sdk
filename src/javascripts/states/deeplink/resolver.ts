@@ -336,28 +336,42 @@ async function resolveContentfulApps(params: {
   }
   const environmentId = params.environmentId ? params.environmentId : 'master';
 
-  return {
-    path: ['spaces', 'environment', 'apps', 'list'],
-    params: {
+  const route = routes['apps.list'](
+    { withEnvironment: Boolean(params.environmentId) },
+    {
       spaceId,
       environmentId,
-      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
       ...(params.id ? { app: params.id } : {}),
-    },
+      navigationState: {
+        referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      },
+    }
+  );
+
+  return {
+    path: route.path,
+    params: route.params,
   };
 }
 
 async function resolveApps(params: { id?: string; referrer?: string }) {
   const { spaceId } = await getSpaceInfo();
 
-  return {
-    path: ['spaces', 'environment', 'apps', 'list'],
-    params: {
+  const route = routes['apps.list'](
+    { withEnvironment: false },
+    {
       spaceId,
       environmentId: 'master',
-      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
       ...(params.id ? { app: params.id } : {}),
-    },
+      navigationState: {
+        referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      },
+    }
+  );
+
+  return {
+    path: route.path,
+    params: route.params,
     deeplinkOptions: {
       selectSpace: true,
       selectEnvironment: true,

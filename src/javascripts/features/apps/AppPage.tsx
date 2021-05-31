@@ -40,11 +40,11 @@ import {
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { go } from 'states/Navigator';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { getSpaceContext } from 'classes/spaceContext';
+import { useRouteNavigate } from 'core/react-routing';
 
 enum InstallationState {
   Installation = 'installation',
@@ -78,6 +78,7 @@ interface Props {
 }
 
 export function AppRoute(props: Props) {
+  const routeNavigate = useRouteNavigate();
   const [app, setApp] = React.useState<MarketplaceApp | null>(null);
   const [ready, setReady] = React.useState(false);
   const [appLoaded, setAppLoaded] = React.useState(false);
@@ -214,17 +215,15 @@ export function AppRoute(props: Props) {
     const params: { spaceId: string; app?: string; environmentId?: string } = {
       spaceId: spaceId,
     };
-    let absoluteListPath = 'spaces.detail.apps.list';
     if (!isMasterEnvironment) {
       params.environmentId = environmentId;
-      absoluteListPath = 'spaces.environment.apps.list';
     }
 
     // No need to consent for private apps.
     if (app.isPrivateApp) {
       if (!props.canManageApps) {
         // redirect users without management permissions to the app list
-        go({ path: absoluteListPath, params });
+        routeNavigate({ path: 'apps.list', ...params });
         return;
       }
       // Otherwise allow to continue page rendering.
@@ -241,7 +240,7 @@ export function AppRoute(props: Props) {
         params.app = app.id;
       }
 
-      go({ path: absoluteListPath, params });
+      routeNavigate({ path: 'apps.list', ...params });
     }
   }, [
     spaceId,
@@ -251,10 +250,11 @@ export function AppRoute(props: Props) {
     props.hasAppsFeature,
     props.acceptedPermissions,
     props.canManageApps,
+    routeNavigate,
   ]);
 
   function goBackToList() {
-    return go({ path: '^.list' });
+    return routeNavigate({ path: 'apps.list' });
   }
 
   async function evictWidget(appInstallation) {

@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, SelectField, Option } from '@contentful/forma-36-react-components';
-import * as Navigator from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { getOrgSpacesFor, getEnvsFor } from './util';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { AppDefinition, Space, Environment } from 'contentful-management/types';
 
-function goToInstallation(spaceId, environmentId, appId, onClose) {
-  Navigator.go({
-    path: 'spaces.environment.apps.detail',
-    params: {
+function goToInstallation(
+  spaceId: string,
+  environmentId: string,
+  appId: string,
+  onClose: () => void
+) {
+  router.navigate(
+    {
+      path: 'apps.app-configuration',
       spaceId,
       environmentId,
       appId,
-      referrer: 'app-management',
+      navigationState: {
+        referrer: 'app-management',
+      },
     },
-    options: {
-      location: 'replace',
-    },
-  }).then(() => onClose());
+    { location: 'replace' }
+  );
+  onClose();
 }
 
 const styles = {

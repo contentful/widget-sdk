@@ -36,7 +36,7 @@ const TasksPageRouter = () => {
     <CustomRouter splitter="/tasks">
       <RouteErrorBoundary>
         <Routes basename={basename + 'tasks'}>
-          <Route name="spaces.detail.tasks" element={<TasksPageRoute />} />
+          <Route path="/" name="spaces.detail.tasks" element={<TasksPageRoute />} />
           <Route name={null} element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>

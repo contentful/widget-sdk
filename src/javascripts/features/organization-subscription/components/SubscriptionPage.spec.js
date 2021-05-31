@@ -155,7 +155,7 @@ describe('SubscriptionPage', () => {
     });
 
     expect(router.navigate).toHaveBeenCalledWith(
-      { orgId: 'Organization3', path: 'organizations.subscription_billing' },
+      { orgId: mockOrganization.sys.id, path: 'organizations.subscription_billing' },
       { reload: true }
     );
   });

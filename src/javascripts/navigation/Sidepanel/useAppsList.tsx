@@ -9,21 +9,8 @@ import { AppsListProps } from '@contentful/experience-components';
 import { useContentfulApps, useInstalledApps } from 'features/apps-core';
 import { MarketplaceApp } from 'features/apps-core';
 import { getContentfulAppUrl } from 'features/apps';
+import { router } from 'core/react-routing';
 
-const getAppInstallRouteProps = ({
-  app,
-  environmentId,
-  isMasterEnvironment,
-}: {
-  app: NavigationSwitcherAppProps;
-  environmentId: string;
-  isMasterEnvironment: boolean;
-}) => {
-  return {
-    path: isMasterEnvironment ? 'spaces.detail.apps.list' : 'spaces.environment.apps.list',
-    params: { environmentId, app: app.slug || app.id },
-  };
-};
 export interface NavigationSwitcherAppProps {
   id?: string;
   definitionId?: string;
@@ -31,7 +18,7 @@ export interface NavigationSwitcherAppProps {
   tagLine?: string;
   featureFlagName?: string;
   href: string;
-  installRouteProps?: ReturnType<typeof getAppInstallRouteProps>;
+  navigate: () => void;
   active: boolean;
   isInstalled: boolean;
   slug?: string;
@@ -42,6 +29,9 @@ const webApp: NavigationSwitcherAppProps = {
   href: '#',
   active: true,
   isInstalled: true,
+  navigate: () => {
+    Navigator.go({ path: 'home' });
+  },
 };
 
 const usePurchasedApps = (organizationId: string | undefined) => {
@@ -124,17 +114,29 @@ export const useAppsList = () => {
               ? await getVariation(featureFlagId, ldContext)
               : true;
             const isInstalled = installedAppIds.has(app.id);
-            const installRouteProps = getAppInstallRouteProps({
-              app,
+
+            const installHref = router.href({
+              path: 'apps.list',
+              app: app.slug || app.id,
+              spaceId,
               environmentId,
-              isMasterEnvironment: envIsMaster,
             });
+
+            const installNavigate = () => {
+              router.navigate({
+                path: 'apps.list',
+                app: app.slug || app.id,
+                spaceId,
+                environmentId,
+              });
+            };
 
             const spaceInformation = {
               spaceId: spaceId as string,
               spaceName: '', // not necessary downstream
               envMeta: { environmentId, isMasterEnvironment: envIsMaster },
             };
+
             const appUrl = getContentfulAppUrl(app.id, spaceInformation);
 
             // Remove long description for showing in AppSwitcher
@@ -144,8 +146,8 @@ export const useAppsList = () => {
               ? {
                   ...app,
                   type: app.id as AppsListProps['type'],
-                  installRouteProps,
-                  href: isInstalled && appUrl ? appUrl : Navigator.href(installRouteProps),
+                  href: isInstalled && appUrl ? appUrl : installHref,
+                  navigate: installNavigate,
                   active: false,
                   isInstalled,
                 }

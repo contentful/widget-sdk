@@ -26,10 +26,10 @@ import { ContentfulAppsList } from './ContentfulAppList';
 import { AppManager } from '../AppOperations';
 import { SpaceInformation } from '../AppDetailsModal/shared';
 import { useAppsTrial } from 'features/trials';
+import { useSearchParams } from 'core/react-routing';
 import { getEnvironmentMeta } from 'core/services/SpaceEnvContext/utils';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { EnvironmentMeta } from 'core/services/SpaceEnvContext/types';
-import { go } from 'states/Navigator';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
@@ -59,7 +59,6 @@ const getEnabledApps = async (apps, flagContext) => {
 };
 
 export interface MarketplacePageProps {
-  app?: string;
   canManageApps?: boolean;
   hasAdvancedAppsFeature: boolean;
   hasAppsFeature: boolean;
@@ -77,13 +76,14 @@ export function MarketplacePage(props: MarketplacePageProps) {
     currentSpace,
   } = useSpaceEnvContext();
   const { client: cma } = useCurrentSpaceAPIClient();
+  const [searchParams] = useSearchParams();
   const [ready, setReady] = React.useState(false);
   const [installedApps, setInstalledApps] = React.useState<MarketplaceApp[]>([]);
   const [availableApps, setAvailableApps] = React.useState<MarketplaceApp[]>([]);
   const [contentfulApps, setContentfulApps] = React.useState<MarketplaceApp[]>([]);
   const [appManager, setAppManager] = React.useState<AppManager | null>(null);
   const [appDetailsModalAppId, setAppDetailsModalAppId] = React.useState<string | null>(
-    props.app ?? null
+    searchParams.get('app') ?? null
   );
   const [isPurchased, setIsPurchased] = React.useState(false);
   const spaceInformation: SpaceInformation = {
@@ -138,13 +138,11 @@ export function MarketplacePage(props: MarketplacePageProps) {
   async function openDetailModal(app: MarketplaceApp) {
     AppLifecycleTracking.detailsOpened(app.id);
     setAppDetailsModalAppId(app.id);
-    return await go({ path: '.', params: { app: app.id }, options: { notify: false } });
   }
 
   async function closeDetailModal() {
     loadApps();
     setAppDetailsModalAppId(null);
-    return await go({ path: '.', params: { app: null }, options: { notify: false } });
   }
 
   function renderModal() {

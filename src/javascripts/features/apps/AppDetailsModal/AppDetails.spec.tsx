@@ -6,6 +6,7 @@ import React from 'react';
 import { AppManager } from '../AppOperations';
 import { AppDetails } from './AppDetails';
 import { SpaceInformation } from './shared';
+import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('core/components/ActionPerformerName', () => ({
   ActionPerformerName: ({ link }) => link.sys.id,
@@ -58,31 +59,35 @@ The Optimizely app makes it easier to power experiments with structured content.
   describe('Installation section', () => {
     it('should show if installed', () => {
       render(
-        <AppDetails
-          app={{
-            ...app,
-            appInstallation: {
-              sys: { createdAt: '2020-01-01', createdBy: { sys: { id: 'creator' } } },
-            } as AppInstallationProps,
-          }}
-          appManager={appManager}
-          spaceInformation={spaceInformation}
-          onClose={noop}
-          canManageApps
-        />
+        <MemoryRouter>
+          <AppDetails
+            app={{
+              ...app,
+              appInstallation: {
+                sys: { createdAt: '2020-01-01', createdBy: { sys: { id: 'creator' } } },
+              } as AppInstallationProps,
+            }}
+            appManager={appManager}
+            spaceInformation={spaceInformation}
+            onClose={noop}
+            canManageApps
+          />
+        </MemoryRouter>
       );
       expect(screen.queryByText('Installed by creator')).toBeDefined();
     });
 
     it('should not show if not installed', () => {
       render(
-        <AppDetails
-          spaceInformation={spaceInformation}
-          app={app}
-          appManager={appManager}
-          onClose={noop}
-          canManageApps
-        />
+        <MemoryRouter>
+          <AppDetails
+            spaceInformation={spaceInformation}
+            app={app}
+            appManager={appManager}
+            onClose={noop}
+            canManageApps
+          />
+        </MemoryRouter>
       );
       expect(screen.queryByText('Installed by')).toBeNull();
     });
@@ -91,26 +96,30 @@ The Optimizely app makes it easier to power experiments with structured content.
   describe('Support section', () => {
     it('should show correct text if supportUrl exists', () => {
       render(
-        <AppDetails
-          app={{ ...app, supportUrl: 'https://www.contentful.com/support/ ' }}
-          appManager={appManager}
-          spaceInformation={spaceInformation}
-          onClose={noop}
-          canManageApps
-        />
+        <MemoryRouter>
+          <AppDetails
+            app={{ ...app, supportUrl: 'https://www.contentful.com/support/ ' }}
+            appManager={appManager}
+            spaceInformation={spaceInformation}
+            onClose={noop}
+            canManageApps
+          />
+        </MemoryRouter>
       );
       expect(screen.queryByText('Contentful supports this app.')).toBeDefined();
     });
 
     it('should show correct text if supportUrl is missing', () => {
       render(
-        <AppDetails
-          appManager={appManager}
-          spaceInformation={spaceInformation}
-          app={app}
-          onClose={noop}
-          canManageApps
-        />
+        <MemoryRouter>
+          <AppDetails
+            appManager={appManager}
+            spaceInformation={spaceInformation}
+            app={app}
+            onClose={noop}
+            canManageApps
+          />
+        </MemoryRouter>
       );
       expect(screen.queryByText('This app is not officially supported.')).toBeDefined();
     });

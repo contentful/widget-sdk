@@ -5,6 +5,7 @@ import {
   apps as repoAppsMock,
   contentfulApps as repoContentfulAppsMock,
 } from '../__mocks__/repoAppsMock';
+import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 
@@ -45,12 +46,14 @@ jest.mock('features/trials', () => ({
 describe('MarketplacePage', () => {
   it('should match snapshot for loading state', async () => {
     const { container } = render(
-      <MarketplacePage
-        repo={getMockAppsRepo()}
-        hasAppsFeature={true}
-        canManageApps={true}
-        hasAdvancedAppsFeature={false}
-      />
+      <MemoryRouter>
+        <MarketplacePage
+          repo={getMockAppsRepo()}
+          hasAppsFeature={true}
+          canManageApps={true}
+          hasAdvancedAppsFeature={false}
+        />
+      </MemoryRouter>
     );
 
     expect(container).toMatchSnapshot();
@@ -60,12 +63,14 @@ describe('MarketplacePage', () => {
     const mockRepo = getMockAppsRepo(repoAppsMock);
 
     const { container } = render(
-      <MarketplacePage
-        repo={mockRepo}
-        hasAppsFeature={true}
-        canManageApps={true}
-        hasAdvancedAppsFeature={false}
-      />
+      <MemoryRouter>
+        <MarketplacePage
+          repo={mockRepo}
+          hasAppsFeature={true}
+          canManageApps={true}
+          hasAdvancedAppsFeature={false}
+        />
+      </MemoryRouter>
     );
 
     await wait();
@@ -77,13 +82,15 @@ describe('MarketplacePage', () => {
     const mockRepo = getMockAppsRepo(repoAppsMock);
 
     const { container } = render(
-      <MarketplacePage
-        repo={mockRepo}
-        hasAppsFeature={true}
-        hasAdvancedAppsFeature={false}
-        // limit the access
-        canManageApps={false}
-      />
+      <MemoryRouter>
+        <MarketplacePage
+          repo={mockRepo}
+          hasAppsFeature={true}
+          hasAdvancedAppsFeature={false}
+          // limit the access
+          canManageApps={false}
+        />
+      </MemoryRouter>
     );
 
     await wait();
@@ -95,12 +102,14 @@ describe('MarketplacePage', () => {
     const mockRepo = getMockAppsRepo(repoContentfulAppsMock);
 
     const { container } = render(
-      <MarketplacePage
-        repo={mockRepo}
-        hasAppsFeature={true}
-        hasAdvancedAppsFeature={false}
-        canManageApps={true}
-      />
+      <MemoryRouter>
+        <MarketplacePage
+          repo={mockRepo}
+          hasAppsFeature={true}
+          hasAdvancedAppsFeature={false}
+          canManageApps={true}
+        />
+      </MemoryRouter>
     );
 
     await wait();

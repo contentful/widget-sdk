@@ -5,7 +5,7 @@ import { AppListItem } from './AppListItem';
 import { AppManager } from '../AppOperations';
 import { hasConfigLocation } from '../utils';
 import { Notification } from '@contentful/forma-36-react-components';
-import { go as navigateToConfig } from 'states/Navigator';
+import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('services/TokenStore', () => ({
   getDomains: () => ({
@@ -64,11 +64,13 @@ const testItem = ({
   it('should have correct actions for ' + name, async () => {
     (hasConfigLocation as jest.Mock).mockReturnValueOnce(hasConfig);
     render(
-      <AppListItem
-        {...props}
-        app={{ ...props.app, isPrivateApp: isPrivate, appInstallation: isInstalled as any }}
-        canManageApps={canManageApps}
-      />
+      <MemoryRouter>
+        <AppListItem
+          {...props}
+          app={{ ...props.app, isPrivateApp: isPrivate, appInstallation: isInstalled as any }}
+          canManageApps={canManageApps}
+        />
+      </MemoryRouter>
     );
 
     // Open the dropdown menu
@@ -144,14 +146,12 @@ describe('AppListItem', () => {
     testItem({
       name: 'installed public apps',
       isInstalled: true,
-      callback: navigateToConfig,
       expectedDropdownActions: ['About', 'Uninstall', 'Configure'],
     });
     testItem({
       name: 'installed private apps',
       isInstalled: true,
       isPrivate: true,
-      callback: navigateToConfig,
       expectedDropdownActions: ['Uninstall', 'Configure', 'Edit app definition'],
     });
     testItem({

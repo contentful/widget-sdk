@@ -1,7 +1,6 @@
 import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { onSlideLevelChanged } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import * as Navigator from 'states/Navigator';
 import { router } from 'core/react-routing';
 import * as entityCreator from 'components/app_container/entityCreator';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
@@ -292,7 +291,6 @@ describe('createNavigatorApi', () => {
         await expect(navigatorApi.openPageExtension({ path })).rejects.toThrowError();
 
         expect(router.navigate).not.toHaveBeenCalled();
-        expect(Navigator.go).not.toHaveBeenCalled();
       });
       it('does not navigate to different type', async () => {
         const navigatorApi = buildApi({
@@ -302,7 +300,6 @@ describe('createNavigatorApi', () => {
         await expect(navigatorApi.openPageExtension()).rejects.toThrowError();
 
         expect(router.navigate).not.toHaveBeenCalled();
-        expect(Navigator.go).not.toHaveBeenCalled();
       });
     });
 
@@ -314,18 +311,16 @@ describe('createNavigatorApi', () => {
         });
         await navigatorApi.openCurrentAppPage({});
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: false,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            path: 'apps.page',
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
             appId: DEFAULT_WIDGET_ID,
-            path: '',
+            pathname: '',
           },
-          path: ['spaces', 'detail', 'apps', 'page'],
-        });
+          { notify: false }
+        );
       });
       it('navigates notifies when not on page location', async () => {
         const navigatorApi = buildApi({
@@ -335,18 +330,16 @@ describe('createNavigatorApi', () => {
         const path = '/somewhere';
         await navigatorApi.openCurrentAppPage({ path });
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: true,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            path: 'apps.page',
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
             appId: DEFAULT_WIDGET_ID,
-            path,
+            pathname: path,
           },
-          path: ['spaces', 'detail', 'apps', 'page'],
-        });
+          { notify: true }
+        );
       });
       it('does not navigate with wrong path', async () => {
         const navigatorApi = buildApi({
@@ -356,7 +349,7 @@ describe('createNavigatorApi', () => {
         const path = 'wrong';
         await expect(navigatorApi.openCurrentAppPage({ path })).rejects.toThrowError();
 
-        expect(Navigator.go).not.toHaveBeenCalled();
+        expect(router.navigate).not.toHaveBeenCalled();
       });
       it('does not navigate to different type', async () => {
         const navigatorApi = buildApi({
@@ -365,7 +358,7 @@ describe('createNavigatorApi', () => {
         });
         await expect(navigatorApi.openCurrentAppPage()).rejects.toThrowError();
 
-        expect(Navigator.go).not.toHaveBeenCalled();
+        expect(router.navigate).not.toHaveBeenCalled();
       });
     });
 
@@ -389,24 +382,24 @@ describe('createNavigatorApi', () => {
         const navigatorApi = buildApi({ widgetNamespace: WidgetNamespace.EXTENSION });
 
         expect(() => navigatorApi.openAppConfig()).toThrow();
-        expect(Navigator.go).not.toHaveBeenCalled();
+        expect(router.navigate).not.toHaveBeenCalled();
       });
 
       it('navigates to the config location', async () => {
         const navigatorApi = buildApi();
         await navigatorApi.openAppConfig();
 
-        expect(Navigator.go).toHaveBeenCalledWith({
-          options: {
-            notify: true,
-          },
-          params: {
+        expect(router.navigate).toHaveBeenCalledWith(
+          {
+            path: 'apps.app-configuration',
             environmentId: DEFAULT_ENVIRONMENT_ID,
             spaceId: DEFAULT_SPACE_ID,
             appId: DEFAULT_WIDGET_ID,
           },
-          path: ['spaces', 'environment', 'apps', 'detail'],
-        });
+          {
+            notify: true,
+          }
+        );
       });
     });
 

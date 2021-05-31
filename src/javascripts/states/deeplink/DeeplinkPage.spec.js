@@ -21,7 +21,7 @@ const flush = () => new Promise((resolve) => setImmediate(resolve));
 describe('deeplink/DeeplinkPage', () => {
   it('should redirect user accoring to resolver response', async () => {
     resolveLink.mockResolvedValue({
-      path: ['spaces', 'environment', 'apps', 'list'],
+      path: 'some.link',
       params: {
         spaceId: '1234',
       },
@@ -48,7 +48,7 @@ describe('deeplink/DeeplinkPage', () => {
     await flush();
 
     expect($state.go).toHaveBeenCalledWith(
-      'spaces.environment.apps.list',
+      'some.link',
       {
         spaceId: '1234',
       },
@@ -58,7 +58,7 @@ describe('deeplink/DeeplinkPage', () => {
 
   it('should show space selection form if resolver returned deeplinkOptions including selectSpace or selectEnv', async function () {
     resolveLink.mockResolvedValue({
-      path: ['spaces', 'environment', 'apps', 'list'],
+      path: 'some.link',
       params: {
         spaceId: '1234',
         app: 'test-app',
@@ -128,7 +128,7 @@ describe('deeplink/DeeplinkPage', () => {
     await waitFor(() => getByText('Redirecting'));
 
     expect($state.go).toHaveBeenCalledWith(
-      'spaces.environment.apps.list',
+      'some.link',
       { environmentId: 'test', spaceId: 'current-space', app: 'test-app' },
       { location: 'replace' }
     );

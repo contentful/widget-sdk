@@ -21,6 +21,7 @@ import {
   getEnvironmentAliasId,
 } from 'core/services/SpaceEnvContext/utils';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { createPageWidgetSDK as localCreatePageWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { usePubSubClient } from 'core/hooks';
 import { LoadingState } from 'features/loading-state';
@@ -251,15 +252,12 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     if (hasNicerSlug) {
       // If it has a nicer slug, that is the app.id
       const slug = app.id;
-      // Add environment path portion if we're not on master
-      const spaceDetailPagePath = !isMasterEnvironment
-        ? 'spaces.environment.apps.page'
-        : 'spaces.detail.apps.page';
 
-      go({ path: spaceDetailPagePath, params: { appId: slug }, options: { replace: true } });
+      router.navigate({ path: 'apps.page', appId: slug, pathname: '/' }, { replace: true });
+
       return;
     }
-  }, [app, props.appId, widget, isMasterEnvironment]);
+  }, [app, props.appId, widget]);
 
   if (!widget || !sdk || (props.appId && !app)) {
     return (

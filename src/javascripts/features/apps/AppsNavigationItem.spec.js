@@ -66,17 +66,5 @@ describe('AppsNavigationItem', () => {
 
       expect(title).toEqual(appWithNavItem.locations[1].navigationItem.name);
     });
-
-    it('uses path as routing info', () => {
-      const [
-        ,
-        ,
-        {
-          srefParams: { path },
-        },
-      ] = buildChildren([appWithNavItem], {});
-
-      expect(path).toEqual(appWithNavItem.locations[1].navigationItem.path);
-    });
   });
 });

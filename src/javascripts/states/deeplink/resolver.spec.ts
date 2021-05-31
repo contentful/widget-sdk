@@ -266,14 +266,21 @@ describe('states/deeplink/resolver', () => {
         id: 'netlify',
       });
 
-      expect(result).toEqual({
-        path: ['spaces', 'environment', 'apps', 'list'],
-        params: {
+      const route = routes['apps.list'](
+        { withEnvironment: false },
+        {
           spaceId: 'test-space-id',
           environmentId: 'master',
           app: 'netlify',
-          referrer: 'deeplink',
-        },
+          navigationState: {
+            referrer: 'deeplink',
+          },
+        }
+      );
+
+      expect(result).toEqual({
+        path: route.path,
+        params: route.params,
         deeplinkOptions: {
           selectSpace: true,
           selectEnvironment: true,

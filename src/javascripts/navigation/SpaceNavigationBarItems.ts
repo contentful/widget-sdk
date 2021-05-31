@@ -210,7 +210,7 @@ export function getSpaceNavigationItems({
       if: canNavigateTo('apps'),
       dataViewType: 'apps',
       navIcon: 'Apps',
-      rootSref: makeRef('apps', isUnscopedRoute),
+      rootSref: makeReactRouterRef('apps.list', withEnvironment).rootSref,
       title: 'Apps',
       render: (item) => renderAppsNavigationItem(item, { isUnscopedRoute, canManageSpace }),
     },
