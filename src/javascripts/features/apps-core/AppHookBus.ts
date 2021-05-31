@@ -36,7 +36,7 @@ export interface AppHookBus {
   on: (eventName: string, handler: mitt.Handler) => void;
   emit: (eventName: string, data?: any) => void;
   setInstallation: (value: { parameters: FreeFormParameters } | null) => void;
-  getInstallation: () => Record<string, any> | null;
+  getInstallation: () => ({parameters: FreeFormParameters;} | null);
 }
 
 export function makeAppHookBus(): AppHookBus {

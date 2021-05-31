@@ -16,7 +16,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { get, noop } from 'lodash';
-import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
+import { APP_EVENTS_IN, AppHookBus } from 'features/apps-core';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
@@ -36,6 +36,7 @@ import {
   WidgetLocation,
   buildAppDefinitionWidget,
   WidgetNamespace,
+  WidgetLoader,
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -46,11 +47,13 @@ import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpac
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { createAppConfigWidgetSDK } from '@contentful/experience-sdk';
+import { createAppConfigWidgetSDK, AppInstallationEvents } from '@contentful/experience-sdk';
+import { FreeFormParameters } from 'contentful-management/types';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
+import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
 enum InstallationState {
   Installation = 'installation',
@@ -94,6 +97,7 @@ export function AppRoute(props: Props) {
   const [installationState, setInstallationState] = React.useState<InstallationState>(
     InstallationState.NotBusy
   );
+  const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>(null);
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
   const { customWidgetClient, client: cma } = useCurrentSpaceAPIClient();
 
@@ -132,6 +136,7 @@ export function AppRoute(props: Props) {
   const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
   React.useEffect(() => {
     getVariation(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION).then(setUseExperienceSDK);
+    getCustomWidgetLoader().then(setWidgetLoader);
   }, []);
 
   const sdkInstance = React.useMemo(() => {
@@ -139,16 +144,17 @@ export function AppRoute(props: Props) {
 
     const spaceContext = getSpaceContext();
 
-    if (useExperienceSDK) {
+    if (useExperienceSDK && widgetLoader && currentEnvironment) {
       return {
         sdk: createAppConfigWidgetSDK({
+          widgetLoader,
           cma: customWidgetClient,
           user: spaceContext.user,
           environment: currentEnvironment,
           space: spaceContext.space,
           widgetId: app.appDefinition.sys.id,
           WidgetNamespace: WidgetNamespace.APP,
-          widgetLoader: undefined,
+          appHookBus: props.appHookBus,
           spaceMembership: undefined,
           roles: undefined,
           callbacks: {
@@ -164,6 +170,13 @@ export function AppRoute(props: Props) {
               },
             }),
             dialog: createDialogCallbacks(),
+            appApi:{
+              setReady: onAppMarkedAsReady,
+              getInstallation: props.appHookBus.getInstallation,
+              refreshPublishedContentTypes() {
+                GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
+              }
+            },
           },
         }),
         onAppHook: noop,
@@ -349,7 +362,7 @@ export function AppRoute(props: Props) {
       setInstallationState(InstallationState.NotBusy);
 
       props.appHookBus.setInstallation(appInstallation);
-      props.appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
+      props.appHookBus.emit(AppInstallationEvents.SUCCEEDED);
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
         Notification.error(getUsageExceededMessage(props.hasAdvancedAppsFeature));
@@ -367,7 +380,7 @@ export function AppRoute(props: Props) {
       setInstallationState(InstallationState.NotBusy);
 
       props.appHookBus.setInstallation(appInstallation);
-      props.appHookBus.emit(APP_EVENTS_OUT.FAILED);
+      props.appHookBus.emit(AppInstallationEvents.FAILED);
     }
   }
 
@@ -392,7 +405,7 @@ export function AppRoute(props: Props) {
 
     if (hasConfigLocation(app.appDefinition)) {
       // The app implements config - hand over control.
-      props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
+      props.appHookBus.emit(AppInstallationEvents.STARTED);
     } else {
       // No config location - just use an empty config right away.
       onAppConfigured({ config: {} });
