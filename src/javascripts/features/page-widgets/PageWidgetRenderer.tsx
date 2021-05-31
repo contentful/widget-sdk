@@ -180,6 +180,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
             name,
             description: description ?? '',
           })),
+          invocationParameters: parameters.invocation,
         }) as PageExtensionSDK)
       : localCreatePageWidgetSDK({
           widgetNamespace: widget.namespace,
