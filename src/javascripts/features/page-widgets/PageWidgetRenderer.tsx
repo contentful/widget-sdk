@@ -119,9 +119,13 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
       !currentEnvironment ||
       !pubSubClient ||
       !customWidgetPlainClient ||
-      !widgetLoader
+      !widgetLoader ||
+      !currentSpace
     )
       return null;
+
+    const { sys, ...restOfUser } = getUserSync();
+    const { id, type } = sys;
 
     return useExperienceSDK
       ? (createPageWidgetSDK({
@@ -131,7 +135,10 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           widgetParameters: widget.parameters,
           space: currentSpaceData,
           widgetLoader,
-          user: getUserSync(),
+          user: {
+            sys: { id, type },
+            ...restOfUser,
+          },
           contentTypes: currentSpaceContentTypes.map((ct) =>
             createPublicContentType(ct as InternalContentType)
           ),
