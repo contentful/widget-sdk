@@ -1,9 +1,6 @@
 import React from 'react';
 import accountProfileState from './accountProfile';
-import {
-  organizationSettings,
-  organization,
-} from 'app/OrganizationSettings/OrganizationSettingsState';
+import { organization } from './organization';
 import { GatekeeperView } from 'account/GatekeeperView';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
@@ -15,7 +12,6 @@ const accountState = {
   abstract: true,
   navComponent: EmptyNavigationBar,
   children: [
-    organizationSettings,
     {
       name: 'new_organization',
       url: '/organizations/new',

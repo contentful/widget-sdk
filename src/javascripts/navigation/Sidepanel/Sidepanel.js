@@ -110,10 +110,7 @@ export default class Sidepanel extends React.Component {
         router.navigate({ path: 'organizations.subscription_v1', orgId });
       }
     } else {
-      Navigator.go({
-        path: 'account.organizations.teams',
-        params: { orgId },
-      });
+      router.navigate({ path: 'organizations.teams', orgId });
     }
   };
 

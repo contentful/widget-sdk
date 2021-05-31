@@ -23,7 +23,7 @@ import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { captureError } from 'core/monitoring';
-import { go } from 'states/Navigator';
+import { goToOrganizationSettings } from './goToOrganizationSettings';
 
 const styles = {
   dotsRow: css({
@@ -88,10 +88,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   }
 
   const goToOrgSettings = () => {
-    go({
-      path: ['account', 'organization_settings'],
-      params: { orgId: organization.sys.id },
-    });
+    goToOrganizationSettings(organization.sys.id);
   };
 
   useEffect(() => {
