@@ -9,10 +9,10 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { go } from 'states/Navigator';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
 import { captureError } from 'core/monitoring';
+import { goToOrganizationSettings } from './goToOrganizationSettings';
 
 const fakeOrganization = fake.Organization();
 const fakeOrgMemberhip = fake.OrganizationMembership('admin');
@@ -31,8 +31,8 @@ jest.mock('services/OrganizationRoles', () => ({
   getOrganizationMembership: jest.fn(),
 }));
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
+jest.mock('./goToOrganizationSettings', () => ({
+  goToOrganizationSettings: jest.fn(),
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
@@ -170,10 +170,7 @@ describe('OrganizationRow', () => {
         within(goToOrgButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organization_settings'],
-        params: { orgId: fakeOrganization.sys.id },
-      });
+      expect(goToOrganizationSettings).toHaveBeenCalledWith(fakeOrganization.sys.id);
     });
 
     it('should go to the org settings if they are a V2 pricing customer and click on the go to org settings button', async () => {
@@ -186,10 +183,7 @@ describe('OrganizationRow', () => {
         within(goToOrgButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organization_settings'],
-        params: { orgId: fakeOrganization.sys.id },
-      });
+      expect(goToOrganizationSettings).toHaveBeenCalledWith(fakeOrganization.sys.id);
     });
 
     it('should call removed them from the org and call onLeaveSuccess if they are can leave the org and click on the leave button', async () => {
