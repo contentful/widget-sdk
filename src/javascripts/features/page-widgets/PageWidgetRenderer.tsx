@@ -94,7 +94,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
       spaceId: currentSpaceId,
       environmentId: currentEnvironmentId,
     }).then(setUseExperienceSDK);
-  }, []);
+  }, [currentOrganizationId, currentSpaceId, currentEnvironmentId]);
 
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
   React.useEffect(() => {
