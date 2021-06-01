@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { range } from 'lodash';
+import { range, keyBy } from 'lodash';
 import React, { ReactElement } from 'react';
 import * as Config from 'Config';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
@@ -36,6 +36,7 @@ import { InternalSpaceAPI } from '../app/widgets/ExtensionSDKs/createSpaceApi';
 import { DialogsAPI, ContentEntityType, FieldExtensionSDK } from '@contentful/app-sdk';
 import { StreamBus } from '../core/utils/kefir';
 import { RenderCustomActions } from '../app/widgets/ReferenceEditor/types';
+import { ContentType, ContentTypeField, EditorInterface } from 'core/typings';
 
 export interface WidgetApi extends FieldExtensionSDK {
   space: InternalSpaceAPI;
@@ -75,7 +76,10 @@ const HELP_TEXT_PARAMETER = {
 };
 
 // Returns a list of all builtin widgets.
-export function create() {
+export function create({
+  contentType,
+  editorInterface,
+}: { contentType?: ContentType; editorInterface?: EditorInterface } = {}) {
   const widgets: BuiltinWidget[] = [];
 
   const registerWidget = (id: string, widgetDescriptor: WidgetDescriptor) => {
@@ -396,6 +400,43 @@ export function create() {
     };
   };
 
+  const getSlugEditorParameters = (
+    contentType?: ContentType,
+    editorInterface?: EditorInterface
+  ) => {
+    const controlsByFieldId = keyBy(editorInterface?.controls ?? [], 'fieldId');
+    const isBuiltinSlugEditor = (field: ContentTypeField) => {
+      // @ts-expect-error apiName is internal only and not present in external facing types
+      const control = controlsByFieldId[field.apiName];
+
+      return control?.widgetId === 'slugEditor' && control?.widgetNamespace === 'builtin';
+    };
+    const isSluggableField = (field: ContentTypeField) =>
+      field.type === 'Symbol' && !isBuiltinSlugEditor(field);
+    const fields = contentType?.fields ?? [];
+    const options = fields
+      .filter(isSluggableField)
+      // @ts-expect-error apiName is internal only and not present in external facing types
+      .map((field) => ({ [field.apiName]: field.name }));
+
+    if (options.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        id: 'trackingFieldId',
+        name: 'Generate slug from',
+        description: 'The value of this field will be used to generate the slug',
+        type: 'Enum',
+        labels: {
+          empty: 'Use entry title field (default behaviour)',
+        },
+        options,
+      },
+    ];
+  };
+
   registerWidget('entryLinkEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry link',
@@ -540,8 +581,16 @@ export function create() {
     icon: 'slug',
     isBackground: true,
     renderFieldEditor: ({ widgetApi }) => {
-      return <SlugEditor isInitiallyDisabled={true} field={widgetApi.field} baseSdk={widgetApi} />;
+      return (
+        <SlugEditor
+          isInitiallyDisabled={true}
+          field={widgetApi.field}
+          baseSdk={widgetApi}
+          parameters={widgetApi.parameters}
+        />
+      );
     },
+    parameters: getSlugEditorParameters(contentType, editorInterface),
   });
 
   return widgets;

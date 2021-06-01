@@ -106,7 +106,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         <Option value="">{get(definition, ['labels', 'empty']) || 'Select an option'}</Option>
         {definition.options.map((o) => {
           if (isObject(o)) {
-            const value = Object.keys(o)[0];
+            const [value] = Object.keys(o);
             return (
               <Option key={value} value={value}>
                 {o[value]}
