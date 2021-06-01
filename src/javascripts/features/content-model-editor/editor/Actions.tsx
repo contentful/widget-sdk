@@ -18,7 +18,7 @@ import { isDraft, isPublished } from 'contentful-management';
 import { getUpdatedField, openFieldModalDialog } from 'features/content-model-editor';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { AddFieldDialogModal } from './Dialogs/AddField';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { getSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 import type { ActionsState, ReducerAction } from './ActionsReducer';
 import { initActionsReducer, reducer, reducerActions } from './ActionsReducer';
@@ -50,7 +50,8 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
   // TODO: remove 'spaceContext'
   const spaceContext = getSpaceContext();
 
-  const { currentSpace, currentSpaceContentTypes, currentOrganizationId } = useSpaceEnvContext();
+  const { currentSpace, currentOrganizationId } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
 

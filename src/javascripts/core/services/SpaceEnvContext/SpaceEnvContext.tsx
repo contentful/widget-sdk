@@ -1,6 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
-import deepEqual from 'fast-deep-equal';
-import * as K from 'core/utils/kefir';
+import React, { createContext } from 'react';
 import { setTags } from 'core/monitoring';
 
 import {
@@ -17,47 +15,18 @@ import {
 } from './utils';
 import { SpaceEnvContextValue } from './types';
 import { getSpaceContext } from 'classes/spaceContext';
-import { ContentType } from './types';
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
-  currentSpaceContentTypes: [],
   currentEnvironmentId: 'master',
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
-  const [contentTypes, setContentTypes] = useState<ContentType[]>(() => getContentTypes());
-
-  useEffect(() => {
-    const angularSpaceContext = getSpaceContext();
-    if (!angularSpaceContext?.publishedCTs?.items$) return;
-
-    const deregister = K.onValue(
-      angularSpaceContext.publishedCTs.items$.skipDuplicates((a, b) => {
-        return deepEqual(a, b);
-      }),
-      (items) => {
-        if (angularSpaceContext.resettingSpace) {
-          return;
-        }
-        setContentTypes((items as ContentType[]) || []);
-      }
-    );
-
-    return deregister;
-  }, []); // eslint-disable-line
-
   function getSpace() {
     return getSpaceContext()?.getSpace();
   }
 
   function getEnvironments() {
     return getSpaceContext()?.environments ?? [];
-  }
-
-  function getContentTypes(): ContentType[] {
-    const angularSpaceContext = getSpaceContext();
-    if (!angularSpaceContext?.publishedCTs?.items$) return [];
-    return K.getValue(angularSpaceContext.publishedCTs.items$) || [];
   }
 
   function getDocPool() {
@@ -91,7 +60,6 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceEnvironments: getEnvironments(),
     currentSpaceId,
     currentSpaceName: getSpaceName(space),
-    currentSpaceContentTypes: contentTypes,
     documentPool: getDocPool(),
   };
 

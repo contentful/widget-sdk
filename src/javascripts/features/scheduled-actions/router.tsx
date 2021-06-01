@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScheduledActionsListPage } from './page/ScheduledActionsListPage';
 import TheLocaleStore from 'services/localeStore';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 
 import StateRedirect from 'app/common/StateRedirect';
 
@@ -10,11 +10,8 @@ import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-rout
 
 const ScheduledActionsListRoute = () => {
   const defaultLocale = TheLocaleStore.getDefaultLocale();
-  const {
-    currentSpaceId: spaceId,
-    currentEnvironmentId: environmentId,
-    currentSpaceContentTypes: contentTypes,
-  } = useSpaceEnvContext();
+  const { currentSpaceId: spaceId, currentEnvironmentId: environmentId } = useSpaceEnvContext();
+  const { currentSpaceContentTypes: contentTypes } = useSpaceEnvContentTypes();
 
   return (
     <ScheduledActionsFeatureFlag>

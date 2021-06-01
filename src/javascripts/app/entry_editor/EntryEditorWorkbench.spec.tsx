@@ -157,7 +157,6 @@ describe('When rendering editors page with no editors', () => {
     render(
       <SpaceEnvContext.Provider
         value={{
-          currentSpaceContentTypes: [],
           currentSpaceId: 'spaceid',
           currentEnvironmentId: 'envid',
           currentOrganizationId: 'orgid',

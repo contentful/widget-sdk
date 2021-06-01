@@ -4,7 +4,7 @@ import { WidgetLocation, WidgetNamespace, WidgetRenderer } from '@contentful/wid
 import { createEditorWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { EditorExtensionSDK } from '@contentful/app-sdk';
 import { usePubSubClient } from 'core/hooks';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { css } from 'emotion';
 import React from 'react';
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
@@ -48,9 +48,10 @@ const CustomEditorExtensionRenderer = (props: Props) => {
     currentEnvironmentId,
     currentEnvironmentAliasId,
     currentSpace,
-    currentSpaceContentTypes,
     currentSpaceId,
   } = useSpaceEnvContext();
+
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const pubSubClient = usePubSubClient();
 

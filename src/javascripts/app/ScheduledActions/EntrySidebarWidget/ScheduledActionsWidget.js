@@ -41,7 +41,7 @@ import {
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import localeStore from 'services/localeStore';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 
 const styles = {
   jobsSkeleton: css({
@@ -112,7 +112,7 @@ export default function ScheduledActionsWidget({
   publicationBlockedReason,
   emitter,
 }) {
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
