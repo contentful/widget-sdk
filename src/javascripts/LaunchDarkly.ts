@@ -61,6 +61,7 @@ export enum FLAGS {
   EXPERIMENT_ONBOARDING_MODAL = 'test-growth-05-2021-onboarding-modal',
   NEW_COWORKER_INVITE_CARD = 'feature-growth-05-2021-new-coworker-invite-card',
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
+  RICH_TEXT_TABLES = 'feature-shelley-05-2021-rich-text-tables',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -93,6 +94,8 @@ const FALLBACK_VALUES = {
   [FLAGS.RECOVERABLE_ONBOARDING_FLOW]: false,
   [FLAGS.NEW_COWORKER_INVITE_CARD]: false,
   [FLAGS.EXPERIENCE_SDK_PAGE_LOCATION]: false,
+  [FLAGS.RICH_TEXT_TABLES]: false,
+  [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,

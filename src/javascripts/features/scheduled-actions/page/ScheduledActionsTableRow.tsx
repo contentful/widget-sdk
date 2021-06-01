@@ -69,10 +69,10 @@ function ScheduledActionWithExsitingEntityRow({
           onClick={(e) => {
             onClick(e);
           }}
-          onKeyDown={(e) => {
-            if (isHotkey(['enter', 'space'], e)) {
+          onKeyDown={(e: unknown) => {
+            if (isHotkey(['enter', 'space'], e as KeyboardEvent)) {
               onClick(e);
-              e.preventDefault();
+              (e as KeyboardEvent).preventDefault();
             }
           }}>
           <TableCell>
