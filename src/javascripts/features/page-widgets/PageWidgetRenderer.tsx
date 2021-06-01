@@ -35,6 +35,7 @@ import { PageExtensionSDK } from '@contentful/app-sdk';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
+  createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
@@ -155,7 +156,11 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
             list: LocaleStore.getLocales(),
           },
           callbacks: {
-            space: {},
+            space: createSpaceCallbacks({
+              pubSubClient,
+              cma: customWidgetPlainClient,
+              environment: currentEnvironment,
+            }),
             dialog: createDialogCallbacks(),
             navigator: createNavigatorCallbacks({
               spaceContext: {
