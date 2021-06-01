@@ -409,11 +409,11 @@ export interface ExperimentStart {
   /**
    * The experiment name the current user is part of
    */
-  experiment_id?: string;
+  experiment_id: string;
   /**
    * The experiment variation the current user is assigned to
    */
-  experiment_variation?: string;
+  experiment_variation: string;
   /**
    * Current organization key
    */
@@ -1747,8 +1747,8 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  */
 /**
  * @typedef ExperimentStart
- * @property {string} [experiment_id] - The experiment name the current user is part of
- * @property {string} [experiment_variation] - The experiment variation the current user is assigned to
+ * @property {string} experiment_id - The experiment name the current user is part of
+ * @property {string} experiment_variation - The experiment variation the current user is assigned to
  * @property {string} [organization_id] - Current organization key
  * @property {string} [space_id] - Current space key
  * @property {string} [user_id] - Curent user key
