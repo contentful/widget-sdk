@@ -4,53 +4,63 @@ import CopyScreen from 'components/shared/stack-onboarding/screens/CopyScreen';
 import ExploreScreen from 'components/shared/stack-onboarding/screens/ExploreScreen';
 import DeployScreen from 'components/shared/stack-onboarding/screens/DeployScreen';
 import OnboardingRoute from 'components/shared/stack-onboarding/OnboardingRoute';
+import { CustomRouter, RouteErrorBoundary, Route, Routes } from 'core/react-routing';
+import StateRedirect from 'app/common/StateRedirect';
 
-const getStarted = {
-  name: 'getStarted',
-  url: '/get-started',
-  component: () => (
-    <OnboardingRoute>
-      <GetStartedScreen />
-    </OnboardingRoute>
-  ),
-};
+const OnboardingRouter = () => {
+  const [basename] = window.location.pathname.split('onboarding');
 
-const copyRepo = {
-  name: 'copy',
-  url: '/copy',
-  component: () => (
-    <OnboardingRoute>
-      <CopyScreen />
-    </OnboardingRoute>
-  ),
-};
-
-const explore = {
-  name: 'explore',
-  url: '/explore',
-  component: () => (
-    <OnboardingRoute>
-      <ExploreScreen />
-    </OnboardingRoute>
-  ),
-};
-
-const deploy = {
-  name: 'deploy',
-  url: '/deploy',
-  component: () => (
-    <OnboardingRoute>
-      <DeployScreen />
-    </OnboardingRoute>
-  ),
+  return (
+    <CustomRouter splitter="onboarding">
+      <RouteErrorBoundary>
+        <Routes basename={basename + 'onboarding'}>
+          <Route
+            name="spaces.detail.onboarding.getStarted"
+            path="/getStarted"
+            element={
+              <OnboardingRoute>
+                <GetStartedScreen />
+              </OnboardingRoute>
+            }
+          />
+          <Route
+            name="spaces.detail.onboarding.copy"
+            path="/copy"
+            element={
+              <OnboardingRoute>
+                <CopyScreen />
+              </OnboardingRoute>
+            }
+          />
+          <Route
+            name="spaces.detail.onboarding.explore"
+            path="/explore"
+            element={
+              <OnboardingRoute>
+                <ExploreScreen />
+              </OnboardingRoute>
+            }
+          />
+          <Route
+            name="spaces.detail.onboarding.deploy"
+            path="/deploy"
+            element={
+              <OnboardingRoute>
+                <DeployScreen />
+              </OnboardingRoute>
+            }
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
+        </Routes>
+      </RouteErrorBoundary>
+    </CustomRouter>
+  );
 };
 
 const stackOnboardingState = {
   name: 'onboarding',
-  url: '/onboarding',
-  abstract: true,
-  component: OnboardingRoute,
-  children: [getStarted, copyRepo, explore, deploy],
+  url: '/onboarding{pathname:any}',
+  component: OnboardingRouter,
 };
 
 export default stackOnboardingState;

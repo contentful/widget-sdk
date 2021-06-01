@@ -550,6 +550,64 @@ const apiKeyListRoute = {
 };
 
 /**
+ * Onboarding routes
+ */
+
+type OnboardingGetStartedRouteType = {
+  path: 'spaces.detail.onboarding.getStarted';
+  spaceId?: string;
+};
+
+type OnboardingCopyRouteType = {
+  path: 'spaces.detail.onboarding.copy';
+  spaceId?: string;
+};
+
+type OnboardingExploreRouteType = {
+  path: 'spaces.detail.onboarding.explore';
+  spaceId?: string;
+};
+
+type OnboardingDeployRouteType = {
+  path: 'spaces.detail.onboarding.deploy';
+  spaceId?: string;
+};
+
+const onboardingRoute = {
+  'spaces.detail.onboarding.getStarted': (
+    _,
+    params: Omit<OnboardingGetStartedRouteType, 'path'>
+  ) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/getStarted',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.copy': (_, params: Omit<OnboardingCopyRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/copy',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.explore': (_, params: Omit<OnboardingExploreRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/explore',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.deploy': (_, params: Omit<OnboardingDeployRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/deploy',
+      spaceId: params.spaceId,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -575,7 +633,11 @@ export type SpaceSettingsRouteType =
   | ApiKeyEditorRouteType
   | CMATokensType
   | CMAKeysType
-  | APIContentModelType;
+  | APIContentModelType
+  | OnboardingGetStartedRouteType
+  | OnboardingCopyRouteType
+  | OnboardingExploreRouteType
+  | OnboardingDeployRouteType;
 
 export const routes = {
   ...hibernationRoutes,
@@ -596,4 +658,5 @@ export const routes = {
   ...tasksRoute,
   ...apiKeyListRoute,
   ...appsRoute,
+  ...onboardingRoute,
 };

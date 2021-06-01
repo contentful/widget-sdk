@@ -78,7 +78,7 @@ async function testSpaceScopedPathDeeplinks(
   });
 }
 
-async function testModernStackOnboardingDeeplinks(link, expected) {
+async function testModernStackOnboardingDeeplinks(link, expectedPathname) {
   const space = {
     sys: { id: 'test' },
   };
@@ -97,8 +97,8 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
   const result = await resolveLink(link, {});
 
   expect(result).toEqual({
-    params: { spaceId: 'test' },
-    path: expected,
+    params: { spaceId: 'test', pathname: expectedPathname },
+    path: 'spaces.detail.onboarding',
   });
 }
 
@@ -402,45 +402,25 @@ describe('states/deeplink/resolver', () => {
 
   describe('#onboarding-get-started', () => {
     it('should redirect the user to modern stack onboarding getting started page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-get-started', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'getStarted',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-get-started', '/getStarted');
     });
   });
 
   describe('#onboarding-copy', () => {
     it('should redirect the user to modern stack onboarding clone repo page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-copy', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'copy',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-copy', '/copy');
     });
   });
 
   describe('#onboarding-explore', () => {
     it('should redirect the user to modern stack onboarding explore content model page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-explore', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'explore',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-explore', '/explore');
     });
   });
 
   describe('#onboarding-deploy', () => {
     it('should redirect the user to modern stack onboarding deploy app page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-deploy', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'deploy',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-deploy', '/deploy');
     });
   });
 

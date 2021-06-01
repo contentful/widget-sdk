@@ -193,10 +193,7 @@ function createOnboardingScreenResolver(screen) {
         path: `spaces.detail.onboarding.${screen}`,
         params: { spaceId },
       });
-      return {
-        path: ['spaces', 'detail', 'onboarding', screen],
-        params: { spaceId },
-      };
+      return routes[`spaces.detail.onboarding.${screen}`]({}, { spaceId });
     } else {
       throw new OnboardingError();
     }

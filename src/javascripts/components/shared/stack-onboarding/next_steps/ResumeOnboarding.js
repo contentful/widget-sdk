@@ -16,6 +16,7 @@ import { trackClickCTA } from 'features/space-home';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
 
@@ -49,11 +50,7 @@ export default function ResumeOnboarding({ spaceId }) {
         params: { spaceId },
       };
     }
-
-    go({
-      path: currentStep.path,
-      params: currentStep.params,
-    });
+    router.navigate({ path: currentStep.path, ...currentStep.params });
   };
 
   const handleDeleteSpace = async () => {

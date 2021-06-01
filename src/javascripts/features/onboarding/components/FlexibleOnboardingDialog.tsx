@@ -3,7 +3,6 @@ import { Modal, IconButton, Flex } from '@contentful/forma-36-react-components';
 import { Choices, DeveloperChoiceDialog } from './DeveloperChoiceDialog';
 import { track } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
-import { go } from 'states/Navigator';
 import {
   markSpace,
   MODERN_STACK_ONBOARDING_SPACE_NAME,
@@ -63,9 +62,9 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
         onClose();
         markSpace(spaceId);
         renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
-        await go({
-          path: ['spaces', 'detail', 'onboarding', 'getStarted'],
-          params: { spaceId },
+        router.navigate({
+          path: 'spaces.detail.onboarding.getStarted',
+          spaceId,
         });
         return;
       case Choices.SAMPLE_SPACE_OPTION:
