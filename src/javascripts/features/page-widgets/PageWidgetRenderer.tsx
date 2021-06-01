@@ -35,6 +35,7 @@ import { PageExtensionSDK } from '@contentful/app-sdk';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
+  createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
@@ -76,6 +77,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     currentEnvironmentId,
     currentEnvironment,
     currentSpaceData,
+    currentOrganizationId,
   } = useSpaceEnvContext();
   const aliasesIds = getEnvironmentAliasesIds(currentEnvironment);
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
@@ -87,8 +89,12 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
 
   const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
   React.useEffect(() => {
-    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION).then(setUseExperienceSDK);
-  }, []);
+    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, {
+      organizationId: currentOrganizationId,
+      spaceId: currentSpaceId,
+      environmentId: currentEnvironmentId,
+    }).then(setUseExperienceSDK);
+  }, [currentOrganizationId, currentSpaceId, currentEnvironmentId]);
 
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
   React.useEffect(() => {
@@ -150,7 +156,11 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
             list: LocaleStore.getLocales(),
           },
           callbacks: {
-            space: {},
+            space: createSpaceCallbacks({
+              pubSubClient,
+              cma: customWidgetPlainClient,
+              environment: currentEnvironment,
+            }),
             dialog: createDialogCallbacks(),
             navigator: createNavigatorCallbacks({
               spaceContext: {
@@ -167,14 +177,15 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           },
           spaceMembership: {
             sys: {
-              id: currentSpaceData.spaceMembership.sys.id,
+              id: currentSpaceData.spaceMember.sys.id,
             },
-            admin: currentSpaceData.spaceMembership.admin,
+            admin: currentSpaceData.spaceMember.admin,
           },
           roles: currentSpaceData.spaceMember.roles.map(({ name, description }) => ({
             name,
             description: description ?? '',
           })),
+          invocationParameters: parameters.invocation,
         }) as PageExtensionSDK)
       : localCreatePageWidgetSDK({
           widgetNamespace: widget.namespace,
