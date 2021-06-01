@@ -30,7 +30,7 @@ import { createPageWidgetSDK } from '@contentful/experience-sdk';
 import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
 import LocaleStore from 'services/localeStore';
 import { getUserSync } from '../../services/TokenStore';
-import { FLAGS, getVariation } from '../../LaunchDarkly';
+import { FLAGS } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
 import {
   createDialogCallbacks,
@@ -39,6 +39,7 @@ import {
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
+import { useVariation } from 'core/hooks/useVariation';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -77,7 +78,6 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     currentEnvironmentId,
     currentEnvironment,
     currentSpaceData,
-    currentOrganizationId,
   } = useSpaceEnvContext();
   const aliasesIds = getEnvironmentAliasesIds(currentEnvironment);
   const environmentAliasId = getEnvironmentAliasId(currentSpace);
@@ -87,14 +87,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   const { customWidgetPlainClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
 
-  const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
-  React.useEffect(() => {
-    getVariation(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, {
-      organizationId: currentOrganizationId,
-      spaceId: currentSpaceId,
-      environmentId: currentEnvironmentId,
-    }).then(setUseExperienceSDK);
-  }, [currentOrganizationId, currentSpaceId, currentEnvironmentId]);
+  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, false);
 
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
   React.useEffect(() => {
