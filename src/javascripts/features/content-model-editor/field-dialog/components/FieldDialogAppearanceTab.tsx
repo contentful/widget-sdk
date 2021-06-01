@@ -20,8 +20,8 @@ const styles = {
   }),
 };
 
-function useSlugTrackingFeatureFlag(widget: BuiltinWidget) {
-  const isSlugEditor = widget.id === 'slugEditor' && widget.namespace === 'builtin';
+function useSlugTrackingFeatureFlag(widget?: BuiltinWidget) {
+  const isSlugEditor = widget?.id === 'slugEditor' && widget?.namespace === 'builtin';
   const spaceContext = useSpaceEnvContext();
   const [isEnabled, setEnabled] = useState(!isSlugEditor);
   useEffect(() => {
