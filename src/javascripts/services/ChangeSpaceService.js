@@ -45,8 +45,12 @@ export const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) =>
  * @param {function} onSubmit
  */
 export async function beginSpaceChange({ organizationId, space, onSubmit: onModalSuccess }) {
-  if (!organizationId) throw new Error('organizationId not supplied for space change');
-  if (!space) throw new Error('space not supplied for space change');
+  if (!organizationId) {
+    throw new Error('organizationId not supplied for space change');
+  }
+  if (!space) {
+    throw new Error('space not supplied for space change');
+  }
 
   const organization = await getOrganization(organizationId);
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);

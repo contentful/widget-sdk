@@ -67,7 +67,9 @@ function denormalizeValue(constraint, value) {
 }
 
 export function transformFiltersToList(filters) {
-  if (!Array.isArray(filters)) return [DEFAULT_FILTER];
+  if (!Array.isArray(filters)) {
+    return [DEFAULT_FILTER];
+  }
 
   return filters
     .map((filter) => {

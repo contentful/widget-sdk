@@ -87,7 +87,9 @@ export default function withRetry(version = CLIENT_VERSION) {
 
   // every second, get the first 7 requests in the queue and send them
   function consumeQueue() {
-    if (queue.length === 0) return;
+    if (queue.length === 0) {
+      return;
+    }
     const calls = queue.splice(0, CALLS_IN_PERIOD);
     calls.forEach(doRequest);
   }

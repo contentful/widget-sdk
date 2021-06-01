@@ -36,7 +36,9 @@ export default function SpacesAutoComplete({
   const items = useMemo(() => {
     const valueIds = value.map((space) => space.sys.id);
 
-    if (!spaces) return [];
+    if (!spaces) {
+      return [];
+    }
 
     return spaces.filter((item) => {
       const name = item.name.toLowerCase();

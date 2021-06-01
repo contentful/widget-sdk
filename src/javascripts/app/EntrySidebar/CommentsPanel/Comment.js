@@ -137,7 +137,9 @@ function CommentActions({ comment, onRemove, hasReplies }) {
   const [showRemovalDialog, setShowRemovalDialog] = useState(false);
   const { currentSpace } = useSpaceEnvContext();
 
-  if (hasReplies || !canRemoveComment(currentSpace, comment)) return null;
+  if (hasReplies || !canRemoveComment(currentSpace, comment)) {
+    return null;
+  }
 
   return (
     <React.Fragment>

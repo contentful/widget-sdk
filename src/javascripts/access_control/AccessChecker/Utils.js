@@ -45,7 +45,9 @@ function verifyEntityForNewUsageCheck(entity, deniedEntities) {
   const entitiesForUsageCheck = deniedEntities || ['Entry', 'Asset', 'ContentType'];
   let entityType = entity;
 
-  if (entity && entity.sys) entityType = get(entity, 'sys.type');
+  if (entity && entity.sys) {
+    entityType = get(entity, 'sys.type');
+  }
 
   return entitiesForUsageCheck.includes(entityType);
 }

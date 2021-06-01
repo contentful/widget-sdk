@@ -169,7 +169,9 @@ export const describeNewResource = entityDescription('resource factory', (names,
 export const describeContentEntity = entityDescription(
   'content entity methods',
   (names, description, context) => {
-    if (description) description();
+    if (description) {
+      description();
+    }
 
     describe('#getName()', function () {
       it('returns id', function () {

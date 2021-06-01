@@ -133,7 +133,9 @@ export const LocalesListRoute = () => {
   } = data;
 
   useEffect(() => {
-    if (!currentSpaceId) return;
+    if (!currentSpaceId) {
+      return;
+    }
 
     getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
       setEntitlementsAPIEnabled(isEnabled);

@@ -183,7 +183,9 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
       beforeEach(() => {
         command = createCommands()[commandKey];
-        if (!command) throw new Error(`No command for key ${commandKey}`);
+        if (!command) {
+          throw new Error(`No command for key ${commandKey}`);
+        }
         wrapper = render({
           ...props,
           primary: command,

@@ -31,7 +31,9 @@ export const useSelectedEntities = ({ entities }) => {
       const entityId = getId(entity);
       if (isSelected(entity)) {
         return Object.entries(oldVal).reduce((acc, [id, entity]) => {
-          if (id === entityId) return acc;
+          if (id === entityId) {
+            return acc;
+          }
           return { ...acc, [id]: entity };
         }, {});
       } else {

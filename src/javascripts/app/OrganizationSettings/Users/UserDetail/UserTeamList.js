@@ -46,8 +46,12 @@ export default function UserTeamMemberships({
   user,
   onTeamMembershipRemove,
 }) {
-  if (loading) return <Skeleton />;
-  if (!loading && memberships.length === 0) return <EmptyState user={user} />;
+  if (loading) {
+    return <Skeleton />;
+  }
+  if (!loading && memberships.length === 0) {
+    return <EmptyState user={user} />;
+  }
   return (
     <Table testId="user-team-list" className={styles.table}>
       <TableHead>

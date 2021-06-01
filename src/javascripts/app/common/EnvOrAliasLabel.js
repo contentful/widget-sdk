@@ -25,7 +25,9 @@ const EnvOrAliasLabel = ({
   overrideColor,
   testId,
 }) => {
-  if (!environmentId) return null;
+  if (!environmentId) {
+    return null;
+  }
 
   let fill = tokens.colorTextLight;
   if (isSelected) {

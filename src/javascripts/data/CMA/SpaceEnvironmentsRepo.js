@@ -42,7 +42,9 @@ export function create(spaceEndpoint) {
         aliasedEnvironment !== undefined || aliases !== undefined
     );
 
-    if (!hasOptedIntoEnvironmentAliases) return { environments: items, aliases: [] };
+    if (!hasOptedIntoEnvironmentAliases) {
+      return { environments: items, aliases: [] };
+    }
 
     return items.reduce(
       (envsAndAliases, env) => {

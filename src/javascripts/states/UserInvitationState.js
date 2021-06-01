@@ -36,10 +36,14 @@ function UserInvitationState(props) {
   }, []);
 
   useEffect(() => {
-    if (!invitation) return;
+    if (!invitation) {
+      return;
+    }
 
     async function checkInvitationStatus() {
-      if (invitation.status !== 'accepted') return;
+      if (invitation.status !== 'accepted') {
+        return;
+      }
 
       const orgId = get(invitation, 'sys.organization.sys.id');
       const org = await getOrganization(orgId);

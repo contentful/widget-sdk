@@ -5,9 +5,13 @@ import _ from 'lodash';
  */
 
 export function toIdentifier(string) {
-  if (shouldFallbackToEmptyString(string)) return '';
+  if (shouldFallbackToEmptyString(string)) {
+    return '';
+  }
   const words = splitIntoWords(string).map(stripInvalidChars);
-  if (_.isEmpty(words)) return '';
+  if (_.isEmpty(words)) {
+    return '';
+  }
   const first = words[0].toLowerCase();
   const rest = words.slice(1).map(capitalize);
   return cleanPrefix([first].concat(rest).join(''));
@@ -33,17 +37,23 @@ export function article(word, includeWord = false) {
 }
 
 export function capitalize(string) {
-  if (shouldFallbackToEmptyString(string)) return '';
+  if (shouldFallbackToEmptyString(string)) {
+    return '';
+  }
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
 export function capitalizeFirst(string) {
-  if (shouldFallbackToEmptyString(string)) return '';
+  if (shouldFallbackToEmptyString(string)) {
+    return '';
+  }
   return string[0].toUpperCase() + string.slice(1);
 }
 
 export function uncapitalize(str) {
-  if (shouldFallbackToEmptyString(str)) return '';
+  if (shouldFallbackToEmptyString(str)) {
+    return '';
+  }
   return str[0].toLowerCase() + str.substr(1);
 }
 

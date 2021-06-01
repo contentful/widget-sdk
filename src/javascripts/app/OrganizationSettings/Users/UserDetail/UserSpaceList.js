@@ -38,8 +38,12 @@ export default function UserSpaceList({
   onSpaceMembershipRemove,
   onSpaceMembershipEdit,
 }) {
-  if (loading) return <Skeleton />;
-  if (!loading && memberships.length === 0) return <EmptyState user={user} />;
+  if (loading) {
+    return <Skeleton />;
+  }
+  if (!loading && memberships.length === 0) {
+    return <EmptyState user={user} />;
+  }
   return (
     <Table testId="user-space-list">
       <TableHead>

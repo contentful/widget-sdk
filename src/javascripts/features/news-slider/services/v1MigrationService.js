@@ -65,13 +65,17 @@ export async function openV1MigrationWarning() {
 }
 
 async function shouldDisplay(org) {
-  if (!org) return false;
+  if (!org) {
+    return false;
+  }
 
   const isEnabled = await getVariation(FLAGS.V1_MIGRATION_2021_WARNING, {
     organizationId: org.sys.id,
   });
 
-  if (!isEnabled || hasSeen(org.sys.id)) return false;
+  if (!isEnabled || hasSeen(org.sys.id)) {
+    return false;
+  }
 
   // check for the status of the migration
   const v1migrationSucceeded = org?.sys?._v1Migration?.status === 'succeeded';

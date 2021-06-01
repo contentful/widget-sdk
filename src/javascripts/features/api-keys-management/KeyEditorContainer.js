@@ -24,7 +24,9 @@ export function KeyEditorContainer(props) {
     setIsLoading(false);
   }, [props.spaceId, props.environmentId]);
 
-  if (isLoading) return <KeyEditorWorkbench />;
+  if (isLoading) {
+    return <KeyEditorWorkbench />;
+  }
 
   return (
     <KeyEditorRoute

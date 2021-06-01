@@ -66,7 +66,9 @@ export const deflattenFolders = (flattened) => {
   let pointer = 0;
   return flattened.reduce((acc, { isFolder, ...item }) => {
     if (isFolder) {
-      if (acc[pointer]) pointer++;
+      if (acc[pointer]) {
+        pointer++;
+      }
       return [...acc, { ...item, views: [] }];
     }
     const views = [...(acc[pointer]?.views || []), item];

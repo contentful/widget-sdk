@@ -90,7 +90,9 @@ export const useEnvironmentsRouteState = (props) => {
     const { spaceId, organizationId, goToSpaceDetail } = props;
 
     const hasAccess = accessChecker.can('manage', 'Environments');
-    if (!hasAccess) goToSpaceDetail();
+    if (!hasAccess) {
+      goToSpaceDetail();
+    }
 
     const [environmentsEnabled, canSelectSource, aliasesEnabled, customAliasesEnabled] =
       await Promise.all([
@@ -100,7 +102,9 @@ export const useEnvironmentsRouteState = (props) => {
         getSpaceFeature(spaceId, 'custom_environment_aliases'),
       ]);
 
-    if (!environmentsEnabled) goToSpaceDetail();
+    if (!environmentsEnabled) {
+      goToSpaceDetail();
+    }
 
     const canManageAliases = accessChecker.can('manage', 'EnvironmentAliases');
     dispatch({

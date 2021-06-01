@@ -35,7 +35,9 @@ const styles = {
 };
 
 export function NotificationBar(props) {
-  if (!props.contents) return null;
+  if (!props.contents) {
+    return null;
+  }
 
   const { contents, linkUrl, linkText, actionMessage, onClickAction } = props;
   const shouldShowLink = linkText && linkUrl;

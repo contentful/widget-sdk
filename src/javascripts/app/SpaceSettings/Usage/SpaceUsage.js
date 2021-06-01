@@ -37,7 +37,9 @@ export default function SpaceUsage() {
   const [entitlementsSet, setEntitlementsSet] = React.useState();
 
   React.useEffect(() => {
-    if (!currentSpaceId) return;
+    if (!currentSpaceId) {
+      return;
+    }
 
     getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
       setEntitlementsAPIEnabled(isEnabled);
@@ -51,7 +53,9 @@ export default function SpaceUsage() {
   }, [currentSpaceId]);
 
   React.useEffect(() => {
-    if (!currentOrganizationId) return;
+    if (!currentOrganizationId) {
+      return;
+    }
 
     const hasAccess = can('update', 'settings');
     if (!hasAccess) {

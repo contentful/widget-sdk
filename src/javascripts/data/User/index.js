@@ -149,8 +149,12 @@ export function isAutomationTestUser(user) {
  * @returns {boolean}
  */
 export function isUserOrgCreator(user, org) {
-  if (!org || !org.sys) throw new Error('Expected org to be an object');
-  if (!user || !user.sys) throw new Error('Expected user to be an object');
+  if (!org || !org.sys) {
+    throw new Error('Expected org to be an object');
+  }
+  if (!user || !user.sys) {
+    throw new Error('Expected user to be an object');
+  }
   const creatorUser = org.sys.createdBy;
   return !!creatorUser && creatorUser.sys.id === user.sys.id;
 }

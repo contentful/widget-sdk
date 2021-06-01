@@ -173,7 +173,9 @@ const isTargetInput = ({ target }) => target.tagName === 'INPUT' || target.tagNa
 const onKeyDownEvent =
   (onClick, preventDefault = true) =>
   (e) => {
-    if (isTargetInput(e)) return;
+    if (isTargetInput(e)) {
+      return;
+    }
     if (isHotkey(['enter', 'space'], e)) {
       onClick(e);
       preventDefault && e.preventDefault();

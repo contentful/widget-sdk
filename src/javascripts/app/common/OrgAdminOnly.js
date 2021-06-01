@@ -33,7 +33,9 @@ export default class OrgAdminOnly extends React.Component {
   render() {
     const { loading, isAdmin } = this.state;
 
-    if (loading) return null;
+    if (loading) {
+      return null;
+    }
 
     if (isAdmin) {
       return this.props.children;

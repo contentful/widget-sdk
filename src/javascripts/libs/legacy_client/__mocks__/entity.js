@@ -1,6 +1,8 @@
 export default function describeEntity(names, description, context) {
   describe(`entity ${names.singular}`, function () {
-    if (description) description();
+    if (description) {
+      description();
+    }
 
     describe('#getSys()', function () {
       it('returns undefined without data', function () {

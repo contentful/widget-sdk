@@ -39,7 +39,9 @@ export const useBulkActions = ({ entityType, entities, updateEntities }) => {
       const result = await func();
       const { rawResults, method, entityType } = result;
 
-      if (withUpdate) await updateEntities();
+      if (withUpdate) {
+        await updateEntities();
+      }
 
       displayResults({ results: rawResults, method, entityType });
 

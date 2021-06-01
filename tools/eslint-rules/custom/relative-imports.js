@@ -7,7 +7,9 @@ module.exports = {
   meta: {},
   create(context) {
     const myPath = context.getFilename();
-    if (myPath === '<text>') return {}; // can't check a non-file
+    if (myPath === '<text>') {
+      return {};
+    } // can't check a non-file
 
     function checkSourceValue(sourceNode) {
       const depPath = sourceNode.value;

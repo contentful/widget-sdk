@@ -140,7 +140,9 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
     dispatch({ type: actions.SET_SELECTED_PLAN, payload: plan });
 
     // we only scroll the user to platform selection when user is changing a space plan
-    if (!showPlatformsAboveSpaces) scrollToPlatformSelection();
+    if (!showPlatformsAboveSpaces) {
+      scrollToPlatformSelection();
+    }
   };
 
   const onSelectPlatform = (platform) => {
@@ -154,7 +156,9 @@ export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
     });
 
     // we only scroll the user to space selection when user is creating a space plan
-    if (showPlatformsAboveSpaces) scrollToSpaceSelection();
+    if (showPlatformsAboveSpaces) {
+      scrollToSpaceSelection();
+    }
   };
 
   return (

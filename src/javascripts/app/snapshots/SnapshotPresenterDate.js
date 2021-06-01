@@ -12,7 +12,9 @@ const SnapshotPresenterDate = ({ settings, value }) => {
   const mode = settings.format || MODE_DATE;
 
   let dateString = moment(date).format('dddd, MMMM Do YYYY');
-  if (mode === MODE_DATE) return <span data-test-id="snapshot-presenter-date">{dateString}</span>;
+  if (mode === MODE_DATE) {
+    return <span data-test-id="snapshot-presenter-date">{dateString}</span>;
+  }
 
   const is24HourTimezone = parseInt(settings.ampm, 10) === 24;
   if (is24HourTimezone) {

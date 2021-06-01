@@ -91,7 +91,9 @@ export const AliasChangedChoiceModal = ({
   const reloadTo = async (newEnvironmentId) => {
     setLoading(true);
     const error = await Navigator.reloadWithEnvironment(newEnvironmentId);
-    if (error) entityUnavailableNotification();
+    if (error) {
+      entityUnavailableNotification();
+    }
     setLoading(false);
     onClose();
   };
@@ -306,7 +308,9 @@ export const AliasDeletedInfoModal = ({ target, aliasId, isShown, onClose }) => 
   const reloadTo = async (newEnvironmentId) => {
     setLoading(true);
     const error = await Navigator.reloadWithEnvironment(newEnvironmentId);
-    if (error) entityUnavailableNotification();
+    if (error) {
+      entityUnavailableNotification();
+    }
     setLoading(false);
     onClose();
   };

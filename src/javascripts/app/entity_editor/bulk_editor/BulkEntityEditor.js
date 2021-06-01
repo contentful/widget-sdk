@@ -133,7 +133,9 @@ export const BulkEntityEditor = ({
 
   const { privateLocales, defaultLocale } = localeData;
   const fieldLocaleListeners = useMemo(() => {
-    if (!editorState) return null;
+    if (!editorState) {
+      return null;
+    }
     const { editorData, editorContext, doc } = editorState;
     return makeFieldLocaleListeners(
       editorData.fieldControls.all,

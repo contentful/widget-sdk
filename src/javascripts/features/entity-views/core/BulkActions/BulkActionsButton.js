@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { Button, Flex } from '@contentful/forma-36-react-components';
 
 export const BulkActionsButton = ({ label, visible, onClick, ...props }) => {
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
   const lowerLabel = label.toLowerCase();
   return (
     <Flex marginRight="spacingS">

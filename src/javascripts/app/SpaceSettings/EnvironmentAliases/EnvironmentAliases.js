@@ -239,7 +239,9 @@ export default function EnvironmentAliases(props) {
   }
 
   const trackedSetStep = (step, track = true) => {
-    if (track) optInStep(step);
+    if (track) {
+      optInStep(step);
+    }
     setStep(step);
   };
 

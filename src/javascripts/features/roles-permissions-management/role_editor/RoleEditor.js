@@ -216,7 +216,9 @@ class RoleEditorWithNavigator extends React.Component {
       ? entities[entityType][entityId].entity.data
       : entityCache[entityType][entityId];
 
-    if (!data) return entityId;
+    if (!data) {
+      return entityId;
+    }
     const { internal_code: defaultLocale } = TheLocaleStore.getDefaultLocale();
 
     try {

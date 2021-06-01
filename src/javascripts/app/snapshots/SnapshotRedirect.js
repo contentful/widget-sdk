@@ -33,7 +33,9 @@ const SnapshotRedirect = (props) => {
   }, [props.entryId]);
 
   React.useEffect(() => {
-    if (!editorData) return;
+    if (!editorData) {
+      return;
+    }
 
     async function init() {
       const entityId = editorData.entity.getId();

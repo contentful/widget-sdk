@@ -110,7 +110,9 @@ const styles = {
 };
 
 const ShareItem = ({ view, roleAssignment, trackingForScopedViews, updateScopedFolderView }) => {
-  if (!roleAssignment) return null;
+  if (!roleAssignment) {
+    return null;
+  }
 
   const updateView = async () => {
     const roles = await openRoleSelector(roleAssignment.endpoint, view.roles);
@@ -153,7 +155,9 @@ export const View = ({
   const roleAssignment = getRoleAssignment();
   const canEdit = canEditScopedFolders();
 
-  if (isFolderClosed) return null;
+  if (isFolderClosed) {
+    return null;
+  }
 
   return (
     <div

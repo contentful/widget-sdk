@@ -1,7 +1,9 @@
 export default function createMethods(constructor, path) {
   const methods = {
     getById: function (id, headers) {
-      if (!id) throw new Error('No id provided');
+      if (!id) {
+        throw new Error('No id provided');
+      }
 
       return this.endpoint(path, id)
         .headers(headers)

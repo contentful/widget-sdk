@@ -88,7 +88,9 @@ EntityListCache.prototype = {
         });
       } else {
         _.forEach(entity.data.fields, (field, fieldId) => {
-          if (!self.fieldIsDisplayed(fieldId)) return;
+          if (!self.fieldIsDisplayed(fieldId)) {
+            return;
+          }
           const locfield = field && field[self.locale];
 
           if (isLink(locfield)) {

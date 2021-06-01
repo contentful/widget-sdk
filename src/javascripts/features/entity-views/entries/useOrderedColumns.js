@@ -19,7 +19,9 @@ export const useOrderedColumns = ({ listViewContext, updateEntities }) => {
   };
 
   const orderColumnBy = (field) => {
-    if (!fieldIsSortable(field)) return;
+    if (!fieldIsSortable(field)) {
+      return;
+    }
     const direction = get(listViewContext.getView(), 'order.direction');
     const newOrder = {
       fieldId: field.id,

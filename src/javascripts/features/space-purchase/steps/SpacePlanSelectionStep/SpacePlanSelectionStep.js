@@ -277,7 +277,9 @@ function LegacySpaceWarning({ spaceName, spacePlan }) {
       {/* eslint-disable-next-line */}
       <ul className={styles.legacyResourcesList}>
         {spacePlan.ratePlanCharges.map((charge, idx) => {
-          if (!charge.tiers) return null;
+          if (!charge.tiers) {
+            return null;
+          }
           return (
             <li key={idx}>
               {charge.tiers[0].endingUnit} {charge.name}

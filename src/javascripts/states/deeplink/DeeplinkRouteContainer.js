@@ -9,7 +9,9 @@ export function DeeplinkRouteContainer() {
   const [marketplaceApps, setMarketplaceApps] = useState({});
 
   useEffect(() => {
-    if (searchParams.link !== 'apps') return;
+    if (searchParams.link !== 'apps') {
+      return;
+    }
 
     async function fetchApps() {
       const apps = await getMarketplaceApps();

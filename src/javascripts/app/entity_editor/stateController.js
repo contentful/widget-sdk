@@ -334,7 +334,9 @@ export const initStateController = ({
       />
     ));
 
-    if (result.action) return result;
+    if (result.action) {
+      return result;
+    }
     throw new Error();
   }
 };

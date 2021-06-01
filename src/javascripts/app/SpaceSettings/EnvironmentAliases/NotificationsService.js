@@ -63,7 +63,9 @@ const notifyAliasChangeWithEnvironmentsAccess = ({
 };
 
 export const triggerAliasChangedNotifications = ({ update, modalLauncher = ModalLauncher }) => {
-  if (aliasChangedToastVisible) return;
+  if (aliasChangedToastVisible) {
+    return;
+  }
   const { newTarget, oldTarget, aliasId } = update;
   const spaceContext = getSpaceContext();
   const currentEnvironmentId = spaceContext.getEnvironmentId();
@@ -139,7 +141,9 @@ export const triggerAliasCreatedOrDeletedNotifications = async ({
   update,
   modalLauncher = ModalLauncher,
 }) => {
-  if (aliasChangedToastVisible) return;
+  if (aliasChangedToastVisible) {
+    return;
+  }
 
   if (update.action === ACTION.CREATE) {
     notificationEnvironmentAliasCreated({ update });

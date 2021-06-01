@@ -14,7 +14,9 @@ export const rangeTypes = {
 export const extractRichTextNodesValidations = (fields) => {
   const nodes = {};
   Object.values(fields).forEach((field) => {
-    if (areSettingsEmpty(field.settings) || !field.enabled) return;
+    if (areSettingsEmpty(field.settings) || !field.enabled) {
+      return;
+    }
     const validation = {};
     validation[field.type] = field.settings;
     validation.message = field.message;

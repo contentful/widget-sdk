@@ -77,7 +77,9 @@ export class QuickNavigation extends React.Component {
         keyMap={keyMap}
         handlers={{
           QUICK_NAV: (event) => {
-            if (this.hasActiveModals()) return;
+            if (this.hasActiveModals()) {
+              return;
+            }
             event.preventDefault();
             trackOpenShortcut();
             this.openModal();
