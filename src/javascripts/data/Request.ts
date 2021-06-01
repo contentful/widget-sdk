@@ -9,6 +9,7 @@ import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultCli
 import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';
 import { AuthParamsType } from 'data/CMA/types';
 import { Source } from 'i13n/constants';
+import { SilentError } from '../core/monitoring';
 
 /**
  * @description
@@ -54,7 +55,7 @@ const RETRY_VERSION: Record<number, RetryFunc> = {
   2: wrapWithRetryWithQueue,
 };
 
-export class PreflightRequestError extends Error {
+export class PreflightRequestError extends SilentError {
   constructor() {
     super('Request failure in preflight');
   }
