@@ -23,12 +23,14 @@ import {
   getSettingsFormFields,
   getValidationsFormFields,
   getNodeValidationsFormFields,
-} from './utils/formFieldDefetitions';
+  getInitialValueFormFields,
+} from './utils/formFieldDefinitions';
 import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import localeStore from 'services/localeStore';
 
 const styles = {
   modalHeader: css({
@@ -103,11 +105,21 @@ const FieldModalDialogForm = ({
     onClose();
   };
 
+  // @todo: REMOVE THIS
+  const defaultLocale = localeStore.getDefaultLocale();
+  const ctFieldWithInitialValue = {
+    ...ctField,
+    initialValue: {
+      [defaultLocale.code]: true,
+    },
+  };
+
   const { onBlur, onChange, onSubmit, fields, form } = useForm({
     fields: {
       ...getSettingsFormFields(ctField, contentType),
       ...getValidationsFormFields(ctField),
       ...getNodeValidationsFormFields(ctField),
+      ...getInitialValueFormFields(ctFieldWithInitialValue),
     },
     submitFn: submitForm,
   });
