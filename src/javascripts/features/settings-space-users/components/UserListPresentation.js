@@ -13,6 +13,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { FilterPill } from 'features/entity-search';
 import { UserListRow } from './UserListRow';
 
+import { track } from 'analytics/Analytics';
 import { AddUsersToSpaceNote } from './AddUsersToSpaceNote';
 import { VIEW_LABELS } from '../constants';
 
@@ -81,6 +82,10 @@ export const UserListPresentation = ({
       setTimeout(() => scrollToRole(roleAnchorEl), 500);
     }
   }, [userGroups, jumpToRole]);
+
+  useEffect(() => {
+    track('user_list:page_loaded');
+  }, []);
 
   return (
     <>

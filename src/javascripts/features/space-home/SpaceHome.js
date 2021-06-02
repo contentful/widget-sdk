@@ -77,6 +77,15 @@ const fetchData =
       organizationId: currentOrganizationId,
     });
 
+    if (inviteCardExperimentEnabled !== null) {
+      Analytics.tracking.experimentStart({
+        experiment_id: FLAGS.NEW_COWORKER_INVITE_CARD,
+        experiment_variation: inviteCardExperimentEnabled ? 'treatment' : 'control',
+        space_id: currentSpaceId,
+        organization_id: currentOrganizationId,
+      });
+    }
+
     const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
 
     const isSpaceEmpty = await isEmptySpace(currentSpaceContentTypes, currentSpace);
