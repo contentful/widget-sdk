@@ -262,7 +262,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "through2": "^3.0.1",
     "trailduck": "^0.2.2",
-    "ts-loader": "6.0.2",
+    "ts-loader": "9.2.2",
     "ts-node": "^9.1.1",
     "typescript": "3.9.7",
     "typewriter": "^7.4.1",
